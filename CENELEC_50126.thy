@@ -1,0 +1,147 @@
+chapter \<open>An Outline of a CENELEC Ontology\<close>
+
+text{* NOTE: An Ontology-Model of a certification standard such as CENELEC or
+Common Criteria identifies:
+- notions (conceptual \emph{categories}) having \emph{instances}
+  (similar to classes and objects),
+- their subtype relation (eg., a "SRAC" is an "assumption"),
+- their syntactical structure 
+  (for the moment: defined by regular expressions describing the
+   order of category instances in the overall document)
+ *}  
+  
+theory CENELEC_50126
+  imports Isa_DOF
+begin
+
+text{* Excerpt of the BE EN 50128:2011 *}
+
+section {* Requirements-Analysis related Categories *}  
+
+doc_class requirement_analysis_item =
+   long_name :: "string option"
+  
+
+doc_class requirement_analysis = 
+   no :: "nat"
+   where "requirement_analysis_item +"
+
+text{*The category @{emph \<open>hypothesis\<close>} is used for assumptions from the 
+      foundational mathematical or physical domain, so for example: 
+      \<^item>   the Mordell-Lang conjecture holds,   
+      \<^item>   euklidian geometry is assumed, or
+      \<^item>   Newtonian (non-relativistic) physics is assumed,
+      \<^item>   @{term "P \<noteq> NP"},
+      \<^item>   or the computational hardness  of certain functions 
+          relevant for cryptography (like prime-factorization).
+     Their acceptance is inherently outside the scope of the model
+     and can only established inside certification process by
+     authority argument.
+*}
+  
+datatype hyp_type = physical | mathematical | computational | other
+    
+doc_class hypothesis = requirement_analysis_item +
+      hyp_type :: hyp_type      -- physical  (* default *)
+  
+text{*The category @{emph \<open>assumption\<close>} is used for domain-specific assumptions. 
+      It has formal , semi-formal and informal sub-categories. They have to be 
+      tracked and discharged by appropriate validation procedures within a 
+      certification process, by it by test or proof. *}
+
+datatype ass_kind = informal | semiformal | formal
+  
+doc_class assumption = requirement_analysis_item +
+     assumption_kind :: ass_kind
+
+text{*The category @{emph \<open>exported constraint\<close>} (or @{emph \<open>ec\<close>} for short) 
+      is used for formal assumptions, that arise during the analysis,
+      design or implementation and have to be tracked till the final
+      evaluation target,and discharged by appropriate validation procedures 
+      within the certification process, by it by test or proof. *}
+
+doc_class ec = assumption  +
+     assumption_kind :: ass_kind -- (*default *) formal
+
+text{*The category @{emph \<open>safety related application condition\<close>} (or @{emph \<open>srac\<close>} 
+      for short) is used for @{typ ec}'s that establish safety properties
+      of the evaluation target. Their trackability throughout the certification
+      is therefore particularly critical. *}
+       
+doc_class srac = ec  +
+     assumption_kind :: ass_kind -- (*default *) formal
+
+section {* Requirements-Analysis related Categories *}  
+
+doc_class test_item =
+   nn :: "string option"
+
+text{* subcategories are : *}
+  
+datatype test_kind = blackbox | whitebox | greybox | fuzz | pertubation
+  
+datatype test_coverage_criterion =  
+             allpathk  nat nat     (* depth, test_coverage_degree *)
+             | mcdc  nat           (* depth, test_coverage_degree *)
+             | exhaustive
+             | dnf_E_d  string nat (* equivalence class testing *)
+             | other string
+    
+doc_class test_specification = test_item +
+          short_goal :: string
+      
+doc_class test_case = test_item +
+          kind  :: test_kind
+          descr :: string
+
+          
+doc_class test_result = test_item +
+             verdict :: bool
+             remarks :: string
+             covvrit :: test_coverage_criterion
+
+datatype   test_environment_kind = hardware_in_the_loop ("hil") 
+                                 | simulated_hardware_in_the_loop ("shil") 
+  
+doc_class  test_environment = test_item +
+             descr :: string
+             kind  :: test_environment_kind -- shil
+
+doc_class  test_tool = test_item +
+             descr :: string
+
+doc_class  test_requirement = test_item +
+             descr :: string
+
+doc_class  test_adm_role = test_item +
+             name :: string
+
+doc_class test_documentation = 
+   no :: "nat"
+   where "(test_specification.((test_case.test_result)+.(test_environment|test_tool))+.
+          [test_requirement].test_adm_role"
+     
+section{* Example *}
+
+text*[ass122::srac] {* The overall sampling frequence of the odometer
+subsystem is therefore 14 khz, which includes sampling, computing and
+result communication times... *}
+  
+text*[t10::test_result] {* This is a meta-test. This could be an ML-command
+that governs the external test-execution via, eg., a makefile or specific calls
+to a test-environment or test-engine *}
+  
+text \<open> As established by @{docref \<open>t10\<close>}, the 
+       assumption @{docref \<open>ass122\<close>} is validated. \<close>
+
+(* Hack: This should be generated automatically: *)
+ML{*
+val _ = Theory.setup
+        ((DocAttrParser.control_antiquotation @{binding srac} {strict_checking=true}  "\\autoref{" "}" ) #>
+         (DocAttrParser.control_antiquotation @{binding ec}{strict_checking=true} "\\autoref{" "}")#>
+         (DocAttrParser.control_antiquotation @{binding requirement_analysis_item} {strict_checking=true}   "\\label{" "}"))
+
+*}
+      
+end      
+  
