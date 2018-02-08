@@ -7,7 +7,7 @@ Common Criteria identifies:
 - their subtype relation (eg., a "SRAC" is an "assumption"),
 - their syntactical structure 
   (for the moment: defined by regular expressions describing the
-   order of category instances in the overall document)
+   order of category instances in the overall document as a regular language)
  *}  
   
 theory CENELEC_50126
@@ -18,13 +18,13 @@ text{* Excerpt of the BE EN 50128:2011 *}
 
 section {* Requirements-Analysis related Categories *}  
 
-doc_class requirement_analysis_item =
+doc_class requirement =
    long_name :: "string option"
   
 
 doc_class requirement_analysis = 
    no :: "nat"
-   where "requirement_analysis_item +"
+   where "requirement_item +"
 
 text{*The category @{emph \<open>hypothesis\<close>} is used for assumptions from the 
       foundational mathematical or physical domain, so for example: 
@@ -41,18 +41,18 @@ text{*The category @{emph \<open>hypothesis\<close>} is used for assumptions fro
   
 datatype hyp_type = physical | mathematical | computational | other
     
-doc_class hypothesis = requirement_analysis_item +
-      hyp_type :: hyp_type      -- physical  (* default *)
+doc_class hypothesis = requirement +
+      hyp_type :: hyp_type <= physical  (* default *)
   
 text{*The category @{emph \<open>assumption\<close>} is used for domain-specific assumptions. 
-      It has formal , semi-formal and informal sub-categories. They have to be 
+      It has formal, semi-formal and informal sub-categories. They have to be 
       tracked and discharged by appropriate validation procedures within a 
       certification process, by it by test or proof. *}
 
 datatype ass_kind = informal | semiformal | formal
   
-doc_class assumption = requirement_analysis_item +
-     assumption_kind :: ass_kind
+doc_class assumption = requirement +
+     assumption_kind :: ass_kind <= informal 
 
 text{*The category @{emph \<open>exported constraint\<close>} (or @{emph \<open>ec\<close>} for short) 
       is used for formal assumptions, that arise during the analysis,
@@ -61,7 +61,7 @@ text{*The category @{emph \<open>exported constraint\<close>} (or @{emph \<open>
       within the certification process, by it by test or proof. *}
 
 doc_class ec = assumption  +
-     assumption_kind :: ass_kind -- (*default *) formal
+     assumption_kind :: ass_kind <= (*default *) formal
 
 text{*The category @{emph \<open>safety related application condition\<close>} (or @{emph \<open>srac\<close>} 
       for short) is used for @{typ ec}'s that establish safety properties
@@ -69,7 +69,18 @@ text{*The category @{emph \<open>safety related application condition\<close>} (
       is therefore particularly critical. *}
        
 doc_class srac = ec  +
-     assumption_kind :: ass_kind -- (*default *) formal
+     assumption_kind :: ass_kind <= (*default *) formal
+
+section {* Design related Categories *}  
+
+doc_class design_item = 
+      description :: string
+
+datatype design_kind = unit | module | protocol
+      
+doc_class interface =  design_item +
+      kind :: design_kind
+      
 
 section {* Requirements-Analysis related Categories *}  
 
@@ -105,7 +116,7 @@ datatype   test_environment_kind = hardware_in_the_loop ("hil")
   
 doc_class  test_environment = test_item +
              descr :: string
-             kind  :: test_environment_kind -- shil
+             kind  :: test_environment_kind <= shil
 
 doc_class  test_tool = test_item +
              descr :: string
@@ -118,6 +129,8 @@ doc_class  test_adm_role = test_item +
 
 doc_class test_documentation = 
    no :: "nat"
+   where "(test_specification.((test_case.test_result)+.(test_environment|test_tool))+.
+          [test_requirement].test_adm_role"
    where "(test_specification.((test_case.test_result)+.(test_environment|test_tool))+.
           [test_requirement].test_adm_role"
      
@@ -142,6 +155,12 @@ val _ = Theory.setup
          (DocAttrParser.control_antiquotation @{binding requirement_analysis_item} {strict_checking=true}   "\\label{" "}"))
 
 *}
+  
+ML{*
+DocObjTab.is_defined_cid_global "srac" @{theory};
+DocObjTab.is_defined_cid_global "ec" @{theory};
+
+*}  
       
 end      
   

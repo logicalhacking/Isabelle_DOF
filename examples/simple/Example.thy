@@ -1,5 +1,5 @@
 theory Example
-  imports  Isa_DOF
+  imports  Isa_DOF CENELEC_50126
   keywords "Term" :: diag 
 begin
   
@@ -13,26 +13,39 @@ declare_reference [blablabla::cid, alpha=beta, beta=gamma]
   
 paragraph*[sdf]{* just a paragraph *}  
 
-subsection*[sdf]{* shouldn't work *}  
+subsection*[sdf]{* shouldn't work, multiple ref. *}  
 
 section*[sedf::requirement]{* works again *}  
+text\<open>\label{sedf}\<close>  (* Hack to make the LaTeX-ing running. Should disappear. *)
   
-section*[seedf::integration_test, dfg=34,fgdfg=zf]{* and another example with attribute setting *}  
+section*[seedf::integration_test, dfg=34,fgdfg=zf]{* and another example with attribute setting,
+but wrong doc_class constraint. *}  
 
 section{* Text Antiquotation Infrastructure ... *}  
                   
-text{* @{docref lalala} *}  
+text{* @{docref \<open>lalala\<close>} -- produces warning. *}  
 
+text{* Here is a reference to @{docref \<open>sedf\<close>} *}    
+(* works currently only in connection with the above label-hack. 
+   Try to hover over the sedf - link and activate it !!! *)
+ 
   
-  
-text{* @{thm refl} @{file "MOF.sml"} @{value 3} @{const hd} @{theory List}}
+(* some show-off of standard anti-quotations: *)  
+text{* @{thm refl} @{file "MOF.sml"} @{value "3+4"} @{const hd} @{theory List}}
        @{term "3"} @{type bool}  @{term [show_types] "f x = a + x"} *}
   
-text{* Here is a reference to @{docref sedf} *}    
+ 
+
+
+
+
+
+
+
+
 
   
-  
-section{* A Small Example for a Command Definition *}
+section{* A Small Example for a Command Definition --- just to see how this works in principle. *}
 
 ML{* 
 val opt_modes =

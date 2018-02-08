@@ -40,20 +40,18 @@ op |>> : ('a * 'c) * ('a -> 'b) -> 'b * 'c;
 op ||> : ('c * 'a) * ('a -> 'b) -> 'c * 'b
 *}
   
-ML{*
-fun H1 f (a,b) = (f a, b)
-fun H2 f (a,b) = (a, f b)
-*}
+
   
 ML{*
 
 structure DocObjTab = 
 struct
-   datatype docclass_struct = DocClassStruct of 
-                                   {inherits_from : string option,
-                                    pos : Position.T, thy_name : string, 
-                                    id : serial, (* for pide *)
-                                    attribute_decl : (string * string * string option) list}
+   type docclass_struct = {params : (string * sort) list, (*currently not used *)
+                           name   : binding, thy_name : string, id : serial, (* for pide *)
+                           inherits_from : (typ list * string) option,
+                           attribute_decl : (binding * typ * term option) list
+                           (*, rex : term list -- not yet used *)}
+
 
    type docclass_tab = docclass_struct Symtab.table
 
@@ -67,10 +65,9 @@ struct
                        |  SOME X => X
             fun father_is_sub s = case Symtab.lookup tab s of 
                           NONE => error "inconsistent doc_class hierarchy"
-                       |  SOME (DocClassStruct{inherits_from=NONE, ...}) => s = t
-                       |  SOME (DocClassStruct{inherits_from=SOME s', ...}) => s' = t 
-                                                                               orelse 
-                                                                               father_is_sub s' 
+                       |  SOME ({inherits_from=NONE, ...}) => s = t
+                       |  SOME ({inherits_from=SOME (_,s'), ...}) => s' = t 
+                                                                     orelse father_is_sub s' 
         in s = t orelse father_is_sub s
         end
 
@@ -104,6 +101,14 @@ val map_data = Data.map;
 val get_data_global = Data.get o Context.Theory;
 val map_data_global = Context.theory_map o map_data;
 
+val default_cid = "text"
+
+fun is_defined_cid_global cid thy = let val t = snd(get_data_global thy)
+                                     in  cid=default_cid orelse Symtab.defined t cid end
+
+fun is_defined_cid_local cid ctxt  = let val t = snd(get_data ctxt)
+                                     in  cid=default_cid orelse Symtab.defined t cid end
+
 
 fun is_declared_oid_global oid thy = let val {tab=t,maxano=_} = fst(get_data_global thy)
                                      in  Symtab.defined t oid end
@@ -127,19 +132,36 @@ fun is_defined_oid_local oid thy    = let val {tab=t,maxano=_} = fst(get_data th
 
 
 fun declare_object_global oid thy  =  (map_data_global
-                                                   (H1(fn {tab=t,maxano=x} => 
-                                                          {tab=Symtab.update_new(oid,NONE)t,
-                                                           maxano=x})) 
+                                                   (apfst(fn {tab=t,maxano=x} => 
+                                                             {tab=Symtab.update_new(oid,NONE)t,
+                                                              maxano=x})) 
                                                    (thy)
                                        handle Symtab.DUP _ => 
                                               error("multiple declaration of document reference"))
 
-fun declare_object_local oid ctxt  = (map_data (H1(fn {tab=t,maxano=x} => 
-                                                      {tab=Symtab.update_new(oid,NONE) t,
-                                                       maxano=x}))
+fun declare_object_local oid ctxt  = (map_data (apfst(fn {tab=t,maxano=x} => 
+                                                         {tab=Symtab.update_new(oid,NONE) t,
+                                                          maxano=x}))
                                                (ctxt)
                                       handle Symtab.DUP _ => 
                                              error("multiple declaration of document reference"))
+
+fun define_doc_class_global (params', binding) parent fields thy  = 
+           let val nn = Context.theory_name thy (* in case that we need the thy-name to identify
+                                                   the space where it is ... *)
+               val cid = Binding.name_of binding
+               val hurx = {params=params', 
+                           name = binding, 
+                           thy_name = nn, 
+                           id = serial(), (* for pide --- really fresh or better reconstruct 
+                                             from prior record definition ? *)
+                           inherits_from = parent,
+                           attribute_decl = fields  (*  currently unchecked *)
+                           (*, rex : term list -- not yet used *)}
+           in  if is_defined_cid_global cid thy 
+               then error("multiple definition of document reference")
+               else map_data_global(apsnd(Symtab.update(cid,hurx)))(thy)
+           end
 
 
 fun define_object_global (oid, bbb) thy  = 
@@ -147,34 +169,34 @@ fun define_object_global (oid, bbb) thy  =
                                                    the space where it is ... *)
            in  if is_defined_oid_global oid thy 
                then error("multiple definition of document reference")
-               else map_data_global  (H1(fn {tab=t,maxano=x} => 
-                                            {tab=Symtab.update(oid,SOME bbb) t,
-                                             maxano=x}))
+               else map_data_global  (apfst(fn {tab=t,maxano=x} => 
+                                               {tab=Symtab.update(oid,SOME bbb) t,
+                                                maxano=x}))
                       (thy)
            end
             
 fun define_object_local (oid, bbb) ctxt  = 
-           map_data (H1(fn {tab=t,maxano=x} => 
-                           {tab=Symtab.update(oid,SOME bbb) t,maxano=x})) ctxt
+           map_data (apfst(fn {tab=t,maxano=x} => 
+                              {tab=Symtab.update(oid,SOME bbb) t,maxano=x})) ctxt
 
 
 (* declares an anonyme label of a given type and generates a unique reference ...  *)
 fun declare_anoobject_global thy cid = map_data_global
-                                           (H1(fn {tab=t,maxano=x} =>
-                                                  let val str = cid^":"^Int.toString(x+1)
-                                                      val _ = writeln("Anonymous doc-ref declared: "
-                                                                      ^str)
-                                                  in  {tab=Symtab.update(str,NONE)t,maxano=x+1}
-                                                  end))         
+                                           (apfst(fn {tab=t,maxano=x} =>
+                                                     let val str = cid^":"^Int.toString(x+1)
+                                                         val _ = writeln("Anonymous doc-ref declared: "
+                                                                         ^str)
+                                                     in  {tab=Symtab.update(str,NONE)t,maxano=x+1}
+                                                     end))         
                                            (thy)
 
 fun declare_anoobject_local ctxt cid = map_data
-                                          (H1(fn {tab=t,maxano=x} => 
-                                                 let val str = cid^":"^Int.toString(x+1)
-                                                     val _ = writeln("Anonymous doc-ref declared: "
+                                          (apfst(fn {tab=t,maxano=x} => 
+                                                     let val str = cid^":"^Int.toString(x+1)
+                                                         val _ = writeln("Anonymous doc-ref declared: "
                                                                      ^str)
-                                                 in   {tab=Symtab.update(str,NONE)t, maxano=x+1}
-                                                 end)) 
+                                                     in   {tab=Symtab.update(str,NONE)t, maxano=x+1}
+                                                     end)) 
                                           (ctxt)
 
 fun get_object_global oid thy  = let val {tab=t,maxano=_} = fst(get_data_global thy)
@@ -198,8 +220,6 @@ end (* struct *)
 
 section{* Syntax for Annotated Documentation Commands (the '' View'') *}
 
-
-
   
 ML{* 
 structure DocAttrParser = 
@@ -208,10 +228,12 @@ struct
 val semi = Scan.option (Parse.$$$ ";");
 
 val attribute =
-  Parse.position Parse.name -- Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.name) "";
+  Parse.position Parse.name 
+  -- Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.name) "";
 
 val reference =
-  Parse.position Parse.name -- Scan.optional (Parse.$$$ "::" |-- Parse.!!! Parse.name) "";
+  Parse.position Parse.name 
+  -- Scan.optional (Parse.$$$ "::" |-- Parse.!!! Parse.name) DocObjTab.default_cid;
 
 val attributes =  (Parse.$$$ "[" |-- (reference -- 
                                      (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) []))
@@ -246,7 +268,7 @@ fun enriched_document_command markdown (((((oid,pos),dtyp),doc_attrs),xstring_op
              ((((string * Position.T) * string) * 'a) * (xstring * Position.T) option) * Input.source 
              -> Toplevel.transition -> Toplevel.transition
 *)
-fun enriched_document_command markdown (((((oid,pos),dtyp:string),doc_attrs),
+fun enriched_document_command markdown (((((oid,pos),cid:string),doc_attrs),
                                         xstring_opt:(xstring * Position.T) option),
                                         toks:Input.source) =
   let
@@ -255,8 +277,11 @@ fun enriched_document_command markdown (((((oid,pos),dtyp:string),doc_attrs),
             (* creates a markup label for this position and reports it to the PIDE framework;
                this label is used as jump-target for point-and-click feature. *)
     fun enrich_trans thy = let val name = Context.theory_name thy
+                               val _ = if not (DocObjTab.is_defined_cid_global cid thy) 
+                                       then error("class reference undefined")
+                                       else ()
                            in DocObjTab.define_object_global (oid, {pos=pos, thy_name=name,
-                                                                    id=id , cid=dtyp})
+                                                                    id=id , cid=cid})
                                                              (thy)
                            end 
     fun MMM(SOME(s,p)) = SOME(s^"XXX",p)
@@ -383,22 +408,31 @@ fun read_parent NONE ctxt = (NONE, ctxt)
         Type (name, Ts) => (SOME (Ts, name), fold Variable.declare_typ Ts ctxt)
       | T => error ("Bad parent record specification: " ^ Syntax.string_of_typ ctxt T));
 
+
+fun map_option f NONE = NONE 
+   |map_option f (SOME x) = SOME (f x)
+
 fun read_fields raw_fields ctxt =
   let
-    val Ts = Syntax.read_typs ctxt (map (fn (_, raw_T, _) => raw_T) raw_fields);
-    val fields = map2 (fn (x, _, mx) => fn T => (x, T, mx)) raw_fields Ts;
+    val Ts = Syntax.read_typs ctxt (map (fn ((_, raw_T, _),_) => raw_T) raw_fields);
+    val terms = map ((map_option (Syntax.read_term ctxt)) o snd) raw_fields
+    val fields = map2 (fn ((x, _, mx),_) => fn T => (x, T, mx)) raw_fields Ts;
     val ctxt' = fold Variable.declare_typ Ts ctxt;
-  in (fields, ctxt') end;
+  in (fields, terms, ctxt') end;
 
-fun add_record_cmd overloaded (raw_params, binding) raw_parent raw_fields thy =
+fun add_record_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdefaults rex thy =
   let
     val ctxt = Proof_Context.init_global thy;
     val params = map (apsnd (Typedecl.read_constraint ctxt)) raw_params;
     val ctxt1 = fold (Variable.declare_typ o TFree) params ctxt;
     val (parent, ctxt2) = read_parent raw_parent ctxt1;
-    val (fields, ctxt3) = read_fields raw_fields ctxt2;
+    val (fields, terms, ctxt3) = read_fields raw_fieldsNdefaults ctxt2;
+    val fieldsNterms = (map (fn (a,b,_) => (a,b)) fields) ~~ terms
+    val fieldsNterms' = map (fn ((x,y),z) => (x,y,z)) fieldsNterms
     val params' = map (Proof_Context.check_tfree ctxt3) params;
-  in thy |> Record.add_record overloaded (params', binding) parent fields end;
+  in thy |> Record.add_record overloaded (params', binding) parent fields 
+         |> DocObjTab.define_doc_class_global (params', binding) parent fieldsNterms'
+  end;
 
 
 val _ =
@@ -406,10 +440,18 @@ val _ =
     (Parse_Spec.overloaded 
         -- (Parse.type_args_constrained  -- Parse.binding) 
         -- (@{keyword "="} |-- Scan.option (Parse.typ --| @{keyword "+"}) 
-            -- Scan.repeat1 Parse.const_binding)
-        -- Scan.option (@{keyword "where"} |-- Parse.term) 
-    >> (fn (((overloaded, x), (y, z)),_) =>
-        Toplevel.theory (add_record_cmd {overloaded = overloaded} x y z)));
+            -- Scan.repeat1 (Parse.const_binding -- Scan.option (@{keyword "<="} |-- Parse.term)))
+            -- Scan.repeat (@{keyword "where"} |-- Parse.term) 
+    >> (fn (((overloaded, x), (y, z)),rex) =>
+        Toplevel.theory (add_record_cmd {overloaded = overloaded} x y z rex)));
+
+*}  
+  
+ML{* 
+Binding.print;
+Syntax.read_term;
+try;
+
 
 *}  
   
