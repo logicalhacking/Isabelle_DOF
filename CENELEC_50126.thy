@@ -106,6 +106,7 @@ doc_class test_case = test_item +
           descr :: string
 
           
+          
 doc_class test_result = test_item +
              verdict :: bool
              remarks :: string
@@ -147,6 +148,8 @@ to a test-environment or test-engine *}
 text \<open> As established by @{docref \<open>t10\<close>}, the 
        assumption @{docref \<open>ass122\<close>} is validated. \<close>
 
+  
+  
 (* Hack: This should be generated automatically: *)
 ML{*
 val _ = Theory.setup
@@ -157,9 +160,8 @@ val _ = Theory.setup
 *}
   
 ML{*
-DocObjTab.is_defined_cid_global "srac" @{theory};
-DocObjTab.is_defined_cid_global "ec" @{theory};
-
+DOF_core.is_defined_cid_global "srac" @{theory};
+DOF_core.is_defined_cid_global "ec" @{theory};
 *}  
       
 end      

@@ -18,7 +18,7 @@ subsection*[sdf]{* shouldn't work, multiple ref. *}
 section*[sedf::requirement]{* works again *}  
 text\<open>\label{sedf}\<close>  (* Hack to make the LaTeX-ing running. Should disappear. *)
   
-section*[seedf::integration_test, dfg=34,fgdfg=zf]{* and another example with attribute setting,
+section*[seedf::test_case, dfg=34,fgdfg=zf]{* and another example with attribute setting,
 but wrong doc_class constraint. *}  
 
 section{* Text Antiquotation Infrastructure ... *}  

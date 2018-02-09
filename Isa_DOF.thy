@@ -37,14 +37,14 @@ curry;
 op |>; 
 op #>;
 op |>> : ('a * 'c) * ('a -> 'b) -> 'b * 'c;
-op ||> : ('c * 'a) * ('a -> 'b) -> 'c * 'b
+op ||> : ('c * 'a) * ('a -> 'b) -> 'c * 'b;
 *}
   
 
   
 ML{*
 
-structure DocObjTab = 
+structure DOF_core = 
 struct
    type docclass_struct = {params : (string * sort) list, (*currently not used *)
                            name   : binding, thy_name : string, id : serial, (* for pide *)
@@ -104,9 +104,15 @@ val map_data_global = Context.theory_map o map_data;
 val default_cid = "text"
 
 fun is_defined_cid_global cid thy = let val t = snd(get_data_global thy)
+                                        val cid = Long_Name.base_name cid
+                                                (* Note: currently, the management of class names
+                                                   is internally done just on base names ... *)
                                      in  cid=default_cid orelse Symtab.defined t cid end
 
 fun is_defined_cid_local cid ctxt  = let val t = snd(get_data ctxt)
+                                         val cid = Long_Name.base_name cid
+                                                (* Note: currently, the management of class names
+                                                   is internally done just on base names ... *)
                                      in  cid=default_cid orelse Symtab.defined t cid end
 
 
@@ -149,7 +155,20 @@ fun declare_object_local oid ctxt  = (map_data (apfst(fn {tab=t,maxano=x} =>
 fun define_doc_class_global (params', binding) parent fields thy  = 
            let val nn = Context.theory_name thy (* in case that we need the thy-name to identify
                                                    the space where it is ... *)
-               val cid = Binding.name_of binding
+               val cid = Long_Name.base_name (Binding.name_of binding)
+                                                (* Note: currently, the management of class names
+                                                   is internally done just on base names ... *)
+               val _   = if is_defined_cid_global cid thy 
+                         then error("multiple definition of document reference")
+                         else ()
+               val _   = case parent of  (* the doc_class may be root, but must refer
+                                            to another doc_class and not just an 
+                                            arbitrary type *)
+                             NONE => ()
+                         |   SOME(_,cid') => if not (is_defined_cid_global cid' thy) 
+                                             then error("class reference undefined : " ^ cid')
+                                             else ()
+               
                val hurx = {params=params', 
                            name = binding, 
                            thy_name = nn, 
@@ -158,9 +177,7 @@ fun define_doc_class_global (params', binding) parent fields thy  =
                            inherits_from = parent,
                            attribute_decl = fields  (*  currently unchecked *)
                            (*, rex : term list -- not yet used *)}
-           in  if is_defined_cid_global cid thy 
-               then error("multiple definition of document reference")
-               else map_data_global(apsnd(Symtab.update(cid,hurx)))(thy)
+           in   map_data_global(apsnd(Symtab.update(cid,hurx)))(thy)
            end
 
 
@@ -233,7 +250,7 @@ val attribute =
 
 val reference =
   Parse.position Parse.name 
-  -- Scan.optional (Parse.$$$ "::" |-- Parse.!!! Parse.name) DocObjTab.default_cid;
+  -- Scan.optional (Parse.$$$ "::" |-- Parse.!!! Parse.name) DOF_core.default_cid;
 
 val attributes =  (Parse.$$$ "[" |-- (reference -- 
                                      (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) []))
@@ -260,7 +277,7 @@ fun init_docref_markup (name, pos) thy = (* now superfluous ? *)
 fun enriched_document_command markdown (((((oid,pos),dtyp),doc_attrs),xstring_opt),toks) =
      
        (Thy_Output.document_command markdown (xstring_opt,toks)) o
-       (Toplevel.theory(DocObjTab.define_object_global (oid, (Binding.make (oid, pos),dtyp))))
+       (Toplevel.theory(DOF_core.define_object_global (oid, (Binding.make (oid, pos),dtyp))))
 *)
 (* new *)
 (* 
@@ -277,10 +294,10 @@ fun enriched_document_command markdown (((((oid,pos),cid:string),doc_attrs),
             (* creates a markup label for this position and reports it to the PIDE framework;
                this label is used as jump-target for point-and-click feature. *)
     fun enrich_trans thy = let val name = Context.theory_name thy
-                               val _ = if not (DocObjTab.is_defined_cid_global cid thy) 
+                               val _ = if not (DOF_core.is_defined_cid_global cid thy) 
                                        then error("class reference undefined")
                                        else ()
-                           in DocObjTab.define_object_global (oid, {pos=pos, thy_name=name,
+                           in DOF_core.define_object_global (oid, {pos=pos, thy_name=name,
                                                                     id=id , cid=cid})
                                                              (thy)
                            end 
@@ -327,25 +344,25 @@ val _ =
 val _ =
   Outer_Syntax.command @{command_keyword "declare_reference"} "declare document reference"
     (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
-                                  (Toplevel.theory (DocObjTab.declare_object_global oid))));
+                                  (Toplevel.theory (DOF_core.declare_object_global oid))));
 
 
 (* Proof.context -> Symtab.key * Position.T -> Pretty.T ; dead code: 
 fun pretty_docref ctxt (name, pos)  =
   let
-    (* val _ = DocObjTab.writeln_keys ctxt *)
+    (* val _ = DOF_core.writeln_keys ctxt *)
     val thy = Proof_Context.theory_of ctxt;
     fun pretty_docref str = let val tok = Pretty.enclose "\\autoref{" "}" (Pretty.text (str))
                             (*  val _ = writeln (Pretty.string_of tok) *)
                             in tok end
   in 
-    if DocObjTab.is_defined_oid_global name thy 
-    then let val {pos=pos_decl,id,...} = the(DocObjTab.get_object_global name thy)
+    if DOF_core.is_defined_oid_global name thy 
+    then let val {pos=pos_decl,id,...} = the(DOF_core.get_object_global name thy)
              val markup = docref_markup false name id pos_decl;
              val _ = Context_Position.report ctxt pos markup;
                      (* this sends a report to the PIDE interface ... *) 
          in pretty_docref name end
-    else if   DocObjTab.is_declared_oid_global name thy 
+    else if   DOF_core.is_declared_oid_global name thy 
          then (warning("declared but undefined document reference:"^name);
                pretty_docref name)
          else error("undefined document reference:"^name)
@@ -357,13 +374,13 @@ fun check_and_mark ctxt (str:{strict_checking: bool}) pos name  =
   let
     val thy = Proof_Context.theory_of ctxt;
   in 
-    if DocObjTab.is_defined_oid_global name thy 
-    then let val {pos=pos_decl,id,...} = the(DocObjTab.get_object_global name thy)
+    if DOF_core.is_defined_oid_global name thy 
+    then let val {pos=pos_decl,id,...} = the(DOF_core.get_object_global name thy)
              val markup = docref_markup false name id pos_decl;
              val _ = Context_Position.report ctxt pos markup;
                      (* this sends a report to the PIDE interface ... *) 
          in  name end
-    else if   DocObjTab.is_declared_oid_global name thy 
+    else if   DOF_core.is_declared_oid_global name thy 
          then (if #strict_checking str then warning("declared but undefined document reference:"^name)
                else (); name)
          else error("undefined document reference:"^name)
@@ -431,7 +448,7 @@ fun add_record_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdefaul
     val fieldsNterms' = map (fn ((x,y),z) => (x,y,z)) fieldsNterms
     val params' = map (Proof_Context.check_tfree ctxt3) params;
   in thy |> Record.add_record overloaded (params', binding) parent fields 
-         |> DocObjTab.define_doc_class_global (params', binding) parent fieldsNterms'
+         |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms'
   end;
 
 
@@ -451,7 +468,6 @@ ML{*
 Binding.print;
 Syntax.read_term;
 try;
-
 
 *}  
   

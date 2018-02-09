@@ -1,0 +1,18 @@
+Open issues:
+
+-- LaTeX generation does not work without hacking and 
+   by hand transformations of the generated code.
+
+-- attributes are neither type-checked nor set into the instances, and
+   there is no mechanism to recover them and use them.
+
+-- defaults are neither type-checked nor set.A
+
+-- structural constraints are neither typechecked nor stored
+
+-- test-executions, test-results, and their entire management
+   inside DOF is very unclear.
+
+-- Hovering over doc-class references is not implemented
+
+-- 
