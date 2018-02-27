@@ -26,6 +26,7 @@ doc_class requirement_analysis =
    no :: "nat"
    where "requirement_item +"
 
+
 text{*The category @{emph \<open>hypothesis\<close>} is used for assumptions from the 
       foundational mathematical or physical domain, so for example: 
       \<^item>   the Mordell-Lang conjecture holds,   
@@ -40,7 +41,21 @@ text{*The category @{emph \<open>hypothesis\<close>} is used for assumptions fro
 *}
   
 datatype hyp_type = physical | mathematical | computational | other
-    
+
+ML{*
+val (docobj_tab , docclass_tab) = DOF_core.get_data_global @{theory};
+Symtab.dest docclass_tab;
+*}
+
+typ "CENELEC_50126.requirement"
+
+ML{*
+DOF_core.name2doc_class_name @{theory} "requirement";
+Syntax.parse_typ @{context} "requirement";
+val Type(t,_) = Syntax.parse_typ @{context} "requirement" handle ERROR _ => dummyT;
+Syntax.read_typ  @{context} "hypothesis" handle  _ => dummyT;
+Proof_Context.init_global;
+*}
 doc_class hypothesis = requirement +
       hyp_type :: hyp_type <= physical  (* default *)
   

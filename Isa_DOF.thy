@@ -101,19 +101,43 @@ val map_data = Data.map;
 val get_data_global = Data.get o Context.Theory;
 val map_data_global = Context.theory_map o map_data;
 
+
+(* doc-class-name management: We still use the record-package for internally 
+   representing doc-classes. The main motivation is that "links" to entities are
+   types over doc-classes, *types* in the Isabelle sense, enriched by additional data.
+   This has the advantage that the type-inference can be abused to infer long-names
+   for doc-class-names. Note, however, that doc-classes are currently implemented
+   by non-polymorphic records only; this means that the extensible "_ext" versions
+   of type names must be reduced to qualifier names only. The used Syntax.parse_typ 
+   handling the identification does that already. *)
+ 
+fun type_name2doc_class_name thy str =  (*  Long_Name.qualifier *) str
+
+fun name2doc_class_name thy str =
+         case Syntax.parse_typ (Proof_Context.init_global thy) str of
+                 Type(tyn, _)  => type_name2doc_class_name thy tyn
+                | _ => error "illegal format for doc-class-name."
+         handle ERROR _ => ""
+
+fun name2doc_class_name_local ctxt str =
+         (case Syntax.parse_typ ctxt str of
+                 Type(tyn, _)  => type_name2doc_class_name ctxt tyn
+                | _ => error "illegal format for doc-class-name.")
+         handle ERROR _ => ""
+
+
 val default_cid = "text"
 
 fun is_defined_cid_global cid thy = let val t = snd(get_data_global thy)
-                                        val cid = Long_Name.base_name cid
-                                                (* Note: currently, the management of class names
-                                                   is internally done just on base names ... *)
-                                     in  cid=default_cid orelse Symtab.defined t cid end
+                                    in  cid=default_cid orelse 
+                                        Symtab.defined t (name2doc_class_name thy cid) 
+                                    end
+
 
 fun is_defined_cid_local cid ctxt  = let val t = snd(get_data ctxt)
-                                         val cid = Long_Name.base_name cid
-                                                (* Note: currently, the management of class names
-                                                   is internally done just on base names ... *)
-                                     in  cid=default_cid orelse Symtab.defined t cid end
+                                     in  cid=default_cid orelse 
+                                         Symtab.defined t (name2doc_class_name_local ctxt cid) 
+                                     end
 
 
 fun is_declared_oid_global oid thy = let val {tab=t,maxano=_} = fst(get_data_global thy)
@@ -155,21 +179,21 @@ fun declare_object_local oid ctxt  = (map_data (apfst(fn {tab=t,maxano=x} =>
 fun define_doc_class_global (params', binding) parent fields thy  = 
            let val nn = Context.theory_name thy (* in case that we need the thy-name to identify
                                                    the space where it is ... *)
-               val cid = Long_Name.base_name (Binding.name_of binding)
-                                                (* Note: currently, the management of class names
-                                                   is internally done just on base names ... *)
-               val _   = if is_defined_cid_global cid thy 
-                         then error("multiple definition of document reference")
+               val cid = (Binding.name_of binding)
+
+               val _   = if is_defined_cid_global cid thy
+                         then error("redefinition of document class")
                          else ()
+
                val _   = case parent of  (* the doc_class may be root, but must refer
                                             to another doc_class and not just an 
                                             arbitrary type *)
                              NONE => ()
-                         |   SOME(_,cid') => if not (is_defined_cid_global cid' thy) 
-                                             then error("class reference undefined : " ^ cid')
+                         |   SOME(_,cid_parent) => if not (is_defined_cid_global cid_parent thy)
+                                             then error("document class undefined : " ^ cid_parent)
                                              else ()
-               
-               val hurx = {params=params', 
+               val cid_long = name2doc_class_name thy cid
+               val info = {params=params', 
                            name = binding, 
                            thy_name = nn, 
                            id = serial(), (* for pide --- really fresh or better reconstruct 
@@ -177,7 +201,7 @@ fun define_doc_class_global (params', binding) parent fields thy  =
                            inherits_from = parent,
                            attribute_decl = fields  (*  currently unchecked *)
                            (*, rex : term list -- not yet used *)}
-           in   map_data_global(apsnd(Symtab.update(cid,hurx)))(thy)
+           in   map_data_global(apsnd(Symtab.update(cid_long,info)))(thy)
            end
 
 
@@ -377,6 +401,7 @@ fun check_and_mark ctxt (str:{strict_checking: bool}) pos name  =
     if DOF_core.is_defined_oid_global name thy 
     then let val {pos=pos_decl,id,...} = the(DOF_core.get_object_global name thy)
              val markup = docref_markup false name id pos_decl;
+             val _ = writeln (Markup.markup markup "S")
              val _ = Context_Position.report ctxt pos markup;
                      (* this sends a report to the PIDE interface ... *) 
          in  name end
@@ -426,7 +451,7 @@ fun read_parent NONE ctxt = (NONE, ctxt)
       | T => error ("Bad parent record specification: " ^ Syntax.string_of_typ ctxt T));
 
 
-fun map_option f NONE = NONE 
+fun map_option _ NONE = NONE 
    |map_option f (SOME x) = SOME (f x)
 
 fun read_fields raw_fields ctxt =
@@ -437,7 +462,7 @@ fun read_fields raw_fields ctxt =
     val ctxt' = fold Variable.declare_typ Ts ctxt;
   in (fields, terms, ctxt') end;
 
-fun add_record_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdefaults rex thy =
+fun add_record_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdefaults _ thy =
   let
     val ctxt = Proof_Context.init_global thy;
     val params = map (apsnd (Typedecl.read_constraint ctxt)) raw_params;
@@ -484,5 +509,12 @@ fun document_command markdown (loc, txt) =
       (fn state => ignore (Thy_Output.output_text state markdown txt));
 
 \<close>  
+
+text{* @{theory "Nat"}*}
+ML\<open>
+open Markup;
+Markup.binding;
+TFree
+\<close>
   
 end

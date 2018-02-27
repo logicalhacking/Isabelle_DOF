@@ -1,5 +1,5 @@
 theory Example
-  imports  Isa_DOF CENELEC_50126
+  imports  "../../CENELEC_50126"
   keywords "Term" :: diag 
 begin
   
@@ -25,14 +25,22 @@ section{* Text Antiquotation Infrastructure ... *}
                   
 text{* @{docref \<open>lalala\<close>} -- produces warning. *}  
 
+text{* @{docref \<open>ass122\<close>} -- global reference to a text-item in another file. *}
+
 text{* Here is a reference to @{docref \<open>sedf\<close>} *}    
 (* works currently only in connection with the above label-hack. 
    Try to hover over the sedf - link and activate it !!! *)
  
   
 (* some show-off of standard anti-quotations: *)  
-text{* @{thm refl} @{file "MOF.sml"} @{value "3+4"} @{const hd} @{theory List}}
-       @{term "3"} @{type bool}  @{term [show_types] "f x = a + x"} *}
+text{* @{thm refl} 
+       @{file "../../Isa_DOF.thy"} 
+       @{value "3+4::int"} 
+       @{const hd} 
+       @{theory List}}
+       @{term "3"} 
+       @{type bool}  
+       @{term [show_types] "f x = a + x"} *}
   
  
 
