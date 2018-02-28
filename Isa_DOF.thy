@@ -18,18 +18,6 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
 begin
   
   
-section{* Reflection of MOF into ML *}
-(*  
-ML_file "MOF.sml"
-  
-  
-ML{* val mt = @{code mt} *}  
-  
-ML{* val replace_class_hierarchy = @{code replace_class_hierarchy}
-     val get_class = @{code get_class};
-*}
-*)    
-  
 section{* A HomeGrown Document Type Management (the ''Model'') *}
 
 ML{*
@@ -59,16 +47,23 @@ struct
 
    fun  merge_docclass_tab (otab,otab') = Symtab.merge (op =) (otab,otab') 
 
-   fun  is_subclass (tab:docclass_tab) s t =
+
+   val default_cid = "text"    (* the top (default) document class: everything is a text.*)
+
+   fun  is_subclass0 (tab:docclass_tab) s t =
         let val _ = case Symtab.lookup tab t of 
-                          NONE => error "super doc_class reference not defined"
-                       |  SOME X => X
+                          NONE => if t <> default_cid 
+                                  then error "document superclass not defined"
+                                  else default_cid
+                       |  SOME _ => ""
             fun father_is_sub s = case Symtab.lookup tab s of 
-                          NONE => error "inconsistent doc_class hierarchy"
+                          NONE => error "document subclass not defined"
                        |  SOME ({inherits_from=NONE, ...}) => s = t
-                       |  SOME ({inherits_from=SOME (_,s'), ...}) => s' = t 
-                                                                     orelse father_is_sub s' 
-        in s = t orelse father_is_sub s
+                       |  SOME ({inherits_from=SOME (_,s'), ...}) => 
+                                  s' = t orelse father_is_sub s' 
+        in s = t orelse 
+           (t = default_cid andalso Symtab.defined tab s ) orelse
+           father_is_sub s
         end
 
    type docobj = {pos : Position.T, thy_name : string, id : serial, cid : string}
@@ -111,6 +106,8 @@ val map_data_global = Context.theory_map o map_data;
    of type names must be reduced to qualifier names only. The used Syntax.parse_typ 
    handling the identification does that already. *)
  
+fun is_subclass (ctxt) s t = is_subclass0(snd(get_data ctxt)) s t
+
 fun type_name2doc_class_name thy str =  (*  Long_Name.qualifier *) str
 
 fun name2doc_class_name thy str =
@@ -126,7 +123,6 @@ fun name2doc_class_name_local ctxt str =
          handle ERROR _ => ""
 
 
-val default_cid = "text"
 
 fun is_defined_cid_global cid thy = let val t = snd(get_data_global thy)
                                     in  cid=default_cid orelse 
@@ -189,9 +185,10 @@ fun define_doc_class_global (params', binding) parent fields thy  =
                                             to another doc_class and not just an 
                                             arbitrary type *)
                              NONE => ()
-                         |   SOME(_,cid_parent) => if not (is_defined_cid_global cid_parent thy)
-                                             then error("document class undefined : " ^ cid_parent)
-                                             else ()
+                         |   SOME(_,cid_parent) => 
+                                      if not (is_defined_cid_global cid_parent thy)
+                                      then error("document class undefined : " ^ cid_parent)
+                                      else ()
                val cid_long = name2doc_class_name thy cid
                val info = {params=params', 
                            name = binding, 
@@ -201,6 +198,7 @@ fun define_doc_class_global (params', binding) parent fields thy  =
                            inherits_from = parent,
                            attribute_decl = fields  (*  currently unchecked *)
                            (*, rex : term list -- not yet used *)}
+               val _ = ()  (* XXX *)
            in   map_data_global(apsnd(Symtab.update(cid_long,info)))(thy)
            end
 
@@ -240,6 +238,7 @@ fun declare_anoobject_local ctxt cid = map_data
                                                      end)) 
                                           (ctxt)
 
+
 fun get_object_global oid thy  = let val {tab=t,maxano=_} = fst(get_data_global thy)
                                      in  case Symtab.lookup t oid of 
                                            NONE => error"undefined reference"
@@ -250,6 +249,23 @@ fun get_object_local oid ctxt  = let val {tab=t,maxano=_} = fst(get_data ctxt)
                                      in  case Symtab.lookup t oid of 
                                            NONE => error"undefined reference"
                                           |SOME(bbb) => bbb
+                                     end
+
+fun get_doc_class_global cid thy = 
+         if cid = default_cid then error("default doc class acces") (* TODO *)
+         else let val t = snd(get_data_global thy)
+              in  (Symtab.lookup t cid) end
+
+
+fun get_doc_class_local cid ctxt = 
+         if cid = default_cid then error("default doc class acces") (* TODO *)
+         else let val t = snd(get_data ctxt)
+              in  (Symtab.lookup t cid) end
+
+
+fun is_defined_cid_local cid ctxt  = let val t = snd(get_data ctxt)
+                                     in  cid=default_cid orelse 
+                                         Symtab.defined t (name2doc_class_name_local ctxt cid) 
                                      end
 
 
@@ -272,9 +288,11 @@ val attribute =
   Parse.position Parse.name 
   -- Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.name) "";
 
+
 val reference =
   Parse.position Parse.name 
-  -- Scan.optional (Parse.$$$ "::" |-- Parse.!!! Parse.name) DOF_core.default_cid;
+  -- Scan.option (Parse.$$$ "::" |-- Parse.!!! (Parse.position Parse.name));
+
 
 val attributes =  (Parse.$$$ "[" |-- (reference -- 
                                      (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) []))
@@ -309,7 +327,7 @@ fun enriched_document_command markdown (((((oid,pos),dtyp),doc_attrs),xstring_op
              ((((string * Position.T) * string) * 'a) * (xstring * Position.T) option) * Input.source 
              -> Toplevel.transition -> Toplevel.transition
 *)
-fun enriched_document_command markdown (((((oid,pos),cid:string),doc_attrs),
+fun enriched_document_command markdown (((((oid,pos),cid_pos),doc_attrs),
                                         xstring_opt:(xstring * Position.T) option),
                                         toks:Input.source) =
   let
@@ -317,18 +335,31 @@ fun enriched_document_command markdown (((((oid,pos),cid:string),doc_attrs),
     val _ = Position.report pos (docref_markup true oid id pos);
             (* creates a markup label for this position and reports it to the PIDE framework;
                this label is used as jump-target for point-and-click feature. *)
-    fun enrich_trans thy = let val name = Context.theory_name thy
+
+    fun enrich_trans  (SOME(cid,pos')) thy = 
+                           let val name = Context.theory_name thy 
                                val _ = if not (DOF_core.is_defined_cid_global cid thy) 
-                                       then error("class reference undefined")
+                                       then error("document class undefined")
                                        else ()
+                               val cid_long =  DOF_core.name2doc_class_name thy cid 
+                               val _ = writeln cid_long
+                               val {id, ...} = the(DOF_core.get_doc_class_global cid_long thy)
+                               val _ = Position.report pos' (docref_markup false cid id pos');
                            in DOF_core.define_object_global (oid, {pos=pos, thy_name=name,
-                                                                    id=id , cid=cid})
+                                                                   id=id,   cid=cid_long})
                                                              (thy)
-                           end 
+                           end
+       | enrich_trans  NONE thy = 
+                           let val name = Context.theory_name thy 
+                           in  DOF_core.define_object_global 
+                                  (oid, {pos=pos, thy_name=name,
+                                         id=id , cid=DOF_core.default_cid}) 
+                               (thy)
+                           end
     fun MMM(SOME(s,p)) = SOME(s^"XXX",p)
        |MMM(NONE) = SOME("XXX",Position.id "")
   in     
-       (Toplevel.theory(enrich_trans))  #>
+       (Toplevel.theory(enrich_trans cid_pos))  #>
        (Thy_Output.document_command markdown (MMM xstring_opt,toks)) #>
        (Thy_Output.document_command markdown (SOME("\\label{"^oid^"}", Position.id ""),toks))  #>
        (Thy_Output.document_command markdown (SOME("\\label{"^oid^"}", Position.id ""),toks)) 
@@ -394,16 +425,18 @@ fun pretty_docref ctxt (name, pos)  =
 *)
 
 
-fun check_and_mark ctxt (str:{strict_checking: bool}) pos name  =
+fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) pos name  =
   let
     val thy = Proof_Context.theory_of ctxt;
   in 
     if DOF_core.is_defined_oid_global name thy 
-    then let val {pos=pos_decl,id,...} = the(DOF_core.get_object_global name thy)
+    then let val {pos=pos_decl,id,cid,...} = the(DOF_core.get_object_global name thy)
              val markup = docref_markup false name id pos_decl;
-             val _ = writeln (Markup.markup markup "S")
              val _ = Context_Position.report ctxt pos markup;
                      (* this sends a report to the PIDE interface ... *) 
+             val _ = if cid <> DOF_core.default_cid andalso not(DOF_core.is_subclass ctxt cid cid_decl)
+                     then error("reference ontologically inconsistent")
+                     else () 
          in  name end
     else if   DOF_core.is_declared_oid_global name thy 
          then (if #strict_checking str then warning("declared but undefined document reference:"^name)
@@ -424,20 +457,20 @@ fun basic_entities name scan pretty =
 fun basic_entity name scan = basic_entities name (scan >> single);
 *)
 
-fun control_antiquotation name (str:{strict_checking: bool}) s1 s2 = 
+fun control_antiquotation name cid_decl (str:{strict_checking: bool}) s1 s2 = 
              Thy_Output.antiquotation name (Scan.lift (Args.cartouche_input))
                  (fn {context =ctxt, source = src:Token.src, state} =>
                       fn source:Input.source => 
                           (Thy_Output.output_text state {markdown=false} #>
-                           check_and_mark ctxt (str:{strict_checking: bool})(Input.pos_of source) #>
+                           check_and_mark ctxt cid_decl (str:{strict_checking: bool})(Input.pos_of source) #>
                            enclose s1 s2) 
                           source);
 
                                            
 val _ = Theory.setup
-        ((control_antiquotation @{binding docref} {strict_checking=true}  "\\autoref{" "}" ) #>
-         (control_antiquotation @{binding docref_unchecked}{strict_checking=false} "\\autoref{" "}")#>
-         (control_antiquotation @{binding docref_define} {strict_checking=false}   "\\label{" "}"))
+        ((control_antiquotation @{binding docref} DOF_core.default_cid {strict_checking=true}  "\\autoref{" "}" ) #>
+         (control_antiquotation @{binding docref_unchecked} DOF_core.default_cid {strict_checking=false} "\\autoref{" "}")#>
+         (control_antiquotation @{binding docref_define} DOF_core.default_cid {strict_checking=false}   "\\label{" "}"))
 
 end (* struct *)
 *}
@@ -492,6 +525,7 @@ val _ =
 ML{* 
 Binding.print;
 Syntax.read_term;
+Syntax.pretty_typ;
 try;
 
 *}  
@@ -514,7 +548,9 @@ text{* @{theory "Nat"}*}
 ML\<open>
 open Markup;
 Markup.binding;
-TFree
+TFree;
+open Position;
+Position.line;
 \<close>
   
 end

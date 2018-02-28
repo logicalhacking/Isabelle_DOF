@@ -26,7 +26,7 @@ doc_class requirement_analysis =
    no :: "nat"
    where "requirement_item +"
 
-
+                              
 text{*The category @{emph \<open>hypothesis\<close>} is used for assumptions from the 
       foundational mathematical or physical domain, so for example: 
       \<^item>   the Mordell-Lang conjecture holds,   
@@ -42,20 +42,10 @@ text{*The category @{emph \<open>hypothesis\<close>} is used for assumptions fro
   
 datatype hyp_type = physical | mathematical | computational | other
 
-ML{*
-val (docobj_tab , docclass_tab) = DOF_core.get_data_global @{theory};
-Symtab.dest docclass_tab;
-*}
 
 typ "CENELEC_50126.requirement"
 
-ML{*
-DOF_core.name2doc_class_name @{theory} "requirement";
-Syntax.parse_typ @{context} "requirement";
-val Type(t,_) = Syntax.parse_typ @{context} "requirement" handle ERROR _ => dummyT;
-Syntax.read_typ  @{context} "hypothesis" handle  _ => dummyT;
-Proof_Context.init_global;
-*}
+
 doc_class hypothesis = requirement +
       hyp_type :: hyp_type <= physical  (* default *)
   
@@ -100,7 +90,7 @@ doc_class interface =  design_item +
 section {* Requirements-Analysis related Categories *}  
 
 doc_class test_item =
-   nn :: "string option"
+      nn :: "string option"
 
 text{* subcategories are : *}
   
@@ -159,25 +149,67 @@ result communication times... *}
 text*[t10::test_result] {* This is a meta-test. This could be an ML-command
 that governs the external test-execution via, eg., a makefile or specific calls
 to a test-environment or test-engine *}
-  
+
+(*
 text \<open> As established by @{docref \<open>t10\<close>}, the 
        assumption @{docref \<open>ass122\<close>} is validated. \<close>
-
+*)
   
-  
+ML{* DOF_core.name2doc_class_name @{theory} "requirement" *}  
 (* Hack: This should be generated automatically: *)
 ML{*
 val _ = Theory.setup
-        ((DocAttrParser.control_antiquotation @{binding srac} {strict_checking=true}  "\\autoref{" "}" ) #>
-         (DocAttrParser.control_antiquotation @{binding ec}{strict_checking=true} "\\autoref{" "}")#>
-         (DocAttrParser.control_antiquotation @{binding requirement_analysis_item} {strict_checking=true}   "\\label{" "}"))
+        ((DocAttrParser.control_antiquotation @{binding srac}     
+                                              (DOF_core.name2doc_class_name @{theory} "srac")
+                                              {strict_checking=true}  
+                                              "\\autoref{" "}" ) #>
+         (DocAttrParser.control_antiquotation @{binding ec}
+                                              (DOF_core.name2doc_class_name @{theory} "ec")
+                                              {strict_checking=true} 
+                                              "\\autoref{" "}")#>
+         (DocAttrParser.control_antiquotation @{binding test_specification}
+                                              (DOF_core.name2doc_class_name @{theory} "test_specification")
+                                              {strict_checking=true}   
+                                              "\\label{" "}"))
 
 *}
   
 ML{*
+
+DOF_core.name2doc_class_name @{theory} "srac";
 DOF_core.is_defined_cid_global "srac" @{theory};
 DOF_core.is_defined_cid_global "ec" @{theory};
+
+DOF_core.is_subclass @{context} "CENELEC_50126.srac" "CENELEC_50126.ec";
+DOF_core.is_subclass @{context} "CENELEC_50126.ec"   "CENELEC_50126.srac";
+
+val ({maxano, tab},tab2) = DOF_core.get_data @{context};
+Symtab.dest tab;
+Symtab.dest tab2;
+
+
 *}  
-      
+
+
+ML{*
+DOF_core.name2doc_class_name @{theory} "requirement";
+Syntax.parse_typ @{context} "requirement";
+val Type(t,_) = Syntax.parse_typ @{context} "requirement" handle ERROR _ => dummyT;
+Syntax.read_typ  @{context} "hypothesis" handle  _ => dummyT;
+Proof_Context.init_global;
+*}
+
+ML{*
+open Position
+*}
+
+
+ML{*
+val Const(c,_) = @{const other};
+Syntax.lookup_const (Proof_Context.syn_of @{context}) "CENELEC_50126.hyp_type.other";
+
+Syntax.parse (Proof_Context.syn_of @{context}) "type" 
+*}
+
 end      
   
