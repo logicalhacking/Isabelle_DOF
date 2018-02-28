@@ -26,6 +26,16 @@ op |>;
 op #>;
 op |>> : ('a * 'c) * ('a -> 'b) -> 'b * 'c;
 op ||> : ('c * 'a) * ('a -> 'b) -> 'c * 'b;
+
+val docrefN = "docref";    
+
+(* derived from: theory_markup *)
+fun docref_markup def name id pos =
+  if id = 0 then Markup.empty
+  else
+    Markup.properties (Position.entity_properties_of def id pos)
+      (Markup.entity docrefN name);   (* or better store the thy-name as property ? ? ? *)
+
 *}
   
 
@@ -48,7 +58,7 @@ struct
    fun  merge_docclass_tab (otab,otab') = Symtab.merge (op =) (otab,otab') 
 
 
-   val default_cid = "text"    (* the top (default) document class: everything is a text.*)
+   val  default_cid = "text"    (* the top (default) document class: everything is a text.*)
 
    fun  is_subclass0 (tab:docclass_tab) s t =
         let val _ = case Symtab.lookup tab t of 
@@ -172,10 +182,12 @@ fun declare_object_local oid ctxt  = (map_data (apfst(fn {tab=t,maxano=x} =>
                                       handle Symtab.DUP _ => 
                                              error("multiple declaration of document reference"))
 
+
 fun define_doc_class_global (params', binding) parent fields thy  = 
            let val nn = Context.theory_name thy (* in case that we need the thy-name to identify
                                                    the space where it is ... *)
                val cid = (Binding.name_of binding)
+               val pos = (Binding.pos_of binding)
 
                val _   = if is_defined_cid_global cid thy
                          then error("redefinition of document class")
@@ -190,15 +202,19 @@ fun define_doc_class_global (params', binding) parent fields thy  =
                                       then error("document class undefined : " ^ cid_parent)
                                       else ()
                val cid_long = name2doc_class_name thy cid
+               val id = serial ();
+               val _ = Position.report pos (docref_markup true cid id pos);
+
                val info = {params=params', 
                            name = binding, 
                            thy_name = nn, 
-                           id = serial(), (* for pide --- really fresh or better reconstruct 
+                           id = id, (* for pide --- really fresh or better reconstruct 
                                              from prior record definition ? *)
                            inherits_from = parent,
                            attribute_decl = fields  (*  currently unchecked *)
                            (*, rex : term list -- not yet used *)}
-               val _ = ()  (* XXX *)
+               val _ = ()  (* XXX *)     
+
            in   map_data_global(apsnd(Symtab.update(cid_long,info)))(thy)
            end
 
@@ -268,8 +284,11 @@ fun is_defined_cid_local cid ctxt  = let val t = snd(get_data ctxt)
                                          Symtab.defined t (name2doc_class_name_local ctxt cid) 
                                      end
 
+fun writeln_classrefs ctxt = let  val t = snd(get_data ctxt)
+                        in   writeln (String.concatWith "," (Symtab.keys t)) end
 
-fun writeln_keys ctxt = let  val {tab=t,maxano=_} = fst(get_data ctxt)
+
+fun writeln_docrefs ctxt = let  val {tab=t,maxano=_} = fst(get_data ctxt)
                         in   writeln (String.concatWith "," (Symtab.keys t)) end
 end (* struct *)
 *}
@@ -298,38 +317,10 @@ val attributes =  (Parse.$$$ "[" |-- (reference --
                                      (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) []))
                                   --| Parse.$$$ "]"
 
-val docrefN = "docref";    
 
-(* derived from: theory_markup *)
-fun docref_markup def name id pos =
-  if id = 0 then Markup.empty
-  else
-    Markup.properties (Position.entity_properties_of def id pos)
-      (Markup.entity docrefN name);   (* or better store the thy-name as property ? ? ? *)
-
-fun init_docref_markup (name, pos) thy = (* now superfluous ? *)
-  let
-    val id = serial ();
-    val _ = Position.report pos (docref_markup true name id pos);
-  in (* map_thy (fn (_, _, axioms, defs, wrappers) => (pos, id, axioms, defs, wrappers)) *)
-     thy 
-  end;
-
-(* old :
-fun enriched_document_command markdown (((((oid,pos),dtyp),doc_attrs),xstring_opt),toks) =
-     
-       (Thy_Output.document_command markdown (xstring_opt,toks)) o
-       (Toplevel.theory(DOF_core.define_object_global (oid, (Binding.make (oid, pos),dtyp))))
-*)
-(* new *)
-(* 
-{markdown: bool} ->
-             ((((string * Position.T) * string) * 'a) * (xstring * Position.T) option) * Input.source 
-             -> Toplevel.transition -> Toplevel.transition
-*)
 fun enriched_document_command markdown (((((oid,pos),cid_pos),doc_attrs),
                                         xstring_opt:(xstring * Position.T) option),
-                                        toks:Input.source) =
+                                        toks:Input.source)  =
   let
     val id = serial ();
     val _ = Position.report pos (docref_markup true oid id pos);
@@ -343,8 +334,22 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),doc_attrs),
                                        else ()
                                val cid_long =  DOF_core.name2doc_class_name thy cid 
                                val _ = writeln cid_long
-                               val {id, ...} = the(DOF_core.get_doc_class_global cid_long thy)
-                               val _ = Position.report pos' (docref_markup false cid id pos');
+
+(*
+ val {pos=pos_decl,id,cid,...} = the(DOF_core.get_object_global name thy)
+             val markup = docref_markup false name id pos_decl;
+             val _ = Context_Position.report ctxt pos markup;
+Context.Theory; 
+Context_Position.report_generic;
+
+*)
+                               val {id, name=bind_target,...} = 
+                                                     the(DOF_core.get_doc_class_global cid_long thy)
+                               val markup = docref_markup false cid id (Binding.pos_of bind_target);
+                               val ctxt = Context.Theory thy
+                               val _ = Context_Position.report_generic ctxt pos' markup;
+
+
                            in DOF_core.define_object_global (oid, {pos=pos, thy_name=name,
                                                                    id=id,   cid=cid_long})
                                                              (thy)
@@ -433,10 +438,11 @@ fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) pos name  =
     then let val {pos=pos_decl,id,cid,...} = the(DOF_core.get_object_global name thy)
              val markup = docref_markup false name id pos_decl;
              val _ = Context_Position.report ctxt pos markup;
-                     (* this sends a report to the PIDE interface ... *) 
-             val _ = if cid <> DOF_core.default_cid andalso not(DOF_core.is_subclass ctxt cid cid_decl)
+                     (* this sends a report for a ref application to the PIDE interface ... *) 
+             val _ = if cid <> DOF_core.default_cid 
+                        andalso not(DOF_core.is_subclass ctxt cid cid_decl)
                      then error("reference ontologically inconsistent")
-                     else () 
+                     else ()
          in  name end
     else if   DOF_core.is_declared_oid_global name thy 
          then (if #strict_checking str then warning("declared but undefined document reference:"^name)
@@ -466,7 +472,8 @@ fun control_antiquotation name cid_decl (str:{strict_checking: bool}) s1 s2 =
                            enclose s1 s2) 
                           source);
 
-                                           
+
+(* Setup for general docrefs of the global DOF_core.default_cid - class ("text")*)
 val _ = Theory.setup
         ((control_antiquotation @{binding docref} DOF_core.default_cid {strict_checking=true}  "\\autoref{" "}" ) #>
          (control_antiquotation @{binding docref_unchecked} DOF_core.default_cid {strict_checking=false} "\\autoref{" "}")#>
@@ -521,7 +528,11 @@ val _ =
         Toplevel.theory (add_record_cmd {overloaded = overloaded} x y z rex)));
 
 *}  
-  
+
+
+
+section{* Testing and Validation *}
+
 ML{* 
 Binding.print;
 Syntax.read_term;
@@ -551,6 +562,9 @@ Markup.binding;
 TFree;
 open Position;
 Position.line;
+Context.Theory; 
+Context_Position.report_generic;
+Context_Position.report;
 \<close>
   
 end

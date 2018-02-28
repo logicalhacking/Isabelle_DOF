@@ -192,6 +192,89 @@ Theory.setup; (* The thing to extend the table of "command"s with parser - callb
 
 *}
 
+(* Syntax operations : Interface for parsing, type-checking, "reading" 
+                       (both) and pretty-printing.
+   Note that this is a late-binding interface, i.e. a collection of "hooks".
+   The real work is done ... see below. 
+   
+   Encapsulates the data structure "syntax" --- the table with const symbols, 
+   print and ast translations, ... The latter is accessible, e.g. from a Proof
+   context via Proof_Context.syn_of.
+*)
+ML{* 
+Syntax.parse_sort;
+Syntax.parse_typ;
+Syntax.parse_term;
+Syntax.parse_prop;
+Syntax.check_term;
+Syntax.check_props;
+Syntax.uncheck_sort;
+Syntax.uncheck_typs;
+Syntax.uncheck_terms;
+Syntax.read_sort;
+Syntax.read_typ;
+Syntax.read_term;
+Syntax.read_typs;
+Syntax.read_sort_global;
+Syntax.read_typ_global;
+Syntax.read_term_global;
+Syntax.read_prop_global;
+Syntax.pretty_term;
+Syntax.pretty_typ;
+Syntax.pretty_sort;
+Syntax.pretty_classrel;
+Syntax.pretty_arity;
+Syntax.string_of_term;
+Syntax.string_of_typ;
+Syntax.lookup_const;
+*}
+
+(* 
+Main phases of inner syntax processing, with standard implementations
+of parse/unparse operations.
+
+At the very very end, it sets up the entire syntax engine (the hooks) via:
+
+val _ =
+  Theory.setup
+   (Syntax.install_operations
+     {parse_sort = parse_sort,
+      parse_typ = parse_typ,
+      parse_term = parse_term false,
+      parse_prop = parse_term true,
+      unparse_sort = unparse_sort,
+      unparse_typ = unparse_typ,
+      unparse_term = unparse_term,
+      check_typs = check_typs,
+      check_terms = check_terms,
+      check_props = check_props,
+      uncheck_typs = uncheck_typs,
+      uncheck_terms = uncheck_terms});
+
+Thus, Syntax_Phases does the actual work, including markup generation and 
+generation of reports. 
+
+Look at: 
+
+fun check_typs ctxt raw_tys =
+  let
+    val (sorting_report, tys) = Proof_Context.prepare_sortsT ctxt raw_tys;
+    val _ = if Context_Position.is_visible ctxt then Output.report sorting_report else ();
+  in
+    tys
+    |> apply_typ_check ctxt
+    |> Term_Sharing.typs (Proof_Context.theory_of ctxt)
+  end;
+
+which is the real implementation behind Syntax.check_typ
+
+*)
+
+ML{*
+Syntax_Phases.reports_of_scope;
+*}
+
+
 
 (* Pretty.T, pretty-operations. *)  
 ML{*
@@ -253,6 +336,12 @@ fun pretty_command (cmd as (name, Command {comment, ...})) =
 (* Markup Operations, and reporting. *)  
 ML{*
 (*  Markup.enclose; *)
+
+(* Position.report is also a type consisting of a pair of a position and markup. *)
+(* It would solve all my problems if I find a way to infer the defining Position.report
+   from a type definition occurence ... *)
+
+Position.report;
 Position.reports; (* ? ? ? I think this is the magic thing that sends reports to the GUI. *)
 
 Markup.properties;

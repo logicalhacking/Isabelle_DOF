@@ -70,9 +70,9 @@ doc_class ec = assumption  +
 
 text{*The category @{emph \<open>safety related application condition\<close>} (or @{emph \<open>srac\<close>} 
       for short) is used for @{typ ec}'s that establish safety properties
-      of the evaluation target. Their trackability throughout the certification
+      of the evaluation target. Their track-ability throughout the certification
       is therefore particularly critical. *}
-       
+                        
 doc_class srac = ec  +
      assumption_kind :: ass_kind <= (*default *) formal
 
@@ -150,12 +150,13 @@ text*[t10::test_result] {* This is a meta-test. This could be an ML-command
 that governs the external test-execution via, eg., a makefile or specific calls
 to a test-environment or test-engine *}
 
-(*
+
 text \<open> As established by @{docref \<open>t10\<close>}, the 
        assumption @{docref \<open>ass122\<close>} is validated. \<close>
-*)
-  
-ML{* DOF_core.name2doc_class_name @{theory} "requirement" *}  
+
+
+section{* Provisory Setup *}
+
 (* Hack: This should be generated automatically: *)
 ML{*
 val _ = Theory.setup
@@ -173,9 +174,15 @@ val _ = Theory.setup
                                               "\\label{" "}"))
 
 *}
-  
-ML{*
 
+
+
+
+section{* Testing and Validation *}
+
+
+ML{*
+DOF_core.name2doc_class_name @{theory} "requirement";
 DOF_core.name2doc_class_name @{theory} "srac";
 DOF_core.is_defined_cid_global "srac" @{theory};
 DOF_core.is_defined_cid_global "ec" @{theory};
@@ -199,17 +206,6 @@ Syntax.read_typ  @{context} "hypothesis" handle  _ => dummyT;
 Proof_Context.init_global;
 *}
 
-ML{*
-open Position
-*}
-
-
-ML{*
-val Const(c,_) = @{const other};
-Syntax.lookup_const (Proof_Context.syn_of @{context}) "CENELEC_50126.hyp_type.other";
-
-Syntax.parse (Proof_Context.syn_of @{context}) "type" 
-*}
 
 end      
   
