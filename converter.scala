@@ -115,7 +115,7 @@ object LaTeXLexer extends RegexParsers {
 }
 
 
-/* Testing Zone */
+/* Unit Testing Zone */
 
 >>>  LaTeXLexer("\\\\")                   => Right(List(VBACKSLASH)) // ok
 >>>  LaTeXLexer("qsdqsd{dfgdfg")          => Right(List(RAWTEXT(qsdqsd), CURLYOPEN, RAWTEXT(dfgdfg))) // ok
@@ -124,10 +124,15 @@ object LaTeXLexer extends RegexParsers {
 >>>  LaTeXLexer("qsdqsd\\\\dfgdfg")       => Right(List(RAWTEXT(qsdqsd), VBACKSLASH, RAWTEXT(dfgdfg))
 >>>  LaTeXLexer("qsdqsd\\dfgdfg*{sdfsdf}")=> Right(List(RAWTEXT(qsdqsd), COMMAND(\dfgdfg*), CURLYOPEN, 
                                                         RAWTEXT(sdfsdf), CURLYCLOSE))  // ok
->>>  LaTeXLexer("qsdqsd\\begin ghjghj")   => Right(List(RAWTEXT(qsdqsd), COMMAND(\begin), RAWTEXT( ghjghj)))
-                                             // nok
+>>>  LaTeXLexer("qsdqsd\\begin [sdgfsdf] {ghjghj}")   
+                                          => Right(List(RAWTEXT(qsdqsd), BEGINENV(\begin [sdgfsdf] ,{ghjghj})))
+                                             // ok
+/* ... but note the following: */
+>>> LaTeXLexer("qsdqsd\\begin [sdgfsdf] ")
+                                          => Right(List(RAWTEXT(qsdqsd), COMMAND(\begin), RAWTEXT( [sdgfsdf] )))
 
 
+/* Rudimentary Topevel Code */
 object TestLaTeXLexer extends LaTeXLexer {
 
   def main(args: Array[String]) = {
