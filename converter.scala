@@ -163,6 +163,13 @@ Right(List(COMMAND(\isacommand), CURLYOPEN, RAWTEXT(text), CURLYOPEN, COMMAND(\i
 \\ The\\ number\\ of\\ teeth\\ per\\ wheelturn\\ is\\ assumed\\ to\\ be\\isanewline\\ positive
 \end{isamarkuptext*}\isamarkuptrue
 
+or even:
+
+\begin{isamarkuptext*}[label=wheel_ass, label_type=exported_constraint, attributes={}]%
+\\ The\\ number\\ of\\ teeth\\ per\\ wheelturn\\ is\\ assumed\\ to\\ be\\isanewline\\ positive
+\end{isamarkuptext*}\isamarkuptrue
+
+
 
 /* Rudimentary Topevel Code */
 object TestLaTeXLexer extends LaTeXLexer {
