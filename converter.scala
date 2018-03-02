@@ -10,6 +10,7 @@ case class  COMMAND (str: String) extends LaTeXToken
 case class  BEGINENV(prelude: String, str: String) extends LaTeXToken
 case class  ENDENV  (prelude: String, str: String) extends LaTeXToken
 case object VBACKSLASH            extends LaTeXToken  /* verbatim backslash */
+case object VSPACE                extends LaTeXToken  /* verbatim space */
 case object VCURLYOPEN            extends LaTeXToken  /* verbatim curly bracket open */
 case object VCURLYCLOSE           extends LaTeXToken  /* verbatim curly bracket close */
 case object VBRACKETOPEN          extends LaTeXToken  /* verbatim square bracket open */
@@ -60,6 +61,7 @@ object LaTeXLexer extends RegexParsers {
   }
 
   def vbackslash     = "\\\\"      ^^ (_ => VBACKSLASH    ) 
+  def vspace         = "\\ "       ^^ (_ => VSPACE        )   
   def vcurlyopen     = "\\{"       ^^ (_ => VCURLYOPEN    ) 
   def vcurlyclose    = "\\}"       ^^ (_ => VCURLYCLOSE   ) 
   def vbracketopen   = "\\["       ^^ (_ => VBRACKETOPEN  ) 
@@ -71,7 +73,7 @@ object LaTeXLexer extends RegexParsers {
   
   def tokens: Parser[List[LaTeXToken]] = {
     phrase(rep1(raw_text   | 
-                vbackslash | vcurlyopen  | vcurlyclose  | vbracketopen | vbracketclose |
+                vbackslash | vcurlyopen  | vcurlyclose  | vbracketopen | vbracketclose | vspace |
                 curlyopen  | curlyclose  | bracketopen  | bracketclose |            
                 begin      | end         | command)) 
   }
@@ -90,6 +92,7 @@ object LaTeXLexer extends RegexParsers {
         case Some(ENDENV(pre,txt))   => {println(pre + txt); printTokens(tokens.tail)}  
           
         case Some(VBACKSLASH)        => {println("\\\\"); printTokens(tokens.tail)}
+        case Some(VSPACE)            => {println("\\ "); printTokens(tokens.tail)}
         case Some(VCURLYOPEN)        => {println("\\{"); printTokens(tokens.tail)}
         case Some(VCURLYCLOSE)       => {println("\\}"); printTokens(tokens.tail)}
         case Some(VBRACKETOPEN)      => {println("\\["); printTokens(tokens.tail)}
@@ -130,6 +133,35 @@ object LaTeXLexer extends RegexParsers {
 /* ... but note the following: */
 >>> LaTeXLexer("qsdqsd\\begin [sdgfsdf] ")
                                           => Right(List(RAWTEXT(qsdqsd), COMMAND(\begin), RAWTEXT( [sdgfsdf] )))
+
+/* Integration Testing Zone */
+
+def sample = "\\isacommand{subsubsection{\\isacharasterisk}}\\isamarkupfalse%\n{\\isacharbrackleft}{\\isachardoublequoteopen}Encoder{\\isacharminus}state{\\isacharminus}diagrams{\\isachardoublequoteclose}{\\isacharbrackright}\\ {\\isacharverbatimopen}\\ Encoder\\ State\\ Diagrams\\ {\\isacharverbatimclose}%"
+
+>>> LaTeXLexer(sample) =>
+Right(List(COMMAND(\isacommand), CURLYOPEN, RAWTEXT(subsubsection), CURLYOPEN, COMMAND(\isacharasterisk), CURLYCLOSE, CURLYCLOSE, COMMAND(\isamarkupfalse), RAWTEXT(%
+), CURLYOPEN, COMMAND(\isacharbrackleft), CURLYCLOSE, CURLYOPEN, COMMAND(\isachardoublequoteopen), CURLYCLOSE, RAWTEXT(Encoder), CURLYOPEN, COMMAND(\isacharminus), CURLYCLOSE, RAWTEXT(state), CURLYOPEN, COMMAND(\isacharminus), CURLYCLOSE, RAWTEXT(diagrams), CURLYOPEN, COMMAND(\isachardoublequoteclose), CURLYCLOSE, CURLYOPEN, COMMAND(\isacharbrackright), CURLYCLOSE, VSPACE, CURLYOPEN, COMMAND(\isacharverbatimopen), CURLYCLOSE, VSPACE, RAWTEXT(Encoder), VSPACE, RAWTEXT(State), VSPACE, RAWTEXT(Diagrams), VSPACE, CURLYOPEN, COMMAND(\isacharverbatimclose)...    
+
+
+should become:
+
+def sample' = "\\isasubsubsection*{Encoder-state-diagrams}{\\ Encoder\\ State\\ Diagrams\\ }"
+
+which could in the LaTeX be set to:
+
+def sample'' = "\\isasubsubsection{\\ Encoder\\ State\\ Diagrams\\}\label{sec:Encoder-state-diagrams}"
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+def sample3 = "\\isacommand{text{\\isacharasterisk}}\\isamarkupfalse%{\\isacharbrackleft}wheel{\\isacharunderscore}ass{\\isacharcolon}{\\isacharcolon}exported{\\isacharunderscore}constraint{\\isacharbrackright}\\ {\\isacharverbatimopen}\\ The\\ number\\ of\\ teeth\\ per\\ wheelturn\\ is\\ assumed\\ to\\ be\\isanewline\\ positive{\\isachardot}{\\isacharverbatimclose}"
+
+LaTeXLexer(sample3) =>
+Right(List(COMMAND(\isacommand), CURLYOPEN, RAWTEXT(text), CURLYOPEN, COMMAND(\isacharasterisk), CURLYCLOSE, CURLYCLOSE, COMMAND(\isamarkupfalse), RAWTEXT(%), CURLYOPEN, COMMAND(\isacharbrackleft), CURLYCLOSE, RAWTEXT(wheel), CURLYOPEN, COMMAND(\isacharunderscore), CURLYCLOSE, RAWTEXT(ass), CURLYOPEN, COMMAND(\isacharcolon), CURLYCLOSE, CURLYOPEN, COMMAND(\isacharcolon), CURLYCLOSE, RAWTEXT(exported), CURLYOPEN, COMMAND(\isacharunderscore), CURLYCLOSE, RAWTEXT(constraint), CURLYOPEN, COMMAND(\isacharbrackright), CURLYCLOSE, VSPACE, CURLYOPEN, COMMAND(\isacharverbatimopen), CURLYCLOSE, VSPACE, RAWTEXT(The), VSPACE, RAWTEXT(number), VSPACE, RAWTEXT(of), VSPACE, RAWTEXT(teeth), VSPACE, RAWTEXT(per), VSPACE, RAWTEXT...
+
+\begin{isamarkuptext*}[wheel_ass::exported_constraint]%
+\\ The\\ number\\ of\\ teeth\\ per\\ wheelturn\\ is\\ assumed\\ to\\ be\\isanewline\\ positive
+\end{isamarkuptext*}\isamarkuptrue
 
 
 /* Rudimentary Topevel Code */
