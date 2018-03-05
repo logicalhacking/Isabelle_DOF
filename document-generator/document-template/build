@@ -32,7 +32,7 @@ NAME=${2:-root}
 ROOT_NAME="root_$NAME"
 [ ! -f "$DIR/$ROOT_NAME.tex" ] && ROOT_NAME="root"
 
-$ISABELLE_TOOL scala $ISABELLE_HOME_USER/DOF/bin/dof_latex_converter.jar .
+$ISABELLE_TOOL scala $ISABELLE_HOME_USER/DOF/lib/dof_latex_converter.jar .
 
 cp $ISABELLE_HOME_USER/DOF/latex/DOF.sty .
 
