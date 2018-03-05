@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+ISABELLE=${1:-`which isabelle`}
+
+ISABELLE_HOME_USER=/home/brucker/.isabelle/Isabelle2017
+
+if [ `basename $PWD` <> "document" ]; then
+    echo "Error: not a Isabelle document directory".
+    exit 1
+fi
+
+if [ ! -f root.tex ]; then
+    echo "Error: no root.tex found."
+    exit 1
+fi
+
+$ISABELLE scala $ISABELLE_HOME_USER/DOF/bin/dof_latex_converter.jar .
+$ISABELLE latex
