@@ -94,6 +94,7 @@ fi
 
 if [ "$DOC" = true ]; then
   $ISABELLE_TOOL mkroot -d -n "$NAME"
+  echo "    \"build\"" >> ROOT
   TITLE=$(echo "$NAME" | tr _ - | tr -d '\\')
   AUTHOR=$(echo "By $USER" | tr _ - | tr -d '\\')
   cp "$ISABELLE_HOME_USER/DOF/document-template"/* document/
