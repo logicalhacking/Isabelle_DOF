@@ -1,0 +1,47 @@
+%% Copyright (C) 2018 The University of Sheffield
+%%               2018 The University of Paris-Sud
+%%
+%% License:
+%%   This program can be redistributed and/or modified under the terms
+%%   of the LaTeX Project Public License Distributed from CTAN
+%%   archives in directory macros/latex/base/lppl.txt; either
+%%   version 1 of the License, or any later version.
+%%   OR
+%%   The 2-clause BSD-style license.
+%%  
+%%   SPDX-License-Identifier: LPPL-1.0+ OR BSD-2-Clause
+
+\NeedsTeXFormat{LaTeX2e}\relax
+\ProvidesPackage{DOF}
+  [0000/00/00 Unreleased v0.0.0+%
+  Document-Type Support Framework for Isabelle.]
+
+\RequirePackage{keyval}
+\RequirePackage{environ}
+
+\def\dof@label{}%
+\def\dof@labeltype{}%
+\def\dof@attributes{}%
+
+\define@key{dof}{label}{\def\dof@label{#1}}%
+\define@key{dof}{label_type}{\def\dof@labeltype{#1}}%
+\define@key{dof}{attributes}{\def\dof@attributes{#1}}%
+
+
+\NewEnviron{isamarkuptext*}[1][]{%
+  \setkeys{dof}{label=defaultlabel,#1}
+  \centerline{\textsc{Begin Of IsaMarkup Star}}
+  \begin{itemize}
+  \item Arguments:
+    \begin{itemize}
+    \item Label: \dof@label
+    \item label\_type: \dof@labeltype
+    \item attributes: \dof@attributes
+    \end{itemize}
+  \item Body:
+  \BODY
+  \end{itemize}
+  \centerline{\textsc{End Of IsaMarkup Star}}
+  \bigskip
+}
+
