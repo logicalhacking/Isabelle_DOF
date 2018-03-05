@@ -29,6 +29,8 @@
 OUTFORMAT=${1:-pdf}
 NAME=${2:-root}
 
+set -e
+
 ROOT_NAME="root_$NAME"
 [ ! -f "$DIR/$ROOT_NAME.tex" ] && ROOT_NAME="root"
 
