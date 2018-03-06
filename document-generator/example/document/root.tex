@@ -1,0 +1,55 @@
+\RequirePackage{ifvtex}
+\documentclass[fontsize=10pt,DIV12,paper=a4,open=right,twoside,abstract=true]{scrreprt}
+\usepackage{fixltx2e}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp}
+\usepackage[english]{babel}
+\usepackage{isabelle}
+\usepackage{DOF}
+\usepackage{isabellesym}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[numbers, sort&compress, sectionbib]{natbib}
+\usepackage{hyperref}
+\setcounter{tocdepth}{3} 
+\hypersetup{%
+   bookmarksdepth=3
+  ,pdfpagelabels
+  ,pageanchor=false
+  ,bookmarksnumbered
+  ,plainpages=false
+} % more detailed digital TOC (aka bookmarks)
+\sloppy
+\allowdisplaybreaks[4]
+\urlstyle{rm}
+\isabellestyle{it}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Overrides the (rightfully issued) warning by Koma Script that \rm
+%%% etc. should not be used (they are deprecated since more than a
+%%% decade)
+  \DeclareOldFontCommand{\rm}{\normalfont\rmfamily}{\mathrm}
+  \DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
+  \DeclareOldFontCommand{\tt}{\normalfont\ttfamily}{\mathtt}
+  \DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
+  \DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\title{DOF-example}
+\author{By brucker}
+\begin{document}
+\maketitle
+\tableofcontents
+\input{session}
+% optional bibliography
+\IfFileExists{root.bib}{%
+    \bibliographystyle{abbrvnat}
+    \bibliography{root}
+}{}
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
