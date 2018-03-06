@@ -41,7 +41,7 @@ object DofConverter {
 
     def convertFile(f: File) = {
         val texFileName = f.getAbsolutePath()
-        println("ODF Converger: converting " + texFileName
+        println("ODF Converter: converting " + texFileName
                 + " (Not yet fully implemented!)")
         f.renameTo(new File(texFileName+".orig"))
 
