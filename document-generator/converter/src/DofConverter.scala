@@ -41,7 +41,7 @@ object DofConverter {
 
     def convertFile(f: File) = {
         val texFileName = f.getAbsolutePath()
-        println("ODF Converter: converting " + texFileName
+        println("DOF Converter: converting " + texFileName
                 + " (Not yet fully implemented!)")
         f.renameTo(new File(texFileName+".orig"))
 
@@ -49,7 +49,7 @@ object DofConverter {
             inputFile =>
             using(new BufferedWriter(new FileWriter(new File(texFileName), true))) {
                 outputFile =>
-                outputFile.write("% This file was modified by the DOV LaTex converter\n")
+                outputFile.write("% This file was modified by the DOF LaTex converter\n")
                 for (line <- inputFile.getLines) {
                     val outputLine = convertTexLine(line)
                     outputFile.write(outputLine + "\n")
