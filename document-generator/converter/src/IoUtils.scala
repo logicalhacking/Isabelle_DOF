@@ -29,44 +29,25 @@
 
 package com.logicalhacking.dof.converter
 
-import java.io.{BufferedWriter, File, FileWriter}
-import IoUtils._
+import scala.language.reflectiveCalls
 import scala.util.matching.Regex
+import java.io.{BufferedWriter, File, FileWriter}
 
-object DofConverter {
-    def convertTexLine(line:String) = {
-        // TODO
-        line
+object IoUtils {
+    def using[A <: { def close(): Unit }, B](param: A)(f: A => B): B =
+        try {
+        f(param)
+    }
+    finally {
+        param.close()
     }
 
-    def convertFile(f: File) = {
-        val texFileName = f.getAbsolutePath()
-        println("ODF Converger: converting " + texFileName
-                + " (Not yet fully implemented!)")
-        f.renameTo(new File(texFileName+".orig"))
-
-        using(io.Source.fromFile(texFileName+".orig")) {
-            inputFile =>
-            using(new BufferedWriter(new FileWriter(new File(texFileName), true))) {
-                outputFile =>
-                outputFile.write("% This file was modified by the DOV LaTex converter\n")
-                for (line <- inputFile.getLines) {
-                    val outputLine = convertTexLine(line)
-                    outputFile.write(outputLine.toUpperCase + "\n")
-                }
-            }
-        }
+    def recursiveListFiles(f: File, r: Regex): Array[File] = {
+        val these = f.listFiles
+        val good = these.filter(f => r.findFirstIn(f.getName).isDefined)
+        good ++ these.filter(_.isDirectory).flatMap(recursiveListFiles(_,r))
     }
 
-    def main(args: Array[String]): Unit = {
-        val dir = if (args.length == 0) {
-            "."
-        } else {
-            args(0)
-        }
-        val texFiles = recursiveListFiles(new File(dir), new Regex("\\.tex$"))
-        for (file <- texFiles) {
-            convertFile(file)
-        }
-    }
+
 }
+
