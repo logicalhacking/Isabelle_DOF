@@ -52,7 +52,7 @@ object DofConverter {
                 outputFile.write("% This file was modified by the DOV LaTex converter\n")
                 for (line <- inputFile.getLines) {
                     val outputLine = convertTexLine(line)
-                    outputFile.write(outputLine.toUpperCase + "\n")
+                    outputFile.write(outputLine + "\n")
                 }
             }
         }
