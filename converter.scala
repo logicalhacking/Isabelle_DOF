@@ -11,6 +11,7 @@ case class  BEGINENV(prelude: String, str: String) extends LaTeXToken
 case class  ENDENV  (prelude: String, str: String) extends LaTeXToken
 case object VBACKSLASH            extends LaTeXToken  /* verbatim backslash */
 case object VSPACE                extends LaTeXToken  /* verbatim space */
+case object VTILDE                extends LaTeXToken  /* verbatim tilde */
 case object VCURLYOPEN            extends LaTeXToken  /* verbatim curly bracket open */
 case object VCURLYCLOSE           extends LaTeXToken  /* verbatim curly bracket close */
 case object VBRACKETOPEN          extends LaTeXToken  /* verbatim square bracket open */
@@ -35,8 +36,9 @@ object LaTeXLexer extends RegexParsers {
   }
   
   def raw_text: Parser[RAWTEXT] = {
-    "[^\\{\\}\\\\]+".r       ^^ { str => RAWTEXT(str) }        /* should recognize strings without backslash 
-                                                           and without curly bracket { */
+    "[^\\{\\}\\\\]+".r       ^^ { str => RAWTEXT(str) }  
+               /* should recognize strings without backslash 
+                  and without curly bracket { */
   }
   
   def begin0: Parser[String]   = {
@@ -53,15 +55,16 @@ object LaTeXLexer extends RegexParsers {
                "\\{[^\\}]*\\}".r       ^^ (_.toString)  
   } 
   
-  def begin          = begin0 ~ arg    ^^ {case begin_txt ~ arg => BEGINENV(begin_txt,arg)}
-  def end            = end0   ~ arg    ^^ {case end_txt   ~ arg => ENDENV  (end_txt,arg)}
+  def begin_env      = begin0 ~ arg    ^^ {case begin_txt ~ arg => BEGINENV(begin_txt,arg)}
+  def end_env        = end0   ~ arg    ^^ {case end_txt   ~ arg => ENDENV  (end_txt,arg)}
                                  
   def command: Parser[COMMAND] = {
-               "\\\\[a-zA-Z][a-zA-Z0-9*]*".r ^^ { str => COMMAND(str) }
+               "\\\\[a-zA-Z0-9][a-zA-Z0-9*]*".r ^^ { str => COMMAND(str) }
   }
 
   def vbackslash     = "\\\\"      ^^ (_ => VBACKSLASH    ) 
   def vspace         = "\\ "       ^^ (_ => VSPACE        )   
+  def vtilde         = "\\~"       ^^ (_ => VTILDE        )   
   def vcurlyopen     = "\\{"       ^^ (_ => VCURLYOPEN    ) 
   def vcurlyclose    = "\\}"       ^^ (_ => VCURLYCLOSE   ) 
   def vbracketopen   = "\\["       ^^ (_ => VBRACKETOPEN  ) 
@@ -72,10 +75,11 @@ object LaTeXLexer extends RegexParsers {
   def bracketclose   = "]"         ^^ (_ => BRACKETCLOSE   ) 
   
   def tokens: Parser[List[LaTeXToken]] = {
-    phrase(rep1(raw_text   | 
-                vbackslash | vcurlyopen  | vcurlyclose  | vbracketopen | vbracketclose | vspace |
-                curlyopen  | curlyclose  | bracketopen  | bracketclose |            
-                begin      | end         | command)) 
+    phrase(rep1(  raw_text   
+                | vbackslash | vspace       | vtilde
+                | vcurlyopen | vcurlyclose  | vbracketopen | vbracketclose 
+                | curlyopen  | curlyclose   | bracketopen  | bracketclose 
+                | begin_env  | end_env      | command)) 
   }
 
   def printTokens(tokens: List[LaTeXToken]) : Unit = {
@@ -93,6 +97,7 @@ object LaTeXLexer extends RegexParsers {
           
         case Some(VBACKSLASH)        => {println("\\\\"); printTokens(tokens.tail)}
         case Some(VSPACE)            => {println("\\ "); printTokens(tokens.tail)}
+        case Some(VTILDE)            => {println("\\~"); printTokens(tokens.tail)}
         case Some(VCURLYOPEN)        => {println("\\{"); printTokens(tokens.tail)}
         case Some(VCURLYCLOSE)       => {println("\\}"); printTokens(tokens.tail)}
         case Some(VBRACKETOPEN)      => {println("\\["); printTokens(tokens.tail)}
@@ -117,6 +122,39 @@ object LaTeXLexer extends RegexParsers {
   }
 }
 
+/* pre: head(S) <> begin */
+/* post: res = (A,B) where S == A ++ B and 
+                     where begin@A is a begin-end 
+                           grouped list if existing, 
+                           otherwise B = Nil */
+def parse_group0 (begin:LaTeXToken,end:LaTeXToken, level:Int)
+                 (S:List[LaTeXToken])
+                 : (List[LaTeXToken],List[LaTeXToken]) = {
+    S match {case Nil => (Nil,Nil)
+             case h1 :: rest if h1 == begin 
+                  => (parse_group0 (begin,end, level+1)(rest) match {
+                       case (s1, rest2) => (h1 :: s1, rest2)
+                      }
+                     )
+             case h1 :: rest if h1 == end
+                  => if(level == 0) { (List(h1), rest) }
+                     else parse_group0 (begin,end, level-1)(rest) match {
+                             case (s1, rest2) => (h1 :: s1, rest2)
+                          }
+             case h1 :: rest 
+                  => (parse_group0 (begin,end,level)(rest) match {
+                       case (s1, rest2) => (h1 :: s1, rest2)
+                      }
+                     )
+            }
+}
+
+def parse_group (begin:LaTeXToken,end:LaTeXToken)(S:List[LaTeXToken])
+                 : (List[LaTeXToken],List[LaTeXToken]) =
+    parse_group0 (begin,end,0)(S) match {
+                       case (s1, s2) => (s1.reverse, s2)
+    }
+                 
 
 /* Unit Testing Zone */
 
