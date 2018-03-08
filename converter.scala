@@ -72,14 +72,14 @@ object LaTeXLexer extends RegexParsers {
   def curlyopen      = "{"         ^^ (_ => CURLYOPEN     ) 
   def curlyclose     = "}"         ^^ (_ => CURLYCLOSE    ) 
   def bracketopen    = "["         ^^ (_ => BRACKETOPEN   ) 
-  def bracketclose   = "]"         ^^ (_ => BRACKETCLOSE   ) 
+  def bracketclose   = "]"         ^^ (_ => BRACKETCLOSE  ) 
   
   def tokens: Parser[List[LaTeXToken]] = {
-    phrase(rep1(  raw_text   
-                | vbackslash | vspace       | vtilde
-                | vcurlyopen | vcurlyclose  | vbracketopen | vbracketclose 
-                | curlyopen  | curlyclose   | bracketopen  | bracketclose 
-                | begin_env  | end_env      | command)) 
+    phrase(rep1( raw_text   |
+                 vbackslash | vspace       | vtilde |
+                 vcurlyopen | vcurlyclose  | vbracketopen | vbracketclose |
+                 curlyopen  | curlyclose   | bracketopen  | bracketclose  |
+                 begin_env  | end_env      | command)) 
   }
 
   def printTokens(tokens: List[LaTeXToken]) : Unit = {
@@ -125,7 +125,7 @@ object LaTeXLexer extends RegexParsers {
 /* pre: head(S) <> begin */
 /* post: res = (A,B) where S == A ++ B and 
                      where begin@A is a begin-end 
-                           grouped list if existing, 
+                           balanced list if existing, 
                            otherwise B = Nil */
 def parse_group0 (begin:LaTeXToken,end:LaTeXToken, level:Int)
                  (S:List[LaTeXToken])
@@ -154,7 +154,32 @@ def parse_group (begin:LaTeXToken,end:LaTeXToken)(S:List[LaTeXToken])
     parse_group0 (begin,end,0)(S) match {
                        case (s1, s2) => (s1.reverse, s2)
     }
-                 
+
+def purifier (S:List[LaTeXToken]) : List[LaTeXToken] =
+    S match { 
+      case RAWTEXT(s1)::CURLYOPEN::COMMAND("\\isacharminus")::CURLYCLOSE ::rest
+           => purifier(RAWTEXT(s1 + "-") :: rest)
+      case RAWTEXT(s1)::CURLYOPEN::COMMAND("\\isacharunderscore")::CURLYCLOSE::rest
+           => purifier(RAWTEXT(s1 + "_") :: rest)
+      case COMMAND("\\isacharminus")::CURLYCLOSE::RAWTEXT(s1)::CURLYOPEN::rest
+           => purifier(RAWTEXT("-" + s1) :: rest)
+      case CURLYOPEN::COMMAND("\\isacharunderscore")::CURLYCLOSE::RAWTEXT(s1)::rest
+           => purifier(RAWTEXT("_" + s1) :: rest)
+      case RAWTEXT(s1)::RAWTEXT(s2)::rest
+           => purifier(RAWTEXT(s1 + s2) :: rest)
+      case a :: rest => a :: purifier(rest)
+      case Nil => Nil
+    }
+    
+def transducer (S:List[LaTeXToken]) : List[LaTeXToken] =
+    S match {
+      case COMMAND("\\isacommand")::CURLYOPEN::RAWTEXT(cmd)::CURLYOPEN
+           ::COMMAND("\\isacharasterisk")::CURLYCLOSE::CURLYCLOSE
+           ::COMMAND("\\isamarkupfalse")::RAWTEXT("%\n"):: CURLYOPEN::rest
+           => COMMAND("\\"+cmd+"*")::CURLYOPEN::CURLYCLOSE::rest
+      case h :: rest => h :: transducer(rest)
+      case Nil => Nil
+    }
 
 /* Unit Testing Zone */
 
@@ -189,6 +214,8 @@ which could in the LaTeX be set to:
 
 def sample'' = "\\isasubsubsection{\\ Encoder\\ State\\ Diagrams\\}\label{sec:Encoder-state-diagrams}"
 
+def L = List(CURLYOPEN, COMMAND("\\isachardoublequoteopen"), CURLYCLOSE, RAWTEXT("Encoder")
+, CURLYOPEN, COMMAND("\\isacharminus"), CURLYCLOSE, RAWTEXT("state"), CURLYOPEN, COMMAND("\\isacharminus"), CURLYCLOSE, RAWTEXT("diagrams"), CURLYOPEN, COMMAND("\\isachardoublequoteclose"), CURLYCLOSE, CURLYOPEN, COMMAND("\\isacharbrackright"))
 
 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
