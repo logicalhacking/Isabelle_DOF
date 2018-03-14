@@ -159,7 +159,7 @@ to a test-environment or test-engine *}
 text \<open> As established by @{docref \<open>t10\<close>}, the 
        assumption @{docref \<open>ass122\<close>} is validated. \<close>
 
-
+                               
 section{* Provisory Setup *}
 
 (* Hack: This should be generated automatically: *)

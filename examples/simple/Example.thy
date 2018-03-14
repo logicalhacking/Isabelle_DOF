@@ -24,9 +24,10 @@ declare_reference [lalala::requirement, alpha="main", beta=42]
 
 declare_reference [lalala::quod] (* shouldn't work *)
 
-declare_reference [blablabla::cid, alpha=beta, beta=gamma]
+declare_reference [blablabla::cid, alpha="beta sdf", beta=gamma, delta=dfg_fgh\<^sub>1]
   
 paragraph*[sdf]{* just a paragraph *}  
+paragraph* [sdfk] \<open> just a paragraph - lexical variant \<close>  
 
 subsection*[sdf]{* shouldn't work, multiple ref. *}  
 

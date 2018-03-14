@@ -181,6 +181,20 @@ def transducer (S:List[LaTeXToken]) : List[LaTeXToken] =
       case Nil => Nil
     }
 
+/* A more abstract approach, that is based on a two-level parsing approach */
+
+object LaTeXParser extends Parsers {
+  override type Elem = LaTeXToken
+
+class LaTeXTokenReader(tokens: Seq[LaTeXToken]) extends Reader[LaTeXToken] {
+  override def first: LaTeXToken = tokens.head
+  override def atEnd: Boolean = tokens.isEmpty
+  override def pos:   Position = NoPosition
+  override def rest:  Reader[LaTeXToken] = new LaTeXTokenReader(tokens.tail)
+}
+
+}
+
 /* Unit Testing Zone */
 
 >>>  LaTeXLexer("\\\\")                   => Right(List(VBACKSLASH)) // ok
