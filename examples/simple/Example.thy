@@ -1,5 +1,5 @@
 theory Example
-  imports  "../../CENELEC_50126"
+  imports  "../../ontologies/CENELEC_50126"
   keywords "Term" :: diag 
 begin
 
