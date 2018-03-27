@@ -1,12 +1,24 @@
+text{* dfgdfg n*}
+
 theory LNCS_onto
-  imports Isa_DOF
+  imports "../Isa_DOF"
 begin
 
 doc_class title =
    short_title :: "string option" -- None
   
+
+(*
+
+text*[tit::title]{* Using an Ontology Framework*} 
+
+*)   
+   
+   
 doc_class subtitle =
    abbrev :: "string option"      -- None
+   
+-- \<open>adding a contribution list and checking that it is cited as well in tech as in conclusion. ? \<close>
 
 doc_class author =
    affiliation :: "string"
@@ -14,17 +26,46 @@ doc_class author =
 doc_class abstract =
    keywds :: "string list"        -- None
 
-doc_class introduction =
+doc_class text_section = 
    main_author :: "author option" -- None
 
-doc_class tech_section =
+doc_class introduction = text_section +
+   comment :: string
+
+doc_class technical = text_section +
+   definition_list :: "string list" -- "[]"
+
+doc_class example   = text_section +
+
+text*[tit::title]{* Using an Ontology Framework*} 
+
+*)   
+   
+   
+doc_class subtitle =
+   abbrev :: "string option"      -- None
+   
+-- \<open>adding a contribution list and checking that it is cited as well in tech as in conclusion. ? \<close>
+
+doc_class author =
+   affiliation :: "string"
+
+doc_class abstract =
+   keywds :: "string list"        -- None
+
+doc_class text_section = 
    main_author :: "author option" -- None
 
-doc_class example_section =
-   main_author :: "author option" -- None
+doc_class introduction = text_section +
+   comment :: string
 
+doc_class technical = text_section +
+   definition_list :: "string list" -- "[]"
 
-doc_class conclusion =
+doc_class example   = text_section +
+   long_name :: "string" -- "'' ''"
+
+doc_class conclusion = text_section +
    main_author :: "author option" -- None
 
 doc_class bibliography =
@@ -57,32 +98,31 @@ doc_class article =
    AS    :: "author list"
    ABS   :: "abstract option"
    INTRO :: "introduction option" 
-   TS    :: "tech_section list"
-   EXS   :: "example_section list"
+   TS    :: "technical list"
+   EXS   :: "example list"
    CON   :: "conclusion"
    where "(title . 
            [subtitle] .
            (author)+ .
            abstract .
            introduction . 
-           (tech_section)+ . 
+           (technical | example)+ . 
            conclusion . 
            bibliography)"
 
 -- \<open>other idea: capture the essence of a monitor class as trace.
-                trace would be `predefined id` like `main` in C.
-   \<close>
+                trace would be `predefined id` like `main` in C. \<close>
 
 doc_class article' = 
    trace :: "(title + subtitle + author+ abstract +
-              introduction + tech_section + example_section +
+              introduction + technical + example +
               conclusion + bibliography) list"
    where "(title . 
            [subtitle] .
            (author)+ .
            abstract .
            introduction . 
-           (tech_section | example_section)+ . 
+           (technical | example)+ . 
            conclusion . 
            bibliography)"
 
