@@ -1,7 +1,7 @@
 text{* dfgdfg n*}
 
 theory LNCS_onto
-  imports "../Isa_DOF"
+   imports "../Isa_DOF"
 begin
 
 doc_class title =

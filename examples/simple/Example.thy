@@ -31,7 +31,7 @@ paragraph* [sdfk] \<open> just a paragraph - lexical variant \<close>
 
 subsection*[sdf]{* shouldn't work, multiple ref. *}  
 
-section*[sedf::requirement]{* works again. One can hover over the class constraint and 
+section*[sedf::requirement, alpja= refl]{* works again. One can hover over the class constraint and 
                               jump to its definition. *}  
 text\<open>\label{sedf}\<close>  (* Hack to make the LaTeX-ing running. Should disappear. *)
   
