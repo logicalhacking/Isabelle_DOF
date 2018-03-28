@@ -123,6 +123,8 @@ object LaTeXLexer extends RegexParsers {
   }
 }
 
+/* Some opeations on token streams */
+
 /* pre: head(S) <> begin */
 /* post: res = (A,B) where S == A ++ B and 
                      where begin@A is a begin-end 
@@ -182,6 +184,7 @@ def transducer (S:List[LaTeXToken]) : List[LaTeXToken] =
       case Nil => Nil
     }
 
+    
 /* A more abstract approach, that is based on a two-level parsing approach */
 
 import scala.util.parsing.combinator.Parsers
@@ -190,26 +193,36 @@ import scala.util.parsing.input.{NoPosition, Position, Reader}
 object LaTeXParser extends Parsers {
   override type Elem = LaTeXToken
 
-class LaTeXTokenReader(tokens: Seq[LaTeXToken]) extends Reader[LaTeXToken] {
-  override def first: LaTeXToken = tokens.head
+class LaTeXTokenReader(tokens: Seq[LaTeXToken]) extends Reader[Seq[LaTeXToken]] {
+  override def first: Seq[LaTeXToken] = tokens.head::Nil 
   override def atEnd: Boolean = tokens.isEmpty
   override def pos:   Position = NoPosition
-  override def rest:  Reader[LaTeXToken] = new LaTeXTokenReader(tokens.tail)
+  override def rest:  Reader[Seq[LaTeXToken]] = new LaTeXTokenReader(tokens.tail)
 }
 
-def apply(tokens: Seq[LaTeXToken]): Either[LaTeXParserError, LaTeXToken] = {
+
+def apply(tokens: Seq[LaTeXToken]): Either[LaTeXParserError, Seq[LaTeXToken]] = {
     val reader = new LaTeXTokenReader(tokens)
-    program(reader) match {
-      case NoSuccess(msg, next) => Left(LaTeXParserError(Location(next.pos.line, next.pos.column), msg))
+    parse_latex(reader) match {
+      case NoSuccess(msg, next)  => Left(LaTeXParserError(Location(next.pos.line, 
+                                                                   next.pos.column), 
+                                                          msg))
       case Success(result, next) => Right(result)
     }
+}
+
+
+def parse_latex: Parser[Seq[LaTeXToken]] = positioned {
+    phrase(sections)
   }
+  
+def sections: Parser[Seq[LaTeXToken]] = positioned {
+    rep1(section) ^^ { case stmtList => stmtList.flatten }
+  }  
 
-
-def program: Parser[LaTeXToken] = positioned {
-    phrase(block)
+def section: Parser[Seq[LaTeXToken]] = positioned {
+    RAWTEXT() ^^ { case rt @ RAWTEXT (id)  => rt::Nil }
   }
-
   
 }
 

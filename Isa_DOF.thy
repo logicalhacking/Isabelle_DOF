@@ -29,7 +29,7 @@ op ||> : ('c * 'a) * ('a -> 'b) -> 'c * 'b;
 
 val docrefN = "docref";    
 
-(* derived from: theory_markup *)
+(* derived from: theory_markup *) 
 fun docref_markup def name id pos =
   if id = 0 then Markup.empty
   else
