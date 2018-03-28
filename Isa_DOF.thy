@@ -1,4 +1,4 @@
-chapter \<open>The Document-Type Support Framework for Isabelle \<close>
+chapter \<open>The Document-Type Support Framework for Isabelle\<close>
 
 text{* Offering reflection to ML for class hierarchies, objects and object states. 
        + Isar syntax for these, assuming that classes entities fit to predefined
@@ -9,7 +9,7 @@ text{* In this section, we develop on the basis of a management of references Is
 that provide direct support in the PIDE framework. *}  
   
 theory Isa_DOF   (* Isabelle Document Ontology Framework *)
-  imports Main (* Isa_MOF *)
+  imports  Main (* Isa_MOF *)
   keywords "section*"    "subsection*"   "subsubsection*" 
            "paragraph*"  "subparagraph*" "text*" "declare_reference"::thy_decl
            and

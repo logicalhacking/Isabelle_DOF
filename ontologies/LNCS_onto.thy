@@ -6,15 +6,7 @@ begin
 
 doc_class title =
    short_title :: "string option" -- None
-  
-
-(*
-
-text*[tit::title]{* Using an Ontology Framework*} 
-
-*)   
-   
-   
+     
 doc_class subtitle =
    abbrev :: "string option"      -- None
    
@@ -24,7 +16,7 @@ doc_class author =
    affiliation :: "string"
 
 doc_class abstract =
-   keywds :: "string list"        -- None
+   keyword_list :: "string list"        -- None
 
 doc_class text_section = 
    main_author :: "author option" -- None
@@ -36,36 +28,12 @@ doc_class technical = text_section +
    definition_list :: "string list" -- "[]"
 
 doc_class example   = text_section +
-
-text*[tit::title]{* Using an Ontology Framework*} 
-
-*)   
-   
-   
-doc_class subtitle =
-   abbrev :: "string option"      -- None
-   
--- \<open>adding a contribution list and checking that it is cited as well in tech as in conclusion. ? \<close>
-
-doc_class author =
-   affiliation :: "string"
-
-doc_class abstract =
-   keywds :: "string list"        -- None
-
-doc_class text_section = 
-   main_author :: "author option" -- None
-
-doc_class introduction = text_section +
    comment :: string
-
-doc_class technical = text_section +
-   definition_list :: "string list" -- "[]"
-
-doc_class example   = text_section +
-   long_name :: "string" -- "'' ''"
 
 doc_class conclusion = text_section +
+   main_author :: "author option" -- None
+   
+doc_class related_work = conclusion +
    main_author :: "author option" -- None
 
 doc_class bibliography =
@@ -112,6 +80,7 @@ doc_class article =
 
 -- \<open>other idea: capture the essence of a monitor class as trace.
                 trace would be `predefined id` like `main` in C. \<close>
+text{* @{cite bla} *}
 
 doc_class article' = 
    trace :: "(title + subtitle + author+ abstract +

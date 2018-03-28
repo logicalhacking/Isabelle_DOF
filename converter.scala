@@ -21,8 +21,9 @@ case object CURLYCLOSE            extends LaTeXToken
 case object BRACKETOPEN           extends LaTeXToken
 case object BRACKETCLOSE          extends LaTeXToken
 
-trait LaTeXCompilationError
-case class LaTeXLexerError(msg: String) extends LaTeXCompilationError
+sealed trait LaTeXCompilationError
+case class LaTeXLexerError (msg: String) extends LaTeXCompilationError
+case class LaTeXParserError(msg: String) extends LaTeXCompilationError
 
 
 object LaTeXLexer extends RegexParsers {
@@ -183,6 +184,9 @@ def transducer (S:List[LaTeXToken]) : List[LaTeXToken] =
 
 /* A more abstract approach, that is based on a two-level parsing approach */
 
+import scala.util.parsing.combinator.Parsers
+import scala.util.parsing.input.{NoPosition, Position, Reader}
+  
 object LaTeXParser extends Parsers {
   override type Elem = LaTeXToken
 
@@ -193,6 +197,20 @@ class LaTeXTokenReader(tokens: Seq[LaTeXToken]) extends Reader[LaTeXToken] {
   override def rest:  Reader[LaTeXToken] = new LaTeXTokenReader(tokens.tail)
 }
 
+def apply(tokens: Seq[LaTeXToken]): Either[LaTeXParserError, LaTeXToken] = {
+    val reader = new LaTeXTokenReader(tokens)
+    program(reader) match {
+      case NoSuccess(msg, next) => Left(LaTeXParserError(Location(next.pos.line, next.pos.column), msg))
+      case Success(result, next) => Right(result)
+    }
+  }
+
+
+def program: Parser[LaTeXToken] = positioned {
+    phrase(block)
+  }
+
+  
 }
 
 /* Unit Testing Zone */
