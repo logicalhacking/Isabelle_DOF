@@ -27,17 +27,21 @@ op #>;
 op |>> : ('a * 'c) * ('a -> 'b) -> 'b * 'c;
 op ||> : ('c * 'a) * ('a -> 'b) -> 'c * 'b;
 
-val docrefN = "docref";    
+val docrefN   = "docref";    
+val docclassN = "doc_class";    
 
 (* derived from: theory_markup *) 
-fun docref_markup def name id pos =
+fun docref_markup_gen refN def name id pos =
   if id = 0 then Markup.empty
   else
     Markup.properties (Position.entity_properties_of def id pos)
-      (Markup.entity docrefN name);   (* or better store the thy-name as property ? ? ? *)
+      (Markup.entity refN name);   (* or better store the thy-name as property ? ? ? *)
+
+val docref_markup = docref_markup_gen docrefN
+
+val docclass_markup = docref_markup_gen docclassN
 
 *}
-  
 
   
 ML{*
@@ -203,7 +207,7 @@ fun define_doc_class_global (params', binding) parent fields thy  =
                                       else ()
                val cid_long = name2doc_class_name thy cid
                val id = serial ();
-               val _ = Position.report pos (docref_markup true cid id pos);
+               val _ = Position.report pos (docclass_markup true cid id pos);
 
                val info = {params=params', 
                            name = binding, 
@@ -345,7 +349,7 @@ Context_Position.report_generic;
 *)
                                val {id, name=bind_target,...} = 
                                                      the(DOF_core.get_doc_class_global cid_long thy)
-                               val markup = docref_markup false cid id (Binding.pos_of bind_target);
+                               val markup = docclass_markup false cid id (Binding.pos_of bind_target);
                                val ctxt = Context.Theory thy
                                val _ = Context_Position.report_generic ctxt pos' markup;
 
