@@ -193,13 +193,12 @@ import scala.util.parsing.input.{NoPosition, Position, Reader}
 object LaTeXParser extends Parsers {
   override type Elem = LaTeXToken
 
-class LaTeXTokenReader(tokens: Seq[LaTeXToken]) extends Reader[Seq[LaTeXToken]] {
-  override def first: Seq[LaTeXToken] = tokens.head::Nil 
+class LaTeXTokenReader(tokens: Seq[LaTeXToken]) extends Reader[LaTeXToken] {
+  override def first: LaTeXToken = tokens.head 
   override def atEnd: Boolean = tokens.isEmpty
   override def pos:   Position = NoPosition
-  override def rest:  Reader[Seq[LaTeXToken]] = new LaTeXTokenReader(tokens.tail)
+  override def rest:  Reader[LaTeXToken] = new LaTeXTokenReader(tokens.tail)
 }
-
 
 def apply(tokens: Seq[LaTeXToken]): Either[LaTeXParserError, Seq[LaTeXToken]] = {
     val reader = new LaTeXTokenReader(tokens)
@@ -211,10 +210,16 @@ def apply(tokens: Seq[LaTeXToken]): Either[LaTeXParserError, Seq[LaTeXToken]] = 
     }
 }
 
+def parse_latex(r: Reader[LaTeXToken]) : Parser[Seq[LaTeXToken]] =  Success(Nil, Nil)
+
+}
+
+}
 
 def parse_latex: Parser[Seq[LaTeXToken]] = positioned {
     phrase(sections)
   }
+  
   
 def sections: Parser[Seq[LaTeXToken]] = positioned {
     rep1(section) ^^ { case stmtList => stmtList.flatten }
