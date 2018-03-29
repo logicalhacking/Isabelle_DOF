@@ -17,7 +17,11 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
   
 begin
   
-  
+
+text{*
+       @{thm [names_long] refl}
+
+*}  
 section{* A HomeGrown Document Type Management (the ''Model'') *}
 
 ML{*
@@ -411,27 +415,6 @@ val _ =
                                   (Toplevel.theory (DOF_core.declare_object_global oid))));
 
 
-(* Proof.context -> Symtab.key * Position.T -> Pretty.T ; dead code: 
-fun pretty_docref ctxt (name, pos)  =
-  let
-    (* val _ = DOF_core.writeln_keys ctxt *)
-    val thy = Proof_Context.theory_of ctxt;
-    fun pretty_docref str = let val tok = Pretty.enclose "\\autoref{" "}" (Pretty.text (str))
-                            (*  val _ = writeln (Pretty.string_of tok) *)
-                            in tok end
-  in 
-    if DOF_core.is_defined_oid_global name thy 
-    then let val {pos=pos_decl,id,...} = the(DOF_core.get_object_global name thy)
-             val markup = docref_markup false name id pos_decl;
-             val _ = Context_Position.report ctxt pos markup;
-                     (* this sends a report to the PIDE interface ... *) 
-         in pretty_docref name end
-    else if   DOF_core.is_declared_oid_global name thy 
-         then (warning("declared but undefined document reference:"^name);
-               pretty_docref name)
-         else error("undefined document reference:"^name)
-  end
-*)
 
 
 fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) pos name  =
@@ -454,34 +437,40 @@ fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) pos name  =
          else error("undefined document reference:"^name)
   end
 
-(* superfluous :
-fun basic_entities_style name scan pretty =
-  Thy_Output.antiquotation name scan (fn {source, context = ctxt, ...} => fn (style, xs) =>
-     Thy_Output.output ctxt
-        (Thy_Output.maybe_pretty_source (fn ctxt => fn x => pretty ctxt (style, x)) ctxt source xs));
+(* generic syntax for doc_class links. *) 
 
-fun basic_entities name scan pretty =
-  Thy_Output.antiquotation name scan (fn {source, context = ctxt, ...} =>
-    Thy_Output.output ctxt o Thy_Output.maybe_pretty_source pretty ctxt source);
+val defineN    = "define"
+val uncheckedN = "unchecked" 
 
-fun basic_entity name scan = basic_entities name (scan >> single);
-*)
+val doc_ref_modes = Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ uncheckedN) 
+                                   >> (fn str => if str = defineN 
+                                                 then {unchecked = false, define= true}  
+                                                 else {unchecked = true,  define= false})) 
+                                   {unchecked = false, define= false};
 
-fun control_antiquotation name cid_decl (str:{strict_checking: bool}) s1 s2 = 
-             Thy_Output.antiquotation name (Scan.lift (Args.cartouche_input))
-                 (fn {context =ctxt, source = src:Token.src, state} =>
-                      fn source:Input.source => 
-                          (Thy_Output.output_text state {markdown=false} #>
-                           check_and_mark ctxt cid_decl (str:{strict_checking: bool})(Input.pos_of source) #>
-                           enclose s1 s2) 
-                          source);
 
+fun doc_class_ref_antiquotation name cid_decl = 
+    let fun open_par x = if x then (writeln "ctr_anti true";  "\\label{" )
+                         else      (writeln "ctr_anti false";  "\\autoref{" )
+        val close = "}"
+    in
+(*        Thy_Output.antiquotation name (Scan.lift (args_alt -- Args.cartouche_input)) *)
+        Thy_Output.antiquotation name (Scan.lift (doc_ref_modes -- Args.cartouche_input))
+            (fn {context =ctxt, source = src:Token.src, state} =>
+                 fn ({unchecked = x, define= y}, source:Input.source) => 
+                     (Thy_Output.output_text state {markdown=false} #>
+                      check_and_mark ctxt cid_decl ({strict_checking = not x})(Input.pos_of source) #>
+                      enclose (open_par y) close) 
+                     source)
+     end
 
 (* Setup for general docrefs of the global DOF_core.default_cid - class ("text")*)
 val _ = Theory.setup
-        ((control_antiquotation @{binding docref} DOF_core.default_cid {strict_checking=true}  "\\autoref{" "}" ) #>
-         (control_antiquotation @{binding docref_unchecked} DOF_core.default_cid {strict_checking=false} "\\autoref{" "}")#>
-         (control_antiquotation @{binding docref_define} DOF_core.default_cid {strict_checking=false}   "\\label{" "}"))
+        ((doc_class_ref_antiquotation @{binding docref} DOF_core.default_cid           )
+(* #>
+         (doc_class_antiquotation @{binding docref_unchecked} DOF_core.default_cid )#>
+         (doc_class_antiquotation @{binding docref_define} DOF_core.default_cid    ))
+*) )
 
 end (* struct *)
 *}
@@ -536,13 +525,11 @@ val _ =
 
 
 section{* Testing and Validation *}
-
-ML{* 
+ML{* op >> ;
 Binding.print;
 Syntax.read_term;
 Syntax.pretty_typ;
 try;
-
 *}  
   
   
@@ -559,16 +546,16 @@ fun document_command markdown (loc, txt) =
 
 \<close>  
 
-text{* @{theory "Nat"}*}
+text{* @{theory "Nat"} @{thm refl}*}
 ML\<open>
 open Markup;
 Markup.binding;
-TFree;
 open Position;
 Position.line;
 Context.Theory; 
 Context_Position.report_generic;
 Context_Position.report;
+Term_Style.parse;
 \<close>
   
 end

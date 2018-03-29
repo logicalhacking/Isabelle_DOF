@@ -156,7 +156,9 @@ that governs the external test-execution via, eg., a makefile or specific calls
 to a test-environment or test-engine *}
 
 
-text \<open> As established by @{docref \<open>t10\<close>}, the 
+text \<open> As established by @{docref (unchecked) \<open>t10\<close>}, 
+                         @{docref (define) \<open>t10\<close>}
+       the               @{docref  \<open>t10\<close>}
        assumption @{docref \<open>ass122\<close>} is validated. \<close>
 
                                
@@ -165,24 +167,24 @@ section{* Provisory Setup *}
 (* Hack: This should be generated automatically: *)
 ML{*
 val _ = Theory.setup
-        ((DocAttrParser.control_antiquotation @{binding srac}     
+        ((DocAttrParser.doc_class_ref_antiquotation @{binding srac}     
                                               (DOF_core.name2doc_class_name @{theory} "srac")
-                                              {strict_checking=true}  
-                                              "\\autoref{" "}" ) #>
-         (DocAttrParser.control_antiquotation @{binding ec}
+                                               ) #>
+         (DocAttrParser.doc_class_ref_antiquotation @{binding ec}
                                               (DOF_core.name2doc_class_name @{theory} "ec")
-                                              {strict_checking=true} 
-                                              "\\autoref{" "}")#>
-         (DocAttrParser.control_antiquotation @{binding test_specification}
+                                              )#>
+         (DocAttrParser.doc_class_ref_antiquotation @{binding test_specification}
                                               (DOF_core.name2doc_class_name @{theory} "test_specification")
-                                              {strict_checking=true}   
-                                              "\\label{" "}"))
+                                              ))
 
 *}
 
 
 
 
+  
+  
+  
 section{* Testing and Validation *}
 
 

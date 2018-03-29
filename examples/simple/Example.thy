@@ -41,6 +41,7 @@ but wrong doc_class constraint. *}
 section{* Text Antiquotation Infrastructure ... *}  
                   
 text{* @{docref \<open>lalala\<close>} -- produces warning. *}  
+text{* @{docref (unchecked) \<open>lalala\<close>} -- produces no warning. *}  
 
 text{* @{docref \<open>ass122\<close>} -- global reference to a text-item in another file. *}
 
