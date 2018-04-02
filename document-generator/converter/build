@@ -45,4 +45,4 @@ SCALAC_VERSION=`$ISABELLE scalac -version`
 echo "Building dof_latex_converter using"
 echo " * $ISABELLE_VERSION"
 echo " * $SCALAC_VERSION"
-$ISABELLE scalac src/*.scala -d bin/dof_latex_converter.jar
+$ISABELLE scalac src/com/logicalhacking/dof/converter/*.scala -d bin/dof_latex_converter.jar
