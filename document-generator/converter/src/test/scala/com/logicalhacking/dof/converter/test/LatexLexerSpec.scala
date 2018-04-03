@@ -30,19 +30,76 @@
 package com.logicalhacking.dof.converter.test
 
 import org.scalatest._
-//import org.junit.runner.RunWith
+import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
-// @ RunWith(classOf[JUnitRunner])
+import com.logicalhacking.dof.converter._
+
+
+@RunWith(classOf[JUnitRunner])
 class LatexLexerSpec extends FlatSpec with Matchers{
-
-  "An empty Set" should "have size 0" in {
-    assert(Set.empty.size == 0)
-  }
-
-  it should "produce NoSuchElementException when head is invoked" in {
-    assertThrows[NoSuchElementException] {
-      Set.empty.head
+  
+  behavior of "Parsing simple commands"
+  
+    it should """accept \\ as newline (VBACKSLASH)""" in {
+      assert(
+          LaTeXLexer("""\\""") 
+          == 
+          Right(List(VBACKSLASH))
+      ) 
     }
+  
+  behavior of "Parsing section commands"
+  
+    it should """accept  simple section specifications""" in {
+      assert(
+          LaTeXLexer("""\section{title}""")
+          ==
+          Right(List(COMMAND("""\section"""), CURLYOPEN, RAWTEXT("title"), CURLYCLOSE))
+      )
+    }
+  
+    it should """accept star variant of section specifications""" in {
+      assert(
+          LaTeXLexer("""\section*{title}""") 
+          == 
+          Right(List(COMMAND("""\section*"""), CURLYOPEN, RAWTEXT("""title"""), CURLYCLOSE))
+      ) 
+    }
+    
+  behavior of "Parsing environments"
+  
+    it should "accept simple environments with arguments" in {
+      assert(
+          LaTeXLexer("""\begin{foo}{argument}bar\end{foo}""") 
+          == 
+          Right(List(BEGINENV("""\begin""","""{foo}"""), CURLYOPEN, RAWTEXT("""argument"""), 
+                     CURLYCLOSE, RAWTEXT("""bar"""), ENDENV("""\end""","""{foo}""")))
+      )
+    }
+
+    it should "parse simple environments with optional arguments" in {
+      assert(
+          LaTeXLexer("""\begin{foo}[optional] bar \end{foo}""")
+          == 
+          Right(List(BEGINENV("""\begin""","""{foo}"""), RAWTEXT("""[optional] bar """), ENDENV("""\end""","""{foo}""")))
+      )
+    }
+
+    it should "parse simple environments optional and required arguments" in {
+      assert(
+          LaTeXLexer("""\begin{foo}[optional]{argument} bar \end{foo}""")
+          ==
+          Right(List(BEGINENV("""\begin""","""{foo}"""), RAWTEXT("""[optional]"""), CURLYOPEN, RAWTEXT("""argument"""), CURLYCLOSE, RAWTEXT(""" bar """), ENDENV("""\end""","""{foo}""")))
+      )
+    }
+
+    it should "parse environments with complex arguments" in {
+      assert(
+          LaTeXLexer("""\begin{altenv}<2>{(}{)}{[}{]}word\end{altenv}""")
+          == 
+          Right(List(BEGINENV("""\begin""","""{altenv}"""), RAWTEXT("""<2>"""), CURLYOPEN, RAWTEXT("""("""), CURLYCLOSE, CURLYOPEN, RAWTEXT(""")"""), CURLYCLOSE, CURLYOPEN, RAWTEXT("""["""), CURLYCLOSE, CURLYOPEN, RAWTEXT("""]"""), CURLYCLOSE, RAWTEXT("""word"""), ENDENV("""\end""","""{altenv}""")))
+      )
   }
+
 }
