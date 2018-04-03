@@ -34,9 +34,12 @@ import IoUtils._
 import scala.util.matching.Regex
 
 object DofConverter {
-    def convertTexLine(line:String) = {
+    def convertLaTeX(string:String):String = {
         // TODO
-        line
+      LaTeXLexer(string) match {
+                       case Left(_) => "Conversion Error" // TODO
+                       case Right(tokens) => LaTeXLexer.toString(tokens)
+                   }
     }
 
     def convertFile(f: File) = {
@@ -44,16 +47,15 @@ object DofConverter {
         println("DOF Converter: converting " + texFileName
                 + " (Not yet fully implemented!)")
         f.renameTo(new File(texFileName+".orig"))
-
+     
         using(io.Source.fromFile(texFileName+".orig")) {
             inputFile =>
             using(new BufferedWriter(new FileWriter(new File(texFileName), true))) {
                 outputFile =>
                 outputFile.write("% This file was modified by the DOF LaTex converter\n")
-                for (line <- inputFile.getLines) {
-                    val outputLine = convertTexLine(line)
-                    outputFile.write(outputLine + "\n")
-                }
+                val input = inputFile.getLines.reduceLeft(_+"\n"+_)
+                val output = convertLaTeX(input)
+                outputFile.write(output)
             }
         }
     }
