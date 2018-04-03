@@ -52,6 +52,8 @@ case object CURLYOPEN             extends LaTeXToken
 case object CURLYCLOSE            extends LaTeXToken
 case object BRACKETOPEN           extends LaTeXToken
 case object BRACKETCLOSE          extends LaTeXToken
+case object NEWLINE               extends LaTeXToken
+
 
 sealed trait LaTeXCompilationError
 case class LaTeXLexerError (msg: String) extends LaTeXCompilationError
@@ -62,7 +64,7 @@ object LaTeXLexer extends RegexParsers {
 
   override def skipWhitespace = false  /* No skipping, we want to maintain the layout 
                                           structure of the LaTeX file */
-  /* override val whiteSpace = "[ \t\r\f]+".r   -- probably not usefule here */
+  /* override val whiteSpace = "[ \t\r\f]+".r   -- probably not useful here */
   
   def spacing:  Parser[SPACING] = {
     "[ \t\r\f_]*".r ^^ { str => SPACING(str) }
@@ -102,6 +104,7 @@ object LaTeXLexer extends RegexParsers {
   def vcurlyclose    = "\\}"       ^^ (_ => VCURLYCLOSE   ) 
   def vbracketopen   = "\\["       ^^ (_ => VBRACKETOPEN  ) 
   def vbracketclose  = "\\]"       ^^ (_ => VBRACKETCLOSE ) 
+  def newline        = "\n"        ^^ (_ => NEWLINE ) 
   def curlyopen      = "{"         ^^ (_ => CURLYOPEN     ) 
   def curlyclose     = "}"         ^^ (_ => CURLYCLOSE    ) 
   def bracketopen    = "["         ^^ (_ => BRACKETOPEN   ) 
@@ -112,41 +115,75 @@ object LaTeXLexer extends RegexParsers {
                  vbackslash | vspace       | vtilde |
                  vcurlyopen | vcurlyclose  | vbracketopen | vbracketclose |
                  curlyopen  | curlyclose   | bracketopen  | bracketclose  |
-                 begin_env  | end_env      | command)) 
+                 newline    | begin_env  | end_env      | command)) 
   }
 
   def printTokens(tokens: List[LaTeXToken]) : Unit = {
       tokens.headOption match {
     
-        case Some(SPACING(spaces))   => {println(spaces); printTokens(tokens.tail)}
+        case Some(SPACING(spaces))   => {print(spaces); printTokens(tokens.tail)}
                                      
-        case Some(RAWTEXT(txt))      => {println(txt); printTokens(tokens.tail)}
+        case Some(RAWTEXT(txt))      => {print(txt); printTokens(tokens.tail)}
                                      
-        case Some(COMMAND(txt))      => {println(txt); printTokens(tokens.tail)}
+        case Some(COMMAND(txt))      => {print(txt); printTokens(tokens.tail)}
     
-        case Some(BEGINENV(pre,txt)) => {println(pre + txt); printTokens(tokens.tail)}
+        case Some(BEGINENV(pre,txt)) => {print(pre + txt); printTokens(tokens.tail)}
                                      
-        case Some(ENDENV(pre,txt))   => {println(pre + txt); printTokens(tokens.tail)}  
+        case Some(ENDENV(pre,txt))   => {print(pre + txt); printTokens(tokens.tail)}  
           
-        case Some(VBACKSLASH)        => {println("\\\\"); printTokens(tokens.tail)}
-        case Some(VSPACE)            => {println("\\ "); printTokens(tokens.tail)}
-        case Some(VTILDE)            => {println("\\~"); printTokens(tokens.tail)}
-        case Some(VCURLYOPEN)        => {println("\\{"); printTokens(tokens.tail)}
-        case Some(VCURLYCLOSE)       => {println("\\}"); printTokens(tokens.tail)}
-        case Some(VBRACKETOPEN)      => {println("\\["); printTokens(tokens.tail)}
-        case Some(VBRACKETCLOSE)     => {println("\\]"); printTokens(tokens.tail)}
-        case Some(CURLYOPEN)         => {println("{"); printTokens(tokens.tail)}
-        case Some(CURLYCLOSE)        => {println("}"); printTokens(tokens.tail)}
-        case Some(BRACKETOPEN)       => {println("["); printTokens(tokens.tail)}
-        case Some(BRACKETCLOSE)      => {println("]"); printTokens(tokens.tail)}
+        case Some(VBACKSLASH)        => {print("\\\\"); printTokens(tokens.tail)}
+        case Some(VSPACE)            => {print("\\ "); printTokens(tokens.tail)}
+        case Some(VTILDE)            => {print("\\~"); printTokens(tokens.tail)}
+        case Some(VCURLYOPEN)        => {print("\\{"); printTokens(tokens.tail)}
+        case Some(VCURLYCLOSE)       => {print("\\}"); printTokens(tokens.tail)}
+        case Some(VBRACKETOPEN)      => {print("\\["); printTokens(tokens.tail)}
+        case Some(VBRACKETCLOSE)     => {print("\\]"); printTokens(tokens.tail)}
+        case Some(NEWLINE)           => {print("\n"); printTokens(tokens.tail)}
+        case Some(CURLYOPEN)         => {print("{"); printTokens(tokens.tail)}
+        case Some(CURLYCLOSE)        => {print("}"); printTokens(tokens.tail)}
+        case Some(BRACKETOPEN)       => {print("["); printTokens(tokens.tail)}
+        case Some(BRACKETCLOSE)      => {print("]"); printTokens(tokens.tail)}
              
-        case Some(token)             =>  {println("+++ INTERNAL ERROR +++"); 
+        case Some(token)             =>  {println("\n +++ INTERNAL ERROR +++"); 
                                           printTokens(tokens.tail)}
     
         case None => {println("\n\n")}  
       }
   }
 
+    def toString(tokens: List[LaTeXToken]) : String = {
+      tokens.headOption match {
+    
+        case Some(SPACING(spaces))   => {spaces + toString(tokens.tail)}
+                                     
+        case Some(RAWTEXT(txt))      => {txt +toString(tokens.tail)}
+                                     
+        case Some(COMMAND(txt))      => {txt + toString(tokens.tail)}
+    
+        case Some(BEGINENV(pre,txt)) => {pre + txt + toString(tokens.tail)}
+                                     
+        case Some(ENDENV(pre,txt))   => {pre + txt + toString(tokens.tail)}  
+          
+        case Some(VBACKSLASH)        => {"""\\""" + toString(tokens.tail)}
+        case Some(VSPACE)            => {"""\ """ + toString(tokens.tail)}
+        case Some(VTILDE)            => {"""\~""" + toString(tokens.tail)}
+        case Some(VCURLYOPEN)        => {"""\{""" + toString(tokens.tail)}
+        case Some(VCURLYCLOSE)       => {"""\}""" + toString(tokens.tail)}
+        case Some(VBRACKETOPEN)      => {"""\[""" + toString(tokens.tail)}
+        case Some(VBRACKETCLOSE)     => {"""\]""" + toString(tokens.tail)}
+        case Some(NEWLINE)           => {"\n"     + toString(tokens.tail)}
+        case Some(CURLYOPEN)         => {"""{"""  + toString(tokens.tail)}
+        case Some(CURLYCLOSE)        => {"""}"""  + toString(tokens.tail)}
+        case Some(BRACKETOPEN)       => {"""["""  + toString(tokens.tail)}
+        case Some(BRACKETCLOSE)      => {"""]"""  + toString(tokens.tail)}
+             
+        case Some(token)             =>  {"\n+++ INTERNAL ERROR +++\n"+toString(tokens.tail)}
+    
+        case None => {""}  
+      }
+  }
+
+  
   def apply(code: String): Either[LaTeXLexerError, List[LaTeXToken]] = {
          parse(tokens, code) match {
            case NoSuccess(msg, next) => Left(LaTeXLexerError(msg))
