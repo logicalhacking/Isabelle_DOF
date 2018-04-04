@@ -17,19 +17,10 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
   
 begin
   
+ 
 
-text{*
-       @{thm [names_long] refl}
-
-*}  
-section{* A HomeGrown Document Type Management (the ''Model'') *}
-
+section{*Primitive Markup Generators*}
 ML{*
-curry;
-op |>; 
-op #>;
-op |>> : ('a * 'c) * ('a -> 'b) -> 'b * 'c;
-op ||> : ('c * 'a) * ('a -> 'b) -> 'c * 'b;
 
 val docrefN   = "docref";    
 val docclassN = "doc_class";    
@@ -47,9 +38,9 @@ val docclass_markup = docref_markup_gen docclassN
 
 *}
 
+section{* A HomeGrown Document Type Management (the ''Model'') *}
   
 ML{*
-
 structure DOF_core = 
 struct
    type docclass_struct = {params : (string * sort) list, (*currently not used *)
@@ -100,7 +91,7 @@ struct
                     in {tab=Symtab.merge X (otab,otab'),maxano=Int.max(m,m')}
                     end) 
 
-
+(* registrating data of the Isa_DOF component *)
 structure Data = Generic_Data
 (
   type T = docobj_tab * docclass_tab 
@@ -215,11 +206,11 @@ fun define_doc_class_global (params', binding) parent fields thy  =
                     name = binding, 
                     thy_name = nn, 
                     id = id, (* for pide --- really fresh or better reconstruct 
-                                      from prior record definition ? *)
+                                from prior record definition ? For the moment: own
+                                generation of serials ... *)
                     inherits_from = parent,
                     attribute_decl = fields  (*  currently unchecked *)
                     (*, rex : term list -- not yet used *)}
-        val _ = ()  (* XXX *)     
     
     in   map_data_global(apsnd(Symtab.update(cid_long,info)))(thy)
     end
@@ -295,11 +286,10 @@ end (* struct *)
 *}
   
 
-section{* Syntax for Annotated Documentation Commands (the '' View'') *}
-
+section{* Syntax for Annotated Documentation Commands (the '' View'' Part I) *}
   
 ML{* 
-structure DocAttrParser = 
+structure AnnoTextelemParser = 
 struct
 
 val semi = Scan.option (Parse.$$$ ";");
@@ -334,9 +324,8 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),doc_attrs),
                                        then error("document class undefined")
                                        else ()
                                val cid_long =  DOF_core.name2doc_class_name thy cid 
-                               val _ = writeln cid_long
                                val {id, name=bind_target,...} = 
-                                                     the(DOF_core.get_doc_class_global cid_long thy)
+                                             the(DOF_core.get_doc_class_global cid_long thy)
                                val markup = docclass_markup false cid id (Binding.pos_of bind_target);
                                val ctxt = Context.Theory thy
                                val _ = Context_Position.report_generic ctxt pos' markup;
@@ -350,7 +339,7 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),doc_attrs),
                            let val name = Context.theory_name thy 
                            in  DOF_core.define_object_global 
                                   (oid, {pos=pos, thy_name=name,
-                                         id=id , cid=DOF_core.default_cid}) 
+                                         id=id,   cid=DOF_core.default_cid}) 
                                (thy)
                            end
     fun MMM(SOME(s,p)) = SOME(s^"XXX",p)
@@ -398,7 +387,15 @@ val _ =
     (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
                                   (Toplevel.theory (DOF_core.declare_object_global oid))));
 
+end (* struct *)
 
+*}
+  
+section{* Syntax for Ontological Antiquotations (the '' View'' Part II) *}
+  
+ML{*
+structure OntoLinkParser = 
+struct
 
 
 fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) pos name  =
@@ -416,10 +413,12 @@ fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) pos name  =
                      else ()
          in  name end
     else if   DOF_core.is_declared_oid_global name thy 
-         then (if #strict_checking str then warning("declared but undefined document reference:"^name)
+         then (if #strict_checking str 
+               then warning("declared but undefined document reference:"^name)
                else (); name)
          else error("undefined document reference:"^name)
   end
+
 
 (* generic syntax for doc_class links. *) 
 
@@ -430,36 +429,44 @@ val doc_ref_modes = Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ unc
                                    >> (fn str => if str = defineN 
                                                  then {unchecked = false, define= true}  
                                                  else {unchecked = true,  define= false})) 
-                                   {unchecked = false, define= false};
+                                   {unchecked = false, define= false} (* default *);
 
 
 fun doc_class_ref_antiquotation name cid_decl = 
-    let fun open_par x = if x then (writeln "ctr_anti true";  "\\label{" )
-                         else      (writeln "ctr_anti false";  "\\autoref{" )
+    let fun open_par x = if x then "\\label{" 
+                         else      "\\autoref{"
         val close = "}"
+        val _ = writeln ("XXX" ^ cid_decl) 
+        fun cid_decl' ctxt = let val thy = (Proof_Context.theory_of ctxt)
+                                 val str  = (Binding.name_of name)
+                                 val name = DOF_core.name2doc_class_name thy str
+                                 val _ = writeln ("YYY" ^  name)
+                             in str end                             
     in
-(*        Thy_Output.antiquotation name (Scan.lift (args_alt -- Args.cartouche_input)) *)
         Thy_Output.antiquotation name (Scan.lift (doc_ref_modes -- Args.cartouche_input))
-            (fn {context =ctxt, source = src:Token.src, state} =>
+            (fn {context = ctxt, source = src:Token.src, state} =>
                  fn ({unchecked = x, define= y}, source:Input.source) => 
                      (Thy_Output.output_text state {markdown=false} #>
-                      check_and_mark ctxt cid_decl ({strict_checking = not x})(Input.pos_of source) #>
+                      check_and_mark ctxt 
+                                     (* (cid_decl' ctxt) *) 
+                                     cid_decl 
+                                     ({strict_checking = not x})
+                                     (Input.pos_of source) #>
                       enclose (open_par y) close) 
                      source)
      end
 
 (* Setup for general docrefs of the global DOF_core.default_cid - class ("text")*)
-val _ = Theory.setup
-        ((doc_class_ref_antiquotation @{binding docref} DOF_core.default_cid           )
-(* #>
-         (doc_class_antiquotation @{binding docref_unchecked} DOF_core.default_cid )#>
-         (doc_class_antiquotation @{binding docref_define} DOF_core.default_cid    ))
-*) )
+val _ = Theory.setup (doc_class_ref_antiquotation @{binding docref} DOF_core.default_cid)
 
 end (* struct *)
 *}
   
+section{* Syntax for Ontologies (the '' View'' Part III) *}
+  
 ML{* 
+structure OntoParser = 
+struct
 
 fun read_parent NONE ctxt = (NONE, ctxt)
   | read_parent (SOME raw_T) ctxt =
@@ -489,34 +496,48 @@ fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdef
     val fieldsNterms = (map (fn (a,b,_) => (a,b)) fields) ~~ terms
     val fieldsNterms' = map (fn ((x,y),z) => (x,y,z)) fieldsNterms
     val params' = map (Proof_Context.check_tfree ctxt3) params;
-    val cid = case raw_parent of
-                NONE => DOF_core.default_cid
-              | SOME X => X
-    val gen_antiquot = DocAttrParser.doc_class_ref_antiquotation
-(*    fun setup_antiquot thy = let val _ = Theory.setup (gen_antiquot  binding cid)
-                             in thy end 
- *)
-     fun setup_antiquot thy = let val _ = Theory.setup (gen_antiquot  Binding.empty cid)
-                             in thy end 
+    val cid = case raw_parent of  (* why the parent ? ? ? *)
+                NONE =>   DOF_core.default_cid
+              | SOME X => DOF_core.name2doc_class_name thy X
+    val gen_antiquotation = OntoLinkParser.doc_class_ref_antiquotation
+
   in thy |> Record.add_record overloaded (params', binding) parent fields 
          |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms'
-    (*     |> setup_antiquot *)
+         |> gen_antiquotation binding cid (* defines the ontology-checked
+                                             text antiquotation to this document class *)
   end;
 
 
 val _ =
   Outer_Syntax.command @{command_keyword doc_class} "define document class"
-    (Parse_Spec.overloaded 
-        -- (Parse.type_args_constrained  -- Parse.binding) 
-        -- (@{keyword "="} |-- Scan.option (Parse.typ --| @{keyword "+"}) 
-            -- Scan.repeat1 (Parse.const_binding -- Scan.option (@{keyword "<="} |-- Parse.term)))
-            -- Scan.repeat (@{keyword "where"} |-- Parse.term) 
+    ((Parse_Spec.overloaded 
+     -- (Parse.type_args_constrained  -- Parse.binding) 
+     -- (@{keyword "="} 
+     |-- Scan.option (Parse.typ --| @{keyword "+"}) 
+     -- Scan.repeat1 
+             (Parse.const_binding -- Scan.option (@{keyword "<="} |-- Parse.term)))
+     -- Scan.repeat (@{keyword "where"} |-- Parse.term)) 
     >> (fn (((overloaded, x), (y, z)),rex) =>
-        Toplevel.theory (add_doc_class_cmd {overloaded = overloaded} x y z rex)));
+           Toplevel.theory (add_doc_class_cmd {overloaded = overloaded} x y z rex)));
+
+end (* struct *)
 
 *}  
 
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
 section{* Testing and Validation *}
 ML{* (* Parsing combinators in Scan *)
@@ -527,38 +548,27 @@ ML{* (* Parsing combinators in Scan *)
      op --| : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> 'b * 'e;
      Scan.repeat : ('a -> 'b * 'a) -> 'a -> 'b list * 'a;
      Scan.option : ('a -> 'b * 'a) -> 'a -> 'b option * 'a;
+*}
+ML{*
 Binding.print;
 Syntax.read_sort;
 Syntax.read_typ;
 Syntax.read_term;
 Syntax.pretty_typ;
+
 *}  
   
-  
-(* Look at this thingi ... *)  
-ML \<open>
-fun document_command markdown (loc, txt) =
-  Toplevel.keep 
-    (fn state => (case loc of
-                   NONE => ignore (Thy_Output.output_text state markdown txt)
-                 | SOME (_, pos) => error ("Illegal target specification -- not a theory context" 
-                                    ^ Position.here pos))) 
-  o Toplevel.present_local_theory loc 
-      (fn state => ignore (Thy_Output.output_text state markdown txt));
-
-\<close>  
-
-text{* @{theory "Nat"} @{thm refl}*}
 ML\<open>
 open Markup;
 Markup.binding;
 open Position;
+open Binding;
 Position.line;
+
 Context.Theory; 
 Context_Position.report_generic;
 Context_Position.report;
 Term_Style.parse;
-open Binding;
 \<close>
   
 end

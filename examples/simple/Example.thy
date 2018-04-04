@@ -8,7 +8,8 @@ section{* Some show-off's of general antiquotations. *}
   
 (* some show-off of standard anti-quotations: *) 
 print_attributes
-  print_antiquotations
+print_antiquotations
+
 text{*  @{thm refl}  of name @{thm [source] refl} 
         @{thm[mode=Rule] conjI}
         @{file "../../Isa_DOF.thy"} 
@@ -20,6 +21,61 @@ text{*  @{thm refl}  of name @{thm [source] refl}
         @{term [show_types] "f x = a + x"} *}
    
 
+section{* Example *}
+
+text*[ass1::assumption] {* Brexit means Brexit *}
+
+text*[hyp1::hypothesis] {* P means not P *}
+  
+  
+text*[ass122::srac] {* The overall sampling frequence of the odometer
+subsystem is therefore 14 khz, which includes sampling, computing and
+result communication times... *}
+  
+text*[t10::test_result] {* This is a meta-test. This could be an ML-command
+that governs the external test-execution via, eg., a makefile or specific calls
+to a test-environment or test-engine *}
+
+
+text \<open> As established by @{docref (unchecked) \<open>t10\<close>}, 
+                         @{docref (define) \<open>t10\<close>}
+       the               @{docref  \<open>t10\<close>}
+       the               @{docref \<open>ass122\<close>}
+     \<close>  
+text \<open> safety related applicability condition @{srac \<open>ass122\<close>}.
+       exported constraint @{ec \<open>ass122\<close>}.       
+     \<close>
+  
+text{*
+   And some ontologically inconsistent reference:
+    @{hypothesis \<open>ass1\<close>} as well as 
+    
+*} 
+-- "very wrong"
+
+text{*
+   And some ontologically inconsistent reference:
+    @{assumption \<open>hyp1\<close>} as well as 
+    
+*} 
+-- "very wrong"
+
+  
+  
+text{*
+   And some ontologically inconsistent reference:
+    @{test_result \<open>ass122\<close>} as well as 
+    
+*} 
+-- wrong  
+  
+text{*
+   And some other ontologically inconsistent reference:
+    @{ec \<open>t10\<close>} as well as  
+*} 
+-- wrong  
+  
+  
 
 section{* Some Tests for Ontology Framework and its CENELEC Instance *}  
 

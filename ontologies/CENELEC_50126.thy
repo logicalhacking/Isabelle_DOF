@@ -62,7 +62,7 @@ doc_class assumption = requirement +
 text{*The category @{emph \<open>exported constraint\<close>} (or @{emph \<open>ec\<close>} for short) 
       is used for formal assumptions, that arise during the analysis,
       design or implementation and have to be tracked till the final
-      evaluation target,and discharged by appropriate validation procedures 
+      evaluation target, and discharged by appropriate validation procedures 
       within the certification process, by it by test or proof. *}
 
 doc_class ec = assumption  +
@@ -144,46 +144,6 @@ doc_class test_documentation =
 
 
 
-
-section{* Example *}
-
-text*[ass122::srac] {* The overall sampling frequence of the odometer
-subsystem is therefore 14 khz, which includes sampling, computing and
-result communication times... *}
-  
-text*[t10::test_result] {* This is a meta-test. This could be an ML-command
-that governs the external test-execution via, eg., a makefile or specific calls
-to a test-environment or test-engine *}
-
-
-text \<open> As established by @{docref (unchecked) \<open>t10\<close>}, 
-                         @{docref (define) \<open>t10\<close>}
-       the               @{docref  \<open>t10\<close>}
-       assumption @{docref \<open>ass122\<close>} is validated. \<close>
-
-                               
-section{* Provisory Setup *}
-
-(* Hack: This should be generated automatically: *)
-ML{*
-val _ = Theory.setup
-        ((DocAttrParser.doc_class_ref_antiquotation @{binding srac}     
-                                              (DOF_core.name2doc_class_name @{theory} "srac")
-                                               ) #>
-         (DocAttrParser.doc_class_ref_antiquotation @{binding ec}
-                                              (DOF_core.name2doc_class_name @{theory} "ec")
-                                              )#>
-         (DocAttrParser.doc_class_ref_antiquotation @{binding test_specification}
-                                              (DOF_core.name2doc_class_name @{theory} "test_specification")
-                                              ))
-
-*}
-
-
-
-
-  
-  
   
 section{* Testing and Validation *}
 
@@ -193,9 +153,11 @@ DOF_core.name2doc_class_name @{theory} "requirement";
 DOF_core.name2doc_class_name @{theory} "srac";
 DOF_core.is_defined_cid_global "srac" @{theory};
 DOF_core.is_defined_cid_global "ec" @{theory};
-
+"hallo";
+DOF_core.is_subclass @{context} "CENELEC_50126.ec" "CENELEC_50126.ec";
 DOF_core.is_subclass @{context} "CENELEC_50126.srac" "CENELEC_50126.ec";
 DOF_core.is_subclass @{context} "CENELEC_50126.ec"   "CENELEC_50126.srac";
+DOF_core.is_subclass @{context} "CENELEC_50126.ec"   "CENELEC_50126.test_requirement";
 
 val ({maxano, tab},tab2) = DOF_core.get_data @{context};
 Symtab.dest tab;
