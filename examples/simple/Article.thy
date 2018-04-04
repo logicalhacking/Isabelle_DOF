@@ -1,9 +1,11 @@
+(* << *)  
 theory Article 
   imports "../../ontologies/LNCS_onto"
 begin
-
-open_monitor[onto::article]  
+(* >> *) 
   
+open_monitor*[onto::article]  
+
 text*[tit::title]{* Using The Isabelle Ontology Framework*} 
   
 text*[stit::subtitle] \<open>Linking the Formal with the Informal\<close>
@@ -12,14 +14,12 @@ text*[auth1::author, affiliation="Université Paris-Sud"]\<open>Burkhart Wolff\<
     
 text*[abs::abstract, keyword_list="[]"] {* Isabelle/Isar is a system 
 framework with many similarities to Eclipse; it is mostly known as part of 
-Isabelle/HOL, an interactive theorem proving and code generation
-environment. Recently, an Document Ontology Framework has been
-developed as a plugin in Isabelle/Isar, allowing to do both 
-conventional typesetting \emph{as well} as formal development.
-A particular asset is the possibility to control the links 
+Isabelle/HOL, an interactive theorem proving and code generation environment. 
+Recently, an Document Ontology Framework has been developed as a plugin in 
+Isabelle/Isar, allowing to do both conventional typesetting \emph{as well} 
+as formal development. A particular asset is the possibility to control the links 
 between the formal and informal aspects of a document
-via (a novel use of) Isabelle's antiquotation mechanism.
- *}
+via (a novel use of) Isabelle's antiquotation mechanism. *}
   
 section*[intro::introduction, comment="''This is a comment''"]{* Introduction *} 
 text{* Lorem ipsum dolor sit amet, suspendisse non arcu malesuada mollis, nibh morbi, 
@@ -56,7 +56,9 @@ text{*
 subsection{* Discussion *}  
 text{* Lorem ipsum dolor sit amet, suspendisse non arcu malesuada mollis, nibh morbi, ... *}
 
-close_monitor[onto]  
-  
+close_monitor*[onto]  
+
+(* << *)    
 end
+(* >> *)    
   

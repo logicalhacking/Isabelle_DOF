@@ -9,7 +9,7 @@ Common Criteria identifies:
   (for the moment: defined by regular expressions describing the
    order of category instances in the overall document as a regular language)
  *}  
-  
+
 theory CENELEC_50126
   imports "../Isa_DOF"
 begin
