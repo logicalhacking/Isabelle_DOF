@@ -63,11 +63,11 @@ struct
    fun  is_subclass0 (tab:docclass_tab) s t =
         let val _ = case Symtab.lookup tab t of 
                           NONE => if t <> default_cid 
-                                  then error "document superclass not defined"
+                                  then error ("document superclass not defined: "^t) 
                                   else default_cid
                        |  SOME _ => ""
             fun father_is_sub s = case Symtab.lookup tab s of 
-                          NONE => error "document subclass not defined"
+                          NONE => error ("document subclass not defined: "^s)
                        |  SOME ({inherits_from=NONE, ...}) => s = t
                        |  SOME ({inherits_from=SOME (_,s'), ...}) => 
                                   s' = t orelse father_is_sub s' 
@@ -446,19 +446,12 @@ fun doc_class_ref_antiquotation name cid_decl =
     let fun open_par x = if x then "\\label{" 
                          else      "\\autoref{"
         val close = "}"
-        val _ = writeln ("XXX" ^ cid_decl) 
-        fun cid_decl' ctxt = let val thy = (Proof_Context.theory_of ctxt)
-                                 val str  = (Binding.name_of name)
-                                 val name = DOF_core.name2doc_class_name thy str
-                                 val _ = writeln ("YYY" ^  name)
-                             in str end                             
     in
         Thy_Output.antiquotation name (Scan.lift (doc_ref_modes -- Args.cartouche_input))
             (fn {context = ctxt, source = src:Token.src, state} =>
                  fn ({unchecked = x, define= y}, source:Input.source) => 
                      (Thy_Output.output_text state {markdown=false} #>
                       check_and_mark ctxt 
-                                     (* (cid_decl' ctxt) *) 
                                      cid_decl 
                                      ({strict_checking = not x})
                                      (Input.pos_of source) #>
@@ -506,15 +499,14 @@ fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdef
     val fieldsNterms = (map (fn (a,b,_) => (a,b)) fields) ~~ terms
     val fieldsNterms' = map (fn ((x,y),z) => (x,y,z)) fieldsNterms
     val params' = map (Proof_Context.check_tfree ctxt3) params;
-    val cid = case raw_parent of  (* why the parent ? ? ? *)
-                NONE =>   DOF_core.default_cid
-              | SOME X => DOF_core.name2doc_class_name thy X
+
+    fun cid thy = DOF_core.name2doc_class_name thy (Binding.name_of binding)
     val gen_antiquotation = OntoLinkParser.doc_class_ref_antiquotation
 
   in thy |> Record.add_record overloaded (params', binding) parent fields 
          |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms'
-         |> gen_antiquotation binding cid (* defines the ontology-checked
-                                             text antiquotation to this document class *)
+         |> (fn thy => gen_antiquotation binding (cid thy) thy) 
+            (* defines the ontology-checked text antiquotation to this document class *)
   end;
 
 
