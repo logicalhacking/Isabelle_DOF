@@ -6,15 +6,18 @@ begin
 section{* Some show-off's of general antiquotations. *}
 
   
-(* some show-off of standard anti-quotations: *)  
-text{* @{thm refl} 
-       @{file "../../Isa_DOF.thy"} 
-       @{value "3+4::int"} 
-       @{const hd} 
-       @{theory List}}
-       @{term "3"} 
-       @{type bool}  
-       @{term [show_types] "f x = a + x"} *}
+(* some show-off of standard anti-quotations: *) 
+print_attributes
+  print_antiquotations
+text{*  @{thm refl}  of name @{thm [source] refl} 
+        @{thm[mode=Rule] conjI}
+        @{file "../../Isa_DOF.thy"} 
+        @{value "3+4::int"} 
+        @{const hd} 
+        @{theory List}}
+        @{term "3"} 
+        @{type bool}  
+        @{term [show_types] "f x = a + x"} *}
    
 
 
@@ -89,8 +92,6 @@ term "a + b = b + a"
   
 section(in order){* sdfsdf*}  (* undocumented trouvaille when analysing the code *) 
 
-  
-  
   
 end
   
