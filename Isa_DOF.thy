@@ -11,7 +11,8 @@ that provide direct support in the PIDE framework. *}
 theory Isa_DOF   (* Isabelle Document Ontology Framework *)
   imports  Main (* Isa_MOF *)
   keywords "section*"    "subsection*"   "subsubsection*" 
-           "paragraph*"  "subparagraph*" "text*" "declare_reference"::thy_decl
+           "paragraph*"  "subparagraph*" "text*" 
+           "open_monitor" "close_monitor" "declare_reference"::thy_decl
            and
            "doc_class" :: thy_decl 
   
@@ -386,6 +387,15 @@ val _ =
   Outer_Syntax.command @{command_keyword "declare_reference"} "declare document reference"
     (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
                                   (Toplevel.theory (DOF_core.declare_object_global oid))));
+
+val _ =
+  Outer_Syntax.command @{command_keyword "open_monitor"} "open a document reference monitor"
+    (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
+                                  (Toplevel.theory (DOF_core.declare_object_global oid))));
+
+val _ =
+  Outer_Syntax.command @{command_keyword "close_monitor"} "close a document reference monitor"
+    (attributes >> (fn (((oid,pos),cid),doc_attrs) => (Toplevel.theory (I)))); (* dummy so far *)
 
 end (* struct *)
 

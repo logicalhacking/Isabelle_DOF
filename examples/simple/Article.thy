@@ -1,6 +1,8 @@
 theory Article 
   imports "../../ontologies/LNCS_onto"
 begin
+
+open_monitor[onto::article]  
   
 text*[tit::title]{* Using The Isabelle Ontology Framework*} 
   
@@ -36,28 +38,12 @@ subsection*[scholar_onto::example]{* A Scholar Paper: Eating one's own dogfood. 
   
 subsection*[mathex_onto::example]{* Math-Exercise *}  
   
-subsection*[cenelec_onto::example]{* CENELEC  *}  
-
 section*[con::conclusion]{* Future Work: Monitoring Classes *}    
-text{* Lorem ipsum dolor sit amet, suspendisse non arcu malesuada mollis, nibh morbi, ...
-
-The control of monitors is done by the commands:
-\<bullet> open_monitor  <doc-class>
-\<bullet> close_monitor <doc-class> 
-where the automaton of the monitor class is expected
-to be in a final state.
-
-Monitors can be nested, so it is possible to "overlay" one or more monitoring 
-classes and imposing different sets of structural constraints in a 
-
-Classes neither directly or via inheritance indirectly
-mentioned in the monitor are @{bold \<open>nested\<close>}
-from a monitor and may occur freely. 
-*}
+text{* Lorem ipsum dolor sit amet, suspendisse non arcu malesuada mollis, nibh morbi, ... *}
 
 subsection*[related::related_work]{* Related Work *}
 text{* 
-\<bullet> XML and dtd's, 
+\<bullet> @{bold  \<open>XML\<close>} and dtd's, 
 \<bullet> OWL and Protege, 
 \<bullet> LaTeX setups such as ... 
   @{url "https://pdi.fbk.eu/technologies/tex-owl-latex-style-syntax-authoring-owl-2-ontologies"} 
@@ -66,8 +52,11 @@ text{*
 \<bullet> AADL Alisa, 
 \<bullet> RATP Ovado
 *}  
+  
 subsection{* Discussion *}  
- 
+text{* Lorem ipsum dolor sit amet, suspendisse non arcu malesuada mollis, nibh morbi, ... *}
+
+close_monitor[onto]  
   
 end
   
