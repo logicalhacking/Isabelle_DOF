@@ -482,32 +482,32 @@ fun map_option _ NONE = NONE
    |map_option f (SOME x) = SOME (f x)
 
 fun read_fields raw_fields ctxt =
-  let
-    val Ts = Syntax.read_typs ctxt (map (fn ((_, raw_T, _),_) => raw_T) raw_fields);
-    val terms = map ((map_option (Syntax.read_term ctxt)) o snd) raw_fields
-    val fields = map2 (fn ((x, _, mx),_) => fn T => (x, T, mx)) raw_fields Ts;
-    val ctxt' = fold Variable.declare_typ Ts ctxt;
-  in (fields, terms, ctxt') end;
+    let
+      val Ts = Syntax.read_typs ctxt (map (fn ((_, raw_T, _),_) => raw_T) raw_fields);
+      val terms = map ((map_option (Syntax.read_term ctxt)) o snd) raw_fields
+      val fields = map2 (fn ((x, _, mx),_) => fn T => (x, T, mx)) raw_fields Ts;
+      val ctxt' = fold Variable.declare_typ Ts ctxt;
+    in (fields, terms, ctxt') end;
 
 fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdefaults _ thy =
-  let
-    val ctxt = Proof_Context.init_global thy;
-    val params = map (apsnd (Typedecl.read_constraint ctxt)) raw_params;
-    val ctxt1 = fold (Variable.declare_typ o TFree) params ctxt;
-    val (parent, ctxt2) = read_parent raw_parent ctxt1;
-    val (fields, terms, ctxt3) = read_fields raw_fieldsNdefaults ctxt2;
-    val fieldsNterms = (map (fn (a,b,_) => (a,b)) fields) ~~ terms
-    val fieldsNterms' = map (fn ((x,y),z) => (x,y,z)) fieldsNterms
-    val params' = map (Proof_Context.check_tfree ctxt3) params;
-
-    fun cid thy = DOF_core.name2doc_class_name thy (Binding.name_of binding)
-    val gen_antiquotation = OntoLinkParser.doc_class_ref_antiquotation
-
-  in thy |> Record.add_record overloaded (params', binding) parent fields 
-         |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms'
-         |> (fn thy => gen_antiquotation binding (cid thy) thy) 
-            (* defines the ontology-checked text antiquotation to this document class *)
-  end;
+    let
+      val ctxt = Proof_Context.init_global thy;
+      val params = map (apsnd (Typedecl.read_constraint ctxt)) raw_params;
+      val ctxt1 = fold (Variable.declare_typ o TFree) params ctxt;
+      val (parent, ctxt2) = read_parent raw_parent ctxt1;
+      val (fields, terms, ctxt3) = read_fields raw_fieldsNdefaults ctxt2;
+      val fieldsNterms = (map (fn (a,b,_) => (a,b)) fields) ~~ terms
+      val fieldsNterms' = map (fn ((x,y),z) => (x,y,z)) fieldsNterms
+      val params' = map (Proof_Context.check_tfree ctxt3) params;
+   
+      fun cid thy = DOF_core.name2doc_class_name thy (Binding.name_of binding)
+      val gen_antiquotation = OntoLinkParser.doc_class_ref_antiquotation
+   
+    in thy |> Record.add_record overloaded (params', binding) parent fields 
+           |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms'
+           |> (fn thy => gen_antiquotation binding (cid thy) thy) 
+              (* defines the ontology-checked text antiquotation to this document class *)
+    end;
 
 
 val _ =
