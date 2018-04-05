@@ -12,7 +12,8 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
   imports  Main (* Isa_MOF *)
   keywords "section*"    "subsection*"   "subsubsection*" 
            "paragraph*"  "subparagraph*" "text*" 
-           "open_monitor*" "close_monitor*" "declare_reference*"::thy_decl
+           "open_monitor*" "close_monitor*" "declare_reference*" 
+           "update_instance*" ::thy_decl
            and
            "doc_class" :: thy_decl 
   
@@ -299,15 +300,30 @@ val attribute =
     Parse.position Parse.name 
     -- Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.name) "";
 
+val attribute_upd =
+    Parse.position Parse.name 
+    -- (Parse.$$$ "+=" || Parse.$$$ "=") 
+    -- Parse.!!! Parse.name;
 
+(*
+Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ uncheckedN)
+*)
 val reference =
     Parse.position Parse.name 
     -- Scan.option (Parse.$$$ "::" |-- Parse.!!! (Parse.position Parse.name));
 
 
-val attributes =  (Parse.$$$ "[" |-- (reference -- 
-                                     (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) []))
-                                  --| Parse.$$$ "]"
+val attributes =  
+    (Parse.$$$ "[" 
+     |-- (reference -- 
+         (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) []))
+     --| Parse.$$$ "]"
+
+val attributes_upd =  
+    (Parse.$$$ "[" 
+     |-- (reference -- 
+         (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute_upd))) []))
+     --| Parse.$$$ "]"
 
 
 fun enriched_document_command markdown (((((oid,pos),cid_pos),doc_attrs),
@@ -384,18 +400,28 @@ val _ =
       >> enriched_document_command {markdown = false});
 
 val _ =
-  Outer_Syntax.command @{command_keyword "declare_reference*"} "declare document reference"
-    (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
-                                  (Toplevel.theory (DOF_core.declare_object_global oid))));
+  Outer_Syntax.command @{command_keyword "declare_reference*"} 
+                       "declare document reference"
+                       (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
+                                      (Toplevel.theory (DOF_core.declare_object_global oid))));
 
 val _ =
-  Outer_Syntax.command @{command_keyword "open_monitor*"} "open a document reference monitor"
-    (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
-                                  (Toplevel.theory (DOF_core.declare_object_global oid))));
+  Outer_Syntax.command @{command_keyword "open_monitor*"} 
+                       "open a document reference monitor"
+                       (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
+                                       (Toplevel.theory (DOF_core.declare_object_global oid))));
 
 val _ =
-  Outer_Syntax.command @{command_keyword "close_monitor*"} "close a document reference monitor"
-    (attributes >> (fn (((oid,pos),cid),doc_attrs) => (Toplevel.theory (I)))); (* dummy so far *)
+  Outer_Syntax.command @{command_keyword "close_monitor*"} 
+                       "close a document reference monitor"
+                       (attributes >> (fn (((oid,pos),cid),doc_attrs) => 
+                                          (Toplevel.theory (I)))); (* dummy so far *)
+
+val _ =
+  Outer_Syntax.command @{command_keyword "update_instance*"} 
+                       "update meta-attributes of an instance of a document class"
+                       (attributes_upd >> (fn (((oid,pos),cid),doc_attrs) => 
+                                              (Toplevel.theory (I)))); (* dummy so far *)
 
 end (* struct *)
 
