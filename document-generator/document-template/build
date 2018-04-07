@@ -34,6 +34,21 @@ set -e
 ROOT_NAME="root_$NAME"
 [ ! -f "$DIR/$ROOT_NAME.tex" ] && ROOT_NAME="root"
 
+if [ ! -f $ISABELLE_HOME_USER/DOF/lib/dof_latex_converter.jar ]; then
+    echo ""
+    echo "                         Warning"
+    echo "                         ======="
+    echo "This is a Isabelle_DOF project. The document preparation requires"
+    echo "the Isabelle_DOF framework. Please obtain the framework by cloning"
+    echo "the Isabelle_DOF git repository, i.e.: "
+    echo "    git clone https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF"
+    echo "You can install the framework as follows:"
+    echo "    cd Isabelle_DOF/document-generator"
+    echo "    ./install"
+    echo ""
+    exit 1
+fi
+
 $ISABELLE_TOOL scala $ISABELLE_HOME_USER/DOF/lib/dof_latex_converter.jar .
 
 cp $ISABELLE_HOME_USER/DOF/latex/DOF.sty .
