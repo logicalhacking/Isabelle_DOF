@@ -1,6 +1,5 @@
 theory Example
   imports  "../../ontologies/CENELEC_50126"
-  keywords "Term" :: diag 
 begin
 
 section{* Some show-off's of general antiquotations. *}
@@ -19,10 +18,11 @@ text{*  @{thm refl}  of name @{thm [source] refl}
         @{term "3"} 
         @{type bool}  
         @{term [show_types] "f x = a + x"} *}
-   
 
 section{* Example *}
 
+text*[tralala] {* Brexit means Brexit *}
+  
 text*[ass1::assumption] {* Brexit means Brexit *}
 
 text*[hyp1::hypothesis] {* P means not P *}
@@ -38,52 +38,38 @@ to a test-environment or test-engine *}
 
 
 text \<open> As established by @{docref (unchecked) \<open>t10\<close>}, 
-                         @{docref (define) \<open>t10\<close>}
-       the               @{docref  \<open>t10\<close>}
+                         @{docref (define) \<open>t10\<close>} \<close>
+text \<open> the               @{docref \<open>t10\<close>}
        the               @{docref \<open>ass122\<close>}
      \<close>  
-text \<open> safety related applicability condition @{srac \<open>ass122\<close>}.
-       exported constraint @{ec \<open>ass122\<close>}.       
+text \<open> safety related applicability condition @{srac \<open>ass122\<close>}. \<close>
+text \<open> exported constraint @{ec \<open>ass122\<close>}.       
      \<close>
   
-text{*
-   And some ontologically inconsistent reference:
-    @{hypothesis \<open>ass1\<close>} as well as 
-    
-*} 
--- "very wrong"
+text{*  And some ontologically inconsistent reference: @{hypothesis \<open>ass1\<close>} as well as  *} 
+-- wrong
 
-text{*
-   And some ontologically inconsistent reference:
-    @{assumption \<open>hyp1\<close>} as well as 
-    
-*} 
--- "very wrong"
+text{* ... some more ontologically inconsistent reference: @{assumption \<open>hyp1\<close>} as well as  *} 
+-- wrong
 
   
   
-text{*
-   And some ontologically inconsistent reference:
-    @{test_result \<open>ass122\<close>} as well as 
-    
-*} 
+text{* And a further ontologically totally inconsistent reference:
+    @{test_result \<open>ass122\<close>} as well as ... *} 
 -- wrong  
   
-text{*
-   And some other ontologically inconsistent reference:
-    @{ec \<open>t10\<close>} as well as  
-*} 
+text{* the ontologically inconsistent reference: @{ec \<open>t10\<close>}  *} 
 -- wrong  
   
   
 
 section{* Some Tests for Ontology Framework and its CENELEC Instance *}  
 
-declare_reference [lalala::requirement, alpha="main", beta=42]
+declare_reference* [lalala::requirement, alpha="main", beta=42]
 
-declare_reference [lalala::quod] (* shouldn't work *)
+declare_reference* [lalala::quod] (* shouldn't work *)
 
-declare_reference [blablabla::cid, alpha="beta sdf", beta=gamma, delta=dfg_fgh\<^sub>1]
+declare_reference* [blablabla::cid, alpha="beta sdf", beta=gamma, delta=dfg_fgh\<^sub>1]
   
 paragraph*[sdf]{* just a paragraph *}  
 paragraph* [sdfk] \<open> just a paragraph - lexical variant \<close>  
@@ -117,34 +103,7 @@ text{* Here is a reference to @{docref \<open>sedf\<close>} *}
    Try to hover over the sedf - link and activate it !!! *)
  
 
-
-
-
-
-
-
-
-
-
-
-  
-section{* A Small Example for a Command Definition --- just to see how this works in principle. *}
-
-ML{* 
-val opt_modes =
-  Scan.optional (@{keyword "("} |-- Parse.!!! (Scan.repeat1 Parse.name --| @{keyword ")"})) [];
-
-val _ =
-  Outer_Syntax.command @{command_keyword Term} "read and print term"
-    (opt_modes -- Parse.term >> Isar_Cmd.print_term);
-
-*}
-
-lemma "True" by simp
-  
-Term "a + b = b + a"
-
-term "a + b = b + a"  
+section{* Miscellaneous ...*}
   
 section(in order){* sdfsdf*}  (* undocumented trouvaille when analysing the code *) 
 
