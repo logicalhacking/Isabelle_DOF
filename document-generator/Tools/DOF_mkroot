@@ -90,8 +90,6 @@ else
 fi
 
 
-[ -z "$NAME" ] && NAME="$(basename "$(cd "$DIR"; pwd -P)")"
-
 if [ "$DOC" = true ]; then
   $ISABELLE_TOOL mkroot -d -n "$NAME"
   echo "    \"build\"" >> ROOT
