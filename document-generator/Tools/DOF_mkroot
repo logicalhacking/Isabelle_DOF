@@ -91,12 +91,12 @@ fi
 
 
 if [ "$DOC" = true ]; then
-  $ISABELLE_TOOL mkroot -d -n "$NAME"
-  echo "    \"build\"" >> ROOT
+  $ISABELLE_TOOL mkroot -d -n "$NAME" "$DIR"
+  echo "    \"build\"" >> "$DIR"/ROOT
   TITLE=$(echo "$NAME" | tr _ - | tr -d '\\')
   AUTHOR=$(echo "By $USER" | tr _ - | tr -d '\\')
-  cp "$ISABELLE_HOME_USER/DOF/document-template"/* document/
-  sed -i -e "s/<AUTHOR>/$AUTHOR/" -e "s/<TITLE>/$TITLE/" document/root.tex
+  cp "$ISABELLE_HOME_USER/DOF/document-template"/* "$DIR"/document/
+  sed -i -e "s/<AUTHOR>/$AUTHOR/" -e "s/<TITLE>/$TITLE/" "$DIR"/document/root.tex
 else
     $ISABELLE_TOOL mkroot -n "$NAME"
 fi
