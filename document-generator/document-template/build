@@ -36,8 +36,8 @@ ROOT_NAME="root_$NAME"
 
 if [ ! -f $ISABELLE_HOME_USER/DOF/lib/dof_latex_converter.jar ]; then
     echo ""
-    echo "                         Warning"
-    echo "                         ======="
+    echo "Warning: Isabelle DOF not installed"
+    echo "========"
     echo "This is a Isabelle_DOF project. The document preparation requires"
     echo "the Isabelle_DOF framework. Please obtain the framework by cloning"
     echo "the Isabelle_DOF git repository, i.e.: "
@@ -46,6 +46,24 @@ if [ ! -f $ISABELLE_HOME_USER/DOF/lib/dof_latex_converter.jar ]; then
     echo "    cd Isabelle_DOF/document-generator"
     echo "    ./install"
     echo ""
+    exit 1
+fi
+
+VERSION=$($ISABELLE_TOOL scala $ISABELLE_HOME_USER/DOF/lib/dof_latex_converter.jar -v) || true
+
+if [ "$VERSION" != "<VERSION>" ]; then 
+    echo ""
+    echo "Warning: Isabelle DOF version mismatch"
+    echo "========"
+    echo " Build script version:        <VERSION>"
+    echo " DOF LaTeX Converter version: $VERSION"
+    echo " Please take one of the following actions:"
+    echo " * If the build script is more recent than the converter, "
+    echo "   then update the build script from your your Isabelle DOF"
+    echo "   installation:"
+    echo "   $ISABELLE_HOME_USER/DOF/document-template/build"
+    echo " * If the converter is more recent than the build script,"
+    echo "   please update your Isabelle DOF installation."
     exit 1
 fi
 
