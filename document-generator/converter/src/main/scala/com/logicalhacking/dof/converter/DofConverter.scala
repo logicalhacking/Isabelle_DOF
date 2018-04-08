@@ -106,6 +106,7 @@ object DofConverter {
         println(texFiles)                                      
         val errors = texFiles.map(file => convertFile(file)).flatten
         if(!errors.isEmpty) {
+            println()
             println("DOF LaTeX converter error(s):")
             println("=============================")
             errors.map{case (file:String, err:LaTeXLexerError) => println(file + ": " + err)}
