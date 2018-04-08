@@ -25,7 +25,7 @@ text*[tralala] {* Brexit means Brexit *}
   
 text*[ass1::assumption] {* Brexit means Brexit *}
 
-text*[hyp1::hypothesis] {* P means not P *}
+text*[hyp1::hypothesis] {* P inequal NP *}
   
   
 text*[ass122::srac] {* The overall sampling frequence of the odometer
@@ -39,7 +39,7 @@ to a test-environment or test-engine *}
 
 text \<open> As established by @{docref (unchecked) \<open>t10\<close>}, 
                          @{docref (define) \<open>t10\<close>} \<close>
-text \<open> the               @{docref \<open>t10\<close>}
+text \<open> the               @{docref \<open>t10\<close>}                      
        the               @{docref \<open>ass122\<close>}
      \<close>  
 text \<open> safety related applicability condition @{srac \<open>ass122\<close>}. \<close>

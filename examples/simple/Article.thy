@@ -31,7 +31,17 @@ sed nibh ut lorem integer, maecenas sed mi purus non nunc, morbi pretium tortor.
 section*[bgrnd::text_section]{* Background: Isabelle and Isabelle_DOF *}  
 text{* As mentioned in @{introduction \<open>intro\<close>} ... *} 
 
-update_instance*[bgrnd, main_author = "Some(''bu'')"] 
+  term "a + b = b + a"
+
+(*
+@{term ''a + b = b + a''}
+@{typ ''a list''}
+@{thm ''refl''}
+@{thms ''[refl,sym]''}
+*)    
+    
+
+update_instance*[bgrnd, main_author = "Some(''bu'')", formula="@{term ''a + b = b + a''}"] 
   
 section*[ontomod::technical]{* Modeling Ontologies in Isabelle_DOF *} 
 text{* Lorem ipsum dolor sit amet, suspendisse non arcu malesuada mollis, nibh morbi,*}
