@@ -94,7 +94,7 @@ object LaTeXLexer extends RegexParsers {
   def end_env        = end0   ~ arg    ^^ {case end_txt   ~ arg => ENDENV  (end_txt,arg)}
                                  
   def command: Parser[COMMAND] = {
-               "\\\\[a-zA-Z0-9][a-zA-Z0-9*]*".r ^^ { str => COMMAND(str) }
+               "\\\\[<>a-zA-Z0-9][a-zA-Z0-9*]*".r ^^ { str => COMMAND(str) }
   }
 
   def vbackslash     = "\\\\"      ^^ (_ => VBACKSLASH    ) 
@@ -104,7 +104,7 @@ object LaTeXLexer extends RegexParsers {
   def vcurlyclose    = "\\}"       ^^ (_ => VCURLYCLOSE   ) 
   def vbracketopen   = "\\["       ^^ (_ => VBRACKETOPEN  ) 
   def vbracketclose  = "\\]"       ^^ (_ => VBRACKETCLOSE ) 
-  def newline        = "\n"        ^^ (_ => NEWLINE ) 
+  def newline        = "\n"        ^^ (_ => NEWLINE       ) 
   def curlyopen      = "{"         ^^ (_ => CURLYOPEN     ) 
   def curlyclose     = "}"         ^^ (_ => CURLYCLOSE    ) 
   def bracketopen    = "["         ^^ (_ => BRACKETOPEN   ) 
