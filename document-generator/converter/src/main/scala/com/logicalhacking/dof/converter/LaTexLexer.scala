@@ -44,6 +44,7 @@ case class  ENDENV  (prelude: String, str: String) extends LaTeXToken
 case object VBACKSLASH            extends LaTeXToken  /* verbatim backslash */
 case object VSPACE                extends LaTeXToken  /* verbatim space */
 case object VTILDE                extends LaTeXToken  /* verbatim tilde */
+case object VUNDERSCORE           extends LaTeXToken  /* verbatim underscore */
 case object VCURLYOPEN            extends LaTeXToken  /* verbatim curly bracket open */
 case object VCURLYCLOSE           extends LaTeXToken  /* verbatim curly bracket close */
 case object VBRACKETOPEN          extends LaTeXToken  /* verbatim square bracket open */
@@ -94,12 +95,13 @@ object LaTeXLexer extends RegexParsers {
   def end_env        = end0   ~ arg    ^^ {case end_txt   ~ arg => ENDENV  (end_txt,arg)}
                                  
   def command: Parser[COMMAND] = {
-               "\\\\[<>a-zA-Z0-9][a-zA-Z0-9*]*".r ^^ { str => COMMAND(str) }
+               "\\\\[<>a-zA-Z0-9][<>a-zA-Z0-9*]*".r ^^ { str => COMMAND(str) }
   }
 
   def vbackslash     = "\\\\"      ^^ (_ => VBACKSLASH    ) 
   def vspace         = "\\ "       ^^ (_ => VSPACE        )   
   def vtilde         = "\\~"       ^^ (_ => VTILDE        )   
+  def vunderscore    = "\\_"       ^^ (_ => VUNDERSCORE   )   
   def vcurlyopen     = "\\{"       ^^ (_ => VCURLYOPEN    ) 
   def vcurlyclose    = "\\}"       ^^ (_ => VCURLYCLOSE   ) 
   def vbracketopen   = "\\["       ^^ (_ => VBRACKETOPEN  ) 
@@ -112,7 +114,7 @@ object LaTeXLexer extends RegexParsers {
   
   def tokens: Parser[List[LaTeXToken]] = {
     phrase(rep1( raw_text   |
-                 vbackslash | vspace       | vtilde |
+                 vbackslash | vspace       | vtilde | vunderscore |
                  vcurlyopen | vcurlyclose  | vbracketopen | vbracketclose |
                  curlyopen  | curlyclose   | bracketopen  | bracketclose  |
                  newline    | begin_env  | end_env      | command)) 
@@ -134,6 +136,7 @@ object LaTeXLexer extends RegexParsers {
         case Some(VBACKSLASH)        => {print("\\\\"); printTokens(tokens.tail)}
         case Some(VSPACE)            => {print("\\ "); printTokens(tokens.tail)}
         case Some(VTILDE)            => {print("\\~"); printTokens(tokens.tail)}
+        case Some(VUNDERSCORE)       => {print("""\_"""); printTokens(tokens.tail)}
         case Some(VCURLYOPEN)        => {print("\\{"); printTokens(tokens.tail)}
         case Some(VCURLYCLOSE)       => {print("\\}"); printTokens(tokens.tail)}
         case Some(VBRACKETOPEN)      => {print("\\["); printTokens(tokens.tail)}
@@ -167,6 +170,7 @@ object LaTeXLexer extends RegexParsers {
         case Some(VBACKSLASH)        => {"""\\""" + toString(tokens.tail)}
         case Some(VSPACE)            => {"""\ """ + toString(tokens.tail)}
         case Some(VTILDE)            => {"""\~""" + toString(tokens.tail)}
+        case Some(VUNDERSCORE)       => {"""\_""" + toString(tokens.tail)}
         case Some(VCURLYOPEN)        => {"""\{""" + toString(tokens.tail)}
         case Some(VCURLYCLOSE)       => {"""\}""" + toString(tokens.tail)}
         case Some(VBRACKETOPEN)      => {"""\[""" + toString(tokens.tail)}
