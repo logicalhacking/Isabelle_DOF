@@ -4,6 +4,7 @@ This directory contains the DOF-plugin for Isabelle's
 document generation system. 
 
 ## Installation 
+
 In most case, the DOF-plugin can be installed as follows:
 ```console 
 foo@bar:~$ ./install
@@ -19,6 +20,7 @@ The DOF-plugin will be installed in the Isabelle user directory
 (the exact location depends on the Isabelle version). 
 
 ## Usage
+
 The DOF-plugin provides an alternative to Isabelle's ``mkroot`` command.
 Isabelle projects that use DOF need to be created using
 ```console 
@@ -27,3 +29,9 @@ isabelle DOF_mkroot -d
 The ``DOF_mkroot`` command takes the same parameter as the standard
 ``mkroot`` command of Isabelle. Thereafter, the normal Isabelle 
 command for building documents can be used. 
+
+## License
+
+This project is licensed under a 2-clause BSD license.
+
+SPDX-License-Identifier: BSD-2-Clause
