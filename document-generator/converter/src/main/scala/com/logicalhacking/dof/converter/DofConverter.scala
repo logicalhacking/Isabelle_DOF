@@ -35,6 +35,7 @@ import scala.util.matching.Regex
 
 
 object DofConverter {
+    val version = "0.0.0"
     def convertLaTeX(string:String):Either[LaTeXLexerError,String] = {
       LaTeXLexer(string) match {
                        case Left(err) => Left(err) 
@@ -52,7 +53,7 @@ object DofConverter {
             inputFile =>
             using(new BufferedWriter(new FileWriter(new File(texFileName), true))) {
                 outputFile =>
-                outputFile.write("% This file was modified by the DOF LaTex converter\n")
+                outputFile.write("% This file was modified by the DOF LaTeX converter\n")
                 val input = inputFile.getLines.reduceLeft(_+"\n"+_)
                 
                 convertLaTeX(input) match {
@@ -65,14 +66,44 @@ object DofConverter {
             }
         }
     }
-
-    def main(args: Array[String]): Unit = {
-        val dir = if (args.length == 0) {
-            "."
-        } else {
-            args(0)
+    
+    def processArgs(args: List[String]):Option[List[String]] =  {
+        def printVersion() = {
+            println("DOF LaTeX converter version "+version)
         }
-        val texFiles = recursiveListFiles(new File(dir), new Regex("\\.tex$")).filterNot(_.length() == 0)
+        def printUsage() = {
+            println("Usage:")
+            println("    scala dof_latex_converter.jar [OPTIONS] [directory ...]")
+            println("")
+            println("Options:")
+            println("      --version, -v    print version and exit")
+            println("      --help,    -h    print usage inforamtion and exit")
+        }
+        args match {
+             case Nil => Some(List[String]()) 
+             case "-v"::Nil        => printVersion(); None 
+             case "--version"::Nil => printVersion(); None 
+             case "-h"::tail       => printUsage(); None 
+             case "--help"::tail   => printUsage(); None 
+             case file::tail       => processArgs(tail) match {
+                                          case Some(files) => Some(file::files)
+                                          case None        => None
+                                      }
+             case _                => printUsage();None
+        }
+    }
+        
+    def main(args: Array[String]): Unit = {
+        val directories = processArgs(args.toList) match {
+            case None => System.exit(1); List[String]()
+            case Some(Nil) => List[String](".")
+            case Some(l)   => l
+        }
+
+        val texFiles = directories.map(dir => recursiveListFiles(new File(dir), new Regex("\\.tex$"))
+                                              .filterNot(_.length() == 0)).flatten
+
+        println(texFiles)                                      
         val errors = texFiles.map(file => convertFile(file)).flatten
         if(!errors.isEmpty) {
             println("DOF LaTeX converter error(s):")
