@@ -33,16 +33,16 @@ import java.io.{BufferedWriter, File, FileWriter}
 import IoUtils._
 import scala.util.matching.Regex
 
+
 object DofConverter {
-    def convertLaTeX(string:String):String = {
-        // TODO
+    def convertLaTeX(string:String):Either[LaTeXLexerError,String] = {
       LaTeXLexer(string) match {
-                       case Left(_) => "Conversion Error" // TODO
-                       case Right(tokens) => LaTeXLexer.toString(tokens)
+                       case Left(err) => Left(err) 
+                       case Right(tokens) => Right(LaTeXLexer.toString(tokens))
                    }
     }
 
-    def convertFile(f: File) = {
+    def convertFile(f: File):Option[(String,LaTeXLexerError)] = {
         val texFileName = f.getAbsolutePath()
         println("DOF Converter: converting " + texFileName
                 + " (Not yet fully implemented!)")
@@ -54,8 +54,14 @@ object DofConverter {
                 outputFile =>
                 outputFile.write("% This file was modified by the DOF LaTex converter\n")
                 val input = inputFile.getLines.reduceLeft(_+"\n"+_)
-                val output = convertLaTeX(input)
-                outputFile.write(output)
+                
+                convertLaTeX(input) match {
+                    case Left(err)     => Some((texFileName, err))
+                    case Right(output) => {
+                                               outputFile.write(output)
+                                               None
+                                           }
+                }
             }
         }
     }
@@ -67,9 +73,13 @@ object DofConverter {
             args(0)
         }
         val texFiles = recursiveListFiles(new File(dir), new Regex("\\.tex$")).filterNot(_.length() == 0)
-        
-        for (file <- texFiles) {
-            convertFile(file)
+        val errors = texFiles.map(file => convertFile(file)).flatten
+        if(!errors.isEmpty) {
+            println("DOF LaTeX converter error(s):")
+            println("=============================")
+            errors.map{case (file:String, err:LaTeXLexerError) => println(file + ": " + err)}
+            System.exit(1)
         }
+        System.exit(0)
     }
 }

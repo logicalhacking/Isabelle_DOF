@@ -42,10 +42,10 @@ object IoUtils {
         param.close()
     }
 
-    def recursiveListFiles(f: File, r: Regex): Array[File] = {
+    def recursiveListFiles(f: File, r: Regex): List[File] = {
         val these = f.listFiles
         val good = these.filter(f => r.findFirstIn(f.getName).isDefined)
-        good ++ these.filter(_.isDirectory).flatMap(recursiveListFiles(_,r))
+        (good ++ these.filter(_.isDirectory).flatMap(recursiveListFiles(_,r))).toList
     }
 
 
