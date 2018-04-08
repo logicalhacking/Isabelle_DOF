@@ -66,7 +66,8 @@ object DofConverter {
         } else {
             args(0)
         }
-        val texFiles = recursiveListFiles(new File(dir), new Regex("\\.tex$"))
+        val texFiles = recursiveListFiles(new File(dir), new Regex("\\.tex$")).filterNot(_.length() == 0)
+        
         for (file <- texFiles) {
             convertFile(file)
         }
