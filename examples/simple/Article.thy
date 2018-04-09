@@ -40,9 +40,8 @@ text{* As mentioned in @{introduction \<open>intro\<close>} ... *}
 @{thms ''[refl,sym]''}
 *)    
     
-
 update_instance*[bgrnd, main_author = "Some(''bu'')", formula="@{term ''a + b = b + a''}"] 
-  
+
 section*[ontomod::technical]{* Modeling Ontologies in Isabelle_DOF *} 
 text{* Lorem ipsum dolor sit amet, suspendisse non arcu malesuada mollis, nibh morbi,*}
   
