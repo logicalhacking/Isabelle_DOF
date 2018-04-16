@@ -19,8 +19,23 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
   
 begin
   
- 
+section{*Inner Syntax Antiquotations: Syntax *}
 
+typedecl "typ"
+typedecl "term"
+typedecl "thm"
+ 
+-- \<open> and others in the future : file, http, thy, ... \<close> 
+
+consts mk_typ  :: "string \<Rightarrow> typ"  ("@{typ _}")
+consts mk_term :: "string \<Rightarrow> term" ("@{term _}")
+consts mk_thm  :: "string \<Rightarrow> thm"  ("@{thm _}")
+
+  
+term "@{typ  ''int => int''}"  
+term "@{term ''Bound 0''}"  
+term "@{thm  ''refl''}"  
+  
 section{*Primitive Markup Generators*}
 ML{*
 
@@ -170,7 +185,6 @@ fun is_defined_oid_local oid thy   = let val {tab,...} = fst(get_data thy)
 
 fun declare_object_global oid thy  =  
     let fun decl {tab=t,maxano=x} = {tab=Symtab.update_new(oid,NONE)t, maxano=x}
-
     in (map_data_global (apfst(decl)) (thy)
        handle Symtab.DUP _ => error("multiple declaration of document reference"))
     end
@@ -289,6 +303,14 @@ end (* struct *)
   
 
 section{* Syntax for Annotated Documentation Commands (the '' View'' Part I) *}
+
+ML{*
+fun read_terms ctxt =
+  grouped 10 Par_List.map_independent (Syntax.parse_term ctxt) #> Syntax.check_terms ctxt;
+
+map_filter;
+
+*}
   
 ML{* 
 structure AnnoTextelemParser = 
@@ -297,13 +319,13 @@ struct
 val semi = Scan.option (Parse.$$$ ";");
 
 val attribute =
-    Parse.position Parse.name 
-    -- Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.name) "";
+    Parse.position Parse.const 
+    -- Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.term) "";
 
 val attribute_upd =
-    Parse.position Parse.name 
+    Parse.position Parse.const 
     -- (Parse.$$$ "+=" || Parse.$$$ "=") 
-    -- Parse.!!! Parse.name;
+    -- Parse.!!! Parse.term;
 
 (*
 Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ uncheckedN)
@@ -360,7 +382,7 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),doc_attrs),
                                (thy)
                            end
     fun MMM(SOME(s,p)) = SOME(s^"XXX",p)
-       |MMM(NONE) = SOME("XXX",Position.id "")
+       |MMM(NONE)      = SOME("XXX",Position.id "")
   in     
        (Toplevel.theory(enrich_trans cid_pos))  #>
        (Thy_Output.document_command markdown (MMM xstring_opt,toks)) #>
@@ -492,6 +514,24 @@ end (* struct *)
 *}
   
 section{* Syntax for Ontologies (the '' View'' Part III) *}
+ 
+ML{* Type_Infer_Context.infer_types *}
+ML{*
+ type_of; Syntax.string_of_term;  Type.typ_instance; Args.term; Syntax.parse_term;
+ Syntax.check_term;
+ Syntax.unparse_term;
+ val x = @{term "None::(string option)"}
+ val t = Syntax.parse_term @{context} "None::(string option)"
+ val t' = Syntax.read_term @{context} "None::(string option)"
+(*
+ val y = Type_Infer_Context.infer_types @{context} [(Syntax.parse_term @{context} "None")]
+         handle   TYPE _ => error"bla"; 
+*)
+*} 
+ML{* type_of t'
+
+
+*}  
   
 ML{* 
 structure OntoParser = 
@@ -503,15 +543,22 @@ fun read_parent NONE ctxt = (NONE, ctxt)
         Type (name, Ts) => (SOME (Ts, name), fold Variable.declare_typ Ts ctxt)
       | T => error ("Bad parent record specification: " ^ Syntax.string_of_typ ctxt T));
 
-
 fun map_option _ NONE = NONE 
-   |map_option f (SOME x) = SOME (f x)
+   |map_option f (SOME x) = SOME (f x);
 
 fun read_fields raw_fields ctxt =
     let
       val Ts = Syntax.read_typs ctxt (map (fn ((_, raw_T, _),_) => raw_T) raw_fields);
       val terms = map ((map_option (Syntax.read_term ctxt)) o snd) raw_fields
+      fun read x  = let val _ = writeln ("CCC"^x)
+                    in  Syntax.read_term ctxt x end
+      fun annotate ((_, raw_T, _),SOME raw_term) =(SOME (read ("("^raw_term^")::"^raw_T))
+                                                   handle ERROR _ => error("type mismatch:"^raw_T)
+                                                   (* BAD STYLE : better would be catching
+                                                      exn. *) )
+         |annotate ((_, _, _),_) = NONE  
       val fields = map2 (fn ((x, _, mx),_) => fn T => (x, T, mx)) raw_fields Ts;
+      val _ = map annotate raw_fields (* checking types conform to defaults *)
       val ctxt' = fold Variable.declare_typ Ts ctxt;
     in (fields, terms, ctxt') end;
 

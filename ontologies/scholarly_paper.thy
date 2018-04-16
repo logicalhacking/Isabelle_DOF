@@ -5,7 +5,7 @@ theory scholarly_paper
 begin
 
 doc_class title =
-   short_title :: "string option"  <=  None
+   short_title :: "string option"  <=  "None::string option"
      
 doc_class subtitle =
    abbrev :: "string option"       <=  None

@@ -233,7 +233,8 @@ Syntax.lookup_const;
 Main phases of inner syntax processing, with standard implementations
 of parse/unparse operations.
 
-At the very very end, it sets up the entire syntax engine (the hooks) via:
+At the very very end in syntax_phases.ML, it sets up the entire syntax engine 
+(the hooks) via:
 
 val _ =
   Theory.setup
@@ -267,6 +268,33 @@ fun check_typs ctxt raw_tys =
   end;
 
 which is the real implementation behind Syntax.check_typ
+
+or:
+
+fun check_terms ctxt raw_ts =
+  let
+    val (sorting_report, raw_ts') = Proof_Context.prepare_sorts ctxt raw_ts;
+    val (ts, ps) = Type_Infer_Context.prepare_positions ctxt raw_ts';
+
+    val tys = map (Logic.mk_type o snd) ps;
+    val (ts', tys') = ts @ tys
+      |> apply_term_check ctxt
+      |> chop (length ts);
+    val typing_report =
+      fold2 (fn (pos, _) => fn ty =>
+        if Position.is_reported pos then
+          cons (Position.reported_text pos Markup.typing
+            (Syntax.string_of_typ ctxt (Logic.dest_type ty)))
+        else I) ps tys' [];
+
+    val _ =
+      if Context_Position.is_visible ctxt then Output.report (sorting_report @ typing_report)
+      else ();
+  in Term_Sharing.terms (Proof_Context.theory_of ctxt) ts' end;
+
+which is the real implementation behind Syntax.check_term
+
+As one can see, check-routines internally generate the markup.
 
 *)
 
