@@ -8,7 +8,7 @@ doc_class title =
    short_title :: "string option"  <=  "None"
     
 doc_class subtitle =
-   abbrev :: "string option"       <=  "[]"
+   abbrev :: "string option"       <=  "None"
    
 -- \<open>adding a contribution list and checking that it is cited as well in tech as in conclusion. ? \<close>
 
@@ -16,7 +16,7 @@ doc_class author =
    affiliation :: "string"
 
 doc_class abstract =
-   keyword_list :: "string list"  <= None
+   keyword_list :: "string list"  <= "[]"
 
 doc_class text_section = 
    main_author :: "author option"  <=  None
@@ -53,7 +53,7 @@ doc_class related_work = conclusion +
    main_author :: "author option"  <=  None
 
 doc_class bibliography =
-   style :: "string option"  <=  "''LNCS''"
+   style :: "string option"  <=  "Some ''LNCS''"
 
 text{* Besides subtyping, there is another relation between
        doc_classes: a class can be a \emph{monitor} to other ones,
