@@ -16,4 +16,7 @@ doc_class Exercise_part =
 doc_class Exercise= 
   content :: "(Exercise_part) list"
 
+doc_class MathExam=
+  content :: "(Exercise) list"
+
 end
