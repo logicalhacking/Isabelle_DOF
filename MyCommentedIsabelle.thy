@@ -76,7 +76,54 @@ op --;
 op ?;
 *}
 
+subsubsection\<open>  Kernel: terms, types, thms \<close>  
 
+text \<open>A basic data-structure of the kernel is term.ML \<close>  
+ML{* open Term;
+(*
+  type indexname = string * int
+  type class = string
+  type sort = class list
+  type arity = string * sort list * sort
+  datatype typ =
+    Type  of string * typ list |
+    TFree of string * sort |
+    TVar  of indexname * sort
+  datatype term =
+    Const of string * typ |
+    Free of string * typ |
+    Var of indexname * typ |
+    Bound of int |
+    Abs of string * typ * term |
+    $ of term * term
+  exception TYPE of string * typ list * term list
+  exception TERM of string * term list
+*)
+(* there is a joker type that can be added as place-holder during term construction.*)
+Term.dummyT : typ
+*}
+  
+
+
+text{* Jokers can be eliminated by the type inference. *}
+ML{*
+Sign.typ_instance: theory -> typ * typ -> bool;
+Sign.typ_unify: theory -> typ * typ -> Type.tyenv * int -> Type.tyenv * int;
+Sign.const_type: theory -> string -> typ option;
+Sign.certify_term: theory -> term -> term * typ * int;
+Sign.cert_term: theory -> term -> term;
+*}
+text{* This is actually an abstract wrapper on the structure Type which contains the heart of 
+the type inference. *}  
+ML{*
+Type.typ_instance: Type.tsig -> typ * typ -> bool
+(* raises  TYPE_MATCH *)
+
+*}  
+  
+subsubsection\<open>  Front End: Parsing issues \<close>  
+  
+  
 (* Tokens and Bindings *)  
 ML{*
 
@@ -611,5 +658,7 @@ fun document_antiq check_file ctxt (name, pos) =
 
 *}
   
+  
+  ML{* Type_Infer_Context.prepare_positions *}
   
 end
