@@ -558,7 +558,7 @@ fun read_fields raw_fields ctxt =
                                                       exn. *) )
          |annotate ((_, _, _),_) = NONE  
       val fields = map2 (fn ((x, _, mx),_) => fn T => (x, T, mx)) raw_fields Ts;
-      val _ = map annotate raw_fields (* checking types conform to defaults *)
+   (*   val _ = map annotate raw_fields (* checking types conform to defaults *) *)
       val ctxt' = fold Variable.declare_typ Ts ctxt;
     in (fields, terms, ctxt') end;
 
@@ -644,6 +644,8 @@ Context.Theory;
 Context_Position.report_generic;
 Context_Position.report;
 Term_Style.parse;
+
+Sign.certify_term;
 \<close>
   
 end
