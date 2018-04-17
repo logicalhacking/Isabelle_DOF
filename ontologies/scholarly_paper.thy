@@ -27,8 +27,24 @@ doc_class introduction = text_section +
 doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
 
-doc_class example   = text_section +
-   comment :: string
+text{* A very rough formatting style could be modeled as follows:*}   
+   
+datatype mesure = points  "int" | inch "int" | textwidth "int"  (* given by the inverse of the integer *)   
+
+datatype placement = left | center | right  
+  
+doc_class figure   = text_section +
+   width   :: "mesure option"  <= "Some(textwidth 1)"    
+   height  :: "mesure option"  <= "Some(textwidth 1)"
+   scale   :: "int option"                              (* in per cent *)
+   "file"  :: string
+   plmt    :: placement 
+   caption :: string
+
+(* something similar on tables ? Idea: rough abstraction of table attributes in LaTeX *)
+   
+doc_class example    = text_section +
+   comment :: "string"
 
 doc_class conclusion = text_section +
    main_author :: "author option"  <=  None
