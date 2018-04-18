@@ -10,7 +10,7 @@ text*[tit::title]{* Using The Isabelle Ontology Framework*}
   
 text*[stit::subtitle] \<open>Linking the Formal with the Informal\<close>
   
-text*[auth1::author, affiliation="Université Paris-Sud"]\<open>Burkhart Wolff\<close>
+text*[auth1::author, affiliation="''Universit\\'e Paris-Sud''"]\<open>Burkhart Wolff\<close>
     
 text*[abs::abstract, keyword_list="[]"] {* Isabelle/Isar is a system 
 framework with many similarities to Eclipse; it is mostly known as part of 
@@ -31,7 +31,7 @@ sed nibh ut lorem integer, maecenas sed mi purus non nunc, morbi pretium tortor.
 section*[bgrnd::text_section]{* Background: Isabelle and Isabelle_DOF *}  
 text{* As mentioned in @{introduction \<open>intro\<close>} ... *} 
 
-  term "a + b = b + a"
+term "a + b = b + a"
 
 (*
 @{term ''a + b = b + a''}

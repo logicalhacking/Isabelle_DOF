@@ -356,10 +356,8 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),doc_attrs),
     val _ = Position.report pos (docref_markup true oid id pos);
             (* creates a markup label for this position and reports it to the PIDE framework;
                this label is used as jump-target for point-and-click feature. *)
-
-    fun enrich_trans  (SOME(cid,pos')) thy = 
-                           let val name = Context.theory_name thy 
-                               val _ = if not (DOF_core.is_defined_cid_global cid thy) 
+    fun handle_classref name (SOME(cid,pos')) thy = 
+                           let val _ = if not (DOF_core.is_defined_cid_global cid thy) 
                                        then error("document class undefined")
                                        else ()
                                val cid_long =  DOF_core.name2doc_class_name thy cid 
@@ -374,13 +372,20 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),doc_attrs),
                                                                    id=id,   cid=cid_long})
                                                              (thy)
                            end
-       | enrich_trans  NONE thy = 
-                           let val name = Context.theory_name thy 
-                           in  DOF_core.define_object_global 
+       | handle_classref name NONE thy = 
+                           DOF_core.define_object_global 
                                   (oid, {pos=pos, thy_name=name,
                                          id=id,   cid=DOF_core.default_cid}) 
                                (thy)
-                           end
+                          
+    fun enrich_trans class_ref thy = 
+          let val name = Context.theory_name thy 
+              fun read_assn  ((lhs, pos), rhs) = (Syntax.read_term_global thy lhs,
+                                                  Syntax.read_term_global thy rhs)
+              val assns = map (read_assn ) doc_attrs
+          in  thy |> handle_classref name class_ref
+          end
+    
     fun MMM(SOME(s,p)) = SOME(s^"XXX",p)
        |MMM(NONE)      = SOME("XXX",Position.id "")
   in     
@@ -527,10 +532,6 @@ ML{*
  val y = Type_Infer_Context.infer_types @{context} [(Syntax.parse_term @{context} "None")]
          handle   TYPE _ => error"bla"; 
 *)
-*} 
-ML{* type_of t'
-
-
 *}  
   
 ML{* 
