@@ -121,6 +121,19 @@ Type.typ_instance: Type.tsig -> typ * typ -> bool
 
 *}  
   
+text{* Type generalization is no longer part of the standard API. Here is a way to
+overcome this:*}  
+
+ML{*
+val ty = @{typ "'a option"};
+val ty' = @{typ "int option"};
+Sign.typ_instance @{theory}(ty', ty);
+val generalize_typ = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,0),sort));
+Sign.typ_instance @{theory} (ty', generalize_typ ty)
+*}
+  
+ 
+  
 subsubsection\<open>  Front End: Parsing issues \<close>  
   
   

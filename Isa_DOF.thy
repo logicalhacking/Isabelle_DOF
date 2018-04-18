@@ -550,15 +550,20 @@ fun read_fields raw_fields ctxt =
     let
       val Ts = Syntax.read_typs ctxt (map (fn ((_, raw_T, _),_) => raw_T) raw_fields);
       val terms = map ((map_option (Syntax.read_term ctxt)) o snd) raw_fields
-      fun read x  = let val _ = writeln ("CCC"^x)
-                    in  Syntax.read_term ctxt x end
-      fun annotate ((_, raw_T, _),SOME raw_term) =(SOME (read ("("^raw_term^")::"^raw_T))
-                                                   handle ERROR _ => error("type mismatch:"^raw_T)
-                                                   (* BAD STYLE : better would be catching
-                                                      exn. *) )
-         |annotate ((_, _, _),_) = NONE  
+      val generalize_typ = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,0),sort));
+      fun test t1 t2 = Sign.typ_instance (Proof_Context.theory_of ctxt)(t1, generalize_typ t2) 
+      fun check_default (ty,SOME trm) = 
+                  let val ty' = (type_of trm)
+                  in if test ty ty' 
+                     then ()
+                     else error("type mismatch:"^ 
+                                (Syntax.string_of_typ ctxt ty')^":"^ 
+                                (Syntax.string_of_typ ctxt ty))
+                  end
+                                                   (* BAD STYLE : better would be catching exn. *) 
+         |check_default (_,_) = ()  
       val fields = map2 (fn ((x, _, mx),_) => fn T => (x, T, mx)) raw_fields Ts;
-   (*   val _ = map annotate raw_fields (* checking types conform to defaults *) *)
+      val _ = map check_default (Ts ~~ terms) (* checking types conform to defaults *) 
       val ctxt' = fold Variable.declare_typ Ts ctxt;
     in (fields, terms, ctxt') end;
 
@@ -647,5 +652,8 @@ Term_Style.parse;
 
 Sign.certify_term;
 \<close>
+  
+
+  
   
 end
