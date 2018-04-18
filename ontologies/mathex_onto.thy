@@ -16,6 +16,7 @@ datatype Grade =
   A1 | A2 | A3
 
 doc_class Header = 
+  examTitle :: string
   examGrade :: Grade
   examSubject :: Subject
 
@@ -28,9 +29,9 @@ doc_class Exercise=
 
 doc_class MathExam=
   content :: "(Header + Author + Exercise) list"
- where "(Header ~ 
-        (Author)+  ~
-        (Exercise)+ )"
+  where "((Author)+  ~
+          Header ~ 
+         (Exercise)+ )"
   
   
 end
