@@ -67,7 +67,7 @@ section{* Some Tests for Ontology Framework and its CENELEC Instance *}
 
 declare_reference* [lalala::requirement, alpha="main", beta=42]
 
-declare_reference* [lalala::quod] (* shouldn't work *)
+declare_reference* [lalala::quod] (* shouldn't work: multiple declaration *)
 
 declare_reference* [blablabla::cid, alpha="beta sdf", beta=gamma, delta=dfg_fgh\<^sub>1]
   

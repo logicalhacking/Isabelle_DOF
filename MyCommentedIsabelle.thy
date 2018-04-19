@@ -289,6 +289,11 @@ Syntax.string_of_typ;
 Syntax.lookup_const;
 *}
 
+ML{*
+fun read_terms ctxt =
+  grouped 10 Par_List.map_independent (Syntax.parse_term ctxt) #> Syntax.check_terms ctxt;
+*}  
+  
 (* 
 Main phases of inner syntax processing, with standard implementations
 of parse/unparse operations.

@@ -92,7 +92,10 @@ struct
            father_is_sub s
         end
 
-   type docobj = {pos : Position.T, thy_name : string, id : serial, cid : string}
+   type docobj = {pos : Position.T, 
+                  thy_name : string,
+                  value   : term, 
+                  id : serial, cid : string}
 
    type docobj_tab ={tab      : (docobj option) Symtab.table,
                      maxano   : int
@@ -237,7 +240,7 @@ fun define_object_global (oid, bbb) thy  =
                                             the space where it is ... *)
     in  if is_defined_oid_global oid thy 
         then error("multiple definition of document reference")
-        else map_data_global  (apfst(fn {tab=t,maxano=x} => 
+        else map_data_global  (apfst(fn {tab=t,maxano=x} =>            
                                         {tab=Symtab.update(oid,SOME bbb) t,
                                          maxano=x}))
                (thy)
@@ -303,14 +306,6 @@ end (* struct *)
   
 
 section{* Syntax for Annotated Documentation Commands (the '' View'' Part I) *}
-
-ML{*
-fun read_terms ctxt =
-  grouped 10 Par_List.map_independent (Syntax.parse_term ctxt) #> Syntax.check_terms ctxt;
-
-map_filter;
-
-*}
   
 ML{* 
 structure AnnoTextelemParser = 
@@ -356,34 +351,30 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),doc_attrs),
     val _ = Position.report pos (docref_markup true oid id pos);
             (* creates a markup label for this position and reports it to the PIDE framework;
                this label is used as jump-target for point-and-click feature. *)
-    fun handle_classref name (SOME(cid,pos')) thy = 
-                           let val _ = if not (DOF_core.is_defined_cid_global cid thy) 
-                                       then error("document class undefined")
-                                       else ()
-                               val cid_long =  DOF_core.name2doc_class_name thy cid 
-                               val {id, name=bind_target,...} = 
-                                             the(DOF_core.get_doc_class_global cid_long thy)
-                               val markup = docclass_markup false cid id (Binding.pos_of bind_target);
-                               val ctxt = Context.Theory thy
-                               val _ = Context_Position.report_generic ctxt pos' markup;
-
-
-                           in DOF_core.define_object_global (oid, {pos=pos, thy_name=name,
-                                                                   id=id,   cid=cid_long})
-                                                             (thy)
-                           end
-       | handle_classref name NONE thy = 
-                           DOF_core.define_object_global 
-                                  (oid, {pos=pos, thy_name=name,
-                                         id=id,   cid=DOF_core.default_cid}) 
-                               (thy)
+    val undef = @{term "undefined"}
+    fun check_classref (SOME(cid,pos')) thy = 
+              let val _ = if not (DOF_core.is_defined_cid_global cid thy) 
+                          then error("document class undefined") else ()
+                  val cid_long = DOF_core.name2doc_class_name thy cid 
+                  val {id, name=bind_target,...} = the(DOF_core.get_doc_class_global cid_long thy)
+                  val markup = docclass_markup false cid id (Binding.pos_of bind_target);
+                  val ctxt = Context.Theory thy
+                  val _ = Context_Position.report_generic ctxt pos' markup;
+              in  cid_long 
+              end
+       | check_classref  NONE _ = DOF_core.default_cid 
                           
     fun enrich_trans class_ref thy = 
           let val name = Context.theory_name thy 
-              fun read_assn  ((lhs, pos), rhs) = (Syntax.read_term_global thy lhs,
-                                                  Syntax.read_term_global thy rhs)
+              val cid_long = check_classref  class_ref thy
+              fun read_assn  ((lhs, pos), rhs) = ((Syntax.read_term_global thy lhs,pos),
+                                                   Syntax.read_term_global thy rhs)
               val assns = map (read_assn ) doc_attrs
-          in  thy |> handle_classref name class_ref
+          in  thy |> DOF_core.define_object_global (oid, {pos=pos, 
+                                                          thy_name=name,
+                                                          value = undef,
+                                                          id=id,   
+                                                          cid=cid_long})
           end
     
     fun MMM(SOME(s,p)) = SOME(s^"XXX",p)
