@@ -295,6 +295,42 @@ fun is_defined_cid_local cid ctxt  = let val t = snd(get_data ctxt)
                                          Symtab.defined t (name2doc_class_name_local ctxt cid) 
                                      end
 
+fun get_attributes_local cid ctxt =
+    if cid = default_cid then []
+    else let val t = snd(get_data ctxt)
+             val cid_long = name2doc_class_name_local ctxt cid
+         in  case Symtab.lookup t cid_long of
+               NONE => error("undefined doc class id :"^cid)
+             | SOME ({inherits_from=NONE,
+                       attribute_decl = X, ...}) => [(cid_long,X)]
+             | SOME ({inherits_from=SOME(_,father),
+                       attribute_decl = X, ...}) => get_attributes_local father ctxt @ [(cid_long,X)]
+         end
+
+fun get_attributes cid thy = get_attributes_local cid (Proof_Context.init_global thy)
+
+fun get_default_local cid attr ctxt =
+    let val hierarchy_rev = rev(get_attributes_local cid ctxt)  (* search in reverse order *)
+        fun found (_,L) = find_first (fn (bind,_,SOME(term)) => Binding.name_of bind = attr
+                                        | _ => false) L                                  
+    in  case get_first found hierarchy_rev of
+           NONE => NONE
+        |  SOME (_,_,X) => X
+    end
+
+fun get_default cid attr thy = get_default_local cid attr (Proof_Context.init_global thy)
+
+fun get_attribute_long_name_local cid attr ctxt =
+    let val hierarchy = get_attributes_local cid ctxt  (* search in order *)
+        fun found (_,L) = find_first (fn (bind,_,_) => Binding.name_of bind = attr) L
+    in  case get_first found hierarchy of
+           NONE => NONE
+         | SOME (bind, ty,_) => SOME(cid,(Binding.name_of bind), ty)
+    end
+
+fun get_attribute_long_name cid attr thy = get_attribute_long_name_local cid attr 
+                                                 (Proof_Context.init_global thy)
+
 fun writeln_classrefs ctxt = let  val tab = snd(get_data ctxt)
                              in   writeln (String.concatWith "," (Symtab.keys tab)) end
 
@@ -342,6 +378,7 @@ val attributes_upd =
          (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute_upd))) []))
      --| Parse.$$$ "]"
 
+val SPY = Unsynchronized.ref ([]:((term * Position.T) * term) list) 
 
 fun enriched_document_command markdown (((((oid,pos),cid_pos),doc_attrs),
                                         xstring_opt:(xstring * Position.T) option),
@@ -370,6 +407,7 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),doc_attrs),
               fun read_assn  ((lhs, pos), rhs) = ((Syntax.read_term_global thy lhs,pos),
                                                    Syntax.read_term_global thy rhs)
               val assns = map (read_assn ) doc_attrs
+              val _ = (SPY:=assns)              
           in  thy |> DOF_core.define_object_global (oid, {pos=pos, 
                                                           thy_name=name,
                                                           value = undef,
@@ -559,21 +597,35 @@ fun read_fields raw_fields ctxt =
       val ctxt' = fold Variable.declare_typ Ts ctxt;
     in (fields, terms, ctxt') end;
 
+
+val tag_attr = (Binding.make("tag_attribute",@{here}), @{typ "int"},Mixfix.NoSyn)
+
 fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdefaults _ thy =
     let
       val ctxt = Proof_Context.init_global thy;
       val params = map (apsnd (Typedecl.read_constraint ctxt)) raw_params;
       val ctxt1 = fold (Variable.declare_typ o TFree) params ctxt;
+      fun cid thy = DOF_core.name2doc_class_name thy (Binding.name_of binding)
       val (parent, ctxt2) = read_parent raw_parent ctxt1;
+      val parent_cid_long = case parent of
+                              NONE => DOF_core.default_cid
+                            | SOME(_,str) => str
       val (fields, terms, ctxt3) = read_fields raw_fieldsNdefaults ctxt2;
       val fieldsNterms = (map (fn (a,b,_) => (a,b)) fields) ~~ terms
       val fieldsNterms' = map (fn ((x,y),z) => (x,y,z)) fieldsNterms
       val params' = map (Proof_Context.check_tfree ctxt3) params;
-   
-      fun cid thy = DOF_core.name2doc_class_name thy (Binding.name_of binding)
+      fun check_n_filter thy (bind,ty,mf) = 
+                     case  DOF_core.get_attribute_long_name parent_cid_long (Binding.name_of bind) thy of
+                           NONE => (* no prior declaration *) SOME(bind,ty,mf)
+                         | SOME(class,attr,ty') => if ty = ty' 
+                                                   then (warning("overriding attribute:"^ attr^
+                                                                 " in doc class:" ^ class);
+                                                        SOME(bind,ty,mf))
+                                                   else error("no overloading allowed.")
       val gen_antiquotation = OntoLinkParser.doc_class_ref_antiquotation
+      val fields2 = map_filter (check_n_filter thy) fields
    
-    in thy |> Record.add_record overloaded (params', binding) parent fields 
+    in thy |> Record.add_record overloaded (params', binding) parent (tag_attr::fields) 
            |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms'
            |> (fn thy => gen_antiquotation binding (cid thy) thy) 
               (* defines the ontology-checked text antiquotation to this document class *)
@@ -597,7 +649,7 @@ end (* struct *)
 *}  
 
 
-  
+  ML{* open Mixfix*}
   
   
   

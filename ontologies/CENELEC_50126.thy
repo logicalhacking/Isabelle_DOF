@@ -80,7 +80,7 @@ section {* Design related Categories *}
 
 doc_class design_item = 
       description :: string
-
+      
 datatype design_kind = unit | module | protocol
       
 doc_class interface =  design_item +
@@ -162,8 +162,14 @@ DOF_core.is_subclass @{context} "CENELEC_50126.ec"   "CENELEC_50126.test_require
 val ({maxano, tab=ref_tab},class_tab) = DOF_core.get_data @{context};
 Symtab.dest ref_tab;
 Symtab.dest class_tab;
+*}
+  
+ML{*
+"XXXXXXXXXXXXXXXXX";
 
+DOF_core.get_attributes_local "srac" @{context};
 
+@{term assumption_kind}
 *}  
 
 
