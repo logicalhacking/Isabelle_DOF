@@ -13,6 +13,13 @@ Common Criteria identifies:
 theory CENELEC_50126
   imports "../Isa_DOF"
 begin
+  
+text_raw{*\snip{appendix.tex}{1}{1}{%*} 
+  
+text{* m importe quoi *}
+
+text_raw{*}%endsnip*}
+
 
 text{* Excerpt of the BE EN 50128:2011 *}
 

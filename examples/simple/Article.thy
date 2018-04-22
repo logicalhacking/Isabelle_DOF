@@ -11,7 +11,20 @@ text*[tit::title]{* Using The Isabelle Ontology Framework*}
 text*[stit::subtitle] \<open>Linking the Formal with the Informal\<close>
   
 text*[auth1::author, affiliation="''Universit\\'e Paris-Sud''"]\<open>Burkhart Wolff\<close>
-    
+term "\<lparr>author.tag_attribute=undefined,affiliation=undefined\<rparr>"
+  
+ML{* !AnnoTextelemParser.SPY *}
+definition HURX where "HURX = affiliation((undefined::author)\<lparr>affiliation:='' ''\<rparr>)"
+thm HURX_def[simplified]
+ML{* 
+val x = @{code "HURX"}
+*}
+  
+definition HORX where "HORX = affiliation(\<lparr>author.tag_attribute=0,affiliation=undefined\<rparr>\<lparr>affiliation:='' ''\<rparr>) "  
+ML{* 
+val x = @{code "HORX"}
+*}
+  
 text*[abs::abstract, keyword_list="[]"] {* Isabelle/Isar is a system 
 framework with many similarities to Eclipse; it is mostly known as part of 
 Isabelle/HOL, an interactive theorem proving and code generation environment. 
