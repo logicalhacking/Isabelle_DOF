@@ -380,9 +380,11 @@ val attributes_upd =
 
 val SPY = Unsynchronized.ref ([]:((term * Position.T) * term) list) 
 
+
 fun enriched_document_command markdown (((((oid,pos),cid_pos),doc_attrs),
                                         xstring_opt:(xstring * Position.T) option),
-                                        toks:Input.source)  =
+                                        toks:Input.source) 
+                                        : Toplevel.transition -> Toplevel.transition =
   let
     val id = serial ();
     val _ = Position.report pos (docref_markup true oid id pos);
@@ -414,14 +416,10 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),doc_attrs),
                                                           id=id,   
                                                           cid=cid_long})
           end
-    
-    fun MMM(SOME(s,p)) = SOME(s^"XXX",p)
-       |MMM(NONE)      = SOME("XXX",Position.id "")
-  in     
-       (Toplevel.theory(enrich_trans cid_pos))  #>
-       (Thy_Output.document_command markdown (MMM xstring_opt,toks)) #>
-       (Thy_Output.document_command markdown (SOME("\\label{"^oid^"}", Position.id ""),toks))  #>
-       (Thy_Output.document_command markdown (SOME("\\label{"^oid^"}", Position.id ""),toks)) 
+    fun check_text thy = (Thy_Output.output_text (Toplevel.theory_toplevel thy) markdown toks; thy)
+  in   
+       Toplevel.theory(enrich_trans cid_pos #> check_text)
+       (* Thanks Frederic Tuong! ! ! *)
   end;
 
 
@@ -443,17 +441,18 @@ val _ =
 val _ =
   Outer_Syntax.command ("paragraph*", @{here}) "paragraph heading"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = true});
 
 val _ =
   Outer_Syntax.command ("subparagraph*", @{here}) "subparagraph heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = true});
 
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = true});
+
 
 val _ =
   Outer_Syntax.command @{command_keyword "declare_reference*"} 
@@ -647,19 +646,7 @@ val _ =
 end (* struct *)
 
 *}  
-
-
-  ML{* open Mixfix*}
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+ 
   
   
 
@@ -673,14 +660,44 @@ ML{* (* Parsing combinators in Scan *)
      Scan.repeat : ('a -> 'b * 'a) -> 'a -> 'b list * 'a;
      Scan.option : ('a -> 'b * 'a) -> 'a -> 'b option * 'a;
 *}
+  ML{* ignore *}
 ML{*
 Binding.print;
 Syntax.read_sort;
 Syntax.read_typ;
 Syntax.read_term;
 Syntax.pretty_typ;
-
+Parse.document_source;
 *}  
+  
+ML{*
+Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
+Thy_Output.document_command;
+
+Toplevel.exit: Toplevel.transition -> Toplevel.transition;
+Toplevel.keep: (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
+Toplevel.keep': (bool -> Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
+Toplevel.ignored: Position.T -> Toplevel.transition;
+Toplevel.generic_theory: (generic_theory -> generic_theory) -> Toplevel.transition -> Toplevel.transition;
+Toplevel.theory': (bool -> theory -> theory) -> Toplevel.transition -> Toplevel.transition;
+Toplevel.theory: (theory -> theory) -> Toplevel.transition -> Toplevel.transition;
+
+Toplevel.present_local_theory:
+(xstring * Position.T) option ->
+     (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
+(* where text treatment and antiquotation parsing happens *)
+
+
+(*fun document_command markdown (loc, txt) =
+  Toplevel.keep (fn state =>
+    (case loc of
+      NONE => ignore (output_text state markdown txt)
+    | SOME (_, pos) =>
+        error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
+  Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt)); *)
+Thy_Output.document_command :  {markdown: bool} -> (xstring * Position.T) option * Input.source -> 
+                               Toplevel.transition -> Toplevel.transition;
+*}
   
 ML\<open>
 open Markup;
@@ -696,7 +713,7 @@ Term_Style.parse;
 
 Sign.certify_term;
 \<close>
-  
+text {* Lq *}
 
   
   

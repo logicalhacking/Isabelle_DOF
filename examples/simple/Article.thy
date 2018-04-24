@@ -10,7 +10,10 @@ text*[tit::title]{* Using The Isabelle Ontology Framework*}
   
 text*[stit::subtitle] \<open>Linking the Formal with the Informal\<close>
   
-text*[auth1::author, affiliation="''Universit\\'e Paris-Sud''"]\<open>Burkhart Wolff\<close>
+text*[auth1::author, affiliation="''University of Sheffield''"]\<open>Achim Brucker\<close>
+text*[auth2::author, affiliation="''Centrale-Supelec''"]\<open>Idir Ait-Adune\<close>
+text*[auth3::author, affiliation="''IRT-SystemX''"]\<open>Paolo Crizzifulli\<close>
+text*[auth4::author, affiliation="''Universit\\'e Paris-Sud''"]\<open>Burkhart Wolff\<close>
 term "\<lparr>author.tag_attribute=undefined,affiliation=undefined\<rparr>"
   
 ML{* !AnnoTextelemParser.SPY *}
@@ -20,7 +23,7 @@ ML{*
 val x = @{code "HURX"}
 *}
   
-definition HORX where "HORX = affiliation(\<lparr>author.tag_attribute=0,affiliation=undefined\<rparr>\<lparr>affiliation:='' ''\<rparr>) "  
+definition HORX where "HORX = affiliation(\<lparr>author.tag_attribute=0,affiliation=''''\<rparr>\<lparr>affiliation:=''e''\<rparr>) "  
 ML{* 
 val x = @{code "HORX"}
 *}
@@ -41,7 +44,7 @@ pretium consectetuer. Lectus accumsan velit ultrices, mauris amet, id elit aliqu
 felis duis. Mattis molestie semper gravida in ullamcorper ut, id accumsan, fusce id 
 sed nibh ut lorem integer, maecenas sed mi purus non nunc, morbi pretium tortor.*}
 
-section*[bgrnd::text_section]{* Background: Isabelle and Isabelle_DOF *}  
+section* [bgrnd :: text_section] {* Background: Isabelle and Isabelle_DOF *}  
 text{* As mentioned in @{introduction \<open>intro\<close>} ... *} 
 
 term "a + b = b + a"
@@ -58,7 +61,10 @@ update_instance*[bgrnd, main_author = "Some(''bu'')", formula="@{term ''a + b = 
 section*[ontomod::technical]{* Modeling Ontologies in Isabelle_DOF *} 
 text{* Lorem ipsum dolor sit amet, suspendisse non arcu malesuada mollis, nibh morbi,*}
   
-subsection*[scholar_onto::example]{* A Scholar Paper: Eating one's own dogfood. *}  
+text*[x]{* @{technical \<open>ontomod\<close>} *}
+  
+subsection*[scholar_onto::example]{* A Scholar Paper: Eating one's own dogfood. @{technical \<open>ontomod\<close>} *}  
+text{* @{technical \<open>ontomod\<close>}*}                                                
   
 subsection*[mathex_onto::example]{* Math-Exercise *}  
   
