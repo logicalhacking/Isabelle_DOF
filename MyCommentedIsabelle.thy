@@ -13,14 +13,44 @@ section "Isabelle/Pure bootstrap";
   text \<open> @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"}\<close>
     
   text "It's even roughly commented ... "
+  (* Paradigmatic Example for Antiquotation programming *)  
+  text \<open> @{footnote \<open>sdf\<close>  }\<close>    
   
 section{* Stuff - Interesting operators (just sample code) *}    
-  
-(* Vorbild *)  
-text \<open> @{footnote \<open>sdf\<close>  }\<close>    
 
-subsection\<open> Global State Management\<close> 
-subsubsection\<open> Mechanism 1 : configuration flags of fixed type. \<close>
+(* General combinators (in Pure/General/basics.ML)*)
+ML{*
+(*
+    exception Bind
+    exception Chr
+    exception Div
+    exception Domain
+    exception Fail of string
+    exception Match
+    exception Overflow
+    exception Size
+    exception Span
+    exception Subscript
+ *)
+exnName : exn -> string ; (* -- very interisting to query an unknown exception  *)
+exnMessage : exn -> string ;
+op ! : 'a Unsynchronized.ref -> 'a;
+op := : ('a Unsynchronized.ref * 'a) -> unit;
+
+op #> :  ('a -> 'b) * ('b -> 'c) -> 'a -> 'c; (* reversed function composition *)
+op o : (('b -> 'c) * ('a -> 'b)) -> 'a -> 'c;
+op |-- : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> 'd * 'e;
+op --| : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> 'b * 'e;
+op -- : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> ('b * 'd) * 'e;
+op ? : bool * ('a -> 'a) -> 'a -> 'a;
+ignore: 'a -> unit;
+op before : ('a * unit) -> 'a;
+I: 'a -> 'a;
+K: 'a -> 'b -> 'a
+*}  
+
+section\<open> Global Isar State Management\<close> 
+subsection\<open> Mechanism 1 : configuration flags of fixed type. \<close>
 
 ML{*
 Config.get @{context} Thy_Output.quotes;
@@ -47,7 +77,7 @@ fun output ctxt prts =
 *)
 *}
 
-subsubsection\<open>  Mechanism 2 : global arbitrary data structure that is attached to the global and
+subsection\<open>  Mechanism 2 : global arbitrary data structure that is attached to the global and
    local Isabelle context $\theta$ \<close>
 ML {*
 
@@ -67,17 +97,9 @@ structure Data = Generic_Data
 *}
 
 
-(* General combinators (in Pure/General/basics.ML)*)
-ML{*
-op #>; (* reversed function composition *)
-op |--;
-op --|;
-op --;
-op ?;
-*}
+section\<open>  Kernel: terms, types, thms \<close>  
 
-subsubsection\<open>  Kernel: terms, types, thms \<close>  
-
+subsection{* Terms and Types *}
 text \<open>A basic data-structure of the kernel is term.ML \<close>  
 ML{* open Term;
 (*
@@ -99,30 +121,27 @@ ML{* open Term;
   exception TYPE of string * typ list * term list
   exception TERM of string * term list
 *)
-(* there is a joker type that can be added as place-holder during term construction.*)
-Term.dummyT : typ
 *}
   
+ML{* Type.typ_instance: Type.tsig -> typ * typ -> bool (* raises  TYPE_MATCH *) *}
+text{* there is a joker type that can be added as place-holder during term construction.
+       Jokers can be eliminated by the type inference. *}
+  
+ML{*  Term.dummyT : typ *}
+  
+subsection{* Type-Inference *}
 
-
-text{* Jokers can be eliminated by the type inference. *}
 ML{*
 Sign.typ_instance: theory -> typ * typ -> bool;
 Sign.typ_unify: theory -> typ * typ -> Type.tyenv * int -> Type.tyenv * int;
 Sign.const_type: theory -> string -> typ option;
-Sign.certify_term: theory -> term -> term * typ * int;
-Sign.cert_term: theory -> term -> term;
+Sign.certify_term: theory -> term -> term * typ * int;   (* core routine for CERTIFICATION of types*)
+Sign.cert_term: theory -> term -> term;                  (* short-cut for the latter *)
 *}
-text{* This is actually an abstract wrapper on the structure Type which contains the heart of 
-the type inference. *}  
-ML{*
-Type.typ_instance: Type.tsig -> typ * typ -> bool
-(* raises  TYPE_MATCH *)
-
-*}  
-  
+text{* @{ML "Sign.certify_term"} is actually an abstract wrapper on the structure Type 
+       which contains the heart of the type inference. *}  
 text{* Type generalization is no longer part of the standard API. Here is a way to
-overcome this:*}  
+overcome this by a self-baked generalization function:*}  
 
 ML{*
 val ty = @{typ "'a option"};
@@ -132,14 +151,13 @@ val generalize_typ = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,0),sort
 Sign.typ_instance @{theory} (ty', generalize_typ ty)
 *}
   
- 
   
-subsubsection\<open>  Front End: Parsing issues \<close>  
-  
-  
-(* Tokens and Bindings *)  
-ML{*
+section\<open>  Front End:  \<close>  
 
+subsection{* Parsing issues *}  
+  
+text{* Tokens and Bindings *}  
+ML{*
 
 (* Core: Token.T *)
 
@@ -149,38 +167,61 @@ ML{*
   type 'a context_parser = Context.generic * T list -> 'a * (Context.generic * T list)
 *)
 
+(* conversion between these two : *)
+
+fun parser2contextparser pars (ctxt, toks) = let val (a, toks') = pars toks
+                                             in  (a,(ctxt, toks')) end;
+val _ = parser2contextparser : 'a parser -> 'a context_parser;
+
+(* bah, is the same as Scan.lift *)
+val _ = Scan.lift Args.cartouche_input : Input.source context_parser;
+
 Token.is_command;
 Token.content_of; (* textueller kern eines Tokens. *)
 
 val H = @{binding here}; (* There are "bindings" consisting of a text-span and a position, 
                     where \<dieresis>positions\<dieresis> are absolute references to a file *)                                  
 
-Binding.make;
+Binding.make: bstring * Position.T -> binding;
 Binding.pos_of @{binding erzerzer};
-Position.here;
-
+Position.here: Position.T -> string;
+(* Bindings *)
+ML\<open>val X = @{here};\<close>  
 
 *}  
+
   
-(* Scanning and combinator parsing. *)  
+subsection {*Scanning and combinator parsing. *}  
 ML\<open>
-Scan.peek;
+Scan.peek  : ('a -> 'b -> 'c * 'd) -> 'a * 'b -> 'c * ('a * 'd);
+Scan.optional: ('a -> 'b * 'a) -> 'b -> 'a -> 'b * 'a;
 Scan.option: ('a -> 'b * 'a) -> 'a -> 'b option * 'a;
 Scan.repeat: ('a -> 'b * 'a) -> 'a -> 'b list * 'a;
-Scan.lift;
-Scan.optional;
+Scan.lift  : ('a -> 'b * 'c) -> 'd * 'a -> 'b * ('d * 'c);
 Scan.lift (Parse.position Args.cartouche_input);
-
-(* "parsers" are actually  interpreters; an 'a parser is a function that parses
+\<close>
+  
+text{* "parsers" are actually  interpreters; an 'a parser is a function that parses
    an input stream and computes(=evaluates, computes) it into 'a. 
    Since the semantics of an Isabelle command is a transition => transition 
    or theory \<Rightarrow> theory  function, i.e. a global system transition.
    parsers of that type can be constructed and be bound as call-back functions
    to a table in the Toplevel-structure of Isar.
 
-   The type 'a parser is already defined in the structure Toekn.
-*)
-
+   The type 'a parser is already defined in the structure Token.
+*}
+  
+text{* Syntax operations : Interface for parsing, type-checking, "reading" 
+                       (both) and pretty-printing.
+   Note that this is a late-binding interface, i.e. a collection of "hooks".
+   The real work is done ... see below. 
+   
+   Encapsulates the data structure "syntax" --- the table with const symbols, 
+   print and ast translations, ... The latter is accessible, e.g. from a Proof
+   context via Proof_Context.syn_of.
+*}
+  
+ML\<open>
 Parse.nat: int parser;  
 Parse.int: int parser;
 Parse.enum_positions: string -> 'a parser -> ('a list * Position.T list) parser;
@@ -192,75 +233,7 @@ Parse.position: 'a parser -> ('a * Position.T) parser;
 
 (* Examples *)                                     
 Parse.position Args.cartouche_input;
-
-
-(* More High-level, more Isar-specific Parsers *)
-Args.name;
-Args.const;
-Args.cartouche_input: Input.source parser; 
-Args.text_token: Token.T parser;
-
-val Z = let val attribute = Parse.position Parse.name -- 
-                            Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.name) "";
-        in (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) end ;
-(* this leads to constructions like the following, where a parser for a *)
-fn name => (Thy_Output.antiquotation name (Scan.lift (Parse.position Args.cartouche_input)));
 \<close>
-
-(* Bindings *)
-ML\<open>val X = @{here};\<close>  
-
-
-
-
-(* Output: Very Low Level *)
-ML\<open> 
-Output.output; (* output is the  structure for the "hooks" with the target devices. *)
-Output.output "bla_1:";
-\<close>
-  
-ML\<open> 
-Thy_Output.verbatim_text;
-Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
-Thy_Output.antiquotation:
-   binding ->
-     'a context_parser ->
-       ({context: Proof.context, source: Token.src, state: Toplevel.state} -> 'a -> string) ->
-         theory -> theory;
-Thy_Output.output: Proof.context -> Pretty.T list -> string;
-Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
-
-
-
-Thy_Output.output : Proof.context -> Pretty.T list -> string;
-\<close>
-
-
-(* Context and Theory: *)
-ML{*
-Context.theory_name;
-
-Theory.check;
-
-Context.map_theory;
-(* Theory.map_thy; *)
-
-Theory.begin_theory;
-Theory.check;
-(* Outer_Syntax.pretty_command; not exported*) 
-Theory.setup; (* The thing to extend the table of "command"s with parser - callbacks. *)
-
-*}
-
-(* Syntax operations : Interface for parsing, type-checking, "reading" 
-                       (both) and pretty-printing.
-   Note that this is a late-binding interface, i.e. a collection of "hooks".
-   The real work is done ... see below. 
-   
-   Encapsulates the data structure "syntax" --- the table with const symbols, 
-   print and ast translations, ... The latter is accessible, e.g. from a Proof
-   context via Proof_Context.syn_of.
-*)
 ML{* 
 Syntax.parse_sort;
 Syntax.parse_typ;
@@ -293,6 +266,65 @@ ML{*
 fun read_terms ctxt =
   grouped 10 Par_List.map_independent (Syntax.parse_term ctxt) #> Syntax.check_terms ctxt;
 *}  
+
+ML\<open>
+(* More High-level, more Isar-specific Parsers *)
+Args.name;
+Args.const;
+Args.cartouche_input: Input.source parser; 
+Args.text_token: Token.T parser;
+
+val Z = let val attribute = Parse.position Parse.name -- 
+                            Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.name) "";
+        in (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) end ;
+(* this leads to constructions like the following, where a parser for a *)
+fn name => (Thy_Output.antiquotation name (Scan.lift (Parse.position Args.cartouche_input)));
+\<close>
+
+
+subsection {* Output: Very Low Level *}
+ML\<open> 
+Output.output; (* output is the  structure for the "hooks" with the target devices. *)
+Output.output "bla_1:";
+\<close>
+
+subsection {* Output: High Level *}
+  
+ML\<open> 
+Thy_Output.verbatim_text;
+Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
+Thy_Output.antiquotation:
+   binding ->
+     'a context_parser ->
+       ({context: Proof.context, source: Token.src, state: Toplevel.state} -> 'a -> string) ->
+         theory -> theory;
+Thy_Output.output: Proof.context -> Pretty.T list -> string;
+Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
+
+Thy_Output.output : Proof.context -> Pretty.T list -> string;
+\<close>
+
+section {*  The Nano-Kernel: Contexts,  (Theory)-Contexts, (Proof)-Contexts *}
+  
+ML{*
+open Context
+*}
+ML{*
+Context.theory_name;
+
+Theory.check;
+
+Context.map_theory;
+(* Theory.map_thy; *)
+
+Theory.begin_theory;
+Theory.check;
+(* Outer_Syntax.pretty_command; not exported*) 
+Theory.setup; (* The thing to extend the table of "command"s with parser - callbacks. *)
+
+*}
+
+
   
 (* 
 Main phases of inner syntax processing, with standard implementations
@@ -675,8 +707,38 @@ fun document_antiq check_file ctxt (name, pos) =
   end;
 
 *}
+ML{* Type_Infer_Context.infer_types *}
+ML{* Type_Infer_Context.prepare_positions *}
   
+section {*Transaction Management in the Isar-Engine : The Toplevel *}
   
-  ML{* Type_Infer_Context.prepare_positions *}
+ML{*
+Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
+Thy_Output.document_command;
+
+Toplevel.exit: Toplevel.transition -> Toplevel.transition;
+Toplevel.keep: (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
+Toplevel.keep': (bool -> Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
+Toplevel.ignored: Position.T -> Toplevel.transition;
+Toplevel.generic_theory: (generic_theory -> generic_theory) -> Toplevel.transition -> Toplevel.transition;
+Toplevel.theory': (bool -> theory -> theory) -> Toplevel.transition -> Toplevel.transition;
+Toplevel.theory: (theory -> theory) -> Toplevel.transition -> Toplevel.transition;
+
+Toplevel.present_local_theory:
+(xstring * Position.T) option ->
+     (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
+(* where text treatment and antiquotation parsing happens *)
+
+
+(*fun document_command markdown (loc, txt) =
+  Toplevel.keep (fn state =>
+    (case loc of
+      NONE => ignore (output_text state markdown txt)
+    | SOME (_, pos) =>
+        error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
+  Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt)); *)
+Thy_Output.document_command :  {markdown: bool} -> (xstring * Position.T) option * Input.source -> 
+                               Toplevel.transition -> Toplevel.transition;
+*}  
   
 end
