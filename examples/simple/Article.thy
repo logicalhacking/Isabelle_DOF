@@ -11,10 +11,12 @@ text*[tit::title]{* Using The Isabelle Ontology Framework*}
 text*[stit::subtitle] \<open>Linking the Formal with the Informal\<close>
   
 text*[auth1::author, affiliation="''University of Sheffield''"]\<open>Achim Brucker\<close>
+  
 text*[auth2::author, affiliation="''Centrale-Supelec''"]       \<open>Idir Ait-Sadoune\<close>
 text*[auth3::author, affiliation="''IRT-SystemX''"]            \<open>Paolo Crisafulli\<close>
 text*[auth4::author, affiliation="''Universit\\'e Paris-Sud''"]\<open>Burkhart Wolff\<close>  
-  
+
+term "affiliation_update (\<lambda> _ . '''') S"  
   
 text*[abs::abstract, keyword_list="[]"] {* Isabelle/Isar is a system 
 framework with many similarities to Eclipse; it is mostly known as part of 
@@ -53,7 +55,7 @@ val (cid,value) = case DOF_core.get_object_global oid thy of
 
 val term'' = @{docitem_value \<open>bgrnd\<close>};
 
-val term' = Sign.certify_term @{theory} value;
+(* val term' = Sign.certify_term @{theory} value; *)
 simplify;
  *}  
   
@@ -72,20 +74,22 @@ val converts = fold convert (!AnnoTextelemParser.SPY) base
 
 
   
-term "\<lparr>author.tag_attribute=undefined,affiliation=undefined\<rparr>"
+term "\<lparr>author.tag_attribute=undefined,email=''dfg'',orcid=None,affiliation=undefined\<rparr>"
   
 ML{* !AnnoTextelemParser.SPY *}
 definition HURX where "HURX = affiliation((undefined::author)\<lparr>affiliation:='' ''\<rparr>)"
 thm HURX_def[simplified]
-ML{* 
+(*ML{* 
 val x = @{code "HURX"}
 *}
+*)
   
-definition HORX where "HORX = affiliation(\<lparr>author.tag_attribute=0,affiliation=''''\<rparr>\<lparr>affiliation:=''e''\<rparr>) "  
-ML{* 
+definition HORX 
+  where "HORX = affiliation(\<lparr>author.tag_attribute=undefined,email=''dfg'',orcid=None,affiliation=undefined\<rparr>\<lparr>affiliation:=''e''\<rparr>) "  
+(* ML{* 
 val x = @{code "HORX"}
 *}
-  
+*)  
   
 
   
@@ -93,7 +97,7 @@ term related_work.main_author_update
 section*[ontomod::technical]{* Modeling Ontologies in Isabelle_DOF *} 
 text{* Lorem ipsum dolor sit amet, suspendisse non arcu malesuada mollis, nibh morbi,*}
   
-text*[x]{* @{technical \<open>ontomod\<close>} @{technical \<open>bgrnd\<close>}*}
+text*[x]{* @{technical \<open>ontomod\<close>} @{introduction \<open>bgrnd\<close>}*}
   
 subsection*[scholar_onto::example]{* A Scholar Paper: Eating one's own dogfood. @{technical \<open>ontomod\<close>} *}  
 text{* @{technical \<open>ontomod\<close>}*}                                                

@@ -442,7 +442,7 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),
               val assns = map read_assn doc_attrs
               val _ = (SPY:=assns)       
               val defaults = base       (* this calculation ignores the defaults *)
-              val value_term = (fold convert assns defaults) |> (Sign.cert_term thy)
+              val value_term = (fold convert assns defaults) (* |> (Sign.cert_term thy) *)
               val name = Context.theory_name thy 
           in  thy |> DOF_core.define_object_global (oid, {pos=pos, 
                                                           thy_name=name,
@@ -476,7 +476,7 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                  (* Missing: Check that attributes are legal here *)
                  val assns = map read_assn doc_attrs
                  val _ = (SPY:=assns) 
-          in  thy |> DOF_core.update_value_global oid ((fold convert assns) #> (Sign.cert_term thy))
+          in  thy |> DOF_core.update_value_global oid ((fold convert assns) (* #> (Sign.cert_term thy) *))
           end
      in  Toplevel.theory(upd)
      end
