@@ -5,6 +5,7 @@ begin
 
 doc_class Author =
    affiliation :: "string"
+  email :: "string"
 
 datatype Subject =
   algebra | geometry | statistical
@@ -26,12 +27,11 @@ doc_class Question =
 
 doc_class Exercise= 
   content :: "(Question) list"
+  mark :: integer
 
 doc_class MathExam=
   content :: "(Header + Author + Exercise) list"
   where "((Author)+  ~
           Header ~ 
          (Exercise)+ )"
-  
-  
 end
