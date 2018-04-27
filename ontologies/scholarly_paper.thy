@@ -13,20 +13,29 @@ doc_class subtitle =
 -- \<open>adding a contribution list and checking that it is cited as well in tech as in conclusion. ? \<close>
 
 doc_class author =
+   email       :: "string"
+   orcid       :: "string option"  <=  "None"
    affiliation :: "string"
 
 doc_class abstract =
    keyword_list :: "string list"  <= "[]"
 
+
 doc_class text_section = 
    main_author :: "author option"  <=  None
 
+(*
+doc_class text_section = 
+   main_author :: "string option"  <=  None
+ *)  
+   
 doc_class introduction = text_section +
-   comment :: string
+   comment2 :: string
 
 doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
-
+   formula :: "term list"
+   
 text{* A very rough formatting style could be modeled as follows:*}   
    
 datatype mesure = points  "int" | inch "int" | textwidth "int"  (* given by the inverse of the integer *)   
@@ -81,9 +90,11 @@ text{* Besides subtyping, there is another relation between
 text{* @{cite bla} *}
 
 doc_class article = 
-   trace :: "(title + subtitle + author+ abstract +
-              introduction + technical + example +
-              conclusion + bibliography) list"
+   style_id :: string                <= "''LNCS''"
+   version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
+   trace    :: "(title + subtitle + author+ abstract +
+                introduction + technical + example +
+                conclusion + bibliography) list"
    where "(title ~ 
            [subtitle] ~
            (author)+  ~ 
