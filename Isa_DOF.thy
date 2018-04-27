@@ -372,9 +372,14 @@ val attribute =
     Parse.position Parse.const 
     -- Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.term) "";
 
-val attribute_upd =
+val attribute_upd  : (((string * Position.T) * string) * string) parser =
     Parse.position Parse.const 
-    -- ( Parse.$$$ "+" ||  Parse.$$$ "=")  
+    -- ( Parse.$$$ "+" ||  Parse.$$$ ":")  (* + still does not work ... Yuck ! ! !*)
+    --| Parse.$$$ "="  
+    (*
+    -- ( Parse.keyword_improper "+" ||  Parse.keyword_improper ":")  (* + still does not work ... *)
+    --| Parse.keyword_improper "="  
+     *)
     (* -- ( Parse.keyword_with (fn x => "+=" = x) ||  Parse.keyword_with (fn x=> ":=" = x)) *) 
     -- Parse.!!! Parse.term;
 (*
@@ -404,11 +409,11 @@ val attributes_upd =
 
 val SPY = Unsynchronized.ref ([]:((term * Position.T) * term) list) 
 
-fun convert((Const(s,ty),_), t) X = Const(s^"_update", range_type ty) 
+fun convert((Const(s,ty),_), t) X = Const(s^"_update", dummyT) 
                                     $ Abs("uuu_", type_of t, t) $ X
-   |convert _ _ = error("Big drama")
+   |convert _ _ = error("Left-hand side not a doc_class attribute.")
 
-val base = @{term "undefined"}
+val base = Const(@{const_name "undefined"},dummyT)
 
 fun check_classref (SOME(cid,pos')) thy = 
           let val _ = if not (DOF_core.is_defined_cid_global cid thy) 
@@ -423,6 +428,8 @@ fun check_classref (SOME(cid,pos')) thy =
    | check_classref  NONE _ = DOF_core.default_cid 
 
 
+fun generalize_typ n = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,n),sort));
+fun infer_type thy term = hd (Type_Infer_Context.infer_types (Proof_Context.init_global thy) [term])
 
 fun enriched_document_command markdown (((((oid,pos),cid_pos),
                                               doc_attrs: ((string * Position.T) * string) list),
@@ -437,12 +444,16 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),
                           
     fun enrich_trans thy = 
           let val cid_long = check_classref  cid_pos thy
-              fun read_assn  ((lhs, pos), rhs) = ((Syntax.read_term_global thy lhs,pos),
-                                                   Syntax.read_term_global thy rhs)
+              val count = Unsynchronized.ref (0 - 1);
+              fun incr () = Unsynchronized.inc count
+              val generalize_term =  let val n = incr () in Term.map_types (generalize_typ n) end
+              fun read_assn  ((lhs, pos), rhs) = 
+                                 ((Syntax.read_term_global thy lhs |> generalize_term,pos),
+                                   Syntax.read_term_global thy rhs |> generalize_term)
               val assns = map read_assn doc_attrs
               val _ = (SPY:=assns)       
               val defaults = base       (* this calculation ignores the defaults *)
-              val value_term = (fold convert assns defaults) (* |> (Sign.cert_term thy) *)
+              val value_term = (fold convert assns defaults)  |> (infer_type thy) 
               val name = Context.theory_name thy 
           in  thy |> DOF_core.define_object_global (oid, {pos=pos, 
                                                           thy_name=name,
@@ -467,16 +478,21 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                  val cid_long = check_classref cid_pos thy
                  val _ = if cid_long = DOF_core.default_cid  orelse cid = cid_long then () 
                                        else error("incompatible classes:"^cid^":"^cid_long)
+
+                 val count = Unsynchronized.ref (0 - 1);
+                 fun incr () = Unsynchronized.inc count
+                 val generalize_term =  let val n = incr () in Term.map_types (generalize_typ n) end
                  fun read_assn  (((lhs, pos), opn), rhs) = 
                            let val _ = writeln opn in 
-                           ((Syntax.read_term_global thy lhs,pos), (* this is problematic, 
-                                                                      lhs need to be qualified  *)
-                             Syntax.read_term_global thy rhs)
+                           ((Syntax.read_term_global thy lhs |> generalize_term ,pos), 
+                                                           (* this is problematic, 
+                                                              lhs need to be qualified  *)
+                             Syntax.read_term_global thy rhs |> generalize_term)
                            end
                  (* Missing: Check that attributes are legal here *)
                  val assns = map read_assn doc_attrs
                  val _ = (SPY:=assns) 
-          in  thy |> DOF_core.update_value_global oid ((fold convert assns) (* #> (Sign.cert_term thy) *))
+          in  thy |> DOF_core.update_value_global oid ((fold convert assns) #> (infer_type thy))
           end
      in  Toplevel.theory(upd)
      end
@@ -631,6 +647,13 @@ val _ = Theory.setup((docitem_ref_antiquotation @{binding docref} DOF_core.defau
 
 end (* struct *)
 *}
+
+ML{*
+      val count = Unsynchronized.ref (0 - 1);
+Unsynchronized.inc count;
+Unsynchronized.inc count
+
+ *}
   
 section{* Syntax for Ontologies (the '' View'' Part III) *} 
 ML{* 
@@ -646,12 +669,16 @@ fun read_parent NONE ctxt = (NONE, ctxt)
 fun map_option _ NONE = NONE 
    |map_option f (SOME x) = SOME (f x);
 
+
+
 fun read_fields raw_fields ctxt =
     let
       val Ts = Syntax.read_typs ctxt (map (fn ((_, raw_T, _),_) => raw_T) raw_fields);
       val terms = map ((map_option (Syntax.read_term ctxt)) o snd) raw_fields
-      val generalize_typ = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,0),sort));
-      fun test t1 t2 = Sign.typ_instance (Proof_Context.theory_of ctxt)(t1, generalize_typ t2) 
+      val count = Unsynchronized.ref (0 - 1);
+      fun incr () = Unsynchronized.inc count
+      fun test t1 t2 = Sign.typ_instance (Proof_Context.theory_of ctxt)
+                                         (t1, AnnoTextelemParser.generalize_typ 0 t2) 
       fun check_default (ty,SOME trm) = 
                   let val ty' = (type_of trm)
                   in if test ty ty' 
@@ -717,36 +744,10 @@ val _ =
 end (* struct *)
 
 *}  
- 
-  
+   
   
 
 section{* Testing and Validation *}
-
-ML{*
-Binding.print;
-Syntax.read_sort;
-Syntax.read_typ;
-Syntax.read_term;
-Syntax.pretty_typ;
-Parse.document_source;
-*}  
-  
-ML\<open>
-open Markup;
-Markup.binding;
-open Position;
-open Binding;
-Position.line;
-
-Context.Theory; 
-Context_Position.report_generic;
-Context_Position.report;
-Term_Style.parse;
-
-Sign.certify_term;
-\<close>
-text {* Lq *}
 
   
   

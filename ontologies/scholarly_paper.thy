@@ -30,7 +30,7 @@ doc_class text_section =
  *)  
    
 doc_class introduction = text_section +
-   comment2 :: string
+   comment :: string
 
 doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
