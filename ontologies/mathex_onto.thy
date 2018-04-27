@@ -5,6 +5,7 @@ begin
 
 doc_class Author =
    affiliation :: "string"
+  email :: "string"
 
 datatype Subject =
   algebra | geometry | statistical
@@ -33,6 +34,4 @@ doc_class MathExam=
   where "((Author)+  ~
           Header ~ 
          (Exercise)+ )"
-  
-  
 end

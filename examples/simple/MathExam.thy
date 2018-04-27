@@ -4,7 +4,8 @@ begin
 
 open_monitor*[exam::MathExam] 
 
-text*[idir::Author, affiliation="CentraleSupelec"]{*Idir AIT SADOUNE*}
+text*[idir::Author, affiliation="''CentraleSupelec''", email="''idir.aitsadoune@centralesupelec.fr''"]
+{*Idir AIT SADOUNE*}
 
 text*[header::Header,examGrade="A1", examSubject= "algebra", examTitle="Exam number 1"]
 {* Please follow directions carefully and show all your work.*}
