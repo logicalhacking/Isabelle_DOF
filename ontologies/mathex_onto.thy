@@ -26,6 +26,7 @@ doc_class Question =
 
 doc_class Exercise= 
   content :: "(Question) list"
+  mark :: integer
 
 doc_class MathExam=
   content :: "(Header + Author + Exercise) list"

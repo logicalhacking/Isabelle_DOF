@@ -11,7 +11,7 @@ text*[tit::title]{* Using The Isabelle Ontology Framework*}
 text*[stit::subtitle] \<open>Linking the Formal with the Informal\<close>
   
 text*[auth1::author, affiliation="''University of Sheffield''"]\<open>Achim Brucker\<close>
-text*[auth2::author, affiliation="''Centrale-Supelec''"]\<open>Idir Ait-Adune\<close>
+text*[auth2::author, affiliation="''Centrale-Supelec''"]\<open>Idir Ait-Sadoune\<close>
 text*[auth3::author, affiliation="''IRT-SystemX''"]\<open>Paolo Crizzifulli\<close>
 text*[auth4::author, affiliation="''Universit\\'e Paris-Sud''"]\<open>Burkhart Wolff\<close>
 term "\<lparr>author.tag_attribute=undefined,affiliation=undefined\<rparr>"
