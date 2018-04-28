@@ -129,7 +129,7 @@ text{* there is a joker type that can be added as place-holder during term const
   
 ML{*  Term.dummyT : typ *}
   
-subsection{* Type-Inference *}
+subsection{* Type-Certification (=checking that a type annotation is consistent) *}
 
 ML{*
 Sign.typ_instance: theory -> typ * typ -> bool;
@@ -150,7 +150,15 @@ Sign.typ_instance @{theory}(ty', ty);
 val generalize_typ = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,0),sort));
 Sign.typ_instance @{theory} (ty', generalize_typ ty)
 *}
-  
+
+subsection{* Type-Inference (= inferring consistent type information if possible) *}
+
+text{* Type inference eliminates also joker-types such as @{ML dummyT} and produces
+       instances for schematic type variables where necessary. In the case of success,
+       it produces a certifiable term. *}  
+ML{*  
+Type_Infer_Context.infer_types: Proof.context -> term list -> term list  
+*}
   
 section\<open>  Front End:  \<close>  
 
@@ -307,7 +315,10 @@ Thy_Output.output : Proof.context -> Pretty.T list -> string;
 section {*  The Nano-Kernel: Contexts,  (Theory)-Contexts, (Proof)-Contexts *}
   
 ML{*
-open Context
+open Context;
+Proof_Context.theory_of: Proof.context -> theory;
+: theory -> Proof.context;
+
 *}
 ML{*
 Context.theory_name;
@@ -564,7 +575,7 @@ Markup.entity;
 ML{* 
 Toplevel.theory; 
 Toplevel.presentation_context_of; (* Toplevel is a kind of table with call-bacl functions *)
-Proof_Context.consts_of;
+
 Consts.the_const; (* T is a kind of signature ... *)
 Variable.import_terms;
 Vartab.update;

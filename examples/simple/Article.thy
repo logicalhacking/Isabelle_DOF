@@ -4,21 +4,24 @@ theory Article
 begin
 (* >> *) 
   
+ML{*           val keywords = Thy_Header.get_keywords' @{context};
+*}  
+  
 open_monitor*[onto::article]  
 
 text*[tit::title]{* Using The Isabelle Ontology Framework*} 
   
 text*[stit::subtitle] \<open>Linking the Formal with the Informal\<close>
   
-text*[auth1::author, affiliation="''University of Sheffield''"]\<open>Achim Brucker\<close>
+text*[auth1::author, affiliation = "''University of Sheffield''"]\<open>Achim Brucker\<close>
   
-text*[auth2::author, affiliation="''Centrale-Supelec''"]       \<open>Idir Ait-Sadoune\<close>
-text*[auth3::author, affiliation="''IRT-SystemX''"]            \<open>Paolo Crisafulli\<close>
+text*[auth2::author, affiliation = "''Centrale-Supelec''"]       \<open>Idir Ait-Sadoune\<close>
+text*[auth3::author, affiliation = "''IRT-SystemX''"]            \<open>Paolo Crisafulli\<close>
 text*[auth4::author, affiliation="''Universit\\'e Paris-Sud''"]\<open>Burkhart Wolff\<close>  
 
 term "affiliation_update (\<lambda> _ . '''') S"  
   
-text*[abs::abstract, keywordlist="[]"] {* Isabelle/Isar is a system 
+text*[abs::abstract, keywordlist="[]::string list"] {* Isabelle/Isar is a system 
 framework with many similarities to Eclipse; it is mostly known as part of 
 Isabelle/HOL, an interactive theorem proving and code generation environment. 
 Recently, an Document Ontology Framework has been developed as a plugin in 
@@ -39,24 +42,19 @@ sed nibh ut lorem integer, maecenas sed mi purus non nunc, morbi pretium tortor.
 section* [bgrnd :: introduction] {* Background: Isabelle and Isabelle_DOF *}  
 text{* As mentioned in @{introduction \<open>intro\<close>} ... *} 
 
-
-  
     
 (*update_instance*[bgrnd, main_author = "Some(''bu'')", formula="@{term ''a + b = b + a''}"] *)
-update_instance*[bgrnd, comment2 = "''bu''"] 
+update_instance*[bgrnd, comment := "''bu''"] 
 
-term  scholarly_paper.introduction.comment2_update  
 ML{* 
-val thy = @{theory};
-val oid = "bgrnd"
-val (cid,value) = case DOF_core.get_object_global oid thy of 
-                                SOME{cid,value,...} => (cid, value)
-                              | NONE => raise TERM("XX",[]);
-
 val term'' = @{docitem_value \<open>bgrnd\<close>};
-
-(* val term' = Sign.certify_term @{theory} value; *)
-simplify;
+val xxx = type_of term'';
+val yyy = HOLogic.mk_Trueprop(Const(@{const_name "HOL.eq"}, xxx --> xxx --> HOLogic.boolT) 
+                              $ term'' $ Free("XXXX", xxx));
+val hhh = Thm.varifyT_global;
+val zzz = Thm.assume(Thm.cterm_of @{context} yyy);
+val zzzz = simplify @{context} zzz;
+val a $ b $ c = @{term "X\<lparr>affiliation:='' ''\<rparr>"};
  *}  
   
 term "scholarly_paper.author.affiliation_update"
@@ -70,19 +68,18 @@ fun convert((Const(s,_),_), t) X = Const(s^"_update", dummyT)
                                $ X
 val base = @{term "undefined"}
 val converts = fold convert (!AnnoTextelemParser.SPY) base
+ML{*   open Thm; varifyT_global ; 
 *}  
+  
 
 
+
+  
+term "scholarly_paper.author.affiliation_update"
+term "scholarly_paper.abstract.keyword_list_update"
+term "scholarly_paper.introduction.comment_update"
   
 term "\<lparr>author.tag_attribute=undefined,email=''dfg'',orcid=None,affiliation=undefined\<rparr>"
-  
-ML{* !AnnoTextelemParser.SPY *}
-definition HURX where "HURX = affiliation((undefined::author)\<lparr>affiliation:='' ''\<rparr>)"
-thm HURX_def[simplified]
-(*ML{* 
-val x = @{code "HURX"}
-*}
-*)
   
 definition HORX 
   where "HORX = affiliation(\<lparr>author.tag_attribute=undefined,email=''dfg'',orcid=None,affiliation=undefined\<rparr>\<lparr>affiliation:=''e''\<rparr>) "  
@@ -92,8 +89,6 @@ val x = @{code "HORX"}
 *)  
   
 
-  
-term related_work.main_author_update   
 section*[ontomod::technical]{* Modeling Ontologies in Isabelle_DOF *} 
 text{* Lorem ipsum dolor sit amet, suspendisse non arcu malesuada mollis, nibh morbi,*}
   
