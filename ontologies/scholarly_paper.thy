@@ -14,7 +14,7 @@ doc_class subtitle =
 
 doc_class author =
    email       :: "string"
-   orcid       :: "string option"  <=  "None"
+   orcid       :: "string"
    affiliation :: "string"
 
 doc_class abstract =

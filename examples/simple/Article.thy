@@ -79,7 +79,7 @@ term "scholarly_paper.author.affiliation_update"
 term "scholarly_paper.abstract.keyword_list_update"
 term "scholarly_paper.introduction.comment_update"
   
-term "\<lparr>author.tag_attribute=undefined,email=''dfg'',orcid=None,affiliation=undefined\<rparr>"
+term "\<lparr>author.tag_attribute=undefined,email=''dfg'',orcid='''',affiliation=undefined\<rparr>"
   
 definition HORX 
   where "HORX = affiliation(\<lparr>author.tag_attribute=undefined,email=''dfg'',orcid=None,affiliation=undefined\<rparr>\<lparr>affiliation:=''e''\<rparr>) "  
