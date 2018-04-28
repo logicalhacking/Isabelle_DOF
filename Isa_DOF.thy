@@ -35,6 +35,9 @@ consts mk_docitem :: "string \<Rightarrow> 'a"      ("@{docitem _}")
 term "@{typ  ''int => int''}"  
 term "@{term ''Bound 0''}"  
 term "@{thm  ''refl''}"  
+term "@{thm  ''<doc_ref>''}"
+  
+  
   
 section{*Primitive Markup Generators*}
 ML{*

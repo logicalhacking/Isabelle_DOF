@@ -48,9 +48,20 @@ update_instance*[bgrnd, comment := "''bu''"]
 
 ML{* 
 val term'' = @{docitem_value \<open>bgrnd\<close>};
-simplify;
-val a $ b $ c = @{term "X\<lparr>affiliation:='' ''\<rparr>"}
+val xxx = type_of term'';
+val yyy = HOLogic.mk_Trueprop(Const(@{const_name "HOL.eq"}, xxx --> xxx --> HOLogic.boolT) 
+                              $ term'' $ Free("XXXX", xxx));
+val hhh = Thm.varifyT_global;
+val zzz = Thm.assume(Thm.cterm_of @{context} yyy);
+val zzzz = simplify @{context} zzz;
+val a $ b $ c = @{term "X\<lparr>affiliation:='' ''\<rparr>"};
  *}  
+ML{*   open Thm; varifyT_global ; 
+*}  
+  
+
+
+
   
 term "scholarly_paper.author.affiliation_update"
 term "scholarly_paper.abstract.keyword_list_update"
