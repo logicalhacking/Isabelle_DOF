@@ -73,7 +73,7 @@ object DofConverter {
 
   def convertIsaDofCommand(cmd: String, tokens: List[LaTeXToken]): List[LaTeXToken] = {
 
-    def convertType(head: List[LaTeXToken], tail: List[LaTeXToken]): List[LaTeXToken] = {
+    def convertType(head: List[LaTeXToken], tail: List[LaTeXToken]): Tuple2[String,List[LaTeXToken]] = {
 
       def split(head:List[LaTeXToken], tokens: List[LaTeXToken]):Tuple2[List[LaTeXToken], List[LaTeXToken]] = {
         tokens match {
@@ -88,23 +88,16 @@ object DofConverter {
       }
       tail match {
         case CURLYOPEN::COMMAND("""\isacharcolon""")::CURLYCLOSE :: CURLYOPEN::COMMAND("""\isacharcolon""")::CURLYCLOSE :: tail => {
-          print ("SPLITTING: \n")
-          print ("head: "+head+"\n")
-          print ("tail: "+tail+"\n")
-          
-          
           val (label, shead)= split(List(), head.reverse)
-          val (typ, stail) = split(List(), tail)  
-          
-          print ("\nlabel = "+(label.reverse)+"\n")
-          print ("\nshead = "+(shead.reverse)+"\n")
-          print ("\nstail = "+stail+"\n")
-          print ("\ntyp = "+typ+"\n")
-          
-          (shead.reverse)++List(RAWTEXT("""label={"""))++(label.reverse)++List(RAWTEXT("""}, type={"""))++typ++List(RAWTEXT("""}"""))++stail
+          val (typ, stail) = split(List(), tail)
+          val typstring = typ match {
+            case RAWTEXT(s)::Nil => s.capitalize
+            case _          => ""
+          }
+          (typstring,(shead.reverse)++List(RAWTEXT("""label={"""))++(label.reverse)++List(RAWTEXT("""}, type={"""))++typ++List(RAWTEXT("""}"""))++stail)
         }
         case t::tail => convertType(head++List(t), tail)
-        case t => t
+        case t => ("",t)
       }
     }
 
@@ -126,7 +119,7 @@ object DofConverter {
     
     val sep=RAWTEXT("%\n")
     
-    def parseIsaDofCmd(args: List[LaTeXToken], tokens: List[LaTeXToken]): Tuple2[List[LaTeXToken], List[LaTeXToken]] = {
+    def parseIsaDofCmd(args: List[LaTeXToken], tokens: List[LaTeXToken]): Tuple3[String,List[LaTeXToken], List[LaTeXToken]] = {
       (args, tokens) match {
         case (args, COMMAND("""\isamarkupfalse""") :: tail) => parseIsaDofCmd(args, tail)
         case (args, CURLYOPEN :: COMMAND("""\isachardoublequoteopen""") :: CURLYCLOSE :: CURLYOPEN :: COMMAND("""\isacharbrackleft""") :: CURLYCLOSE :: tail) 
@@ -134,41 +127,45 @@ object DofConverter {
         case (args, CURLYOPEN :: COMMAND("""\isacharbrackright""") :: CURLYCLOSE :: CURLYOPEN :: COMMAND("""\isachardoublequoteclose""") :: CURLYCLOSE :: tail) 
                              => parseIsaDofCmd(backSpace(args) ++ List(CURLYCLOSE), delSpace(tail))
         case (args, CURLYOPEN :: COMMAND("""\isacharbrackleft""") :: CURLYCLOSE :: tail) => parseIsaDofCmd(backSpace(args) ++List(sep) ++ List(BRACKETOPEN), tail)
-        case (args, CURLYOPEN :: COMMAND("""\isacharbrackright""") :: CURLYCLOSE :: tail) => parseIsaDofCmd(deMarkUpArgList(convertType(List(), args))++List(BRACKETCLOSE,sep), tail)
+        case (args, CURLYOPEN :: COMMAND("""\isacharbrackright""") :: CURLYCLOSE :: tail) => {
+          val (typ,arglist) = convertType(List(), args)
+          val (_, t1, t2)   = parseIsaDofCmd(deMarkUpArgList(arglist)++List(BRACKETCLOSE,sep), tail)
+          (typ,t1,t2)
+        }
         case (args, CURLYOPEN :: COMMAND("""\isacharverbatimopen""") :: CURLYCLOSE ::tail) => parseIsaDofCmd(args ++ List(CURLYOPEN), delSpace(tail))
-        case (args, CURLYOPEN :: COMMAND("""\isacharverbatimclose""") :: CURLYCLOSE :: tail) => (deMarkUp(backSpace(args) ++ List(CURLYCLOSE)), sep::delSpace(tail))
+        case (args, CURLYOPEN :: COMMAND("""\isacharverbatimclose""") :: CURLYCLOSE :: tail) => ("",deMarkUp(backSpace(args) ++ List(CURLYCLOSE)), sep::delSpace(tail))
         case (args, CURLYOPEN :: COMMAND("""\isacartoucheopen""") :: CURLYCLOSE ::tail) => parseIsaDofCmd(args ++ List(CURLYOPEN), delSpace(tail))
-        case (args, CURLYOPEN :: COMMAND("""\isacartoucheclose""") :: CURLYCLOSE :: tail) => (deMarkUp(backSpace(args) ++ List(CURLYCLOSE)), sep::delSpace(tail))
+        case (args, CURLYOPEN :: COMMAND("""\isacartoucheclose""") :: CURLYCLOSE :: tail) => ("",deMarkUp(backSpace(args) ++ List(CURLYCLOSE)), sep::delSpace(tail))
         case (args, t :: tail) => parseIsaDofCmd(args ++ List(t), tail)
-        case (args, Nil) => (deMarkUp(args), Nil)
+        case (args, Nil) => ("",deMarkUp(args), Nil)
       }
     }
 
     
     cmd match {
       case """chapter""" => {
-        val (sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofChapter""") :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
+        sep::COMMAND("""\isaDofChapter"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
       }
       case """section""" => {
-        val (sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofSection""") :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
+        sep::COMMAND("""\isaDofSection"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
       }
       case """subsection""" => {
-        val (sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        COMMAND("""\isaDofSubSection""") :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
+        COMMAND("""\isaDofSubSection"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
       }
       case """subsubsection""" => {
-        val (sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofCSubSubSection""") :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
+        sep::COMMAND("""\isaDofCSubSubSection"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
       }
       case """paragraph""" => {
-        val (sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofParagraph""") :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
+        sep::COMMAND("""\isaDofParagraph"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
       }
       case """text""" => {
-        val (dofText, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofText""") :: dofText ++ convertLaTeXTokenStream(tail)
+        val (typ,dofText, tail) = parseIsaDofCmd(Nil, tokens)
+        sep::COMMAND("""\isaDofText"""+typ) :: dofText ++ convertLaTeXTokenStream(tail)
       }
       case s => sep::COMMAND("""\isaDofUnknown{""" + s + """}""") ::sep:: convertLaTeXTokenStream(tokens)
     }
