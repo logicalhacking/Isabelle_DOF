@@ -39,7 +39,7 @@ object DofConverter {
   def deMarkUpArgList(tokens: List[LaTeXToken]): List[LaTeXToken] = {
     tokens match {
       case CURLYOPEN :: COMMAND("""\isacharprime""") :: CURLYCLOSE :: CURLYOPEN :: COMMAND("""\isacharprime""") :: CURLYCLOSE :: tail      
-        => RAWTEXT(""""""") :: deMarkUpArgList(tail)
+        => RAWTEXT("") :: deMarkUpArgList(tail)
       case CURLYOPEN :: COMMAND("""\isachardoublequoteopen""") :: CURLYCLOSE :: tail  => RAWTEXT("""{""") :: deMarkUpArgList(tail)
       case CURLYOPEN :: COMMAND("""\isachardoublequoteclose""") :: CURLYCLOSE :: tail  => RAWTEXT("""}""") :: deMarkUpArgList(tail)
       case t :: tail => t :: deMarkUpArgList(tail)
