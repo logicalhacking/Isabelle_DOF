@@ -18,7 +18,7 @@ doc_class author =
    affiliation :: "string"
 
 doc_class abstract =
-   keyword_list :: "string list"   <= "[]"
+  keywordlist    :: "string list"   <= "[]"
 
 
 doc_class text_section = 

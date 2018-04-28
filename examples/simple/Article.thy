@@ -18,7 +18,7 @@ text*[auth4::author, affiliation="''Universit\\'e Paris-Sud''"]\<open>Burkhart W
 
 term "affiliation_update (\<lambda> _ . '''') S"  
   
-text*[abs::abstract, keyword_list="[]"] {* Isabelle/Isar is a system 
+text*[abs::abstract, keywordlist="[]"] {* Isabelle/Isar is a system 
 framework with many similarities to Eclipse; it is mostly known as part of 
 Isabelle/HOL, an interactive theorem proving and code generation environment. 
 Recently, an Document Ontology Framework has been developed as a plugin in 
@@ -60,7 +60,7 @@ simplify;
  *}  
   
 term "scholarly_paper.author.affiliation_update"
-term "scholarly_paper.abstract.keyword_list_update"
+term "scholarly_paper.abstract.keywordlist_update"
 term "scholarly_paper.introduction.comment2_update"
 ML{* val a $ b $ c = @{term "X\<lparr>affiliation:='' ''\<rparr>"}; fold;
 *}
