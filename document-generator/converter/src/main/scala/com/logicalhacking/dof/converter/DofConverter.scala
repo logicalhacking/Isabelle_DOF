@@ -46,7 +46,7 @@ object DofConverter {
       case Nil => Nil
     }
   }
-  
+
   def deMarkUp(tokens: List[LaTeXToken]): List[LaTeXToken] = {
     tokens match {
       case CURLYOPEN :: COMMAND("""\isacharcolon""") :: CURLYCLOSE :: tail      => RAWTEXT(""":""") :: deMarkUp(tail)
@@ -64,6 +64,7 @@ object DofConverter {
       case CURLYOPEN :: COMMAND("""\isacharparenright""") :: CURLYCLOSE :: tail => RAWTEXT(""")""") :: deMarkUp(tail)
       case CURLYOPEN :: COMMAND("""\isacharequal""") :: CURLYCLOSE :: tail      => RAWTEXT("""=""") :: deMarkUp(tail)
       case CURLYOPEN :: COMMAND("""\isacharminus""") :: CURLYCLOSE :: tail      => RAWTEXT("""-""") :: deMarkUp(tail)
+      case CURLYOPEN :: COMMAND("""\isacharplus""") :: CURLYCLOSE :: tail      => RAWTEXT("""+""") :: deMarkUp(tail)
       case CURLYOPEN :: COMMAND("""\isacharprime""") :: CURLYCLOSE :: tail      => RAWTEXT("""'""") :: deMarkUp(tail)
       case VSPACE :: tail => RAWTEXT(""" """) :: deMarkUp(tail)
       case t :: tail => t :: deMarkUp(tail)
