@@ -19,7 +19,7 @@ doc_class D = B +
 
 doc_class F  = 
    r :: "thm list"
-   b :: "(A \<times> B) set"   <= "{}"
+   b :: "(A \<times> C) set"   <= "{}"
 
 doc_class M = 
    trace :: "(A + C + D + F) list"
