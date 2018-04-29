@@ -9,12 +9,17 @@ text{* In this section, we develop on the basis of a management of references Is
 that provide direct support in the PIDE framework. *}  
   
 theory Isa_DOF   (* Isabelle Document Ontology Framework *)
-  imports  Main (* Isa_MOF *)
-  keywords "section*"    "subsection*"   "subsubsection*" 
-           "paragraph*"  "subparagraph*" "text*" 
-           "open_monitor*" "close_monitor*" "declare_reference*" 
+  imports  Main  (* Isa_MOF *)
+  keywords "+=" ":="
+
+  and      "section*"    "subsection*"   "subsubsection*" 
+           "paragraph*"  "subparagraph*" "text*"  ::thy_decl
+           
+  and      "open_monitor*" "close_monitor*" "declare_reference*" 
            "update_instance*" "doc_class" ::thy_decl
-          
+
+  and      "lemma*" ::thy_decl
+           
   
 begin
   
@@ -377,22 +382,10 @@ val attribute =
 
 val attribute_upd  : (((string * Position.T) * string) * string) parser =
     Parse.position Parse.const 
-    -- ( Parse.$$$ "+" ||  Parse.$$$ ":")  (* + still does not work ... Yuck ! ! !*)
-    --| Parse.$$$ "="  
-    (*
-    -- ( Parse.keyword_improper "+" ||  Parse.keyword_improper ":")  (* + still does not work ... *)
-    --| Parse.keyword_improper "="  
-     *)
-    (* -- ( Parse.keyword_with (fn x => "+=" = x) ||  Parse.keyword_with (fn x=> ":=" = x)) *) 
+    -- (@{keyword "+="} || @{keyword ":="})
     -- Parse.!!! Parse.term;
-(*
-Token.T list ->
-  (((string * Position.T) * string) * string) *
-  Token.T list*)
 
-(*
-Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ uncheckedN)
-*)
+(* Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ uncheckedN) *)
 val reference =
     Parse.position Parse.name 
     -- Scan.option (Parse.$$$ "::" |-- Parse.!!! (Parse.position Parse.name));
@@ -548,6 +541,13 @@ val _ =
                        "close a document reference monitor"
                        (attributes >> (fn (((oid,pos),cid),doc_attrs) => 
                                           (Toplevel.theory (I)))); (* dummy so far *)
+
+val _ =
+  Outer_Syntax.command @{command_keyword "lemma*"} 
+                       "close a document reference monitor"
+                       (attributes >> (fn (((oid,pos),cid),doc_attrs) => 
+                                          (Toplevel.theory (I)))); (* dummy/fake so far *)
+
 val _ =
   Outer_Syntax.command @{command_keyword "update_instance*"} 
                        "update meta-attributes of an instance of a document class"
@@ -556,6 +556,8 @@ val _ =
 end (* struct *)
 
 *}
+
+lemma murx : "XXX" sorry
   
 section{* Syntax for Ontological Antiquotations (the '' View'' Part II) *}
   
@@ -651,12 +653,6 @@ val _ = Theory.setup((docitem_ref_antiquotation @{binding docref} DOF_core.defau
 end (* struct *)
 *}
 
-ML{*
-      val count = Unsynchronized.ref (0 - 1);
-Unsynchronized.inc count;
-Unsynchronized.inc count
-
- *}
   
 section{* Syntax for Ontologies (the '' View'' Part III) *} 
 ML{* 

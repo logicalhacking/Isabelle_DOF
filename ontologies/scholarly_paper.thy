@@ -34,7 +34,7 @@ doc_class introduction = text_section +
 
 doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
-   formula :: "term list"
+   formula :: "thm list"
    
 text{* A very rough formatting style could be modeled as follows:*}   
    

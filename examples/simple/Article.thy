@@ -59,7 +59,7 @@ val a $ b $ c = @{term "X\<lparr>affiliation:='' ''\<rparr>"};
   
 term "scholarly_paper.author.affiliation_update"
 term "scholarly_paper.abstract.keywordlist_update"
-term "scholarly_paper.introduction.comment2_update"
+term "scholarly_paper.introduction.comment_update"
 ML{* val a $ b $ c = @{term "X\<lparr>affiliation:='' ''\<rparr>"}; fold;
 *}
 ML{* !AnnoTextelemParser.SPY;
@@ -68,15 +68,12 @@ fun convert((Const(s,_),_), t) X = Const(s^"_update", dummyT)
                                $ X
 val base = @{term "undefined"}
 val converts = fold convert (!AnnoTextelemParser.SPY) base
-ML{*   open Thm; varifyT_global ; 
-*}  
-  
+ 
 
 
 
   
 term "scholarly_paper.author.affiliation_update"
-term "scholarly_paper.abstract.keyword_list_update"
 term "scholarly_paper.introduction.comment_update"
   
 term "\<lparr>author.tag_attribute=undefined,email=''dfg'',orcid='''',affiliation=undefined\<rparr>"
@@ -91,7 +88,16 @@ val x = @{code "HORX"}
 
 section*[ontomod::technical]{* Modeling Ontologies in Isabelle_DOF *} 
 text{* Lorem ipsum dolor sit amet, suspendisse non arcu malesuada mollis, nibh morbi,*}
+
+lemma some_lemma : "P" sorry
   
+update_instance*[ontomod, formula := "[@{thm ''some_lemma''}]"] 
+
+lemma another_lemma : "Q" sorry
+  
+update_instance*[ontomod, formula += "[@{thm ''another_lemma''}]"] 
+
+    
 text*[x]{* @{technical \<open>ontomod\<close>} @{introduction \<open>bgrnd\<close>}*}
   
 subsection*[scholar_onto::example]{* A Scholar Paper: Eating one's own dogfood. @{technical \<open>ontomod\<close>} *}  
