@@ -24,32 +24,57 @@ where for organizational reasons the execution of an exam takes place in facilit
 where the author of the exam is not expected to be physically present.
  *}  
   
-datatype ContentClass =   
-  examiner | validator | student
   
 datatype Grade =
   A1 | A2 | A3
 
 doc_class Header = 
   examTitle :: string
-  examGrade :: Grade
   examSubject :: Subject
 
-doc_class Question =
-  level :: Level
-  mark  :: integer
+datatype ContentClass =   
+    examiner    -- \<open>the 'author' of the exam\<close>
+    | validator -- \<open>the 'proof-reader' of the exam\<close>
+    | student   -- \<open>the victim ;-) ... \<close>
 
-doc_class Exercise= 
-  content :: "(Question) list"
-  mark :: integer
+doc_class Exam_item = 
+  concerns :: "ContentClass set"  
 
-doc_class Solution = 
-  content :: "(Question) list"
+datatype Question_Type =   
+  formal | informal 
   
+doc_class Question = Exam_item +
+  level    :: Level
+  type     :: Question_Type
+  concerns :: "ContentClass set" <= "{examiner,validator,student}" 
+  mark     :: int
+
+doc_class Exercise = Exam_item +
+  content  :: "(Question) list"
+  concerns :: "ContentClass set" <= "{examiner,validator,student}" 
+  mark     :: int
+
+text{* In many institutions, it makes sense to have a rigorous process of validation
+for exam subjects : is the initial question correct ? Is a proof in the sense of the
+question possible ? We model the possibility that the @{term examiner} validates a 
+question by a sample proof validated by Isabelle. In our scenario this sample proofs
+are completely @{emph \<open>intern\<close>}, i.e. not exposed to the students but just additional
+material for the internal review process of the exam.*}
+  
+doc_class Validation = 
+   tests  :: "term list"  <="[]"
+   proofs :: "thm list"   <="[]"
+  
+doc_class Solution = Exam_item +
+  content  :: "Question list"
+  valids   :: "Validation list"
+  concerns :: "ContentClass set" <= "{examiner,validator}" 
   
 doc_class MathExam=
   content :: "(Header + Author + Exercise) list"
+  global_grade :: Grade 
   where "((Author)+  ~
           Header ~ 
-         (Exercise)+ )"
+         (Exercise ~ Solution)+ )"
+
 end
