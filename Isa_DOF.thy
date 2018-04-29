@@ -518,17 +518,17 @@ val _ =
 val _ =
   Outer_Syntax.command ("paragraph*", @{here}) "paragraph heading"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = true});
+      >> enriched_document_command {markdown = false});
 
 val _ =
   Outer_Syntax.command ("subparagraph*", @{here}) "subparagraph heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = true});
+      >> enriched_document_command {markdown = false});
 
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> enriched_document_command {markdown = true});
+      >> enriched_document_command {markdown = false});
 
 
 val _ =
