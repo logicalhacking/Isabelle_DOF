@@ -18,37 +18,34 @@ doc_class author =
    affiliation :: "string"
 
 doc_class abstract =
-  keywordlist    :: "string list"   <= "[]"
-
+   keywordlist        :: "string list"   <= "[]" 
+   principal_theorems :: "thm list"
 
 doc_class text_section = 
    main_author :: "author option"  <=  None
-
-(*
-doc_class text_section = 
-   main_author :: "string option"  <=  None
- *)  
    
 doc_class introduction = text_section +
    comment :: string
 
 doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
-   formula :: "thm list"
+   formal_results  :: "thm list"
    
 text{* A very rough formatting style could be modeled as follows:*}   
    
-datatype mesure = points  "int" | inch "int" | textwidth "int"  (* given by the inverse of the integer *)   
+datatype mesure = points      "int" 
+                  | inch      "int"  (* divised by 100 *)
+                  | cm        "int"  (* divised by 100 *)
+                  | textwidth "int"  (* given in percent *)   
 
-datatype placement = left | center | right  
+datatype alignment = left | center | right  
   
 doc_class figure   = text_section +
-   width   :: "mesure option"  <= "Some(textwidth 1)"    
-   height  :: "mesure option"  <= "Some(textwidth 1)"
-   scale   :: "int option"                              (* in per cent *)
-   "file"  :: string
-   plmt    :: placement 
-   caption :: string
+   width   :: "mesure option"  <= "Some(textwidth 100)"    
+   height  :: "mesure option"  <= "Some(textwidth 100)"
+   scale   :: "int option"            (* given in per cent *)
+   "file"  :: "file"
+   plmt    :: alignment        <= center
 
 (* something similar on tables ? Idea: rough abstraction of table attributes in LaTeX *)
    

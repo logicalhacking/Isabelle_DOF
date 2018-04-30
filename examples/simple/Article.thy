@@ -4,8 +4,6 @@ theory Article
 begin
 (* >> *) 
   
-ML{*           val keywords = Thy_Header.get_keywords' @{context};
-*}  
   
 open_monitor*[onto::article]  
 

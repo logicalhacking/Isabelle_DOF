@@ -28,12 +28,17 @@ section{*Inner Syntax Antiquotations: Syntax *}
 typedecl "typ"
 typedecl "term"
 typedecl "thm"
+typedecl "file"
+typedecl "http"
+typedecl "thy"
  
 -- \<open> and others in the future : file, http, thy, ... \<close> 
 
 consts mk_typ     :: "string \<Rightarrow> typ"     ("@{typ _}")
 consts mk_term    :: "string \<Rightarrow> term"    ("@{term _}")
 consts mk_thm     :: "string \<Rightarrow> thm"     ("@{thm _}")
+consts mk_file    :: "string \<Rightarrow> file"    ("@{file _}")
+consts mk_thy     :: "string \<Rightarrow> thy"     ("@{thy _}")
 consts mk_docitem :: "string \<Rightarrow> 'a"      ("@{docitem _}")
 
   
