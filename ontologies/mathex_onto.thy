@@ -31,6 +31,8 @@ datatype Grade =
 doc_class Header = 
   examTitle :: string
   examSubject :: Subject
+  date :: string
+  timeAllowed :: int --  minutes
 
 datatype ContentClass =   
     examiner    -- \<open>the 'author' of the exam\<close>
@@ -52,7 +54,7 @@ doc_class Question = Exam_item +
 doc_class Exercise = Exam_item +
   content  :: "(Question) list"
   concerns :: "ContentClass set" <= "{examiner,validator,student}" 
-  mark     :: int
+
 
 text{* In many institutions, it makes sense to have a rigorous process of validation
 for exam subjects : is the initial question correct ? Is a proof in the sense of the
