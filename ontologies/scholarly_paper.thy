@@ -23,9 +23,11 @@ doc_class abstract =
 
 doc_class text_section = 
    main_author :: "author option"  <=  None
+   fixme_list  :: "string list"    <=  "[]" 
    
 doc_class introduction = text_section +
    comment :: string
+   claims  :: "thm list"
 
 doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
@@ -34,8 +36,8 @@ doc_class technical = text_section +
 text{* A very rough formatting style could be modeled as follows:*}   
    
 datatype mesure = points      "int" 
-                  | inch      "int"  (* divised by 100 *)
                   | cm        "int"  (* divised by 100 *)
+                  | inch      "int"  (* divised by 100 *)
                   | textwidth "int"  (* given in percent *)   
 
 datatype alignment = left | center | right  
@@ -43,7 +45,7 @@ datatype alignment = left | center | right
 doc_class figure   = text_section +
    width   :: "mesure option"  <= "Some(textwidth 100)"    
    height  :: "mesure option"  <= "Some(textwidth 100)"
-   scale   :: "int option"            (* given in per cent *)
+   scale   :: "int option"        (* given in per cent *)
    "file"  :: "file"
    plmt    :: alignment        <= center
 
