@@ -154,39 +154,35 @@ object LaTeXLexer extends RegexParsers {
       }
   }
 
-    def toString(tokens: List[LaTeXToken]) : String = {
-      tokens.headOption match {
-    
-        case Some(SPACING(spaces))   => {spaces + toString(tokens.tail)}
-                                     
-        case Some(RAWTEXT(txt))      => {txt +toString(tokens.tail)}
-                                     
-        case Some(COMMAND(txt))      => {txt + toString(tokens.tail)}
-    
-        case Some(BEGINENV(pre,txt)) => {pre + txt + toString(tokens.tail)}
-                                     
-        case Some(ENDENV(pre,txt))   => {pre + txt + toString(tokens.tail)}  
-          
-        case Some(VBACKSLASH)        => {"""\\""" + toString(tokens.tail)}
-        case Some(VSPACE)            => {"""\ """ + toString(tokens.tail)}
-        case Some(VTILDE)            => {"""\~""" + toString(tokens.tail)}
-        case Some(VUNDERSCORE)       => {"""\_""" + toString(tokens.tail)}
-        case Some(VCURLYOPEN)        => {"""\{""" + toString(tokens.tail)}
-        case Some(VCURLYCLOSE)       => {"""\}""" + toString(tokens.tail)}
-        case Some(VBRACKETOPEN)      => {"""\[""" + toString(tokens.tail)}
-        case Some(VBRACKETCLOSE)     => {"""\]""" + toString(tokens.tail)}
-        case Some(NEWLINE)           => {"\n"     + toString(tokens.tail)}
-        case Some(CURLYOPEN)         => {"""{"""  + toString(tokens.tail)}
-        case Some(CURLYCLOSE)        => {"""}"""  + toString(tokens.tail)}
-        case Some(BRACKETOPEN)       => {"""["""  + toString(tokens.tail)}
-        case Some(BRACKETCLOSE)      => {"""]"""  + toString(tokens.tail)}
-             
-        case Some(token)             =>  {"\n+++ INTERNAL ERROR +++\n"+toString(tokens.tail)}
-    
-        case None => {""}  
-      }
+  def toString(tokens: List[LaTeXToken]) : String = {
+      var result = ""
+        for (token <- tokens) {
+            var str = token match {
+              case (SPACING(spaces))   => {spaces}
+              case (RAWTEXT(txt))      => {txt }
+              case (COMMAND(txt))      => {txt }
+              case (BEGINENV(pre,txt)) => {pre + txt}
+              case (ENDENV(pre,txt))   => {pre + txt}  
+              case (VBACKSLASH)        => {"""\\""" }
+              case (VSPACE)            => {"""\ """ }
+              case (VTILDE)            => {"""\~""" }
+              case (VUNDERSCORE)       => {"""\_""" }
+              case (VCURLYOPEN)        => {"""\{""" }
+              case (VCURLYCLOSE)       => {"""\}""" }
+              case (VBRACKETOPEN)      => {"""\[""" }
+              case (VBRACKETCLOSE)     => {"""\]""" }
+              case (NEWLINE)           => {"\n"     }
+              case (CURLYOPEN)         => {"""{"""  }
+              case (CURLYCLOSE)        => {"""}"""  }
+              case (BRACKETOPEN)       => {"""["""  }
+              case (BRACKETCLOSE)      => {"""]"""  }
+              case (token)             =>  {"\n+++ INTERNAL ERROR +++\n"}
+           }
+           result += str
+       }
+       result
   }
-
+  
   
   def apply(code: String): Either[LaTeXLexerError, List[LaTeXToken]] = {
          parse(tokens, code) match {
