@@ -42,14 +42,26 @@ datatype ContentClass =
 doc_class Exam_item = 
   concerns :: "ContentClass set"  
 
+datatype SubQuestion = Item string
+ 
+doc_class Answer_Formal =  Exam_item +
+  step_label :: string
+  "term"     :: "string" 
+  
+doc_class Answer_YesNo =  Exam_item +
+  step_label :: string
+  yes_no     :: bool  -- \<open>for checkboxes\<close>
+
 datatype Question_Type =   
-  formal | informal 
+  formal | informal | mixed 
   
 doc_class Question = Exam_item +
   level    :: Level
   type     :: Question_Type
+  subitems :: "(SubQuestion * (Answer_Formal + Answer_YesNo)list) list"
   concerns :: "ContentClass set" <= "{examiner,validator,student}" 
   mark     :: int
+   
 
 doc_class Exercise = Exam_item +
   content  :: "(Question) list"
