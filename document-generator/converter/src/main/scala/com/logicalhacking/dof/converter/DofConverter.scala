@@ -32,6 +32,7 @@ package com.logicalhacking.dof.converter
 import java.io.{ BufferedWriter, File, FileWriter }
 import IoUtils._
 import scala.util.matching.Regex
+import scala.annotation.tailrec
 
 object DofConverter {
   val version = "0.0.0"
@@ -47,31 +48,39 @@ object DofConverter {
     }
   }
 
-  def deMarkUp(tokens: List[LaTeXToken]): List[LaTeXToken] = {
+  def deMarkUp(tokens: List[LaTeXToken]): List[LaTeXToken] = deMarkUpT(Nil, tokens)
+  
+  @tailrec def deMarkUpT(out:List[LaTeXToken], tokens: List[LaTeXToken]): List[LaTeXToken] = {
+    def matcher(tokens: List[LaTeXToken]): Tuple2[LaTeXToken, List[LaTeXToken]] = {
     tokens match {
-      case CURLYOPEN :: COMMAND("""\isacharcolon""") :: CURLYCLOSE :: tail      => RAWTEXT(""":""") :: deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isacharunderscore""") :: CURLYCLOSE :: tail => RAWTEXT("""_""") :: deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isadigit""") :: CURLYOPEN::n::CURLYCLOSE::CURLYCLOSE :: tail => n :: deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isacharcomma""") :: CURLYCLOSE :: tail      => RAWTEXT(""",""") :: deMarkUp(tail)
-      case COMMAND("""\isanewline""") :: tail                                   =>  deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isachardot""") :: CURLYCLOSE :: tail        => RAWTEXT(""".""") :: deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isacharsemicolon""") :: CURLYCLOSE :: tail  => RAWTEXT(""";""") :: deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isacharbackslash""") :: CURLYCLOSE :: tail  => RAWTEXT("""\""") :: deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isacharslash""") :: CURLYCLOSE :: tail      => RAWTEXT("""/""") :: deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isacharbraceleft""") :: CURLYCLOSE :: tail  => RAWTEXT("""{""") :: deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isacharbraceright""") :: CURLYCLOSE :: tail => RAWTEXT("""}""") :: deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isacharparenleft""") :: CURLYCLOSE :: tail  => RAWTEXT("""(""") :: deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isacharparenright""") :: CURLYCLOSE :: tail => RAWTEXT(""")""") :: deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isacharequal""") :: CURLYCLOSE :: tail      => RAWTEXT("""=""") :: deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isacharminus""") :: CURLYCLOSE :: tail      => RAWTEXT("""-""") :: deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isacharplus""") :: CURLYCLOSE :: tail      => RAWTEXT("""+""") :: deMarkUp(tail)
-      case CURLYOPEN :: COMMAND("""\isacharprime""") :: CURLYCLOSE :: tail      => RAWTEXT("""'""") :: deMarkUp(tail)
-      case VSPACE :: tail => RAWTEXT(""" """) :: deMarkUp(tail)
-      case t :: tail => t :: deMarkUp(tail)
-      case Nil => Nil
+      case CURLYOPEN :: COMMAND("""\isacharcolon""") :: CURLYCLOSE :: tail      => (RAWTEXT(""":"""),tail)
+      case CURLYOPEN :: COMMAND("""\isacharunderscore""") :: CURLYCLOSE :: tail => (RAWTEXT("""_"""),tail)
+      case CURLYOPEN :: COMMAND("""\isadigit""") :: CURLYOPEN::n::CURLYCLOSE::CURLYCLOSE :: tail => (n,tail)
+      case CURLYOPEN :: COMMAND("""\isacharcomma""") :: CURLYCLOSE :: tail      => (RAWTEXT(""","""),tail)
+      case COMMAND("""\isanewline""") :: tail                                   =>  (RAWTEXT(""),tail)
+      case CURLYOPEN :: COMMAND("""\isachardot""") :: CURLYCLOSE :: tail        => (RAWTEXT("""."""),tail)
+      case CURLYOPEN :: COMMAND("""\isacharsemicolon""") :: CURLYCLOSE :: tail  => (RAWTEXT(""";"""),tail)
+      case CURLYOPEN :: COMMAND("""\isacharbackslash""") :: CURLYCLOSE :: tail  => (RAWTEXT("""\"""),tail)
+      case CURLYOPEN :: COMMAND("""\isacharslash""") :: CURLYCLOSE :: tail      => (RAWTEXT("""/"""),tail)
+      case CURLYOPEN :: COMMAND("""\isacharbraceleft""") :: CURLYCLOSE :: tail  => (RAWTEXT("""{"""),tail)
+      case CURLYOPEN :: COMMAND("""\isacharbraceright""") :: CURLYCLOSE :: tail => (RAWTEXT("""}"""),tail)
+      case CURLYOPEN :: COMMAND("""\isacharparenleft""") :: CURLYCLOSE :: tail  => (RAWTEXT("""("""),tail)
+      case CURLYOPEN :: COMMAND("""\isacharparenright""") :: CURLYCLOSE :: tail => (RAWTEXT(""")"""),tail)
+      case CURLYOPEN :: COMMAND("""\isacharequal""") :: CURLYCLOSE :: tail      => (RAWTEXT("""="""),tail)
+      case CURLYOPEN :: COMMAND("""\isacharminus""") :: CURLYCLOSE :: tail      => (RAWTEXT("""-"""),tail)
+      case CURLYOPEN :: COMMAND("""\isacharplus""") :: CURLYCLOSE :: tail      => (RAWTEXT("""+"""),tail)
+      case CURLYOPEN :: COMMAND("""\isacharprime""") :: CURLYCLOSE :: tail      => (RAWTEXT("""'"""),tail)
+      case VSPACE :: tail => (RAWTEXT(""" """),tail)
+      case t :: tail => (t,tail)
+      case Nil => (RAWTEXT(""" """),Nil)
     }
+    }
+    
+    val (t,tail) = matcher(tokens)
+    if (tokens == Nil) out
+    else deMarkUpT(out++List(t), tail)
   }
-
+  
   def convertIsaDofCommand(cmd: String, tokens: List[LaTeXToken]): List[LaTeXToken] = {
 
     def convertType(head: List[LaTeXToken], tail: List[LaTeXToken]): Tuple2[String,List[LaTeXToken]] = {
