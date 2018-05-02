@@ -120,39 +120,6 @@ object LaTeXLexer extends RegexParsers {
                  newline    | begin_env  | end_env      | command)) 
   }
 
-  def printTokens(tokens: List[LaTeXToken]) : Unit = {
-      tokens.headOption match {
-    
-        case Some(SPACING(spaces))   => {print(spaces); printTokens(tokens.tail)}
-                                     
-        case Some(RAWTEXT(txt))      => {print(txt); printTokens(tokens.tail)}
-                                     
-        case Some(COMMAND(txt))      => {print(txt); printTokens(tokens.tail)}
-    
-        case Some(BEGINENV(pre,txt)) => {print(pre + txt); printTokens(tokens.tail)}
-                                     
-        case Some(ENDENV(pre,txt))   => {print(pre + txt); printTokens(tokens.tail)}  
-          
-        case Some(VBACKSLASH)        => {print("\\\\"); printTokens(tokens.tail)}
-        case Some(VSPACE)            => {print("\\ "); printTokens(tokens.tail)}
-        case Some(VTILDE)            => {print("\\~"); printTokens(tokens.tail)}
-        case Some(VUNDERSCORE)       => {print("""\_"""); printTokens(tokens.tail)}
-        case Some(VCURLYOPEN)        => {print("\\{"); printTokens(tokens.tail)}
-        case Some(VCURLYCLOSE)       => {print("\\}"); printTokens(tokens.tail)}
-        case Some(VBRACKETOPEN)      => {print("\\["); printTokens(tokens.tail)}
-        case Some(VBRACKETCLOSE)     => {print("\\]"); printTokens(tokens.tail)}
-        case Some(NEWLINE)           => {print("\n"); printTokens(tokens.tail)}
-        case Some(CURLYOPEN)         => {print("{"); printTokens(tokens.tail)}
-        case Some(CURLYCLOSE)        => {print("}"); printTokens(tokens.tail)}
-        case Some(BRACKETOPEN)       => {print("["); printTokens(tokens.tail)}
-        case Some(BRACKETCLOSE)      => {print("]"); printTokens(tokens.tail)}
-             
-        case Some(token)             =>  {println("\n +++ INTERNAL ERROR +++"); 
-                                          printTokens(tokens.tail)}
-    
-        case None => {println("\n\n")}  
-      }
-  }
 
   def toString(tokens: List[LaTeXToken]) : String = {
       var result = ""
