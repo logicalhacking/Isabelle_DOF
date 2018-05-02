@@ -4,10 +4,12 @@ begin
    
 open_monitor*[exam::MathExam] 
 
-text*[idir::Author, affiliation="''CentraleSupelec''", email="''idir.aitsadoune@centralesupelec.fr''"]
+section*[idir::Author, affiliation="''CentraleSupelec''", 
+         email="''idir.aitsadoune@centralesupelec.fr''"]
 {*Idir AIT SADOUNE*}
 
-text*[header::Header,examSubject= "algebra",  examTitle="''Exam number 1''", date="''02-05-2018''",timeAllowed="90::int"]
+subsection*[header::Header,examSubject= "algebra",  examTitle="''Exam number 1''", 
+            date="''02-05-2018''", timeAllowed="90::int"]
 {* 
 \begin{itemize}
 \item Use black ink or black ball-point pen. 
@@ -16,7 +18,7 @@ text*[header::Header,examSubject= "algebra",  examTitle="''Exam number 1''", dat
 \end{itemize}
 *}
 
-section*[exo1 :: Exercise, Exercise.content="[q1::Question,q2::Question]"]
+subsubsection*[exo1 :: Exercise, Exercise.content="[q1::Question,q2::Question]"]
 {* 
 Here are the first four lines of a number pattern.
 \begin{itemize}
