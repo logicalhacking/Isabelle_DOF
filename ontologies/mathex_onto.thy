@@ -42,11 +42,11 @@ datatype ContentClass =
 doc_class Exam_item = 
   concerns :: "ContentClass set"  
 
-datatype SubQuestion = Item string
+type_synonym SubQuestion = string
  
-doc_class Answer_Formal =  Exam_item +
-  step_label :: string
-  "term"     :: "string" 
+doc_class Answer_Formal_Step =  Exam_item +
+  justification :: string
+  "term"        :: "string" 
   
 doc_class Answer_YesNo =  Exam_item +
   step_label :: string
@@ -55,16 +55,16 @@ doc_class Answer_YesNo =  Exam_item +
 datatype Question_Type =   
   formal | informal | mixed 
   
-doc_class Question = Exam_item +
+doc_class Task = Exam_item +
   level    :: Level
   type     :: Question_Type
-  subitems :: "(SubQuestion * (Answer_Formal + Answer_YesNo)list) list"
+  subitems :: "(SubQuestion * (Answer_Formal_Step list + Answer_YesNo)list) list"
   concerns :: "ContentClass set" <= "{examiner,validator,student}" 
   mark     :: int
    
 
 doc_class Exercise = Exam_item +
-  content  :: "(Question) list"
+  content  :: "(Task) list"
   concerns :: "ContentClass set" <= "{examiner,validator,student}" 
 
 
