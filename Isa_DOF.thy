@@ -10,6 +10,7 @@ that provide direct support in the PIDE framework. *}
   
 theory Isa_DOF   (* Isabelle Document Ontology Framework *)
   imports  Main  (* Isa_MOF *)
+           RegExp
   keywords "+=" ":="
 
   and      "section*"    "subsection*"   "subsubsection*" 
@@ -701,9 +702,10 @@ fun read_fields raw_fields ctxt =
 
 val tag_attr = (Binding.make("tag_attribute",@{here}), @{typ "int"},Mixfix.NoSyn)
 
-fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdefaults _ thy =
+fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdefaults rexp thy =
     let
       val ctxt = Proof_Context.init_global thy;
+      val _ = map (Syntax.read_term_global thy) rexp;
       val params = map (apsnd (Typedecl.read_constraint ctxt)) raw_params;
       val ctxt1 = fold (Variable.declare_typ o TFree) params ctxt;
       fun cid thy = DOF_core.name2doc_class_name thy (Binding.name_of binding)

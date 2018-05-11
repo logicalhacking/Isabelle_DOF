@@ -80,15 +80,13 @@ doc_class Validation =
    proofs :: "thm list"   <="[]"
   
 doc_class Solution = Exam_item +
-  content  :: "Question list"
+  content  :: "Exercise list"
   valids   :: "Validation list"
   concerns :: "ContentClass set" <= "{examiner,validator}" 
   
 doc_class MathExam=
   content :: "(Header + Author + Exercise) list"
   global_grade :: Grade 
-  where "((Author)+  ~
-          Header ~ 
-         (Exercise ~ Solution)+ )"
+  where "\<lbrace>Author\<rbrace>\<^sup>+  ~~  Header ~~  \<lbrace>Exercise ~~ Solution\<rbrace>\<^sup>+ "
 
 end

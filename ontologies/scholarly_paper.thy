@@ -94,13 +94,13 @@ doc_class article =
    trace    :: "(title + subtitle + author+ abstract +
                 introduction + technical + example +
                 conclusion + bibliography) list"
-   where "(title ~ 
-           [subtitle] ~
-           (author)+  ~ 
-           abstract   ~
-           introduction ~ 
-           (technical || example)+ . 
-           conclusion ~  
+   where "(title ~~ 
+           \<lbrakk>subtitle\<rbrakk> ~~
+           \<lbrace>author\<rbrace>\<^sup>+  ~~ 
+           abstract   ~~
+           introduction ~~ 
+           \<lbrace>technical || example\<rbrace>\<^sup>+ ~~ 
+           conclusion ~~  
            bibliography)"
 
 
