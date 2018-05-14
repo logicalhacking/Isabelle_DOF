@@ -10,13 +10,11 @@ Common Criteria identifies:
    order of category instances in the overall document as a regular language)
  *}  
 
-text_raw{*\snip{appendix.tex}{1}{1}{%*} 
-  
+(*<<*)  
 theory CENELEC_50126
   imports "../Isa_DOF"
 begin
- 
-text_raw{*}%endsnip*}
+(*>>*) 
 
 
 text{* Excerpt of the BE EN 50128:2011 *}

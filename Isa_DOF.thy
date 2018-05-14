@@ -11,6 +11,7 @@ that provide direct support in the PIDE framework. *}
 theory Isa_DOF   (* Isabelle Document Ontology Framework *)
   imports  Main  (* Isa_MOF *)
            RegExp
+           Assert
   keywords "+=" ":="
 
   and      "section*"    "subsection*"   "subsubsection*" 
@@ -19,7 +20,7 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
   and      "open_monitor*" "close_monitor*" "declare_reference*" 
            "update_instance*" "doc_class" ::thy_decl
 
-  and      "lemma*" ::thy_decl
+  and      "lemma*" "assert*"::thy_decl
            
   
 begin
@@ -553,6 +554,11 @@ val _ =
                        "close a document reference monitor"
                        (attributes >> (fn (((oid,pos),cid),doc_attrs) => 
                                           (Toplevel.theory (I)))); (* dummy/fake so far *)
+val _ =
+  Outer_Syntax.command @{command_keyword "assert*"} 
+                       "close a document reference monitor"
+                       (attributes >> (fn (((oid,pos),cid),doc_attrs) => 
+                                          (Toplevel.theory (I)))); (* dummy/fake so far *)
 
 val _ =
   Outer_Syntax.command @{command_keyword "update_instance*"} 
@@ -563,7 +569,6 @@ end (* struct *)
 
 *}
 
-lemma murx : "XXX" sorry
   
 section{* Syntax for Ontological Antiquotations (the '' View'' Part II) *}
   
