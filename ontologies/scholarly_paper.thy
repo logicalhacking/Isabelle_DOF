@@ -54,10 +54,10 @@ doc_class figure   = text_section +
 doc_class example    = text_section +
    comment :: "string"
 
-doc_class conclusion = text_section +
+doc_class "conclusion" = text_section +
    main_author :: "author option"  <=  None
    
-doc_class related_work = conclusion +
+doc_class related_work = "conclusion" +
    main_author :: "author option"  <=  None
 
 doc_class bibliography =

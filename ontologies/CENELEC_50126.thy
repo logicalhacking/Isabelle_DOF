@@ -27,7 +27,7 @@ doc_class requirement =
 
 doc_class requirement_analysis = 
    no :: "nat"
-   where "\<lbrace>requirement_item\<rbrace>\<^sup>+"
+   where "\<lbrace>requirement\<rbrace>\<^sup>+"
 
                               
 text{*The category @{emph \<open>hypothesis\<close>} is used for assumptions from the 
@@ -140,8 +140,8 @@ doc_class test_documentation =
    no :: "nat"
    where "test_specification ~~ \<lbrace>test_case~~test_result\<rbrace>\<^sup>+ ~~ \<lbrace>test_environment||test_tool\<rbrace>\<^sup>+ ~~
           \<lbrakk>test_requirement\<rbrakk>  ~~ test_adm_role"
-   where " test_specification ~~\<lbrace>test_case~~test_result\<rbrace>\<^sup>+ ~~ \<lbrace>test_environment||test_tool\<rbrace>\<^sup>+ ~~
-          \<lbrakk> test_requirement \<rbrakk> ~~ test_adm_role"
+   where " test_specification ~~ \<lbrace>test_case~~test_result\<rbrace>\<^sup>+ ~~ \<lbrace>test_environment||test_tool\<rbrace>\<^sup>+ ~~
+          \<lbrakk>test_requirement \<rbrakk> ~~ test_adm_role"
 
 
   

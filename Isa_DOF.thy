@@ -49,7 +49,7 @@ term "@{term ''Bound 0''}"
 term "@{thm  ''refl''}"  
 term "@{docitem  ''<doc_ref>''}"
   
-  
+type_synonym monitor = "int rexp"  
   
 section{*Primitive Markup Generators*}
 ML{*
@@ -732,11 +732,14 @@ fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdef
                                                    else error("no overloading allowed.")
       val gen_antiquotation = OntoLinkParser.docitem_ref_antiquotation
       val _ = map_filter (check_n_filter thy) fields
+      val H = Sign.add_consts_cmd [(binding,"monitor",Mixfix.NoSyn)]
    
     in thy |> Record.add_record overloaded (params', binding) parent (tag_attr::fields) 
            |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms'
            |> (fn thy => gen_antiquotation binding (cid thy) thy) 
               (* defines the ontology-checked text antiquotation to this document class *)
+           |> Sign.add_consts_cmd [(binding,"monitor",Mixfix.NoSyn)]
+              (* defines syntax for monitor regeexpr for this class *)
     end;
 
 

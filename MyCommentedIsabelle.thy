@@ -312,6 +312,7 @@ Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> st
 Thy_Output.output : Proof.context -> Pretty.T list -> string;
 \<close>
 
+  
 section {*  The Nano-Kernel: Contexts,  (Theory)-Contexts, (Proof)-Contexts *}
   
 ML{*
