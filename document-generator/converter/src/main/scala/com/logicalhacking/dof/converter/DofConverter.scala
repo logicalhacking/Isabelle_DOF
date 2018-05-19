@@ -211,8 +211,7 @@ object DofConverter {
 
   def convertFile(f: File): Option[(String, LaTeXLexerError)] = {
     val texFileName = f.getAbsolutePath()
-    println("DOF Converter: converting " + texFileName
-      + " (Not yet fully implemented!)")
+    println("DOF Converter "+version+": converting " + texFileName)
     f.renameTo(new File(texFileName + ".orig"))
 
     using(io.Source.fromFile(texFileName + ".orig")) {
