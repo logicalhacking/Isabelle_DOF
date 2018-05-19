@@ -153,7 +153,7 @@ object LaTeXLexer extends RegexParsers {
   
   def apply(code: String): Either[LaTeXLexerError, List[LaTeXToken]] = {
          parse(tokens, code) match {
-           case NoSuccess(msg, next) => Left(LaTeXLexerError(msg))
+           case NoSuccess(msg, next) => Left(LaTeXLexerError(msg + "at position "+next.pos))
            case Success(result, next) => Right(result)
     }
   }
