@@ -83,7 +83,7 @@ object LaTeXLexer extends RegexParsers {
   }
 
   def end0: Parser[String]      = {
-               "\\\\end[^\\{]*".r      ^^ (_.toString)   
+               "\\\\end\\{.*".r      ^^ (_.toString)   
                /* grabs whitespace and also env options ... */
   }
   
