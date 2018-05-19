@@ -45,21 +45,35 @@ text{* As mentioned in @{introduction \<open>intro\<close>} ... *}
 update_instance*[bgrnd, comment := "''bu''"] 
 
 ML{* 
-val term'' = @{docitem_value \<open>bgrnd\<close>};
-val xxx = type_of term'';
-val yyy = HOLogic.mk_Trueprop(Const(@{const_name "HOL.eq"}, xxx --> xxx --> HOLogic.boolT) 
-                              $ term'' $ Free("XXXX", xxx));
-val hhh = Thm.varifyT_global;
-val zzz = Thm.assume(Thm.cterm_of @{context} yyy);
-val zzzz = simplify @{context} zzz;
-val a $ b $ c = @{term "X\<lparr>affiliation:='' ''\<rparr>"};
+Thm.concl_of;
+*}  
+  
+ML{* 
+val X =  (@{term scholarly_paper.example.comment})
+val Y = Type.legacy_freeze @{docitem_value \<open>bgrnd\<close>}
+*}
+ML{* 
+fun calculate_attr_access ctxt f term =
+    let val term = Type.legacy_freeze term;
+        val ty = type_of term
+        val term' = (Const(@{const_name "HOL.eq"}, ty --> ty --> HOLogic.boolT) 
+                              $ (Type.legacy_freeze(f term)) 
+                              $ Free("_XXXXXXX", ty))
+        val term'' = (HOLogic.mk_Trueprop(term'))
+        val thm = simplify @{context} (Thm.assume(Thm.cterm_of ctxt term''));
+        val Const(@{const_name "HOL.eq"},_) $ lhs $ _ = HOLogic.dest_Trueprop (Thm.concl_of thm)
+    in  lhs end
+
+val H = fn X => @{term scholarly_paper.example.comment} $ X
+val t = calculate_attr_access @{context} H @{docitem_value \<open>bgrnd\<close>};
+
  *}  
   
 term "scholarly_paper.author.affiliation_update"
 term "scholarly_paper.abstract.keywordlist_update"
 term "scholarly_paper.introduction.comment_update"
-ML{* val a $ b $ c = @{term "X\<lparr>affiliation:='' ''\<rparr>"}; fold;
-*}
+ML{* val a $ b $ c = @{term "X\<lparr>affiliation:='' ''\<rparr>"}; fold; *}
+  
 ML{* !AnnoTextelemParser.SPY;
 fun convert((Const(s,_),_), t) X = Const(s^"_update", dummyT) 
                                $ Abs("uuu_", type_of t, t)
@@ -67,7 +81,7 @@ fun convert((Const(s,_),_), t) X = Const(s^"_update", dummyT)
 val base = @{term "undefined"}
 val converts = fold convert (!AnnoTextelemParser.SPY) base
  
-
+*}
 
 
   
@@ -76,24 +90,18 @@ term "scholarly_paper.introduction.comment_update"
   
 term "\<lparr>author.tag_attribute=undefined,email=''dfg'',orcid='''',affiliation=undefined\<rparr>"
   
-definition HORX 
-  where "HORX = affiliation(\<lparr>author.tag_attribute=undefined,email=''dfg'',orcid=None,affiliation=undefined\<rparr>\<lparr>affiliation:=''e''\<rparr>) "  
-(* ML{* 
-val x = @{code "HORX"}
-*}
-*)  
-  
+
 
 section*[ontomod::technical]{* Modeling Ontologies in Isabelle_DOF *} 
 text{* Lorem ipsum dolor sit amet, suspendisse non arcu malesuada mollis, nibh morbi,*}
 
 lemma some_lemma : "P" sorry
   
-update_instance*[ontomod, formula := "[@{thm ''some_lemma''}]"] 
+update_instance*[ontomod, formal_results := "[@{thm ''some_lemma''}]"] 
 
 lemma another_lemma : "Q" sorry
   
-update_instance*[ontomod, formula += "[@{thm ''another_lemma''}]"] 
+update_instance*[ontomod, formal_results += "[@{thm ''another_lemma''}]"] 
 
     
 text*[x]{* @{technical \<open>ontomod\<close>} @{introduction \<open>bgrnd\<close>}*}

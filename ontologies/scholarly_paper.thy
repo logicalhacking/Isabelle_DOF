@@ -54,10 +54,10 @@ doc_class figure   = text_section +
 doc_class example    = text_section +
    comment :: "string"
 
-doc_class conclusion = text_section +
+doc_class "conclusion" = text_section +
    main_author :: "author option"  <=  None
    
-doc_class related_work = conclusion +
+doc_class related_work = "conclusion" +
    main_author :: "author option"  <=  None
 
 doc_class bibliography =
@@ -94,13 +94,13 @@ doc_class article =
    trace    :: "(title + subtitle + author+ abstract +
                 introduction + technical + example +
                 conclusion + bibliography) list"
-   where "(title ~ 
-           [subtitle] ~
-           (author)+  ~ 
-           abstract   ~
-           introduction ~ 
-           (technical || example)+ . 
-           conclusion ~  
+   where "(title ~~ 
+           \<lbrakk>subtitle\<rbrakk> ~~
+           \<lbrace>author\<rbrace>\<^sup>+  ~~ 
+           abstract   ~~
+           introduction ~~ 
+           \<lbrace>technical || example\<rbrace>\<^sup>+ ~~ 
+           conclusion ~~  
            bibliography)"
 
 
