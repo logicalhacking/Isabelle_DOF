@@ -1,5 +1,5 @@
 /**
-eq * Copyright (c) 2018 The University of Sheffield. All rights reserved.
+ * Copyright (c) 2018 The University of Sheffield. All rights reserved.
  *               2018 The University of Paris-Sud. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ import scala.util.matching.Regex
 import scala.annotation.tailrec
 
 object DofConverter {
-  val version = "0.0.0"
+  val version = "0.0.1"
   val sep=RAWTEXT("%\n")
     
   def deMarkUpArgList(tokens: List[LaTeXToken]): List[LaTeXToken] = {
