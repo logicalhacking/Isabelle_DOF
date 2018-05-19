@@ -158,42 +158,49 @@ object DofConverter {
       }
     }
     
-    cmd match {
+    val (pre, tail) = cmd match {
       case """chapter""" => {
         val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofChapter"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        (sep::COMMAND("""\isaDofChapter"""+typ) :: sectionArgs,tail)
       }
       case """section""" => {
         val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofSection"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        (sep::COMMAND("""\isaDofSection"""+typ) :: sectionArgs, tail)
       }
       case """subsection""" => {
         val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        COMMAND("""\isaDofSubSection"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        (COMMAND("""\isaDofSubSection"""+typ) :: sectionArgs, tail)
       }
       case """subsubsection""" => {
         val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofSubSubSection"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        (sep::COMMAND("""\isaDofSubSubSection"""+typ) :: sectionArgs, tail)
       }
       case """paragraph""" => {
         val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofParagraph"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        (sep::COMMAND("""\isaDofParagraph"""+typ) :: sectionArgs, tail)
       }
       case """text""" => {
         val (typ,dofText, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofText"""+typ) :: dofText ++ convertLaTeXTokenStream(tail)
+        (sep::COMMAND("""\isaDofText"""+typ) :: dofText, tail)
       }
-      case s => sep::COMMAND("""\isaDofUnknown{""" + s + """}""") ::sep:: convertLaTeXTokenStream(tokens)
+      case s => (sep::COMMAND("""\isaDofUnknown{""" + s + """}""")::sep::Nil, tokens)
     }
+    pre ++ convertLaTeXTokenStream(tail)
   }
 
-def convertLaTeXTokenStream(tokens: List[LaTeXToken]): List[LaTeXToken] = {
-    tokens match {
-      case Nil => Nil
-      case COMMAND("""\isacommand""") :: CURLYOPEN :: RAWTEXT(cmd) :: CURLYOPEN
-        :: COMMAND("""\isacharasterisk""") :: CURLYCLOSE :: CURLYCLOSE :: ts => convertIsaDofCommand(cmd, ts)
-      case t :: ts => t :: convertLaTeXTokenStream(ts)
+  def convertLaTeXTokenStream(tokens: List[LaTeXToken]): List[LaTeXToken] = {
+    @tailrec  
+    def convertLaTeXTokenStreamRec(acc:List[LaTeXToken], tokens: List[LaTeXToken]): List[LaTeXToken] = {
+      val (pre, tail) = tokens match {
+        case Nil => (Nil, Nil)
+        case COMMAND("""\isacommand""") :: CURLYOPEN :: RAWTEXT(cmd) :: CURLYOPEN
+          :: COMMAND("""\isacharasterisk""") :: CURLYCLOSE :: CURLYCLOSE :: ts => (convertIsaDofCommand(cmd, ts), Nil)
+        case t :: ts => (t::Nil,ts)
+      }
+      if (tail == Nil) pre
+      else convertLaTeXTokenStreamRec(acc++pre, tail)
     }
+    convertLaTeXTokenStreamRec(Nil, tokens)
   }
 
   def convertLaTeX(string: String): Either[LaTeXLexerError, String] = {
