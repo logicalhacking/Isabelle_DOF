@@ -86,7 +86,6 @@ object DofConverter {
     deMarkupRec(Nil, tokens)
   }
   
-  
   def convertIsaDofCommand(cmd: String, tokens: List[LaTeXToken]): List[LaTeXToken] = {
     @tailrec 
     def convertType(head: List[LaTeXToken], tail: List[LaTeXToken]): Tuple2[String,List[LaTeXToken]] = {
@@ -189,16 +188,16 @@ object DofConverter {
   }
 
   def convertLaTeXTokenStream(tokens: List[LaTeXToken]): List[LaTeXToken] = {
-    @tailrec  
-    def convertLaTeXTokenStreamRec(acc:List[LaTeXToken], tokens: List[LaTeXToken]): List[LaTeXToken] = {
-      val (pre, tail) = tokens match {
-        case Nil => (Nil, Nil)
+    @tailrec
+    def convertLaTeXTokenStreamRec(acc: List[LaTeXToken], tokens: List[LaTeXToken]): List[LaTeXToken] = {
+      val (res, tail, rec) = tokens match {
+        case Nil => (Nil, Nil, false)
         case COMMAND("""\isacommand""") :: CURLYOPEN :: RAWTEXT(cmd) :: CURLYOPEN
-          :: COMMAND("""\isacharasterisk""") :: CURLYCLOSE :: CURLYCLOSE :: ts => (convertIsaDofCommand(cmd, ts), Nil)
-        case t :: ts => (t::Nil,ts)
+          :: COMMAND("""\isacharasterisk""") :: CURLYCLOSE :: CURLYCLOSE :: ts => (convertIsaDofCommand(cmd, ts), Nil, false)
+        case t :: ts => (t::Nil, ts, true)
       }
-      if (tail == Nil) pre
-      else convertLaTeXTokenStreamRec(acc++pre, tail)
+      if (! rec) acc++res
+      else convertLaTeXTokenStreamRec(acc++res, tail) 
     }
     convertLaTeXTokenStreamRec(Nil, tokens)
   }
