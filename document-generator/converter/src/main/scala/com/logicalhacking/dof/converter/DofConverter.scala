@@ -280,7 +280,7 @@ object DofConverter {
       println("DOF LaTeX converter warning(s):")
       println("=============================")
       println("  Empty LATeX files found, Isabelle build most likely failed!")
-      emptyTexFiles.map { case (file:File) => println("    "+ file + "is empty") }
+      emptyTexFiles.map { case (file:File) => println("    "+ file + " is empty") }
     }
 
     if (nonEmptyTexFiles.isEmpty) {
