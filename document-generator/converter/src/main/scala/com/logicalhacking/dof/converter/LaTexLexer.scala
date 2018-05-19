@@ -153,7 +153,12 @@ object LaTeXLexer extends RegexParsers {
               case (CURLYCLOSE)        => {"""}"""  }
               case (BRACKETOPEN)       => {"""["""  }
               case (BRACKETCLOSE)      => {"""]"""  }
-              case (token)             =>  {"\n+++ INTERNAL ERROR +++\n"}
+              case (VHYPHEN)           => {"""\-"""}   
+              case (VBACKTICK)         => {"""\`"""}
+              case (VQUOTE)            => {"""\'"""}
+              case (VSEMI)             => {"""\;"""}
+              case (VCOMMA)            => {"""\,"""}
+              case (token)             => {"\n+++ INTERNAL ERROR +++\n"}
            }
            result += str
        }
