@@ -44,6 +44,11 @@ case class  ENDENV  (prelude: String, str: String) extends LaTeXToken
 case object VBACKSLASH            extends LaTeXToken  /* verbatim backslash */
 case object VSPACE                extends LaTeXToken  /* verbatim space */
 case object VTILDE                extends LaTeXToken  /* verbatim tilde */
+case object VHYPHEN               extends LaTeXToken
+case object VCOMMA                extends LaTeXToken
+case object VSEMI                 extends LaTeXToken
+case object VQUOTE                extends LaTeXToken
+case object VBACKTICK             extends LaTeXToken
 case object VUNDERSCORE           extends LaTeXToken  /* verbatim underscore */
 case object VCURLYOPEN            extends LaTeXToken  /* verbatim curly bracket open */
 case object VCURLYCLOSE           extends LaTeXToken  /* verbatim curly bracket close */
@@ -101,6 +106,11 @@ object LaTeXLexer extends RegexParsers {
   def vbackslash     = "\\\\"      ^^ (_ => VBACKSLASH    ) 
   def vspace         = "\\ "       ^^ (_ => VSPACE        )   
   def vtilde         = "\\~"       ^^ (_ => VTILDE        )   
+  def vhyphen        = "\\-"       ^^ (_ => VHYPHEN       )   
+  def vbacktick      = "\\`"       ^^ (_ => VBACKTICK     )   
+  def vquote         = "\\'"       ^^ (_ => VQUOTE        )   
+  def vsemi          = "\\;"       ^^ (_ => VSEMI         )   
+  def vcomma         = "\\,"       ^^ (_ => VCOMMA        )   
   def vunderscore    = "\\_"       ^^ (_ => VUNDERSCORE   )   
   def vcurlyopen     = "\\{"       ^^ (_ => VCURLYOPEN    ) 
   def vcurlyclose    = "\\}"       ^^ (_ => VCURLYCLOSE   ) 
@@ -114,7 +124,7 @@ object LaTeXLexer extends RegexParsers {
   
   def tokens: Parser[List[LaTeXToken]] = {
     phrase(rep1( raw_text   |
-                 vbackslash | vspace       | vtilde | vunderscore |
+                 vbackslash | vspace       | vtilde | vhyphen | vbacktick | vquote | vsemi | vcomma | vunderscore |
                  vcurlyopen | vcurlyclose  | vbracketopen | vbracketclose |
                  curlyopen  | curlyclose   | bracketopen  | bracketclose  |
                  newline    | begin_env  | end_env      | command)) 
@@ -153,7 +163,7 @@ object LaTeXLexer extends RegexParsers {
   
   def apply(code: String): Either[LaTeXLexerError, List[LaTeXToken]] = {
          parse(tokens, code) match {
-           case NoSuccess(msg, next) => Left(LaTeXLexerError(msg + "at position "+next.pos))
+           case NoSuccess(msg, next) => Left(LaTeXLexerError(msg + " at position "+next.pos))
            case Success(result, next) => Right(result)
     }
   }
