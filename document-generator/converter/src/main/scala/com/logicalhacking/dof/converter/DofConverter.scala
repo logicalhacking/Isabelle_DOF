@@ -272,16 +272,31 @@ object DofConverter {
       case Some(l) => l
     }
 
-    val texFiles = directories.map(dir => recursiveListFiles(new File(dir), new Regex("\\.tex$"))
-      .filterNot(_.length() == 0)).flatten
+    val emptyTexFiles = directories.map(dir => recursiveListFiles(new File(dir), new Regex("\\.tex$")).filter(_.length() == 0)).flatten
+    val nonEmptyTexFiles = directories.map(dir => recursiveListFiles(new File(dir), new Regex("\\.tex$")).filterNot(_.length() == 0)).flatten
+    
+    if (! emptyTexFiles.isEmpty) {
+      println()
+      println("DOF LaTeX converter warning(s):")
+      println("=============================")
+      println("  Empty LATeX files found, Isabelle build most likely failed!")
+      emptyTexFiles.map { case (file:File) => println("    "+ file + "is empty") }
+    }
 
-    println(texFiles)
-    val errors = texFiles.map(file => convertFile(file)).flatten
+    if (nonEmptyTexFiles.isEmpty) {
+      println()
+      println("DOF LaTeX converter error(s):")
+      println("=============================")
+      println("  No valid LaTeX files found")
+      System.exit(1)
+    }
+    
+    val errors = nonEmptyTexFiles.map(file => convertFile(file)).flatten
     if (!errors.isEmpty) {
       println()
       println("DOF LaTeX converter error(s):")
       println("=============================")
-      errors.map { case (file: String, err: LaTeXLexerError) => println(file + ": " + err) }
+      errors.map { case (file: String, err: LaTeXLexerError) => println("  " + file + ": " + err) }
       System.exit(1)
     }
     System.exit(0)
