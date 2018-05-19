@@ -36,9 +36,11 @@ import scala.annotation.tailrec
 
 object DofConverter {
   val version = "0.0.0"
-
+  val sep=RAWTEXT("%\n")
+    
   def deMarkUpArgList(tokens: List[LaTeXToken]): List[LaTeXToken] = {
-    @tailrec def deMarkUpArgListRec(acc:List[LaTeXToken], tokens: List[LaTeXToken]): List[LaTeXToken] = {
+    @tailrec 
+    def deMarkUpArgListRec(acc:List[LaTeXToken], tokens: List[LaTeXToken]): List[LaTeXToken] = {
       val (t,tail) = tokens match {
          case CURLYOPEN :: COMMAND("""\isacharprime""") :: CURLYCLOSE :: CURLYOPEN :: COMMAND("""\isacharprime""") :: CURLYCLOSE :: tail      
           => (RAWTEXT(""),tail)
@@ -50,11 +52,12 @@ object DofConverter {
       if (tokens == Nil) acc
       else deMarkUpArgListRec(acc++List(t), tail)
     }
-  deMarkUpArgListRec(Nil, tokens)
+    deMarkUpArgListRec(Nil, tokens)
   }
 
   def deMarkUp(tokens: List[LaTeXToken]): List[LaTeXToken] = {
-    @tailrec def deMarkupRec(out:List[LaTeXToken], tokens: List[LaTeXToken]): List[LaTeXToken] = {
+    @tailrec 
+    def deMarkupRec(out:List[LaTeXToken], tokens: List[LaTeXToken]): List[LaTeXToken] = {
       val (t,tail) = tokens match {
         case CURLYOPEN :: COMMAND("""\isacharcolon""") :: CURLYCLOSE :: tail      => (RAWTEXT(""":"""),tail)
         case CURLYOPEN :: COMMAND("""\isacharunderscore""") :: CURLYCLOSE :: tail => (RAWTEXT("""_"""),tail)
@@ -85,9 +88,9 @@ object DofConverter {
   
   
   def convertIsaDofCommand(cmd: String, tokens: List[LaTeXToken]): List[LaTeXToken] = {
-
+    @tailrec 
     def convertType(head: List[LaTeXToken], tail: List[LaTeXToken]): Tuple2[String,List[LaTeXToken]] = {
-
+      @tailrec 
       def split(head:List[LaTeXToken], tokens: List[LaTeXToken]):Tuple2[List[LaTeXToken], List[LaTeXToken]] = {
         tokens match {
           case CURLYOPEN::COMMAND("""\isacharcomma""")::CURLYCLOSE::tail => (head,tokens)          
@@ -99,6 +102,7 @@ object DofConverter {
           case t => (head,t)
         }
       }
+      
       tail match {
         case CURLYOPEN::COMMAND("""\isacharcolon""")::CURLYCLOSE :: CURLYOPEN::COMMAND("""\isacharcolon""")::CURLYCLOSE :: tail => {
           val (label, shead)= split(List(), head.reverse)
@@ -115,6 +119,7 @@ object DofConverter {
     }
 
 
+    @tailrec 
     def delSpace(tokens: List[LaTeXToken]): List[LaTeXToken] = {
       tokens match {
         case VSPACE :: tail => delSpace(tail)
@@ -128,9 +133,8 @@ object DofConverter {
       }
     }
 
-    def backSpace(tokens: List[LaTeXToken]): List[LaTeXToken] = (delSpace(tokens.reverse)).reverse
     
-    val sep=RAWTEXT("%\n")
+    def backSpace(tokens: List[LaTeXToken]): List[LaTeXToken] = (delSpace(tokens.reverse)).reverse
     
     def parseIsaDofCmd(args: List[LaTeXToken], tokens: List[LaTeXToken]): Tuple3[String,List[LaTeXToken], List[LaTeXToken]] = {
       (args, tokens) match {
@@ -153,7 +157,6 @@ object DofConverter {
         case (args, Nil) => ("",deMarkUp(args), Nil)
       }
     }
-
     
     cmd match {
       case """chapter""" => {
