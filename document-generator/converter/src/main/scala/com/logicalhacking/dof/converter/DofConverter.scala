@@ -35,7 +35,7 @@ import scala.util.matching.Regex
 import scala.annotation.tailrec
 
 object DofConverter {
-  val version = "0.0.1"
+  val version = "0.0.2"
   val sep=RAWTEXT("%\n")
     
   def deMarkUpArgList(tokens: List[LaTeXToken]): List[LaTeXToken] = {
