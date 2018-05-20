@@ -16,32 +16,23 @@
   [0000/00/00 Unreleased v0.0.0+%
   Document-Type Support Framework for Isabelle.]
 
-\RequirePackage{keyval}
-\RequirePackage{environ}
+\RequirePackage{keycommand}
 
-\def\dof@label{}%
-\def\dof@labeltype{}%
-\def\dof@attributes{}%
-
-\define@key{dof}{label}{\def\dof@label{#1}}%
-\define@key{dof}{label_type}{\def\dof@labeltype{#1}}%
-\define@key{dof}{attributes}{\def\dof@attributes{#1}}%
-
-
-\NewEnviron{isamarkuptext*}[1][]{%
-  \setkeys{dof}{label=defaultlabel,#1}
-  \centerline{\textsc{Begin Of IsaMarkup Star}}
-  \begin{itemize}
-  \item Arguments:
-    \begin{itemize}
-    \item Label: \dof@label
-    \item label\_type: \dof@labeltype
-    \item attributes: \dof@attributes
-    \end{itemize}
-  \item Body:
-  \BODY
-  \end{itemize}
-  \centerline{\textsc{End Of IsaMarkup Star}}
-  \bigskip
+\newkeycommand\isaDofChapter[label=,type=][1]{%
+  \isamarkupchapter{#1}\label{\commandkey{label}}%
 }
-
+\newkeycommand\isaDofSection[label=,type=][1]{%
+  \isamarkupsection{#1}\label{\commandkey{label}}%
+}
+\newkeycommand\isaDofSubSection[label=,type=][1]{%
+  \isamarkupsubsection{#1}\label{\commandkey{label}}%
+}
+\newkeycommand\isaDofSubSubSection[label=,type=][1]{%
+  \isamarkupsubsubsection{#1}\label{\commandkey{label}}%
+}
+\newkeycommand\isaDofParagraph[label=,type=][1]{%
+  \isamarkupparagraph{#1}\label{\commandkey{label}}%
+}
+\newkeycommand\isaDofSubParagraph[label=,type=][1]{%
+  \isamarkupsubparagraph{#1}\label{\commandkey{label}}%
+}
