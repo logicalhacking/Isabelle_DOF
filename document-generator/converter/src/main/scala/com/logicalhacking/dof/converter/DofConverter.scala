@@ -46,6 +46,7 @@ object DofConverter {
           => (RAWTEXT(""),tail)
         case CURLYOPEN :: COMMAND("""\isachardoublequoteopen""") :: CURLYCLOSE :: tail  => (RAWTEXT("""{"""),tail)
         case CURLYOPEN :: COMMAND("""\isachardoublequoteclose""") :: CURLYCLOSE :: tail  => (RAWTEXT("""}"""), tail)
+        case CURLYOPEN :: COMMAND("""\isacharunderscore""") :: CURLYCLOSE :: tail => (RAWTEXT("""_"""),tail)
         case t :: tail => (t,tail)
         case Nil => (RAWTEXT(""),Nil)
       }  
@@ -60,7 +61,7 @@ object DofConverter {
     def deMarkupRec(out:List[LaTeXToken], tokens: List[LaTeXToken]): List[LaTeXToken] = {
       val (t,tail) = tokens match {
         case CURLYOPEN :: COMMAND("""\isacharcolon""") :: CURLYCLOSE :: tail      => (RAWTEXT(""":"""),tail)
-        case CURLYOPEN :: COMMAND("""\isacharunderscore""") :: CURLYCLOSE :: tail => (RAWTEXT("""_"""),tail)
+        case CURLYOPEN :: COMMAND("""\isacharunderscore""") :: CURLYCLOSE :: tail => (RAWTEXT("""\_"""),tail)
         case CURLYOPEN :: COMMAND("""\isadigit""") :: CURLYOPEN::n::CURLYCLOSE::CURLYCLOSE :: tail => (n,tail)
         case CURLYOPEN :: COMMAND("""\isacharcomma""") :: CURLYCLOSE :: tail      => (RAWTEXT(""","""),tail)
         case COMMAND("""\isanewline""") :: tail                                   =>  (RAWTEXT(""),tail)
