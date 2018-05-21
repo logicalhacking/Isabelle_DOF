@@ -9,27 +9,30 @@
 %%   OR
 %%   The 2-clause BSD-style license.
 %%  
-%%   SPDX-License-Identifier: LPPL-1
+%%   SPDX-License-Identifier: LPPL-1.0+ OR BSD-2-Clause
 
 %% Warning: Do Not Edit!
 %% =====================
-%% This is the root file for the Isabelle/DOF. 
+%% This is the root file for the Isabelle/DOF configuration "scholarly_paper/lncs". 
 %% All customization and/or additional packages should be added to the file 
 %% preamble.tex. 
 
-
 \RequirePackage{ifvtex}
-\documentclass[fontsize=10pt,DIV12,paper=a4,open=right,twoside,abstract=true]{scrreprt}
+\documentclass{llncs}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{textcomp}
-\usepackage[english]{babel}
+\usepackage[USenglish]{babel}
 \usepackage{isabelle}
-\usepackage{DOF}
+\usepackage{xcolor}
 \usepackage{isabellesym}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage[numbers, sort&compress, sectionbib]{natbib}
+\usepackage{DOF-scholarly_paper-lncs}
+\IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
+\usepackage{xspace}
+\newcommand{\isadof}{Isabelle/DOF\xspace}
+\usepackage{graphicx}
 \usepackage{hyperref}
 \setcounter{tocdepth}{3} 
 \hypersetup{%
@@ -43,6 +46,23 @@
 \allowdisplaybreaks[4]
 \urlstyle{rm}
 \isabellestyle{it}
+\usepackage[caption]{subfig}
+\usepackage[size=footnotesize]{caption}
+
+\newcommand{\ie}{i.e.}
+\newcommand{\eg}{e.g.}
+
+\renewcommand{\topfraction}{0.9}      % max fraction of floats at top
+\renewcommand{\bottomfraction}{0.8}   % max fraction of floats at bottom
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}     % 2 may work better
+\setcounter{dbltopnumber}{2}    % for 2-column pages
+\renewcommand{\dbltopfraction}{0.9}   % fit big float above 2-col. text
+\renewcommand{\textfraction}{0.07}    % allow minimal text w. figs
+\renewcommand{\floatpagefraction}{0.7}        % require fuller float pages
+\renewcommand{\dblfloatpagefraction}{0.7}     % require fuller float pages
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Overrides the (rightfully issued) warning by Koma Script that \rm
 %%% etc. should not be used (they are deprecated since more than a
@@ -54,18 +74,33 @@
   \DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\title{<TITLE>}
-\author{<AUTHOR>}
 \begin{document}
+\selectlanguage{USenglish}%
+\renewcommand{\bibname}{References}%
+\renewcommand{\figurename}{Fig.}
+\renewcommand{\abstractname}{Abstract.}
+\renewcommand{\subsubsectionautorefname}{Sect.}
+\renewcommand{\subsectionautorefname}{Sect.}
+\renewcommand{\sectionautorefname}{Sect.}
+\renewcommand{\figureautorefname}{Fig.}
+\newcommand{\subtableautorefname}{\tableautorefname}
+\newcommand{\subfigureautorefname}{\figureautorefname}
+\newcommand{\lstnumberautorefname}{Line}
+
+
+
 \maketitle
-\tableofcontents
+\makeatother
 \input{session}
 % optional bibliography
 \IfFileExists{root.bib}{%
-    \bibliographystyle{abbrvnat}
-    \bibliography{root}
-}{}
+{\small   \renewcommand{\doi}[1]{}
+  \newcommand{\urlprefix}{}
+
+  \bibliographystyle{spmpscinat}
+  
+  \bibliography{root}
+}}{}
 \end{document}
 
 %%% Local Variables:

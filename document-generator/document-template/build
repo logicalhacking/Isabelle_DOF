@@ -69,7 +69,7 @@ fi
 
 $ISABELLE_TOOL scala $ISABELLE_HOME_USER/DOF/lib/dof_latex_converter.jar .
 
-cp $ISABELLE_HOME_USER/DOF/latex/DOF.sty .
+cp $ISABELLE_HOME_USER/DOF/latex/*.sty .
 
 $ISABELLE_TOOL latex -o sty "$ROOT_NAME.tex" && \
 $ISABELLE_TOOL latex -o "$OUTFORMAT" "$ROOT_NAME.tex" && \

@@ -1,5 +1,5 @@
 /**
-eq * Copyright (c) 2018 The University of Sheffield. All rights reserved.
+ * Copyright (c) 2018 The University of Sheffield. All rights reserved.
  *               2018 The University of Paris-Sud. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,56 +35,62 @@ import scala.util.matching.Regex
 import scala.annotation.tailrec
 
 object DofConverter {
-  val version = "0.0.0"
-
+  val version = "0.0.2"
+  val sep=RAWTEXT("%\n")
+    
   def deMarkUpArgList(tokens: List[LaTeXToken]): List[LaTeXToken] = {
-    tokens match {
-      case CURLYOPEN :: COMMAND("""\isacharprime""") :: CURLYCLOSE :: CURLYOPEN :: COMMAND("""\isacharprime""") :: CURLYCLOSE :: tail      
-        => RAWTEXT("") :: deMarkUpArgList(tail)
-      case CURLYOPEN :: COMMAND("""\isachardoublequoteopen""") :: CURLYCLOSE :: tail  => RAWTEXT("""{""") :: deMarkUpArgList(tail)
-      case CURLYOPEN :: COMMAND("""\isachardoublequoteclose""") :: CURLYCLOSE :: tail  => RAWTEXT("""}""") :: deMarkUpArgList(tail)
-      case t :: tail => t :: deMarkUpArgList(tail)
-      case Nil => Nil
+    @tailrec 
+    def deMarkUpArgListRec(acc:List[LaTeXToken], tokens: List[LaTeXToken]): List[LaTeXToken] = {
+      val (t,tail) = tokens match {
+         case CURLYOPEN :: COMMAND("""\isacharprime""") :: CURLYCLOSE :: CURLYOPEN :: COMMAND("""\isacharprime""") :: CURLYCLOSE :: tail      
+          => (RAWTEXT(""),tail)
+        case CURLYOPEN :: COMMAND("""\isachardoublequoteopen""") :: CURLYCLOSE :: tail  => (RAWTEXT("""{"""),tail)
+        case CURLYOPEN :: COMMAND("""\isachardoublequoteclose""") :: CURLYCLOSE :: tail  => (RAWTEXT("""}"""), tail)
+        case CURLYOPEN :: COMMAND("""\isacharunderscore""") :: CURLYCLOSE :: tail => (RAWTEXT("""_"""),tail)
+        case t :: tail => (t,tail)
+        case Nil => (RAWTEXT(""),Nil)
+      }  
+      if (tokens == Nil) acc
+      else deMarkUpArgListRec(acc++List(t), tail)
     }
+    deMarkUpArgListRec(Nil, tokens)
   }
 
-  def deMarkUp(tokens: List[LaTeXToken]): List[LaTeXToken] = deMarkUpT(Nil, tokens)
-  
-  @tailrec def deMarkUpT(out:List[LaTeXToken], tokens: List[LaTeXToken]): List[LaTeXToken] = {
-    def matcher(tokens: List[LaTeXToken]): Tuple2[LaTeXToken, List[LaTeXToken]] = {
-    tokens match {
-      case CURLYOPEN :: COMMAND("""\isacharcolon""") :: CURLYCLOSE :: tail      => (RAWTEXT(""":"""),tail)
-      case CURLYOPEN :: COMMAND("""\isacharunderscore""") :: CURLYCLOSE :: tail => (RAWTEXT("""_"""),tail)
-      case CURLYOPEN :: COMMAND("""\isadigit""") :: CURLYOPEN::n::CURLYCLOSE::CURLYCLOSE :: tail => (n,tail)
-      case CURLYOPEN :: COMMAND("""\isacharcomma""") :: CURLYCLOSE :: tail      => (RAWTEXT(""","""),tail)
-      case COMMAND("""\isanewline""") :: tail                                   =>  (RAWTEXT(""),tail)
-      case CURLYOPEN :: COMMAND("""\isachardot""") :: CURLYCLOSE :: tail        => (RAWTEXT("""."""),tail)
-      case CURLYOPEN :: COMMAND("""\isacharsemicolon""") :: CURLYCLOSE :: tail  => (RAWTEXT(""";"""),tail)
-      case CURLYOPEN :: COMMAND("""\isacharbackslash""") :: CURLYCLOSE :: tail  => (RAWTEXT("""\"""),tail)
-      case CURLYOPEN :: COMMAND("""\isacharslash""") :: CURLYCLOSE :: tail      => (RAWTEXT("""/"""),tail)
-      case CURLYOPEN :: COMMAND("""\isacharbraceleft""") :: CURLYCLOSE :: tail  => (RAWTEXT("""{"""),tail)
-      case CURLYOPEN :: COMMAND("""\isacharbraceright""") :: CURLYCLOSE :: tail => (RAWTEXT("""}"""),tail)
-      case CURLYOPEN :: COMMAND("""\isacharparenleft""") :: CURLYCLOSE :: tail  => (RAWTEXT("""("""),tail)
-      case CURLYOPEN :: COMMAND("""\isacharparenright""") :: CURLYCLOSE :: tail => (RAWTEXT(""")"""),tail)
-      case CURLYOPEN :: COMMAND("""\isacharequal""") :: CURLYCLOSE :: tail      => (RAWTEXT("""="""),tail)
-      case CURLYOPEN :: COMMAND("""\isacharminus""") :: CURLYCLOSE :: tail      => (RAWTEXT("""-"""),tail)
-      case CURLYOPEN :: COMMAND("""\isacharplus""") :: CURLYCLOSE :: tail      => (RAWTEXT("""+"""),tail)
-      case CURLYOPEN :: COMMAND("""\isacharprime""") :: CURLYCLOSE :: tail      => (RAWTEXT("""'"""),tail)
-      case VSPACE :: tail => (RAWTEXT(""" """),tail)
-      case t :: tail => (t,tail)
-      case Nil => (RAWTEXT(""" """),Nil)
+  def deMarkUp(tokens: List[LaTeXToken]): List[LaTeXToken] = {
+    @tailrec 
+    def deMarkupRec(out:List[LaTeXToken], tokens: List[LaTeXToken]): List[LaTeXToken] = {
+      val (t,tail) = tokens match {
+        case CURLYOPEN :: COMMAND("""\isacharcolon""") :: CURLYCLOSE :: tail      => (RAWTEXT(""":"""),tail)
+        case CURLYOPEN :: COMMAND("""\isacharunderscore""") :: CURLYCLOSE :: tail => (RAWTEXT("""\_"""),tail)
+        case CURLYOPEN :: COMMAND("""\isadigit""") :: CURLYOPEN::n::CURLYCLOSE::CURLYCLOSE :: tail => (n,tail)
+        case CURLYOPEN :: COMMAND("""\isacharcomma""") :: CURLYCLOSE :: tail      => (RAWTEXT(""","""),tail)
+        case COMMAND("""\isanewline""") :: tail                                   =>  (RAWTEXT(""),tail)
+        case CURLYOPEN :: COMMAND("""\isachardot""") :: CURLYCLOSE :: tail        => (RAWTEXT("""."""),tail)
+        case CURLYOPEN :: COMMAND("""\isacharsemicolon""") :: CURLYCLOSE :: tail  => (RAWTEXT(""";"""),tail)
+        case CURLYOPEN :: COMMAND("""\isacharbackslash""") :: CURLYCLOSE :: tail  => (RAWTEXT("""\"""),tail)
+        case CURLYOPEN :: COMMAND("""\isacharslash""") :: CURLYCLOSE :: tail      => (RAWTEXT("""/"""),tail)
+        case CURLYOPEN :: COMMAND("""\isacharbraceleft""") :: CURLYCLOSE :: tail  => (RAWTEXT("""{"""),tail)
+        case CURLYOPEN :: COMMAND("""\isacharbraceright""") :: CURLYCLOSE :: tail => (RAWTEXT("""}"""),tail)
+        case CURLYOPEN :: COMMAND("""\isacharparenleft""") :: CURLYCLOSE :: tail  => (RAWTEXT("""("""),tail)
+        case CURLYOPEN :: COMMAND("""\isacharparenright""") :: CURLYCLOSE :: tail => (RAWTEXT(""")"""),tail)
+        case CURLYOPEN :: COMMAND("""\isacharequal""") :: CURLYCLOSE :: tail      => (RAWTEXT("""="""),tail)
+        case CURLYOPEN :: COMMAND("""\isacharminus""") :: CURLYCLOSE :: tail      => (RAWTEXT("""-"""),tail)
+        case CURLYOPEN :: COMMAND("""\isacharplus""") :: CURLYCLOSE :: tail      => (RAWTEXT("""+"""),tail)
+        case CURLYOPEN :: COMMAND("""\isacharprime""") :: CURLYCLOSE :: tail      => (RAWTEXT("""'"""),tail)
+        case VSPACE :: tail => (RAWTEXT(""" """),tail)
+        case t :: tail => (t,tail)
+        case Nil => (RAWTEXT(""" """),Nil)
+      }
+      if (tokens == Nil) out
+      else deMarkupRec(out++List(t), tail)
     }
-    }
-    
-    val (t,tail) = matcher(tokens)
-    if (tokens == Nil) out
-    else deMarkUpT(out++List(t), tail)
+    deMarkupRec(Nil, tokens)
   }
   
   def convertIsaDofCommand(cmd: String, tokens: List[LaTeXToken]): List[LaTeXToken] = {
-
+    @tailrec 
     def convertType(head: List[LaTeXToken], tail: List[LaTeXToken]): Tuple2[String,List[LaTeXToken]] = {
-
+      @tailrec 
       def split(head:List[LaTeXToken], tokens: List[LaTeXToken]):Tuple2[List[LaTeXToken], List[LaTeXToken]] = {
         tokens match {
           case CURLYOPEN::COMMAND("""\isacharcomma""")::CURLYCLOSE::tail => (head,tokens)          
@@ -96,6 +102,7 @@ object DofConverter {
           case t => (head,t)
         }
       }
+      
       tail match {
         case CURLYOPEN::COMMAND("""\isacharcolon""")::CURLYCLOSE :: CURLYOPEN::COMMAND("""\isacharcolon""")::CURLYCLOSE :: tail => {
           val (label, shead)= split(List(), head.reverse)
@@ -112,6 +119,7 @@ object DofConverter {
     }
 
 
+    @tailrec 
     def delSpace(tokens: List[LaTeXToken]): List[LaTeXToken] = {
       tokens match {
         case VSPACE :: tail => delSpace(tail)
@@ -125,9 +133,8 @@ object DofConverter {
       }
     }
 
-    def backSpace(tokens: List[LaTeXToken]): List[LaTeXToken] = (delSpace(tokens.reverse)).reverse
     
-    val sep=RAWTEXT("%\n")
+    def backSpace(tokens: List[LaTeXToken]): List[LaTeXToken] = (delSpace(tokens.reverse)).reverse
     
     def parseIsaDofCmd(args: List[LaTeXToken], tokens: List[LaTeXToken]): Tuple3[String,List[LaTeXToken], List[LaTeXToken]] = {
       (args, tokens) match {
@@ -150,44 +157,50 @@ object DofConverter {
         case (args, Nil) => ("",deMarkUp(args), Nil)
       }
     }
-
     
-    cmd match {
+    val (pre, tail) = cmd match {
       case """chapter""" => {
         val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofChapter"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        (sep::COMMAND("""\isaDofChapter"""+typ) :: sectionArgs,tail)
       }
       case """section""" => {
         val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofSection"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        (sep::COMMAND("""\isaDofSection"""+typ) :: sectionArgs, tail)
       }
       case """subsection""" => {
         val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        COMMAND("""\isaDofSubSection"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        (COMMAND("""\isaDofSubSection"""+typ) :: sectionArgs, tail)
       }
       case """subsubsection""" => {
         val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofCSubSubSection"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        (sep::COMMAND("""\isaDofSubSubSection"""+typ) :: sectionArgs, tail)
       }
       case """paragraph""" => {
         val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofParagraph"""+typ) :: sectionArgs ++ convertLaTeXTokenStream(tail)
+        (sep::COMMAND("""\isaDofParagraph"""+typ) :: sectionArgs, tail)
       }
       case """text""" => {
         val (typ,dofText, tail) = parseIsaDofCmd(Nil, tokens)
-        sep::COMMAND("""\isaDofText"""+typ) :: dofText ++ convertLaTeXTokenStream(tail)
+        (sep::COMMAND("""\isaDofText"""+typ) :: dofText, tail)
       }
-      case s => sep::COMMAND("""\isaDofUnknown{""" + s + """}""") ::sep:: convertLaTeXTokenStream(tokens)
+      case s => (sep::COMMAND("""\isaDofUnknown{""" + s + """}""")::sep::Nil, tokens)
     }
+    pre ++ convertLaTeXTokenStream(tail)
   }
 
   def convertLaTeXTokenStream(tokens: List[LaTeXToken]): List[LaTeXToken] = {
-    tokens match {
-      case Nil => Nil
-      case COMMAND("""\isacommand""") :: CURLYOPEN :: RAWTEXT(cmd) :: CURLYOPEN
-        :: COMMAND("""\isacharasterisk""") :: CURLYCLOSE :: CURLYCLOSE :: ts => convertIsaDofCommand(cmd, ts)
-      case t :: ts => t :: convertLaTeXTokenStream(ts)
+    @tailrec
+    def convertLaTeXTokenStreamRec(acc: List[LaTeXToken], tokens: List[LaTeXToken]): List[LaTeXToken] = {
+      val (res, tail, rec) = tokens match {
+        case Nil => (Nil, Nil, false)
+        case COMMAND("""\isacommand""") :: CURLYOPEN :: RAWTEXT(cmd) :: CURLYOPEN
+          :: COMMAND("""\isacharasterisk""") :: CURLYCLOSE :: CURLYCLOSE :: ts => (convertIsaDofCommand(cmd, ts), Nil, false)
+        case t :: ts => (t::Nil, ts, true)
+      }
+      if (! rec) acc++res
+      else convertLaTeXTokenStreamRec(acc++res, tail) 
     }
+    convertLaTeXTokenStreamRec(Nil, tokens)
   }
 
   def convertLaTeX(string: String): Either[LaTeXLexerError, String] = {
@@ -199,8 +212,7 @@ object DofConverter {
 
   def convertFile(f: File): Option[(String, LaTeXLexerError)] = {
     val texFileName = f.getAbsolutePath()
-    println("DOF Converter: converting " + texFileName
-      + " (Not yet fully implemented!)")
+    println("DOF Converter "+version+": converting " + texFileName)
     f.renameTo(new File(texFileName + ".orig"))
 
     using(io.Source.fromFile(texFileName + ".orig")) {
@@ -259,16 +271,31 @@ object DofConverter {
       case Some(l) => l
     }
 
-    val texFiles = directories.map(dir => recursiveListFiles(new File(dir), new Regex("\\.tex$"))
-      .filterNot(_.length() == 0)).flatten
+    val emptyTexFiles = directories.map(dir => recursiveListFiles(new File(dir), new Regex("\\.tex$")).filter(_.length() == 0)).flatten
+    val nonEmptyTexFiles = directories.map(dir => recursiveListFiles(new File(dir), new Regex("\\.tex$")).filterNot(_.length() == 0)).flatten
+    
+    if (! emptyTexFiles.isEmpty) {
+      println()
+      println("DOF LaTeX converter warning(s):")
+      println("=============================")
+      println("  Empty LATeX files found, Isabelle build most likely failed!")
+      emptyTexFiles.map { case (file:File) => println("    "+ file + " is empty") }
+    }
 
-    println(texFiles)
-    val errors = texFiles.map(file => convertFile(file)).flatten
+    if (nonEmptyTexFiles.isEmpty) {
+      println()
+      println("DOF LaTeX converter error(s):")
+      println("=============================")
+      println("  No valid LaTeX files found")
+      System.exit(1)
+    }
+    
+    val errors = nonEmptyTexFiles.map(file => convertFile(file)).flatten
     if (!errors.isEmpty) {
       println()
       println("DOF LaTeX converter error(s):")
       println("=============================")
-      errors.map { case (file: String, err: LaTeXLexerError) => println(file + ": " + err) }
+      errors.map { case (file: String, err: LaTeXLexerError) => println("  " + file + ": " + err) }
       System.exit(1)
     }
     System.exit(0)
