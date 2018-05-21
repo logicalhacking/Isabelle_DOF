@@ -71,8 +71,9 @@ text{* Besides subtyping, there is another relation between
        in which instances of monitored classes may occur.
 
        The control of monitors is done by the commands:
-       -- monitor <doc-class>
-       -- close_monitor <doc-class> 
+       \<^item> monitor <doc-class>
+       \<^item> close_monitor <doc-class>
+ 
        where the automaton of the monitor class is expected
        to be in a final state.
 
@@ -85,7 +86,7 @@ text{* Besides subtyping, there is another relation between
 
 
 -- \<open>underlying idea: capture the essence of a monitor class as trace.
-                trace would be `predefined id` like `main` in C. \<close>
+    trace would be `predefined id` like `main` in C. \<close>
 text{* @{cite bla} *}
 
 doc_class article = 
@@ -94,16 +95,14 @@ doc_class article =
    trace    :: "(title + subtitle + author+ abstract +
                 introduction + technical + example +
                 conclusion + bibliography) list"
-   where "(title ~~ 
-           \<lbrakk>subtitle\<rbrakk> ~~
-           \<lbrace>author\<rbrace>\<^sup>+  ~~ 
-           abstract   ~~
+   where "(title       ~~ 
+           \<lbrakk>subtitle\<rbrakk>   ~~
+           \<lbrace>author\<rbrace>\<^sup>+    ~~ 
+           abstract     ~~
            introduction ~~ 
            \<lbrace>technical || example\<rbrace>\<^sup>+ ~~ 
-           conclusion ~~  
+           conclusion   ~~  
            bibliography)"
-
-
 
 end
 
