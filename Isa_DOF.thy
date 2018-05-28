@@ -738,7 +738,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdef
            |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms'
            |> (fn thy => gen_antiquotation binding (cid thy) thy) 
               (* defines the ontology-checked text antiquotation to this document class *)
-           |> (Sign.add_consts_cmd [(binding, "doc_class", Mixfix.NoSyn)])
+           |> (Sign.add_consts_cmd [(binding, "doc_class RegExp.rexp", Mixfix.NoSyn)])
               (* adding const symbol representing doc-class for Monitor-RegExps.*)
            
     end;
