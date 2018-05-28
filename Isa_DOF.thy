@@ -27,6 +27,7 @@ begin
   
 section{*Inner Syntax Antiquotations: Syntax *}
 
+typedecl "doc_class"
 typedecl "typ"
 typedecl "term"
 typedecl "thm"
@@ -664,6 +665,7 @@ val _ = Theory.setup((docitem_ref_antiquotation @{binding docref} DOF_core.defau
 end (* struct *)
 *}
 
+ consts sdf :: bool
   
 section{* Syntax for Ontologies (the '' View'' Part III) *} 
 ML{* 
@@ -732,11 +734,13 @@ fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdef
                                                    else error("no overloading allowed.")
       val gen_antiquotation = OntoLinkParser.docitem_ref_antiquotation
       val _ = map_filter (check_n_filter thy) fields
-   
     in thy |> Record.add_record overloaded (params', binding) parent (tag_attr::fields) 
            |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms'
            |> (fn thy => gen_antiquotation binding (cid thy) thy) 
               (* defines the ontology-checked text antiquotation to this document class *)
+           |> (Sign.add_consts_cmd [(binding, "doc_class", Mixfix.NoSyn)])
+              (* adding const symbol representing doc-class for Monitor-RegExps.*)
+           
     end;
 
 
@@ -757,7 +761,7 @@ end (* struct *)
 *}  
    
   
-
+ML{* open Mixfix;*}
 section{* Testing and Validation *}
 
   
