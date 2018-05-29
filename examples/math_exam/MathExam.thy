@@ -36,22 +36,29 @@ Here are the first four lines of a number pattern.
 \end{itemize}
 *}
 
-lemma XX : "(x ^ 3) + 2 * (x^2) + 11 * x - 12 = (x-4) * (x+1) * (x - 3)"
+lemma check : fixes x::real 
+              shows "(x^3) - 6 * x^2 + 5 * x + 12 = (x-4) * (x+1) * (x - 3)"
+        
 proof -
-  have  " (x ^ 3) + 2 * (x^2) + 11 * x - 12 = (x + 1) * ( x ^ 2 - 2 * x - 3)"
-    sorry
-  have "... = (x + 1) * (x + 4) * (x - 3)"
-    sorry
+  have * : "(x-4) * (x+1) * (x - 3) = (x-4) * ((x+1) * (x-3))"
+         by simp
+  have ** : "... = (x-4) * (x^2 - 2*x - 3)"
+    apply(auto simp: right_diff_distrib add.commute semiring_normalization_rules(1)[symmetric])
+    by (simp add: semiring_normalization_rules(29))
+  have *** : "... = x^3 - 6 * x^2 + 5 * x + 12"
+    apply(auto simp: right_diff_distrib left_diff_distrib add.commute semiring_normalization_rules(1)[symmetric])
+      by (simp add: numeral_3_eq_3 semiring_normalization_rules(29))
   show ?thesis
-    sorry
+    by(simp only: * ** ***)
 qed
   
-
+text*[a1::Answer_Formal_Step]{* First Step: Fill in term and justification *}
+text*[a2::Answer_Formal_Step]{* Next Step: Fill in term and justification *}
+text*[a3::Answer_Formal_Step]{* Next Step: Fill in term and justification *}
+text*[a4::Answer_Formal_Step]{* Next Step: Fill in term and justification *}
   
 text*[q1::Task, level="oneStar", mark="1::int", type="formal"] 
-{*
-Complete Line 10 :  @{term "10*x + 2*y =  11*16"}
-*}
+{* Complete Line 10 :  @{term "10*x + 2*y =  11*16"} *}
 
 text*[q2::Task, level="threeStars", mark="3::int", type="formal"] 
 {*
