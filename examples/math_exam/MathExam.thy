@@ -36,8 +36,11 @@ Here are the first four lines of a number pattern.
 \end{itemize}
 *}
 
-lemma check : fixes x::real 
-              shows "(x^3) - 6 * x^2 + 5 * x + 12 = (x-4) * (x+1) * (x - 3)"
+(* a bit brutal, as long as lemma* does not yet work *)
+(*<*)
+lemma check_polynome :
+  fixes x::real 
+  shows "(x^3) - 6 * x^2 + 5 * x + 12 = (x-4) * (x+1) * (x - 3)"
         
 proof -
   have * : "(x-4) * (x+1) * (x - 3) = (x-4) * ((x+1) * (x-3))"
@@ -47,10 +50,11 @@ proof -
     by (simp add: semiring_normalization_rules(29))
   have *** : "... = x^3 - 6 * x^2 + 5 * x + 12"
     apply(auto simp: right_diff_distrib left_diff_distrib add.commute semiring_normalization_rules(1)[symmetric])
-      by (simp add: numeral_3_eq_3 semiring_normalization_rules(29))
+    by (simp add: numeral_3_eq_3 semiring_normalization_rules(29))
   show ?thesis
     by(simp only: * ** ***)
 qed
+(*>*)
   
 text*[a1::Answer_Formal_Step]{* First Step: Fill in term and justification *}
 text*[a2::Answer_Formal_Step]{* Next Step: Fill in term and justification *}
