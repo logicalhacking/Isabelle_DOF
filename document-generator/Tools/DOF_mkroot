@@ -41,6 +41,12 @@ function usage()
   echo "    -d           enable document preparation"
   echo "    -n NAME      alternative session name (default: DIR base name)"
   echo "    -o TEMPLATE  alternative setup for root.tex (default: basic support using scrreprt)"
+  echo "       Available templates:"
+  for t in "$ISABELLE_HOME_USER/DOF/document-template/"*.tex; do
+    if [[ $t =~ root-(.*).tex$ ]]; then
+      echo "       * ${BASH_REMATCH[1]}"
+    fi
+  done
   echo
   echo "  Prepare session root DIR (default: current directory)."
   echo
@@ -60,7 +66,7 @@ function fail()
 
 DOC=""
 NAME=""
-TEMPLATE=""
+TEMPLATE="default-scrreprt"
 
 while getopts "o:n:d" OPT
 do
@@ -72,7 +78,7 @@ do
       NAME="$OPTARG"
       ;;
     o)
-      TEMPLATE="-$OPTARG"
+      TEMPLATE="$OPTARG"
       ;;
     \?)
       usage
@@ -102,7 +108,7 @@ if [ "$DOC" = true ]; then
   AUTHOR=$(echo "By $USER" | tr _ - | tr -d '\\')
   cp "$ISABELLE_HOME_USER/DOF/document-template/build" "$DIR"/document/
   cp "$ISABELLE_HOME_USER/DOF/document-template/preamble.tex" "$DIR"/document/
-  cp "$ISABELLE_HOME_USER/DOF/document-template/root$TEMPLATE.tex" "$DIR"/document/root.tex
+  cp "$ISABELLE_HOME_USER/DOF/document-template/root-$TEMPLATE.tex" "$DIR"/document/root.tex
   sed -i -e "s/<AUTHOR>/$AUTHOR/" -e "s/<TITLE>/$TITLE/" "$DIR"/document/root.tex
 else
     $ISABELLE_TOOL mkroot -n "$NAME"
