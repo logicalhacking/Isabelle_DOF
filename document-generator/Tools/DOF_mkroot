@@ -40,6 +40,7 @@ function usage()
   echo "  Options are:"
   echo "    -d           enable document preparation"
   echo "    -n NAME      alternative session name (default: DIR base name)"
+  echo "    -o TEMPLATE  alternative setup for root.tex (default: basic support using scrreprt)"
   echo
   echo "  Prepare session root DIR (default: current directory)."
   echo
@@ -59,8 +60,9 @@ function fail()
 
 DOC=""
 NAME=""
+TEMPLATE=""
 
-while getopts "n:d" OPT
+while getopts "o:n:d" OPT
 do
   case "$OPT" in
     d)
@@ -68,6 +70,9 @@ do
       ;;
     n)
       NAME="$OPTARG"
+      ;;
+    o)
+      TEMPLATE="-$OPTARG"
       ;;
     \?)
       usage
@@ -95,7 +100,9 @@ if [ "$DOC" = true ]; then
   echo "    \"build\"" >> "$DIR"/ROOT
   TITLE=$(echo "$NAME" | tr _ - | tr -d '\\')
   AUTHOR=$(echo "By $USER" | tr _ - | tr -d '\\')
-  cp "$ISABELLE_HOME_USER/DOF/document-template"/* "$DIR"/document/
+  cp "$ISABELLE_HOME_USER/DOF/document-template/build" "$DIR"/document/
+  cp "$ISABELLE_HOME_USER/DOF/document-template/preamble.tex" "$DIR"/document/
+  cp "$ISABELLE_HOME_USER/DOF/document-template/root$TEMPLATE.tex" "$DIR"/document/root.tex
   sed -i -e "s/<AUTHOR>/$AUTHOR/" -e "s/<TITLE>/$TITLE/" "$DIR"/document/root.tex
 else
     $ISABELLE_TOOL mkroot -n "$NAME"
