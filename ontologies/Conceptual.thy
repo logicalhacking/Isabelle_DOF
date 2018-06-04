@@ -1,7 +1,7 @@
-theory Conceptual
-  imports "../Isa_Dof"
+theory conceptual
+  imports "../Isa_DOF"
 begin
-  
+
 doc_class A =
    x :: "string"  
 

@@ -1,6 +1,5 @@
 theory mathex_onto
- 
-imports "../Isa_DOF"
+ imports "../Isa_DOF"
 begin
 
 doc_class Author =

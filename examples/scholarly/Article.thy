@@ -65,7 +65,7 @@ fun calculate_attr_access ctxt f term =
     in  lhs end
 
 val H = fn X => @{term scholarly_paper.example.comment} $ X
-val t = calculate_attr_access @{context} H @{docitem_value \<open>bgrnd\<close>};
+(* val t = calculate_attr_access @{context} H @{docitem_value \<open>bgrnd\<close>}; *)
 
  *}  
   

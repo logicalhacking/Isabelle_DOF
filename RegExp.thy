@@ -1,8 +1,7 @@
 theory RegExp
 imports Main 
 begin
-(* value "insert" *)
- 
+
 datatype 'a rexp = Empty                         ("<>")
                  | Atom 'a                       ("\<lfloor>_\<rfloor>" 65)
                  | Alt  "('a rexp)" "('a rexp)"  (infixr "||" 55)
