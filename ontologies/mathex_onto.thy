@@ -29,7 +29,7 @@ datatype Grade =
 
 doc_class Header = 
   examTitle :: string
-  examSubject :: Subject
+  examSubject :: "(Subject) list"
   date :: string
   timeAllowed :: int --  minutes
 
