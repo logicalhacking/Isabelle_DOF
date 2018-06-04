@@ -48,6 +48,12 @@ else
     echo "Registering tools in Tools already registered in $DIR/settings"
 fi
 
+if [[ -d "$ISABELLE_HOME_USER/DOF" ]]; then
+    echo "Moving old installation to $DIR/settings $ISABELLE_HOME_USER/DOF.bak"
+    rm -rf "$ISABELLE_HOME_USER/DOF.bak"
+    mv "$ISABELLE_HOME_USER/DOF" "$ISABELLE_HOME_USER/DOF.bak"
+fi
+
 # Build Scala lib
 (cd converter; ./build $ISABELLE)
 DIR="$ISABELLE_HOME_USER/DOF/lib"
