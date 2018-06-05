@@ -9,7 +9,7 @@ section*[idir::Author,affiliation="''CentraleSupelec''",
 email="''idir.aitsadoune@centralesupelec.fr''"]
 {*Idir AIT SADOUNE*}
 
-section*[header::Header,examSubject= "[algebra,geometry]", 
+subsection*[header::Header,examSubject= "[algebra,geometry]", 
  examTitle="''BACCALAUREAT GENERAL MATHEMATIQUES''", 
 date="''21-06-2017''", 
 timeAllowed="240::int"]
@@ -23,20 +23,19 @@ timeAllowed="240::int"]
 \end{itemize}
 *}
 
-section*[exo1 :: Exercise,Exercise.concerns= "{examiner,validator,student}",
+subsubsection*[exo1 :: Exercise,Exercise.concerns= "{examiner,validator,student}",
 Exercise.content="[q1::Task]"]
 {* 
-On considère la fonction h définie sur l’intervalle [0..+\<infinity>] par : @{term "h(x) = x * e^(-x)"}
+On considère la fonction h définie sur l’intervalle [0..+\<infinity>] par : @{term "h(x) = x * exponent (-x)"}
 *}
 
   
-subsection*[q1::Task, Task.concerns= "{examiner,validator,student}",
-subitems="[q11]",
+subsubsection*[q1::Task, Task.concerns= "{examiner,validator,student}",
 level="oneStar", mark="1::int", type="formal"] 
-{* Déterminer la limite de la fonction h en +\<infinity>. *}
+{* Déterminer la limite de la fonction @{term "h"} en +\<infinity>. *}
 
-text*[q11::Answer_Formal_Step]
-{* First Step: Fill in term and justifi*}
+text*[a1::Answer_Formal_Step]
+{* First Step: Fill in term and justification*}
 
 
 
