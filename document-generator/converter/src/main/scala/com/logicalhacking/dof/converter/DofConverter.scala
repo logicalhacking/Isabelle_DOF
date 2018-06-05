@@ -158,7 +158,9 @@ object DofConverter {
       }
     }
     
-    val (pre, tail) = cmd match {
+    
+    
+    val (pre:List[LaTeXToken], tail:List[LaTeXToken]) = cmd match {
       case """chapter""" => {
         val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
         (sep::COMMAND("""\isaDofChapter"""+typ) :: sectionArgs,tail)
@@ -185,7 +187,7 @@ object DofConverter {
       }
       case s => (sep::COMMAND("""\isaDofUnknown{""" + s + """}""")::sep::Nil, tokens)
     }
-    pre ++ convertLaTeXTokenStream(tail)
+    backSpace(pre) ++ convertLaTeXTokenStream(delSpace(tail))
   }
 
   def convertLaTeXTokenStream(tokens: List[LaTeXToken]): List[LaTeXToken] = {
