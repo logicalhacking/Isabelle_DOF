@@ -30,6 +30,27 @@ The ``DOF_mkroot`` command takes the same parameter as the standard
 ``mkroot`` command of Isabelle. Thereafter, the normal Isabelle 
 command for building documents can be used. 
 
+Using the ``-o`` option, different LaTeX and ontology setups can be
+selected:
+```console 
+    -o TEMPLATE  alternative setup for root.tex (default: basic support using scrreprt)
+       Available templates:
+       * default-scrreprt
+       * scholarly_paper-lncs
+```
+For example, 
+```console 
+isabelle DOF_mkroot -d -o scholarly_paper-lncs
+```
+creates a setup using the scholarly_paper ontology and Springer's
+LNCS LaTeX class as document class. Note that the generated setup
+does not include the actual ``llncs.cls`` file. This is due to
+license restrictions. You need to obtain the file from Springer's
+website and either copy it in you ``texmf`` directory or the ``root``
+folder. In the latter case, you also need to add it in the ``ROOT`` file
+as dependency.
+
+
 ## Development Setup
 
 Compilation using the provided ``build`` script, e.g.: 
