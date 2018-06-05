@@ -1,6 +1,6 @@
 theory BAC2017
   imports "../../ontologies/mathex_onto"
-    Real
+    Deriv Transcendental
 begin
    
 open_monitor*[exam::MathExam] 
@@ -29,14 +29,41 @@ Exercise.content="[q1::Task]"]
 On considère la fonction h définie sur l’intervalle [0..+\<infinity>] par : @{term "h(x) = x * exponent (-x)"}
 *}
 
+definition h :: "real \<Rightarrow> real"
+  where "h x \<equiv> x * exp (- x)"
+
   
 subsubsection*[q1::Task, Task.concerns= "{examiner,validator,student}",
 level="oneStar", mark="1::int", type="formal"] 
-{* Déterminer la limite de la fonction @{term "h"} en +\<infinity>. *}
+{* Déterminer la limite de la fonction @{term h} en +\<infinity>. *}
 
 text*[a1::Answer_Formal_Step]
 {* First Step: Fill in term and justification*}
 
+lemma q1 : "(h \<longlongrightarrow> (0::real)) at_top"
+  sorry
+
+  
+subsubsection*[q2::Task, Task.concerns= "{examiner,validator,student}",
+level="oneStar", mark="1::int", type="formal"] 
+{* Étudier les variations de la fonction @{term h} sur l'intervalle [0..+\<infinity>] et dresser son tableau
+   de variation} *}
+find_theorems exp
+
+text*[a2::Answer_Formal_Step]
+{* First Step: Fill in term and justification*}
+
+lemma q2_a : "DERIV h x :> (1 - x) * exp (- x)"
+proof -
+  have * : "DERIV (exp \<circ> uminus) x :> - (exp (-x))"
+    by (simp add: has_derivative_minus has_derivative_compose Transcendental.DERIV_exp)
+  have ** : "DERIV id x :> 1"
+    by (metis DERIV_ident eq_id_iff)
+  have *** : "DERIV h x :> x * (- (exp (- x))) + 1 * (exp (- x))"
+    by (simp add: * ** has_derivative_mult)
+  show ?thesis
+    by (metis "***" left_diff_distrib mult_minus_right uminus_add_conv_diff)
+qed
 
 
 close_monitor*[exam] 
