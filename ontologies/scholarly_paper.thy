@@ -34,20 +34,14 @@ doc_class technical = text_section +
    formal_results  :: "thm list"
    
 text{* A very rough formatting style could be modeled as follows:*}   
-   
-datatype mesure = points      "int" 
-                  | cm        "int"  (* divised by 100 *)
-                  | inch      "int"  (* divised by 100 *)
-                  | textwidth "int"  (* given in percent *)   
 
-datatype alignment = left | center | right  
-  
+
+datatype placement = h | t | b | ht | hb   
 doc_class figure   = text_section +
-   width   :: "mesure option"  <= "Some(textwidth 100)"    
-   height  :: "mesure option"  <= "Some(textwidth 100)"
-   scale   :: "int option"        (* given in per cent *)
-   "file"  :: "file"
-   plmt    :: alignment        <= center
+   relative_width   :: "string" (* percent of textwidth *)    
+   src     :: "string"
+   placement :: placement 
+   spawn_columns :: bool <= True 
 
 (* something similar on tables ? Idea: rough abstraction of table attributes in LaTeX *)
    

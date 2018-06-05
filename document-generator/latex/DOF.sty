@@ -17,6 +17,7 @@
   Document-Type Support Framework for Isabelle.]
 
 \RequirePackage{keycommand}
+\RequirePackage{fp}
 
 \newkeycommand\isaDofChapter[label=,type=][1]{%
   \isamarkupchapter{#1}\label{\commandkey{label}}%
@@ -35,4 +36,19 @@
 }
 \newkeycommand\isaDofSubParagraph[label=,type=][1]{%
   \isamarkupsubparagraph{#1}\label{\commandkey{label}}%
+}
+
+\newkeycommand\isaDofTextFigure
+  [label=,type=,relative_width=,placement,src=,spawn_columns=enum False True][1]{%
+  \begin{figure}[]
+    \centering
+    \ifcommandkey{relative_width}
+    {%
+      \FPdiv\scale{\commandkey{relative_width}}{100}
+      \includegraphics[width=\scale\textwidth]{\commandkey{src}} 
+    }{%
+      \includegraphics[]{\commandkey{src}}
+    } 
+    \caption{#1}\label{\commandkey{label}}%
+  \end{figure}
 }
