@@ -50,17 +50,21 @@ Thm.concl_of;
   
 ML{* 
 val X =  (@{term scholarly_paper.example.comment})
-val Y = Type.legacy_freeze @{docitem_value \<open>bgrnd\<close>}
+val Y = Type.legacy_freeze @{docitem_value \<open>bgrnd\<close>};
+Syntax.string_of_term
 *}
 ML{* 
 fun calculate_attr_access ctxt f term =
-    let val term = Type.legacy_freeze term;
-        val ty = type_of term
+    (* term assumed to be ground type, (f term) not necessarily *)
+    let val _ = writeln("XXX"^(Syntax.string_of_term ctxt term))
+        val [subterm'] = Type_Infer_Context.infer_types ctxt [f term]
+        val ty = type_of (subterm')
+        val _ = writeln("YYY"^(Syntax.string_of_term ctxt subterm'))
         val term' = (Const(@{const_name "HOL.eq"}, ty --> ty --> HOLogic.boolT) 
-                              $ (Type.legacy_freeze(f term)) 
+                              $ subterm' 
                               $ Free("_XXXXXXX", ty))
-        val term'' = (HOLogic.mk_Trueprop(term'))
-        val thm = simplify @{context} (Thm.assume(Thm.cterm_of ctxt term''));
+        val _ = writeln("ZZZ"^(Syntax.string_of_term ctxt term'))
+        val thm = simplify ctxt (Thm.assume(Thm.cterm_of ctxt (HOLogic.mk_Trueprop term')));
         val Const(@{const_name "HOL.eq"},_) $ lhs $ _ = HOLogic.dest_Trueprop (Thm.concl_of thm)
     in  lhs end
 
@@ -68,6 +72,9 @@ val H = fn X => @{term scholarly_paper.example.comment} $ X
 (* val t = calculate_attr_access @{context} H @{docitem_value \<open>bgrnd\<close>}; *)
 
  *}  
+  
+ML{*val t = calculate_attr_access @{context} H @{docitem_value \<open>bgrnd\<close>}; *}  
+  
   
 term "scholarly_paper.author.affiliation_update"
 term "scholarly_paper.abstract.keywordlist_update"
