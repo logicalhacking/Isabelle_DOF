@@ -31,6 +31,12 @@ ISABELLE=${1:-`which isabelle`}
 export `$ISABELLE getenv ISABELLE_HOME_USER`
 export `$ISABELLE getenv ISABELLE_TOOLS`
 
+if [[ -d "$ISABELLE_HOME_USER/DOF" ]]; then
+    echo "Moving old installation to $DIR/settings $ISABELLE_HOME_USER/DOF.bak"
+    rm -rf "$ISABELLE_HOME_USER/DOF.bak"
+    mv "$ISABELLE_HOME_USER/DOF" "$ISABELLE_HOME_USER/DOF.bak"
+fi
+
 DIR="$ISABELLE_HOME_USER/DOF/Tools"
 echo "Installing Tools in $DIR"
 mkdir -p "$DIR"
@@ -48,11 +54,6 @@ else
     echo "Registering tools in Tools already registered in $DIR/settings"
 fi
 
-if [[ -d "$ISABELLE_HOME_USER/DOF" ]]; then
-    echo "Moving old installation to $DIR/settings $ISABELLE_HOME_USER/DOF.bak"
-    rm -rf "$ISABELLE_HOME_USER/DOF.bak"
-    mv "$ISABELLE_HOME_USER/DOF" "$ISABELLE_HOME_USER/DOF.bak"
-fi
 
 # Build Scala lib
 (cd converter; ./build $ISABELLE)
