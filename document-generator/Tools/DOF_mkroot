@@ -38,6 +38,7 @@ function usage()
   echo "Usage: isabelle $PRG [OPTIONS] [DIR]"
   echo
   echo "  Options are:"
+  echo "    -h           print this help text and exit"
   echo "    -d           enable document preparation"
   echo "    -n NAME      alternative session name (default: DIR base name)"
   echo "    -o TEMPLATE  alternative setup for root.tex (default: basic support using scrreprt)"
@@ -68,9 +69,13 @@ DOC=""
 NAME=""
 TEMPLATE="default-scrreprt"
 
-while getopts "o:n:d" OPT
+while getopts "o:n:dh" OPT
 do
   case "$OPT" in
+    h)
+      usage
+      exit 1
+      ;;
     d)
       DOC="true"
       ;;
@@ -82,6 +87,7 @@ do
       ;;
     \?)
       usage
+      exit 0
       ;;
   esac
 done
