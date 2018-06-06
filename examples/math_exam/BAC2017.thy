@@ -5,7 +5,7 @@ begin
    
 open_monitor*[exam::MathExam] 
 
-section*[idir::Author,affiliation="''CentraleSupelec''", 
+section*[idir::Author,affiliation="''LRI, CentraleSupelec''", 
 email="''idir.aitsadoune@centralesupelec.fr''"]
 {*Idir AIT SADOUNE*}
 
