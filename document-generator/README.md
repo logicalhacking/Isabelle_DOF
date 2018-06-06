@@ -31,7 +31,7 @@ The ``DOF_mkroot`` command takes the same parameter as the standard
 command for building documents can be used. 
 
 Using the ``-o`` option, different LaTeX and ontology setups can be
-selected:
+selected (use ``-h`` to obtain a list of all installed setups):
 ```console 
     -o TEMPLATE  alternative setup for root.tex (default: basic support using scrreprt)
        Available templates:
