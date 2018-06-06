@@ -7,7 +7,7 @@ doc_class Author =
    email :: "string"
 
 datatype Subject =
-  algebra | geometry | statistical
+  algebra | geometry | statistical | analysis
 
 datatype Level =
   oneStar | twoStars | threeStars
