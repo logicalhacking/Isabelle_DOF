@@ -104,17 +104,24 @@ object DofConverter {
       }
       
       tail match {
-        case CURLYOPEN::COMMAND("""\isacharcolon""")::CURLYCLOSE :: CURLYOPEN::COMMAND("""\isacharcolon""")::CURLYCLOSE :: tail => {
+        case CURLYOPEN::COMMAND("""\isacharcolon""")::CURLYCLOSE :: CURLYOPEN::COMMAND("""\isacharcolon""")::CURLYCLOSE :: tail  => {
           val (label, shead)= split(List(), head.reverse)
-          val (typ, stail) = split(List(), tail)
+          val (typ, stail) = split(List(), delSpace(tail))
           val typstring = typ match {
             case RAWTEXT(s)::Nil => s.capitalize
             case _          => ""
           }
           (typstring,(shead.reverse)++List(RAWTEXT("""label={"""))++(label.reverse)++List(RAWTEXT("""}, type={"""))++typ++List(RAWTEXT("""}"""))++stail)
         }
+        case CURLYOPEN::COMMAND("""\isacharbrackright""")::CURLYCLOSE :: tail => {
+          val (label, shead)= split(List(), head.reverse)
+          ("",(shead.reverse)++List(RAWTEXT("""label={"""))++(label.reverse)++List(RAWTEXT("""}"""))++List(RAWTEXT("""]"""))++delSpace(tail))
+        }
         case t::tail => convertType(head++List(t), tail)
-        case t => ("",t)
+        case Nil =>  {
+          val (label, shead)= split(List(), head.reverse)
+          ("",(shead.reverse)++List(RAWTEXT("""label={"""))++(label.reverse)++List(RAWTEXT("""}"""))++List(RAWTEXT(""","""))++delSpace(tail))
+        }
       }
     }
 
