@@ -34,7 +34,7 @@ doc_class Header =
   timeAllowed :: int --  minutes
 
 datatype ContentClass =   
-    examiner    -- \<open>the 'author' of the exam\<close>
+      examiner    -- \<open>the 'author' of the exam\<close>
     | validator -- \<open>the 'proof-reader' of the exam\<close>
     | student   -- \<open>the victim ;-) ... \<close>
 

@@ -49,35 +49,66 @@ I: 'a -> 'a;
 K: 'a -> 'b -> 'a
 *}  
 
-section\<open> Global Isar State Management\<close> 
-subsection\<open> Mechanism 1 : configuration flags of fixed type. \<close>
+section {*  The Nano-Kernel: Contexts,  (Theory)-Contexts, (Proof)-Contexts *}
 
+text\<open> What I call the 'Nano-Kernel' in Isabelle can also be seen as an acyclic theory graph.
+The meat of it can be found in the file @{file "$ISABELLE_HOME/src/Pure/context.ML"}. 
+My notion is a bit criticisable since this entity, which provides the type of theory
+and proof_context which is not that Nano after all.
+However, these type are pretty empty place-holders at that level and the content of
+@{file  "$ISABELLE_HOME/src/Pure/theory.ML"} is registered much later.
+The sources themselves mention it as "Fundamental Structure"
+and in principle theories and proof contexts could be REGISTERED as user data;
+the chosen specialization is therefore an acceptable meddling of the abstraction "Nano-Kernel"
+and its application context: Isabelle.
+
+Makarius himself says about this structure:
+
+"Generic theory contexts with unique identity, arbitrarily typed data,
+monotonic development graph and history support.  Generic proof
+contexts with arbitrarily typed data."
+
+A context is essentially a container with
+\<^item> an id
+\<^item> a list of parents (so: the graph structure)
+\<^item> a time stamp and
+\<^item> a sub-context relation (which uses a combination of the id and the time-stamp to
+  establish this relation very fast whenever needed; it plays a crucial role for the
+  context transfer in the kernel.
+
+
+A context comes in form of three 'flavours':
+\<^item> theories
+\<^item> Proof-Contexts (containing theories but also additional information if Isar goes into prove-mode)
+\<^item> Generic (the sum of both)
+
+All context have to be seen as mutable; so there are usually transformations defined on them
+which are possible as long as a particular protocol (begin_thy - end_thy etc) are respected.
+
+Contexts come with type user-defined data which is mutable through the entire lifetime of
+a context.
+\<close>  
+
+subsection\<open> Mechanism 1 : Core Interface. \<close>
+
+  
 ML{*
-Config.get @{context} Thy_Output.quotes;
-Config.get @{context} Thy_Output.display;
+Context.parents_of: theory -> theory list;
+Context.ancestors_of: theory -> theory list;
+Context.proper_subthy : theory * theory -> bool;
+Context.Proof: Proof.context -> Context.generic; (*constructor*)
+Context.proof_of : Context.generic -> Proof.context;
+Context.certificate_theory_id : Context.certificate -> Context.theory_id;
+Context.theory_name : theory -> string;
+Context.map_theory: (theory -> theory) -> Context.generic -> Context.generic;
+(* Theory.map_thy; *)
 
-val C = Synchronized.var "Pretty.modes" "latEEex"; 
-(* Synchronized: a mechanism to bookkeep global
-   variables with synchronization mechanism included *)
-Synchronized.value C;
-(*
-fun output ctxt prts =
-   603   prts
-   604   |> Config.get ctxt quotes ? map Pretty.quote
-   605   |> (if Config.get ctxt display then
-   606         map (Pretty.indent (Config.get ctxt indent) #> string_of_margin ctxt #> Output.output)
-   607         #> space_implode "\\isasep\\isanewline%\n"
-   608         #> Latex.environment "isabelle"
-   609       else
-   610         map
-   611           ((if Config.get ctxt break then string_of_margin ctxt else Pretty.unformatted_string_of)
-   612             #> Output.output)
-   613         #> space_implode "\\isasep\\isanewline%\n"
-   614         #> enclose "\\isa{" "}");
-*)
+open Context; (* etc *)
 *}
+  
 
-subsection\<open>  Mechanism 2 : global arbitrary data structure that is attached to the global and
+
+subsection\<open>Mechanism 2 : global arbitrary data structure that is attached to the global and
    local Isabelle context $\theta$ \<close>
 ML {*
 
@@ -97,7 +128,27 @@ structure Data = Generic_Data
 *}
 
 
-section\<open>  Kernel: terms, types, thms \<close>  
+
+ML{*
+(*
+signature CONTEXT =
+sig
+  include BASIC_CONTEXT
+  (*theory context*)
+  type theory_id
+  val theory_id: theory -> theory_id
+  val timing: bool Unsynchronized.ref
+  val parents_of: theory -> theory list
+  val ancestors_of: theory -> theory list
+  val theory_id_name: theory_id -> string
+  val theory_name: theory -> string
+  val PureN: string
+...
+end
+*)
+*}
+
+section\<open>  Kernel: terms, types, theories, proof_contexts, thms \<close>  
 
 subsection{* Terms and Types *}
 text \<open>A basic data-structure of the kernel is term.ML \<close>  
@@ -160,16 +211,125 @@ ML{*
 Type_Infer_Context.infer_types: Proof.context -> term list -> term list  
 *}
   
+subsection{* Theories *}  
+text \<open> This structure yields the datatype \verb*thy* which becomes the content of 
+\verb*Context.theory*. In a way, the LCF-Kernel registers itself into the Nano-Kernel,
+which inspired me (bu) to this naming. \<close>
+ML{*
+
+(* intern Theory.Thy; (* Data-Type Abstraction still makes it an LCF Kernel *)
+
+datatype thy = Thy of
+ {pos: Position.T,
+  id: serial,
+  axioms: term Name_Space.table,
+  defs: Defs.T,
+  wrappers: wrapper list * wrapper list};
+
+*)
+
+Theory.check: Proof.context -> string * Position.T -> theory;
+
+Theory.local_setup: (Proof.context -> Proof.context) -> unit;
+Theory.setup: (theory -> theory) -> unit;  (* The thing to extend the table of "command"s with parser - callbacks. *)
+Theory.get_markup: theory -> Markup.T;
+Theory.axiom_table: theory -> term Name_Space.table;
+Theory.axiom_space: theory -> Name_Space.T;
+Theory.axioms_of: theory -> (string * term) list;
+Theory.all_axioms_of: theory -> (string * term) list;
+Theory.defs_of: theory -> Defs.T;
+Theory.at_begin: (theory -> theory option) -> theory -> theory;
+Theory.at_end: (theory -> theory option) -> theory -> theory;
+Theory.begin_theory: string * Position.T -> theory list -> theory;
+Theory.end_theory: theory -> theory;
+
+*}
+
+text{* Even the parsers and type checkers stemming from the theory-structure are registered via
+hooks (this can be confusing at times). Main phases of inner syntax processing, with standard 
+implementations of parse/unparse operations were treated this way.
+At the very very end in syntax_phases.ML, it sets up the entire syntax engine 
+(the hooks) via:
+*}
+
+(* 
+val _ =
+  Theory.setup
+   (Syntax.install_operations
+     {parse_sort = parse_sort,
+      parse_typ = parse_typ,
+      parse_term = parse_term false,
+      parse_prop = parse_term true,
+      unparse_sort = unparse_sort,
+      unparse_typ = unparse_typ,
+      unparse_term = unparse_term,
+      check_typs = check_typs,
+      check_terms = check_terms,
+      check_props = check_props,
+      uncheck_typs = uncheck_typs,
+      uncheck_terms = uncheck_terms});
+*)
+  
+text{*
+Thus, Syntax_Phases does the actual work, including markup generation and 
+generation of reports. 
+
+Look at: *}
+(*
+fun check_typs ctxt raw_tys =
+  let
+    val (sorting_report, tys) = Proof_Context.prepare_sortsT ctxt raw_tys;
+    val _ = if Context_Position.is_visible ctxt then Output.report sorting_report else ();
+  in
+    tys
+    |> apply_typ_check ctxt
+    |> Term_Sharing.typs (Proof_Context.theory_of ctxt)
+  end;
+
+which is the real implementation behind Syntax.check_typ
+
+or:
+
+fun check_terms ctxt raw_ts =
+  let
+    val (sorting_report, raw_ts') = Proof_Context.prepare_sorts ctxt raw_ts;
+    val (ts, ps) = Type_Infer_Context.prepare_positions ctxt raw_ts';
+
+    val tys = map (Logic.mk_type o snd) ps;
+    val (ts', tys') = ts @ tys
+      |> apply_term_check ctxt
+      |> chop (length ts);
+    val typing_report =
+      fold2 (fn (pos, _) => fn ty =>
+        if Position.is_reported pos then
+          cons (Position.reported_text pos Markup.typing
+            (Syntax.string_of_typ ctxt (Logic.dest_type ty)))
+        else I) ps tys' [];
+
+    val _ =
+      if Context_Position.is_visible ctxt then Output.report (sorting_report @ typing_report)
+      else ();
+  in Term_Sharing.terms (Proof_Context.theory_of ctxt) ts' end;
+
+which is the real implementation behind Syntax.check_term
+
+As one can see, check-routines internally generate the markup.
+
+*)  
+  
 section\<open>  Front End:  \<close>  
 
 subsection{* Parsing issues *}  
   
-text{* Tokens and Bindings *}  
+text\<open> Parsing combinators represent the ground building blocks of both generic input engines
+as well as the specific Isar framework. They are implemented in the  structure \verb*Token* 
+providing core type \verb+Token.T+. 
+\<close>
+ML{* open Token*}  
+
 ML{*
 
-(* Core: Token.T *)
-
-(* Derived type : *)
+(* Provided types : *)
 (*
   type 'a parser = T list -> 'a * T list
   type 'a context_parser = Context.generic * T list -> 'a * (Context.generic * T list)
@@ -187,6 +347,12 @@ val _ = Scan.lift Args.cartouche_input : Input.source context_parser;
 Token.is_command;
 Token.content_of; (* textueller kern eines Tokens. *)
 
+*}
+
+text{* Tokens and Bindings *}  
+
+
+ML{*
 val H = @{binding here}; (* There are "bindings" consisting of a text-span and a position, 
                     where \<dieresis>positions\<dieresis> are absolute references to a file *)                                  
 
@@ -312,100 +478,7 @@ Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> st
 Thy_Output.output : Proof.context -> Pretty.T list -> string;
 \<close>
 
-  
-section {*  The Nano-Kernel: Contexts,  (Theory)-Contexts, (Proof)-Contexts *}
-  
-ML{*
-open Context;
-Proof_Context.theory_of: Proof.context -> theory;
-: theory -> Proof.context;
 
-*}
-ML{*
-Context.theory_name;
-
-Theory.check;
-
-Context.map_theory;
-(* Theory.map_thy; *)
-
-Theory.begin_theory;
-Theory.check;
-(* Outer_Syntax.pretty_command; not exported*) 
-Theory.setup; (* The thing to extend the table of "command"s with parser - callbacks. *)
-
-*}
-
-
-  
-(* 
-Main phases of inner syntax processing, with standard implementations
-of parse/unparse operations.
-
-At the very very end in syntax_phases.ML, it sets up the entire syntax engine 
-(the hooks) via:
-
-val _ =
-  Theory.setup
-   (Syntax.install_operations
-     {parse_sort = parse_sort,
-      parse_typ = parse_typ,
-      parse_term = parse_term false,
-      parse_prop = parse_term true,
-      unparse_sort = unparse_sort,
-      unparse_typ = unparse_typ,
-      unparse_term = unparse_term,
-      check_typs = check_typs,
-      check_terms = check_terms,
-      check_props = check_props,
-      uncheck_typs = uncheck_typs,
-      uncheck_terms = uncheck_terms});
-
-Thus, Syntax_Phases does the actual work, including markup generation and 
-generation of reports. 
-
-Look at: 
-
-fun check_typs ctxt raw_tys =
-  let
-    val (sorting_report, tys) = Proof_Context.prepare_sortsT ctxt raw_tys;
-    val _ = if Context_Position.is_visible ctxt then Output.report sorting_report else ();
-  in
-    tys
-    |> apply_typ_check ctxt
-    |> Term_Sharing.typs (Proof_Context.theory_of ctxt)
-  end;
-
-which is the real implementation behind Syntax.check_typ
-
-or:
-
-fun check_terms ctxt raw_ts =
-  let
-    val (sorting_report, raw_ts') = Proof_Context.prepare_sorts ctxt raw_ts;
-    val (ts, ps) = Type_Infer_Context.prepare_positions ctxt raw_ts';
-
-    val tys = map (Logic.mk_type o snd) ps;
-    val (ts', tys') = ts @ tys
-      |> apply_term_check ctxt
-      |> chop (length ts);
-    val typing_report =
-      fold2 (fn (pos, _) => fn ty =>
-        if Position.is_reported pos then
-          cons (Position.reported_text pos Markup.typing
-            (Syntax.string_of_typ ctxt (Logic.dest_type ty)))
-        else I) ps tys' [];
-
-    val _ =
-      if Context_Position.is_visible ctxt then Output.report (sorting_report @ typing_report)
-      else ();
-  in Term_Sharing.terms (Proof_Context.theory_of ctxt) ts' end;
-
-which is the real implementation behind Syntax.check_term
-
-As one can see, check-routines internally generate the markup.
-
-*)
 
 ML{*
 Syntax_Phases.reports_of_scope;
@@ -721,7 +794,7 @@ fun document_antiq check_file ctxt (name, pos) =
 *}
 ML{* Type_Infer_Context.infer_types *}
 ML{* Type_Infer_Context.prepare_positions *}
-  
+
 section {*Transaction Management in the Isar-Engine : The Toplevel *}
   
 ML{*
@@ -752,5 +825,33 @@ Toplevel.present_local_theory:
 Thy_Output.document_command :  {markdown: bool} -> (xstring * Position.T) option * Input.source -> 
                                Toplevel.transition -> Toplevel.transition;
 *}  
+  
+subsection\<open> Configuration flags of fixed type in the Isar-engine. \<close>
+
+ML{*
+Config.get @{context} Thy_Output.quotes;
+Config.get @{context} Thy_Output.display;
+
+val C = Synchronized.var "Pretty.modes" "latEEex"; 
+(* Synchronized: a mechanism to bookkeep global
+   variables with synchronization mechanism included *)
+Synchronized.value C;
+(*
+fun output ctxt prts =
+   603   prts
+   604   |> Config.get ctxt quotes ? map Pretty.quote
+   605   |> (if Config.get ctxt display then
+   606         map (Pretty.indent (Config.get ctxt indent) #> string_of_margin ctxt #> Output.output)
+   607         #> space_implode "\\isasep\\isanewline%\n"
+   608         #> Latex.environment "isabelle"
+   609       else
+   610         map
+   611           ((if Config.get ctxt break then string_of_margin ctxt else Pretty.unformatted_string_of)
+   612             #> Output.output)
+   613         #> space_implode "\\isasep\\isanewline%\n"
+   614         #> enclose "\\isa{" "}");
+*)
+*}  
+    
   
 end

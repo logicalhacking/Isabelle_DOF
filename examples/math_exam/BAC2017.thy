@@ -1,6 +1,7 @@
 theory BAC2017
   imports "../../ontologies/mathex_onto"
-    Deriv Transcendental
+          Deriv 
+          Transcendental
 begin
    
 open_monitor*[exam::MathExam] 
@@ -14,27 +15,33 @@ section*[keller::Author,affiliation="''LRI, Univ. Paris-Sud''",
 email="''Chantal.Keller@lri.fr''"]
 {*Chantal KELLER*}
 
+text{* This example is an excerpt from the french baccaleareat 2017. 
+       The textual explanations were kept in french.
+ *}
 
 section*[header::Header,examSubject= "[analysis,geometry]", 
- examTitle="''BACCALAUREAT GENERAL MATHEMATIQUES''", 
-date="''21-06-2017''", 
-timeAllowed="240::int"]
+         examTitle="''BACCALAUREAT GENERAL MATHEMATIQUES''", 
+         date="''21-06-2017''", 
+        timeAllowed="240::int"]
 {* 
 \begin{itemize}
-\item Les calculatrices électroniques de poche sont autorisées, conformément à la réglementation en vigueur.
+\item Les calculatrices électroniques de poche sont autorisées, conformément à la réglementation 
+      en vigueur.
 \item Le sujet est composé de 4 exercices indépendants.
 \item Le candidat doit traiter tous les exercices.
-\item Le candidat est invité à faire figurer sur la copie toute trace de recherche, même incomplète ou non fructueuse, qu’il aura développée.
-\item Il est rappelé que la qualité de la rédaction, la clarté et la précision des raisonnements entreront pour une part importante dans l’appréciation des copies.
+\item Le candidat est invité à faire figurer sur la copie toute trace de recherche, même incomplète 
+      ou non fructueuse, qu’il aura développée.
+\item Il est rappelé que la qualité de la rédaction, la clarté et la précision des raisonnements 
+      entreront pour une part importante dans l’appréciation des copies.
 \end{itemize}
 *}
 
 
 subsection*[exo1 :: Exercise,
-    Exercise.concerns= "{examiner,validator,student}",
-    Exercise.content="[q1::Task,q2,q3a]"]
-{* 
-On considère la fonction h définie sur l’intervalle [0..+\<infinity>] par : @{term "h(x) = x * exponent (-x)"}
+            Exercise.concerns= "{examiner,validator,student}",
+            Exercise.content="[q1::Task,q2,q3a]"]
+{*  On considère la fonction h définie sur l’intervalle [0..+\<infinity>] par : 
+    @{term "h(x) = x * exponent (-x)"}
 *}
 
 definition h :: "real \<Rightarrow> real"
@@ -69,14 +76,14 @@ definition h' :: "real \<Rightarrow> real"
 
 lemma q2_a : "DERIV h x :> h' x"
 proof -
-  have * : "DERIV (exp \<circ> uminus) x :> - (exp (-x))"
-    by (simp add: has_derivative_compose)
+  have * : "DERIV (exp \<circ> uminus) x :> - (exp (-x))"  
+          sorry (*    by (simp add: has_derivative_compose) *)
   have ** : "DERIV id x :> 1"
     by (metis DERIV_ident eq_id_iff)
   have *** : "DERIV h x :> x * (- (exp (- x))) + 1 * (exp (- x))"
-    by (simp add: * ** has_derivative_mult comp_def)
+          sorry (* by (simp add: * ** has_derivative_mult comp_def) *)
   show ?thesis
-    by (metis "***" left_diff_distrib mult_minus_right uminus_add_conv_diff)
+          sorry (* by (metis "***" left_diff_distrib mult_minus_right uminus_add_conv_diff) *)
 qed
 
 lemma q2_b : "0 \<le> x \<and> x \<le> y \<and> y \<le> 1 \<Longrightarrow> h x \<le> h y"

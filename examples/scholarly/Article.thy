@@ -54,9 +54,10 @@ val Y = Type.legacy_freeze @{docitem_value \<open>bgrnd\<close>};
 Syntax.string_of_term
 *}
 ML{* 
-fun calculate_attr_access ctxt f term =
+fun calculate_attr_access ctxt proj_term term =
     (* term assumed to be ground type, (f term) not necessarily *)
     let val _ = writeln("XXX"^(Syntax.string_of_term ctxt term))
+        fun f X = proj_term $ X
         val [subterm'] = Type_Infer_Context.infer_types ctxt [f term]
         val ty = type_of (subterm')
         val _ = writeln("YYY"^(Syntax.string_of_term ctxt subterm'))
@@ -68,12 +69,12 @@ fun calculate_attr_access ctxt f term =
         val Const(@{const_name "HOL.eq"},_) $ lhs $ _ = HOLogic.dest_Trueprop (Thm.concl_of thm)
     in  lhs end
 
-val H = fn X => @{term scholarly_paper.example.comment} $ X
-(* val t = calculate_attr_access @{context} H @{docitem_value \<open>bgrnd\<close>}; *)
 
  *}  
   
-ML{*val t = calculate_attr_access @{context} H @{docitem_value \<open>bgrnd\<close>}; *}  
+ML{*val t = calculate_attr_access @{context} 
+                                  @{term scholarly_paper.example.comment} 
+                                  @{docitem_value \<open>bgrnd\<close>}; *}  
   
   
 term "scholarly_paper.author.affiliation_update"

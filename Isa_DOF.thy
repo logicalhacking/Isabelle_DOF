@@ -356,7 +356,7 @@ fun get_value_local oid ctxt  = case get_object_local oid ctxt of
                                    SOME{value=term,...} => SOME term
                                  | NONE => NONE  
 
-
+(* missing : setting terms to ground (no type-schema vars, no schema vars. )*)
 fun update_value_global oid upd thy  = 
           case get_object_global oid thy of
                SOME{pos,thy_name,value,id,cid} => 
@@ -665,7 +665,42 @@ val _ = Theory.setup((docitem_ref_antiquotation @{binding docref} DOF_core.defau
 end (* struct *)
 *}
 
- consts sdf :: bool
+ML{* 
+fun calculate_attr_access ctxt proj_term term =
+    (* term assumed to be ground type, (f term) not necessarily *)
+    let val _ = writeln("XXX"^(Syntax.string_of_term ctxt term))
+        fun f X = proj_term $ X
+        val [subterm'] = Type_Infer_Context.infer_types ctxt [f term]
+        val ty = type_of (subterm')
+        val _ = writeln("YYY"^(Syntax.string_of_term ctxt subterm'))
+        val term' = (Const(@{const_name "HOL.eq"}, ty --> ty --> HOLogic.boolT) 
+                              $ subterm' 
+                              $ Free("_XXXXXXX", ty))
+        val _ = writeln("ZZZ"^(Syntax.string_of_term ctxt term'))
+        val thm = simplify ctxt (Thm.assume(Thm.cterm_of ctxt (HOLogic.mk_Trueprop term')));
+        val Const(@{const_name "HOL.eq"},_) $ lhs $ _ = HOLogic.dest_Trueprop (Thm.concl_of thm)
+    in  lhs end
+
+fun calculate_attr_access_check ctxt proj_str str = (* template *)
+    let val term = Bound 0
+    in  (ML_Syntax.atomic o ML_Syntax.print_term) term
+    end
+ *}  
+  
+ML{*
+ML_Syntax.atomic o ML_Syntax.print_term;
+Args.term --| (Scan.lift @{keyword "in"}) -- Args.term;
+fn (ctxt,toks) =>
+(Scan.lift Args.name --| (Scan.lift @{keyword "in"}) -- Args.term >> 
+(fn(attr_term, class_term) =>  (ML_Syntax.atomic o ML_Syntax.print_term) class_term)) (ctxt, toks);
+
+*}
+ML{* 
+val _ = Theory.setup 
+ (  ML_Antiquotation.inline @{binding doc_class_attr} (Args.term >> (ML_Syntax.atomic o ML_Syntax.print_term)))    
+
+*}
+  
   
 section{* Syntax for Ontologies (the '' View'' Part III) *} 
 ML{* 
