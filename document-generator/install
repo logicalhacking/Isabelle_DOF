@@ -26,7 +26,6 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-set -e
 
 ISABELLE=${1:-`which isabelle`}
 export `$ISABELLE getenv ISABELLE_HOME_USER`
