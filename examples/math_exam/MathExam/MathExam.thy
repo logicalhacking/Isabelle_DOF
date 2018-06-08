@@ -1,8 +1,9 @@
+(*<*)
 theory MathExam
-  imports "../../ontologies/mathex_onto"
+  imports "../../../ontologies/mathex_onto"
     Real
 begin
-   
+(*>*)   
 open_monitor*[exam::MathExam] 
 
 section*[idir::Author, affiliation="''CentraleSupelec''", 

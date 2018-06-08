@@ -317,7 +317,7 @@ As one can see, check-routines internally generate the markup.
 
 *)  
   
-section\<open>  Front End:  \<close>  
+section\<open> Front End \<close>  
 
 subsection{* Parsing issues *}  
   
@@ -455,95 +455,8 @@ val Z = let val attribute = Parse.position Parse.name --
 fn name => (Thy_Output.antiquotation name (Scan.lift (Parse.position Args.cartouche_input)));
 \<close>
 
-
-subsection {* Output: Very Low Level *}
-ML\<open> 
-Output.output; (* output is the  structure for the "hooks" with the target devices. *)
-Output.output "bla_1:";
-\<close>
-
-subsection {* Output: High Level *}
-  
-ML\<open> 
-Thy_Output.verbatim_text;
-Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
-Thy_Output.antiquotation:
-   binding ->
-     'a context_parser ->
-       ({context: Proof.context, source: Token.src, state: Toplevel.state} -> 'a -> string) ->
-         theory -> theory;
-Thy_Output.output: Proof.context -> Pretty.T list -> string;
-Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
-
-Thy_Output.output : Proof.context -> Pretty.T list -> string;
-\<close>
-
-
-
-ML{*
-Syntax_Phases.reports_of_scope;
-*}
-
-
-
-(* Pretty.T, pretty-operations. *)  
-ML{*
-
-(* interesting piece for LaTeX Generation: 
-fun verbatim_text ctxt =
-  if Config.get ctxt display then
-    split_lines #> map (prefix (Symbol.spaces (Config.get ctxt indent))) #> cat_lines #>
-    Latex.output_ascii #> Latex.environment "isabellett"
-  else
-    split_lines #>
-    map (Latex.output_ascii #> enclose "\\isatt{" "}") #>
-    space_implode "\\isasep\\isanewline%\n";
-
-(* From structure Thy_Output *)
-fun pretty_const ctxt c =
-  let
-    val t = Const (c, Consts.type_scheme (Proof_Context.consts_of ctxt) c)
-      handle TYPE (msg, _, _) => error msg;
-    val ([t'], _) = Variable.import_terms true [t] ctxt;
-  in pretty_term ctxt t' end;
-
-  basic_entity @{binding const} (Args.const {proper = true, strict = false}) pretty_const #>
-
-*)
-
-Pretty.enclose : string -> string -> Pretty.T list -> Pretty.T; (* not to confuse with: String.enclose *)
-
-(* At times, checks where attached to Pretty - functions and exceptions used to
-   stop the execution/validation of a command *)
-fun pretty_theory ctxt (name, pos) = (Theory.check ctxt (name, pos); Pretty.str name);
-Pretty.enclose;
-Pretty.str;
-Pretty.mark_str;
-Pretty.text "bla_d";
-
-Pretty.quote; (* Pretty.T transformation adding " " *) 
-Pretty.unformatted_string_of : Pretty.T -> string ;
-
-Latex.output_ascii;
-Latex.environment "isa" "bg";
-Latex.output_ascii "a_b:c'é";
-(* Note: *)
-space_implode "sd &e sf dfg" ["qs","er","alpa"];
-
-
-(*
-fun pretty_command (cmd as (name, Command {comment, ...})) =
-  Pretty.block
-    (Pretty.marks_str
-      ([Active.make_markup Markup.sendbackN {implicit = true, properties = [Markup.padding_line]},
-        command_markup false cmd], name) :: Pretty.str ":" :: Pretty.brk 2 :: Pretty.text comment);
-*)
-
-
-*}  
-
-  
-(* Markup Operations, and reporting. *)  
+subsection\<open> Markup \<close>  
+text{* Markup Operations, and reporting. *}  
 ML{*
 (*  Markup.enclose; *)
 
@@ -644,6 +557,96 @@ Markup.properties; (* read : add Properties.T items into Markup.T  *)
 Markup.entity;
 
 *}
+
+  
+  
+subsection {* Output: Very Low Level *}
+ML\<open> 
+Output.output; (* output is the  structure for the "hooks" with the target devices. *)
+Output.output "bla_1:";
+\<close>
+
+subsection {* Output: High Level *}
+  
+ML\<open> 
+Thy_Output.verbatim_text;
+Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
+Thy_Output.antiquotation:
+   binding ->
+     'a context_parser ->
+       ({context: Proof.context, source: Token.src, state: Toplevel.state} -> 'a -> string) ->
+         theory -> theory;
+Thy_Output.output: Proof.context -> Pretty.T list -> string;
+Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
+
+Thy_Output.output : Proof.context -> Pretty.T list -> string;
+\<close>
+
+
+
+ML{*
+Syntax_Phases.reports_of_scope;
+*}
+
+
+
+(* Pretty.T, pretty-operations. *)  
+ML{*
+
+(* interesting piece for LaTeX Generation: 
+fun verbatim_text ctxt =
+  if Config.get ctxt display then
+    split_lines #> map (prefix (Symbol.spaces (Config.get ctxt indent))) #> cat_lines #>
+    Latex.output_ascii #> Latex.environment "isabellett"
+  else
+    split_lines #>
+    map (Latex.output_ascii #> enclose "\\isatt{" "}") #>
+    space_implode "\\isasep\\isanewline%\n";
+
+(* From structure Thy_Output *)
+fun pretty_const ctxt c =
+  let
+    val t = Const (c, Consts.type_scheme (Proof_Context.consts_of ctxt) c)
+      handle TYPE (msg, _, _) => error msg;
+    val ([t'], _) = Variable.import_terms true [t] ctxt;
+  in pretty_term ctxt t' end;
+
+  basic_entity @{binding const} (Args.const {proper = true, strict = false}) pretty_const #>
+
+*)
+
+Pretty.enclose : string -> string -> Pretty.T list -> Pretty.T; (* not to confuse with: String.enclose *)
+
+(* At times, checks where attached to Pretty - functions and exceptions used to
+   stop the execution/validation of a command *)
+fun pretty_theory ctxt (name, pos) = (Theory.check ctxt (name, pos); Pretty.str name);
+Pretty.enclose;
+Pretty.str;
+Pretty.mark_str;
+Pretty.text "bla_d";
+
+Pretty.quote; (* Pretty.T transformation adding " " *) 
+Pretty.unformatted_string_of : Pretty.T -> string ;
+
+Latex.output_ascii;
+Latex.environment "isa" "bg";
+Latex.output_ascii "a_b:c'é";
+(* Note: *)
+space_implode "sd &e sf dfg" ["qs","er","alpa"];
+
+
+(*
+fun pretty_command (cmd as (name, Command {comment, ...})) =
+  Pretty.block
+    (Pretty.marks_str
+      ([Active.make_markup Markup.sendbackN {implicit = true, properties = [Markup.padding_line]},
+        command_markup false cmd], name) :: Pretty.str ":" :: Pretty.brk 2 :: Pretty.text comment);
+*)
+
+
+*}  
+
+  
 
   
 ML{* 

@@ -1,10 +1,9 @@
 session "MathExam" = "HOL" +
   options [document = pdf, document_output = "output"]
   theories [document = false]
-    (* Foo *)
-    (* Bar *)
+    "../../../ontologies/mathex_onto" 
   theories
-    (* Baz *)
+     MathExam
   document_files
     "root.tex"
     "build"

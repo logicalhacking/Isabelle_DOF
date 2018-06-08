@@ -1,10 +1,9 @@
 session "BAC2017" = "HOL" +
-  options [document = pdf, document_output = "output"]
+  options [document = pdf, document_output = "output",quick_and_dirty=true]
   theories [document = false]
-    (* Foo *)
-    (* Bar *)
+    "../../../ontologies/mathex_onto"
   theories
-    (* Baz *)
+     BAC2017
   document_files
     "root.tex"
     "build"

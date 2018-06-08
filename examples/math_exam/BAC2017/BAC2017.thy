@@ -1,5 +1,5 @@
 theory BAC2017
-  imports "../../ontologies/mathex_onto"
+  imports "../../../ontologies/mathex_onto"
           Deriv 
           Transcendental
 begin
