@@ -106,16 +106,19 @@ else
   usage
 fi
 
+if [ -z "$NAME" ]; then
+  NAME="$DIR"
+fi
 
 if [ "$DOC" = true ]; then
   $ISABELLE_TOOL mkroot -d -n "$NAME" "$DIR"
+  echo "    \"preamble.tex\"" >> "$DIR"/ROOT
   echo "    \"build\"" >> "$DIR"/ROOT
   TITLE=$(echo "$NAME" | tr _ - | tr -d '\\')
   AUTHOR=$(echo "By $USER" | tr _ - | tr -d '\\')
   cp "$ISABELLE_HOME_USER/DOF/document-template/build" "$DIR"/document/
   cp "$ISABELLE_HOME_USER/DOF/document-template/preamble.tex" "$DIR"/document/
-  cp "$ISABELLE_HOME_USER/DOF/document-template/root-$TEMPLATE.tex" "$DIR"/document/root.tex
-  sed -i -e "s/<AUTHOR>/$AUTHOR/" -e "s/<TITLE>/$TITLE/" "$DIR"/document/root.tex
+  sed -e "s/<AUTHOR>/$AUTHOR/" -e "s/<TITLE>/$TITLE/" "$ISABELLE_HOME_USER/DOF/document-template/root-$TEMPLATE.tex" > "$DIR"/document/root.tex
 else
     $ISABELLE_TOOL mkroot -n "$NAME"
 fi
