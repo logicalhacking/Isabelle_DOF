@@ -1,7 +1,27 @@
 theory mathex_onto
  imports "../Isa_DOF"
 begin
+  
+text{* In our scenario, content has four different types of addressees: 
+\<^item> the @{emph \<open>setter\<close>}, i.e. the author of the exam, 
+\<^item> the @{emph \<open>student\<close>}, i.e. the addressee of the exam, 
+\<^item> the @{emph \<open>checker\<close>}, i.e. a person that checks the exam for
+\<^item> the @{emph \<open>external_examiner\<close>}, i.e. a person that checks the exam for
+  feasibility and non-ambiguity.
 
+Note that the latter quality assurance mechanism is used in many universities,
+where for organizational reasons the execution of an exam takes place in facilities
+where the author of the exam is not expected to be physically present.
+*}  
+  
+  
+datatype ContentClass =   
+      setter            -- \<open>the 'author' of the exam\<close>
+    | checker           -- \<open>the 'proof-reader' of the exam\<close>
+    | external_examiner -- \<open>the 'proof-reader' of the exam\<close>
+    | student           -- \<open>the victim ;-) ... \<close>
+
+  
 doc_class Author =
    affiliation :: "string"
    email :: "string"
@@ -12,17 +32,6 @@ datatype Subject =
 datatype Level =
   oneStar | twoStars | threeStars
 
-text{* In our scenario, content has three different types of addressees: 
-\<^item> the @{emph \<open>examiner\<close>}, i.e. the author of the exam, 
-\<^item> the @{emph \<open>student\<close>}, i.e. the addressee of the exam, 
-\<^item> the @{emph \<open>validator\<close>}, i.e. a person that checks the exam for
-  feasibility and non-ambiguity.
-
-Note that the latter quality assurance mechanism is used in many universities,
-where for organizational reasons the execution of an exam takes place in facilities
-where the author of the exam is not expected to be physically present.
- *}  
-  
   
 datatype Grade =
   A1 | A2 | A3
@@ -32,11 +41,6 @@ doc_class Header =
   examSubject :: "(Subject) list"
   date :: string
   timeAllowed :: int --  minutes
-
-datatype ContentClass =   
-      examiner    -- \<open>the 'author' of the exam\<close>
-    | validator -- \<open>the 'proof-reader' of the exam\<close>
-    | student   -- \<open>the victim ;-) ... \<close>
 
 doc_class Exam_item = 
   concerns :: "ContentClass set"  
@@ -58,18 +62,18 @@ doc_class Task = Exam_item +
   level    :: Level
   type     :: Question_Type
   subitems :: "(SubQuestion * (Answer_Formal_Step list + Answer_YesNo)list) list"
-  concerns :: "ContentClass set" <= "{examiner,validator,student}" 
+  concerns :: "ContentClass set" <= "{setter,student,checker,external_examiner}" 
   mark     :: int
    
 
 doc_class Exercise = Exam_item +
   content  :: "(Task) list"
-  concerns :: "ContentClass set" <= "{examiner,validator,student}" 
+  concerns :: "ContentClass set" <= "{setter,student,checker,external_examiner}"
 
 
 text{* In many institutions, it makes sense to have a rigorous process of validation
 for exam subjects : is the initial question correct ? Is a proof in the sense of the
-question possible ? We model the possibility that the @{term examiner} validates a 
+question possible ? We model the possibility that the @{term setter} validates a 
 question by a sample proof validated by Isabelle. In our scenario this sample proofs
 are completely @{emph \<open>intern\<close>}, i.e. not exposed to the students but just additional
 material for the internal review process of the exam.*}
@@ -81,11 +85,11 @@ doc_class Validation =
 doc_class Solution = Exam_item +
   content  :: "Exercise list"
   valids   :: "Validation list"
-  concerns :: "ContentClass set" <= "{examiner,validator}" 
+  concerns :: "ContentClass set" <= "{setter,checker,external_examiner}"
   
 doc_class MathExam=
   content :: "(Header + Author + Exercise) list"
   global_grade :: Grade 
   where "\<lbrace>Author\<rbrace>\<^sup>+  ~~  Header ~~  \<lbrace>Exercise ~~ Solution\<rbrace>\<^sup>+ "
-
+    
 end

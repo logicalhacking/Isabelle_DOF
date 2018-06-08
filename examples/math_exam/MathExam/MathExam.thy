@@ -8,7 +8,7 @@ open_monitor*[exam::MathExam]
 
 section*[idir::Author, affiliation="''CentraleSupelec''", 
          email="''idir.aitsadoune@centralesupelec.fr''"]
-{*Idir AIT SADOUNE*}
+        {*Idir AIT SADOUNE*}
 
 subsection*[header::Header,examSubject= "[algebra]",  examTitle="''Exam number 1''", 
             date="''02-05-2018''", timeAllowed="90::int"]
