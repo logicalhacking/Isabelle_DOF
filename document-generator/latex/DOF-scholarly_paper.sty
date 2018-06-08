@@ -12,12 +12,14 @@
 %%   SPDX-License-Identifier: LPPL-1.0+ OR BSD-2-Clause
 
 \NeedsTeXFormat{LaTeX2e}\relax
-\ProvidesPackage{DOF-scholarly_paper-lncs}
+\ProvidesPackage{DOF-scholarly_paper}
   [0000/00/00 Unreleased v0.0.0+%
   Document-Type Support Framework for Isabelle (LNCS).]
 
-\RequirePackage{DOF}
-
+\RequirePackage{DOF-core}
+\@ifclassloaded{llncs}%
+  {}%
+  {\PackageError{DOF-scholarly_paper}{Scholarly Paper only suports LNCS as document class.}{}\stop}%
 
 \newkeycommand\isaDofSectionIntroduction[label=,type=,main_author=,fixme_list=][1]{%
   \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%

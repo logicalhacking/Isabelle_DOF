@@ -13,7 +13,7 @@
 
 %% Warning: Do Not Edit!
 %% =====================
-%% This is the root file for the Isabelle/DOF configuration "scholarly_paper/lncs". 
+%% This is the root file for the Isabelle/DOF using Springer's llncs.cls.
 %% All customization and/or additional packages should be added to the file 
 %% preamble.tex. 
 
@@ -28,7 +28,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage[numbers, sort&compress, sectionbib]{natbib}
-\usepackage{DOF-scholarly_paper-lncs}
+\input{ontologies}
 \IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
 \usepackage{xspace}
 \newcommand{\isadof}{Isabelle/DOF\xspace}

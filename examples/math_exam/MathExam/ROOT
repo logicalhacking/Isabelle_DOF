@@ -9,4 +9,7 @@ session "MathExam" = "HOL" +
     "preamble.tex"
     "llncs.cls"
     "root.tex"
+    "ontologies.tex"
+    "preamble.tex"
     "build"
+    "llncs.cls"
