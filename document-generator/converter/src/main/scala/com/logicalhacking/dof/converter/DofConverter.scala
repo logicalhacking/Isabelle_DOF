@@ -107,10 +107,7 @@ object DofConverter {
         case CURLYOPEN::COMMAND("""\isacharcolon""")::CURLYCLOSE :: CURLYOPEN::COMMAND("""\isacharcolon""")::CURLYCLOSE :: tail  => {
           val (label, shead)= split(List(), head.reverse)
           val (typ, stail) = split(List(), delSpace(tail))
-          val typstring = typ match {
-            case RAWTEXT(s)::Nil => s.capitalize
-            case _          => ""
-          }
+          val typstring = LaTeXLexer.toString(deMarkUpArgList(typ)).replace("_","").capitalize
           (typstring,(shead.reverse)++List(RAWTEXT("""label={"""))++(label.reverse)++List(RAWTEXT("""}, type={"""))++typ++List(RAWTEXT("""}"""))++stail)
         }
         case CURLYOPEN::COMMAND("""\isacharbrackright""")::CURLYCLOSE :: tail => {
