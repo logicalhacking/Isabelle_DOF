@@ -1,9 +1,12 @@
 session "MathExam" = "HOL" +
   options [document = pdf, document_output = "output"]
   theories [document = false]
-    "../../../ontologies/mathex_onto" 
+    (* Foo *)
+    "../../../ontologies/mathex_onto"
   theories
-     MathExam
+    MathExam
   document_files
+    "preamble.tex"
+    "llncs.cls"
     "root.tex"
     "build"
