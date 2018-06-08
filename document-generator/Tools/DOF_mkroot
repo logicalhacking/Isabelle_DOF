@@ -41,8 +41,15 @@ function usage()
   echo "    -h           print this help text and exit"
   echo "    -d           enable document preparation"
   echo "    -n NAME      alternative session name (default: DIR base name)"
-  echo "    -o TEMPLATE  alternative setup for root.tex (default: basic support using scrreprt)"
-  echo "       Available templates:"
+  echo "    -o ONTOLOGY  (default: $DEFAULT_ONTOLOGY)"
+  echo "       Available ontologies:"
+  for t in "$ISABELLE_HOME_USER/DOF/latex/"*.sty; do
+    if [[ $t =~ DOF-(.*).sty$ ]]; then
+      echo "       * ${BASH_REMATCH[1]}"
+    fi
+  done
+  echo "    -t TEMPLATE   (default: DEFAULT_TEMPLATE)"
+  echo "       Available document templates:"
   for t in "$ISABELLE_HOME_USER/DOF/document-template/"*.tex; do
     if [[ $t =~ root-(.*).tex$ ]]; then
       echo "       * ${BASH_REMATCH[1]}"
@@ -67,9 +74,13 @@ function fail()
 
 DOC=""
 NAME=""
-TEMPLATE="default-scrreprt"
+DEFAULT_TEMPLATE="scrreprt"
+DEFAULT_ONTOLOGY="core"
 
-while getopts "o:n:dh" OPT
+TEMPLATE="$DEFAULT_TEMPLATE"
+ONTOLOGY="$DEFAULT_ONTOLOGY"
+
+while getopts "t:o:n:dh" OPT
 do
   case "$OPT" in
     h)
@@ -83,7 +94,18 @@ do
       NAME="$OPTARG"
       ;;
     o)
+      if [ ! -f "$ISABELLE_HOME_USER/DOF/latex/DOF-$OPTARG.sty" ]; then
+          echo "ERROR: Ontology $OPTARG not available!"
+          exit 1
+      fi
+      ONTOLOGY="$ONTOLOGY $OPTARG"
+      ;;
+    t)
       TEMPLATE="$OPTARG"
+      if [ ! -f "$ISABELLE_HOME_USER/DOF/document-template/root-$TEMPLATE.tex" ]; then
+          echo "ERROR: Template $TEMPLATE not available!"
+          exit 1
+      fi
       ;;
     \?)
       usage
@@ -113,11 +135,16 @@ fi
 if [ "$DOC" = true ]; then
   $ISABELLE_TOOL mkroot -d -n "$NAME" "$DIR"
   echo "    \"preamble.tex\"" >> "$DIR"/ROOT
+  echo "    \"ontologies.tex\"" >> "$DIR"/ROOT
   echo "    \"build\"" >> "$DIR"/ROOT
   TITLE=$(echo "$NAME" | tr _ - | tr -d '\\')
   AUTHOR=$(echo "By $USER" | tr _ - | tr -d '\\')
   cp "$ISABELLE_HOME_USER/DOF/document-template/build" "$DIR"/document/
   cp "$ISABELLE_HOME_USER/DOF/document-template/preamble.tex" "$DIR"/document/
+  cp "$ISABELLE_HOME_USER/DOF/document-template/ontologies.tex" "$DIR"/document/
+  for o in $ONTOLOGY; do
+    echo "\usepackage{$o}" >> "$DIR"/document/ontologies.tex;
+  done
   sed -e "s/<AUTHOR>/$AUTHOR/" -e "s/<TITLE>/$TITLE/" "$ISABELLE_HOME_USER/DOF/document-template/root-$TEMPLATE.tex" > "$DIR"/document/root.tex
 else
     $ISABELLE_TOOL mkroot -n "$NAME"
