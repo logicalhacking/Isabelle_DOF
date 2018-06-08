@@ -456,7 +456,7 @@ fn name => (Thy_Output.antiquotation name (Scan.lift (Parse.position Args.cartou
 \<close>
 
 subsection\<open> Markup \<close>  
-text{* Markup Operations, and reporting. *}  
+text{* Markup Operations, and reporting. Diag in Isa_DOF Foundations Paper. *}  
 ML{*
 (*  Markup.enclose; *)
 
