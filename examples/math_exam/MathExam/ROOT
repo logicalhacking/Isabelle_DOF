@@ -6,4 +6,7 @@ session "MathExam" = "HOL" +
      MathExam
   document_files
     "root.tex"
+    "ontologies.tex"
+    "preamble.tex"
     "build"
+    "llncs.cls"
