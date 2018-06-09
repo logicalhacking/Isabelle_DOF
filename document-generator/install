@@ -26,6 +26,7 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
+set -e
 
 ISABELLE=${1:-`which isabelle`}
 export `$ISABELLE getenv ISABELLE_HOME_USER`
@@ -62,7 +63,7 @@ echo "Installing library in $DIR"
 mkdir -p "$DIR" 
 cp converter/bin/*.jar "$DIR"
 
-VERSION=`$ISABELLE scala converter/bin/*.jar -v`
+VERSION=$($ISABELLE scala converter/bin/*.jar -v) || true
 
 DIR="$ISABELLE_HOME_USER/DOF/document-template"
 echo "Installing document templates in $DIR"
