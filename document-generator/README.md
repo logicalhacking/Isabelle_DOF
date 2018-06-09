@@ -24,7 +24,7 @@ The DOF-plugin will be installed in the Isabelle user directory
 The DOF-plugin provides an alternative to Isabelle's ``mkroot`` command.
 Isabelle projects that use DOF need to be created using
 ```console 
-isabelle DOF_mkroot -d 
+foo@bar:~$ isabelle DOF_mkroot -d 
 ```
 The ``DOF_mkroot`` command takes the same parameter as the standard
 ``mkroot`` command of Isabelle. Thereafter, the normal Isabelle 
@@ -34,7 +34,7 @@ Using the ``-o`` option, different ontology setups can be
 selected and using the ``-t`` option, different LaTeX setups 
 can be selected (use ``-h`` to obtain a list of all installed setups):
 ```console 
-> isabelle DOF_mkroot -h
+foo@bar:~$ isabelle DOF_mkroot -h
 
 Usage: isabelle DOF_mkroot [OPTIONS] [DIR]
 
@@ -57,7 +57,7 @@ Usage: isabelle DOF_mkroot [OPTIONS] [DIR]
 ```
 For example, 
 ```console 
-isabelle DOF_mkroot -d -o scholarly_paper -t lncs
+foo@bar:~$ isabelle DOF_mkroot -d -o scholarly_paper -t lncs
 ```
 creates a setup using the scholarly_paper ontology and Springer's
 LNCS LaTeX class as document class. Note that the generated setup
@@ -72,8 +72,8 @@ as dependency.
 
 Compilation using the provided ``build`` script, e.g.: 
 ```console
-cd converter
-./build
+foo@bar:~$ cd converter
+foo@bar:~$ ./build
 ```
 This build script requires a basic Unix-environment as, e.g., provided
 by Isabelle as well as a running Isabelle installation. 
@@ -93,7 +93,7 @@ supports the usual features of a modern IDE, e.g., Intellisense.
 
 The converter is part of the Isabelle DOF repository:
 ```console
-git clone https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF.git
+foo@bar:~$ git clone https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF.git
 ```
 
 ### Importing the Project into Eclipse
