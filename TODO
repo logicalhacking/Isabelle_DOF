@@ -1,12 +1,9 @@
 Open issues:
 
--- LaTeX generation does not work without hacking and 
-   by hand transformations of the generated code.
-
 -- attributes are neither type-checked nor set into the instances, and
    there is no mechanism to recover them and use them.
 
--- defaults are neither type-checked nor set.A
+-- defaults are neither type-checked nor set.
 
 -- structural constraints are neither typechecked nor stored
 
@@ -15,4 +12,3 @@ Open issues:
 
 -- Hovering over doc-class references is not implemented
 
--- 
