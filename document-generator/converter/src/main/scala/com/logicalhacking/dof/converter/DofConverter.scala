@@ -137,27 +137,28 @@ object DofConverter {
         case tokens => tokens
       }
     }
-
-    
+   
     def backSpace(tokens: List[LaTeXToken]): List[LaTeXToken] = (delSpace(tokens.reverse)).reverse
+    
+    def trim(tokens: List[LaTeXToken]): List[LaTeXToken] = delSpace(backSpace(tokens))
     
     def parseIsaDofCmd(args: List[LaTeXToken], tokens: List[LaTeXToken]): Tuple3[String,List[LaTeXToken], List[LaTeXToken]] = {
       (args, tokens) match {
         case (args, COMMAND("""\isamarkupfalse""") :: tail) => parseIsaDofCmd(args, tail)
         case (args, CURLYOPEN :: COMMAND("""\isachardoublequoteopen""") :: CURLYCLOSE :: CURLYOPEN :: COMMAND("""\isacharbrackleft""") :: CURLYCLOSE :: tail) 
-                             => parseIsaDofCmd(backSpace(args) ++ List(CURLYOPEN), tail)
+                             => parseIsaDofCmd(trim(args) ++ List(CURLYOPEN), tail)
         case (args, CURLYOPEN :: COMMAND("""\isacharbrackright""") :: CURLYCLOSE :: CURLYOPEN :: COMMAND("""\isachardoublequoteclose""") :: CURLYCLOSE :: tail) 
-                             => parseIsaDofCmd(backSpace(args) ++ List(CURLYCLOSE), delSpace(tail))
-        case (args, CURLYOPEN :: COMMAND("""\isacharbrackleft""") :: CURLYCLOSE :: tail) => parseIsaDofCmd(backSpace(args) ++List(sep) ++ List(BRACKETOPEN), tail)
+                             => parseIsaDofCmd(trim(args) ++ List(CURLYCLOSE), delSpace(tail))
+        case (args, CURLYOPEN :: COMMAND("""\isacharbrackleft""") :: CURLYCLOSE :: tail) => parseIsaDofCmd(trim(args) ++List(sep) ++ List(BRACKETOPEN), tail)
         case (args, CURLYOPEN :: COMMAND("""\isacharbrackright""") :: CURLYCLOSE :: tail) => {
           val (typ,arglist) = convertType(List(), args)
           val (_, t1, t2)   = parseIsaDofCmd(deMarkUpArgList(arglist)++List(BRACKETCLOSE,sep), tail)
           (typ,t1,t2)
         }
-        case (args, CURLYOPEN :: COMMAND("""\isacharverbatimopen""") :: CURLYCLOSE ::tail) => parseIsaDofCmd(backSpace(args) ++ List(CURLYOPEN), delSpace(tail))
-        case (args, CURLYOPEN :: COMMAND("""\isacharverbatimclose""") :: CURLYCLOSE :: tail) => ("",deMarkUp(backSpace(args) ++ List(CURLYCLOSE)), sep::delSpace(tail))
-        case (args, CURLYOPEN :: COMMAND("""\isacartoucheopen""") :: CURLYCLOSE ::tail) => parseIsaDofCmd(backSpace(args) ++ List(CURLYOPEN), delSpace(tail))
-        case (args, CURLYOPEN :: COMMAND("""\isacartoucheclose""") :: CURLYCLOSE :: tail) => ("",deMarkUp(backSpace(args) ++ List(CURLYCLOSE)), sep::delSpace(tail))
+        case (args, CURLYOPEN :: COMMAND("""\isacharverbatimopen""") :: CURLYCLOSE ::tail) => parseIsaDofCmd(trim(args) ++ List(CURLYOPEN), delSpace(tail))
+        case (args, CURLYOPEN :: COMMAND("""\isacharverbatimclose""") :: CURLYCLOSE :: tail) => ("",deMarkUp(trim(args) ++ List(CURLYCLOSE)), sep::delSpace(tail))
+        case (args, CURLYOPEN :: COMMAND("""\isacartoucheopen""") :: CURLYCLOSE ::tail) => parseIsaDofCmd(trim(args) ++ List(CURLYOPEN), delSpace(tail))
+        case (args, CURLYOPEN :: COMMAND("""\isacartoucheclose""") :: CURLYCLOSE :: tail) => ("",deMarkUp(trim(args) ++ List(CURLYCLOSE)), sep::delSpace(tail))
         case (args, t :: tail) => parseIsaDofCmd(args ++ List(t), tail)
         case (args, Nil) => ("",deMarkUp(args), Nil)
       }
