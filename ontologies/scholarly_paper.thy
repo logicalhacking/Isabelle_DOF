@@ -43,7 +43,13 @@ doc_class figure   = text_section +
    placement :: placement 
    spawn_columns :: bool <= True 
 
-(* something similar on tables ? Idea: rough abstraction of table attributes in LaTeX *)
+doc_class side_by_side_figure   = figure +
+   anchor    :: "string"
+   caption   :: "string"
+   relative_width2 :: "string" (* percent of textwidth *)    
+   src2      :: "string"
+   anchor2   :: "string"
+   caption2  :: "string"
    
 doc_class example    = text_section +
    comment :: "string"
