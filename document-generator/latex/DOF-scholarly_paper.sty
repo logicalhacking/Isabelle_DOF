@@ -37,11 +37,11 @@
   \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 
-\newkeycommand\isaDofSectionTextsection[label=,type=,main_author=,text_section.main_author=,fixme_list=][1]{%
+\newkeycommand\isaDofSectionTextSection[label=,type=,main_author=,text_section.main_author=,fixme_list=][1]{%
   \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 
-\newkeycommand\isaDofSectionRelatedwork[label=,type=,main_author=,fixme_list=][1]{%
+\newkeycommand\isaDofSectionRelatedWork[label=,type=,main_author=,fixme_list=][1]{%
   \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 
@@ -49,11 +49,11 @@
   \isamarkupfalse\isamarkupsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 
-\newkeycommand\isaDofSubSectionExample[label=,type=][1]{%
+\newkeycommand\isaDofSubsectionExample[label=,type=][1]{%
   \isamarkupfalse\isamarkupsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 
-\newkeycommand\isaDofSubSectionTechnical[label=,type=][1]{%
+\newkeycommand\isaDofSubsectionTechnical[label=,type=][1]{%
   \isamarkupfalse\isamarkupsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 
@@ -61,7 +61,7 @@
   \isamarkupfalse\isamarkupsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 
-\newkeycommand\isaDofSubSectionTextsection[label=,type=,main_author=,text_section.main_author=,fixme_list=][1]{%
+\newkeycommand\isaDofSubSectionTextSection[label=,type=,main_author=,text_section.main_author=,fixme_list=][1]{%
   \isamarkupfalse\isamarkupsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 
@@ -126,10 +126,10 @@
   \protected@write\@auxout{}{\string\addaffiliation{\dof@a\\\string\email{\commandkey{email}}}}%
 }
 
-\newkeycommand\isaDofTextSubtitle[label=,type=,keywordlist=][1]{%
+\newkeycommand\isaDofSubtitle[label=,type=,keywordlist=][1]{%
   \immediate\write\@auxout{\noexpand\subtitle{#1}}%
 }
 
-\newkeycommand\isaDofTextTitle[label=,type=,keywordlist=][1]{%
+\newkeycommand\isaDofTitle[label=,type=,keywordlist=][1]{%
   \immediate\write\@auxout{\noexpand\title{#1}}%
 }
