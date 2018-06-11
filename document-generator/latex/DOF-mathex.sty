@@ -50,7 +50,7 @@
 }
 
 
-\newkeycommand\isaDofSubSectionHeader[label=,type=,examTitle=,examSubject=,date,timeAllowed][1]{%
+\newkeycommand\isaDofSubsectionHeader[label=,type=,examTitle=,examSubject=,date,timeAllowed][1]{%
     \immediate\write\@auxout{\noexpand\title{\commandkey{examTitle}}}%
 }
 
@@ -70,22 +70,22 @@
   #1
 }
 
-\newkeycommand\isaDofSubSubSectionExercise[label=,type=,Exercise.content=,concerns=,][1]{%
+\newkeycommand\isaDofSubsubsectionExercise[label=,type=,Exercise.content=,concerns=,][1]{%
   \begin{Exercise}
   #1
   \end{Exercise}
 }
 
-\newkeycommand\isaDofSubSubSectionValidation[label=,type=,tests=,proofs=][1]{%
+\newkeycommand\isaDofSubsubsectionValidation[label=,type=,tests=,proofs=][1]{%
   #1
 }
 
-\newkeycommand\isaDofSubSubSectionSolution[label=,type=,content=,valids=,concerns=][1]{%
+\newkeycommand\isaDofSubsubsectionSolution[label=,type=,content=,valids=,concerns=][1]{%
   \begin{Answer}
   #1
   \end{Answer}
 }
 
-\newkeycommand\isaDofSubSubSectionMathExam[label=,type=,content=,global_grade=][1]{%
+\newkeycommand\isaDofSubsubsectionMathExam[label=,type=,content=,global_grade=][1]{%
   #1
 }

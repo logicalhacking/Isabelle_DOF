@@ -107,7 +107,7 @@ object DofConverter {
         case CURLYOPEN::COMMAND("""\isacharcolon""")::CURLYCLOSE :: CURLYOPEN::COMMAND("""\isacharcolon""")::CURLYCLOSE :: tail  => {
           val (label, shead)= split(List(), head.reverse)
           val (typ, stail) = split(List(), delSpace(tail))
-          val typstring = LaTeXLexer.toString(deMarkUpArgList(typ)).replace("_","").capitalize
+          val typstring = LaTeXLexer.toString(deMarkUpArgList(typ))
           (typstring,(shead.reverse)++List(RAWTEXT("""label={"""))++(label.reverse)++List(RAWTEXT("""}, type={"""))++typ++List(RAWTEXT("""}"""))++stail)
         }
         case CURLYOPEN::COMMAND("""\isacharbrackright""")::CURLYCLOSE :: tail => {
@@ -166,36 +166,20 @@ object DofConverter {
     
     
     
-    val (pre:List[LaTeXToken], tail:List[LaTeXToken]) = cmd match {
-      case """chapter""" => {
+    val (pre:List[LaTeXToken], tail:List[LaTeXToken]) =  {
         val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        (sep::COMMAND("""\isaDofChapter"""+typ) :: sectionArgs,tail)
-      }
-      case """section""" => {
-        val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        (sep::COMMAND("""\isaDofSection"""+typ) :: sectionArgs, tail)
-      }
-      case """subsection""" => {
-        val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        (COMMAND("""\isaDofSubSection"""+typ) :: sectionArgs, tail)
-      }
-      case """subsubsection""" => {
-        val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        (sep::COMMAND("""\isaDofSubSubSection"""+typ) :: sectionArgs, tail)
-      }
-      case """paragraph""" => {
-        val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
-        (sep::COMMAND("""\isaDofParagraph"""+typ) :: sectionArgs, tail)
-      }
-      case """text""" => {
-        val (typ,dofText, tail) = parseIsaDofCmd(Nil, tokens)
-        (sep::COMMAND("""\isaDofText"""+typ) :: dofText, tail)
-      }
-      case s => (sep::COMMAND("""\isaDofUnknown{""" + s + """}""")::sep::Nil, tokens)
+        val dofcmd = if (normalize(cmd) == normalize(typ)) normalize(cmd)
+                     else normalize(cmd)+normalize(typ)
+        
+        (sep::COMMAND("""\isaDof"""+dofcmd) :: sectionArgs,tail)
+
     }
     backSpace(pre) ++ convertLaTeXTokenStream(delSpace(tail))
   }
+  def normalize(s:String) = ((s.split("_")).map(x => x.capitalize)).reduceLeft(_+_)
 
+  
+  
   def convertLaTeXTokenStream(tokens: List[LaTeXToken]): List[LaTeXToken] = {
     @tailrec
     def convertLaTeXTokenStreamRec(acc: List[LaTeXToken], tokens: List[LaTeXToken]): List[LaTeXToken] = {
