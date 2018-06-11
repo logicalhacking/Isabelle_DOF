@@ -1,4 +1,4 @@
-theory conceptual
+theory Conceptual
   imports "../Isa_DOF"
 begin
 
