@@ -14,8 +14,11 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
            Assert
   keywords "+=" ":="
 
-  and      "section*"    "subsection*"   "subsubsection*" 
-           "paragraph*"  "subparagraph*" "text*"  ::thy_decl
+  and      "title*"      "subtitle*"
+           "section*"    "subsection*"   "subsubsection*" 
+           "figure*"     "side_by_side_figure*" 
+           "paragraph*"  "subparagraph*" 
+           "text*"  :: thy_decl
            
   and      "open_monitor*" "close_monitor*" "declare_reference*" 
            "update_instance*" "doc_class" ::thy_decl
@@ -501,10 +504,22 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
      in  Toplevel.theory(upd)
      end
 
+
+val _ =
+  Outer_Syntax.command ("title*", @{here}) "section heading"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> enriched_document_command {markdown = false});
+
+val _ =
+  Outer_Syntax.command ("subtitle*", @{here}) "section heading"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> enriched_document_command {markdown = false});
+
 val _ =
   Outer_Syntax.command ("section*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
       >> enriched_document_command {markdown = false});
+
 
 val _ =
   Outer_Syntax.command ("subsection*", @{here}) "subsection heading"
@@ -525,6 +540,17 @@ val _ =
   Outer_Syntax.command ("subparagraph*", @{here}) "subparagraph heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
       >> enriched_document_command {markdown = false});
+
+val _ =
+  Outer_Syntax.command ("figure*", @{here}) "paragraph heading"
+    (attributes --  Parse.opt_target -- Parse.document_source --| semi
+      >> enriched_document_command {markdown = false});
+
+val _ =
+  Outer_Syntax.command ("side_by_side_figure*", @{here}) "paragraph heading"
+    (attributes --  Parse.opt_target -- Parse.document_source --| semi
+      >> enriched_document_command {markdown = false});
+
 
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
