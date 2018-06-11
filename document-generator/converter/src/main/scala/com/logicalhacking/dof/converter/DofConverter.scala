@@ -187,6 +187,21 @@ object DofConverter {
         case Nil => (Nil, Nil, false)
         case COMMAND("""\isacommand""") :: CURLYOPEN :: RAWTEXT(cmd) :: CURLYOPEN
           :: COMMAND("""\isacharasterisk""") :: CURLYCLOSE :: CURLYCLOSE :: ts => (convertIsaDofCommand(cmd, ts), Nil, false)
+        case COMMAND("""\isacommand""") :: CURLYOPEN :: RAWTEXT(cmd0) ::CURLYOPEN :: COMMAND("""\isacharunderscore""")::CURLYCLOSE::RAWTEXT(cmd1) :: CURLYOPEN
+          :: COMMAND("""\isacharasterisk""") :: CURLYCLOSE :: CURLYCLOSE :: ts => (convertIsaDofCommand(cmd0 + "_" + cmd1, ts), Nil, false)
+        case COMMAND("""\isacommand""") :: CURLYOPEN :: RAWTEXT(cmd0) ::CURLYOPEN :: COMMAND("""\isacharunderscore""")::CURLYCLOSE::RAWTEXT(cmd1) ::CURLYOPEN :: COMMAND("""\isacharunderscore""")::CURLYCLOSE::RAWTEXT(cmd2) :: CURLYOPEN
+          :: COMMAND("""\isacharasterisk""") :: CURLYCLOSE :: CURLYCLOSE :: ts => (convertIsaDofCommand(cmd0 + "_" + cmd1 + "_" + cmd2, ts), Nil, false)
+        case COMMAND("""\isacommand""") :: CURLYOPEN :: RAWTEXT(cmd0) ::
+                    CURLYOPEN :: COMMAND("""\isacharunderscore""")::CURLYCLOSE::RAWTEXT(cmd1) ::
+                    CURLYOPEN :: COMMAND("""\isacharunderscore""")::CURLYCLOSE::RAWTEXT(cmd2) :: 
+                    CURLYOPEN :: COMMAND("""\isacharunderscore""")::CURLYCLOSE::RAWTEXT(cmd3) :: 
+                    CURLYOPEN :: COMMAND("""\isacharasterisk""") :: CURLYCLOSE :: CURLYCLOSE :: ts => (convertIsaDofCommand(cmd0 + "_" + cmd1 + "_" + cmd2 + "_" + cmd3, ts), Nil, false)
+        case COMMAND("""\isacommand""") :: CURLYOPEN :: RAWTEXT(cmd0) ::
+                    CURLYOPEN :: COMMAND("""\isacharunderscore""")::CURLYCLOSE::RAWTEXT(cmd1) ::
+                    CURLYOPEN :: COMMAND("""\isacharunderscore""")::CURLYCLOSE::RAWTEXT(cmd2) :: 
+                    CURLYOPEN :: COMMAND("""\isacharunderscore""")::CURLYCLOSE::RAWTEXT(cmd3) :: 
+                    CURLYOPEN :: COMMAND("""\isacharunderscore""")::CURLYCLOSE::RAWTEXT(cmd4) :: 
+                    CURLYOPEN :: COMMAND("""\isacharasterisk""") :: CURLYCLOSE :: CURLYCLOSE :: ts => (convertIsaDofCommand(cmd0 + "_" + cmd1 + "_" + cmd2 + "_" + cmd3 + "_" + cmd4, ts), Nil, false)
         case t :: ts => (t::Nil, ts, true)
       }
       if (! rec) acc++res
