@@ -16,9 +16,9 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
 
   and      "title*"      "subtitle*"
            "section*"    "subsection*"   "subsubsection*" 
-           "figure*"     "side_by_side_figure*" 
+           "figure*"     "sideBySideFigure*" 
            "paragraph*"  "subparagraph*" 
-           "text*"  :: thy_decl
+           "text*"       :: thy_decl
            
   and      "open_monitor*" "close_monitor*" "declare_reference*" 
            "update_instance*" "doc_class" ::thy_decl
@@ -547,7 +547,7 @@ val _ =
       >> enriched_document_command {markdown = false});
 
 val _ =
-  Outer_Syntax.command ("side_by_side_figure*", @{here}) "paragraph heading"
+  Outer_Syntax.command ("sideBySideFigure*", @{here}) "paragraph heading"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
       >> enriched_document_command {markdown = false});
 
