@@ -67,7 +67,8 @@ text*[q1::Task, level="oneStar", mark="1::int", type="formal"]
 
 text*[q2::Task, level="threeStars", mark="3::int", type="formal"] 
 {*
-Prove that  @{term "n*(n+5) + 2*(n+3) "} is always the product of two numbers with a difference of 5.
+Prove that  @{term "n*(n+5) + 2*(n+3) "} is always the product of two numbers 
+with a difference of 5.
 *}
 
 (*<*)
