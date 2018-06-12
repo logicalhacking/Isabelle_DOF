@@ -159,13 +159,12 @@ object DofConverter {
         case (args, CURLYOPEN :: COMMAND("""\isacharverbatimclose""") :: CURLYCLOSE :: tail) => ("",deMarkUp(trim(args) ++ List(CURLYCLOSE)), sep::delSpace(tail))
         case (args, CURLYOPEN :: COMMAND("""\isacartoucheopen""") :: CURLYCLOSE ::tail) => parseIsaDofCmd(trim(args) ++ List(CURLYOPEN), delSpace(tail))
         case (args, CURLYOPEN :: COMMAND("""\isacartoucheclose""") :: CURLYCLOSE :: tail) => ("",deMarkUp(trim(args) ++ List(CURLYCLOSE)), sep::delSpace(tail))
+        case (args, COMMAND("""\isacommand""") :: tail) => ("",deMarkUp(trim(args)), sep::COMMAND("""\isacommand""")::tail)        
         case (args, t :: tail) => parseIsaDofCmd(args ++ List(t), tail)
         case (args, Nil) => ("",deMarkUp(args), Nil)
       }
     }
-    
-    
-    
+        
     val (pre:List[LaTeXToken], tail:List[LaTeXToken]) =  {
         val (typ,sectionArgs, tail) = parseIsaDofCmd(Nil, tokens)
         val dofcmd = if (normalize(cmd) == normalize(typ)) normalize(cmd)
