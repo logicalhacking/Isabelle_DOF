@@ -32,6 +32,8 @@ ISABELLE=${1:-`which isabelle`}
 export `$ISABELLE getenv ISABELLE_HOME_USER`
 export `$ISABELLE getenv ISABELLE_TOOLS`
 
+GEN_DIR=document-generator
+
 if [[ -d "$ISABELLE_HOME_USER/DOF" ]]; then
     echo "Moving old installation to $DIR/settings $ISABELLE_HOME_USER/DOF.bak"
     rm -rf "$ISABELLE_HOME_USER/DOF.bak"
@@ -41,7 +43,7 @@ fi
 DIR="$ISABELLE_HOME_USER/DOF/Tools"
 echo "Installing Tools in $DIR"
 mkdir -p "$DIR"
-cp Tools/* "$DIR"
+cp $GEN_DIR/Tools/* "$DIR"
 chmod 755 "$DIR"/*
 
 # Register Tools
@@ -57,24 +59,24 @@ fi
 
 
 # Build Scala lib
-(cd converter; ./build $ISABELLE)
+(cd $GEN_DIR/converter; ./build $ISABELLE)
 DIR="$ISABELLE_HOME_USER/DOF/lib"
 echo "Installing library in $DIR"
 mkdir -p "$DIR" 
-cp converter/bin/*.jar "$DIR"
+cp $GEN_DIR/converter/bin/*.jar "$DIR"
 
-VERSION=$($ISABELLE scala converter/bin/*.jar -v) || true
+VERSION=$($ISABELLE scala $GEN_DIR/converter/bin/*.jar -v) || true
 
 DIR="$ISABELLE_HOME_USER/DOF/document-template"
 echo "Installing document templates in $DIR"
 mkdir -p "$DIR"
-cp document-template/* "$DIR"
+cp $GEN_DIR/document-template/* "$DIR"
 sed -i -e "s/<VERSION>/$VERSION/" "$DIR"/build
 
 
 DIR="$ISABELLE_HOME_USER/DOF/latex"
 echo "Installing LaTeX styles in $DIR"
 mkdir -p "$DIR"
-cp latex/*.sty "$DIR"
+cp $GEN_DIR/latex/*.sty "$DIR"
 
 echo "Installation of $VERSION successful."
