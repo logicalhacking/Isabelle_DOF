@@ -26,6 +26,8 @@ doc_class Author =
    affiliation :: "string"
    email :: "string"
 
+    
+   
 datatype Subject =
   algebra | geometry | statistical | analysis
 
@@ -45,6 +47,15 @@ doc_class Header =
 doc_class Exam_item = 
   concerns :: "ContentClass set"  
 
+(* should go into something more fundamental on texts. *) 
+datatype placement = h | t | b | ht | hb   
+doc_class figure   = Exam_item +
+   relative_width   :: "string" (* percent of textwidth *)    
+   src     :: "string"
+   placement :: placement 
+   spawn_columns :: bool <= True 
+   
+  
 type_synonym SubQuestion = string
  
 doc_class Answer_Formal_Step =  Exam_item +

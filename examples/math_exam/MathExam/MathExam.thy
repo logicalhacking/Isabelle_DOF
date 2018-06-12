@@ -20,14 +20,13 @@ subsection*[header::Header,examSubject= "[algebra]",  examTitle="''Exam number 1
 \end{itemize}
 *}
 
+(* should be in DOF-core *)
 (*
-text*[fig1::figure, width = "Some(textwidth 80)", 
-      "file"="@{file ''../../../figures/Dogfood-Intro.png''}"]
-     {* Ouroboros I : This paper from inside ... *}  
+figure*[figure::figure, spawn_columns=False,relative_width="''80''", 
+        src="''figures/Polynomialdeg5.png''"] \<open> A Polynome. \<close>
 *)
-
-subsubsection*[exo1 :: Exercise, Exercise.content="[q1::Task,q2::Task]"]
-{* 
+subsubsection*[exo1 :: Exercise, Exercise.content="[q1::Task,q2::Task]"]\<open>Exercise 1\<close>
+text{* 
 Here are the first four lines of a number pattern.
 \begin{itemize}
 \item Line 1 : @{term "1*6 + 2*4 = 2*7"}
@@ -35,6 +34,26 @@ Here are the first four lines of a number pattern.
 \item Line 3 : @{term "3*8 + 2*6 = 4*9"}
 \item Line 4 : @{term "4*9 + 2*7 = 5*10"} 
 \end{itemize}
+*}
+
+declare [[show_sorts=false]]  
+subsubsection*[exo2 :: Exercise, Exercise.content="[q1::Task,q2::Task]"]\<open>Exercise 2\<close> 
+  
+text{* Find the roots of the polynome:
+@{term "(x^3) - 6 * x^2 + 5 * x + 12"}.
+Note the intermediate steps in the following fields and submit the solution.  *}
+text{*
+\begin{Form}[action={http://your-web-server.com/path/receiveform.cgi}]
+\begin{tabular}{l}
+    From @{term "(x^3) - 6 * x^2 + 5 * x + 12"}  \\\\  
+    \TextField{have 1} \\\\  
+    \TextField{have 2} \\\\  
+    \TextField{have 3} \\\\
+    \TextField{finally show} \\\\
+    \CheckBox[width=1em]{Has the polynomial as many solutions as its degree ? } \\\\
+    \Submit{Submit}\\
+\end{tabular}
+\end{Form}
 *}
 
 (* a bit brutal, as long as lemma* does not yet work *)
@@ -64,6 +83,8 @@ text*[a4::Answer_Formal_Step]{* Next Step: Fill in term and justification *}
   
 text*[q1::Task, level="oneStar", mark="1::int", type="formal"] 
 {* Complete Line 10 :  @{term "10*x + 2*y =  11*16"} *}
+
+subsubsection*[exo3 :: Exercise, Exercise.content="[q1::Task,q2::Task]"]\<open>Exercise 3\<close>  
 
 text*[q2::Task, level="threeStars", mark="3::int", type="formal"] 
 {*
