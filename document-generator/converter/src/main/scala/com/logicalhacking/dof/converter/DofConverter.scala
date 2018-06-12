@@ -201,6 +201,7 @@ object DofConverter {
                     CURLYOPEN :: COMMAND("""\isacharunderscore""")::CURLYCLOSE::RAWTEXT(cmd3) :: 
                     CURLYOPEN :: COMMAND("""\isacharunderscore""")::CURLYCLOSE::RAWTEXT(cmd4) :: 
                     CURLYOPEN :: COMMAND("""\isacharasterisk""") :: CURLYCLOSE :: CURLYCLOSE :: ts => (convertIsaDofCommand(cmd0 + "_" + cmd1 + "_" + cmd2 + "_" + cmd3 + "_" + cmd4, ts), Nil, false)
+        case COMMAND("""\at""") :: ts => (RAWTEXT("""@""")::Nil, ts, true)
         case t :: ts => (t::Nil, ts, true)
       }
       if (! rec) acc++res
