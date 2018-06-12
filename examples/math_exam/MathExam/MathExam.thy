@@ -3,8 +3,8 @@ theory MathExam
   imports "../../../ontologies/mathex_onto"
     Real
 begin
-open_monitor*[exam::MathExam] 
 (*>*)   
+open_monitor*[exam::MathExam] 
 
 section*[idir::Author, affiliation="''CentraleSupelec''", 
          email="''idir.aitsadoune@centralesupelec.fr''"]
@@ -71,7 +71,5 @@ Prove that  @{term "n*(n+5) + 2*(n+3) "} is always the product of two numbers
 with a difference of 5.
 *}
 
-(*<*)
-close_monitor*[exam] 
-(*>*)
+close_monitor*[exam::MathExam] 
 end

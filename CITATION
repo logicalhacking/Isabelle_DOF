@@ -1,0 +1,29 @@
+To cite Isabelle/DOF in publications, please use
+
+  
+  Achim D. Brucker, Idir Ait-Sadoune, Paolo Crisafulli, and Burkhart
+  Wolff. Using The Isabelle Ontology Framework: Linking the Formal
+  with the Informal. In Conference on Intelligent Computer Mathematics
+  (CICM). Lecture Notes in Computer Science, Springer-Verlag, 2018.
+  
+A BibTeX entry for LaTeX users is
+
+@InCollection{	  brucker.ea:isabelle-ontologies:2018,
+  url		= {https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelle-ontologies-2018},
+  keywords	= {Isabelle/Isar, HOL, Ontologies},
+  location	= {Hagenberg, Austria},
+  author	= {Achim D. Brucker and Idir Ait-Sadoune and Paolo Crisafulli
+		  and Burkhart Wolff},
+  booktitle	= {Conference on Intelligent Computer Mathematics (CICM)},
+  language	= {USenglish},
+  publisher	= {Springer-Verlag},
+  address	= {Heidelberg},
+  series	= {Lecture Notes in Computer Science},
+  title		= {Using The Isabelle Ontology Framework: Linking the Formal
+		  with the Informal},
+  classification= {conference},
+  areas		= {formal methods, software engineering},
+  public	= {yes},
+  year		= {2018},
+  pdf		= {https://www.brucker.ch/bibliography/download/2018/brucker.ea-isabelle-ontologies-2018.pdf}
+}
