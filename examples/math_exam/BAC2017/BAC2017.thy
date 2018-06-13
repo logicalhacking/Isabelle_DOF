@@ -1,5 +1,5 @@
 theory BAC2017
-  imports "../../ontologies/mathex_onto"
+  imports "../../../ontologies/mathex_onto"
           Deriv 
           Transcendental
 begin
@@ -38,7 +38,7 @@ section*[header::Header,examSubject= "[analysis,geometry]",
 
 
 subsection*[exo1 :: Exercise,
-            Exercise.concerns= "{examiner,validator,student}",
+            Exercise.concerns= "{setter,student,checker,external_examiner}",
             Exercise.content="[q1::Task,q2,q3a]"]
 {*  On considère la fonction h définie sur l’intervalle [0..+\<infinity>] par : 
     @{term "h(x) = x * exponent (-x)"}
@@ -48,7 +48,7 @@ definition h :: "real \<Rightarrow> real"
   where "h x \<equiv> x * exp (- x)"
 
  
-subsubsection*[q1::Task, Task.concerns= "{examiner,validator,student}",
+subsubsection*[q1::Task, Task.concerns= "{setter,student}",
 level="oneStar", mark="1::int", type="formal"] 
 {* Déterminer la limite de la fonction @{term h} en +\<infinity>. *}
 
