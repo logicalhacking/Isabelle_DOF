@@ -64,6 +64,7 @@ object DofConverter {
         case CURLYOPEN :: COMMAND("""\isacharunderscore""") :: CURLYCLOSE :: tail => (RAWTEXT("""\_"""),tail)
         case CURLYOPEN :: COMMAND("""\isadigit""") :: CURLYOPEN::n::CURLYCLOSE::CURLYCLOSE :: tail => (n,tail)
         case CURLYOPEN :: COMMAND("""\isacharcomma""") :: CURLYCLOSE :: tail      => (RAWTEXT(""","""),tail)
+        case CURLYOPEN :: COMMAND("""\isachartilde""") :: CURLYCLOSE :: tail      => (RAWTEXT("""~"""),tail)
         case COMMAND("""\isanewline""") :: tail                                   =>  (RAWTEXT(""),tail)
         case CURLYOPEN :: COMMAND("""\isachardot""") :: CURLYCLOSE :: tail        => (RAWTEXT("""."""),tail)
         case CURLYOPEN :: COMMAND("""\isacharsemicolon""") :: CURLYCLOSE :: tail  => (RAWTEXT(""";"""),tail)
