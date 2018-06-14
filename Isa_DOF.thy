@@ -378,7 +378,8 @@ fun writeln_docrefs ctxt = let  val {tab,...} = fst(get_data ctxt)
 end (* struct *)
 *}
   
-
+  
+  
 section{* Syntax for Annotated Documentation Commands (the '' View'' Part I) *}
   
 ML{* 
@@ -415,6 +416,10 @@ val attributes_upd =
      --| Parse.$$$ "]"
 
 val SPY = Unsynchronized.ref ([]:((term * Position.T) * term) list) 
+
+val SPY2 = Unsynchronized.ref ([]:Symbol_Pos.T list);
+
+val SPY3 = Unsynchronized.ref ("");
 
 fun convert((Const(s,ty),_), t) X = Const(s^"_update", dummyT) 
                                     $ Abs("uuu_", type_of t, t) $ X
@@ -458,7 +463,8 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),
                                  ((Syntax.read_term_global thy lhs |> generalize_term,pos),
                                    Syntax.read_term_global thy rhs |> generalize_term)
               val assns = map read_assn doc_attrs
-              val _ = (SPY:=assns)       
+              val _ = (SPY:=assns)   
+              val _ = (SPY2 := Input.source_explode toks)
               val defaults = base       (* this calculation ignores the defaults *)
               val value_term = (fold convert assns defaults)  |> (infer_type thy) 
               val name = Context.theory_name thy 
@@ -468,7 +474,8 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),
                                                           id=id,   
                                                           cid=cid_long})
           end
-    fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
+    fun check_text thy = ( let val _ = (SPY3 := Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks)
+                           in  thy end)
   in   
        Toplevel.theory(enrich_trans #> check_text)
        (* Thanks Frederic Tuong! ! ! *)
@@ -596,6 +603,84 @@ end (* struct *)
 
 *}
 
+(* experiments >>> *)
+text{* fghfgh *}
+  
+text*[sdf] {* f @{thm refl}*}  
+ML{* AnnoTextelemParser.SPY2; 
+     (* conclusion: Input.source_explode converts " f @{thm refl}" 
+        into: 
+        [(" ", {offset=14, id=-2769}), ("f", {offset=15, id=-2769}), (" ", {offset=16, id=-2769}),
+        ("@", {offset=17, id=-2769}), ("{", {offset=18, id=-2769}), ("t", {offset=19, id=-2769}),
+        ("h", {offset=20, id=-2769}), ("m", {offset=21, id=-2769}), (" ", {offset=22, id=-2769}),
+        ("r", {offset=23, id=-2769}), ("e", {offset=24, id=-2769}), ("f", {offset=25, id=-2769}),
+        ("l", {offset=26, id=-2769}), ("}", {offset=27, id=-2769})]
+     *)*} 
+  
+text*[sdfg] {* fg @{thm refl}*}  
+ ML{* AnnoTextelemParser.SPY3; *}  
+  
+ML{*
+(* text is :
+ 
+val _ =
+  Outer_Syntax.command ("text", @{here}) "formal comment (primary style)"
+    (Parse.opt_target -- Parse.document_source >> Thy_Output.document_command {markdown = true});
+
+*)
+(* registrierung *)
+Outer_Syntax.command : Outer_Syntax.command_keyword -> string 
+                       -> (Toplevel.transition -> Toplevel.transition) parser -> unit;
+
+(* Isar Toplevel Steuerung *)
+Toplevel.keep :  (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
+    (* val keep' = add_trans o Keep;
+       fun keep f = add_trans (Keep (fn _ => f));
+     *)
+
+Toplevel.present_local_theory : (xstring * Position.T) option -> (Toplevel.state -> unit) ->
+    Toplevel.transition -> Toplevel.transition;
+    (* fun present_local_theory target = present_transaction (fn int =>
+           (fn Theory (gthy, _) =>
+                   let val (finish, lthy) = Named_Target.switch target gthy;
+                   in Theory (finish lthy, SOME lthy) end
+           | _ => raise UNDEF));
+
+       fun present_transaction f g = add_trans (Transaction (f, g));
+       fun transaction f = present_transaction f (K ());
+    *)
+
+Toplevel.theory : (theory -> theory) -> Toplevel.transition -> Toplevel.transition; 
+   (* fun theory' f = transaction (fn int =>
+                (fn Theory (Context.Theory thy, _) =>
+                      let val thy' = thy
+                                     |> Sign.new_group
+                                     |> f int
+                                     |> Sign.reset_group;
+                      in Theory (Context.Theory thy', NONE) end
+                | _ => raise UNDEF));
+
+      fun theory f = theory' (K f); *)
+
+Thy_Output.document_command : {markdown: bool} -> (xstring * Position.T) option * Input.source ->
+    Toplevel.transition -> Toplevel.transition;
+    (*  fun document_command markdown (loc, txt) =
+            Toplevel.keep (fn state =>
+               (case loc of
+                   NONE => ignore (output_text state markdown txt)
+                         | SOME (_, pos) =>
+                   error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
+             Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt));
+
+    *)
+
+Thy_Output.output_text : Toplevel.state -> {markdown: bool} -> Input.source -> string ; 
+                         (* this is where antiquotation expansion happens : uses eval_antiquote *)
+
+
+*}
+
+(* <<< experiments *)  
   
 section{* Syntax for Ontological Antiquotations (the '' View'' Part II) *}
   
