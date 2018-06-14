@@ -18,7 +18,7 @@ where the author of the exam is not expected to be physically present.
 datatype ContentClass =   
       setter            -- \<open>the 'author' of the exam\<close>
     | checker           -- \<open>the 'proof-reader' of the exam\<close>
-    | external_examiner -- \<open>the 'proof-reader' of the exam\<close>
+    | external_examiner -- \<open>an external 'proof-reader' of the exam\<close>
     | student           -- \<open>the victim ;-) ... \<close>
 
   
