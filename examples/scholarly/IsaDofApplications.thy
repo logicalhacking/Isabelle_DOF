@@ -110,7 +110,7 @@ it is the \emph{Eclipse of Formal Methods Tools}.  This refers to the
   \emph{systems}.}''~\cite{wenzel.ea:building:2007} 
 
  The current system framework offers moreover the following features:
-\begin{compactitem}
+\begin{itemize}
 \item a build management grouping components into to pre-compiled sessions,
 \item a prover IDE (PIDE) framework~\cite{wenzel:asynchronous:2014} with 
        various front-ends 
@@ -118,7 +118,7 @@ it is the \emph{Eclipse of Formal Methods Tools}.  This refers to the
 \item an extensible front-end language Isabelle/Isar, and,
 \item last but not least, an LCF style, generic theorem prover kernel as 
   the most prominent and deeply integrated system component.
-\end{compactitem}
+\end{itemize}
 *}  
 
 figure*[architecture::figure,relative_width="''100''",
@@ -170,7 +170,7 @@ section*[isadof::text_section,
          {* \isadof *}
    
 text{* An \isadof document consists of three components: 
-\begin{compactitem}
+\begin{itemize}
 \item the @{emph \<open>ontology definition\<close>} (which is an Isabelle theory file with definitions
   for document-classes and all auxiliary datatypes.  
 \item the @{emph \<open>core\<close>} of the document itself which is an Isabelle theory
@@ -178,7 +178,7 @@ text{* An \isadof document consists of three components:
   commands such as \inlineisar+title*+, \inlineisar+section*+,  \inlineisar+text*+, etc., 
   which can be annotated with meta-information defined in the underlying  ontology definition.
 \item the  @{emph \<open>layout definition\<close>} for the given ontology exploiting this meta-information.
-\end{compactitem}
+\end{itemize}
 \isadof is a novel Isabelle system component providing specific support for all these three parts.
 Note that the document core @{emph \<open>may\<close>}, but @{emph \<open>must\<close>} not 
 use Isabelle definitions or proofs for checking the formal content---the 
@@ -203,13 +203,13 @@ by terms HOL-terms, \ie, the actual parsers and type-checkers of the Isabelle sy
 This has the particular advantage that \isadof commands can be arbitrarily mixed with 
 Isabelle/HOL commands providing the machinery for type declarations and term specifications such
 as enumerations. In particular, document class definitions provide:
-\begin{compactitem}
+\begin{itemize}
 \item  a HOL-type for each document class as well as inheritance, 
 \item  support for attributes with HOL-types and optional default values,
 \item  support for overriding of attribute defaults but not overloading, and
 \item  text-elements annotated with document classes; they are mutable 
    instances of document classes.
-\end{compactitem}
+\end{itemize}
 Attributes referring to other ontological concepts are called \emph{links}. 
 The HOL-types inside the document specification language support built-in types for Isabelle/HOL \inlineisar+typ+'s, 
 \inlineisar+term+'s, and \inlineisar+thm+'s reflecting internal Isabelle's internal types 
@@ -402,14 +402,14 @@ during the exam and the preparation requires a very rigorous process, as the fre
 
 We assume that the content has four different types of addressees, which have a different
 \emph{view} on the integrated document 
-\begin{compactitem}
+\begin{itemize}
 \item the @{emph \<open>setter\<close>}, \ie, the author of the exam, 
 \item the @{emph \<open>checker\<close>}, \ie, an internal person that checks the exam for feasibility 
 and non-ambiguity, 
 \item the @{emph \<open>external examiner\<close>}, \ie, an external person that checks the exam for 
 feasibility and non-ambiguity, and 
 \item the @{emph \<open>student\<close>}, \ie, the addressee of the exam. 
-\end{compactitem}
+\end{itemize}
 The latter quality assurance mechanism is used in many universities,
 where for organizational reasons the execution of an exam takes place in facilities
 where the author of the exam is not expected to be physically present.
@@ -680,10 +680,10 @@ in which instances of monitored classes may occur. *}
 
 text{*
 The control of monitors is done by the commands:
-\begin{compactitem}
+\begin{itemize}
 \item \inlineisar+open_monitor* +  <doc-class>
 \item \inlineisar+close_monitor* + <doc-class> 
-\end{compactitem}
+\end{itemize}
 where the automaton of the monitor class is expected
 to be in a final state. In the final state, user-defined SML 
 Monitors can be nested, so it is possible to "overlay" one or more monitoring 
@@ -696,7 +696,7 @@ may occur freely. *}
 section*[conclusion::conclusion]{* Conclusion and Related Work*}    
 text{* We have demonstrated the use of \isadof, a novel ontology modeling and enforcement
 IDE deeply integrated into the Isabelle/Isar Framework. The two most distinguishing features are
-\begin{compactitem}
+\begin{itemize}
 \item \isadof and its ontology language  are a strongly typed language that allows
   for referring (albeit not reasoning) to entities of Isabelle/HOL, most notably types, terms,
   and (formally proven) theorems, and
@@ -704,7 +704,7 @@ IDE deeply integrated into the Isabelle/Isar Framework. The two most distinguish
   text-exploration (which is the type of this link? To which text element does this link refer?
   Which are the syntactic alternatives here?) were available during editing
   instead of a post-hoc validation process.
-\end{compactitem} *}
+\end{itemize} *}
 
 text{* Of course, a conventional batch-process  also exists which can be used
 for the validation of large document bases in a conventional continuous build process.
