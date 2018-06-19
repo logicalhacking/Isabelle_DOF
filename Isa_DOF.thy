@@ -477,7 +477,7 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),
     fun check_text thy = ( let val _ = (SPY3 := Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks)
                            in  thy end)
   in   
-       Toplevel.theory(enrich_trans #> check_text)
+       Toplevel.theory(enrich_trans #> check_text) 
        (* Thanks Frederic Tuong! ! ! *)
   end;
 
@@ -562,7 +562,7 @@ val _ =
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = true});
 
 
 val _ =
@@ -619,7 +619,7 @@ ML{* AnnoTextelemParser.SPY2;
   
 text*[sdfg] {* fg @{thm refl}*}  
  ML{* AnnoTextelemParser.SPY3; *}  
-  
+
 ML{*
 (* text is :
  
@@ -905,8 +905,34 @@ val _ =
 end (* struct *)
 
 *}  
-   
+
+text*[xxxy] {* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}}*}    
   
+ ML{* AnnoTextelemParser.SPY3; *}  
+  
+section{* Library of Standard Text Ontology *}
+
+datatype placement = pl_h | pl_t | pl_b | pl_ht | pl_hb   
+doc_class figure   = 
+   relative_width   :: "string" (* percent of textwidth *)    
+   src              :: "string"
+   placement        :: placement 
+   spawn_columns    :: bool <= True 
+
+doc_class side_by_side_figure   = figure +
+   anchor           :: "string"
+   caption          :: "string"
+   relative_width2  :: "string" (* percent of textwidth *)    
+   src2             :: "string"
+   anchor2          :: "string"
+   caption2         :: "string"
+
+(* dito the future monitor: figure - block *)
+
+(* dito the future table *)
+
+(* dito the future monitor: table - block *)
+
 ML{* open Mixfix;*}
 section{* Testing and Validation *}
 

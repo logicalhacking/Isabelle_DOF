@@ -2,11 +2,12 @@ theory mathex_onto
  imports "../Isa_DOF"
 begin
   
+(*<<*)  
 text{* In our scenario, content has four different types of addressees: 
 \<^item> the @{emph \<open>setter\<close>}, i.e. the author of the exam, 
 \<^item> the @{emph \<open>student\<close>}, i.e. the addressee of the exam, 
 \<^item> the @{emph \<open>checker\<close>}, i.e. a person that checks the exam for
-\<^item> the @{emph \<open>external_examiner\<close>}, i.e. a person that checks the exam for
+\<^item> the @{emph \<open>external\_examiner\<close>}, i.e. a person that checks the exam for
   feasibility and non-ambiguity.
 
 Note that the latter quality assurance mechanism is used in many universities,
@@ -47,14 +48,6 @@ doc_class Header =
 doc_class Exam_item = 
   concerns :: "ContentClass set"  
 
-(* should go into something more fundamental on texts. *) 
-datatype placement = h | t | b | ht | hb   
-doc_class figure   = Exam_item +
-   relative_width   :: "string" (* percent of textwidth *)    
-   src     :: "string"
-   placement :: placement 
-   spawn_columns :: bool <= True 
-   
   
 type_synonym SubQuestion = string
  
@@ -102,5 +95,6 @@ doc_class MathExam=
   content :: "(Header + Author + Exercise) list"
   global_grade :: Grade 
   where "\<lbrace>Author\<rbrace>\<^sup>+  ~~  Header ~~  \<lbrace>Exercise ~~ Solution\<rbrace>\<^sup>+ "
-    
+  
+(*>>*)
 end
