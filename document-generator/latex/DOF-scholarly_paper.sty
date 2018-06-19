@@ -16,11 +16,20 @@
   [0000/00/00 Unreleased v0.0.0+%
   Document-Type Support Framework for Isabelle (LNCS).]
 
-\RequirePackage{ifthen}
 \RequirePackage{DOF-core}
+\RequirePackage{ifthen}
 \@ifclassloaded{llncs}%
   {}%
-  {\PackageError{DOF-scholarly_paper}{Scholarly Paper only suports LNCS as document class.}{}\stop}%
+  {%
+    \@ifclassloaded{scrartcl}%
+    {%
+      \newcommand{\institute}[1]{}%
+      \newcommand{\inst}[1]{}%
+      \newcommand{\orcidID}[1]{}%
+      \newcommand{\email}[1]{}%
+    }%
+    {\PackageError{DOF-scholarly_paper}{Scholarly Paper only supports LNCS or scrartcl as document class.}{}\stop}%
+  }
 
 \newkeycommand\isaDofSectionIntroduction[label=,type=,main_author=,fixme_list=][1]{%
   \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%

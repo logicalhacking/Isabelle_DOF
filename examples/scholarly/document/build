@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# Copyright (c) 2018 The University of Sheffield. All rights reserved.
+#               2018 The University of Paris-Sud. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in
+#    the documentation and/or other materials provided with the
+#    distribution.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+OUTFORMAT=${1:-pdf}
+NAME=${2:-root}
+
+set -e
+
+ROOT_NAME="root_$NAME"
+[ ! -f "$DIR/$ROOT_NAME.tex" ] && ROOT_NAME="root"
+
+if [ ! -f $ISABELLE_HOME_USER/DOF/lib/dof_latex_converter.jar ]; then
+    echo ""
+    echo "Warning: Isabelle DOF not installed"
+    echo "========"
+    echo "This is a Isabelle_DOF project. The document preparation requires"
+    echo "the Isabelle_DOF framework. Please obtain the framework by cloning"
+    echo "the Isabelle_DOF git repository, i.e.: "
+    echo "    git clone https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF"
+    echo "You can install the framework as follows:"
+    echo "    cd Isabelle_DOF/document-generator"
+    echo "    ./install"
+    echo ""
+    exit 1
+fi
+
+VERSION=$($ISABELLE_TOOL scala $ISABELLE_HOME_USER/DOF/lib/dof_latex_converter.jar -v) || true
+
+if [ "$VERSION" != "DOF LaTeX converter version 0.0.3" ]; then 
+    echo ""
+    echo "Warning: Isabelle DOF version mismatch"
+    echo "========"
+    echo " Build script version:        DOF LaTeX converter version 0.0.2"
+    echo " DOF LaTeX Converter version: $VERSION"
+    echo " Please take one of the following actions:"
+    echo " * If the build script is more recent than the converter, "
+    echo "   then update the build script from your your Isabelle DOF"
+    echo "   installation:"
+    echo "   $ISABELLE_HOME_USER/DOF/document-template/build"
+    echo " * If the converter is more recent than the build script,"
+    echo "   please update your Isabelle DOF installation."
+    exit 1
+fi
+
+$ISABELLE_TOOL scala $ISABELLE_HOME_USER/DOF/lib/dof_latex_converter.jar .
+
+cp $ISABELLE_HOME_USER/DOF/latex/*.sty .
+
+$ISABELLE_TOOL latex -o sty "$ROOT_NAME.tex" && \
+$ISABELLE_TOOL latex -o "$OUTFORMAT" "$ROOT_NAME.tex" && \
+{ [ ! -f "$ROOT_NAME.bib" ] || $ISABELLE_TOOL latex -o bbl "$ROOT_NAME.tex"; } && \
+{ [ ! -f "$ROOT_NAME.idx" ] || $ISABELLE_TOOL latex -o idx "$ROOT_NAME.tex"; } && \
+$ISABELLE_TOOL latex -o "$OUTFORMAT" "$ROOT_NAME.tex" && \
+$ISABELLE_TOOL latex -o "$OUTFORMAT" "$ROOT_NAME.tex"
+
