@@ -364,6 +364,17 @@ ML\<open>val X = @{here};\<close>
 
 *}  
 
+subsection {*Input streams. *}  
+ML{*  
+  Input.source_explode : Input.source -> Symbol_Pos.T list;
+     (* conclusion: Input.source_explode converts " f @{thm refl}" 
+        into: 
+        [(" ", {offset=14, id=-2769}), ("f", {offset=15, id=-2769}), (" ", {offset=16, id=-2769}),
+        ("@", {offset=17, id=-2769}), ("{", {offset=18, id=-2769}), ("t", {offset=19, id=-2769}),
+        ("h", {offset=20, id=-2769}), ("m", {offset=21, id=-2769}), (" ", {offset=22, id=-2769}),
+        ("r", {offset=23, id=-2769}), ("e", {offset=24, id=-2769}), ("f", {offset=25, id=-2769}),
+        ("l", {offset=26, id=-2769}), ("}", {offset=27, id=-2769})]
+     *)*} 
   
 subsection {*Scanning and combinator parsing. *}  
 ML\<open>
@@ -400,14 +411,17 @@ Parse.nat: int parser;
 Parse.int: int parser;
 Parse.enum_positions: string -> 'a parser -> ('a list * Position.T list) parser;
 Parse.enum: string -> 'a parser -> 'a list parser;
+Parse.input: 'a parser -> Input.source parser;
 
-Parse.enum;
-Parse.!!!;
+Parse.enum : string -> 'a parser -> 'a list parser;
+Parse.!!! : (T list -> 'a) -> T list -> 'a;
 Parse.position: 'a parser -> ('a * Position.T) parser;
 
 (* Examples *)                                     
 Parse.position Args.cartouche_input;
 \<close>
+
+text{* Parsing combinators for elementary Isabelle Lexems*}  
 ML{* 
 Syntax.parse_sort;
 Syntax.parse_typ;
@@ -456,27 +470,36 @@ fn name => (Thy_Output.antiquotation name (Scan.lift (Parse.position Args.cartou
 \<close>
 
 subsection\<open> Markup \<close>  
-text{* Markup Operations, and reporting. Diag in Isa_DOF Foundations Paper. *}  
+text{* Markup Operations, and reporting. Diag in Isa_DOF Foundations Paper.
+       Markup operation send via side-effect annotations to the GUI (precisely:
+       to the PIDE Framework) that were used for hyperlinking applicating to binding
+       occurrences, info for hovering, ... *}  
 ML{*
-(*  Markup.enclose; *)
 
 (* Position.report is also a type consisting of a pair of a position and markup. *)
 (* It would solve all my problems if I find a way to infer the defining Position.report
    from a type definition occurence ... *)
 
-Position.report;
-Position.reports; (* ? ? ? I think this is the magic thing that sends reports to the GUI. *)
-
-Markup.properties;
-Properties.get;
+Position.report: Position.T -> Markup.T -> unit;
+Position.reports: Position.report list -> unit; 
+     (* ? ? ? I think this is the magic thing that sends reports to the GUI. *)
+Markup.entity : string -> string -> Markup.T;
+Markup.properties : Properties.T -> Markup.T -> Markup.T ;
+Properties.get : Properties.T -> string -> string option;
+Markup.enclose : Markup.T -> string -> string; 
      
-
-fun theory_markup def name id pos =
+(* example for setting a link, the def flag controls if it is a defining or a binding 
+occurence of an item *)
+fun theory_markup (def:bool) (name:string) (id:serial) (pos:Position.T) =
   if id = 0 then Markup.empty
   else
     Markup.properties (Position.entity_properties_of def id pos)
       (Markup.entity Markup.theoryN name);
-Markup.theoryN;
+Markup.theoryN : string;
+
+serial();   (* A global, lock-guarded seriel counter used to produce unique identifiers,
+               be it on the level of thy-internal states or as reference in markup in
+               PIDE *)
 
 (* From Theory:
 fun check ctxt (name, pos) =
@@ -510,9 +533,7 @@ fun get_markup thy =
 
 
 *)
-serial();   (* A global, lock-guarded seriel counter used to produce unique identifiers,
-               be it on the level of thy-internal states or as reference in markup in
-               PIDE *)
+
 (*
 fun theory_markup def thy_name id pos =
   if id = 0 then Markup.empty
@@ -553,8 +574,6 @@ fun check ctxt (name, pos) =
 
 
 *)
-Markup.properties; (* read : add Properties.T items into Markup.T  *)
-Markup.entity;
 
 *}
 
@@ -663,7 +682,6 @@ fun control_antiquotation name s1 s2 =
 
 Output.output;
 
-Proof_Context.read_const;
 Syntax.read_input ;
 Input.source_content;
 
@@ -738,13 +756,23 @@ fun output_text state {markdown} source =
 *}  
   
   
-ML{* Outer_Syntax.print_commands @{theory};
+ML{* 
+Outer_Syntax.print_commands @{theory};
+
 Outer_Syntax.command : Outer_Syntax.command_keyword -> string -> 
                            (Toplevel.transition -> Toplevel.transition) parser -> unit;
 (* creates an implicit thy_setup with an entry for a call-back function, which happens
-   to be a parser that must have as side-effect a Toplevel-transition-transition. *)
+   to be a parser that must have as side-effect a Toplevel-transition-transition. 
+   Registers "Toplevel.transition -> Toplevel.transition" parsers to the Isar interpreter.
+   *)
 
-
+(*Example: text is :
+ 
+val _ =
+  Outer_Syntax.command ("text", @{here}) "formal comment (primary style)"
+    (Parse.opt_target -- Parse.document_source >> Thy_Output.document_command {markdown = true});
+*)
+ 
 (* not exported: Thy_Output.output_token; Ich glaub, da passierts ... *)
 Thy_Output.present_thy;
 *}
@@ -798,6 +826,8 @@ fun document_antiq check_file ctxt (name, pos) =
 ML{* Type_Infer_Context.infer_types *}
 ML{* Type_Infer_Context.prepare_positions *}
 
+  
+  
 section {*Transaction Management in the Isar-Engine : The Toplevel *}
   
 ML{*
@@ -827,7 +857,107 @@ Toplevel.present_local_theory:
   Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt)); *)
 Thy_Output.document_command :  {markdown: bool} -> (xstring * Position.T) option * Input.source -> 
                                Toplevel.transition -> Toplevel.transition;
+
+(* Isar Toplevel Steuerung *)
+Toplevel.keep :  (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
+    (* val keep' = add_trans o Keep;
+       fun keep f = add_trans (Keep (fn _ => f));
+     *)
+
+Toplevel.present_local_theory : (xstring * Position.T) option -> (Toplevel.state -> unit) ->
+    Toplevel.transition -> Toplevel.transition;
+    (* fun present_local_theory target = present_transaction (fn int =>
+           (fn Theory (gthy, _) =>
+                   let val (finish, lthy) = Named_Target.switch target gthy;
+                   in Theory (finish lthy, SOME lthy) end
+           | _ => raise UNDEF));
+
+       fun present_transaction f g = add_trans (Transaction (f, g));
+       fun transaction f = present_transaction f (K ());
+    *)
+
+Toplevel.theory : (theory -> theory) -> Toplevel.transition -> Toplevel.transition; 
+   (* fun theory' f = transaction (fn int =>
+                (fn Theory (Context.Theory thy, _) =>
+                      let val thy' = thy
+                                     |> Sign.new_group
+                                     |> f int
+                                     |> Sign.reset_group;
+                      in Theory (Context.Theory thy', NONE) end
+                | _ => raise UNDEF));
+
+      fun theory f = theory' (K f); *)
+
+Thy_Output.document_command : {markdown: bool} -> (xstring * Position.T) option * Input.source ->
+    Toplevel.transition -> Toplevel.transition;
+    (*  fun document_command markdown (loc, txt) =
+            Toplevel.keep (fn state =>
+               (case loc of
+                   NONE => ignore (output_text state markdown txt)
+                         | SOME (_, pos) =>
+                   error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
+             Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt));
+
+    *)
+
+Thy_Output.output_text : Toplevel.state -> {markdown: bool} -> Input.source -> string ; 
+                         (* this is where antiquotation expansion happens : uses eval_antiquote *)
+
+
 *}  
+  
+  
+ML{*
+
+
+(* Isar Toplevel Steuerung *)
+Toplevel.keep :  (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
+    (* val keep' = add_trans o Keep;
+       fun keep f = add_trans (Keep (fn _ => f));
+     *)
+
+Toplevel.present_local_theory : (xstring * Position.T) option -> (Toplevel.state -> unit) ->
+    Toplevel.transition -> Toplevel.transition;
+    (* fun present_local_theory target = present_transaction (fn int =>
+           (fn Theory (gthy, _) =>
+                   let val (finish, lthy) = Named_Target.switch target gthy;
+                   in Theory (finish lthy, SOME lthy) end
+           | _ => raise UNDEF));
+
+       fun present_transaction f g = add_trans (Transaction (f, g));
+       fun transaction f = present_transaction f (K ());
+    *)
+
+Toplevel.theory : (theory -> theory) -> Toplevel.transition -> Toplevel.transition; 
+   (* fun theory' f = transaction (fn int =>
+                (fn Theory (Context.Theory thy, _) =>
+                      let val thy' = thy
+                                     |> Sign.new_group
+                                     |> f int
+                                     |> Sign.reset_group;
+                      in Theory (Context.Theory thy', NONE) end
+                | _ => raise UNDEF));
+
+      fun theory f = theory' (K f); *)
+
+Thy_Output.document_command : {markdown: bool} -> (xstring * Position.T) option * Input.source ->
+    Toplevel.transition -> Toplevel.transition;
+    (*  fun document_command markdown (loc, txt) =
+            Toplevel.keep (fn state =>
+               (case loc of
+                   NONE => ignore (output_text state markdown txt)
+                         | SOME (_, pos) =>
+                   error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
+             Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt));
+
+    *)
+
+Thy_Output.output_text : Toplevel.state -> {markdown: bool} -> Input.source -> string ; 
+                         (* this is where antiquotation expansion happens : uses eval_antiquote *)
+
+
+*}
+  
   
 subsection\<open> Configuration flags of fixed type in the Isar-engine. \<close>
 

@@ -607,79 +607,12 @@ end (* struct *)
 text{* fghfgh *}
   
 text*[sdf] {* f @{thm refl}*}  
-ML{* AnnoTextelemParser.SPY2; 
-     (* conclusion: Input.source_explode converts " f @{thm refl}" 
-        into: 
-        [(" ", {offset=14, id=-2769}), ("f", {offset=15, id=-2769}), (" ", {offset=16, id=-2769}),
-        ("@", {offset=17, id=-2769}), ("{", {offset=18, id=-2769}), ("t", {offset=19, id=-2769}),
-        ("h", {offset=20, id=-2769}), ("m", {offset=21, id=-2769}), (" ", {offset=22, id=-2769}),
-        ("r", {offset=23, id=-2769}), ("e", {offset=24, id=-2769}), ("f", {offset=25, id=-2769}),
-        ("l", {offset=26, id=-2769}), ("}", {offset=27, id=-2769})]
-     *)*} 
-  
 text*[sdfg] {* fg @{thm refl}*}  
- ML{* AnnoTextelemParser.SPY3; *}  
-
-ML{*
-(* text is :
- 
-val _ =
-  Outer_Syntax.command ("text", @{here}) "formal comment (primary style)"
-    (Parse.opt_target -- Parse.document_source >> Thy_Output.document_command {markdown = true});
-
-*)
-(* registrierung *)
-Outer_Syntax.command : Outer_Syntax.command_keyword -> string 
-                       -> (Toplevel.transition -> Toplevel.transition) parser -> unit;
-
-(* Isar Toplevel Steuerung *)
-Toplevel.keep :  (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
-    (* val keep' = add_trans o Keep;
-       fun keep f = add_trans (Keep (fn _ => f));
-     *)
-
-Toplevel.present_local_theory : (xstring * Position.T) option -> (Toplevel.state -> unit) ->
-    Toplevel.transition -> Toplevel.transition;
-    (* fun present_local_theory target = present_transaction (fn int =>
-           (fn Theory (gthy, _) =>
-                   let val (finish, lthy) = Named_Target.switch target gthy;
-                   in Theory (finish lthy, SOME lthy) end
-           | _ => raise UNDEF));
-
-       fun present_transaction f g = add_trans (Transaction (f, g));
-       fun transaction f = present_transaction f (K ());
-    *)
-
-Toplevel.theory : (theory -> theory) -> Toplevel.transition -> Toplevel.transition; 
-   (* fun theory' f = transaction (fn int =>
-                (fn Theory (Context.Theory thy, _) =>
-                      let val thy' = thy
-                                     |> Sign.new_group
-                                     |> f int
-                                     |> Sign.reset_group;
-                      in Theory (Context.Theory thy', NONE) end
-                | _ => raise UNDEF));
-
-      fun theory f = theory' (K f); *)
-
-Thy_Output.document_command : {markdown: bool} -> (xstring * Position.T) option * Input.source ->
-    Toplevel.transition -> Toplevel.transition;
-    (*  fun document_command markdown (loc, txt) =
-            Toplevel.keep (fn state =>
-               (case loc of
-                   NONE => ignore (output_text state markdown txt)
-                         | SOME (_, pos) =>
-                   error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
-             Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt));
-
-    *)
-
-Thy_Output.output_text : Toplevel.state -> {markdown: bool} -> Input.source -> string ; 
-                         (* this is where antiquotation expansion happens : uses eval_antiquote *)
-
-
-*}
-
+ML{* AnnoTextelemParser.SPY3; 
+(* produces: ref "fg \\isa{<markup>\\ {\\isacharequal}\\ <markup>}": string ref *)
+(* This proves that  Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks actually
+PRODUCES strings in which the antiquotations were expanded. *)
+*} 
 (* <<< experiments *)  
   
 section{* Syntax for Ontological Antiquotations (the '' View'' Part II) *}
@@ -792,24 +725,42 @@ fun calculate_attr_access ctxt proj_term term =
         val Const(@{const_name "HOL.eq"},_) $ lhs $ _ = HOLogic.dest_Trueprop (Thm.concl_of thm)
     in  lhs end
 
-fun calculate_attr_access_check ctxt proj_str str = (* template *)
-    let val term = Bound 0
-    in  (ML_Syntax.atomic o ML_Syntax.print_term) term
-    end
+fun calculate_attr_access_check ctxt attr oid = (* template *)
+    case DOF_core.get_value_local oid ctxt of 
+             SOME term => let val SOME{cid,...} = DOF_core.get_object_local oid ctxt
+                              val (pr_name,_,ty) = case DOF_core.get_attribute_long_name_local cid attr ctxt of
+                                            SOME f => f
+                                          | NONE => error ("attribute undefined for ref"^ oid)
+                              val proj_term = Const(pr_name,ty) (* pr_name should be long_name *)
+                              val term = calculate_attr_access ctxt proj_term term
+                          in (ML_Syntax.atomic o ML_Syntax.print_term) term end
+           | NONE => error "identifier not a docitem reference"
+    
  *}  
   
 ML{*
 ML_Syntax.atomic o ML_Syntax.print_term;
-Args.term --| (Scan.lift @{keyword "in"}) -- Args.term;
-fn (ctxt,toks) =>
-(Scan.lift Args.name --| (Scan.lift @{keyword "in"}) -- Args.term >> 
-(fn(attr_term, class_term) =>  (ML_Syntax.atomic o ML_Syntax.print_term) class_term)) (ctxt, toks);
+Scan.lift Args.name --| (Scan.lift @{keyword "in"}) -- Scan.lift Args.name;
+(fn (ctxt,toks) =>
+   (Scan.lift Args.name --| (Scan.lift @{keyword "in"}) -- Scan.lift Args.name >> 
+   (fn(attr, oid) =>  (calculate_attr_access_check (Context.the_proof ctxt) attr oid) )) (ctxt, toks))
+   : string context_parser
 
 *}
 ML{* 
 val _ = Theory.setup 
- (  ML_Antiquotation.inline @{binding doc_class_attr} (Args.term >> (ML_Syntax.atomic o ML_Syntax.print_term)))    
-
+           (ML_Antiquotation.inline @{binding doc_class_attr} 
+               (fn (ctxt,toks) =>
+                       (Scan.lift Args.name --| 
+                        (Scan.lift @{keyword "in"}) -- 
+                         Scan.lift Args.name 
+                        >>  
+                        (fn(attr : string, oid : string) =>  
+                           (calculate_attr_access_check (Context.the_proof ctxt) attr oid) ) 
+                       : string context_parser
+                       ) 
+                       (ctxt, toks))
+           )    
 *}
   
   
@@ -906,10 +857,12 @@ end (* struct *)
 
 *}  
 
-text*[xxxy] {* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}}*}    
+text*[xxxy] {* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}*}    
   
  ML{* AnnoTextelemParser.SPY3; *}  
-  
+
+text{* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}  *}   
+   
 section{* Library of Standard Text Ontology *}
 
 datatype placement = pl_h | pl_t | pl_b | pl_ht | pl_hb   
@@ -933,7 +886,6 @@ doc_class side_by_side_figure   = figure +
 
 (* dito the future monitor: table - block *)
 
-ML{* open Mixfix;*}
 section{* Testing and Validation *}
 
   
