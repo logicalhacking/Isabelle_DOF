@@ -23,7 +23,7 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
   and      "open_monitor*" "close_monitor*" "declare_reference*" 
            "update_instance*" "doc_class" ::thy_decl
 
-  and      "lemma*" "assert*"::thy_decl
+  and      "lemma*" "theorem*" "assert*"  ::thy_decl
            
   
 begin
@@ -583,26 +583,71 @@ val _ =
                        (attributes >> (fn (((oid,pos),cid),doc_attrs) => 
                                           (Toplevel.theory (I)))); (* dummy so far *)
 
-val _ =
-  Outer_Syntax.command @{command_keyword "lemma*"} 
-                       "close a document reference monitor"
-                       (attributes >> (fn (((oid,pos),cid),doc_attrs) => 
-                                          (Toplevel.theory (I)))); (* dummy/fake so far *)
-val _ =
-  Outer_Syntax.command @{command_keyword "assert*"} 
-                       "close a document reference monitor"
-                       (attributes >> (fn (((oid,pos),cid),doc_attrs) => 
-                                          (Toplevel.theory (I)))); (* dummy/fake so far *)
 
 val _ =
   Outer_Syntax.command @{command_keyword "update_instance*"} 
                        "update meta-attributes of an instance of a document class"
                         (attributes_upd >> (fn args =>  update_instance_command args)); 
 
+val _ =
+  Outer_Syntax.command @{command_keyword "lemma*"} 
+                       "lemma"
+                       (attributes >> (fn (((oid,pos),cid),doc_attrs) => 
+                                          (Toplevel.theory (I)))); (* dummy/fake so far *)
+val _ =
+  Outer_Syntax.command @{command_keyword "assert*"} 
+                       "evaluate and print term"
+                       (attributes 
+                        -- opt_evaluator 
+                        -- opt_modes 
+                        -- Parse.term
+                        >> (fn ((((((oid,pos),cid),doc_attrs),some_name:string option),modes : string list),t:string) => 
+                                          (Toplevel.keep (assert_cmd some_name modes t)))); (* dummy/fake so far *)
+
+
 end (* struct *)
 
 *}
+  
+ML \<open>
+local (* dull and dangerous copy from Pure.thy given that these functions are not
+         globally exported. *)
 
+val long_keyword =
+  Parse_Spec.includes >> K "" ||
+  Parse_Spec.long_statement_keyword;
+
+val long_statement =
+  Scan.optional (Parse_Spec.opt_thm_name ":" --| Scan.ahead long_keyword) Binding.empty_atts --
+  Scan.optional Parse_Spec.includes [] -- Parse_Spec.long_statement
+    >> (fn ((binding, includes), (elems, concl)) => (true, binding, includes, elems, concl));
+
+val short_statement =
+  Parse_Spec.statement -- Parse_Spec.if_statement -- Parse.for_fixes
+    >> (fn ((shows, assumes), fixes) =>
+      (false, Binding.empty_atts, [], [Element.Fixes fixes, Element.Assumes assumes],
+        Element.Shows shows));
+
+fun theorem spec schematic descr  =
+  Outer_Syntax.local_theory_to_proof' spec ("state " ^ descr)
+    ((long_statement || short_statement) >> (fn (long, binding, includes, elems, concl) =>
+      ((if schematic then Specification.schematic_theorem_cmd else Specification.theorem_cmd )
+        long Thm.theoremK NONE (K I) binding includes elems concl)));
+
+
+val _ = theorem @{command_keyword "theorem*"} false "theorem";
+(* val _ = theorem @{command_keyword "lemma*"} false "lemma";
+val _ = theorem @{command_keyword corollary} false "corollary";
+val _ = theorem @{command_keyword proposition} false "proposition";
+val _ = theorem @{command_keyword schematic_goal} true "schematic goal"; *)
+
+in end\<close>  
+  
+
+assert "True"  
+  
+lemma X : "True" by simp
+  
 (* experiments >>> *)
 text{* fghfgh *}
   
