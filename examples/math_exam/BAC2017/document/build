@@ -51,11 +51,11 @@ fi
 
 VERSION=$($ISABELLE_TOOL scala $ISABELLE_HOME_USER/DOF/lib/dof_latex_converter.jar -v) || true
 
-if [ "$VERSION" != "DOF LaTeX converter version 0.0.2" ]; then 
+if [ "$VERSION" != "DOF LaTeX converter version 0.0.3" ]; then 
     echo ""
     echo "Warning: Isabelle DOF version mismatch"
     echo "========"
-    echo " Build script version:        DOF LaTeX converter version 0.0.2"
+    echo " Build script version:        DOF LaTeX converter version 0.0.3"
     echo " DOF LaTeX Converter version: $VERSION"
     echo " Please take one of the following actions:"
     echo " * If the build script is more recent than the converter, "

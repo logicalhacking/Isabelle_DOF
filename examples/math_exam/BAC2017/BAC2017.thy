@@ -7,19 +7,19 @@ begin
 open_monitor*[exam::MathExam] 
 
 
-section*[idir::Author,affiliation="''LRI, CentraleSupelec''", 
+text*[idir::Author,affiliation="''LRI, CentraleSupelec''", 
 email="''idir.aitsadoune@centralesupelec.fr''"]
 {*Idir AIT SADOUNE*}
 
-section*[keller::Author,affiliation="''LRI, Univ. Paris-Sud''", 
-email="''Chantal.Keller@lri.fr''"]
+text*[keller::Author,affiliation="''LRI, Univ. Paris-Sud''", 
+         email="''Chantal.Keller@lri.fr''"]
 {*Chantal KELLER*}
 
 text{* This example is an excerpt from the french baccaleareat 2017. 
        The textual explanations were kept in french.
  *}
 
-section*[header::Header,examSubject= "[analysis,geometry]", 
+text*[header::Header,examSubject= "[analysis,geometry]", 
          examTitle="''BACCALAUREAT GENERAL MATHEMATIQUES''", 
          date="''21-06-2017''", 
         timeAllowed="240::int"]
@@ -37,7 +37,7 @@ section*[header::Header,examSubject= "[analysis,geometry]",
 *}
 
 
-subsection*[exo1 :: Exercise,
+text*[exo1 :: Exercise,
             Exercise.concerns= "{setter,student,checker,external_examiner}",
             Exercise.content="[q1::Task,q2,q3a]"]
 {*  On considère la fonction h définie sur l’intervalle [0..+\<infinity>] par : 
@@ -48,7 +48,7 @@ definition h :: "real \<Rightarrow> real"
   where "h x \<equiv> x * exp (- x)"
 
  
-subsubsection*[q1::Task, Task.concerns= "{setter,student}",
+text*[q1::Task, Task.concerns= "{setter,student}",
 level="oneStar", mark="1::int", type="formal"] 
 {* Déterminer la limite de la fonction @{term h} en +\<infinity>. *}
 
@@ -58,12 +58,12 @@ text*[a1::Answer_Formal_Step]
 lemma q1 : "(h \<longlongrightarrow> (0::real)) at_top"
   sorry
 
-subsubsection*[v1::Validation,
+text*[v1::Validation,
     proofs="[q1::thm]"]
   {* See lemma q1 *}
 
   
-subsubsection*[q2::Task, Task.concerns= "{examiner,validator,student}",
+text*[q2::Task, Task.concerns= "{examiner,validator,student}",
 level="oneStar", mark="1::int", type="formal"] 
 {* Étudier les variations de la fonction @{term h} sur l'intervalle [0..+\<infinity>] et dresser son tableau
    de variation *}
@@ -92,12 +92,12 @@ lemma q2_b : "0 \<le> x \<and> x \<le> y \<and> y \<le> 1 \<Longrightarrow> h x 
 lemma q2_c : "1 \<le> x \<and> x \<le> y \<Longrightarrow> h x \<ge> h y"
   sorry
 
-subsubsection*[v2::Validation,
+text*[v2::Validation,
     proofs="[q2_b::thm, q2_c]"]
   {* See lemmas q2_b and q2_c *}
 
 
-subsubsection*[q3a::Task, Task.concerns= "{examiner,validator,student}",
+text*[q3a::Task, Task.concerns= "{examiner,validator,student}",
 level="oneStar", mark="1::int", type="formal"] 
 {* Vérifier que pour tout nombre réel x appartenant à l'intervalle [0..+\<infinity>], on a :
    @term{h x = (exp (- x)) - (h' x)} *}
