@@ -20,19 +20,19 @@ subsection*[header::Header,examSubject= "[algebra]",  examTitle="''Exam number 1
 \end{itemize}
 *}
 
-(* should be in DOF-core *)
+(* should be in DOF-core 
 
-(* causes crash on the LaTeX side:
+* causes crash on the LaTeX side:
  ( FP-DIV )
 *** ! Undefined control sequence.
 *** <argument> ...ative_width}}{100} \includegraphics
 ***                                                   [width=\scale \textwidth ]...
 *** l.44 {A Polynome.}
-
+*)
 figure*[figure::figure, spawn_columns=False,relative_width="''80''", 
         src="''figures/Polynomialdeg5.png''"] 
         \<open>A Polynome.\<close>
-*)
+
 
 subsubsection*[exo1 :: Exercise, Exercise.content="[q1::Task,q2::Task]"]\<open>Exercise 1\<close>
 text{* 
