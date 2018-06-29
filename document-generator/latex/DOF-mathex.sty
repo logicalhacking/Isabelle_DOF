@@ -49,16 +49,23 @@
     \immediate\write\@auxout{\noexpand\addauthor{#1}}%
 }
 
+\newkeycommand\isaDofTextHeader[label=,type=,examSubject=,date=,timeAllowed=][1]{%
+    \immediate\write\@auxout{\noexpand\title{\commandkey{#1}}}%
+}
 
-\newkeycommand\isaDofSubsectionHeader[label=,type=,examTitle=,examSubject=,date,timeAllowed][1]{%
-    \immediate\write\@auxout{\noexpand\title{\commandkey{examTitle}}}%
+\newkeycommand\isaDofSectionHeader[label=,type=,examSubject=,date=,timeAllowed=][1]{%
+    \immediate\write\@auxout{\noexpand\title{\commandkey{#1}}}%
+}
+
+\newkeycommand\isaDofSubsectionHeader[label=,type=,examSubject=,date=,timeAllowed=][1]{%
+    \immediate\write\@auxout{\noexpand\title{\commandkey{#1}}}%
 }
 
 \newkeycommand\isaDofTextAnswerFormalStep[label=,type=,justification=,term=][1]{%
   #1
 }
 
-\newkeycommand\isaDofTextAnswerYesNo[label=,type=,step_label=, yes_no=][1]{%
+\newkeycommand\isaDofTextAnswerYesNo[label=,type=,step_label=,yes_no=][1]{%
   #1
 }
 

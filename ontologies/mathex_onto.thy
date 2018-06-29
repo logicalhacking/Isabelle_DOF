@@ -19,7 +19,7 @@ where the author of the exam is not expected to be physically present.
 datatype ContentClass =   
       setter            -- \<open>the 'author' of the exam\<close>
     | checker           -- \<open>the 'proof-reader' of the exam\<close>
-    | external_examiner -- \<open>an external 'proof-reader' of the exam\<close>
+    | externalExaminer -- \<open>an external 'proof-reader' of the exam\<close>
     | student           -- \<open>the victim ;-) ... \<close>
 
   
@@ -40,7 +40,6 @@ datatype Grade =
   A1 | A2 | A3
 
 doc_class Header = 
-  examTitle :: string
   examSubject :: "(Subject) list"
   date :: string
   timeAllowed :: int --  minutes
@@ -66,13 +65,13 @@ doc_class Task = Exam_item +
   level    :: Level
   type     :: Question_Type
   subitems :: "(SubQuestion * (Answer_Formal_Step list + Answer_YesNo)list) list"
-  concerns :: "ContentClass set" <= "{setter,student,checker,external_examiner}" 
+  concerns :: "ContentClass set" <= "{setter,student,checker,externalExaminer}" 
   mark     :: int
    
 
 doc_class Exercise = Exam_item +
   content  :: "(Task) list"
-  concerns :: "ContentClass set" <= "{setter,student,checker,external_examiner}"
+  concerns :: "ContentClass set" <= "{setter,student,checker,externalExaminer}"
 
 
 text{* In many institutions, it makes sense to have a rigorous process of validation
@@ -89,7 +88,7 @@ doc_class Validation =
 doc_class Solution = Exam_item +
   content  :: "Exercise list"
   valids   :: "Validation list"
-  concerns :: "ContentClass set" <= "{setter,checker,external_examiner}"
+  concerns :: "ContentClass set" <= "{setter,checker,externalExaminer}"
   
 doc_class MathExam=
   content :: "(Header + Author + Exercise) list"

@@ -6,13 +6,10 @@ begin
 (*>*)   
 open_monitor*[exam::MathExam] 
 
-section*[idir::Author, affiliation="''CentraleSupelec''", 
-         email="''idir.aitsadoune@centralesupelec.fr''"]
-        {*Idir AIT SADOUNE*}
 
-subsection*[header::Header,examSubject= "[algebra]",  examTitle="''Exam number 1''", 
-            date="''02-05-2018''", timeAllowed="90::int"]
-{* 
+section*[header::Header,examSubject= "[algebra]", 
+            date="''02-05-2018''", timeAllowed="90::int"] {* Exam number 1 *}
+text{* 
 \begin{itemize}
 \item Use black ink or black ball-point pen. 
 \item Draw diagrams in pencil.
@@ -20,6 +17,11 @@ subsection*[header::Header,examSubject= "[algebra]",  examTitle="''Exam number 1
 \end{itemize}
 *}
 
+subsection*[idir::Author, affiliation="''CentraleSupelec''", 
+         email="''idir.aitsadoune@centralesupelec.fr''"]
+        {*Idir AIT SADOUNE*}
+  
+  
 (* should be in DOF-core 
 
 * causes crash on the LaTeX side:

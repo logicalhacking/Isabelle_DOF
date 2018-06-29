@@ -11,4 +11,4 @@ session "MathExam" = "HOL" +
     "ontologies.tex"
     "preamble.tex"
     "build"
-    "document/figures/Polynomialdeg5.png"
+    "figures/Polynomialdeg5.png"

@@ -2,8 +2,12 @@ session "BAC2017" = "HOL" +
   options [document = pdf, document_output = "output",quick_and_dirty=true]
   theories [document = false]
     "../../../ontologies/mathex_onto"
+    "Deriv" 
+    "Transcendental"
   theories
      BAC2017
   document_files
     "root.tex"
+    "preamble.tex"
+    "ontologies.tex"
     "build"

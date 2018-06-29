@@ -6,7 +6,7 @@ begin
    
 open_monitor*[exam::MathExam] 
 
-
+(* currently rethinking on "deep ontologies" necessary ... Achim
 text*[idir::Author,affiliation="''LRI, CentraleSupelec''", 
 email="''idir.aitsadoune@centralesupelec.fr''"]
 {*Idir AIT SADOUNE*}
@@ -18,12 +18,11 @@ text*[keller::Author,affiliation="''LRI, Univ. Paris-Sud''",
 text{* This example is an excerpt from the french baccaleareat 2017. 
        The textual explanations were kept in french.
  *}
-
-text*[header::Header,examSubject= "[analysis,geometry]", 
-         examTitle="''BACCALAUREAT GENERAL MATHEMATIQUES''", 
-         date="''21-06-2017''", 
-        timeAllowed="240::int"]
-{* 
+*)
+  
+text*[header::Header,examSubject="[analysis,geometry]", date="''21-06-2017''", 
+      timeAllowed="240::int"]{* BACCALAUREAT GENERAL MATHEMATIQUES *}
+text{* 
 \begin{itemize}
 \item Les calculatrices électroniques de poche sont autorisées, conformément à la réglementation 
       en vigueur.
@@ -38,8 +37,7 @@ text*[header::Header,examSubject= "[analysis,geometry]",
 
 
 text*[exo1 :: Exercise,
-            Exercise.concerns= "{setter,student,checker,external_examiner}",
-            Exercise.content="[q1::Task,q2,q3a]"]
+      Exercise.concerns= "{setter,student,checker,externalExaminer}"]
 {*  On considère la fonction h définie sur l’intervalle [0..+\<infinity>] par : 
     @{term "h(x) = x * exponent (-x)"}
 *}
@@ -52,21 +50,17 @@ text*[q1::Task, Task.concerns= "{setter,student}",
 level="oneStar", mark="1::int", type="formal"] 
 {* Déterminer la limite de la fonction @{term h} en +\<infinity>. *}
 
-text*[a1::Answer_Formal_Step]
-{* Fill in term and justification*}
+text*[a1::Answer_Formal_Step] {* Fill in term and justification*}
 
-lemma q1 : "(h \<longlongrightarrow> (0::real)) at_top"
-  sorry
+lemma q1 : "(h \<longlongrightarrow> (0::real)) at_top"  sorry
 
-text*[v1::Validation,
-    proofs="[q1::thm]"]
-  {* See lemma q1 *}
+text*[v1::Validation, proofs="[@{thm ''q1''}::thm]"] {* See lemma @{thm q1}. *}
 
   
-text*[q2::Task, Task.concerns= "{examiner,validator,student}",
-level="oneStar", mark="1::int", type="formal"] 
-{* Étudier les variations de la fonction @{term h} sur l'intervalle [0..+\<infinity>] et dresser son tableau
-   de variation *}
+text*[q2::Task, Task.concerns= "{setter,checker,student}",
+                level="oneStar", mark="1::int", type="formal"] 
+{* Étudier les variations de la fonction @{term h} sur l'intervalle [0..+\<infinity>] et 
+   dresser son tableau de variation *}
 
 text*[a2::Answer_Formal_Step]
 {* Fill in term and justification*}
@@ -92,15 +86,14 @@ lemma q2_b : "0 \<le> x \<and> x \<le> y \<and> y \<le> 1 \<Longrightarrow> h x 
 lemma q2_c : "1 \<le> x \<and> x \<le> y \<Longrightarrow> h x \<ge> h y"
   sorry
 
-text*[v2::Validation,
-    proofs="[q2_b::thm, q2_c]"]
-  {* See lemmas q2_b and q2_c *}
+text*[v2::Validation, proofs="[@{thm ''q2_b''}, @{thm ''q2_c''}]"]
+     {* See lemmas @{thm q2_b} and @{thm q2_c}. *}
 
 
-text*[q3a::Task, Task.concerns= "{examiner,validator,student}",
+text*[q3a::Task, Task.concerns= "{setter,checker,student}",
 level="oneStar", mark="1::int", type="formal"] 
 {* Vérifier que pour tout nombre réel x appartenant à l'intervalle [0..+\<infinity>], on a :
-   @term{h x = (exp (- x)) - (h' x)} *}
+   @{term "h x = (exp (- x)) - (h' x)"}. *}
 
 text*[a3a::Answer_Formal_Step]
 {* Fill in term and justification*}
@@ -108,17 +101,14 @@ text*[a3a::Answer_Formal_Step]
 lemma q3a : "h x = (exp (- x)) - (h' x)"
   by (simp add : h_def h'_def left_diff_distrib)
 
-subsubsection*[v3a::Validation,
-    proofs="[q3a::thm]"]
-  {* See lemma q3a *}
+subsubsection*[v3a::Validation,  proofs="[@{thm ''q3a''}::thm]"]
+  {* See lemma @{thm q3a}. *}
 
 
 subsection*[sol1 :: Solution,
     Solution.content="[exo1::Exercise]",
     Solution.valids = "[v1::Validation,v2,v3a]"]
-{* 
-See validations.
-*}
+{*  See validations. *}
 
 
 
