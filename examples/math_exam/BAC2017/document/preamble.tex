@@ -13,8 +13,32 @@
 
 %% This is a placeholder for user-specific configuration and packages. 
 
-\newkeycommand\isaDofTextExercise[label=,type=,Exercise.content=,concerns=,][1]{%
+\newkeycommand\isaDofTextExercise[label=,type=,Exercise.content=,content=,concerns=,][1]{%
   \begin{Exercise}
   #1
   \end{Exercise}
+}
+
+\newkeycommand\isaDofTextSolution[Task.concerns=,concerns=,content=,valids=,][1]{%
+  #1
+}
+
+\newkeycommand\isaDofSectionSolution[Task.concerns=,concerns=,content=,valids=,][1]{%
+  #1
+}
+
+\newkeycommand\isaDofSubsectionSolution[Task.concerns=,concerns=,content=,valids=,][1]{%
+  #1
+}
+
+\newkeycommand\isaDofSubsubsectionSolution[Task.concerns=,concerns=,content=,valids=,][1]{%
+  #1
+}
+
+\newkeycommand\isaDofTextExercise[Task.concerns=,concerns=,content=,][1]{%
+  #1
+}
+
+\newkeycommand\isaDofTextValidation[tests=,proofs=,][1]{%
+  #1
 }
