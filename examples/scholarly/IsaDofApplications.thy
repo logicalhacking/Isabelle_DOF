@@ -4,11 +4,11 @@ theory IsaDofApplications
 begin
 (*>*)  
  
-title*[tit::title]\<open>Using The Isabelle Ontology Framework\<close> 
+title*[tit::title]\<open>Using the Isabelle Ontology Framework\<close> 
 subtitle*[stit::subtitle]\<open>Linking the Formal with the Informal\<close>
 
 text*[adb::author,  email="''a.brucker@sheffield.ac.uk''",  orcid="''0000-0002-6355-1200''", 
-                    affiliation="''University of Sheffield, Sheffield, UK''"]  \<open>Achim D. Brucker\<close>
+                    affiliation="''The University of Sheffield, Sheffield, UK''"]  \<open>Achim D. Brucker\<close>
 text*[idir::author, email="''idir.aitsadoune@centralesupelec.fr''", 
                     affiliation = "''CentraleSupelec, Paris, France''"]        \<open>Idir Ait-Sadoune\<close>
 text*[paolo::author,email="''paolo.crisafulli@irt-systemx.fr''", 
@@ -49,7 +49,7 @@ community~\cite{w3c:ontologies:2015}), \ie, a machine-readable form of
 the structure of documents as well as the document discourse.
 Such ontologies can be used for the scientific discourse within scholarly
 articles, mathematical libraries, and in the engineering discourse  
-of standardized software certification documents\cite{boulanger:cenelec-50128:2015,cc:cc-part3:2006}. 
+of standardized software certification documents~\cite{boulanger:cenelec-50128:2015,cc:cc-part3:2006}. 
 Further applications are the domain-specific discourse in juridical texts or medical reports.  
 In general, an ontology is a formal explicit description of \emph{concepts} 
 in a domain of discourse (called \emph{classes}), properties of each concept 
@@ -171,7 +171,7 @@ section*[isadof::text_section,
    
 text\<open> An \isadof document consists of three components: 
 \begin{itemize}
-\item the @{emph \<open>ontology definition\<close>} (which is an Isabelle theory file with definitions
+\item the @{emph \<open>ontology definition\<close>} which is an Isabelle theory file with definitions
   for document-classes and all auxiliary datatypes.  
 \item the @{emph \<open>core\<close>} of the document itself which is an Isabelle theory
   importing the ontology definition. \isadof provides an own family of text-element
