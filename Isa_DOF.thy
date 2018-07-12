@@ -19,6 +19,7 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
            "figure*"     "side_by_side_figure*" 
            "paragraph*"  "subparagraph*" 
            "text*"       :: thy_decl
+  and      "textbis"       :: document_body
            
   and      "open_monitor*" "close_monitor*" "declare_reference*" 
            "update_instance*" "doc_class" ::thy_decl
@@ -561,6 +562,10 @@ val _ =
 
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
+    (attributes -- Parse.opt_target -- Parse.document_source 
+      >> enriched_document_command {markdown = true});
+val _ =
+  Outer_Syntax.command ("textbis", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
       >> enriched_document_command {markdown = true});
 

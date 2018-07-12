@@ -8,9 +8,11 @@ section*[a::A, x = "''alpha''"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 text*[c1::C, x = "''beta''"] 
 \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
-  
+
+
 text*[d::D, a1 = "X3"] 
-\<open> ... phasellus amet id massa nunc, pede suscipit repellendus, ... \<close>
+\<open> ... phasellus amet id massa nunc, pede suscipit repellendus, ... @{docitem_ref \<open>c1\<close>} @{thm "refl"}\<close>
+
 
 update_instance*[d::D, a1 := X2]
 
