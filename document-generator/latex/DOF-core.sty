@@ -91,6 +91,12 @@
   \end{isamarkuptext}%
 }
 
+%\newkeyenvironment{isamarkupText*}[label=][0]
+\newenvironment{isamarkupText*}%[][0]
+{\par\isastyletext\begin{isapar}}
+{\end{isapar}}
+
+
 \newkeycommand\isaDofOpenMonitor[label=,type=]{}
 \newkeycommand\isaDofCloseMonitor[label=,type=]{}
 
