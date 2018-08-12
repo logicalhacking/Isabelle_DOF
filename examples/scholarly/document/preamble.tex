@@ -37,6 +37,11 @@
 
 \newcommand{\isadof}{Isabelle/DOF\xspace}
 
+
+\newkeycommand\isamarkuptextbis[label=,type=,main_author=,fixme_list=][1]{%
+  \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
+}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "root.tex"

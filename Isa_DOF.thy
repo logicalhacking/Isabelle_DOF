@@ -19,7 +19,7 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
            "figure*"     "side_by_side_figure*" 
            "paragraph*"  "subparagraph*" 
            "text*"       :: thy_decl
-  and      "textbis"       :: document_body
+  and      "Text*"       :: document_body
            
   and      "open_monitor*" "close_monitor*" "declare_reference*" 
            "update_instance*" "doc_class" ::thy_decl
@@ -565,7 +565,7 @@ val _ =
     (attributes -- Parse.opt_target -- Parse.document_source 
       >> enriched_document_command {markdown = true});
 val _ =
-  Outer_Syntax.command ("textbis", @{here}) "formal comment (primary style)"
+  Outer_Syntax.command ("Text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
       >> enriched_document_command {markdown = true});
 
@@ -938,6 +938,60 @@ doc_class side_by_side_figure   = figure +
 
 section{* Testing and Validation *}
 
-  
+ML{*
+
+local
+val space_proper =
+  Scan.one Token.is_blank -- Scan.many Token.is_comment -- Scan.one Token.is_proper;
+
+val is_improper = not o (Token.is_proper orf Token.is_begin_ignore orf Token.is_end_ignore);
+val improper = Scan.many is_improper;
+val improper_end = Scan.repeat (Scan.unless space_proper (Scan.one is_improper));
+val space_proper =
+  Scan.one Token.is_blank -- Scan.many Token.is_comment -- Scan.one Token.is_proper;
+
+val blank_end = Scan.repeat (Scan.unless space_proper (Scan.one Token.is_blank));
+val tag = (improper -- Parse.$$$ "%" -- improper) |-- Parse.!!! (Parse.tag_name --| blank_end);
+
+val keywords = Thy_Header.get_keywords @{theory};
+val locale =
+  Scan.option ((Parse.$$$ "(" -- improper -- Parse.$$$ "in") |--
+    Parse.!!! (improper |-- Parse.name --| (improper -- Parse.$$$ ")")));
+
+
+fun convert_meta_args (NONE : ((((string * Position.T) * (string * Position.T) option) * ((string * Position.T) * string) list) option)) = ""
+
+(* problem: no context. Only approximative pretty-printing 
+   on terms possible, and very limited calculations. However, this is acceptable 
+   on meta-args since they are intended to target to control the latex-presentation
+   process and not semantic evaluation. Meta-args should be ground, well-formed and 
+   well-typed anyway, otherwise they would have been rejected in the parsing process. *)
+val meta_args_parser_hook =  Unsynchronized.ref((fn thy => fn s => ("",s)): theory -> string parser)
+
+in
+
+val m = (Scan.option (AnnoTextelemParser.attributes) >> convert_meta_args) 
+
+
+fun markup pred mk flag = Scan.peek (fn d =>
+      improper |--
+        Parse.position (Scan.one (fn tok =>
+          Token.is_command tok andalso pred keywords (Token.content_of tok))) --
+      Scan.repeat tag --
+      Parse.!!!! 
+      (    (!meta_args_parser_hook (@{theory}))
+         --
+           (  (improper -- locale -- improper) 
+         |-- (Parse.document_source)) 
+         --| improper_end)
+      >> (fn (((tok, pos'), tags), (meta_args,source)) =>
+        let val name = Token.content_of tok
+        in (SOME (name, pos', tags), (mk (name, meta_args, source), (flag, d))) end));
+
+fun set_meta_args_parser f = (meta_args_parser_hook:= f)
+
+end
+
+*}
   
 end
