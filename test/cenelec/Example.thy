@@ -36,6 +36,7 @@ text*[t10::test_result] {* This is a meta-test. This could be an ML-command
 that governs the external test-execution via, eg., a makefile or specific calls
 to a test-environment or test-engine *}
 
+text \<open> @{ec \<open>ass122\<close>}}\<close>
 
 text \<open> As established by @{docref (unchecked) \<open>t10\<close>}, 
                          @{docref (define) \<open>t10\<close>} \<close>
@@ -43,17 +44,43 @@ text \<open> the               @{docref \<open>t10\<close>}
        as well as the    @{docref \<open>ass122\<close>}\<close>  
 text \<open> represent a justification of the safety related applicability 
        condition @{srac \<open>ass122\<close>} aka exported constraint @{ec \<open>ass122\<close>}.       
-     \<close> 
+     \<close>
+  
+text{*  And some ontologically inconsistent reference: @{hypothesis \<open>ass1\<close>} as well as  *} 
+-- wrong
+
+text{* ... some more ontologically inconsistent reference: @{assumption \<open>hyp1\<close>} as well as  *} 
+-- wrong
+
+  
+  
+text{* And a further ontologically totally inconsistent reference:
+    @{test_result \<open>ass122\<close>} as well as ... *} 
+-- wrong  
+  
+text{* the ontologically inconsistent reference: @{ec \<open>t10\<close>}  *} 
+-- wrong  
+  
+  
 
 section{* Some Tests for Ontology Framework and its CENELEC Instance *}  
 
 declare_reference* [lalala::requirement, alpha="main", beta=42]
 
+declare_reference* [lalala::quod] (* shouldn't work: multiple declaration *)
 
 declare_reference* [blablabla::cid, alpha="beta sdf", beta=gamma, delta=dfg_fgh\<^sub>1]
   
+paragraph*[sdf]{* just a paragraph *}  
 paragraph* [sdfk] \<open> just a paragraph - lexical variant \<close>  
 
+subsection*[sdf]{* shouldn't work, multiple ref. *}  
+
+section*[sedf::requirement, alpja= refl]{* Shouldn't work - misspelled attribute. *}  
+text\<open>\label{sedf}\<close>  (* Hack to make the LaTeX-ing running. Should disappear. *)
+  
+section*[seedf::test_case, dfg=34,fgdfg=zf]{* and another example with attribute setting,
+but wrong doc_class constraint. *}  
 
 section{* Text Antiquotation Infrastructure ... *}  
                   
@@ -65,7 +92,19 @@ text{* @{docref \<open>ass122\<close>} -- global reference to a text-item in ano
 text{* @{ec \<open>ass122\<close>} -- global reference to a exported constraint in another file.
                          Note that the link is actually a srac, which, according to 
                          the ontology, happens to be an "ec".  *}
-   
+
+text{* @{test_specification \<open>ass122\<close>} -- wrong: "reference ontologically inconsistent". *}
+
+
+
+text{* Here is a reference to @{docref \<open>sedf\<close>} *}    
+(* works currently only in connection with the above label-hack. 
+   Try to hover over the sedf - link and activate it !!! *)
+ 
+
+section \<open>Miscellaneous\<close> 
+  
+section(in order){* sdfsdf*}  (* undocumented trouvaille when analysing the code *) 
 
   
 end

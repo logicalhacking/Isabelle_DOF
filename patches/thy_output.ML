@@ -408,6 +408,7 @@ val locale =
   Scan.option ((Parse.$$$ "(" -- improper -- Parse.$$$ "in") |--
     Parse.!!! (improper |-- Parse.name --| (improper -- Parse.$$$ ")")));
 
+(*
 val reference =
     Parse.position Parse.name 
     -- Scan.option (Parse.$$$ "::" |-- Parse.!!! (Parse.position Parse.name));
@@ -423,7 +424,7 @@ val attributes =
      --| Parse.$$$ "]"
 
 fun convert_meta_args (NONE : ((((string * Position.T) * (string * Position.T) option) * ((string * Position.T) * string) list) option)) = ""
-
+*)
 val meta_args_parser_hook =  Unsynchronized.ref((fn thy => fn s => ("",s)): theory -> string parser)
 
 

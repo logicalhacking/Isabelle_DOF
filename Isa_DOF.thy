@@ -382,10 +382,26 @@ end (* struct *)
   
   
 section{* Syntax for Annotated Documentation Commands (the '' View'' Part I) *}
-  
+
 ML{* 
 structure AnnoTextelemParser = 
 struct
+
+type meta_args_t = (((string * Position.T) *
+                     (string * Position.T) option)
+                    * ((string * Position.T) * string) list)
+
+fun meta_args_2_string thy (((lab, _), cid_opt), attr_list) = 
+    (* for the moment naive, i.e. without textual normalization of attribute names and 
+       adapted term printing *)
+    let val l   = "label = "^lab
+        val cid = "cid =" ^ (case cid_opt of
+                                NONE => DOF_core.default_cid
+                              | SOME(cid,_) => DOF_core.name2doc_class_name thy cid) 
+        fun str ((lhs,_),rhs) = lhs^"="^rhs  (* no normalization on lhs (could be long-name)
+                                                no paraphrasing on rhs (could be fully paranthesized
+                                                pretty-printed formula in LaTeX notation ... *)
+    in  enclose "[" "]" (commas ([l,cid] @ (map str attr_list))) end
 
 val semi = Scan.option (Parse.$$$ ";");
 
@@ -408,7 +424,7 @@ val attributes =
     (Parse.$$$ "[" 
      |-- (reference -- 
          (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) []))
-     --| Parse.$$$ "]"
+     --| Parse.$$$ "]" : meta_args_t parser 
 
 val attributes_upd =  
     (Parse.$$$ "[" 
@@ -444,8 +460,7 @@ fun check_classref (SOME(cid,pos')) thy =
 fun generalize_typ n = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,n),sort));
 fun infer_type thy term = hd (Type_Infer_Context.infer_types (Proof_Context.init_global thy) [term])
 
-fun enriched_document_command markdown (((((oid,pos),cid_pos),
-                                              doc_attrs: ((string * Position.T) * string) list),
+fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
                                         xstring_opt:(xstring * Position.T) option),
                                         toks:Input.source) 
                                         : Toplevel.transition -> Toplevel.transition =
@@ -454,11 +469,12 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),
     val _ = Position.report pos (docref_markup true oid id pos);
             (* creates a markup label for this position and reports it to the PIDE framework;
                this label is used as jump-target for point-and-click feature. *)
-                          
     fun enrich_trans thy = 
           let val cid_long = check_classref  cid_pos thy
               val count = Unsynchronized.ref (0 - 1);
               fun incr () = Unsynchronized.inc count
+    val _ = writeln ("XXX" ^ (meta_args_2_string thy (((oid,pos),cid_pos), doc_attrs)) )                     
+
               val generalize_term =  let val n = incr () in Term.map_types (generalize_typ n) end
               fun read_assn  ((lhs, pos), rhs) = 
                                  ((Syntax.read_term_global thy lhs |> generalize_term,pos),
@@ -475,8 +491,8 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos),
                                                           id=id,   
                                                           cid=cid_long})
           end
-    fun check_text thy = ( let val _ = (SPY3 := Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks)
-                           in  thy end)
+    fun check_text thy = let val _ = Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks
+                         in  thy end (* as side-effect, generates markup *)
   in   
        Toplevel.theory(enrich_trans #> check_text) 
        (* Thanks Frederic Tuong! ! ! *)
@@ -609,6 +625,10 @@ val _ =
                         >> (fn ((((((oid,pos),cid),doc_attrs),some_name:string option),modes : string list),t:string) => 
                                           (Toplevel.keep (assert_cmd some_name modes t)))); (* dummy/fake so far *)
 
+(* this sets parser and converter for LaTeX generation of meta-attributes. 
+   Currently of *all* commands, no distinction between text* and text command. 
+*)
+val _ = Thy_Output.set_meta_args_parser (fn thy => attributes >> meta_args_2_string thy)
 
 end (* struct *)
 
@@ -670,7 +690,6 @@ section{* Syntax for Ontological Antiquotations (the '' View'' Part II) *}
 ML{*
 structure OntoLinkParser = 
 struct
-
 
 fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) pos name  =
   let
@@ -737,8 +756,6 @@ fun check_and_mark_term ctxt oid  =
            in  value end
       else error("undefined document reference:"^oid)
   end
-
-
 
 val X = (Scan.lift Args.cartouche_input : Input.source context_parser) >> (fn inp => "")
 
@@ -909,7 +926,7 @@ end (* struct *)
 
 text*[xxxy] {* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}*}    
   
- ML{* AnnoTextelemParser.SPY3; *}  
+ML{* AnnoTextelemParser.SPY3; *}  
 
 text{* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}  *}   
    
@@ -937,7 +954,7 @@ doc_class side_by_side_figure   = figure +
 (* dito the future monitor: table - block *)
 
 section{* Testing and Validation *}
-
+(*
 ML{*
 
 local
@@ -993,5 +1010,5 @@ fun set_meta_args_parser f = (meta_args_parser_hook:= f)
 end
 
 *}
-  
+  *)
 end
