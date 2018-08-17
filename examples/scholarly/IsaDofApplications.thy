@@ -293,9 +293,9 @@ figure*[fig1::figure, spawn_columns=False,relative_width="''95''",
        \<open> Ouroboros I: This paper from inside \ldots \<close>  
 
 text*[ctest2]\<open>This is a crucial test : @{docitem_ref \<open>fig1\<close>} @{thm "refl"}\<close>
-(*
+
 Text*[ctest]\<open>This is a crucial test : @{docitem_ref \<open>fig1\<close>} @{thm "refl"}\<close>
-*)
+
 
 text\<open> @{docitem_ref \<open>fig1\<close>} shows the corresponding view in the Isabelle/PIDE of the present paper.
 Note that the text uses \isadof's own text-commands containing the meta-information provided by

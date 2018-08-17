@@ -395,12 +395,13 @@ fun meta_args_2_string thy (((lab, _), cid_opt), attr_list) =
     (* for the moment naive, i.e. without textual normalization of attribute names and 
        adapted term printing *)
     let val l   = "label = "^lab
-        val cid = "cid =" ^ (case cid_opt of
+        val cid = "type = " ^ (case cid_opt of
                                 NONE => DOF_core.default_cid
                               | SOME(cid,_) => DOF_core.name2doc_class_name thy cid) 
-        fun str ((lhs,_),rhs) = lhs^"="^rhs  (* no normalization on lhs (could be long-name)
-                                                no paraphrasing on rhs (could be fully paranthesized
-                                                pretty-printed formula in LaTeX notation ... *)
+        fun str ((lhs,_),rhs) = lhs^" = "^(enclose "{" "}" rhs)  
+                                (* no normalization on lhs (could be long-name)
+                                   no paraphrasing on rhs (could be fully paranthesized
+                                   pretty-printed formula in LaTeX notation ... *)
     in  enclose "[" "]" (commas ([l,cid] @ (map str attr_list))) end
 
 val semi = Scan.option (Parse.$$$ ";");
@@ -628,7 +629,8 @@ val _ =
 (* this sets parser and converter for LaTeX generation of meta-attributes. 
    Currently of *all* commands, no distinction between text* and text command. 
 *)
-val _ = Thy_Output.set_meta_args_parser (fn thy => attributes >> meta_args_2_string thy)
+val _ = Thy_Output.set_meta_args_parser 
+             (fn thy => (Scan.optional (attributes >> meta_args_2_string thy) "")) 
 
 end (* struct *)
 
