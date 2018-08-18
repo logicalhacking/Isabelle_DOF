@@ -6,8 +6,7 @@ open_monitor*[struct::M]
 
 section*[a::A, x = "''alpha''"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
-text*[c1::C, x = "''beta''"] 
-\<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
+text*[c1::C, x = "''beta''"] \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
 
 
 text*[d::D, a1 = "X3"] 
@@ -32,7 +31,7 @@ update_instance*[f,r:="[@{thm ''some_proof''}]"]
 text{* ..., mauris amet, id elit aliquam aptent id,  ... *}
   
 update_instance*[f,b:="{(@{docitem  ''a''}::A,@{docitem  ''c1''}::C), 
-                        (@{docitem  ''a''},@{docitem  ''c1''})}"] 
+                        (@{docitem  ''a''},   @{docitem  ''c1''})}"] 
   
 close_monitor*[struct]
 

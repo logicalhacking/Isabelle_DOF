@@ -263,7 +263,7 @@ fun define_object_global (oid, bbb) thy  =
         else map_data_global  (apfst(fn {tab=t,maxano=x} =>            
                                         {tab=Symtab.update(oid,SOME bbb) t,
                                          maxano=x}))
-               (thy)
+                              (thy)
     end
             
 fun define_object_local (oid, bbb) ctxt  = 
@@ -392,12 +392,13 @@ type meta_args_t = (((string * Position.T) *
                     * ((string * Position.T) * string) list)
 
 fun meta_args_2_string thy (((lab, _), cid_opt), attr_list) = 
-    (* for the moment naive, i.e. without textual normalization of attribute names and 
-       adapted term printing *)
-    let val l   = "label = "^lab
-        val cid = "type = " ^ (case cid_opt of
+    (* for the moment naive, i.e. without textual normalization of 
+       attribute names and adapted term printing *)
+    let val l   = "label = "^ (enclose "{" "}" lab)
+        val cid = "type = " ^ (enclose "{" "}"
+                                (case cid_opt of
                                 NONE => DOF_core.default_cid
-                              | SOME(cid,_) => DOF_core.name2doc_class_name thy cid) 
+                              | SOME(cid,_) => DOF_core.name2doc_class_name thy cid) )
         fun str ((lhs,_),rhs) = lhs^" = "^(enclose "{" "}" rhs)  
                                 (* no normalization on lhs (could be long-name)
                                    no paraphrasing on rhs (could be fully paranthesized
@@ -415,7 +416,6 @@ val attribute_upd  : (((string * Position.T) * string) * string) parser =
     -- (@{keyword "+="} || @{keyword ":="})
     -- Parse.!!! Parse.term;
 
-(* Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ uncheckedN) *)
 val reference =
     Parse.position Parse.name 
     -- Scan.option (Parse.$$$ "::" |-- Parse.!!! (Parse.position Parse.name));
@@ -474,8 +474,6 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
           let val cid_long = check_classref  cid_pos thy
               val count = Unsynchronized.ref (0 - 1);
               fun incr () = Unsynchronized.inc count
-    val _ = writeln ("XXX" ^ (meta_args_2_string thy (((oid,pos),cid_pos), doc_attrs)) )                     
-
               val generalize_term =  let val n = incr () in Term.map_types (generalize_typ n) end
               fun read_assn  ((lhs, pos), rhs) = 
                                  ((Syntax.read_term_global thy lhs |> generalize_term,pos),
@@ -492,8 +490,8 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
                                                           id=id,   
                                                           cid=cid_long})
           end
-    fun check_text thy = let val _ = Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks
-                         in  thy end (* as side-effect, generates markup *)
+    fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
+                         (* as side-effect, generates markup *)
   in   
        Toplevel.theory(enrich_trans #> check_text) 
        (* Thanks Frederic Tuong! ! ! *)
@@ -508,8 +506,9 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                                 SOME{cid,...} => cid
                               | NONE => error("undefined doc_class.")
                  val cid_long = check_classref cid_pos thy
-                 val _ = if cid_long = DOF_core.default_cid  orelse cid = cid_long then () 
-                                       else error("incompatible classes:"^cid^":"^cid_long)
+                 val _ = if cid_long = DOF_core.default_cid  orelse cid = cid_long 
+                         then () 
+                         else error("incompatible classes:"^cid^":"^cid_long)
 
                  val count = Unsynchronized.ref (0 - 1);
                  fun incr () = Unsynchronized.inc count
@@ -759,7 +758,6 @@ fun check_and_mark_term ctxt oid  =
       else error("undefined document reference:"^oid)
   end
 
-val X = (Scan.lift Args.cartouche_input : Input.source context_parser) >> (fn inp => "")
 
 fun docitem_value_ML_antiquotation binding = 
     ML_Antiquotation.inline binding 
@@ -781,22 +779,22 @@ end (* struct *)
 ML{* 
 fun calculate_attr_access ctxt proj_term term =
     (* term assumed to be ground type, (f term) not necessarily *)
-    let val _ = writeln("XXX"^(Syntax.string_of_term ctxt term))
-        fun f X = proj_term $ X
-        val [subterm'] = Type_Infer_Context.infer_types ctxt [f term]
+    let val _ = writeln("XXX "^(Syntax.string_of_term ctxt (proj_term $ term)))
+        val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
         val ty = type_of (subterm')
-        val _ = writeln("YYY"^(Syntax.string_of_term ctxt subterm'))
+        val _ = writeln("YYY "^(Syntax.string_of_term ctxt subterm'))
         val term' = (Const(@{const_name "HOL.eq"}, ty --> ty --> HOLogic.boolT) 
                               $ subterm' 
                               $ Free("_XXXXXXX", ty))
-        val _ = writeln("ZZZ"^(Syntax.string_of_term ctxt term'))
+        val _ = writeln("ZZZ "^(Syntax.string_of_term ctxt term'))
         val thm = simplify ctxt (Thm.assume(Thm.cterm_of ctxt (HOLogic.mk_Trueprop term')));
         val Const(@{const_name "HOL.eq"},_) $ lhs $ _ = HOLogic.dest_Trueprop (Thm.concl_of thm)
     in  lhs end
 
 fun calculate_attr_access_check ctxt attr oid = (* template *)
-    case DOF_core.get_value_local oid ctxt of 
-             SOME term => let val SOME{cid,...} = DOF_core.get_object_local oid ctxt
+    case DOF_core.get_value_local oid (Context.the_proof ctxt) of 
+             SOME term => let val ctxt = Context.the_proof ctxt
+                              val SOME{cid,...} = DOF_core.get_object_local oid ctxt
                               val (pr_name,_,ty) = case DOF_core.get_attribute_long_name_local cid attr ctxt of
                                             SOME f => f
                                           | NONE => error ("attribute undefined for ref"^ oid)
@@ -807,31 +805,20 @@ fun calculate_attr_access_check ctxt attr oid = (* template *)
     
  *}  
   
-ML{*
-ML_Syntax.atomic o ML_Syntax.print_term;
-Scan.lift Args.name --| (Scan.lift @{keyword "in"}) -- Scan.lift Args.name;
-(fn (ctxt,toks) =>
-   (Scan.lift Args.name --| (Scan.lift @{keyword "in"}) -- Scan.lift Args.name >> 
-   (fn(attr, oid) =>  (calculate_attr_access_check (Context.the_proof ctxt) attr oid) )) (ctxt, toks))
-   : string context_parser
-
-*}
 ML{* 
 val _ = Theory.setup 
-           (ML_Antiquotation.inline @{binding doc_class_attr} 
+           (ML_Antiquotation.inline @{binding docitem_attr} 
                (fn (ctxt,toks) =>
-                       (Scan.lift Args.name --| 
-                        (Scan.lift @{keyword "in"}) -- 
-                         Scan.lift Args.name 
+                       (Scan.lift Args.name --| (Scan.lift @{keyword "::"}) -- Scan.lift Args.name 
                         >>  
-                        (fn(attr : string, oid : string) =>  
-                           (calculate_attr_access_check (Context.the_proof ctxt) attr oid) ) 
-                       : string context_parser
+                        (fn(attr:string,oid:string) => calculate_attr_access_check ctxt attr oid) 
+                        : string context_parser
                        ) 
                        (ctxt, toks))
            )    
 *}
-  
+
+
   
 section{* Syntax for Ontologies (the '' View'' Part III) *} 
 ML{* 
@@ -930,7 +917,6 @@ text*[xxxy] {* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}*}
   
 ML{* AnnoTextelemParser.SPY3; *}  
 
-text{* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}  *}   
    
 section{* Library of Standard Text Ontology *}
 
@@ -956,61 +942,5 @@ doc_class side_by_side_figure   = figure +
 (* dito the future monitor: table - block *)
 
 section{* Testing and Validation *}
-(*
-ML{*
 
-local
-val space_proper =
-  Scan.one Token.is_blank -- Scan.many Token.is_comment -- Scan.one Token.is_proper;
-
-val is_improper = not o (Token.is_proper orf Token.is_begin_ignore orf Token.is_end_ignore);
-val improper = Scan.many is_improper;
-val improper_end = Scan.repeat (Scan.unless space_proper (Scan.one is_improper));
-val space_proper =
-  Scan.one Token.is_blank -- Scan.many Token.is_comment -- Scan.one Token.is_proper;
-
-val blank_end = Scan.repeat (Scan.unless space_proper (Scan.one Token.is_blank));
-val tag = (improper -- Parse.$$$ "%" -- improper) |-- Parse.!!! (Parse.tag_name --| blank_end);
-
-val keywords = Thy_Header.get_keywords @{theory};
-val locale =
-  Scan.option ((Parse.$$$ "(" -- improper -- Parse.$$$ "in") |--
-    Parse.!!! (improper |-- Parse.name --| (improper -- Parse.$$$ ")")));
-
-
-fun convert_meta_args (NONE : ((((string * Position.T) * (string * Position.T) option) * ((string * Position.T) * string) list) option)) = ""
-
-(* problem: no context. Only approximative pretty-printing 
-   on terms possible, and very limited calculations. However, this is acceptable 
-   on meta-args since they are intended to target to control the latex-presentation
-   process and not semantic evaluation. Meta-args should be ground, well-formed and 
-   well-typed anyway, otherwise they would have been rejected in the parsing process. *)
-val meta_args_parser_hook =  Unsynchronized.ref((fn thy => fn s => ("",s)): theory -> string parser)
-
-in
-
-val m = (Scan.option (AnnoTextelemParser.attributes) >> convert_meta_args) 
-
-
-fun markup pred mk flag = Scan.peek (fn d =>
-      improper |--
-        Parse.position (Scan.one (fn tok =>
-          Token.is_command tok andalso pred keywords (Token.content_of tok))) --
-      Scan.repeat tag --
-      Parse.!!!! 
-      (    (!meta_args_parser_hook (@{theory}))
-         --
-           (  (improper -- locale -- improper) 
-         |-- (Parse.document_source)) 
-         --| improper_end)
-      >> (fn (((tok, pos'), tags), (meta_args,source)) =>
-        let val name = Token.content_of tok
-        in (SOME (name, pos', tags), (mk (name, meta_args, source), (flag, d))) end));
-
-fun set_meta_args_parser f = (meta_args_parser_hook:= f)
-
-end
-
-*}
-  *)
 end

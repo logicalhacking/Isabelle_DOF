@@ -4,7 +4,6 @@ begin
 
 section{* Some show-off's of general antiquotations. *}
 
-  
 (* some show-off of standard anti-quotations: *) 
 print_attributes
 print_antiquotations
