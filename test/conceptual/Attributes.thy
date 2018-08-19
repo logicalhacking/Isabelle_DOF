@@ -7,12 +7,15 @@ text* [dfgdfg::B, y = "[''sdf'']"]\<open> sdfsdfs sdfsdf sdfsdf @{thm refl}}\<cl
 term "B"
 text\<open> @{docitem_ref \<open>dfgdfg\<close>} }\<close>
 
-declare  [[ML_print_depth = 20]]
+print_doc_classes
+
+print_doc_items
+
 ML\<open>  
+
 val ({tab = x, ...},y)= DOF_core.get_data @{context};
 writeln "================";
-Symtab.dest x;
-writeln "================";
+
 Symtab.dest y;
 \<close>
 

@@ -25,6 +25,8 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
            "update_instance*" "doc_class" ::thy_decl
 
   and      "lemma*" "theorem*" "assert*"  ::thy_decl
+
+  and     "print_doc_classes" "print_doc_items"  :: diag
            
   
 begin
@@ -376,10 +378,52 @@ fun writeln_classrefs ctxt = let  val tab = snd(get_data ctxt)
 
 fun writeln_docrefs ctxt = let  val {tab,...} = fst(get_data ctxt)
                            in   writeln (String.concatWith "," (Symtab.keys tab)) end
+
+fun print_doc_items b ctxt = 
+    let val ({tab = x, ...},_)= get_data ctxt;
+        val _ = writeln "=====================================";    
+        fun print_item (n, SOME({cid,id,pos,thy_name,value})) =
+           (writeln ("docitem: "^n);
+            writeln ("    type:    "^cid);
+            writeln ("    origine: "^thy_name);
+            writeln ("    value:   "  ^ (Syntax.string_of_term ctxt value))
+           );
+    in  map print_item (Symtab.dest x); 
+        writeln "=====================================\n\n\n" end;
+
+fun print_doc_classes b ctxt = 
+    let val ({tab = _, ...},y)= get_data ctxt;
+        val _ = writeln "=====================================";    
+        fun print_attr (n, ty, NONE) = (Binding.print n)
+          | print_attr (n, ty, SOME t) = (Binding.print n^"("^Syntax.string_of_term ctxt t^")")
+        fun print_class (n, {attribute_decl, id, inherits_from, name, params, thy_name}) =
+           (case inherits_from of 
+               NONE => writeln ("docclass: "^n)
+             | SOME(_,nn) => writeln ("docclass: "^n^" = "^nn^" + ");
+            writeln ("    name:    "^(Binding.print name));
+            writeln ("    origin:  "^thy_name);
+            writeln ("    attrs:   "  ^ commas (map print_attr attribute_decl))
+           );
+    in  map print_class (Symtab.dest y); 
+        writeln "=====================================\n\n\n" 
+    end;
+
+val _ =
+  Outer_Syntax.command @{command_keyword print_doc_classes}
+    "print document classes"
+    (Parse.opt_bang >> (fn b =>
+      Toplevel.keep (print_doc_classes b o Toplevel.context_of)));
+
+val _ =
+  Outer_Syntax.command @{command_keyword print_doc_items}
+    "print document items"
+    (Parse.opt_bang >> (fn b =>
+      Toplevel.keep (print_doc_items b o Toplevel.context_of)));
+
 end (* struct *)
 *}
   
-  
+print_antiquotations  
   
 section{* Syntax for Annotated Documentation Commands (the '' View'' Part I) *}
 
