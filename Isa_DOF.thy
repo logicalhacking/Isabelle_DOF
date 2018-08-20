@@ -348,7 +348,7 @@ type attributes_info = { def_occurrence : string,
                          typ : typ
                        }
 
-fun get_attribute_info_local cid attr ctxt : attributes_info option=
+fun get_attribute_info_local (*long*)cid attr ctxt : attributes_info option=
     let val hierarchy = get_attributes_local cid ctxt  (* search in order *)
         fun found (s,L) = case find_first (fn (bind,_,_) => Binding.name_of bind = attr) L of
                             NONE => NONE
@@ -360,8 +360,8 @@ fun get_attribute_info_local cid attr ctxt : attributes_info option=
                                              typ = ty})
     end
 
-fun get_attribute_info cid attr thy = get_attribute_info_local cid attr 
-                                                 (Proof_Context.init_global thy)
+fun get_attribute_info (*long*)cid attr thy = 
+        get_attribute_info_local cid attr (Proof_Context.init_global thy)
 
 
 fun get_value_global oid thy  = case get_object_global oid thy of
