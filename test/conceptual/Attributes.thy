@@ -2,6 +2,9 @@ theory Attributes
   imports "../../ontologies/Conceptual"
 begin
 
+ML\<open>open Long_Name;
+base_name "Conceptual.A"
+\<close>
 text*[dfgdfg::B, y = "[''sdf'']"]\<open> sdfsdfs sdfsdf sdfsdf @{thm refl}}\<close>
 
 text\<open> @{docitem_ref \<open>dfgdfg\<close>} }\<close>

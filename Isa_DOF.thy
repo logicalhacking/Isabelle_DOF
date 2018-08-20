@@ -487,7 +487,10 @@ fun convert((Const(s,ty),_), t) X = Const(s^"_update", dummyT)
                                     $ Abs("uuu_", type_of t, t) $ X
    |convert _ _ = error("Left-hand side not a doc_class attribute.")
 
-val base = Const(@{const_name "undefined"},dummyT)
+fun base_default cid_long = 
+    if cid_long = DOF_core.default_cid then Const(@{const_name "undefined"},@{typ "unit"})
+    else let val ty_name = cid_long^"."^  Long_Name.base_name cid_long^"_ext"
+         in  Const(@{const_name "undefined"},Type(ty_name, [@{typ "unit"}])) end
 
 fun check_classref (SOME(cid,pos')) thy = 
           let val _ = if not (DOF_core.is_defined_cid_global cid thy) 
@@ -525,7 +528,7 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
               val assns = map read_assn doc_attrs
               val _ = (SPY:=assns)   
               val _ = (SPY2 := Input.source_explode toks)
-              val defaults = base       (* this calculation ignores the defaults *)
+              val defaults = base_default  cid_long     (* this calculation ignores the defaults *)
               val value_term = (fold convert assns defaults)  |> (infer_type thy) 
               val name = Context.theory_name thy 
           in  thy |> DOF_core.define_object_global (oid, {pos=pos, 
