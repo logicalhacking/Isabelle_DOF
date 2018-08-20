@@ -317,6 +317,7 @@ fun is_defined_cid_local cid ctxt  = let val t = snd(get_data ctxt)
                                          Symtab.defined t (name2doc_class_name_local ctxt cid) 
                                      end
 
+
 fun get_attributes_local cid ctxt =
     if cid = default_cid then []
     else let val t = snd(get_data ctxt)
@@ -342,15 +343,24 @@ fun get_default_local cid attr ctxt =
 
 fun get_default cid attr thy = get_default_local cid attr (Proof_Context.init_global thy)
 
-fun get_attribute_long_name_local cid attr ctxt =
+type attributes_info = { def_occurrence : string,
+                         long_name : string,
+                         typ : typ
+                       }
+
+fun get_attribute_info_local cid attr ctxt : attributes_info option=
     let val hierarchy = get_attributes_local cid ctxt  (* search in order *)
-        fun found (_,L) = find_first (fn (bind,_,_) => Binding.name_of bind = attr) L
+        fun found (s,L) = case find_first (fn (bind,_,_) => Binding.name_of bind = attr) L of
+                            NONE => NONE
+                          | SOME X => SOME(s,X)
     in  case get_first found hierarchy of
            NONE => NONE
-         | SOME (bind, ty,_) => SOME(cid,(Binding.name_of bind), ty)
+         | SOME (cid',(bind, ty,_)) => SOME({def_occurrence = cid,
+                                             long_name = cid'^"."^(Binding.name_of bind), 
+                                             typ = ty})
     end
 
-fun get_attribute_long_name cid attr thy = get_attribute_long_name_local cid attr 
+fun get_attribute_info cid attr thy = get_attribute_info_local cid attr 
                                                  (Proof_Context.init_global thy)
 
 
@@ -842,10 +852,12 @@ fun calculate_attr_access_check ctxt attr oid = (* template *)
     case DOF_core.get_value_local oid (Context.the_proof ctxt) of 
              SOME term => let val ctxt = Context.the_proof ctxt
                               val SOME{cid,...} = DOF_core.get_object_local oid ctxt
-                              val (long_cid, attr_b,ty) = case DOF_core.get_attribute_long_name_local cid attr ctxt of
+                              val (* (long_cid, attr_b,ty) = *)
+                                  {def_occurrence, long_name, typ=ty} = 
+                                       case DOF_core.get_attribute_info_local cid attr ctxt of
                                             SOME f => f
                                           | NONE => error ("attribute undefined for ref"^ oid)
-                              val proj_term = Const(long_cid^"."^attr_b,dummyT --> ty) 
+                              val proj_term = Const(long_name,dummyT --> ty) 
                               val term = calculate_attr_access ctxt proj_term term
                           in (ML_Syntax.atomic o ML_Syntax.print_term) term end
            | NONE => error "identifier not a docitem reference"
@@ -925,11 +937,11 @@ fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdef
       val fieldsNterms' = map (fn ((x,y),z) => (x,y,z)) fieldsNterms
       val params' = map (Proof_Context.check_tfree ctxt3) params;
       fun check_n_filter thy (bind,ty,mf) = 
-                     case  DOF_core.get_attribute_long_name parent_cid_long (Binding.name_of bind) thy of
+                     case  DOF_core.get_attribute_info parent_cid_long (Binding.name_of bind) thy of
                            NONE => (* no prior declaration *) SOME(bind,ty,mf)
-                         | SOME(class,attr,ty') => if ty = ty' 
-                                                   then (warning("overriding attribute:"^ attr^
-                                                                 " in doc class:" ^ class);
+                         | SOME{def_occurrence, long_name, typ} => if ty = typ 
+                                                   then (warning("overriding attribute:"^long_name^
+                                                                 " in doc class:" ^ def_occurrence);
                                                         SOME(bind,ty,mf))
                                                    else error("no overloading allowed.")
       val gen_antiquotation = OntoLinkParser.docitem_ref_antiquotation
