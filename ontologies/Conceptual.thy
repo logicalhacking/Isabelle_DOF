@@ -3,18 +3,25 @@ theory Conceptual
 begin
 
 doc_class A =
-   x :: "string"  
+   x :: int  
 
 doc_class B =
-   y :: "string list"          <= "[]"
+   x :: "string"               (* attributes live in their own name-space *)
+   y :: "string list"          <= "[]"  (* and can have arbitrary type constructors *)
+                                        (* LaTeX may have problems with this, though *)
 
 doc_class C = B +
-   z :: "A option"             <= None
+   z :: "A option"             <= None  (* A LINK, i.e. an attribute that has a type
+                                           referring to a document class. Mathematical
+                                           relations over document items can be modeled. *)
 
 datatype enum = X1 | X2 | X3
    
 doc_class D = B +
-   a1 :: enum                  <= "X2"
+   x  :: "string"              <= "''def''" (* overriding default *)
+   a1 :: enum                  <= "X2"      (* class - definitions may be mixed 
+                                               with arbitrary HOL-commands, thus 
+                                               also local definitions of enumerations *)
    a2 :: int                   <= 0
 
 doc_class F  = 

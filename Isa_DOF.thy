@@ -839,10 +839,10 @@ fun calculate_attr_access_check ctxt attr oid = (* template *)
     case DOF_core.get_value_local oid (Context.the_proof ctxt) of 
              SOME term => let val ctxt = Context.the_proof ctxt
                               val SOME{cid,...} = DOF_core.get_object_local oid ctxt
-                              val (pr_name,_,ty) = case DOF_core.get_attribute_long_name_local cid attr ctxt of
+                              val (long_cid, attr_b,ty) = case DOF_core.get_attribute_long_name_local cid attr ctxt of
                                             SOME f => f
                                           | NONE => error ("attribute undefined for ref"^ oid)
-                              val proj_term = Const(pr_name,ty) (* pr_name should be long_name *)
+                              val proj_term = Const(long_cid^"."^attr_b,dummyT --> ty) 
                               val term = calculate_attr_access ctxt proj_term term
                           in (ML_Syntax.atomic o ML_Syntax.print_term) term end
            | NONE => error "identifier not a docitem reference"
