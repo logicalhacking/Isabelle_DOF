@@ -65,7 +65,7 @@ fun calc_update_term thy cid_long (S:(((string * Position.T) * string) * string)
         fun incr () = Unsynchronized.inc count
         val generalize_term =  let val n = incr () 
                                in Term.map_types (AnnoTextelemParser.generalize_typ n) end
-        fun read_assn (((lhs, pos), opr), rhs) tt =
+        fun read_assn (((lhs, pos), opr), rhs) term =
             let val info_opt = DOF_core.get_attribute_info cid_long 
                                        (Long_Name.base_name lhs) thy
                 val (ln,lnt,lnu,lnut) = case info_opt of 
@@ -77,24 +77,25 @@ fun calc_update_term thy cid_long (S:(((string * Position.T) * string) * string)
                         else error("illegal notation for attribute of "^cid_long)
                 val rhs' = Syntax.read_term_global thy rhs |> generalize_term
                 fun join (ttt as @{typ "int"}) 
-                         = Const ("Groups.plus_class.plus", ttt --> ttt --> ttt)
+                         = Const (@{const_name "plus"}, ttt --> ttt --> ttt)
                    |join (ttt as @{typ "string"}) 
-                         = Const ("List.append", ttt --> ttt --> ttt)
-                   |join (ttt as Type("Set.set",_)) 
-                         = Const ("Lattices.sup_class.sup", ttt --> ttt --> ttt)
-                   |join (ttt as Type("List.list",_)) 
-                         = Const ("List.append", ttt --> ttt --> ttt)
+                         = Const (@{const_name "append"}, ttt --> ttt --> ttt)
+                   |join (ttt as Type(@{type_name "set"},_)) 
+                         = Const (@{const_name "sup"}, ttt --> ttt --> ttt)
+                   |join (ttt as Type(@{type_name "list"},_)) 
+                         = Const (@{const_name "append"}, ttt --> ttt --> ttt)
                    |join _ = error("implicit fusion operation not defined on attribute: "^ lhs)
                  (* could be extended to bool, map, multisets, ... *)
              in case opr of 
                   "=" => Const(lnu,lnut) 
                          $ Abs ("uu_", lnt, rhs') 
-                         $ tt
+                         $ term
                 | "+=" => Const(lnu,lnut) 
                          $ Abs ("uu_", lnt, join lnt $ (Bound 0) $ rhs') 
-                         $ tt 
+                         $ term
+                | _ => error "corrupted syntax - oops - this should not occur" 
              end   
      in fold read_assn S term end
 \<close>
-
+ML\<open>\<close>
 end
