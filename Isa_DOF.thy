@@ -332,6 +332,7 @@ fun get_attributes_local cid ctxt =
 
 fun get_attributes cid thy = get_attributes_local cid (Proof_Context.init_global thy)
 
+(* deprecated ?
 fun get_default_local cid attr ctxt =
     let val hierarchy_rev = rev(get_attributes_local cid ctxt)  (* search in reverse order *)
         fun found (_,L) = find_first (fn (bind,_,SOME(term)) => Binding.name_of bind = attr
@@ -342,8 +343,10 @@ fun get_default_local cid attr ctxt =
     end
 
 fun get_default cid attr thy = get_default_local cid attr (Proof_Context.init_global thy)
+*)
 
 type attributes_info = { def_occurrence : string,
+                         def_pos   : Position.T,
                          long_name : string,
                          typ : typ
                        }
@@ -356,6 +359,7 @@ fun get_attribute_info_local (*long*)cid attr ctxt : attributes_info option=
     in  case get_first found hierarchy of
            NONE => NONE
          | SOME (cid',(bind, ty,_)) => SOME({def_occurrence = cid,
+                                             def_pos = Binding.pos_of bind,
                                              long_name = cid'^"."^(Binding.name_of bind), 
                                              typ = ty})
     end
@@ -412,7 +416,7 @@ fun print_doc_classes b ctxt =
              | SOME(_,nn) => writeln ("docclass: "^n^" = "^nn^" + ");
             writeln ("    name:    "^(Binding.print name));
             writeln ("    origin:  "^thy_name);
-            writeln ("    attrs:   "  ^ commas (map print_attr attribute_decl))
+            writeln ("    attrs:   "^commas (map print_attr attribute_decl))
            );
     in  map print_class (Symtab.dest y); 
         writeln "=====================================\n\n\n" 
@@ -433,7 +437,6 @@ val _ =
 end (* struct *)
 *}
   
-print_antiquotations  
   
 section{* Syntax for Annotated Documentation Commands (the '' View'' Part I) *}
 
@@ -497,10 +500,12 @@ fun convert((Const(s,ty),_), t) X = Const(s^"_update", dummyT)
                                     $ Abs("uuu_", type_of t, t) $ X
    |convert _ _ = error("Left-hand side not a doc_class attribute.")
 
-fun base_default cid_long = 
-    if cid_long = DOF_core.default_cid then Const(@{const_name "undefined"},@{typ "unit"})
-    else let val ty_name = cid_long^"."^  Long_Name.base_name cid_long^"_ext"
-         in  Const(@{const_name "undefined"},Type(ty_name, [@{typ "unit"}])) end
+fun cid_2_cidType cid_long = 
+    if cid_long = DOF_core.default_cid then @{typ "unit"}
+    else    let val ty_name = cid_long^"."^  Long_Name.base_name cid_long^"_ext"
+            in Type(ty_name, [@{typ "unit"}]) end
+
+fun base_default_term cid_long = Const(@{const_name "undefined"},cid_2_cidType cid_long) 
 
 fun check_classref (SOME(cid,pos')) thy = 
           let val _ = if not (DOF_core.is_defined_cid_global cid thy) 
@@ -517,7 +522,7 @@ fun check_classref (SOME(cid,pos')) thy =
 
 fun generalize_typ n = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,n),sort));
 fun infer_type thy term = hd (Type_Infer_Context.infer_types (Proof_Context.init_global thy) [term])
-
+                                             
 fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
                                         xstring_opt:(xstring * Position.T) option),
                                         toks:Input.source) 
@@ -529,7 +534,7 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
                this label is used as jump-target for point-and-click feature. *)
     fun enrich_trans thy = 
           let val cid_long = check_classref  cid_pos thy
-              val count = Unsynchronized.ref (0 - 1);
+              val count = Unsynchronized.ref (~1);
               fun incr () = Unsynchronized.inc count
               val generalize_term =  let val n = incr () in Term.map_types (generalize_typ n) end
               fun read_assn  ((lhs, pos), rhs) = 
@@ -538,7 +543,7 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
               val assns = map read_assn doc_attrs
               val _ = (SPY:=assns)   
               val _ = (SPY2 := Input.source_explode toks)
-              val defaults = base_default  cid_long     (* this calculation ignores the defaults *)
+              val defaults = base_default_term  cid_long     (* this calculation ignores the defaults *)
               val value_term = (fold convert assns defaults)  |> (infer_type thy) 
               val name = Context.theory_name thy 
           in  thy |> DOF_core.define_object_global (oid, {pos=pos, 
@@ -623,12 +628,12 @@ val _ =
       >> enriched_document_command {markdown = false});
 
 val _ =
-  Outer_Syntax.command ("figure*", @{here}) "paragraph heading"
+  Outer_Syntax.command ("figure*", @{here}) "figure"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
       >> enriched_document_command {markdown = false});
 
 val _ =
-  Outer_Syntax.command ("side_by_side_figure*", @{here}) "paragraph heading"
+  Outer_Syntax.command ("side_by_side_figure*", @{here}) "multiple figures"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
       >> enriched_document_command {markdown = false});
 
@@ -853,7 +858,7 @@ fun calculate_attr_access_check ctxt attr oid = (* template *)
              SOME term => let val ctxt = Context.the_proof ctxt
                               val SOME{cid,...} = DOF_core.get_object_local oid ctxt
                               val (* (long_cid, attr_b,ty) = *)
-                                  {def_occurrence, long_name, typ=ty} = 
+                                  {def_occurrence, long_name, typ=ty,def_pos} = 
                                        case DOF_core.get_attribute_info_local cid attr ctxt of
                                             SOME f => f
                                           | NONE => error ("attribute undefined for ref"^ oid)
@@ -939,7 +944,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdef
       fun check_n_filter thy (bind,ty,mf) = 
                      case  DOF_core.get_attribute_info parent_cid_long (Binding.name_of bind) thy of
                            NONE => (* no prior declaration *) SOME(bind,ty,mf)
-                         | SOME{def_occurrence, long_name, typ} => if ty = typ 
+                         | SOME{def_occurrence,long_name,typ,def_pos} => if ty = typ 
                                                    then (warning("overriding attribute:"^long_name^
                                                                  " in doc class:" ^ def_occurrence);
                                                         SOME(bind,ty,mf))

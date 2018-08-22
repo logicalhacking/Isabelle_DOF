@@ -184,23 +184,98 @@ subsection{* Type-Certification (=checking that a type annotation is consistent)
 
 ML{*
 Sign.typ_instance: theory -> typ * typ -> bool;
+Sign.typ_match: theory -> typ * typ -> Type.tyenv -> Type.tyenv;
 Sign.typ_unify: theory -> typ * typ -> Type.tyenv * int -> Type.tyenv * int;
 Sign.const_type: theory -> string -> typ option;
 Sign.certify_term: theory -> term -> term * typ * int;   (* core routine for CERTIFICATION of types*)
 Sign.cert_term: theory -> term -> term;                  (* short-cut for the latter *)
+Sign.tsig_of: theory -> Type.tsig                        (* projects the type signature *)
 *}
-text{* @{ML "Sign.certify_term"} is actually an abstract wrapper on the structure Type 
-       which contains the heart of the type inference. *}  
-text{* Type generalization is no longer part of the standard API. Here is a way to
-overcome this by a self-baked generalization function:*}  
+text{* 
+@{ML "Sign.typ_match"} etc. is actually an abstract wrapper on the structure 
+@{ML_structure "Type"} 
+which contains the heart of the type inference. 
+It also contains the type substitution type  @{ML_type "Type.tyenv"} which is
+is actually a type synonym for @{ML_type "(sort * typ) Vartab.table"} 
+which in itself is a synonym for @{ML_type "'a Symtab.table"}, so 
+possesses the usual @{ML "Symtab.empty"} and  @{ML "Symtab.dest"} operations. *}  
 
-ML{*
+text\<open>Note that @{emph \<open>polymorphic variables\<close>} are treated like constant symbols 
+in the type inference; thus, the following test, that one type is an instance of the
+other, yields false:
+\<close>
+ML\<open>
 val ty = @{typ "'a option"};
 val ty' = @{typ "int option"};
-Sign.typ_instance @{theory}(ty', ty);
+
+val Type("List.list",[S]) = @{typ "('a) list"}; (* decomposition example *)
+
+val false = Sign.typ_instance @{theory}(ty', ty);
+\<close>
+text\<open>In order to make the type inference work, one has to consider @{emph \<open>schematic\<close>} 
+type variables, which are more and more hidden from the Isar interface. Consequently,
+the typ antiquotation above will not work for schematic type variables and we have
+to construct them by hand on the SML level: \<close>
+ML\<open> 
+val t_schematic = Type("List.list",[TVar(("'a",0),@{sort "HOL.type"})]);
+\<close>
+text\<open> MIND THE "'" !!!\<close>
+text \<open>On this basis, the following @{ML_type "Type.tyenv"} is constructed: \<close>
+ML\<open>
+val tyenv = Sign.typ_match ( @{theory}) 
+               (t_schematic, @{typ "int list"})
+               (Vartab.empty);            
+val  [(("'a", 0), (["HOL.type"], @{typ "int"}))] = Vartab.dest tyenv;
+\<close>
+
+text{* Type generalization --- the conversion between free type variables and schematic 
+type variables ---  is apparently no longer part of the standard API (there is a slightly 
+more general replacement in @{ML "Term_Subst.generalizeT_same"}, however). Here is a way to
+overcome this by a self-baked generalization function:*}  
+
+ML\<open>
 val generalize_typ = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,0),sort));
-Sign.typ_instance @{theory} (ty', generalize_typ ty)
-*}
+val generalize_term = Term.map_types generalize_typ;
+val true = Sign.typ_instance @{theory} (ty', generalize_typ ty)
+\<close>
+text\<open>... or more general variants thereof that are parameterized by the indexes for schematic
+type variables instead of assuming just @{ML "0"}. \<close>
+
+text
+\<open>Now we turn to the crucial issue of type-instantiation and with a given type environment
+@{ML "tyenv"}. For this purpose, one has to switch to the low-level interface 
+@{ML_structure "Term_Subst"}. 
+\<close>
+
+ML\<open>
+Term_Subst.map_types_same : (typ -> typ) -> term -> term;
+Term_Subst.map_aterms_same : (term -> term) -> term -> term;
+Term_Subst.instantiate: ((indexname * sort) * typ) list * ((indexname * typ) * term) list -> term -> term;
+Term_Subst.instantiateT: ((indexname * sort) * typ) list -> typ -> typ;
+Term_Subst.generalizeT: string list -> int -> typ -> typ;
+                        (* this is the standard type generalisation function !!!
+                           only type-frees in the string-list were taken into account. *)
+Term_Subst.generalize: string list * string list -> int -> term -> term
+                        (* this is the standard term generalisation function !!!
+                           only type-frees and frees in the string-lists were taken 
+                           into account. *)
+\<close>
+
+text \<open>Apparently, a bizarre conversion between the old-style interface and 
+the new-style @{ML "tyenv"} is necessary. See the following example.\<close>
+ML\<open>
+val S = Vartab.dest tyenv;
+val S' = (map (fn (s,(t,u)) => ((s,t),u)) S) : ((indexname * sort) * typ) list;
+         (* it took me quite some time to find out that these two type representations,
+            obscured by a number of type-synonyms, where actually identical. *)
+val ty = t_schematic;
+val ty' = Term_Subst.instantiateT S' t_schematic;
+val t = (generalize_term @{term "[]"});
+
+val t' = Term_Subst.map_types_same (Term_Subst.instantiateT S') (t)
+(* or alternatively : *)
+val t'' = Term.map_types (Term_Subst.instantiateT S') (t)
+\<close>
 
 subsection{* Type-Inference (= inferring consistent type information if possible) *}
 
@@ -211,7 +286,16 @@ ML{*
 Type_Infer_Context.infer_types: Proof.context -> term list -> term list  
 *}
   
-subsection{* Theories *}  
+subsection{* thy and the signature interface*}  
+ML\<open>
+Sign.tsig_of: theory -> Type.tsig;
+Sign.syn_of : theory -> Syntax.syntax;
+Sign.of_sort : theory -> typ * sort -> bool ;
+\<close>
+
+subsection{* Theories *}
+
+
 text \<open> This structure yields the datatype \verb*thy* which becomes the content of 
 \verb*Context.theory*. In a way, the LCF-Kernel registers itself into the Nano-Kernel,
 which inspired me (bu) to this naming. \<close>

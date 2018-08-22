@@ -605,8 +605,9 @@ Clicking on a document class identifier permits to hyperlink into the correspond
 class definition (\autoref{fig:Dogfood-IV-jumpInDocCLass}); hovering over an attribute-definition
 (which is qualified in order to disambiguate; \autoref{fig:Dogfood-V-attribute}).
 \<close>
-
-side_by_side_figure*["text-elements"::side_by_side_figure,anchor="''fig-Dogfood-II-bgnd1''"
+(*     
+side_by_s ide_figure*["text-elements"::side_by_side_figure,
+ side_by_side_figure.anchor="''fig-Dogfood-II-bgnd1''"
  ,caption="''Exploring a Reference of a Text-Element.''"
  ,relative_width="''48''"
  ,src="''figures/Dogfood-II-bgnd1''"
@@ -625,6 +626,8 @@ side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-
  ,relative_width2="''47''"
  ,src2="''figures/Dogfood-III-bgnd-text_section''" 
 ]\<open> Hyperlinks. \<close>
+*)
+
 
 declare_reference*["figDogfoodVIlinkappl"::figure]
 text\<open> An ontological reference application in 
