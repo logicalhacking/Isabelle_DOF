@@ -241,6 +241,9 @@ val true = Sign.typ_instance @{theory} (ty', generalize_typ ty)
 text\<open>... or more general variants thereof that are parameterized by the indexes for schematic
 type variables instead of assuming just @{ML "0"}. \<close>
 
+text\<open> Example:\<close>
+ML\<open>val t = generalize_term @{term "[]"}\<close>
+
 text
 \<open>Now we turn to the crucial issue of type-instantiation and with a given type environment
 @{ML "tyenv"}. For this purpose, one has to switch to the low-level interface 
