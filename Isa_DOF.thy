@@ -490,12 +490,19 @@ val SPY2 = Unsynchronized.ref ([]:Symbol_Pos.T list);
 val SPY3 = Unsynchronized.ref ("");
 
 
-fun cid_2_cidType cid_long = 
+fun cid_2_cidType cid_long thy =
     if cid_long = DOF_core.default_cid then @{typ "unit"}
-    else    let val ty_name = cid_long^"."^  Long_Name.base_name cid_long^"_ext"
-            in Type(ty_name, [@{typ "unit"}]) end
+    else let val t = snd(DOF_core.get_data_global thy)
+             fun ty_name cid = cid^"."^  Long_Name.base_name cid^"_ext"
+             fun fathers cid_long = case Symtab.lookup t cid_long of
+                       NONE => error("undefined doc class id :"^cid_long)
+                     | SOME ({inherits_from=NONE, ...}) => [cid_long]
+                     | SOME ({inherits_from=SOME(_,father), ...}) => 
+                           cid_long :: (fathers father) 
+         in fold (fn x => fn y => Type(ty_name x,[y])) (fathers cid_long) @{typ "unit"}  
+         end
 
-fun base_default_term cid_long = Const(@{const_name "undefined"},cid_2_cidType cid_long) 
+fun base_default_term thy cid_long = Const(@{const_name "undefined"},cid_2_cidType thy cid_long) 
 
 fun check_classref (SOME(cid,pos')) thy = 
           let val _ = if not (DOF_core.is_defined_cid_global cid thy) 
@@ -518,7 +525,7 @@ val SPY6 = Unsynchronized.ref("")
 val SPY7 = Unsynchronized.ref([]:(string * Position.T * string * term) list)
 
 fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) term = 
-    let val cid_ty = cid_2_cidType cid_long 
+    let val cid_ty = cid_2_cidType cid_long thy 
         val generalize_term =  Term.map_types (generalize_typ 0)
         fun toString t = Syntax.string_of_term (Proof_Context.init_global thy) t  
         fun instantiate_term S t = Term_Subst.map_types_same (Term_Subst.instantiateT S) (t)
@@ -591,7 +598,7 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
               (* val _ = (SPY:=assns)   
               val _ = (SPY2 := Input.source_explode toks) *)
 *) 
-              val defaults_init = base_default_term  cid_long     
+              val defaults_init = base_default_term  cid_long thy     
               fun conv (na, _(*ty*), term) = (Binding.name_of na, Binding.pos_of na, "=", term);
               val S = map conv (DOF_core.get_attribute_defaults cid_long thy);
               val (defaults, _(*ty*), _) = calc_update_term thy cid_long S defaults_init;
@@ -898,16 +905,16 @@ end (* struct *)
 *}
 
 ML{* 
+structure AttributeAcces = 
+struct
+
 fun calculate_attr_access ctxt proj_term term =
     (* term assumed to be ground type, (f term) not necessarily *)
-    let val _ = writeln("XXX "^(Syntax.string_of_term ctxt (proj_term $ term)))
-        val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
+    let val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
         val ty = type_of (subterm')
-        val _ = writeln("YYY "^(Syntax.string_of_term ctxt subterm'))
         val term' = (Const(@{const_name "HOL.eq"}, ty --> ty --> HOLogic.boolT) 
                               $ subterm' 
                               $ Free("_XXXXXXX", ty))
-        val _ = writeln("ZZZ "^(Syntax.string_of_term ctxt term'))
         val thm = simplify ctxt (Thm.assume(Thm.cterm_of ctxt (HOLogic.mk_Trueprop term')));
         val Const(@{const_name "HOL.eq"},_) $ lhs $ _ = HOLogic.dest_Trueprop (Thm.concl_of thm)
     in  lhs end
@@ -926,9 +933,7 @@ fun calculate_attr_access_check ctxt attr oid = (* template *)
                           in (ML_Syntax.atomic o ML_Syntax.print_term) term end
            | NONE => error "identifier not a docitem reference"
     
- *}  
-  
-ML{* 
+
 val _ = Theory.setup 
            (ML_Antiquotation.inline @{binding docitem_attr} 
                (fn (ctxt,toks) =>
@@ -939,6 +944,8 @@ val _ = Theory.setup
                        ) 
                        (ctxt, toks))
            )    
+
+end
 *}
 
 

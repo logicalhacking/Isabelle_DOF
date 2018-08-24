@@ -24,6 +24,9 @@ doc_class D = B +
                                                also local definitions of enumerations *)
    a2 :: int                   <= 0
 
+doc_class E = D +
+   x :: "string"              <= "''qed''" (* overriding default *)
+   
 doc_class F  = 
    r :: "thm list"
    b :: "(A \<times> C) set"         <= "{}"
