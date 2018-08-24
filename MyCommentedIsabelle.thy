@@ -335,7 +335,7 @@ Theory.end_theory: theory -> theory;
 text{* Even the parsers and type checkers stemming from the theory-structure are registered via
 hooks (this can be confusing at times). Main phases of inner syntax processing, with standard 
 implementations of parse/unparse operations were treated this way.
-At the very very end in syntax_phases.ML, it sets up the entire syntax engine 
+At the very very end in  @{file "~~/src/Pure/Syntax/syntax_phases.ML"}, it sets up the entire syntax engine 
 (the hooks) via:
 *}
 
@@ -404,7 +404,39 @@ As one can see, check-routines internally generate the markup.
 
 *)  
   
-section\<open> Front End \<close>  
+section\<open>Front End \<close>  
+
+subsection\<open>string, bstring and xstring\<close>
+text\<open>@{ML_type "string"} is the basic library type from the SML library
+in structure @{ML_structure "String"}. Many Isabelle operations produce
+or require formats thereof introduced as type synonyms 
+@{ML_type "bstring"} (defined in structure @{ML_structure "Binding"}
+and @{ML_type "xstring"} (defined in structure @{ML_structure "Name_Space"}.
+Unfortunately, the abstraction is not tight and combinations with 
+elementary routines might produce quire crappy results.
+\<close>
+
+ML\<open>val b = Binding.name_of@{binding "here"}\<close>
+text\<open>... produces the system output \verb+val it = "here": bstring+,
+     but note that it is trappy to believe it is just a string.
+\<close>
+
+ML\<open>String.explode b\<close> (* is harmless, but  *)
+ML\<open>String.explode(Binding.name_of
+(Binding.conglomerate[Binding.qualified_name "X.x",
+              @{binding "here"}]  ))\<close>
+(* Somehow it is possible to smuggle markup into bstrings; and this leads 
+   ML\<open>(((String.explode(!ODL_Command_Parser.SPY6))))\<close>
+   to something like 
+   val it = [#"\^E", #"\^F", #"i", #"n", #"p", #"u", #"t", #"\^F", #"d", #"e", #"l", #"i", #"m", #"i", #"t", #"e", #"d", #"=", #"f", #"a", ...]: char list
+*)
+
+text\<open> However, there is an own XML parser for this format. See Section Markup. 
+\<close>
+ML\<open> fun dark_matter x = XML.content_of (YXML.parse_body x)\<close>
+
+(* MORE TO COME *)
+
 
 subsection{* Parsing issues *}  
   
@@ -867,8 +899,8 @@ Thy_Output.present_thy;
 ML{* Thy_Output.document_command {markdown = true} *}  
 (* Structures related to LaTeX Generation *)
 ML{*  Latex.output_ascii;
-      Latex.modes;
-      Latex.output_token 
+
+      Latex.output_token
 (* Hm, generierter output for
 subsection*[Shaft_Encoder_characteristics]{ * Shaft Encoder Characteristics * } :
 

@@ -3,12 +3,7 @@ theory Example
 begin
 
 section{* Some show-off's of general antiquotations. *}
-
-  
 (* some show-off of standard anti-quotations: *) 
-print_attributes
-print_antiquotations
-
 text\<open>  @{thm refl}  of name @{thm [source] refl} 
         @{thm[mode=Rule] conjI}
         @{file "../../Isa_DOF.thy"} 
@@ -19,7 +14,13 @@ text\<open>  @{thm refl}  of name @{thm [source] refl}
         @{type bool}  
         @{term [show_types] "f x = a + x"} \<close>
 
+
+
+
+
 section{* Example *}
+print_doc_classes
+print_doc_items
 
 text*[tralala] {* Brexit means Brexit *}
   

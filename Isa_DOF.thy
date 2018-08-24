@@ -332,19 +332,6 @@ fun get_attributes_local cid ctxt =
 
 fun get_attributes cid thy = get_attributes_local cid (Proof_Context.init_global thy)
 
-(* deprecated ?
-fun get_default_local cid attr ctxt =
-    let val hierarchy_rev = rev(get_attributes_local cid ctxt)  (* search in reverse order *)
-        fun found (_,L) = find_first (fn (bind,_,SOME(term)) => Binding.name_of bind = attr
-                                        | _ => false) L                                  
-    in  case get_first found hierarchy_rev of
-           NONE => NONE
-        |  SOME (_,_,X) => X
-    end
-
-fun get_default cid attr thy = get_default_local cid attr (Proof_Context.init_global thy)
-*)
-
 type attributes_info = { def_occurrence : string,
                          def_pos   : Position.T,
                          long_name : string,
@@ -367,6 +354,11 @@ fun get_attribute_info_local (*long*)cid attr ctxt : attributes_info option=
 fun get_attribute_info (*long*)cid attr thy = 
         get_attribute_info_local cid attr (Proof_Context.init_global thy)
 
+fun get_attribute_defaults (* long*)cid thy = 
+    let val attrS = flat(map snd (get_attributes cid thy))
+        fun trans (_,_,NONE) = NONE
+           |trans (na,ty,SOME def) =SOME(na,ty, def)
+    in  map_filter trans attrS end
 
 fun get_value_global oid thy  = case get_object_global oid thy of
                                    SOME{value=term,...} => SOME term
@@ -441,7 +433,7 @@ end (* struct *)
 section{* Syntax for Annotated Documentation Commands (the '' View'' Part I) *}
 
 ML{* 
-structure AnnoTextelemParser = 
+structure ODL_Command_Parser = 
 struct
 
 type meta_args_t = (((string * Position.T) *
@@ -452,21 +444,22 @@ fun meta_args_2_string thy (((lab, _), cid_opt), attr_list) =
     (* for the moment naive, i.e. without textual normalization of 
        attribute names and adapted term printing *)
     let val l   = "label = "^ (enclose "{" "}" lab)
-        val cid = "type = " ^ (enclose "{" "}"
-                                (case cid_opt of
+        val cid_long = case cid_opt of
                                 NONE => DOF_core.default_cid
-                              | SOME(cid,_) => DOF_core.name2doc_class_name thy cid) )
-        fun str ((lhs,_),rhs) = lhs^" = "^(enclose "{" "}" rhs)  
+                              | SOME(cid,_) => DOF_core.name2doc_class_name thy cid
+        val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
+        fun toLong n = #long_name(the(DOF_core.get_attribute_info cid_long n thy))
+        fun str ((lhs,_),rhs) = (toLong lhs)^" = "^(enclose "{" "}" rhs)  
                                 (* no normalization on lhs (could be long-name)
                                    no paraphrasing on rhs (could be fully paranthesized
                                    pretty-printed formula in LaTeX notation ... *)
-    in  enclose "[" "]" (commas ([l,cid] @ (map str attr_list))) end
+    in  enclose "[" "]" (commas ([l,cid_txt] @ (map str attr_list))) end
 
 val semi = Scan.option (Parse.$$$ ";");
 
 val attribute =
     Parse.position Parse.const 
-    -- Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.term) "";
+    -- Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.term) "True";
 
 val attribute_upd  : (((string * Position.T) * string) * string) parser =
     Parse.position Parse.const 
@@ -496,9 +489,6 @@ val SPY2 = Unsynchronized.ref ([]:Symbol_Pos.T list);
 
 val SPY3 = Unsynchronized.ref ("");
 
-fun convert((Const(s,ty),_), t) X = Const(s^"_update", dummyT) 
-                                    $ Abs("uuu_", type_of t, t) $ X
-   |convert _ _ = error("Left-hand side not a doc_class attribute.")
 
 fun cid_2_cidType cid_long = 
     if cid_long = DOF_core.default_cid then @{typ "unit"}
@@ -522,7 +512,59 @@ fun check_classref (SOME(cid,pos')) thy =
 
 fun generalize_typ n = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,n),sort));
 fun infer_type thy term = hd (Type_Infer_Context.infer_types (Proof_Context.init_global thy) [term])
-                                             
+
+val SPY5 = Unsynchronized.ref(@{theory})
+val SPY6 = Unsynchronized.ref("")
+val SPY7 = Unsynchronized.ref([]:(string * Position.T * string * term) list)
+
+fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) term = 
+    let val cid_ty = cid_2_cidType cid_long 
+        val generalize_term =  Term.map_types (generalize_typ 0)
+        fun toString t = Syntax.string_of_term (Proof_Context.init_global thy) t  
+        fun instantiate_term S t = Term_Subst.map_types_same (Term_Subst.instantiateT S) (t)
+        val _ = (SPY5:=thy)
+        fun read_assn (lhs, _:Position.T, opr, rhs) term =
+            let val _ = (SPY6:=lhs)
+                val info_opt = DOF_core.get_attribute_info cid_long 
+                                       (Long_Name.base_name lhs) thy
+                val (ln,lnt,lnu,lnut) = case info_opt of 
+                                           NONE => error ("unknown attribute >" 
+                                                          ^((Long_Name.base_name lhs))
+                                                          ^"< in class: "^cid_long)
+                                        |  SOME{long_name, typ, ...} => (long_name, typ, 
+                                                                         long_name ^"_update",
+                                                                         (typ --> typ) 
+                                                                          --> cid_ty --> cid_ty)
+                val tyenv = Sign.typ_match thy  ((generalize_typ 0)(type_of rhs), lnt) (Vartab.empty)
+                            handle Type.TYPE_MATCH => error ("type of attribute: " ^ ln 
+                                                             ^ " does not fit to term: " 
+                                                             ^ toString rhs);
+                val tyenv' = (map (fn (s,(t,u)) => ((s,t),u)) (Vartab.dest tyenv))
+                val _ = if Long_Name.base_name lhs = lhs orelse ln = lhs then ()
+                        else error("illegal notation for attribute of "^cid_long)
+                fun join (ttt as @{typ "int"}) 
+                         = Const (@{const_name "plus"}, ttt --> ttt --> ttt)
+                   |join (ttt as @{typ "string"}) 
+                         = Const (@{const_name "append"}, ttt --> ttt --> ttt)
+                   |join (ttt as Type(@{type_name "set"},_)) 
+                         = Const (@{const_name "sup"}, ttt --> ttt --> ttt)
+                   |join (ttt as Type(@{type_name "list"},_)) 
+                         = Const (@{const_name "append"}, ttt --> ttt --> ttt)
+                   |join _ = error("implicit fusion operation not defined for attribute: "^ lhs)
+                 (* could be extended to bool, map, multisets, ... *)
+             in case opr of 
+                  "=" => Const(lnu,lnut) 
+                         $ Abs ("uu_", lnt, instantiate_term tyenv'  (generalize_term rhs)) 
+                         $ term
+                | "+=" => Const(lnu,lnut) 
+                         $ Abs ("uu_", lnt, join lnt 
+                                            $ (Bound 0) 
+                                            $ instantiate_term tyenv'(generalize_term rhs)) 
+                         $ term
+                | _ => error "corrupted syntax - oops - this should not occur" 
+             end   
+     in Sign.certify_term thy  (fold read_assn S term) end
+
 fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
                                         xstring_opt:(xstring * Position.T) option),
                                         toks:Input.source) 
@@ -534,6 +576,11 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
                this label is used as jump-target for point-and-click feature. *)
     fun enrich_trans thy = 
           let val cid_long = check_classref  cid_pos thy
+(* OLD
+              fun convert((Const(s,ty),_), t) X = Const(s^"_update", dummyT) 
+                                    $ Abs("uuu_", type_of t, t) $ X
+                 |convert _ _ = error("Left-hand side not a doc_class attribute.")
+
               val count = Unsynchronized.ref (~1);
               fun incr () = Unsynchronized.inc count
               val generalize_term =  let val n = incr () in Term.map_types (generalize_typ n) end
@@ -541,17 +588,27 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
                                  ((Syntax.read_term_global thy lhs |> generalize_term,pos),
                                    Syntax.read_term_global thy rhs |> generalize_term)
               val assns = map read_assn doc_attrs
-              val _ = (SPY:=assns)   
-              val _ = (SPY2 := Input.source_explode toks)
-              val defaults = base_default_term  cid_long     (* this calculation ignores the defaults *)
-              val value_term = (fold convert assns defaults)  |> (infer_type thy) 
-              val name = Context.theory_name thy 
-          in  thy |> DOF_core.define_object_global (oid, {pos=pos, 
-                                                          thy_name=name,
-                                                          value = value_term,
-                                                          id=id,   
-                                                          cid=cid_long})
+              (* val _ = (SPY:=assns)   
+              val _ = (SPY2 := Input.source_explode toks) *)
+*) 
+              val defaults_init = base_default_term  cid_long     
+              fun conv (na, _(*ty*), term) = (Binding.name_of na, Binding.pos_of na, "=", term);
+              val S = map conv (DOF_core.get_attribute_defaults cid_long thy);
+              val (defaults, _(*ty*), _) = calc_update_term thy cid_long S defaults_init;
+              fun markup2string x = XML.content_of (YXML.parse_body x)
+              fun conv_attrs ((lhs, pos), rhs) = (markup2string lhs,pos,"=", Syntax.read_term_global thy rhs)
+              val assns' = map conv_attrs doc_attrs
+              (* NEW : *)               
+              val (value_term, _(*ty*), _) = calc_update_term thy cid_long assns' defaults 
+              (* OLD : 
+              val value_term = (fold convert assns defaults)  |> (infer_type thy) *)
+          in  thy |> DOF_core.define_object_global (oid, {pos      = pos, 
+                                                          thy_name = Context.theory_name thy,
+                                                          value    = value_term,
+                                                          id       = id,   
+                                                          cid      = cid_long})
           end
+
     fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
                          (* as side-effect, generates markup *)
   in   
@@ -562,7 +619,9 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
 fun update_instance_command  (((oid:string,pos),cid_pos),
                               doc_attrs: (((string*Position.T)*string)*string)list)                                        
                              : Toplevel.transition -> Toplevel.transition = 
-     let
+     let  fun convert((Const(s,ty),_), t) X = Const(s^"_update", dummyT) 
+                                    $ Abs("uuu_", type_of t, t) $ X
+             |convert _ _ = error("Left-hand side not a doc_class attribute.")
          fun upd thy = 
              let val cid = case DOF_core.get_object_global oid thy of 
                                 SOME{cid,...} => cid
@@ -741,7 +800,7 @@ text{* fghfgh *}
   
 text*[sdf] {* f @{thm refl}*}  
 text*[sdfg] {* fg @{thm refl}*}  
-ML{* AnnoTextelemParser.SPY3; 
+ML{* ODL_Command_Parser.SPY3; 
 (* produces: ref "fg \\isa{<markup>\\ {\\isacharequal}\\ <markup>}": string ref *)
 (* This proves that  Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks actually
 PRODUCES strings in which the antiquotations were expanded. *)
@@ -907,7 +966,7 @@ fun read_fields raw_fields ctxt =
       val count = Unsynchronized.ref (0 - 1);
       fun incr () = Unsynchronized.inc count
       fun test t1 t2 = Sign.typ_instance (Proof_Context.theory_of ctxt)
-                                         (t1, AnnoTextelemParser.generalize_typ 0 t2) 
+                                         (t1, ODL_Command_Parser.generalize_typ 0 t2) 
       fun check_default (ty,SOME trm) = 
                   let val ty' = (type_of trm)
                   in if test ty ty' 
@@ -979,7 +1038,7 @@ end (* struct *)
 
 text*[xxxy] {* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}*}    
   
-ML{* AnnoTextelemParser.SPY3; *}  
+ML{* ODL_Command_Parser.SPY3; *}  
 
    
 section{* Library of Standard Text Ontology *}
