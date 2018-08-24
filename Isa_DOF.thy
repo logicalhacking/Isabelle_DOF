@@ -485,11 +485,6 @@ val attributes_upd =
          (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute_upd))) []))
      --| Parse.$$$ "]"
 
-val SPY = Unsynchronized.ref ([]:((term * Position.T) * term) list) 
-
-val SPY2 = Unsynchronized.ref ([]:Symbol_Pos.T list);
-
-val SPY3 = Unsynchronized.ref ("");
 
 
 fun cid_2_cidType cid_long thy =
@@ -775,21 +770,11 @@ val _ = theorem @{command_keyword proposition} false "proposition";
 val _ = theorem @{command_keyword schematic_goal} true "schematic goal"; *)
 
 in end\<close>  
-  
-
-assert "True"  
-  
-  
+    
 (* experiments >>> *)
   
 text*[sdf] {* f @{thm refl}*}  
 text*[sdfg] {* fg @{thm refl}*}  
-ML{* ODL_Command_Parser.SPY3; 
-(* produces: ref "fg \\isa{<markup>\\ {\\isacharequal}\\ <markup>}": string ref *)
-(* This proves that  Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks actually
-PRODUCES strings in which the antiquotations were expanded. *)
-*} 
-(* <<< experiments *)  
   
 section{* Syntax for Ontological Antiquotations (the '' View'' Part II) *}
   
@@ -1029,8 +1014,6 @@ end (* struct *)
 
 text*[xxxy] {* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}*}    
   
-ML{* ODL_Command_Parser.SPY3; *}  
-
    
 section{* Library of Standard Text Ontology *}
 
