@@ -406,6 +406,8 @@ As one can see, check-routines internally generate the markup.
   
 section\<open>Front End \<close>  
 
+ML\<open>Sign.add_trrules\<close>
+
 subsection\<open>string, bstring and xstring\<close>
 text\<open>@{ML_type "string"} is the basic library type from the SML library
 in structure @{ML_structure "String"}. Many Isabelle operations produce
