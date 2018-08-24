@@ -19,8 +19,6 @@ text\<open>  @{thm refl}  of name @{thm [source] refl}
 
 
 section{* Example *}
-print_doc_classes
-print_doc_items
 
 text*[tralala] {* Brexit means Brexit *}
   
@@ -52,7 +50,11 @@ declare_reference* [lalala::requirement, alpha="main", beta=42]
 
 
 declare_reference* [blablabla::cid, alpha="beta sdf", beta=gamma, delta=dfg_fgh\<^sub>1]
-  
+
+print_doc_classes
+print_doc_items
+
+
 paragraph* [sdfk] \<open> just a paragraph - lexical variant \<close>  
 
 

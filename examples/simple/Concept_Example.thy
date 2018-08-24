@@ -4,7 +4,7 @@ begin
 
 open_monitor*[struct::M]  
 
-section*[a::A, x = "''alpha''"] \<open> Lorem ipsum dolor sit amet, ... \<close>
+section*[a::A, x = "3"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 text*[c1::C, x = "''beta''"] \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
 

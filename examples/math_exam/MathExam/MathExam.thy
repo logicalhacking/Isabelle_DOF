@@ -36,7 +36,7 @@ figure*[figure::figure, spawn_columns=False,relative_width="''80''",
         \<open>A Polynome.\<close>
 
 
-subsubsection*[exo1 :: Exercise, Exercise.content="[q1::Task,q2::Task]"]\<open>Exercise 1\<close>
+subsubsection*[exo1 :: Exercise, content="[q1::Task,q2::Task]"]\<open>Exercise 1\<close>
 text{* 
 Here are the first four lines of a number pattern.
 \begin{itemize}
@@ -48,7 +48,7 @@ Here are the first four lines of a number pattern.
 *}
 
 declare [[show_sorts=false]]  
-subsubsection*[exo2 :: Exercise, Exercise.content="[q1::Task,q2::Task]"]\<open>Exercise 2\<close> 
+subsubsection*[exo2 :: Exercise, content="[q1::Task,q2::Task]"]\<open>Exercise 2\<close> 
   
 text{* Find the roots of the polynome:
 @{term "(x^3) - 6 * x^2 + 5 * x + 12"}.
@@ -95,7 +95,7 @@ text*[a4::Answer_Formal_Step]{* Next Step: Fill in term and justification *}
 text*[q1::Task, level="oneStar", mark="1::int", type="formal"] 
 {* Complete Line 10 :  @{term "10*x + 2*y =  11*16"} *}
 
-subsubsection*[exo3 :: Exercise, Exercise.content="[q1::Task,q2::Task]"]\<open>Exercise 3\<close>  
+subsubsection*[exo3 :: Exercise, content="[q1::Task,q2::Task]"]\<open>Exercise 3\<close>  
 
 text*[q2::Task, level="threeStars", mark="3::int", type="formal"] 
 {* Prove that  @{term "n*(n+5) + 2*(n+3) "} is always the product of two numbers 

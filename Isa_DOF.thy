@@ -389,11 +389,13 @@ fun print_doc_items b ctxt =
     let val ({tab = x, ...},_)= get_data ctxt;
         val _ = writeln "=====================================";    
         fun print_item (n, SOME({cid,id,pos,thy_name,value})) =
-           (writeln ("docitem: "^n);
-            writeln ("    type:    "^cid);
-            writeln ("    origine: "^thy_name);
-            writeln ("    value:   "  ^ (Syntax.string_of_term ctxt value))
-           );
+                 (writeln ("docitem: "^n);
+                  writeln ("    type:    "^cid);
+                  writeln ("    origine: "^thy_name);
+                  writeln ("    value:   "  ^ (Syntax.string_of_term ctxt value))
+                 )
+          | print_item (n, NONE) = 
+                 (writeln ("forward reference for docitem: "^n));
     in  map print_item (Symtab.dest x); 
         writeln "=====================================\n\n\n" end;
 

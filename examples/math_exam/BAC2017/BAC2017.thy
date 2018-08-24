@@ -37,7 +37,7 @@ text{*
 
 
 text*[exo1 :: Exercise,
-      Exercise.concerns= "{setter,student,checker,externalExaminer}"]
+     concerns= "{setter,student,checker,externalExaminer}"]
 {*  On considère la fonction h définie sur l’intervalle [0..+\<infinity>] par : 
     @{term "h(x) = x * exponent (-x)"}
 *}
@@ -46,7 +46,7 @@ definition h :: "real \<Rightarrow> real"
   where "h x \<equiv> x * exp (- x)"
 
  
-text*[q1::Task, Task.concerns= "{setter,student}",
+text*[q1::Task, concerns= "{setter,student}",
 level="oneStar", mark="1::int", type="formal"] 
 {* Déterminer la limite de la fonction @{term h} en +\<infinity>. *}
 
@@ -57,7 +57,7 @@ lemma q1 : "(h \<longlongrightarrow> (0::real)) at_top"  sorry
 text*[v1::Validation, proofs="[@{thm ''q1''}::thm]"] {* See lemma @{thm q1}. *}
 
   
-text*[q2::Task, Task.concerns= "{setter,checker,student}",
+text*[q2::Task, concerns= "{setter,checker,student}",
                 level="oneStar", mark="1::int", type="formal"] 
 {* Étudier les variations de la fonction @{term h} sur l'intervalle [0..+\<infinity>] et 
    dresser son tableau de variation *}
@@ -90,7 +90,7 @@ text*[v2::Validation, proofs="[@{thm ''q2_b''}, @{thm ''q2_c''}]"]
      {* See lemmas @{thm q2_b} and @{thm q2_c}. *}
 
 
-text*[q3a::Task, Task.concerns= "{setter,checker,student}",
+text*[q3a::Task, concerns= "{setter,checker,student}",
 level="oneStar", mark="1::int", type="formal"] 
 {* Vérifier que pour tout nombre réel x appartenant à l'intervalle [0..+\<infinity>], on a :
    @{term "h x = (exp (- x)) - (h' x)"}. *}
@@ -106,8 +106,8 @@ subsubsection*[v3a::Validation,  proofs="[@{thm ''q3a''}::thm]"]
 
 
 subsection*[sol1 :: Solution,
-    Solution.content="[exo1::Exercise]",
-    Solution.valids = "[v1::Validation,v2,v3a]"]
+    content="[exo1::Exercise]",
+    valids = "[v1::Validation,v2,v3a]"]
 {*  See validations. *}
 
 

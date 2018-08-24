@@ -93,7 +93,7 @@ we discuss the user-interaction generated from the ontological definitions.  Fin
 conclusions  and discuss related work in @{docitem_ref (unchecked) \<open>conclusion\<close>}. \<close>  
 
 section*[bgrnd::text_section,
-         text_section.main_author="Some(@{docitem ''adb''}::author)"]
+         main_author="Some(@{docitem ''adb''}::author)"]
          \<open> Background: The Isabelle System \<close>
 text\<open>
 While Isabelle is widely perceived as an interactive theorem prover
@@ -166,7 +166,7 @@ Isabelle's PIDE offers auto-completion and error-messages while typing the above
 \emph{semi-formal} content.  \<close>
 
 section*[isadof::text_section,
-         text_section.main_author="Some(@{docitem ''adb''}::author)"]
+         main_author="Some(@{docitem ''adb''}::author)"]
          \<open> \isadof \<close>
    
 text\<open> An \isadof document consists of three components: 
