@@ -2,6 +2,9 @@ theory Attributes
   imports "../../ontologies/Conceptual"
 begin
 
+section\<open>Elementary Creation of DocItems and Access of their Attibutes\<close>
+
+text\<open>Current status:\<close>
 print_doc_classes
 print_doc_items
 
@@ -24,10 +27,9 @@ ML\<open>val Type("Conceptual.B.B_ext",[Type("Conceptual.C.C_ext",t)]) = @{typ "
 
 text*[dfgdfg2::C, z = "None"]\<open> sdfsdfs sdfsdf sdfsdf @{thm refl} \<close> 
 
-text*[omega::E, x = "''g''"]\<open> sdfsdfs sdfsdf sdfsdf @{thm refl} \<close> 
+text*[omega::E, x = "''def''"]\<open> sdfsdfs sdfsdf sdfsdf @{thm refl} \<close> 
 
 text\<open> @{docitem_ref \<open>dfgdfg\<close>} \<close>
-
 
 
 term "A.x (undefined\<lparr>A.x := 3\<rparr>)"
@@ -62,30 +64,33 @@ text\<open>A not too trivial test: default y -> [].
      Then @{term "t"}: creation of a multi inheritance object omega,
      triple updates, the last one wins.\<close>
 ML\<open>val s =  map HOLogic.dest_string (HOLogic.dest_list @{docitem_attr y::dfgdfg});
-   val t =   HOLogic.dest_string (@{docitem_attr x::omega});
- \<close>
-
-(* separate checking and term construction ?*)
+   val t =   HOLogic.dest_string (@{docitem_attr x::omega});  \<close>
 
 
-ML\<open>val t = @{term "Conceptual.B.y_update"}\<close>
-declare [[ML_print_depth=30]]
 
-ML\<open>
 
+section\<open>Mutation of Attibutes in DocItems\<close>
+
+ML\<open> val  Const ("Groups.zero_class.zero", @{typ "int"}) =  @{docitem_attr a2::omega} \<close>
+
+update_instance*[omega::E, a2+="1"]
+
+ML\<open> val Const ("Groups.one_class.one", @{typ "int"})=  @{docitem_attr a2::omega} \<close>
+
+update_instance*[omega::E, a2+="6"]
+
+ML\<open>  @{docitem_attr a2::omega} \<close>
+ML\<open>  HOLogic.dest_number @{docitem_attr a2::omega} \<close>
+
+update_instance*[omega::E, x+="''inition''"]
+
+ML\<open> val s =   HOLogic.dest_string ( @{docitem_attr x::omega}) \<close>
+
+update_instance*[omega::E, y+="[''defini'',''tion'']"]
+
+update_instance*[omega::E, y+="[''en'']"]
+
+ML\<open>val s =  map HOLogic.dest_string (HOLogic.dest_list @{docitem_attr y::omega});
 \<close>
-ML\<open>
-val cid_long = "Conceptual.B"
-val attr_name = "dfgdfg"
-val thy = @{theory};
-
-val S = DOF_core.get_attribute_defaults cid_long thy;
-fun conv (na, _ (* ty *), term) = (Binding.name_of na, Binding.pos_of na, "=", term);
-val (tt, ty, n) = ODL_Command_Parser.calc_update_term thy cid_long (map conv S) 
-            (the(DOF_core.get_value_global attr_name thy));
-\<close>
-
-
-
 
 end

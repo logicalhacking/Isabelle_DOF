@@ -392,7 +392,7 @@ fun print_doc_items b ctxt =
                  (writeln ("docitem: "^n);
                   writeln ("    type:    "^cid);
                   writeln ("    origine: "^thy_name);
-                  writeln ("    value:   "  ^ (Syntax.string_of_term ctxt value))
+                  writeln ("    value:   "^(Syntax.string_of_term ctxt value))
                  )
           | print_item (n, NONE) = 
                  (writeln ("forward reference for docitem: "^n));
@@ -565,6 +565,9 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
                   "=" => Const(lnu,lnut) 
                          $ Abs ("uu_", lnt, instantiate_term tyenv'  (generalize_term rhs)) 
                          $ term
+                | ":=" => Const(lnu,lnut) 
+                         $ Abs ("uu_", lnt, instantiate_term tyenv'  (generalize_term rhs)) 
+                         $ term
                 | "+=" => Const(lnu,lnut) 
                          $ Abs ("uu_", lnt, join lnt 
                                             $ (Bound 0) 
@@ -585,21 +588,6 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
                this label is used as jump-target for point-and-click feature. *)
     fun enrich_trans thy = 
           let val cid_long = check_classref  cid_pos thy
-(* OLD
-              fun convert((Const(s,ty),_), t) X = Const(s^"_update", dummyT) 
-                                    $ Abs("uuu_", type_of t, t) $ X
-                 |convert _ _ = error("Left-hand side not a doc_class attribute.")
-
-              val count = Unsynchronized.ref (~1);
-              fun incr () = Unsynchronized.inc count
-              val generalize_term =  let val n = incr () in Term.map_types (generalize_typ n) end
-              fun read_assn  ((lhs, pos), rhs) = 
-                                 ((Syntax.read_term_global thy lhs |> generalize_term,pos),
-                                   Syntax.read_term_global thy rhs |> generalize_term)
-              val assns = map read_assn doc_attrs
-              (* val _ = (SPY:=assns)   
-              val _ = (SPY2 := Input.source_explode toks) *)
-*) 
               val defaults_init = base_default_term  cid_long thy     
               fun conv (na, _(*ty*), term) = (Binding.name_of na, Binding.pos_of na, "=", term);
               val S = map conv (DOF_core.get_attribute_defaults cid_long thy);
@@ -628,10 +616,7 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
 fun update_instance_command  (((oid:string,pos),cid_pos),
                               doc_attrs: (((string*Position.T)*string)*string)list)                                        
                              : Toplevel.transition -> Toplevel.transition = 
-     let  fun convert((Const(s,ty),_), t) X = Const(s^"_update", dummyT) 
-                                    $ Abs("uuu_", type_of t, t) $ X
-             |convert _ _ = error("Left-hand side not a doc_class attribute.")
-         fun upd thy = 
+     let  fun upd thy = 
              let val cid = case DOF_core.get_object_global oid thy of 
                                 SOME{cid,...} => cid
                               | NONE => error("undefined doc_class.")
@@ -639,21 +624,13 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                  val _ = if cid_long = DOF_core.default_cid  orelse cid = cid_long 
                          then () 
                          else error("incompatible classes:"^cid^":"^cid_long)
+                 fun markup2string x = XML.content_of (YXML.parse_body x)
 
-                 val count = Unsynchronized.ref (0 - 1);
-                 fun incr () = Unsynchronized.inc count
-                 val generalize_term =  let val n = incr () in Term.map_types (generalize_typ n) end
-                 fun read_assn  (((lhs, pos), opn), rhs) = 
-                           let val _ = writeln opn in 
-                           ((Syntax.read_term_global thy lhs |> generalize_term ,pos), 
-                                                           (* this is problematic, 
-                                                              lhs need to be qualified  *)
-                             Syntax.read_term_global thy rhs |> generalize_term)
-                           end
-                 (* Missing: Check that attributes are legal here *)
-                 val assns = map read_assn doc_attrs
-                 val _ = (SPY:=assns) 
-          in  thy |> DOF_core.update_value_global oid ((fold convert assns) #> (infer_type thy))
+                 fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, Syntax.read_term_global thy rhs)
+                 val assns' = map conv_attrs doc_attrs
+                 val def_trans = #1 o (calc_update_term thy cid_long assns')
+          in     
+                 thy |> DOF_core.update_value_global oid (def_trans)
           end
      in  Toplevel.theory(upd)
      end
@@ -802,10 +779,8 @@ in end\<close>
 
 assert "True"  
   
-lemma X : "True" by simp
   
 (* experiments >>> *)
-text{* fghfgh *}
   
 text*[sdf] {* f @{thm refl}*}  
 text*[sdfg] {* fg @{thm refl}*}  
@@ -914,12 +889,19 @@ fun calculate_attr_access ctxt proj_term term =
     (* term assumed to be ground type, (f term) not necessarily *)
     let val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
         val ty = type_of (subterm')
+        val _ = writeln ("calculate_attr_access raw term: " ^ Syntax.string_of_term ctxt subterm')
         val term' = (Const(@{const_name "HOL.eq"}, ty --> ty --> HOLogic.boolT) 
                               $ subterm' 
                               $ Free("_XXXXXXX", ty))
         val thm = simplify ctxt (Thm.assume(Thm.cterm_of ctxt (HOLogic.mk_Trueprop term')));
-        val Const(@{const_name "HOL.eq"},_) $ lhs $ _ = HOLogic.dest_Trueprop (Thm.concl_of thm)
-    in  lhs end
+    in  case HOLogic.dest_Trueprop (Thm.concl_of thm) of
+           Free("_XXXXXXX", @{typ "bool"}) => @{const "True"}
+        |  @{const "HOL.Not"} $  Free("_XXXXXXX", @{typ "bool"}) =>  @{const "False"}
+        |  Const(@{const_name "HOL.eq"},_) $ lhs $ Free("_XXXXXXX", _ )=> lhs 
+        |  Const(@{const_name "HOL.eq"},_) $ Free("_XXXXXXX", _ ) $ rhs => rhs
+        |  _ => error ("could not reduce attribute term: " ^
+                       Syntax.string_of_term ctxt subterm')
+    end
 
 fun calculate_attr_access_check ctxt attr oid = (* template *)
     case DOF_core.get_value_local oid (Context.the_proof ctxt) of 
