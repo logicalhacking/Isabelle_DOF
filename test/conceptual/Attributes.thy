@@ -114,7 +114,7 @@ update_instance*[fig1::figure_group, trace+="[figure]"]
 
 close_monitor*[fig1]  
 
-ML\<open>  (HOLogic.dest_list @{docitem_attr trace::fig1}) \<close>
+ML\<open> map (fn Const(s,_) => s) (HOLogic.dest_list @{docitem_attr trace::fig1}) \<close>
 
 
 end
