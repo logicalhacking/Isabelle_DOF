@@ -605,9 +605,9 @@ Clicking on a document class identifier permits to hyperlink into the correspond
 class definition (\autoref{fig:Dogfood-IV-jumpInDocCLass}); hovering over an attribute-definition
 (which is qualified in order to disambiguate; \autoref{fig:Dogfood-V-attribute}).
 \<close>
-(*     
-side_by_s ide_figure*["text-elements"::side_by_side_figure,
- side_by_side_figure.anchor="''fig-Dogfood-II-bgnd1''"
+     
+side_by_side_figure*["text-elements"::side_by_side_figure,
+ anchor="''fig-Dogfood-II-bgnd1''"
  ,caption="''Exploring a Reference of a Text-Element.''"
  ,relative_width="''48''"
  ,src="''figures/Dogfood-II-bgnd1''"
@@ -625,8 +625,8 @@ side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-
  ,caption2="''Exploring an attribute.''"
  ,relative_width2="''47''"
  ,src2="''figures/Dogfood-III-bgnd-text_section''" 
-]\<open> Hyperlinks. \<close>
-*)
+]\<open> Hyperlinks.\<close>
+
 
 
 declare_reference*["figDogfoodVIlinkappl"::figure]
@@ -675,7 +675,7 @@ This example shows that ontological modeling is indeed adequate for large techni
 collaboratively developed documentations, where modifications can lead easily to incoherence. 
 The current checks help to systematically avoid this type of incoherence between formal and 
 informal parts. \<close>    
-(*
+
 section*[onto_future::technical]\<open> Monitor Classes \<close>  
 text\<open> Besides sub-typing, there is another relation between
 document classes: a class can be a \emph{monitor} to other ones,
@@ -699,7 +699,7 @@ classes and imposing different sets of structural constraints in a
 Classes which are neither directly nor indirectly (via inheritance) mentioned in the 
 monitor are \emph{independent} from a monitor; instances of independent test elements 
 may occur freely. \<close>
-*)
+
 
 section*[conclusion::conclusion]\<open> Conclusion and Related Work\<close>    
 text\<open> We have demonstrated the use of \isadof, a novel ontology modeling and enforcement

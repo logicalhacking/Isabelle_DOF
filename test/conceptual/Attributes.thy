@@ -85,12 +85,36 @@ ML\<open>  HOLogic.dest_number @{docitem_attr a2::omega} \<close>
 update_instance*[omega::E, x+="''inition''"]
 
 ML\<open> val s =   HOLogic.dest_string ( @{docitem_attr x::omega}) \<close>
-
+                            
 update_instance*[omega::E, y+="[''defini'',''tion'']"]
 
 update_instance*[omega::E, y+="[''en'']"]
 
 ML\<open>val s =  map HOLogic.dest_string (HOLogic.dest_list @{docitem_attr y::omega});
 \<close>
+
+
+section\<open>Simulation of a Monitor\<close>
+
+open_monitor*[fig1::figure_group, 
+              anchor="''fig-demo''", 
+              caption="''Sample ''"]  
+
+
+figure*[fig_A::figure, spawn_columns=False,relative_width="''90''",
+        src="''figures/A.png''"]
+       \<open> The A train \ldots \<close>
+update_instance*[fig1::figure_group, trace+="[figure]"]
+
+
+figure*[fig_B::figure, spawn_columns=False,relative_width="''90''",
+        src="''figures/B.png''"]
+       \<open> The B train \ldots \<close>  
+update_instance*[fig1::figure_group, trace+="[figure]"]
+
+close_monitor*[fig1]  
+
+ML\<open>  (HOLogic.dest_list @{docitem_attr trace::fig1}) \<close>
+
 
 end

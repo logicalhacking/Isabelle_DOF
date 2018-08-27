@@ -442,7 +442,7 @@ type meta_args_t = (((string * Position.T) *
                      (string * Position.T) option)
                     * ((string * Position.T) * string) list)
 
-fun meta_args_2_string thy (((lab, _), cid_opt), attr_list) = 
+fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) = 
     (* for the moment naive, i.e. without textual normalization of 
        attribute names and adapted term printing *)
     let val l   = "label = "^ (enclose "{" "}" lab)
@@ -526,10 +526,8 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
         val generalize_term =  Term.map_types (generalize_typ 0)
         fun toString t = Syntax.string_of_term (Proof_Context.init_global thy) t  
         fun instantiate_term S t = Term_Subst.map_types_same (Term_Subst.instantiateT S) (t)
-        val _ = (SPY5:=thy)
         fun read_assn (lhs, _:Position.T, opr, rhs) term =
-            let val _ = (SPY6:=lhs)
-                val info_opt = DOF_core.get_attribute_info cid_long 
+            let val info_opt = DOF_core.get_attribute_info cid_long 
                                        (Long_Name.base_name lhs) thy
                 val (ln,lnt,lnu,lnut) = case info_opt of 
                                            NONE => error ("unknown attribute >" 
@@ -572,41 +570,47 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
              end   
      in Sign.certify_term thy  (fold read_assn S term) end
 
+
+
+fun create_and_check_docitem oid pos cid_pos doc_attrs thy = 
+      let val id = serial ();
+          val _ = Position.report pos (docref_markup true oid id pos);
+          (* creates a markup label for this position and reports it to the PIDE framework;
+           this label is used as jump-target for point-and-click feature. *)
+          val cid_long = check_classref  cid_pos thy
+          val defaults_init = base_default_term  cid_long thy     
+          fun conv (na, _(*ty*), term) = (Binding.name_of na, Binding.pos_of na, "=", term);
+          val S = map conv (DOF_core.get_attribute_defaults cid_long thy);
+          val (defaults, _(*ty*), _) = calc_update_term thy cid_long S defaults_init;
+          fun markup2string x = XML.content_of (YXML.parse_body x)
+          fun conv_attrs ((lhs, pos), rhs) = (markup2string lhs,pos,"=", Syntax.read_term_global thy rhs)
+          val assns' = map conv_attrs doc_attrs
+          val (value_term, _(*ty*), _) = calc_update_term thy cid_long assns' defaults 
+      in  thy |> DOF_core.define_object_global (oid, {pos      = pos, 
+                                                      thy_name = Context.theory_name thy,
+                                                      value    = value_term,
+                                                      id       = id,   
+                                                      cid      = cid_long})
+      end
+
+
 fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
                                         xstring_opt:(xstring * Position.T) option),
                                         toks:Input.source) 
                                         : Toplevel.transition -> Toplevel.transition =
   let
-    val id = serial ();
-    val _ = Position.report pos (docref_markup true oid id pos);
-            (* creates a markup label for this position and reports it to the PIDE framework;
-               this label is used as jump-target for point-and-click feature. *)
-    fun enrich_trans thy = 
-          let val cid_long = check_classref  cid_pos thy
-              val defaults_init = base_default_term  cid_long thy     
-              fun conv (na, _(*ty*), term) = (Binding.name_of na, Binding.pos_of na, "=", term);
-              val S = map conv (DOF_core.get_attribute_defaults cid_long thy);
-              val (defaults, _(*ty*), _) = calc_update_term thy cid_long S defaults_init;
-              fun markup2string x = XML.content_of (YXML.parse_body x)
-              fun conv_attrs ((lhs, pos), rhs) = (markup2string lhs,pos,"=", Syntax.read_term_global thy rhs)
-              val assns' = map conv_attrs doc_attrs
-              (* NEW : *)               
-              val (value_term, _(*ty*), _) = calc_update_term thy cid_long assns' defaults 
-              (* OLD : 
-              val value_term = (fold convert assns defaults)  |> (infer_type thy) *)
-          in  thy |> DOF_core.define_object_global (oid, {pos      = pos, 
-                                                          thy_name = Context.theory_name thy,
-                                                          value    = value_term,
-                                                          id       = id,   
-                                                          cid      = cid_long})
-          end
 
     fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
                          (* as side-effect, generates markup *)
   in   
-       Toplevel.theory(enrich_trans #> check_text) 
+       Toplevel.theory(create_and_check_docitem oid pos cid_pos doc_attrs #> check_text) 
        (* Thanks Frederic Tuong! ! ! *)
   end;
+
+
+fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
+       Toplevel.theory(create_and_check_docitem oid pos cid_pos doc_attrs) 
+
 
 fun update_instance_command  (((oid:string,pos),cid_pos),
                               doc_attrs: (((string*Position.T)*string)*string)list)                                        
@@ -693,12 +697,17 @@ val _ =
                        "declare document reference"
                        (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
                                       (Toplevel.theory (DOF_core.declare_object_global oid))));
-
+(*
 val _ =
   Outer_Syntax.command @{command_keyword "open_monitor*"} 
                        "open a document reference monitor"
                        (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
                                        (Toplevel.theory (DOF_core.declare_object_global oid))));
+*)
+val _ =
+  Outer_Syntax.command @{command_keyword "open_monitor*"} 
+                       "open a document reference monitor"
+                       (attributes >> open_monitor_command);
 
 val _ =
   Outer_Syntax.command @{command_keyword "close_monitor*"} 
@@ -1032,7 +1041,11 @@ doc_class side_by_side_figure   = figure +
    anchor2          :: "string"
    caption2         :: "string"
 
-(* dito the future monitor: figure - block *)
+doc_class figure_group = 
+   trace            :: "doc_class rexp list" <= "[]"
+   anchor           :: "string"
+   caption          :: "string"
+   where "\<lbrace>figure\<rbrace>\<^sup>+"
 
 (* dito the future table *)
 
