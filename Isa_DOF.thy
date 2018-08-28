@@ -333,9 +333,9 @@ fun get_attributes_local cid ctxt =
 fun get_attributes cid thy = get_attributes_local cid (Proof_Context.init_global thy)
 
 type attributes_info = { def_occurrence : string,
-                         def_pos   : Position.T,
-                         long_name : string,
-                         typ : typ
+                         def_pos        : Position.T,
+                         long_name      : string,
+                         typ            : typ
                        }
 
 fun get_attribute_info_local (*long*)cid attr ctxt : attributes_info option=
@@ -617,7 +617,11 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                              : Toplevel.transition -> Toplevel.transition = 
      let  fun upd thy = 
              let val cid = case DOF_core.get_object_global oid thy of 
-                                SOME{cid,...} => cid
+                                SOME{pos=pos_decl,cid,id,...} => 
+                                    let val markup = docref_markup false oid id pos_decl;
+                                        val ctxt = Proof_Context.init_global thy;
+                                        val _ = Context_Position.report ctxt pos markup;
+                                    in  cid end
                               | NONE => error("undefined doc_class.")
                  val cid_long = check_classref cid_pos thy
                  val _ = if cid_long = DOF_core.default_cid  orelse cid = cid_long 
@@ -897,10 +901,26 @@ fun calculate_attr_access ctxt proj_term term =
                        Syntax.string_of_term ctxt subterm')
     end
 
-fun calculate_attr_access_check ctxt attr oid = (* template *)
+fun calculate_attr_access_check ctxt attr oid pos = (* template *)
     case DOF_core.get_value_local oid (Context.the_proof ctxt) of 
              SOME term => let val ctxt = Context.the_proof ctxt
-                              val SOME{cid,...} = DOF_core.get_object_local oid ctxt
+                              val SOME{cid,pos=pos_decl,id,...} = DOF_core.get_object_local oid ctxt
+                              val markup = docref_markup false oid id pos_decl;
+                              val _ = Context_Position.report ctxt pos markup;
+
+(*
+
+val cid = case DOF_core.get_object_global oid thy of 
+                                SOME{pos=pos_decl,cid,id,...} => 
+                                    let val markup = docref_markup false oid id pos_decl;
+                                        val ctxt = Proof_Context.init_global thy;
+                                        val _ = Context_Position.report ctxt pos markup;
+                                    in  cid end
+                              | NONE => error("undefined doc_class.")
+*)
+
+
+
                               val (* (long_cid, attr_b,ty) = *)
                                   {def_occurrence, long_name, typ=ty,def_pos} = 
                                        case DOF_core.get_attribute_info_local cid attr ctxt of
@@ -915,9 +935,11 @@ fun calculate_attr_access_check ctxt attr oid = (* template *)
 val _ = Theory.setup 
            (ML_Antiquotation.inline @{binding docitem_attr} 
                (fn (ctxt,toks) =>
-                       (Scan.lift Args.name --| (Scan.lift @{keyword "::"}) -- Scan.lift Args.name 
+                       (Scan.lift Args.name 
+                        --| (Scan.lift @{keyword "::"}) 
+                        -- Scan.lift (Parse.position Args.name) 
                         >>  
-                        (fn(attr:string,oid:string) => calculate_attr_access_check ctxt attr oid) 
+                        (fn(attr:string,(oid:string,pos)) => calculate_attr_access_check ctxt attr oid pos) 
                         : string context_parser
                        ) 
                        (ctxt, toks))
