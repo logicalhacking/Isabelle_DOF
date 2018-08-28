@@ -101,12 +101,12 @@ open_monitor*[figs1::figure_group,
 figure*[fig_A::figure, spawn_columns=False,relative_width="''90''",
         src="''figures/A.png''"]
        \<open> The A train \ldots \<close>
-update_instance*[figs1::figure_group, trace+="[figure]"]
+update_instance*[figs1::figure_group, trace+="[figure]"](* simulation : will disappear *)
 
 figure*[fig_B::figure, spawn_columns=False,relative_width="''90''",
         src="''figures/B.png''"]
        \<open> The B train \ldots \<close>  
-update_instance*[figs1::figure_group, trace+="[figure]"]
+update_instance*[figs1::figure_group, trace+="[figure]"](* simulation : will disappear *)
 
 close_monitor*[fig1]  
 
