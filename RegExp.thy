@@ -77,8 +77,16 @@ fun              L :: "'a rexp => 'a lang"
 where L_Emp :   "L Empty      = {}"
      |L_Atom:   "L (\<lfloor>a\<rfloor>)      = {[a]}"
      |L_Un:     "L (el || er)  = (L el) \<union> (L er)"
-     |L_Conc:   "L (el ~~ er)  = {xs@ys | xs ys. xs:L el \<and> ys:L er}"
+     |L_Conc:   "L (el ~~ er)  = {xs@ys | xs ys. xs \<in> L el \<and> ys \<in> L er}"
      |L_Star:   "L (Star e)   = star(L e)"
+
+
+fun              L\<^sub>s\<^sub>u\<^sub>b :: "'a::order rexp => 'a lang"
+where L\<^sub>s\<^sub>u\<^sub>b_Emp :   "L\<^sub>s\<^sub>u\<^sub>b Empty       = {}"
+     |L\<^sub>s\<^sub>u\<^sub>b_Atom:   "L\<^sub>s\<^sub>u\<^sub>b (\<lfloor>a\<rfloor>)       = {z . \<forall>x. x \<le> a \<and> z=[x]}"
+     |L\<^sub>s\<^sub>u\<^sub>b_Un:     "L\<^sub>s\<^sub>u\<^sub>b (el || er)  = (L\<^sub>s\<^sub>u\<^sub>b el) \<union> (L\<^sub>s\<^sub>u\<^sub>b er)"
+     |L\<^sub>s\<^sub>u\<^sub>b_Conc:   "L\<^sub>s\<^sub>u\<^sub>b (el ~~ er)  = {xs@ys | xs ys. xs \<in> L\<^sub>s\<^sub>u\<^sub>b el \<and> ys \<in> L\<^sub>s\<^sub>u\<^sub>b er}"
+     |L\<^sub>s\<^sub>u\<^sub>b_Star:   "L\<^sub>s\<^sub>u\<^sub>b (Star e)    = star(L\<^sub>s\<^sub>u\<^sub>b e)"
 
 
 schematic_goal WeCompute: "L(Star ((\<lfloor>CHR ''a''\<rfloor> || \<lfloor>CHR ''b''\<rfloor>) ~~ \<lfloor>CHR ''c''\<rfloor>)) = ?X"

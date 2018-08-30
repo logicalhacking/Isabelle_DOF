@@ -880,14 +880,17 @@ end (* struct *)
 *}
 
 ML{* 
-structure AttributeAcces = 
+structure AttributeAccess = 
 struct
 
 fun calculate_attr_access ctxt proj_term term =
     (* term assumed to be ground type, (f term) not necessarily *)
     let val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
         val ty = type_of (subterm')
-        val _ = writeln ("calculate_attr_access raw term: " ^ Syntax.string_of_term ctxt subterm')
+        (* Debug :
+        val _ = writeln ("calculate_attr_access raw term: " 
+                         ^ Syntax.string_of_term ctxt subterm')
+         *)
         val term' = (Const(@{const_name "HOL.eq"}, ty --> ty --> HOLogic.boolT) 
                               $ subterm' 
                               $ Free("_XXXXXXX", ty))

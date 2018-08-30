@@ -29,7 +29,7 @@ text*[dfgdfg2::C, z = "None"]\<open> sdfsdfs sdfsdf sdfsdf @{thm refl} \<close>
 
 text*[omega::E, x = "''def''"]\<open> sdfsdfs sdfsdf sdfsdf @{thm refl} \<close> 
 
-text\<open> @{docitem_ref \<open>dfgdfg\<close>} \<close>
+text\<open> As mentioned in @{docitem_ref \<open>dfgdfg\<close>} \<close>
 
 
 term "A.x (undefined\<lparr>A.x := 3\<rparr>)"
@@ -51,9 +51,9 @@ DOF_core.get_attribute_info  "Conceptual.C" "z" @{theory};
 
 
 ML\<open>
-DOF_core.get_value_local "sdf" @{context};
-DOF_core.get_value_local "sdfg" @{context};
-DOF_core.get_value_local "xxxy" @{context};
+DOF_core.get_value_local "sdf"   @{context};
+DOF_core.get_value_local "sdfg"  @{context};
+DOF_core.get_value_local "xxxy"  @{context};
 DOF_core.get_value_local "dfgdfg" @{context};
 DOF_core.get_value_local "omega" @{context};
 \<close>
@@ -63,28 +63,28 @@ text\<open>A not too trivial test: default y -> [].
      The latter wins at access time.
      Then @{term "t"}: creation of a multi inheritance object omega,
      triple updates, the last one wins.\<close>
-ML\<open>val s =  map HOLogic.dest_string (HOLogic.dest_list @{docitem_attr y::dfgdfg});
-   val t =   HOLogic.dest_string (@{docitem_attr x::omega});  \<close>
+ML\<open>val s = map HOLogic.dest_string (HOLogic.dest_list @{docitem_attr y::dfgdfg});
+   val t = HOLogic.dest_string (@{docitem_attr x::omega});  \<close>
 
 
 
 
 section\<open>Mutation of Attibutes in DocItems\<close>
 
-ML\<open> val  Const ("Groups.zero_class.zero", @{typ "int"}) =  @{docitem_attr a2::omega} \<close>
+ML\<open> val Const("Groups.zero_class.zero", @{typ "int"}) =  @{docitem_attr a2::omega} \<close>
 
 update_instance*[omega::E, a2+="1"]
 
-ML\<open> val Const ("Groups.one_class.one", @{typ "int"})=  @{docitem_attr a2::omega} \<close>
+ML\<open> val Const("Groups.one_class.one", @{typ "int"})=  @{docitem_attr a2 :: omega} \<close>
 
 update_instance*[omega::E, a2+="6"]
 
-ML\<open>  @{docitem_attr a2::omega} \<close>
-ML\<open>  HOLogic.dest_number @{docitem_attr a2::omega} \<close>
+ML\<open> @{docitem_attr a2::omega};
+    val s =  HOLogic.dest_number @{docitem_attr a2::omega} \<close>
 
 update_instance*[omega::E, x+="''inition''"]
 
-ML\<open> val s =   HOLogic.dest_string ( @{docitem_attr x::omega}) \<close>
+ML\<open> val s = HOLogic.dest_string ( @{docitem_attr x::omega}) \<close>
                             
 update_instance*[omega::E, y+="[''defini'',''tion'']"]
 

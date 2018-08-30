@@ -14,6 +14,7 @@ doc_class C = B +
    z :: "A option"             <= None  (* A LINK, i.e. an attribute that has a type
                                            referring to a document class. Mathematical
                                            relations over document items can be modeled. *)
+   g :: "thm"
 
 datatype enum = X1 | X2 | X3
    
