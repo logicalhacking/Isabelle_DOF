@@ -31,46 +31,46 @@ mechanism for linking informal and formal parts of a document.
 
 In this paper, we present \isadof, a novel Document Ontology Framework
 on top of Isabelle. \isadof allows for conventional typesetting
-\emph{as well} as formal development. We show how to model document
+\<^emph>\<open>as well\<close> as formal development. We show how to model document
  ontologies inside \isadof, how to use the resulting meta-information 
 for enforcing a certain document structure, and discuss ontology-specific IDE support. 
 \<close>
 
 section*[intro::introduction]\<open> Introduction \<close>  
 text*[introtext::introduction]\<open> 
-The linking of the \emph{formal} to the \emph{informal} is perhaps the
+The linking of the \<^emph>\<open>formal\<close> to the \<^emph>\<open>informal\<close> is perhaps the
 most pervasive challenge in the digitization of knowledge and its
 propagation. This challenge incites numerous research efforts
 summarized under the labels ``semantic web'', ``data mining'', or any
 form of advanced ``semantic'' text processing.  A key role in
-structuring this linking play \emph{document ontologies} (also called
-\emph{vocabulary} in the semantic web
-community~\cite{w3c:ontologies:2015}), \ie, a machine-readable form of
-the structure of documents as well as the document discourse.
+structuring this linking play \<^emph>\<open>document ontologies\<close> (also called
+\<^emph>\<open>vocabulary\<close> in the semantic web community~\cite{w3c:ontologies:2015}), 
+\ie, a machine-readable form of the structure of documents as well as 
+the document discourse.
+
 Such ontologies can be used for the scientific discourse within scholarly
 articles, mathematical libraries, and in the engineering discourse  
 of standardized software certification documents~\cite{boulanger:cenelec-50128:2015,cc:cc-part3:2006}. 
 Further applications are the domain-specific discourse in juridical texts or medical reports.  
-In general, an ontology is a formal explicit description of \emph{concepts} 
-in a domain of discourse (called \emph{classes}), properties of each concept 
-describing \emph{attributes} of the concept, as well as \emph{links} between 
-them. A particular link between concepts is the \emph{is-a} relation declaring 
+In general, an ontology is a formal explicit description of \<^emph>\<open>concepts\<close> 
+in a domain of discourse (called \<^emph>\<open>classes\<close>), properties of each concept 
+describing \<^emph>\<open>attributes\<close> of the concept, as well as \<^emph>\<open>links\<close> between 
+them. A particular link between concepts is the \<^emph>\<open>is-a\<close> relation declaring 
 the instances of a subclass to be instances of the super-class.
 
 The main objective of this paper is to present \isadof, a novel
-framework to \emph{model} typed ontologies and to \emph{enforce} them during
+framework to \<^emph>\<open>model\<close> typed ontologies and to \<^emph>\<open>enforce\<close> them during
 document evolution. Based on Isabelle infrastructures, ontologies may refer to
 types, terms, proven theorems, code, or established assertions.
 Based on a novel adaption of the Isabelle IDE, a document is checked to be 
-\emph{conform} to a particular ontology---\isadof is
-designed to give fast user-feedback \emph{during the capture of
-content}. This is particularly valuable in case of document changes,
-where the \emph{coherence} between the formal and the informal parts of the
+\<^emph>\<open>conform\<close> to a particular ontology---\isadof is designed to give fast user-feedback 
+\<^emph>\<open>during the capture of content\<close>. This is particularly valuable in case of document 
+changes, where the \<^emph>\<open>coherence\<close> between the formal and the informal parts of the
 content can be mechanically checked.
 
-To avoid any misunderstanding: \isadof  is \emph{not a theory in HOL}  
+To avoid any misunderstanding: \isadof  is \<^emph>\<open>not a theory in HOL\<close>   
 on ontologies and operations to track and trace links in texts,
-it is an \emph{environment to write structured text} which \emph{may contain} 
+it is an \<^emph>\<open>environment to write structured text\<close> which \<^emph>\<open>may contain\<close>  
 Isabelle/HOL definitions and proofs like mathematical articles, tech-reports and
 scientific papers---as the present one, which is written in \isadof 
 itself. \isadof is a plugin into the Isabelle/Isar

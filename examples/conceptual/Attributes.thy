@@ -75,7 +75,7 @@ ML\<open> val Const("Groups.zero_class.zero", @{typ "int"}) =  @{docitem_attr a2
 
 update_instance*[omega::E, a2+="1"]
 
-ML\<open> val Const("Groups.one_class.one", @{typ "int"})=  @{docitem_attr a2 :: omega} \<close>
+ML\<open> val (s as Const("Groups.one_class.one", @{typ "int"}))=  @{docitem_attr a2 :: omega} \<close>
 
 update_instance*[omega::E, a2+="6"]
 
