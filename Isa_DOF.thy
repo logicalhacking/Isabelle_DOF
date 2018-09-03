@@ -56,7 +56,8 @@ term "@{typ  ''int => int''}"
 term "@{term ''Bound 0''}"  
 term "@{thm  ''refl''}"  
 term "@{docitem  ''<doc_ref>''}"
-  
+
+ML\<open> @{term "@{docitem  ''<doc_ref>''}"}\<close>
   
   
 section{*Primitive Markup Generators*}
@@ -77,6 +78,8 @@ val docref_markup = docref_markup_gen docrefN
 val docclass_markup = docref_markup_gen docclassN
 
 *}
+
+
 
 section{* A HomeGrown Document Type Management (the ''Model'') *}
   
@@ -389,6 +392,40 @@ fun update_value_global oid upd thy  =
                                                          value=upd value,id=id, cid=cid})
                    in   map_data_global (apfst(fn{tab,maxano}=>{tab=tab' tab,maxano=maxano})) thy end
              | NONE => error("undefined doc object: "^oid)  
+
+
+fun get_isa_global isa thy  =  case Symtab.lookup (#3(get_data_global thy)) isa of 
+                                       NONE => error("undefined inner syntax antiquotation: "^isa)
+                                      |SOME(bbb) => bbb
+                               
+
+fun get_isa_local isa ctxt  = case Symtab.lookup (#3(get_data ctxt)) isa of 
+                                       NONE => error("undefined inner syntax antiquotation: "^isa)
+                                      |SOME(bbb) => bbb
+                              
+
+fun update_isa_local (isa, trans) ctxt  = 
+    map_data (apthrd(Symtab.update(isa,trans))) ctxt
+
+fun update_isa_global (isa, trans) thy  = 
+    map_data_global (apthrd(Symtab.update(isa,trans))) thy
+
+
+fun transduce_term_global term thy = 
+    let val tab = #3(get_data_global thy)
+        fun T(Const(s,ty) $ t) = if String.isPrefix "Isa_DOF.ISA_" s
+                                 then case Symtab.lookup tab s of
+                                        NONE => error("undefined inner syntax antiquotation: "^s)
+                                      | SOME(trans) => case trans t of 
+                                                         NONE => Const(s,ty) $ t
+                                                         (* checking isa, may raise error though. *)        
+                                                       | SOME t => Const(s,ty) $ t
+                                                         (* transforming isa *)
+                                 else (Const(s,ty) $ (T t))
+          |T(t1 $ t2) = T(t1) $ T(t2)
+          |T(Abs(s,ty,t)) = Abs(s,ty,T t)
+          |T t = t
+    in   T term end
 
 
 fun writeln_classrefs ctxt = let  val tab = #2(get_data ctxt)
