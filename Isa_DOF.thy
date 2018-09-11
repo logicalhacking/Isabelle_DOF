@@ -519,13 +519,31 @@ fun ML_isa_antiq check_file thy (name, pos) =
   in "Path.explode " ^ ML_Syntax.print_string (Path.implode path) end;
 
 
-fun ML_isa_file_string thy (term, pos) =
+fun ML_isa_check_generic check thy (term, pos) =
   let val name = (HOLogic.dest_string term
                   handle TERM(_,[t]) => error ("wrong term format: must be string constant: " 
-                                               ^ Syntax.string_of_term_global @{theory} t ))
-      val check = (SOME File.check_file)
-      val _ = check_path check (Proof_Context.init_global thy) Path.current (name, pos);
-  in SOME term end;
+                                               ^ Syntax.string_of_term_global thy t ))
+      val _ = check thy (name,pos)
+  in  SOME term end;  
+
+
+fun ML_isa_check_typ thy (term, pos) =
+  let fun check thy (name, _) = Syntax.parse_typ (Proof_Context.init_global thy) name 
+  in  ML_isa_check_generic check thy (term, pos) end 
+
+
+fun ML_isa_check_term thy (term, pos) =
+  let fun check thy (name, _) = Syntax.parse_term (Proof_Context.init_global thy) name 
+  in  ML_isa_check_generic check thy (term, pos) end 
+
+
+fun ML_isa_check_file thy (term, pos) =
+  let fun check thy (name, pos) = check_path (SOME File.check_file) 
+                                             (Proof_Context.init_global thy) 
+                                             (Path.current) 
+                                             (name, pos);
+  in  ML_isa_check_generic check thy (term, pos) end;
+
 
 fun ML_isa_id thy (term,pos) = SOME term
 
@@ -538,11 +556,12 @@ end; (* struct *)
 \<close>
 
 ML\<open>Syntax.parse_typ\<close>
+
 subsection\<open> Isar - Setup\<close>
-
-setup\<open>DOF_core.update_isa_global("file",ISA_core.ML_isa_file_string) \<close>     
+setup\<open>DOF_core.update_isa_global("file"   ,ISA_core.ML_isa_check_file) \<close>     
+setup\<open>DOF_core.update_isa_global("typ"    ,ISA_core.ML_isa_check_typ) \<close>     
+setup\<open>DOF_core.update_isa_global("term"   ,ISA_core.ML_isa_check_term) \<close>     
 setup\<open>DOF_core.update_isa_global("docitem",ISA_core.ML_isa_id)\<close>     
-
 
 
 section\<open> Syntax for Annotated Documentation Commands (the '' View'' Part I) \<close>

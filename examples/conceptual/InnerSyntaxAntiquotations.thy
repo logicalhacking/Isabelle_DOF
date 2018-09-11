@@ -11,5 +11,7 @@ Symtab.dest z;
 
 text*[xcv::F, u="@{file ''./examples/conceptual/Attributes.thy''}"]\<open>Lorem ipsum ...\<close>
 
+text*[xcv1::F, s="[@{typ ''int list''}]"]\<open>Lorem ipsum ...\<close>
+
 
 end

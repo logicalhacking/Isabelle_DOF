@@ -31,6 +31,7 @@ doc_class E = D +
 doc_class F  = 
    r :: "thm list"
    u :: "file"
+   s :: "typ list"
    b :: "(A \<times> C) set"         <= "{}"
 
 doc_class M = 
