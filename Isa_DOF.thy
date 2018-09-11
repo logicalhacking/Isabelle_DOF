@@ -1,8 +1,13 @@
-chapter \<open>The Document-Type Support Framework for Isabelle\<close>
+chapter \<open>The Document Ontology Framework for Isabelle\<close>
 
-text\<open> Offering reflection to ML for class hierarchies, objects and object states. 
-       + Isar syntax for these, assuming that classes entities fit to predefined
-       Isar keywords. \<close> 
+text\<open> Offering 
+\<^item> text-elements that can be annotated with meta-information
+\<^item> typed links to text-elements via specifically generated anti-quotations
+\<^item> typed structure of this meta-information specifiable in an Ontology-Language ODL
+\<^item> inner-syntax-antiquotations allowing to reference Isabelle-entities such as 
+  types, terms, theorems inside the meta-information
+\<^item> monitors allowing to enforce a specific textual structure of an Isabelle Document
+\<^item> LaTeX support. \<close> 
   
 text\<open> In this section, we develop on the basis of a management of references Isar-markups
 that provide direct support in the PIDE framework. \<close>  
@@ -484,7 +489,7 @@ ML\<open> @{term "@{docitem  ''<doc_ref>''}"}\<close>
 
 thm "refl"
 ML\<open>@{thm refl}; Facts.named\<close>
-ML\<open> @{file "Assert.thy"} ; File.check_file;  Path.named_root\<close>
+(* ML\<open> @{file "Assert.thy"} ; File.check_file;  Path.named_root\<close> *)
 ML\<open>Parse.path : string parser\<close>
 
 subsection\<open> Semantics \<close>
@@ -525,14 +530,15 @@ end; (* struct *)
 
 (* Test *)
 
-ISA_core.ML_isa_antiq (SOME File.check_file) @{theory} ("RegExp.thy",@{here});
-
+(* ISA_core.ML_isa_antiq (SOME File.check_file) @{theory} ("RegExp.thy",@{here}); *)
+                                                            
 \<close>
 
-ML\<open>\<close>
+ML\<open>Syntax.parse_typ\<close>
 subsection\<open> Isar - Setup\<close>
 
 setup\<open>DOF_core.update_isa_global("file",ISA_core.ML_isa_string (SOME File.check_file)) \<close>     
+setup\<open>DOF_core.update_isa_global("docitem",ISA_core.ML_isa_string (SOME I)) \<close>     
 
 
 

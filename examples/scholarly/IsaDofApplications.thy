@@ -17,7 +17,7 @@ text*[bu::author,   email="''wolff@lri.fr''",
                     affiliation="''Universit\\'e Paris-Sud, Paris, France''"]  \<open>Burkhart Wolff\<close>
     
 
-text*[abs::abstract, keywordlist="[''Ontology'',''Ontological Modeling'',''Isabelle/DOF'']"]\<open>
+Text*[abs::abstract,keywordlist="[''Ontology'',''Ontological Modeling'',''Isabelle/DOF'']"]\<open>
 While Isabelle is mostly known as part of Isabelle/HOL (an interactive 
 theorem prover), it actually provides a framework for developing a wide
 spectrum of applications. A particular strength
@@ -29,7 +29,7 @@ for ensuring the structure of different document types (as, e.g.,
 required in certification processes) in general and, in particular,
 mechanism for linking informal and formal parts of a document. 
 
-In this paper, we present \isadof, a novel Document Ontology Framework
+In this paper, we present \isadof, a novel Document Ontology Framework 
 on top of Isabelle. \isadof allows for conventional typesetting
 \<^emph>\<open>as well\<close> as formal development. We show how to model document
  ontologies inside \isadof, how to use the resulting meta-information 
