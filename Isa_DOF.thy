@@ -548,8 +548,15 @@ fun ML_isa_check_file thy (term, pos) =
   in  ML_isa_check_generic check thy (term, pos) end;
 
 
-
 fun ML_isa_id thy (term,pos) = SOME term
+
+
+fun ML_isa_check_docitem thy (term, pos) =
+  let fun check thy (name, _) = if DOF_core.is_declared_oid_global name thy then ()
+                                else err ("faulty reference to docitem: "^name) pos
+  in  ML_isa_check_generic check thy (term, pos) end 
+(* does not work - must transform type to get the term right. *)
+
 
 end; (* struct *)
                                                             
@@ -557,11 +564,12 @@ end; (* struct *)
 
 
 subsection\<open> Isar - Setup\<close>
+
 setup\<open>DOF_core.update_isa_global("typ"    ,ISA_core.ML_isa_check_typ) \<close>     
 setup\<open>DOF_core.update_isa_global("term"   ,ISA_core.ML_isa_check_term) \<close>     
 setup\<open>DOF_core.update_isa_global("thm"    ,ISA_core.ML_isa_check_thm) \<close>     
 setup\<open>DOF_core.update_isa_global("file"   ,ISA_core.ML_isa_check_file) \<close>     
-setup\<open>DOF_core.update_isa_global("docitem",ISA_core.ML_isa_id)\<close>     
+setup\<open>DOF_core.update_isa_global("docitem",ISA_core.ML_isa_check_docitem)\<close>     
 
 
 section\<open> Syntax for Annotated Documentation Commands (the '' View'' Part I) \<close>
@@ -763,7 +771,8 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                          else error("incompatible classes:"^cid^":"^cid_long)
                  fun markup2string x = XML.content_of (YXML.parse_body x)
 
-                 fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, Syntax.read_term_global thy rhs)
+                 fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
+                                                            Syntax.read_term_global thy rhs)
                  val assns' = map conv_attrs doc_attrs
                  val def_trans = #1 o (calc_update_term thy cid_long assns')
           in     
