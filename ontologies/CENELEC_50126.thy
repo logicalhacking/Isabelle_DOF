@@ -159,7 +159,7 @@ DOF_core.is_subclass @{context} "CENELEC_50126.srac" "CENELEC_50126.ec";
 DOF_core.is_subclass @{context} "CENELEC_50126.ec"   "CENELEC_50126.srac";
 DOF_core.is_subclass @{context} "CENELEC_50126.ec"   "CENELEC_50126.test_requirement";
 "XXXXXXXXXXXXXXXXX";
-val ({maxano, tab=ref_tab},class_tab) = DOF_core.get_data @{context};
+val ({maxano, tab=ref_tab},class_tab,_) = DOF_core.get_data @{context};
 Symtab.dest ref_tab;
 Symtab.dest class_tab;
 *}

@@ -30,6 +30,7 @@ doc_class E = D +
    
 doc_class F  = 
    r :: "thm list"
+   u :: "file"
    b :: "(A \<times> C) set"         <= "{}"
 
 doc_class M = 

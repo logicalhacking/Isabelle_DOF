@@ -10,7 +10,7 @@ print_doc_items
 
 (* corresponds to low-level accesses : *)
 ML\<open>  
-val ({tab = x, ...},y)= DOF_core.get_data @{context};
+val ({tab = x, ...},y,z)= DOF_core.get_data @{context};
 Symtab.dest x;
 "==============================================";
 Symtab.dest y;

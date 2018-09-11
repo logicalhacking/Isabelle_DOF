@@ -1,12 +1,11 @@
 chapter \<open>The Document-Type Support Framework for Isabelle\<close>
 
-text{* Offering reflection to ML for class hierarchies, objects and object states. 
+text\<open> Offering reflection to ML for class hierarchies, objects and object states. 
        + Isar syntax for these, assuming that classes entities fit to predefined
-       Isar keywords.
- *} 
+       Isar keywords. \<close> 
   
-text{* In this section, we develop on the basis of a management of references Isar-markups
-that provide direct support in the PIDE framework. *}  
+text\<open> In this section, we develop on the basis of a management of references Isar-markups
+that provide direct support in the PIDE framework. \<close>  
   
 theory Isa_DOF   (* Isabelle Document Ontology Framework *)
   imports  Main  (* Isa_MOF *)
@@ -30,38 +29,10 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
            
   
 begin
+    
   
-section{*Inner Syntax Antiquotations: Syntax *}
-
-typedecl "doc_class"
-typedecl "typ"
-typedecl "term"
-typedecl "thm"
-typedecl "file"
-typedecl "http"
-typedecl "thy"
- 
--- \<open> and others in the future : file, http, thy, ... \<close> 
-
-consts ISA_typ          :: "string \<Rightarrow> typ"               ("@{typ _}")
-consts ISA_term         :: "string \<Rightarrow> term"              ("@{term _}")
-consts ISA_thm          :: "string \<Rightarrow> thm"               ("@{thm _}")
-consts ISA_file         :: "string \<Rightarrow> file"              ("@{file _}")
-consts ISA_thy          :: "string \<Rightarrow> thy"               ("@{thy _}")
-consts ISA_docitem      :: "string \<Rightarrow> 'a"                ("@{docitem _}")
-consts ISA_docitem_attr :: "string \<Rightarrow> string \<Rightarrow> 'a"      ("@{docitemattr (_) :: (_)}")
-
-  
-term "@{typ  ''int => int''}"  
-term "@{term ''Bound 0''}"  
-term "@{thm  ''refl''}"  
-term "@{docitem  ''<doc_ref>''}"
-
-ML\<open> @{term "@{docitem  ''<doc_ref>''}"}\<close>
-  
-  
-section{*Primitive Markup Generators*}
-ML{*
+section\<open>Primitive Markup Generators\<close>
+ML\<open>
 
 val docrefN   = "docref";    
 val docclassN = "doc_class";    
@@ -76,14 +47,13 @@ fun docref_markup_gen refN def name id pos =
 val docref_markup = docref_markup_gen docrefN
 
 val docclass_markup = docref_markup_gen docclassN
-
-*}
-
+\<close>
 
 
-section{* A HomeGrown Document Type Management (the ''Model'') *}
+
+section\<open> A HomeGrown Document Type Management (the ''Model'') \<close>
   
-ML{*
+ML\<open>
 structure DOF_core = 
 struct
    type docclass_struct = {params : (string * sort) list, (*currently not used *)
@@ -137,7 +107,7 @@ struct
                     in {tab=Symtab.merge X (otab,otab'),maxano=Int.max(m,m')}
                     end) 
 
-   type ISA_transformer_tab = (term -> term option) Symtab.table
+   type ISA_transformer_tab = (theory -> term * Position.T -> term option) Symtab.table
 
    val  initial_ISA_tab:ISA_transformer_tab = Symtab.empty
 
@@ -394,29 +364,31 @@ fun update_value_global oid upd thy  =
              | NONE => error("undefined doc object: "^oid)  
 
 
-fun get_isa_global isa thy  =  case Symtab.lookup (#3(get_data_global thy)) isa of 
+val ISA_prefix = "Isa_DOF.ISA_"  (* ISA's must be declared in Isa_DOF.thy  !!! *)
+
+fun get_isa_global isa thy  =  case Symtab.lookup (#3(get_data_global thy)) (ISA_prefix^isa) of 
                                        NONE => error("undefined inner syntax antiquotation: "^isa)
                                       |SOME(bbb) => bbb
                                
 
-fun get_isa_local isa ctxt  = case Symtab.lookup (#3(get_data ctxt)) isa of 
+fun get_isa_local isa ctxt  = case Symtab.lookup (#3(get_data ctxt)) (ISA_prefix^isa) of 
                                        NONE => error("undefined inner syntax antiquotation: "^isa)
                                       |SOME(bbb) => bbb
                               
 
 fun update_isa_local (isa, trans) ctxt  = 
-    map_data (apthrd(Symtab.update(isa,trans))) ctxt
+    map_data (apthrd(Symtab.update(ISA_prefix^isa,trans))) ctxt
 
 fun update_isa_global (isa, trans) thy  = 
-    map_data_global (apthrd(Symtab.update(isa,trans))) thy
+    map_data_global (apthrd(Symtab.update(ISA_prefix^isa,trans))) thy
 
 
-fun transduce_term_global term thy = 
+fun transduce_term_global (term,pos) thy = 
     let val tab = #3(get_data_global thy)
-        fun T(Const(s,ty) $ t) = if String.isPrefix "Isa_DOF.ISA_" s
+        fun T(Const(s,ty) $ t) = if String.isPrefix ISA_prefix s
                                  then case Symtab.lookup tab s of
                                         NONE => error("undefined inner syntax antiquotation: "^s)
-                                      | SOME(trans) => case trans t of 
+                                      | SOME(trans) => case trans thy (t,pos) of 
                                                          NONE => Const(s,ty) $ t
                                                          (* checking isa, may raise error though. *)        
                                                        | SOME t => Const(s,ty) $ t
@@ -479,12 +451,94 @@ val _ =
       Toplevel.keep (print_doc_items b o Toplevel.context_of)));
 
 end (* struct *)
-*}
-  
-  
-section{* Syntax for Annotated Documentation Commands (the '' View'' Part I) *}
+\<close>
 
-ML{* 
+section\<open> Syntax for Inner Syntax Antiquotations (ISA) \<close>
+
+subsection\<open> Syntax \<close> 
+
+typedecl "doc_class"
+typedecl "typ"
+typedecl "term"
+typedecl "thm"
+typedecl "file"
+typedecl "http"
+typedecl "thy"
+ 
+-- \<open> and others in the future : file, http, thy, ... \<close> 
+
+consts ISA_typ          :: "string \<Rightarrow> typ"               ("@{typ _}")
+consts ISA_term         :: "string \<Rightarrow> term"              ("@{term _}")
+consts ISA_thm          :: "string \<Rightarrow> thm"               ("@{thm _}")
+consts ISA_file         :: "string \<Rightarrow> file"              ("@{file _}")
+consts ISA_thy          :: "string \<Rightarrow> thy"               ("@{thy _}")
+consts ISA_docitem      :: "string \<Rightarrow> 'a"                ("@{docitem _}")
+consts ISA_docitem_attr :: "string \<Rightarrow> string \<Rightarrow> 'a"      ("@{docitemattr (_) :: (_)}")
+
+(* tests *)  
+term "@{typ  ''int => int''}"  
+term "@{term ''Bound 0''}"  
+term "@{thm  ''refl''}"  
+term "@{docitem  ''<doc_ref>''}"
+ML\<open> @{term "@{docitem  ''<doc_ref>''}"}\<close>
+
+thm "refl"
+ML\<open>@{thm refl}; Facts.named\<close>
+ML\<open> @{file "Assert.thy"} ; File.check_file;  Path.named_root\<close>
+ML\<open>Parse.path : string parser\<close>
+
+subsection\<open> Semantics \<close>
+
+ML\<open>
+structure ISA_core = 
+struct
+
+fun err msg pos = error (msg ^ Position.here pos);
+
+fun check_path check_file ctxt dir (name, pos) =
+  let
+    val _ = Context_Position.report ctxt pos Markup.language_path;
+
+    val path = Path.append dir (Path.explode name) handle ERROR msg => err msg pos;
+    val _ = Path.expand path handle ERROR msg => err msg pos;
+    val _ = Context_Position.report ctxt pos (Markup.path (Path.smart_implode path));
+    val _ =
+      (case check_file of
+        NONE => path
+      | SOME check => (check path handle ERROR msg => err msg pos));
+  in path end;
+
+
+fun ML_isa_antiq check_file thy (name, pos) =
+  let val path = check_path check_file (Proof_Context.init_global thy) Path.current (name, pos);
+  in "Path.explode " ^ ML_Syntax.print_string (Path.implode path) end;
+
+
+fun ML_isa_string check thy (term, pos) =
+  let val name = (HOLogic.dest_string term
+                  handle TERM(_,[t]) => error ("wrong term format: must be string constant: " 
+                                               ^ Syntax.string_of_term_global @{theory} t ))
+      val path = check_path check (Proof_Context.init_global thy) Path.current (name, pos);
+  in SOME term end;
+
+end; (* struct *)
+
+(* Test *)
+
+ISA_core.ML_isa_antiq (SOME File.check_file) @{theory} ("RegExp.thy",@{here});
+
+\<close>
+
+ML\<open>\<close>
+subsection\<open> Isar - Setup\<close>
+
+setup\<open>DOF_core.update_isa_global("file",ISA_core.ML_isa_string (SOME File.check_file)) \<close>     
+
+
+
+section\<open> Syntax for Annotated Documentation Commands (the '' View'' Part I) \<close>
+
+ML\<open>
 structure ODL_Command_Parser = 
 struct
 
@@ -576,7 +630,7 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
         val generalize_term =  Term.map_types (generalize_typ 0)
         fun toString t = Syntax.string_of_term (Proof_Context.init_global thy) t  
         fun instantiate_term S t = Term_Subst.map_types_same (Term_Subst.instantiateT S) (t)
-        fun read_assn (lhs, _:Position.T, opr, rhs) term =
+        fun read_assn (lhs, pos:Position.T, opr, rhs) term =
             let val info_opt = DOF_core.get_attribute_info cid_long 
                                        (Long_Name.base_name lhs) thy
                 val (ln,lnt,lnu,lnut) = case info_opt of 
@@ -587,6 +641,7 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
                                                                          long_name ^"_update",
                                                                          (typ --> typ) 
                                                                           --> cid_ty --> cid_ty)
+                val rhs = DOF_core.transduce_term_global (rhs,pos) thy 
                 val tyenv = Sign.typ_match thy  ((generalize_typ 0)(type_of rhs), lnt) (Vartab.empty)
                             handle Type.TYPE_MATCH => error ("type of attribute: " ^ ln 
                                                              ^ " does not fit to term: " 
@@ -751,13 +806,7 @@ val _ =
                        "declare document reference"
                        (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
                                       (Toplevel.theory (DOF_core.declare_object_global oid))));
-(*
-val _ =
-  Outer_Syntax.command @{command_keyword "open_monitor*"} 
-                       "open a document reference monitor"
-                       (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
-                                       (Toplevel.theory (DOF_core.declare_object_global oid))));
-*)
+
 val _ =
   Outer_Syntax.command @{command_keyword "open_monitor*"} 
                        "open a document reference monitor"
@@ -798,7 +847,7 @@ val _ = Thy_Output.set_meta_args_parser
 
 end (* struct *)
 
-*}
+\<close>
   
 ML \<open>
 local (* dull and dangerous copy from Pure.thy given that these functions are not
@@ -834,14 +883,10 @@ val _ = theorem @{command_keyword schematic_goal} true "schematic goal"; *)
 
 in end\<close>  
     
-(* experiments >>> *)
+ 
+section\<open> Syntax for Ontological Antiquotations (the '' View'' Part II) \<close>
   
-text*[sdf] {* f @{thm refl}*}  
-text*[sdfg] {* fg @{thm refl}*}  
-  
-section{* Syntax for Ontological Antiquotations (the '' View'' Part II) *}
-  
-ML{*
+ML\<open>
 structure OntoLinkParser = 
 struct
 
@@ -927,9 +972,9 @@ val _ = Theory.setup((docitem_ref_antiquotation @{binding docref} DOF_core.defau
                       docitem_value_ML_antiquotation @{binding docitem_value})
 
 end (* struct *)
-*}
+\<close>
 
-ML{* 
+ML\<open> 
 structure AttributeAccess = 
 struct
 
@@ -960,20 +1005,6 @@ fun calculate_attr_access_check ctxt attr oid pos = (* template *)
                               val SOME{cid,pos=pos_decl,id,...} = DOF_core.get_object_local oid ctxt
                               val markup = docref_markup false oid id pos_decl;
                               val _ = Context_Position.report ctxt pos markup;
-
-(*
-
-val cid = case DOF_core.get_object_global oid thy of 
-                                SOME{pos=pos_decl,cid,id,...} => 
-                                    let val markup = docref_markup false oid id pos_decl;
-                                        val ctxt = Proof_Context.init_global thy;
-                                        val _ = Context_Position.report ctxt pos markup;
-                                    in  cid end
-                              | NONE => error("undefined doc_class.")
-*)
-
-
-
                               val (* (long_cid, attr_b,ty) = *)
                                   {def_occurrence, long_name, typ=ty,def_pos} = 
                                        case DOF_core.get_attribute_info_local cid attr ctxt of
@@ -997,14 +1028,12 @@ val _ = Theory.setup
                        ) 
                        (ctxt, toks))
            )    
-
-end
-*}
+end\<close>
 
 
   
-section{* Syntax for Ontologies (the '' View'' Part III) *} 
-ML{* 
+section\<open> Syntax for Ontologies (the '' View'' Part III) \<close> 
+ML\<open>
 structure OntoParser = 
 struct
 
@@ -1093,13 +1122,11 @@ val _ =
            Toplevel.theory (add_doc_class_cmd {overloaded = overloaded} x y z rex)));
 
 end (* struct *)
+\<close>  
 
-*}  
-
-text*[xxxy] {* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}*}    
   
    
-section{* Library of Standard Text Ontology *}
+section\<open> Library of Standard Text Ontology \<close>
 
 datatype placement = pl_h | pl_t | pl_b | pl_ht | pl_hb   
 doc_class figure   = 
@@ -1126,6 +1153,11 @@ doc_class figure_group =
 
 (* dito the future monitor: table - block *)
 
-section{* Testing and Validation *}
+section\<open> Testing and Validation \<close>
+  
+text*[sdf] {* f @{thm refl}*}  
+text*[sdfg] {* fg @{thm refl}*}  
+ 
+text*[xxxy] {* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}*}    
 
 end

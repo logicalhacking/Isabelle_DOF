@@ -4,6 +4,8 @@ begin
 
 section{* Some show-off's of general antiquotations. *}
 (* some show-off of standard anti-quotations: *) 
+text \<open>THIS IS A TEXT\<close>
+
 text\<open>  @{thm refl}  of name @{thm [source] refl} 
         @{thm[mode=Rule] conjI}
         @{file "../../Isa_DOF.thy"} 
@@ -45,7 +47,7 @@ text \<open> represent a justification of the safety related applicability
      \<close> 
 
 section{* Some Tests for Ontology Framework and its CENELEC Instance *}  
-
+                                                  
 declare_reference* [lalala::requirement, alpha="main", beta=42]
 
 
