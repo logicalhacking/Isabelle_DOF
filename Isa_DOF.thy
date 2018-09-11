@@ -519,12 +519,15 @@ fun ML_isa_antiq check_file thy (name, pos) =
   in "Path.explode " ^ ML_Syntax.print_string (Path.implode path) end;
 
 
-fun ML_isa_string check thy (term, pos) =
+fun ML_isa_file_string thy (term, pos) =
   let val name = (HOLogic.dest_string term
                   handle TERM(_,[t]) => error ("wrong term format: must be string constant: " 
                                                ^ Syntax.string_of_term_global @{theory} t ))
-      val path = check_path check (Proof_Context.init_global thy) Path.current (name, pos);
+      val check = (SOME File.check_file)
+      val _ = check_path check (Proof_Context.init_global thy) Path.current (name, pos);
   in SOME term end;
+
+fun ML_isa_id thy (term,pos) = SOME term
 
 end; (* struct *)
 
@@ -537,8 +540,8 @@ end; (* struct *)
 ML\<open>Syntax.parse_typ\<close>
 subsection\<open> Isar - Setup\<close>
 
-setup\<open>DOF_core.update_isa_global("file",ISA_core.ML_isa_string (SOME File.check_file)) \<close>     
-setup\<open>DOF_core.update_isa_global("docitem",ISA_core.ML_isa_string (SOME I)) \<close>     
+setup\<open>DOF_core.update_isa_global("file",ISA_core.ML_isa_file_string) \<close>     
+setup\<open>DOF_core.update_isa_global("docitem",ISA_core.ML_isa_id)\<close>     
 
 
 
@@ -560,12 +563,13 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) =
                                 NONE => DOF_core.default_cid
                               | SOME(cid,_) => DOF_core.name2doc_class_name thy cid
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
-        fun toLong n = #long_name(the(DOF_core.get_attribute_info cid_long n thy))
-        fun str ((lhs,_),rhs) = (toLong lhs)^" = "^(enclose "{" "}" rhs)  
+        fun markup2string x = XML.content_of (YXML.parse_body x)
+        fun toLong n =  #long_name(the(DOF_core.get_attribute_info cid_long (markup2string n) thy))
+        fun str ((lhs,_),rhs) = (toLong lhs)^" = "^(enclose "{" "}" (markup2string rhs))  
                                 (* no normalization on lhs (could be long-name)
                                    no paraphrasing on rhs (could be fully paranthesized
                                    pretty-printed formula in LaTeX notation ... *)
-    in  enclose "[" "]" (commas ([l,cid_txt] @ (map str attr_list))) end
+    in  enclose "[" "]" (commas ([l,cid_txt] @ (map str  attr_list ))) end
 
 val semi = Scan.option (Parse.$$$ ";");
 
