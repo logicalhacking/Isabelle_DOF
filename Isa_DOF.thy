@@ -467,7 +467,6 @@ typedecl "typ"
 typedecl "term"
 typedecl "thm"
 typedecl "file"
-typedecl "http"
 typedecl "thy"
  
 -- \<open> and others in the future : file, http, thy, ... \<close> 
@@ -485,12 +484,8 @@ term "@{typ  ''int => int''}"
 term "@{term ''Bound 0''}"  
 term "@{thm  ''refl''}"  
 term "@{docitem  ''<doc_ref>''}"
-ML\<open> @{term "@{docitem  ''<doc_ref>''}"}\<close>
+ML\<open>   @{term "@{docitem  ''<doc_ref>''}"}\<close>
 
-thm "refl"
-ML\<open>@{thm refl}; Facts.named\<close>
-(* ML\<open> @{file "Assert.thy"} ; File.check_file;  Path.named_root\<close> *)
-ML\<open>Parse.path : string parser\<close>
 
 subsection\<open> Semantics \<close>
 
@@ -537,6 +532,14 @@ fun ML_isa_check_term thy (term, pos) =
   in  ML_isa_check_generic check thy (term, pos) end 
 
 
+fun ML_isa_check_thm thy (term, pos) =
+  (* this works for long-names only *)
+  let fun check thy (name, _) = case Proof_Context.lookup_fact (Proof_Context.init_global thy) name of
+                                  NONE => err ("No Theorem:" ^name) pos
+                                | SOME X => X
+  in   ML_isa_check_generic check thy (term, pos) end 
+
+
 fun ML_isa_check_file thy (term, pos) =
   let fun check thy (name, pos) = check_path (SOME File.check_file) 
                                              (Proof_Context.init_global thy) 
@@ -545,22 +548,19 @@ fun ML_isa_check_file thy (term, pos) =
   in  ML_isa_check_generic check thy (term, pos) end;
 
 
+
 fun ML_isa_id thy (term,pos) = SOME term
 
 end; (* struct *)
-
-(* Test *)
-
-(* ISA_core.ML_isa_antiq (SOME File.check_file) @{theory} ("RegExp.thy",@{here}); *)
                                                             
 \<close>
 
-ML\<open>Syntax.parse_typ\<close>
 
 subsection\<open> Isar - Setup\<close>
-setup\<open>DOF_core.update_isa_global("file"   ,ISA_core.ML_isa_check_file) \<close>     
 setup\<open>DOF_core.update_isa_global("typ"    ,ISA_core.ML_isa_check_typ) \<close>     
 setup\<open>DOF_core.update_isa_global("term"   ,ISA_core.ML_isa_check_term) \<close>     
+setup\<open>DOF_core.update_isa_global("thm"    ,ISA_core.ML_isa_check_thm) \<close>     
+setup\<open>DOF_core.update_isa_global("file"   ,ISA_core.ML_isa_check_file) \<close>     
 setup\<open>DOF_core.update_isa_global("docitem",ISA_core.ML_isa_id)\<close>     
 
 

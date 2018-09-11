@@ -9,9 +9,12 @@ Symtab.dest z;
 
 \<close>
 
+lemma murks : "T = {ert,dfg}" sorry
+
 text*[xcv::F, u="@{file ''./examples/conceptual/Attributes.thy''}"]\<open>Lorem ipsum ...\<close>
 
-text*[xcv1::F, s="[@{typ ''int list''}]"]\<open>Lorem ipsum ...\<close>
+text*[xcv1::F, r="[@{thm ''HOL.refl''}, @{thm ''InnerSyntaxAntiquotations.murks''}]", 
+               s="[@{typ ''int list''}]"]\<open>Lorem ipsum ...\<close>
 
 
 end
