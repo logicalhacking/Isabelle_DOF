@@ -20,10 +20,12 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
 
   and      "title*"      "subtitle*"
            "section*"    "subsection*"   "subsubsection*" 
-           "figure*"     "side_by_side_figure*" 
+           "text*"       
+           "Text*"       
            "paragraph*"  "subparagraph*" 
-           "text*"       :: thy_decl
-  and      "Text*"       :: document_body
+           "figure*"
+           "side_by_side_figure*" 
+           :: document_body
            
   and      "open_monitor*" "close_monitor*" "declare_reference*" 
            "update_instance*" "doc_class" ::thy_decl
