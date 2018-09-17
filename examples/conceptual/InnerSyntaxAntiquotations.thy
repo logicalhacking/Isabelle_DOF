@@ -1,10 +1,29 @@
+chapter\<open>Inner Syntax Antiquotations (ISA)'s\<close>
+
 theory InnerSyntaxAntiquotations
   imports "../../ontologies/Conceptual"
 begin
 
+text\<open>Since the syntax chosen for values of doc-class attributes is HOL-syntax --- requiring
+a fast read on the ``What's in Main''-documentation, but not additional knowledge on, say, SML --- 
+an own syntax for references to types, terms, theorems, etc. are necessary. These are the
+``Inner Syntax Antiquotations'' since they make only sense \emph{inside} the Inner-Syntax
+of Isabelle/Isar, so inside the \verb+" ... "+ parenthesis.
+
+They are the key-mechanism to denote 
+\<^item> Links, i.e. attributes refering to doc classes defined by the ontology
+\<^item> Meta-Links, i.e. attributes referring to formal entities inside Isabelle (such as thm's)
+
+This file contains a number of examples resulting from the @{theory "Conceptual"} - ontology;
+the emphasis of this presentation is to present the expressivity of ODL on a paradigmatical example.
+\<close>
+
+
+text\<open>Voila the content of the Isabelle_DOF environment so far:\<close>
 ML\<open> val ({tab = x, ...},y,z)= DOF_core.get_data @{context}; Symtab.dest z; \<close>
 
-lemma murks : "T = {ert,dfg}" sorry
+text\<open>Some sample lemma:\<close>
+lemma murks : "Example" sorry
 
 text\<open>Example for a meta-attribute of ODL-type @{typ "file"} with an appropriate ISA for the
      file @{file "./Attributes.thy"}\<close>
