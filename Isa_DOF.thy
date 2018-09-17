@@ -112,7 +112,7 @@ struct
                     in {tab=Symtab.merge X (otab,otab'),maxano=Int.max(m,m')}
                     end) 
 
-   type ISA_transformer_tab = (theory -> term * Position.T -> term option) Symtab.table
+   type ISA_transformer_tab = (theory -> term * typ * Position.T -> term option) Symtab.table
 
    val  initial_ISA_tab:ISA_transformer_tab = Symtab.empty
 
@@ -151,6 +151,10 @@ fun apthrd f (x, y, z) = (x, y, f z);
 fun is_subclass (ctxt) s t = is_subclass0(#2(get_data ctxt)) s t
 
 fun type_name2doc_class_name thy str =  (*  Long_Name.qualifier *) str
+
+fun typ_to_cid (Type(s,[@{typ "unit"}])) = Long_Name.qualifier s
+   |typ_to_cid (Type(_,[T])) = typ_to_cid T
+   |typ_to_cid _ = error("type is not an ontological type.")
 
 fun name2doc_class_name thy str =
          case Syntax.parse_typ (Proof_Context.init_global thy) str of
@@ -389,11 +393,12 @@ fun update_isa_global (isa, trans) thy  =
 
 
 fun transduce_term_global (term,pos) thy = 
+    (* pre: term should be fully typed in order to allow type-relqted term-transformations *)
     let val tab = #3(get_data_global thy)
         fun T(Const(s,ty) $ t) = if String.isPrefix ISA_prefix s
                                  then case Symtab.lookup tab s of
                                         NONE => error("undefined inner syntax antiquotation: "^s)
-                                      | SOME(trans) => case trans thy (t,pos) of 
+                                      | SOME(trans) => case trans thy (t,ty,pos) of 
                                                          NONE => Const(s,ty) $ t
                                                          (* checking isa, may raise error though. *)        
                                                        | SOME t => Const(s,ty) $ t
@@ -509,7 +514,7 @@ fun check_path check_file ctxt dir (name, pos) =
   in path end;
 
 
-fun ML_isa_antiq check_file thy (name, pos) =
+fun ML_isa_antiq check_file thy (name, _, pos) =
   let val path = check_path check_file (Proof_Context.init_global thy) Path.current (name, pos);
   in "Path.explode " ^ ML_Syntax.print_string (Path.implode path) end;
 
@@ -522,17 +527,17 @@ fun ML_isa_check_generic check thy (term, pos) =
   in  SOME term end;  
 
 
-fun ML_isa_check_typ thy (term, pos) =
+fun ML_isa_check_typ thy (term, _, pos) =
   let fun check thy (name, _) = Syntax.parse_typ (Proof_Context.init_global thy) name 
   in  ML_isa_check_generic check thy (term, pos) end 
 
 
-fun ML_isa_check_term thy (term, pos) =
+fun ML_isa_check_term thy (term, _, pos) =
   let fun check thy (name, _) = Syntax.parse_term (Proof_Context.init_global thy) name 
   in  ML_isa_check_generic check thy (term, pos) end 
 
 
-fun ML_isa_check_thm thy (term, pos) =
+fun ML_isa_check_thm thy (term, _, pos) =
   (* this works for long-names only *)
   let fun check thy (name, _) = case Proof_Context.lookup_fact (Proof_Context.init_global thy) name of
                                   NONE => err ("No Theorem:" ^name) pos
@@ -540,7 +545,7 @@ fun ML_isa_check_thm thy (term, pos) =
   in   ML_isa_check_generic check thy (term, pos) end 
 
 
-fun ML_isa_check_file thy (term, pos) =
+fun ML_isa_check_file thy (term, _, pos) =
   let fun check thy (name, pos) = check_path (SOME File.check_file) 
                                              (Proof_Context.init_global thy) 
                                              (Path.current) 
@@ -551,11 +556,24 @@ fun ML_isa_check_file thy (term, pos) =
 fun ML_isa_id thy (term,pos) = SOME term
 
 
-fun ML_isa_check_docitem thy (term, pos) =
-  let fun check thy (name, _) = if DOF_core.is_declared_oid_global name thy then ()
-                                else err ("faulty reference to docitem: "^name) pos
+fun ML_isa_check_docitem thy (term, req_ty, pos) =
+  let fun check thy (name, _) = 
+           if DOF_core.is_declared_oid_global name thy 
+           then case DOF_core.get_object_global name thy of
+                    NONE => warning("oid declared, but not yet defined --- "^
+                                    " type-check incomplete")
+                 |  SOME {pos=pos_decl,cid,id,...} => 
+                         let val ctxt = (Proof_Context.init_global thy)
+                             val req_class = case req_ty of 
+                                         Type("fun",[_,T]) =>  DOF_core.typ_to_cid T
+                                       | _ => error("can not infer type for: "^ name)
+                         in if cid <> DOF_core.default_cid 
+                               andalso not(DOF_core.is_subclass ctxt cid req_class)
+                            then error("reference ontologically inconsistent")
+                            else ()
+                         end
+           else err ("faulty reference to docitem: "^name) pos
   in  ML_isa_check_generic check thy (term, pos) end 
-(* does not work - must transform type to get the term right. *)
 
 
 end; (* struct *)
@@ -678,7 +696,6 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
                                                                          long_name ^"_update",
                                                                          (typ --> typ) 
                                                                           --> cid_ty --> cid_ty)
-                val rhs = DOF_core.transduce_term_global (rhs,pos) thy 
                 val tyenv = Sign.typ_match thy  ((generalize_typ 0)(type_of rhs), lnt) (Vartab.empty)
                             handle Type.TYPE_MATCH => error ("type of attribute: " ^ ln 
                                                              ^ " does not fit to term: " 
@@ -696,18 +713,12 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
                          = Const (@{const_name "append"}, ttt --> ttt --> ttt)
                    |join _ = error("implicit fusion operation not defined for attribute: "^ lhs)
                  (* could be extended to bool, map, multisets, ... *)
+                val rhs' = instantiate_term tyenv' (generalize_term rhs)
+                val rhs'' = DOF_core.transduce_term_global (rhs',pos) thy                 
              in case opr of 
-                  "=" => Const(lnu,lnut) 
-                         $ Abs ("uu_", lnt, instantiate_term tyenv'  (generalize_term rhs)) 
-                         $ term
-                | ":=" => Const(lnu,lnut) 
-                         $ Abs ("uu_", lnt, instantiate_term tyenv'  (generalize_term rhs)) 
-                         $ term
-                | "+=" => Const(lnu,lnut) 
-                         $ Abs ("uu_", lnt, join lnt 
-                                            $ (Bound 0) 
-                                            $ instantiate_term tyenv'(generalize_term rhs)) 
-                         $ term
+                  "=" => Const(lnu,lnut) $ Abs ("uu_", lnt, rhs'') $ term
+                | ":=" => Const(lnu,lnut) $ Abs ("uu_", lnt, rhs'') $ term
+                | "+=" => Const(lnu,lnut) $ Abs ("uu_", lnt, join lnt $ (Bound 0) $ rhs'') $ term
                 | _ => error "corrupted syntax - oops - this should not occur" 
              end   
      in Sign.certify_term thy  (fold read_assn S term) end
@@ -962,22 +973,24 @@ val doc_ref_modes = Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ unc
                                    {unchecked = false, define= false} (* default *);
 
 
+fun docitem_ref_antiquotation_generic enclose name cid_decl = 
+    Thy_Output.antiquotation name (Scan.lift (doc_ref_modes -- Args.cartouche_input))
+        (fn {context = ctxt, source = src:Token.src, state} =>
+             fn ({unchecked = x, define= y}, source:Input.source) => 
+                 (Thy_Output.output_text state {markdown=false} #>
+                  check_and_mark ctxt                   
+                                 cid_decl 
+                                 ({strict_checking = not x})
+                                 (Input.pos_of source) #>
+                  enclose y) 
+                 source)
+
+
 fun docitem_ref_antiquotation name cid_decl = 
     let fun open_par x = if x then "\\label{" 
                               else "\\autoref{"
         val close = "}"
-    in
-        Thy_Output.antiquotation name (Scan.lift (doc_ref_modes -- Args.cartouche_input))
-            (fn {context = ctxt, source = src:Token.src, state} =>
-                 fn ({unchecked = x, define= y}, source:Input.source) => 
-                     (Thy_Output.output_text state {markdown=false} #>
-                      check_and_mark ctxt                   
-                                     cid_decl 
-                                     ({strict_checking = not x})
-                                     (Input.pos_of source) #>
-                      enclose (open_par y) close) 
-                     source)
-     end
+    in  docitem_ref_antiquotation_generic (fn y => enclose (open_par y) close) name cid_decl end
 
 
 fun check_and_mark_term ctxt oid  =
@@ -1007,6 +1020,9 @@ fun docitem_value_ML_antiquotation binding =
 val _ = Theory.setup((docitem_ref_antiquotation @{binding docref} DOF_core.default_cid) #>
                      (* deprecated syntax                 ^^^^^^*)
                      (docitem_ref_antiquotation @{binding docitem_ref} DOF_core.default_cid) #>
+                     (* deprecated syntax                 ^^^^^^^^^^*)
+                     (docitem_ref_antiquotation @{binding docitem} DOF_core.default_cid) #>
+
                       docitem_value_ML_antiquotation @{binding docitem_value})
 
 end (* struct *)
