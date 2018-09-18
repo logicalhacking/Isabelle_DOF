@@ -17,87 +17,113 @@
   Document-Type Support Framework for Isabelle.]
 
 \RequirePackage{keycommand}
+\RequirePackage{environ}
 \RequirePackage{graphicx}
 \RequirePackage{fp}
 
-\newkeycommand\isaDofChapter[label=,type=][1]{%
-  \isamarkupchapter{#1}\label{\commandkey{label}}%
-}
-\newkeycommand\isaDofSection[label=,type=][1]{%
-  \isamarkupsection{#1}\label{\commandkey{label}}%
-}
-\newkeycommand\isaDofSubSection[label=,type=][1]{%
-  \isamarkupsubsection{#1}\label{\commandkey{label}}%
-}
-\newkeycommand\isaDofSubSubSection[label=,type=][1]{%
-  \isamarkupsubsubsection{#1}\label{\commandkey{label}}%
-}
-\newkeycommand\isaDofParagraph[label=,type=][1]{%
-  \isamarkupparagraph{#1}\label{\commandkey{label}}%
-}
-\newkeycommand\isaDofSubParagraph[label=,type=][1]{%
-  \isamarkupsubparagraph{#1}\label{\commandkey{label}}%
+% Generic dispatcher
+\newkeycommand+[\|]\isaDof[label=,type=,args={}][1]{%
+\csname isaDof\commandkey{type}\endcsname[label=\commandkey{label},\commandkey{args}]{#1}%
 }
 
-\newkeycommand\isaDofFigure
-  [label=,type=,relative_width=,placement=,src=,spawn_columns=enum False True][1]{%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: figure*
+\NewEnviron{isamarkupfigure*}[1][]{\isaDof[#1]{\BODY}}
+\expandafter\newkeycommand\csname isaDofIsa_DOF.figure\endcsname%
+[label=,type=%
+,Isa_DOF.figure.relative_width=%
+,Isa_DOF.figure.placement=%
+,Isa_DOF.figure.src=%
+,Isa_DOF.figure.spawn_columns=enum False True%
+][1]{%
+  % TODO:
+  % \begin{figure}[]
+  %   \centering
+  %   \ifcommandkey{Isa_DOF.figure.relative_width}
+  %   {%
+  %     \FPdiv\scale{\commandkey{Isa_DOF.figure.relative_width}}{100}
+  %     \includegraphics[width=\scale\textwidth]{\commandkey{Isa_DOF.figure.src}} 
+  %   }{%
+  %     \includegraphics[]{\commandkey{Isa_DOF.figure.src}}
+  %   } 
+  %   \caption{#1}\label{\commandkey{Isa_DOF.figure.label}}%
+  % \end{figure}
+}
+% end: figure*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: side_by_side_figure*
+\NewEnviron{isamarkupside_by_side_figure*}[1][]{\isaDof[#1]{\BODY}}
+\expandafter\newkeycommand\csname isaDofIsa_DOF.side_by_side_figure\endcsname%
+[label=,type=%
+,Isa_DOF.figure.relative_width=%
+,Isa_DOF.figure.src=%
+,Isa_DOF.side_by_side_figure.anchor=%
+,Isa_DOF.side_by_side_figure.caption=%
+,Isa_DOF.side_by_side_figure.relative_width2=%
+,Isa_DOF.side_by_side_figure.src2=%
+,Isa_DOF.side_by_side_figure.anchor2=%
+,Isa_DOF.side_by_side_figure.caption2=%
+,Isa_DOF.side_by_side_figure.placement=%
+,Isa_DOF.side_by_side_figure.spawn_columns=enum False True%
+][1]{%
   \begin{figure}[]
-    \centering
-    \ifcommandkey{relative_width}
-    {%
-      \FPdiv\scale{\commandkey{relative_width}}{100}
-      \includegraphics[width=\scale\textwidth]{\commandkey{src}} 
-    }{%
-      \includegraphics[]{\commandkey{src}}
-    } 
-    \caption{#1}\label{\commandkey{label}}%
+  % TODO
+  %   \subfloat[\label{\commandkey{anchor}}\commandkey{caption}]%
+  %     {\ifcommandkey{relative_width}%
+  %       {%
+  %         \FPdiv\scale{\commandkey{relative_width}}{100}%
+  %         \includegraphics[width=\scale\textwidth]{\commandkey{src}}% 
+  %       }{%
+  %         \includegraphics[]{\commandkey{src}}%
+  %       }% 
+  %     }%
+  %     \hfill%
+  %     \subfloat[\label{\commandkey{anchor2}}\commandkey{caption2}]%
+  %     {\ifcommandkey{relative_width2}%
+  %       {%
+  %         \FPdiv\scale{\commandkey{relative_width2}}{100}%
+  %         \includegraphics[width=\scale\textwidth]{\commandkey{src2}}% 
+  %       }{%
+  %         \includegraphics[]{\commandkey{src2}}%
+  %       }% 
+  %     }%
+  %   \caption{#1}\label{\commandkey{label}}%
   \end{figure}
 }
+% end: side_by_side_figure*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newkeycommand\isaDofDeclareReferenceFigure[label=,type=]{}
-
-\newkeycommand\isaDofSideBySideFigure
-  [label=,type=
-   ,relative_width=,src=,anchor=,caption=,
-   ,relative_width2=,src2=,anchor2=,caption2=,
-   ,placement=,spawn_columns=enum False True][1]{%
-  \begin{figure}[]
-      \subfloat[\label{\commandkey{anchor}}\commandkey{caption}]%
-      {\ifcommandkey{relative_width}%
-        {%
-          \FPdiv\scale{\commandkey{relative_width}}{100}%
-          \includegraphics[width=\scale\textwidth]{\commandkey{src}}% 
-        }{%
-          \includegraphics[]{\commandkey{src}}%
-        }% 
-      }%
-      \hfill%
-      \subfloat[\label{\commandkey{anchor2}}\commandkey{caption2}]%
-      {\ifcommandkey{relative_width2}%
-        {%
-          \FPdiv\scale{\commandkey{relative_width2}}{100}%
-          \includegraphics[width=\scale\textwidth]{\commandkey{src2}}% 
-        }{%
-          \includegraphics[]{\commandkey{src2}}%
-        }% 
-      }%
-    \caption{#1}\label{\commandkey{label}}%
-  \end{figure}
-}
-
-\newkeycommand\isaDofText[label=][1]{%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: Text*
+\NewEnviron{isamarkupText*}[1][]{\isaDof[#1]{\BODY}}
+\newkeycommand\isaDofText[label=,type=][1]{%
   \begin{isamarkuptext}%
       #1
   \end{isamarkuptext}%
 }
+% end: Text*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\newkeyenvironment{isamarkupText*}[label=][0]
-\newenvironment{isamarkupText*}%[][0]
-{\par\isastyletext\begin{isapar}}
-{\end{isapar}}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: text*
+\NewEnviron{isamarkuptext*}[1][]{\isaDof[#1]{\BODY}}
+\newkeycommand\isaDoftext[label=,type=][1]{%
+  \begin{isamarkuptext}%
+      #1
+  \end{isamarkuptext}%
+}
+% end: text*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newkeycommand\isaDofOpenMonitor[label=,type=]{}
 \newkeycommand\isaDofCloseMonitor[label=,type=]{}
 
 \newkeycommand\isaDofDeclareReferenceTextSection[label=,type=]{}
+\newkeycommand\isaDofDeclareReferenceFigure[label=,type=]{}
+
+\NewEnviron{isamarkupsection*}[1][]{\isaDof[#1]{\BODY}}
+\NewEnviron{isamarkupsubsection*}[1][]{\isaDof[#1]{\BODY}}
