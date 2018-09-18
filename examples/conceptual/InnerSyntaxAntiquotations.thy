@@ -11,8 +11,8 @@ an own syntax for references to types, terms, theorems, etc. are necessary. Thes
 of Isabelle/Isar, so inside the \verb+" ... "+ parenthesis.
 
 They are the key-mechanism to denote 
-\<^item> Links, i.e. attributes refering to doc classes defined by the ontology
-\<^item> Meta-Links, i.e. attributes referring to formal entities inside Isabelle (such as thm's)
+\<^item> Ontological Links, i.e. attributes refering to document classes defined by the ontology
+\<^item> Ontological F-Links, i.e. attributes referring to formal entities inside Isabelle (such as thm's)
 
 This file contains a number of examples resulting from the @{theory "Conceptual"} - ontology;
 the emphasis of this presentation is to present the expressivity of ODL on a paradigmatical example.
@@ -43,9 +43,13 @@ text*[xcv4::F, r="[@{thm ''HOL.refl''},
                b="{(@{docitem ''xcv1''},@{docitem ''xcv2''})}",  
                s="[@{typ ''int list''}]"]\<open>Lorem ipsum ...\<close>
 
+text*[xcv5::G, g="@{thm ''HOL.sym''}"]\<open>Lorem ipsum ...\<close>
+
 text\<open>... and here we add a relation between @{docitem \<open>xcv3\<close>} and @{docitem \<open>xcv2\<close>} 
-into the relation \verb+b+ of @{docitem_ref \<open>xcv4\<close>} \<close>
-update_instance*[xcv4::F, b+="{(@{docitem ''xcv3''},@{docitem ''xcv2''})}"]
+into the relation \verb+b+ of @{docitem_ref \<open>xcv5\<close>}. Note that in the link-relation,
+a @{typ "C"}-type is required, but a  @{typ "G"}-type is offered which is leagal in
+\verb+Isa_DOF+ because of the sub-class relation between those classes: \<close>
+update_instance*[xcv4::F, b+="{(@{docitem ''xcv3''},@{docitem ''xcv5''})}"]
 
 text\<open>And here is the result on term level:\<close>
 ML\<open> @{docitem_attr b::xcv4} \<close>

@@ -88,9 +88,8 @@ scenarios from the point of view of the ontology modeling. In @{docitem_ref (unc
 we discuss the user-interaction generated from the ontological definitions.  Finally, we draw 
 conclusions  and discuss related work in @{docitem_ref (unchecked) \<open>conclusion\<close>}. \<close>  
 
-section*[bgrnd::text_section,
-         main_author="Some(@{docitem ''adb''}::author)"]
-         \<open> Background: The Isabelle System \<close>
+section*[bgrnd::text_section,main_author="Some(@{docitem ''adb''}::author)"]\<open>
+ Background: The Isabelle System \<close>
 text\<open>
 While Isabelle is widely perceived as an interactive theorem prover
 for HOL (Higher-order Logic)~\cite{nipkow.ea:isabelle:2002}, we
@@ -117,9 +116,7 @@ it is the \emph{Eclipse of Formal Methods Tools}.  This refers to the
 \end{itemize}
 \<close>  
 
-figure*[architecture::figure,relative_width="''100''",
-      src="''figures/isabelle-architecture''"]
-  \<open> The system architecture of Isabelle (left-hand side) and the 
+figure*[architecture::figure,relative_width="''100''",src="''figures/isabelle-architecture''"]\<open> The system architecture of Isabelle (left-hand side) and the 
      asynchronous communication between the Isabelle system and 
      the IDE (right-hand side). \<close>
 
@@ -161,9 +158,7 @@ displayed and can be used for calculations before actually being typeset. When e
 Isabelle's PIDE offers auto-completion and error-messages while typing the above 
 \emph{semi-formal} content.  \<close>
 
-section*[isadof::text_section,
-         main_author="Some(@{docitem ''adb''}::author)"]
-         \<open> \isadof \<close>
+section*[isadof::text_section,main_author="Some(@{docitem ''adb''}::author)"]\<open> \isadof \<close>
    
 text\<open> An \isadof document consists of three components: 
 \begin{itemize}
@@ -284,9 +279,7 @@ semantic links between concepts can be modeled this way.
 The translation of its content to, \eg, Springer's \LaTeX{} setup for the Lecture Notes in Computer 
 Science Series, as required by many scientific conferences, is mostly straight-forward. \<close>
 
-figure*[fig1::figure, spawn_columns=False,relative_width="''95''", 
-        src="''figures/Dogfood-Intro''"]
-       \<open> Ouroboros I: This paper from inside \ldots \<close>  
+figure*[fig1::figure,spawn_columns=False,relative_width="''95''",src="''figures/Dogfood-Intro''"]\<open> Ouroboros I: This paper from inside \ldots \<close>  
 
 text*[ctest2]\<open>This is a crucial test : @{docitem_ref \<open>fig1\<close>} @{thm "refl"}\<close>
 
@@ -386,9 +379,7 @@ use fractions or even mathematical reals. This must be counterbalanced by syntac
 and semantic convenience. Choosing the mathematical reals, \eg, would have the drawback that 
 attribute evaluation could be substantially more complicated.\<close>
 
-figure*[fig_figures::figure, spawn_columns=False,relative_width="''85''",
-      src="''figures/Dogfood-figures''"]
-     \<open> Ouroboros II: figures \ldots \<close>
+figure*[fig_figures::figure,spawn_columns=False,relative_width="''85''",src="''figures/Dogfood-figures''"]\<open> Ouroboros II: figures \ldots \<close>
 
 text\<open> The document class \inlineisar+figure+ --- supported by the \isadof text command 
 \inlineisar+figure*+ --- makes it possible to express the pictures and diagrams in this paper 
@@ -515,9 +506,7 @@ exam-sheets with multiple-choice and/or free-response elements
 help of the latter, it is possible that students write in a browser a formal mathematical 
 derivation---as part of an algebra exercise, for example---which is submitted to the examiners 
 electronically. \<close>
-figure*[fig_qcm::figure, spawn_columns=False,relative_width="''90''",
-        src="''figures/InteractiveMathSheet''"]
-       \<open> A Generated QCM Fragment \ldots \<close>  
+figure*[fig_qcm::figure,spawn_columns=False,relative_width="''90''",src="''figures/InteractiveMathSheet''"]\<open> A Generated QCM Fragment \ldots \<close>  
 
 subsection*[cenelec_onto::example]\<open> The Certification Scenario following CENELEC \<close>
 text\<open> Documents to be provided in formal certifications (such as CENELEC
@@ -602,41 +591,16 @@ class definition (\autoref{fig:Dogfood-IV-jumpInDocCLass}); hovering over an att
 (which is qualified in order to disambiguate; \autoref{fig:Dogfood-V-attribute}).
 \<close>
      
-side_by_side_figure*["text-elements"::side_by_side_figure,
- anchor="''fig-Dogfood-II-bgnd1''"
- ,caption="''Exploring a Reference of a Text-Element.''"
- ,relative_width="''48''"
- ,src="''figures/Dogfood-II-bgnd1''"
- ,anchor2="''fig-bgnd-text_section''"
- ,caption2="''Exploring the class of a text element.''"
- ,relative_width2="''47''"
- ,src2="''figures/Dogfood-III-bgnd-text_section''" 
-]\<open> Exploring text elements. \<close>
+side_by_side_figure*["text-elements"::side_by_side_figure,anchor="''fig-Dogfood-II-bgnd1''",caption="''Exploring a Reference of a Text-Element.''",relative_width="''48''",src="''figures/Dogfood-II-bgnd1''",anchor2="''fig-bgnd-text_section''",caption2="''Exploring the class of a text element.''",relative_width2="''47''",src2="''figures/Dogfood-III-bgnd-text_section''"]\<open> Exploring text elements. \<close>
 
-side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-jumpInDocCLass''"
- ,caption="''Hyperlink to Class-Definition.''"
- ,relative_width="''48''"
- ,src="''figures/Dogfood-IV-jumpInDocCLass''"
- ,anchor2="''fig:Dogfood-V-attribute''"
- ,caption2="''Exploring an attribute.''"
- ,relative_width2="''47''"
- ,src2="''figures/Dogfood-III-bgnd-text_section''" 
-]\<open> Hyperlinks.\<close>
+side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-jumpInDocCLass''",caption="''Hyperlink to Class-Definition.''",relative_width="''48''",src="''figures/Dogfood-IV-jumpInDocCLass''",anchor2="''fig:Dogfood-V-attribute''",caption2="''Exploring an attribute.''",relative_width2="''47''",src2="''figures/Dogfood-III-bgnd-text_section''"]\<open> Hyperlinks.\<close>
 
 
 
 declare_reference*["figDogfoodVIlinkappl"::figure]
-text\<open> An ontological reference application in 
-\autoref{figDogfoodVIlinkappl}: the
-ontology-dependant antiquotation \inlineisar|@ {example ...}| refers to the corresponding 
-text-elements. Hovering allows for inspection, clicking for jumping to the definition. 
-If the link does not exist or has a non-compatible type, the text is not validated.
-\<close>
+text\<open> An ontological reference application in \autoref{figDogfoodVIlinkappl}: the ontology-dependant antiquotation \inlineisar|@ {example ...}| refers to the corresponding text-elements. Hovering allows for inspection, clicking for jumping to the definition.  If the link does not exist or has a non-compatible type, the text is not validated.  \<close>
 
-figure*[figDogfoodVIlinkappl::figure,relative_width="''80''",
-        src="''figures/Dogfood-V-attribute''"]
-        \<open> Exploring an attribute (hyperlinked to the class). \<close>
-  
+figure*[figDogfoodVIlinkappl::figure,relative_width="''80''",src="''figures/Dogfood-V-attribute''"]\<open> Exploring an attribute (hyperlinked to the class). \<close> 
 subsection*[cenelec_pide::example]\<open> CENELEC  \<close>
 declare_reference*[figfig3::figure]  
 text\<open> The corresponding view in @{docitem_ref (unchecked)
@@ -645,9 +609,7 @@ coherent to the @{example \<open>cenelec_onto\<close>}. The first sample shows s
 \cite{wenzel:isabelle-isar:2017} into formal entities of a theory. This way, the informal parts 
 of a document get ``formal content'' and become more robust under change.
 \<close>
-figure*[figfig3::figure,relative_width="''80''",
-      src="''figures/antiquotations-PIDE''"]
-     \<open> Standard antiquotations referring to theory elements.\<close>
+figure*[figfig3::figure,relative_width="''80''",src="''figures/antiquotations-PIDE''"]\<open> Standard antiquotations referring to theory elements.\<close>
 
 declare_reference*[figfig5::figure]  
 text\<open> The subsequent sample in @{docitem_ref (unchecked) \<open>figfig5\<close>} shows the definition of an 
@@ -656,12 +618,8 @@ has the consequence that a certain calculation must be executed sufficiently fas
 device. This condition can not be established inside the formal theory but has to be 
 checked by system integration tests.\<close>
   
-figure*[figfig5::figure,relative_width="''80''",
-        src="''figures/srac-definition''"]
-       \<open> Defining a SRAC reference \ldots \<close>
-figure*[figfig7::figure,relative_width="''80''",
-        src="''figures/srac-as-es-application''"]
-       \<open> Using a SRAC as EC document reference. \<close>
+figure*[figfig5::figure,relative_width="''80''",src="''figures/srac-definition''"]\<open> Defining a SRAC reference \ldots \<close>
+figure*[figfig7::figure,relative_width="''80''",src="''figures/srac-as-es-application''"]\<open> Using a SRAC as EC document reference. \<close>
        
 text\<open> Now we reference in @{docitem_ref (unchecked) \<open>figfig7\<close>} this safety-related condition; 
 however, this happens in a context where general \emph{exported constraints} are listed. 
