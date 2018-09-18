@@ -610,13 +610,15 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) =
                                 NONE => DOF_core.default_cid
                               | SOME(cid,_) => DOF_core.name2doc_class_name thy cid
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
-        fun markup2string x = XML.content_of (YXML.parse_body x)
+        fun markup2string x = YXML.content_of  x
         fun toLong n =  #long_name(the(DOF_core.get_attribute_info cid_long (markup2string n) thy))
         fun str ((lhs,_),rhs) = (toLong lhs)^" = "^(enclose "{" "}" (markup2string rhs))  
                                 (* no normalization on lhs (could be long-name)
                                    no paraphrasing on rhs (could be fully paranthesized
                                    pretty-printed formula in LaTeX notation ... *)
-    in  enclose "[" "]" (commas ([l,cid_txt] @ (map str  attr_list ))) end
+    in  
+      enclose "[" "]" (String.concat [ cid_txt, ", args={", (commas ([cid_txt,l] @ (map str  attr_list ))), "}"]) 
+      end
 
 val semi = Scan.option (Parse.$$$ ";");
 
