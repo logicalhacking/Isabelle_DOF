@@ -57,21 +57,10 @@ else
     echo "Registering tools in Tools already registered in $DIR/settings"
 fi
 
-
-# Build Scala lib
-(cd $GEN_DIR/converter; ./build $ISABELLE)
-DIR="$ISABELLE_HOME_USER/DOF/lib"
-echo "Installing library in $DIR"
-mkdir -p "$DIR" 
-cp $GEN_DIR/converter/bin/*.jar "$DIR"
-
-VERSION=$($ISABELLE scala $GEN_DIR/converter/bin/*.jar -v) || true
-
 DIR="$ISABELLE_HOME_USER/DOF/document-template"
 echo "Installing document templates in $DIR"
 mkdir -p "$DIR"
 cp $GEN_DIR/document-template/* "$DIR"
-sed -i -e "s/<VERSION>/$VERSION/" "$DIR"/build
 
 
 DIR="$ISABELLE_HOME_USER/DOF/latex"
@@ -79,4 +68,4 @@ echo "Installing LaTeX styles in $DIR"
 mkdir -p "$DIR"
 cp $GEN_DIR/latex/*.sty "$DIR"
 
-echo "Installation of $VERSION successful."
+echo "Installation successful."
