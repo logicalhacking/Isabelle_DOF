@@ -591,7 +591,6 @@ setup\<open>DOF_core.update_isa_global("docitem",ISA_core.ML_isa_check_docitem)\
 
 
 section\<open> Syntax for Annotated Documentation Commands (the '' View'' Part I) \<close>
-
 ML\<open>
 structure ODL_Command_Parser = 
 struct
@@ -609,7 +608,12 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) =
                               | SOME(cid,_) => DOF_core.name2doc_class_name thy cid
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
 
-        fun markup2string x =  YXML.content_of x 
+        (* TODO: temp. hack *)
+        fun unquote_string s = if String.isPrefix "''" s then
+                                  String.substring(s,2,(String.size s)-4)
+                               else s
+        fun markup2string s =  unquote_string (String.concat (List.filter (fn c => c <> Symbol.DEL) 
+                                             (Symbol.explode (YXML.content_of s)))) 
 
         fun toLong n =  #long_name(the(DOF_core.get_attribute_info cid_long (markup2string n) thy))
         fun str ((lhs,_),rhs) = (toLong lhs)^" = "^(enclose "{" "}" (markup2string rhs))  
