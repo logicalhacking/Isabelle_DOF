@@ -36,18 +36,18 @@
 ,Isa_DOF.figure.src=%
 ,Isa_DOF.figure.spawn_columns=enum False True%
 ][1]{%
-  % TODO:
-  % \begin{figure}[]
-  %   \centering
-  %   \ifcommandkey{Isa_DOF.figure.relative_width}
-  %   {%
-  %     \FPdiv\scale{\commandkey{Isa_DOF.figure.relative_width}}{100}
-  %     \includegraphics[width=\scale\textwidth]{\commandkey{Isa_DOF.figure.src}} 
-  %   }{%
-  %     \includegraphics[]{\commandkey{Isa_DOF.figure.src}}
-  %   } 
-  %   \caption{#1}\label{\commandkey{Isa_DOF.figure.label}}%
-  % \end{figure}
+  \gdef\DOF@src{\commandkey{Isa_DOF.figure.src}}%
+  \begin{figure}[]
+    \centering
+    \ifcommandkey{Isa_DOF.figure.relative_width}
+    {%
+      \FPdiv\scale{\commandkey{Isa_DOF.figure.relative_width}}{100}
+      \includegraphics[width=\scale\textwidth]{\DOF@src} 
+    }{%
+      \includegraphics[]{\DOF@src}
+    } 
+    \caption{#1}\label{\commandkey{label}}%
+  \end{figure}
 }
 % end: figure*
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,27 +71,28 @@
 ,Isa_DOF.side_by_side_figure.spawn_columns=enum False True%
 ][1]{%
   \begin{figure}[]
-  % TODO
-  %   \subfloat[\label{\commandkey{anchor}}\commandkey{caption}]%
-  %     {\ifcommandkey{relative_width}%
-  %       {%
-  %         \FPdiv\scale{\commandkey{relative_width}}{100}%
-  %         \includegraphics[width=\scale\textwidth]{\commandkey{src}}% 
-  %       }{%
-  %         \includegraphics[]{\commandkey{src}}%
-  %       }% 
-  %     }%
-  %     \hfill%
-  %     \subfloat[\label{\commandkey{anchor2}}\commandkey{caption2}]%
-  %     {\ifcommandkey{relative_width2}%
-  %       {%
-  %         \FPdiv\scale{\commandkey{relative_width2}}{100}%
-  %         \includegraphics[width=\scale\textwidth]{\commandkey{src2}}% 
-  %       }{%
-  %         \includegraphics[]{\commandkey{src2}}%
-  %       }% 
-  %     }%
-  %   \caption{#1}\label{\commandkey{label}}%
+  \gdef\DOF@src{\commandkey{Isa_DOF.figure.src}}%
+  \gdef\DOF@srctwo{\commandkey{Isa_DOF.side_by_side_figure.src2}}%
+  \subfloat[\label{\commandkey{Isa_DOF.side_by_side_figure.anchor}}\commandkey{Isa_DOF.side_by_side_figure.caption}]%
+    {\ifcommandkey{Isa_DOF.figure.relative_width}%
+      {%
+        \FPdiv\scale{\commandkey{Isa_DOF.figure.relative_width}}{100}%
+        \includegraphics[width=\scale\textwidth]{\DOF@src}% 
+      }{%
+        \includegraphics[]{\DOF@src}%
+      }% 
+    }%
+    \hfill%
+    \subfloat[\label{\commandkey{Isa_DOF.side_by_side_figure.anchor2}}\commandkey{Isa_DOF.side_by_side_figure.caption2}]%
+    {\ifcommandkey{Isa_DOF.side_by_side_figure.relative_width2}%
+      {%
+        \FPdiv\scale{\commandkey{Isa_DOF.side_by_side_figure.relative_width2}}{100}%
+        \includegraphics[width=\scale\textwidth]{\DOF@srctwo}% 
+      }{%
+        \includegraphics[]{\DOF@srctwo}%
+      }% 
+    }%
+  \caption{#1}\label{\commandkey{label}}%
   \end{figure}
 }
 % end: side_by_side_figure*
