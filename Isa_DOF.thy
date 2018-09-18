@@ -581,8 +581,6 @@ fun ML_isa_check_docitem thy (term, req_ty, pos) =
 end; (* struct *)
                                                             
 \<close>
-
-
 subsection\<open> Isar - Setup\<close>
 
 setup\<open>DOF_core.update_isa_global("typ"    ,ISA_core.ML_isa_check_typ) \<close>     
@@ -610,7 +608,9 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) =
                                 NONE => DOF_core.default_cid
                               | SOME(cid,_) => DOF_core.name2doc_class_name thy cid
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
-        fun markup2string x = YXML.content_of  x
+
+        fun markup2string x =  YXML.content_of x 
+
         fun toLong n =  #long_name(the(DOF_core.get_attribute_info cid_long (markup2string n) thy))
         fun str ((lhs,_),rhs) = (toLong lhs)^" = "^(enclose "{" "}" (markup2string rhs))  
                                 (* no normalization on lhs (could be long-name)
@@ -1188,7 +1188,7 @@ section\<open> Library of Standard Text Ontology \<close>
 
 datatype placement = pl_h | pl_t | pl_b | pl_ht | pl_hb   
 doc_class figure   = 
-   relative_width   :: "string" (* percent of textwidth *)    
+   relative_width   :: "int" (* percent of textwidth *)    
    src              :: "string"
    placement        :: placement 
    spawn_columns    :: bool <= True 
@@ -1196,7 +1196,7 @@ doc_class figure   =
 doc_class side_by_side_figure   = figure +
    anchor           :: "string"
    caption          :: "string"
-   relative_width2  :: "string" (* percent of textwidth *)    
+   relative_width2  :: "int" (* percent of textwidth *)    
    src2             :: "string"
    anchor2          :: "string"
    caption2         :: "string"
