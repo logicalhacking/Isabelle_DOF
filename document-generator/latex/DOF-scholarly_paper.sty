@@ -35,8 +35,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: title*
-\NewEnviron{isamarkuptitle*}[1][]{\isaDof[#1]{\BODY}}
-\expandafter\newkeycommand\csname isaDofscholarly_paper.title\endcsname%
+\NewEnviron{isamarkuptitle*}[1][]{\isaDof[env={title},#1]{\BODY}}
+\expandafter\newkeycommand\csname isaDof.title.scholarly_paper.title\endcsname%
 [label=,type=%
 ,keywordlist=%
 ][1]{%
@@ -47,8 +47,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: subtitle*
-\NewEnviron{isamarkupsubtitle*}[1][]{\isaDof[#1]{\BODY}}
-\expandafter\newkeycommand\csname isaDofscholarly_paper.subtitle\endcsname%
+\NewEnviron{isamarkupsubtitle*}[1][]{\isaDof[env={subtitle},#1]{\BODY}}
+\expandafter\newkeycommand\csname isaDof.subtitle.scholarly_paper.subtitle\endcsname%
 [label=,type=%
 ,keywordlist=%
 ][1]{%
@@ -88,7 +88,7 @@
   }
 }
 
-\expandafter\newkeycommand\csname isaDofscholarly_paper.author\endcsname%
+\expandafter\newkeycommand\csname isaDof.text.scholarly_paper.author\endcsname%
 [label=,type=%
 ,scholarly_paper.author.email=%
 ,scholarly_paper.author.affiliation=%
@@ -108,7 +108,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: scholarly_paper.abstract
-\expandafter\newkeycommand\csname isaDofscholarly_paper.abstract\endcsname%
+\expandafter\newkeycommand\csname isaDof.text.scholarly_paper.abstract\endcsname%
 [label=,type=%
 ,scholarly_paper.abstract.keywordlist=%
 ][1]{%
@@ -126,65 +126,83 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: scholarly_paper.introduction
-\expandafter\newkeycommand\csname isaDofscholarly_paper.introduction\endcsname%
+\expandafter\newkeycommand\csname isaDof.section.scholarly_paper.introduction\endcsname%
 [label=,type=%
 ,scholarly_paper.introduction.main_author=%
 ,scholarly_paper.introduction.fixme_list=%
 ][1]{%
-  \gdef\dof@section#1
-  \isamarkupfalse\isamarkupsection{\gdef\dof@section#1}\label{\commandkey{label}}\isamarkuptrue%
+  \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
+}
+\expandafter\newkeycommand\csname isaDof.subsection.scholarly_paper.introduction\endcsname%
+[label=,type=%
+,scholarly_paper.introduction.main_author=%
+,scholarly_paper.introduction.fixme_list=%
+][1]{%
+  \isamarkupfalse\isamarkupsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
+}
+\expandafter\newkeycommand\csname isaDof.text.scholarly_paper.introduction\endcsname%
+[label=,type=%
+,scholarly_paper.introduction.main_author=%
+,scholarly_paper.introduction.fixme_list=%
+][1]{%
+  \begin{isamarkuptext}%
+    #1
+  \end{isamarkuptext}%
 }
 % end: scholarly_paper.introduction
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: scholarly_paper.introduction
-\expandafter\newkeycommand\csname isaDofscholarly_paper.text_section\endcsname%
+\expandafter\newkeycommand\csname isaDof.section.scholarly_paper.text_section\endcsname%
 [label=,type=%
 ,scholarly_paper.text_section.main_author=%
 ,scholarly_paper.text_section.fixme_list=%
 ][1]{%
-  \gdef\dof@section#1
-  \isamarkupfalse\isamarkupsection{\gdef\dof@section#1}\label{\commandkey{label}}\isamarkuptrue%
+  \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 % end: scholarly_paper.introduction
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: scholarly_paper.technical
-\expandafter\newkeycommand\csname isaDofscholarly_paper.technical\endcsname%
+\expandafter\newkeycommand\csname isaDof.section.scholarly_paper.technical\endcsname%
 [label=,type=%
 ,scholarly_paper.text_section.main_author=%
 ,scholarly_paper.text_section.fixme_list=%
 ][1]{%
-  \gdef\dof@section#1
-  \isamarkupfalse\isamarkupsection{\gdef\dof@section#1}\label{\commandkey{label}}\isamarkuptrue%
+  \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 % end: scholarly_paper.technical
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: scholarly_paper.example
-\expandafter\newkeycommand\csname isaDofscholarly_paper.example\endcsname%
+\expandafter\newkeycommand\csname isaDof.section.scholarly_paper.example\endcsname%
 [label=,type=%
 ,scholarly_paper.text_section.main_author=%
 ,scholarly_paper.text_section.fixme_list=%
 ][1]{%
-  \gdef\dof@section#1
-  \isamarkupfalse\isamarkupsection{\gdef\dof@section#1}\label{\commandkey{label}}\isamarkuptrue%
+  \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
+}
+\expandafter\newkeycommand\csname isaDof.subsection.scholarly_paper.example\endcsname%
+[label=,type=%
+,scholarly_paper.text_section.main_author=%
+,scholarly_paper.text_section.fixme_list=%
+][1]{%
+  \isamarkupfalse\isamarkupsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 % end: scholarly_paper.example
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: scholarly_paper.conclusion
-\expandafter\newkeycommand\csname isaDofscholarly_paper.conclusion\endcsname%
+\expandafter\newkeycommand\csname isaDof.section.scholarly_paper.conclusion\endcsname%
 [label=,type=%
 ,scholarly_paper.text_section.main_author=%
 ,scholarly_paper.text_section.fixme_list=%
 ][1]{%
-  \gdef\dof@section#1
-  \isamarkupfalse\isamarkupsection{\gdef\dof@section#1}\label{\commandkey{label}}\isamarkuptrue%
+  \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 % end: scholarly_paper.conclusion
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -22,29 +22,31 @@
 \RequirePackage{fp}
 
 % Generic dispatcher
-\newkeycommand+[\|]\isaDof[label=,type=,args={}][1]{%
-\csname isaDof\commandkey{type}\endcsname[label=\commandkey{label},\commandkey{args}]{#1}%
+\newkeycommand+[\|]\isaDof[env={UNKNOWN},label=,type={dummyT},args={}][1]{%
+\csname isaDof.\commandkey{env}.\commandkey{type}\endcsname[label=\commandkey{label},\commandkey{args}]{#1}%
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: figure*
-\NewEnviron{isamarkupfigure*}[1][]{\isaDof[#1]{\BODY}}
-\expandafter\newkeycommand\csname isaDofIsa_DOF.figure\endcsname%
+\NewEnviron{isamarkupfigure*}[1][]{\isaDof[env={figure},#1]{\BODY}}
+\expandafter\newkeycommand\csname isaDof.figure.Isa_DOF.figure\endcsname%
 [label=,type=%
 ,Isa_DOF.figure.relative_width=%
 ,Isa_DOF.figure.placement=%
 ,Isa_DOF.figure.src=%
 ,Isa_DOF.figure.spawn_columns=enum False True%
 ][1]{%
-  \gdef\DOF@src{\commandkey{Isa_DOF.figure.src}}%
   \begin{figure}[]
     \centering
     \ifcommandkey{Isa_DOF.figure.relative_width}
     {%
-      \FPdiv\scale{\commandkey{Isa_DOF.figure.relative_width}}{100}
-      \includegraphics[width=\scale\textwidth]{\DOF@src} 
+      \gdef\dof@width{\commandkey{Isa_DOF.figure.relative_width}}
+      \gdef\dof@src{\commandkey{Isa_DOF.figure.src}}
+      \FPdiv\scale{\dof@width}{100}%
+      \includegraphics[width=\scale\textwidth]{\dof@src}%
     }{%
-      \includegraphics[]{\DOF@src}
+      \gdef\dof@src{\commandkey{Isa_DOF.figure.src}}
+      \includegraphics[]{\dof@src}%
     } 
     \caption{#1}\label{\commandkey{label}}%
   \end{figure}
@@ -56,8 +58,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: side_by_side_figure*
-\NewEnviron{isamarkupside_by_side_figure*}[1][]{\isaDof[#1]{\BODY}}
-\expandafter\newkeycommand\csname isaDofIsa_DOF.side_by_side_figure\endcsname%
+\NewEnviron{isamarkupside_by_side_figure*}[1][]{\isaDof[env={side_by_side_figure},#1]{\BODY}}
+\expandafter\newkeycommand\csname isaDof.side_by_side_figure.Isa_DOF.side_by_side_figure\endcsname%
 [label=,type=%
 ,Isa_DOF.figure.relative_width=%
 ,Isa_DOF.figure.src=%
@@ -71,28 +73,32 @@
 ,Isa_DOF.side_by_side_figure.spawn_columns=enum False True%
 ][1]{%
   \begin{figure}[]
-  \gdef\DOF@src{\commandkey{Isa_DOF.figure.src}}%
-  \gdef\DOF@srctwo{\commandkey{Isa_DOF.side_by_side_figure.src2}}%
-  \subfloat[\label{\commandkey{Isa_DOF.side_by_side_figure.anchor}}\commandkey{Isa_DOF.side_by_side_figure.caption}]%
-    {\ifcommandkey{Isa_DOF.figure.relative_width}%
-      {%
-        \FPdiv\scale{\commandkey{Isa_DOF.figure.relative_width}}{100}%
-        \includegraphics[width=\scale\textwidth]{\DOF@src}% 
-      }{%
-        \includegraphics[]{\DOF@src}%
-      }% 
-    }%
-    \hfill%
-    \subfloat[\label{\commandkey{Isa_DOF.side_by_side_figure.anchor2}}\commandkey{Isa_DOF.side_by_side_figure.caption2}]%
-    {\ifcommandkey{Isa_DOF.side_by_side_figure.relative_width2}%
-      {%
-        \FPdiv\scale{\commandkey{Isa_DOF.side_by_side_figure.relative_width2}}{100}%
-        \includegraphics[width=\scale\textwidth]{\DOF@srctwo}% 
-      }{%
-        \includegraphics[]{\DOF@srctwo}%
-      }% 
-    }%
-  \caption{#1}\label{\commandkey{label}}%
+    \subfloat[\label{\commandkey{Isa_DOF.side_by_side_figure.anchor}}\commandkey{Isa_DOF.side_by_side_figure.caption}]%
+      {\ifcommandkey{Isa_DOF.figure.relative_width}%
+       {%
+          \gdef\dof@width{\commandkey{Isa_DOF.figure.relative_width}}
+          \gdef\dof@src{\commandkey{Isa_DOF.figure.src}}
+          \FPdiv\scale{\dof@width}{100}%
+          \includegraphics[width=\scale\textwidth]{\dof@src}%
+        }{%
+          \gdef\dof@src{\commandkey{Isa_DOF.figure.src}}
+          \includegraphics[]{\dof@src}%
+        }% 
+      }%
+      \hfill%
+      \subfloat[\label{\commandkey{Isa_DOF.side_by_side_figure.anchor2}}\commandkey{Isa_DOF.side_by_side_figure.caption2}]%
+      {\ifcommandkey{Isa_DOF.side_by_side_figure.relative_width2}%
+        {%
+          \gdef\dof@width{\commandkey{Isa_DOF.side_by_side_figure.relative_width2}}
+          \gdef\dof@src{\commandkey{Isa_DOF.side_by_side_figure.src2}}
+          \FPdiv\scale{\dof@width}{100}%
+          \includegraphics[width=\scale\textwidth]{\dof@src}%
+        }{%
+          \gdef\dof@src{\commandkey{Isa_DOF.side_by_side_figure.src2}}
+          \includegraphics[]{\dof@src}%
+        }% 
+      }%
+    \caption{#1}\label{\commandkey{label}}%
   \end{figure}
 }
 % end: side_by_side_figure*
@@ -100,23 +106,13 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: Text*
-\NewEnviron{isamarkupText*}[1][]{\isaDof[#1]{\BODY}}
-\newkeycommand\isaDofText[label=,type=][1]{%
-  \begin{isamarkuptext}%
-      #1
-  \end{isamarkuptext}%
-}
+\NewEnviron{isamarkupText*}[1][]{\isaDof[env={Text},#1]{\BODY}}
 % end: Text*
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: text*
-\NewEnviron{isamarkuptext*}[1][]{\isaDof[#1]{\BODY}}
-\newkeycommand\isaDoftext[label=,type=][1]{%
-  \begin{isamarkuptext}%
-      #1
-  \end{isamarkuptext}%
-}
+\NewEnviron{isamarkuptext*}[1][]{\isaDof[env={text},#1]{\BODY}}
 % end: text*
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -126,5 +122,14 @@
 \newkeycommand\isaDofDeclareReferenceTextSection[label=,type=]{}
 \newkeycommand\isaDofDeclareReferenceFigure[label=,type=]{}
 
-\NewEnviron{isamarkupsection*}[1][]{\isaDof[#1]{\BODY}}
-\NewEnviron{isamarkupsubsection*}[1][]{\isaDof[#1]{\BODY}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: section*
+\NewEnviron{isamarkupsection*}[1][]{\isaDof[env={section},#1]{\BODY}}
+% end: section*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: subsection*
+\NewEnviron{isamarkupsubsection*}[1][]{\isaDof[env={subsection},#1]{\BODY}}
+% end: subsection*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
