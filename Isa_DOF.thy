@@ -21,7 +21,6 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
   and      "title*"      "subtitle*"
            "section*"    "subsection*"   "subsubsection*" 
            "text*"       
-           "Text*"       
            "paragraph*"  "subparagraph*" 
            "figure*"
            "side_by_side_figure*" 
@@ -852,11 +851,6 @@ val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
       >> enriched_document_command {markdown = true});
-val _ =
-  Outer_Syntax.command ("Text*", @{here}) "formal comment (primary style)"
-    (attributes -- Parse.opt_target -- Parse.document_source 
-      >> enriched_document_command {markdown = true});
-
 
 val _ =
   Outer_Syntax.command @{command_keyword "declare_reference*"} 
