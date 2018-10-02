@@ -108,7 +108,7 @@ figure*[fig_B::figure, spawn_columns=False,relative_width="''90''",
        \<open> The B train \ldots \<close>  
 update_instance*[figs1::figure_group, trace+="[figure]"]
 
-close_monitor*[fig1]  
+close_monitor*[figs1]  
 
 ML\<open> map (fn Const(s,_) => s) (HOLogic.dest_list @{docitem_attr trace::figs1}) \<close>
 

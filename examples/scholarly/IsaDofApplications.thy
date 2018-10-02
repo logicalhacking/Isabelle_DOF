@@ -74,12 +74,13 @@ framework in the style of~\cite{wenzel.ea:building:2007}.
 \<close>
 
 (* declaring the forward references used in the subsequent section *)  
+(*<*)
 declare_reference*[bgrnd::text_section]
 declare_reference*[isadof::text_section]
 declare_reference*[ontomod::text_section]
 declare_reference*[ontopide::text_section]
 declare_reference*[conclusion::text_section]
-
+(*>*)
 text*[plan::introduction]\<open> The plan of the paper is follows: we start by introducing  the underlying 
 Isabelel sytem (@{docitem_ref (unchecked) \<open>bgrnd\<close>}) followed by presenting the 
 essentials of  \isadof and its ontology language (@{docitem_ref (unchecked) \<open>isadof\<close>}). 
@@ -104,19 +105,18 @@ it is the \emph{Eclipse of Formal Methods Tools}.  This refers to the
   explicit infrastructure for building derivative
   \emph{systems}.}''~\cite{wenzel.ea:building:2007} 
 
- The current system framework offers moreover the following features:
-\begin{itemize}
-\item a build management grouping components into to pre-compiled sessions,
-\item a prover IDE (PIDE) framework~\cite{wenzel:asynchronous:2014} with 
-       various front-ends 
-\item documentation - and code generators,
-\item an extensible front-end language Isabelle/Isar, and,
-\item last but not least, an LCF style, generic theorem prover kernel as 
+The current system framework offers moreover the following features:
+
+\<^item> a build management grouping components into to pre-compiled sessions,
+\<^item> a prover IDE (PIDE) framework~\cite{wenzel:asynchronous:2014} with various front-ends 
+\<^item> documentation - and code generators,
+\<^item> an extensible front-end language Isabelle/Isar, and,
+\<^item> last but not least, an LCF style, generic theorem prover kernel as 
   the most prominent and deeply integrated system component.
-\end{itemize}
 \<close>  
 
-figure*[architecture::figure,relative_width="100",src="''figures/isabelle-architecture''"]\<open> The system architecture of Isabelle (left-hand side) and the 
+figure*[architecture::figure,relative_width="100",src="''figures/isabelle-architecture''"]\<open> 
+     The system architecture of Isabelle (left-hand side) and the 
      asynchronous communication between the Isabelle system and 
      the IDE (right-hand side). \<close>
 
@@ -145,8 +145,7 @@ Now, \emph{inside} the textual content, it is possible to embed a \emph{text-ant
 \end{isar}
 which is represented in the generated output by:
 \begin{out}
-  According to the reflexivity axiom $x = x$, we obtain in $\Gamma$ for $\operatorname{fac} 5$
-  the result $120$.
+  According to the reflexivity axiom $x = x$, we obtain in $\Gamma$ for $\operatorname{fac} 5$ the result $120$.
 \end{out}
 where \inlineisar+refl+ is actually the reference to the axiom of reflexivity in HOL. 
 For the antiquotation \inlineisar+\at{value "fac 5"}+  we assume the usual definition for 
@@ -161,16 +160,15 @@ Isabelle's PIDE offers auto-completion and error-messages while typing the above
 section*[isadof::technical,main_author="Some(@{docitem ''adb''}::author)"]\<open> \isadof \<close>
    
 text\<open> An \isadof document consists of three components: 
-\begin{itemize}
-\item the @{emph \<open>ontology definition\<close>} which is an Isabelle theory file with definitions
+\<^item> the @{emph \<open>ontology definition\<close>} which is an Isabelle theory file with definitions
   for document-classes and all auxiliary datatypes.  
-\item the @{emph \<open>core\<close>} of the document itself which is an Isabelle theory
+\<^item> the @{emph \<open>core\<close>} of the document itself which is an Isabelle theory
   importing the ontology definition. \isadof provides an own family of text-element
   commands such as \inlineisar+title*+, \inlineisar+section*+,  \inlineisar+text*+, etc., 
   which can be annotated with meta-information defined in the underlying  ontology definition.
-\item the  @{emph \<open>layout definition\<close>} for the given ontology exploiting this meta-information.
-\end{itemize}
-\isadof is a novel Isabelle system component providing specific support for all these three parts.
+\<^item> the  @{emph \<open>layout definition\<close>} for the given ontology exploiting this meta-information.
+\<close>
+text\<open>\isadof is a novel Isabelle system component providing specific support for all these three parts.
 Note that the document core @{emph \<open>may\<close>}, but @{emph \<open>must\<close>} not 
 use Isabelle definitions or proofs for checking the formal content---the 
 present paper is actually an example of a document not containing any proof.
@@ -194,14 +192,14 @@ by terms HOL-terms, \ie, the actual parsers and type-checkers of the Isabelle sy
 This has the particular advantage that \isadof commands can be arbitrarily mixed with 
 Isabelle/HOL commands providing the machinery for type declarations and term specifications such
 as enumerations. In particular, document class definitions provide:
-\begin{itemize}
-\item  a HOL-type for each document class as well as inheritance, 
-\item  support for attributes with HOL-types and optional default values,
-\item  support for overriding of attribute defaults but not overloading, and
-\item  text-elements annotated with document classes; they are mutable 
+\<^item>  a HOL-type for each document class as well as inheritance, 
+\<^item>  support for attributes with HOL-types and optional default values,
+\<^item>  support for overriding of attribute defaults but not overloading, and
+\<^item>  text-elements annotated with document classes; they are mutable 
    instances of document classes.
-\end{itemize}
-Attributes referring to other ontological concepts are called \emph{links}. 
+\<close>
+text\<open>
+Attributes referring to other ontological concepts are called \emph{links}.
 The HOL-types inside the document specification language support built-in types for Isabelle/HOL \inlineisar+typ+'s, 
 \inlineisar+term+'s, and \inlineisar+thm+'s reflecting internal Isabelle's internal types 
 for these entities; when denoted in HOL-terms to instantiate an attribute, for example, there is a 
@@ -388,16 +386,16 @@ during the exam and the preparation requires a very rigorous process, as the fre
 \emph{baccaleaureat} and exams at The University of Sheffield.
 
 We assume that the content has four different types of addressees, which have a different
-\emph{view} on the integrated document 
-\begin{itemize}
-\item the @{emph \<open>setter\<close>}, \ie, the author of the exam, 
-\item the @{emph \<open>checker\<close>}, \ie, an internal person that checks the exam for feasibility 
+\emph{view} on the integrated document: 
+
+\<^item> the @{emph \<open>setter\<close>}, \ie, the author of the exam,
+\<^item> the @{emph \<open>checker\<close>}, \ie, an internal person that checks the exam for feasibility 
 and non-ambiguity, 
-\item the @{emph \<open>external examiner\<close>}, \ie, an external person that checks the exam for 
+\<^item> the @{emph \<open>external examiner\<close>}, \ie, an external person that checks the exam for 
 feasibility and non-ambiguity, and 
-\item the @{emph \<open>student\<close>}, \ie, the addressee of the exam. 
-\end{itemize}
-The latter quality assurance mechanism is used in many universities,
+\<^item> the @{emph \<open>student\<close>}, \ie, the addressee of the exam. 
+\<close>
+text\<open> The latter quality assurance mechanism is used in many universities,
 where for organizational reasons the execution of an exam takes place in facilities
 where the author of the exam is not expected to be physically present.
 Furthermore, we assume a simple grade system (thus, some calculation is required). 
@@ -468,9 +466,9 @@ doc_class Exercise = Exam_item +
 In many institutions, it makes sense to have a rigorous process of validation
 for exam subjects: is the initial question correct? Is a proof in the sense of the
 question possible? We model the possibility that the @{term examiner} validates a 
-question by a sample proof validated by Isabelle (see \autoref{fig:onto-exam-monitor}). In our scenario this sample proofs
-are completely @{emph \<open>intern\<close>}, \ie, not exposed to the students but just additional
-material for the internal review process of the exam.
+question by a sample proof validated by Isabelle (see \autoref{fig:onto-exam-monitor}). 
+In our scenario this sample proofs are completely @{emph \<open>intern\<close>}, \ie, not exposed to the 
+students but just additional material for the internal review process of the exam.
 \begin{figure}
 \begin{isar}
 doc_class Validation = 
@@ -637,10 +635,10 @@ in which instances of monitored classes may occur. \<close>
 
 text\<open>
 The control of monitors is done by the commands:
-\begin{itemize}
-\item \inlineisar+open_monitor* +  <doc-class>
-\item \inlineisar+close_monitor* + <doc-class> 
-\end{itemize}
+\<^item> \inlineisar+open_monitor* +  <doc-class>
+\<^item> \inlineisar+close_monitor* + <doc-class> 
+\<close>
+text\<open>
 where the automaton of the monitor class is expected
 to be in a final state. In the final state, user-defined SML 
 Monitors can be nested, so it is possible to "overlay" one or more monitoring 
@@ -653,15 +651,14 @@ may occur freely. \<close>
 section*[conclusion::conclusion]\<open> Conclusion and Related Work\<close>    
 text\<open> We have demonstrated the use of \isadof, a novel ontology modeling and enforcement
 IDE deeply integrated into the Isabelle/Isar Framework. The two most distinguishing features are
-\begin{itemize}
-\item \isadof and its ontology language  are a strongly typed language that allows
+\<^item> \isadof and its ontology language  are a strongly typed language that allows
   for referring (albeit not reasoning) to entities of Isabelle/HOL, most notably types, terms,
   and (formally proven) theorems, and
-\item \isadof is supported by the Isabelle/PIDE framework; thus, the advantages of an IDE for 
+\<^item> \isadof is supported by the Isabelle/PIDE framework; thus, the advantages of an IDE for 
   text-exploration (which is the type of this link? To which text element does this link refer?
   Which are the syntactic alternatives here?) were available during editing
   instead of a post-hoc validation process.
-\end{itemize} \<close>
+\<close>
 
 text\<open> Of course, a conventional batch-process  also exists which can be used
 for the validation of large document bases in a conventional continuous build process.
@@ -710,8 +707,7 @@ text\<open> The implementation of the framework, the discussed ontology definiti
         \url{https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF/}.\<close>
 paragraph\<open> Acknowledgement. \<close> 
 text\<open> This work was partly supported by  the framework of IRT SystemX, Paris-Saclay, France, 
-and therefore granted with public funds within the scope of the 
-Program ``Investissements d’Avenir''.\<close>
+and therefore granted with public funds within the scope of the Program ``Investissements d’Avenir''.\<close>
 
 (*<*) 
 end

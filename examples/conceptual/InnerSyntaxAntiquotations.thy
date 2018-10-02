@@ -46,7 +46,7 @@ text*[xcv4::F, r="[@{thm ''HOL.refl''},
 text*[xcv5::G, g="@{thm ''HOL.sym''}"]\<open>Lorem ipsum ...\<close>
 
 text\<open>... and here we add a relation between @{docitem \<open>xcv3\<close>} and @{docitem \<open>xcv2\<close>} 
-into the relation \verb+b+ of @{docitem_ref \<open>xcv5\<close>}. Note that in the link-relation,
+into the relation \verb+b+ of @{docitem \<open>xcv5\<close>}. Note that in the link-relation,
 a @{typ "C"}-type is required, but a  @{typ "G"}-type is offered which is leagal in
 \verb+Isa_DOF+ because of the sub-class relation between those classes: \<close>
 update_instance*[xcv4::F, b+="{(@{docitem ''xcv3''},@{docitem ''xcv5''})}"]
