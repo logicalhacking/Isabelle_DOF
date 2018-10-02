@@ -33,7 +33,7 @@ for enforcing a certain document structure, and discuss ontology-specific IDE su
 \<close>
 
 section*[intro::introduction]\<open> Introduction \<close>  
-text*[introtext::segment]\<open> 
+text*[introtext::introduction]\<open> 
 The linking of the \<^emph>\<open>formal\<close> to the \<^emph>\<open>informal\<close> is perhaps the
 most pervasive challenge in the digitization of knowledge and its
 propagation. This challenge incites numerous research efforts
@@ -80,7 +80,7 @@ declare_reference*[ontomod::text_section]
 declare_reference*[ontopide::text_section]
 declare_reference*[conclusion::text_section]
 
-text*[plan::segment]\<open> The plan of the paper is follows: we start by introducing  the underlying 
+text*[plan::introduction]\<open> The plan of the paper is follows: we start by introducing  the underlying 
 Isabelel sytem (@{docitem_ref (unchecked) \<open>bgrnd\<close>}) followed by presenting the 
 essentials of  \isadof and its ontology language (@{docitem_ref (unchecked) \<open>isadof\<close>}). 
 It follows @{docitem_ref (unchecked) \<open>ontomod\<close>}, where we present three application 
@@ -90,7 +90,7 @@ conclusions  and discuss related work in @{docitem_ref (unchecked) \<open>conclu
 
 section*[bgrnd::text_section,main_author="Some(@{docitem ''adb''}::author)"]\<open>
  Background: The Isabelle System \<close>
-text*[background::segment]\<open>
+text*[background::introduction]\<open>
 While Isabelle is widely perceived as an interactive theorem prover
 for HOL (Higher-order Logic)~\cite{nipkow.ea:isabelle:2002}, we
 would like to emphasize the view that Isabelle is far more than that:
@@ -120,7 +120,7 @@ figure*[architecture::figure,relative_width="100",src="''figures/isabelle-archit
      asynchronous communication between the Isabelle system and 
      the IDE (right-hand side). \<close>
 
-text*[blug::segment]\<open> The Isabelle system architecture shown in @{docitem_ref \<open>architecture\<close>}
+text*[blug::introduction]\<open> The Isabelle system architecture shown in @{docitem_ref \<open>architecture\<close>}
  comes with many layers, with Standard ML (SML) at the bottom layer as implementation 
 language. The architecture actually foresees a \emph{Nano-Kernel} (our terminology) which 
 resides in the SML structure \texttt{Context}. This structure provides a kind of container called 
@@ -129,7 +129,7 @@ for components (plugins) such as \isadof. On top of the latter, the LCF-Kernel, 
 automated proof procedures as well as specific support for higher specification constructs
 were built. \<close>
     
-text*[arch::segment]\<open> We would like to detail the documentation generation of the architecture,
+text\<open> We would like to detail the documentation generation of the architecture,
 which is based on literate specification commands such as \inlineisar+section+ \ldots, 
 \inlineisar+subsection+ \ldots, \inlineisar+text+ \ldots, etc.
 Thus, a user can add a simple text:
@@ -153,7 +153,7 @@ For the antiquotation \inlineisar+\at{value "fac 5"}+  we assume the usual defin
 \inlineisar+fac+ in HOL.
 \<close>
 
-text*[anti::segment]\<open> Thus, antiquotations can refer to formal content, can be type-checked before being 
+text*[anti]\<open> Thus, antiquotations can refer to formal content, can be type-checked before being 
 displayed and can be used for calculations before actually being typeset. When editing, 
 Isabelle's PIDE offers auto-completion and error-messages while typing the above 
 \emph{semi-formal} content.  \<close>
@@ -236,7 +236,7 @@ exam sheets as well as standardization documents where the concepts of the
 standard are captured in the ontology. For space reasons, we will concentrate in all three
 cases on aspects of the modeling due to space limitations.
 \<close>
-subsection*[scholar_onto::text_section]\<open> The Scholar Paper Scenario: Eating One's Own Dog Food. \<close>  
+subsection*[scholar_onto::example]\<open> The Scholar Paper Scenario: Eating One's Own Dog Food. \<close>  
 text\<open> The following ontology is a simple ontology modeling scientific papers. In this 
 \isadof application scenario, we deliberately refrain from integrating references to
 (Isabelle) formal content in order  demonstrate that \isadof is not a framework from 
@@ -281,7 +281,7 @@ Science Series, as required by many scientific conferences, is mostly straight-f
 
 figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogfood-Intro''"]\<open> Ouroboros I: This paper from inside \ldots \<close>  
 
-text\<open> @{docitem_ref \<open>fig1\<close>} shows the corresponding view in the Isabelle/PIDE of the present paper.
+text\<open> @{docitem_ref \<open>fig1\<close>} shows the corresponding view in the Isabelle/PIDE of thqqe present paper.
 Note that the text uses \isadof's own text-commands containing the meta-information provided by
 the underlying ontology.
 We proceed by a definition of \inlineisar+introduction+'s, which we define as the extension of
@@ -575,7 +575,7 @@ doc_class srac = ec  +
 \<close>
    
 section*[ontopide::technical]\<open> Ontology-based IDE support \<close>  
-text\<open> We present a selection of interaction scenarios  @{example \<open>scholar_onto\<close>} 
+text\<open> We present a selection of interaction scenarios  @{example \<open>scholar_onto\<close>}
 and @{example \<open>cenelec_onto\<close>} with Isabelle/PIDE instrumented by \isadof.
  \<close>
 subsection*[scholar_pide::example]\<open> A Scholarly Paper \<close>  
