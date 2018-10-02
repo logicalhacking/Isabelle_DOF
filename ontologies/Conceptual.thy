@@ -32,7 +32,11 @@ doc_class F  =
    r :: "thm list"
    u :: "file"
    s :: "typ list"
-   b :: "(A \<times> C) set"         <= "{}"
+   b :: "(A \<times> C) set"         <= "{}"        (* This is a relation link, roughly corresponding
+                                                 to an association class. It can be used to track
+                                                 claims to result - relations, for example.*) 
+doc_class G = C +                                               
+   g :: "thm"  <= "@{thm ''HOL.refl''}"
 
 doc_class M = 
    trace :: "(A + C + D + F) list"
