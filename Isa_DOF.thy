@@ -31,7 +31,7 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
 
   and      "lemma*" "theorem*" "assert*"  ::thy_decl
 
-  and     "print_doc_classes" "print_doc_items"  :: diag
+  and     "print_doc_classes" "print_doc_items" "generate_template_sty" :: diag
            
   
 begin
@@ -460,6 +460,67 @@ val _ =
     "print document items"
     (Parse.opt_bang >> (fn b =>
       Toplevel.keep (print_doc_items b o Toplevel.context_of)));
+
+fun toStringLaTeXNewKeyCommand env long_name =
+    "\\expandafter\\newkeycommand\\csname"^" "^"isaDof."^env^"."^long_name^"\\endcsname%\n" 
+
+fun toStringMetaArgs true attr_long_names = 
+       enclose "[" "][1]" (commas ("label=,type=%\n" :: attr_long_names))
+   |toStringMetaArgs false attr_long_names = 
+       enclose "[" "][1]" (commas attr_long_names) 
+
+fun toStringDocItemBody env =
+    enclose "{%\n\\isamarkupfalse\\isamarkup" 
+            "{#1}\\label{\\commandkey{label}}\\isamarkuptrue%\n}\n"
+            env
+            
+fun toStringDocItemCommand env long_name attr_long_names = 
+    toStringLaTeXNewKeyCommand env long_name ^
+    toStringMetaArgs true attr_long_names ^
+    toStringDocItemBody env ^"\n"
+
+fun toStringDocItemLabel long_name attr_long_names = 
+    toStringLaTeXNewKeyCommand "Label" long_name ^
+    toStringMetaArgs false attr_long_names ^
+    "{%\n\\autoref{#1}\n}\n"
+
+fun toStringDocItemRef long_name label attr_long_namesNvalues = 
+    "\\isaDof.Label." ^ long_name ^
+    enclose "[" "]" (commas attr_long_namesNvalues) ^
+    enclose "{" "}" label
+
+fun writeFile filename content =
+    let val fd = TextIO.openOut filename
+        val _ = TextIO.output (fd, content) handle e => (TextIO.closeOut fd; raise e)
+        val _ = TextIO.closeOut fd
+    in () end
+
+fun write_ontology_latex_sty_template thy = 
+    let val raw_name = Context.theory_long_name thy
+        val curr_thy_name = if String.isPrefix "Draft." raw_name 
+                   then String.substring(raw_name, 6, (String.size raw_name)-6)
+                   else error "Not in ontology definition context"
+        val ({tab = _, ...},y,_)= get_data_global thy;
+        fun  write_attr (n, ty, _) = YXML.content_of(Binding.print n)^ "=\n"
+
+        fun write_class (n, {attribute_decl, id, inherits_from, name, params, thy_name}) =
+            if curr_thy_name = thy_name then
+                   toStringDocItemCommand "section" n (map write_attr attribute_decl) ^
+                   toStringDocItemCommand "text" n (map write_attr attribute_decl) ^
+                   toStringDocItemLabel n (map write_attr attribute_decl)
+                   (* or parameterising with "env" ? ? ?*)
+            else ""
+        val content = String.concat(map write_class (Symtab.dest y))
+        val _ = writeln content
+    in  writeFile ("Isa-DOF."^curr_thy_name^".template.sty") content
+    end;
+
+
+val _ =
+  Outer_Syntax.command @{command_keyword generate_template_sty}
+    "generate a template LaTeX style file for this ontology"
+    (Parse.opt_bang >> (fn b =>
+      Toplevel.keep (write_ontology_latex_sty_template o Toplevel.theory_of)));
 
 end (* struct *)
 \<close>
@@ -1216,4 +1277,11 @@ text*[sdfg] {* fg @{thm refl}*}
  
 text*[xxxy] {* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}*}    
 
+ML\<open>
+writeln (DOF_core.toStringDocItemCommand "section" "scholarly_paper.introduction" []);
+writeln (DOF_core.toStringDocItemLabel "scholarly_paper.introduction" []);
+writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
+
+(DOF_core.write_ontology_latex_sty_template @{theory})
+\<close>
 end

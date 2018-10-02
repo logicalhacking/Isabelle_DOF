@@ -89,5 +89,7 @@ doc_class article =
            conclusion   ~~  
            bibliography)"
 
+generate_template_sty
+
 end
 
