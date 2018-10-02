@@ -27,6 +27,18 @@
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: text.text
+\expandafter\newkeycommand\csname isaDof.text.text\endcsname%
+[label=,type=%
+][1]{%
+  \begin{isamarkuptext}%
+    #1
+  \end{isamarkuptext}%
+}
+% begin: text.text
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: figure*
 \NewEnviron{isamarkupfigure*}[1][]{\isaDof[env={figure},#1]{\BODY}}
 \expandafter\newkeycommand\csname isaDof.figure.Isa_DOF.figure\endcsname%
