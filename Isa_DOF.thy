@@ -705,7 +705,11 @@ val attribute_upd  : (((string * Position.T) * string) * string) parser =
 val reference =
     Parse.position Parse.name 
     --| improper
-    -- Scan.option (Parse.$$$ "::" -- improper |-- Parse.!!! (Parse.position Parse.name));
+    -- Scan.option (Parse.$$$ "::" 
+                    -- improper 
+                    |-- (Parse.!!! (Parse.position Parse.name))
+                    ) 
+    --| improper;
 
 
 val attributes =  
@@ -717,11 +721,12 @@ val attributes =
      --| improper)  : meta_args_t parser 
 
 val attributes_upd =  
-    (Parse.$$$ "[" 
+    ((Parse.$$$ "[" 
      -- improper 
      |-- (reference -- 
          (Scan.optional(Parse.$$$ "," -- improper |-- (Parse.enum "," (improper |-- attribute_upd)))) []))
-     --| Parse.$$$ "]" 
+     --| Parse.$$$ "]")
+     --| improper
 
 
 
