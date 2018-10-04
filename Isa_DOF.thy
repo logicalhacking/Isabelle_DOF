@@ -511,7 +511,7 @@ fun write_ontology_latex_sty_template thy =
                    (* or parameterising with "env" ? ? ?*)
             else ""
         val content = String.concat(map write_class (Symtab.dest y))
-        val _ = writeln content
+        (* val _ = writeln content  -- for interactive testing only, breaks LaTeX compilation *) 
     in  writeFile ("Isa-DOF."^curr_thy_name^".template.sty") content
     end;
 
@@ -689,8 +689,10 @@ val is_improper = not o (Token.is_proper orf Token.is_begin_ignore orf Token.is_
 val improper = Scan.many is_improper;
 
 val attribute =
-    Parse.position Parse.const 
-    -- Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.term) "True";
+    Parse.position Parse.const
+    --| improper 
+    -- Scan.optional (Parse.$$$ "=" --| improper |-- Parse.!!! Parse.term) "True"
+   : ((string * Position.T) * string) parser;
 
 val attribute_upd  : (((string * Position.T) * string) * string) parser =
     Parse.position Parse.const 
@@ -703,17 +705,18 @@ val reference =
 
 
 val attributes =  
-    (Parse.$$$ "["
+    ((Parse.$$$ "["
       -- improper 
      |-- (reference -- 
-         (Scan.optional(Parse.$$$ "," -- improper |-- (Parse.enum "," ( attribute)))) []))
-     --| Parse.$$$ "]" : meta_args_t parser 
+         (Scan.optional(Parse.$$$ "," -- improper |-- (Parse.enum "," (improper |-- attribute)))) []))
+     --| Parse.$$$ "]"
+     --| improper)  : meta_args_t parser 
 
 val attributes_upd =  
     (Parse.$$$ "[" 
      -- improper 
      |-- (reference -- 
-         (Scan.optional(Parse.$$$ "," -- improper |-- (Parse.enum "," attribute_upd))) []))
+         (Scan.optional(Parse.$$$ "," -- improper |-- (Parse.enum "," (improper |-- attribute_upd)))) []))
      --| Parse.$$$ "]"
 
 

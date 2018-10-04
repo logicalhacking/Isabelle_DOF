@@ -88,8 +88,10 @@ doc_class article =
            \<lbrace>technical || example\<rbrace>\<^sup>+ ~~ 
            conclusion   ~~  
            bibliography)"
-(*
+
+(* breaks currently LaTeX compilation:
 gen_sty_template
 *)
+
 end
 
