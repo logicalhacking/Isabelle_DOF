@@ -49,7 +49,7 @@ doc_class bibliography =
    style :: "string option"  <=  "Some ''LNCS''"
 
 text{* Besides subtyping, there is another relation between
-       doc_classes: a class can be a \emph{monitor} to other ones,
+       doc_classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
        which is expressed by occurrence in the where clause.
        While sub-classing refers to data-inheritance of attributes,
        a monitor captures structural constraints -- the order --
@@ -65,13 +65,13 @@ text{* Besides subtyping, there is another relation between
        Monitors can be nested.
  
        Classes neither directly or via inheritance indirectly
-       mentioned in the monitor are \emph{independent} from
+       mentioned in the monitor are \<^emph>\<open>independent\<close> from
        a monitor and may occur freely. 
 *}
 
 
 -- \<open>underlying idea: capture the essence of a monitor class as trace.
-    trace would be `predefined id` like `main` in C. \<close>
+    trace would be \<^emph>\<open>`predefined id`\<close> like \<^verbatim>\<open>main\<close> in C. \<close>
 text{* @{cite bla} *}
 
 doc_class article = 
@@ -88,8 +88,8 @@ doc_class article =
            \<lbrace>technical || example\<rbrace>\<^sup>+ ~~ 
            conclusion   ~~  
            bibliography)"
-
-generate_template_sty
-
+(*
+gen_sty_template
+*)
 end
 

@@ -31,7 +31,7 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
 
   and      "lemma*" "theorem*" "assert*"  ::thy_decl
 
-  and     "print_doc_classes" "print_doc_items" "generate_template_sty" :: diag
+  and     "print_doc_classes" "print_doc_items" "gen_sty_template" :: diag
            
   
 begin
@@ -517,7 +517,7 @@ fun write_ontology_latex_sty_template thy =
 
 
 val _ =
-  Outer_Syntax.command @{command_keyword generate_template_sty}
+  Outer_Syntax.command @{command_keyword gen_sty_template}
     "generate a template LaTeX style file for this ontology"
     (Parse.opt_bang >> (fn b =>
       Toplevel.keep (write_ontology_latex_sty_template o Toplevel.theory_of)));
@@ -685,6 +685,8 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) =
       end
 
 val semi = Scan.option (Parse.$$$ ";");
+val is_improper = not o (Token.is_proper orf Token.is_begin_ignore orf Token.is_end_ignore);
+val improper = Scan.many is_improper;
 
 val attribute =
     Parse.position Parse.const 
@@ -697,19 +699,21 @@ val attribute_upd  : (((string * Position.T) * string) * string) parser =
 
 val reference =
     Parse.position Parse.name 
-    -- Scan.option (Parse.$$$ "::" |-- Parse.!!! (Parse.position Parse.name));
+    -- Scan.option (Parse.$$$ "::" -- improper |-- Parse.!!! (Parse.position Parse.name));
 
 
 val attributes =  
-    (Parse.$$$ "[" 
+    (Parse.$$$ "["
+      -- improper 
      |-- (reference -- 
-         (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) []))
+         (Scan.optional(Parse.$$$ "," -- improper |-- (Parse.enum "," ( attribute)))) []))
      --| Parse.$$$ "]" : meta_args_t parser 
 
 val attributes_upd =  
     (Parse.$$$ "[" 
+     -- improper 
      |-- (reference -- 
-         (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute_upd))) []))
+         (Scan.optional(Parse.$$$ "," -- improper |-- (Parse.enum "," attribute_upd))) []))
      --| Parse.$$$ "]"
 
 
@@ -1277,6 +1281,7 @@ text*[sdfg] {* fg @{thm refl}*}
  
 text*[xxxy] {* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}*}    
 
+(*
 ML\<open>
 writeln (DOF_core.toStringDocItemCommand "section" "scholarly_paper.introduction" []);
 writeln (DOF_core.toStringDocItemLabel "scholarly_paper.introduction" []);
@@ -1284,4 +1289,5 @@ writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
 
 (DOF_core.write_ontology_latex_sty_template @{theory})
 \<close>
+*)
 end
