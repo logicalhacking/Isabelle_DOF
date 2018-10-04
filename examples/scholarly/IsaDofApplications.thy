@@ -4,24 +4,29 @@ theory IsaDofApplications
 begin
 (*>*)  
  
-title*[
-tit::title]\<open>Using the Isabelle Ontology Framework\<close> 
+title*
+[
+tit
+::
+title]
+\<open>Using the Isabelle Ontology Framework\<close> 
 subtitle*[stit::subtitle]
+
 \<open>Linking the Formal with the Informal\<close>
 
-text*[adb::author,
+text*[adb:: author,
       email="''a.brucker@sheffield.ac.uk''",
       orcid="''0000-0002-6355-1200''",
       affiliation="''The University of Sheffield, Sheffield, UK''"]\<open>Achim D. Brucker\<close>
 text*[idir::author,
-      email="''idir.aitsadoune@centralesupelec.fr''",
-      affiliation="''CentraleSupelec, Paris, France''"]\<open>Idir Ait-Sadoune\<close>
+      email       = "''idir.aitsadoune@centralesupelec.fr''",
+      affiliation = "''CentraleSupelec, Paris, France''"]\<open>Idir Ait-Sadoune\<close>
 text*[paolo::author,
-      email="''paolo.crisafulli@irt-systemx.fr''",
-      affiliation="''IRT-SystemX, Paris, France''"]\<open>Paolo Crisafulli\<close>
+      email      = "''paolo.crisafulli@irt-systemx.fr''",
+      affiliation= "''IRT-SystemX, Paris, France''"]\<open>Paolo Crisafulli\<close>
 text*[bu::author,
-      email = "''wolff@lri.fr''",
-      affiliation="''Universit\\'e Paris-Sud, Paris, France''"]\<open>Burkhart Wolff\<close>
+      email       = "''wolff@lri.fr''",
+      affiliation = "''Universit\\'e Paris-Sud, Paris, France''"]\<open>Burkhart Wolff\<close>
     
 
 text*[abs::abstract,

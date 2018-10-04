@@ -408,23 +408,6 @@ val locale =
   Scan.option ((Parse.$$$ "(" -- improper -- Parse.$$$ "in") |--
     Parse.!!! (improper |-- Parse.name --| (improper -- Parse.$$$ ")")));
 
-(*
-val reference =
-    Parse.position Parse.name 
-    -- Scan.option (Parse.$$$ "::" |-- Parse.!!! (Parse.position Parse.name));
-
-val attribute =
-    Parse.position Parse.const 
-    -- Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.term) "";
-
-val attributes =  
-    (Parse.$$$ "[" 
-     |-- (reference -- 
-         (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) []))
-     --| Parse.$$$ "]"
-
-fun convert_meta_args (NONE : ((((string * Position.T) * (string * Position.T) option) * ((string * Position.T) * string) list) option)) = ""
-*)
 val meta_args_parser_hook =  Unsynchronized.ref((fn thy => fn s => ("",s)): theory -> string parser)
 
 
@@ -441,15 +424,15 @@ fun present_thy thy command_results toks =
 
     fun markup pred mk flag = Scan.peek (fn d =>
       improper |--
-        Parse.position (Scan.one (fn tok =>
-          Token.is_command tok andalso pred keywords (Token.content_of tok))) --
+        Parse.position (Scan.one (fn tok =>  Token.is_command tok andalso 
+                                             pred keywords (Token.content_of tok))) --
       Scan.repeat tag --
-      Parse.!!!! 
-      (    (!meta_args_parser_hook thy)
-         --
-           (  (improper -- locale -- improper) 
+      (improper |--
+      (Parse.!!!! 
+      (  (!meta_args_parser_hook thy)
+         -- (  (improper -- locale -- improper) 
          |-- (Parse.document_source)) 
-         --| improper_end)
+         --| improper_end)))
       >> (fn (((tok, pos'), tags), (meta_args,source)) =>
         let val name = Token.content_of tok
         in (SOME (name, pos', tags), (mk (name, meta_args, source), (flag, d))) end));

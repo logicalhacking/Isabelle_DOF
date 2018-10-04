@@ -686,21 +686,25 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) =
 
 val semi = Scan.option (Parse.$$$ ";");
 val is_improper = not o (Token.is_proper orf Token.is_begin_ignore orf Token.is_end_ignore);
-val improper = Scan.many is_improper;
+val improper = Scan.many is_improper; (* parses white-space and comments *)
 
 val attribute =
     Parse.position Parse.const
     --| improper 
-    -- Scan.optional (Parse.$$$ "=" --| improper |-- Parse.!!! Parse.term) "True"
+    -- Scan.optional (Parse.$$$ "=" --| improper |-- Parse.!!! Parse.term --| improper) "True"
    : ((string * Position.T) * string) parser;
 
 val attribute_upd  : (((string * Position.T) * string) * string) parser =
     Parse.position Parse.const 
-    -- (@{keyword "+="} || @{keyword ":="})
-    -- Parse.!!! Parse.term;
+    --| improper
+    -- ((@{keyword "+="} --| improper) || (@{keyword ":="} --| improper))
+    -- Parse.!!! Parse.term
+    --| improper
+    : (((string * Position.T) * string) * string) parser;
 
 val reference =
     Parse.position Parse.name 
+    --| improper
     -- Scan.option (Parse.$$$ "::" -- improper |-- Parse.!!! (Parse.position Parse.name));
 
 
@@ -717,7 +721,7 @@ val attributes_upd =
      -- improper 
      |-- (reference -- 
          (Scan.optional(Parse.$$$ "," -- improper |-- (Parse.enum "," (improper |-- attribute_upd)))) []))
-     --| Parse.$$$ "]"
+     --| Parse.$$$ "]" 
 
 
 
