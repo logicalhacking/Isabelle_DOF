@@ -31,7 +31,8 @@ subsection*[idir::Author, affiliation="''CentraleSupelec''",
 ***                                                   [width=\scale \textwidth ]...
 *** l.44 {A Polynome.}
 *)
-figure*[figure::figure, spawn_columns=False,relative_width="''80''", 
+figure*[figure::figure, spawn_columns=False,
+        relative_width="80", 
         src="''figures/Polynomialdeg5.png''"] 
         \<open>A Polynome.\<close>
 

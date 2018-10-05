@@ -54,7 +54,7 @@ text*[a1::Answer_Formal_Step] {* Fill in term and justification*}
 
 lemma q1 : "(h \<longlongrightarrow> (0::real)) at_top"  sorry
 
-text*[v1::Validation, proofs="[@{thm ''q1''}::thm]"] {* See lemma @{thm q1}. *}
+text*[v1::Validation, proofs="[@{thm ''HOL.refl''}::thm]"] {* See lemma @{thm q1}. *}
 
   
 text*[q2::Task, concerns= "{setter,checker,student}",
@@ -101,7 +101,7 @@ text*[a3a::Answer_Formal_Step]
 lemma q3a : "h x = (exp (- x)) - (h' x)"
   by (simp add : h_def h'_def left_diff_distrib)
 
-subsubsection*[v3a::Validation,  proofs="[@{thm ''q3a''}::thm]"]
+subsubsection*[v3a::Validation,  proofs="[@{thm ''BAC2017.q3a''}::thm]"]
   {* See lemma @{thm q3a}. *}
 
 

@@ -10,10 +10,12 @@ print_doc_items
 
 (* corresponds to low-level accesses : *)
 ML\<open>  
-val ({tab = x, ...},y,z)= DOF_core.get_data @{context};
+val {docobj_tab={tab = x, ...},
+     docclass_tab,
+     ISA_transformer_tab} = DOF_core.get_data @{context};
 Symtab.dest x;
 "==============================================";
-Symtab.dest y;
+Symtab.dest docclass_tab;
 \<close>
 
 text*[dfgdfg::B, Conceptual.B.x ="''f''", y = "[''sdf'']"]\<open> sdfsdfs sdfsdf sdfsdf @{thm refl} \<close> 
@@ -98,12 +100,14 @@ open_monitor*[figs1::figure_group,
               anchor="''fig-demo''", 
               caption="''Sample ''"]  
 
-figure*[fig_A::figure, spawn_columns=False,relative_width="''90''",
+figure*[fig_A::figure, spawn_columns=False,
+        relative_width="90",
         src="''figures/A.png''"]
        \<open> The A train \ldots \<close>
 update_instance*[figs1::figure_group, trace+="[figure]"]
 
-figure*[fig_B::figure, spawn_columns=False,relative_width="''90''",
+figure*[fig_B::figure, 
+        spawn_columns=False,relative_width="90",
         src="''figures/B.png''"]
        \<open> The B train \ldots \<close>  
 update_instance*[figs1::figure_group, trace+="[figure]"]

@@ -117,17 +117,22 @@ struct
 
    val  initial_ISA_tab:ISA_transformer_tab = Symtab.empty
 
-
+                                        
 (* registrating data of the Isa_DOF component *)
 structure Data = Generic_Data
 (
-  type T = docobj_tab * docclass_tab * ISA_transformer_tab
-  val empty  = (initial_docobj_tab, initial_docclass_tab, initial_ISA_tab) 
-  val extend = I
-  fun merge((d1,c1,e1),(d2,c2,e2))  = (merge_docobj_tab   (d1,d2), 
-                                       merge_docclass_tab (c1,c2),
-                                       Symtab.merge (fn (_ , _) => false)(e1,e2)
-                                      )
+  type T =     {docobj_tab : docobj_tab,
+                docclass_tab : docclass_tab,
+                ISA_transformer_tab : ISA_transformer_tab}
+  val empty  = {docobj_tab = initial_docobj_tab,
+                docclass_tab = initial_docclass_tab,
+                ISA_transformer_tab = initial_ISA_tab} 
+  val extend =  I
+  fun merge(   {docobj_tab=d1,docclass_tab = c1,ISA_transformer_tab = e1},
+               {docobj_tab=d2,docclass_tab = c2,ISA_transformer_tab = e2})  = 
+               {docobj_tab=merge_docobj_tab   (d1,d2), 
+                docclass_tab = merge_docclass_tab (c1,c2),
+                ISA_transformer_tab = Symtab.merge (fn (_ , _) => false)(e1,e2)}
 );
 
 
@@ -136,9 +141,12 @@ val map_data = Data.map;
 val get_data_global = Data.get o Context.Theory;
 val map_data_global = Context.theory_map o map_data;
 
-fun apfst f (x, y, z) = (f x, y, z);
-fun apsnd f (x, y, z) = (x, f y, z);
-fun apthrd f (x, y, z) = (x, y, f z);
+fun apfst f {docobj_tab,docclass_tab,ISA_transformer_tab} = 
+            {docobj_tab = f docobj_tab, docclass_tab=docclass_tab, ISA_transformer_tab=ISA_transformer_tab};
+fun apsnd f {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z} = 
+            {docobj_tab=x,docclass_tab = f y,ISA_transformer_tab = z};
+fun apthrd f{docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z} = 
+            {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = f z};
 
 (* doc-class-name management: We still use the record-package for internally 
    representing doc-classes. The main motivation is that "links" to entities are
@@ -149,7 +157,7 @@ fun apthrd f (x, y, z) = (x, y, f z);
    of type names must be reduced to qualifier names only. The used Syntax.parse_typ 
    handling the identification does that already. *)
  
-fun is_subclass (ctxt) s t = is_subclass0(#2(get_data ctxt)) s t
+fun is_subclass (ctxt) s t = is_subclass0(#docclass_tab(get_data ctxt)) s t
 
 fun type_name2doc_class_name thy str =  (*  Long_Name.qualifier *) str
 
@@ -171,32 +179,32 @@ fun name2doc_class_name_local ctxt str =
 
 
 
-fun is_defined_cid_global cid thy = let val t = #2(get_data_global thy)
+fun is_defined_cid_global cid thy = let val t = #docclass_tab(get_data_global thy)
                                     in  cid=default_cid orelse 
                                         Symtab.defined t (name2doc_class_name thy cid) 
                                     end
 
 
-fun is_defined_cid_local cid ctxt  = let val t = #2(get_data ctxt)
+fun is_defined_cid_local cid ctxt  = let val t = #docclass_tab(get_data ctxt)
                                      in  cid=default_cid orelse 
                                          Symtab.defined t (name2doc_class_name_local ctxt cid) 
                                      end
 
 
-fun is_declared_oid_global oid thy = let val {tab,...} = #1(get_data_global thy)
+fun is_declared_oid_global oid thy = let val {tab,...} = #docobj_tab(get_data_global thy)
                                      in  Symtab.defined tab oid end
 
-fun is_declared_oid_local oid thy  = let val {tab,...} = #1(get_data thy)
+fun is_declared_oid_local oid thy  = let val {tab,...} = #docobj_tab(get_data thy)
                                      in  Symtab.defined tab oid end
 
-fun is_defined_oid_global oid thy  = let val {tab,...} = #1(get_data_global thy)
+fun is_defined_oid_global oid thy  = let val {tab,...} = #docobj_tab(get_data_global thy)
                                      in  case Symtab.lookup tab oid of 
                                            NONE => false
                                           |SOME(NONE) => false
                                           |SOME _ => true
                                      end
 
-fun is_defined_oid_local oid thy   = let val {tab,...} = #1(get_data thy)
+fun is_defined_oid_local oid thy   = let val {tab,...} = #docobj_tab(get_data thy)
                                      in  case Symtab.lookup tab oid of 
                                            NONE => false
                                           |SOME(NONE) => false
@@ -284,13 +292,13 @@ fun declare_anoobject_local ctxt cid =
     end
 
 
-fun get_object_global oid thy  = let val {tab,...} = #1(get_data_global thy)
+fun get_object_global oid thy  = let val {tab,...} = #docobj_tab(get_data_global thy)
                                  in  case Symtab.lookup tab oid of 
                                        NONE => error("undefined reference: "^oid)
                                       |SOME(bbb) => bbb
                                  end
 
-fun get_object_local oid ctxt  = let val {tab,...} = #1(get_data ctxt)
+fun get_object_local oid ctxt  = let val {tab,...} = #docobj_tab(get_data ctxt)
                                  in  case Symtab.lookup tab oid of 
                                        NONE => error("undefined reference: "^oid)
                                       |SOME(bbb) => bbb
@@ -298,17 +306,17 @@ fun get_object_local oid ctxt  = let val {tab,...} = #1(get_data ctxt)
 
 fun get_doc_class_global cid thy = 
     if cid = default_cid then error("default doc class acces") (* TODO *)
-    else let val t = #2(get_data_global thy)
+    else let val t = #docclass_tab(get_data_global thy)
          in  (Symtab.lookup t cid) end
     
 
 fun get_doc_class_local cid ctxt = 
     if cid = default_cid then error("default doc class acces") (* TODO *)
-    else let val t = #2(get_data ctxt)
+    else let val t = #docclass_tab(get_data ctxt)
          in  (Symtab.lookup t cid) end
 
 
-fun is_defined_cid_local cid ctxt  = let val t = #2(get_data ctxt)
+fun is_defined_cid_local cid ctxt  = let val t = #docclass_tab(get_data ctxt)
                                      in  cid=default_cid orelse 
                                          Symtab.defined t (name2doc_class_name_local ctxt cid) 
                                      end
@@ -316,7 +324,7 @@ fun is_defined_cid_local cid ctxt  = let val t = #2(get_data ctxt)
 
 fun get_attributes_local cid ctxt =
     if cid = default_cid then []
-    else let val t = #2(get_data ctxt)
+    else let val t = #docclass_tab(get_data ctxt)
              val cid_long = name2doc_class_name_local ctxt cid
          in  case Symtab.lookup t cid_long of
                NONE => error("undefined doc class id :"^cid)
@@ -376,15 +384,14 @@ fun update_value_global oid upd thy  =
 
 val ISA_prefix = "Isa_DOF.ISA_"  (* ISA's must be declared in Isa_DOF.thy  !!! *)
 
-fun get_isa_global isa thy  =  case Symtab.lookup (#3(get_data_global thy)) (ISA_prefix^isa) of 
+fun get_isa_global isa thy  =  case Symtab.lookup (#ISA_transformer_tab(get_data_global thy)) (ISA_prefix^isa) of 
                                        NONE => error("undefined inner syntax antiquotation: "^isa)
                                       |SOME(bbb) => bbb
                                
 
-fun get_isa_local isa ctxt  = case Symtab.lookup (#3(get_data ctxt)) (ISA_prefix^isa) of 
+fun get_isa_local isa ctxt  = case Symtab.lookup (#ISA_transformer_tab(get_data ctxt)) (ISA_prefix^isa) of 
                                        NONE => error("undefined inner syntax antiquotation: "^isa)
                                       |SOME(bbb) => bbb
-                              
 
 fun update_isa_local (isa, trans) ctxt  = 
     map_data (apthrd(Symtab.update(ISA_prefix^isa,trans))) ctxt
@@ -395,7 +402,7 @@ fun update_isa_global (isa, trans) thy  =
 
 fun transduce_term_global (term,pos) thy = 
     (* pre: term should be fully typed in order to allow type-relqted term-transformations *)
-    let val tab = #3(get_data_global thy)
+    let val tab = #ISA_transformer_tab(get_data_global thy)
         fun T(Const(s,ty) $ t) = if String.isPrefix ISA_prefix s
                                  then case Symtab.lookup tab s of
                                         NONE => error("undefined inner syntax antiquotation: "^s)
@@ -411,15 +418,15 @@ fun transduce_term_global (term,pos) thy =
     in   T term end
 
 
-fun writeln_classrefs ctxt = let  val tab = #2(get_data ctxt)
+fun writeln_classrefs ctxt = let  val tab = #docclass_tab(get_data ctxt)
                              in   writeln (String.concatWith "," (Symtab.keys tab)) end
 
 
-fun writeln_docrefs ctxt = let  val {tab,...} = #1(get_data ctxt)
+fun writeln_docrefs ctxt = let  val {tab,...} = #docobj_tab(get_data ctxt)
                            in   writeln (String.concatWith "," (Symtab.keys tab)) end
 
 fun print_doc_items b ctxt = 
-    let val ({tab = x, ...},_,_)= get_data ctxt;
+    let val {docobj_tab={tab = x, ...},...}= get_data ctxt;
         val _ = writeln "=====================================";    
         fun print_item (n, SOME({cid,id,pos,thy_name,value})) =
                  (writeln ("docitem: "^n);
@@ -433,7 +440,7 @@ fun print_doc_items b ctxt =
         writeln "=====================================\n\n\n" end;
 
 fun print_doc_classes b ctxt = 
-    let val ({tab = _, ...},y,_)= get_data ctxt;
+    let val {docobj_tab={tab = x, ...},docclass_tab, ...} = get_data ctxt;
         val _ = writeln "=====================================";    
         fun print_attr (n, ty, NONE) = (Binding.print n)
           | print_attr (n, ty, SOME t) = (Binding.print n^"("^Syntax.string_of_term ctxt t^")")
@@ -445,7 +452,7 @@ fun print_doc_classes b ctxt =
             writeln ("    origin:  "^thy_name);
             writeln ("    attrs:   "^commas (map print_attr attribute_decl))
            );
-    in  map print_class (Symtab.dest y); 
+    in  map print_class (Symtab.dest docclass_tab); 
         writeln "=====================================\n\n\n" 
     end;
 
@@ -500,7 +507,7 @@ fun write_ontology_latex_sty_template thy =
         val curr_thy_name = if String.isPrefix "Draft." raw_name 
                    then String.substring(raw_name, 6, (String.size raw_name)-6)
                    else error "Not in ontology definition context"
-        val ({tab = _, ...},y,_)= get_data_global thy;
+        val {docobj_tab={tab = x, ...},docclass_tab,...}= get_data_global thy;
         fun  write_attr (n, ty, _) = YXML.content_of(Binding.print n)^ "=\n"
 
         fun write_class (n, {attribute_decl, id, inherits_from, name, params, thy_name}) =
@@ -510,7 +517,7 @@ fun write_ontology_latex_sty_template thy =
                    toStringDocItemLabel n (map write_attr attribute_decl)
                    (* or parameterising with "env" ? ? ?*)
             else ""
-        val content = String.concat(map write_class (Symtab.dest y))
+        val content = String.concat(map write_class (Symtab.dest docclass_tab))
         (* val _ = writeln content  -- for interactive testing only, breaks LaTeX compilation *) 
     in  writeFile ("Isa-DOF."^curr_thy_name^".template.sty") content
     end;
@@ -732,7 +739,7 @@ val attributes_upd =
 
 fun cid_2_cidType cid_long thy =
     if cid_long = DOF_core.default_cid then @{typ "unit"}
-    else let val t = #2(DOF_core.get_data_global thy)
+    else let val t = #docclass_tab(DOF_core.get_data_global thy)
              fun ty_name cid = cid^"."^  Long_Name.base_name cid^"_ext"
              fun fathers cid_long = case Symtab.lookup t cid_long of
                        NONE => error("undefined doc class id :"^cid_long)

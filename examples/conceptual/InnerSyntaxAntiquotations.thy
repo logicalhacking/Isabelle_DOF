@@ -20,7 +20,10 @@ the emphasis of this presentation is to present the expressivity of ODL on a par
 
 
 text\<open>Voila the content of the Isabelle_DOF environment so far:\<close>
-ML\<open> val ({tab = x, ...},y,z)= DOF_core.get_data @{context}; Symtab.dest z; \<close>
+ML\<open> val {docobj_tab={tab = x, ...},
+     docclass_tab,
+     ISA_transformer_tab}= DOF_core.get_data @{context}; 
+    Symtab.dest ISA_transformer_tab; \<close>
 
 text\<open>Some sample lemma:\<close>
 lemma murks : "Example" sorry

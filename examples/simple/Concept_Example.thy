@@ -26,7 +26,7 @@ section*[f::F] \<open> Lectus accumsan velit ultrices, ... }\<close>
   
 theorem some_proof : "P" sorry
     
-update_instance*[f::F,r:="[@{thm ''some_proof''}]"]
+update_instance*[f::F,r:="[@{thm ''Concept_Example.some_proof''}]"]
 
 text{* ..., mauris amet, id elit aliquam aptent id,  ... *}
   
