@@ -89,9 +89,8 @@ doc_class article =
            conclusion   ~~  
            bibliography)"
 
-(* breaks currently LaTeX compilation:
+(* breaks currently LaTeX compilation: *)
 gen_sty_template
-*)
 
 end
 
