@@ -57,7 +57,7 @@ propagation. This challenge incites numerous research efforts
 summarized under the labels ``semantic web'', ``data mining'', or any
 form of advanced ``semantic'' text processing.  A key role in
 structuring this linking play \<^emph>\<open>document ontologies\<close> (also called
-\<^emph>\<open>vocabulary\<close> in the semantic web community~\cite{w3c:ontologies:2015}), 
+\<^emph>\<open>vocabulary\<close> in the semantic web community~@{cite "w3c:ontologies:2015"}), 
 \ie, a machine-readable form of the structure of documents as well as 
 the document discourse.
 
@@ -172,7 +172,7 @@ For the antiquotation \inlineisar+\at{value "fac 5"}+  we assume the usual defin
 text*[anti]\<open> Thus, antiquotations can refer to formal content, can be type-checked before being 
 displayed and can be used for calculations before actually being typeset. When editing, 
 Isabelle's PIDE offers auto-completion and error-messages while typing the above 
-\emph{semi-formal} content.  \<close>
+\<^emph>\<open>semi-formal\<close> content.  \<close>
 
 section*[isadof::technical,main_author="Some(@{docitem ''adb''}::author)"]\<open> \isadof \<close>
    
@@ -216,11 +216,11 @@ as enumerations. In particular, document class definitions provide:
    instances of document classes.
 \<close>
 text\<open>
-Attributes referring to other ontological concepts are called \emph{links}.
+Attributes referring to other ontological concepts are called \<^emph>\<open>links\<close>.
 The HOL-types inside the document specification language support built-in types for Isabelle/HOL \inlineisar+typ+'s, 
 \inlineisar+term+'s, and \inlineisar+thm+'s reflecting internal Isabelle's internal types 
 for these entities; when denoted in HOL-terms to instantiate an attribute, for example, there is a 
-specific syntax (called \emph{inner syntax antiquotations}) that is checked by \isadof 
+specific syntax (called \<^emph>\<open>inner syntax antiquotations\<close>) that is checked by \isadof 
 for consistency.
 
 Document classes can have a \inlineisar+where+ clause containing a regular 
@@ -715,7 +715,7 @@ text\<open> \isadof in its present form has a number of technical short-comings 
   presentation (such as HTML) would be highly desirable in particular for the 
   math exam scenarios. And last but not least, it would be desirable that PIDE 
   itself is ``ontology-aware'' and can, for example, use meta-information
-  to control read- and write accesses of \emph{parts} of documents.
+  to control read- and write accesses of \<^emph>\<open>parts\<close> of documents.
 \<close>
 
 paragraph\<open> Availability. \<close> 

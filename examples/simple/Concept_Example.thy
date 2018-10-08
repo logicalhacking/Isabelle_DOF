@@ -31,7 +31,7 @@ update_instance*[f::F,r:="[@{thm ''Concept_Example.some_proof''}]"]
 text{* ..., mauris amet, id elit aliquam aptent id,  ... *}
   
 update_instance*[f::F,b:="{(@{docitem  ''a''}::A,@{docitem  ''c1''}::C), 
-                        (@{docitem  ''a''},   @{docitem  ''c1''})}"] 
+                           (@{docitem  ''a''},   @{docitem  ''c1''})}"] 
   
 close_monitor*[struct]
 

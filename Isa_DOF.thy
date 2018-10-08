@@ -65,8 +65,8 @@ struct
    type docclass_struct = {params : (string * sort) list, (*currently not used *)
                            name   : binding, thy_name : string, id : serial, (* for pide *)
                            inherits_from : (typ list * string) option,
-                           attribute_decl : (binding * typ * term option) list
-                           (*, rex : term list -- not yet used *)}
+                           attribute_decl : (binding * typ * term option) list,
+                           rex : term list  }
 
 
    type docclass_tab = docclass_struct Symtab.table
@@ -141,9 +141,10 @@ val map_data = Data.map;
 val get_data_global = Data.get o Context.Theory;
 val map_data_global = Context.theory_map o map_data;
 
-fun apfst f {docobj_tab,docclass_tab,ISA_transformer_tab} = 
+
+fun upd_docobj_tab f {docobj_tab,docclass_tab,ISA_transformer_tab} = 
             {docobj_tab = f docobj_tab, docclass_tab=docclass_tab, ISA_transformer_tab=ISA_transformer_tab};
-fun apsnd f {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z} = 
+fun upd_docclass_tab f {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z} = 
             {docobj_tab=x,docclass_tab = f y,ISA_transformer_tab = z};
 fun apthrd f{docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z} = 
             {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = f z};
@@ -214,18 +215,18 @@ fun is_defined_oid_local oid thy   = let val {tab,...} = #docobj_tab(get_data th
 
 fun declare_object_global oid thy  =  
     let fun decl {tab=t,maxano=x} = {tab=Symtab.update_new(oid,NONE)t, maxano=x}
-    in (map_data_global (apfst(decl)) (thy)
+    in (map_data_global (upd_docobj_tab(decl)) (thy)
        handle Symtab.DUP _ => error("multiple declaration of document reference"))
     end
 
 fun declare_object_local oid ctxt  =
     let fun decl {tab,maxano} = {tab=Symtab.update_new(oid,NONE) tab, maxano=maxano}
-    in  (map_data(apfst decl)(ctxt)
+    in  (map_data(upd_docobj_tab decl)(ctxt)
         handle Symtab.DUP _ => error("multiple declaration of document reference"))
     end
 
 
-fun define_doc_class_global (params', binding) parent fields thy  = 
+fun define_doc_class_global (params', binding) parent fields reg_exp thy  = 
     let val nn = Context.theory_name thy (* in case that we need the thy-name to identify
                                             the space where it is ... *)
         val cid = (Binding.name_of binding)
@@ -254,10 +255,10 @@ fun define_doc_class_global (params', binding) parent fields thy  =
                                 from prior record definition ? For the moment: own
                                 generation of serials ... *)
                     inherits_from = parent,
-                    attribute_decl = fields  (*  currently unchecked *)
-                    (*, rex : term list -- not yet used *)}
+                    attribute_decl = fields , 
+                    rex = reg_exp }
     
-    in   map_data_global(apsnd(Symtab.update(cid_long,info)))(thy)
+    in   map_data_global(upd_docclass_tab(Symtab.update(cid_long,info)))(thy)
     end
 
 
@@ -266,14 +267,14 @@ fun define_object_global (oid, bbb) thy  =
                                             the space where it is ... *)
     in  if is_defined_oid_global oid thy 
         then error("multiple definition of document reference")
-        else map_data_global  (apfst(fn {tab=t,maxano=x} =>            
+        else map_data_global  (upd_docobj_tab(fn {tab=t,maxano=x} =>            
                                         {tab=Symtab.update(oid,SOME bbb) t,
                                          maxano=x}))
                               (thy)
     end
             
 fun define_object_local (oid, bbb) ctxt  = 
-    map_data (apfst(fn{tab,maxano}=>{tab=Symtab.update(oid,SOME bbb)tab,maxano=maxano})) ctxt
+    map_data (upd_docobj_tab(fn{tab,maxano}=>{tab=Symtab.update(oid,SOME bbb)tab,maxano=maxano})) ctxt
 
 
 (* declares an anonyme label of a given type and generates a unique reference ...  *)
@@ -281,14 +282,14 @@ fun declare_anoobject_global thy cid =
     let fun declare {tab,maxano} = let val str = cid^":"^Int.toString(maxano+1)
                                        val _ = writeln("Anonymous doc-ref declared: " ^ str)
                                    in  {tab=Symtab.update(str,NONE)tab,maxano= maxano+1} end
-    in  map_data_global (apfst declare) (thy)
+    in  map_data_global (upd_docobj_tab declare) (thy)
     end
 
 fun declare_anoobject_local ctxt cid = 
     let fun declare {tab,maxano} = let val str = cid^":"^Int.toString(maxano+1)
                                            val _ = writeln("Anonymous doc-ref declared: " ^str)
                                        in  {tab=Symtab.update(str,NONE)tab, maxano=maxano+1} end
-    in map_data (apfst declare) (ctxt) 
+    in map_data (upd_docobj_tab declare) (ctxt) 
     end
 
 
@@ -378,7 +379,7 @@ fun update_value_global oid upd thy  =
                SOME{pos,thy_name,value,id,cid} => 
                    let val tab' = Symtab.update(oid,SOME{pos=pos,thy_name=thy_name,
                                                          value=upd value,id=id, cid=cid})
-                   in   map_data_global (apfst(fn{tab,maxano}=>{tab=tab' tab,maxano=maxano})) thy end
+                   in   map_data_global (upd_docobj_tab(fn{tab,maxano}=>{tab=tab' tab,maxano=maxano})) thy end
              | NONE => error("undefined doc object: "^oid)  
 
 
@@ -444,7 +445,7 @@ fun print_doc_classes b ctxt =
         val _ = writeln "=====================================";    
         fun print_attr (n, ty, NONE) = (Binding.print n)
           | print_attr (n, ty, SOME t) = (Binding.print n^"("^Syntax.string_of_term ctxt t^")")
-        fun print_class (n, {attribute_decl, id, inherits_from, name, params, thy_name}) =
+        fun print_class (n, {attribute_decl, id, inherits_from, name, params, thy_name, rex}) =
            (case inherits_from of 
                NONE => writeln ("docclass: "^n)
              | SOME(_,nn) => writeln ("docclass: "^n^" = "^nn^" + ");
@@ -510,7 +511,7 @@ fun write_ontology_latex_sty_template thy =
         val {docobj_tab={tab = x, ...},docclass_tab,...}= get_data_global thy;
         fun  write_attr (n, ty, _) = YXML.content_of(Binding.print n)^ "=\n"
 
-        fun write_class (n, {attribute_decl, id, inherits_from, name, params, thy_name}) =
+        fun write_class (n, {attribute_decl, id, inherits_from, name, params, thy_name,rex}) =
             if curr_thy_name = thy_name then
                    toStringDocItemCommand "section" n (map write_attr attribute_decl) ^
                    toStringDocItemCommand "text" n (map write_attr attribute_decl) ^
@@ -767,9 +768,6 @@ fun check_classref (SOME(cid,pos')) thy =
 fun generalize_typ n = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,n),sort));
 fun infer_type thy term = hd (Type_Infer_Context.infer_types (Proof_Context.init_global thy) [term])
 
-val SPY5 = Unsynchronized.ref(@{theory})
-val SPY6 = Unsynchronized.ref("")
-val SPY7 = Unsynchronized.ref([]:(string * Position.T * string * term) list)
 
 fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) term = 
     let val cid_ty = cid_2_cidType cid_long thy 
@@ -843,9 +841,8 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
                                         toks:Input.source) 
                                         : Toplevel.transition -> Toplevel.transition =
   let
-
-    fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
-                         (* as side-effect, generates markup *)
+       fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
+       (* as side-effect, generates markup *)
   in   
        Toplevel.theory(create_and_check_docitem oid pos cid_pos doc_attrs #> check_text) 
        (* Thanks Frederic Tuong! ! ! *)
@@ -853,7 +850,10 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
 
 
 fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
-       Toplevel.theory(create_and_check_docitem oid pos cid_pos doc_attrs) 
+    let fun o_m_c oid pos cid_pos doc_attrs thy = create_and_check_docitem oid pos cid_pos doc_attrs thy
+    in
+       Toplevel.theory(o_m_c oid pos cid_pos doc_attrs) 
+    end;
 
 
 fun update_instance_command  (((oid:string,pos),cid_pos),
@@ -1213,11 +1213,24 @@ fun read_fields raw_fields ctxt =
 
 
 val tag_attr = (Binding.make("tag_attribute",@{here}), @{typ "int"},Mixfix.NoSyn)
+val trace_attr = ((Binding.make("trace",@{here}), "doc_class rexp list",Mixfix.NoSyn),
+                  SOME "[]"): ((binding * string * mixfix) * string option)
+
+fun check_regexps term = 
+    let val _ = case fold_aterms  Term.add_free_names term [] of
+                   n::_ => error("No free variables allowed in monitor regexp:" ^ n)
+                 | _ => ()  
+        val _ = case fold_aterms  Term.add_var_names term [] of
+                   (n,_)::_ => error("No schematic variables allowed in monitor regexp:" ^ n)
+                 | _ => ()
+        (* Missing: Checks on constants such as undefined, ... *)
+    in  term end
 
 fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdefaults rexp thy =
     let
       val ctxt = Proof_Context.init_global thy;
-      val _ = map (Syntax.read_term_global thy) rexp;
+      val regexps = map (Syntax.read_term_global thy) rexp;
+      val _ = map check_regexps regexps
       val params = map (apsnd (Typedecl.read_constraint ctxt)) raw_params;
       val ctxt1 = fold (Variable.declare_typ o TFree) params ctxt;
       fun cid thy = DOF_core.name2doc_class_name thy (Binding.name_of binding)
@@ -1225,7 +1238,16 @@ fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdef
       val parent_cid_long = case parent of
                               NONE => DOF_core.default_cid
                             | SOME(_,str) => str
-      val (fields, terms, ctxt3) = read_fields raw_fieldsNdefaults ctxt2;
+      val raw_fieldsNdefaults' = filter (fn((bi,_,_),_) => Binding.name_of bi <> "trace") 
+                                        raw_fieldsNdefaults
+      val _ = if length raw_fieldsNdefaults' <> length raw_fieldsNdefaults 
+              then warning("re-declaration of trace attribute in monitor --- ignored")
+              else ()
+      val raw_fieldsNdefaults'' = if   null rexp  
+                                 then trace_attr::raw_fieldsNdefaults' 
+                                 else raw_fieldsNdefaults 
+      val (fields, terms, ctxt3) = read_fields raw_fieldsNdefaults'' ctxt2;
+      
       val fieldsNterms = (map (fn (a,b,_) => (a,b)) fields) ~~ terms
       val fieldsNterms' = map (fn ((x,y),z) => (x,y,z)) fieldsNterms
       val params' = map (Proof_Context.check_tfree ctxt3) params;
@@ -1240,7 +1262,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdef
       val gen_antiquotation = OntoLinkParser.docitem_ref_antiquotation
       val _ = map_filter (check_n_filter thy) fields
     in thy |> Record.add_record overloaded (params', binding) parent (tag_attr::fields) 
-           |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms'
+           |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms' regexps
            |> (fn thy => gen_antiquotation binding (cid thy) thy) 
               (* defines the ontology-checked text antiquotation to this document class *)
            |> (Sign.add_consts_cmd [(binding, "doc_class RegExp.rexp", Mixfix.NoSyn)])
@@ -1300,7 +1322,8 @@ text*[sdfg] {* fg @{thm refl}*}
  
 text*[xxxy] {* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}*}    
 
-(*
+(* the following test crashes the LaTeX generation - however, without the latter this output is 
+   instructive 
 ML\<open>
 writeln (DOF_core.toStringDocItemCommand "section" "scholarly_paper.introduction" []);
 writeln (DOF_core.toStringDocItemLabel "scholarly_paper.introduction" []);
@@ -1309,4 +1332,11 @@ writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
 (DOF_core.write_ontology_latex_sty_template @{theory})
 \<close>
 *)
+
+ML\<open> fold_aterms  Term.add_free_names;
+fold_aterms  Term.add_var_names;
+filter (fn((bi,_,_),_) => Binding.name_of bi = "trace") 
+\<close>
+   
+
 end
