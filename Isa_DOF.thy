@@ -31,7 +31,7 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
 
   and      "lemma*" "theorem*" "assert*"  ::thy_decl
 
-  and     "print_doc_classes" "print_doc_items" "gen_sty_template" :: diag
+  and      "print_doc_classes" "print_doc_items" "gen_sty_template" :: diag
            
   
 begin
@@ -117,22 +117,34 @@ struct
 
    val  initial_ISA_tab:ISA_transformer_tab = Symtab.empty
 
-                                        
+   type open_monitor_info = {enabled_for_cid : string list,
+                             regexp_stack    : term list list (* really ? *)}
+   type monitor_tab = open_monitor_info Symtab.table
+
+   val  initial_monitor_tab:monitor_tab = Symtab.empty
+
+
 (* registrating data of the Isa_DOF component *)
 structure Data = Generic_Data
 (
-  type T =     {docobj_tab : docobj_tab,
-                docclass_tab : docclass_tab,
-                ISA_transformer_tab : ISA_transformer_tab}
+  type T =     {docobj_tab          : docobj_tab,
+                docclass_tab        : docclass_tab,
+                ISA_transformer_tab : ISA_transformer_tab,
+                monitor_tab : monitor_tab}
   val empty  = {docobj_tab = initial_docobj_tab,
                 docclass_tab = initial_docclass_tab,
-                ISA_transformer_tab = initial_ISA_tab} 
+                ISA_transformer_tab = initial_ISA_tab,
+                monitor_tab = initial_monitor_tab
+               } 
   val extend =  I
-  fun merge(   {docobj_tab=d1,docclass_tab = c1,ISA_transformer_tab = e1},
-               {docobj_tab=d2,docclass_tab = c2,ISA_transformer_tab = e2})  = 
+  fun merge(   {docobj_tab=d1,docclass_tab = c1,ISA_transformer_tab = e1, monitor_tab=m1},
+               {docobj_tab=d2,docclass_tab = c2,ISA_transformer_tab = e2, monitor_tab=m2})  = 
                {docobj_tab=merge_docobj_tab   (d1,d2), 
                 docclass_tab = merge_docclass_tab (c1,c2),
-                ISA_transformer_tab = Symtab.merge (fn (_ , _) => false)(e1,e2)}
+                ISA_transformer_tab = Symtab.merge (fn (_ , _) => false)(e1,e2),
+                monitor_tab =  Symtab.merge (op =)(m1,m2) 
+                     (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
+                }
 );
 
 
@@ -142,12 +154,18 @@ val get_data_global = Data.get o Context.Theory;
 val map_data_global = Context.theory_map o map_data;
 
 
-fun upd_docobj_tab f {docobj_tab,docclass_tab,ISA_transformer_tab} = 
-            {docobj_tab = f docobj_tab, docclass_tab=docclass_tab, ISA_transformer_tab=ISA_transformer_tab};
-fun upd_docclass_tab f {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z} = 
-            {docobj_tab=x,docclass_tab = f y,ISA_transformer_tab = z};
-fun apthrd f{docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z} = 
-            {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = f z};
+fun upd_docobj_tab f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab} = 
+            {docobj_tab = f docobj_tab, docclass_tab=docclass_tab, 
+             ISA_transformer_tab=ISA_transformer_tab, monitor_tab=monitor_tab};
+fun upd_docclass_tab f {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z, monitor_tab} = 
+            {docobj_tab=x,docclass_tab = f y,ISA_transformer_tab = z, monitor_tab=monitor_tab};
+fun upd_ISA_transformers f{docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z, monitor_tab} = 
+            {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = f z, monitor_tab=monitor_tab};
+fun upd_monitor_tabs f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab} = 
+            {docobj_tab = docobj_tab,docclass_tab = docclass_tab,
+             ISA_transformer_tab = ISA_transformer_tab, monitor_tab = f monitor_tab};
+
+
 
 (* doc-class-name management: We still use the record-package for internally 
    representing doc-classes. The main motivation is that "links" to entities are
@@ -395,10 +413,10 @@ fun get_isa_local isa ctxt  = case Symtab.lookup (#ISA_transformer_tab(get_data 
                                       |SOME(bbb) => bbb
 
 fun update_isa_local (isa, trans) ctxt  = 
-    map_data (apthrd(Symtab.update(ISA_prefix^isa,trans))) ctxt
+    map_data (upd_ISA_transformers(Symtab.update(ISA_prefix^isa,trans))) ctxt
 
 fun update_isa_global (isa, trans) thy  = 
-    map_data_global (apthrd(Symtab.update(ISA_prefix^isa,trans))) thy
+    map_data_global (upd_ISA_transformers(Symtab.update(ISA_prefix^isa,trans))) thy
 
 
 fun transduce_term_global (term,pos) thy = 
@@ -764,17 +782,20 @@ fun cid_2_cidType cid_long thy =
 
 fun base_default_term thy cid_long = Const(@{const_name "undefined"},cid_2_cidType thy cid_long) 
 
-fun check_classref (SOME(cid,pos')) thy = 
+fun check_classref is_monitor (SOME(cid,pos')) thy = 
           let val _ = if not (DOF_core.is_defined_cid_global cid thy) 
                       then error("document class undefined") else ()
               val cid_long = DOF_core.name2doc_class_name thy cid 
-              val {id, name=bind_target,...} = the(DOF_core.get_doc_class_global cid_long thy)
+              val {id, name=bind_target,rex,...} = the(DOF_core.get_doc_class_global cid_long thy)
+              val _ = if is_monitor andalso (null rex orelse cid_long= DOF_core.default_cid ) 
+                      then error("should be monitor class!")
+                      else ()
               val markup = docclass_markup false cid id (Binding.pos_of bind_target);
               val ctxt = Context.Theory thy
               val _ = Context_Position.report_generic ctxt pos' markup;
           in  cid_long 
           end
-   | check_classref  NONE _ = DOF_core.default_cid 
+   | check_classref _ NONE _ = DOF_core.default_cid 
 
 
 fun generalize_typ n = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,n),sort));
@@ -826,12 +847,12 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
 
 
 
-fun create_and_check_docitem oid pos cid_pos doc_attrs thy = 
+fun create_and_check_docitem is_monitor oid pos cid_pos doc_attrs thy = 
       let val id = serial ();
           val _ = Position.report pos (docref_markup true oid id pos);
           (* creates a markup label for this position and reports it to the PIDE framework;
            this label is used as jump-target for point-and-click feature. *)
-          val cid_long = check_classref  cid_pos thy
+          val cid_long = check_classref is_monitor cid_pos thy
           val defaults_init = base_default_term  cid_long thy     
           fun conv (na, _(*ty*), term) = (Binding.name_of na, Binding.pos_of na, "=", term);
           val S = map conv (DOF_core.get_attribute_defaults cid_long thy);
@@ -856,44 +877,68 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
        fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
        (* as side-effect, generates markup *)
   in   
-       Toplevel.theory(create_and_check_docitem oid pos cid_pos doc_attrs #> check_text) 
+       Toplevel.theory(create_and_check_docitem false oid pos cid_pos doc_attrs #> check_text) 
        (* Thanks Frederic Tuong! ! ! *)
   end;
 
 
+fun update_instance_command  (((oid:string,pos),cid_pos),
+                              doc_attrs: (((string*Position.T)*string)*string)list) thy
+            : theory = 
+            let val cid = case DOF_core.get_object_global oid thy of 
+                               SOME{pos=pos_decl,cid,id,...} => 
+                                   let val markup = docref_markup false oid id pos_decl;
+                                       val ctxt = Proof_Context.init_global thy;
+                                       val _ = Context_Position.report ctxt pos markup;
+                                   in  cid end
+                             | NONE => error("undefined doc_class.")
+                val cid_long = check_classref false cid_pos thy
+                val _ = if cid_long = DOF_core.default_cid  orelse cid = cid_long 
+                        then () 
+                        else error("incompatible classes:"^cid^":"^cid_long)
+                fun markup2string x = XML.content_of (YXML.parse_body x)
+         
+                fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
+                                                           Syntax.read_term_global thy rhs)
+                val assns' = map conv_attrs doc_attrs
+                val def_trans = #1 o (calc_update_term thy cid_long assns')
+            in     
+                thy |> DOF_core.update_value_global oid (def_trans)
+            end
+
+
 fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
-    let fun o_m_c oid pos cid_pos doc_attrs thy = create_and_check_docitem oid pos cid_pos doc_attrs thy
+    let fun o_m_c oid pos cid_pos doc_attrs thy = create_and_check_docitem true oid pos cid_pos doc_attrs thy
+        val add_consts = fold_aterms (fn Const(c as (_,@{typ "doc_class rexp"})) => insert (op =) c 
+                                        | _ => I);
+        fun compute_enabled_set cid thy = 
+                     case DOF_core.get_doc_class_global cid thy of
+                       SOME X => map fst (fold add_consts (#rex X) [])
+                     | NONE => error("Internal error: class id undefined. ");
+        
+        fun create_monitor_entry thy =  
+            let val {cid, ...} = the(DOF_core.get_object_global oid thy)
+                val S = compute_enabled_set cid thy
+                val info = {enabled_for_cid = S, 
+                             regexp_stack  = []}
+            in  DOF_core.map_data_global(DOF_core.upd_monitor_tabs(Symtab.update(oid, info )))(thy)
+            end
     in
-       Toplevel.theory(o_m_c oid pos cid_pos doc_attrs) 
+        Toplevel.theory(o_m_c oid pos cid_pos doc_attrs  #> create_monitor_entry ) 
     end;
 
 
-fun update_instance_command  (((oid:string,pos),cid_pos),
-                              doc_attrs: (((string*Position.T)*string)*string)list)                                        
-                             : Toplevel.transition -> Toplevel.transition = 
-     let  fun upd thy = 
-             let val cid = case DOF_core.get_object_global oid thy of 
-                                SOME{pos=pos_decl,cid,id,...} => 
-                                    let val markup = docref_markup false oid id pos_decl;
-                                        val ctxt = Proof_Context.init_global thy;
-                                        val _ = Context_Position.report ctxt pos markup;
-                                    in  cid end
-                              | NONE => error("undefined doc_class.")
-                 val cid_long = check_classref cid_pos thy
-                 val _ = if cid_long = DOF_core.default_cid  orelse cid = cid_long 
-                         then () 
-                         else error("incompatible classes:"^cid^":"^cid_long)
-                 fun markup2string x = XML.content_of (YXML.parse_body x)
-
-                 fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
-                                                            Syntax.read_term_global thy rhs)
-                 val assns' = map conv_attrs doc_attrs
-                 val def_trans = #1 o (calc_update_term thy cid_long assns')
-          in     
-                 thy |> DOF_core.update_value_global oid (def_trans)
-          end
-     in  Toplevel.theory(upd)
-     end
+fun close_monitor_command (args as (((oid:string,pos),cid_pos),
+                                    doc_attrs: (((string*Position.T)*string)*string)list)) thy = 
+    let val {monitor_tab,...} = DOF_core.get_data_global thy
+        fun check_if_final {enabled_for_cid, regexp_stack} = true (* check if final: TODO *)
+        val _ =  case Symtab.lookup monitor_tab oid of
+                     SOME X => check_if_final X 
+                  |  NONE => error ("Not belonging to a monitor class: "^oid)
+        val delete_monitor_entry = DOF_core.map_data_global (DOF_core.upd_monitor_tabs (Symtab.delete oid))
+    in  thy |> update_instance_command args 
+            |> delete_monitor_entry
+    end 
 
 
 val _ =
@@ -962,14 +1007,13 @@ val _ =
 val _ =
   Outer_Syntax.command @{command_keyword "close_monitor*"} 
                        "close a document reference monitor"
-                       (attributes >> (fn (((oid,pos),cid),doc_attrs) => 
-                                          (Toplevel.theory (I)))); (* dummy so far *)
+                       (attributes_upd >> (fn args => Toplevel.theory(close_monitor_command args))); 
 
 
 val _ =
   Outer_Syntax.command @{command_keyword "update_instance*"} 
                        "update meta-attributes of an instance of a document class"
-                        (attributes_upd >> (fn args =>  update_instance_command args)); 
+                        (attributes_upd >> (fn args => Toplevel.theory(update_instance_command args))); 
 
 val _ =
   Outer_Syntax.command @{command_keyword "lemma*"} 
@@ -1347,8 +1391,8 @@ writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
 
 ML\<open> fold_aterms  Term.add_free_names;
 fold_aterms  Term.add_var_names;
-filter (fn((bi,_,_),_) => Binding.name_of bi = "trace") 
 \<close>
-   
+
+
 
 end

@@ -12,7 +12,8 @@ print_doc_items
 ML\<open>  
 val {docobj_tab={tab = x, ...},
      docclass_tab,
-     ISA_transformer_tab} = DOF_core.get_data @{context};
+     ISA_transformer_tab,
+     monitor_tab} = DOF_core.get_data @{context};
 Symtab.dest x;
 "==============================================";
 Symtab.dest docclass_tab;
@@ -117,5 +118,19 @@ close_monitor*[figs1]
 ML\<open> map (fn Const(s,_) => s) (HOLogic.dest_list @{docitem_attr trace::figs1}) \<close>
 
 print_doc_items
+print_doc_classes 
+
+ML\<open> DOF_core.get_object_global "sdf" @{theory};
+    fold_aterms Term.add_const_names; 
+    fold_aterms (fn Const c => insert (op =) c | _ => I);
+    val add_consts = fold_aterms (fn Const(c as (_,@{typ "doc_class rexp"})) => insert (op =) c 
+                                    | _ => I);
+    fun compute_enabled_set cid thy = 
+                     case DOF_core.get_doc_class_global cid thy of
+                       SOME X => map fst (fold add_consts (#rex X) [])
+                     | NONE => error("Internal error: class id undefined. ");
+
+compute_enabled_set "Isa_DOF.figure_group" @{theory}
+\<close>
 
 end
