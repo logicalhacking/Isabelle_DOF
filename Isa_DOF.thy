@@ -515,17 +515,29 @@ fun toStringDocItemRef long_name label attr_long_namesNvalues =
     enclose "[" "]" (commas attr_long_namesNvalues) ^
     enclose "{" "}" label
 
-fun writeFile filename content =
-    let val fd = TextIO.openOut filename
-        val _ = TextIO.output (fd, content) handle e => (TextIO.closeOut fd; raise e)
-        val _ = TextIO.closeOut fd
-    in () end
+fun write_file thy filename content =
+    let 
+       val filename = Path.explode filename
+       val master_dir = Resources.master_directory thy
+       val abs_filename = if (Path.is_absolute filename) 
+                          then filename 
+                          else Path.append master_dir filename
+    in
+      File.write (abs_filename) content
+      handle (IO.Io{name=name,...}) 
+             => warning ("Could not write \""^(name)^"\".")
+    end
 
 fun write_ontology_latex_sty_template thy = 
-    let val raw_name = Context.theory_long_name thy
+    let 
+        (* 
+        val raw_name = Context.theory_long_name thy
+
         val curr_thy_name = if String.isPrefix "Draft." raw_name 
                    then String.substring(raw_name, 6, (String.size raw_name)-6)
                    else error "Not in ontology definition context"
+        *)
+        val curr_thy_name = Context.theory_name thy
         val {docobj_tab={tab = x, ...},docclass_tab,...}= get_data_global thy;
         fun  write_attr (n, ty, _) = YXML.content_of(Binding.print n)^ "=\n"
 
@@ -538,7 +550,7 @@ fun write_ontology_latex_sty_template thy =
             else ""
         val content = String.concat(map write_class (Symtab.dest docclass_tab))
         (* val _ = writeln content  -- for interactive testing only, breaks LaTeX compilation *) 
-    in  writeFile ("Isa-DOF."^curr_thy_name^".template.sty") content
+    in  write_file thy ("Isa-DOF."^curr_thy_name^".template.sty") content
     end;
 
 
