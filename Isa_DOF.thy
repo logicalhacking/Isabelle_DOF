@@ -1353,7 +1353,7 @@ doc_class figure   =
    placement        :: placement 
    spawn_columns    :: bool <= True 
 
-doc_class side_by_side_figure   = figure +
+doc_class side_by_side_figure = figure +
    anchor           :: "string"
    caption          :: "string"
    relative_width2  :: "int" (* percent of textwidth *)    
