@@ -90,8 +90,8 @@ struct
                        |  SOME ({inherits_from=SOME (_,s'), ...}) => 
                                   s' = t orelse father_is_sub s' 
         in s = t orelse 
-           (t = default_cid andalso Symtab.defined tab s ) orelse
-           father_is_sub s
+           (t = default_cid  andalso Symtab.defined tab s ) orelse
+           (s <> default_cid andalso father_is_sub s)
         end
 
    type docobj =    {pos      : Position.T, 
@@ -119,6 +119,7 @@ struct
 
    type open_monitor_info = {enabled_for_cid : string list,
                              regexp_stack    : term list list (* really ? *)}
+
    type monitor_tab = open_monitor_info Symtab.table
 
    val  initial_monitor_tab:monitor_tab = Symtab.empty
@@ -166,6 +167,9 @@ fun upd_monitor_tabs f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab
              ISA_transformer_tab = ISA_transformer_tab, monitor_tab = f monitor_tab};
 
 
+fun get_enabled_for_cid  ({enabled_for_cid, regexp_stack }:open_monitor_info) =  enabled_for_cid
+fun get_regexp_stack     ({enabled_for_cid, regexp_stack }:open_monitor_info) =  regexp_stack
+
 
 (* doc-class-name management: We still use the record-package for internally 
    representing doc-classes. The main motivation is that "links" to entities are
@@ -177,6 +181,7 @@ fun upd_monitor_tabs f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab
    handling the identification does that already. *)
  
 fun is_subclass (ctxt) s t = is_subclass0(#docclass_tab(get_data ctxt)) s t
+fun is_subclass_global thy s t = is_subclass0(#docclass_tab(get_data_global thy)) s t
 
 fun type_name2doc_class_name thy str =  (*  Long_Name.qualifier *) str
 
@@ -845,7 +850,17 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
              end   
      in Sign.certify_term thy  (fold read_assn S term) end
 
-
+fun register_oid_cid_in_open_monitors oid cid_long thy = 
+      let val {monitor_tab,...} = DOF_core.get_data_global thy
+          fun is_enabled (n, info) = 
+                         if exists (DOF_core.is_subclass_global thy cid_long) 
+                                   (DOF_core.get_enabled_for_cid info) 
+                         then SOME n 
+                         else NONE
+          val enabled_monitors = List.mapPartial is_enabled (Symtab.dest monitor_tab)
+          val _ = writeln "registrating ..." 
+          val _ = app (fn n => writeln(oid^" => "^n)) enabled_monitors;
+      in  thy end
 
 fun create_and_check_docitem is_monitor oid pos cid_pos doc_attrs thy = 
       let val id = serial ();
@@ -866,6 +881,7 @@ fun create_and_check_docitem is_monitor oid pos cid_pos doc_attrs thy =
                                                       value    = value_term,
                                                       id       = id,   
                                                       cid      = cid_long})
+              |> register_oid_cid_in_open_monitors oid cid_long
       end
 
 

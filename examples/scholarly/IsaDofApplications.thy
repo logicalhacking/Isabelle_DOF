@@ -58,7 +58,8 @@ the document discourse.
 
 Such ontologies can be used for the scientific discourse within scholarly
 articles, mathematical libraries, and in the engineering discourse  
-of standardized software certification documents~@{cite "boulanger:cenelec-50128:2015" and "cc:cc-part3:2006"}. 
+of standardized software certification 
+documents~@{cite "boulanger:cenelec-50128:2015" and "cc:cc-part3:2006"}. 
 Further applications are the domain-specific discourse in juridical texts or medical reports.  
 In general, an ontology is a formal explicit description of \<^emph>\<open>concepts\<close> 
 in a domain of discourse (called \<^emph>\<open>classes\<close>), properties of each concept 
@@ -101,8 +102,8 @@ scenarios from the point of view of the ontology modeling. In @{docitem_ref (unc
 we discuss the user-interaction generated from the ontological definitions.  Finally, we draw 
 conclusions  and discuss related work in @{docitem_ref (unchecked) \<open>conclusion\<close>}. \<close>  
 
-section*[bgrnd::text_section,main_author="Some(@{docitem ''adb''}::author)"]\<open>
- Background: The Isabelle System \<close>
+section*[bgrnd::text_section,main_author="Some(@{docitem ''adb''}::author)"]
+        \<open> Background: The Isabelle System \<close>
 text*[background::introduction]\<open>
 While Isabelle is widely perceived as an interactive theorem prover
 for HOL (Higher-order Logic)~@{cite "nipkow.ea:isabelle:2002"}, we
@@ -254,6 +255,7 @@ text\<open> The following ontology is a simple ontology modeling scientific pape
 Isabelle users to Isabelle users only.
 Of course, such references can be added easily and represent a particular strength  
 of \isadof.
+
 
 \begin{figure}
 \begin{isar}
