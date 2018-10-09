@@ -144,7 +144,7 @@ structure Data = Generic_Data
                 ISA_transformer_tab = Symtab.merge (fn (_ , _) => false)(e1,e2),
                 monitor_tab =  Symtab.merge (op =)(m1,m2) 
                      (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
-                }
+               }
 );
 
 
