@@ -77,10 +77,6 @@ text{* @{cite bla} *}
 doc_class article = 
    style_id :: string                <= "''LNCS''"
    version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
-(*   trace    :: "(title + subtitle + author+ abstract +
-                introduction + technical + example +
-                conclusion + bibliography) list"
- *)
    where "(title       ~~ 
            \<lbrakk>subtitle\<rbrakk>   ~~
            \<lbrace>author\<rbrace>\<^sup>+    ~~ 
