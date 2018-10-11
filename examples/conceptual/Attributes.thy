@@ -105,16 +105,15 @@ figure*[fig_A::figure, spawn_columns=False,
         relative_width="90",
         src="''figures/A.png''"]
        \<open> The A train \ldots \<close>
-update_instance*[figs1::figure_group, trace+="[figure]"]
 
 figure*[fig_B::figure, 
         spawn_columns=False,relative_width="90",
         src="''figures/B.png''"]
        \<open> The B train \ldots \<close>  
-update_instance*[figs1::figure_group, trace+="[figure]"]
 
 close_monitor*[figs1]  
 
+text\<open>Resulting trace in figs1: \<close>
 ML\<open> map (fn Const(s,_) => s) (HOLogic.dest_list @{docitem_attr trace::figs1}) \<close>
 
 print_doc_items

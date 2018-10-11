@@ -8,7 +8,7 @@ open_monitor*[this::article]
 
 title*[tit::title]\<open>Using the Isabelle Ontology Framework\<close> 
 subtitle*[stit::subtitle]\<open>Linking the Formal with the Informal\<close>
-
+term scholarly_paper.author
 text*[adb:: author,
       email="''a.brucker@sheffield.ac.uk''",
       orcid="''0000-0002-6355-1200''",
@@ -736,6 +736,9 @@ and therefore granted with public funds within the scope of the Program ``Invest
 
 (*<*) 
 close_monitor*[this]
+
+text\<open>Resulting trace in figs1: \<close>
+ML\<open> map (fn Const(s,_) => s) (HOLogic.dest_list @{docitem_attr trace::this}) \<close>
 
 end
 (*>*) 

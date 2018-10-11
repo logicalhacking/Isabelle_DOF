@@ -117,7 +117,7 @@ struct
 
    val  initial_ISA_tab:ISA_transformer_tab = Symtab.empty
 
-   type open_monitor_info = {enabled_for_cid : string list,
+   type open_monitor_info = {accepted_cids : string list,
                              regexp_stack    : term list list (* really ? *)}
 
    type monitor_tab = open_monitor_info Symtab.table
@@ -167,8 +167,8 @@ fun upd_monitor_tabs f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab
              ISA_transformer_tab = ISA_transformer_tab, monitor_tab = f monitor_tab};
 
 
-fun get_enabled_for_cid  ({enabled_for_cid, regexp_stack }:open_monitor_info) =  enabled_for_cid
-fun get_regexp_stack     ({enabled_for_cid, regexp_stack }:open_monitor_info) =  regexp_stack
+fun get_accepted_cids  ({accepted_cids, regexp_stack }:open_monitor_info) =  accepted_cids
+fun get_regexp_stack     ({accepted_cids, regexp_stack }:open_monitor_info) =  regexp_stack
 
 
 (* doc-class-name management: We still use the record-package for internally 
@@ -850,17 +850,27 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
              end   
      in Sign.certify_term thy  (fold read_assn S term) end
 
-fun register_oid_cid_in_open_monitors oid cid_long thy = 
+
+
+fun register_oid_cid_in_open_monitors oid pos cid_long thy = 
       let val {monitor_tab,...} = DOF_core.get_data_global thy
           fun is_enabled (n, info) = 
                          if exists (DOF_core.is_subclass_global thy cid_long) 
-                                   (DOF_core.get_enabled_for_cid info) 
+                                   (DOF_core.get_accepted_cids info) 
                          then SOME n 
                          else NONE
           val enabled_monitors = List.mapPartial is_enabled (Symtab.dest monitor_tab)
-          val _ = writeln "registrating ..." 
-          val _ = app (fn n => writeln(oid^" => "^n)) enabled_monitors;
-      in  thy end
+          fun markup2string x = XML.content_of (YXML.parse_body x)
+          fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
+                                                     Syntax.read_term_global thy rhs)
+          val trace_attr = [((("trace", @{here}), "+="), "["^cid_long^"]")]
+          val assns' = map conv_attrs trace_attr
+          fun cid_of oid = #cid(the(DOF_core.get_object_global oid thy))
+          fun def_trans oid = #1 o (calc_update_term thy (cid_of oid) assns')
+          val _ = if null enabled_monitors then () else writeln "registrating in monitors ..." 
+          val _ = app (fn n => writeln(oid^" : "^cid_long^" ==> "^n)) enabled_monitors;
+      in  thy |> fold (fn mon_oid => DOF_core.update_value_global mon_oid (def_trans mon_oid))(enabled_monitors)
+      end
 
 fun create_and_check_docitem is_monitor oid pos cid_pos doc_attrs thy = 
       let val id = serial ();
@@ -881,21 +891,9 @@ fun create_and_check_docitem is_monitor oid pos cid_pos doc_attrs thy =
                                                       value    = value_term,
                                                       id       = id,   
                                                       cid      = cid_long})
-              |> register_oid_cid_in_open_monitors oid cid_long
+              |> register_oid_cid_in_open_monitors oid pos cid_long
       end
 
-
-fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
-                                        xstring_opt:(xstring * Position.T) option),
-                                        toks:Input.source) 
-                                        : Toplevel.transition -> Toplevel.transition =
-  let
-       fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
-       (* as side-effect, generates markup *)
-  in   
-       Toplevel.theory(create_and_check_docitem false oid pos cid_pos doc_attrs #> check_text) 
-       (* Thanks Frederic Tuong! ! ! *)
-  end;
 
 
 fun update_instance_command  (((oid:string,pos),cid_pos),
@@ -923,6 +921,20 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
             end
 
 
+fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
+                                        xstring_opt:(xstring * Position.T) option),
+                                        toks:Input.source) 
+                                        : Toplevel.transition -> Toplevel.transition =
+  let
+       fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
+       (* as side-effect, generates markup *)
+  in   
+       Toplevel.theory(create_and_check_docitem false oid pos cid_pos doc_attrs #> check_text) 
+       (* Thanks Frederic Tuong! ! ! *)
+  end;
+
+
+
 fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
     let fun o_m_c oid pos cid_pos doc_attrs thy = create_and_check_docitem true oid pos cid_pos doc_attrs thy
         val add_consts = fold_aterms (fn Const(c as (_,@{typ "doc_class rexp"})) => insert (op =) c 
@@ -935,7 +947,7 @@ fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
         fun create_monitor_entry thy =  
             let val {cid, ...} = the(DOF_core.get_object_global oid thy)
                 val S = compute_enabled_set cid thy
-                val info = {enabled_for_cid = S, 
+                val info = {accepted_cids = S, 
                              regexp_stack  = []}
             in  DOF_core.map_data_global(DOF_core.upd_monitor_tabs(Symtab.update(oid, info )))(thy)
             end
@@ -947,7 +959,7 @@ fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
 fun close_monitor_command (args as (((oid:string,pos),cid_pos),
                                     doc_attrs: (((string*Position.T)*string)*string)list)) thy = 
     let val {monitor_tab,...} = DOF_core.get_data_global thy
-        fun check_if_final {enabled_for_cid, regexp_stack} = true (* check if final: TODO *)
+        fun check_if_final {accepted_cids, regexp_stack} = true (* check if final: TODO *)
         val _ =  case Symtab.lookup monitor_tab oid of
                      SOME X => check_if_final X 
                   |  NONE => error ("Not belonging to a monitor class: "^oid)
@@ -1315,9 +1327,9 @@ fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdef
       val _ = if length raw_fieldsNdefaults' <> length raw_fieldsNdefaults 
               then warning("re-declaration of trace attribute in monitor --- ignored")
               else ()
-      val raw_fieldsNdefaults'' = if   null rexp  
-                                 then trace_attr::raw_fieldsNdefaults' 
-                                 else raw_fieldsNdefaults 
+      val raw_fieldsNdefaults'' = if  null rexp  
+                                 then raw_fieldsNdefaults' 
+                                 else trace_attr::raw_fieldsNdefaults' 
       val (fields, terms, ctxt3) = read_fields raw_fieldsNdefaults'' ctxt2;
       
       val fieldsNterms = (map (fn (a,b,_) => (a,b)) fields) ~~ terms
