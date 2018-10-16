@@ -23,6 +23,9 @@ text*[dfgdfg::B, Conceptual.B.x ="''f''", y = "[''sdf'']"]\<open> sdfsdfs sdfsdf
 
 typ "C"
 typ "D"
+
+term "C"
+
 ML\<open>val Type("Conceptual.B.B_ext",[Type("Conceptual.C.C_ext",t)]) = @{typ "C"};
    val @{typ "D"} = ODL_Command_Parser.cid_2_cidType "Conceptual.D" @{theory};
    val @{typ "E"}= ODL_Command_Parser.cid_2_cidType "Conceptual.E" @{theory};
@@ -114,7 +117,13 @@ figure*[fig_B::figure,
 close_monitor*[figs1]  
 
 text\<open>Resulting trace in figs1: \<close>
-ML\<open> map (fn Const(s,_) => s) (HOLogic.dest_list @{docitem_attr trace::figs1}) \<close>
+ML\<open> fun conv_doc_class_string_pair (Const(@{const_name "Pair"},_) 
+                                    $ Const(s,_) 
+                                    $ S) = (s, HOLogic.dest_string S);
+
+map  conv_doc_class_string_pair (HOLogic.dest_list @{docitem_attr trace::figs1}) \<close>
+
+
 
 print_doc_items
 print_doc_classes 

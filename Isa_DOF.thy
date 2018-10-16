@@ -863,7 +863,7 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
           fun markup2string x = XML.content_of (YXML.parse_body x)
           fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
                                                      Syntax.read_term_global thy rhs)
-          val trace_attr = [((("trace", @{here}), "+="), "["^cid_long^"]")]
+          val trace_attr = [((("trace", @{here}), "+="), "[("^cid_long^", ''"^oid^"'')]")]
           val assns' = map conv_attrs trace_attr
           fun cid_of oid = #cid(the(DOF_core.get_object_global oid thy))
           fun def_trans oid = #1 o (calc_update_term thy (cid_of oid) assns')
@@ -936,7 +936,8 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
 
 
 fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
-    let fun o_m_c oid pos cid_pos doc_attrs thy = create_and_check_docitem true oid pos cid_pos doc_attrs thy
+    let fun o_m_c oid pos cid_pos doc_attrs thy = create_and_check_docitem true oid pos 
+                                                                           cid_pos doc_attrs thy
         val add_consts = fold_aterms (fn Const(c as (_,@{typ "doc_class rexp"})) => insert (op =) c 
                                         | _ => I);
         fun compute_enabled_set cid thy = 
@@ -1297,7 +1298,7 @@ fun read_fields raw_fields ctxt =
 
 
 val tag_attr = (Binding.make("tag_attribute",@{here}), @{typ "int"},Mixfix.NoSyn)
-val trace_attr = ((Binding.make("trace",@{here}), "doc_class rexp list",Mixfix.NoSyn),
+val trace_attr = ((Binding.make("trace",@{here}), "(doc_class rexp \<times> string) list",Mixfix.NoSyn),
                   SOME "[]"): ((binding * string * mixfix) * string option)
 
 fun check_regexps term = 
@@ -1390,7 +1391,7 @@ doc_class side_by_side_figure = figure +
    caption2         :: "string"
 
 doc_class figure_group = 
-   trace            :: "doc_class rexp list" <= "[]"
+ (*  trace            :: "doc_class rexp list" <= "[]" *)
    anchor           :: "string"
    caption          :: "string"
    where "\<lbrace>figure\<rbrace>\<^sup>+"
@@ -1418,7 +1419,7 @@ writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
 *)
 
 ML\<open> fold_aterms  Term.add_free_names;
-fold_aterms  Term.add_var_names;
+    fold_aterms  Term.add_var_names;
 \<close>
 
 

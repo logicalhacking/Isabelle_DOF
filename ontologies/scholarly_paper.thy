@@ -48,43 +48,43 @@ doc_class related_work = "conclusion" +
 doc_class bibliography =
    style :: "string option"  <=  "Some ''LNCS''"
 
-text{* Besides subtyping, there is another relation between
-       doc_classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
-       which is expressed by occurrence in the where clause.
-       While sub-classing refers to data-inheritance of attributes,
-       a monitor captures structural constraints -- the order --
-       in which instances of monitored classes may occur.
+text\<open> Besides subtyping, there is another relation between
+doc_classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
+which is expressed by occurrence in the where clause.
+While sub-classing refers to data-inheritance of attributes,
+a monitor captures structural constraints -- the order --
+in which instances of monitored classes may occur.
 
-       The control of monitors is done by the commands:
-       \<^item> monitor <doc-class>
-       \<^item> close_monitor <doc-class>
- 
-       where the automaton of the monitor class is expected
-       to be in a final state.
+The control of monitors is done by the commands:
+\<^item> \<^verbatim>\<open> monitor <oid::class_type, <attributes-defs> > \<close>
+\<^item> \<^verbatim>\<open> close_monitor <oid[::class_type],<attributes-updates>> \<close>
 
-       Monitors can be nested.
- 
-       Classes neither directly or via inheritance indirectly
-       mentioned in the monitor are \<^emph>\<open>independent\<close> from
-       a monitor and may occur freely. 
-*}
+where the automaton of the monitor class is expected
+to be in a final state.
+
+Monitors can be nested.
+
+Classes neither directly or  indirectly (via inheritance)
+mentioned in the monitor clause are \<^emph>\<open>independent\<close> from
+the monitor and may occur freely, \ie{} in arbitrary order.n \<close>
 
 
--- \<open>underlying idea: capture the essence of a monitor class as trace.
-    trace would be \<^emph>\<open>`predefined id`\<close> like \<^verbatim>\<open>main\<close> in C. \<close>
-text{* @{cite bla} *}
+text \<open>underlying idea: a monitor class automatically receives a  
+    \<^verbatim>\<open>trace\<close> attribute in which a list of observed class-ids is maintained.
+    The \<^verbatim>\<open>trace\<close> is a \<^emph>\<open>`predefined id`\<close> like \<^verbatim>\<open>main\<close> in C. It can be accessed
+    like any other attribute of a class instance, \ie{} a document item.\<close>
 
 doc_class article = 
    style_id :: string                <= "''LNCS''"
    version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
    where "(title       ~~ 
            \<lbrakk>subtitle\<rbrakk>   ~~
-           \<lbrace>author\<rbrace>\<^sup>+    ~~ 
+           \<lbrace>author\<rbrace>\<^sup>+   ~~ 
            abstract     ~~
            introduction ~~ 
            \<lbrace>technical || example\<rbrace>\<^sup>+ ~~ 
            conclusion   ~~  
-           \<lbrakk>bibliography\<rbrakk>)"
+           bibliography)"
 
 gen_sty_template
 
