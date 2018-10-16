@@ -117,13 +117,7 @@ figure*[fig_B::figure,
 close_monitor*[figs1]  
 
 text\<open>Resulting trace in figs1: \<close>
-ML\<open> fun conv_doc_class_string_pair (Const(@{const_name "Pair"},_) 
-                                    $ Const(s,_) 
-                                    $ S) = (s, HOLogic.dest_string S);
-
-map  conv_doc_class_string_pair (HOLogic.dest_list @{docitem_attr trace::figs1}) \<close>
-
-
+ML\<open>@{trace_attribute figs1}\<close>
 
 print_doc_items
 print_doc_classes 

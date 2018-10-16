@@ -1231,15 +1231,13 @@ fun calculate_attr_access_check ctxt attr oid pos = (* template *)
                               val markup = docref_markup false oid id pos_decl;
                               val _ = Context_Position.report ctxt pos markup;
                               val (* (long_cid, attr_b,ty) = *)
-                                  {def_occurrence, long_name, typ=ty,def_pos} = 
+                                  {long_name, typ=ty,...} = 
                                        case DOF_core.get_attribute_info_local cid attr ctxt of
                                             SOME f => f
                                           | NONE => error ("attribute undefined for ref"^ oid)
                               val proj_term = Const(long_name,dummyT --> ty) 
-                              val term = calculate_attr_access ctxt proj_term term
-                          in (ML_Syntax.atomic o ML_Syntax.print_term) term end
+                          in  calculate_attr_access ctxt proj_term term end
            | NONE => error "identifier not a docitem reference"
-    
 
 val _ = Theory.setup 
            (ML_Antiquotation.inline @{binding docitem_attr} 
@@ -1248,12 +1246,36 @@ val _ = Theory.setup
                         --| (Scan.lift @{keyword "::"}) 
                         -- Scan.lift (Parse.position Args.name) 
                         >>  
-                        (fn(attr:string,(oid:string,pos)) => calculate_attr_access_check ctxt attr oid pos) 
+                        (fn(attr:string,(oid:string,pos)) 
+                            => (ML_Syntax.atomic o ML_Syntax.print_term) 
+                                (calculate_attr_access_check ctxt attr oid pos)) 
                         : string context_parser
                        ) 
                        (ctxt, toks))
-           )    
-end\<close>
+           ) 
+
+fun calculate_trace ctxt oid pos =
+    let fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
+        val term = calculate_attr_access_check ctxt "trace" oid pos
+        val string_pair_list = map conv (HOLogic.dest_list term)
+        val conv_2_ML = ML_Syntax.print_list(ML_Syntax.print_pair 
+                                               ML_Syntax.print_string 
+                                               ML_Syntax.print_string)
+    in  conv_2_ML string_pair_list end
+
+val _ = Theory.setup 
+           (ML_Antiquotation.inline @{binding trace_attribute}
+              (fn (ctxt,toks) => 
+                   (Scan.lift (Parse.position Args.name)
+                   >> (fn(oid:string,pos) => ML_Syntax.atomic (calculate_trace ctxt oid pos))
+                      : string context_parser
+              ) 
+              (ctxt, toks))
+           )
+end
+
+
+\<close>
 
 
   
@@ -1419,8 +1441,7 @@ writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
 *)
 
 ML\<open> fold_aterms  Term.add_free_names;
-    fold_aterms  Term.add_var_names;
-\<close>
+    fold_aterms  Term.add_var_names;\<close>
 
 
 

@@ -737,13 +737,9 @@ and therefore granted with public funds within the scope of the Program ``Invest
 (*<*) 
 close_monitor*[this]
 
-text\<open>Resulting trace in this: \<close>
-ML\<open> 
-fun conv_doc_class_string_pair (Const(@{const_name "Pair"},_) 
-                                    $ Const(s,_) 
-                                    $ S) = (s, HOLogic.dest_string S);
+text\<open>Resulting trace in doc\_item ''this'': \<close>
+ML\<open>@{trace_attribute this}\<close>
 
-map conv_doc_class_string_pair (HOLogic.dest_list @{docitem_attr trace::this}) \<close>
 
 end
 (*>*) 
