@@ -120,6 +120,8 @@ close_monitor*[figs1]
 text\<open>Resulting trace in figs1: \<close>
 ML\<open>@{trace_attribute figs1}\<close>
 
+
+text\<open>Final Status:\<close>
 print_doc_items
 print_doc_classes 
 
