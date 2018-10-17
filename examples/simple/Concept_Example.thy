@@ -31,11 +31,14 @@ text\<open>This is an example where we add a theorem into a kind of "result-list
 update_instance*[f::F,r:="[@{thm ''Concept_Example.some_proof''}]"]
 
 text\<open> ..., mauris amet, id elit aliquam aptent id,  ... @{docitem \<open>a\<close>} \<close>
-  
+
+text\<open>Here we add and maintain a link that is actually modeled as m-to-n relation ...\<close>
 update_instance*[f::F,b:="{(@{docitem  ''a''}::A,@{docitem  ''c1''}::C), 
-                           (@{docitem  ''a''},   @{docitem  ''c1''})}"] 
+                           (@{docitem  ''a''},   @{docitem  ''c2''})}"] 
   
 close_monitor*[struct]
+
+text\<open>And the trace of the monitor is:\<close>
 ML\<open>@{trace_attribute struct}\<close>
 
   
