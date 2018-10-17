@@ -2,42 +2,43 @@ theory Attributes
   imports "../../ontologies/Conceptual"
 begin
 
-section\<open>Elementary Creation of DocItems and Access of their Attibutes\<close>
+section\<open>Elementary Creation of Doc-items and Access of their Attibutes\<close>
 
 text\<open>Current status:\<close>
 print_doc_classes
 print_doc_items
 
-(* corresponds to low-level accesses : *)
+(* this corresponds to low-level accesses : *)
 ML\<open>  
-val {docobj_tab={tab = x, ...},
-     docclass_tab,
-     ISA_transformer_tab,
-     monitor_tab} = DOF_core.get_data @{context};
-Symtab.dest x;
-"==============================================";
+val {docobj_tab={tab = docitem_tab, ...},docclass_tab, ISA_transformer_tab, monitor_tab} 
+    = DOF_core.get_data @{context};
+
+Symtab.dest docitem_tab;
 Symtab.dest docclass_tab;
 \<close>
 
-text*[dfgdfg::B, Conceptual.B.x ="''f''", y = "[''sdf'']"]\<open> sdfsdfs sdfsdf sdfsdf @{thm refl} \<close> 
+text\<open>A text item containing standard theorem antiquotations and complex meta-information.\<close>
+text*[dfgdfg::B, Conceptual.B.x ="''f''", y = "[''sdf'']"]\<open> Lorem ipsum ...  @{thm refl} \<close> 
 
+text\<open>document class declarations lead also HOL-type declarations (relevant for ontological links).\<close>
 typ "C"
 typ "D"
-
+text\<open> ... as well as HOL-constant declarations (relevant for monitor rexps and tracres.).\<close>
 term "C"
 
+text\<open>Voila what happens on the ML level:\<close>
 ML\<open>val Type("Conceptual.B.B_ext",[Type("Conceptual.C.C_ext",t)]) = @{typ "C"};
    val @{typ "D"} = ODL_Command_Parser.cid_2_cidType "Conceptual.D" @{theory};
-   val @{typ "E"}= ODL_Command_Parser.cid_2_cidType "Conceptual.E" @{theory};
+   val @{typ "E"} = ODL_Command_Parser.cid_2_cidType "Conceptual.E" @{theory};
   \<close>
 
-text*[dfgdfg2::C, z = "None"]\<open> sdfsdfs sdfsdf sdfsdf @{thm refl} \<close> 
+text*[dfgdfg2::C, z = "None"]\<open> Lorem ipsum ... @{thm refl} \<close> 
 
-text*[omega::E, x = "''def''"]\<open> sdfsdfs sdfsdf sdfsdf @{thm refl} \<close> 
+text*[omega::E, x = "''def''"]\<open> Lorem ipsum ... @{thm refl} \<close> 
 
 text\<open> As mentioned in @{docitem_ref \<open>dfgdfg\<close>} \<close>
 
-
+text\<open>Here is a simulation what happens on the level of the (HOL)-term representation:\<close>
 term "A.x (undefined\<lparr>A.x := 3\<rparr>)"
 term "B.x ((undefined::C)\<lparr>B.y := [''sdf'']\<rparr>)"
 term "C.z ((undefined::C)\<lparr>B.y := [''sdf''], z:= Some undefined\<rparr>)"
@@ -69,34 +70,34 @@ text\<open>A not too trivial test: default y -> [].
      The latter wins at access time.
      Then @{term "t"}: creation of a multi inheritance object omega,
      triple updates, the last one wins.\<close>
-ML\<open>val s = map HOLogic.dest_string (HOLogic.dest_list @{docitem_attr y::dfgdfg});
-   val t = HOLogic.dest_string (@{docitem_attr x::omega});  \<close>
+ML\<open>val s = map HOLogic.dest_string (HOLogic.dest_list @{docitem_attribute y::dfgdfg});
+   val t = HOLogic.dest_string (@{docitem_attribute x::omega});  \<close>
 
 
 
 
 section\<open>Mutation of Attibutes in DocItems\<close>
 
-ML\<open> val Const("Groups.zero_class.zero", @{typ "int"}) =  @{docitem_attr a2::omega} \<close>
+ML\<open> val Const("Groups.zero_class.zero", @{typ "int"}) =  @{docitem_attribute a2::omega} \<close>
 
 update_instance*[omega::E, a2+="1"]
 
-ML\<open> val (s as Const("Groups.one_class.one", @{typ "int"}))=  @{docitem_attr a2 :: omega} \<close>
+ML\<open> val (s as Const("Groups.one_class.one", @{typ "int"}))=  @{docitem_attribute a2 :: omega} \<close>
 
 update_instance*[omega::E, a2+="6"]
 
-ML\<open> @{docitem_attr a2::omega};
-    val s =  HOLogic.dest_number @{docitem_attr a2::omega} \<close>
+ML\<open> @{docitem_attribute a2::omega};
+    val s =  HOLogic.dest_number @{docitem_attribute a2::omega} \<close>
 
 update_instance*[omega::E, x+="''inition''"]
 
-ML\<open> val s = HOLogic.dest_string ( @{docitem_attr x::omega}) \<close>
+ML\<open> val s = HOLogic.dest_string ( @{docitem_attribute x::omega}) \<close>
                             
 update_instance*[omega::E, y+="[''defini'',''tion'']"]
 
 update_instance*[omega::E, y+="[''en'']"]
 
-ML\<open> val s =  map HOLogic.dest_string (HOLogic.dest_list @{docitem_attr y::omega}); \<close>
+ML\<open> val s =  map HOLogic.dest_string (HOLogic.dest_list @{docitem_attribute y::omega}); \<close>
   
 section\<open>Simulation of a Monitor\<close>
 
@@ -122,17 +123,5 @@ ML\<open>@{trace_attribute figs1}\<close>
 print_doc_items
 print_doc_classes 
 
-ML\<open> DOF_core.get_object_global "sdf" @{theory};
-    fold_aterms Term.add_const_names; 
-    fold_aterms (fn Const c => insert (op =) c | _ => I);
-    val add_consts = fold_aterms (fn Const(c as (_,@{typ "doc_class rexp"})) => insert (op =) c 
-                                    | _ => I);
-    fun compute_enabled_set cid thy = 
-                     case DOF_core.get_doc_class_global cid thy of
-                       SOME X => map fst (fold add_consts (#rex X) [])
-                     | NONE => error("Internal error: class id undefined. ");
-
-compute_enabled_set "Isa_DOF.figure_group" @{theory}
-\<close>
 
 end

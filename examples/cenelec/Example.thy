@@ -1,8 +1,10 @@
+chapter\<open> Example : Forward and Standard (use-after-define) Referencing\<close>
+
 theory Example
   imports  "../../ontologies/CENELEC_50126"
 begin
 
-section{* Some show-off's of general antiquotations. *}
+section\<open> Some examples of Isabelle's standard antiquotations. \<close>
 (* some show-off of standard anti-quotations: *) 
 text \<open>THIS IS A TEXT\<close>
 
@@ -19,57 +21,67 @@ text\<open>  @{thm refl}  of name @{thm [source] refl}
 
 
 
+section\<open> Core Examples for stating text-elements as doc-items.\<close>
 
-section{* Example *}
+text\<open>An "anonymous" text-item, automatically coerced into the top-class "text".\<close>
+text*[tralala] \<open> Brexit means Brexit \<close> 
 
-text*[tralala] {* Brexit means Brexit *}
+text\<open>Examples for declaration of typed doc-items "assumption" and "hypothesis",
+     concepts defined in the underlying ontology @{theory "CENELEC_50126"}. \<close>
+text*[ass1::assumption] \<open> The subsystem Y is safe. \<close>
+text*[hyp1::hypothesis] \<open> P inequal NP \<close>
   
-text*[ass1::assumption] {* Brexit means Brexit *}
-
-text*[hyp1::hypothesis] {* P inequal NP *}
-  
-  
-text*[ass122::srac] {* The overall sampling frequence of the odometer
+text\<open>A real example fragment from a larger project, declaring a text-element as a
+     "safety-related application condition", a concept defined in the  @{theory "CENELEC_50126"}
+     ontology:\<close>  
+text*[ass122::srac] \<open> The overall sampling frequence of the odometer
 subsystem is therefore 14 khz, which includes sampling, computing and
-result communication times... *}
+result communication times... \<close>
   
-text*[t10::test_result] {* This is a meta-test. This could be an ML-command
+text*[t10::test_result] \<open> This is a meta-test. This could be an ML-command
 that governs the external test-execution via, eg., a makefile or specific calls
-to a test-environment or test-engine *}
+to a test-environment or test-engine \<close>
 
 
+section\<open> References to doc-items.\<close>
+text\<open>Finally some examples of references to doc-items, i.e. text-elements with declared 
+     meta-information and status. \<close> 
 text \<open> As established by @{docref (unchecked) \<open>t10\<close>}, 
                          @{docref (define) \<open>t10\<close>} \<close>
 text \<open> the               @{docref \<open>t10\<close>}                      
        as well as the    @{docref \<open>ass122\<close>}\<close>  
 text \<open> represent a justification of the safety related applicability 
-       condition @{srac \<open>ass122\<close>} aka exported constraint @{ec \<open>ass122\<close>}.       
-     \<close> 
+       condition @{srac \<open>ass122\<close>} aka exported constraint @{ec \<open>ass122\<close>}.\<close> 
 
-section{* Some Tests for Ontology Framework and its CENELEC Instance *}  
+
+
+
+section\<open> Some Tests for Ontology Framework and its CENELEC Instance \<close>  
                                                   
 declare_reference* [lalala::requirement, alpha="main", beta=42]
-
-
 declare_reference* [blablabla::cid, alpha="beta sdf", beta=gamma, delta=dfg_fgh\<^sub>1]
+paragraph* [sdfk] \<open> just a paragraph - lexical variant \<close>  
+
+
+
+
+section\<open> Some global inspection commands for the status of docitem  and doc-class tables ... \<close>  
 
 print_doc_classes
 print_doc_items
 
 
-paragraph* [sdfk] \<open> just a paragraph - lexical variant \<close>  
 
-
-section{* Text Antiquotation Infrastructure ... *}  
+section\<open> Text Antiquotation Infrastructure ... \<close>  
                   
-text{* @{docref \<open>lalala\<close>} -- produces warning. *}  
-text{* @{docref (unchecked) \<open>lalala\<close>} -- produces no warning. *}  
+text\<open> @{docref \<open>lalala\<close>}   -- produces warning. \<close>  
+text\<open> @{docref (unchecked) \<open>lalala\<close>} -- produces no warning. \<close>  
 
-text{* @{docref \<open>ass122\<close>} -- global reference to a text-item in another file. *}
+text\<open> @{docref \<open>ass122\<close>} -- global reference to a text-item in another file. \<close>
 
-text{* @{ec \<open>ass122\<close>} -- global reference to a exported constraint in another file.
+text\<open> @{ec \<open>ass122\<close>} -- global reference to a exported constraint in another file.
                          Note that the link is actually a srac, which, according to 
-                         the ontology, happens to be an "ec".  *}
+                         the ontology, happens to be an "ec".  \<close>
    
 
   

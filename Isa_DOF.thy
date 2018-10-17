@@ -1240,7 +1240,7 @@ fun calculate_attr_access_check ctxt attr oid pos = (* template *)
            | NONE => error "identifier not a docitem reference"
 
 val _ = Theory.setup 
-           (ML_Antiquotation.inline @{binding docitem_attr} 
+           (ML_Antiquotation.inline @{binding docitem_attribute} 
                (fn (ctxt,toks) =>
                        (Scan.lift Args.name 
                         --| (Scan.lift @{keyword "::"}) 
@@ -1255,20 +1255,20 @@ val _ = Theory.setup
            ) 
 
 fun calculate_trace ctxt oid pos =
+    (* grabs attribute, and converts its HOL-term into (textual) ML representation *)
     let fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
         val term = calculate_attr_access_check ctxt "trace" oid pos
         val string_pair_list = map conv (HOLogic.dest_list term)
-        val conv_2_ML = ML_Syntax.print_list(ML_Syntax.print_pair 
-                                               ML_Syntax.print_string 
-                                               ML_Syntax.print_string)
-    in  conv_2_ML string_pair_list end
+        val print_string_pair = ML_Syntax.print_pair  ML_Syntax.print_string ML_Syntax.print_string
+    in  ML_Syntax.print_list print_string_pair string_pair_list end
 
 val _ = Theory.setup 
            (ML_Antiquotation.inline @{binding trace_attribute}
               (fn (ctxt,toks) => 
-                   (Scan.lift (Parse.position Args.name)
-                   >> (fn(oid:string,pos) => ML_Syntax.atomic (calculate_trace ctxt oid pos))
-                      : string context_parser
+                   ((Scan.lift (Parse.position Args.name)
+                    >> 
+                    (fn(oid:string,pos) => ML_Syntax.atomic (calculate_trace ctxt oid pos))
+                   ) : string context_parser
               ) 
               (ctxt, toks))
            )

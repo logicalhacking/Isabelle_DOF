@@ -55,6 +55,6 @@ a @{typ "C"}-type is required, but a  @{typ "G"}-type is offered which is leagal
 update_instance*[xcv4::F, b+="{(@{docitem ''xcv3''},@{docitem ''xcv5''})}"]
 
 text\<open>And here is the result on term level:\<close>
-ML\<open> @{docitem_attr b::xcv4} \<close>
+ML\<open> @{docitem_attribute b::xcv4} \<close>
 
 end
