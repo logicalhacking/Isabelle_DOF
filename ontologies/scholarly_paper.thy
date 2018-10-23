@@ -1,7 +1,7 @@
 section{* An example ontology for a scholarly paper*}
 
 theory scholarly_paper
-   imports "../Isa_DOF"
+   imports "../Isa_COL"
 begin
 
 doc_class title =

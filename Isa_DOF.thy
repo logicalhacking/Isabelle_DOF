@@ -1393,35 +1393,6 @@ val _ =
 end (* struct *)
 \<close>  
 
-  
-   
-section\<open> Library of Standard Text Ontology \<close>
-
-datatype placement = pl_h | pl_t | pl_b | pl_ht | pl_hb   
-doc_class figure   = 
-   relative_width   :: "int" (* percent of textwidth *)    
-   src              :: "string"
-   placement        :: placement 
-   spawn_columns    :: bool <= True 
-
-doc_class side_by_side_figure = figure +
-   anchor           :: "string"
-   caption          :: "string"
-   relative_width2  :: "int" (* percent of textwidth *)    
-   src2             :: "string"
-   anchor2          :: "string"
-   caption2         :: "string"
-
-doc_class figure_group = 
- (*  trace            :: "doc_class rexp list" <= "[]" *)
-   anchor           :: "string"
-   caption          :: "string"
-   where "\<lbrace>figure\<rbrace>\<^sup>+"
-
-(* dito the future table *)
-
-(* dito the future monitor: table - block *)
-
 section\<open> Testing and Validation \<close>
   
 text*[sdf] {* f @{thm refl}*}  
@@ -1442,7 +1413,6 @@ writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
 
 ML\<open> fold_aterms  Term.add_free_names;
     fold_aterms  Term.add_var_names;\<close>
-
 
 
 end
