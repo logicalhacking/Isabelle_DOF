@@ -8,7 +8,6 @@ open_monitor*[this::article]
 
 title*[tit::title]\<open>Using the Isabelle Ontology Framework\<close> 
 subtitle*[stit::subtitle]\<open>Linking the Formal with the Informal\<close>
-term scholarly_paper.author
 text*[adb:: author,
       email="''a.brucker@sheffield.ac.uk''",
       orcid="''0000-0002-6355-1200''",
