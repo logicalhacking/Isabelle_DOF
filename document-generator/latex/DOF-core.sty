@@ -41,23 +41,23 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: figure*
 \NewEnviron{isamarkupfigure*}[1][]{\isaDof[env={figure},#1]{\BODY}}
-\expandafter\newkeycommand\csname isaDof.figure.Isa_DOF.figure\endcsname%
+\expandafter\newkeycommand\csname isaDof.figure.Isa_COL.figure\endcsname%
 [label=,type=%
-,Isa_DOF.figure.relative_width=%
-,Isa_DOF.figure.placement=%
-,Isa_DOF.figure.src=%
-,Isa_DOF.figure.spawn_columns=enum False True%
+,Isa_COL.figure.relative_width=%
+,Isa_COL.figure.placement=%
+,Isa_COL.figure.src=%
+,Isa_COL.figure.spawn_columns=enum False True%
 ][1]{%
   \begin{figure}[]
     \centering
-    \ifcommandkey{Isa_DOF.figure.relative_width}
+    \ifcommandkey{Isa_COL.figure.relative_width}
     {%
-      \gdef\dof@width{\commandkey{Isa_DOF.figure.relative_width}}
-      \gdef\dof@src{\commandkey{Isa_DOF.figure.src}}
+      \gdef\dof@width{\commandkey{Isa_COL.figure.relative_width}}
+      \gdef\dof@src{\commandkey{Isa_COL.figure.src}}
       \FPdiv\scale{\dof@width}{100}%
       \includegraphics[width=\scale\textwidth]{\dof@src}%
     }{%
-      \gdef\dof@src{\commandkey{Isa_DOF.figure.src}}
+      \gdef\dof@src{\commandkey{Isa_COL.figure.src}}
       \includegraphics[]{\dof@src}%
     } 
     \caption{#1}\label{\commandkey{label}}%
@@ -71,42 +71,42 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: side_by_side_figure*
 \NewEnviron{isamarkupside_by_side_figure*}[1][]{\isaDof[env={side_by_side_figure},#1]{\BODY}}
-\expandafter\newkeycommand\csname isaDof.side_by_side_figure.Isa_DOF.side_by_side_figure\endcsname%
+\expandafter\newkeycommand\csname isaDof.side_by_side_figure.Isa_COL.side_by_side_figure\endcsname%
 [label=,type=%
-,Isa_DOF.figure.relative_width=%
-,Isa_DOF.figure.src=%
-,Isa_DOF.side_by_side_figure.anchor=%
-,Isa_DOF.side_by_side_figure.caption=%
-,Isa_DOF.side_by_side_figure.relative_width2=%
-,Isa_DOF.side_by_side_figure.src2=%
-,Isa_DOF.side_by_side_figure.anchor2=%
-,Isa_DOF.side_by_side_figure.caption2=%
-,Isa_DOF.side_by_side_figure.placement=%
-,Isa_DOF.side_by_side_figure.spawn_columns=enum False True%
+,Isa_COL.figure.relative_width=%
+,Isa_COL.figure.src=%
+,Isa_COL.side_by_side_figure.anchor=%
+,Isa_COL.side_by_side_figure.caption=%
+,Isa_COL.side_by_side_figure.relative_width2=%
+,Isa_COL.side_by_side_figure.src2=%
+,Isa_COL.side_by_side_figure.anchor2=%
+,Isa_COL.side_by_side_figure.caption2=%
+,Isa_COL.side_by_side_figure.placement=%
+,Isa_COL.side_by_side_figure.spawn_columns=enum False True%
 ][1]{%
   \begin{figure}[]
-    \subfloat[\label{\commandkey{Isa_DOF.side_by_side_figure.anchor}}\commandkey{Isa_DOF.side_by_side_figure.caption}]%
-      {\ifcommandkey{Isa_DOF.figure.relative_width}%
+    \subfloat[\label{\commandkey{Isa_COL.side_by_side_figure.anchor}}\commandkey{Isa_COL.side_by_side_figure.caption}]%
+      {\ifcommandkey{Isa_COL.figure.relative_width}%
        {%
-          \gdef\dof@width{\commandkey{Isa_DOF.figure.relative_width}}
-          \gdef\dof@src{\commandkey{Isa_DOF.figure.src}}
+          \gdef\dof@width{\commandkey{Isa_COL.figure.relative_width}}
+          \gdef\dof@src{\commandkey{Isa_COL.figure.src}}
           \FPdiv\scale{\dof@width}{100}%
           \includegraphics[width=\scale\textwidth]{\dof@src}%
         }{%
-          \gdef\dof@src{\commandkey{Isa_DOF.figure.src}}
+          \gdef\dof@src{\commandkey{Isa_COL.figure.src}}
           \includegraphics[]{\dof@src}%
         }% 
       }%
       \hfill%
-      \subfloat[\label{\commandkey{Isa_DOF.side_by_side_figure.anchor2}}\commandkey{Isa_DOF.side_by_side_figure.caption2}]%
-      {\ifcommandkey{Isa_DOF.side_by_side_figure.relative_width2}%
+      \subfloat[\label{\commandkey{Isa_COL.side_by_side_figure.anchor2}}\commandkey{Isa_COL.side_by_side_figure.caption2}]%
+      {\ifcommandkey{Isa_COL.side_by_side_figure.relative_width2}%
         {%
-          \gdef\dof@width{\commandkey{Isa_DOF.side_by_side_figure.relative_width2}}
-          \gdef\dof@src{\commandkey{Isa_DOF.side_by_side_figure.src2}}
+          \gdef\dof@width{\commandkey{Isa_COL.side_by_side_figure.relative_width2}}
+          \gdef\dof@src{\commandkey{Isa_COL.side_by_side_figure.src2}}
           \FPdiv\scale{\dof@width}{100}%
           \includegraphics[width=\scale\textwidth]{\dof@src}%
         }{%
-          \gdef\dof@src{\commandkey{Isa_DOF.side_by_side_figure.src2}}
+          \gdef\dof@src{\commandkey{Isa_COL.side_by_side_figure.src2}}
           \includegraphics[]{\dof@src}%
         }% 
       }%
