@@ -19,7 +19,7 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
   keywords "+=" ":="
 
   and      "title*"      "subtitle*"
-           "section*"    "subsection*"   "subsubsection*" 
+           "chapter*" "section*"    "subsection*"   "subsubsection*" 
            "text*"       
            "paragraph*"  "subparagraph*" 
            "figure*"
@@ -977,6 +977,11 @@ val _ =
 
 val _ =
   Outer_Syntax.command ("subtitle*", @{here}) "section heading"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> enriched_document_command {markdown = false});
+
+val _ =
+  Outer_Syntax.command ("chapter*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
       >> enriched_document_command {markdown = false});
 

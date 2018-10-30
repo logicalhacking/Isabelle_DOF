@@ -135,6 +135,12 @@
 \newkeycommand\isaDofDeclareReferenceFigure[label=,type=]{}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: chapter*
+\NewEnviron{isamarkupchapter*}[1][]{\isaDof[env={chapter},#1]{\BODY}}
+% end: chapter*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: section*
 \NewEnviron{isamarkupsection*}[1][]{\isaDof[env={section},#1]{\BODY}}
 % end: section*
