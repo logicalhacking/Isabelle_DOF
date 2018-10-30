@@ -1,5 +1,5 @@
 theory mathex_onto
- imports "../Isa_DOF"
+ imports "../Isa_COL"
 begin
   
 (*<<*)  

@@ -1,4 +1,4 @@
-session "Isabelle_DOF" = Main + 
+session "Isabelle_DOF" = "Functional-Automata" + 
   options [document = pdf, document_output = "output"]
   theories [document = false]
     (* Foo *)

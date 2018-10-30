@@ -16,6 +16,7 @@ theory Isa_DOF   (* Isabelle Document Ontology Framework *)
   imports  Main  (* Isa_MOF *)
            RegExp
            Assert
+           
   keywords "+=" ":="
 
   and      "title*"      "subtitle*"
@@ -1377,7 +1378,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdef
            |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms' regexps
            |> (fn thy => gen_antiquotation binding (cid thy) thy) 
               (* defines the ontology-checked text antiquotation to this document class *)
-           |> (Sign.add_consts_cmd [(binding, "doc_class RegExp.rexp", Mixfix.NoSyn)])
+           |> (Sign.add_consts_cmd [(binding, "doc_class Regular_Exp.rexp", Mixfix.NoSyn)])
               (* adding const symbol representing doc-class for Monitor-RegExps.*)
            
     end;
@@ -1416,8 +1417,6 @@ writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
 \<close>
 *)
 
-ML\<open> fold_aterms  Term.add_free_names;
-    fold_aterms  Term.add_var_names;\<close>
 
 
 end

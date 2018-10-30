@@ -74,10 +74,10 @@ print_doc_items
 
 section\<open> Text Antiquotation Infrastructure ... \<close>  
                   
-text\<open> @{docref \<open>lalala\<close>}   -- produces warning. \<close>  
-text\<open> @{docref (unchecked) \<open>lalala\<close>} -- produces no warning. \<close>  
+text\<open> @{docitem \<open>lalala\<close>}   -- produces warning. \<close>  
+text\<open> @{docitem (unchecked) \<open>lalala\<close>} -- produces no warning. \<close>  
 
-text\<open> @{docref \<open>ass122\<close>} -- global reference to a text-item in another file. \<close>
+text\<open> @{docitem \<open>ass122\<close>} -- global reference to a text-item in another file. \<close>
 
 text\<open> @{ec \<open>ass122\<close>} -- global reference to a exported constraint in another file.
                          Note that the link is actually a srac, which, according to 
