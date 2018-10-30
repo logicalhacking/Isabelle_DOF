@@ -19,7 +19,14 @@
 \RequirePackage{DOF-core}
 \RequirePackage{ifthen}
 
+\RequirePackage{ifthen}
+\newboolean{DOF@scholarlypaper@force}
+\DeclareOption{force}{\setboolean{DOF@scholarlypaper@force}{true}}
 
+\ProcessOptions\relax
+
+\ifthenelse{\boolean{DOF@scholarlypaper@force}}{%
+}{%
 \@ifclassloaded{llncs}%
   {}%
   {%
@@ -32,7 +39,7 @@
     }%
     {\PackageError{DOF-scholarly_paper}{Scholarly Paper only supports LNCS or scrartcl as document class.}{}\stop}%
   }
-
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: title*
 \NewEnviron{isamarkuptitle*}[1][]{\isaDof[env={title},#1]{\BODY}}
