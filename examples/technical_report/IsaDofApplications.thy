@@ -43,7 +43,7 @@ on top of Isabelle. \isadof allows for conventional typesetting
 for enforcing a certain document structure, and discuss ontology-specific IDE support. 
 \<close>
 
-section*[intro::introduction]\<open> Introduction \<close>  
+chapter*[intro::introduction]\<open> Introduction \<close>  
 text*[introtext::introduction]\<open> 
 The linking of the \<^emph>\<open>formal\<close> to the \<^emph>\<open>informal\<close> is perhaps the
 most pervasive challenge in the digitization of knowledge and its
@@ -101,7 +101,7 @@ scenarios from the point of view of the ontology modeling. In @{docitem_ref (unc
 we discuss the user-interaction generated from the ontological definitions.  Finally, we draw 
 conclusions  and discuss related work in @{docitem_ref (unchecked) \<open>conclusion\<close>}. \<close>  
 
-section*[bgrnd::text_section,main_author="Some(@{docitem ''adb''}::author)"]
+chapter*[bgrnd::text_section,main_author="Some(@{docitem ''adb''}::author)"]
         \<open> Background: The Isabelle System \<close>
 text*[background::introduction]\<open>
 While Isabelle is widely perceived as an interactive theorem prover
@@ -169,14 +169,14 @@ displayed and can be used for calculations before actually being typeset. When e
 Isabelle's PIDE offers auto-completion and error-messages while typing the above 
 \<^emph>\<open>semi-formal\<close> content.  \<close>
 
-section*[isadof::technical,main_author="Some(@{docitem ''adb''}::author)"]\<open> \isadof \<close>
+chapter*[isadof::technical,main_author="Some(@{docitem ''adb''}::author)"]\<open> \isadof \<close>
    
 text\<open> An \isadof document consists of three components: 
 \<^item> the \<^emph>\<open>ontology definition\<close> which is an Isabelle theory file with definitions
   for document-classes and all auxiliary datatypes.  
 \<^item> the \<^emph>\<open>core\<close> of the document itself which is an Isabelle theory
   importing the ontology definition. \isadof provides an own family of text-element
-  commands such as \inlineisar+title*+, \inlineisar+section*+,  \inlineisar+text*+, etc., 
+  commands such as \inlineisar+title*+, \inlineisar+chapter*+,  \inlineisar+text*+, etc., 
   which can be annotated with meta-information defined in the underlying  ontology definition.
 \<^item> the \<^emph>\<open>layout definition\<close> for the given ontology exploiting this meta-information.
 \<close>
@@ -240,14 +240,14 @@ article in PDF using the  following command:
 \end{bash}
 \<close>
 
-section*[ontomod::text_section]\<open> Modeling Ontologies in \isadof \<close> 
+chapter*[ontomod::text_section]\<open> Modeling Ontologies in \isadof \<close> 
 text\<open> In this section, we will use the \isadof document ontology language
 for three different application scenarios: for scholarly papers, for mathematical 
 exam sheets as well as standardization documents where the concepts of the
 standard are captured in the ontology. For space reasons, we will concentrate in all three
 cases on aspects of the modeling due to space limitations.\<close>
 
-subsection*[scholar_onto::example]\<open> The Scholar Paper Scenario: Eating One's Own Dog Food. \<close>  
+section*[scholar_onto::example]\<open> The Scholar Paper Scenario: Eating One's Own Dog Food. \<close>  
 text\<open> The following ontology is a simple ontology modeling scientific papers. In this 
 \isadof application scenario, we deliberately refrain from integrating references to
 (Isabelle) formal content in order  demonstrate that \isadof is not a framework from 
@@ -388,7 +388,7 @@ text\<open> The document class \inlineisar+figure+ --- supported by the \isadof 
 such as @{docitem_ref \<open>fig_figures\<close>}.
 \<close>
      
-subsection*[mathex_onto::example]\<open> The Math-Exam Scenario \<close> 
+section*[mathex_onto::example]\<open> The Math-Exam Scenario \<close> 
 text\<open> The Math-Exam Scenario is an application with mixed formal and 
 semi-formal content. It addresses applications where the author of the exam is not present 
 during the exam and the preparation requires a very rigorous process, as the french 
@@ -512,7 +512,7 @@ figure*[fig_qcm::figure,spawn_columns=False,
         relative_width="90",src="''figures/InteractiveMathSheet''"]
         \<open> A Generated QCM Fragment \ldots \<close>  
 
-subsection*[cenelec_onto::example]\<open> The Certification Scenario following CENELEC \<close>
+section*[cenelec_onto::example]\<open> The Certification Scenario following CENELEC \<close>
 text\<open> Documents to be provided in formal certifications (such as CENELEC
 50126/50128, the DO-178B/C, or Common Criteria) can much profit from the control of ontological consistency: 
 a lot of an evaluators work consists in tracing down the links from requirements over 
@@ -583,11 +583,11 @@ doc_class srac = ec  +
 \end{isar}
 \<close>
    
-section*[ontopide::technical]\<open> Ontology-based IDE support \<close>  
+chapter*[ontopide::technical]\<open> Ontology-based IDE support \<close>  
 text\<open> We present a selection of interaction scenarios  @{example \<open>scholar_onto\<close>}
 and @{example \<open>cenelec_onto\<close>} with Isabelle/PIDE instrumented by \isadof. \<close>
 
-subsection*[scholar_pide::example]\<open> A Scholarly Paper \<close>  
+section*[scholar_pide::example]\<open> A Scholarly Paper \<close>  
 text\<open> In \autoref{fig-Dogfood-II-bgnd1} and \autoref{fig-bgnd-text_section} we show how
 hovering over links permits to explore its meta-information. 
 Clicking on a document class identifier permits to hyperlink into the corresponding
@@ -616,7 +616,7 @@ non-compatible type, the text is not validated.  \<close>
 
 figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-V-attribute''"]
        \<open> Exploring an attribute (hyperlinked to the class). \<close> 
-subsection*[cenelec_pide::example]\<open> CENELEC  \<close>
+section*[cenelec_pide::example]\<open> CENELEC  \<close>
 declare_reference*[figfig3::figure]  
 text\<open> The corresponding view in @{docitem_ref (unchecked) \<open>figfig3\<close>} shows core part of a document,  
 coherent to the @{example \<open>cenelec_onto\<close>}. The first sample shows standard Isabelle antiquotations 
@@ -647,7 +647,7 @@ collaboratively developed documentations, where modifications can lead easily to
 The current checks help to systematically avoid this type of incoherence between formal and 
 informal parts. \<close>    
 
-section*[onto_future::technical]\<open> Monitor Classes \<close>  
+chapter*[onto_future::technical]\<open> Monitor Classes \<close>  
 text\<open> Besides sub-typing, there is another relation between
 document classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
 which is expressed by the occurrence of a \inlineisar+where+ clause
@@ -672,7 +672,7 @@ monitor are \<^emph>\<open>independent\<close> from a monitor; instances of inde
 may occur freely. \<close>
 
 
-section*[conclusion::conclusion]\<open> Conclusion and Related Work\<close>    
+chapter*[conclusion::conclusion]\<open> Conclusion and Related Work\<close>    
 text\<open> We have demonstrated the use of \isadof, a novel ontology modeling and enforcement
 IDE deeply integrated into the Isabelle/Isar Framework. The two most distinguishing features are
 \<^item> \isadof and its ontology language  are a strongly typed language that allows
