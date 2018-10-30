@@ -1,0 +1,27 @@
+session "TechnicalReport" = "HOL" +
+  options  [document = pdf, document_output = "output", quick_and_dirty = true]
+  theories [document = false]
+    "../../ontologies/scholarly_paper"
+    "../../ontologies/technical_report"
+  theories
+    IsaDofApplications
+  document_files
+    "root.tex"
+    "root.bib"
+    "preamble.tex"
+    "build"
+    "lstisadof.sty"
+    "ontologies.tex"
+    "figures/isabelle-architecture.pdf"
+    "figures/Dogfood-Intro.png"
+    "figures/InteractiveMathSheet.png"
+    "figures/Dogfood-II-bgnd1.png"
+    "figures/Dogfood-III-bgnd-text_section.png"
+    "figures/Dogfood-IV-jumpInDocCLass.png"
+    "figures/Dogfood-III-bgnd-text_section.png"
+    "figures/Dogfood-V-attribute.png"
+    "figures/antiquotations-PIDE.png"
+    "figures/srac-definition.png"
+    "figures/srac-as-es-application.png"
+    "figures/Dogfood-figures.png"
+
