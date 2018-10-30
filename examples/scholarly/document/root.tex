@@ -26,20 +26,15 @@
 \usepackage[english]{babel}
 \usepackage{isabelle}
 \input{ontologies}
-\IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
 \usepackage{isabellesym}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage[numbers, sort&compress, sectionbib]{natbib}
-
+\input{ontologies}
+\IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
+\usepackage{xspace}
+\newcommand{\isadof}{Isabelle/DOF\xspace}
 \usepackage{graphicx}
-\usepackage[caption]{subfig}
-\usepackage[size=footnotesize]{caption}
-
-\newcommand{\ie}{i.e.}
-\newcommand{\eg}{e.g.}
-
-
 \usepackage{hyperref}
 \setcounter{tocdepth}{3} 
 \hypersetup{%
