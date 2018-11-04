@@ -12,9 +12,9 @@ text\<open> Offering
 text\<open> In this section, we develop on the basis of a management of references Isar-markups
 that provide direct support in the PIDE framework. \<close>  
   
-theory Isa_DOF   (* Isabelle Document Ontology Framework *)
-  imports  Main  (* Isa_MOF *)
-           RegExp
+theory Isa_DOF                (* Isabelle Document Ontology Framework *)
+  imports  Main  
+           RegExpInterface    (* Interface to functional regular automata for monitoring *)
            Assert
            
   keywords "+=" ":="
@@ -65,9 +65,9 @@ structure DOF_core =
 struct
    type docclass_struct = {params : (string * sort) list, (*currently not used *)
                            name   : binding, thy_name : string, id : serial, (* for pide *)
-                           inherits_from : (typ list * string) option,
-                           attribute_decl : (binding * typ * term option) list,
-                           rex : term list  }
+                           inherits_from  : (typ list * string) option,      (* imports *)
+                           attribute_decl : (binding * typ * term option) list, (* class local *)
+                           rex            : term list  } (* monitoring regexps --- product semantics*)
 
 
    type docclass_tab = docclass_struct Symtab.table
@@ -169,7 +169,7 @@ fun upd_monitor_tabs f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab
 
 
 fun get_accepted_cids  ({accepted_cids, regexp_stack }:open_monitor_info) =  accepted_cids
-fun get_regexp_stack     ({accepted_cids, regexp_stack }:open_monitor_info) =  regexp_stack
+fun get_regexp_stack   ({accepted_cids, regexp_stack }:open_monitor_info) =  regexp_stack
 
 
 (* doc-class-name management: We still use the record-package for internally 

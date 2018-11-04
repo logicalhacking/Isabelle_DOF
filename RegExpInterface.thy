@@ -1,4 +1,4 @@
-theory RegExp
+theory RegExpInterface
 imports "Functional-Automata.Execute"
 begin
 
@@ -87,7 +87,9 @@ export_code  zero one Suc Int.nat  nat_of_integer int_of_integer
 
 SML_file "RegExpChecker.sml"
 
-ML\<open> open RegExpChecker;\<close>
+ML\<open> 
+(*use "RegExpChecker.sml";
+open RegExpChecker; *)\<close>
 
 (*
 ML{* use "RegExpChecker.sml"; open RegExpChecker;
