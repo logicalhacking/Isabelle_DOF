@@ -95,7 +95,7 @@ structure RegExpInterface : sig
     type env 
     val  alphabet: term list -> env
     val  conv    : term -> env -> int RegExpChecker.rexp (* for debugging *)
-    val  rexp_term2da: term  -> env -> automaton
+    val  rexp_term2da: env -> term -> automaton
     val  enabled : automaton -> env -> string list
     val  next    : automaton -> env -> string -> automaton
     val  final   : automaton -> bool
@@ -129,7 +129,7 @@ local open RegExpChecker in
    val eq_int = {equal = curry(op =) : Int.int -> Int.int -> bool};
    val eq_bool_list = {equal = curry(op =) : bool list  -> bool list  -> bool};
 
-   fun rexp_term2da term env = let val rexp = conv term env;
+   fun rexp_term2da env term = let val rexp = conv term env;
                                    val nda = RegExpChecker.rexp2na eq_int rexp;
                                    val da = RegExpChecker.na2da eq_bool_list nda;
                                in  da end;

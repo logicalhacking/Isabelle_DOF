@@ -56,6 +56,9 @@ val docref_markup = docref_markup_gen docrefN
 val docclass_markup = docref_markup_gen docclassN
 \<close>
 
+ML\<open>
+
+\<close>
 
 
 section\<open> A HomeGrown Document Type Management (the ''Model'') \<close>
@@ -119,12 +122,13 @@ struct
    val  initial_ISA_tab:ISA_transformer_tab = Symtab.empty
 
    type open_monitor_info = {accepted_cids : string list,
-                             regexp_stack    : term list list (* really ? *)}
+                             regexp_stack    : RegExpInterface.automaton list }
 
    type monitor_tab = open_monitor_info Symtab.table
 
    val  initial_monitor_tab:monitor_tab = Symtab.empty
 
+   fun override(t1,t2) = fold(Symtab.update)(Symtab.dest t2)(t1)
 
 (* registrating data of the Isa_DOF component *)
 structure Data = Generic_Data
@@ -132,11 +136,11 @@ structure Data = Generic_Data
   type T =     {docobj_tab          : docobj_tab,
                 docclass_tab        : docclass_tab,
                 ISA_transformer_tab : ISA_transformer_tab,
-                monitor_tab : monitor_tab}
-  val empty  = {docobj_tab = initial_docobj_tab,
-                docclass_tab = initial_docclass_tab,
+                monitor_tab         : monitor_tab}
+  val empty  = {docobj_tab    = initial_docobj_tab,
+                docclass_tab  = initial_docclass_tab,
                 ISA_transformer_tab = initial_ISA_tab,
-                monitor_tab = initial_monitor_tab
+                monitor_tab   = initial_monitor_tab
                } 
   val extend =  I
   fun merge(   {docobj_tab=d1,docclass_tab = c1,ISA_transformer_tab = e1, monitor_tab=m1},
@@ -144,7 +148,7 @@ structure Data = Generic_Data
                {docobj_tab=merge_docobj_tab   (d1,d2), 
                 docclass_tab = merge_docclass_tab (c1,c2),
                 ISA_transformer_tab = Symtab.merge (fn (_ , _) => false)(e1,e2),
-                monitor_tab =  Symtab.merge (op =)(m1,m2) 
+                monitor_tab =  override(m1,m2) 
                      (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
                }
 );
@@ -939,18 +943,16 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
 fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
     let fun o_m_c oid pos cid_pos doc_attrs thy = create_and_check_docitem true oid pos 
                                                                            cid_pos doc_attrs thy
-        val add_consts = fold_aterms (fn Const(c as (_,@{typ "doc_class rexp"})) => insert (op =) c 
-                                        | _ => I);
         fun compute_enabled_set cid thy = 
                      case DOF_core.get_doc_class_global cid thy of
-                       SOME X => map fst (fold add_consts (#rex X) [])
+                       SOME X => let val alph = RegExpInterface.alphabet (#rex X)
+                                 in  (alph, map (RegExpInterface.rexp_term2da alph)(#rex X)) end 
                      | NONE => error("Internal error: class id undefined. ");
         
         fun create_monitor_entry thy =  
             let val {cid, ...} = the(DOF_core.get_object_global oid thy)
-                val S = compute_enabled_set cid thy
-                val info = {accepted_cids = S, 
-                             regexp_stack  = []}
+                val (S, aS) = compute_enabled_set cid thy
+                val info = {accepted_cids = S, regexp_stack  = aS }
             in  DOF_core.map_data_global(DOF_core.upd_monitor_tabs(Symtab.update(oid, info )))(thy)
             end
     in
@@ -1404,7 +1406,7 @@ section\<open> Testing and Validation \<close>
 text*[sdf] {* f @{thm refl}*}  
 text*[sdfg] {* fg @{thm refl}*}  
  
-text*[xxxy] {* dd @{docitem_ref \<open>sdfg\<close>}  @{thm refl}*}    
+text*[xxxy] {* dd @{docitem \<open>sdfg\<close>}  @{thm refl}*}    
 
 (* the following test crashes the LaTeX generation - however, without the latter this output is 
    instructive 
