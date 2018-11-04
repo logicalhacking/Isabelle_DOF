@@ -88,23 +88,79 @@ export_code  zero one Suc Int.nat  nat_of_integer int_of_integer
 SML_file "RegExpChecker.sml"
 
 ML\<open> 
-(*use "RegExpChecker.sml";
-open RegExpChecker; *)\<close>
+use "RegExpChecker.sml";
 
-(*
-ML{* use "RegExpChecker.sml"; open RegExpChecker;
+structure RegExpInterface : sig
+    type automaton
+    type env 
+    val  alphabet: term list -> env
+    val  conv    : term -> env -> int RegExpChecker.rexp (* for debugging *)
+    val  rexp_term2da: term  -> env -> automaton
+    val  enabled : automaton -> env -> string list
+    val  next    : automaton -> env -> string -> automaton
+    val  final   : automaton -> bool
+    val  accepts : automaton -> env -> string list -> bool
+  end
+ =
+struct
+local open RegExpChecker in
 
-val eq_int = {equal = curry(op =) : int -> int -> bool};
-val eq_bool_list = {equal = curry(op =) : bool list -> bool list -> bool};
-val eq_mynat = {equal = fn x:RegExpChecker.nat => fn y => x = y}
-val s = RegExpChecker.rexp2na eq_int;
-val xxx = na2da eq_mynat;
-val ((init), (next,fin)) = na2da eq_bool_list (RegExpChecker.rexp2na eq_mynat example_expression);
-val Set X = next zero init;
-val Set Y = next one init;
-val Set Z = next (Suc one) init;
-*}
-*)
+  type state = bool list RegExpChecker.set
+  type env = string list
+
+  type automaton = state * ((Int.int -> state -> state) * (state -> bool))
+
+  val add_atom = fold_aterms (fn Const(c as(_,Type(@{type_name "rexp"},_)))=> insert (op=) c |_=>I);
+  fun alphabet termS  =  rev(map fst (fold add_atom termS []));
+
+  fun conv (Const(@{const_name "Regular_Exp.rexp.Zero"},_)) _ = Zero
+     |conv (Const(@{const_name "Regular_Exp.rexp.One"},_)) _ = Onea 
+     |conv (Const(@{const_name "Regular_Exp.rexp.Times"},_) $ X $ Y) env = Times(conv X env, conv Y env)
+     |conv (Const(@{const_name "Regular_Exp.rexp.Plus"},_) $ X $ Y) env = Plus(conv X env, conv Y env)
+     |conv (Const(@{const_name "Regular_Exp.rexp.Star"},_) $ X) env = Star(conv X env)
+     |conv (Const(@{const_name "RegExpInterface.opt"},_) $ X) env = Plus(conv X env, Onea)
+     |conv (Const(@{const_name "RegExpInterface.rep1"},_) $ X) env = Times(conv X env, Star(conv X env))
+     |conv (Const (s, Type(@{type_name "rexp"},_))) env = 
+               let val n = find_index (fn x => x = s) env 
+                   val _ = if n<0 then error"conversion error of regexp."  else ()
+               in  Atom(n) end
+     |conv S _ = error("conversion error of regexp:" ^ (Syntax.string_of_term (@{context})S))
+
+   val eq_int = {equal = curry(op =) : Int.int -> Int.int -> bool};
+   val eq_bool_list = {equal = curry(op =) : bool list  -> bool list  -> bool};
+
+   fun rexp_term2da term env = let val rexp = conv term env;
+                                   val nda = RegExpChecker.rexp2na eq_int rexp;
+                                   val da = RegExpChecker.na2da eq_bool_list nda;
+                               in  da end;
+
+
+   (* here comes the main interface of the module: 
+      - "enabled" gives the part of the alphabet "env" for which the automatan does not
+        go into a final state
+      - next provides an automata transformation that produces an automaton that
+        recognizes the rest of a word after a *)
+   fun enabled (da as (state,(_,_))) env  = 
+                              let val inds = RegExpChecker.enabled da state (0 upto (length env - 1))
+                              in  map (fn i => nth env i) inds end
+
+   fun next  (current_state, (step,fin)) env a =
+                              let val index = find_index (fn x => x = a) env   
+                              in  if index < 0 then error"undefined id for monitor"
+                                  else (step index current_state,(step,fin))
+                              end
+
+   fun final (current_state, (_,fin)) = fin current_state
+
+   fun accepts da env word = let fun index a = find_index (fn x => x = a) env   
+                                 val indexL = map index word
+                                 val _ = if forall (fn x => x >= 0) indexL then ()
+                                         else error"undefined id for monitor"
+                             in  RegExpChecker.accepts da indexL end
+
+end; (* local *)
+end  (* struct *)
+\<close>
 
 
 no_notation Atom ("\<lfloor>_\<rfloor>")  
