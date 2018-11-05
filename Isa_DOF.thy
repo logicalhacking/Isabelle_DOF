@@ -119,7 +119,7 @@ struct
    val  initial_ISA_tab:ISA_transformer_tab = Symtab.empty
 
    type open_monitor_info = {accepted_cids : string list,
-                             regexp_stack    : RegExpInterface.automaton list }
+                             automatas     : RegExpInterface.automaton list }
 
    type monitor_tab = open_monitor_info Symtab.table
 
@@ -169,8 +169,8 @@ fun upd_monitor_tabs f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab
              ISA_transformer_tab = ISA_transformer_tab, monitor_tab = f monitor_tab};
 
 
-fun get_accepted_cids  ({accepted_cids, regexp_stack }:open_monitor_info) =  accepted_cids
-fun get_regexp_stack   ({accepted_cids, regexp_stack }:open_monitor_info) =  regexp_stack
+fun get_accepted_cids  ({accepted_cids, automatas }:open_monitor_info) =  accepted_cids
+fun get_automatas   ({accepted_cids, automatas }:open_monitor_info) =  automatas
 
 
 (* doc-class-name management: We still use the record-package for internally 
@@ -875,9 +875,9 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
              along the super-class id. The evaluation is in parallel, simulating a product
              semantics without expanding the subclass relationship. *)
           fun is_enabled_for_cid moid =
-                         let val {accepted_cids, regexp_stack} = the(Symtab.lookup monitor_tab moid)
-                             val indexS= 1 upto (length regexp_stack)
-                             val indexed_autoS = regexp_stack ~~ indexS
+                         let val {accepted_cids, automatas} = the(Symtab.lookup monitor_tab moid)
+                             val indexS= 1 upto (length automatas)
+                             val indexed_autoS = automatas ~~ indexS
                              fun check_for_cid (A,n) = 
                                    let val accS = (RegExpInterface.enabled A accepted_cids)
                                        val is_subclass = DOF_core.is_subclass_global thy
@@ -901,8 +901,8 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
            (* check that any transition is possible : *)
           val delta_autoS = map is_enabled_for_cid enabled_monitors; 
           fun update_info (n, aS) (tab: DOF_core.monitor_tab) =  
-                         let val {accepted_cids,regexp_stack} = the(Symtab.lookup tab n)
-                         in Symtab.update(n, {accepted_cids=accepted_cids, regexp_stack=aS}) tab end
+                         let val {accepted_cids,automatas} = the(Symtab.lookup tab n)
+                         in Symtab.update(n, {accepted_cids=accepted_cids, automatas=aS}) tab end
           fun update_trace mon_oid = DOF_core.update_value_global mon_oid (def_trans mon_oid)
           val update_automatons = DOF_core.upd_monitor_tabs(fold update_info delta_autoS)
       in  thy |> fold (update_trace) (enabled_monitors)
@@ -985,7 +985,7 @@ fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
         fun create_monitor_entry thy =  
             let val {cid, ...} = the(DOF_core.get_object_global oid thy)
                 val (S, aS) = compute_enabled_set cid thy
-                val info = {accepted_cids = S, regexp_stack  = aS }
+                val info = {accepted_cids = S, automatas  = aS }
             in  DOF_core.map_data_global(DOF_core.upd_monitor_tabs(Symtab.update(oid, info )))(thy)
             end
     in
@@ -996,7 +996,7 @@ fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
 fun close_monitor_command (args as (((oid:string,pos),cid_pos),
                                     doc_attrs: (((string*Position.T)*string)*string)list)) thy = 
     let val {monitor_tab,...} = DOF_core.get_data_global thy
-        fun check_if_final {accepted_cids, regexp_stack} = true (* check if final: TODO *)
+        fun check_if_final {accepted_cids, automatas} = true (* check if final: TODO *)
         val _ =  case Symtab.lookup monitor_tab oid of
                      SOME X => check_if_final X 
                   |  NONE => error ("Not belonging to a monitor class: "^oid)

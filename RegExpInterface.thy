@@ -1,22 +1,33 @@
+chapter\<open>The High-Level Interface to the Automata-Library\<close>
+
 theory RegExpInterface
 imports "Functional-Automata.Execute"
 begin
 
-term Atom
-value "Star (Times(Plus (Atom(CHR ''a'')) (Atom(CHR ''b''))) (Atom(CHR ''c'')))"
+text\<open> The implementation of the monitoring concept follows the following design decisions:
+\<^enum> We re-use generated code from the AFP submissions @{theory Regular_Set} and 
+  @{theory Automata}, converted by the code-generator into executable SML code
+  (ports to future Isabelle versions should just reuse future versions of these)
+\<^enum> Monitor-Expressions are regular expressions (in some adapted syntax) 
+  over Document Class identifiers; they denote the language of all possible document object
+  instances belonging to these classes
+\<^enum> Instead of expanding the sub-class relation (and building the product automaton of all 
+  monitor expressions), we convert the monitor expressions into automata over class-id's
+  executed in parallel, in order to avoid blowup.
+\<^enum> For efficiency reasons, the class-ids were internally abstracted to integers; the
+  encoding table is called environment \<^verbatim>\<open>env\<close>.
+\<^enum> For reusability reasons, we did NOT abstract the internal state representation in the
+  deterministic automata construction (lists of lists of bits - sic !) by replacing them
+  by unique keys via a suitable coding-table; rather, we opted for keeping the automatas small
+  (no products, no subclass-expansion).
+\<close>
+
+section\<open>Monitor Syntax over RegExp - constructs\<close>
 
 notation Star  ("\<lbrace>(_)\<rbrace>\<^sup>*" [0]100)
 notation Plus  (infixr "||" 55)
 notation Times (infixr "~~" 60)
 notation Atom  ("\<lfloor>_\<rfloor>" 65)
-
-(*
-datatype 'a rexp = Empty                         ("<>")
-                 | Atom 'a                       ("\<lfloor>_\<rfloor>" 65)
-                 | Alt  "('a rexp)" "('a rexp)"  (infixr "||" 55)
-                 | Conc "('a rexp)" "('a rexp)"  (infixr "~~" 60)
-                 | Star "('a rexp)"              ("\<lbrace>(_)\<rbrace>\<^sup>*" [0]100)          
-*)
 
 definition rep1 :: "'a rexp \<Rightarrow> 'a rexp" ("\<lbrace>(_)\<rbrace>\<^sup>+")
   where "\<lbrace>A\<rbrace>\<^sup>+ \<equiv>  A ~~ \<lbrace>A\<rbrace>\<^sup>*"
@@ -28,7 +39,7 @@ value "Star (Conc(Alt (Atom(CHR ''a'')) (Atom(CHR ''b''))) (Atom(CHR ''c'')))"
 text{* or better equivalently: *}
 value "\<lbrace>(\<lfloor>CHR ''a''\<rfloor> || \<lfloor>CHR ''b''\<rfloor>) ~~ \<lfloor>CHR ''c''\<rfloor>\<rbrace>\<^sup>*"
 
-section{* Definition of a semantic function: the ``language'' of the regular expression *}
+section{* Some Standard and Derived Semantics *}
 text\<open> This is just a reminder - already defined in @{theory Regular_Exp} as @{term lang}.\<close>
 
 text{* In the following, we give a semantics for our regular expressions, which so far have
@@ -36,9 +47,6 @@ just been a term language (i.e. abstract syntax). The semantics is a ``denotatio
 i.e. we give a direct meaning for regular expressions in some universe of ``denotations''. 
 
 This universe of denotations is in our concrete case: *}
-
-definition enabled :: "('a,'\<sigma> set)da  \<Rightarrow> '\<sigma> set \<Rightarrow> 'a list \<Rightarrow>  'a list" 
-  where   "enabled A \<sigma> = filter (\<lambda>x. next A x \<sigma> \<noteq> {}) "
 
 text{* Now the denotational semantics for regular expression can be defined on a post-card: *}
 
@@ -67,39 +75,48 @@ definition YY where "YY = na2da(rexp2na example_expression)"
 value "NA.accepts (rexp2na example_expression) [0,1,1,0,0,1]"
 value "DA.accepts (na2da (rexp2na example_expression)) [0,1,1,0,0,1]"
 
+
+section\<open>HOL - Adaptions and Export to SML\<close>
+
+definition enabled :: "('a,'\<sigma> set)da  \<Rightarrow> '\<sigma> set \<Rightarrow> 'a list \<Rightarrow>  'a list" 
+  where   "enabled A \<sigma> = filter (\<lambda>x. next A x \<sigma> \<noteq> {}) "
+
+
 definition zero where "zero = (0::nat)"
 definition one where "one = (1::nat)"
 
-typ "'a set"
 
+export_code  zero one Suc Int.nat  nat_of_integer int_of_integer  (* for debugging *)
+             example_expression                                   (* for debugging *)
 
-export_code  zero one Suc Int.nat  nat_of_integer int_of_integer  
-             Zero One     Atom     Plus  Times  Star      
-             rexp2na      na2da    enabled
+             Zero One     Atom     Plus  Times  Star              (* regexp abstract syntax *)
+
+             rexp2na      na2da    enabled                        (* low-level automata interface *)
              NA.accepts   DA.accepts  
 
-             example_expression
+             in SML  module_name RegExpChecker file "RegExpChecker.sml"
 
-             in SML
-                                 
-      
-      module_name RegExpChecker file "RegExpChecker.sml"
 
 SML_file "RegExpChecker.sml"
 
-ML\<open> 
-use "RegExpChecker.sml";
+section\<open>The Abstract Interface For Monitor Expressions\<close>
+text\<open>Here comes the hic : The reflection of the HOL-Automata module into an SML module 
+with an abstract interface hiding some generation artefacts like the internal states 
+of the deterministic automata ...\<close>
+
+ML\<open> use "RegExpChecker.sml";
 
 structure RegExpInterface : sig
     type automaton
     type env 
+    type cid
     val  alphabet: term list -> env
     val  conv    : term -> env -> int RegExpChecker.rexp (* for debugging *)
     val  rexp_term2da: env -> term -> automaton
-    val  enabled : automaton -> env -> string list
-    val  next    : automaton -> env -> string -> automaton
+    val  enabled : automaton -> env -> cid list  
+    val  next    : automaton -> env -> cid -> automaton
     val  final   : automaton -> bool
-    val  accepts : automaton -> env -> string list -> bool
+    val  accepts : automaton -> env -> cid list -> bool
   end
  =
 struct
@@ -107,6 +124,7 @@ local open RegExpChecker in
 
   type state = bool list RegExpChecker.set
   type env = string list
+  type cid = string
 
   type automaton = state * ((Int.int -> state -> state) * (state -> bool))
 
@@ -162,8 +180,6 @@ end; (* local *)
 end  (* struct *)
 \<close>
 
-
 no_notation Atom ("\<lfloor>_\<rfloor>")  
-
 
 end
