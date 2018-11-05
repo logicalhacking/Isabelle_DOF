@@ -87,24 +87,6 @@ export_code  zero one Suc Int.nat  nat_of_integer int_of_integer
 
 SML_file "RegExpChecker.sml"
 
-ML\<open> open RegExpChecker;\<close>
-
-(*
-ML{* use "RegExpChecker.sml"; open RegExpChecker;
-
-val eq_int = {equal = curry(op =) : int -> int -> bool};
-val eq_bool_list = {equal = curry(op =) : bool list -> bool list -> bool};
-val eq_mynat = {equal = fn x:RegExpChecker.nat => fn y => x = y}
-val s = RegExpChecker.rexp2na eq_int;
-val xxx = na2da eq_mynat;
-val ((init), (next,fin)) = na2da eq_bool_list (RegExpChecker.rexp2na eq_mynat example_expression);
-val Set X = next zero init;
-val Set Y = next one init;
-val Set Z = next (Suc one) init;
-*}
-*)
-
-
 no_notation Atom ("\<lfloor>_\<rfloor>")  
 
 

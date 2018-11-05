@@ -36,8 +36,8 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            
   
 begin
-    
-  
+
+
 section\<open>Primitive Markup Generators\<close>
 ML\<open>
 
@@ -54,9 +54,6 @@ fun docref_markup_gen refN def name id pos =
 val docref_markup = docref_markup_gen docrefN
 
 val docclass_markup = docref_markup_gen docclassN
-\<close>
-
-ML\<open>
 
 \<close>
 
@@ -570,8 +567,15 @@ val _ =
     (Parse.opt_bang >> (fn b =>
       Toplevel.keep (write_ontology_latex_sty_template o Toplevel.theory_of)));
 
+val (strict_monitor_checking, strict_monitor_checking_setup) 
+     = Attrib.config_bool @{binding strict_monitor_checking} (K false);
+
 end (* struct *)
+
 \<close>
+
+setup\<open>DOF_core.strict_monitor_checking_setup\<close>
+
 
 section\<open> Syntax for Inner Syntax Antiquotations (ISA) \<close>
 
@@ -855,7 +859,9 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
              end   
      in Sign.certify_term thy  (fold read_assn S term) end
 
-
+fun msg thy txt = if Config.get_global thy DOF_core.strict_monitor_checking
+                  then error txt
+                  else warning txt 
 
 fun register_oid_cid_in_open_monitors oid pos cid_long thy = 
       let val {monitor_tab,...} = DOF_core.get_data_global thy
@@ -864,6 +870,24 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
                                    (DOF_core.get_accepted_cids info) 
                          then SOME n 
                          else NONE
+          (* filtering those monitors with automata, whose alphabet contains the
+             cid of this oid. The enabled ones were selected and moved to their successor state
+             along the super-class id. The evaluation is in parallel, simulating a product
+             semantics without expanding the subclass relationship. *)
+          fun is_enabled_for_cid moid =
+                         let val {accepted_cids, regexp_stack} = the(Symtab.lookup monitor_tab moid)
+                             val indexS= 1 upto (length regexp_stack)
+                             val indexed_autoS = regexp_stack ~~ indexS
+                             fun check_for_cid (A,n) = 
+                                   let val accS = (RegExpInterface.enabled A accepted_cids)
+                                       val is_subclass = DOF_core.is_subclass_global thy
+                                       val idx = find_index (is_subclass cid_long) accS
+                                   in  if idx < 0 
+                                       then (msg thy ("monitor "^moid^"(" ^ Int.toString n 
+                                                       ^") not enabled for doc_class: "^cid_long);A)
+                                       else RegExpInterface.next A accepted_cids (nth accS idx)
+                                   end
+                         in (moid,map check_for_cid indexed_autoS)  end  
           val enabled_monitors = List.mapPartial is_enabled (Symtab.dest monitor_tab)
           fun markup2string x = XML.content_of (YXML.parse_body x)
           fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
@@ -874,8 +898,17 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
           fun def_trans oid = #1 o (calc_update_term thy (cid_of oid) assns')
           val _ = if null enabled_monitors then () else writeln "registrating in monitors ..." 
           val _ = app (fn n => writeln(oid^" : "^cid_long^" ==> "^n)) enabled_monitors;
-      in  thy |> fold (fn mon_oid => DOF_core.update_value_global mon_oid (def_trans mon_oid))(enabled_monitors)
+           (* check that any transition is possible : *)
+          val delta_autoS = map is_enabled_for_cid enabled_monitors; 
+          fun update_info (n, aS) (tab: DOF_core.monitor_tab) =  
+                         let val {accepted_cids,regexp_stack} = the(Symtab.lookup tab n)
+                         in Symtab.update(n, {accepted_cids=accepted_cids, regexp_stack=aS}) tab end
+          fun update_trace mon_oid = DOF_core.update_value_global mon_oid (def_trans mon_oid)
+          val update_automatons = DOF_core.upd_monitor_tabs(fold update_info delta_autoS)
+      in  thy |> fold (update_trace) (enabled_monitors)
+              |> DOF_core.map_data_global(update_automatons)
       end
+
 
 fun create_and_check_docitem is_monitor oid pos cid_pos doc_attrs thy = 
       let val id = serial ();
@@ -1269,6 +1302,7 @@ fun calculate_trace ctxt oid pos =
         val string_pair_list = map conv (HOLogic.dest_list term)
         val print_string_pair = ML_Syntax.print_pair  ML_Syntax.print_string ML_Syntax.print_string
     in  ML_Syntax.print_list print_string_pair string_pair_list end
+
 
 val _ = Theory.setup 
            (ML_Antiquotation.inline @{binding trace_attribute}
