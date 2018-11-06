@@ -1,4 +1,4 @@
-session "MathExam" = "HOL" +
+session "MathExam" = "Functional-Automata" +
   options [document = pdf, document_output = "output"]
   theories [document = false]
     (* Foo *)
