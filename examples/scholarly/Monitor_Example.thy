@@ -16,7 +16,7 @@ val term = @{term "(title       ~~
 
 ML\<open>
 val alpha = (RegExpInterface.alphabet [term]);
-val DA as (init,(next,fin)) = RegExpInterface.rexp_term2da  (RegExpInterface.alphabet [term]) term ;
+val DA as (init,(next,fin)) = RegExpInterface.rexp_term2da  alpha term ;
 RegExpChecker.accepts DA [0,2,3,4,5,6,7,8];
 \<close>
 

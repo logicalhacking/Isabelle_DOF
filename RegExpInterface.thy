@@ -96,9 +96,9 @@ export_code  zero one Suc Int.nat  nat_of_integer int_of_integer  (* for debuggi
 
              in SML  module_name RegExpChecker file "RegExpChecker.sml"
 
-
+(*
 SML_file "RegExpChecker.sml"
-
+*)
 section\<open>The Abstract Interface For Monitor Expressions\<close>
 text\<open>Here comes the hic : The reflection of the HOL-Automata module into an SML module 
 with an abstract interface hiding some generation artefacts like the internal states 
