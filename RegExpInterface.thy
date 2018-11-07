@@ -94,11 +94,14 @@ export_code  zero one Suc Int.nat  nat_of_integer int_of_integer  (* for debuggi
              rexp2na      na2da    enabled                        (* low-level automata interface *)
              NA.accepts   DA.accepts  
 
-             in SML  module_name RegExpChecker file "RegExpChecker.sml"
-
-
-SML_file "RegExpChecker.sml"
-SML_export \<open>structure RegExpChecker = RegExpChecker\<close>
+             in SML  module_name RegExpChecker 
+                     file "RegExpChecker.sml"                     (* writing it to a file *)
+                                                                  
+(* potentially susceptible to race conditions ... *)                                                                 
+SML_file "RegExpChecker.sml"                                      (* reads and eval generated file  
+                                                                     into SML toplevel  *)
+SML_export \<open>structure RegExpChecker = RegExpChecker\<close>              (* copies from SML toplevel into 
+                                                                     Isabelle/ML toplevel *)
 
 section\<open>The Abstract Interface For Monitor Expressions\<close>
 text\<open>Here comes the hic : The reflection of the HOL-Automata module into an SML module 
@@ -106,12 +109,6 @@ with an abstract interface hiding some generation artefacts like the internal st
 of the deterministic automata ...\<close>
 
 ML\<open> 
-
-
-(*
-use "RegExpChecker.sml";
-*)
-
 
 structure RegExpInterface : sig
     type automaton

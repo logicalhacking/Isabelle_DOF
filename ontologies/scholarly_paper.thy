@@ -24,10 +24,16 @@ doc_class abstract =
 doc_class text_section = 
    main_author :: "author option"  <=  None
    fixme_list  :: "string list"    <=  "[]" 
-   
+
 doc_class introduction = text_section +
    comment :: string
    claims  :: "thm list"
+
+doc_class introduction_title = introduction +
+   fixme_list  :: "string list"    <=  "[]" 
+
+doc_class introduction_elem = introduction +
+   fixme_list  :: "string list"    <=  "[]" 
 
 doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
@@ -81,8 +87,10 @@ doc_class article =
            \<lbrakk>subtitle\<rbrakk>   ~~
            \<lbrace>author\<rbrace>\<^sup>+   ~~ 
            abstract     ~~
-           introduction ~~ 
-           \<lbrace>technical || example\<rbrace>\<^sup>+ ~~ 
+           introduction_title ~~ 
+           \<lbrace>introduction_elem\<rbrace>\<^sup>+ ~~ 
+           \<lbrace>technical || example\<rbrace>\<^sup>+ ~~
+           \<lbrakk>introduction\<rbrakk>   ~~
            conclusion   ~~  
            bibliography)"
 
