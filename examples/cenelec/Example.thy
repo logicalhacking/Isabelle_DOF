@@ -34,6 +34,9 @@ text*[hyp1::hypothesis] \<open> P inequal NP \<close>
 text\<open>A real example fragment from a larger project, declaring a text-element as a
      "safety-related application condition", a concept defined in the  @{theory "CENELEC_50126"}
      ontology:\<close>  
+
+text*[new_ass::hypothesis]\<open>Under the assumption @{assumption \<open>ass1\<close>} we establish the following: ... \<close>
+
 text*[ass122::srac] \<open> The overall sampling frequence of the odometer
 subsystem is therefore 14 khz, which includes sampling, computing and
 result communication times... \<close>

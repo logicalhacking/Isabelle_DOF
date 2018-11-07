@@ -1,0 +1,12 @@
+session MyCommentedIsabelle = "Functional-Automata" +
+  options [document = pdf, document_output = "output",quick_and_dirty = true]
+  theories [document = false]
+    "../../../ontologies/scholarly_paper"
+    "../../../ontologies/technical_report"
+  theories
+    "MyCommentedIsabelle"
+  document_files
+    "root.tex"
+    "preamble.tex"
+    "ontologies.tex"
+    "build"
