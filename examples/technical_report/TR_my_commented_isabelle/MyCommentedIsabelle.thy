@@ -10,11 +10,11 @@ title*[tit::title]\<open>An Account with my Personal, Ecclectic Comments on the 
 subtitle*[stit::subtitle]\<open>Version : Isabelle 2017\<close>
 text*[bu::author,
       email       = "''wolff@lri.fr''",
-      affiliation = "''Universit\\'e Paris-Sud, Paris, France''"]\<open>Burkhart Wolff\<close>
+      affiliation = "''Universit\\'e Paris-Saclay, Paris, France''"]\<open>Burkhart Wolff\<close>
     
 
 text*[abs::abstract,
-      keywordlist="[''Ontology'',''Ontological Modeling'',''Isabelle/DOF'']"]\<open>
+      keywordlist="[''LCF-Architecture'',''Isabelle'',''SML'',''PIDE'',''Tactic Programming'']"]\<open>
 While Isabelle is mostly known as part of Isabelle/HOL (an interactive 
 theorem prover), it actually provides a system framework for developing a wide
 spectrum of applications. A particular strength of the Isabelle framework is the 
@@ -61,17 +61,25 @@ ML\<open> val x = @{thm refl}\<close>
 
 text\<open>In a way, literate specification with a maximum of formal content is a way to
      ensure "Agile Development", at least for its objectives, albeit not
-     by its popular methods and processes like SCRUM. 
+     for its popular methods and processes like SCRUM. 
 
      A maximum of formal content inside text documentation also ensures the 
      consistency of this present text with the underlying Isabelle version.\<close>
 
-text\<open>It is instructive to study the fundamental Boot Order of the Isabelle system;
+text\<open>It is instructive to study the fundamental bootstrapping sequence of the Isabelle system;
      it is written in the Isar format and gives an idea of the global module dependencies: 
      @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"}. Loading this file 
      (for example by hovering over this hyperlink in the antiquotation holding control or
      command key in Isabelle/jedit and activating it) allows the Isabelle IDE 
      to support hyperlinking \<^emph>\<open>inside\<close> the Isabelle source.\<close>
+
+text\<open>The bootstrapping sequence is also reflected in the following diagram: \<close>
+
+figure*[architecture::figure,relative_width="100",src="''figures/isabelle-architecture''"]\<open> 
+     The system architecture of Isabelle (left-hand side) and the 
+     asynchronous communication between the Isabelle system and 
+     the IDE (right-hand side). \<close>
+
 
 section "Elements of the SML library";  
 text\<open>Elements of the @{file "$ISABELLE_HOME/src/Pure/General/basics.ML"} SML library
@@ -382,12 +390,10 @@ Sign.syn_of : theory -> Syntax.syntax;
 Sign.of_sort : theory -> typ * sort -> bool ;
 \<close>
 
-subsection{* Thm's and the Core Kernel *}  
+subsection{* Thm's and the LCF-Style, "Mikro"-Kernel *}  
 text\<open> 
   The basic constructors and operations on theorems@{file "$ISABELLE_HOME/src/Pure/thm.ML"},
   a set of derived (Pure) inferences can be found in @{file "$ISABELLE_HOME/src/Pure/drule.ML"}.
-  They reflect the Pure logic depicted in a number of presentations such as 
-  M. Wenzel, \<^emph>\<open>Parallel Proof Checking in Isabelle/Isar\<close>, PLMMS 2009, or ...
 
   The main types provided by structure \<^verbatim>\<open>thm\<close> are certified types @{ML_type ctyp}, 
   certified terms @{ML_type cterm}, @{ML_type thm} as well as conversions @{ML_type conv}.
@@ -415,8 +421,17 @@ ML\<open>
 text\<open>... which perform type-checking in the given theory context in order to make a type
      or term "admissible" for the kernel.\<close>
 
-text\<open>Besides a number of destructors on @{ML_type thm}'s, this true LCF-Kernel in the
-     provides the fundamental inference rules of Isabelle/Pure. \<close>
+text\<open> We come now to the very heart of the LCF-Kernel of Isabelle, which 
+     provides the fundamental inference rules of Isabelle/Pure. 
+
+   Besides a number of destructors on @{ML_type thm}'s,
+  the abstract data-type \<^verbatim>\<open>thm\<close> is used for logical objects of the form 
+  $\Gamma \vdash_\theta \phi$, where $\Gamma$ represents a set of local assumptions,
+  $\theta$ the "theory" or more precisely the global context in which a formula $\phi$ 
+  has been constructed just by applying the following operations representing 
+  logical inference rules:
+
+\<close>
 ML\<open>
   (*inference rules*)
   Thm.assume: cterm -> thm;
@@ -424,15 +439,51 @@ ML\<open>
   Thm.implies_elim: thm -> thm -> thm;
   Thm.forall_intr: cterm -> thm -> thm;
   Thm.forall_elim: cterm -> thm -> thm;
-  Thm.reflexive: cterm -> thm;
-  Thm.symmetric: thm -> thm;
-  Thm.transitive: thm -> thm -> thm;
-  Thm.trivial: cterm -> thm;
+
+  Thm.transfer : theory -> thm -> thm;
 
   Thm.generalize: string list * string list -> int -> thm -> thm;
   Thm.instantiate: ((indexname*sort)*ctyp)list * ((indexname*typ)*cterm) list -> thm -> thm;
 \<close>
-text\<open>... where @{ML "Thm.trivial"} produces the elementary tautologies of the form @{prop "A \<Longrightarrow> A"},
+text\<open>  They reflect the Pure logic depicted in a number of presentations such as 
+  M. Wenzel, \<^emph>\<open>Parallel Proof Checking in Isabelle/Isar\<close>, PLMMS 2009, or simiular papers.
+  Notated as logical inference rules, these operations were presented as follows:
+\<close>
+(*
+side_by_side_figure*["text-elements"::side_by_side_figure,anchor="''fig-kernel1''",
+                      caption="''Pure Kernel Inference Rules I ''",relative_width="48",
+                      src="''figures/pure-inferences-I''",anchor2="''fig-kernel2''",
+                      caption2="''Pure Kernel Inference Rules II''",relative_width2="47",
+                      src2="''figures/pure-inferences-II''"]\<open>  \<close>
+*)
+
+figure*[kir1::figure,relative_width="100",src="''figures/pure-inferences-I''"]
+       \<open> Pure Kernel Inference Rules I.\<close>
+figure*[kir2::figure,relative_width="100",src="''figures/pure-inferences-II''"]
+       \<open> Pure Kernel Inference Rules II. \<close>
+
+text\<open>Note that the transfer rule:
+\[
+\begin{prooftree}
+ \Gamma \vdash_\theta \phi            \quad \quad       \theta \subseteq \theta'
+\justifies
+ \Gamma \vdash_\theta' \phi
+\end{prooftree}
+\]
+which is a consequence of explicit theories  is a characteristic of Isabelle's the Kernel design
+and a remarquable difference to its sisters HOL-Light and HOL4; instead of transfer, these systems
+reconstruct proofs in an enlarged global context instead of taking the result and converting it.\<close>
+
+text\<open>Besides the meta-logical (Pure) implication $\_\Longrightarrow \_$, the Kernel axiomatizes
+also a Pure-Equality $\_ \equiv \_ $ used for definitions of constant symbols: \<close>
+ML\<open>
+  Thm.reflexive: cterm -> thm;
+  Thm.symmetric: thm -> thm;
+  Thm.transitive: thm -> thm -> thm;
+\<close>
+text\<open>The operation:\<close>
+ML\<open>  Thm.trivial: cterm -> thm; \<close>
+text\<open>... produces the elementary tautologies of the form @{prop "A \<Longrightarrow> A"},
   an operation used to start a backward-style proof.\<close>
 
 text\<open>The elementary conversions are:\<close>

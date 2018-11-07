@@ -9,4 +9,9 @@ session MyCommentedIsabelle = "Functional-Automata" +
     "root.tex"
     "preamble.tex"
     "ontologies.tex"
+    "prooftree.sty"
     "build"
+    "figures/isabelle-architecture.pdf"
+    "figures/pure-inferences-I.pdf"
+    "figures/pure-inferences-II.pdf"
+

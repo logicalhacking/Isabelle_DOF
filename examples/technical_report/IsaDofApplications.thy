@@ -294,7 +294,7 @@ Science Series, as required by many scientific conferences, is mostly straight-f
 figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogfood-Intro''"]
        \<open> Ouroboros I: This paper from inside \ldots \<close>  
 
-text\<open> @{docitem_ref \<open>fig1\<close>} shows the corresponding view in the Isabelle/PIDE of thqqe present paper.
+text\<open> @{docitem \<open>fig1\<close>} shows the corresponding view in the Isabelle/PIDE of thqqe present paper.
 Note that the text uses \isadof's own text-commands containing the meta-information provided by
 the underlying ontology.
 We proceed by a definition of \inlineisar+introduction+'s, which we define as the extension of
