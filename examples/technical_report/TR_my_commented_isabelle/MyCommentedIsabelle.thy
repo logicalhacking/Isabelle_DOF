@@ -449,13 +449,13 @@ text\<open>  They reflect the Pure logic depicted in a number of presentations s
   M. Wenzel, \<^emph>\<open>Parallel Proof Checking in Isabelle/Isar\<close>, PLMMS 2009, or simiular papers.
   Notated as logical inference rules, these operations were presented as follows:
 \<close>
-(*
+
 side_by_side_figure*["text-elements"::side_by_side_figure,anchor="''fig-kernel1''",
                       caption="''Pure Kernel Inference Rules I ''",relative_width="48",
                       src="''figures/pure-inferences-I''",anchor2="''fig-kernel2''",
                       caption2="''Pure Kernel Inference Rules II''",relative_width2="47",
                       src2="''figures/pure-inferences-II''"]\<open>  \<close>
-*)
+
 
 figure*[kir1::figure,relative_width="100",src="''figures/pure-inferences-I''"]
        \<open> Pure Kernel Inference Rules I.\<close>
