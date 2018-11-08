@@ -34,6 +34,25 @@ export `$ISABELLE getenv ISABELLE_TOOLS`
 
 GEN_DIR=document-generator
 
+
+VERSION=`$ISABELLE version`
+if [ "$VERSION" != "Isabelle2017: October 2017" ]; then
+  echo "Warning, the version of Isabelle (i.e., $VERSION) you are using"
+  echo "                    IS NOT SUPPORTED"
+  echo "by the current version of Isabelle/DOF. Please install a supported"
+  echo "version of Isabelle and rerun the install script, providing the"
+  echo "the \"isabelle\" binary as argument."
+  echo 
+  read -p "Still continue (y/N)? " -n 1 -r
+  echo 
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then 
+      echo "Continuing installation on your OWN risk."
+  else
+      exit 1
+  fi
+fi
+
 if [[ -d "$ISABELLE_HOME_USER/DOF" ]]; then
     echo "Moving old installation to $DIR/settings $ISABELLE_HOME_USER/DOF.bak"
     rm -rf "$ISABELLE_HOME_USER/DOF.bak"
