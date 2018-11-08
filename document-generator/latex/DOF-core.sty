@@ -20,7 +20,7 @@
 \RequirePackage{environ}
 \RequirePackage{graphicx}
 \RequirePackage{fp}
-
+\RequirePackage[caption]{subfig}
 % Generic dispatcher
 \newkeycommand+[\|]\isaDof[env={UNKNOWN},label=,type={dummyT},args={}][1]{%
 \csname isaDof.\commandkey{env}.\commandkey{type}\endcsname[label=\commandkey{label},\commandkey{args}]{#1}%
