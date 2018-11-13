@@ -17,7 +17,7 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            RegExpInterface    (* Interface to functional regular automata for monitoring *)
            Assert
            
-  keywords "+=" ":="
+  keywords "+=" ":=" "accepts" "rejects"
 
   and      "title*"      "subtitle*"
            "chapter*" "section*"    "subsection*"   "subsubsection*" 
@@ -1230,7 +1230,6 @@ fun docitem_value_ML_antiquotation binding =
 
 (* Setup for general docrefs of the global DOF_core.default_cid - class ("text")*)
 val _ = Theory.setup((docitem_ref_antiquotation @{binding docref} DOF_core.default_cid) #>
-                     (* deprecated syntax                 ^^^^^^*)
                      (docitem_ref_antiquotation @{binding docitem_ref} DOF_core.default_cid) #>
                      (* deprecated syntax                 ^^^^^^^^^^*)
                      (docitem_ref_antiquotation @{binding docitem} DOF_core.default_cid) #>
@@ -1375,7 +1374,7 @@ fun check_regexps term =
         (* Missing: Checks on constants such as undefined, ... *)
     in  term end
 
-fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdefaults rexp thy =
+fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdefaults rjtS rexp thy =
     let
       val ctxt = Proof_Context.init_global thy;
       val regexps = map (Syntax.read_term_global thy) rexp;
@@ -1426,14 +1425,19 @@ val _ =
      -- (Parse.type_args_constrained  -- Parse.binding) 
      -- (@{keyword "="} 
      |-- Scan.option (Parse.typ --| @{keyword "+"}) 
-     -- Scan.repeat1 
+      -- Scan.repeat1 
              (Parse.const_binding -- Scan.option (@{keyword "<="} |-- Parse.term)))
-     -- Scan.repeat (@{keyword "where"} |-- Parse.term)) 
-    >> (fn (((overloaded, x), (y, z)),rex) =>
-           Toplevel.theory (add_doc_class_cmd {overloaded = overloaded} x y z rex)));
+      -- (   Scan.repeat (@{keyword "rejects"} |-- Parse.enum1 "," Args.name) 
+          -- Scan.repeat (@{keyword "accepts"} |-- Parse.term))) 
+    >> (fn (((overloaded, x), (y, z)),(rejectS,accept_rex)) =>
+           Toplevel.theory (add_doc_class_cmd {overloaded = overloaded} x y z rejectS accept_rex)));
 
 end (* struct *)
 \<close>  
+
+ML\<open>
+
+\<close>
 
 section\<open> Testing and Validation \<close>
   

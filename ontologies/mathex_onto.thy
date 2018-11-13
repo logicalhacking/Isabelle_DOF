@@ -93,7 +93,7 @@ doc_class Solution = Exam_item +
 doc_class MathExam=
   content :: "(Header + Author + Exercise) list"
   global_grade :: Grade 
-  where "\<lbrace>Author\<rbrace>\<^sup>+  ~~  Header ~~  \<lbrace>Exercise ~~ Solution\<rbrace>\<^sup>+ "
+  accepts "\<lbrace>Author\<rbrace>\<^sup>+  ~~  Header ~~  \<lbrace>Exercise ~~ Solution\<rbrace>\<^sup>+ "
   
 (*>>*)
 end

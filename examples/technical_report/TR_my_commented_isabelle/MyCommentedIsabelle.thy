@@ -457,22 +457,23 @@ side_by_side_figure*["text-elements"::side_by_side_figure,anchor="''fig-kernel1'
                       caption2="''Pure Kernel Inference Rules II''",relative_width2="47",
                       src2="''figures/pure-inferences-II''"]\<open>  \<close>
 
-
+(*
 figure*[kir1::figure,relative_width="100",src="''figures/pure-inferences-I''"]
        \<open> Pure Kernel Inference Rules I.\<close>
 figure*[kir2::figure,relative_width="100",src="''figures/pure-inferences-II''"]
        \<open> Pure Kernel Inference Rules II. \<close>
+ *)
 
 text\<open>Note that the transfer rule:
 \[
 \begin{prooftree}
- \Gamma \vdash_\theta \phi            \quad \quad       \theta \subseteq \theta'
+ \Gamma \vdash_\theta \phi            \qquad \qquad       \theta \sqsubseteq \theta'
 \justifies
- \Gamma \vdash_\theta' \phi
+ \Gamma \vdash_{\theta'} \phi  \qquad \qquad
 \end{prooftree}
 \]
-which is a consequence of explicit theories  is a characteristic of Isabelle's the Kernel design
-and a remarquable difference to its sisters HOL-Light and HOL4; instead of transfer, these systems
+which is a consequence of explicit theories  characteristic for Isabelle's LCF-kernel design
+and a remarkable difference to its sisters HOL-Light and HOL4; instead of transfer, these systems
 reconstruct proofs in an enlarged global context instead of taking the result and converting it.\<close>
 
 text\<open>Besides the meta-logical (Pure) implication $\_\Longrightarrow \_$, the Kernel axiomatizes
@@ -509,13 +510,12 @@ ML\<open>
 
 subsection{* Theories *}
 
-
 text \<open> This structure yields the datatype \verb*thy* which becomes the content of 
 \verb*Context.theory*. In a way, the LCF-Kernel registers itself into the Nano-Kernel,
 which inspired me (bu) to this naming. \<close>
 ML{*
 
-(* intern Theory.Thy; (* Data-Type Abstraction still makes it an LCF Kernel *)
+(* intern Theory.Thy; 
 
 datatype thy = Thy of
  {pos: Position.T,
@@ -543,80 +543,80 @@ Theory.end_theory: theory -> theory;
 
 *}
 
-text{* Even the parsers and type checkers stemming from the theory-structure are registered via
-hooks (this can be confusing at times). Main phases of inner syntax processing, with standard 
-implementations of parse/unparse operations were treated this way.
-At the very very end in  @{file "~~/src/Pure/Syntax/syntax_phases.ML"}, it sets up the entire syntax engine 
-(the hooks) via:
-*}
-
-
-(* 
-val _ =
-  Theory.setup
-   (Syntax.install_operations
-     {parse_sort = parse_sort,
-      parse_typ = parse_typ,
-      parse_term = parse_term false,
-      parse_prop = parse_term true,
-      unparse_sort = unparse_sort,
-      unparse_typ = unparse_typ,
-      unparse_term = unparse_term,
-      check_typs = check_typs,
-      check_terms = check_terms,
-      check_props = check_props,
-      uncheck_typs = uncheck_typs,
-      uncheck_terms = uncheck_terms});
-*)
-  
-text{* Thus, Syntax\_Phases does the actual work, including 
-        markup generation and  generation of reports. 
-Look at: *}
-(*
-fun check_typs ctxt raw_tys =
-  let
-    val (sorting_report, tys) = Proof_Context.prepare_sortsT ctxt raw_tys;
-    val _ = if Context_Position.is_visible ctxt then Output.report sorting_report else ();
-  in
-    tys
-    |> apply_typ_check ctxt
-    |> Term_Sharing.typs (Proof_Context.theory_of ctxt)
-  end;
-
-which is the real implementation behind Syntax.check_typ
-
-or:
-
-fun check_terms ctxt raw_ts =
-  let
-    val (sorting_report, raw_ts') = Proof_Context.prepare_sorts ctxt raw_ts;
-    val (ts, ps) = Type_Infer_Context.prepare_positions ctxt raw_ts';
-
-    val tys = map (Logic.mk_type o snd) ps;
-    val (ts', tys') = ts @ tys
-      |> apply_term_check ctxt
-      |> chop (length ts);
-    val typing_report =
-      fold2 (fn (pos, _) => fn ty =>
-        if Position.is_reported pos then
-          cons (Position.reported_text pos Markup.typing
-            (Syntax.string_of_typ ctxt (Logic.dest_type ty)))
-        else I) ps tys' [];
-
-    val _ =
-      if Context_Position.is_visible ctxt then Output.report (sorting_report @ typing_report)
-      else ();
-  in Term_Sharing.terms (Proof_Context.theory_of ctxt) ts' end;
-
-which is the real implementation behind Syntax.check_term
-
-As one can see, check-routines internally generate the markup.
-
-*)  
 
 section\<open>Backward Proofs, Tactics and Tacticals\<close>
 
-text\<open>MORE TO COME\<close>
+text\<open> \<^verbatim>\<open>tactic\<close>'s are in principle relations on theorems; this gives a natural way 
+to represent the fact that HO-Unification (and therefore the mechanism of rule-instantiation) 
+are non-deterministic in principle. Heuristics may choose particular preferences between 
+the theorems in the range of this relation, but the Isabelle Design accepts this fundamental 
+fact reflected at this point in the prover architecture. 
+This potentially infinite relation is implemented by a function of theorems to lazy lists 
+over theorems, which gives both sufficient structure for heuristic
+considerations as well as a nice algebra, called  \<^verbatim>\<open>TACTICAL\<close>'s, providing a bottom element
+@{ML "no_tac"} (the function that always fails), the top-element @{ML "all_tac"}
+ (the function that never fails), sequential composition @{ML "op THEN"}, (serialized) 
+non-deterministic composition @{ML "op ORELSE"}, conditionals, repetitions over lists, etc.
+The following is an excerpt of @{file "~~/src/Pure/tactical.ML"}:
+\<close>
+
+ML\<open>
+signature TACTICAL =
+sig
+  type tactic = thm -> thm Seq.seq
+
+  val all_tac: tactic
+  val no_tac: tactic
+  val COND: (thm -> bool) -> tactic -> tactic -> tactic
+
+  val THEN: tactic * tactic -> tactic
+  val ORELSE: tactic * tactic -> tactic
+  val THEN': ('a -> tactic) * ('a -> tactic) -> 'a -> tactic
+  val ORELSE': ('a -> tactic) * ('a -> tactic) -> 'a -> tactic
+
+  val TRY: tactic -> tactic
+  val EVERY: tactic list -> tactic
+  val EVERY': ('a -> tactic) list -> 'a -> tactic
+  val FIRST: tactic list -> tactic
+  (* ... *)
+end
+\<close>
+
+text\<open>The next layer in the architecture describes @{ML_type \<open>tactic\<close>}'s, i.e. basic operations on theorems 
+in a backward reasoning style (bottom up development of proof-trees). An initial state for
+some property @{term A} --- the \<^emph>\<open>goal\<close> --- is constructed via the kernel @{ML "Thm.trivial"}-operation into 
+@{term "A \<Longrightarrow> A"}, and tactics either refine the premises --- the \<^emph>\<open>subgoals\<close> the of this meta-implication --- 
+producing more and more of them or eliminate them. Subgoals of the form  
+@{term "B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> A \<Longrightarrow> B\<^sub>3 \<Longrightarrow> B\<^sub>4 \<Longrightarrow> A"} can be eliminated via 
+the @{ML Tactic.assume_tac} - tactic, 
+and a subgoal @{term C\<^sub>m} can be refined via the theorem
+@{term "E\<^sub>1 \<Longrightarrow> E\<^sub>2 \<Longrightarrow> E\<^sub>3 \<Longrightarrow> C\<^sub>m"} the @{ML Tactic.resolve_tac} - tactic to new subgoals
+@{term "E\<^sub>1"},@{term "E\<^sub>2"}, @{term "E\<^sub>3"}. In case that a theorem used for resolution
+has no premise @{term "E\<^sub>i"}, the subgoal  @{term C\<^sub>m} is also eliminated ("closed").
+
+The following abstract of the most commonly used @{ML_type \<open>tactic\<close>}'s drawn from
+@{file "~~/src/Pure/tactic.ML"} looks as follows:
+\<close>
+
+ML\<open>
+signature BASIC_TACTIC =
+sig
+  (* ... *)
+  val assume_tac: Proof.context -> int -> tactic
+  val compose_tac: Proof.context -> (bool * thm * int) -> int -> tactic
+  val resolve_tac: Proof.context -> thm list -> int -> tactic
+  val eresolve_tac: Proof.context -> thm list -> int -> tactic
+  val forward_tac: Proof.context -> thm list -> int -> tactic
+  val dresolve_tac: Proof.context -> thm list -> int -> tactic
+  val rotate_tac: int -> int -> tactic
+  val defer_tac: int -> tactic
+  val prefer_tac: int -> tactic
+  (* ... *)
+end;
+\<close>
+
+
+
 
 section\<open>The Isar Engine\<close>
   
@@ -1348,6 +1348,78 @@ val _ =
 Thy_Output.present_thy;
 *}  
 
-    
+text{* Even the parsers and type checkers stemming from the theory-structure are registered via
+hooks (this can be confusing at times). Main phases of inner syntax processing, with standard 
+implementations of parse/unparse operations were treated this way.
+At the very very end in  @{file "~~/src/Pure/Syntax/syntax_phases.ML"}, it sets up the entire syntax engine 
+(the hooks) via:
+*}
+
+
+(* 
+val _ =
+  Theory.setup
+   (Syntax.install_operations
+     {parse_sort = parse_sort,
+      parse_typ = parse_typ,
+      parse_term = parse_term false,
+      parse_prop = parse_term true,
+      unparse_sort = unparse_sort,
+      unparse_typ = unparse_typ,
+      unparse_term = unparse_term,
+      check_typs = check_typs,
+      check_terms = check_terms,
+      check_props = check_props,
+      uncheck_typs = uncheck_typs,
+      uncheck_terms = uncheck_terms});
+*)
+  
+text{* Thus, Syntax\_Phases does the actual work, including 
+        markup generation and  generation of reports. 
+Look at: *}
+(*
+fun check_typs ctxt raw_tys =
+  let
+    val (sorting_report, tys) = Proof_Context.prepare_sortsT ctxt raw_tys;
+    val _ = if Context_Position.is_visible ctxt then Output.report sorting_report else ();
+  in
+    tys
+    |> apply_typ_check ctxt
+    |> Term_Sharing.typs (Proof_Context.theory_of ctxt)
+  end;
+
+which is the real implementation behind Syntax.check_typ
+
+or:
+
+fun check_terms ctxt raw_ts =
+  let
+    val (sorting_report, raw_ts') = Proof_Context.prepare_sorts ctxt raw_ts;
+    val (ts, ps) = Type_Infer_Context.prepare_positions ctxt raw_ts';
+
+    val tys = map (Logic.mk_type o snd) ps;
+    val (ts', tys') = ts @ tys
+      |> apply_term_check ctxt
+      |> chop (length ts);
+    val typing_report =
+      fold2 (fn (pos, _) => fn ty =>
+        if Position.is_reported pos then
+          cons (Position.reported_text pos Markup.typing
+            (Syntax.string_of_typ ctxt (Logic.dest_type ty)))
+        else I) ps tys' [];
+
+    val _ =
+      if Context_Position.is_visible ctxt then Output.report (sorting_report @ typing_report)
+      else ();
+  in Term_Sharing.terms (Proof_Context.theory_of ctxt) ts' end;
+
+which is the real implementation behind Syntax.check_term
+
+As one can see, check-routines internally generate the markup.
+
+*)  
+
+
+
   
 end

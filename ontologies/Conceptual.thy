@@ -40,6 +40,6 @@ doc_class G = C +
 
 doc_class M = 
    trace :: "(A + C + D + F) list"
-   where "A ~~ \<lbrace>C || D\<rbrace>\<^sup>* ~~ \<lbrakk>F\<rbrakk>"
+   accepts "A ~~ \<lbrace>C || D\<rbrace>\<^sup>* ~~ \<lbrakk>F\<rbrakk>"
      
 end     

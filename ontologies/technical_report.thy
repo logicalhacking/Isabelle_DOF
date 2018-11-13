@@ -13,7 +13,7 @@ doc_class "chapter" = text_section +
 doc_class report = 
    style_id :: string                <= "''LNCS''"
    version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
-   where "(title       ~~ 
+   accepts "(title       ~~ 
            \<lbrakk>subtitle\<rbrakk>   ~~
            \<lbrace>author\<rbrace>\<^sup>+   ~~ 
            abstract     ~~

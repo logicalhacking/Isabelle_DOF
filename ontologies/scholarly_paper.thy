@@ -83,7 +83,7 @@ text \<open>underlying idea: a monitor class automatically receives a
 doc_class article = 
    style_id :: string                <= "''LNCS''"
    version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
-   where "(title       ~~ 
+   accepts "(title       ~~ 
            \<lbrakk>subtitle\<rbrakk>   ~~
            \<lbrace>author\<rbrace>\<^sup>+   ~~ 
            abstract     ~~

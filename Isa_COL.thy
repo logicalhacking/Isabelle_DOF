@@ -29,10 +29,11 @@ doc_class side_by_side_figure = figure +
    caption2         :: "string"
 
 doc_class figure_group = 
- (*  trace            :: "doc_class rexp list" <= "[]" *)
+   (*  trace :: "doc_class rexp list" <= "[]" automatically generated since monitor clause *)
    anchor           :: "string"
    caption          :: "string"
-   where "\<lbrace>figure\<rbrace>\<^sup>+"
+   rejects             "figure_group"   (* this forbids recursive figure-groups *)
+   accepts             "\<lbrace>figure\<rbrace>\<^sup>+"
 
 (* dito the future table *)
 
