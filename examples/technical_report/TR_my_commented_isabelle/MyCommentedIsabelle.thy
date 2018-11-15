@@ -26,46 +26,110 @@ text to the unfortunately somewhat outdated "The Isabelle Cookbook" in
 \url{https://nms.kcl.ac.uk/christian.urban/Cookbook/}. The reader is encouraged
 not only to consider the generated .pdf, but also consult the loadable version in Isabelle/jedit
 in order to make experiments on the running code. 
+
+This text is written itself in Isabelle/Isar using a specific document ontology
+for technical reports. It is intended to be a "living document", i.e. it is not only
+used for generating a static, conventional .pdf, but also for direct interactive 
+exploration in Isabelle/jedit. This way, types, intermediate results of computations and
+checks can be repeated by the reader who is invited to interact with this document.
+Moreover, the textual parts have been enriched with a maximum of formal content
+which makes this text re-checkable at each load and easier maintainable.
 \<close>
 
 
 
 chapter{* SML and Fundamental SML libraries  *}    
 
-section "Text, Antiquotations, and the Isabelle/Pure bootstrap"
+section "ML, Text and Antiquotations"
 
 text\<open>Isabelle is written in SML, the "Standard Meta-Language", which is
-is an impure functional programming language allowing, in principle, variables and side-effects: \<close>
+is an impure functional programming language allowing, in principle, mutable variables and side-effects. 
+The following Isabelle/Isar commands allow for accessing the underlying SML interpreter
+of Isabelle directly. In the example, a mutable variable X is declared, defined to 0 and updated; 
+and finally re-evaluated leading to output: \<close>
 
 ML\<open> val X = Unsynchronized.ref 0;
     X:= !X + 1;
-    X\<close>
+    X
+  \<close>
 
 text\<open>However, since Isabelle is a platform involving parallel execution, concurrent computing, and,
 as an interactive environment, involves backtracking / re-evaluation as a consequence of user-
 interaction, imperative programming is discouraged and nearly never used in the entire Isabelle
-code-base. Isabelle then implements an own top-level for an extensible language, Isar, in which
-domain-specific components can be developed and integrated into the system on the fly. Thus, the 
-Isabelle code-base consists mainly of SML and \<^verbatim>\<open>.thy\<close>-files containing mixtures of 
-Isar commands and SML. Furthermore, a rich text annotation language is provided for a specific
-style of literate programming. \<close>
+code-base. The preferred programming style is purely functional: \<close>
 
-text\<open>Text enriched by "formal content", i.e. machine-checked, typed references 
-     to all sorts of entities in form \<^emph>\<open>antiquotations\<close> allows for coping with 
-     sources that rapidly evolve and were developed by distributed teams 
-     as is typical in open-source developments. 
-     A paradigmatic example for antiquotation in Texts and Program snippets is here:
+ML\<open> fun fac x = if x = 0 then 1 else x * fac(x-1) ;
+    fac 10;
+  \<close>
+-- or 
+ML\<open> type state = {  a : int,   b : string}
+    fun incr_state ({a, b}:state) =  {a=a+1, b=b}
+  \<close>
+
+text\<open> The faculty function is defined and executed; the (sub)-interpreter in Isar
+works in the conventional read-execute-print loop for each statement separated by a ";".
+Functions, types, data-types etc. can be grouped to modules (called \<^emph>\<open>structures\<close>) which can
+be constrained to interfaces (called \<^emph>\<open>signatures\<close>) and even be parametric structures
+(called \<^emph>\<open>functors\<close>). \<close>
+
+text\<open> The Isabelle/Isar interpreter (called \<^emph>\<open>toplevel\<close> ) is extensible; by a mixture of SML
+and Isar-commands, domain-specific components can be developed and integrated into the system 
+on the fly. Actually, the Isabelle system code-base consists mainly of SML and \<^verbatim>\<open>.thy\<close>-files 
+containing mixtures of Isar commands and SML. \<close>
+
+text\<open> Besides the ML-command used in the above examples, there are a number of commands 
+representing text-elements in Isabelle/Isar; text commands can be interleaved arbitraryly
+with other commands. Text in text-commands may use LaTeX and is used for type-setting 
+documentations in a kind of literate programming style. \<close>
+
+text\<open>So: the text command for:\<close>
+
+text\<open>\<^emph>\<open>This is a text.\<close>\<close>
+
+text\<open>... is represented in an \<^verbatim>\<open>.thy\<close> file by:\<close>
+
+text\<open>\verb+text\<open>\<^emph>\<open>This is a text.\<close>\<close>+\<close>
+
+text\<open>and desplayed in the Isabelle/jedit front-end at the sceen by:\<close>
+
+figure*[fig2::figure, relative_width="100",src="''figures/text-element''"]
+        \<open>A text-element as presented in Isabelle/jedit. \<close>
+
+text\<open> text-commands, ML- commands (and in principle any other command) can be seen as 
+\<^emph>\<open>quotations\<close> over the underlying SML environment (similar to OCaml or Haskell).
+Linking these different sorts of quotations with each other and the underlying SML-envirnment
+is supported via \<^emph>\<open>antiquotations\<close>'s. Generally speaking, antiquotations are a programming technique 
+to specify expressions or patterns in a quotation, parsed in the context of the enclosing expression 
+or pattern where the quotation is.
+
+The way an antiquotation is specified depends on the quotation expander: typically a specific 
+character and an identifier, or specific parentheses and a complete expression or pattern.\<close>
+
+text\<open> In Isabelle documentations, antiquotation's were heavily used to enrich literate explanations
+and documentations by "formal content", i.e. machine-checked, typed references
+to all sorts of entities in the context of the interpreting environment. 
+Formal content allows for coping with sources that rapidly evolve and were developed by 
+distributed teams as is typical in open-source developments. 
+A paradigmatic example for antiquotation in Texts and Program snippets is here:
 \<close>
 
-text \<open> @{footnote \<open>sdf\<close>}, @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"}\<close> 
-ML\<open> val x = @{thm refl}\<close>
+text\<open> @{footnote \<open>sdf\<close>}, @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"}\<close> 
+ML\<open>    val x = @{thm refl};
+       val y = @{term "A \<longrightarrow> B"}
+       val y = @{typ  "'a list"}
+  \<close>
 
-text\<open>In a way, literate specification with a maximum of formal content is a way to
-     ensure "Agile Development", at least for its objectives, albeit not
-     for its popular methods and processes like SCRUM. 
+text\<open>... which we will describe in more detail later. \<close> 
 
+text\<open>In a way, literate specification attempting to maximize its formal content is a way to
+ensure "Agile Development" in a (theory)-document development, at least for its objectives, 
+albeit not for its popular methods and processes like SCRUM. \<close>
+
+paragraph\<open>
      A maximum of formal content inside text documentation also ensures the 
      consistency of this present text with the underlying Isabelle version.\<close>
+
+section\<open>The Isabelle/Pure bootstrap\<close>
 
 text\<open>It is instructive to study the fundamental bootstrapping sequence of the Isabelle system;
      it is written in the Isar format and gives an idea of the global module dependencies: 
@@ -89,21 +153,23 @@ except those generated by the specific "error" function are discouraged in Isabe
 source programming since they might produce races. Finally, a number of commonly
 used "squigglish" combinators is listed:
 \<close>
-ML{*
-(*
-    exception Bind
-    exception Chr
-    exception Div
-    exception Domain
-    exception Fail of string
-    exception Match
-    exception Overflow
-    exception Size
-    exception Span
-    exception Subscript
- *)
-exnName : exn -> string ; (* -- very interisting to query an unknown exception  *)
-exnMessage : exn -> string ;
+ML\<open>
+ Bind      : exn;
+ Chr       : exn;
+ Div       : exn;
+ Domain    : exn;
+ Fail      : string -> exn;
+ Match     : exn;
+ Overflow  : exn;
+ Size      : exn;
+ Span      : exn;
+ Subscript : exn;
+
+ exnName : exn -> string ; (* -- very interesting to query an unknown exception  *)
+ exnMessage : exn -> string ;
+\<close>
+
+ML\<open>
 op ! : 'a Unsynchronized.ref -> 'a;
 op := : ('a Unsynchronized.ref * 'a) -> unit;
 
@@ -117,7 +183,7 @@ ignore: 'a -> unit;
 op before : ('a * unit) -> 'a;
 I: 'a -> 'a;
 K: 'a -> 'b -> 'a
-*}  
+\<close> 
 
 text\<open>Some basic examples for the programming style using these combinators can be found in the
  "The Isabelle Cookbook" section 2.3.\<close>
@@ -1457,7 +1523,4 @@ As one can see, check-routines internally generate the markup.
 
 *)  
 
-
-
-  
 end

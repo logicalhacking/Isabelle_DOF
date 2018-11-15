@@ -11,6 +11,7 @@ session MyCommentedIsabelle = "Functional-Automata" +
     "ontologies.tex"
     "prooftree.sty"
     "build"
+    "figures/text-element.pdf"
     "figures/isabelle-architecture.pdf"
     "figures/pure-inferences-I.pdf"
     "figures/pure-inferences-II.pdf"
