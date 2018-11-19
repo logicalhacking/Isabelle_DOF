@@ -75,7 +75,7 @@ be constrained to interfaces (called \<^emph>\<open>signatures\<close>) and even
 text\<open> The Isabelle/Isar interpreter (called \<^emph>\<open>toplevel\<close> ) is extensible; by a mixture of SML
 and Isar-commands, domain-specific components can be developed and integrated into the system 
 on the fly. Actually, the Isabelle system code-base consists mainly of SML and \<^verbatim>\<open>.thy\<close>-files 
-containing mixtures of Isar commands and SML. \<close>
+containing such mixtures of Isar commands and SML. \<close>
 
 text\<open> Besides the ML-command used in the above examples, there are a number of commands 
 representing text-elements in Isabelle/Isar; text commands can be interleaved arbitraryly

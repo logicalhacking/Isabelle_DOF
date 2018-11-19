@@ -50,16 +50,16 @@ This universe of denotations is in our concrete case: *}
 
 text{* Now the denotational semantics for regular expression can be defined on a post-card: *}
 
-fun              L :: "'a rexp => 'a lang"
-  where L_Emp :   "L Zero        = {}"
-       |L_One:    "L One         = {[]}"
-       |L_Atom:   "L (\<lfloor>a\<rfloor>)       = {[a]}"
-       |L_Un:     "L (el || er)  = (L el) \<union> (L er)"
-       |L_Conc:   "L (el ~~ er)  = {xs@ys | xs ys. xs \<in> L el \<and> ys \<in> L er}"
-       |L_Star:   "L (Star e)    = Regular_Set.star(L e)"
+fun       L :: "'a rexp => 'a lang"
+  where   L_Emp :   "L Zero        = {}"
+         |L_One:    "L One         = {[]}"
+         |L_Atom:   "L (\<lfloor>a\<rfloor>)       = {[a]}"
+         |L_Un:     "L (el || er)  = (L el) \<union> (L er)"
+         |L_Conc:   "L (el ~~ er)  = {xs@ys | xs ys. xs \<in> L el \<and> ys \<in> L er}"
+         |L_Star:   "L (Star e)    = Regular_Set.star(L e)"
 
 
-text\<open>A more useful definition is the \<close>
+text\<open>A more useful definition is the sub-language - definition\<close>
 fun       L\<^sub>s\<^sub>u\<^sub>b :: "'a::order rexp => 'a lang"
   where   L\<^sub>s\<^sub>u\<^sub>b_Emp:    "L\<^sub>s\<^sub>u\<^sub>b Zero        = {}"
          |L\<^sub>s\<^sub>u\<^sub>b_One:    "L\<^sub>s\<^sub>u\<^sub>b One         = {[]}"
@@ -114,13 +114,14 @@ structure RegExpInterface : sig
     type automaton
     type env 
     type cid
-    val  alphabet: term list -> env
-    val  conv    : term -> env -> int RegExpChecker.rexp (* for debugging *)
+    val  alphabet    : term list -> env
+    val  ext_alphabet: env -> term list -> env
+    val  conv        : term -> env -> int RegExpChecker.rexp (* for debugging *)
     val  rexp_term2da: env -> term -> automaton
-    val  enabled : automaton -> env -> cid list  
-    val  next    : automaton -> env -> cid -> automaton
-    val  final   : automaton -> bool
-    val  accepts : automaton -> env -> cid list -> bool
+    val  enabled     : automaton -> env -> cid list  
+    val  next        : automaton -> env -> cid -> automaton
+    val  final       : automaton -> bool
+    val  accepts     : automaton -> env -> cid list -> bool
   end
  =
 struct
@@ -134,6 +135,7 @@ local open RegExpChecker in
 
   val add_atom = fold_aterms (fn Const(c as(_,Type(@{type_name "rexp"},_)))=> insert (op=) c |_=>I);
   fun alphabet termS  =  rev(map fst (fold add_atom termS []));
+  fun ext_alphabet env termS  =  rev(map fst (fold add_atom termS [])) @ env;
 
   fun conv (Const(@{const_name "Regular_Exp.rexp.Zero"},_)) _ = Zero
      |conv (Const(@{const_name "Regular_Exp.rexp.One"},_)) _ = Onea 

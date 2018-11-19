@@ -67,6 +67,7 @@ struct
                            name   : binding, thy_name : string, id : serial, (* for pide *)
                            inherits_from  : (typ list * string) option,      (* imports *)
                            attribute_decl : (binding * typ * term option) list, (* class local *)
+                           rejectS        : term list,
                            rex            : term list  } (* monitoring regexps --- product semantics*)
 
 
@@ -119,6 +120,7 @@ struct
    val  initial_ISA_tab:ISA_transformer_tab = Symtab.empty
 
    type open_monitor_info = {accepted_cids : string list,
+                             rejected_cids : string list,
                              automatas     : RegExpInterface.automaton list }
 
    type monitor_tab = open_monitor_info Symtab.table
@@ -169,8 +171,8 @@ fun upd_monitor_tabs f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab
              ISA_transformer_tab = ISA_transformer_tab, monitor_tab = f monitor_tab};
 
 
-fun get_accepted_cids  ({accepted_cids, automatas }:open_monitor_info) =  accepted_cids
-fun get_automatas   ({accepted_cids, automatas }:open_monitor_info) =  automatas
+fun get_accepted_cids  ({accepted_cids, ... } : open_monitor_info) = accepted_cids
+fun get_automatas      ({automatas, ... }     : open_monitor_info) = automatas
 
 
 (* doc-class-name management: We still use the record-package for internally 
@@ -250,8 +252,33 @@ fun declare_object_local oid ctxt  =
         handle Symtab.DUP _ => error("multiple declaration of document reference"))
     end
 
+val SPY = Unsynchronized.ref(Bound 0)
 
-fun define_doc_class_global (params', binding) parent fields reg_exp thy  = 
+fun check_regexps term = 
+    let val _ = case fold_aterms  Term.add_free_names term [] of
+                   n::_ => error("No free variables allowed in monitor regexp:" ^ n)
+                 | _ => ()  
+        val _ = case fold_aterms  Term.add_var_names term [] of
+                   (n,_)::_ => error("No schematic variables allowed in monitor regexp:" ^ n)
+                 | _ => ()
+        (* Missing: Checks on constants such as undefined, ... *)
+    in  term end
+
+fun check_reject_atom cid_long term = 
+    let val _ = case fold_aterms  Term.add_free_names term [] of
+                   n::_ => error("No free variables allowed in monitor regexp:" ^ n)
+                 | _ => ()  
+        val _ = case fold_aterms  Term.add_var_names term [] of
+                   (n,_)::_ => error("No schematic variables allowed in monitor regexp:" ^ n)
+                 | _ => ()
+        (* Missing: Checks on constants such as undefined, ... *)
+        val _ = case term of
+                  Const(_ ,Type(@{type_name "rexp"},[_])) => ()
+                 | _ => error("current restriction: only atoms allowed here!") 
+    in  term end
+
+
+fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms thy  = 
     let val nn = Context.theory_name thy (* in case that we need the thy-name to identify
                                             the space where it is ... *)
         val cid = (Binding.name_of binding)
@@ -273,6 +300,12 @@ fun define_doc_class_global (params', binding) parent fields reg_exp thy  =
         val id = serial ();
         val _ = Position.report pos (docclass_markup true cid id pos);
     
+        val rejectS = map (Syntax.read_term_global thy) reject_Atoms;
+        val _ = map (check_reject_atom cid_long)  rejectS; 
+        val reg_exps = map (Syntax.read_term_global thy) rexp;
+        val _ = map check_regexps reg_exps
+        val _ = if not(null rejectS) andalso (null reg_exps) 
+                then  error ("reject clause requires accept clause ! ") else ();
         val info = {params=params', 
                     name = binding, 
                     thy_name = nn, 
@@ -281,7 +314,8 @@ fun define_doc_class_global (params', binding) parent fields reg_exp thy  =
                                 generation of serials ... *)
                     inherits_from = parent,
                     attribute_decl = fields , 
-                    rex = reg_exp }
+                    rejectS = rejectS,
+                    rex = reg_exps }
     
     in   map_data_global(upd_docclass_tab(Symtab.update(cid_long,info)))(thy)
     end
@@ -470,7 +504,7 @@ fun print_doc_classes b ctxt =
         val _ = writeln "=====================================";    
         fun print_attr (n, ty, NONE) = (Binding.print n)
           | print_attr (n, ty, SOME t) = (Binding.print n^"("^Syntax.string_of_term ctxt t^")")
-        fun print_class (n, {attribute_decl, id, inherits_from, name, params, thy_name, rex}) =
+        fun print_class (n, {attribute_decl, id, inherits_from, name, params, thy_name, rejectS, rex}) =
            (case inherits_from of 
                NONE => writeln ("docclass: "^n)
              | SOME(_,nn) => writeln ("docclass: "^n^" = "^nn^" + ");
@@ -548,7 +582,7 @@ fun write_ontology_latex_sty_template thy =
         val {docobj_tab={tab = x, ...},docclass_tab,...}= get_data_global thy;
         fun  write_attr (n, ty, _) = YXML.content_of(Binding.print n)^ "=\n"
 
-        fun write_class (n, {attribute_decl, id, inherits_from, name, params, thy_name,rex}) =
+        fun write_class (n, {attribute_decl,id,inherits_from,name,params,thy_name,rex,rejectS}) =
             if curr_thy_name = thy_name then
                    toStringDocItemCommand "section" n (map write_attr attribute_decl) ^
                    toStringDocItemCommand "text" n (map write_attr attribute_decl) ^
@@ -875,7 +909,8 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
              along the super-class id. The evaluation is in parallel, simulating a product
              semantics without expanding the subclass relationship. *)
           fun is_enabled_for_cid moid =
-                         let val {accepted_cids, automatas} = the(Symtab.lookup monitor_tab moid)
+                         let val {accepted_cids, rejected_cids, automatas} = 
+                                              the(Symtab.lookup monitor_tab moid)
                              val indexS= 1 upto (length automatas)
                              val indexed_autoS = automatas ~~ indexS
                              fun check_for_cid (A,n) = 
@@ -901,8 +936,10 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
            (* check that any transition is possible : *)
           val delta_autoS = map is_enabled_for_cid enabled_monitors; 
           fun update_info (n, aS) (tab: DOF_core.monitor_tab) =  
-                         let val {accepted_cids,automatas} = the(Symtab.lookup tab n)
-                         in Symtab.update(n, {accepted_cids=accepted_cids, automatas=aS}) tab end
+                         let val {accepted_cids,rejected_cids,automatas} = the(Symtab.lookup tab n)
+                         in Symtab.update(n, {accepted_cids=accepted_cids, 
+                                              rejected_cids=rejected_cids,
+                                              automatas=aS}) tab end
           fun update_trace mon_oid = DOF_core.update_value_global mon_oid (def_trans mon_oid)
           val update_automatons = DOF_core.upd_monitor_tabs(fold update_info delta_autoS)
       in  thy |> fold (update_trace) (enabled_monitors)
@@ -974,18 +1011,19 @@ fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta
 
 
 fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
-    let fun o_m_c oid pos cid_pos doc_attrs thy = create_and_check_docitem true oid pos 
-                                                                           cid_pos doc_attrs thy
+    let fun o_m_c oid pos cid_pos doc_attrs thy = create_and_check_docitem 
+                                                         true oid pos cid_pos doc_attrs thy
         fun compute_enabled_set cid thy = 
                      case DOF_core.get_doc_class_global cid thy of
-                       SOME X => let val alph = RegExpInterface.alphabet (#rex X)
+                       SOME X => let val ralph = RegExpInterface.alphabet (#rejectS X)
+                                     val alph = RegExpInterface.ext_alphabet ralph (#rex X)
                                  in  (alph, map (RegExpInterface.rexp_term2da alph)(#rex X)) end 
                      | NONE => error("Internal error: class id undefined. ");
         
         fun create_monitor_entry thy =  
             let val {cid, ...} = the(DOF_core.get_object_global oid thy)
                 val (S, aS) = compute_enabled_set cid thy
-                val info = {accepted_cids = S, automatas  = aS }
+                val info = {accepted_cids = S, rejected_cids = [], automatas  = aS }
             in  DOF_core.map_data_global(DOF_core.upd_monitor_tabs(Symtab.update(oid, info )))(thy)
             end
     in
@@ -996,7 +1034,7 @@ fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
 fun close_monitor_command (args as (((oid:string,pos),cid_pos),
                                     doc_attrs: (((string*Position.T)*string)*string)list)) thy = 
     let val {monitor_tab,...} = DOF_core.get_data_global thy
-        fun check_if_final {accepted_cids, automatas} = true (* check if final: TODO *)
+        fun check_if_final {accepted_cids, rejected_cids,automatas} = true (* check if final: TODO *)
         val _ =  case Symtab.lookup monitor_tab oid of
                      SOME X => check_if_final X 
                   |  NONE => error ("Not belonging to a monitor class: "^oid)
@@ -1364,21 +1402,11 @@ val tag_attr = (Binding.make("tag_attribute",@{here}), @{typ "int"},Mixfix.NoSyn
 val trace_attr = ((Binding.make("trace",@{here}), "(doc_class rexp \<times> string) list",Mixfix.NoSyn),
                   SOME "[]"): ((binding * string * mixfix) * string option)
 
-fun check_regexps term = 
-    let val _ = case fold_aterms  Term.add_free_names term [] of
-                   n::_ => error("No free variables allowed in monitor regexp:" ^ n)
-                 | _ => ()  
-        val _ = case fold_aterms  Term.add_var_names term [] of
-                   (n,_)::_ => error("No schematic variables allowed in monitor regexp:" ^ n)
-                 | _ => ()
-        (* Missing: Checks on constants such as undefined, ... *)
-    in  term end
 
-fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdefaults rjtS rexp thy =
+fun add_doc_class_cmd overloaded (raw_params, binding) 
+                      raw_parent raw_fieldsNdefaults reject_Atoms regexps thy =
     let
       val ctxt = Proof_Context.init_global thy;
-      val regexps = map (Syntax.read_term_global thy) rexp;
-      val _ = map check_regexps regexps
       val params = map (apsnd (Typedecl.read_constraint ctxt)) raw_params;
       val ctxt1 = fold (Variable.declare_typ o TFree) params ctxt;
       fun cid thy = DOF_core.name2doc_class_name thy (Binding.name_of binding)
@@ -1391,9 +1419,9 @@ fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdef
       val _ = if length raw_fieldsNdefaults' <> length raw_fieldsNdefaults 
               then warning("re-declaration of trace attribute in monitor --- ignored")
               else ()
-      val raw_fieldsNdefaults'' = if  null rexp  
-                                 then raw_fieldsNdefaults' 
-                                 else trace_attr::raw_fieldsNdefaults' 
+      val raw_fieldsNdefaults'' = if  null regexps  
+                                  then raw_fieldsNdefaults' 
+                                  else trace_attr::raw_fieldsNdefaults' 
       val (fields, terms, ctxt3) = read_fields raw_fieldsNdefaults'' ctxt2;
       
       val fieldsNterms = (map (fn (a,b,_) => (a,b)) fields) ~~ terms
@@ -1409,12 +1437,14 @@ fun add_doc_class_cmd overloaded (raw_params, binding) raw_parent raw_fieldsNdef
                                                    else error("no overloading allowed.")
       val gen_antiquotation = OntoLinkParser.docitem_ref_antiquotation
       val _ = map_filter (check_n_filter thy) fields
-    in thy |> Record.add_record overloaded (params', binding) parent (tag_attr::fields) 
-           |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms' regexps
-           |> (fn thy => gen_antiquotation binding (cid thy) thy) 
-              (* defines the ontology-checked text antiquotation to this document class *)
-           |> (Sign.add_consts_cmd [(binding, "doc_class Regular_Exp.rexp", Mixfix.NoSyn)])
+
+
+    in thy |> Record.add_record overloaded (params', binding) parent (tag_attr::fields)
+           |> (Sign.add_consts_cmd [(binding,  "doc_class Regular_Exp.rexp", Mixfix.NoSyn)])
+           |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms' regexps reject_Atoms
               (* adding const symbol representing doc-class for Monitor-RegExps.*)
+           |> (fn thy => gen_antiquotation binding (cid thy) thy)
+              (* defines the ontology-checked text antiquotation to this document class *)
            
     end;
 
@@ -1427,7 +1457,7 @@ val _ =
      |-- Scan.option (Parse.typ --| @{keyword "+"}) 
       -- Scan.repeat1 
              (Parse.const_binding -- Scan.option (@{keyword "<="} |-- Parse.term)))
-      -- (   Scan.repeat (@{keyword "rejects"} |-- Parse.enum1 "," Args.name) 
+      -- (   Scan.optional (@{keyword "rejects"} |-- Parse.enum1 "," Parse.term) []
           -- Scan.repeat (@{keyword "accepts"} |-- Parse.term))) 
     >> (fn (((overloaded, x), (y, z)),(rejectS,accept_rex)) =>
            Toplevel.theory (add_doc_class_cmd {overloaded = overloaded} x y z rejectS accept_rex)));
