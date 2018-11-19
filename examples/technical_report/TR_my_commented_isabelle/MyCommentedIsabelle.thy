@@ -315,6 +315,7 @@ subsection{* Terms and Types *}
 text \<open>A basic data-structure of the kernel is @{file "$ISABELLE_HOME/src/Pure/term.ML"} \<close>  
 ML{* open Term;
 signature TERM' = sig
+  (* ... *)
   type indexname = string * int
   type class = string
   type sort = class list
@@ -332,16 +333,77 @@ signature TERM' = sig
     $ of term * term
   exception TYPE of string * typ list * term list
   exception TERM of string * term list
+  (* ... *)
 end
 *}
-  
+
+text\<open>This core-data structure of the Isabelle Kernel is accessible in the Isabelle/ML environment
+and serves as basis for programmed extensions concerning syntax, type-checking, and advanced
+tactic programming over kernel primitives and higher API's. There are a number of anti-quotations
+giving support for this task; since @{ML Const}-names are long-names revealing information
+of the potentially evolving library structure, the use of anti-quotations leads to a safer programming
+style of tactics and became therefore standard in the entire Isabelle code-base.
+\<close>
+
+text\<open>The following examples show how term- and type-level antiquotations are used and that
+     they can both be used for term-construction as well as term-destruction (pattern-matching):\<close>
+
+ML\<open> val Const ("HOL.implies", @{typ "bool \<Rightarrow> bool \<Rightarrow> bool"}) 
+              $ Free ("A", @{typ "bool"}) 
+              $ Free ("B", @{typ "bool"}) 
+        = @{term "A \<longrightarrow> B"};
+
+ val "HOL.bool" = @{type_name "bool"};
+
+ (* three ways to write type bool:@ *)
+ val Type("fun",[s,Type("fun",[@{typ "bool"},Type(@{type_name "bool"},[])])]) = @{typ "bool \<Rightarrow> bool \<Rightarrow> bool"};
+ 
+\<close>
+
+text\<open>Note that the SML interpreter is configured that he will actually print a type
+     \<^verbatim>\<open>Type("HOL.bool",[])\<close> just as \<^verbatim>\<open>"bool": typ\<close>, so a compact notation looking
+     pretty much like a string. This can be confusing at times.\<close>
+
+text\<open>Note, furthermore, that there is a programming API for the HOL-instance of Isabelle:
+it is contained in @{file  "$ISABELLE_HOME/src/HOL/Tools/hologic.ML"}. It offers for many
+operators of the HOL logic specific constructors and destructors:
+\<close>
+
+ML\<open>
+HOLogic.boolT : typ;
+HOLogic.mk_Trueprop: term -> term;
+HOLogic.dest_Trueprop: term -> term;
+HOLogic.Trueprop_conv: conv -> conv;
+HOLogic.mk_setT: typ -> typ;
+HOLogic.dest_setT: typ -> typ;
+HOLogic.Collect_const: typ -> term;
+HOLogic.mk_Collect: string * typ * term -> term;
+HOLogic.mk_mem: term * term -> term;
+HOLogic.dest_mem: term -> term * term;
+HOLogic.mk_set: typ -> term list -> term;
+HOLogic.conj_intr: Proof.context -> thm -> thm -> thm;
+HOLogic.conj_elim: Proof.context -> thm -> thm * thm;
+HOLogic.conj_elims: Proof.context -> thm -> thm list;
+HOLogic.conj: term;
+HOLogic.disj: term;
+HOLogic.imp: term;
+HOLogic.Not: term;
+HOLogic.mk_not: term -> term;
+HOLogic.mk_conj: term * term -> term;
+HOLogic.dest_conj: term -> term list;
+HOLogic.conjuncts: term -> term list;
+(* ... *)
+\<close>
+
+
+
+subsection{* Type-Certification (=checking that a type annotation is consistent) *}
+
 ML{* Type.typ_instance: Type.tsig -> typ * typ -> bool (* raises  TYPE_MATCH *) *}
 text{* there is a joker type that can be added as place-holder during term construction.
        Jokers can be eliminated by the type inference. *}
   
 ML{*  Term.dummyT : typ *}
-  
-subsection{* Type-Certification (=checking that a type annotation is consistent) *}
 
 ML{*
 Sign.typ_instance: theory -> typ * typ -> bool;
