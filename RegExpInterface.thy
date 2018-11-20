@@ -135,7 +135,12 @@ local open RegExpChecker in
 
   val add_atom = fold_aterms (fn Const(c as(_,Type(@{type_name "rexp"},_)))=> insert (op=) c |_=>I);
   fun alphabet termS  =  rev(map fst (fold add_atom termS []));
-  fun ext_alphabet env termS  =  rev(map fst (fold add_atom termS [])) @ env;
+  fun ext_alphabet env termS  =  
+         let val res = rev(map fst (fold add_atom termS [])) @ env;
+             val _ = if has_duplicates  (op=) res
+                     then error("reject and accept alphabets must be disjoint!")
+                     else ()
+         in res end;
 
   fun conv (Const(@{const_name "Regular_Exp.rexp.Zero"},_)) _ = Zero
      |conv (Const(@{const_name "Regular_Exp.rexp.One"},_)) _ = Onea 

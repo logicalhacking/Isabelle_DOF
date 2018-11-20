@@ -721,8 +721,7 @@ text\<open> \isadof in its present form has a number of technical short-comings 
 
 paragraph\<open> Availability. \<close> 
 text\<open> The implementation of the framework, the discussed ontology definitions, 
-        and examples  are available at 
-        \url{https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF/}.\<close>
+      and examples  are available at  \url{https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF/}.\<close>
 paragraph\<open> Acknowledgement. \<close> 
 text\<open> This work was partly supported by  the framework of IRT SystemX, Paris-Saclay, France, 
 and therefore granted with public funds within the scope of the Program ``Investissements d’Avenir''.\<close>
