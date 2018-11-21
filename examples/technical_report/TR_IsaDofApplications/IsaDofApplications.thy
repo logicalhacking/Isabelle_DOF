@@ -1,6 +1,6 @@
 (*<*)
 theory IsaDofApplications
-  imports "../../ontologies/technical_report"
+  imports "../../../ontologies/technical_report"
 begin
 
 open_monitor*[this::article] 

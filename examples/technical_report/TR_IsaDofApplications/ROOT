@@ -1,8 +1,8 @@
-session "TechnicalReport" = "Functional-Automata" +
+session "TR_IsaDofApplications" = "Functional-Automata" +
   options  [document = pdf, document_output = "output", quick_and_dirty = true]
   theories [document = false]
-    "../../ontologies/scholarly_paper"
-    "../../ontologies/technical_report"
+    "../../../ontologies/scholarly_paper"
+    "../../../ontologies/technical_report"
   theories
     IsaDofApplications
   document_files

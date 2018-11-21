@@ -28,15 +28,13 @@ doc_class side_by_side_figure = figure +
    anchor2          :: "string"
    caption2         :: "string"
 
-ML\<open>@{term "figure_group"}\<close>
-
 
 ML\<open>DOF_core.SPY;\<close>
 doc_class figure_group = 
    (*  trace :: "doc_class rexp list" <= "[]" automatically generated since monitor clause *)
    anchor           :: "string"
    caption          :: "string"
-   rejects             "figure"   (* this forbids recursive figure-groups *)
+   rejects            figure, figure_group   (* this forbids recursive figure-groups *)
    accepts             "\<lbrace>figure\<rbrace>\<^sup>+"
 
 ML\<open>@{term "side_by_side_figure"};

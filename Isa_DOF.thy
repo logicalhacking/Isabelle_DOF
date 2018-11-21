@@ -4,9 +4,12 @@ text\<open> Offering
 \<^item> text-elements that can be annotated with meta-information
 \<^item> typed links to text-elements via specifically generated anti-quotations
 \<^item> typed structure of this meta-information specifiable in an Ontology-Language ODL
+  providing syntax and PIDE support of document classes 
 \<^item> inner-syntax-antiquotations (ISA's) allowing to reference Isabelle-entities such as 
   types, terms, theorems inside the meta-information
 \<^item> monitors allowing to enforce a specific textual structure of an Isabelle Document
+\<^item> a basic infrastructure to define class invariants
+  (for continuous checking of meta-information side-conditions of text-elements 
 \<^item> LaTeX support. \<close> 
   
 text\<open> In this section, we develop on the basis of a management of references Isar-markups
@@ -118,7 +121,7 @@ struct
    type ISA_transformer_tab = (theory -> term * typ * Position.T -> term option) Symtab.table
    val  initial_ISA_tab:ISA_transformer_tab = Symtab.empty
 
-   type docclass_inv_tab = (theory -> bool) Symtab.table
+   type docclass_inv_tab = (Context.generic -> bool) Symtab.table
    val  initial_docclass_inv_tab : docclass_inv_tab = Symtab.empty
 
    type open_monitor_info = {accepted_cids : string list,
@@ -157,6 +160,7 @@ structure Data = Generic_Data
                 monitor_tab =  override(m1,m2), 
                      (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
                 docclass_inv_tab = override(n1,n2)
+                     (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
                }
 );
 
