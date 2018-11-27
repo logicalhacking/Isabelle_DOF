@@ -1,5 +1,5 @@
 (*<*)
-theory IsaDofApplications
+theory IsaDofManual
   imports "../../../ontologies/technical_report"
 begin
 
