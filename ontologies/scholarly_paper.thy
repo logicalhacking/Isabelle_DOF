@@ -13,8 +13,9 @@ doc_class subtitle =
 -- \<open>adding a contribution list and checking that it is cited as well in tech as in conclusion. ? \<close>
 
 doc_class author =
-   email       :: "string"
-   orcid       :: "string"
+   email       :: "string" <= "''''"
+   http_site   :: "string" <= "''''"
+   orcid       :: "string" <= "''''"
    affiliation :: "string"
 
 doc_class abstract =
