@@ -6,8 +6,7 @@ begin
 open_monitor*[this::article] 
 (*>*)
 
-title*[tit::title]\<open>Using the Isabelle Ontology Framework\<close> 
-subtitle*[stit::subtitle]\<open>Linking the Formal with the Informal\<close>
+title*[tit::title]\<open>The \isadof User and Implementation Manual\<close> 
 text*[adb:: author,
       email="''a.brucker@sheffield.ac.uk''",
       orcid="''0000-0002-6355-1200''",
