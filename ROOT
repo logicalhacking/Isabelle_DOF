@@ -8,6 +8,7 @@ session "Isabelle_DOF" = "Functional-Automata" +
     "ontologies/CENELEC_50126"
     "ontologies/Conceptual"
     "ontologies/scholarly_paper"
+    "ontologies/technical_report"
     "ontologies/mathex_onto"
 
 
