@@ -4,7 +4,7 @@ theory MyCommentedIsabelle
 begin
  
 
-open_monitor*[this::article] 
+open_monitor*[this::report] 
 (*>*)
 
 title*[tit::title]\<open>An Account with my Personal, Ecclectic Comments on the Isabelle Architecture\<close> 
