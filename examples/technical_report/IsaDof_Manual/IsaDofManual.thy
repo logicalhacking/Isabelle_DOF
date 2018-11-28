@@ -3,7 +3,7 @@ theory IsaDofManual
   imports "../../../ontologies/technical_report"
 begin
 
-open_monitor*[this::article] 
+open_monitor*[this::report] 
 (*>*)
 
 title*[tit::title]\<open>The \isadof User and Implementation Manual\<close> 

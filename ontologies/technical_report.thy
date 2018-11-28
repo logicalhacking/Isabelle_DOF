@@ -4,15 +4,19 @@ theory technical_report
    imports "scholarly_paper"
 begin
 
+(* for reports paper: invariant: level \<ge> -1 *)
+
 doc_class table_of_contents =
-   depth       :: int <= 3
+   bookmark_depth :: int <= 3
+   depth          :: int <= 3
 
 doc_class front_matter = 
-   style :: string 
+   front_matter_style :: string    (* TODO Achim :::: *)
 
-doc_class "chapter" = text_section +
-   style :: string 
-  
+doc_class index =
+   kind  :: "doc_class" 
+   level :: "int option"
+
 doc_class report = 
    style_id :: string                <= "''LNCS''"
    version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
@@ -25,7 +29,7 @@ doc_class report =
            introduction ~~ 
            \<lbrace>technical || example\<rbrace>\<^sup>+ ~~ 
            conclusion   ~~  
-           \<lbrakk>table_of_contents\<rbrakk>  ~~
+           \<lbrace>index\<rbrace>\<^sup>+  ~~  
            bibliography)"
 
 end
