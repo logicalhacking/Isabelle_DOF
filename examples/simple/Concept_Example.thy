@@ -41,6 +41,14 @@ close_monitor*[struct]
 text\<open>And the trace of the monitor is:\<close>
 ML\<open>@{trace_attribute struct}\<close>
 
+print_doc_classes
+print_doc_items
+
+ML\<open>
+
+\<close>
+
+setup\<open>DOF_core.update_class_invariant "Conceptual.A" (K true)\<close>
   
 end 
   

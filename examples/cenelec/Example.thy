@@ -70,9 +70,6 @@ paragraph* [sdfk] \<open> just a paragraph - lexical variant \<close>
 
 section\<open> Some global inspection commands for the status of docitem  and doc-class tables ... \<close>  
 
-print_doc_classes
-print_doc_items
-
 
 
 section\<open> Text Antiquotation Infrastructure ... \<close>  

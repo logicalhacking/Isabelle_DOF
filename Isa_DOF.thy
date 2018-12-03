@@ -66,8 +66,9 @@ section\<open> A HomeGrown Document Type Management (the ''Model'') \<close>
 ML\<open>
 structure DOF_core = 
 struct
-   type docclass_struct = {params : (string * sort) list, (*currently not used *)
-                           name   : binding, thy_name : string, id : serial, (* for pide *)
+   type docclass_struct = {params         : (string * sort) list, (*currently not used *)
+                           name           : binding, 
+                           thy_name       : string, id : serial, (* for pide *)
                            inherits_from  : (typ list * string) option,      (* imports *)
                            attribute_decl : (binding * typ * term option) list, (* class local *)
                            rejectS        : term list,
@@ -188,7 +189,7 @@ fun upd_monitor_tabs f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab
 fun upd_docclass_inv_tab f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab, docclass_inv_tab} = 
             {docobj_tab = docobj_tab,docclass_tab = docclass_tab,
              ISA_transformer_tab = ISA_transformer_tab, monitor_tab = monitor_tab, 
-             docclass_inv_tab= f docclass_inv_tab};
+             docclass_inv_tab    = f docclass_inv_tab};
 
 
 fun get_accepted_cids  ({accepted_cids, ... } : open_monitor_info) = accepted_cids
@@ -232,11 +233,18 @@ fun is_defined_cid_global cid thy = let val t = #docclass_tab(get_data_global th
                                         Symtab.defined t (name2doc_class_name thy cid) 
                                     end
 
+fun is_defined_cid_global' cid_long thy = let val t = #docclass_tab(get_data_global thy)
+                                    in  cid_long=default_cid orelse  Symtab.defined t cid_long end
+
+
 
 fun is_defined_cid_local cid ctxt  = let val t = #docclass_tab(get_data ctxt)
                                      in  cid=default_cid orelse 
                                          Symtab.defined t (name2doc_class_name_local ctxt cid) 
                                      end
+
+fun is_defined_cid_local' cid_long ctxt  = let val t = #docclass_tab(get_data ctxt)
+                                     in  cid_long=default_cid orelse Symtab.defined t cid_long  end
 
 
 fun is_declared_oid_global oid thy = let val {tab,...} = #docobj_tab(get_data_global thy)
@@ -270,6 +278,24 @@ fun declare_object_local oid ctxt  =
     let fun decl {tab,maxano} = {tab=Symtab.update_new(oid,NONE) tab, maxano=maxano}
     in  (map_data(upd_docobj_tab decl)(ctxt)
         handle Symtab.DUP _ => error("multiple declaration of document reference"))
+    end
+
+
+fun update_class_invariant cid_long f thy = 
+    let val  _ = if is_defined_cid_global' cid_long thy then () 
+                 else error("undefined class id : " ^cid_long)
+    in  map_data_global (upd_docclass_inv_tab (Symtab.update (cid_long, 
+                        (fn ctxt => ((writeln("Inv check of :" ^cid_long); f ctxt )))))) 
+                        thy
+    end
+
+fun get_class_invariant cid_long thy =
+    let val  _ = if is_defined_cid_global' cid_long thy then () 
+                 else error("undefined class id : " ^cid_long)
+        val {docclass_inv_tab, ...} =  get_data_global thy
+    in  case Symtab.lookup  docclass_inv_tab cid_long of 
+            NONE   => K true
+          | SOME f => f
     end
 
 val SPY = Unsynchronized.ref(Bound 0)
@@ -464,9 +490,10 @@ fun update_value_global oid upd thy  =
 
 val ISA_prefix = "Isa_DOF.ISA_"  (* ISA's must be declared in Isa_DOF.thy  !!! *)
 
-fun get_isa_global isa thy  =  case Symtab.lookup (#ISA_transformer_tab(get_data_global thy)) (ISA_prefix^isa) of 
-                                       NONE => error("undefined inner syntax antiquotation: "^isa)
-                                      |SOME(bbb) => bbb
+fun get_isa_global isa thy  =  
+            case Symtab.lookup (#ISA_transformer_tab(get_data_global thy)) (ISA_prefix^isa) of 
+                 NONE      => error("undefined inner syntax antiquotation: "^isa)
+               | SOME(bbb) => bbb
                                
 
 fun get_isa_local isa ctxt  = case Symtab.lookup (#ISA_transformer_tab(get_data ctxt)) (ISA_prefix^isa) of 
@@ -894,13 +921,13 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
                 val _ = if Long_Name.base_name lhs = lhs orelse ln = lhs then ()
                         else error("illegal notation for attribute of "^cid_long)
                 fun join (ttt as @{typ "int"}) 
-                         = Const (@{const_name "plus"}, ttt --> ttt --> ttt)
+                         = Const (@{const_name "Groups.plus"}, ttt --> ttt --> ttt)
                    |join (ttt as @{typ "string"}) 
-                         = Const (@{const_name "append"}, ttt --> ttt --> ttt)
+                         = Const (@{const_name "List.append"}, ttt --> ttt --> ttt)
                    |join (ttt as Type(@{type_name "set"},_)) 
-                         = Const (@{const_name "sup"}, ttt --> ttt --> ttt)
+                         = Const (@{const_name "Lattices.sup"}, ttt --> ttt --> ttt)
                    |join (ttt as Type(@{type_name "list"},_)) 
-                         = Const (@{const_name "append"}, ttt --> ttt --> ttt)
+                         = Const (@{const_name "List.append"}, ttt --> ttt --> ttt)
                    |join _ = error("implicit fusion operation not defined for attribute: "^ lhs)
                  (* could be extended to bool, map, multisets, ... *)
                 val rhs' = instantiate_term tyenv' (generalize_term rhs)
@@ -1491,11 +1518,6 @@ ML\<open>
 
 section\<open> Testing and Validation \<close>
   
-text*[sdf] {* f @{thm refl}*}  
-text*[sdfg] {* fg @{thm refl}*}  
- 
-text*[xxxy] {* dd @{docitem \<open>sdfg\<close>}  @{thm refl}*}    
-
 (* the following test crashes the LaTeX generation - however, without the latter this output is 
    instructive 
 ML\<open>

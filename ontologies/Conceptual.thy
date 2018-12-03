@@ -41,5 +41,14 @@ doc_class G = C +
 doc_class M = 
    trace :: "(A + C + D + F) list"
    accepts "A ~~ \<lbrace>C || D\<rbrace>\<^sup>* ~~ \<lbrakk>F\<rbrakk>"
-     
+
+
+section*[test::A]\<open> Test and Validation\<close>
+text\<open>Defining some document elements to be referenced in another theory: \<close>
+text*[sdf] {* f @{thm refl}*}  
+text*[sdfg] {* fg @{thm refl}*}  
+ 
+text*[xxxy] {* dd @{docitem \<open>sdfg\<close>}  @{thm refl}*}    
+
+
 end     
