@@ -91,9 +91,9 @@ doc_class article =
             \<lbrakk>subtitle\<rbrakk>    ~~
             \<lbrace>author\<rbrace>\<^sup>+     ~~ 
             abstract      ~~
-            introduction  ~~ 
+            \<lbrace>introduction\<rbrace>\<^sup>+   ~~ 
             \<lbrace>technical || example\<rbrace>\<^sup>+ ~~
-            conclusion   ~~  
+            \<lbrace>conclusion\<rbrace>\<^sup>+    ~~  
             bibliography)"
 
 gen_sty_template

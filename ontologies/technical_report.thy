@@ -20,15 +20,15 @@ doc_class index =
 doc_class report = 
    style_id :: string                <= "''LNCS''"
    version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
-   accepts "(title       ~~ 
-           \<lbrakk>subtitle\<rbrakk>   ~~
-           \<lbrace>author\<rbrace>\<^sup>+   ~~ 
-           \<lbrakk>front_matter\<rbrakk>  ~~
-           abstract     ~~
-           \<lbrakk>table_of_contents\<rbrakk>  ~~
-           introduction ~~ 
+   accepts "(title                 ~~ 
+           \<lbrakk>subtitle\<rbrakk>              ~~
+           \<lbrace>author\<rbrace>\<^sup>+               ~~ 
+           \<lbrakk>front_matter\<rbrakk>          ~~
+           abstract                ~~
+           \<lbrakk>table_of_contents\<rbrakk>     ~~
+           \<lbrace>introduction\<rbrace>\<^sup>+         ~~ 
            \<lbrace>technical || example\<rbrace>\<^sup>+ ~~ 
-           conclusion   ~~  
+           \<lbrace>conclusion\<rbrace>\<^sup>+           ~~  
            \<lbrace>index\<rbrace>\<^sup>+  ~~  
            bibliography)"
 
