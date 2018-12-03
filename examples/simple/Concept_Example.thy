@@ -48,7 +48,10 @@ ML\<open>
 
 \<close>
 
-setup\<open>DOF_core.update_class_invariant "Conceptual.A" (K true)\<close>
-  
+setup\<open>DOF_core.update_class_invariant "Conceptual.A" (fn thy => (writeln "ZZZ"; true))\<close>
+
+section*[b::A, x = "5"] \<open> Lorem ipsum dolor sit amet, ... \<close>
+
+
 end 
   

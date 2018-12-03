@@ -176,7 +176,7 @@ fun upd_docobj_tab f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab,d
             {docobj_tab = f docobj_tab, docclass_tab=docclass_tab, 
              ISA_transformer_tab=ISA_transformer_tab, monitor_tab=monitor_tab,
              docclass_inv_tab=docclass_inv_tab};
-fun upd_docclass_tab f {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z, monitor_tab, docclass_inv_tab} = 
+fun upd_docclass_tab f {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z, monitor_tab,  docclass_inv_tab} = 
             {docobj_tab=x,docclass_tab = f y,ISA_transformer_tab = z, monitor_tab=monitor_tab,
              docclass_inv_tab=docclass_inv_tab};
 fun upd_ISA_transformers f{docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z, monitor_tab, docclass_inv_tab} = 
@@ -1008,12 +1008,14 @@ fun create_and_check_docitem is_monitor oid pos cid_pos doc_attrs thy =
           fun conv_attrs ((lhs, pos), rhs) = (markup2string lhs,pos,"=", Syntax.read_term_global thy rhs)
           val assns' = map conv_attrs doc_attrs
           val (value_term, _(*ty*), _) = calc_update_term thy cid_long assns' defaults 
+          val check_inv =   (DOF_core.get_class_invariant cid_long thy) o Context.Theory 
       in  thy |> DOF_core.define_object_global (oid, {pos      = pos, 
                                                       thy_name = Context.theory_name thy,
                                                       value    = value_term,
                                                       id       = id,   
                                                       cid      = cid_long})
               |> register_oid_cid_in_open_monitors oid pos cid_long
+              |> (fn thy => (check_inv thy; thy))
       end
 
 
@@ -1038,8 +1040,10 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                                                            Syntax.read_term_global thy rhs)
                 val assns' = map conv_attrs doc_attrs
                 val def_trans = #1 o (calc_update_term thy cid_long assns')
+                val check_inv = (DOF_core.get_class_invariant cid_long thy) o Context.Theory 
             in     
                 thy |> DOF_core.update_value_global oid (def_trans)
+                    |> (fn thy => (check_inv thy; thy))
             end
 
 
@@ -1315,6 +1319,7 @@ fun docitem_value_ML_antiquotation binding =
 
 (* Setup for general docrefs of the global DOF_core.default_cid - class ("text")*)
 val _ = Theory.setup((docitem_ref_antiquotation @{binding docref} DOF_core.default_cid) #>
+                     (* deprecated syntax                 ^^^^^^*)
                      (docitem_ref_antiquotation @{binding docitem_ref} DOF_core.default_cid) #>
                      (* deprecated syntax                 ^^^^^^^^^^*)
                      (docitem_ref_antiquotation @{binding docitem} DOF_core.default_cid) #>
