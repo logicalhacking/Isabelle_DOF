@@ -122,7 +122,7 @@ struct
    type ISA_transformer_tab = (theory -> term * typ * Position.T -> term option) Symtab.table
    val  initial_ISA_tab:ISA_transformer_tab = Symtab.empty
 
-   type docclass_inv_tab = (Context.generic -> bool) Symtab.table
+   type docclass_inv_tab = (string -> Context.generic -> bool) Symtab.table
    val  initial_docclass_inv_tab : docclass_inv_tab = Symtab.empty
 
    type open_monitor_info = {accepted_cids : string list,
@@ -294,7 +294,7 @@ fun get_class_invariant cid_long thy =
                  else error("undefined class id : " ^cid_long)
         val {docclass_inv_tab, ...} =  get_data_global thy
     in  case Symtab.lookup  docclass_inv_tab cid_long of 
-            NONE   => K true
+            NONE   => K(K true)
           | SOME f => f
     end
 
@@ -1008,7 +1008,7 @@ fun create_and_check_docitem is_monitor oid pos cid_pos doc_attrs thy =
           fun conv_attrs ((lhs, pos), rhs) = (markup2string lhs,pos,"=", Syntax.read_term_global thy rhs)
           val assns' = map conv_attrs doc_attrs
           val (value_term, _(*ty*), _) = calc_update_term thy cid_long assns' defaults 
-          val check_inv =   (DOF_core.get_class_invariant cid_long thy) o Context.Theory 
+          val check_inv =   (DOF_core.get_class_invariant cid_long thy oid) o Context.Theory 
       in  thy |> DOF_core.define_object_global (oid, {pos      = pos, 
                                                       thy_name = Context.theory_name thy,
                                                       value    = value_term,
@@ -1040,7 +1040,7 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                                                            Syntax.read_term_global thy rhs)
                 val assns' = map conv_attrs doc_attrs
                 val def_trans = #1 o (calc_update_term thy cid_long assns')
-                val check_inv = (DOF_core.get_class_invariant cid_long thy) o Context.Theory 
+                val check_inv = (DOF_core.get_class_invariant cid_long thy oid) o Context.Theory 
             in     
                 thy |> DOF_core.update_value_global oid (def_trans)
                     |> (fn thy => (check_inv thy; thy))
