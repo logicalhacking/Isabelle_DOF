@@ -1090,7 +1090,10 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
                      SOME X => check_if_final X 
                   |  NONE => error ("Not belonging to a monitor class: "^oid)
         val delete_monitor_entry = DOF_core.map_data_global (DOF_core.upd_monitor_tabs (Symtab.delete oid))
-    in  thy |> update_instance_command args 
+        val {cid=cid_long, ...} = the(DOF_core.get_object_global oid thy)
+        val check_inv =   (DOF_core.get_class_invariant cid_long thy oid) o Context.Theory 
+    in  thy |> update_instance_command args
+            |> (fn thy => (check_inv thy; thy))
             |> delete_monitor_entry
     end 
 
@@ -1364,7 +1367,7 @@ fun calc_attr_access ctxt attr oid pos = (* template *)
                                   {long_name, typ=ty,...} = 
                                        case DOF_core.get_attribute_info_local cid attr ctxt of
                                             SOME f => f
-                                          | NONE => error ("attribute undefined for ref"^ oid)
+                                          | NONE => error ("attribute undefined for reference: "^ oid)
                               val proj_term = Const(long_name,dummyT --> ty) 
                           in  calculate_attr_access0 ctxt proj_term term end
            | NONE => error "identifier not a docitem reference"
@@ -1386,8 +1389,8 @@ val _ = Theory.setup
 
 fun calculate_trace ctxt oid pos =
     (* grabs attribute, and converts its HOL-term into (textual) ML representation *)
-    let fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
-        val term = calc_attr_access ctxt "trace" oid pos
+    let val term = calc_attr_access ctxt "trace" oid pos
+        fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
         val string_pair_list = map conv (HOLogic.dest_list term)
         val print_string_pair = ML_Syntax.print_pair  ML_Syntax.print_string ML_Syntax.print_string
     in  ML_Syntax.print_list print_string_pair string_pair_list end

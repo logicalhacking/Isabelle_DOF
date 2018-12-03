@@ -44,7 +44,7 @@ doc_class M =
 
 
 section*[test::A]\<open> Test and Validation\<close>
-text\<open>Defining some document elements to be referenced in another theory: \<close>
+text\<open>Defining some document elements to be referenced in later on in another theory: \<close>
 text*[sdf] {* f @{thm refl}*}  
 text*[sdfg] {* fg @{thm refl}*}  
  
