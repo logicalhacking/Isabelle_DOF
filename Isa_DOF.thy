@@ -1333,7 +1333,7 @@ ML\<open>
 structure AttributeAccess = 
 struct
 
-fun calculate_attr_access ctxt proj_term term =
+fun calculate_attr_access0 ctxt proj_term term =
     (* term assumed to be ground type, (f term) not necessarily *)
     let val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
         val ty = type_of (subterm')
@@ -1354,9 +1354,9 @@ fun calculate_attr_access ctxt proj_term term =
                        Syntax.string_of_term ctxt subterm')
     end
 
-fun calculate_attr_access_check ctxt attr oid pos = (* template *)
-    case DOF_core.get_value_local oid (Context.the_proof ctxt) of 
-             SOME term => let val ctxt = Context.the_proof ctxt
+fun calc_attr_access ctxt attr oid pos = (* template *)
+    case DOF_core.get_value_global oid (Context.theory_of ctxt) of 
+            SOME term => let val ctxt =  (Proof_Context.init_global (Context.theory_of ctxt))
                               val SOME{cid,pos=pos_decl,id,...} = DOF_core.get_object_local oid ctxt
                               val markup = docref_markup false oid id pos_decl;
                               val _ = Context_Position.report ctxt pos markup;
@@ -1366,7 +1366,7 @@ fun calculate_attr_access_check ctxt attr oid pos = (* template *)
                                             SOME f => f
                                           | NONE => error ("attribute undefined for ref"^ oid)
                               val proj_term = Const(long_name,dummyT --> ty) 
-                          in  calculate_attr_access ctxt proj_term term end
+                          in  calculate_attr_access0 ctxt proj_term term end
            | NONE => error "identifier not a docitem reference"
 
 val _ = Theory.setup 
@@ -1378,7 +1378,7 @@ val _ = Theory.setup
                         >>  
                         (fn(attr:string,(oid:string,pos)) 
                             => (ML_Syntax.atomic o ML_Syntax.print_term) 
-                                (calculate_attr_access_check ctxt attr oid pos)) 
+                                (calc_attr_access ctxt attr oid pos)) 
                         : string context_parser
                        ) 
                        (ctxt, toks))
@@ -1387,7 +1387,7 @@ val _ = Theory.setup
 fun calculate_trace ctxt oid pos =
     (* grabs attribute, and converts its HOL-term into (textual) ML representation *)
     let fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
-        val term = calculate_attr_access_check ctxt "trace" oid pos
+        val term = calc_attr_access ctxt "trace" oid pos
         val string_pair_list = map conv (HOLogic.dest_list term)
         val print_string_pair = ML_Syntax.print_pair  ML_Syntax.print_string ML_Syntax.print_string
     in  ML_Syntax.print_list print_string_pair string_pair_list end

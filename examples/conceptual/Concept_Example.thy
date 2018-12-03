@@ -44,14 +44,6 @@ ML\<open>@{trace_attribute struct}\<close>
 print_doc_classes
 print_doc_items
 
-ML\<open>
-
-\<close>
-
-setup\<open>DOF_core.update_class_invariant "Conceptual.A" (fn oid => 
-                                                       fn thy => (writeln ("ZZZ:"^oid); true))\<close>
-
-section*[b::A, x = "5"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 
 end 
