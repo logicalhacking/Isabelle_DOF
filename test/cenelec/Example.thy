@@ -99,6 +99,7 @@ text{* @{test_specification \<open>ass122\<close>} -- wrong: "reference ontologi
 text{* Here is a reference to @{docref \<open>sedf\<close>} *}    
 (* shouldn't work: label exists, but definition was finally rejected to to errors. *)
  
+check_doc_global (* shoudn't work : Unresolved forward references: lalala,blablabla *)
 
 section \<open>Miscellaneous\<close> 
   

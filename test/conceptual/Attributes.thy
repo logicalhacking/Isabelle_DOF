@@ -114,4 +114,6 @@ ML\<open>@{trace_attribute figs1}\<close>
 
 print_doc_items
 
+check_doc_global
+
 end

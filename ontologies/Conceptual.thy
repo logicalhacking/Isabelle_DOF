@@ -6,14 +6,14 @@ doc_class A =
    x :: int  
 
 doc_class B =
-   x :: "string"               (* attributes live in their own name-space *)
-   y :: "string list"          <= "[]"  (* and can have arbitrary type constructors *)
-                                        (* LaTeX may have problems with this, though *)
-
-doc_class C = B +
-   z :: "A option"             <= None  (* A LINK, i.e. an attribute that has a type
-                                           referring to a document class. Mathematical
-                                           relations over document items can be modeled. *)
+   x :: "string"                            (* attributes live in their own name-space *)
+   y :: "string list"          <= "[]"      (* and can have arbitrary type constructors *)
+                                            (* LaTeX may have problems with this, though *)
+                                            
+doc_class C = B +                           
+   z :: "A option"             <= None      (* A LINK, i.e. an attribute that has a type
+                                               referring to a document class. Mathematical
+                                               relations over document items can be modeled. *)
    g :: "thm"
 
 datatype enum = X1 | X2 | X3
@@ -26,15 +26,15 @@ doc_class D = B +
    a2 :: int                   <= 0
 
 doc_class E = D +
-   x :: "string"              <= "''qed''" (* overriding default *)
+   x :: "string"              <= "''qed''"  (* overriding default *)
    
 doc_class F  = 
    r :: "thm list"
    u :: "file"
    s :: "typ list"
-   b :: "(A \<times> C) set"         <= "{}"        (* This is a relation link, roughly corresponding
-                                                 to an association class. It can be used to track
-                                                 claims to result - relations, for example.*) 
+   b :: "(A \<times> C) set"         <= "{}"       (* This is a relation link, roughly corresponding
+                                                to an association class. It can be used to track
+                                                claims to result - relations, for example.*) 
 doc_class G = C +                                               
    g :: "thm"  <= "@{thm ''HOL.refl''}"
 

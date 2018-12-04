@@ -22,10 +22,10 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            
   keywords "+=" ":=" "accepts" "rejects"
 
-  and      "title*"      "subtitle*"
-           "chapter*" "section*"    "subsection*"   "subsubsection*" 
-           "text*"       
+  and      "title*"     "subtitle*"
+           "chapter*"  "section*"    "subsection*"   "subsubsection*" 
            "paragraph*"  "subparagraph*" 
+           "text*"       
            "figure*"
            "side_by_side_figure*" 
            :: document_body
@@ -35,7 +35,7 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
 
   and      "lemma*" "theorem*" "assert*"  ::thy_decl
 
-  and      "print_doc_classes" "print_doc_items" "gen_sty_template" :: diag
+  and      "print_doc_classes" "print_doc_items" "gen_sty_template"  "check_doc_global" :: diag
            
   
 begin
@@ -563,6 +563,14 @@ fun print_doc_classes b ctxt =
         writeln "=====================================\n\n\n" 
     end;
 
+fun check_doc_global (strict_checking : bool) ctxt = 
+    let val {docobj_tab={tab = x, ...}, ...} = get_data ctxt;
+        val S = map_filter (fn (s,NONE) => SOME s | _ => NONE) (Symtab.dest x)
+    in if null S 
+       then () 
+       else error("Global consistency error - Unresolved forward references: "^ String.concatWith "," S)   
+    end 
+
 val _ =
   Outer_Syntax.command @{command_keyword print_doc_classes}
     "print document classes"
@@ -574,6 +582,13 @@ val _ =
     "print document items"
     (Parse.opt_bang >> (fn b =>
       Toplevel.keep (print_doc_items b o Toplevel.context_of)));
+
+val _ =
+  Outer_Syntax.command @{command_keyword check_doc_global}
+    "check global document consistency"
+    (Parse.opt_bang >> (fn b =>
+      Toplevel.keep (check_doc_global b o Toplevel.context_of)));
+
 
 fun toStringLaTeXNewKeyCommand env long_name =
     "\\expandafter\\newkeycommand\\csname"^" "^"isaDof."^env^"."^long_name^"\\endcsname%\n" 
