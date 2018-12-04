@@ -97,8 +97,7 @@ text{* @{test_specification \<open>ass122\<close>} -- wrong: "reference ontologi
 
 
 text{* Here is a reference to @{docref \<open>sedf\<close>} *}    
-(* works currently only in connection with the above label-hack. 
-   Try to hover over the sedf - link and activate it !!! *)
+(* shouldn't work: label exists, but definition was finally rejected to to errors. *)
  
 
 section \<open>Miscellaneous\<close> 

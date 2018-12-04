@@ -36,11 +36,13 @@ ML\<open>fun check_A_invariant oid {is_monitor:bool} ctxt =
 
 setup\<open>DOF_core.update_class_invariant "Conceptual.A" check_A_invariant\<close>
 
+(* test : should fail : *)
+subsection*[c::A, x = "6"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 
-subsection*[d::A, x = "4"] \<open> Lorem ipsum dolor sit amet, ... \<close>
+subsection*[d::A, x = "5"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
-(* test : update should not fail, invariant still valid *)
+(* test : update should fail : *)
 update_instance*[d::A, x += "1"]
 
 
@@ -61,7 +63,7 @@ that instances of class C occur more often as those of class D; note that this i
 to take sub-classing into account:
 \<close>
 
-ML\<open>fun check_M_invariant oid {is_monitor} ctxt = 
+ML\<open>fun check_M_invariant oid {is_monitor}  ctxt = 
       let val term =  AttributeAccess.calc_attr_access ctxt "trace" oid @{here}
           fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
           val string_pair_list = map conv (HOLogic.dest_list term)
@@ -89,9 +91,8 @@ text*[c2::C, x = "''delta''"] \<open> ... in ut tortor eleifend augue pretium co
 
 section*[f::E]                \<open> Lectus accumsan velit ultrices, ... }\<close>
 
-(* test : close_monitor should fail : 
+(* test : close_monitor should fail : *)
 section*[f2::E]               \<open> Lectus accumsan velit ultrices, ... }\<close>
-*)
 
 ML\<open>val term = AttributeAccess.calc_attr_access (Context.Proof @{context}) "trace" "struct" @{here};
    fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)

@@ -956,7 +956,7 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
              along the super-class id. The evaluation is in parallel, simulating a product
              semantics without expanding the subclass relationship. *)
           fun is_enabled_for_cid moid =
-                         let val {accepted_cids, rejected_cids, automatas} = 
+                         let val {accepted_cids, automatas, ...} = 
                                               the(Symtab.lookup monitor_tab moid)
                              val indexS= 1 upto (length automatas)
                              val indexed_autoS = automatas ~~ indexS
@@ -981,16 +981,22 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
           val _ = if null enabled_monitors then () else writeln "registrating in monitors ..." 
           val _ = app (fn n => writeln(oid^" : "^cid_long^" ==> "^n)) enabled_monitors;
            (* check that any transition is possible : *)
+          fun inst_class_inv x = DOF_core.get_class_invariant(cid_of x) thy x {is_monitor=false}
+          fun class_inv_checks ctxt = map (fn x => inst_class_inv x ctxt) enabled_monitors
           val delta_autoS = map is_enabled_for_cid enabled_monitors; 
           fun update_info (n, aS) (tab: DOF_core.monitor_tab) =  
-                         let val {accepted_cids,rejected_cids,automatas} = the(Symtab.lookup tab n)
+                         let val {accepted_cids,rejected_cids,...} = the(Symtab.lookup tab n)
                          in Symtab.update(n, {accepted_cids=accepted_cids, 
                                               rejected_cids=rejected_cids,
                                               automatas=aS}) tab end
           fun update_trace mon_oid = DOF_core.update_value_global mon_oid (def_trans mon_oid)
           val update_automatons = DOF_core.upd_monitor_tabs(fold update_info delta_autoS)
-      in  thy |> fold (update_trace) (enabled_monitors)
-              |> DOF_core.map_data_global(update_automatons)
+      in  thy |> (* update traces of all enabled monitors *)
+                 fold (update_trace) (enabled_monitors)
+              |> (* check class invariants of enabled monitors *)
+                 (fn thy => (class_inv_checks (Context.Theory thy); thy))
+              |> (* update the automata of enabled monitors *)
+                 DOF_core.map_data_global(update_automatons)
       end
 
 
