@@ -122,7 +122,7 @@ struct
    type ISA_transformer_tab = (theory -> term * typ * Position.T -> term option) Symtab.table
    val  initial_ISA_tab:ISA_transformer_tab = Symtab.empty
 
-   type docclass_inv_tab = (string -> Context.generic -> bool) Symtab.table
+   type docclass_inv_tab = (string -> {is_monitor:bool} -> Context.generic -> bool) Symtab.table
    val  initial_docclass_inv_tab : docclass_inv_tab = Symtab.empty
 
    type open_monitor_info = {accepted_cids : string list,
@@ -285,7 +285,7 @@ fun update_class_invariant cid_long f thy =
     let val  _ = if is_defined_cid_global' cid_long thy then () 
                  else error("undefined class id : " ^cid_long)
     in  map_data_global (upd_docclass_inv_tab (Symtab.update (cid_long, 
-                        (fn ctxt => ((writeln("Inv check of :" ^cid_long); f ctxt )))))) 
+                        (fn ctxt => ((writeln("Inv check of : " ^cid_long); f ctxt )))))) 
                         thy
     end
 
@@ -294,7 +294,7 @@ fun get_class_invariant cid_long thy =
                  else error("undefined class id : " ^cid_long)
         val {docclass_inv_tab, ...} =  get_data_global thy
     in  case Symtab.lookup  docclass_inv_tab cid_long of 
-            NONE   => K(K true)
+            NONE   => K(K(K true))
           | SOME f => f
     end
 
@@ -1008,7 +1008,8 @@ fun create_and_check_docitem is_monitor oid pos cid_pos doc_attrs thy =
           fun conv_attrs ((lhs, pos), rhs) = (markup2string lhs,pos,"=", Syntax.read_term_global thy rhs)
           val assns' = map conv_attrs doc_attrs
           val (value_term, _(*ty*), _) = calc_update_term thy cid_long assns' defaults 
-          val check_inv =   (DOF_core.get_class_invariant cid_long thy oid) o Context.Theory 
+          val check_inv =   (DOF_core.get_class_invariant cid_long thy oid {is_monitor=is_monitor}) 
+                            o Context.Theory 
       in  thy |> DOF_core.define_object_global (oid, {pos      = pos, 
                                                       thy_name = Context.theory_name thy,
                                                       value    = value_term,
@@ -1040,20 +1041,26 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                                                            Syntax.read_term_global thy rhs)
                 val assns' = map conv_attrs doc_attrs
                 val def_trans = #1 o (calc_update_term thy cid_long assns')
-                val check_inv = (DOF_core.get_class_invariant cid_long thy oid) o Context.Theory 
+                val check_inv = (DOF_core.get_class_invariant cid_long thy oid {is_monitor=false}) 
+                                 o Context.Theory 
             in     
                 thy |> DOF_core.update_value_global oid (def_trans)
                     |> (fn thy => (check_inv thy; thy))
             end
 
 
-fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
+fun enriched_document_command markdown level (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
                                         xstring_opt:(xstring * Position.T) option),
                                         toks:Input.source) 
                                         : Toplevel.transition -> Toplevel.transition =
   let
-       fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
        (* as side-effect, generates markup *)
+       fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
+       (* generating the level-attribute syntax *)
+       val doc_attrs' = case level of 
+                  NONE => doc_attrs 
+                | SOME(NONE) => (("level",@{here}),"None")::doc_attrs
+                | SOME(SOME x) => (("level",@{here}),"Some("^ Int.toString x ^"::int)")::doc_attrs
   in   
        Toplevel.theory(create_and_check_docitem false oid pos cid_pos doc_attrs #> check_text) 
        (* Thanks Frederic Tuong! ! ! *)
@@ -1091,7 +1098,8 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
                   |  NONE => error ("Not belonging to a monitor class: "^oid)
         val delete_monitor_entry = DOF_core.map_data_global (DOF_core.upd_monitor_tabs (Symtab.delete oid))
         val {cid=cid_long, ...} = the(DOF_core.get_object_global oid thy)
-        val check_inv =   (DOF_core.get_class_invariant cid_long thy oid) o Context.Theory 
+        val check_inv =   (DOF_core.get_class_invariant cid_long thy oid) {is_monitor=true} 
+                           o Context.Theory 
     in  thy |> update_instance_command args
             |> (fn thy => (check_inv thy; thy))
             |> delete_monitor_entry
@@ -1101,59 +1109,59 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
 val _ =
   Outer_Syntax.command ("title*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} NONE) ;
 
 val _ =
   Outer_Syntax.command ("subtitle*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} NONE);
 
 val _ =
   Outer_Syntax.command ("chapter*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} (SOME(SOME 0)));
 
 val _ =
   Outer_Syntax.command ("section*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} (SOME(SOME 1)));
 
 
 val _ =
   Outer_Syntax.command ("subsection*", @{here}) "subsection heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} (SOME(SOME 2)));
 
 val _ =
   Outer_Syntax.command ("subsubsection*", @{here}) "subsubsection heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} (SOME(SOME 3)));
 
 val _ =
   Outer_Syntax.command ("paragraph*", @{here}) "paragraph heading"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} (SOME(SOME 4)));
 
 val _ =
   Outer_Syntax.command ("subparagraph*", @{here}) "subparagraph heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} (SOME(SOME 5)));
 
 val _ =
   Outer_Syntax.command ("figure*", @{here}) "figure"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} NONE);
 
 val _ =
   Outer_Syntax.command ("side_by_side_figure*", @{here}) "multiple figures"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} NONE);
 
 
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> enriched_document_command {markdown = true});
+      >> enriched_document_command {markdown = true} (SOME NONE));
 
 val _ =
   Outer_Syntax.command @{command_keyword "declare_reference*"} 
@@ -1536,7 +1544,5 @@ writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
 (DOF_core.write_ontology_latex_sty_template @{theory})
 \<close>
 *)
-
-
 
 end

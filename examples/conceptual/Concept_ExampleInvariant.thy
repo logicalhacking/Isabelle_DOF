@@ -91,7 +91,7 @@ text*[c2::C, x = "''delta''"] \<open> ... in ut tortor eleifend augue pretium co
 
 section*[f::E]                \<open> Lectus accumsan velit ultrices, ... }\<close>
 
-(* test : close_monitor should fail : *
+(* test : close_monitor should fail : 
 section*[f2::E]               \<open> Lectus accumsan velit ultrices, ... }\<close>
 *)
 ML\<open>val term = AttributeAccess.calc_attr_access (Context.Proof @{context}) "trace" "struct" @{here};

@@ -86,7 +86,7 @@ lemma q2_b : "0 \<le> x \<and> x \<le> y \<and> y \<le> 1 \<Longrightarrow> h x 
 lemma q2_c : "1 \<le> x \<and> x \<le> y \<Longrightarrow> h x \<ge> h y"
   sorry
 
-text*[v2::Validation, proofs="[@{thm ''q2_b''}, @{thm ''q2_c''}]"]
+text*[v2::Validation, proofs="[@{thm ''BAC2017.q2_b''}, @{thm ''BAC2017.q2_c''}]"]
      {* See lemmas @{thm q2_b} and @{thm q2_c}. *}
 
 

@@ -44,8 +44,8 @@ on top of Isabelle. \isadof allows for conventional typesetting
 for enforcing a certain document structure, and discuss ontology-specific IDE support. 
 \<close>
 
-section*[intro::introduction_title]\<open> Introduction \<close>  
-text*[introtext::introduction_elem]\<open> 
+section*[intro::introduction]\<open> Introduction \<close>  
+text*[introtext::introduction]\<open> 
 The linking of the \<^emph>\<open>formal\<close> to the \<^emph>\<open>informal\<close> is perhaps the
 most pervasive challenge in the digitization of knowledge and its
 propagation. This challenge incites numerous research efforts
@@ -94,7 +94,7 @@ declare_reference*[ontomod::text_section]
 declare_reference*[ontopide::text_section]
 declare_reference*[conclusion::text_section]
 (*>*)
-text*[plan::introduction_elem]\<open> The plan of the paper is follows: we start by introducing  the underlying 
+text*[plan::introduction]\<open> The plan of the paper is follows: we start by introducing  the underlying 
 Isabelel sytem (@{docitem (unchecked) \<open>bgrnd\<close>}) followed by presenting the 
 essentials of  \isadof and its ontology language (@{docitem (unchecked) \<open>isadof\<close>}). 
 It follows @{docitem (unchecked) \<open>ontomod\<close>}, where we present three application 
@@ -104,7 +104,7 @@ conclusions  and discuss related work in @{docitem_ref (unchecked) \<open>conclu
 
 section*[bgrnd::text_section,main_author="Some(@{docitem ''adb''}::author)"]
         \<open> Background: The Isabelle System \<close>
-text*[background::introduction_elem]\<open>
+text*[background::introduction]\<open>
 While Isabelle is widely perceived as an interactive theorem prover
 for HOL (Higher-order Logic)~@{cite "nipkow.ea:isabelle:2002"}, we
 would like to emphasize the view that Isabelle is far more than that:
@@ -133,7 +133,7 @@ figure*[architecture::figure,relative_width="100",src="''figures/isabelle-archit
      asynchronous communication between the Isabelle system and 
      the IDE (right-hand side). \<close>
 
-text*[blug::introduction_elem]\<open> The Isabelle system architecture shown in @{docitem_ref \<open>architecture\<close>}
+text*[blug::introduction]\<open> The Isabelle system architecture shown in @{docitem_ref \<open>architecture\<close>}
  comes with many layers, with Standard ML (SML) at the bottom layer as implementation 
 language. The architecture actually foresees a \<^emph>\<open>Nano-Kernel\<close> (our terminology) which 
 resides in the SML structure \texttt{Context}. This structure provides a kind of container called 
