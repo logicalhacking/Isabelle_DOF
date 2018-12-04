@@ -271,7 +271,14 @@ Context.certificate_theory_id : Context.certificate -> Context.theory_id;
 Context.theory_name : theory -> string;
 Context.map_theory: (theory -> theory) -> Context.generic -> Context.generic;
 *}
-  
+
+
+text\<open>ML structure @{ML_structure Proof_Context}:\<close>
+ML\<open>
+ Proof_Context.init_global: theory -> Proof.context;
+ Context.Proof: Proof.context -> Context.generic; (* the path to a generic Context *)
+ Proof_Context.get_global: theory -> string -> Proof.context
+\<close>
 
 
 subsection\<open>Mechanism 2 : global arbitrary data structure that is attached to the global and
@@ -783,6 +790,14 @@ Gentzen Natural Deduction (to which Isabelle/Pure is geared) reasoning and
 Gentzen Sequent Deduction.\<close>
 
 
+section\<open>The classical goal package\<close>
+
+ML\<open> open Goal;
+Goal.prove_internal : Proof.context -> cterm list -> cterm -> (thm list -> tactic) -> thm;
+
+Goal.prove_global :  theory -> string list -> term list -> term -> 
+                   ({context: Proof.context, prems: thm list} -> tactic) -> thm
+\<close>
 
 section\<open>The Isar Engine\<close>
   

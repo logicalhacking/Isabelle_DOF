@@ -25,16 +25,19 @@ doc_class abstract =
 doc_class text_section = 
    main_author :: "author option"  <=  None
    fixme_list  :: "string list"    <=  "[]" 
+   level       :: "int  option"    <=  "None"   
+                                  (* we follow LaTeX terminology on levels 
+                                               part          = Some -1
+                                               chapter       = Some 0
+                                               section       = Some 1
+                                               subsection    = Some 2
+                                               subsubsection = Some 3
+                                      ... *)
+   (* for scholarly paper: invariant level > 0 *)
 
 doc_class introduction = text_section +
    comment :: string
    claims  :: "thm list"
-
-doc_class introduction_title = introduction +
-   fixme_list  :: "string list"    <=  "[]" 
-
-doc_class introduction_elem = introduction +
-   fixme_list  :: "string list"    <=  "[]" 
 
 doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
@@ -84,16 +87,14 @@ text \<open>underlying idea: a monitor class automatically receives a
 doc_class article = 
    style_id :: string                <= "''LNCS''"
    version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
-   accepts "(title       ~~ 
-           \<lbrakk>subtitle\<rbrakk>   ~~
-           \<lbrace>author\<rbrace>\<^sup>+   ~~ 
-           abstract     ~~
-           introduction_title ~~ 
-           \<lbrace>introduction_elem\<rbrace>\<^sup>+ ~~ 
-           \<lbrace>technical || example\<rbrace>\<^sup>+ ~~
-           \<lbrakk>introduction\<rbrakk>   ~~
-           conclusion   ~~  
-           bibliography)"
+   accepts "(title        ~~ 
+            \<lbrakk>subtitle\<rbrakk>    ~~
+            \<lbrace>author\<rbrace>\<^sup>+     ~~ 
+            abstract      ~~
+            \<lbrace>introduction\<rbrace>\<^sup>+   ~~ 
+            \<lbrace>technical || example\<rbrace>\<^sup>+ ~~
+            \<lbrace>conclusion\<rbrace>\<^sup>+    ~~  
+            bibliography)"
 
 gen_sty_template
 

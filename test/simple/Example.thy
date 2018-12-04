@@ -95,8 +95,7 @@ section*[sedf::requirement, long_name = "None::string option"]
                               jump to its definition. *}  
 text\<open>\label{sedf}\<close>  (* Hack to make the LaTeX-ing running. Should disappear. *)
   
-section*[seedf::test_case, dfg=34,fgdfg=zf]{* and another example with attribute setting,
-but wrong doc_class constraint. *}  
+section*[seedf::test_case, dfg=34,fgdfg=zf]{* and another example with undefined attributes. *}  
 
 section{* Text Antiquotation Infrastructure ... *}  
                   

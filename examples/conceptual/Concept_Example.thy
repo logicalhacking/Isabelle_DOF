@@ -44,7 +44,7 @@ ML\<open>@{trace_attribute struct}\<close>
 print_doc_classes
 print_doc_items
 
-check_doc_global
+
 
 end 
   

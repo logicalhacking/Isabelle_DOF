@@ -10,7 +10,7 @@ print_doc_items
 
 (* this corresponds to low-level accesses : *)
 ML\<open>  
-val {docobj_tab={tab = docitem_tab, ...},docclass_tab, ISA_transformer_tab, monitor_tab} 
+val {docobj_tab={tab = docitem_tab, ...},docclass_tab, ISA_transformer_tab, monitor_tab,...} 
     = DOF_core.get_data @{context};
 
 Symtab.dest docitem_tab;

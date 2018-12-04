@@ -22,10 +22,10 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            
   keywords "+=" ":=" "accepts" "rejects"
 
-  and      "title*"      "subtitle*"
-           "chapter*" "section*"    "subsection*"   "subsubsection*" 
-           "text*"       
+  and      "title*"     "subtitle*"
+           "chapter*"  "section*"    "subsection*"   "subsubsection*" 
            "paragraph*"  "subparagraph*" 
+           "text*"       
            "figure*"
            "side_by_side_figure*" 
            :: document_body
@@ -35,7 +35,7 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
 
   and      "lemma*" "theorem*" "assert*"  ::thy_decl
 
-  and      "print_doc_classes" "print_doc_items" "gen_sty_template" :: diag
+  and      "print_doc_classes" "print_doc_items" "gen_sty_template"  "check_doc_global" :: diag
            
   
 begin
@@ -66,8 +66,9 @@ section\<open> A HomeGrown Document Type Management (the ''Model'') \<close>
 ML\<open>
 structure DOF_core = 
 struct
-   type docclass_struct = {params : (string * sort) list, (*currently not used *)
-                           name   : binding, thy_name : string, id : serial, (* for pide *)
+   type docclass_struct = {params         : (string * sort) list, (*currently not used *)
+                           name           : binding, 
+                           thy_name       : string, id : serial, (* for pide *)
                            inherits_from  : (typ list * string) option,      (* imports *)
                            attribute_decl : (binding * typ * term option) list, (* class local *)
                            rejectS        : term list,
@@ -121,7 +122,7 @@ struct
    type ISA_transformer_tab = (theory -> term * typ * Position.T -> term option) Symtab.table
    val  initial_ISA_tab:ISA_transformer_tab = Symtab.empty
 
-   type docclass_inv_tab = (Context.generic -> bool) Symtab.table
+   type docclass_inv_tab = (string -> {is_monitor:bool} -> Context.generic -> bool) Symtab.table
    val  initial_docclass_inv_tab : docclass_inv_tab = Symtab.empty
 
    type open_monitor_info = {accepted_cids : string list,
@@ -175,7 +176,7 @@ fun upd_docobj_tab f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab,d
             {docobj_tab = f docobj_tab, docclass_tab=docclass_tab, 
              ISA_transformer_tab=ISA_transformer_tab, monitor_tab=monitor_tab,
              docclass_inv_tab=docclass_inv_tab};
-fun upd_docclass_tab f {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z, monitor_tab, docclass_inv_tab} = 
+fun upd_docclass_tab f {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z, monitor_tab,  docclass_inv_tab} = 
             {docobj_tab=x,docclass_tab = f y,ISA_transformer_tab = z, monitor_tab=monitor_tab,
              docclass_inv_tab=docclass_inv_tab};
 fun upd_ISA_transformers f{docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z, monitor_tab, docclass_inv_tab} = 
@@ -188,7 +189,7 @@ fun upd_monitor_tabs f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab
 fun upd_docclass_inv_tab f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab, docclass_inv_tab} = 
             {docobj_tab = docobj_tab,docclass_tab = docclass_tab,
              ISA_transformer_tab = ISA_transformer_tab, monitor_tab = monitor_tab, 
-             docclass_inv_tab= f docclass_inv_tab};
+             docclass_inv_tab    = f docclass_inv_tab};
 
 
 fun get_accepted_cids  ({accepted_cids, ... } : open_monitor_info) = accepted_cids
@@ -232,11 +233,18 @@ fun is_defined_cid_global cid thy = let val t = #docclass_tab(get_data_global th
                                         Symtab.defined t (name2doc_class_name thy cid) 
                                     end
 
+fun is_defined_cid_global' cid_long thy = let val t = #docclass_tab(get_data_global thy)
+                                    in  cid_long=default_cid orelse  Symtab.defined t cid_long end
+
+
 
 fun is_defined_cid_local cid ctxt  = let val t = #docclass_tab(get_data ctxt)
                                      in  cid=default_cid orelse 
                                          Symtab.defined t (name2doc_class_name_local ctxt cid) 
                                      end
+
+fun is_defined_cid_local' cid_long ctxt  = let val t = #docclass_tab(get_data ctxt)
+                                     in  cid_long=default_cid orelse Symtab.defined t cid_long  end
 
 
 fun is_declared_oid_global oid thy = let val {tab,...} = #docobj_tab(get_data_global thy)
@@ -270,6 +278,24 @@ fun declare_object_local oid ctxt  =
     let fun decl {tab,maxano} = {tab=Symtab.update_new(oid,NONE) tab, maxano=maxano}
     in  (map_data(upd_docobj_tab decl)(ctxt)
         handle Symtab.DUP _ => error("multiple declaration of document reference"))
+    end
+
+
+fun update_class_invariant cid_long f thy = 
+    let val  _ = if is_defined_cid_global' cid_long thy then () 
+                 else error("undefined class id : " ^cid_long)
+    in  map_data_global (upd_docclass_inv_tab (Symtab.update (cid_long, 
+                        (fn ctxt => ((writeln("Inv check of : " ^cid_long); f ctxt )))))) 
+                        thy
+    end
+
+fun get_class_invariant cid_long thy =
+    let val  _ = if is_defined_cid_global' cid_long thy then () 
+                 else error("undefined class id : " ^cid_long)
+        val {docclass_inv_tab, ...} =  get_data_global thy
+    in  case Symtab.lookup  docclass_inv_tab cid_long of 
+            NONE   => K(K(K true))
+          | SOME f => f
     end
 
 val SPY = Unsynchronized.ref(Bound 0)
@@ -464,9 +490,10 @@ fun update_value_global oid upd thy  =
 
 val ISA_prefix = "Isa_DOF.ISA_"  (* ISA's must be declared in Isa_DOF.thy  !!! *)
 
-fun get_isa_global isa thy  =  case Symtab.lookup (#ISA_transformer_tab(get_data_global thy)) (ISA_prefix^isa) of 
-                                       NONE => error("undefined inner syntax antiquotation: "^isa)
-                                      |SOME(bbb) => bbb
+fun get_isa_global isa thy  =  
+            case Symtab.lookup (#ISA_transformer_tab(get_data_global thy)) (ISA_prefix^isa) of 
+                 NONE      => error("undefined inner syntax antiquotation: "^isa)
+               | SOME(bbb) => bbb
                                
 
 fun get_isa_local isa ctxt  = case Symtab.lookup (#ISA_transformer_tab(get_data ctxt)) (ISA_prefix^isa) of 
@@ -536,6 +563,14 @@ fun print_doc_classes b ctxt =
         writeln "=====================================\n\n\n" 
     end;
 
+fun check_doc_global (strict_checking : bool) ctxt = 
+    let val {docobj_tab={tab = x, ...}, ...} = get_data ctxt;
+        val S = map_filter (fn (s,NONE) => SOME s | _ => NONE) (Symtab.dest x)
+    in if null S 
+       then () 
+       else error("Global consistency error - Unresolved forward references: "^ String.concatWith "," S)   
+    end 
+
 val _ =
   Outer_Syntax.command @{command_keyword print_doc_classes}
     "print document classes"
@@ -547,6 +582,13 @@ val _ =
     "print document items"
     (Parse.opt_bang >> (fn b =>
       Toplevel.keep (print_doc_items b o Toplevel.context_of)));
+
+val _ =
+  Outer_Syntax.command @{command_keyword check_doc_global}
+    "check global document consistency"
+    (Parse.opt_bang >> (fn b =>
+      Toplevel.keep (check_doc_global b o Toplevel.context_of)));
+
 
 fun toStringLaTeXNewKeyCommand env long_name =
     "\\expandafter\\newkeycommand\\csname"^" "^"isaDof."^env^"."^long_name^"\\endcsname%\n" 
@@ -894,13 +936,13 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
                 val _ = if Long_Name.base_name lhs = lhs orelse ln = lhs then ()
                         else error("illegal notation for attribute of "^cid_long)
                 fun join (ttt as @{typ "int"}) 
-                         = Const (@{const_name "plus"}, ttt --> ttt --> ttt)
+                         = Const (@{const_name "Groups.plus"}, ttt --> ttt --> ttt)
                    |join (ttt as @{typ "string"}) 
-                         = Const (@{const_name "append"}, ttt --> ttt --> ttt)
+                         = Const (@{const_name "List.append"}, ttt --> ttt --> ttt)
                    |join (ttt as Type(@{type_name "set"},_)) 
-                         = Const (@{const_name "sup"}, ttt --> ttt --> ttt)
+                         = Const (@{const_name "Lattices.sup"}, ttt --> ttt --> ttt)
                    |join (ttt as Type(@{type_name "list"},_)) 
-                         = Const (@{const_name "append"}, ttt --> ttt --> ttt)
+                         = Const (@{const_name "List.append"}, ttt --> ttt --> ttt)
                    |join _ = error("implicit fusion operation not defined for attribute: "^ lhs)
                  (* could be extended to bool, map, multisets, ... *)
                 val rhs' = instantiate_term tyenv' (generalize_term rhs)
@@ -929,7 +971,7 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
              along the super-class id. The evaluation is in parallel, simulating a product
              semantics without expanding the subclass relationship. *)
           fun is_enabled_for_cid moid =
-                         let val {accepted_cids, rejected_cids, automatas} = 
+                         let val {accepted_cids, automatas, ...} = 
                                               the(Symtab.lookup monitor_tab moid)
                              val indexS= 1 upto (length automatas)
                              val indexed_autoS = automatas ~~ indexS
@@ -954,16 +996,22 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
           val _ = if null enabled_monitors then () else writeln "registrating in monitors ..." 
           val _ = app (fn n => writeln(oid^" : "^cid_long^" ==> "^n)) enabled_monitors;
            (* check that any transition is possible : *)
+          fun inst_class_inv x = DOF_core.get_class_invariant(cid_of x) thy x {is_monitor=false}
+          fun class_inv_checks ctxt = map (fn x => inst_class_inv x ctxt) enabled_monitors
           val delta_autoS = map is_enabled_for_cid enabled_monitors; 
           fun update_info (n, aS) (tab: DOF_core.monitor_tab) =  
-                         let val {accepted_cids,rejected_cids,automatas} = the(Symtab.lookup tab n)
+                         let val {accepted_cids,rejected_cids,...} = the(Symtab.lookup tab n)
                          in Symtab.update(n, {accepted_cids=accepted_cids, 
                                               rejected_cids=rejected_cids,
                                               automatas=aS}) tab end
           fun update_trace mon_oid = DOF_core.update_value_global mon_oid (def_trans mon_oid)
           val update_automatons = DOF_core.upd_monitor_tabs(fold update_info delta_autoS)
-      in  thy |> fold (update_trace) (enabled_monitors)
-              |> DOF_core.map_data_global(update_automatons)
+      in  thy |> (* update traces of all enabled monitors *)
+                 fold (update_trace) (enabled_monitors)
+              |> (* check class invariants of enabled monitors *)
+                 (fn thy => (class_inv_checks (Context.Theory thy); thy))
+              |> (* update the automata of enabled monitors *)
+                 DOF_core.map_data_global(update_automatons)
       end
 
 
@@ -981,12 +1029,15 @@ fun create_and_check_docitem is_monitor oid pos cid_pos doc_attrs thy =
           fun conv_attrs ((lhs, pos), rhs) = (markup2string lhs,pos,"=", Syntax.read_term_global thy rhs)
           val assns' = map conv_attrs doc_attrs
           val (value_term, _(*ty*), _) = calc_update_term thy cid_long assns' defaults 
+          val check_inv =   (DOF_core.get_class_invariant cid_long thy oid {is_monitor=is_monitor}) 
+                            o Context.Theory 
       in  thy |> DOF_core.define_object_global (oid, {pos      = pos, 
                                                       thy_name = Context.theory_name thy,
                                                       value    = value_term,
                                                       id       = id,   
                                                       cid      = cid_long})
               |> register_oid_cid_in_open_monitors oid pos cid_long
+              |> (fn thy => (check_inv thy; thy))
       end
 
 
@@ -1011,18 +1062,26 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                                                            Syntax.read_term_global thy rhs)
                 val assns' = map conv_attrs doc_attrs
                 val def_trans = #1 o (calc_update_term thy cid_long assns')
+                val check_inv = (DOF_core.get_class_invariant cid_long thy oid {is_monitor=false}) 
+                                 o Context.Theory 
             in     
                 thy |> DOF_core.update_value_global oid (def_trans)
+                    |> (fn thy => (check_inv thy; thy))
             end
 
 
-fun enriched_document_command markdown (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
+fun enriched_document_command markdown level (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
                                         xstring_opt:(xstring * Position.T) option),
                                         toks:Input.source) 
                                         : Toplevel.transition -> Toplevel.transition =
   let
-       fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
        (* as side-effect, generates markup *)
+       fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
+       (* generating the level-attribute syntax *)
+       val doc_attrs' = case level of 
+                  NONE => doc_attrs 
+                | SOME(NONE) => (("level",@{here}),"None")::doc_attrs
+                | SOME(SOME x) => (("level",@{here}),"Some("^ Int.toString x ^"::int)")::doc_attrs
   in   
        Toplevel.theory(create_and_check_docitem false oid pos cid_pos doc_attrs #> check_text) 
        (* Thanks Frederic Tuong! ! ! *)
@@ -1059,7 +1118,11 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
                      SOME X => check_if_final X 
                   |  NONE => error ("Not belonging to a monitor class: "^oid)
         val delete_monitor_entry = DOF_core.map_data_global (DOF_core.upd_monitor_tabs (Symtab.delete oid))
-    in  thy |> update_instance_command args 
+        val {cid=cid_long, ...} = the(DOF_core.get_object_global oid thy)
+        val check_inv =   (DOF_core.get_class_invariant cid_long thy oid) {is_monitor=true} 
+                           o Context.Theory 
+    in  thy |> update_instance_command args
+            |> (fn thy => (check_inv thy; thy))
             |> delete_monitor_entry
     end 
 
@@ -1067,59 +1130,59 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
 val _ =
   Outer_Syntax.command ("title*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} NONE) ;
 
 val _ =
   Outer_Syntax.command ("subtitle*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} NONE);
 
 val _ =
   Outer_Syntax.command ("chapter*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} (SOME(SOME 0)));
 
 val _ =
   Outer_Syntax.command ("section*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} (SOME(SOME 1)));
 
 
 val _ =
   Outer_Syntax.command ("subsection*", @{here}) "subsection heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} (SOME(SOME 2)));
 
 val _ =
   Outer_Syntax.command ("subsubsection*", @{here}) "subsubsection heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} (SOME(SOME 3)));
 
 val _ =
   Outer_Syntax.command ("paragraph*", @{here}) "paragraph heading"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} (SOME(SOME 4)));
 
 val _ =
   Outer_Syntax.command ("subparagraph*", @{here}) "subparagraph heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} (SOME(SOME 5)));
 
 val _ =
   Outer_Syntax.command ("figure*", @{here}) "figure"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} NONE);
 
 val _ =
   Outer_Syntax.command ("side_by_side_figure*", @{here}) "multiple figures"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false});
+      >> enriched_document_command {markdown = false} NONE);
 
 
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> enriched_document_command {markdown = true});
+      >> enriched_document_command {markdown = true} (SOME NONE));
 
 val _ =
   Outer_Syntax.command @{command_keyword "declare_reference*"} 
@@ -1288,6 +1351,7 @@ fun docitem_value_ML_antiquotation binding =
 
 (* Setup for general docrefs of the global DOF_core.default_cid - class ("text")*)
 val _ = Theory.setup((docitem_ref_antiquotation @{binding docref} DOF_core.default_cid) #>
+                     (* deprecated syntax                 ^^^^^^*)
                      (docitem_ref_antiquotation @{binding docitem_ref} DOF_core.default_cid) #>
                      (* deprecated syntax                 ^^^^^^^^^^*)
                      (docitem_ref_antiquotation @{binding docitem} DOF_core.default_cid) #>
@@ -1301,7 +1365,7 @@ ML\<open>
 structure AttributeAccess = 
 struct
 
-fun calculate_attr_access ctxt proj_term term =
+fun calculate_attr_access0 ctxt proj_term term =
     (* term assumed to be ground type, (f term) not necessarily *)
     let val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
         val ty = type_of (subterm')
@@ -1322,9 +1386,9 @@ fun calculate_attr_access ctxt proj_term term =
                        Syntax.string_of_term ctxt subterm')
     end
 
-fun calculate_attr_access_check ctxt attr oid pos = (* template *)
-    case DOF_core.get_value_local oid (Context.the_proof ctxt) of 
-             SOME term => let val ctxt = Context.the_proof ctxt
+fun calc_attr_access ctxt attr oid pos = (* template *)
+    case DOF_core.get_value_global oid (Context.theory_of ctxt) of 
+            SOME term => let val ctxt =  (Proof_Context.init_global (Context.theory_of ctxt))
                               val SOME{cid,pos=pos_decl,id,...} = DOF_core.get_object_local oid ctxt
                               val markup = docref_markup false oid id pos_decl;
                               val _ = Context_Position.report ctxt pos markup;
@@ -1332,9 +1396,9 @@ fun calculate_attr_access_check ctxt attr oid pos = (* template *)
                                   {long_name, typ=ty,...} = 
                                        case DOF_core.get_attribute_info_local cid attr ctxt of
                                             SOME f => f
-                                          | NONE => error ("attribute undefined for ref"^ oid)
+                                          | NONE => error ("attribute undefined for reference: "^ oid)
                               val proj_term = Const(long_name,dummyT --> ty) 
-                          in  calculate_attr_access ctxt proj_term term end
+                          in  calculate_attr_access0 ctxt proj_term term end
            | NONE => error "identifier not a docitem reference"
 
 val _ = Theory.setup 
@@ -1346,7 +1410,7 @@ val _ = Theory.setup
                         >>  
                         (fn(attr:string,(oid:string,pos)) 
                             => (ML_Syntax.atomic o ML_Syntax.print_term) 
-                                (calculate_attr_access_check ctxt attr oid pos)) 
+                                (calc_attr_access ctxt attr oid pos)) 
                         : string context_parser
                        ) 
                        (ctxt, toks))
@@ -1354,8 +1418,8 @@ val _ = Theory.setup
 
 fun calculate_trace ctxt oid pos =
     (* grabs attribute, and converts its HOL-term into (textual) ML representation *)
-    let fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
-        val term = calculate_attr_access_check ctxt "trace" oid pos
+    let val term = calc_attr_access ctxt "trace" oid pos
+        fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
         val string_pair_list = map conv (HOLogic.dest_list term)
         val print_string_pair = ML_Syntax.print_pair  ML_Syntax.print_string ML_Syntax.print_string
     in  ML_Syntax.print_list print_string_pair string_pair_list end
@@ -1491,11 +1555,6 @@ ML\<open>
 
 section\<open> Testing and Validation \<close>
   
-text*[sdf] {* f @{thm refl}*}  
-text*[sdfg] {* fg @{thm refl}*}  
- 
-text*[xxxy] {* dd @{docitem \<open>sdfg\<close>}  @{thm refl}*}    
-
 (* the following test crashes the LaTeX generation - however, without the latter this output is 
    instructive 
 ML\<open>
@@ -1506,7 +1565,5 @@ writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
 (DOF_core.write_ontology_latex_sty_template @{theory})
 \<close>
 *)
-
-
 
 end

@@ -10,10 +10,11 @@ print_doc_items
 
 (* corresponds to low-level accesses : *)
 ML\<open>  
-val ({tab = x, ...},y,_)= DOF_core.get_data @{context};
-Symtab.dest x;
+val {docobj_tab={tab = docitem_tab, ...},docclass_tab, ISA_transformer_tab, monitor_tab,...} 
+    = DOF_core.get_data @{context};
+Symtab.dest docitem_tab;
 "==============================================";
-Symtab.dest y;
+Symtab.dest docclass_tab;
 \<close>
 
 text*[dfgdfg::B, Conceptual.B.x ="''f''", y = "[''sdf'']"]\<open> sdfsdfs sdfsdf sdfsdf @{thm refl} \<close> 
@@ -63,34 +64,34 @@ text\<open>A not too trivial test: default y -> [].
      The latter wins at access time.
      Then @{term "t"}: creation of a multi inheritance object omega,
      triple updates, the last one wins.\<close>
-ML\<open>val s =  map HOLogic.dest_string (HOLogic.dest_list @{docitem_attr y::dfgdfg});
-   val t =   HOLogic.dest_string (@{docitem_attr x::omega});  \<close>
+ML\<open>val s =  map HOLogic.dest_string (HOLogic.dest_list @{docitem_attribute y::dfgdfg});
+   val t =   HOLogic.dest_string (@{docitem_attribute x::omega});  \<close>
 
 
 
 
 section\<open>Mutation of Attibutes in DocItems\<close>
 
-ML\<open> val  Const ("Groups.zero_class.zero", @{typ "int"}) =  @{docitem_attr a2::omega} \<close>
+ML\<open> val  Const ("Groups.zero_class.zero", @{typ "int"}) =  @{docitem_attribute a2::omega} \<close>
 
 update_instance*[omega::E, a2+="1"]
 
-ML\<open> val Const ("Groups.one_class.one", @{typ "int"})=  @{docitem_attr a2::omega} \<close>
+ML\<open> val Const ("Groups.one_class.one", @{typ "int"})=  @{docitem_attribute a2::omega} \<close>
 
 update_instance*[omega::E, a2+="6"]
 
-ML\<open>  @{docitem_attr a2::omega} \<close>
-ML\<open>  HOLogic.dest_number @{docitem_attr a2::omega} \<close>
+ML\<open>  @{docitem_attribute a2::omega} \<close>
+ML\<open>  HOLogic.dest_number @{docitem_attribute a2::omega} \<close>
 
 update_instance*[omega::E, x+="''inition''"]
 
-ML\<open> val s =   HOLogic.dest_string ( @{docitem_attr x::omega}) \<close>
+ML\<open> val s =   HOLogic.dest_string ( @{docitem_attribute x::omega}) \<close>
                             
 update_instance*[omega::E, y+="[''defini'',''tion'']"]
 
 update_instance*[omega::E, y+="[''en'']"]
 
-ML\<open> val s =  map HOLogic.dest_string (HOLogic.dest_list @{docitem_attr y::omega}); \<close>
+ML\<open> val s =  map HOLogic.dest_string (HOLogic.dest_list @{docitem_attribute y::omega}); \<close>
   
 section\<open>Simulation of a Monitor\<close>
 
@@ -98,20 +99,21 @@ open_monitor*[figs1::figure_group,
               anchor="''fig-demo''", 
               caption="''Sample ''"]  
 
-figure*[fig_A::figure, spawn_columns=False,relative_width="''90''",
+figure*[fig_A::figure, spawn_columns=False,relative_width="90",
         src="''figures/A.png''"]
        \<open> The A train \ldots \<close>
-update_instance*[figs1::figure_group, trace+="[figure]"](* simulation : will disappear *)
 
-figure*[fig_B::figure, spawn_columns=False,relative_width="''90''",
+figure*[fig_B::figure, spawn_columns=False,relative_width="90",
         src="''figures/B.png''"]
        \<open> The B train \ldots \<close>  
-update_instance*[figs1::figure_group, trace+="[figure]"](* simulation : will disappear *)
 
-close_monitor*[fig1]  
+close_monitor*[figs1]  
 
-ML\<open> map (fn Const(s,_) => s) (HOLogic.dest_list @{docitem_attr trace::figs1}) \<close>
+text\<open>Resulting trace in figs1: \<close>
+ML\<open>@{trace_attribute figs1}\<close>
 
 print_doc_items
+
+check_doc_global
 
 end
