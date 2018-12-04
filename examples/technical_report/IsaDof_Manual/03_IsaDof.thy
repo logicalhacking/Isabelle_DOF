@@ -429,12 +429,22 @@ Clicking on a document class identifier permits to hyperlink into the correspond
 class definition (\autoref{fig:Dogfood-IV-jumpInDocCLass}); hovering over an attribute-definition
 (which is qualified in order to disambiguate; \autoref{fig:Dogfood-V-attribute}).
 \<close>
-     
-side_by_side_figure*["text-elements"::side_by_side_figure,anchor="''fig-Dogfood-II-bgnd1''",
-                      caption="''Exploring a Reference of a Text-Element.''",relative_width="48",
-                      src="''figures/Dogfood-II-bgnd1''",anchor2="''fig-bgnd-text_section''",
-                      caption2="''Exploring the class of a text element.''",relative_width2="47",
-                      src2="''figures/Dogfood-III-bgnd-text_section''"]\<open> Exploring text elements. \<close>
+
+open_monitor*["text-elements"::figure_group,
+              caption="''Exploring text elements.''"]
+
+figure*["fig-Dogfood-II-bgnd1"::figure, spawn_columns=False,
+        relative_width="48",
+        src="''figures/Dogfood-II-bgnd1''"]
+       \<open>Exploring a Reference of a Text-Element.\<close>
+
+figure*["fig-bgnd-text_section"::figure, spawn_columns=False,
+        relative_width="48",
+        src="''figures/Dogfood-III-bgnd-text_section''"]
+       \<open>Exploring the class of a text element.\<close>
+
+close_monitor*["text-elements"]
+
 
 side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-jumpInDocCLass''",
                       caption="''Hyperlink to Class-Definition.''",relative_width="48",

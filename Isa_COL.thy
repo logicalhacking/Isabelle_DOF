@@ -13,7 +13,9 @@ begin
    
 section\<open> Library of Standard Text Ontology \<close>
 
-datatype placement = pl_h | pl_t | pl_b | pl_ht | pl_hb   
+datatype placement = pl_h | pl_t | pl_b | pl_ht | pl_hb  
+
+
 doc_class figure   = 
    relative_width   :: "int" (* percent of textwidth *)    
    src              :: "string"
@@ -32,9 +34,8 @@ doc_class side_by_side_figure = figure +
 ML\<open>DOF_core.SPY;\<close>
 doc_class figure_group = 
    (*  trace :: "doc_class rexp list" <= "[]" automatically generated since monitor clause *)
-   anchor           :: "string"
    caption          :: "string"
-   rejects            figure, figure_group   (* this forbids recursive figure-groups *)
+   rejects            figure_group   (* this forbids recursive figure-groups *)
    accepts             "\<lbrace>figure\<rbrace>\<^sup>+"
 
 ML\<open>@{term "side_by_side_figure"};
