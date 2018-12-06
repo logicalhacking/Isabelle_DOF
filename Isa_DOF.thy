@@ -1549,8 +1549,21 @@ val _ =
 end (* struct *)
 \<close>  
 
-ML\<open>
+text\<open> @{term "a + b"}\<close>
 
+text\<open>copied from @{file "$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"} \<close>
+ML\<open> (* copy from *)
+fun basic_entities name scan pretty =
+  Thy_Output.antiquotation name scan (fn {source, context = ctxt, ...} =>
+    Thy_Output.output ctxt o Thy_Output.maybe_pretty_source pretty ctxt source);
+
+fun basic_entity name scan = basic_entities name (scan >> single);
+
+Thy_Output.pretty_term;
+
+(*
+  basic_entity @{binding term} (Term_Style.parse -- Args.term) pretty_term_style 
+*)
 \<close>
 
 section\<open> Testing and Validation \<close>

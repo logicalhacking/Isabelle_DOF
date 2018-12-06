@@ -85,7 +85,7 @@ text*[c1::C, x = "''beta''"]  \<open> ... suspendisse non arcu malesuada mollis,
 
 text*[d1::E, a1 = "X3"]       \<open> ... phasellus amet id massa nunc, pede suscipit repellendus, ... \<close>
     
-text*[c2::C, x = "''delta''"] \<open> ... in ut tortor eleifend augue pretium consectetuer...  \<close>
+text*[c2:: C, x = "''delta''"] \<open> ... in ut tortor eleifend augue pretium consectetuer...  \<close>
 
 section*[f::E]                \<open> Lectus accumsan velit ultrices, ... }\<close>
 

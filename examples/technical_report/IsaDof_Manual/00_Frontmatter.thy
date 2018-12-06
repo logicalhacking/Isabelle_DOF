@@ -3,7 +3,7 @@ theory "00_Frontmatter"
   imports "../../../ontologies/technical_report"
 begin
 
-open_monitor*[this::article] 
+open_monitor*[this::report] 
 
 (*>*)
 
