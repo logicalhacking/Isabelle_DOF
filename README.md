@@ -16,9 +16,20 @@ argument to the ``install`` script:
 ```console 
 foo@bar:~$ ./install /usr/local/Isabelle2016-1/bin/isabelle
 ```
+or likewise:
+```console 
+foo@bar:~$ ./install /usr/local/Isabelle2017/bin/isabelle
+```
 
 The DOF-plugin will be installed in the Isabelle user directory 
 (the exact location depends on the Isabelle version). 
+
+Additionally, you have to replace the file 
+```Isabelle2017/src/Pure/Thy/thy_output.ML```
+by the file you find in the Isabelle_DOF-distribution:
+```patches/thy_output.ML```
+When starting up, Isabelle will recompile itself and integrating this 
+file (which modifies about 10 lines in the LaTeX generator...).
 
 ## Usage
 
