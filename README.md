@@ -14,10 +14,6 @@ If a specific Isabelle version should be used (i.e., not the default
 one), the full path to the ``isabelle`` command needs to be passed as 
 argument to the ``install`` script:
 ```console 
-foo@bar:~$ ./install /usr/local/Isabelle2016-1/bin/isabelle
-```
-or likewise:
-```console 
 foo@bar:~$ ./install /usr/local/Isabelle2017/bin/isabelle
 ```
 
