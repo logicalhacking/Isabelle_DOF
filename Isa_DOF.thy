@@ -1299,15 +1299,15 @@ fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) pos name  =
 val defineN    = "define"
 val uncheckedN = "unchecked" 
 
-val doc_ref_modes = Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ uncheckedN) 
+val docitem_modes = Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ uncheckedN) 
                                    >> (fn str => if str = defineN 
                                                  then {unchecked = false, define= true}  
                                                  else {unchecked = true,  define= false})) 
                                    {unchecked = false, define= false} (* default *);
 
 
-fun docitem_ref_antiquotation_generic enclose name cid_decl = 
-    Thy_Output.antiquotation name (Scan.lift (doc_ref_modes -- Args.cartouche_input))
+fun docitem_antiquotation_generic enclose name cid_decl = 
+    Thy_Output.antiquotation name (Scan.lift (docitem_modes -- Args.cartouche_input))
         (fn {context = ctxt, source = src:Token.src, state} =>
              fn ({unchecked = x, define= y}, source:Input.source) => 
                  (Thy_Output.output_text state {markdown=false} #>
@@ -1319,11 +1319,11 @@ fun docitem_ref_antiquotation_generic enclose name cid_decl =
                  source)
 
 
-fun docitem_ref_antiquotation name cid_decl = 
+fun docitem_antiquotation name cid_decl = 
     let fun open_par x = if x then "\\label{" 
                               else "\\autoref{"
         val close = "}"
-    in  docitem_ref_antiquotation_generic (fn y => enclose (open_par y) close) name cid_decl end
+    in  docitem_antiquotation_generic (fn y => enclose (open_par y) close) name cid_decl end
 
 
 fun check_and_mark_term ctxt oid  =
@@ -1341,7 +1341,7 @@ fun check_and_mark_term ctxt oid  =
   end
 
 
-fun docitem_value_ML_antiquotation binding = 
+fun ML_antiquotation_docitem_value binding = 
     ML_Antiquotation.inline binding 
          (fn (ctxt, toks) => (Scan.lift (Args.cartouche_input) 
                               >> (fn inp => (ML_Syntax.atomic o ML_Syntax.print_term) 
@@ -1350,16 +1350,18 @@ fun docitem_value_ML_antiquotation binding =
                                          
 
 (* Setup for general docrefs of the global DOF_core.default_cid - class ("text")*)
-val _ = Theory.setup((docitem_ref_antiquotation @{binding docref} DOF_core.default_cid) #>
-                     (* deprecated syntax                 ^^^^^^*)
-                     (docitem_ref_antiquotation @{binding docitem_ref} DOF_core.default_cid) #>
-                     (* deprecated syntax                 ^^^^^^^^^^*)
-                     (docitem_ref_antiquotation @{binding docitem} DOF_core.default_cid) #>
+val _ = Theory.setup((docitem_antiquotation @{binding docref} DOF_core.default_cid) #>
+                     (* deprecated syntax             ^^^^^^*)
+                     (docitem_antiquotation @{binding docitem_ref} DOF_core.default_cid) #>
+                     (* deprecated syntax             ^^^^^^^^^^*)
+                     (docitem_antiquotation @{binding docitem} DOF_core.default_cid) #>
 
-                      docitem_value_ML_antiquotation @{binding docitem_value})
+                      ML_antiquotation_docitem_value @{binding docitem_value})
 
 end (* struct *)
 \<close>
+
+
 
 ML\<open> 
 structure AttributeAccess = 
@@ -1401,20 +1403,6 @@ fun calc_attr_access ctxt attr oid pos = (* template *)
                           in  calculate_attr_access0 ctxt proj_term term end
            | NONE => error "identifier not a docitem reference"
 
-val _ = Theory.setup 
-           (ML_Antiquotation.inline @{binding docitem_attribute} 
-               (fn (ctxt,toks) =>
-                       (Scan.lift Args.name 
-                        --| (Scan.lift @{keyword "::"}) 
-                        -- Scan.lift (Parse.position Args.name) 
-                        >>  
-                        (fn(attr:string,(oid:string,pos)) 
-                            => (ML_Syntax.atomic o ML_Syntax.print_term) 
-                                (calc_attr_access ctxt attr oid pos)) 
-                        : string context_parser
-                       ) 
-                       (ctxt, toks))
-           ) 
 
 fun calculate_trace ctxt oid pos =
     (* grabs attribute, and converts its HOL-term into (textual) ML representation *)
@@ -1425,21 +1413,43 @@ fun calculate_trace ctxt oid pos =
     in  ML_Syntax.print_list print_string_pair string_pair_list end
 
 
+val parse_attribute_access = (Scan.lift Args.name 
+                              --| (Scan.lift @{keyword "::"}) 
+                              -- Scan.lift (Parse.position Args.name))
+                              : (string * (string * Position.T)) context_parser 
+
+fun attr_2_ML ctxt (attr:string,(oid:string,pos)) = (ML_Syntax.atomic o ML_Syntax.print_term) 
+                                                    (calc_attr_access ctxt attr oid pos) 
+
+fun trace_attr_2_ML ctxt (oid:string,pos) = ML_Syntax.atomic (calculate_trace ctxt oid pos)
+
 val _ = Theory.setup 
-           (ML_Antiquotation.inline @{binding trace_attribute}
-              (fn (ctxt,toks) => 
-                   ((Scan.lift (Parse.position Args.name)
-                    >> 
-                    (fn(oid:string,pos) => ML_Syntax.atomic (calculate_trace ctxt oid pos))
-                   ) : string context_parser
-              ) 
-              (ctxt, toks))
+           (ML_Antiquotation.inline @{binding docitem_attribute} 
+               (fn (ctxt,toks) => (parse_attribute_access >>  attr_2_ML ctxt) (ctxt, toks))  #>
+            ML_Antiquotation.inline @{binding trace_attribute}
+              (fn (ctxt,toks) => (Scan.lift(Parse.position Args.name) >> trace_attr_2_ML ctxt) (ctxt, toks))
            )
 end
 
 
 \<close>
 
+text\<open> @{term "a + b"}\<close>
+
+text\<open>copied from @{file "$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"} \<close>
+ML\<open> 
+fun basic_entities name scan pretty =
+  Thy_Output.antiquotation name scan (fn {source, context = ctxt, ...} =>
+    Thy_Output.output ctxt o Thy_Output.maybe_pretty_source pretty ctxt source);
+
+fun basic_entity name scan = basic_entities name (scan >> single);
+
+fun pretty_term_style ctxt (style, t) =
+  Thy_Output.pretty_term ctxt (style t);
+
+basic_entity @{binding term} (Term_Style.parse -- Args.term) pretty_term_style
+
+\<close>
 
   
 section\<open> Syntax for Ontologies (the '' View'' Part III) \<close> 
@@ -1519,7 +1529,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
                                                                  " in doc class:" ^ def_occurrence);
                                                         SOME(bind,ty,mf))
                                                    else error("no overloading allowed.")
-      val gen_antiquotation = OntoLinkParser.docitem_ref_antiquotation
+      val gen_antiquotation = OntoLinkParser.docitem_antiquotation
       val _ = map_filter (check_n_filter thy) fields
 
 
@@ -1549,22 +1559,7 @@ val _ =
 end (* struct *)
 \<close>  
 
-text\<open> @{term "a + b"}\<close>
 
-text\<open>copied from @{file "$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"} \<close>
-ML\<open> (* copy from *)
-fun basic_entities name scan pretty =
-  Thy_Output.antiquotation name scan (fn {source, context = ctxt, ...} =>
-    Thy_Output.output ctxt o Thy_Output.maybe_pretty_source pretty ctxt source);
-
-fun basic_entity name scan = basic_entities name (scan >> single);
-
-Thy_Output.pretty_term;
-
-(*
-  basic_entity @{binding term} (Term_Style.parse -- Args.term) pretty_term_style 
-*)
-\<close>
 
 section\<open> Testing and Validation \<close>
   

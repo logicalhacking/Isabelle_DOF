@@ -96,8 +96,8 @@ ML\<open> val s =  map HOLogic.dest_string (HOLogic.dest_list @{docitem_attribut
 section\<open>Simulation of a Monitor\<close>
 
 open_monitor*[figs1::figure_group, 
-              anchor="''fig-demo''", 
-              caption="''Sample ''"]  
+              (* anchor="''fig-demo''", Achim ...*)
+              caption="''Sample ''"] 
 
 figure*[fig_A::figure, spawn_columns=False,relative_width="90",
         src="''figures/A.png''"]

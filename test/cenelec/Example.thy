@@ -74,12 +74,15 @@ paragraph*[sdf]{* just a paragraph *}
 paragraph* [sdfk] \<open> just a paragraph - lexical variant \<close>  
 
 subsection*[sdf]{* shouldn't work, multiple ref. *}  
+-- wrong
 
 section*[sedf::requirement, alpja= refl]{* Shouldn't work - misspelled attribute. *}  
 text\<open>\label{sedf}\<close>  (* Hack to make the LaTeX-ing running. Should disappear. *)
-  
+-- wrong
+
 section*[seedf::test_case, dfg=34,fgdfg=zf]{* and another example with attribute setting,
 but wrong doc_class constraint. *}  
+-- wrong
 
 section{* Text Antiquotation Infrastructure ... *}  
                   
@@ -93,13 +96,14 @@ text{* @{ec \<open>ass122\<close>} -- global reference to a exported constraint 
                          the ontology, happens to be an "ec".  *}
 
 text{* @{test_specification \<open>ass122\<close>} -- wrong: "reference ontologically inconsistent". *}
-
+-- wrong
 
 
 text{* Here is a reference to @{docref \<open>sedf\<close>} *}    
 (* shouldn't work: label exists, but definition was finally rejected to to errors. *)
  
 check_doc_global (* shoudn't work : Unresolved forward references: lalala,blablabla *)
+-- wrong
 
 section \<open>Miscellaneous\<close> 
   
