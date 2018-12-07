@@ -1388,12 +1388,12 @@ fun calculate_attr_access0 ctxt proj_term term =
                        Syntax.string_of_term ctxt subterm')
     end
 
-fun calc_attr_access ctxt attr oid pos = (* template *)
+fun calc_attr_access ctxt attr oid pos pos' = (* template *)
     case DOF_core.get_value_global oid (Context.theory_of ctxt) of 
             SOME term => let val ctxt =  (Proof_Context.init_global (Context.theory_of ctxt))
                               val SOME{cid,pos=pos_decl,id,...} = DOF_core.get_object_local oid ctxt
                               val markup = docref_markup false oid id pos_decl;
-                              val _ = Context_Position.report ctxt pos markup;
+                              val _ = Context_Position.report ctxt pos' markup;
                               val (* (long_cid, attr_b,ty) = *)
                                   {long_name, typ=ty,...} = 
                                        case DOF_core.get_attribute_info_local cid attr ctxt of
@@ -1401,33 +1401,37 @@ fun calc_attr_access ctxt attr oid pos = (* template *)
                                           | NONE => error ("attribute undefined for reference: "^ oid)
                               val proj_term = Const(long_name,dummyT --> ty) 
                           in  calculate_attr_access0 ctxt proj_term term end
-           | NONE => error "identifier not a docitem reference"
+           | NONE => error("identifier not a docitem reference" ^ Position.here pos)
 
 
-fun calculate_trace ctxt oid pos =
+fun calculate_trace ctxt oid pos pos' =
     (* grabs attribute, and converts its HOL-term into (textual) ML representation *)
-    let val term = calc_attr_access ctxt "trace" oid pos
+    let val term = calc_attr_access ctxt "trace" oid pos pos'
         fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
         val string_pair_list = map conv (HOLogic.dest_list term)
         val print_string_pair = ML_Syntax.print_pair  ML_Syntax.print_string ML_Syntax.print_string
     in  ML_Syntax.print_list print_string_pair string_pair_list end
 
-
-val parse_attribute_access = (Scan.lift Args.name 
+val parse_oid = Scan.lift(Parse.position Args.name) 
+val parse_attribute_access = (parse_oid 
                               --| (Scan.lift @{keyword "::"}) 
                               -- Scan.lift (Parse.position Args.name))
-                              : (string * (string * Position.T)) context_parser 
+                              : ((string *Position.T) * (string * Position.T)) context_parser 
 
-fun attr_2_ML ctxt (attr:string,(oid:string,pos)) = (ML_Syntax.atomic o ML_Syntax.print_term) 
-                                                    (calc_attr_access ctxt attr oid pos) 
+val parse_attribute_access' = Term_Style.parse -- parse_attribute_access
+                              : ((term -> term) *
+                                 ((string * Position.T) * (string * Position.T))) context_parser
 
-fun trace_attr_2_ML ctxt (oid:string,pos) = ML_Syntax.atomic (calculate_trace ctxt oid pos)
+fun attr_2_ML ctxt ((attr:string,pos),(oid:string,pos')) = (ML_Syntax.atomic o ML_Syntax.print_term) 
+                                                           (calc_attr_access ctxt attr oid pos pos') 
+
+fun trace_attr_2_ML ctxt (oid:string,pos) = ML_Syntax.atomic (calculate_trace ctxt oid @{here} pos)
 
 val _ = Theory.setup 
            (ML_Antiquotation.inline @{binding docitem_attribute} 
                (fn (ctxt,toks) => (parse_attribute_access >>  attr_2_ML ctxt) (ctxt, toks))  #>
             ML_Antiquotation.inline @{binding trace_attribute}
-              (fn (ctxt,toks) => (Scan.lift(Parse.position Args.name) >> trace_attr_2_ML ctxt) (ctxt, toks))
+               (fn (ctxt,toks) => (parse_oid >> trace_attr_2_ML ctxt) (ctxt, toks))
            )
 end
 
@@ -1444,8 +1448,7 @@ fun basic_entities name scan pretty =
 
 fun basic_entity name scan = basic_entities name (scan >> single);
 
-fun pretty_term_style ctxt (style, t) =
-  Thy_Output.pretty_term ctxt (style t);
+fun pretty_term_style ctxt (style, t) = Thy_Output.pretty_term ctxt (style t);
 
 basic_entity @{binding term} (Term_Style.parse -- Args.term) pretty_term_style
 
