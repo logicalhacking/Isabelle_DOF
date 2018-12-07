@@ -98,7 +98,11 @@ update_instance*[omega::E, y+="[''defini'',''tion'']"]
 update_instance*[omega::E, y+="[''en'']"]
 
 ML\<open> val s =  map HOLogic.dest_string (HOLogic.dest_list @{docitem_attribute y::omega}); \<close>
-  
+
+subsection\<open> Example text antiquotation:\<close>
+text\<open> @{docitem_attribute omega::y}  \<close>
+
+
 section\<open>Simulation of a Monitor\<close>
 
 open_monitor*[figs1::figure_group, 
@@ -117,9 +121,10 @@ figure*[fig_B::figure,
 
 close_monitor*[figs1]  
 
-text\<open>Resulting trace in figs1: \<close>
+text\<open>Resulting trace of figs1 as ML antiquotation: \<close>
 ML\<open>@{trace_attribute figs1}\<close>
-
+text\<open> Resulting trace of figs as text antiquotation:\<close>
+text\<open>@{trace_attribute figs1}\<close>
 
 text\<open>Final Status:\<close>
 print_doc_items

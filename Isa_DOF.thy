@@ -1367,7 +1367,7 @@ ML\<open>
 structure AttributeAccess = 
 struct
 
-fun calculate_attr_access0 ctxt proj_term term =
+fun symbex_attr_access0 ctxt proj_term term =
     (* term assumed to be ground type, (f term) not necessarily *)
     let val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
         val ty = type_of (subterm')
@@ -1388,7 +1388,7 @@ fun calculate_attr_access0 ctxt proj_term term =
                        Syntax.string_of_term ctxt subterm')
     end
 
-fun calc_attr_access ctxt attr oid pos pos' = (* template *)
+fun compute_attr_access ctxt attr oid pos pos' = (* template *)
     case DOF_core.get_value_global oid (Context.theory_of ctxt) of 
             SOME term => let val ctxt =  (Proof_Context.init_global (Context.theory_of ctxt))
                               val SOME{cid,pos=pos_decl,id,...} = DOF_core.get_object_local oid ctxt
@@ -1398,15 +1398,16 @@ fun calc_attr_access ctxt attr oid pos pos' = (* template *)
                                   {long_name, typ=ty,...} = 
                                        case DOF_core.get_attribute_info_local cid attr ctxt of
                                             SOME f => f
-                                          | NONE => error ("attribute undefined for reference: "^ oid)
+                                          | NONE => error("attribute undefined for reference: "
+                                                          ^ oid ^ Position.here pos)
                               val proj_term = Const(long_name,dummyT --> ty) 
-                          in  calculate_attr_access0 ctxt proj_term term end
+                          in  symbex_attr_access0 ctxt proj_term term end
            | NONE => error("identifier not a docitem reference" ^ Position.here pos)
 
 
-fun calculate_trace ctxt oid pos pos' =
+fun compute_trace_ML ctxt oid pos pos' =
     (* grabs attribute, and converts its HOL-term into (textual) ML representation *)
-    let val term = calc_attr_access ctxt "trace" oid pos pos'
+    let val term = compute_attr_access ctxt "trace" oid pos pos'
         fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
         val string_pair_list = map conv (HOLogic.dest_list term)
         val print_string_pair = ML_Syntax.print_pair  ML_Syntax.print_string ML_Syntax.print_string
@@ -1423,38 +1424,45 @@ val parse_attribute_access' = Term_Style.parse -- parse_attribute_access
                                  ((string * Position.T) * (string * Position.T))) context_parser
 
 fun attr_2_ML ctxt ((attr:string,pos),(oid:string,pos')) = (ML_Syntax.atomic o ML_Syntax.print_term) 
-                                                           (calc_attr_access ctxt attr oid pos pos') 
+                                                           (compute_attr_access ctxt attr oid pos pos') 
 
-fun trace_attr_2_ML ctxt (oid:string,pos) = ML_Syntax.atomic (calculate_trace ctxt oid @{here} pos)
+fun trace_attr_2_ML ctxt (oid:string,pos) = ML_Syntax.atomic (compute_trace_ML ctxt oid @{here} pos)
 
-val _ = Theory.setup 
-           (ML_Antiquotation.inline @{binding docitem_attribute} 
-               (fn (ctxt,toks) => (parse_attribute_access >>  attr_2_ML ctxt) (ctxt, toks))  #>
-            ML_Antiquotation.inline @{binding trace_attribute}
-               (fn (ctxt,toks) => (parse_oid >> trace_attr_2_ML ctxt) (ctxt, toks))
-           )
-end
-
-
-\<close>
-
-text\<open> @{term "a + b"}\<close>
-
-text\<open>copied from @{file "$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"} \<close>
-ML\<open> 
+(* copied from "$ISABELLE_HOME/src/Pure/Thy/thy_output.ML" *)
 fun basic_entities name scan pretty =
   Thy_Output.antiquotation name scan (fn {source, context = ctxt, ...} =>
     Thy_Output.output ctxt o Thy_Output.maybe_pretty_source pretty ctxt source);
 
 fun basic_entity name scan = basic_entities name (scan >> single);
 
-fun pretty_term_style ctxt (style, t) = Thy_Output.pretty_term ctxt (style t);
+fun pretty_attr_access_style ctxt (style, ((oid,pos),(attr,pos'))) = 
+           Thy_Output.pretty_term ctxt (style (compute_attr_access 
+                                                (Context.Proof ctxt) 
+                                                 attr oid pos pos'));
+fun pretty_trace_style ctxt (style, (oid,pos)) = 
+          Thy_Output.pretty_term ctxt (style (compute_attr_access 
+                                               (Context.Proof ctxt) 
+                                                "trace" oid pos pos));
+  
+val _ = Theory.setup 
+           (ML_Antiquotation.inline @{binding docitem_attribute} 
+               (fn (ctxt,toks) => (parse_attribute_access >>  attr_2_ML ctxt) (ctxt, toks))  #>
+            ML_Antiquotation.inline @{binding trace_attribute}
+               (fn (ctxt,toks) => (parse_oid >> trace_attr_2_ML ctxt) (ctxt, toks)) #>
+            basic_entity @{binding trace_attribute} (Term_Style.parse -- parse_oid) 
+                                                    pretty_trace_style #>
+            basic_entity @{binding docitem_attribute} (Term_Style.parse -- parse_attribute_access)
+                                                      pretty_attr_access_style
+           )
 
-basic_entity @{binding term} (Term_Style.parse -- Args.term) pretty_term_style
-
+end
 \<close>
 
-  
+text\<open> Note that the functions @{ML "AttributeAccess.basic_entities"},
+       @{ML "AttributeAccess.basic_entity"} are 
+       copied from @{file "$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"} \<close>
+
+
 section\<open> Syntax for Ontologies (the '' View'' Part III) \<close> 
 ML\<open>
 structure OntoParser = 
