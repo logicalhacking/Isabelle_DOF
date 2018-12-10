@@ -93,7 +93,7 @@ section*[f::E]                \<open> Lectus accumsan velit ultrices, ... }\<clo
 section*[f2::E]               \<open> Lectus accumsan velit ultrices, ... }\<close>
 *)
 
-ML\<open>val term = AttributeAccess.calc_attr_access (Context.Proof @{context}) "trace" "struct" @{here} @{here} ;
+ML\<open>val term = AttributeAccess.compute_attr_access (Context.Proof @{context}) "trace" "struct" @{here} @{here} ;
    fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
    val string_pair_list = map conv (HOLogic.dest_list term)
   \<close>

@@ -34,7 +34,8 @@ doc_class side_by_side_figure = figure +
 doc_class figure_group = 
    (*  trace :: "doc_class rexp list" <= "[]" automatically generated since monitor clause *)
    caption          :: "string"
-   rejects            figure_group   (* this forbids recursive figure-groups *)
+   rejects            figure_group   (* this forbids recursive figure-groups not supported
+                                        by the current LaTeX style-file. *)
    accepts             "\<lbrace>figure\<rbrace>\<^sup>+"
 
 

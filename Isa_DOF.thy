@@ -564,11 +564,15 @@ fun print_doc_classes b ctxt =
     end;
 
 fun check_doc_global (strict_checking : bool) ctxt = 
-    let val {docobj_tab={tab = x, ...}, ...} = get_data ctxt;
+    let val {docobj_tab={tab = x, ...}, monitor_tab, ...} = get_data ctxt;
         val S = map_filter (fn (s,NONE) => SOME s | _ => NONE) (Symtab.dest x)
+        val T = map fst (Symtab.dest monitor_tab)
     in if null S 
-       then () 
-       else error("Global consistency error - Unresolved forward references: "^ String.concatWith "," S)   
+       then if null T then ()
+            else error("Global consistency error - there are open monitors:  "
+                  ^ String.concatWith "," T) 
+       else error("Global consistency error - Unresolved forward references: "
+                  ^ String.concatWith "," S)   
     end 
 
 val _ =
@@ -1113,9 +1117,13 @@ fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
 fun close_monitor_command (args as (((oid:string,pos),cid_pos),
                                     doc_attrs: (((string*Position.T)*string)*string)list)) thy = 
     let val {monitor_tab,...} = DOF_core.get_data_global thy
-        fun check_if_final {accepted_cids, rejected_cids,automatas} = true (* check if final: TODO *)
+        fun check_if_final aS = let val i = find_index (not o RegExpInterface.final) aS
+                                in  if i >= 0 
+                                    then error("monitor number "^ Int.toString i^" not in final state.")
+                                    else ()
+                                end
         val _ =  case Symtab.lookup monitor_tab oid of
-                     SOME X => check_if_final X 
+                     SOME {automatas,...} => check_if_final automatas 
                   |  NONE => error ("Not belonging to a monitor class: "^oid)
         val delete_monitor_entry = DOF_core.map_data_global (DOF_core.upd_monitor_tabs (Symtab.delete oid))
         val {cid=cid_long, ...} = the(DOF_core.get_object_global oid thy)
@@ -1198,15 +1206,13 @@ val _ =
 val _ =
   Outer_Syntax.command @{command_keyword "close_monitor*"} 
                        "close a document reference monitor"
-                       (attributes_upd >> (fn args => Toplevel.theory(close_monitor_command args))); 
+                       (attributes_upd >> (Toplevel.theory o close_monitor_command)); 
 
-
-val update_instance_command' = Toplevel.theory o update_instance_command
 
 val _ =
   Outer_Syntax.command @{command_keyword "update_instance*"} 
                        "update meta-attributes of an instance of a document class"
-                        (attributes_upd >> update_instance_command'); 
+                        (attributes_upd >> (Toplevel.theory o update_instance_command)); 
 
  (* dummy/fake so far: *)
 val update_lemma_cmd = (fn (((oid,pos),cid),doc_attrs) => (Toplevel.theory (I)))
@@ -1263,9 +1269,9 @@ fun theorem spec schematic descr  =
 
 val _ = theorem @{command_keyword "theorem*"} false "theorem";
 (* val _ = theorem @{command_keyword "lemma*"} false "lemma";
-val _ = theorem @{command_keyword corollary} false "corollary";
-val _ = theorem @{command_keyword proposition} false "proposition";
-val _ = theorem @{command_keyword schematic_goal} true "schematic goal"; *)
+   val _ = theorem @{command_keyword corollary} false "corollary";
+   val _ = theorem @{command_keyword proposition} false "proposition";
+   val _ = theorem @{command_keyword schematic_goal} true "schematic goal"; *)
 
 in end\<close>  
     
