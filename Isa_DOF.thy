@@ -1201,31 +1201,35 @@ val _ =
                        (attributes_upd >> (fn args => Toplevel.theory(close_monitor_command args))); 
 
 
+val update_instance_command' = Toplevel.theory o update_instance_command
+
 val _ =
   Outer_Syntax.command @{command_keyword "update_instance*"} 
                        "update meta-attributes of an instance of a document class"
-                        (attributes_upd >> (fn args => Toplevel.theory(update_instance_command args))); 
+                        (attributes_upd >> update_instance_command'); 
+
+ (* dummy/fake so far: *)
+val update_lemma_cmd = (fn (((oid,pos),cid),doc_attrs) => (Toplevel.theory (I)))
 
 val _ =
   Outer_Syntax.command @{command_keyword "lemma*"} 
-                       "lemma"
-                       (attributes >> (fn (((oid,pos),cid),doc_attrs) => 
-                                          (Toplevel.theory (I)))); (* dummy/fake so far *)
+                       "lemma" (attributes >> update_lemma_cmd);
+
+(* dummy/fake so far: *)
+fun assert_cmd' ((((((oid,pos),cid),doc_attrs),some_name:string option),modes : string list),t:string) = 
+                                          (Toplevel.keep (assert_cmd some_name modes t))
 val _ =
   Outer_Syntax.command @{command_keyword "assert*"} 
                        "evaluate and print term"
-                       (attributes 
-                        -- opt_evaluator 
-                        -- opt_modes 
-                        -- Parse.term
-                        >> (fn ((((((oid,pos),cid),doc_attrs),some_name:string option),modes : string list),t:string) => 
-                                          (Toplevel.keep (assert_cmd some_name modes t)))); (* dummy/fake so far *)
+                       (attributes -- opt_evaluator -- opt_modes  -- Parse.term  >> assert_cmd'); 
 
-(* this sets parser and converter for LaTeX generation of meta-attributes. 
+(* the following 2 lines set parser and converter for LaTeX generation of meta-attributes. 
    Currently of *all* commands, no distinction between text* and text command. 
-*)
+   This code depends on a MODIFIED Isabelle2017 version resulting fro; applying the files
+   under Isabell_DOF/patches. 
+ *)
 val _ = Thy_Output.set_meta_args_parser 
-             (fn thy => (Scan.optional (attributes >> meta_args_2_string thy) "")) 
+                       (fn thy => (Scan.optional (attributes >> meta_args_2_string thy) "")) 
 
 end (* struct *)
 
@@ -1414,6 +1418,7 @@ fun compute_trace_ML ctxt oid pos pos' =
     in  ML_Syntax.print_list print_string_pair string_pair_list end
 
 val parse_oid = Scan.lift(Parse.position Args.name) 
+val parse_oid' = Term_Style.parse -- parse_oid
 val parse_attribute_access = (parse_oid 
                               --| (Scan.lift @{keyword "::"}) 
                               -- Scan.lift (Parse.position Args.name))
@@ -1428,6 +1433,7 @@ fun attr_2_ML ctxt ((attr:string,pos),(oid:string,pos')) = (ML_Syntax.atomic o M
 
 fun trace_attr_2_ML ctxt (oid:string,pos) = ML_Syntax.atomic (compute_trace_ML ctxt oid @{here} pos)
 
+local
 (* copied from "$ISABELLE_HOME/src/Pure/Thy/thy_output.ML" *)
 fun basic_entities name scan pretty =
   Thy_Output.antiquotation name scan (fn {source, context = ctxt, ...} =>
@@ -1436,31 +1442,26 @@ fun basic_entities name scan pretty =
 fun basic_entity name scan = basic_entities name (scan >> single);
 
 fun pretty_attr_access_style ctxt (style, ((oid,pos),(attr,pos'))) = 
-           Thy_Output.pretty_term ctxt (style (compute_attr_access 
-                                                (Context.Proof ctxt) 
-                                                 attr oid pos pos'));
+           Thy_Output.pretty_term ctxt (style (compute_attr_access (Context.Proof ctxt) 
+                                                                    attr oid pos pos'));
 fun pretty_trace_style ctxt (style, (oid,pos)) = 
-          Thy_Output.pretty_term ctxt (style (compute_attr_access 
-                                               (Context.Proof ctxt) 
-                                                "trace" oid pos pos));
-  
+          Thy_Output.pretty_term ctxt (style (compute_attr_access  (Context.Proof ctxt) 
+                                                                   "trace" oid pos pos));
+in  
 val _ = Theory.setup 
            (ML_Antiquotation.inline @{binding docitem_attribute} 
                (fn (ctxt,toks) => (parse_attribute_access >>  attr_2_ML ctxt) (ctxt, toks))  #>
             ML_Antiquotation.inline @{binding trace_attribute}
                (fn (ctxt,toks) => (parse_oid >> trace_attr_2_ML ctxt) (ctxt, toks)) #>
-            basic_entity @{binding trace_attribute} (Term_Style.parse -- parse_oid) 
-                                                    pretty_trace_style #>
-            basic_entity @{binding docitem_attribute} (Term_Style.parse -- parse_attribute_access)
-                                                      pretty_attr_access_style
+            basic_entity @{binding trace_attribute} parse_oid'  pretty_trace_style #>
+            basic_entity @{binding docitem_attribute} parse_attribute_access' pretty_attr_access_style
            )
-
+end
 end
 \<close>
 
-text\<open> Note that the functions @{ML "AttributeAccess.basic_entities"},
-       @{ML "AttributeAccess.basic_entity"} are 
-       copied from @{file "$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"} \<close>
+text\<open> Note that the functions \<^verbatim>\<open>basic_entities\<close> and \<^verbatim>\<open>basic_entity\<close> in @{ML_structure AttributeAccess}
+       are copied from @{file "$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"} \<close>
 
 
 section\<open> Syntax for Ontologies (the '' View'' Part III) \<close> 
@@ -1563,7 +1564,7 @@ val _ =
       -- Scan.repeat1 
              (Parse.const_binding -- Scan.option (@{keyword "<="} |-- Parse.term)))
       -- (   Scan.optional (@{keyword "rejects"} |-- Parse.enum1 "," Parse.term) []
-          -- Scan.repeat (@{keyword "accepts"} |-- Parse.term))) 
+          -- Scan.repeat   (@{keyword "accepts"} |-- Parse.term))) 
     >> (fn (((overloaded, x), (y, z)),(rejectS,accept_rex)) =>
            Toplevel.theory (add_doc_class_cmd {overloaded = overloaded} x y z rejectS accept_rex)));
 
