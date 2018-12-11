@@ -735,11 +735,9 @@ text\<open> This work was partly supported by  the framework of IRT SystemX, Par
 and therefore granted with public funds within the scope of the Program ``Investissements d’Avenir''.\<close>
 
 (*<*) 
+section*[bib::bibliography]\<open>References\<close>
+
 close_monitor*[this]
-
-text\<open>Resulting trace in doc\_item ''this'': \<close>
-ML\<open>@{trace_attribute this}\<close>
-
 
 end
 (*>*) 

@@ -1077,7 +1077,7 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
 fun enriched_document_command markdown level (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
                                         xstring_opt:(xstring * Position.T) option),
                                         toks:Input.source) 
-                                        : Toplevel.transition -> Toplevel.transition =
+                                        : theory -> theory =
   let
        (* as side-effect, generates markup *)
        fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
@@ -1087,7 +1087,7 @@ fun enriched_document_command markdown level (((((oid,pos),cid_pos), doc_attrs) 
                 | SOME(NONE) => (("level",@{here}),"None")::doc_attrs
                 | SOME(SOME x) => (("level",@{here}),"Some("^ Int.toString x ^"::int)")::doc_attrs
   in   
-       Toplevel.theory(create_and_check_docitem false oid pos cid_pos doc_attrs #> check_text) 
+       (create_and_check_docitem false oid pos cid_pos doc_attrs #> check_text) 
        (* Thanks Frederic Tuong! ! ! *)
   end;
 
@@ -1110,7 +1110,7 @@ fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
             in  DOF_core.map_data_global(DOF_core.upd_monitor_tabs(Symtab.update(oid, info )))(thy)
             end
     in
-        Toplevel.theory(o_m_c oid pos cid_pos doc_attrs  #> create_monitor_entry ) 
+        o_m_c oid pos cid_pos doc_attrs  #> create_monitor_entry  
     end;
 
 
@@ -1119,14 +1119,16 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
     let val {monitor_tab,...} = DOF_core.get_data_global thy
         fun check_if_final aS = let val i = find_index (not o RegExpInterface.final) aS
                                 in  if i >= 0 
-                                    then error("monitor number "^ Int.toString i^" not in final state.")
+                                    then error("monitor number "^Int.toString i^" not in final state.")
                                     else ()
                                 end
         val _ =  case Symtab.lookup monitor_tab oid of
                      SOME {automatas,...} => check_if_final automatas 
                   |  NONE => error ("Not belonging to a monitor class: "^oid)
         val delete_monitor_entry = DOF_core.map_data_global (DOF_core.upd_monitor_tabs (Symtab.delete oid))
-        val {cid=cid_long, ...} = the(DOF_core.get_object_global oid thy)
+        val {cid=cid_long, id, ...} = the(DOF_core.get_object_global oid thy)
+        val markup = docref_markup false oid id pos;
+        val _ = Context_Position.report (Proof_Context.init_global thy) pos markup;
         val check_inv =   (DOF_core.get_class_invariant cid_long thy oid) {is_monitor=true} 
                            o Context.Theory 
     in  thy |> update_instance_command args
@@ -1138,59 +1140,59 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
 val _ =
   Outer_Syntax.command ("title*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false} NONE) ;
+      >> (Toplevel.theory o (enriched_document_command {markdown = false} NONE))) ;
 
 val _ =
   Outer_Syntax.command ("subtitle*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false} NONE);
+      >> (Toplevel.theory o (enriched_document_command {markdown = false} NONE)));
 
 val _ =
   Outer_Syntax.command ("chapter*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false} (SOME(SOME 0)));
+      >> (Toplevel.theory o (enriched_document_command {markdown = false} (SOME(SOME 0)))));
 
 val _ =
   Outer_Syntax.command ("section*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false} (SOME(SOME 1)));
+      >> (Toplevel.theory o (enriched_document_command {markdown = false} (SOME(SOME 1)))));
 
 
 val _ =
   Outer_Syntax.command ("subsection*", @{here}) "subsection heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false} (SOME(SOME 2)));
+      >> (Toplevel.theory o (enriched_document_command {markdown = false} (SOME(SOME 2)))));
 
 val _ =
   Outer_Syntax.command ("subsubsection*", @{here}) "subsubsection heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false} (SOME(SOME 3)));
+      >> (Toplevel.theory o (enriched_document_command {markdown = false} (SOME(SOME 3)))));
 
 val _ =
   Outer_Syntax.command ("paragraph*", @{here}) "paragraph heading"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false} (SOME(SOME 4)));
+      >> (Toplevel.theory o (enriched_document_command {markdown = false} (SOME(SOME 4)))));
 
 val _ =
   Outer_Syntax.command ("subparagraph*", @{here}) "subparagraph heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false} (SOME(SOME 5)));
+      >> (Toplevel.theory o (enriched_document_command {markdown = false} (SOME(SOME 5)))));
 
 val _ =
   Outer_Syntax.command ("figure*", @{here}) "figure"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false} NONE);
+      >> (Toplevel.theory o (enriched_document_command {markdown = false} NONE)));
 
 val _ =
   Outer_Syntax.command ("side_by_side_figure*", @{here}) "multiple figures"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> enriched_document_command {markdown = false} NONE);
+      >> (Toplevel.theory o (enriched_document_command {markdown = false} NONE)));
 
 
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> enriched_document_command {markdown = true} (SOME NONE));
+      >> (Toplevel.theory o (enriched_document_command {markdown = true} (SOME NONE))));
 
 val _ =
   Outer_Syntax.command @{command_keyword "declare_reference*"} 
@@ -1201,7 +1203,7 @@ val _ =
 val _ =
   Outer_Syntax.command @{command_keyword "open_monitor*"} 
                        "open a document reference monitor"
-                       (attributes >> open_monitor_command);
+                       (attributes >> (Toplevel.theory o open_monitor_command));
 
 val _ =
   Outer_Syntax.command @{command_keyword "close_monitor*"} 
@@ -1221,9 +1223,19 @@ val _ =
   Outer_Syntax.command @{command_keyword "lemma*"} 
                        "lemma" (attributes >> update_lemma_cmd);
 
-(* dummy/fake so far: *)
-fun assert_cmd' ((((((oid,pos),cid),doc_attrs),some_name:string option),modes : string list),t:string) = 
-                                          (Toplevel.keep (assert_cmd some_name modes t))
+fun assert_cmd'((((((oid,pos),cid_pos),doc_attrs),some_name:string option),modes : string list),
+                prop:string) =
+    let val doc_attrs' = map (fn ((lhs,pos),rhs) => (((lhs,pos),"="),rhs)) doc_attrs
+        (* missing : registrating t as property *)
+        fun mks thy = case DOF_core.get_object_global oid thy of
+                   SOME _ => update_instance_command (((oid,pos),cid_pos),doc_attrs') thy
+                 | NONE   => create_and_check_docitem false oid pos cid_pos doc_attrs thy
+        val check = (assert_cmd some_name modes prop) o Proof_Context.init_global
+    in 
+        (* Toplevel.keep (check o Toplevel.context_of) *)
+        Toplevel.theory (fn thy => (check thy; mks thy))
+    end
+
 val _ =
   Outer_Syntax.command @{command_keyword "assert*"} 
                        "evaluate and print term"
@@ -1514,7 +1526,6 @@ val tag_attr = (Binding.make("tag_attribute",@{here}), @{typ "int"},Mixfix.NoSyn
 val trace_attr = ((Binding.make("trace",@{here}), "(doc_class rexp \<times> string) list",Mixfix.NoSyn),
                   SOME "[]"): ((binding * string * mixfix) * string option)
 
-
 fun add_doc_class_cmd overloaded (raw_params, binding) 
                       raw_parent raw_fieldsNdefaults reject_Atoms regexps thy =
     let
@@ -1577,11 +1588,11 @@ val _ =
 end (* struct *)
 \<close>  
 
-
+ML\<open>find_index\<close>
 
 section\<open> Testing and Validation \<close>
   
-(* the following test crashes the LaTeX generation - however, without the latter this output is 
+(* the f ollowing test crashes the LaTeX generation - however, without the latter this output is 
    instructive 
 ML\<open>
 writeln (DOF_core.toStringDocItemCommand "section" "scholarly_paper.introduction" []);

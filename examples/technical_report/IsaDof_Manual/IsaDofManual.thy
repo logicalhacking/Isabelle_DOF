@@ -4,6 +4,8 @@ theory IsaDofManual
 begin
 (*<*) 
 
+text*[bib::bibliography]\<open>TODO\<close>
+
 close_monitor*[this]
 
 text\<open>Resulting trace in doc\_item ''this'': \<close>

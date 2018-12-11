@@ -29,7 +29,7 @@ subsection*[b::A, x = "5"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 text\<open>Setting a sample invariant, referring to attribute value "x":\<close>
 ML\<open>fun check_A_invariant oid {is_monitor:bool} ctxt = 
-      let val term =  AttributeAccess.calc_attr_access ctxt "x" oid @{here} @{here} 
+      let val term =  AttributeAccess.compute_attr_access ctxt "x" oid @{here} @{here} 
           val (@{typ "int"},x_value) = HOLogic.dest_number term
       in  if x_value > 5 then error("class A invariant violation") else true end
 \<close>
@@ -62,7 +62,7 @@ to take sub-classing into account:
 \<close>
 
 ML\<open>fun check_M_invariant oid {is_monitor} ctxt = 
-      let val term =  AttributeAccess.calc_attr_access ctxt "trace" oid @{here} @{here} 
+      let val term =  AttributeAccess.compute_attr_access ctxt "trace" oid @{here} @{here} 
           fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
           val string_pair_list = map conv (HOLogic.dest_list term) 
           val cid_list = map fst string_pair_list

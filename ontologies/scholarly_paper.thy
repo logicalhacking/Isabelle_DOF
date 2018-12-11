@@ -55,8 +55,14 @@ doc_class "conclusion" = text_section +
 doc_class related_work = "conclusion" +
    main_author :: "author option"  <=  None
 
+(* There is no consensus if this is a good classification *)
+datatype formal_content_kind = "definition" | "axiom" | aux_lemma | "lemma" | "corrollary" | "theorem"
+
+doc_class "thm_elements" = "thms" +
+   kind        :: "formal_content_kind option" 
+
 doc_class bibliography =
-   style :: "string option"  <=  "Some ''LNCS''"
+   style       :: "string option"  <=  "Some ''LNCS''"
 
 text\<open> Besides subtyping, there is another relation between
 doc_classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,

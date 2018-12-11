@@ -29,7 +29,7 @@ doc_class report =
            \<lbrace>introduction\<rbrace>\<^sup>+         ~~ 
            \<lbrace>technical || example\<rbrace>\<^sup>+ ~~ 
            \<lbrace>conclusion\<rbrace>\<^sup>+           ~~  
-           \<lbrace>index\<rbrace>\<^sup>+  ~~  
+           \<lbrace>index\<rbrace>\<^sup>*  ~~  
            bibliography)"
 
 ML\<open>

@@ -122,13 +122,17 @@ figure*[fig_B::figure,
 close_monitor*[figs1]  
 
 text\<open>Resulting trace of figs1 as ML antiquotation: \<close>
-ML\<open>@{trace_attribute figs1}\<close>
-text\<open> Resulting trace of figs as text antiquotation:\<close>
+ML  \<open>@{trace_attribute figs1}\<close>
+text\<open>Resulting trace of figs as text antiquotation:\<close>
 text\<open>@{trace_attribute figs1}\<close>
 
 text\<open>Final Status:\<close>
 print_doc_items
 print_doc_classes 
+
+(*quatsch so far *)
+text*[aa::figure]\<open>dfg\<close>
+assert*[aa] "True"
 
 
 end
