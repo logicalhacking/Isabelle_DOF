@@ -189,6 +189,13 @@
 ][1]{%
   \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
+\expandafter\newkeycommand\csname isaDof.subsection.scholarly_paper.technical\endcsname%
+[label=,type=%
+,scholarly_paper.text_section.main_author=%
+,scholarly_paper.text_section.fixme_list=%
+][1]{%
+  \isamarkupfalse\isamarkupsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
+}
 % end: scholarly_paper.technical
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -223,3 +230,13 @@
 % end: scholarly_paper.conclusion
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: scholarly_paper.bibliography
+\expandafter\newkeycommand\csname isaDof.section.scholarly_paper.bibliography\endcsname%
+[label=,type=%
+,scholarly_paper.text_section.main_author=%
+,scholarly_paper.text_section.fixme_list=%
+][1]{%
+  \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
+}
+% end: scholarly_paper.bibliography
