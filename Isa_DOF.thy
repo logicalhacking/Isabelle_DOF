@@ -1066,11 +1066,11 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                                                            Syntax.read_term_global thy rhs)
                 val assns' = map conv_attrs doc_attrs
                 val def_trans = #1 o (calc_update_term thy cid_long assns')
-                val check_inv = (DOF_core.get_class_invariant cid_long thy oid {is_monitor=false}) 
-                                 o Context.Theory 
+                fun check_inv thy =((DOF_core.get_class_invariant cid_long thy oid {is_monitor=false} 
+                                     o Context.Theory ) thy ; thy)
             in     
                 thy |> DOF_core.update_value_global oid (def_trans)
-                    |> (fn thy => (check_inv thy; thy))
+                    |> check_inv
             end
 
 
@@ -1225,7 +1225,9 @@ val _ =
 
 fun assert_cmd'((((((oid,pos),cid_pos),doc_attrs),some_name:string option),modes : string list),
                 prop:string) =
-    let val doc_attrs' = map (fn ((lhs,pos),rhs) => (((lhs,pos),"="),rhs)) doc_attrs
+    let fun markup2string x = XML.content_of (YXML.parse_body x)
+        val doc_attrs = (("property",pos),"[@{term ''"^markup2string prop ^"''}]")::doc_attrs 
+        val doc_attrs' = map (fn ((lhs,pos),rhs) => (((lhs,pos),"="),rhs)) doc_attrs
         (* missing : registrating t as property *)
         fun mks thy = case DOF_core.get_object_global oid thy of
                    SOME _ => update_instance_command (((oid,pos),cid_pos),doc_attrs') thy
@@ -1589,7 +1591,6 @@ val _ =
 end (* struct *)
 \<close>  
 
-ML\<open>find_index\<close>
 
 section\<open> Testing and Validation \<close>
   
