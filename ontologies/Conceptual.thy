@@ -3,9 +3,11 @@ theory Conceptual
 begin
 
 doc_class A =
+   level :: "int option"
    x :: int  
 
 doc_class B =
+   level :: "int option"
    x :: "string"                            (* attributes live in their own name-space *)
    y :: "string list"          <= "[]"      (* and can have arbitrary type constructors *)
                                             (* LaTeX may have problems with this, though *)

@@ -39,15 +39,17 @@ datatype Level =
 datatype Grade =
   A1 | A2 | A3
 
-doc_class Header = 
+
+doc_class Exam_item = 
+  level    :: "int option"
+  concerns :: "ContentClass set"  
+
+doc_class Header = Exam_item +
   examSubject :: "(Subject) list"
   date :: string
   timeAllowed :: int --  minutes
 
-doc_class Exam_item = 
-  concerns :: "ContentClass set"  
 
-  
 type_synonym SubQuestion = string
  
 doc_class Answer_Formal_Step =  Exam_item +
@@ -62,11 +64,11 @@ datatype Question_Type =
   formal | informal | mixed 
   
 doc_class Task = Exam_item +
-  level    :: Level
-  type     :: Question_Type
-  subitems :: "(SubQuestion * (Answer_Formal_Step list + Answer_YesNo)list) list"
-  concerns :: "ContentClass set" <= "{setter,student,checker,externalExaminer}" 
-  mark     :: int
+  local_grade :: Level
+  type        :: Question_Type
+  subitems    :: "(SubQuestion * (Answer_Formal_Step list + Answer_YesNo)list) list"
+  concerns    :: "ContentClass set" <= "{setter,student,checker,externalExaminer}" 
+  mark        :: int
    
 
 doc_class Exercise = Exam_item +
@@ -90,7 +92,7 @@ doc_class Solution = Exam_item +
   valids   :: "Validation list"
   concerns :: "ContentClass set" <= "{setter,checker,externalExaminer}"
   
-doc_class MathExam=
+doc_class MathExam =
   content :: "(Header + Author + Exercise) list"
   global_grade :: Grade 
   accepts "\<lbrace>Author\<rbrace>\<^sup>+  ~~  Header ~~  \<lbrace>Exercise ~~ Solution\<rbrace>\<^sup>+ "

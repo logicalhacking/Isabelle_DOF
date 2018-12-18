@@ -1087,7 +1087,7 @@ fun enriched_document_command markdown level (((((oid,pos),cid_pos), doc_attrs) 
                 | SOME(NONE) => (("level",@{here}),"None")::doc_attrs
                 | SOME(SOME x) => (("level",@{here}),"Some("^ Int.toString x ^"::int)")::doc_attrs
   in   
-       (create_and_check_docitem false oid pos cid_pos doc_attrs #> check_text) 
+       (create_and_check_docitem false oid pos cid_pos doc_attrs' #> check_text) 
        (* Thanks Frederic Tuong! ! ! *)
   end;
 
@@ -1192,7 +1192,7 @@ val _ =
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (enriched_document_command {markdown = true} (SOME NONE))));
+      >> (Toplevel.theory o (enriched_document_command {markdown = true} (NONE))));
 
 val _ =
   Outer_Syntax.command @{command_keyword "declare_reference*"} 
@@ -1431,9 +1431,7 @@ fun compute_trace_ML ctxt oid pos pos' =
     (* grabs attribute, and converts its HOL-term into (textual) ML representation *)
     let val term = compute_attr_access ctxt "trace" oid pos pos'
         fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
-        val string_pair_list = map conv (HOLogic.dest_list term)
-        val print_string_pair = ML_Syntax.print_pair  ML_Syntax.print_string ML_Syntax.print_string
-    in  ML_Syntax.print_list print_string_pair string_pair_list end
+    in  map conv (HOLogic.dest_list term) end
 
 val parse_oid = Scan.lift(Parse.position Args.name) 
 val parse_oid' = Term_Style.parse -- parse_oid
@@ -1449,7 +1447,10 @@ val parse_attribute_access' = Term_Style.parse -- parse_attribute_access
 fun attr_2_ML ctxt ((attr:string,pos),(oid:string,pos')) = (ML_Syntax.atomic o ML_Syntax.print_term) 
                                                            (compute_attr_access ctxt attr oid pos pos') 
 
-fun trace_attr_2_ML ctxt (oid:string,pos) = ML_Syntax.atomic (compute_trace_ML ctxt oid @{here} pos)
+fun trace_attr_2_ML ctxt (oid:string,pos) =
+    let val print_string_pair = ML_Syntax.print_pair  ML_Syntax.print_string ML_Syntax.print_string
+        val toML = (ML_Syntax.atomic o (ML_Syntax.print_list print_string_pair))
+    in  toML (compute_trace_ML ctxt oid @{here} pos) end
 
 local
 (* copied from "$ISABELLE_HOME/src/Pure/Thy/thy_output.ML" *)

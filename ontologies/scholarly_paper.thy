@@ -61,7 +61,7 @@ datatype formal_content_kind = "definition" | "axiom" | aux_lemma | "lemma" | "c
 doc_class "thm_elements" = "thms" +
    kind        :: "formal_content_kind option" 
 
-doc_class bibliography =
+doc_class bibliography = text_section +
    style       :: "string option"  <=  "Some ''LNCS''"
 
 text\<open> Besides subtyping, there is another relation between
@@ -101,6 +101,90 @@ doc_class article =
             \<lbrace>technical || example\<rbrace>\<^sup>+ ~~
             \<lbrace>conclusion\<rbrace>\<^sup>+    ~~  
             bibliography)"
+
+
+ML\<open>
+structure Scholarly_paper_trace_invariant =
+struct 
+local
+
+fun group f g cidS [] = []
+   |group f g cidS (a::S) = case find_first (f a) cidS of
+                            NONE => [a] :: group f g cidS S
+                          | SOME cid => let val (pref,suff) =  take_prefix  (g cid) S
+                                        in (a::pref)::(group f g cidS suff) end;
+
+fun partition ctxt cidS trace = 
+    let fun find_lead (x,_) = DOF_core.is_subclass ctxt x;
+        fun find_cont cid (cid',_) =  DOF_core.is_subclass ctxt cid' cid
+    in group find_lead find_cont cidS trace end;
+
+fun dest_option _ (Const (@{const_name "None"}, _)) = NONE
+  | dest_option f (Const (@{const_name "Some"}, _) $ t) = SOME (f t)
+
+in 
+
+fun check ctxt cidS mon_id pos =
+    let val trace  = AttributeAccess.compute_trace_ML ctxt mon_id pos @{here}
+        val groups = partition (Context.proof_of ctxt) cidS trace
+        fun get_level_raw oid = AttributeAccess.compute_attr_access ctxt "level" oid @{here} @{here};
+        fun get_level oid = dest_option (snd o HOLogic.dest_number) (get_level_raw (oid));
+        fun check_level_hd a = case (get_level (snd a)) of
+                                  NONE => error("Invariant violation: leading section" ^ snd a ^ 
+                                                " must have lowest level")
+                                | SOME X => X
+        fun check_group_elem level_hd a = case (get_level (snd a)) of
+                                              NONE => true
+                                            | SOME y => if level_hd <= y then true
+                                                        (* or < ? But this is too strong ... *)
+                                                        else error("Invariant violation: "^
+                                                                   "subsequent section " ^ snd a ^ 
+                                                                   " must have higher level.");
+        fun check_group [] = true
+           |check_group [_] = true
+           |check_group (a::S) = forall (check_group_elem (check_level_hd a)) (S)
+    in if forall check_group groups then () 
+       else error"Invariant violation: leading section must have lowest level" 
+    end
+end
+
+end
+\<close>
+
+
+setup\<open> let val cidS = ["scholarly_paper.introduction","scholarly_paper.technical", 
+                       "scholarly_paper.example", "scholarly_paper.conclusion"];
+           val upd =  DOF_core.update_class_invariant "scholarly_paper.article"
+           fun body moni_oid _ ctxt = (Scholarly_paper_trace_invariant.check 
+                                                    ctxt cidS moni_oid @{here};
+                                       true)
+       in  upd body end\<close>
+
+
+(* some test code *)
+ML\<open>
+(*
+
+val trace  = AttributeAccess.compute_trace_ML (Context.Proof @{context}) "this" @{here} @{here}
+val groups = partition (  @{context}) cidS trace
+val _::_::_::_:: _ ::_ ::_ ::a::_ = groups;
+check;
+
+fun get_level_raw oid = AttributeAccess.compute_attr_access (Context.Proof @{context}) "level" oid @{here} @{here};
+fun get_level oid = dest_option (snd o HOLogic.dest_number) (get_level_raw (oid));
+fun check_level_hd a = case (get_level (snd a)) of
+                 NONE => error("Invariant violation: leading section" ^ snd a ^ 
+                               " must have lowest level")
+               | SOME X => X
+fun check_group_elem level_hd a = case (get_level (snd a)) of
+                            NONE => true
+                          | SOME y => if y > level_hd then true
+                                      else error("Invariant violation: subsequent section " ^ snd a ^ 
+                                                 " must have higher level.");
+fun check_group a = map (check_group_elem (check_level_hd (hd a))) (tl a) ;
+*)
+\<close>
+
 
 gen_sty_template
 

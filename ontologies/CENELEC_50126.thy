@@ -12,7 +12,7 @@ Common Criteria identifies:
 
 (*<<*)  
 theory CENELEC_50126
-  imports "../Isa_DOF" "../Isa_COL"
+  imports  "../Isa_COL"
 begin
 (*>>*) 
 

@@ -45,6 +45,9 @@ for enforcing a certain document structure, and discuss ontology-specific IDE su
 \<close>
 
 section*[intro::introduction]\<open> Introduction \<close>  
+text\<open> drfgdfg\<close>
+ML\<open>@{trace_attribute this}\<close>
+print_doc_items
 text*[introtext::introduction]\<open> 
 The linking of the \<^emph>\<open>formal\<close> to the \<^emph>\<open>informal\<close> is perhaps the
 most pervasive challenge in the digitization of knowledge and its
@@ -388,7 +391,7 @@ text\<open> The document class \inlineisar+figure+ --- supported by the \isadof 
 \inlineisar+figure*+ --- makes it possible to express the pictures and diagrams in this paper 
 such as @{docitem_ref \<open>fig_figures\<close>}.
 \<close>
-     
+         
 subsection*[mathex_onto::example]\<open> The Math-Exam Scenario \<close> 
 text\<open> The Math-Exam Scenario is an application with mixed formal and 
 semi-formal content. It addresses applications where the author of the exam is not present 
@@ -738,6 +741,7 @@ and therefore granted with public funds within the scope of the Program ``Invest
 section*[bib::bibliography]\<open>References\<close>
 
 close_monitor*[this]
+
 
 end
 (*>*) 

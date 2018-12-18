@@ -1,7 +1,8 @@
 chapter\<open> Example : Forward and Standard (use-after-define) Referencing\<close>
 
 theory Example
-  imports  "../../ontologies/CENELEC_50126"
+  imports  "../../ontologies/CENELEC_50126" 
+           "../../ontologies/scholarly_paper"
 begin
 
 section\<open> Some examples of Isabelle's standard antiquotations. \<close>
@@ -63,16 +64,17 @@ section\<open> Some Tests for Ontology Framework and its CENELEC Instance \<clos
                                                   
 declare_reference* [lalala::requirement, alpha="main", beta=42]
 declare_reference* [blablabla::cid, alpha="beta sdf", beta=gamma, delta=dfg_fgh\<^sub>1]
-paragraph* [sdfk] \<open> just a paragraph - lexical variant \<close>  
+
+paragraph* [sdfk::introduction] \<open> just a paragraph - lexical variant \<close>
 
 
 
 
-section\<open> Some global inspection commands for the status of docitem  and doc-class tables ... \<close>  
+section*[h::example]\<open> Some global inspection commands for the status of docitem  and doc-class tables ... \<close>  
 
 
 
-section\<open> Text Antiquotation Infrastructure ... \<close>  
+section*[i::example]\<open> Text Antiquotation Infrastructure ... \<close>  
                   
 text\<open> @{docitem \<open>lalala\<close>}   -- produces warning. \<close>  
 text\<open> @{docitem (unchecked) \<open>lalala\<close>} -- produces no warning. \<close>  

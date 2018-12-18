@@ -32,8 +32,5 @@ doc_class report =
            \<lbrace>index\<rbrace>\<^sup>*  ~~  
            bibliography)"
 
-ML\<open>
-\<close>
-
 end
 

@@ -23,7 +23,7 @@ text\<open> ... in ut tortor ... @{docitem \<open>a\<close>} ... @{A \<open>a\<c
     
 text*[c2::C, x = "''delta''"]  \<open> ... in ut tortor eleifend augue pretium consectetuer.  \<close>
 
-section*[f::F] \<open> Lectus accumsan velit ultrices, ... }\<close>
+text*[f::F] \<open> Lectus accumsan velit ultrices, ... }\<close>
   
 theorem some_proof : "P" sorry
 

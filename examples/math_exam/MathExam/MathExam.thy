@@ -17,7 +17,7 @@ text{*
 \end{itemize}
 *}
 
-subsection*[idir::Author, affiliation="''CentraleSupelec''", 
+text*[idir::Author, affiliation="''CentraleSupelec''", 
          email="''idir.aitsadoune@centralesupelec.fr''"]
         {*Idir AIT SADOUNE*}
   
@@ -87,22 +87,22 @@ proof -
     by(simp only: * ** ***)
 qed
 (*>*)
-  
+
 text*[a1::Answer_Formal_Step]{* First Step: Fill in term and justification *}
 text*[a2::Answer_Formal_Step]{* Next Step: Fill in term and justification *}
 text*[a3::Answer_Formal_Step]{* Next Step: Fill in term and justification *}
 text*[a4::Answer_Formal_Step]{* Next Step: Fill in term and justification *}
   
-text*[q1::Task, level="oneStar", mark="1::int", type="formal"] 
+text*[q1::Task, local_grade="oneStar", mark="1::int", type="formal"] 
 {* Complete Line 10 :  @{term "10*x + 2*y =  11*16"} *}
 
 subsubsection*[exo3 :: Exercise, content="[q1::Task,q2::Task]"]\<open>Exercise 3\<close>  
 
-text*[q2::Task, level="threeStars", mark="3::int", type="formal"] 
+text*[q2::Task, local_grade="threeStars", mark="3::int", type="formal"] 
 {* Prove that  @{term "n*(n+5) + 2*(n+3) "} is always the product of two numbers 
    with a difference of 5.
 *} 
 (* this does not work on the level of the LaTeX output for known restrictions of the Toplevel. *)
-close_monitor*[exam::MathExam] 
+close_monitor*[exam :: MathExam] 
 
 end
