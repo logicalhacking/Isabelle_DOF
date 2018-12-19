@@ -26,7 +26,8 @@ doc_class text_section =
    main_author :: "author option"  <=  None
    fixme_list  :: "string list"    <=  "[]" 
    level       :: "int  option"    <=  "None"   
-                                  (* we follow LaTeX terminology on levels 
+                                  (* this attribute enables doc-notation support section* etc.
+                                     we follow LaTeX terminology on levels 
                                                part          = Some -1
                                                chapter       = Some 0
                                                section       = Some 1
@@ -55,14 +56,12 @@ doc_class "conclusion" = text_section +
 doc_class related_work = "conclusion" +
    main_author :: "author option"  <=  None
 
-(* There is no consensus if this is a good classification *)
-datatype formal_content_kind = "definition" | "axiom" | aux_lemma | "lemma" | "corrollary" | "theorem"
-
-doc_class "thm_elements" = "thms" +
-   kind        :: "formal_content_kind option" 
-
 doc_class bibliography = text_section +
    style       :: "string option"  <=  "Some ''LNCS''"
+
+doc_class annex = "text_section" +
+   main_author :: "author option"  <=  None
+
 
 text\<open> Besides subtyping, there is another relation between
 doc_classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
@@ -100,7 +99,8 @@ doc_class article =
             \<lbrace>introduction\<rbrace>\<^sup>+   ~~ 
             \<lbrace>technical || example\<rbrace>\<^sup>+ ~~
             \<lbrace>conclusion\<rbrace>\<^sup>+    ~~  
-            bibliography)"
+            bibliography     ~~
+            \<lbrace>annex\<rbrace>\<^sup>* )"
 
 
 ML\<open>
@@ -154,11 +154,10 @@ end
 
 setup\<open> let val cidS = ["scholarly_paper.introduction","scholarly_paper.technical", 
                        "scholarly_paper.example", "scholarly_paper.conclusion"];
-           val upd =  DOF_core.update_class_invariant "scholarly_paper.article"
            fun body moni_oid _ ctxt = (Scholarly_paper_trace_invariant.check 
                                                     ctxt cidS moni_oid @{here};
                                        true)
-       in  upd body end\<close>
+       in  DOF_core.update_class_invariant "scholarly_paper.article" body end\<close>
 
 
 (* some test code *)
