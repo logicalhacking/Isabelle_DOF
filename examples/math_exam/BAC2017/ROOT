@@ -9,4 +9,3 @@ session "BAC2017" = "Functional-Automata" +
   document_files
     "root.tex"
     "preamble.tex"
-    "build"

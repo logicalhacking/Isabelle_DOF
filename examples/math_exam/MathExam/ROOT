@@ -10,5 +10,4 @@ session "MathExam" = "Functional-Automata" +
     "root.tex"
     "ontologies.tex"
     "preamble.tex"
-    "build"
     "figures/Polynomialdeg5.png"

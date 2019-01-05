@@ -8,7 +8,6 @@ session "IsaDofApplications" = "Functional-Automata" +
     "root.tex"
     "root.bib"
     "preamble.tex"
-    "build"
     "lstisadof.sty"
     "ontologies.tex"
     "figures/isabelle-architecture.pdf"
