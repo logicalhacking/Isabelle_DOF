@@ -31,7 +31,7 @@ shopt -s nocasematch
 
 # Global configuration  
 ISABELLE_VERSION="Isabelle2017: October 2017"
-ISABELLE_URL="http://isabelle.in.tum.de/website-Isabelle2017/"
+ISABELLE_URL="https://isabelle.in.tum.de/website-Isabelle2017/"
 AFP_URL="https://sourceforge.net/projects/afp/files/afp-Isabelle2017/afp-2018-08-14.tar.gz"
 
 ISABELLE=${1:-`which isabelle`}
