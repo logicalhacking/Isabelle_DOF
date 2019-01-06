@@ -96,7 +96,7 @@ check_isa_dof_patch() {
     echo "* Check availabilty of Isabelle/DOF patch:"
     src="patches/thy_output.ML"
     dst="$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"
-    if [[ $(md5sum "$src") = $(md5sum "$dst") ]]; then
+    if [[ $(md5sum "$src" | cut -d' ' -f1) = $(md5sum "$dst" | cut -d' ' -f1) ]]; then
         echo "  Success: latest Isabelle/DOF patch already applied"
         if isabelle process -e 'Thy_Output.set_meta_args_parser' &> /dev/null ; then
             true
