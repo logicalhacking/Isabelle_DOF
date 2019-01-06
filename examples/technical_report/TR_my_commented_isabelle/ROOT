@@ -10,6 +10,7 @@ session "TR_mycommentedisabelle" = "Functional-Automata" +
     "preamble.tex"
     "ontologies.tex"
     "prooftree.sty"
+    "build"
     "figures/text-element.pdf"
     "figures/isabelle-architecture.pdf"
     "figures/pure-inferences-I.pdf"

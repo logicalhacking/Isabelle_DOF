@@ -9,6 +9,7 @@ session "IsaDof_Manual" = "Functional-Automata" +
     "root.tex"
     "root.bib"
     "preamble.tex"
+    "build"
     "lstisadof.sty"
     "ontologies.tex"
     "figures/isabelle-architecture.pdf"
