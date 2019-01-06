@@ -34,9 +34,12 @@ ISABELLE_URL="http://isabelle.in.tum.de/website-Isabelle2017/"
 AFP_URL="https://sourceforge.net/projects/afp/files/afp-Isabelle2017/afp-2018-08-14.tar.gz"
 
 ISABELLE=${1:-`which isabelle`}
-export `$ISABELLE getenv ISABELLE_HOME_USER`
-export `$ISABELLE getenv ISABELLE_TOOLS`
 GEN_DIR=document-generator
+
+VARS=`$ISABELLE getenv ISABELLE_HOME_USER ISABELLE_HOME ISABELLE_TOOLS`
+for i in $VARS; do 
+	export "$i"
+done
 
 check_isabelle_version() {
     echo "* Checking Isabelle version:"
@@ -86,7 +89,6 @@ check_isa_dof_patch() {
     if isabelle process -e 'Thy_Output.set_meta_args_parser' &> /dev/null ; then
         echo "  Success: Isabelle is already patched"
     else
-        export `isabelle getenv ISABELLE_HOME_USER`
         echo "  FAILURE: Isabelle/DOF patch is not available."
         echo "    Please copy patches/thy_output.ML to $ISABELLE_HOME/src/Pure/Thy/:"
         echo "       cp patches/thy_output.ML $ISABELLE_HOME/src/Pure/Thy/"
