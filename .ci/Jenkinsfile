@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build Docker') {
+            steps {
+                sh 'cp patches/thy_output.ML .ci/isabelle4isadof/'
+                sh 'docker build -t logicalhacking:isabelle4dof .ci/isabelle4isadof'
+                sh 'rm -f .ci/isabelle4isadof/thy_output.ML'
+            }
+        }
+        stage('Check Docker') {
+            when { changeset "patches/*" } 
+            steps {
+                sh 'cp patches/thy_output.ML .ci/isabelle4isadof/'
+                sh 'docker build --no-cache -t logicalhacking:isabelle4dof .ci/isabelle4isadof'
+                sh 'rm -f .ci/isabelle4isadof/thy_output.ML'
+            }
+        }
+        stage('Build Isabelle/DOF') {
+            steps {
+                sh 'docker run -v $PWD:/DOF logicalhacking:isabelle2017  sh -c "cd /DOF && ./install && isabelle build -D ."'
+            } 
+	}
+    }
+} 
