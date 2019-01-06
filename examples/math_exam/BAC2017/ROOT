@@ -9,4 +9,5 @@ session "BAC2017" = "Functional-Automata" +
   document_files
     "root.inf"
     "preamble.tex"
+    "ontologies.tex"
     "build"
