@@ -77,19 +77,38 @@ check_isabelle_version() {
 
 check_afp_entries() {
     echo "* Checking availability of AFP entries:"
-    for afp in Regular-Sets Functional-Automata; do
+    missing=""
+    required="Regular-Sets Functional-Automata"
+    for afp in $required; do 
         res=`$ISABELLE build -n -d . $afp 2>/dev/null || true`
         if [ "$res" != "" ]; then 
             echo "  Success: found APF entry $afp."
         else
-            echo "  FAILURE: could not find AFP entry $afp."
+            echo "  Warning: could not find AFP entry $afp."
+            missing="$missing $afp"
+       fi
+    done
+    if [ "$missing" != "" ]; then 
+        echo "           Trying to install AFP (this might take a few *minutes*) ...."
+	extract=""
+	for e in $missing; do
+	    extract="$extract afp-2018-08-14/thys/$e"
+	done
+        if curl -s -L $AFP_URL | tar zxf - -C .afp $extract; then 
+            for e in $missing; do 
+                echo "           Registering $e in $ISABELLE_HOME_USER/ROOTS"
+                echo "$PWD/.afp/afp-2018-08-14/thys/$e" >> $ISABELLE_HOME_USER/ROOTS 
+            done
+            echo "           AFP installation successful."
+        else
+            echo "  FAILURE: could not find AFP entries: $missing."
             echo "    Please obtain the AFP from"
             echo "    $AFP_URL"
             echo "    and follow the following instructions:"
             echo "    https://www.isa-afp.org/using.html"
             exit_error
         fi
-    done
+    fi
 }
 
 check_isa_dof_patch() {
