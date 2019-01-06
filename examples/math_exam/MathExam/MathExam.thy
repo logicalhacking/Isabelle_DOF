@@ -1,6 +1,6 @@
 (*<*)
 theory MathExam
-  imports "../../../ontologies/mathex_onto"
+  imports "Isabelle_DOF.mathex_onto"
     Real
 begin
 (*>*)   

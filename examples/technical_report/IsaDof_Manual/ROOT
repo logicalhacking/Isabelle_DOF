@@ -1,8 +1,5 @@
-session "IsaDof_Manual" = "Functional-Automata" +
+session "IsaDof_Manual" = "Isabelle_DOF" + 
   options  [document = pdf, document_output = "output", quick_and_dirty = true]
-  theories [document = false]
-    "../../../ontologies/scholarly_paper"
-    "../../../ontologies/technical_report"
   theories
     IsaDofManual
   document_files
