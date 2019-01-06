@@ -66,7 +66,7 @@ ontology definitions. If you want to edit the ontology definition,
 just open the theory file with the default HOL session: 
 
 ```console
-isabelle jedit -d . -l Isabelle_DOF examples/scholarly_paper/2018_cicm/IsaDofApplications.thy
+isabelle jedit -d . -l HOL examples/scholarly_paper/2018_cicm/IsaDofApplications.thy
 ```
 
 While this gives you more flexibility, it might "clutter" your editing
