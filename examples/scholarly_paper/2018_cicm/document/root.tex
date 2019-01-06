@@ -25,15 +25,22 @@
 \usepackage{textcomp}
 \usepackage[english]{babel}
 \usepackage{isabelle}
-\input{ontologies}
 \usepackage{isabellesym}
+\IfFileExists{DOF-core.sty}{}{%
+  \PackageError{DOF-core}{Isabelle/DOF not installed. 
+    This is a Isabelle_DOF project. The document preparation requires
+    the Isabelle_DOF framework. Please obtain the framework by cloning
+    the Isabelle_DOF git repository, i.e.: 
+         "git clone https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF"
+    You can install the framework as follows:
+         "cd Isabelle_DOF/document-generator && ./install"}{%
+    For further help, see https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF}
+}
+\input{ontologies}
+\IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage[numbers, sort&compress, sectionbib]{natbib}
-\input{ontologies}
-\IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
-\usepackage{xspace}
-\newcommand{\isadof}{Isabelle/DOF\xspace}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \setcounter{tocdepth}{3} 
