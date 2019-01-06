@@ -7,6 +7,6 @@ session "BAC2017" = "Functional-Automata" +
   theories
      BAC2017
   document_files
-    "root.tex"
+    "root.inf"
     "preamble.tex"
     "build"

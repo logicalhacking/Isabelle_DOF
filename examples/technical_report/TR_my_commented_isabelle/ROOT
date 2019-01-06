@@ -6,7 +6,7 @@ session "TR_mycommentedisabelle" = "Functional-Automata" +
   theories
     "MyCommentedIsabelle"
   document_files
-    "root.tex"
+    "root.inf"
     "preamble.tex"
     "ontologies.tex"
     "prooftree.sty"

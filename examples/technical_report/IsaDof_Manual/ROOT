@@ -6,7 +6,7 @@ session "IsaDof_Manual" = "Functional-Automata" +
   theories
     IsaDofManual
   document_files
-    "root.tex"
+    "root.inf"
     "root.bib"
     "preamble.tex"
     "build"

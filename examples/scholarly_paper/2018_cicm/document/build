@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright (c) 2018 The University of Sheffield. All rights reserved.
+# Copyright (c) 2018-2019 The University of Sheffield. All rights reserved.
 #               2018 The University of Paris-Sud. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,11 +36,11 @@ ROOT_NAME="root_$NAME"
 
 if [ ! -f $ISABELLE_HOME_USER/DOF/latex/DOF-core.sty ]; then
     echo ""
-    echo "Warning: Isabelle DOF not installed"
-    echo "========"
-    echo "This is a Isabelle_DOF project. The document preparation requires"
-    echo "the Isabelle_DOF framework. Please obtain the framework by cloning"
-    echo "the Isabelle_DOF git repository, i.e.: "
+    echo "Error: Isabelle/DOF not installed"
+    echo "====="
+    echo "This is a Isabelle/DOF project. The document preparation requires"
+    echo "the Isabelle/DOF framework. Please obtain the framework by cloning"
+    echo "the Isabelle/DOF git repository, i.e.: "
     echo "    git clone https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF"
     echo "You can install the framework as follows:"
     echo "    cd Isabelle_DOF/document-generator"
@@ -49,6 +49,27 @@ if [ ! -f $ISABELLE_HOME_USER/DOF/latex/DOF-core.sty ]; then
     exit 1
 fi
 
+if [ ! -f root.inf ]; then 
+    echo ""
+    echo "Error: Isabelle/DOF document setup not correct"
+    echo "====="
+    echo "Could not find root.inf. Please upgrade your Isabelle/DOF document"
+    echo "setup manually."
+    exit 1
+fi
+
+ROOT="$ISABELLE_HOME_USER/DOF/document-template/root-$(cat root.inf).tex"
+if [ ! -f $ROOT]; then 
+    echo ""
+    echo "Error: Isabelle/DOF document setup not correct"
+    echo "====="
+    echo "Could not find root file ($ROOT)."
+    echo "Please upgrade your Isabelle/DOF document setup manually."
+    exit 1
+fi
+
+cp $ROOT root.tex
+cp $ISABELLE_HOME_USER/DOF/latex/*.sty .
 cp $ISABELLE_HOME_USER/DOF/latex/*.sty .
 
 $ISABELLE_TOOL latex -o sty "$ROOT_NAME.tex" && \

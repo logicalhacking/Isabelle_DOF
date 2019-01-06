@@ -7,7 +7,7 @@ session "MathExam" = "Functional-Automata" +
     MathExam
   document_files
     "preamble.tex"
-    "root.tex"
+    "root.inf"
     "ontologies.tex"
     "preamble.tex"
     "build"
