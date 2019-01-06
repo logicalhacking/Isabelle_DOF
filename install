@@ -42,6 +42,13 @@ for i in $VARS; do
 	export "$i"
 done
 
+exit_error() {
+    echo ""
+    echo "  *** Isabelle/DOF installation FAILED, please check the README.md for help ***"
+    echo ""
+    exit 1
+}
+
 check_isabelle_version() {
     echo "* Checking Isabelle version:"
     VERSION=`$ISABELLE version`
@@ -61,7 +68,7 @@ check_isabelle_version() {
         then 
             echo "    Continuing installation on your OWN risk."
         else
-            exit 1
+            exit_error
         fi
      else
         echo "  Success: found supported Isabelle version ($VERSION)"
@@ -80,7 +87,7 @@ check_afp_entries() {
             echo "    $AFP_URL"
             echo "    and follow the following instructions:"
             echo "    https://www.isa-afp.org/using.html"
-            exit 1
+            exit_error
         fi
     done
 }
@@ -107,7 +114,7 @@ check_isa_dof_patch() {
             echo "    Please copy patches/thy_output.ML to $ISABELLE_HOME/src/Pure/Thy/:"
             echo "       cp patches/thy_output.ML $ISABELLE_HOME/src/Pure/Thy/"
             echo "    and rebuild Isabelle/HOL."
-            exit 1
+            exit_error
 	fi
     fi
 }
@@ -163,5 +170,7 @@ check_isa_dof_patch
 check_afp_entries
 check_old_installation
 install_and_register
-echo "* Installation successful"
-exit 1
+echo "* Installation successful. Enjoy Isabelle/DOF, you can now generate all"
+echo "  documents with Isabelle/DOF by executing."
+echo "  $ISABELLE build -D ."
+exit 0
