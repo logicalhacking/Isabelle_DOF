@@ -58,7 +58,7 @@ check_isabelle_version() {
         echo "                        IS NOT SUPPORTED"
         echo "    by the current version of Isabelle/DOF. Please install a supported"
         echo "    version of Isabelle and rerun the install script, providing the"
-        echo "    the \"isabelle\" binary as argument."
+        echo "    the \"isabelle\" command as argument."
         echo "    Isabelle 2017 can be obtained from:"
         echo "    $ISABELLE_URL"
         echo 
