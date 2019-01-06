@@ -27,6 +27,7 @@
 # SPDX-License-Identifier: BSD-2-Clause
 
 set -e
+shopt -s nocasematch
 
 # Global configuration  
 ISABELLE_VERSION="Isabelle2017: October 2017"
@@ -86,14 +87,28 @@ check_afp_entries() {
 
 check_isa_dof_patch() {
     echo "* Check availabilty of Isabelle/DOF patch:"
-    if isabelle process -e 'Thy_Output.set_meta_args_parser' &> /dev/null ; then
-        echo "  Success: Isabelle is already patched"
+    src="patches/thy_output.ML"
+    dst="$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"
+    if [[ $(md5sum "$src") = $(md5sum "$dst") ]]; then
+        echo "  Success: latest Isabelle/DOF patch already applied"
+        if isabelle process -e 'Thy_Output.set_meta_args_parser' &> /dev/null ; then
+            true
+        else
+            echo "  Success: Warning: Isabelle/HOL needs to be rebuild to activate patch."
+        fi
     else
-        echo "  FAILURE: Isabelle/DOF patch is not available."
-        echo "    Please copy patches/thy_output.ML to $ISABELLE_HOME/src/Pure/Thy/:"
-        echo "       cp patches/thy_output.ML $ISABELLE_HOME/src/Pure/Thy/"
-        echo "    and rebuild Isabelle/HOL."
-        exit 1
+        echo "  Warning: Isabelle/DOF patch is not available or outdated."
+        echo "           Trying to patch system ...."
+	if (cp $dst $dst.backup-by-isadof-installer && cp -f $src $dst) &> /dev/null; then 
+	    echo "       Applied patch successfully, Isabelle/HOL will be rebuilt during"
+	    echo "       the next start of Isabelle."
+	else
+            echo "  FAILURE: Could not apply Isabelle/DOF patch."
+            echo "    Please copy patches/thy_output.ML to $ISABELLE_HOME/src/Pure/Thy/:"
+            echo "       cp patches/thy_output.ML $ISABELLE_HOME/src/Pure/Thy/"
+            echo "    and rebuild Isabelle/HOL."
+            exit 1
+	fi
     fi
 }
 

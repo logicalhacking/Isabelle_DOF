@@ -12,14 +12,6 @@ Isabelle/DOF requires [Isabelle 2017](http://isabelle.in.tum.de/website-Isabelle
 Please download the Isabelle 2017 distribution for your operating
 system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2017/).
 
-After unpacking the Isabelle distribution, replace the file
-``Isabelle2017/src/Pure/Thy/thy_output.ML`` in the Isabelle
-distribution with the file ``patches/thy_output.ML`` from the
-Isabelle/DOF distribution:
-
-```console
-cp patches/thy_output.ML `isabelle getenv -b ISABELLE_HOME`/src/Pure/Thy/
-```
 
 ### AFP Entries
 
@@ -33,7 +25,7 @@ run the following command to make the AFP session `ROOTS` available to
 Isabelle:
  
 ```console
-echo "/home/myself/afp/thys" >> ~/.isabelle/Isabelle2018/ROOTS
+echo "/home/myself/afp/thys" >> ~/.isabelle/Isabelle2017/ROOTS
 ```
 
 ## Installation 
@@ -49,8 +41,19 @@ argument to the ``install`` script:
 foo@bar:~$ ./install /usr/local/Isabelle2017/bin/isabelle
 ```
 
-The DOF-plugin will be installed in the Isabelle user directory 
-(the exact location depends on the Isabelle version). 
+The installer will 
+* apply a patch to Isabelle that is necessary to use Isabelle/DOF. 
+  If this patch installations fails, you need to manually replace 
+  the file ``Isabelle2017/src/Pure/Thy/thy_output.ML`` in the Isabelle
+  distribution with the file ``patches/thy_output.ML`` from the  
+  Isabelle/DOF distribution:        
+        ```console
+        cp patches/thy_output.ML `isabelle getenv -b ISABELLE_HOME`/src/Pure/Thy/
+        ```
+
+* install the Isabelle/DOF-plugin into the Isabelle user directory 
+  (the exact location depends on the Isabelle version). 
+* check that the AFP has been installed successfully. 
 
 ## Usage
 
