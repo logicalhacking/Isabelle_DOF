@@ -45,9 +45,6 @@ for enforcing a certain document structure, and discuss ontology-specific IDE su
 \<close>
 
 section*[intro::introduction]\<open> Introduction \<close>  
-text\<open> drfgdfg\<close>
-ML\<open>@{trace_attribute this}\<close>
-print_doc_items
 text*[introtext::introduction]\<open> 
 The linking of the \<^emph>\<open>formal\<close> to the \<^emph>\<open>informal\<close> is perhaps the
 most pervasive challenge in the digitization of knowledge and its
