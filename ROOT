@@ -1,8 +1,7 @@
 session "Isabelle_DOF" = "Functional-Automata" + 
   options [document = pdf, document_output = "output"]
-  theories [document = false]
-    (* Foo *)
-    (* Bar *)
+  sessions
+    "Regular-Sets"
   theories
     Isa_DOF
     "ontologies/CENELEC_50126"

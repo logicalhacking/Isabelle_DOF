@@ -1,5 +1,5 @@
 #/usr/bin/env bash
-# Copyright (c) 2018 The University of Sheffield. All rights reserved.
+# Copyright (c) 2018-2019 The University of Sheffield. All rights reserved.
 #               2018 The University of Paris-Sud. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -137,15 +137,17 @@ if [ "$DOC" = true ]; then
   echo "    \"preamble.tex\"" >> "$DIR"/ROOT
   echo "    \"ontologies.tex\"" >> "$DIR"/ROOT
   echo "    \"build\"" >> "$DIR"/ROOT
+  sed -i -e "s/root.tex/root.inf/" "$DIR"/ROOT
+  rm -f "$DIR"/document/root.tex
   TITLE=$(echo "$NAME" | tr _ - | tr -d '\\')
   AUTHOR=$(echo "By $USER" | tr _ - | tr -d '\\')
+  echo $TEMPLATE > "$DIR"/document/root.inf
   cp "$ISABELLE_HOME_USER/DOF/document-template/build" "$DIR"/document/
-  cp "$ISABELLE_HOME_USER/DOF/document-template/preamble.tex" "$DIR"/document/
   cp "$ISABELLE_HOME_USER/DOF/document-template/ontologies.tex" "$DIR"/document/
   for o in $ONTOLOGY; do
     echo "\usepackage{DOF-$o}" >> "$DIR"/document/ontologies.tex;
   done
-  sed -e "s/<AUTHOR>/$AUTHOR/" -e "s/<TITLE>/$TITLE/" "$ISABELLE_HOME_USER/DOF/document-template/root-$TEMPLATE.tex" > "$DIR"/document/root.tex
+  sed -e "s/<AUTHOR>/$AUTHOR/" -e "s/<TITLE>/$TITLE/" "$ISABELLE_HOME_USER/DOF/document-template/preamble.tex" > "$DIR"/document/preamble.tex
 else
     $ISABELLE_TOOL mkroot -n "$NAME"
 fi

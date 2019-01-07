@@ -1,6 +1,6 @@
 (*<*)
 theory MyCommentedIsabelle
-  imports "../../../ontologies/technical_report"
+  imports "Isabelle_DOF.technical_report"
 begin
  
 

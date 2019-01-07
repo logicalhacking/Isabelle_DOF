@@ -1,12 +1,9 @@
-session "TR_mycommentedisabelle" = "Functional-Automata" +
+session "TR_mycommentedisabelle" = "Isabelle_DOF" +
   options [document = pdf, document_output = "output",quick_and_dirty = true]
-  theories [document = false]
-    "../../../ontologies/scholarly_paper"
-    "../../../ontologies/technical_report"
   theories
     "MyCommentedIsabelle"
   document_files
-    "root.tex"
+    "root.inf"
     "preamble.tex"
     "ontologies.tex"
     "prooftree.sty"

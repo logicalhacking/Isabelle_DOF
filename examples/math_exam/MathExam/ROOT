@@ -1,13 +1,10 @@
-session "MathExam" = "Functional-Automata" +
+session "MathExam" = "Isabelle_DOF" +
   options [document = pdf, document_output = "output"]
-  theories [document = false]
-    (* Foo *)
-    "../../../ontologies/mathex_onto"
   theories
     MathExam
   document_files
     "preamble.tex"
-    "root.tex"
+    "root.inf"
     "ontologies.tex"
     "preamble.tex"
     "build"

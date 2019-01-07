@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright (c) 2018 The University of Sheffield. All rights reserved.
+# Copyright (c) 2018-2019 The University of Sheffield. All rights reserved.
 #               2018 The University of Paris-Sud. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,65 +26,170 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-set -e
+#set -e
+shopt -s nocasematch
+
+# Global configuration  
+ISABELLE_VERSION="Isabelle2017: October 2017"
+ISABELLE_URL="https://isabelle.in.tum.de/website-Isabelle2017/"
+AFP_URL="https://sourceforge.net/projects/afp/files/afp-Isabelle2017/afp-2018-08-14.tar.gz"
 
 ISABELLE=${1:-`which isabelle`}
-export `$ISABELLE getenv ISABELLE_HOME_USER`
-export `$ISABELLE getenv ISABELLE_TOOLS`
-
 GEN_DIR=document-generator
 
+VARS=`$ISABELLE getenv ISABELLE_HOME_USER ISABELLE_HOME ISABELLE_TOOLS`
+for i in $VARS; do 
+	export "$i"
+done
 
-VERSION=`$ISABELLE version`
-if [ "$VERSION" != "Isabelle2017: October 2017" ]; then
-  echo "Warning, the version of Isabelle (i.e., $VERSION) you are using"
-  echo "                    IS NOT SUPPORTED"
-  echo "by the current version of Isabelle/DOF. Please install a supported"
-  echo "version of Isabelle and rerun the install script, providing the"
-  echo "the \"isabelle\" binary as argument."
-  echo 
-  read -p "Still continue (y/N)? " -n 1 -r
-  echo 
-  if [[ $REPLY =~ ^[Yy]$ ]]
-  then 
-      echo "Continuing installation on your OWN risk."
-  else
-      exit 1
-  fi
-fi
+exit_error() {
+    echo ""
+    echo "  *** Isabelle/DOF installation FAILED, please check the README.md for help ***"
+    echo ""
+    exit 1
+}
 
-if [[ -d "$ISABELLE_HOME_USER/DOF" ]]; then
-    echo "Moving old installation to $DIR/settings $ISABELLE_HOME_USER/DOF.bak"
-    rm -rf "$ISABELLE_HOME_USER/DOF.bak"
-    mv "$ISABELLE_HOME_USER/DOF" "$ISABELLE_HOME_USER/DOF.bak"
-fi
+check_isabelle_version() {
+    echo "* Checking Isabelle version:"
+    VERSION=`$ISABELLE version`
+    if [ "$VERSION" != "$ISABELLE_VERSION" ]; then
+        echo "  WARNING:"
+        echo "    The version of Isabelle (i.e., $VERSION) you are using"
+        echo "                        IS NOT SUPPORTED"
+        echo "    by the current version of Isabelle/DOF. Please install a supported"
+        echo "    version of Isabelle and rerun the install script, providing the"
+        echo "    the \"isabelle\" command as argument."
+        echo "    Isabelle 2017 can be obtained from:"
+        echo "    $ISABELLE_URL"
+        echo 
+        read -p "    Still continue (y/N)? " -n 1 -r
+        echo 
+        if [[ $REPLY =~ ^[Yy]$ ]];
+        then 
+            echo "    Continuing installation on your OWN risk."
+        else
+            exit_error
+        fi
+     else
+        echo "  Success: found supported Isabelle version ($VERSION)"
+    fi
+}
 
-DIR="$ISABELLE_HOME_USER/DOF/Tools"
-echo "Installing Tools in $DIR"
-mkdir -p "$DIR"
-cp $GEN_DIR/Tools/* "$DIR"
-chmod 755 "$DIR"/*
+check_afp_entries() {
+    echo "* Checking availability of AFP entries:"
+    missing=""
+    required="Regular-Sets Functional-Automata"
+    for afp in $required; do 
+        res=`$ISABELLE build -n -d . $afp 2>/dev/null || true`
+        if [ "$res" != "" ]; then 
+            echo "  Success: found APF entry $afp."
+        else
+            echo "  Warning: could not find AFP entry $afp."
+            missing="$missing $afp"
+       fi
+    done
+    if [ "$missing" != "" ]; then 
+        echo "           Trying to install AFP (this might take a few *minutes*) ...."
+	extract=""
+	for e in $missing; do
+	    extract="$extract afp-2018-08-14/thys/$e"
+	done
+        if curl -s -L $AFP_URL | tar zxf - -C .afp $extract; then 
+            for e in $missing; do 
+                echo "           Registering $e in $ISABELLE_HOME_USER/ROOTS"
+                echo "$PWD/.afp/afp-2018-08-14/thys/$e" >> $ISABELLE_HOME_USER/ROOTS 
+            done
+            echo "           AFP installation successful."
+        else
+            echo "  FAILURE: could not find AFP entries: $missing."
+            echo "    Please obtain the AFP from"
+            echo "    $AFP_URL"
+            echo "    and follow the following instructions:"
+            echo "    https://www.isa-afp.org/using.html"
+            exit_error
+        fi
+    fi
+}
 
-# Register Tools
-DIR="$ISABELLE_HOME_USER/etc"
-mkdir -p "$DIR"
-if [[ $ISABELLE_TOOLS = *DOF* ]]; then
-    echo "Tools already registered in $DIR/settings"
-else
-    echo 'ISABELLE_TOOLS=$ISABELLE_TOOLS:$ISABELLE_HOME_USER/DOF/Tools' \
-         >> "$DIR/settings"
-    echo "Registering tools in Tools already registered in $DIR/settings"
-fi
+check_isa_dof_patch() {
+    echo "* Check availabilty of Isabelle/DOF patch:"
+    src="patches/thy_output.ML"
+    dst="$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"
+    if [[ $(md5sum "$src" | cut -d' ' -f1) = $(md5sum "$dst" | cut -d' ' -f1) ]]; then
+        echo "  Success: latest Isabelle/DOF patch already applied"
+        if isabelle process -e 'Thy_Output.set_meta_args_parser' &> /dev/null ; then
+            true
+        else
+            echo "  Success: Warning: Isabelle/HOL needs to be rebuild to activate patch."
+        fi
+    else
+        echo "  Warning: Isabelle/DOF patch is not available or outdated."
+        echo "           Trying to patch system ...."
+	if (cp $dst $dst.backup-by-isadof-installer && cp -f $src $dst) &> /dev/null; then 
+	    echo "       Applied patch successfully, Isabelle/HOL will be rebuilt during"
+	    echo "       the next start of Isabelle."
+	else
+            echo "  FAILURE: Could not apply Isabelle/DOF patch."
+            echo "    Please copy patches/thy_output.ML to $ISABELLE_HOME/src/Pure/Thy/:"
+            echo "       cp patches/thy_output.ML $ISABELLE_HOME/src/Pure/Thy/"
+            echo "    and rebuild Isabelle/HOL."
+            exit_error
+	fi
+    fi
+}
 
-DIR="$ISABELLE_HOME_USER/DOF/document-template"
-echo "Installing document templates in $DIR"
-mkdir -p "$DIR"
-cp $GEN_DIR/document-template/* "$DIR"
+check_old_installation(){
+    echo "* Searching for existing installation:"
+    if [[ -d "$ISABELLE_HOME_USER/DOF" ]]; then
+        echo "  Found old installation, moving it to $ISABELLE_HOME_USER/DOF.bak."
+        rm -rf "$ISABELLE_HOME_USER/DOF.bak"
+        mv "$ISABELLE_HOME_USER/DOF" "$ISABELLE_HOME_USER/DOF.bak"
+    else
+        echo "  No old instllation found."
+    fi
+
+}
+
+install_and_register(){
+    echo "* Installing Isabelle/DOF"
+
+    DIR="$ISABELLE_HOME_USER/DOF/Tools"
+    echo "  - Installing Tools in $DIR"
+    mkdir -p "$DIR"
+    cp $GEN_DIR/Tools/* "$DIR"
+    chmod 755 "$DIR"/*
+
+    DIR="$ISABELLE_HOME_USER/DOF/document-template"
+    echo "  - Installing document templates in $DIR"
+    mkdir -p "$DIR"
+    cp $GEN_DIR/document-template/* "$DIR"
+
+    DIR="$ISABELLE_HOME_USER/DOF/latex"
+    echo "  - Installing LaTeX styles in $DIR"
+    mkdir -p "$DIR"
+    cp $GEN_DIR/latex/*.sty "$DIR"
+
+    DIR="$ISABELLE_HOME_USER/etc"
+    echo "  - Registering Isabelle/DOF"
+    mkdir -p "$DIR"
+    if [[ $ISABELLE_TOOLS = *DOF* ]]; then
+        echo "    * Tools already registered in $DIR/settings"
+    else
+        echo "    * Registering tools in Tools already registered in $DIR/settings"
+        echo 'ISABELLE_TOOLS=$ISABELLE_TOOLS:$ISABELLE_HOME_USER/DOF/Tools' \
+             >> "$DIR/settings"
+    fi
+}
 
 
-DIR="$ISABELLE_HOME_USER/DOF/latex"
-echo "Installing LaTeX styles in $DIR"
-mkdir -p "$DIR"
-cp $GEN_DIR/latex/*.sty "$DIR"
-
-echo "Installation successful."
+echo "Isabelle/DOF Installer"
+echo "======================"
+check_isabelle_version
+check_isa_dof_patch
+check_afp_entries
+check_old_installation
+install_and_register
+echo "* Installation successful. Enjoy Isabelle/DOF, you can now generate all"
+echo "  documents with Isabelle/DOF by executing."
+echo "  $ISABELLE build -D ."
+exit 0

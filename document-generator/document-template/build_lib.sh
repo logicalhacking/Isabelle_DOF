@@ -26,8 +26,15 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
+OUTFORMAT=${1:-pdf}
+NAME=${2:-root}
+
 set -e
-if [ ! -f $ISABELLE_HOME_USER/DOF/document-template/build_lib.sh ]; then
+
+ROOT_NAME="root_$NAME"
+[ ! -f "$DIR/$ROOT_NAME.tex" ] && ROOT_NAME="root"
+
+if [ ! -f $ISABELLE_HOME_USER/DOF/latex/DOF-core.sty ]; then
     echo ""
     echo "Error: Isabelle/DOF not installed"
     echo "====="
@@ -42,5 +49,33 @@ if [ ! -f $ISABELLE_HOME_USER/DOF/document-template/build_lib.sh ]; then
     exit 1
 fi
 
-cp $ISABELLE_HOME_USER/DOF/document-template/build_lib.sh .
-source build_lib.sh
+if [ ! -f root.inf ]; then 
+    echo ""
+    echo "Error: Isabelle/DOF document setup not correct"
+    echo "====="
+    echo "Could not find root.inf. Please upgrade your Isabelle/DOF document"
+    echo "setup manually."
+    exit 1
+fi
+
+ROOT="$ISABELLE_HOME_USER/DOF/document-template/root-$(cat root.inf).tex"
+if [ ! -f $ROOT]; then 
+    echo ""
+    echo "Error: Isabelle/DOF document setup not correct"
+    echo "====="
+    echo "Could not find root file ($ROOT)."
+    echo "Please upgrade your Isabelle/DOF document setup manually."
+    exit 1
+fi
+
+cp $ROOT root.tex
+cp $ISABELLE_HOME_USER/DOF/latex/*.sty .
+cp $ISABELLE_HOME_USER/DOF/latex/*.sty .
+
+$ISABELLE_TOOL latex -o sty "$ROOT_NAME.tex" && \
+$ISABELLE_TOOL latex -o "$OUTFORMAT" "$ROOT_NAME.tex" && \
+{ [ ! -f "$ROOT_NAME.bib" ] || $ISABELLE_TOOL latex -o bbl "$ROOT_NAME.tex"; } && \
+{ [ ! -f "$ROOT_NAME.idx" ] || $ISABELLE_TOOL latex -o idx "$ROOT_NAME.tex"; } && \
+$ISABELLE_TOOL latex -o "$OUTFORMAT" "$ROOT_NAME.tex" && \
+$ISABELLE_TOOL latex -o "$OUTFORMAT" "$ROOT_NAME.tex"
+

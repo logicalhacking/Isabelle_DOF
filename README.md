@@ -4,6 +4,12 @@ Isabelle/DOF is a novel Document Ontology Framework on top of
 Isabelle. Isabelle/DOF allows for both conventional typesetting as
 well as formal development.
 
+## Prerequisites
+
+Isabelle/DOF requires [Isabelle 2017](http://isabelle.in.tum.de/website-Isabelle2017/). 
+Please download the Isabelle 2017 distribution for your operating
+system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2017/).
+
 ## Installation 
 
 In most case, the DOF-plugin can be installed as follows:
@@ -17,17 +23,57 @@ argument to the ``install`` script:
 foo@bar:~$ ./install /usr/local/Isabelle2017/bin/isabelle
 ```
 
-The DOF-plugin will be installed in the Isabelle user directory 
-(the exact location depends on the Isabelle version). 
+The installer will 
+* apply a patch to Isabelle that is necessary to use Isabelle/DOF. 
+  If this patch installations fails, you need to manually replace 
+  the file ``Isabelle2017/src/Pure/Thy/thy_output.ML`` in the Isabelle
+  distribution with the file ``patches/thy_output.ML`` from the  
+  Isabelle/DOF distribution:        
+        ```console
+        cp patches/thy_output.ML `isabelle getenv -b ISABELLE_HOME`/src/Pure/Thy/
+        ```
+* install required entries from the [AFP](https://www.isa-afp.org). If this
+  installations fails, you need to manually install the AFP for Isabelle 2017 as follows:
+  Download the [AFP for Isabelle 2017](https://sourceforge.net/projects/afp/files/afp-Isabelle2017/afp-2018-08-14.tar.gz") 
+  and follow the [instructions for installing the AFP as Isabelle 
+  component](https://www.isa-afp.org/using.html). If you have extracted
+  the AFP archive into the directory to `/home/myself/afp`, you should
+  run the following command to make the AFP session `ROOTS` available to
+  Isabelle:
+ 
+        ```console
+        echo "/home/myself/afp/thys" >> ~/.isabelle/Isabelle2017/ROOTS
+        ```
 
-Additionally, you have to replace the file 
-```Isabelle2017/src/Pure/Thy/thy_output.ML```
-by the file you find in the Isabelle_DOF-distribution:
-```patches/thy_output.ML```
-When starting up, Isabelle will recompile itself and integrating this 
-file (which modifies about 10 lines in the LaTeX generator...).
+* install the Isabelle/DOF-plugin into the Isabelle user directory 
+  (the exact location depends on the Isabelle version). 
+* check that the AFP has been installed successfully. 
 
 ## Usage
+
+### Opening an Example
+
+If you want to work with or extend one of the examples, e.g., you can
+open it similar to any standard Isabelle theory:
+
+```console
+isabelle jedit -d . -l Isabelle_DOF examples/scholarly_paper/2018_cicm/IsaDofApplications.thy
+```
+
+This will open an example of a scientific paper using the pre-compiled
+session ``Isabelle_DOF``, i.e., you will not be able to edit the
+ontology definitions. If you want to edit the ontology definition,
+just open the theory file with the default HOL session: 
+
+```console
+isabelle jedit -d . -l HOL examples/scholarly_paper/2018_cicm/IsaDofApplications.thy
+```
+
+While this gives you more flexibility, it might "clutter" your editing
+experience, as a lot of internal theories are loaded into Isabelle's
+editor. 
+
+### Creating a New Project
 
 The DOF-plugin provides an alternative to Isabelle's ``mkroot`` command.
 Isabelle projects that use DOF need to be created using
@@ -75,6 +121,7 @@ website and either copy it in you ``texmf`` directory or the ``root``
 folder. In the latter case, you also need to add it in the ``ROOT`` file
 as dependency.
 
+
 ## Team
 
 Main contacts:
@@ -87,8 +134,6 @@ Main contacts:
 * Idir Ait-Sadoune 
 * Paolo Crisafulli 
 * Chantal Keller
-
-
 
 ## License
 

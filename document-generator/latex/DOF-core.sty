@@ -19,8 +19,12 @@
 \RequirePackage{keycommand}
 \RequirePackage{environ}
 \RequirePackage{graphicx}
+\RequirePackage{xspace}
 \RequirePackage{fp}
 \RequirePackage[caption]{subfig}
+
+\newcommand{\isadof}{Isabelle/DOF\xspace}
+
 % Generic dispatcher
 \newkeycommand+[\|]\isaDof[env={UNKNOWN},label=,type={dummyT},args={}][1]{%
 \csname isaDof.\commandkey{env}.\commandkey{type}\endcsname[label=\commandkey{label},\commandkey{args}]{#1}%
