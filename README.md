@@ -40,11 +40,9 @@ The installer will
   the AFP archive into the directory to `/home/myself/afp`, you should
   run the following command to make the AFP session `ROOTS` available to
   Isabelle:
- 
         ```console
         echo "/home/myself/afp/thys" >> ~/.isabelle/Isabelle2017/ROOTS
         ```
-
 * install the Isabelle/DOF-plugin into the Isabelle user directory 
   (the exact location depends on the Isabelle version). 
 * check that the AFP has been installed successfully. 
