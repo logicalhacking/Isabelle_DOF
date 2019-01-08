@@ -151,8 +151,8 @@ if [ "$DOC" = true ]; then
   TITLE=$(echo "$NAME" | tr _ - | tr -d '\\')
   AUTHOR=$(echo "By $USER" | tr _ - | tr -d '\\')
   echo "%% This is a placeholder for user-specific configuration and packages." >> "$DIR"/document/preamble.tex
-  echo "\\title{$TITLE}" >> "$DIR"/document/preamble.tex
-  echo "\\author{$AUTHOR}" >> "$DIR"/document/preamble.tex
+  echo "\\title{$TITLE}{}{}{}{}{}{}" >> "$DIR"/document/preamble.tex
+  echo "\\author{$AUTHOR}{}{}{}{}{}" >> "$DIR"/document/preamble.tex
 
 else
     $ISABELLE_TOOL mkroot -n "$NAME"
