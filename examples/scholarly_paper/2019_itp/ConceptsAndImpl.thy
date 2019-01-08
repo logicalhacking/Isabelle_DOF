@@ -41,9 +41,11 @@ text*[abs::abstract,
  
   Sufficiently annotated, large documents are easier to be developed collaboratively 
   by continuously validating the \<^emph>\<open>coherence\<close> between formal and informal parts, and
-  the impact of changes can be better tracked automatically.
+  the impact of changes can be better tracked automatically. 
 
 \<close>
+(* Industrial Application  ? *)
+
 
 (*   Support of document ontologies is provided for immediate
   user-feedback when editing large documents with formal and
@@ -51,24 +53,55 @@ text*[abs::abstract,
   \eg, deliverables in a certified software engineering
   process.  *)
 
-
+(*
+@inproceedings{DBLP:conf/mkm/BlanchetteHMN15,
+  author    = {Jasmin Christian Blanchette and
+               Maximilian P. L. Haslbeck and
+               Daniel Matichuk and
+               Tobias Nipkow},
+  title     = {Mining the Archive of Formal Proofs},
+  booktitle = {Intelligent Computer Mathematics - International Conference, {CICM}
+               2015, Washington, DC, USA, July 13-17, 2015, Proceedings},
+  pages     = {3--17},
+  year      = {2015},
+  crossref  = {DBLP:conf/mkm/2015},
+  url       = {https://doi.org/10.1007/978-3-319-20615-8\_1},
+  doi       = {10.1007/978-3-319-20615-8\_1},
+  timestamp = {Fri, 02 Nov 2018 09:40:47 +0100},
+  biburl    = {https://dblp.org/rec/bib/conf/mkm/BlanchetteHMN15},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+*)
 section*[intro::introduction]\<open> Introduction \<close> 
 text*[introtext::introduction]\<open>
+With the maturation and growing power of interactive proof systems, the body of formalized 
+mathematics and engineering is dramatically increasing. The Isabelle Archive of Formal Proof (AFP), 
+for example, created in 2004, counted in 2015 the number of 215 articles
+@{footnote \<open>... where "articles" are theory developments underlying a submission process 
+similar to the mizar journal \cite{}\<close>}, whereas the count stood at 413 only three years later.
+An in-depth empirical analysis shows that both complexity and size increased accordingly
+@{cite "DBLP:conf/mkm/BlanchetteHMN15"}. Since the entire AFP is part of the Isabelle regression 
+test suite and therefore maintained for the different releases, this body of knowledge is also 
+available in high technical consistency. 
 
-Given the body of formalized mathematics in 
-
-, for example the Isabelle/AFP
+This raises a wider interest in the application of advanced "semantic Web" structuring, query 
+and mining techniques. Compared to other scientific disciplines like biology or medicine,
+where large data-bases of genomes or scientific publications have been organized along 
+ontologies @{cite "..." and "..." } enabling queries, for example, there are still a number of 
+technical and social challenges to overcome in order to leverage this techniques in the
+field of interactive theorem proving.  \fixme{avoid ontology here.}
 
 One of the main use of ontologies is annotation. Let us consider a set of entities available in
 a given corpus. These entities may be sentences or paragraphs in a document, figures, tables,
-definitions or lemmas in a document, etc. By annotation, we denote the link that may exist between an ontology concept 
-and a document element of the considered corpus.
+definitions or lemmas in a document, etc. By annotation, we denote the link that may exist between 
+an ontology concept and a document element of the considered corpus.
 
-The annotation process consists in defining and running a set of rules leading to the production of annotations.
-This process may be completely automated, semi-automatic with user validation or completely 
+The annotation process consists in defining and running a set of rules leading to the production of 
+annotations. This process may be completely automated, semi-automatic with user validation or completely 
 interactive. 
-
-IDEA: a table with conceptual properties 
+\<close>
+text\<open>
+IDEA FOR RELATED WORK: a table with conceptual properties of ontology languages
 Feature       | Ontolingua  | DAML+OIL | RDFS | OWL | PLIB | XML | Isa_ODL
 ------------------------------------------------------------------------
 granularity   | Word        |          |      |     |      | Character    | sentence (word)
@@ -79,8 +112,8 @@ algebraic operators |                                            | sets, lists, 
 Constraints   |                                                  | ML, executable HOL
 CWA vs OWA    |                                                  | OWA
 Context Modeling |                                               | Context import
-Inheritance   | 
-Instantiation |  
+Inheritance   |                                                  | SINGLE
+Instantiation |                                                  | MULTIPLE
 \<close>
 
 text*[intro_old::introduction]\<open> 

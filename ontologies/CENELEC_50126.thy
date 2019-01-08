@@ -35,9 +35,6 @@ text{*The category @{emph \<open>hypothesis\<close>} is used for assumptions fro
       \<^item>   the Mordell-Lang conjecture holds,   
       \<^item>   euklidian geometry is assumed, or
       \<^item>   Newtonian (non-relativistic) physics is assumed,
-      \<^item>   @{term "P \<noteq> NP"},
-      \<^item>   or the computational hardness  of certain functions 
-          relevant for cryptography (like prime-factorization).
      Their acceptance is inherently outside the scope of the model
      and can only established inside certification process by
      authority argument.
@@ -48,10 +45,19 @@ datatype hyp_type = physical | mathematical | computational | other
 
 typ "CENELEC_50126.requirement"
 
-
 doc_class hypothesis = requirement +
       hyp_type :: hyp_type <= physical  (* default *)
-  
+
+text{* The following sub-class of security related hypothesis might comprise, for example:
+      \<^item>   @{term "P \<noteq> NP"},
+      \<^item>   or the computational hardness  of certain functions 
+          relevant for cryptography (like prime-factorization).
+*}
+
+doc_class security_hyp = hypothesis +
+      hyp_type :: hyp_type <= physical  (* default *)
+
+
 text{*The category @{emph \<open>assumption\<close>} is used for domain-specific assumptions. 
       It has formal, semi-formal and informal sub-categories. They have to be 
       tracked and discharged by appropriate validation procedures within a 
@@ -78,6 +84,16 @@ text{*The category @{emph \<open>safety related application condition\<close>} (
                         
 doc_class srac = ec  +
      assumption_kind :: ass_kind <= (*default *) formal
+
+doc_class timing = ec  +
+     assumption_kind :: ass_kind <= (*default *) formal
+
+doc_class energy = ec  +
+     assumption_kind :: ass_kind <= (*default *) formal
+
+doc_class security = ec  +
+     assumption_kind :: ass_kind <= (*default *) formal
+
 
 section {* Design related Categories *}  
 
