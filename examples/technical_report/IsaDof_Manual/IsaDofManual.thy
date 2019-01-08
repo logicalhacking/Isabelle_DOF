@@ -1,10 +1,10 @@
 (*<*)
 theory IsaDofManual
-  imports "04_Conclusion"
+  imports "06_Conclusion"
 begin
 (*<*) 
 
-text*[bib::bibliography]\<open>TODO\<close>
+text*[bib::bibliography]\<open>References\<close>
 
 close_monitor*[this]
 

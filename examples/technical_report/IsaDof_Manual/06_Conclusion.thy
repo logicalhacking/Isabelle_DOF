@@ -1,6 +1,7 @@
 (*<*)
-theory "04_Conclusion"
+theory "06_Conclusion"
   imports "03_IsaDof"
+  (* imports "05_DesignImpl *)
 begin
 (*>*)
 
