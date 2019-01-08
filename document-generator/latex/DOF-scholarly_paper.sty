@@ -37,7 +37,16 @@
       \newcommand{\orcidID}[1]{}%
       \newcommand{\email}[1]{}%
     }%
-    {\PackageError{DOF-scholarly_paper}{Scholarly Paper only supports LNCS or scrartcl as document class.}{}\stop}%
+    {%
+      \@ifclassloaded{lipics-v2019}%
+      {%
+      \newcommand{\institute}[1]{}%
+      \newcommand{\inst}[1]{}%
+      \newcommand{\orcidID}[1]{}%
+      \newcommand{\email}[1]{}%
+      }%
+      {\PackageError{DOF-scholarly_paper}{Scholarly Paper only supports LNCS or scrartcl as document class.}{}\stop}%
+    }
   }
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,9 +79,6 @@
 \def\dof@affiliation{}%
 
 \AtBeginDocument{%
-  \author{\dof@author}
-  \institute{\dof@affiliation}
-
 }
 
 \def\leftadd#1#2{\expandafter\leftaddaux\expandafter{#1}{#2}{#1}}
