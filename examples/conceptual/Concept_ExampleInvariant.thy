@@ -76,10 +76,12 @@ ML\<open>fun check_M_invariant oid {is_monitor} ctxt =
 
 setup\<open>DOF_core.update_class_invariant "Conceptual.M" check_M_invariant\<close>
 
-open_monitor*[struct::M]  
 
+section\<open>Example: Monitor Class Invariant\<close>
 
-section*[a::A, x = "3"]       \<open> Lorem ipsum dolor sit amet, ... \<close>
+open_monitor*[struct::M]
+
+subsection*[a::A, x = "3"]       \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 text*[c1::C, x = "''beta''"]  \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
 
@@ -87,7 +89,7 @@ text*[d1::E, a1 = "X3"]       \<open> ... phasellus amet id massa nunc, pede sus
     
 text*[c2:: C, x = "''delta''"] \<open> ... in ut tortor eleifend augue pretium consectetuer...  \<close>
 
-section*[f::E]                \<open> Lectus accumsan velit ultrices, ... }\<close>
+subsection*[f::E]                \<open> Lectus accumsan velit ultrices, ... }\<close>
 
 (* test : close_monitor should fail : 
 section*[f2::E]               \<open> Lectus accumsan velit ultrices, ... }\<close>
@@ -97,8 +99,6 @@ ML\<open>val term = AttributeAccess.compute_attr_access (Context.Proof @{context
    fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
    val string_pair_list = map conv (HOLogic.dest_list term)
   \<close>
-(*  trace example *)
-text\<open>Setting a sample invariant, referring to attribute value "x":\<close>
 
 
 close_monitor*[struct]
