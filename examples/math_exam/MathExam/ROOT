@@ -4,8 +4,7 @@ session "MathExam" = "Isabelle_DOF" +
     MathExam
   document_files
     "preamble.tex"
-    "root.inf"
-    "ontologies.tex"
+    "isadof.cfg"
     "preamble.tex"
     "build"
     "figures/Polynomialdeg5.png"

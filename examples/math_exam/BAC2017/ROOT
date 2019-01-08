@@ -6,7 +6,6 @@ session "BAC2017" = "Isabelle_DOF" +
   theories
      BAC2017
   document_files
-    "root.inf"
+    "isadof.cfg"
     "preamble.tex"
-    "ontologies.tex"
     "build"

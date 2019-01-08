@@ -135,17 +135,15 @@ fi
 if [ "$DOC" = true ]; then
   $ISABELLE_TOOL mkroot -d -n "$NAME" "$DIR"
   echo "    \"preamble.tex\"" >> "$DIR"/ROOT
-  echo "    \"ontologies.tex\"" >> "$DIR"/ROOT
   echo "    \"build\"" >> "$DIR"/ROOT
-  sed -i -e "s/root.tex/root.inf/" "$DIR"/ROOT
+  sed -i -e "s/root.tex/isadof.cfg/" "$DIR"/ROOT
   rm -f "$DIR"/document/root.tex
   TITLE=$(echo "$NAME" | tr _ - | tr -d '\\')
   AUTHOR=$(echo "By $USER" | tr _ - | tr -d '\\')
-  echo $TEMPLATE > "$DIR"/document/root.inf
+  echo "Template: $TEMPLATE" > "$DIR"/document/isadof.cfg
   cp "$ISABELLE_HOME_USER/DOF/document-template/build" "$DIR"/document/
-  cp "$ISABELLE_HOME_USER/DOF/document-template/ontologies.tex" "$DIR"/document/
   for o in $ONTOLOGY; do
-    echo "\usepackage{DOF-$o}" >> "$DIR"/document/ontologies.tex;
+    echo "Ontology: $o" >> "$DIR"/document/isadof.cfg;
   done
   sed -e "s/<AUTHOR>/$AUTHOR/" -e "s/<TITLE>/$TITLE/" "$ISABELLE_HOME_USER/DOF/document-template/preamble.tex" > "$DIR"/document/preamble.tex
 else
