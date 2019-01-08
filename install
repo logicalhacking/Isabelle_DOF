@@ -94,6 +94,7 @@ check_afp_entries() {
 	for e in $missing; do
 	    extract="$extract afp-2018-08-14/thys/$e"
 	done
+	mkdir -p .afp
         if curl -s -L $AFP_URL | tar zxf - -C .afp $extract; then 
             for e in $missing; do 
                 echo "           Registering $e in $ISABELLE_HOME_USER/ROOTS"
