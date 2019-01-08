@@ -3,12 +3,11 @@ session "IsaDofApplications" = "Isabelle_DOF" +
   theories
     IsaDofApplications
   document_files
-    "root.inf"
+    "isadof.cfg"
     "root.bib"
     "preamble.tex"
     "build"
     "lstisadof.sty"
-    "ontologies.tex"
     "figures/isabelle-architecture.pdf"
     "figures/Dogfood-Intro.png"
     "figures/InteractiveMathSheet.png"

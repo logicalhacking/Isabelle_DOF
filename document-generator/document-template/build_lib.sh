@@ -49,17 +49,64 @@ if [ ! -f $ISABELLE_HOME_USER/DOF/latex/DOF-core.sty ]; then
     exit 1
 fi
 
-if [ ! -f root.inf ]; then 
+if [ -f "$DIR/$ROOT_NAME.tex" ]; then 
+    echo ""
+    echo "Error: Found root file ($DIR/$ROOT_NAME.tex)"
+    echo "====="
+    echo "Isabelle/DOF does not use the Isabelle root file setup. Please check"
+    echo "your project setup. Your $DIR/isadof.cfg should define a Isabelle/DOF"
+    echo "template and your project should not include a root file."
+    echo ""
+    exit 1
+fi
+
+if [ -f "$DIR/ontologies.tex" ]; then 
+    echo ""
+    echo "Error: Old project setup, found a ontologies file ($DIR/ontologies.tex)"
+    echo "====="
+    echo "Isabelle/DOF does no longer support the use of $DIR/ontologies.tex. The"
+    echo "required ontologies should be defined in $DIR/isadof.cfg."
+    echo ""
+    exit 1
+fi
+
+if [ -f "$DIR/$ROOT_NAME.tex" ]; then 
+    echo ""
+    echo "Error: Found root file ($DIR/$ROOT_NAME.tex)"
+    echo "====="
+    echo "Isabelle/DOF does not make use of the Isabelle root file mechanism."
+    echo "Please check your Isabelle/DOF setup."
+    exit 1
+fi
+
+if [ ! -f isadof.cfg ]; then 
     echo ""
     echo "Error: Isabelle/DOF document setup not correct"
     echo "====="
-    echo "Could not find root.inf. Please upgrade your Isabelle/DOF document"
+    echo "Could not find isadof.cfg. Please upgrade your Isabelle/DOF document"
     echo "setup manually."
     exit 1
 fi
 
-ROOT="$ISABELLE_HOME_USER/DOF/document-template/root-$(cat root.inf).tex"
-if [ ! -f $ROOT]; then 
+TEMPLATE=""
+ONTOLOGY="core"
+CONFIG="isadof.cfg"
+while IFS= read -r line;do
+    fields=($(printf "%s" "$line"|cut -d':' --output-delimiter=' ' -f1-))
+    if [[ "${fields[0]}" = "Template" ]]; then 
+	TEMPLATE="${fields[1]}"
+    fi                      
+    if [[ "${fields[0]}" = "Ontology" ]]; then 
+	ONTOLOGY="$ONTOLOGY ${fields[1]}"
+    fi
+done < $CONFIG
+
+for o in $ONTOLOGY; do
+  echo "\usepackage{DOF-$o}" >> ontologies.tex;
+done
+
+ROOT="$ISABELLE_HOME_USER/DOF/document-template/root-$TEMPLATE.tex"
+if [ ! -f $ROOT ]; then 
     echo ""
     echo "Error: Isabelle/DOF document setup not correct"
     echo "====="
@@ -72,10 +119,10 @@ cp $ROOT root.tex
 cp $ISABELLE_HOME_USER/DOF/latex/*.sty .
 cp $ISABELLE_HOME_USER/DOF/latex/*.sty .
 
-$ISABELLE_TOOL latex -o sty "$ROOT_NAME.tex" && \
-$ISABELLE_TOOL latex -o "$OUTFORMAT" "$ROOT_NAME.tex" && \
-{ [ ! -f "$ROOT_NAME.bib" ] || $ISABELLE_TOOL latex -o bbl "$ROOT_NAME.tex"; } && \
-{ [ ! -f "$ROOT_NAME.idx" ] || $ISABELLE_TOOL latex -o idx "$ROOT_NAME.tex"; } && \
-$ISABELLE_TOOL latex -o "$OUTFORMAT" "$ROOT_NAME.tex" && \
-$ISABELLE_TOOL latex -o "$OUTFORMAT" "$ROOT_NAME.tex"
+$ISABELLE_TOOL latex -o sty "root.tex" && \
+$ISABELLE_TOOL latex -o "$OUTFORMAT" "root.tex" && \
+{ [ ! -f "$ROOT_NAME.bib" ] || $ISABELLE_TOOL latex -o bbl "root.tex"; } && \
+{ [ ! -f "$ROOT_NAME.idx" ] || $ISABELLE_TOOL latex -o idx "root.tex"; } && \
+$ISABELLE_TOOL latex -o "$OUTFORMAT" "root.tex" && \
+$ISABELLE_TOOL latex -o "$OUTFORMAT" "root.tex"
 

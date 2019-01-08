@@ -3,9 +3,8 @@ session "TR_mycommentedisabelle" = "Isabelle_DOF" +
   theories
     "MyCommentedIsabelle"
   document_files
-    "root.inf"
+    "isadof.cfg"
     "preamble.tex"
-    "ontologies.tex"
     "prooftree.sty"
     "build"
     "figures/text-element.pdf"
