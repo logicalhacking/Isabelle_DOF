@@ -80,7 +80,7 @@ check_afp_entries() {
     missing=""
     required="Regular-Sets Functional-Automata"
     for afp in $required; do 
-        res=`$ISABELLE build -n -d . $afp 2>/dev/null || true`
+        res=`$ISABELLE build -n $afp 2>/dev/null || true`
         if [ "$res" != "" ]; then 
             echo "  Success: found APF entry $afp."
         else
