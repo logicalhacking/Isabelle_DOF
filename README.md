@@ -142,6 +142,7 @@ SPDX-License-Identifier: BSD-2-Clause
 ## Publications
 
 * Achim D. Brucker, Idir Ait-Sadoune, Paolo Crisafulli, and Burkhart
-  Wolff. Using The Isabelle Ontology Framework: Linking the Formal
-  with the Informal. In Conference on Intelligent Computer Mathematics
-  (CICM). Lecture Notes in Computer Science, Springer-Verlag, 2018.
+  Wolff. [Using The Isabelle Ontology Framework: Linking the Formal
+  with the Informal]({https://www.brucker.ch/bibliography/download/2018/brucker.ea-isabelle-ontologies-2018.pdf). 
+  In Conference on Intelligent Computer Mathematics (CICM). Lecture 
+  Notes in Computer Science (11006), Springer-Verlag, 2018.
