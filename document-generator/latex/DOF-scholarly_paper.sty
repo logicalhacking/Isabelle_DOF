@@ -126,6 +126,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: scholarly_paper.abstract
+\providecommand{\keywords}[1]{\mbox{}\\\medskip\noindent{\textbf{Keywords:}} #1}
 \expandafter\newkeycommand\csname isaDof.text.scholarly_paper.abstract\endcsname%
 [label=,type=%
 ,scholarly_paper.abstract.keywordlist=%
@@ -133,8 +134,8 @@
   \begin{isamarkuptext}%
     \begin{abstract}%
       #1%
-      \ifthenelse{\equal{\commandkey{scholarly_paper.abstract.keywordlist}}{}}{}{%      
-        \mbox{}\\\medskip\noindent{\textbf{Keywords:}} \commandkey{scholarly_paper.abstract.keywordlist}%
+      \ifthenelse{\equal{\commandkey{scholarly_paper.abstract.keywordlist}}{}}{}{%     
+        \keywords{\commandkey{scholarly_paper.abstract.keywordlist}}%
       }%
     \end{abstract}%
   \end{isamarkuptext}%
