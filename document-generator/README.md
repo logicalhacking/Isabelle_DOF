@@ -4,7 +4,7 @@ This directory contains the LaTeX setup for Isabelle's
 document generation system. 
 
 
-## Tipps
+## Tips and Tricks
 
 During debugging of LaTeX errors, it can be very helpful to use 
 more than 79 characters for error messages (otherwise, long errors
