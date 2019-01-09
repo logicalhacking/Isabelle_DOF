@@ -21,8 +21,8 @@
 \bibliographystyle{plainurl}% the mandatory bibstyle
 \usepackage{isabelle}
 \usepackage{isabellesym}
-\usepackage{amsmath}
-\usepackage{amssymb}
+% \usepackage{amsmath}
+% \usepackage{amssymb}
 \usepackage[numbers, sort&compress, sectionbib]{natbib}
 \IfFileExists{DOF-core.sty}{}{%
   \PackageError{DOF-core}{Isabelle/DOF not installed. 
@@ -34,7 +34,37 @@
          "cd Isabelle_DOF/document-generator && ./install"}{%
     For further help, see https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF}
 }
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% provide an alternative definition of 
+% begin: scholarly_paper.author
+\RequirePackage{keycommand}
+\makeatletter
+\newcommand{\DOFlipicsAuthor}[4]{\expandafter\author{#1}{#2}{#3}{#4}}
+\expandafter\newkeycommand\csname isaDof.text.scholarly_paper.author\endcsname%
+[label=,type=%
+,scholarly_paper.author.email=%
+,scholarly_paper.author.affiliation=%
+,scholarly_paper.author.orcid=%
+][1]{%
+  \protected@write\@auxout{}{\string\protect\string\DOFlipicsAuthor{#1}%
+                                           {\commandkey{scholarly_paper.author.affiliation}}
+         {\commandkey{scholarly_paper.author.email}}
+        {\commandkey{scholarly_paper.author.orcid}}
+        {}
+        }
+}
+
+\makeatother
+% end: scholarly_paper.author
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{ontologies}
+\renewcommand{\DOFauthor}{}
+\renewcommand{\DOFinstitute}{}
+\expandafter\newcommand\csname 2authand\endcsname{}
+
 \IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
 \begin{document}
 

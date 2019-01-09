@@ -78,7 +78,12 @@
 \def\dof@author{}%
 \def\dof@affiliation{}%
 
+\newcommand{\DOFauthor}{\author{\dof@author}}
+\newcommand{\DOFinstitute}{\institute{\dof@affiliation}}
+
 \AtBeginDocument{%
+  \DOFauthor
+  \DOFinstitute
 }
 
 \def\leftadd#1#2{\expandafter\leftaddaux\expandafter{#1}{#2}{#1}}
@@ -101,7 +106,7 @@
   }
 }
 
-\expandafter\newkeycommand\csname isaDof.text.scholarly_paper.author\endcsname%
+\expandafter\providekeycommand\csname isaDof.text.scholarly_paper.author\endcsname%
 [label=,type=%
 ,scholarly_paper.author.email=%
 ,scholarly_paper.author.affiliation=%
