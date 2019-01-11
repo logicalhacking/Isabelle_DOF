@@ -2,9 +2,12 @@ chapter \<open>The Document Ontology Common Library for the Isabelle Ontology Fr
 
 text\<open> Offering support for common Isabelle Elements like definitions, lemma- and theorem
 statements, proofs, etc. Isabelle is a lot of things, but it is an interactive theorem
-proving environment after all !
-\<^item> 
-\<^item> 
+proving environment after all ! So this ontology provides:
+\<^item> declarations for textual descriptions of definitions, lemmas, theorems, assertions, ...
+  and the usual means for typed referencing on them,
+\<^item> monitors allowing for filtering content; this means (typed) brackets that can be 
+  put around formal content that is more or less relevant for different types of users,  
+  \fixme{find nicer formulation}
 \<^item> LaTeX support. \<close> 
   
   
