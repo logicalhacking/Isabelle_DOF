@@ -23,6 +23,7 @@ assert*[aa::F] "True"
 ML\<open>assert_list_dest @{docitem_attribute property :: aa}\<close>
 assert*[aa::F] "True & True" (* small pb: unicodes crashes here ... *)
 ML\<open> assert_list_dest @{docitem_attribute property :: aa}\<close>
+(* bigger pb: overrides last solution ... *)
 
 text\<open>An example for the ontology specification character of the short-cuts such as 
 @{command  "assert*"}: in the following, we use the same notation referring to a completely
