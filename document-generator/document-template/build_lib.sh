@@ -92,7 +92,7 @@ TEMPLATE=""
 ONTOLOGY="core"
 CONFIG="isadof.cfg"
 while IFS= read -r line;do
-    fields=($(printf "%s" "$line"|cut -d':' --output-delimiter=' ' -f1-))
+    fields=($(printf "%s" "$line"|cut -d':' -f1- | tr ':' ' '))
     if [[ "${fields[0]}" = "Template" ]]; then 
 	TEMPLATE="${fields[1]}"
     fi                      
