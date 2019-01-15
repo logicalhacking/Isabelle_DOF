@@ -1224,18 +1224,22 @@ val _ =
                        "lemma" (attributes >> update_lemma_cmd);
 
 fun assert_cmd'((((((oid,pos),cid_pos),doc_attrs),some_name:string option),modes : string list),
-                prop:string) =
+                prop) =
     let fun markup2string x = XML.content_of (YXML.parse_body x)
+        val _ = String.explode (markup2string prop)
+        fun parse_convert thy = (let val h = Syntax.parse_term (Proof_Context.init_global thy) prop
+                                 in Syntax.string_of_term_global thy h end)
+        val _ = writeln ("XXX" ^ markup2string prop)
         val doc_attrs = (("property",pos),"[@{term ''"^markup2string prop ^"''}]")::doc_attrs 
-        val doc_attrs' = map (fn ((lhs,pos),rhs) => (((lhs,pos),"="),rhs)) doc_attrs
+        val doc_attrs' = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) doc_attrs
         (* missing : registrating t as property *)
         fun mks thy = case DOF_core.get_object_global oid thy of
-                   SOME _ => update_instance_command (((oid,pos),cid_pos),doc_attrs') thy
-                 | NONE   => create_and_check_docitem false oid pos cid_pos doc_attrs thy
+                   SOME _ => (writeln "SOME"; update_instance_command (((oid,pos),cid_pos),doc_attrs') thy)
+                 | NONE   => (writeln "NONE";create_and_check_docitem false oid pos cid_pos doc_attrs thy)
         val check = (assert_cmd some_name modes prop) o Proof_Context.init_global
     in 
         (* Toplevel.keep (check o Toplevel.context_of) *)
-        Toplevel.theory (fn thy => (check thy; mks thy))
+        Toplevel.theory (fn thy => (check thy; writeln ("YYY" ^  parse_convert thy); mks thy))
     end
 
 val _ =
