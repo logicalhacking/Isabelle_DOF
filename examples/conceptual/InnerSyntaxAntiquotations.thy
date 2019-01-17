@@ -45,7 +45,7 @@ text*[xcv4::F, r="[@{thm ''HOL.refl''},
                    @{thm ''InnerSyntaxAntiquotations.murks''}]", 
                b="{(@{docitem ''xcv1''},@{docitem ''xcv2''})}",  
                s="[@{typ ''int list''}]",
-               property = "[@{term ''a --> b''}]"
+               property = "[@{term ''H --> H''}]"
 ]\<open>Lorem ipsum ...\<close>
 
 text*[xcv5::G, g="@{thm ''HOL.sym''}"]\<open>Lorem ipsum ...\<close>

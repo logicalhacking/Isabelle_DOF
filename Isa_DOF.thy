@@ -742,12 +742,14 @@ fun ML_isa_check_generic check thy (term, pos) =
 
 
 fun ML_isa_check_typ thy (term, _, pos) =
-  let fun check thy (name, _) = Syntax.parse_typ (Proof_Context.init_global thy) name 
+  let fun check thy (name, _) = let val ctxt = (Proof_Context.init_global thy)
+                                in (Syntax.check_typ ctxt o Syntax.parse_typ ctxt) name end
   in  ML_isa_check_generic check thy (term, pos) end 
 
 
 fun ML_isa_check_term thy (term, _, pos) =
-  let fun check thy (name, _) = Syntax.parse_term (Proof_Context.init_global thy) name 
+  let fun check thy (name, _) = let val ctxt = (Proof_Context.init_global thy)
+                                in (Syntax.check_term ctxt o Syntax.parse_term ctxt) name end 
   in  ML_isa_check_generic check thy (term, pos) end 
 
 
@@ -1226,20 +1228,27 @@ val _ =
 fun assert_cmd'((((((oid,pos),cid_pos),doc_attrs),some_name:string option),modes : string list),
                 prop) =
     let fun markup2string x = XML.content_of (YXML.parse_body x)
-        val _ = String.explode (markup2string prop)
-        fun parse_convert thy = (let val h = Syntax.parse_term (Proof_Context.init_global thy) prop
-                                 in Syntax.string_of_term_global thy h end)
+        fun parse_convert thy = (let val ctxt = (Proof_Context.init_global thy)
+                                     val term = Syntax.parse_term ctxt prop
+                                     val str = Sledgehammer_Util.hackish_string_of_term ctxt term
+                                     fun hpp x = if x = #"\\" then "\\\\" else String.implode [x] 
+                                     val str' = map hpp (String.explode str)
+                                     val str'' = String.concatWith " " str'
+                                 in str''
+                                 end)
         val _ = writeln ("XXX" ^ markup2string prop)
-        val doc_attrs = (("property",pos),"[@{term ''"^markup2string prop ^"''}]")::doc_attrs 
-        val doc_attrs' = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) doc_attrs
-        (* missing : registrating t as property *)
+        fun conv_attrs thy = (("property",pos),"[@{term ''"^markup2string prop ^"''}]")::doc_attrs  
+        (* fun conv_attrs thy = (("property",pos),"[@{term ''"^parse_convert thy ^"''}]")::doc_attrs *)
+        fun conv_attrs' thy = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) (conv_attrs thy)
         fun mks thy = case DOF_core.get_object_global oid thy of
-                   SOME _ => (writeln "SOME"; update_instance_command (((oid,pos),cid_pos),doc_attrs') thy)
-                 | NONE   => (writeln "NONE";create_and_check_docitem false oid pos cid_pos doc_attrs thy)
+                   SOME _ => (writeln "SOME"; update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
+                 | NONE   => (writeln "NONE"; create_and_check_docitem false oid pos cid_pos (conv_attrs thy) thy)
         val check = (assert_cmd some_name modes prop) o Proof_Context.init_global
     in 
         (* Toplevel.keep (check o Toplevel.context_of) *)
-        Toplevel.theory (fn thy => (check thy; writeln ("YYY" ^  parse_convert thy); mks thy))
+        Toplevel.theory (fn thy => (check thy; 
+                                    (* writeln ("YYY" ^  parse_convert thy); *)
+                                    mks thy))
     end
 
 val _ =
@@ -1608,5 +1617,5 @@ writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
 (DOF_core.write_ontology_latex_sty_template @{theory})
 \<close>
 *)
-
+ML\<open>op oo\<close>
 end
