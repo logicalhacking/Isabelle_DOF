@@ -44,7 +44,9 @@ text\<open>Major sample: test-item of doc-class \verb+F+ with a relational link,
 text*[xcv4::F, r="[@{thm ''HOL.refl''}, 
                    @{thm ''InnerSyntaxAntiquotations.murks''}]", 
                b="{(@{docitem ''xcv1''},@{docitem ''xcv2''})}",  
-               s="[@{typ ''int list''}]"]\<open>Lorem ipsum ...\<close>
+               s="[@{typ ''int list''}]",
+               property = "[@{term ''a --> b''}]"
+]\<open>Lorem ipsum ...\<close>
 
 text*[xcv5::G, g="@{thm ''HOL.sym''}"]\<open>Lorem ipsum ...\<close>
 
