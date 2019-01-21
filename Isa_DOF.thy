@@ -791,6 +791,11 @@ fun ML_isa_check_docitem thy (term, req_ty, pos) =
            else err ("faulty reference to docitem: "^name) pos
   in  ML_isa_check_generic check thy (term, pos) end 
 
+(* utilities *)
+
+fun property_list_dest X = map HOLogic.dest_string 
+                                (map (fn Const ("Isa_DOF.ISA_term", _) $ s => s )  
+                                     (HOLogic.dest_list X))
 
 end; (* struct *)
                                                             
@@ -1617,5 +1622,5 @@ writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
 (DOF_core.write_ontology_latex_sty_template @{theory})
 \<close>
 *)
-ML\<open>op oo\<close>
+
 end
