@@ -445,7 +445,6 @@ DOF_core.get_attributes_local "srac" @{context};
 @{term assumption_kind}
 \<close> 
 
-text\<open>dfgdfg\<close>
 
 ML\<open>
 DOF_core.name2doc_class_name @{theory} "requirement";
