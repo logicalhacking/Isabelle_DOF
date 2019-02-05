@@ -1,0 +1,11 @@
+session "mini_odo" = "Isabelle_DOF" +
+  options [document = pdf, document_output = "output"]
+  theories [document = false]
+    (* Foo *)
+    (* Bar *)
+  theories
+    "mini_odo"
+  document_files
+    "isadof.cfg"
+    "preamble.tex"
+    "build"
