@@ -30,7 +30,7 @@ text*[tralala] \<open> Brexit means Brexit \<close>
 text\<open>Examples for declaration of typed doc-items "assumption" and "hypothesis",
      concepts defined in the underlying ontology @{theory "CENELEC_50126"}. \<close>
 text*[ass1::assumption] \<open> The subsystem Y is safe. \<close>
-text*[hyp1::hypothesis] \<open> P inequal NP \<close>
+text*[hyp1::hypothesis] \<open> P not equal NP \<close>
   
 text\<open>A real example fragment from a larger project, declaring a text-element as a
      "safety-related application condition", a concept defined in the  @{theory "CENELEC_50126"}
