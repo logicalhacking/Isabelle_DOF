@@ -96,7 +96,7 @@ Usage: isabelle DOF_mkroot [OPTIONS] [DIR]
     -n NAME      alternative session name (default: DIR base name)
     -o ONTOLOGY  (default: core)
        Available ontologies:
-       * cenelec_50126
+       * cenelec_50128
        * core
        * mathex
        * scholarly_paper

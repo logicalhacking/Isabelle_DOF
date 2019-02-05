@@ -1,5 +1,5 @@
 theory Example
-  imports  "../../ontologies/CENELEC_50126"
+  imports  "../../ontologies/CENELEC_50128"
 begin
 
 section{* Some show-off's of general antiquotations. *}

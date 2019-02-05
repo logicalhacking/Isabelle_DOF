@@ -4,7 +4,7 @@ session "Isabelle_DOF" = "Functional-Automata" +
     "Regular-Sets"
   theories
     Isa_DOF
-    "ontologies/CENELEC_50126"
+    "ontologies/CENELEC_50128"
     "ontologies/Conceptual"
     "ontologies/scholarly_paper"
     "ontologies/technical_report"

@@ -1,7 +1,7 @@
 chapter\<open> Example : Forward and Standard (use-after-define) Referencing\<close>
 
 theory Example
-  imports  "../../ontologies/CENELEC_50126" 
+  imports  "../../ontologies/CENELEC_50128" 
            "../../ontologies/scholarly_paper"
 begin
 
@@ -28,12 +28,12 @@ text\<open>An "anonymous" text-item, automatically coerced into the top-class "t
 text*[tralala] \<open> Brexit means Brexit \<close> 
 
 text\<open>Examples for declaration of typed doc-items "assumption" and "hypothesis",
-     concepts defined in the underlying ontology @{theory "CENELEC_50126"}. \<close>
+     concepts defined in the underlying ontology @{theory "CENELEC_50128"}. \<close>
 text*[ass1::assumption] \<open> The subsystem Y is safe. \<close>
 text*[hyp1::hypothesis] \<open> P inequal NP \<close>
   
 text\<open>A real example fragment from a larger project, declaring a text-element as a
-     "safety-related application condition", a concept defined in the  @{theory "CENELEC_50126"}
+     "safety-related application condition", a concept defined in the  @{theory "CENELEC_50128"}
      ontology:\<close>  
 
 text*[new_ass::hypothesis]\<open>Under the assumption @{assumption \<open>ass1\<close>} we establish the following: ... \<close>

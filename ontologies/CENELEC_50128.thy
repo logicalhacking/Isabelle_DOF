@@ -11,7 +11,7 @@ identifies:
  \<close> 
 
 (*<<*)  
-theory CENELEC_50126
+theory CENELEC_50128
   imports  "../Isa_COL"
 begin
 (*>>*) 
@@ -311,7 +311,7 @@ text\<open>The category @{emph \<open>hypothesis\<close>} is used for assumption
 datatype hyp_type = physical | mathematical | computational | other
 
 
-typ "CENELEC_50126.requirement"
+typ "CENELEC_50128.requirement"
 
 doc_class hypothesis = requirement +
       hyp_type :: hyp_type <= physical  (* default *)
@@ -426,10 +426,10 @@ DOF_core.name2doc_class_name @{theory} "srac";
 DOF_core.is_defined_cid_global "srac" @{theory};
 DOF_core.is_defined_cid_global "ec" @{theory};
 "XXXXXXXXXXXXXXXXX";
-DOF_core.is_subclass @{context} "CENELEC_50126.ec" "CENELEC_50126.ec";
-DOF_core.is_subclass @{context} "CENELEC_50126.srac" "CENELEC_50126.ec";
-DOF_core.is_subclass @{context} "CENELEC_50126.ec"   "CENELEC_50126.srac";
-DOF_core.is_subclass @{context} "CENELEC_50126.ec"   "CENELEC_50126.test_requirement";
+DOF_core.is_subclass @{context} "CENELEC_50128.ec" "CENELEC_50128.ec";
+DOF_core.is_subclass @{context} "CENELEC_50128.srac" "CENELEC_50128.ec";
+DOF_core.is_subclass @{context} "CENELEC_50128.ec"   "CENELEC_50128.srac";
+DOF_core.is_subclass @{context} "CENELEC_50128.ec"   "CENELEC_50128.test_requirement";
 "XXXXXXXXXXXXXXXXX";
 val {docobj_tab={maxano, tab=ref_tab},docclass_tab=class_tab,...} = DOF_core.get_data @{context};
 Symtab.dest ref_tab;
