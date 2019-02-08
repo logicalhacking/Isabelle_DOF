@@ -17,6 +17,12 @@ Symtab.dest docitem_tab;
 Symtab.dest docclass_tab;
 \<close>
 
+ML\<open>
+fun fac x = if x = 0 then 1 else x * (fac(x -1));
+fac 3;
+open Thm;
+\<close>
+
 text\<open>A text item containing standard theorem antiquotations and complex meta-information.\<close>
 text*[dfgdfg::B, Conceptual.B.x ="''f''", y = "[''sdf'']"]\<open> Lorem ipsum ...  @{thm refl} \<close> 
 
