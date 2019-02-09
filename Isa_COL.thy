@@ -62,8 +62,9 @@ doc_class formal_content =
     accepts "\<lbrace>formal_item\<rbrace>\<^sup>+"
 
 
-
-
+doc_class concept = 
+    tag        :: "string"   <= "''''"
+    properties :: "thm list" 
 
 section\<open>Tests\<close>
 

@@ -20,22 +20,21 @@ text\<open> Excerpt of the BE EN 50128:2011, page 22. \<close>
 
 section\<open>Terms and Definitions\<close>
 
-subsection\<open>assessment\<close>
-text\<open>process of analysis to determine whether software, which may include process, documentation, 
-system, subsystem hardware and/or software components, meets the specified requirements and to form 
-a judgement as to whether the software is fit for its intended purpose. Safety assessment is 
-focused on but not limited to the safety properties of a system.\<close>
+Definition*[assessment::concept]\<open>process of analysis to determine whether software, which may include 
+process, documentation, system, subsystem hardware and/or software components, meets the specified 
+requirements and to form  a judgement as to whether the software is fit for its intended purpose. 
+Safety assessment is focused on but not limited to the safety properties of a system.\<close>
 
-subsection\<open>assessor\<close>
-text\<open>entity that carries out an assessment\<close>
+Definition*[assessor::concept, tag="''assessor''"]
+\<open>entity that carries out an assessment\<close>
 
-subsection\<open>commercial off-the-shelf (COTS) software\<close>
-text\<open>software defined by market-driven need, commercially available and 
-whose fitness for purpose has been demonstrated by a broad spectrum of commercial 
-users\<close>
+Definition*[cots::concept, tag="''commercial off-the-shelf (COTS) software''"]
+\<open>software defined by market-driven need, commercially available and whose fitness for purpose 
+has been demonstrated by a broad spectrum of commercial users\<close>
 
-subsection\<open>component\<close>
-text\<open>a constituent part of software which has well-defined interfaces and behaviour 
+
+Definition*[component::concept]
+\<open>a constituent part of software which has well-defined interfaces and behaviour 
 with respect to the software architecture and design and fulfils the following 
 criteria:
 \<^enum> it is designed according to “Components” (see Table A.20);
@@ -45,112 +44,109 @@ criteria:
    (e. g. subsystems) which have an independent version
 \<close>
 
-subsection\<open>configuration manager\<close>
-text\<open>entity that is responsible for implementing and carrying out the processes
+Definition*[cmgr::concept, tag="''configuration manager''"]
+\<open>entity that is responsible for implementing and carrying out the processes
 for the configuration management of documents, software and related tools including 
 \<^emph>\<open>change management\<close>\<close>
 
-subsection\<open>customer\<close>
-text\<open>entity which purchases a railway control and protection system including 
-the software\<close>
+Definition*[customer::concept]
+\<open>entity which purchases a railway control and protection system including the software\<close>
 
-subsection\<open>designer\<close>
-text\<open>entity that analyses and transforms specified requirements into acceptable design solutions 
+Definition*[designer::concept]
+\<open>entity that analyses and transforms specified requirements into acceptable design solutions 
 which have the required safety integrity level\<close>
 
-subsection\<open>entity\<close>
-text\<open>person, group or organisation who fulfils a role as defined in this European 
-Standard\<close>
+Definition*[entity::concept]
+\<open>person, group or organisation who fulfils a role as defined in this European Standard\<close>
 
-subsection\<open>error, fault\<close>
-text\<open>defect, mistake or inaccuracy which could result in failure or in a deviation 
-from the intended performance or behaviour\<close>
+declare_reference*[fault::concept]
+Definition*[error::concept]
+\<open>defect, mistake or inaccuracy which could result in failure or in a deviation 
+from the intended performance or behaviour (cf @{concept (unchecked) \<open>fault\<close>}))\<close>
 
-subsection\<open>failure\<close>
-text\<open>unacceptable difference between required and observed performance\<close>
+Definition*[fault::concept]
+\<open>defect, mistake or inaccuracy which could result in failure or in a deviation 
+from the intended performance or behaviour (cf @{concept \<open>error\<close>})\<close>
 
-subsection\<open>fault tolerance\<close>
-text\<open>built-in capability of a system to provide continued correct provision of service as specified, 
+Definition*[failure::concept]
+\<open>unacceptable difference between required and observed performance\<close>
+
+Definition*[ft::concept, tag="''fault tolerance''"]
+\<open>built-in capability of a system to provide continued correct provision of service as specified, 
 in the presence of a limited number of hardware or software faults\<close>
 
-subsection\<open>firmware\<close>
-text\<open>software stored in read-only memory or in semi-permanent storage such as flash memory, in a 
+Definition*[firmware::concept]
+\<open>software stored in read-only memory or in semi-permanent storage such as flash memory, in a 
 way that is functionally independent of applicative software\<close>
 
-subsection\<open>generic software\<close>
-text\<open>software which can be usedfor a variety of installations purely by the provision of 
+Definition*[gen_soft::concept,tag="''generic software''"]
+\<open>software which can be used for a variety of installations purely by the provision of 
 application-specific data and/or algorithms\<close>
 
-subsection\<open>implementer\<close>
-text\<open>entity that transforms specified designs into their physical realisation\<close> 
+Definition*[implementer::concept]
+\<open>entity that transforms specified designs into their physical realisation\<close> 
 
-subsection\<open>integration\<close>
-text\<open>process of assembling software and/or hardware items, according to the architectural and 
-design specification, and testing the integrated unit
-\<close>
+Definition*[integration::concept]
+\<open>process of assembling software and/or hardware items, according to the architectural and 
+design specification, and testing the integrated unit\<close>
 
-subsection\<open>integrator\<close>
-text\<open>entity that carries out software integration\<close>
+Definition*[integrator::concept]
+\<open>entity that carries out software integration\<close>
 
-subsection\<open>pre-existing software\<close>
-text\<open>software developed prior to the application currently in question, including COTS (commercial 
+Definition*[PES :: concept, tag="''pre-existing software''"]
+\<open>software developed prior to the application currently in question, including COTS (commercial 
 off-the shelf) and open source software\<close>
 
-subsection\<open>open source software\<close>
-text\<open>source code available to the general public with relaxed or non-existent copyright restrictions
-\<close>
+Definition*[OSS :: concept, tag="''open source software''"]
+\<open>source code available to the general public with relaxed or non-existent copyright restrictions\<close>
 
-subsection\<open>programmable logic controller\<close>
-text\<open>solid-state control system which has a user programmable memory for storage of instructions to 
-implement specific functions
-\<close>
+Definition*[PLC::concept, tag="''programmable logic controller''"]
+\<open>solid-state control system which has a user programmable memory for storage of instructions to 
+implement specific functions\<close>
 
-subsection\<open>project management\<close>
-text\<open>administrative and/or technical conduct of a project, including safety aspects\<close>
+Definition*[PM::concept, tag="''project management''"]
+\<open>administrative and/or technical conduct of a project, including safety aspects\<close>
 
-subsection\<open>project manager\<close>
-text\<open>entity that carries out project management\<close>
+Definition*[PGMGR::concept, tag="''project manager''"]
+\<open>entity that carries out project management\<close>
 
-subsection\<open>reliability\<close>
-text\<open>ability of an item to perform a required function under given conditions for a given period of 
-time\<close>
+Definition*[reliability::concept]
+\<open>ability of an item to perform a required function under given conditions for a given period of time\<close>
 
-subsection\<open>robustness\<close>
-text\<open>ability of an item to detect and handle abnormal situations\<close>
+Definition*[robustness::concept]
+\<open>ability of an item to detect and handle abnormal situations\<close>
 
-subsection\<open>requirements manager\<close>
-text\<open>entity that carries out requirements management\<close>
+Definition*[RMGR::concept, tag="''requirements manager''"]
+\<open>entity that carries out requirements management\<close>
 
-subsection\<open>requirements management\<close>
-text\<open>the process of eliciting, documenting, analysing, prioritising and agreeing on requirements and 
+Definition*[RMGMT::concept, tag="''requirements management''"]
+\<open>the process of eliciting, documenting, analysing, prioritising and agreeing on requirements and 
 then controlling change and communicating to relevant stakeholders. It is a continuous process 
-throughout a project
-\<close>
+throughout a project\<close>
 
-subsection\<open>risk\<close>
-text\<open>combination of the rate of occurrence of accidents and incidents resulting in harm (caused by 
-a hazard) and the degree of severity of that harm
-\<close>
+Definition*[risk::concept]
+\<open>combination of the rate of occurrence of accidents and incidents resulting in harm (caused by 
+a hazard) and the degree of severity of that harm\<close>
 
-subsection\<open>safety\<close>
-text\<open>freedom from unacceptable levels of risk of harm to people\<close>
+Definition*[safety::concept]
+\<open>freedom from unacceptable levels of risk of harm to people\<close>
 
-subsection\<open>safety authority\<close>
-text\<open>body responsible for certifying that safety related software or services comply with relevant 
+Definition*[SA::concept, tag="''safety authority''"]
+\<open>body responsible for certifying that safety related software or services comply with relevant 
 statutory safety requirements\<close>
 
-subsection\<open>safety function\<close>
-text\<open>a function that implements a part or whole of a safety requirement\<close>
+Definition*[SF::concept, tag="''safety function''"]
+\<open>a function that implements a part or whole of a safety requirement\<close>
 
-subsection\<open>safety-related software\<close>
-text\<open>software which performs safety functions\<close>
+Definition*[SFRS::concept, tag= "''safety-related software''"]
+\<open>software which performs safety functions\<close>
 
-subsection\<open>software\<close>
-text\<open>intellectual creation comprising the programs, procedures, rules, data and any associated 
+Definition*[software::concept]
+\<open>intellectual creation comprising the programs, procedures, rules, data and any associated 
 documentation pertaining to the operation of a system\<close>
 
-subsection\<open>software baseline\<close>
-text\<open>complete and consistent set of source code, executable files, configuration files, 
+Definition*[SB::concept, tag="''software baseline''"]
+\<open>complete and consistent set of source code, executable files, configuration files, 
 installation scripts and documentation that are needed for a software release. Information about 
 compilers, operating systems, preexisting software and dependent tools is stored as part of the 
 baseline. This will enable the organisation to software deployment
@@ -160,91 +156,80 @@ released and assessed
 
 
 
-subsection\<open>software life-cycle\<close>
-text\<open>those activities occurring during a period of time that starts when
+Definition*[SWLC::concept, tag="''software life-cycle''"]
+\<open>those activities occurring during a period of time that starts when
 software is conceived and ends when the software is no longer available for use. The software life 
 cycle typically includes a requirements phase, design phase,test phase, integration phase, 
 deployment phase and a maintenance phase 3.1.35 software maintainability
 capability of the software to be modified; to correct faults, improve to a different environment
 \<close>
 
-subsection\<open>software maintenance\<close>
-text\<open> action, or set of actions, carried out on software after deployment functionality
-performance or other attributes, or adapt it with the aim of enhancing or correcting its
-\<close>
+Definition*[SM::concept, tag="''software maintenance''"]
+\<open> action, or set of actions, carried out on software after deployment functionality
+performance or other attributes, or adapt it with the aim of enhancing or correcting its\<close>
 
-subsection\<open>software safety integrity level\<close>
-text\<open>classification number which determines the techniques and measures that have to be applied to 
+Definition*[SOSIL::concept, tag="''software safety integrity level''"]
+\<open>classification number which determines the techniques and measures that have to be applied to 
 software NOTE Safety-related software has been classified into five safety integrity levels, where 
-0 is the lowest and 4 the highest.
-\<close>
+0 is the lowest and 4 the highest.\<close>
 
-subsection\<open>supplier\<close>
-text\<open>entity that designs and builds a railway control and protection system including the software 
+Definition*[supplier::concept]
+\<open>entity that designs and builds a railway control and protection system including the software 
 or parts thereof\<close>
 
-subsection\<open>system safety integrity level\<close>
-text\<open> classification number which indicates the required degree of confidence that an integrated 
-system comprising hardware and software will meet its specified safety requirements
-\<close>
+Definition*[SYSIL::concept, tag="''system safety integrity level''"]
+\<open>classification number which indicates the required degree of confidence that an integrated 
+system comprising hardware and software will meet its specified safety requirements\<close>
 
-subsection\<open>tester\<close>
-text\<open>an entity that carries out testing
-\<close>
+Definition*[tester::concept]\<open>an entity that carries out testing\<close>
 
-subsection\<open>testing\<close>
-text\<open>process of executing software under controlled conditions as to ascertain its behaviour and 
-performance comparedto the corresponding requirements specification
-\<close>
+Definition*[testing::concept]
+\<open>process of executing software under controlled conditions as to ascertain its behaviour and 
+performance compared to the corresponding requirements specification\<close>
 
-subsection\<open>tool class T1\<close>
-text\<open>generates no outputs which candirectly or indirectly contribute to the executable code 
+Definition*[TCT1::concept, tag="''tool class T1''"]
+\<open>generates no outputs which can directly or indirectly contribute to the executable code 
 (including data) of the software NOTE 11 examples include: a text editor or a requirement or 
-design support tool with no automatic code generation capabilities; configuration control tools.
-\<close>
+design support tool with no automatic code generation capabilities; configuration control tools.\<close>
 
-subsection\<open>tool class T2\<close>
-text\<open>supports the test or verification of the design or executable code, where errors in the tool 
+Definition*[TCT2::concept,tag="''tool class T2''"]
+\<open>supports the test or verification of the design or executable code, where errors in the tool 
 can fail to reveal defects but cannot directly create errors in the executable software
 NOTE T2 examples include: a test harness generator; a test coverage measurement tool; a static 
 analysis tool. reproduce defined versions and be the input for future releases at enhancements or 
 at upgrade in the maintenance phase
 \<close>
 
-subsection\<open>tool class T3\<close>
-text\<open>generates outputs which can directly or indirectly contribute to the executable code 
+Definition*[TCT3::concept, tag="''tool class T3''"]
+\<open>generates outputs which can directly or indirectly contribute to the executable code 
 (including data) of the safety related system NOTE T3 examples include: a source code compiler, 
 a data/algorithms compiler, a tool to change set-points during system operation; an optimising 
 compiler where the relationship between the source code program and the generated object code is 
 not obvious; a compiler that incorporates an executable run-time package into the executable code.
 \<close>
-subsection\<open>traceability\<close>
-text\<open>degree to which relationship can be established between two or more products of a development 
+Definition*[traceability::concept]
+\<open>degree to which relationship can be established between two or more products of a development 
 process, especially those having a predecessor/successor or master/subordinate relationship to one 
-another
-\<close>
+another\<close>
 
-subsection\<open>validation\<close>
-text\<open>process of analysis followed by a judgment based on evidence to
+Definition*[validation::concept]
+\<open>process of analysis followed by a judgment based on evidence to
 documentation, software or application) fits the user needs,in particular with respect to safety 
 and quality and determine whether an item (e.g. process, with emphasis on the suitability of its 
-operation in accordance to its purpose in its intended environment
-\<close>
+operation in accordance to its purpose in its intended environment\<close>
 
-subsection\<open>validator\<close>
-text\<open>entity that is responsible for the validation
-\<close>
+Definition*[validator::concept]
+\<open>entity that is responsible for the validation\<close>
 
-subsection\<open>verification\<close>
-text\<open>process of examination followed by a judgment based on evidence that output items (process,
+Definition*[verification::concept]
+\<open>process of examination followed by a judgment based on evidence that output items (process,
 documentation, software or application) of a specific development phase fulfils the requirements of 
 that phase with respect to completeness, correctness and consistency.
 NOTE Verification is mostly based on document reviews (design, implementation, test documents etc.).
 \<close>
 
-subsection\<open>verifier\<close>
-text\<open>entity that is responsible for one or more verification activities
-\<close>
+Definition*[verifier::concept]
+\<open>entity that is responsible for one or more verification activities\<close>
 
 
 datatype role =  PM  (* Program Manager *) 
@@ -419,6 +404,9 @@ doc_class test_documentation =
 
   
 section\<open> Testing and Validation \<close>
+
+text\<open>Test : @{concept \<open>cots\<close>}\<close>
+
 
 ML\<open>
 DOF_core.name2doc_class_name @{theory} "requirement";

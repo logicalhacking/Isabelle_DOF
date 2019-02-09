@@ -28,12 +28,15 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            "text*"       
            "figure*"
            "side_by_side_figure*" 
+           "Definition*" "Lemma*" "Theorem*" "Conjecture*"
            :: document_body
            
   and      "open_monitor*" "close_monitor*" "declare_reference*" 
            "update_instance*" "doc_class" ::thy_decl
 
-  and      "lemma*" "theorem*" "assert*"  ::thy_decl
+  and      (* "definition*" *) "corrollary*" "proposition*" "schematic_goal*" 
+           "lemma*" "theorem*" (* -- intended replacement of Isar std commands.*) 
+           "assert*"  ::thy_decl
 
   and      "print_doc_classes" "print_doc_items" "gen_sty_template"  "check_doc_global" :: diag
            
@@ -1081,22 +1084,32 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
             end
 
 
-fun enriched_document_command markdown level (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
-                                        xstring_opt:(xstring * Position.T) option),
-                                        toks:Input.source) 
-                                        : theory -> theory =
+fun gen_enriched_document_command transform 
+                               markdown  
+                              (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
+                                  xstring_opt:(xstring * Position.T) option),
+                                  toks:Input.source) 
+                              : theory -> theory =
   let
        (* as side-effect, generates markup *)
        fun check_text thy = (Thy_Output.output_text(Toplevel.theory_toplevel thy) markdown toks; thy)
        (* generating the level-attribute syntax *)
-       val doc_attrs' = case level of 
+  in   
+       (create_and_check_docitem false oid pos cid_pos (transform doc_attrs) #> check_text) 
+       (* Thanks Frederic Tuong! ! ! *)
+  end;
+
+fun enriched_document_command level =
+   let fun transform doc_attrs = case level of 
                   NONE => doc_attrs 
                 | SOME(NONE) => (("level",@{here}),"None")::doc_attrs
                 | SOME(SOME x) => (("level",@{here}),"Some("^ Int.toString x ^"::int)")::doc_attrs
-  in   
-       (create_and_check_docitem false oid pos cid_pos doc_attrs' #> check_text) 
-       (* Thanks Frederic Tuong! ! ! *)
-  end;
+   in  gen_enriched_document_command transform end; 
+
+fun enriched_formal_statement_command (tag:string) =
+   let fun transform doc_attrs = (("tag",@{here}),"''"^tag^"''") :: 
+                                 (("properties",@{here}),"([]::thm list)")::doc_attrs
+   in  gen_enriched_document_command transform end; 
 
 
 
@@ -1143,63 +1156,90 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
             |> delete_monitor_entry
     end 
 
+(* *********************************************************************** *)
+(* Textual Command Support                                                 *)
+(* *********************************************************************** *)
+
+(* {markdown = true} sets the parsing process such that in the text-core markdown elements are
+   accepted. *)
+
+val _ =
+  Outer_Syntax.command ("Definition*", @{here}) "Textual Definition"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_formal_statement_command "definition" {markdown = true} )));
+
+val _ =
+  Outer_Syntax.command ("Lemma*", @{here}) "Textual Lemma Outline"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_formal_statement_command "lemma" {markdown = true} )));
+
+val _ =
+  Outer_Syntax.command ("Theorem*", @{here}) "Textual Theorem Outline"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_formal_statement_command "theorem" {markdown = true} )));
+
+val _ =
+  Outer_Syntax.command ("Conjecture*", @{here}) "Textual Theorem Outline"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_formal_statement_command "conjecture" {markdown = true} )));
+
 
 val _ =
   Outer_Syntax.command ("title*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command {markdown = false} NONE))) ;
+      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} ))) ;
 
 val _ =
   Outer_Syntax.command ("subtitle*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command {markdown = false} NONE)));
+      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} )));
 
 val _ =
   Outer_Syntax.command ("chapter*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command {markdown = false} (SOME(SOME 0)))));
+      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 0)) {markdown = false} )));
 
 val _ =
   Outer_Syntax.command ("section*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command {markdown = false} (SOME(SOME 1)))));
+      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 1)) {markdown = false} )));
 
 
 val _ =
   Outer_Syntax.command ("subsection*", @{here}) "subsection heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command {markdown = false} (SOME(SOME 2)))));
+      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 2)) {markdown = false} )));
 
 val _ =
   Outer_Syntax.command ("subsubsection*", @{here}) "subsubsection heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command {markdown = false} (SOME(SOME 3)))));
+      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 3)) {markdown = false} )));
 
 val _ =
   Outer_Syntax.command ("paragraph*", @{here}) "paragraph heading"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command {markdown = false} (SOME(SOME 4)))));
+      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 4)) {markdown = false} )));
 
 val _ =
   Outer_Syntax.command ("subparagraph*", @{here}) "subparagraph heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command {markdown = false} (SOME(SOME 5)))));
+      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 5)) {markdown = false} )));
 
 val _ =
   Outer_Syntax.command ("figure*", @{here}) "figure"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command {markdown = false} NONE)));
+      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} )));
 
 val _ =
   Outer_Syntax.command ("side_by_side_figure*", @{here}) "multiple figures"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command {markdown = false} NONE)));
+      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} )));
 
 
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (enriched_document_command {markdown = true} (NONE))));
+      >> (Toplevel.theory o (enriched_document_command NONE {markdown = true} )));
 
 val _ =
   Outer_Syntax.command @{command_keyword "declare_reference*"} 
@@ -1223,12 +1263,6 @@ val _ =
                        "update meta-attributes of an instance of a document class"
                         (attributes_upd >> (Toplevel.theory o update_instance_command)); 
 
- (* dummy/fake so far: *)
-val update_lemma_cmd = (fn (((oid,pos),cid),doc_attrs) => (Toplevel.theory (I)))
-
-val _ =
-  Outer_Syntax.command @{command_keyword "lemma*"} 
-                       "lemma" (attributes >> update_lemma_cmd);
 
 fun assert_cmd'((((((oid,pos),cid_pos),doc_attrs),some_name:string option),modes : string list),
                 prop) =
@@ -1294,19 +1328,23 @@ val short_statement =
 
 fun theorem spec schematic descr  =
   Outer_Syntax.local_theory_to_proof' spec ("state " ^ descr)
-    ((long_statement || short_statement) >> (fn (long, binding, includes, elems, concl) =>
-      ((if schematic then Specification.schematic_theorem_cmd else Specification.theorem_cmd )
-        long Thm.theoremK NONE (K I) binding includes elems concl)));
+    ((ODL_Command_Parser.attributes -- (long_statement || short_statement)) 
+    >> (fn (_ (* skip *) ,(long, binding, includes, elems, concl)) =>
+           ((if schematic then Specification.schematic_theorem_cmd 
+                          else Specification.theorem_cmd )
+             long Thm.theoremK NONE (K I) binding includes elems concl)));
 
+in
 
-val _ = theorem @{command_keyword "theorem*"} false "theorem";
-(* val _ = theorem @{command_keyword "lemma*"} false "lemma";
-   val _ = theorem @{command_keyword corollary} false "corollary";
-   val _ = theorem @{command_keyword proposition} false "proposition";
-   val _ = theorem @{command_keyword schematic_goal} true "schematic goal"; *)
+(* Half - fake. activates original Isar commands, but skips meta-arguments for the moment. *)
+val _ = theorem @{command_keyword "theorem*"}        false "theorem";
+val _ = theorem @{command_keyword "lemma*"}          false "lemma";
+val _ = theorem @{command_keyword "corrollary*"}     false "corollary";
+val _ = theorem @{command_keyword "proposition*"}    false "proposition";
+val _ = theorem @{command_keyword "schematic_goal*"} true  "schematic goal"; 
 
-in end\<close>  
-    
+end\<close>  
+
  
 section\<open> Syntax for Ontological Antiquotations (the '' View'' Part II) \<close>
   
@@ -1622,5 +1660,7 @@ writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
 (DOF_core.write_ontology_latex_sty_template @{theory})
 \<close>
 *)
+
+lemma X : "True" sorry
 
 end
