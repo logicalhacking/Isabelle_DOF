@@ -22,18 +22,18 @@ doc_class abstract =
    keywordlist        :: "string list"   <= "[]" 
    principal_theorems :: "thm list"
 
-doc_class text_section = 
+doc_class text_section = text_element +
    main_author :: "author option"  <=  None
    fixme_list  :: "string list"    <=  "[]" 
    level       :: "int  option"    <=  "None"   
-                                  (* this attribute enables doc-notation support section* etc.
-                                     we follow LaTeX terminology on levels 
-                                               part          = Some -1
-                                               chapter       = Some 0
-                                               section       = Some 1
-                                               subsection    = Some 2
-                                               subsubsection = Some 3
-                                      ... *)
+   (* this attribute enables doc-notation support section* etc.
+      we follow LaTeX terminology on levels 
+                part          = Some -1
+                chapter       = Some 0
+                section       = Some 1
+                subsection    = Some 2
+                subsubsection = Some 3
+       ... *)
    (* for scholarly paper: invariant level > 0 *)
 
 doc_class introduction = text_section +
