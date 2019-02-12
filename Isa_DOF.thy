@@ -1661,6 +1661,6 @@ writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
 \<close>
 *)
 
-lemma X : "True" sorry
+lemma X : "True" oops
 
 end
