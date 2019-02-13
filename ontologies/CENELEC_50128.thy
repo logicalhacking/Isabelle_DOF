@@ -279,47 +279,155 @@ datatype sil = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
 
 type_synonym saftety_integraytion_level = sil
 
+
 doc_class objectives =
    long_name    :: "string option"
    is_concerned :: "role set"
 
-doc_class FnI = objectives +
+
+doc_class requirement = text_element +
+   long_name    :: "string option"
+   is_concerned :: "role set"
+  
+(*
+doc_class requirement_analysis = 
+   no :: "nat"
+   accepts "\<lbrace>requirement\<rbrace>\<^sup>+"
+*)
+                              
+text\<open>The category @{emph \<open>hypothesis\<close>} is used for assumptions from the 
+      foundational mathematical or physical domain, so for example: 
+      \<^item>   the Mordell-Lang conjecture holds,   
+      \<^item>   euklidian geometry is assumed, or
+      \<^item>   Newtonian (non-relativistic) physics is assumed,
+     Their acceptance is inherently outside the scope of the model
+     and can only established inside certification process by
+     authority argument.
+\<close>
+  
+datatype hyp_type = physical | mathematical | computational | other
+
+
+typ "CENELEC_50128.requirement"
+
+doc_class hypothesis = requirement +
+      hyp_type :: hyp_type <= physical  (* default *)
+
+text\<open> The following sub-class of security related hypothesis might comprise, for example:
+      \<^item>   @{term "P \<noteq> NP"},
+      \<^item>   or the computational hardness  of certain functions 
+          relevant for cryptography (like prime-factorization).
+      (* speculation bu, not 50128 *)\<close>
+
+doc_class security_hyp = hypothesis +
+      hyp_type :: hyp_type <= physical  (* default *)
+
+
+doc_class FnI = requirement +
+   is_concerned :: "role set" <= "UNIV"    
+   type_synonym functions_and_interfaces = FnI
+
+doc_class AC = requirement +
    is_concerned :: "role set" <= "UNIV" 
-   
-type_synonym functions_and_interfaces = FnI
+   type_synonym application_conditions = AC
 
-doc_class AC = objectives +
+text\<open>The category \<^emph>\<open>assumption\<close> is used for domain-specific assumptions. It has formal, semi-formal 
+      and informal sub-categories. They have to be  tracked and discharged by appropriate 
+      validation procedures within a certification process, by it by test or proof. \<close>
+
+datatype ass_kind = informal | semiformal | formal
+  
+doc_class assumption = requirement +
+     assumption_kind :: ass_kind <= informal 
+
+text\<open> The category \<^emph>\<open>exported constraint\<close> (or \<^emph>\<open>EC\<close>  for short) is used for formal application 
+conditions; They represent in particular \<^emph>\<open>derived constraints\<close>, i.e. constraints that arrive
+as side-conditions during refinement proofs or implementation decisions and must be tracked.\<close>
+
+doc_class EC = AC  +
+     assumption_kind :: ass_kind <= (*default *) formal
+     type_synonym exported_constraint = EC
+
+text\<open> The category \<^emph>\<open>safety related application condition\<close> (or \<^emph>\<open>SRAC\<close> for short) is used
+for exported constraints assuring in judgements safety requirements of the system. \<close>
+                        
+doc_class SRAC = EC  +
+     assumption_kind :: ass_kind <= (*default *) formal
+     type_synonym safety_related_application_condition = SRAC
+
+
+doc_class CoAS = requirement +
    is_concerned :: "role set" <= "UNIV" 
+   type_synonym configuration_or_architecture_of_system = CoAS
 
-type_synonym application_conditions = AC
-
-doc_class CoAS = objectives +
+doc_class HtbC = requirement +
    is_concerned :: "role set" <= "UNIV" 
+   type_synonym hazard_to_be_controlled = HtbC
 
-type_synonym configuration_or_architecture_of_system = CoAS
-
-doc_class HtbC = objectives +
+doc_class SIR = requirement +
    is_concerned :: "role set" <= "UNIV" 
-
-type_synonym hazard_to_be_controlled = HtbC
-
-doc_class SIR = objectives +
-   is_concerned :: "role set" <= "UNIV" 
-
-type_synonym safety_integrity_requirement = SIR
+   type_synonym safety_integrity_requirement = SIR
 
 text\<open>The following class is a bit unclear about usage and seems to be in 
 conceptual mismatch with @{typ objectives}: \<close>
-doc_class SILA = objectives +
+doc_class SILA = requirement +
    is_concerned :: "role set" <= "UNIV" 
    alloc        :: "sil" <= "SIL0" 
+   type_synonym allocation_of_SIL = SILA
 
-type_synonym allocation_of_SIL = SILA
-
-doc_class TC = objectives +
+doc_class TC = requirement +
    is_concerned :: "role set" <= "UNIV" 
+   type_synonym timing_constraint = TC
 
-type_synonym timing_constraint = TC
+section\<open>Software Assurance related Entities and Concepts\<close>
+
+
+text{* subcategories are : *}
+text\<open>Table A.5: Verification and Testing\<close> 
+datatype vnt_technique = 
+               formal_proof 
+             | stat_analysis 
+             | dyn_analysis (* Refinedin Table A.13: 
+                               -- Test Case Execution from Boundary Analysis
+                               -- Test Case Execution from Error Guessing
+                               -- Test Case Execution from Error Seeding
+                               -- Performance Modeling
+                               -- Equivalence Classes and Input Partition Testing
+                               -- Structure-Based Testing
+                             *)
+             | metrics 
+             | traceability
+             | sw_error_effect_analysis
+             | test_coverage_for_code
+             | functional_testing
+                            (* Refined in Table A.14:
+                               -- Test Case Execution from Cause Consequence Diagrams
+                               -- Prototyping / Animation
+                               -- Boundary Value Analysis
+                               -- Equivalence Classes and Input Partition Testing
+                               -- Process Simulation
+                             *)
+             | perf_testing
+             | interface_testing
+             | model_based_testing  (* 'modeling' unclear *)  
+
+type_synonym verification_and_testing_technique = vnt_technique
+
+datatype test_coverage_criterion =  
+             allpathk  nat nat     (* depth, test_coverage_degree *)
+             | mcdc  nat           (* depth, test_coverage_degree *)
+             | exhaustive
+             | dnf_E_d  string nat (* equivalence class testing *)
+             | other string
+
+text\<open>The objective of software verification is to examine and arrive at a \<^emph>\<open>judgement\<close> based on 
+\<^emph>\<open>evidence\<close> that  output items (process, documentation, software or application) of a specific 
+development phase fulfil the requirements and plans with respect to completeness, correctness 
+and consistency. \<close>
+doc_class judgement = 
+   evidence        :: "verification_and_testing_technique list"
+   is_concerned    :: "role set" <= "{VER,ASR,VAL}" 
+
 
 
 section\<open> Design and Test Documents \<close> 
@@ -338,69 +446,103 @@ doc_class SYSSREQS = cenelec_text +
    phase        :: "phase"  <= "SYSDEV_ext" 
    type_synonym system_safety_requirements_specification = SYSSREQS
 
+doc_class SYSAD = cenelec_text + 
+   phase        :: "phase"  <= "SYSDEV_ext" 
+   type_synonym system_architecture_description = SYSAD
+
 doc_class SYSS_pl = cenelec_text + 
    phase        :: "phase"  <= "SPl" 
    type_synonym system_safety_plan = SYSS_pl
 
-doc_class SYS_VnV = cenelec_text + 
+doc_class SYS_VnV_pl = cenelec_text + 
    phase        :: "phase"  <= "SPl" 
-   type_synonym system_VnV_plan = SYS_VnV
+   type_synonym system_VnV_plan = SYS_VnV_pl
 
-doc_class SORS = cenelec_text + 
+doc_class SWRS = cenelec_text + 
    phase        :: "phase"  <= "SD" 
-   type_synonym software_requirements_specification = SORS
+   type_synonym software_requirements_specification = SWRS
 
-doc_class SOTS = cenelec_text + 
+doc_class SWRVR = cenelec_text + 
    phase        :: "phase"  <= "SD" 
-   type_synonym software_test_specification = SOTS
+   type_synonym software_requirements_verification_report = SWRVR
 
-doc_class SOAS = cenelec_text + 
-   phase        :: "phase"  <= "SD" 
-   type_synonym software_architecture_specification = SOAS
 
-doc_class SODS = cenelec_text + 
+doc_class SWTS = cenelec_text + 
    phase        :: "phase"  <= "SD" 
-   type_synonym software_design_specification = SODS
+   type_synonym software_test_specification = SWTS
 
-doc_class SOIS = cenelec_text + 
+doc_class SWAS = cenelec_text + 
    phase        :: "phase"  <= "SD" 
-   type_synonym software_interface_specification = SOIS
+   type_synonym software_architecture_specification = SWAS
 
-doc_class SOHITS = cenelec_text + 
+doc_class SWDS = cenelec_text + 
    phase        :: "phase"  <= "SD" 
-   type_synonym software_hardware_integration_test_specification = SOHITS
+   type_synonym software_design_specification = SWDS
 
-doc_class SOCDS = cenelec_text + 
+doc_class SWIS = cenelec_text + 
    phase        :: "phase"  <= "SD" 
-   type_synonym software_component_design_specification = SOCDS
+   type_synonym software_interface_specification = SWIS
 
-doc_class SOCTS = cenelec_text + 
+doc_class SWITS = cenelec_text + 
    phase        :: "phase"  <= "SD" 
-   type_synonym software_component_test_specification = SOCTS
+   type_synonym software_integration_test_specification = SWITS
 
-doc_class SOSCD = cenelec_text + 
+doc_class SWHITS = cenelec_text + 
    phase        :: "phase"  <= "SD" 
-   type_synonym software_source_code_and_documentation = SOSCD
+   type_synonym software_hardware_integration_test_specification = SWHITS
 
-doc_class SOCTR = cenelec_text + 
+doc_class SWADVR = cenelec_text + 
    phase        :: "phase"  <= "SD" 
-   type_synonym software_component_test_report = SOCTR
+   type_synonym software_architecture_and_design_verification_report = SWADVR
 
-doc_class SOHAITR = cenelec_text + 
+doc_class SWCDS = cenelec_text + 
    phase        :: "phase"  <= "SD" 
-   type_synonym software_hardware_integration_test_report = SOHAITR
+   type_synonym software_component_design_specification = SWCDS
 
-doc_class SOTR_global = cenelec_text + 
+doc_class SWCTS = cenelec_text + 
    phase        :: "phase"  <= "SD" 
-   type_synonym overall_software_test_report = SOTR_global
+   type_synonym software_component_test_specification = SWCTS
 
-doc_class SODD = cenelec_text + 
+doc_class SWCDVR = cenelec_text + 
    phase        :: "phase"  <= "SD" 
-   type_synonym software_deployment_documents = SODD
+   type_synonym software_component_design_verification_report = SWCDVR
 
-doc_class SOMD = cenelec_text + 
+
+doc_class SWSCD = cenelec_text + 
    phase        :: "phase"  <= "SD" 
-   type_synonym software_maintenance_documents = SOMD
+   type_synonym software_source_code_and_documentation = SWSCD
+
+doc_class SWCTR = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_component_test_report = SWCTR
+
+doc_class SWSCVR = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_source_code_verification_report = SWSCVR
+
+doc_class SWHAITR = cenelec_text +
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_hardware_integration_test_report = SWHAITR
+
+doc_class SWIVR = cenelec_text +
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_integration_verification_report = SWIVR
+
+doc_class SWTR_global = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym overall_software_test_report = SWTR_global
+
+doc_class SWVALR = cenelec_text +
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_validation_report = SWVALR
+
+doc_class SWDD = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_deployment_documents = SWDD
+
+doc_class SWMD = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_maintenance_documents = SWMD
 
  
 section\<open> Software Assurance \<close>
@@ -470,72 +612,11 @@ to ensure that an audit trail can be established to allow
 verification and validation activities to be undertaken effectively.\<close>
 (* So : pretty much META *)
 
-section\<open> Requirements-Analysis related Categories \<close> 
-
-doc_class requirement = text_element +
-   long_name    :: "string option"
-   is_concerned :: "role set"
-  
-
-doc_class requirement_analysis = 
-   no :: "nat"
-   accepts "\<lbrace>requirement\<rbrace>\<^sup>+"
-
-                              
-text\<open>The category @{emph \<open>hypothesis\<close>} is used for assumptions from the 
-      foundational mathematical or physical domain, so for example: 
-      \<^item>   the Mordell-Lang conjecture holds,   
-      \<^item>   euklidian geometry is assumed, or
-      \<^item>   Newtonian (non-relativistic) physics is assumed,
-     Their acceptance is inherently outside the scope of the model
-     and can only established inside certification process by
-     authority argument.
-\<close>
-  
-datatype hyp_type = physical | mathematical | computational | other
 
 
-typ "CENELEC_50128.requirement"
-
-doc_class hypothesis = requirement +
-      hyp_type :: hyp_type <= physical  (* default *)
-
-text\<open> The following sub-class of security related hypothesis might comprise, for example:
-      \<^item>   @{term "P \<noteq> NP"},
-      \<^item>   or the computational hardness  of certain functions 
-          relevant for cryptography (like prime-factorization).\<close>
-
-doc_class security_hyp = hypothesis +
-      hyp_type :: hyp_type <= physical  (* default *)
 
 
-text\<open>The category \<^emph>\<open>assumption\<close> is used for domain-specific assumptions. It has formal, semi-formal 
-      and informal sub-categories. They have to be  tracked and discharged by appropriate 
-      validation procedures within a certification process, by it by test or proof. \<close>
-
-datatype ass_kind = informal | semiformal | formal
-  
-doc_class assumption = requirement +
-     assumption_kind :: ass_kind <= informal 
-
-text\<open> The category \<^emph>\<open>exported constraint\<close> (or \<^emph>\<open>ec\<close>  for short) is used for formal assumptions, ... \<close>
-
-doc_class ec = assumption  +
-     assumption_kind :: ass_kind <= (*default *) formal
-
-text\<open> The category \<^emph>\<open>safety related application condition\<close> (or \<^emph>\<open>srac\<close> for short) is used  ... \<close>
-                        
-doc_class srac = ec  +
-     assumption_kind :: ass_kind <= (*default *) formal
-
-doc_class timing = ec  +
-     assumption_kind :: ass_kind <= (*default *) formal
-
-doc_class energy = ec  +
-     assumption_kind :: ass_kind <= (*default *) formal
-
-doc_class security = ec  +
-     assumption_kind :: ass_kind <= (*default *) formal
+(* DEATH ZONE FROM HERE ... *)
 
 
 section\<open> Design related Categories \<close>  
@@ -553,17 +634,6 @@ section\<open> Requirements-Analysis related Categories \<close>
 
 doc_class test_item =
       nn :: "string option"
-
-text{* subcategories are : *}
-  
-datatype test_kind = blackbox | whitebox | greybox | fuzz | pertubation
-  
-datatype test_coverage_criterion =  
-             allpathk  nat nat     (* depth, test_coverage_degree *)
-             | mcdc  nat           (* depth, test_coverage_degree *)
-             | exhaustive
-             | dnf_E_d  string nat (* equivalence class testing *)
-             | other string
     
 doc_class test_specification = test_item +
           short_goal :: string
@@ -603,6 +673,20 @@ doc_class test_documentation =
 
   
 section\<open> Testing and Validation \<close>
+
+text\<open>functional, performance and safety requirements
+verification results
+verification techniques: table A5, A6 A7 and A8
+\<close>
+
+doc_class  verification_result = verification_item +
+             descr :: string
+
+doc_class  verification_technique = verification_item +
+             descr :: string
+
+
+
 
 text\<open>Test : @{concept \<open>COTS\<close>}\<close>
 

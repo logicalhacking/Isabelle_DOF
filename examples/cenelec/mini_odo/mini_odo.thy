@@ -37,7 +37,7 @@ text\<open>A real example fragment from a larger project, declaring a text-eleme
 
 text*[new_ass::hypothesis]\<open>Under the assumption @{assumption \<open>ass1\<close>} we establish the following: ... \<close>
 
-text*[ass122::srac] \<open> The overall sampling frequence of the odometer
+text*[ass122::SRAC] \<open> The overall sampling frequence of the odometer
 subsystem is therefore 14 khz, which includes sampling, computing and
 result communication times... \<close>
   
@@ -54,7 +54,7 @@ text \<open> As established by @{docref (unchecked) \<open>t10\<close>},
 text \<open> the               @{docref \<open>t10\<close>}                      
        as well as the    @{docref \<open>ass122\<close>}\<close>  
 text \<open> represent a justification of the safety related applicability 
-       condition @{srac \<open>ass122\<close>} aka exported constraint @{ec \<open>ass122\<close>}.\<close> 
+       condition @{SRAC \<open>ass122\<close>} aka exported constraint @{EC \<open>ass122\<close>}.\<close> 
 
 
 
@@ -65,11 +65,8 @@ declare_reference* [lalala::requirement, alpha="main", beta=42]
 declare_reference* [blablabla::cid, alpha="beta sdf", beta=gamma, delta=dfg_fgh\<^sub>1]
 
 
-
-
-
-section*[h::example]\<open> Some global inspection commands for the status of docitem  and doc-class tables ... \<close>  
-
+section*[h::example]\<open> Some global inspection commands for the status of docitem and 
+                      doc-class tables ... \<close>  
 
 
 section*[i::example]\<open> Text Antiquotation Infrastructure ... \<close>  
@@ -79,7 +76,7 @@ text\<open> @{docitem (unchecked) \<open>lalala\<close>} -- produces no warning.
 
 text\<open> @{docitem \<open>ass122\<close>} -- global reference to a text-item in another file. \<close>
 
-text\<open> @{ec \<open>ass122\<close>} -- global reference to a exported constraint in another file.
+text\<open> @{EC \<open>ass122\<close>} -- global reference to a exported constraint in another file.
                          Note that the link is actually a srac, which, according to 
                          the ontology, happens to be an "ec".  \<close>
    
