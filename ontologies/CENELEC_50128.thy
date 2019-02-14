@@ -440,6 +440,7 @@ doc_class cenelec_text = text_element +
 
 doc_class SYSREQS = cenelec_text + 
    phase        :: "phase"  <= "SYSDEV_ext" 
+   accepts      "\<lbrace>objectives||requirement||cenelec_text\<rbrace>\<^sup>+ "       
    type_synonym system_requirements_specification = SYSREQS
 
 doc_class SYSSREQS = cenelec_text + 
@@ -616,7 +617,7 @@ verification and validation activities to be undertaken effectively.\<close>
 
 
 
-(* DEATH ZONE FROM HERE ... *)
+(* DEATH ZONE FROM HERE ... >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> *)
 
 
 section\<open> Design related Categories \<close>  
@@ -639,7 +640,6 @@ doc_class test_specification = test_item +
           short_goal :: string
       
 doc_class test_case = test_item +
-          kind  :: test_kind
           descr :: string
           
 doc_class test_result = test_item +
@@ -672,20 +672,7 @@ doc_class test_documentation =
 
 
   
-section\<open> Testing and Validation \<close>
-
-text\<open>functional, performance and safety requirements
-verification results
-verification techniques: table A5, A6 A7 and A8
-\<close>
-
-doc_class  verification_result = verification_item +
-             descr :: string
-
-doc_class  verification_technique = verification_item +
-             descr :: string
-
-
+section\<open> META : Testing and Validation \<close>
 
 
 text\<open>Test : @{concept \<open>COTS\<close>}\<close>
@@ -693,14 +680,14 @@ text\<open>Test : @{concept \<open>COTS\<close>}\<close>
 
 ML\<open>
 DOF_core.name2doc_class_name @{theory} "requirement";
-DOF_core.name2doc_class_name @{theory} "srac";
-DOF_core.is_defined_cid_global "srac" @{theory};
-DOF_core.is_defined_cid_global "ec" @{theory};
+DOF_core.name2doc_class_name @{theory} "SRAC";
+DOF_core.is_defined_cid_global "SRAC" @{theory};
+DOF_core.is_defined_cid_global "EC" @{theory};
 "XXXXXXXXXXXXXXXXX";
-DOF_core.is_subclass @{context} "CENELEC_50128.ec" "CENELEC_50128.ec";
-DOF_core.is_subclass @{context} "CENELEC_50128.srac" "CENELEC_50128.ec";
-DOF_core.is_subclass @{context} "CENELEC_50128.ec"   "CENELEC_50128.srac";
-DOF_core.is_subclass @{context} "CENELEC_50128.ec"   "CENELEC_50128.test_requirement";
+DOF_core.is_subclass @{context} "CENELEC_50128.EC" "CENELEC_50128.EC";
+DOF_core.is_subclass @{context} "CENELEC_50128.SRAC" "CENELEC_50128.EC";
+DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.SRAC";
+DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.test_requirement";
 "XXXXXXXXXXXXXXXXX";
 val {docobj_tab={maxano, tab=ref_tab},docclass_tab=class_tab,...} = DOF_core.get_data @{context};
 Symtab.dest ref_tab;
@@ -711,7 +698,7 @@ Symtab.dest class_tab;
 ML\<open>
 "XXXXXXXXXXXXXXXXX";
 
-DOF_core.get_attributes_local "srac" @{context};
+DOF_core.get_attributes_local "SRAC" @{context};
 
 @{term assumption_kind}
 \<close> 
