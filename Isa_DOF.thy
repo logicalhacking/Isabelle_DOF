@@ -1139,7 +1139,8 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
     let val {monitor_tab,...} = DOF_core.get_data_global thy
         fun check_if_final aS = let val i = find_index (not o RegExpInterface.final) aS
                                 in  if i >= 0 
-                                    then error("monitor number "^Int.toString i^" not in final state.")
+                                    then msg thy ("monitor number "^Int.toString i^
+                                                   " not in final state.")
                                     else ()
                                 end
         val _ =  case Symtab.lookup monitor_tab oid of
