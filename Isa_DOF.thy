@@ -401,17 +401,17 @@ fun declare_anoobject_local ctxt cid =
     end
 
 
-fun get_object_global oid thy  = let val {tab,...} = #docobj_tab(get_data_global thy)
-                                 in  case Symtab.lookup tab oid of 
-                                       NONE => error("undefined reference: "^oid)
-                                      |SOME(bbb) => bbb
-                                 end
+fun get_object_global_opt oid thy  = Symtab.lookup (#tab(#docobj_tab(get_data_global thy))) oid 
 
-fun get_object_local oid ctxt  = let val {tab,...} = #docobj_tab(get_data ctxt)
-                                 in  case Symtab.lookup tab oid of 
+fun get_object_global oid thy  = case get_object_global_opt oid thy of 
                                        NONE => error("undefined reference: "^oid)
                                       |SOME(bbb) => bbb
-                                 end
+
+fun get_object_local_opt oid ctxt  = Symtab.lookup (#tab(#docobj_tab(get_data ctxt))) oid
+
+fun get_object_local oid ctxt  = case get_object_local_opt oid ctxt of 
+                                       NONE => error("undefined reference: "^oid)
+                                      |SOME(bbb) => bbb
 
 fun get_doc_class_global cid thy = 
     if cid = default_cid then error("default doc class acces") (* TODO *)
@@ -1280,8 +1280,9 @@ fun assert_cmd'((((((oid,pos),cid_pos),doc_attrs),some_name:string option),modes
         fun conv_attrs thy = (("property",pos),"[@{term ''"^markup2string prop ^"''}]")::doc_attrs  
         (* fun conv_attrs thy = (("property",pos),"[@{term ''"^parse_convert thy ^"''}]")::doc_attrs *)
         fun conv_attrs' thy = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) (conv_attrs thy)
-        fun mks thy = case DOF_core.get_object_global oid thy of
-                   SOME _ => (writeln "SOME"; update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
+        fun mks thy = case DOF_core.get_object_global_opt oid thy of
+                   SOME NONE => (error("update of declared but not created doc_item:" ^ oid))
+                 | SOME _ => (writeln "SOME"; update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
                  | NONE   => (writeln "NONE"; create_and_check_docitem false oid pos cid_pos (conv_attrs thy) thy)
         val check = (assert_cmd some_name modes prop) o Proof_Context.init_global
     in 

@@ -239,7 +239,7 @@ datatype role =  PM  (* Program Manager *)
               |  DES (* Designer *)
               |  IMP (* Implementer *)
               |  ASR (* Assessor *)
-              |  Ne  (* Integrator *)
+              |  INT  (* Integrator *)
               |  TST (* Tester *)
               |  VER (* Verifier *)
               |  VnV (* Verification and Validation *)
@@ -425,10 +425,8 @@ text\<open>The objective of software verification is to examine and arrive at a 
 development phase fulfil the requirements and plans with respect to completeness, correctness 
 and consistency. \<close>
 doc_class judgement = 
-   evidence        :: "verification_and_testing_technique list"
+   evidence        :: "vnt_technique list"
    is_concerned    :: "role set" <= "{VER,ASR,VAL}" 
-
-
 
 section\<open> Design and Test Documents \<close> 
 

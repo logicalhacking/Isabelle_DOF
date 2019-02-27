@@ -27,7 +27,7 @@ text\<open>An example for the ontology specification character of the short-cuts
 different class. "F" and "assertion" have only in common that they posses the attribute
 \<^verbatim>\<open>property\<close>: \<close>
 
-text*[aaa::assertion]\<open>Our definition of the integers has the following properties:\<close>
+text\<open>Creation just like that: \<close>
 assert*[aaa::assertion] "3 < (4::int)"
 assert*[aaa::assertion] "0 < (4::int)"
 
