@@ -63,6 +63,46 @@ val docclass_markup = docref_markup_gen docclassN
 
 \<close>
 
+section\<open>String Utilities\<close>
+
+ML\<open>
+
+fun markup2string x = XML.content_of (YXML.parse_body x)
+
+fun spy x y = (writeln (x ^ y); y)
+
+(* a hacky, but save encoding of unicode comming from the interface to the string format
+   that can be parsed by the inner-syntax string parser ''dfdf''. *)
+fun bstring_to_holstring ctxt x (* (x:bstring) *) : string =
+    let val term = Syntax.parse_term ctxt (markup2string x)
+        fun hpp x = if x = #"\\" then "@" else 
+                    if x = #"@"  then "@@" else String.implode [x] 
+    in  term |>  Sledgehammer_Util.hackish_string_of_term ctxt
+             |>  map hpp o String.explode |> String.concat
+    end;
+
+
+fun chopper p (x:string) = 
+    let fun hss buff [] = rev buff
+           |hss buff (S as a::R) = if p a then let val (front,rest) = take_prefix p S
+                                               in hss (String.implode front :: buff) rest end
+                                   else        let val (front,rest) = take_prefix (not o p) S
+                                               in hss (String.implode front ::buff) rest end
+    in hss [] (String.explode x) end;
+
+
+fun holstring_to_bstring ctxt (x:string) : bstring  =
+    let fun collapse "" = ""
+           |collapse S = if String.sub(S,0) = #"@" 
+                         then let val n = String.size S
+                                  val front = replicate (n div 2) #"@" 
+                                  val back  = if (n mod 2)=1 then [#"\\"] else []
+                              in String.implode (front @ back) end 
+                         else S;
+        val t = String.concat (map collapse (chopper (fn x => x = #"@") x));
+    in  t |>  Syntax.string_of_term ctxt o Syntax.parse_term ctxt end;
+
+\<close>
 
 section\<open> A HomeGrown Document Type Management (the ''Model'') \<close>
   
@@ -511,15 +551,15 @@ fun update_isa_global (isa, trans) thy  =
 
 
 fun transduce_term_global (term,pos) thy = 
-    (* pre: term should be fully typed in order to allow type-relqted term-transformations *)
+    (* pre: term should be fully typed in order to allow type-related term-transformations *)
     let val tab = #ISA_transformer_tab(get_data_global thy)
         fun T(Const(s,ty) $ t) = if String.isPrefix ISA_prefix s
                                  then case Symtab.lookup tab s of
                                         NONE => error("undefined inner syntax antiquotation: "^s)
-                                      | SOME(trans) => case trans thy (t,ty,pos) of 
+                                      | SOME(trans) => (case trans thy (t,ty,pos) of 
                                                          NONE => Const(s,ty) $ t
                                                          (* checking isa, may raise error though. *)        
-                                                       | SOME t => Const(s,ty) $ t
+                                                       | SOME t => Const(s,ty) $ t)
                                                          (* transforming isa *)
                                  else (Const(s,ty) $ (T t))
           |T(t1 $ t2) = T(t1) $ T(t2)
@@ -695,6 +735,7 @@ typedecl "thy"
 
 consts ISA_typ          :: "string \<Rightarrow> typ"               ("@{typ _}")
 consts ISA_term         :: "string \<Rightarrow> term"              ("@{term _}")
+consts ISA_term_repr    :: "string \<Rightarrow> term"              ("@{termrepr _}")
 consts ISA_thm          :: "string \<Rightarrow> thm"               ("@{thm _}")
 consts ISA_file         :: "string \<Rightarrow> file"              ("@{file _}")
 consts ISA_thy          :: "string \<Rightarrow> thy"               ("@{thy _}")
@@ -797,7 +838,8 @@ fun ML_isa_check_docitem thy (term, req_ty, pos) =
 (* utilities *)
 
 fun property_list_dest X = map HOLogic.dest_string 
-                                (map (fn Const ("Isa_DOF.ISA_term", _) $ s => s )  
+                                (map (fn Const ("Isa_DOF.ISA_term", _) $ s => s 
+                                        |Const ("Isa_DOF.ISA_term_repr",_) $ s => s)  
                                      (HOLogic.dest_list X))
 
 end; (* struct *)
@@ -805,11 +847,12 @@ end; (* struct *)
 \<close>
 subsection\<open> Isar - Setup\<close>
 
-setup\<open>DOF_core.update_isa_global("typ"    ,ISA_core.ML_isa_check_typ) \<close>     
-setup\<open>DOF_core.update_isa_global("term"   ,ISA_core.ML_isa_check_term) \<close>     
-setup\<open>DOF_core.update_isa_global("thm"    ,ISA_core.ML_isa_check_thm) \<close>     
-setup\<open>DOF_core.update_isa_global("file"   ,ISA_core.ML_isa_check_file) \<close>     
-setup\<open>DOF_core.update_isa_global("docitem",ISA_core.ML_isa_check_docitem)\<close>     
+setup\<open>DOF_core.update_isa_global("typ"      ,ISA_core.ML_isa_check_typ) \<close>     
+setup\<open>DOF_core.update_isa_global("term"     ,ISA_core.ML_isa_check_term) \<close>     
+setup\<open>DOF_core.update_isa_global("term_repr",fn _ => fn (t,_,_) => SOME t) \<close>     
+setup\<open>DOF_core.update_isa_global("thm"      ,ISA_core.ML_isa_check_thm) \<close>     
+setup\<open>DOF_core.update_isa_global("file"     ,ISA_core.ML_isa_check_file) \<close>     
+setup\<open>DOF_core.update_isa_global("docitem"  ,ISA_core.ML_isa_check_docitem)\<close>     
 
 
 section\<open> Syntax for Annotated Documentation Commands (the '' View'' Part I) \<close>
@@ -835,7 +878,7 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) =
                                   String.substring(s,2,(String.size s)-4)
                                else s
         fun markup2string s =  unquote_string (String.concat (List.filter (fn c => c <> Symbol.DEL) 
-                                             (Symbol.explode (YXML.content_of s)))) 
+                                              (Symbol.explode (YXML.content_of s)))) 
 
         fun toLong n =  #long_name(the(DOF_core.get_attribute_info cid_long (markup2string n) thy))
         fun str ((lhs,_),rhs) = (toLong lhs)^" = "^(enclose "{" "}" (markup2string rhs))  
@@ -932,8 +975,7 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
         fun toString t = Syntax.string_of_term (Proof_Context.init_global thy) t  
         fun instantiate_term S t = Term_Subst.map_types_same (Term_Subst.instantiateT S) (t)
         fun read_assn (lhs, pos:Position.T, opr, rhs) term =
-            let val info_opt = DOF_core.get_attribute_info cid_long 
-                                       (Long_Name.base_name lhs) thy
+            let val info_opt = DOF_core.get_attribute_info cid_long (Long_Name.base_name lhs) thy
                 val (ln,lnt,lnu,lnut) = case info_opt of 
                                            NONE => error ("unknown attribute >" 
                                                           ^((Long_Name.base_name lhs))
@@ -943,9 +985,9 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
                                                                          (typ --> typ) 
                                                                           --> cid_ty --> cid_ty)
                 val tyenv = Sign.typ_match thy  ((generalize_typ 0)(type_of rhs), lnt) (Vartab.empty)
-                            handle Type.TYPE_MATCH => error ("type of attribute: " ^ ln 
+                            handle Type.TYPE_MATCH => (error ("type of attribute: " ^ ln 
                                                              ^ " does not fit to term: " 
-                                                             ^ toString rhs);
+                                                             ^ toString rhs));
                 val tyenv' = (map (fn (s,(t,u)) => ((s,t),u)) (Vartab.dest tyenv))
                 val _ = if Long_Name.base_name lhs = lhs orelse ln = lhs then ()
                         else error("illegal notation for attribute of "^cid_long)
@@ -1000,7 +1042,6 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
                                    end
                          in (moid,map check_for_cid indexed_autoS)  end  
           val enabled_monitors = List.mapPartial is_enabled (Symtab.dest monitor_tab)
-          fun markup2string x = XML.content_of (YXML.parse_body x)
           fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
                                                      Syntax.read_term_global thy rhs)
           val trace_attr = [((("trace", @{here}), "+="), "[("^cid_long^", ''"^oid^"'')]")]
@@ -1039,7 +1080,6 @@ fun create_and_check_docitem is_monitor oid pos cid_pos doc_attrs thy =
           fun conv (na, _(*ty*), term) = (Binding.name_of na, Binding.pos_of na, "=", term);
           val S = map conv (DOF_core.get_attribute_defaults cid_long thy);
           val (defaults, _(*ty*), _) = calc_update_term thy cid_long S defaults_init;
-          fun markup2string x = XML.content_of (YXML.parse_body x)
           fun conv_attrs ((lhs, pos), rhs) = (markup2string lhs,pos,"=", Syntax.read_term_global thy rhs)
           val assns' = map conv_attrs doc_attrs
           val (value_term, _(*ty*), _) = calc_update_term thy cid_long assns' defaults 
@@ -1070,14 +1110,14 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                 val _ = if cid_long = DOF_core.default_cid  orelse cid = cid_long 
                         then () 
                         else error("incompatible classes:"^cid^":"^cid_long)
-                fun markup2string x = XML.content_of (YXML.parse_body x)
          
-                fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
+                fun conv_attrs (((lhs, pos), opn), rhs) = ((markup2string lhs),pos,opn, 
                                                            Syntax.read_term_global thy rhs)
                 val assns' = map conv_attrs doc_attrs
-                val def_trans = #1 o (calc_update_term thy cid_long assns')
+                val def_trans  = (#1 o (calc_update_term thy cid_long assns'))
                 fun check_inv thy =((DOF_core.get_class_invariant cid_long thy oid {is_monitor=false} 
-                                     o Context.Theory ) thy ; thy)
+                                     o Context.Theory ) thy ;
+                                    thy)
             in     
                 thy |> DOF_core.update_value_global oid (def_trans)
                     |> check_inv
@@ -1265,31 +1305,21 @@ val _ =
                         (attributes_upd >> (Toplevel.theory o update_instance_command)); 
 
 
-fun assert_cmd'((((((oid,pos),cid_pos),doc_attrs),some_name:string option),modes : string list),
+fun assert_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
                 prop) =
-    let fun markup2string x = XML.content_of (YXML.parse_body x)
-        fun parse_convert thy = (let val ctxt = (Proof_Context.init_global thy)
-                                     val term = Syntax.parse_term ctxt prop
-                                     val str = Sledgehammer_Util.hackish_string_of_term ctxt term
-                                     fun hpp x = if x = #"\\" then "\\\\" else String.implode [x] 
-                                     val str' = map hpp (String.explode str)
-                                     val str'' = String.concatWith " " str'
-                                 in str''
-                                 end)
-        val _ = writeln ("XXX" ^ markup2string prop)
-        fun conv_attrs thy = (("property",pos),"[@{term ''"^markup2string prop ^"''}]")::doc_attrs  
+    let fun conv_2_holstring thy =  (bstring_to_holstring (Proof_Context.init_global thy))
+        fun conv_attrs thy = (("property",pos),"[@{termrepr ''"^conv_2_holstring thy prop ^" ''}]")
+                             ::doc_attrs  
         (* fun conv_attrs thy = (("property",pos),"[@{term ''"^parse_convert thy ^"''}]")::doc_attrs *)
         fun conv_attrs' thy = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) (conv_attrs thy)
         fun mks thy = case DOF_core.get_object_global_opt oid thy of
                    SOME NONE => (error("update of declared but not created doc_item:" ^ oid))
-                 | SOME _ => (writeln "SOME"; update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
-                 | NONE   => (writeln "NONE"; create_and_check_docitem false oid pos cid_pos (conv_attrs thy) thy)
-        val check = (assert_cmd some_name modes prop) o Proof_Context.init_global
+                 | SOME _ => (update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
+                 | NONE   => (create_and_check_docitem false oid pos cid_pos (conv_attrs thy) thy)
+        val check = (assert_cmd name_opt modes prop) o Proof_Context.init_global
     in 
         (* Toplevel.keep (check o Toplevel.context_of) *)
-        Toplevel.theory (fn thy => (check thy; 
-                                    (* writeln ("YYY" ^  parse_convert thy); *)
-                                    mks thy))
+        Toplevel.theory (fn thy => (check thy; mks thy))
     end
 
 val _ =
@@ -1663,6 +1693,17 @@ writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
 \<close>
 *)
 
-lemma X : "True" oops
+
+ML\<open>
+
+\<close>
+(*
+ML\<open>
+val h = bstring_to_holstring @{context} (Syntax.string_of_term @{context} @{term "A \<longrightarrow> A"});
+holstring_to_bstring @{context} h
+\<close>
+*)
+
+
 
 end
