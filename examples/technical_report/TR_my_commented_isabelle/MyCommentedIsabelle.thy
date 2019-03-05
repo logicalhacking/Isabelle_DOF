@@ -1053,8 +1053,76 @@ fun output ctxt prts =
 *)
 \<close>  
   
-chapter\<open>Front End \<close>  
-text\<open>Introduction ... TODO\<close>
+chapter\<open>Front-End \<close>  
+text\<open>In the following chapter, we turn to the right part of @{docitem \<open>architecture\<close>}: 
+The PIDE ("Prover-IDE") layer consisting of a part written in SML and another in SCALA. 
+Roughly speaking, PIDE implements "continuous build - continuous check" - functionality
+over a currently textual, albeit generic document model. It transforms modification
+of text elements in an instance of this model into increments (edits), communicates
+them to the Isabelle system, which reacts by the creation of a multitude of light-weight
+reevaluation threads resulting in a stream of markup that is used to annotate text
+elements in the document. The latter is used to asynchronously highlight, e.g., variables
+or keywords with specific colors, to hyper-linking bound variables to their defining occurrences,
+or to annotate type-information to terms which becomes displayed by specific
+user-gestures on demand (hovering), etc. 
+Note that PIDE is not an editor, it is the framework that 
+coordinates these asynchronous streams of information and optimizes it to a certain
+extent (asynchronously transmitted markup referring to text that is already modified
+is dropped, and corresponding re-calculations stopped, for example). 
+Four concrete editors --- also called PIDE applications --- have been implemented:
+\<^enum>an Eclipse plugin (developped by an Edinburg-group, based on an very old PIDE version),
+\<^enum>a Visual-Studio Code plugin (developed by Makarius Wenzel), 
+ currently based on a fairly old PIDE version, 
+\<^enum>clide, a web-client supporting javascript and HTML5
+ (developed by a group at University Bremen, based on a very old PIDE version), and 
+\<^enum>the most commonly used: the plugin in JEdit - Editor,
+ (developed by Makarius Wenzel, current PIDE version.)
+\<close>
+
+text\<open>The document model forsees a number of text files, which are organized in form of an acyclic graph. Such graphs can be 
+grouped into \<^emph>\<open>sessions\<close> and "frozen" to binaries thus avoiding long compilation 
+times. Text files have an abstract name serving
+as identity (the mapping to file-ids in an underlying file-system is done in an own 
+build management).
+The primary format of the text files is \<^verbatim>\<open>.thy\<close> (for historically: theory),
+secondary formats can be \<^verbatim>\<open>.sty\<close>,\<^verbatim>\<open>.tex\<close>, \<^verbatim>\<open>.png\<close>, \<^verbatim>\<open>.pdf\<close>, or other files processed 
+by Isabelle and listed in a configurations processed by the build system.
+\<close>
+figure*[fig3::figure, relative_width="100",src="''figures/document-model.pdf''"]
+        \<open>Document Model\<close>
+text\<open>A \<^verbatim>\<open>.thy\<close> file consists of a \<^emph>\<open>preamble\<close>, a \<^emph>\<open>context-import-statement\<close> and 
+a \<^emph>\<open>body\<close> consisting of a sequence of \<^emph>\<open>commands\<close>. Even the preamble consists of
+a sequence of commands used for a simple form of text not depending on any context
+(so: practically excluding any form of text antiquotation (see above)).
+The context-import-statement looks as follows, for example:
+\begin{verbatim}
+theory Isa_DOF                (* Isabelle Document Ontology Framework *)
+  imports  Main  
+           RegExpInterface    (* Interface to functional regular automata for monitoring *)
+           Assert
+           
+  keywords "+=" ":=" "accepts" "rejects"
+\end{verbatim}
+where \<^verbatim>\<open>Isa_DOF\<close> is the abstract name of the text-file, \<^verbatim>\<open>Main\<close> etc. refer to imported
+text files (recall that the import relation must be acyclic), and a list of 
+\<^emph>\<open>keyword\<close>-declarations. keywords are used to separate commands form each other;
+predefined commands allow for the dynamic creation of new commands similarly 
+to the definition of new functions in an interpreter shell (or: toplevel, see above.).
+A command starts with a pre-declared keyword and specific syntax of this command;
+the declaration of a keyword is only allowed in the same \<^verbatim>\<open>.thy\<close>-file where the
+the corresponding new command is defined. The semantics of the command is expressed
+in ML and consists of a @{ML_type "Toplevel.transition -> Toplevel.transition"}
+function. Thus, the Isar-toplevel supports the generic document model 
+and allows for user-programmed extensions.
+\<close>
+
+text\<open>Isabelle \<^verbatim>\<open>.thy\<close>-files were processed by two types of parsers:
+\<^enum> the "outer-syntax" (i.e. the syntax for commands) is processed 
+  by a lexer-library and parser combinators built on top, and
+\<^enum> the "inner-syntax" (i.e. the syntax for @{term \<open>\<Lambda>\<close>} - terms) 
+  with an evolved, eight-layer parsing and pretty-printing process.
+\<close>
+
 
 section\<open>Basics: string, bstring and xstring\<close>
 text\<open>@{ML_type "string"} is the basic library type from the SML library
@@ -1063,12 +1131,12 @@ or require formats thereof introduced as type synonyms
 @{ML_type "bstring"} (defined in structure @{ML_structure "Binding"}
 and @{ML_type "xstring"} (defined in structure @{ML_structure "Name_Space"}.
 Unfortunately, the abstraction is not tight and combinations with 
-elementary routines might produce quire crappy results.
+elementary routines might produce quite crappy results.
 \<close>
 
 ML\<open>val b = Binding.name_of@{binding "here"}\<close>
 text\<open>... produces the system output \verb+val it = "here": bstring+,
-     but note that it is trappy to believe it is just a string.
+     but note that it is misleading to believe it is just a string.
 \<close>
 
 ML\<open>String.explode b\<close> (* is harmless, but  *)

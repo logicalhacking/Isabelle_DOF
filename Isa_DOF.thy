@@ -66,10 +66,9 @@ val docclass_markup = docref_markup_gen docclassN
 section\<open>String Utilities\<close>
 
 ML\<open>
+fun spy x y = (writeln (x ^ y); y)
 
 fun markup2string x = XML.content_of (YXML.parse_body x)
-
-fun spy x y = (writeln (x ^ y); y)
 
 (* a hacky, but save encoding of unicode comming from the interface to the string format
    that can be parsed by the inner-syntax string parser ''dfdf''. *)
@@ -837,9 +836,9 @@ fun ML_isa_check_docitem thy (term, req_ty, pos) =
 
 (* utilities *)
 
-fun property_list_dest X = map HOLogic.dest_string 
-                                (map (fn Const ("Isa_DOF.ISA_term", _) $ s => s 
-                                        |Const ("Isa_DOF.ISA_term_repr",_) $ s => s)  
+fun property_list_dest ctxt X = (map (fn Const ("Isa_DOF.ISA_term", _) $ s => HOLogic.dest_string s 
+                                        |Const ("Isa_DOF.ISA_term_repr",_) $ s 
+                                                  => holstring_to_bstring ctxt (HOLogic.dest_string s))  
                                      (HOLogic.dest_list X))
 
 end; (* struct *)

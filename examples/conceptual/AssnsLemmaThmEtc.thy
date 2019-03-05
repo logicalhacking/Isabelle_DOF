@@ -13,22 +13,33 @@ print_doc_items
 section\<open>Definitions, Lemmas, Theorems, Assertions\<close>
 
 
-text*[aa::F, property = "[@{termrepr ''True''}]"]\<open>Our definition of the HOL-Logic has the following properties:\<close>
+text*[aa::F, property = "[@{term ''True''}]"]\<open>Our definition of the HOL-Logic has the following properties:\<close>
 assert*[aa::F] "True"
 
-ML\<open>  val (Const _ $ t $ t') =  @{docitem_attribute property :: aa}\<close>
 
-ML\<open>  ISA_core.property_list_dest  @{docitem_attribute property :: aa}\<close>
+(* sample for accessing a property filled with previous assert's of "aa" *)
+ML\<open> ISA_core.property_list_dest @{context} @{docitem_attribute property :: aa};\<close>
 
-assert*[aa::F] "True \<longrightarrow> True" (* small pb: unicodes crashes here ... *)
+assert*[aa::F] " X \<and> Y \<longrightarrow> True" (*example with uni-code *)
+ML\<open> ISA_core.property_list_dest @{context} @{docitem_attribute property :: aa};
+    app writeln (tl (rev it));\<close>
+
+assert*[aa::F] "\<forall>x::bool. X \<and> Y \<longrightarrow> True" (*problem with uni-code *)
 
 ML\<open>
-Syntax.read_term_global @{theory} "[@{term '' 'True @<longrightarrow> True' ''}]";
-
-@{term "[@{term '' ' True @<longrightarrow> True ' ''}]"} 
+Syntax.read_term_global @{theory} "[@{termrepr ''True @<longrightarrow> True''}]";
+(* this only works  because the isa check is not activated in "term" !!! *)
+@{term "[@{term '' True @<longrightarrow> True ''}]"}; (* with isa-check *) 
+@{term "[@{termrepr '' True @<longrightarrow> True ''}]"}; (* without isa check *)
 \<close>
 
-ML\<open> ISA_core.property_list_dest @{docitem_attribute property :: aa}\<close>
+ML\<open>val [_,_,Const _ $ s,_] = (HOLogic.dest_list @{docitem_attribute property :: aa});
+val t = HOLogic.dest_string s;
+holstring_to_bstring @{context} t 
+\<close>
+
+lemma "All (\<lambda>x. X \<and> Y \<longrightarrow> True)" oops
+
 
 text\<open>An example for the ontology specification character of the short-cuts such as 
 @{command  "assert*"}: in the following, we use the same notation referring to a completely
