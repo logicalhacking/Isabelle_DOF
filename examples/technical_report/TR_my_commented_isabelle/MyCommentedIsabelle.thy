@@ -1088,7 +1088,7 @@ The primary format of the text files is \<^verbatim>\<open>.thy\<close> (for his
 secondary formats can be \<^verbatim>\<open>.sty\<close>,\<^verbatim>\<open>.tex\<close>, \<^verbatim>\<open>.png\<close>, \<^verbatim>\<open>.pdf\<close>, or other files processed 
 by Isabelle and listed in a configurations processed by the build system.
 \<close>
-figure*[fig3::figure, relative_width="100",src="''figures/document-model.pdf''"]
+figure*[fig3::figure, relative_width="100",src="''figures/document-model''"]
         \<open>Document Model\<close>
 text\<open>A \<^verbatim>\<open>.thy\<close> file consists of a \<^emph>\<open>preamble\<close>, a \<^emph>\<open>context-import-statement\<close> and 
 a \<^emph>\<open>body\<close> consisting of a sequence of \<^emph>\<open>commands\<close>. Even the preamble consists of
