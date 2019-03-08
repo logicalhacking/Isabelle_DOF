@@ -1054,21 +1054,22 @@ fun output ctxt prts =
 \<close>  
   
 chapter\<open>Front-End \<close>  
-text\<open>In the following chapter, we turn to the right part of @{docitem \<open>architecture\<close>}: 
+text\<open>In the following chapter, we turn to the right part of the system architecture 
+shown in @{docitem \<open>architecture\<close>}: 
 The PIDE ("Prover-IDE") layer consisting of a part written in SML and another in SCALA. 
 Roughly speaking, PIDE implements "continuous build - continuous check" - functionality
-over a currently textual, albeit generic document model. It transforms modification
-of text elements in an instance of this model into increments (edits), communicates
-them to the Isabelle system, which reacts by the creation of a multitude of light-weight
-reevaluation threads resulting in a stream of markup that is used to annotate text
-elements in the document. The latter is used to asynchronously highlight, e.g., variables
+over a textual, albeit generic document model. It transforms user modifications
+of text elements in an instance of this model into increments (edits) and communicates
+them to the Isabelle system. The latter reacts by the creation of a multitude of light-weight
+reevaluation threads resulting in an asynchronous stream of markup that is used to annotate text
+elements. Such markup is used to highlight, e.g., variables
 or keywords with specific colors, to hyper-linking bound variables to their defining occurrences,
 or to annotate type-information to terms which becomes displayed by specific
 user-gestures on demand (hovering), etc. 
 Note that PIDE is not an editor, it is the framework that 
-coordinates these asynchronous streams of information and optimizes it to a certain
-extent (asynchronously transmitted markup referring to text that is already modified
-is dropped, and corresponding re-calculations stopped, for example). 
+coordinates these asynchronous information streams and optimizes it to a certain
+extent (outdated markup referring to modified text is dropped, and 
+corresponding re-calculations are oriented to the user focus, for example). 
 Four concrete editors --- also called PIDE applications --- have been implemented:
 \<^enum>an Eclipse plugin (developped by an Edinburg-group, based on an very old PIDE version),
 \<^enum>a Visual-Studio Code plugin (developed by Makarius Wenzel), 
@@ -1080,21 +1081,21 @@ Four concrete editors --- also called PIDE applications --- have been implemente
 \<close>
 
 text\<open>The document model forsees a number of text files, which are organized in form of an acyclic graph. Such graphs can be 
-grouped into \<^emph>\<open>sessions\<close> and "frozen" to binaries thus avoiding long compilation 
-times. Text files have an abstract name serving
-as identity (the mapping to file-ids in an underlying file-system is done in an own 
-build management).
-The primary format of the text files is \<^verbatim>\<open>.thy\<close> (for historically: theory),
+grouped into \<^emph>\<open>sessions\<close> and "frozen" to binaries in order to avoid long compilation 
+times. Text files have an abstract name serving as identity (the mapping to file-paths 
+in an underlying file-system is done in an own build management).
+The primary format of the text files is \<^verbatim>\<open>.thy\<close> (historically for: theory),
 secondary formats can be \<^verbatim>\<open>.sty\<close>,\<^verbatim>\<open>.tex\<close>, \<^verbatim>\<open>.png\<close>, \<^verbatim>\<open>.pdf\<close>, or other files processed 
-by Isabelle and listed in a configurations processed by the build system.
+by Isabelle and listed in a configuration processed by the build system.
 \<close>
 figure*[fig3::figure, relative_width="100",src="''figures/document-model''"]
-        \<open>Document Model\<close>
-text\<open>A \<^verbatim>\<open>.thy\<close> file consists of a \<^emph>\<open>preamble\<close>, a \<^emph>\<open>context-import-statement\<close> and 
-a \<^emph>\<open>body\<close> consisting of a sequence of \<^emph>\<open>commands\<close>. Even the preamble consists of
-a sequence of commands used for a simple form of text not depending on any context
-(so: practically excluding any form of text antiquotation (see above)).
-The context-import-statement looks as follows, for example:
+        \<open>A Theory-Graph in the Document Model\<close>
+text\<open>A \<^verbatim>\<open>.thy\<close> file consists of a \<^emph>\<open>header\<close>, a \<^emph>\<open>context-definition\<close> and 
+a \<^emph>\<open>body\<close> consisting of a sequence of \<^emph>\<open>commands\<close>. Even the header consists of
+a sequence of commands used for introductory text elements not depending on any context
+information (so: practically excluding any form of text antiquotation (see above)).
+The context-definition contains an \<^emph>\<open>import\<close> and a \<^emph>\<open>keyword\<close> section;  
+for example:
 \begin{verbatim}
 theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   imports  Main  
@@ -1104,8 +1105,8 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   keywords "+=" ":=" "accepts" "rejects"
 \end{verbatim}
 where \<^verbatim>\<open>Isa_DOF\<close> is the abstract name of the text-file, \<^verbatim>\<open>Main\<close> etc. refer to imported
-text files (recall that the import relation must be acyclic), and a list of 
-\<^emph>\<open>keyword\<close>-declarations. keywords are used to separate commands form each other;
+text files (recall that the import relation must be acyclic). \<^emph>\<open>keyword\<close>s are used to separate 
+commands form each other;
 predefined commands allow for the dynamic creation of new commands similarly 
 to the definition of new functions in an interpreter shell (or: toplevel, see above.).
 A command starts with a pre-declared keyword and specific syntax of this command;
