@@ -28,7 +28,7 @@ Safety assessment is focused on but not limited to the safety properties of a sy
 Definition*[assessor::concept, tag="''assessor''"]
 \<open>entity that carries out an assessment\<close>
 
-Definition*[cots::concept, tag="''commercial off-the-shelf (COTS) software''"]
+Definition*[COTS::concept, tag="''commercial off-the-shelf software''"]
 \<open>software defined by market-driven need, commercially available and whose fitness for purpose 
 has been demonstrated by a broad spectrum of commercial users\<close>
 
@@ -44,7 +44,7 @@ criteria:
    (e. g. subsystems) which have an independent version
 \<close>
 
-Definition*[cmgr::concept, tag="''configuration manager''"]
+Definition*[CMGR::concept, tag="''configuration manager''"]
 \<open>entity that is responsible for implementing and carrying out the processes
 for the configuration management of documents, software and related tools including 
 \<^emph>\<open>change management\<close>\<close>
@@ -71,7 +71,7 @@ from the intended performance or behaviour (cf @{concept \<open>error\<close>})\
 Definition*[failure::concept]
 \<open>unacceptable difference between required and observed performance\<close>
 
-Definition*[ft::concept, tag="''fault tolerance''"]
+Definition*[FT::concept, tag="''fault tolerance''"]
 \<open>built-in capability of a system to provide continued correct provision of service as specified, 
 in the presence of a limited number of hardware or software faults\<close>
 
@@ -79,7 +79,7 @@ Definition*[firmware::concept]
 \<open>software stored in read-only memory or in semi-permanent storage such as flash memory, in a 
 way that is functionally independent of applicative software\<close>
 
-Definition*[gen_soft::concept,tag="''generic software''"]
+Definition*[GS::concept,tag="''generic software''"]
 \<open>software which can be used for a variety of installations purely by the provision of 
 application-specific data and/or algorithms\<close>
 
@@ -231,27 +231,33 @@ NOTE Verification is mostly based on document reviews (design, implementation, t
 Definition*[verifier::concept]
 \<open>entity that is responsible for one or more verification activities\<close>
 
+section\<open>Organization, Roles and Responsabilities\<close>
+text\<open>see also section \<^emph>\<open>Software management and organization\<close>.\<close>
 
 datatype role =  PM  (* Program Manager *) 
               |  RQM (* Requirements Manager *)
               |  DES (* Designer *)
               |  IMP (* Implementer *)
               |  ASR (* Assessor *)
-              |  Ne  (* Integrator *)
+              |  INT  (* Integrator *)
               |  TST (* Tester *)
               |  VER (* Verifier *)
+              |  VnV (* Verification and Validation *)
               |  VAL (* Validator *)
 
 
-datatype phase =  SR    (* Software Requirement      *) 
-               |  SA    (* Software Architecture     *)
-               |  SDES  (* Software Design           *)
-               |  SCDES (* Software Component Design *)
-               |  CInT  (* Component Implementation and Testing *)
-               |  SI    (* Software Integration      *)
-               |  SV    (* Software Validation       *)
-               |  SD    (* Software Deployment       *)
-               |  SM    (* Software Maintenance      *)
+
+datatype phase = SYSDEV_ext (* System Development Phase (external) *) 
+               | SPl   (* Software Planning *)
+               | SR    (* Software Requirement      *) 
+               | SA    (* Software Architecture     *)
+               | SDES  (* Software Design           *)
+               | SCDES (* Software Component Design *)
+               | CInT  (* Component Implementation and Testing *)
+               | SI    (* Software Integration      *)
+               | SV    (* Software Validation       *)
+               | SD    (* Software Deployment       *)
+               | SM    (* Software Maintenance      *)
 
 abbreviation software_requirement  :: "phase" where "software_requirement  \<equiv> SR"
 abbreviation software_architecture :: "phase" where "software_architecture \<equiv> SA"
@@ -264,24 +270,30 @@ abbreviation software_validation   :: "phase" where "software_validation  \<equi
 abbreviation software_deployment   :: "phase" where "software_deployment  \<equiv> SD"
 abbreviation software_maintenance  :: "phase" where "software_maintenance \<equiv> SM"
 
-term "SR"
+term "SR" (* meta-test *)
+
+
+section\<open>Objectives, Conformance and Software Integrity Levels\<close>
+
+datatype sil = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
+
+type_synonym saftety_integraytion_level = sil
+
 
 doc_class objectives =
    long_name    :: "string option"
    is_concerned :: "role set"
 
 
-section\<open> Requirements-Analysis related Categories \<close> 
-
-doc_class requirement =
+doc_class requirement = text_element +
    long_name    :: "string option"
    is_concerned :: "role set"
   
-
+(*
 doc_class requirement_analysis = 
    no :: "nat"
    accepts "\<lbrace>requirement\<rbrace>\<^sup>+"
-
+*)
                               
 text\<open>The category @{emph \<open>hypothesis\<close>} is used for assumptions from the 
       foundational mathematical or physical domain, so for example: 
@@ -304,11 +316,20 @@ doc_class hypothesis = requirement +
 text\<open> The following sub-class of security related hypothesis might comprise, for example:
       \<^item>   @{term "P \<noteq> NP"},
       \<^item>   or the computational hardness  of certain functions 
-          relevant for cryptography (like prime-factorization).\<close>
+          relevant for cryptography (like prime-factorization).
+      (* speculation bu, not 50128 *)\<close>
 
 doc_class security_hyp = hypothesis +
       hyp_type :: hyp_type <= physical  (* default *)
 
+
+doc_class FnI = requirement +
+   is_concerned :: "role set" <= "UNIV"    
+   type_synonym functions_and_interfaces = FnI
+
+doc_class AC = requirement +
+   is_concerned :: "role set" <= "UNIV" 
+   type_synonym application_conditions = AC
 
 text\<open>The category \<^emph>\<open>assumption\<close> is used for domain-specific assumptions. It has formal, semi-formal 
       and informal sub-categories. They have to be  tracked and discharged by appropriate 
@@ -319,24 +340,282 @@ datatype ass_kind = informal | semiformal | formal
 doc_class assumption = requirement +
      assumption_kind :: ass_kind <= informal 
 
-text\<open> The category \<^emph>\<open>exported constraint\<close> (or \<^emph>\<open>ec\<close>  for short) is used for formal assumptions, ... \<close>
+text\<open> The category \<^emph>\<open>exported constraint\<close> (or \<^emph>\<open>EC\<close>  for short) is used for formal application 
+conditions; They represent in particular \<^emph>\<open>derived constraints\<close>, i.e. constraints that arrive
+as side-conditions during refinement proofs or implementation decisions and must be tracked.\<close>
 
-doc_class ec = assumption  +
+doc_class EC = AC  +
      assumption_kind :: ass_kind <= (*default *) formal
+     type_synonym exported_constraint = EC
 
-text\<open> The category \<^emph>\<open>safety related application condition\<close> (or \<^emph>\<open>srac\<close> for short) is used  ... \<close>
+text\<open> The category \<^emph>\<open>safety related application condition\<close> (or \<^emph>\<open>SRAC\<close> for short) is used
+for exported constraints assuring in judgements safety requirements of the system. \<close>
                         
-doc_class srac = ec  +
+doc_class SRAC = EC  +
      assumption_kind :: ass_kind <= (*default *) formal
+     type_synonym safety_related_application_condition = SRAC
 
-doc_class timing = ec  +
-     assumption_kind :: ass_kind <= (*default *) formal
 
-doc_class energy = ec  +
-     assumption_kind :: ass_kind <= (*default *) formal
+doc_class CoAS = requirement +
+   is_concerned :: "role set" <= "UNIV" 
+   type_synonym configuration_or_architecture_of_system = CoAS
 
-doc_class security = ec  +
-     assumption_kind :: ass_kind <= (*default *) formal
+doc_class HtbC = requirement +
+   is_concerned :: "role set" <= "UNIV" 
+   type_synonym hazard_to_be_controlled = HtbC
+
+doc_class SIR = requirement +
+   is_concerned :: "role set" <= "UNIV" 
+   type_synonym safety_integrity_requirement = SIR
+
+text\<open>The following class is a bit unclear about usage and seems to be in 
+conceptual mismatch with @{typ objectives}: \<close>
+doc_class SILA = requirement +
+   is_concerned :: "role set" <= "UNIV" 
+   alloc        :: "sil" <= "SIL0" 
+   type_synonym allocation_of_SIL = SILA
+
+doc_class TC = requirement +
+   is_concerned :: "role set" <= "UNIV" 
+   type_synonym timing_constraint = TC
+
+section\<open>Software Assurance related Entities and Concepts\<close>
+
+
+text{* subcategories are : *}
+text\<open>Table A.5: Verification and Testing\<close> 
+datatype vnt_technique = 
+               formal_proof 
+             | stat_analysis 
+             | dyn_analysis (* Refinedin Table A.13: 
+                               -- Test Case Execution from Boundary Analysis
+                               -- Test Case Execution from Error Guessing
+                               -- Test Case Execution from Error Seeding
+                               -- Performance Modeling
+                               -- Equivalence Classes and Input Partition Testing
+                               -- Structure-Based Testing
+                             *)
+             | metrics 
+             | traceability
+             | sw_error_effect_analysis
+             | test_coverage_for_code
+             | functional_testing
+                            (* Refined in Table A.14:
+                               -- Test Case Execution from Cause Consequence Diagrams
+                               -- Prototyping / Animation
+                               -- Boundary Value Analysis
+                               -- Equivalence Classes and Input Partition Testing
+                               -- Process Simulation
+                             *)
+             | perf_testing
+             | interface_testing
+             | model_based_testing  (* 'modeling' unclear *)  
+
+type_synonym verification_and_testing_technique = vnt_technique
+
+datatype test_coverage_criterion =  
+             allpathk  nat nat     (* depth, test_coverage_degree *)
+             | mcdc  nat           (* depth, test_coverage_degree *)
+             | exhaustive
+             | dnf_E_d  string nat (* equivalence class testing *)
+             | other string
+
+text\<open>The objective of software verification is to examine and arrive at a \<^emph>\<open>judgement\<close> based on 
+\<^emph>\<open>evidence\<close> that  output items (process, documentation, software or application) of a specific 
+development phase fulfil the requirements and plans with respect to completeness, correctness 
+and consistency. \<close>
+doc_class judgement = 
+   evidence        :: "vnt_technique list"
+   is_concerned    :: "role set" <= "{VER,ASR,VAL}" 
+
+section\<open> Design and Test Documents \<close> 
+
+doc_class cenelec_text = text_element +
+   phase        :: "phase"
+   is_concerned :: "role set" <= "UNIV" 
+
+
+
+doc_class SYSREQS = cenelec_text + 
+   phase        :: "phase"  <= "SYSDEV_ext" 
+   accepts      "\<lbrace>objectives||requirement||cenelec_text\<rbrace>\<^sup>+ "       
+   type_synonym system_requirements_specification = SYSREQS
+
+doc_class SYSSREQS = cenelec_text + 
+   phase        :: "phase"  <= "SYSDEV_ext" 
+   type_synonym system_safety_requirements_specification = SYSSREQS
+
+doc_class SYSAD = cenelec_text + 
+   phase        :: "phase"  <= "SYSDEV_ext" 
+   type_synonym system_architecture_description = SYSAD
+
+doc_class SYSS_pl = cenelec_text + 
+   phase        :: "phase"  <= "SPl" 
+   type_synonym system_safety_plan = SYSS_pl
+
+doc_class SYS_VnV_pl = cenelec_text + 
+   phase        :: "phase"  <= "SPl" 
+   type_synonym system_VnV_plan = SYS_VnV_pl
+
+doc_class SWRS = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_requirements_specification = SWRS
+
+doc_class SWRVR = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_requirements_verification_report = SWRVR
+
+
+doc_class SWTS = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_test_specification = SWTS
+
+doc_class SWAS = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_architecture_specification = SWAS
+
+doc_class SWDS = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_design_specification = SWDS
+
+doc_class SWIS = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_interface_specification = SWIS
+
+doc_class SWITS = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_integration_test_specification = SWITS
+
+doc_class SWHITS = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_hardware_integration_test_specification = SWHITS
+
+doc_class SWADVR = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_architecture_and_design_verification_report = SWADVR
+
+doc_class SWCDS = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_component_design_specification = SWCDS
+
+doc_class SWCTS = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_component_test_specification = SWCTS
+
+doc_class SWCDVR = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_component_design_verification_report = SWCDVR
+
+
+doc_class SWSCD = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_source_code_and_documentation = SWSCD
+
+doc_class SWCTR = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_component_test_report = SWCTR
+
+doc_class SWSCVR = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_source_code_verification_report = SWSCVR
+
+doc_class SWHAITR = cenelec_text +
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_hardware_integration_test_report = SWHAITR
+
+doc_class SWIVR = cenelec_text +
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_integration_verification_report = SWIVR
+
+doc_class SWTR_global = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym overall_software_test_report = SWTR_global
+
+doc_class SWVALR = cenelec_text +
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_validation_report = SWVALR
+
+doc_class SWDD = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_deployment_documents = SWDD
+
+doc_class SWMD = cenelec_text + 
+   phase        :: "phase"  <= "SD" 
+   type_synonym software_maintenance_documents = SWMD
+
+ 
+section\<open> Software Assurance \<close>
+
+subsection\<open> Software Testing \<close>
+text\<open>Objective: 
+The objective of software testing, as performed by the Tester and/or Integrator, 
+is to ascertain the behaviour or performance of software against the corresponding test 
+specification to the extent achievable by the selected test coverage.
+\<close>
+
+text\<open>Outputs:
+\<^enum> @{typ overall_software_test_report}
+\<^enum> @{typ software_test_specification} Overall Software Test Specification
+\<^enum> Overall Software Test Report
+\<^enum> Software Integration Test Specification
+\<^enum> Software Integration Test Report
+\<^enum> Software/Hardware Integration Test Specification
+\<^enum> Software/Hardware Integration Test Report
+\<^enum> Software Component Test Specification
+\<^enum> Software Component Test Report
+\<close>
+
+subsection\<open> Software Verification \<close>
+text\<open>Objective:
+The objective of software verification is to examine and arrive at a judgement based on evidence 
+that output items (process, documentation, software or application) of a specific development 
+phase fulfil the requirements and plans with respect to completeness, correctness and consistency. 
+These activities are managed by the @{concept \<open>verifier\<close>}.
+\<close>
+
+text\<open>Outputs:
+\<^enum> Software Verification Plan
+\<^enum> Software Verification Report(s)
+\<^enum> Software Quality Assurance Verification Report
+\<close>
+
+subsection\<open> Software Validation  \<close>
+text\<open>Objective:
+\<^enum>The objective of software validation is to demonstrate that the processes and their outputs are 
+such that the software is of the defined software safety integrity level, fulfils the software 
+requirements and is fit for its intended application. This activity is performed by the Validator.
+\<^enum>The main validation activities are to demonstrate by analysis and/or testing that all the software
+requirements are specified, implemented, tested and fulfilled as required by the applicable SIL, 
+and to evaluate the safety criticality of all anomalies and non-conformities based on the results 
+of reviews, analyses and tests.
+\<close>
+text\<open>Output documents:
+\<^enum> Software Validation Plan
+\<^enum> Software Validation Report
+\<^enum> Software Validation Verification Report
+\<close>
+
+subsection\<open> Software Assessment \<close> (* other word for : formal evaluation. *)
+text\<open>Objective:
+\<^enum>To evaluate that the lifecycle processes and their outputs are such that the software is of the 
+defined software safety integrity levels 1-4 andis fit for its intended application.
+\<^enum> For SIL 0 software, requirements of this standard shall be fulfilled but where a certificate stating 
+compliance with EN ISO 9001 is available, no assessment will be required.
+\<close>
+
+subsection\<open> Software Quality Assurance  \<close>
+text\<open>Objectives: To identify, monitor and control all those activities, both technical and 
+managerial, which are necessary to ensure that the software achieves the quality required. 
+This is necessary to provide the required qualitative defence against systematic faults and 
+to ensure that an audit trail can be established to allow
+verification and validation activities to be undertaken effectively.\<close>
+(* So : pretty much META *)
+
+
+
+
+
+(* DEATH ZONE FROM HERE ... >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> *)
 
 
 section\<open> Design related Categories \<close>  
@@ -354,23 +633,11 @@ section\<open> Requirements-Analysis related Categories \<close>
 
 doc_class test_item =
       nn :: "string option"
-
-text{* subcategories are : *}
-  
-datatype test_kind = blackbox | whitebox | greybox | fuzz | pertubation
-  
-datatype test_coverage_criterion =  
-             allpathk  nat nat     (* depth, test_coverage_degree *)
-             | mcdc  nat           (* depth, test_coverage_degree *)
-             | exhaustive
-             | dnf_E_d  string nat (* equivalence class testing *)
-             | other string
     
 doc_class test_specification = test_item +
           short_goal :: string
       
 doc_class test_case = test_item +
-          kind  :: test_kind
           descr :: string
           
 doc_class test_result = test_item +
@@ -403,21 +670,22 @@ doc_class test_documentation =
 
 
   
-section\<open> Testing and Validation \<close>
+section\<open> META : Testing and Validation \<close>
 
-text\<open>Test : @{concept \<open>cots\<close>}\<close>
+
+text\<open>Test : @{concept \<open>COTS\<close>}\<close>
 
 
 ML\<open>
 DOF_core.name2doc_class_name @{theory} "requirement";
-DOF_core.name2doc_class_name @{theory} "srac";
-DOF_core.is_defined_cid_global "srac" @{theory};
-DOF_core.is_defined_cid_global "ec" @{theory};
+DOF_core.name2doc_class_name @{theory} "SRAC";
+DOF_core.is_defined_cid_global "SRAC" @{theory};
+DOF_core.is_defined_cid_global "EC" @{theory};
 "XXXXXXXXXXXXXXXXX";
-DOF_core.is_subclass @{context} "CENELEC_50128.ec" "CENELEC_50128.ec";
-DOF_core.is_subclass @{context} "CENELEC_50128.srac" "CENELEC_50128.ec";
-DOF_core.is_subclass @{context} "CENELEC_50128.ec"   "CENELEC_50128.srac";
-DOF_core.is_subclass @{context} "CENELEC_50128.ec"   "CENELEC_50128.test_requirement";
+DOF_core.is_subclass @{context} "CENELEC_50128.EC" "CENELEC_50128.EC";
+DOF_core.is_subclass @{context} "CENELEC_50128.SRAC" "CENELEC_50128.EC";
+DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.SRAC";
+DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.test_requirement";
 "XXXXXXXXXXXXXXXXX";
 val {docobj_tab={maxano, tab=ref_tab},docclass_tab=class_tab,...} = DOF_core.get_data @{context};
 Symtab.dest ref_tab;
@@ -428,7 +696,7 @@ Symtab.dest class_tab;
 ML\<open>
 "XXXXXXXXXXXXXXXXX";
 
-DOF_core.get_attributes_local "srac" @{context};
+DOF_core.get_attributes_local "SRAC" @{context};
 
 @{term assumption_kind}
 \<close> 

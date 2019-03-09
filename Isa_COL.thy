@@ -13,6 +13,9 @@ begin
    
 section\<open> Library of Standard Text Ontology \<close>
 
+
+
+
 datatype placement = pl_h | pl_t | pl_b | pl_ht | pl_hb  
 
 
@@ -45,6 +48,19 @@ doc_class figure_group =
 (* dito the future monitor: table - block *)
 
 
+text\<open> The attribute @{term "level"} in the subsequent enables doc-notation support section* etc.
+we follow LaTeX terminology on levels 
+\<^enum>             part          = Some -1
+\<^enum>             chapter       = Some 0
+\<^enum>             section       = Some 1
+\<^enum>             subsection    = Some 2
+\<^enum>             subsubsection = Some 3
+\<^enum>             ... 
+
+for scholarly paper: invariant level > 0 \<close>
+
+doc_class text_element = 
+   level       :: "int  option"    <=  "None" 
 
 section\<open>Some attempt to model standardized links to Standard Isabelle Formal Content\<close>
 
@@ -64,7 +80,7 @@ doc_class formal_content =
 
 doc_class concept = 
     tag        :: "string"   <= "''''"
-    properties :: "thm list" 
+    properties :: "thm list" <= "[]"
 
 section\<open>Tests\<close>
 

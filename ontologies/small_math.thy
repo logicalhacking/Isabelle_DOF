@@ -1,67 +1,59 @@
-section{* An example ontology for a scholarly paper*}
+section{* An example ontology for a math paper*}
 
-theory scholarly_paper
+theory small_math
    imports "../Isa_COL"
 begin
 
 doc_class title =
    short_title :: "string option"  <=  "None"
-    
-doc_class subtitle =
-   abbrev :: "string option"       <=  "None"
-   
--- \<open>adding a contribution list and checking that it is cited as well in tech as in conclusion. ? \<close>
 
 doc_class author =
    email       :: "string" <= "''''"
-   http_site   :: "string" <= "''''"
-   orcid       :: "string" <= "''''"
-   affiliation :: "string"
+
+datatype classification = algebra | geometry | graph_theory
 
 doc_class abstract =
-   keywordlist        :: "string list"   <= "[]" 
-   principal_theorems :: "thm list"
+    keyword_list :: "classification list"   <= "[]" 
 
-doc_class text_section = text_element +
-   main_author :: "author option"  <=  None
-   fixme_list  :: "string list"    <=  "[]" 
-   level       :: "int  option"    <=  "None"   
-   (* this attribute enables doc-notation support section* etc.
-      we follow LaTeX terminology on levels 
-                part          = Some -1
-                chapter       = Some 0
-                section       = Some 1
-                subsection    = Some 2
-                subsubsection = Some 3
-       ... *)
-   (* for scholarly paper: invariant level > 0 *)
+doc_class text_section = 
+    authored_by :: "author set"   <=  "{}"
+    level       :: "int  option"  <=  "None"   
+    (* this attribute enables doc-notation support section* etc.
+       we follow LaTeX terminology on levels 
+                 part          = Some -1
+                 chapter       = Some 0
+                 section       = Some 1
+                 subsection    = Some 2
+                 subsubsection = Some 3
+        ... *)
+    (* for scholarly paper: invariant level > 0 *)
+
+type_synonym notion = string
 
 doc_class introduction = text_section +
-   comment :: string
-   claims  :: "thm list"
+    uses :: "notion set"
+
+doc_class contribution_claim = introduction +
+    based_on :: "notion list"
 
 doc_class technical = text_section +
-   definition_list :: "string list" <=  "[]"
-   formal_results  :: "thm list"
-   
-text{* A very rough formatting style could be modeled as follows:*}   
+    formal_results  :: "thm list"
 
-   
-doc_class example    = text_section +
-   comment :: "string"
+doc_class "definition" = technical +
+    is_formal :: "bool"
+    property  :: "term list" <= "[]"
+
+datatype kind = expert_opinion | argument | "proof"
+
+doc_class result = technical +
+    evidence  :: kind 
+    property  :: "thm list" <= "[]"
+
+doc_class example    = technical +
+    referring_to :: "(notion + definition) set" <=  "{}"
 
 doc_class "conclusion" = text_section +
-   main_author :: "author option"  <=  None
-   
-doc_class related_work = "conclusion" +
-   main_author :: "author option"  <=  None
-
-doc_class bibliography = text_section +
-   style       :: "string option"  <=  "Some ''LNCS''"
-
-doc_class annex = "text_section" +
-   main_author :: "author option"  <=  None
-
+    establish   :: "(contribution_claim \<times> result) set"
 
 text\<open> Besides subtyping, there is another relation between
 doc_classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
@@ -90,21 +82,13 @@ text \<open>underlying idea: a monitor class automatically receives a
     like any other attribute of a class instance, \ie{} a document item.\<close>
 
 doc_class article = 
-   style_id :: string                <= "''LNCS''"
-   version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
-   accepts "(title        ~~ 
-            \<lbrakk>subtitle\<rbrakk>    ~~
-            \<lbrace>author\<rbrace>\<^sup>+     ~~ 
-            abstract      ~~
-            \<lbrace>introduction\<rbrace>\<^sup>+   ~~ 
-            \<lbrace>technical || example\<rbrace>\<^sup>+ ~~
-            \<lbrace>conclusion\<rbrace>\<^sup>+    ~~  
-            bibliography     ~~
-            \<lbrace>annex\<rbrace>\<^sup>* )"
+    style_id :: string                <= "''LNCS''"
+    accepts "(title      ~~ \<lbrace>author\<rbrace>\<^sup>+     ~~   abstract      ~~
+             \<lbrace>introduction\<rbrace>\<^sup>+  ~~  \<lbrace>technical || example\<rbrace>\<^sup>+ ~~ \<lbrace>conclusion\<rbrace>\<^sup>+)"
 
 
 ML\<open>
-structure Scholarly_paper_trace_invariant =
+structure Small_Math_trace_invariant =
 struct 
 local
 
@@ -151,38 +135,12 @@ end
 end
 \<close>
 
-
-setup\<open> let val cidS = ["scholarly_paper.introduction","scholarly_paper.technical", 
-                       "scholarly_paper.example", "scholarly_paper.conclusion"];
-           fun body moni_oid _ ctxt = (Scholarly_paper_trace_invariant.check 
-                                                    ctxt cidS moni_oid @{here};
+setup\<open> let val cidS = ["small_math.introduction","small_math.technical", "small_math.conclusion"];
+           fun body moni_oid _ ctxt = (Small_Math_trace_invariant.check  ctxt cidS moni_oid @{here};
                                        true)
-       in  DOF_core.update_class_invariant "scholarly_paper.article" body end\<close>
+       in  DOF_core.update_class_invariant "small_math.article" body end\<close>
 
 
-(* some test code *)
-ML\<open>
-(*
-
-val trace  = AttributeAccess.compute_trace_ML (Context.Proof @{context}) "this" @{here} @{here}
-val groups = partition (  @{context}) cidS trace
-val _::_::_::_:: _ ::_ ::_ ::a::_ = groups;
-check;
-
-fun get_level_raw oid = AttributeAccess.compute_attr_access (Context.Proof @{context}) "level" oid @{here} @{here};
-fun get_level oid = dest_option (snd o HOLogic.dest_number) (get_level_raw (oid));
-fun check_level_hd a = case (get_level (snd a)) of
-                 NONE => error("Invariant violation: leading section" ^ snd a ^ 
-                               " must have lowest level")
-               | SOME X => X
-fun check_group_elem level_hd a = case (get_level (snd a)) of
-                            NONE => true
-                          | SOME y => if y > level_hd then true
-                                      else error("Invariant violation: subsequent section " ^ snd a ^ 
-                                                 " must have higher level.");
-fun check_group a = map (check_group_elem (check_level_hd (hd a))) (tl a) ;
-*)
-\<close>
 
 
 gen_sty_template
