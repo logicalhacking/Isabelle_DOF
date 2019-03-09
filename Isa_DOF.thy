@@ -832,19 +832,38 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) =
 
         (* TODO: temp. hack *)
         fun unquote_string s = if String.isPrefix "''" s then
-                                  String.substring(s,2,(String.size s)-4)
+                                    String.substring(s,2,(String.size s)-4)
                                else s
-        fun markup2string s =  unquote_string (String.concat (List.filter (fn c => c <> Symbol.DEL) 
-                                             (Symbol.explode (YXML.content_of s)))) 
-
+        fun ltx_of_term _ (((Const ("List.list.Cons", t1) $  (Const ("String.Char", t2 ) $ t))) $ t') 
+                           = (HOLogic.dest_string (((Const ("List.list.Cons", t1) $  (Const ("String.Char", t2 ) $ t))) $ t'))
+          | ltx_of_term _ (@{term "numeral :: _ \<Rightarrow> _"} $ t) = Int.toString(HOLogic.dest_numeral t)
+          | ltx_of_term ctxt t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
+        fun markup2string s = String.concat (List.filter (fn c => c <> Symbol.DEL) (Symbol.explode (YXML.content_of s))) 
+        fun ltx_of_markup s = let
+                                val old_str = unquote_string  (markup2string s)
+                                val ctxt = Proof_Context.init_global thy
+		                            val term = (Syntax.check_term ctxt o Syntax.parse_term ctxt) s
+                                val str_of_term = ltx_of_term  ctxt term 
+                                    handle _ => "Exception in ltx_of_term"
+                                (* For debugging: 
+                                val _ = writeln("<OLD_STR>"^old_str^"</OLD_STR>")          
+                                val _ = writeln("<NEW_STR>"^str_of_term^"</NEW_STR>")          
+                                val t_str = ML_Syntax.print_term term  
+                                            handle (TERM _) => "Exception TERM in ltx_of_markup (print_term)"
+                                val _ = writeln("<TERM>"^t_str^"</TERM>")
+                                *)
+                              in
+                                str_of_term
+                              end 
         fun toLong n =  #long_name(the(DOF_core.get_attribute_info cid_long (markup2string n) thy))
-        fun str ((lhs,_),rhs) = (toLong lhs)^" = "^(enclose "{" "}" (markup2string rhs))  
+
+        fun str ((lhs,_),rhs) = (toLong lhs)^" = "^(enclose "{" "}" (ltx_of_markup rhs))  
                                 (* no normalization on lhs (could be long-name)
                                    no paraphrasing on rhs (could be fully paranthesized
                                    pretty-printed formula in LaTeX notation ... *)
     in  
-      enclose "[" "]" (String.concat [ cid_txt, ", args={", (commas ([cid_txt,l] @ (map str  attr_list ))), "}"]) 
-      end
+      (enclose "[" "]" (String.concat [ cid_txt, ", args={", (commas ([cid_txt,l] @ (map str  attr_list ))), "}"])) 
+end
 
 val semi = Scan.option (Parse.$$$ ";");
 val is_improper = not o (Token.is_proper orf Token.is_begin_ignore orf Token.is_end_ignore);
