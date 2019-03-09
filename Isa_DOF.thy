@@ -878,7 +878,7 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) =
           | ltx_of_term ctxt t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
         fun markup2string s = String.concat (List.filter (fn c => c <> Symbol.DEL) (Symbol.explode (YXML.content_of s))) 
         fun ltx_of_markup s = let
-                                val old_str = unquote_string  (markup2string s)
+                                val old_str = (markup2string s)
                                 val ctxt = Proof_Context.init_global thy
 		                            val term = (Syntax.check_term ctxt o Syntax.parse_term ctxt) s
                                 val str_of_term = ltx_of_term  ctxt term 
