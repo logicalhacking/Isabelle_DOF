@@ -853,7 +853,6 @@ setup\<open>DOF_core.update_isa_global("thm"      ,ISA_core.ML_isa_check_thm) \<
 setup\<open>DOF_core.update_isa_global("file"     ,ISA_core.ML_isa_check_file) \<close>     
 setup\<open>DOF_core.update_isa_global("docitem"  ,ISA_core.ML_isa_check_docitem)\<close>     
 
-
 section\<open> Syntax for Annotated Documentation Commands (the '' View'' Part I) \<close>
 ML\<open>
 structure ODL_Command_Parser = 
@@ -875,15 +874,19 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) =
         fun ltx_of_term _ (((Const ("List.list.Cons", t1) $  (Const ("String.Char", t2 ) $ t))) $ t') 
                            = (HOLogic.dest_string (((Const ("List.list.Cons", t1) $  (Const ("String.Char", t2 ) $ t))) $ t'))
           | ltx_of_term _ (@{term "numeral :: _ \<Rightarrow> _"} $ t) = Int.toString(HOLogic.dest_numeral t)
+          | ltx_of_term ctx ((Const ("List.list.Cons", _) $ t1) $ t2) = (case t2 of 
+                                                                            Const ("List.list.Nil", _) => (ltx_of_term ctx t1)
+                                                                           |_ => ((ltx_of_term ctx t1)^", " ^(ltx_of_term ctx t2))
+                                                                         )
           | ltx_of_term ctxt t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
         fun markup2string s = String.concat (List.filter (fn c => c <> Symbol.DEL) (Symbol.explode (YXML.content_of s))) 
         fun ltx_of_markup s = let
-                                val old_str = (markup2string s)
                                 val ctxt = Proof_Context.init_global thy
 		                            val term = (Syntax.check_term ctxt o Syntax.parse_term ctxt) s
                                 val str_of_term = ltx_of_term  ctxt term 
                                     handle _ => "Exception in ltx_of_term"
                                 (* For debugging: 
+                                val old_str = (markup2string s)
                                 val _ = writeln("<OLD_STR>"^old_str^"</OLD_STR>")          
                                 val _ = writeln("<NEW_STR>"^str_of_term^"</NEW_STR>")          
                                 val t_str = ML_Syntax.print_term term  
