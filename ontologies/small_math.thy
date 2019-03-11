@@ -10,7 +10,7 @@ doc_class title =
 doc_class author =
    email       :: "string" <= "''''"
 
-datatype classification = algebra | geometry | graph_theory
+datatype classification = algebra | geometry | topology
 
 doc_class abstract =
     keyword_list :: "classification list"   <= "[]" 
