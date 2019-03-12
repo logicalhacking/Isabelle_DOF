@@ -1434,26 +1434,25 @@ val docitem_modes = Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ unc
                                                  else {unchecked = true,  define= false})) 
                                    {unchecked = false, define= false} (* default *);
 
+val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.cartouche_input))
 
-fun docitem_antiquotation_generic enclose name cid_decl = 
-    Thy_Output.antiquotation name (Scan.lift (docitem_modes -- Args.cartouche_input))
-        (fn {context = ctxt, source = src:Token.src, state} =>
-             fn ({unchecked = x, define= y}, source:Input.source) => 
+fun docitem_antiquotation_generic cid_decl 
+             {context = ctxt, source = src:Token.src, state}  
+             ({unchecked = x, define= y}, source:Input.source) =
+             let fun label_latex flag = enclose (if flag then "\\label{"  else "\\autoref{") "}"
+             in 
                  (Thy_Output.output_text state {markdown=false} #>
                   check_and_mark ctxt                   
                                  cid_decl 
                                  ({strict_checking = not x})
                                  (Input.pos_of source) #>
-                  enclose y) 
-                 source)
-
+                  label_latex y) 
+                 source
+             end
+     
 
 fun docitem_antiquotation name cid_decl = 
-    let fun open_par x = if x then "\\label{" 
-                              else "\\autoref{"
-        val close = "}"
-    in  docitem_antiquotation_generic (fn y => enclose (open_par y) close) name cid_decl end
-
+    Thy_Output.antiquotation name docitem_antiquotation_parser (docitem_antiquotation_generic cid_decl)
 
 fun check_and_mark_term ctxt oid  =
   let val thy = Context.theory_of ctxt;
@@ -1470,22 +1469,22 @@ fun check_and_mark_term ctxt oid  =
   end
 
 
-fun ML_antiquotation_docitem_value binding = 
-    ML_Antiquotation.inline binding 
-         (fn (ctxt, toks) => (Scan.lift (Args.cartouche_input) 
-                              >> (fn inp => (ML_Syntax.atomic o ML_Syntax.print_term) 
-                                            (check_and_mark_term ctxt (Input.source_content inp)))) 
-                             (ctxt, toks))
                                          
+fun ML_antiquotation_docitem_value (ctxt, toks) = 
+              (Scan.lift (Args.cartouche_input) 
+               >> (fn inp => (ML_Syntax.atomic o ML_Syntax.print_term) 
+                             ((check_and_mark_term ctxt o Input.source_content) inp)))
+               (ctxt, toks)
+
 
 (* Setup for general docrefs of the global DOF_core.default_cid - class ("text")*)
 val _ = Theory.setup((docitem_antiquotation @{binding docref} DOF_core.default_cid) #>
                      (* deprecated syntax             ^^^^^^*)
                      (docitem_antiquotation @{binding docitem_ref} DOF_core.default_cid) #>
                      (* deprecated syntax             ^^^^^^^^^^*)
-                     (docitem_antiquotation @{binding docitem} DOF_core.default_cid) #>
 
-                      ML_antiquotation_docitem_value @{binding docitem_value})
+                     (docitem_antiquotation @{binding docitem} DOF_core.default_cid) #>
+                     ML_Antiquotation.inline @{binding docitem_value} ML_antiquotation_docitem_value)
 
 end (* struct *)
 \<close>
@@ -1666,7 +1665,6 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
                                                                  " in doc class:" ^ def_occurrence);
                                                         SOME(bind,ty,mf))
                                                    else error("no overloading allowed.")
-      val gen_antiquotation = OntoLinkParser.docitem_antiquotation
       val _ = map_filter (check_n_filter thy) fields
 
 
@@ -1674,7 +1672,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
            |> (Sign.add_consts_cmd [(binding,  "doc_class Regular_Exp.rexp", Mixfix.NoSyn)])
            |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms' regexps reject_Atoms
               (* adding const symbol representing doc-class for Monitor-RegExps.*)
-           |> (fn thy => gen_antiquotation binding (cid thy) thy)
+           |> (fn thy => OntoLinkParser.docitem_antiquotation binding (cid thy) thy)
               (* defines the ontology-checked text antiquotation to this document class *)
            
     end;
