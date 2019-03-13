@@ -1482,9 +1482,11 @@ val _ = Theory.setup((docitem_antiquotation @{binding docref} DOF_core.default_c
                      (* deprecated syntax             ^^^^^^*)
                      (docitem_antiquotation @{binding docitem_ref} DOF_core.default_cid) #>
                      (* deprecated syntax             ^^^^^^^^^^*)
-
-                     (docitem_antiquotation @{binding docitem} DOF_core.default_cid) #>
-                     ML_Antiquotation.inline @{binding docitem_value} ML_antiquotation_docitem_value)
+                     docitem_antiquotation @{binding docitem} DOF_core.default_cid #>
+    (*                 Thy_Output.antiquotation @{binding docitem} docitem_antiquotation_parser 
+                                                                 (docitem_antiquotation_generic DOF_core.default_cid) #>
+     *)
+                ML_Antiquotation.inline  @{binding docitem_value} ML_antiquotation_docitem_value)
 
 end (* struct *)
 \<close>

@@ -47,7 +47,23 @@ datatype kind = expert_opinion | argument | "proof"
 
 doc_class result = technical +
     evidence  :: kind 
-    property  :: "thm list" <= "[]"
+    c  :: "thm list" <= "[]"
+
+
+
+ML\<open>fun check_invariant_invariant oid {is_monitor:bool} ctxt =
+      let val kind_term = AttributeAccess.compute_attr_access ctxt "kind" oid @{here} @{here} 
+          val property_termS = AttributeAccess.compute_attr_access ctxt "property" oid @{here} @{here} 
+          val tS = HOLogic.dest_list property_termS
+      in  case kind_term of
+            @{term "proof"} => if not(null tS) then true
+                               else error("class class invariant violation") 
+           | _ => false
+      end
+\<close>
+
+setup\<open>DOF_core.update_class_invariant "small_math.result" check_invariant_invariant\<close>
+
 
 doc_class example    = technical +
     referring_to :: "(notion + definition) set" <=  "{}"
