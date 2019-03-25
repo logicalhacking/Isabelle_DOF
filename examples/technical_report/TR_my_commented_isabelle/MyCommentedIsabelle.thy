@@ -648,7 +648,9 @@ subsection\<open> Theories \<close>
 
 text \<open> This structure yields the datatype \verb*thy* which becomes the content of 
 \verb*Context.theory*. In a way, the LCF-Kernel registers itself into the Nano-Kernel,
-which inspired me (bu) to this naming. \<close>
+which inspired me (bu) to this naming. 
+
+\<close>
 ML\<open>
 
 (* intern Theory.Thy; 
@@ -1156,6 +1158,12 @@ ML\<open> fun dark_matter x = XML.content_of (YXML.parse_body x)\<close>
 
 (* MORE TO COME *)
 
+
+section\<open>Low-level Markup Reporting\<close>
+
+section\<open>Environment Structured Reporting\<close>
+
+text\<open> @{ML_type "'a Name_Space.table"} \<close>
 
 section\<open> Parsing issues \<close>  
   
