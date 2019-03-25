@@ -243,6 +243,17 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: scholarly_paper.conclusion
+\expandafter\newkeycommand\csname isaDof.subsection.scholarly_paper.conclusion\endcsname%
+[label=,type=%
+,scholarly_paper.text_section.main_author=%
+,scholarly_paper.text_section.fixme_list=%
+][1]{%
+  \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
+}
+% end: scholarly_paper.conclusion
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: scholarly_paper.bibliography
 \expandafter\newkeycommand\csname isaDof.section.scholarly_paper.bibliography\endcsname%
 [label=,type=%
