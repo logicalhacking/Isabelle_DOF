@@ -24,14 +24,25 @@
 
 \newcommand{\isadof}{Isabelle/DOF\xspace}
 
-% Generic dispatcher
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: newcommand wrapper
+\newcommand\newisadof[1]{\expandafter\newkeycommand\csname isaDof.#1\endcsname}%
+\newcommand\renewisadof[1]{\expandafter\renewkeycommand\csname isaDof.#1\endcsname}%
+\newcommand\provideisadof[1]{\expandafter\providekeycommand\csname isaDof.#1\endcsname}%
+% end: newcommand wrapper
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: generic dispatcher
 \newkeycommand+[\|]\isaDof[env={UNKNOWN},label=,type={dummyT},args={}][1]{%
 \csname isaDof.\commandkey{env}.\commandkey{type}\endcsname[label=\commandkey{label},\commandkey{args}]{#1}%
 }
+% end: generic dispatcher
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: text.text
-\expandafter\newkeycommand\csname isaDof.text.text\endcsname%
+\newisadof{text.text}%
 [label=,type=%
 ][1]{%
   \begin{isamarkuptext}%
@@ -44,7 +55,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: figure*
 \NewEnviron{isamarkupfigure*}[1][]{\isaDof[env={figure},#1]{\BODY}}
-\expandafter\newkeycommand\csname isaDof.figure.Isa_COL.figure\endcsname%
+\newisadof{figure.Isa_COL.figure}%
 [label=,type=%
 ,Isa_COL.figure.relative_width=%
 ,Isa_COL.figure.placement=%
@@ -74,7 +85,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: side_by_side_figure*
 \NewEnviron{isamarkupside_by_side_figure*}[1][]{\isaDof[env={side_by_side_figure},#1]{\BODY}}
-\expandafter\newkeycommand\csname isaDof.side_by_side_figure.Isa_COL.side_by_side_figure\endcsname%
+\newisadof{side_by_side_figure.Isa_COL.side_by_side_figure}%
 [label=,type=%
 ,Isa_COL.figure.relative_width=%
 ,Isa_COL.figure.src=%
