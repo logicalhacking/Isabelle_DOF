@@ -20,6 +20,7 @@
 \RequirePackage{environ}
 \RequirePackage{graphicx}
 \RequirePackage{xspace}
+\RequirePackage{etoolbox}
 \RequirePackage{fp}
 
 \newcommand{\isadof}{Isabelle/DOF\xspace}
@@ -35,7 +36,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: generic dispatcher
 \newkeycommand+[\|]\isaDof[env={UNKNOWN},label=,type={dummyT},args={}][1]{%
-\csname isaDof.\commandkey{env}.\commandkey{type}\endcsname[label=\commandkey{label},\commandkey{args}]{#1}%
+  \ifcsname isaDof.\commandkey{env}.\commandkey{type}\endcsname%
+      \csname isaDof.\commandkey{env}.\commandkey{type}\endcsname%
+              [label=\commandkey{label},\commandkey{args}]{#1}%
+  \else%
+      \errmessage{Isabelle/DOF: No LaTeX representation for concept
+        "\commandkey{env}.\commandkey{type}" defined:}
+      
+  \fi%
 }
 % end: generic dispatcher
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
