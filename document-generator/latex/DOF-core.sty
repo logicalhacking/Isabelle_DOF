@@ -35,141 +35,90 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: generic dispatcher
-\newkeycommand+[\|]\isaDof[env={UNKNOWN},label=,type={dummyT},args={}][1]{%
+\newkeycommand+[\|]\isaDof[env={UNKNOWN},label=,level=,type={dummyT},args={}][1]{%
   \ifcsname isaDof.\commandkey{env}.\commandkey{type}\endcsname%
       \csname isaDof.\commandkey{env}.\commandkey{type}\endcsname%
               [label=\commandkey{label},\commandkey{args}]{#1}%
   \else%
-      \errmessage{Isabelle/DOF: No LaTeX representation for concept
-        "\commandkey{env}.\commandkey{type}" defined:}
-      
+      \message{Isabelle/DOF: Using default LaTeX representation for concept %
+        "\commandkey{env}.\commandkey{type}".}%
+      \ifcsname isaDof.\commandkey{env}\endcsname%
+         \csname isaDof.\commandkey{env}\endcsname%
+                [label=\commandkey{label}]{#1}%
+      \else%
+      \errmessage{Isabelle/DOF: No LaTeX representation for concept %
+        "\commandkey{env}.\commandkey{type}" defined and no default %
+        definition for "\commandkey{env}" available either.}%
+      \fi%
   \fi%
 }
 % end: generic dispatcher
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% begin: text.text
-\newisadof{text.text}%
-[label=,type=%
-][1]{%
+% begin: text*-dispatcher
+\NewEnviron{isamarkuptext*}[1][]{\isaDof[env={text},#1]{\BODY}}
+% end: text*-dispatcher
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: chapter*-dispatcher
+\NewEnviron{isamarkupchapter*}[1][]{\isaDof[env={chapter},#1]{\BODY}}
+% end: chapter*-dispatcher
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: section*-dispatcher
+\NewEnviron{isamarkupsection*}[1][]{\isaDof[env={section},#1]{\BODY}}
+% end: section*-dispatcher
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: subsection*-dispatcher
+\NewEnviron{isamarkupsubsection*}[1][]{\isaDof[env={subsection},#1]{\BODY}}
+% end: subsection*-dispatcher
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: subsubsection*-dispatcher
+\NewEnviron{isamarkupsubsubsection*}[1][]{\isaDof[env={subsection},#1]{\BODY}}
+% end: subsubsection*-dispatcher
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: paragraph*-dispatcher
+\NewEnviron{isamarkupparagraph*}[1][]{\isaDof[env={paragraph},#1]{\BODY}}
+% end: paragraph*-dispatcher
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: text default implementation
+\newisadof{text}[label=,type=][1]{%
   \begin{isamarkuptext}%
     #1
   \end{isamarkuptext}%
 }
-% begin: text.text
+% end: text default implementation
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% begin: figure*
-\NewEnviron{isamarkupfigure*}[1][]{\isaDof[env={figure},#1]{\BODY}}
-\newisadof{figure.Isa_COL.figure}%
-[label=,type=%
-,Isa_COL.figure.relative_width=%
-,Isa_COL.figure.placement=%
-,Isa_COL.figure.src=%
-,Isa_COL.figure.spawn_columns=enum False True%
-][1]{%
-  \begin{figure}[]
-    \centering
-    \ifcommandkey{Isa_COL.figure.relative_width}
-    {%
-      \gdef\dof@width{\commandkey{Isa_COL.figure.relative_width}}
-      \gdef\dof@src{\commandkey{Isa_COL.figure.src}}
-      \FPdiv\scale{\dof@width}{100}%
-      \includegraphics[width=\scale\textwidth]{\dof@src}%
-    }{%
-      \gdef\dof@src{\commandkey{Isa_COL.figure.src}}
-      \includegraphics[]{\dof@src}%
-    } 
-    \caption{#1}\label{\commandkey{label}}%
-  \end{figure}
+% begin: chapter/section default implementations
+\newisadof{chapter}[label=,type=][1]{%
+  \isamarkupfalse\isamarkupchapter{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
-% end: figure*
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% begin: side_by_side_figure*
-\NewEnviron{isamarkupside_by_side_figure*}[1][]{\isaDof[env={side_by_side_figure},#1]{\BODY}}
-\newisadof{side_by_side_figure.Isa_COL.side_by_side_figure}%
-[label=,type=%
-,Isa_COL.figure.relative_width=%
-,Isa_COL.figure.src=%
-,Isa_COL.side_by_side_figure.anchor=%
-,Isa_COL.side_by_side_figure.caption=%
-,Isa_COL.side_by_side_figure.relative_width2=%
-,Isa_COL.side_by_side_figure.src2=%
-,Isa_COL.side_by_side_figure.anchor2=%
-,Isa_COL.side_by_side_figure.caption2=%
-,Isa_COL.side_by_side_figure.placement=%
-,Isa_COL.side_by_side_figure.spawn_columns=enum False True%
-][1]{%
-  \begin{figure}[]
-    \subfloat[\label{\commandkey{Isa_COL.side_by_side_figure.anchor}}\commandkey{Isa_COL.side_by_side_figure.caption}]%
-      {\ifcommandkey{Isa_COL.figure.relative_width}%
-       {%
-          \gdef\dof@width{\commandkey{Isa_COL.figure.relative_width}}
-          \gdef\dof@src{\commandkey{Isa_COL.figure.src}}
-          \FPdiv\scale{\dof@width}{100}%
-          \includegraphics[width=\scale\textwidth]{\dof@src}%
-        }{%
-          \gdef\dof@src{\commandkey{Isa_COL.figure.src}}
-          \includegraphics[]{\dof@src}%
-        }% 
-      }%
-      \hfill%
-      \subfloat[\label{\commandkey{Isa_COL.side_by_side_figure.anchor2}}\commandkey{Isa_COL.side_by_side_figure.caption2}]%
-      {\ifcommandkey{Isa_COL.side_by_side_figure.relative_width2}%
-        {%
-          \gdef\dof@width{\commandkey{Isa_COL.side_by_side_figure.relative_width2}}
-          \gdef\dof@src{\commandkey{Isa_COL.side_by_side_figure.src2}}
-          \FPdiv\scale{\dof@width}{100}%
-          \includegraphics[width=\scale\textwidth]{\dof@src}%
-        }{%
-          \gdef\dof@src{\commandkey{Isa_COL.side_by_side_figure.src2}}
-          \includegraphics[]{\dof@src}%
-        }% 
-      }%
-    \caption{#1}\label{\commandkey{label}}%
-  \end{figure}
+\newisadof{section}[label=,type=][1]{%
+  \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
-% end: side_by_side_figure*
+\newisadof{subsection}[label=,type=][1]{%
+  \isamarkupfalse\isamarkupsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
+}
+\newisadof{subsubsection}[label=,type=][1]{%
+  \isamarkupfalse\isamarkupsubsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
+}
+\newisadof{paragraph}[label=,type=][1]{%
+  \isamarkupfalse\isamarkupparagraph{#1}\label{\commandkey{label}}\isamarkuptrue%
+}
+% end: chapter/section default implementations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% begin: Text*
-\NewEnviron{isamarkupText*}[1][]{\isaDof[env={Text},#1]{\BODY}}
-% end: Text*
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% begin: text*
-\NewEnviron{isamarkuptext*}[1][]{\isaDof[env={text},#1]{\BODY}}
-% end: text*
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\newkeycommand\isaDofOpenMonitor[label=,type=]{}
-\newkeycommand\isaDofCloseMonitor[label=,type=]{}
-
-\newkeycommand\isaDofDeclareReferenceTextSection[label=,type=]{}
-\newkeycommand\isaDofDeclareReferenceFigure[label=,type=]{}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% begin: chapter*
-\NewEnviron{isamarkupchapter*}[1][]{\isaDof[env={chapter},#1]{\BODY}}
-% end: chapter*
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% begin: section*
-\NewEnviron{isamarkupsection*}[1][]{\isaDof[env={section},#1]{\BODY}}
-% end: section*
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% begin: subsection*
-\NewEnviron{isamarkupsubsection*}[1][]{\isaDof[env={subsection},#1]{\BODY}}
-% end: subsection*
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

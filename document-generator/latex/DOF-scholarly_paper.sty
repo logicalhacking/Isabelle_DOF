@@ -16,7 +16,7 @@
   [0000/00/00 Unreleased v0.0.0+%
   Document-Type Support Framework for Isabelle (LNCS).]
 
-\RequirePackage{DOF-core}
+\RequirePackage{DOF-COL}
 \RequirePackage{ifthen}
 
 \RequirePackage{ifthen}
@@ -153,10 +153,15 @@
   \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 \newisadof{subsection.scholarly_paper.introduction}%
-[label=,type=%
+[label=,type=,level=%
+,scholarly_paper.level=%
+,scholarly_paper.introduction.level=%
 ,scholarly_paper.introduction.main_author=%
 ,scholarly_paper.introduction.fixme_list=%
 ][1]{%
+  \typeout{L1: \commandkey{level}}
+  \typeout{L2: \commandkey{scholarly_paper.level}}
+  \typeout{L3: \commandkey{scholarly_paper.introdution.level}}
   \isamarkupfalse\isamarkupsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 \newisadof{text.scholarly_paper.introduction_elem}%
