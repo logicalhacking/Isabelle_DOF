@@ -35,7 +35,11 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: generic dispatcher
-\newkeycommand+[\|]\isaDof[env={UNKNOWN},label=,level=,type={dummyT},args={}][1]{%
+\newkeycommand+[\|]\isaDof[env={UNKNOWN},label=,type={dummyT},args={}][1]{%
+  \ifcsname isaDof.\commandkey{type}\endcsname%
+      \csname isaDof.\commandkey{type}\endcsname%
+              [label=\commandkey{label},\commandkey{args}]{#1}%
+  \else\relax\fi%
   \ifcsname isaDof.\commandkey{env}.\commandkey{type}\endcsname%
       \csname isaDof.\commandkey{env}.\commandkey{type}\endcsname%
               [label=\commandkey{label},\commandkey{args}]{#1}%
