@@ -54,7 +54,7 @@
 \NewEnviron{isamarkuptitle*}[1][]{\isaDof[env={title},#1]{\BODY}}
 \newisadof{title.scholarly_paper.title}%
 [label=,type=%
-,keywordlist=%
+,scholarly_paper.title.short_title=%
 ][1]{%
   \immediate\write\@auxout{\noexpand\title{#1}}%
 }
@@ -66,7 +66,7 @@
 \NewEnviron{isamarkupsubtitle*}[1][]{\isaDof[env={subtitle},#1]{\BODY}}
 \newisadof{subtitle.scholarly_paper.subtitle}%
 [label=,type=%
-,keywordlist=%
+,scholarly_paper.subtitle.abbrev=%
 ][1]{%
   \immediate\write\@auxout{\noexpand\subtitle{#1}}%
 }
@@ -111,6 +111,7 @@
 ,scholarly_paper.author.email=%
 ,scholarly_paper.author.affiliation=%
 ,scholarly_paper.author.orcid=%
+,scholarly_paper.author.http_site=%
 ][1]{%
   \stepcounter{dof@cnt@author}
   \def\dof@a{\commandkey{scholarly_paper.author.affiliation}}

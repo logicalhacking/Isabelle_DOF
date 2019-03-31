@@ -849,6 +849,8 @@ fun property_list_dest ctxt X = (map (fn Const ("Isa_DOF.ISA_term", _) $ s => HO
 end; (* struct *)
                                                             
 \<close>
+
+
 subsection\<open> Isar - Setup\<close>
 
 setup\<open>DOF_core.update_isa_global("typ"      ,ISA_core.ML_isa_check_typ) \<close>     
@@ -873,7 +875,7 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) =
     let val l   = "label = "^ (enclose "{" "}" lab)
         val cid_long = case cid_opt of
                                 NONE => DOF_core.default_cid
-                              | SOME(cid,_) => DOF_core.name2doc_class_name thy cid
+                              | SOME(cid,_) => DOF_core.name2doc_class_name thy cid        
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
 
         fun ltx_of_term _ (((Const ("List.list.Cons", t1) $  (Const ("String.Char", t2 ) $ t))) $ t') 
@@ -885,9 +887,8 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) =
                                                                          )
           | ltx_of_term ctxt t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
         fun markup2string s = String.concat (List.filter (fn c => c <> Symbol.DEL) (Symbol.explode (YXML.content_of s))) 
-        fun ltx_of_markup s = let
-                                val ctxt = Proof_Context.init_global thy
-		                            val term = (Syntax.check_term ctxt o Syntax.parse_term ctxt) s
+        fun ltx_of_markup ctxt s = let
+  	                            val term = (Syntax.check_term ctxt o Syntax.parse_term ctxt) s
                                 val str_of_term = ltx_of_term  ctxt term 
                                     handle _ => "Exception in ltx_of_term"
                                 (* For debugging: 
@@ -903,12 +904,18 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) =
                               end 
         fun toLong n =  #long_name(the(DOF_core.get_attribute_info cid_long (markup2string n) thy))
 
-        fun str ((lhs,_),rhs) = (toLong lhs)^" = "^(enclose "{" "}" (ltx_of_markup rhs))  
-                                (* no normalization on lhs (could be long-name)
-                                   no paraphrasing on rhs (could be fully paranthesized
-                                   pretty-printed formula in LaTeX notation ... *)
-    in  
-      (enclose "[" "]" (String.concat [ cid_txt, ", args={", (commas ([cid_txt,l] @ (map str  attr_list ))), "}"])) 
+        val ctxt = Proof_Context.init_global thy
+        val actual_args =  map (fn ((lhs,_),rhs) => (toLong lhs, ltx_of_markup ctxt rhs))
+                               attr_list  
+	      val default_args = map (fn (b,_,t) => (toLong (Long_Name.base_name ( Sign.full_name thy b)), ltx_of_term ctxt t))
+                               (DOF_core.get_attribute_defaults cid_long thy)
+
+        val default_args_filtered = filter (fn (a,_) => not (exists (fn b => b = a) 
+                                    (map (fn (c,_) => c) actual_args))) default_args
+        val str_args = map (fn (lhs,rhs) => lhs^" = "^(enclose "{" "}" rhs)) 
+                      (actual_args@default_args_filtered)
+    in
+      (enclose "[" "]" (String.concat [ cid_txt, ", args={", (commas str_args), "}"])) 
 end
 
 val semi = Scan.option (Parse.$$$ ";");
