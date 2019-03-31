@@ -13,7 +13,8 @@ text\<open> Offering
 \<^item> LaTeX support. \<close> 
   
 text\<open> In this section, we develop on the basis of a management of references Isar-markups
-that provide direct support in the PIDE framework. \<close>  
+that provide direct support in the PIDE framework. \<close> 
+
   
 theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   imports  Main  
@@ -636,46 +637,6 @@ val _ =
       Toplevel.keep (check_doc_global b o Toplevel.context_of)));
 
 
-fun toStringLaTeXNewKeyCommand env long_name =
-    "\\expandafter\\newkeycommand\\csname"^" "^"isaDof."^env^"."^long_name^"\\endcsname%\n" 
-
-fun toStringMetaArgs true attr_long_names = 
-       enclose "[" "][1]" (commas ("label=,type=%\n" :: attr_long_names))
-   |toStringMetaArgs false attr_long_names = 
-       enclose "[" "][1]" (commas attr_long_names) 
-
-fun toStringDocItemBody env =
-    enclose "{%\n\\isamarkupfalse\\isamarkup" 
-            "{#1}\\label{\\commandkey{label}}\\isamarkuptrue%\n}\n"
-            env
-            
-fun toStringDocItemCommand env long_name attr_long_names = 
-    toStringLaTeXNewKeyCommand env long_name ^
-    toStringMetaArgs true attr_long_names ^
-    toStringDocItemBody env ^"\n"
-
-fun toStringDocItemLabel long_name attr_long_names = 
-    toStringLaTeXNewKeyCommand "Label" long_name ^
-    toStringMetaArgs false attr_long_names ^
-    "{%\n\\autoref{#1}\n}\n"
-
-fun toStringDocItemRef long_name label attr_long_namesNvalues = 
-    "\\isaDof.Label." ^ long_name ^
-    enclose "[" "]" (commas attr_long_namesNvalues) ^
-    enclose "{" "}" label
-
-fun write_file thy filename content =
-    let 
-       val filename = Path.explode filename
-       val master_dir = Resources.master_directory thy
-       val abs_filename = if (Path.is_absolute filename) 
-                          then filename 
-                          else Path.append master_dir filename
-    in
-      File.write (abs_filename) content
-      handle (IO.Io{name=name,...}) 
-             => warning ("Could not write \""^(name)^"\".")
-    end
 
 fun write_ontology_latex_sty_template thy = 
     let 
@@ -688,6 +649,48 @@ fun write_ontology_latex_sty_template thy =
         *)
         val curr_thy_name = Context.theory_name thy
         val {docobj_tab={tab = x, ...},docclass_tab,...}= get_data_global thy;
+
+        fun toStringLaTeXNewKeyCommand env long_name =
+            "\\expandafter\\newkeycommand\\csname"^" "^"isaDof."^env^"."^long_name^"\\endcsname%\n" 
+        
+        fun toStringMetaArgs true attr_long_names = 
+               enclose "[" "][1]" (commas ("label=,type=%\n" :: attr_long_names))
+           |toStringMetaArgs false attr_long_names = 
+               enclose "[" "][1]" (commas attr_long_names) 
+        
+        fun toStringDocItemBody env =
+            enclose "{%\n\\isamarkupfalse\\isamarkup" 
+                    "{#1}\\label{\\commandkey{label}}\\isamarkuptrue%\n}\n"
+                    env
+                    
+        fun toStringDocItemCommand env long_name attr_long_names = 
+            toStringLaTeXNewKeyCommand env long_name ^
+            toStringMetaArgs true attr_long_names ^
+            toStringDocItemBody env ^"\n"
+        
+        fun toStringDocItemLabel long_name attr_long_names = 
+            toStringLaTeXNewKeyCommand "Label" long_name ^
+            toStringMetaArgs false attr_long_names ^
+            "{%\n\\autoref{#1}\n}\n"
+        
+        fun toStringDocItemRef long_name label attr_long_namesNvalues = 
+            "\\isaDof.Label." ^ long_name ^
+            enclose "[" "]" (commas attr_long_namesNvalues) ^
+            enclose "{" "}" label
+        
+        fun write_file thy filename content =
+            let 
+               val filename = Path.explode filename
+               val master_dir = Resources.master_directory thy
+               val abs_filename = if (Path.is_absolute filename) 
+                                  then filename 
+                                  else Path.append master_dir filename
+            in
+              File.write (abs_filename) content
+              handle (IO.Io{name=name,...}) 
+                     => warning ("Could not write \""^(name)^"\".")
+            end
+
         fun  write_attr (n, ty, _) = YXML.content_of(Binding.print n)^ "=\n"
 
         fun write_class (n, {attribute_decl,id,inherits_from,name,params,thy_name,rex,rejectS}) =
@@ -699,8 +702,10 @@ fun write_ontology_latex_sty_template thy =
             else ""
         val content = String.concat(map write_class (Symtab.dest docclass_tab))
         (* val _ = writeln content  -- for interactive testing only, breaks LaTeX compilation *) 
-    in  write_file thy ("Isa-DOF."^curr_thy_name^".template.sty") content
-    end;
+    in 
+        warning("LaTeX Style file  generation not supported.")
+        (*  write_file thy ("Isa-DOF."^curr_thy_name^".template.sty") content *)
+    end
 
 
 val _ =
@@ -1695,32 +1700,5 @@ val _ =
 
 end (* struct *)
 \<close>  
-
-
-section\<open> Testing and Validation \<close>
-  
-(* the f ollowing test crashes the LaTeX generation - however, without the latter this output is 
-   instructive 
-ML\<open>
-writeln (DOF_core.toStringDocItemCommand "section" "scholarly_paper.introduction" []);
-writeln (DOF_core.toStringDocItemLabel "scholarly_paper.introduction" []);
-writeln (DOF_core.toStringDocItemRef "scholarly_paper.introduction" "XX" []);
-
-(DOF_core.write_ontology_latex_sty_template @{theory})
-\<close>
-*)
-
-
-ML\<open>
-
-\<close>
-(*
-ML\<open>
-val h = bstring_to_holstring @{context} (Syntax.string_of_term @{context} @{term "A \<longrightarrow> A"});
-holstring_to_bstring @{context} h
-\<close>
-*)
-
-
 
 end
