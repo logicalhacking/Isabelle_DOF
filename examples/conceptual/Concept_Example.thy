@@ -14,7 +14,7 @@ section*[a::A, x = "3"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 text*[c1::C, x = "''beta''"] \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
 
 text*[d::D, a1 = "X3"] \<open> ... phasellus amet id massa nunc, pede suscipit repellendus, 
-                         ... @{docitem \<open>c1\<close>} @{thm "refl"}\<close>
+                         ... @{docitem c1} @{thm "refl"}\<close>
 
 
 update_instance*[d::D, a1 := X2]
@@ -35,11 +35,12 @@ text\<open> ..., mauris amet, id elit aliquam aptent id,  ... @{docitem \<open>a
 text\<open>Here we add and maintain a link that is actually modeled as m-to-n relation ...\<close>
 update_instance*[f::F,b:="{(@{docitem  ''a''}::A,@{docitem  ''c1''}::C), 
                            (@{docitem  ''a''},   @{docitem  ''c2''})}"] 
-  
+
 close_monitor*[struct]
 
 text\<open>And the trace of the monitor is:\<close>
 ML\<open>@{trace_attribute struct}\<close>
+
 
 print_doc_classes
 print_doc_items

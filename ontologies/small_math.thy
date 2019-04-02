@@ -99,7 +99,7 @@ text \<open>underlying idea: a monitor class automatically receives a
 
 doc_class article = 
     style_id :: string                <= "''LNCS''"
-    accepts "(title      ~~ \<lbrace>author\<rbrace>\<^sup>+     ~~   abstract      ~~
+    accepts "(title           ~~ \<lbrace>author\<rbrace>\<^sup>+               ~~   abstract      ~~
              \<lbrace>introduction\<rbrace>\<^sup>+  ~~  \<lbrace>technical || example\<rbrace>\<^sup>+ ~~ \<lbrace>conclusion\<rbrace>\<^sup>+)"
 
 
@@ -155,7 +155,6 @@ setup\<open> let val cidS = ["small_math.introduction","small_math.technical", "
            fun body moni_oid _ ctxt = (Small_Math_trace_invariant.check  ctxt cidS moni_oid @{here};
                                        true)
        in  DOF_core.update_class_invariant "small_math.article" body end\<close>
-
 
 
 

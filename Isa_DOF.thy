@@ -55,7 +55,7 @@ fun docref_markup_gen refN def name id pos =
   if id = 0 then Markup.empty
   else
     Markup.properties (Position.entity_properties_of def id pos)
-      (Markup.entity refN name);   (* or better store the thy-name as property ? ? ? *)
+                      (Markup.entity refN name);   (* or better store the thy-name as property ? ? ? *)
 
 val docref_markup = docref_markup_gen docrefN
 
@@ -1434,7 +1434,7 @@ val docitem_modes = Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ unc
                                                  else {unchecked = true,  define= false})) 
                                    {unchecked = false, define= false} (* default *);
 
-val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.cartouche_input))
+val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.text_input))
 
 fun docitem_antiquotation_generic cid_decl 
              {context = ctxt, source = src:Token.src, state}  

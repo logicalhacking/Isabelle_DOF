@@ -9,7 +9,7 @@ open_monitor*[this::report]
 
 title*[tit::title]\<open>An Account with my Personal, Ecclectic Comments on the Isabelle Architecture\<close> 
 subtitle*[stit::subtitle]\<open>Version : Isabelle 2017\<close>
-text*[bu::author,
+text*[bu::author,     
       email       = "''wolff@lri.fr''",
       affiliation = "''Universit\\'e Paris-Saclay, Paris, France''"]\<open>Burkhart Wolff\<close>
     
@@ -845,6 +845,8 @@ end;
 *)
 \<close>
 
+
+
   
 ML\<open> Thy_Output.document_command {markdown = true} \<close>  
 (* Structures related to LaTeX Generation *)
@@ -1158,15 +1160,68 @@ ML\<open> fun dark_matter x = XML.content_of (YXML.parse_body x)\<close>
 
 (* MORE TO COME *)
 
+section\<open>Positions\<close>
+text\<open>A basic data-structure relevant for PIDE are \<^emph>\<open>positions\<close>; beyond the usual line- and column
+information they can represent ranges, list of ranges, and the name of the atomic sub-document
+in which they are contained. In the command:\<close>
+ML\<open>
+val pos = @{here};
+val markup = Position.here pos;
+writeln ("And a link to the declaration of 'here' is "^markup)
+\<close> 
+(* \<^here>  *)
+text\<open> ... uses the antiquotation @{ML "@{here}"} to infer from the system lexer the actual position
+of itself in the global document, converts it to markup (a string-representation of it) and sends
+it via the usual @{ML "writeln"} to the interface. \<close>
 
-section\<open>Low-level Markup Reporting\<close>
+figure*[hyplinkout::figure,relative_width="40",src="''figures/markup-demo''"]
+\<open>Output with hyperlinked position.\<close>
+
+text\<open>@{docitem \<open>hyplinkout\<close>} shows the produced output where the little house-like symbol in the 
+display is hyperlinked to the position of @{ML "@{here}"} in the ML sample above.\<close>
+
+section\<open>Markup and Low-level Markup Reporting\<close>
+text\<open>The structures @{ML_structure Markup} and @{ML_structure Properties} represent the basic 
+annotation data which is part of the protocol sent from Isabelle to the frontend.
+They are qualified as "quasi-abstract", which means they are intended to be an abstraction of 
+the serialized, textual presentation of the protocol. Markups are structurally a pair of a key
+and properties; @{ML_structure Markup} provides a number of of such \<^emph>\<open>key\<close>s for annotation classes
+such as "constant", "fixed", "cartouche", some of them quite obscure. Here is a code sample
+from \<^theory_text>\<open>Isabelle_DOF\<close>. A markup must be tagged with an id; this is done by the @{ML serial}-function
+discussed earlier.\<close>
+ML\<open> 
+local 
+  
+val docclassN = "doc_class";    
+
+(* derived from: theory_markup; def for "defining occurrence" (true) in contrast to
+   "referring occurence" (false). *) 
+fun docclass_markup def name id pos =
+  if id = 0 then Markup.empty
+  else           Markup.properties (Position.entity_properties_of def id pos)
+                                   (Markup.entity docclassN name);   
+
+in
+
+fun report_defining_occurrence pos cid =
+           let val id = serial ()
+               val markup_of_cid = docclass_markup true cid id pos
+           in  Position.report pos markup_of_cid end;
+
+end
+\<close>
+
+text\<open>The @\<open>ML report_defining_occurrence\<close>-function above takes a position and a "cid" parsed
+in the Front-End, converts this into markup together with a unique number identifying this
+markup, and sends this as a report to the Front-End. \<close>
+
 
 section\<open>Environment Structured Reporting\<close>
 
 text\<open> @{ML_type "'a Name_Space.table"} \<close>
 
 section\<open> Parsing issues \<close>  
-  
+
 text\<open> Parsing combinators represent the ground building blocks of both generic input engines
 as well as the specific Isar framework. They are implemented in the  structure \verb+Token+ 
 providing core type \verb+Token.T+. 
