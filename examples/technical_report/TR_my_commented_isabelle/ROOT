@@ -7,6 +7,7 @@ session "TR_mycommentedisabelle" = "Isabelle_DOF" +
     "preamble.tex"
     "prooftree.sty"
     "build"
+    "figures/markup-demo"
     "figures/text-element.pdf"
     "figures/isabelle-architecture.pdf"
     "figures/pure-inferences-I.pdf"
