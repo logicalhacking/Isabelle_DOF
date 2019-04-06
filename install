@@ -129,13 +129,16 @@ check_isa_dof_patch() {
         command -v md5sum >/dev/null 2>&1 || echo "  Warning: md5sum not available, cannot check if patch is already applied."
         echo "  Warning: Isabelle/DOF patch is not available or outdated."
         echo "           Trying to patch system ...."
-	if (cp $dst $dst.backup-by-isadof-installer && cp -f $src $dst) &> /dev/null; then 
+        if [ ! -f "$dst.backup-by-isadof-installer" ]; then
+            cp -f "$dst" "$dst.backup-by-isadof-installer" || true;
+        fi
+	if (cp -f $src $dst) &> /dev/null; then 
 	    echo "       Applied patch successfully, Isabelle/HOL will be rebuilt during"
 	    echo "       the next start of Isabelle."
 	else
             echo "  FAILURE: Could not apply Isabelle/DOF patch."
-            echo "    Please copy patches/thy_output.ML to $ISABELLE_HOME/src/Pure/Thy/:"
-            echo "       cp patches/thy_output.ML $ISABELLE_HOME/src/Pure/Thy/"
+            echo "    Please copy $src to $dst, e.g.:"
+            echo "       cp -f $src $dst"
             echo "    and rebuild Isabelle/HOL."
             exit_error
 	fi
