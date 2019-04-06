@@ -114,11 +114,11 @@ check_afp_entries() {
 }
 
 check_isa_dof_patch() {
-    echo "* Check availabilty of Isabelle/DOF patch:"
+    echo "* Check availability of Isabelle/DOF patch:"
     src="patches/thy_output.ML"
     dst="$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"
      
-    if command -v md5sum > /dev/null 2>&1 && [[ $(md5sum "$src" | cut -d' ' -f1) = $(md5sum "$dst" | cut -d' ' -f1) ]]; then
+    if command -v cmp > /dev/null 2>&1 && cmp -s "$src" "$dst" ; then
         echo "  Success: latest Isabelle/DOF patch already applied"
         if isabelle process -e 'Thy_Output.set_meta_args_parser' &> /dev/null ; then
             true
@@ -126,28 +126,22 @@ check_isa_dof_patch() {
             echo "  Warning: Isabelle/HOL needs to be rebuild to activate patch."
         fi
     else
-        if command -v md5 > /dev/null 2>&1 && [[ $(md5 "$src" | cut -d' ' -f1) = $(md5 "$dst" | cut -d' ' -f1) ]]; then
-        echo "  Success: latest Isabelle/DOF patch already applied"
-        if isabelle process -e 'Thy_Output.set_meta_args_parser' &> /dev/null ; then
-            true
-        else
-            echo "  Warning: Isabelle/HOL needs to be rebuild to activate patch."
+        command -v cmp >/dev/null 2>&1 || echo "  Warning: cmp not available, cannot check if patch is already applied."
+        echo "  Warning: Isabelle/DOF patch is not available or outdated."
+        echo "           Trying to patch system ...."
+        if [ ! -f "$dst.backup-by-isadof-installer" ]; then
+            cp -f "$dst" "$dst.backup-by-isadof-installer" || true;
         fi
-        else 
-            ommand -v md5sum >/dev/null 2>&1 || command -v md5 >/dev/null 2>&1 || echo "  Warning: neither md5sum inor md5 were available, cannot check if patch is already applied."
-            echo "  Warning: Isabelle/DOF patch is not available or outdated."
-            echo "           Trying to patch system ...."
-	    if (cp $dst $dst.backup-by-isadof-installer && cp -f $src $dst) &> /dev/null; then 
-	        echo "       Applied patch successfully, Isabelle/HOL will be rebuilt during"
-	        echo "       the next start of Isabelle."
-	    else
-                echo "  FAILURE: Could not apply Isabelle/DOF patch."
-                echo "    Please copy patches/thy_output.ML to $ISABELLE_HOME/src/Pure/Thy/:"
-                echo "       cp patches/thy_output.ML $ISABELLE_HOME/src/Pure/Thy/"
-                echo "    and rebuild Isabelle/HOL."
-                exit_error
-	    fi
-        fi
+	if (cp -f $src $dst) &> /dev/null; then 
+	    echo "       Applied patch successfully, Isabelle/HOL will be rebuilt during"
+	    echo "       the next start of Isabelle."
+	else
+            echo "  FAILURE: Could not apply Isabelle/DOF patch."
+            echo "    Please copy $src to $dst, e.g.:"
+            echo "       cp -f $src $dst"
+            echo "    and rebuild Isabelle/HOL."
+            exit_error
+	fi
     fi
 }
 
@@ -158,7 +152,7 @@ check_old_installation(){
         rm -rf "$ISABELLE_HOME_USER/DOF.bak"
         mv "$ISABELLE_HOME_USER/DOF" "$ISABELLE_HOME_USER/DOF.bak"
     else
-        echo "  No old instllation found."
+        echo "  No old installation found."
     fi
 
 }
