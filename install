@@ -114,7 +114,7 @@ check_afp_entries() {
 }
 
 check_isa_dof_patch() {
-    echo "* Check availabilty of Isabelle/DOF patch:"
+    echo "* Check availability of Isabelle/DOF patch:"
     src="patches/thy_output.ML"
     dst="$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"
      
@@ -152,7 +152,7 @@ check_old_installation(){
         rm -rf "$ISABELLE_HOME_USER/DOF.bak"
         mv "$ISABELLE_HOME_USER/DOF" "$ISABELLE_HOME_USER/DOF.bak"
     else
-        echo "  No old instllation found."
+        echo "  No old installation found."
     fi
 
 }
