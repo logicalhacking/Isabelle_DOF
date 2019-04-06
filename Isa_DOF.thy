@@ -940,6 +940,7 @@ setup\<open>DOF_core.update_isa_global("file"     ,ISA_core.ML_isa_check_file) \
 setup\<open>DOF_core.update_isa_global("docitem"  ,ISA_core.ML_isa_check_docitem)\<close>     
 
 section\<open> Syntax for Annotated Documentation Commands (the '' View'' Part I) \<close>
+
 ML\<open>
 structure ODL_Command_Parser = 
 struct
@@ -947,55 +948,6 @@ struct
 type meta_args_t = (((string * Position.T) *
                      (string * Position.T) option)
                     * ((string * Position.T) * string) list)
-
-fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : meta_args_t) = 
-    (* for the moment naive, i.e. without textual normalization of 
-       attribute names and adapted term printing *)
-    let val l   = "label = "^ (enclose "{" "}" lab)
-        val cid_long = case cid_opt of
-                                NONE => DOF_core.default_cid
-                              | SOME(cid,_) => DOF_core.name2doc_class_name thy cid        
-        val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
-
-        fun ltx_of_term _ (((Const ("List.list.Cons", t1) $  (Const ("String.Char", t2 ) $ t))) $ t') 
-                           = (HOLogic.dest_string (((Const ("List.list.Cons", t1) $  (Const ("String.Char", t2 ) $ t))) $ t'))
-          | ltx_of_term _ (@{term "numeral :: _ \<Rightarrow> _"} $ t) = Int.toString(HOLogic.dest_numeral t)
-          | ltx_of_term ctx ((Const ("List.list.Cons", _) $ t1) $ t2) = (case t2 of 
-                                                                            Const ("List.list.Nil", _) => (ltx_of_term ctx t1)
-                                                                           |_ => ((ltx_of_term ctx t1)^", " ^(ltx_of_term ctx t2))
-                                                                         )
-          | ltx_of_term ctxt t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
-        fun markup2string s = String.concat (List.filter (fn c => c <> Symbol.DEL) (Symbol.explode (YXML.content_of s))) 
-        fun ltx_of_markup ctxt s = let
-  	                            val term = (Syntax.check_term ctxt o Syntax.parse_term ctxt) s
-                                val str_of_term = ltx_of_term  ctxt term 
-                                    handle _ => "Exception in ltx_of_term"
-                                (* For debugging: 
-                                val old_str = (markup2string s)
-                                val _ = writeln("<OLD_STR>"^old_str^"</OLD_STR>")          
-                                val _ = writeln("<NEW_STR>"^str_of_term^"</NEW_STR>")          
-                                val t_str = ML_Syntax.print_term term  
-                                            handle (TERM _) => "Exception TERM in ltx_of_markup (print_term)"
-                                val _ = writeln("<TERM>"^t_str^"</TERM>")
-                                *)
-                              in
-                                str_of_term
-                              end 
-        fun toLong n =  #long_name(the(DOF_core.get_attribute_info cid_long (markup2string n) thy))
-
-        val ctxt = Proof_Context.init_global thy
-        val actual_args =  map (fn ((lhs,_),rhs) => (toLong lhs, ltx_of_markup ctxt rhs))
-                               attr_list  
-	      val default_args = map (fn (b,_,t) => (toLong (Long_Name.base_name ( Sign.full_name thy b)), ltx_of_term ctxt t))
-                               (DOF_core.get_attribute_defaults cid_long thy)
-
-        val default_args_filtered = filter (fn (a,_) => not (exists (fn b => b = a) 
-                                    (map (fn (c,_) => c) actual_args))) default_args
-        val str_args = map (fn (lhs,rhs) => lhs^" = "^(enclose "{" "}" rhs)) 
-                      (actual_args@default_args_filtered)
-    in
-      (enclose "[" "]" (String.concat [ cid_txt, ", args={", (commas str_args), "}"])) 
-end
 
 val semi = Scan.option (Parse.$$$ ";");
 val is_improper = not o (Token.is_proper orf Token.is_begin_ignore orf Token.is_end_ignore);
@@ -1435,18 +1387,88 @@ val _ =
                        "evaluate and print term"
                        (attributes -- opt_evaluator -- opt_modes  -- Parse.term  >> assert_cmd'); 
 
+
+end (* struct *)
+
+\<close>
+
+
+ML\<open>
+structure ODL_LTX_Converter = 
+struct
+
+fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Command_Parser.meta_args_t) = 
+    (* for the moment naive, i.e. without textual normalization of 
+       attribute names and adapted term printing *)
+    let val _ = writeln("Label: "^lab)
+        val cid_long = case cid_opt of
+                                NONE => DOF_core.default_cid
+                              | SOME(cid,_) => DOF_core.name2doc_class_name thy cid        
+        val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
+
+
+        fun ltx_of_term _ _ (((Const ("List.list.Cons", t1) $  (Const ("String.Char", t2 ) $ t))) $ t') 
+                           = (HOLogic.dest_string (((Const ("List.list.Cons", t1) $  (Const ("String.Char", t2 ) $ t))) $ t'))
+          | ltx_of_term _ _ (Const ("List.list.Nil", _)) = ""
+          | ltx_of_term _ _ (@{term "numeral :: _ \<Rightarrow> _"} $ t) = Int.toString(HOLogic.dest_numeral t)
+          | ltx_of_term ctx encl ((Const ("List.list.Cons", _) $ t1) $ t2) = 
+                                               let val inner = (case t2 of 
+                                                                  Const ("List.list.Nil", _) => (ltx_of_term ctx true t1)
+                                                                | _ => ((ltx_of_term ctx false t1)^", " ^(ltx_of_term ctx false t2))
+                                                             )
+                                               in if encl then enclose "{" "}" inner else inner end
+          | ltx_of_term _ _ (Const ("Option.option.None", _)) = ""
+          | ltx_of_term ctxt _ (Const ("Option.option.Some", _)$t) = ltx_of_term ctxt true t
+          | ltx_of_term ctxt _ t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
+
+
+        fun ltx_of_term_dbg ctx encl term  = let 
+              val t_str = ML_Syntax.print_term term  
+                          handle (TERM _) => "Exception TERM in ltx_of_term_dbg (print_term)"
+              val ltx = ltx_of_term ctx encl term
+              val _ = writeln("<STRING>"^(Sledgehammer_Util.hackish_string_of_term ctx term)^"</STRING>")
+              val _ = writeln("<LTX>"^ltx^"</LTX>")
+              val _ = writeln("<TERM>"^t_str^"</TERM>")
+            in ltx end 
+
+
+        fun markup2string s = String.concat (List.filter (fn c => c <> Symbol.DEL) (Symbol.explode (YXML.content_of s)))
+        fun ltx_of_markup ctxt s = let
+  	                            val term = (Syntax.check_term ctxt o Syntax.parse_term ctxt) s
+                                val str_of_term = ltx_of_term  ctxt true term 
+                                    handle _ => "Exception in ltx_of_term"
+                              in
+                                str_of_term
+                              end 
+        fun toLong n =  #long_name(the(DOF_core.get_attribute_info cid_long (markup2string n) thy))
+
+        val ctxt = Proof_Context.init_global thy
+        val actual_args =  map (fn ((lhs,_),rhs) => (toLong lhs, ltx_of_markup ctxt rhs))
+                               attr_list  
+	      val default_args = map (fn (b,_,t) => (toLong (Long_Name.base_name ( Sign.full_name thy b)), ltx_of_term ctxt true t))
+                               (DOF_core.get_attribute_defaults cid_long thy)
+
+        val default_args_filtered = filter (fn (a,_) => not (exists (fn b => b = a) 
+                                    (map (fn (c,_) => c) actual_args))) default_args
+        val str_args = map (fn (lhs,rhs) => lhs^" = "^(enclose "{" "}" rhs)) 
+                      (actual_args@default_args_filtered)
+    in
+      (enclose "[" "]" (String.concat [ cid_txt, ", args={", (commas str_args), "}"])) 
+end
 (* the following 2 lines set parser and converter for LaTeX generation of meta-attributes. 
    Currently of *all* commands, no distinction between text* and text command. 
    This code depends on a MODIFIED Isabelle2017 version resulting fro; applying the files
    under Isabell_DOF/patches. 
  *)
 val _ = Thy_Output.set_meta_args_parser 
-                       (fn thy => (Scan.optional (attributes >> meta_args_2_string thy) "")) 
+                       (fn thy => (Scan.optional (ODL_Command_Parser.attributes >> meta_args_2_string thy) "")) 
 
-end (* struct *)
 
+end
 \<close>
-  
+
+
+
 ML \<open>
 local (* dull and dangerous copy from Pure.thy given that these functions are not
          globally exported. *)
