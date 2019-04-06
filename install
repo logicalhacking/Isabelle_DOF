@@ -118,7 +118,7 @@ check_isa_dof_patch() {
     src="patches/thy_output.ML"
     dst="$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"
      
-    if command -v md5sum > /dev/null 2>&1 && [[ $(md5sum "$src" | cut -d' ' -f1) = $(md5sum "$dst" | cut -d' ' -f1) ]]; then
+    if command -v cmp > /dev/null 2>&1 && cmp -s "$src" "$dst" ; then
         echo "  Success: latest Isabelle/DOF patch already applied"
         if isabelle process -e 'Thy_Output.set_meta_args_parser' &> /dev/null ; then
             true
@@ -126,7 +126,7 @@ check_isa_dof_patch() {
             echo "  Warning: Isabelle/HOL needs to be rebuild to activate patch."
         fi
     else
-        command -v md5sum >/dev/null 2>&1 || echo "  Warning: md5sum not available, cannot check if patch is already applied."
+        command -v cmp >/dev/null 2>&1 || echo "  Warning: cmp not available, cannot check if patch is already applied."
         echo "  Warning: Isabelle/DOF patch is not available or outdated."
         echo "           Trying to patch system ...."
         if [ ! -f "$dst.backup-by-isadof-installer" ]; then
