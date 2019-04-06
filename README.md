@@ -12,16 +12,26 @@ system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle201
 
 ## Installation 
 
+### Quick Installation Guide
+
 In most case, the DOF-plugin can be installed as follows:
 ```console 
 foo@bar:~$ ./install
 ```
 If a specific Isabelle version should be used (i.e., not the default 
 one), the full path to the ``isabelle`` command needs to be passed as 
-argument to the ``install`` script:
+using the ``-i`` command line argument of the ``install`` script:
 ```console 
-foo@bar:~$ ./install /usr/local/Isabelle2017/bin/isabelle
+foo@bar:~$ ./install -i /usr/local/Isabelle2017/bin/isabelle
 ```
+
+For further command line options of the installer, please use the 
+built-in help:
+```console 
+foo@bar:~$ ./install -h
+```
+
+### What The Installer Actually Does
 
 The installer will 
 * apply a patch to Isabelle that is necessary to use Isabelle/DOF. 
