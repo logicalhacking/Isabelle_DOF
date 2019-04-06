@@ -48,7 +48,7 @@ function usage()
       echo "       * ${BASH_REMATCH[1]}"
     fi
   done
-  echo "    -t TEMPLATE   (default: DEFAULT_TEMPLATE)"
+  echo "    -t TEMPLATE   (default: $DEFAULT_TEMPLATE)"
   echo "       Available document templates:"
   for t in "$ISABELLE_HOME_USER/DOF/document-template/"*.tex; do
     if [[ $t =~ root-(.*).tex$ ]]; then
