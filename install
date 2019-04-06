@@ -126,19 +126,28 @@ check_isa_dof_patch() {
             echo "  Warning: Isabelle/HOL needs to be rebuild to activate patch."
         fi
     else
-        command -v md5sum >/dev/null 2>&1 || echo "  Warning: md5sum not available, cannot check if patch is already applied."
-        echo "  Warning: Isabelle/DOF patch is not available or outdated."
-        echo "           Trying to patch system ...."
-	if (cp $dst $dst.backup-by-isadof-installer && cp -f $src $dst) &> /dev/null; then 
-	    echo "       Applied patch successfully, Isabelle/HOL will be rebuilt during"
-	    echo "       the next start of Isabelle."
-	else
-            echo "  FAILURE: Could not apply Isabelle/DOF patch."
-            echo "    Please copy patches/thy_output.ML to $ISABELLE_HOME/src/Pure/Thy/:"
-            echo "       cp patches/thy_output.ML $ISABELLE_HOME/src/Pure/Thy/"
-            echo "    and rebuild Isabelle/HOL."
-            exit_error
-	fi
+        if command -v md5 > /dev/null 2>&1 && [[ $(md5 "$src" | cut -d' ' -f1) = $(md5 "$dst" | cut -d' ' -f1) ]]; then
+        echo "  Success: latest Isabelle/DOF patch already applied"
+        if isabelle process -e 'Thy_Output.set_meta_args_parser' &> /dev/null ; then
+            true
+        else
+            echo "  Warning: Isabelle/HOL needs to be rebuild to activate patch."
+        fi
+        else 
+            ommand -v md5sum >/dev/null 2>&1 || command -v md5 >/dev/null 2>&1 || echo "  Warning: neither md5sum inor md5 were available, cannot check if patch is already applied."
+            echo "  Warning: Isabelle/DOF patch is not available or outdated."
+            echo "           Trying to patch system ...."
+	    if (cp $dst $dst.backup-by-isadof-installer && cp -f $src $dst) &> /dev/null; then 
+	        echo "       Applied patch successfully, Isabelle/HOL will be rebuilt during"
+	        echo "       the next start of Isabelle."
+	    else
+                echo "  FAILURE: Could not apply Isabelle/DOF patch."
+                echo "    Please copy patches/thy_output.ML to $ISABELLE_HOME/src/Pure/Thy/:"
+                echo "       cp patches/thy_output.ML $ISABELLE_HOME/src/Pure/Thy/"
+                echo "    and rebuild Isabelle/HOL."
+                exit_error
+	    fi
+        fi
     fi
 }
 
