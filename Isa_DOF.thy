@@ -56,7 +56,7 @@ fun docref_markup_gen refN def name id pos =
   if id = 0 then Markup.empty
   else
     Markup.properties (Position.entity_properties_of def id pos)
-      (Markup.entity refN name);   (* or better store the thy-name as property ? ? ? *)
+                      (Markup.entity refN name);   (* or better store the thy-name as property ? ? ? *)
 
 val docref_markup = docref_markup_gen docrefN
 
@@ -746,12 +746,91 @@ consts ISA_thy          :: "string \<Rightarrow> thy"               ("@{thy _}")
 consts ISA_docitem      :: "string \<Rightarrow> 'a"                ("@{docitem _}")
 consts ISA_docitem_attr :: "string \<Rightarrow> string \<Rightarrow> 'a"      ("@{docitemattr (_) :: (_)}")
 
+\<comment> \<open>Dynamic setup of inner syntax cartouche\<close>
+
+ML \<open>
+(*  Author:     Frédéric Tuong, Université Paris-Saclay *)
+(*  Title:      HOL/ex/Cartouche_Examples.thy
+    Author:     Makarius
+*)
+  local
+    fun mk_char f_char (s, _) accu =
+        fold
+          (fn c => fn (accu, l) =>
+            (f_char c accu,
+               Syntax.const @{const_syntax Cons}
+             $ (Syntax.const @{const_syntax Char} $ HOLogic.mk_numeral c)
+             $ l))
+          (rev (map Char.ord (String.explode s)))
+          accu;
+
+    fun mk_string _ accu [] = (accu, Const (@{const_syntax Nil}, @{typ "char list"}))
+      | mk_string f_char accu (s :: ss) = mk_char f_char s (mk_string f_char accu ss);
+
+  in
+    fun string_tr f f_char accu content args =
+      let fun err () = raise TERM ("string_tr", args) in
+        (case args of
+          [(c as Const (@{syntax_const "_constrain"}, _)) $ Free (s, _) $ p] =>
+            (case Term_Position.decode_position p of
+              SOME (pos, _) => c $ f (mk_string f_char accu (content (s, pos))) $ p
+            | NONE => err ())
+        | _ => err ())
+      end;
+  end;
+\<close>
+
+syntax "_cartouche_string" :: "cartouche_position \<Rightarrow> _"  ("_")
+
+ML\<open>
+val cartouche_grammar =
+  [ ("char list", snd)
+  , ("String.literal", (fn (_, x) => Syntax.const @{const_syntax STR} $ x))]
+\<close>
+
+ML\<open>
+fun parse_translation_cartouche binding l f_char accu =
+  let val cartouche_type = Attrib.setup_config_string binding (K (fst (hd l)))
+      (* if there is no type specified, by default we set the first element
+         to be the default type of cartouches *) in
+  fn ctxt =>
+    string_tr
+      let val cart_type = Config.get ctxt cartouche_type in
+      case (List.find (fn (s, _) => s = cart_type)
+                          l) of
+        NONE => error ("Unregistered return type for the cartouche: \"" ^ cart_type ^ "\"")
+      | SOME (_, f) => f
+      end
+      f_char
+      accu
+      (Symbol_Pos.cartouche_content o Symbol_Pos.explode)
+  end
+\<close>
+
+parse_translation \<open>
+  [( @{syntax_const "_cartouche_string"}
+   , parse_translation_cartouche @{binding cartouche_type} cartouche_grammar (K I) ())]
+\<close>
+
+
 (* tests *)  
 term "@{typ  ''int => int''}"  
 term "@{term ''Bound 0''}"  
 term "@{thm  ''refl''}"  
 term "@{docitem  ''<doc_ref>''}"
 ML\<open>   @{term "@{docitem  ''<doc_ref>''}"}\<close>
+(**)
+term "@{typ  \<open>int => int\<close>}"  
+term "@{term \<open>Bound 0\<close>}"  
+term "@{thm  \<open>refl\<close>}"  
+term "@{docitem  \<open><doc_ref>\<close>}"
+ML\<open>   @{term "@{docitem  \<open><doc_ref>\<close>}"}\<close>
+(**)
+declare [[cartouche_type = "String.literal"]]
+term "\<open>Université\<close> :: String.literal"
+declare [[cartouche_type = "char list"]]
+term "\<open>Université\<close> :: char list"
+(**)
 
 
 subsection\<open> Semantics \<close>
@@ -1446,7 +1525,7 @@ val docitem_modes = Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ unc
                                                  else {unchecked = true,  define= false})) 
                                    {unchecked = false, define= false} (* default *);
 
-val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.cartouche_input))
+val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.text_input))
 
 fun docitem_antiquotation_generic cid_decl 
              {context = ctxt, source = src:Token.src, state}  
