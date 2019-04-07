@@ -70,9 +70,11 @@ section*[h::example]\<open> Some global inspection commands for the status of do
 
 
 section*[i::example]\<open> Text Antiquotation Infrastructure ... \<close>  
-                  
+                 
+(*<*)
 text\<open> @{docitem \<open>lalala\<close>}   -- produces warning. \<close>  
 text\<open> @{docitem (unchecked) \<open>lalala\<close>} -- produces no warning. \<close>  
+(*>*)
 
 text\<open> @{docitem \<open>ass122\<close>} -- global reference to a text-item in another file. \<close>
 
