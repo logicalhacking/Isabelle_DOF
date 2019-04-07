@@ -1400,7 +1400,7 @@ struct
 fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Command_Parser.meta_args_t) = 
     (* for the moment naive, i.e. without textual normalization of 
        attribute names and adapted term printing *)
-    let val _ = writeln("Label: "^lab)
+    let val l   = "label = "^ (enclose "{" "}" lab)
         val cid_long = case cid_opt of
                                 NONE => DOF_core.default_cid
                               | SOME(cid,_) => DOF_core.name2doc_class_name thy cid        
@@ -1452,8 +1452,10 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Command_Parse
                                     (map (fn (c,_) => c) actual_args))) default_args
         val str_args = map (fn (lhs,rhs) => lhs^" = "^(enclose "{" "}" rhs)) 
                       (actual_args@default_args_filtered)
+        val label_and_type = String.concat [ l, ",", cid_txt]
+        val str_args = label_and_type::str_args
     in
-      (enclose "[" "]" (String.concat [ cid_txt, ", args={", (commas str_args), "}"])) 
+      (enclose "[" "]" (String.concat [ label_and_type, ", args={", (commas str_args), "}"])) 
 end
 (* the following 2 lines set parser and converter for LaTeX generation of meta-attributes. 
    Currently of *all* commands, no distinction between text* and text command. 
