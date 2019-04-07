@@ -129,3 +129,37 @@ $ISABELLE_TOOL latex -o "$OUTFORMAT" "root.tex" && \
 $ISABELLE_TOOL latex -o "$OUTFORMAT" "root.tex" && \
 $ISABELLE_TOOL latex -o "$OUTFORMAT" "root.tex"
 
+MISSING_CITATIONS=`grep 'Warning.*Citation' root.log | awk '{print $5}' | sort  -u`
+if [ "$MISSING_CITATIONS" != "" ]; then
+    echo ""
+    echo "ERROR (Isabelle/DOF): document referencing inconsistent due to missing citations: "
+    echo "$MISSING_CITATIONS"
+    exit 1
+fi
+DANGLING_REFS=`grep 'Warning.*Refer' root.log | awk '{print $4}' | sort  -u`
+if [ "$DANGLING_REFS" != "" ]; then
+    echo ""
+    echo "ERROR (Isabelle/DOF): document referencing inconsistent due to dangling references:"
+    echo "$DANGLING_REFS"
+    echo ""
+    exit 1
+fi
+if [ -f "root.blg" ]; then 
+    echo "BibTeX Warnings:"
+    echo "================"
+    grep Warning  root.blg | sed -e 's/Warning--//'
+    echo ""
+fi
+echo "Layout Glitches:"
+echo "================"
+echo -n "Number of overfull hboxes: "
+grep 'Overfull .hbox' root.log | wc -l
+echo -n "Number of underfull hboxes: "
+grep 'Underfull .hbox' root.log | wc -l
+echo -n "Number of overfull vboxes: "
+grep 'Overfull .vbox' root.log | wc -l
+echo -n "Number of underfull vboxes: "
+grep 'Underfull .vbox' root.log | wc -l
+echo ""
+
+exit 0
