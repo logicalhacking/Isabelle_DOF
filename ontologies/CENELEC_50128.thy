@@ -231,6 +231,7 @@ NOTE Verification is mostly based on document reviews (design, implementation, t
 Definition*[verifier::concept]
 \<open>entity that is responsible for one or more verification activities\<close>
 
+
 section\<open>Organization, Roles and Responsabilities\<close>
 text\<open>see also section \<^emph>\<open>Software management and organization\<close>.\<close>
 
@@ -289,11 +290,15 @@ doc_class requirement = text_element +
    long_name    :: "string option"
    is_concerned :: "role set"
   
-(*
-doc_class requirement_analysis = 
-   no :: "nat"
-   accepts "\<lbrace>requirement\<rbrace>\<^sup>+"
-*)
+text\<open>The following class permits to represent common situations where a set of requirements 
+decomposes a main requirement. The GSN notation favors this particular decomposition style.\<close>
+doc_class sub_requirement = 
+   decomposes ::  requirement
+   relates_to :: "requirement set"
+
+doc_class safety_requirement = requirement +
+   formal_definition    :: "thm list"
+
                               
 text\<open>The category @{emph \<open>hypothesis\<close>} is used for assumptions from the 
       foundational mathematical or physical domain, so for example: 
@@ -383,35 +388,28 @@ section\<open>Software Assurance related Entities and Concepts\<close>
 
 
 text{* subcategories are : *}
-text\<open>Table A.5: Verification and Testing\<close> 
-datatype vnt_technique = 
-               formal_proof 
-             | stat_analysis 
-             | dyn_analysis (* Refinedin Table A.13: 
-                               -- Test Case Execution from Boundary Analysis
-                               -- Test Case Execution from Error Guessing
-                               -- Test Case Execution from Error Seeding
-                               -- Performance Modeling
-                               -- Equivalence Classes and Input Partition Testing
-                               -- Structure-Based Testing
-                             *)
-             | metrics 
-             | traceability
-             | sw_error_effect_analysis
-             | test_coverage_for_code
-             | functional_testing
-                            (* Refined in Table A.14:
-                               -- Test Case Execution from Cause Consequence Diagrams
-                               -- Prototyping / Animation
-                               -- Boundary Value Analysis
-                               -- Equivalence Classes and Input Partition Testing
-                               -- Process Simulation
-                             *)
-             | perf_testing
-             | interface_testing
-             | model_based_testing  (* 'modeling' unclear *)  
 
-type_synonym verification_and_testing_technique = vnt_technique
+text\<open>Table A.13:  \<close>
+
+datatype dyn_ana_kind = 
+           boundary_analysis     (* -- Test Case Execution from Boundary Analysis *)
+         | error_guessing        (* -- Test Case Execution from Error Guessing *)
+         | error_seeding         (* -- Test Case Execution from Error Seeding *)
+         | performance_modeling  (* -- Performance Modeling *)
+         | equivalence_class_test(* -- Equivalence Classes and Input Partition Testing*)
+         | structure_based_test  (* -- Structure-Based Testing *)
+
+text\<open>Table A.14:  \<close>
+
+datatype fun_test_kind = 
+           cause_consequence_diagram (* -- Test Case Execution from Cause Consequence Diagrams *)
+         | prototyping               (* -- Prototyping / Animation *)
+         | bounadry_value_analysis   (* -- Boundary Value Analysis *) 
+         | equivalence_class_test    (* -- Equivalence Classes and Input Partition Testing*)
+         | process_simulation        (* -- Process Simulation *) 
+ 
+
+text\<open>Table A.5: Verification and Testing\<close>
 
 datatype test_coverage_criterion =  
              allpathk  nat nat     (* depth, test_coverage_degree *)
@@ -420,12 +418,33 @@ datatype test_coverage_criterion =
              | dnf_E_d  string nat (* equivalence class testing *)
              | other string
 
+datatype vnt_technique = 
+               formal_proof "thm list"
+             | stat_analysis 
+             | dyn_analysis dyn_ana_kind 
+             | metrics 
+             | traceability
+             | sw_error_effect_analysis
+             | test_coverage_for_code test_coverage_criterion
+             | functional_testing fun_test_kind test_coverage_criterion
+             | perf_testing test_coverage_criterion
+             | interface_testing test_coverage_criterion
+             | model_based_testing  test_coverage_criterion (* 'modeling' unclear *)  
+
+
+type_synonym verification_and_testing_technique = vnt_technique
+
+
 text\<open>The objective of software verification is to examine and arrive at a \<^emph>\<open>judgement\<close> based on 
 \<^emph>\<open>evidence\<close> that  output items (process, documentation, software or application) of a specific 
 development phase fulfil the requirements and plans with respect to completeness, correctness 
 and consistency. \<close>
-doc_class judgement = 
+datatype status = complete | in_complete | reject | unclear | unknown 
+
+doc_class judgement =    
+   refers_to       :: requirement
    evidence        :: "vnt_technique list"
+   status          :: status
    is_concerned    :: "role set" <= "{VER,ASR,VAL}" 
 
 section\<open> Design and Test Documents \<close> 
