@@ -812,6 +812,72 @@ parse_translation \<open>
    , parse_translation_cartouche @{binding cartouche_type} cartouche_grammar (K I) ())]
 \<close>
 
+(* (* PORT TO ISABELLE2018 *)
+ML \<open>
+(*  Author:     Frédéric Tuong, Université Paris-Saclay *)
+(*  Title:      HOL/ex/Cartouche_Examples.thy
+    Author:     Makarius
+*)
+  local
+    fun mk_char (f_char, f_cons, _) (s, _) accu =
+        fold
+          (fn c => fn (accu, l) =>
+            (f_char c accu, f_cons c l))
+          (rev (map Char.ord (String.explode s)))
+          accu;
+
+    fun mk_string (_, _, f_nil) accu [] = (accu, f_nil)
+      | mk_string f accu (s :: ss) = mk_char f s (mk_string f accu ss);
+  in
+    fun string_tr f f_mk accu content args =
+      let fun err () = raise TERM ("string_tr", args) in
+        (case args of
+          [(c as Const (@{syntax_const "_constrain"}, _)) $ Free (s, _) $ p] =>
+            (case Term_Position.decode_position p of
+              SOME (pos, _) => c $ f (mk_string f_mk accu (content (s, pos))) $ p
+            | NONE => err ())
+        | _ => err ())
+      end;
+  end;
+\<close>
+
+syntax "_cartouche_string" :: "cartouche_position \<Rightarrow> _"  ("_")
+
+ML\<open>
+structure Cartouche_Grammar = struct
+  fun list_comb_mk cst n c = list_comb (Syntax.const cst, String_Syntax.mk_bits_syntax n c)
+  val nil1 = Syntax.const @{const_syntax String.empty_literal}
+  fun cons1 c l = list_comb_mk @{const_syntax String.Literal} 7 c $ l
+
+  val default =
+    [ ( "char list"
+      , ( Const (@{const_syntax Nil}, @{typ "char list"})
+        , fn c => fn l => Syntax.const @{const_syntax Cons} $ list_comb_mk @{const_syntax Char} 8 c $ l
+        , snd))
+    , ( "String.literal", (nil1, cons1, snd))]
+end
+\<close>
+
+ML\<open>
+fun parse_translation_cartouche binding l f_integer accu =
+  let val cartouche_type = Attrib.setup_config_string binding (K (fst (hd l)))
+      (* if there is no type specified, by default we set the first element
+         to be the default type of cartouches *) in
+  fn ctxt =>
+    let val cart_type = Config.get ctxt cartouche_type in
+    case List.find (fn (s, _) => s = cart_type) l of
+      NONE => error ("Unregistered return type for the cartouche: \"" ^ cart_type ^ "\"")
+    | SOME (_, (nil0, cons, f)) =>
+        string_tr f (f_integer, cons, nil0) accu (Symbol_Pos.cartouche_content o Symbol_Pos.explode)
+    end
+  end
+\<close>
+
+parse_translation \<open>
+  [( @{syntax_const "_cartouche_string"}
+   , parse_translation_cartouche @{binding cartouche_type} Cartouche_Grammar.default (K I) ())]
+\<close>
+*)
 
 (* tests *)  
 term "@{typ  ''int => int''}"  
