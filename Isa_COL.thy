@@ -60,15 +60,13 @@ we follow LaTeX terminology on levels
 for scholarly paper: invariant level > 0 \<close>
 
 doc_class text_element = 
-   level       :: "int  option"    <=  "None" 
-(* 
-   referentiable :: boolean <= "false"
-   variants      :: "string_literal set" <= "{''outline'', ''document''}" 
-*)
+   level         :: "int  option"    <=  "None" 
+   referentiable :: bool <= "False"
+   variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
 
 section\<open>Some attempt to model standardized links to Standard Isabelle Formal Content\<close>
 
-doc_class assertions =
+doc_class assertions = 
     properties :: "term list"
 
 doc_class "thms" =

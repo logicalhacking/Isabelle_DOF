@@ -358,6 +358,7 @@ for exported constraints assuring in judgements safety requirements of the syste
                         
 doc_class SRAC = EC  +
      assumption_kind :: ass_kind <= (*default *) formal
+     formal_repr     :: "thm list"
      type_synonym safety_related_application_condition = SRAC
 
 
