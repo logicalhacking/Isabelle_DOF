@@ -1511,7 +1511,9 @@ end\<close>
 
  
 section\<open> Syntax for Ontological Antiquotations (the '' View'' Part II) \<close>
-  
+
+text\<open> @{theory Main}\<close>
+
 ML\<open>
 structure OntoLinkParser = 
 struct
@@ -1555,6 +1557,16 @@ fun docitem_antiquotation_generic cid_decl
              {context = ctxt, source = src:Token.src, state}  
              ({unchecked = x, define= y}, source:Input.source) =
              let fun label_latex flag = enclose (if flag then "\\label{"  else "\\autoref{") "}"
+                 val X1 = Thy_Output.output_text state {markdown=false}
+                          :  Input.source -> string
+                 val X2 = check_and_mark ctxt                   
+                                 cid_decl 
+                                 ({strict_checking = not x})
+                                 (Input.pos_of source)
+                          : string -> string
+                 val X3 = label_latex y
+                          : string -> string
+                 
              in 
                  (Thy_Output.output_text state {markdown=false} #>
                   check_and_mark ctxt                   
@@ -1810,5 +1822,7 @@ val _ =
 
 end (* struct *)
 \<close>  
+
+ML\<open>Thy_Output.document_command; Thy_Output.output_text\<close>
 
 end
