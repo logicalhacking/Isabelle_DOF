@@ -734,5 +734,10 @@ Syntax.read_typ  @{context} "hypothesis" handle  _ => dummyT;
 Proof_Context.init_global;
 \<close>
 
+text\<open> 
+ @{theory_text [display] \<open>definition a\<^sub>E \<equiv> True
+                          lemma XXX : "True = False " by auto\<close>} 
+\<close>
+
 end      
   
