@@ -4,17 +4,17 @@ theory Concept_Example
   imports "../../ontologies/Conceptual" (* we use the generic "Conceptual" ontology *)
 begin
 
-text\<open>@{theory Conceptual} provides a monitor @{typ M} enforcing a particular document structure.
-     Here, we say: From now on, this structural rules are respected wrt. all doc\_classes M is
-     enabled for.\<close>
+text\<open>@{theory \<open>Draft.Conceptual\<close>} provides a monitor @{typ M} enforcing a particular document 
+     structure.  Here, we say: From now on, this structural rules are respected wrt. all 
+     \<^theory_text>\<open>doc_class\<close>es @{typ M} is enabled for.\<close>
 open_monitor*[struct::M]  
 
 section*[a::A, x = "3"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 text*[c1::C, x = "''beta''"] \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
-
+               
 text*[d::D, a1 = "X3"] \<open> ... phasellus amet id massa nunc, pede suscipit repellendus, 
-                         ... @{C \<open>c1\<close>} @{thm "refl"}\<close>
+                         ... @{C c1} @{thm "refl"}\<close>
 
 
 update_instance*[d::D, a1 := X2]

@@ -10,13 +10,14 @@ doc_class title =
 doc_class subtitle =
    abbrev :: "string option"       <=  "None"
    
--- \<open>adding a contribution list and checking that it is cited as well in tech as in conclusion. ? \<close>
+(* adding a contribution list and checking that it is cited as well in tech as in conclusion. ? *)
 
 doc_class author =
    email       :: "string" <= "''''"
    http_site   :: "string" <= "''''"
    orcid       :: "string" <= "''''"
    affiliation :: "string"
+
 
 doc_class abstract =
    keywordlist        :: "string list"   <= "[]" 
@@ -111,7 +112,7 @@ local
 fun group f g cidS [] = []
    |group f g cidS (a::S) = case find_first (f a) cidS of
                             NONE => [a] :: group f g cidS S
-                          | SOME cid => let val (pref,suff) =  take_prefix  (g cid) S
+                          | SOME cid => let val (pref,suff) =  chop_prefix  (g cid) S
                                         in (a::pref)::(group f g cidS suff) end;
 
 fun partition ctxt cidS trace = 

@@ -28,8 +28,6 @@ Safety assessment is focused on but not limited to the safety properties of a sy
 Definition*[assessor::concept, tag="''assessor''"]
 \<open>entity that carries out an assessment\<close>
 
-text\<open>@{docitem \<open>assessment\<close>}\<close>
-
 Definition*[COTS::concept, tag="''commercial off-the-shelf software''"]
 \<open>software defined by market-driven need, commercially available and whose fitness for purpose 
 has been demonstrated by a broad spectrum of commercial users\<close>
@@ -73,7 +71,7 @@ from the intended performance or behaviour (cf @{concept \<open>error\<close>})\
 Definition*[failure::concept]
 \<open>unacceptable difference between required and observed performance\<close>
 
-Definition*[FT::concept, tag="\<open>fault tolerance\<close>"]
+Definition*[FT::concept, tag="''fault tolerance''"]
 \<open>built-in capability of a system to provide continued correct provision of service as specified, 
 in the presence of a limited number of hardware or software faults\<close>
 
@@ -262,16 +260,6 @@ datatype phase = SYSDEV_ext (* System Development Phase (external) *)
                | SD    (* Software Deployment       *)
                | SM    (* Software Maintenance      *)
 
-datatype sil = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
-
-type_synonym saftety_integraytion_level = sil
-
-doc_class cenelec_text = text_element +
-   phase        :: "phase"
-   sil          :: sil
-   is_concerned :: "role set" <= "UNIV" 
-
-
 abbreviation software_requirement  :: "phase" where "software_requirement  \<equiv> SR"
 abbreviation software_architecture :: "phase" where "software_architecture \<equiv> SA"
 abbreviation software_design       :: "phase" where "software_design       \<equiv> SD"
@@ -288,6 +276,9 @@ term "SR" (* meta-test *)
 
 section\<open>Objectives, Conformance and Software Integrity Levels\<close>
 
+datatype sil = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
+
+type_synonym saftety_integraytion_level = sil
 
 
 doc_class objectives =
@@ -295,7 +286,7 @@ doc_class objectives =
    is_concerned :: "role set"
 
 
-doc_class requirement = cenelec_text +
+doc_class requirement = text_element +
    long_name    :: "string option"
    is_concerned :: "role set"
   
@@ -458,6 +449,11 @@ doc_class judgement =
    is_concerned    :: "role set" <= "{VER,ASR,VAL}" 
 
 section\<open> Design and Test Documents \<close> 
+
+doc_class cenelec_text = text_element +
+   phase        :: "phase"
+   is_concerned :: "role set" <= "UNIV" 
+
 
 
 doc_class SYSREQS = cenelec_text + 
@@ -696,35 +692,30 @@ doc_class test_documentation =
   
 section\<open> META : Testing and Validation \<close>
 
-
 text\<open>Test : @{concept \<open>COTS\<close>}\<close>
-
 
 ML\<open>
 DOF_core.name2doc_class_name @{theory} "requirement";
 DOF_core.name2doc_class_name @{theory} "SRAC";
 DOF_core.is_defined_cid_global "SRAC" @{theory};
 DOF_core.is_defined_cid_global "EC" @{theory};
-"XXXXXXXXXXXXXXXXX";
-DOF_core.is_subclass @{context} "CENELEC_50128.EC" "CENELEC_50128.EC";
+\<close>
+
+ML\<open>
+DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.EC";
 DOF_core.is_subclass @{context} "CENELEC_50128.SRAC" "CENELEC_50128.EC";
 DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.SRAC";
 DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.test_requirement";
-"XXXXXXXXXXXXXXXXX";
-val {docobj_tab={maxano, tab=ref_tab},docclass_tab=class_tab,...} = DOF_core.get_data @{context};
+\<close>
+
+ML\<open>val {docobj_tab={maxano, tab=ref_tab},docclass_tab=class_tab,...} = DOF_core.get_data @{context};
 Symtab.dest ref_tab;
 Symtab.dest class_tab;
 \<close>
 
-
 ML\<open>
-"XXXXXXXXXXXXXXXXX";
-
-DOF_core.get_attributes_local "SRAC" @{context};
-
-@{term assumption_kind}
+val internal_data_of_SRAC_definition = DOF_core.get_attributes_local "SRAC" @{context}
 \<close> 
-
 
 ML\<open>
 DOF_core.name2doc_class_name @{theory} "requirement";
@@ -732,11 +723,6 @@ Syntax.parse_typ @{context} "requirement";
 val Type(t,_) = Syntax.parse_typ @{context} "requirement" handle ERROR _ => dummyT;
 Syntax.read_typ  @{context} "hypothesis" handle  _ => dummyT;
 Proof_Context.init_global;
-\<close>
-
-text\<open> 
- @{theory_text [display] \<open>definition a\<^sub>E \<equiv> True
-                          lemma XXX : "True = False " by auto\<close>} 
 \<close>
 
 end      

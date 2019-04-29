@@ -1,241 +1,163 @@
 (*  Title:      Pure/Thy/thy_output.ML
-    Author:     Markus Wenzel, TU Muenchen
+    Author:     Makarius
 
-Theory document output with antiquotations.
+Theory document output.
 *)
 
 signature THY_OUTPUT =
 sig
-  val display: bool Config.T
-  val quotes: bool Config.T
-  val margin: int Config.T
-  val indent: int Config.T
-  val source: bool Config.T
-  val break: bool Config.T
-  val modes: string Config.T
-  val add_wrapper: ((unit -> string) -> unit -> string) -> Proof.context -> Proof.context
-  val add_option: binding -> (string -> Proof.context -> Proof.context) -> theory -> theory
-  val check_command: Proof.context -> xstring * Position.T -> string
-  val check_option: Proof.context -> xstring * Position.T -> string
-  val print_antiquotations: bool -> Proof.context -> unit
-  val antiquotation: binding -> 'a context_parser ->
-    ({source: Token.src, state: Toplevel.state, context: Proof.context} -> 'a -> string) ->
-      theory -> theory
-  val boolean: string -> bool
-  val integer: string -> int
-  val eval_antiquote: Toplevel.state -> Antiquote.text_antiquote -> string
-  val output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string
-  val present_thy: theory -> (Toplevel.transition * Toplevel.state) list -> Token.T list -> Buffer.T
+  val output_document: Proof.context -> {markdown: bool} -> Input.source -> Latex.text list
+  val check_comments: Proof.context -> Symbol_Pos.T list -> unit
+  val output_token: Proof.context -> Token.T -> Latex.text list
+  val output_source: Proof.context -> string -> Latex.text list
+  type segment = {span: Command_Span.span, command: Toplevel.transition, state: Toplevel.state}
+  val present_thy: Options.T -> theory -> segment list -> Latex.text list
   val set_meta_args_parser : (theory -> string parser) -> unit
-  val pretty_text: Proof.context -> string -> Pretty.T
   val pretty_term: Proof.context -> term -> Pretty.T
   val pretty_thm: Proof.context -> thm -> Pretty.T
-  val str_of_source: Token.src -> string
-  val maybe_pretty_source: (Proof.context -> 'a -> Pretty.T) -> Proof.context ->
-    Token.src -> 'a list -> Pretty.T list
-  val string_of_margin: Proof.context -> Pretty.T -> string
-  val output: Proof.context -> Pretty.T list -> string
-  val verbatim_text: Proof.context -> string -> string
-  val document_command: {markdown: bool} -> (xstring * Position.T) option * Input.source ->
-    Toplevel.transition -> Toplevel.transition
+  val lines: Latex.text list -> Latex.text list
+  val items: Latex.text list -> Latex.text list
+  val isabelle: Proof.context -> Latex.text list -> Latex.text
+  val isabelle_typewriter: Proof.context -> Latex.text list -> Latex.text
+  val typewriter: Proof.context -> string -> Latex.text
+  val verbatim: Proof.context -> string -> Latex.text
+  val source: Proof.context -> Token.src -> Latex.text
+  val pretty: Proof.context -> Pretty.T -> Latex.text
+  val pretty_source: Proof.context -> Token.src -> Pretty.T -> Latex.text
+  val pretty_items: Proof.context -> Pretty.T list -> Latex.text
+  val pretty_items_source: Proof.context -> Token.src -> Pretty.T list -> Latex.text
+  val antiquotation_pretty:
+    binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory
+  val antiquotation_pretty_source:
+    binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory
+  val antiquotation_raw:
+    binding -> 'a context_parser -> (Proof.context -> 'a -> Latex.text) -> theory -> theory
+  val antiquotation_verbatim:
+    binding -> 'a context_parser -> (Proof.context -> 'a -> string) -> theory -> theory
 end;
 
 structure Thy_Output: THY_OUTPUT =
 struct
 
-(** options **)
+(* output document source *)
 
-val display = Attrib.setup_option_bool ("thy_output_display", \<^here>);
-val break = Attrib.setup_option_bool ("thy_output_break", \<^here>);
-val quotes = Attrib.setup_option_bool ("thy_output_quotes", \<^here>);
-val margin = Attrib.setup_option_int ("thy_output_margin", \<^here>);
-val indent = Attrib.setup_option_int ("thy_output_indent", \<^here>);
-val source = Attrib.setup_option_bool ("thy_output_source", \<^here>);
-val modes = Attrib.setup_option_string ("thy_output_modes", \<^here>);
+val output_symbols = single o Latex.symbols_output;
 
-
-structure Wrappers = Proof_Data
-(
-  type T = ((unit -> string) -> unit -> string) list;
-  fun init _ = [];
-);
-
-fun add_wrapper wrapper = Wrappers.map (cons wrapper);
-
-val wrap = Wrappers.get #> fold (fn wrapper => fn f => wrapper f);
-
-
-
-(** maintain global antiquotations **)
-
-structure Antiquotations = Theory_Data
-(
-  type T =
-    (Token.src -> Toplevel.state -> Proof.context -> string) Name_Space.table *
-      (string -> Proof.context -> Proof.context) Name_Space.table;
-  val empty : T =
-    (Name_Space.empty_table Markup.document_antiquotationN,
-      Name_Space.empty_table Markup.document_antiquotation_optionN);
-  val extend = I;
-  fun merge ((commands1, options1), (commands2, options2)) : T =
-    (Name_Space.merge_tables (commands1, commands2),
-      Name_Space.merge_tables (options1, options2));
-);
-
-val get_antiquotations = Antiquotations.get o Proof_Context.theory_of;
-
-fun add_command name cmd thy = thy
-  |> Antiquotations.map (apfst (Name_Space.define (Context.Theory thy) true (name, cmd) #> snd));
-
-fun add_option name opt thy = thy
-  |> Antiquotations.map (apsnd (Name_Space.define (Context.Theory thy) true (name, opt) #> snd));
-
-fun check_command ctxt = #1 o Name_Space.check (Context.Proof ctxt) (#1 (get_antiquotations ctxt));
-
-fun check_option ctxt = #1 o Name_Space.check (Context.Proof ctxt) (#2 (get_antiquotations ctxt));
-
-fun command src state ctxt =
-  let val (src', f) = Token.check_src ctxt (#1 o get_antiquotations) src
-  in f src' state ctxt end;
-
-fun option ((xname, pos), s) ctxt =
+fun output_comment ctxt (kind, syms) =
+  (case kind of
+    Comment.Comment =>
+      Input.cartouche_content syms
+      |> output_document (ctxt |> Config.put Document_Antiquotation.thy_output_display false)
+          {markdown = false}
+      |> Latex.enclose_body "%\n\\isamarkupcmt{" "%\n}"
+  | Comment.Cancel =>
+      Symbol_Pos.cartouche_content syms
+      |> output_symbols
+      |> Latex.enclose_body "%\n\\isamarkupcancel{" "}"
+  | Comment.Latex =>
+      [Latex.symbols (Symbol_Pos.cartouche_content syms)])
+and output_comment_document ctxt (comment, syms) =
+  (case comment of
+    SOME kind => output_comment ctxt (kind, syms)
+  | NONE => [Latex.symbols syms])
+and output_document_text ctxt syms =
+  Comment.read_body syms |> maps (output_comment_document ctxt)
+and output_document ctxt {markdown} source =
   let
-    val (_, opt) =
-      Name_Space.check (Context.Proof ctxt) (#2 (get_antiquotations ctxt)) (xname, pos);
-  in opt s ctxt end;
-
-fun print_antiquotations verbose ctxt =
-  let
-    val (commands, options) = get_antiquotations ctxt;
-    val command_names = map #1 (Name_Space.markup_table verbose ctxt commands);
-    val option_names = map #1 (Name_Space.markup_table verbose ctxt options);
-  in
-    [Pretty.big_list "document antiquotations:" (map Pretty.mark_str command_names),
-     Pretty.big_list "document antiquotation options:" (map Pretty.mark_str option_names)]
-  end |> Pretty.writeln_chunks;
-
-fun antiquotation name scan body =
-  add_command name
-    (fn src => fn state => fn ctxt =>
-      let val (x, ctxt') = Token.syntax scan src ctxt
-      in body {source = src, state = state, context = ctxt'} x end);
-
-
-
-(** syntax of antiquotations **)
-
-(* option values *)
-
-fun boolean "" = true
-  | boolean "true" = true
-  | boolean "false" = false
-  | boolean s = error ("Bad boolean value: " ^ quote s);
-
-fun integer s =
-  let
-    fun int ss =
-      (case Library.read_int ss of (i, []) => i
-      | _ => error ("Bad integer value: " ^ quote s));
-  in (case Symbol.explode s of "-" :: ss => ~ (int ss) | ss => int ss) end;
-
-
-(* outer syntax *)
-
-local
-
-val property =
-  Parse.position Parse.name -- Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.name) "";
-
-val properties =
-  Scan.optional (Parse.$$$ "[" |-- Parse.!!! (Parse.enum "," property --| Parse.$$$ "]")) [];
-
-in
-
-val antiq =
-  Parse.!!!
-    (Parse.token Parse.liberal_name -- properties -- Parse.args --| Scan.ahead Parse.eof)
-  >> (fn ((name, props), args) => (props, name :: args));
-
-end;
-
-
-(* eval antiquote *)
-
-local
-
-fun eval_antiq state (opts, src) =
-  let
-    val preview_ctxt = fold option opts (Toplevel.presentation_context_of state);
-    val print_ctxt = Context_Position.set_visible false preview_ctxt;
-
-    fun cmd ctxt = wrap ctxt (fn () => command src state ctxt) ();
-    val _ = cmd preview_ctxt;
-    val print_modes = space_explode "," (Config.get print_ctxt modes) @ [Latex.latexN];
-  in Print_Mode.with_modes print_modes (fn () => cmd print_ctxt) () end;
-
-in
-
-fun eval_antiquote _ (Antiquote.Text ss) = Symbol_Pos.content ss
-  | eval_antiquote state (Antiquote.Control {name, body, ...}) =
-      eval_antiq state
-        ([], Token.make_src name (if null body then [] else [Token.read_cartouche body]))
-  | eval_antiquote state (Antiquote.Antiq {range = (pos, _), body, ...}) =
-      let
-        val keywords =
-          (case try Toplevel.presentation_context_of state of
-            SOME ctxt => Thy_Header.get_keywords' ctxt
-          | NONE =>
-              error ("Unknown context -- cannot expand document antiquotations" ^
-                Position.here pos));
-      in eval_antiq state (Token.read_antiq keywords antiq (body, pos)) end;
-
-end;
-
-
-(* output text *)
-
-fun output_text state {markdown} source =
-  let
-    val is_reported =
-      (case try Toplevel.context_of state of
-        SOME ctxt => Context_Position.is_visible ctxt
-      | NONE => true);
-
     val pos = Input.pos_of source;
     val syms = Input.source_explode source;
 
-    val _ =
-      if is_reported then
-        Position.report pos (Markup.language_document (Input.is_delimited source))
-      else ();
-
-    val output_antiquotes = map (eval_antiquote state) #> implode;
+    val output_antiquotes =
+      maps (Document_Antiquotation.evaluate (output_document_text ctxt) ctxt);
 
     fun output_line line =
-      (if Markdown.line_is_item line then "\\item " else "") ^
+      (if Markdown.line_is_item line then [Latex.string "\\item "] else []) @
         output_antiquotes (Markdown.line_content line);
 
-    fun output_blocks blocks = space_implode "\n\n" (map output_block blocks)
-    and output_block (Markdown.Par lines) = cat_lines (map output_line lines)
+    fun output_block (Markdown.Par lines) =
+          Latex.block (separate (Latex.string "\n") (map (Latex.block o output_line) lines))
       | output_block (Markdown.List {kind, body, ...}) =
-          Latex.environment (Markdown.print_kind kind) (output_blocks body);
+          Latex.environment_block (Markdown.print_kind kind) (output_blocks body)
+    and output_blocks blocks = separate (Latex.string "\n\n") (map output_block blocks);
   in
-    if Toplevel.is_skipped_proof state then ""
+    if Toplevel.is_skipped_proof (Toplevel.presentation_state ctxt) then []
     else if markdown andalso exists (Markdown.is_control o Symbol_Pos.symbol) syms
     then
       let
-        val ants = Antiquote.parse pos syms;
+        val ants = Antiquote.parse_comments pos syms;
         val reports = Antiquote.antiq_reports ants;
         val blocks = Markdown.read_antiquotes ants;
-        val _ = if is_reported then Position.reports (reports @ Markdown.reports blocks) else ();
+        val _ = Context_Position.reports ctxt (reports @ Markdown.reports blocks);
       in output_blocks blocks end
     else
       let
-        val ants = Antiquote.parse pos (Symbol_Pos.trim_blanks syms);
+        val ants = Antiquote.parse_comments pos (trim (Symbol.is_blank o Symbol_Pos.symbol) syms);
         val reports = Antiquote.antiq_reports ants;
-        val _ = if is_reported then Position.reports (reports @ Markdown.text_reports ants) else ();
+        val _ = Context_Position.reports ctxt (reports @ Markdown.text_reports ants);
       in output_antiquotes ants end
   end;
+
+
+(* output tokens with formal comments *)
+
+local
+
+val output_symbols_antiq =
+  (fn Antiquote.Text syms => output_symbols syms
+    | Antiquote.Control {name = (name, _), body, ...} =>
+        Latex.string (Latex.output_symbols [Symbol.encode (Symbol.Control name)]) ::
+          output_symbols body
+    | Antiquote.Antiq {body, ...} =>
+        Latex.enclose_body "%\n\\isaantiq\n" "{}%\n\\endisaantiq\n" (output_symbols body));
+
+fun output_comment_symbols ctxt {antiq} (comment, syms) =
+  (case (comment, antiq) of
+    (NONE, false) => output_symbols syms
+  | (NONE, true) =>
+      Antiquote.parse_comments (#1 (Symbol_Pos.range syms)) syms
+      |> maps output_symbols_antiq
+  | (SOME comment, _) => output_comment ctxt (comment, syms));
+
+fun output_body ctxt antiq bg en syms =
+  Comment.read_body syms
+  |> maps (output_comment_symbols ctxt {antiq = antiq})
+  |> Latex.enclose_body bg en;
+
+in
+
+fun output_token ctxt tok =
+  let
+    fun output antiq bg en =
+      output_body ctxt antiq bg en (Input.source_explode (Token.input_of tok));
+  in
+    (case Token.kind_of tok of
+      Token.Comment NONE => []
+    | Token.Command => output false "\\isacommand{" "}"
+    | Token.Keyword =>
+        if Symbol.is_ascii_identifier (Token.content_of tok)
+        then output false "\\isakeyword{" "}"
+        else output false "" ""
+    | Token.String => output false "{\\isachardoublequoteopen}" "{\\isachardoublequoteclose}"
+    | Token.Alt_String => output false "{\\isacharbackquoteopen}" "{\\isacharbackquoteclose}"
+    | Token.Verbatim => output true "{\\isacharverbatimopen}" "{\\isacharverbatimclose}"
+    | Token.Cartouche => output false "{\\isacartoucheopen}" "{\\isacartoucheclose}"
+    | _ => output false "" "")
+  end handle ERROR msg => error (msg ^ Position.here (Token.pos_of tok));
+
+fun output_source ctxt s =
+  output_body ctxt false "" "" (Symbol_Pos.explode (s, Position.none));
+
+fun check_comments ctxt =
+  Comment.read_body #> List.app (fn (comment, syms) =>
+    let
+      val pos = #1 (Symbol_Pos.range syms);
+      val _ =
+        comment |> Option.app (fn kind =>
+          Context_Position.reports ctxt (map (pair pos) (Markup.cartouche :: Comment.markups kind)));
+      val _ = output_comment_symbols ctxt {antiq = false} (comment, syms);
+    in if comment = SOME Comment.Comment then check_comments ctxt syms else () end);
+
+end;
 
 
 
@@ -243,37 +165,41 @@ fun output_text state {markdown} source =
 
 (*NB: arranging white space around command spans is a black art*)
 
+val is_white = Token.is_space orf Token.is_informal_comment;
+val is_black = not o is_white;
+
+val is_white_comment = Token.is_informal_comment;
+val is_black_comment = Token.is_formal_comment;
+
+
 (* presentation tokens *)
 
 datatype token =
-    No_Token
+    Ignore_Token
   | Basic_Token of Token.T
-  | Markup_Token of string * string * Input.source
-  | Markup_Env_Token of string * string * Input.source
+  | Markup_Token of string * Input.source
+  | Markup_Env_Token of string * Input.source
   | Raw_Token of Input.source;
 
 fun basic_token pred (Basic_Token tok) = pred tok
   | basic_token _ _ = false;
 
-val improper_token = basic_token Token.is_improper;
-val comment_token = basic_token Token.is_comment;
+val white_token = basic_token is_white;
+val white_comment_token = basic_token is_white_comment;
 val blank_token = basic_token Token.is_blank;
 val newline_token = basic_token Token.is_newline;
 
-
-(* output token *)
-
-fun output_token state tok =
+fun present_token ctxt tok =
   (case tok of
-    No_Token => ""
-  | Basic_Token tok => Latex.output_token tok
-  | Markup_Token (cmd, meta_args, source) =>
-      "%\n\\isamarkup" ^ cmd ^ meta_args ^ "{" ^ output_text state {markdown = false} source ^ "%\n}\n"
-  | Markup_Env_Token (cmd, meta_args, source) =>
-      Latex.environment ("isamarkup" ^ cmd) 
-            (meta_args ^ output_text state {markdown = true} source)
+    Ignore_Token => []
+  | Basic_Token tok => output_token ctxt tok
+  | Markup_Token (cmd, source) =>
+      Latex.enclose_body ("%\n\\isamarkup" ^ cmd ^ "{") "%\n}\n"
+        (output_document ctxt {markdown = false} source)
+  | Markup_Env_Token (cmd, source) =>
+      [Latex.environment_block ("isamarkup" ^ cmd) (output_document ctxt {markdown = true} source)]
   | Raw_Token source =>
-      "%\n" ^ output_text state {markdown = true} source ^ "\n");
+      Latex.string "%\n" :: output_document ctxt {markdown = true} source @ [Latex.string "\n"]);
 
 
 (* command spans *)
@@ -285,16 +211,16 @@ datatype span = Span of command * (source * source * source * source) * bool;
 
 fun make_span cmd src =
   let
-    fun take_newline (tok :: toks) =
+    fun chop_newline (tok :: toks) =
           if newline_token (fst tok) then ([tok], toks, true)
           else ([], tok :: toks, false)
-      | take_newline [] = ([], [], false);
+      | chop_newline [] = ([], [], false);
     val (((src_prefix, src_main), src_suffix1), (src_suffix2, src_appendix, newline)) =
       src
-      |> take_prefix (improper_token o fst)
-      ||>> take_suffix (improper_token o fst)
-      ||>> take_prefix (comment_token o fst)
-      ||> take_newline;
+      |> chop_prefix (white_token o fst)
+      ||>> chop_suffix (white_token o fst)
+      ||>> chop_prefix (white_comment_token o fst)
+      ||> chop_newline;
   in Span (cmd, (src_prefix, src_main, src_suffix1 @ src_suffix2, src_appendix), newline) end;
 
 
@@ -307,41 +233,71 @@ fun err_bad_nesting pos =
 
 fun edge which f (x: string option, y) =
   if x = y then I
-  else (case which (x, y) of NONE => I | SOME txt => Buffer.add (f txt));
+  else (case which (x, y) of NONE => I | SOME txt => cons (Latex.string (f txt)));
 
 val begin_tag = edge #2 Latex.begin_tag;
 val end_tag = edge #1 Latex.end_tag;
 fun open_delim delim e = edge #2 Latex.begin_delim e #> delim #> edge #2 Latex.end_delim e;
 fun close_delim delim e = edge #1 Latex.begin_delim e #> delim #> edge #1 Latex.end_delim e;
 
+fun read_tag s =
+  (case space_explode "%" s of
+    ["", b] => (SOME b, NONE)
+  | [a, b] => (NONE, SOME (a, b))
+  | _ => error ("Bad document_tags specification: " ^ quote s));
+
 in
 
-fun present_span keywords span state state' (tag_stack, active_tag, newline, buffer, present_cont) =
+fun make_command_tag options keywords =
   let
+    val document_tags =
+      map read_tag (space_explode "," (Options.string options \<^system_option>\<open>document_tags\<close>));
+    val document_tags_default = map_filter #1 document_tags;
+    val document_tags_command = map_filter #2 document_tags;
+  in
+    fn {cmd_name, cmd_tags, tag, active_tag} => fn state => fn state' =>
+      let
+        val tag' = try hd (fold (update (op =)) cmd_tags (the_list tag));
+
+        val keyword_tags =
+          if cmd_name = "end" andalso Toplevel.is_end_theory state' then ["theory"]
+          else Keyword.command_tags keywords cmd_name;
+        val command_tags =
+          the_list (AList.lookup (op =) document_tags_command cmd_name) @
+          keyword_tags @ document_tags_default;
+
+        val active_tag' =
+          if is_some tag' then tag'
+          else
+            (case command_tags of
+              default_tag :: _ => SOME default_tag
+            | [] =>
+                if Keyword.is_vacuous keywords cmd_name andalso Toplevel.is_proof state
+                then active_tag
+                else NONE);
+      in {tag' = tag', active_tag' = active_tag'} end
+  end;
+
+fun present_span thy command_tag span state state'
+    (tag_stack, active_tag, newline, latex, present_cont) =
+  let
+    val ctxt' =
+      Toplevel.presentation_context state'
+        handle Toplevel.UNDEF => Proof_Context.get_global thy Context.PureN;
     val present = fold (fn (tok, (flag, 0)) =>
-        Buffer.add (output_token state' tok)
-        #> Buffer.add flag
+        fold cons (present_token ctxt' tok)
+        #> cons (Latex.string flag)
       | _ => I);
 
     val Span ((cmd_name, cmd_pos, cmd_tags), srcs, span_newline) = span;
 
     val (tag, tags) = tag_stack;
-    val tag' = try hd (fold (update (op =)) cmd_tags (the_list tag));
+    val {tag', active_tag'} =
+      command_tag {cmd_name = cmd_name, cmd_tags = cmd_tags, tag = tag, active_tag = active_tag}
+        state state';
+    val edge = (active_tag, active_tag');
 
     val nesting = Toplevel.level state' - Toplevel.level state;
-
-    val active_tag' =
-      if is_some tag' then tag'
-      else if cmd_name = "end" andalso not (Toplevel.is_toplevel state') then NONE
-      else
-        (case Keyword.command_tags keywords cmd_name of
-          default_tag :: _ => SOME default_tag
-        | [] =>
-            if Keyword.is_vacuous keywords cmd_name andalso Toplevel.is_proof state
-            then active_tag
-            else NONE);
-
-    val edge = (active_tag, active_tag');
 
     val newline' =
       if is_none active_tag' then span_newline else newline;
@@ -354,8 +310,8 @@ fun present_span keywords span state state' (tag_stack, active_tag, newline, buf
           tg :: tgs => (tg, tgs)
         | [] => err_bad_nesting (Position.here cmd_pos));
 
-    val buffer' =
-      buffer
+    val latex' =
+      latex
       |> end_tag edge
       |> close_delim (fst present_cont) edge
       |> snd present_cont
@@ -365,12 +321,12 @@ fun present_span keywords span state state' (tag_stack, active_tag, newline, buf
     val present_cont' =
       if newline then (present (#3 srcs), present (#4 srcs))
       else (I, present (#3 srcs) #> present (#4 srcs));
-  in (tag_stack', active_tag', newline', buffer', present_cont') end;
+  in (tag_stack', active_tag', newline', latex', present_cont') end;
 
-fun present_trailer ((_, tags), active_tag, _, buffer, present_cont) =
+fun present_trailer ((_, tags), active_tag, _, latex, present_cont) =
   if not (null tags) then err_bad_nesting " at end of theory"
   else
-    buffer
+    latex
     |> end_tag (active_tag, NONE)
     |> close_delim (fst present_cont) (active_tag, NONE)
     |> snd present_cont;
@@ -386,9 +342,9 @@ val markup_true = "\\isamarkuptrue%\n";
 val markup_false = "\\isamarkupfalse%\n";
 
 val space_proper =
-  Scan.one Token.is_blank -- Scan.many Token.is_comment -- Scan.one Token.is_proper;
+  Scan.one Token.is_blank -- Scan.many is_white_comment -- Scan.one is_black;
 
-val is_improper = not o (Token.is_proper orf Token.is_begin_ignore orf Token.is_end_ignore);
+val is_improper = not o (is_black orf Token.is_begin_ignore orf Token.is_end_ignore);
 val improper = Scan.many is_improper;
 val improper_end = Scan.repeat (Scan.unless space_proper (Scan.one is_improper));
 val blank_end = Scan.repeat (Scan.unless space_proper (Scan.one Token.is_blank));
@@ -413,29 +369,27 @@ val meta_args_parser_hook =  Unsynchronized.ref((fn thy => fn s => ("",s)): theo
 
 in
 
-fun present_thy thy command_results toks =
+type segment = {span: Command_Span.span, command: Toplevel.transition, state: Toplevel.state};
+
+fun present_thy options thy (segments: segment list) =
   let
     val keywords = Thy_Header.get_keywords thy;
+
 
     (* tokens *)
 
     val ignored = Scan.state --| ignore
-      >> (fn d => (NONE, (No_Token, ("", d))));
+      >> (fn d => (NONE, (Ignore_Token, ("", d))));
 
     fun markup pred mk flag = Scan.peek (fn d =>
       improper |--
-        Parse.position (Scan.one (fn tok =>  Token.is_command tok andalso 
-                                             pred keywords (Token.content_of tok))) --
+        Parse.position (Scan.one (fn tok =>
+          Token.is_command tok andalso pred keywords (Token.content_of tok))) --
       Scan.repeat tag --
-      (improper |--
-      (Parse.!!!! 
-      (  (!meta_args_parser_hook thy)
-         -- (  (improper -- locale -- improper) 
-         |-- (Parse.document_source)) 
-         --| improper_end)))
-      >> (fn (((tok, pos'), tags), (meta_args,source)) =>
+      Parse.!!!! ((improper -- locale -- improper) |-- Parse.document_source --| improper_end)
+      >> (fn (((tok, pos'), tags), source) =>
         let val name = Token.content_of tok
-        in (SOME (name, pos', tags), (mk (name, meta_args, source), (flag, d))) end));
+        in (SOME (name, pos', tags), (mk (name, source), (flag, d))) end));
 
     val command = Scan.peek (fn d =>
       Scan.optional (Scan.one Token.is_command_modifier ::: improper) [] --
@@ -444,11 +398,15 @@ fun present_thy thy command_results toks =
         map (fn tok => (NONE, (Basic_Token tok, ("", d)))) cmd_mod @
           [(SOME (Token.content_of cmd, Token.pos_of cmd, tags),
             (Basic_Token cmd, (markup_false, d)))]));
-
+(*
+    val cmt = Scan.peek (fn d =>
+      Scan.one is_black_comment >> (fn tok => (NONE, (Basic_Token tok, ("", d))))); 
+ *)
     val cmt = Scan.peek (fn d =>
       (Parse.$$$ "--" || Parse.$$$ Symbol.comment) |--
         Parse.!!!! (improper |-- Parse.document_source) >>
-        (fn source => (NONE, (Markup_Token ("cmt", "", source), ("", d)))));
+        (fn source => (NONE, (Markup_Token ("cmt", source), ("", d)))));
+
 
     val other = Scan.peek (fn d =>
        Parse.not_eof >> (fn tok => (NONE, (Basic_Token tok, ("", d)))));
@@ -457,7 +415,7 @@ fun present_thy thy command_results toks =
       (ignored ||
         markup Keyword.is_document_heading Markup_Token markup_true ||
         markup Keyword.is_document_body Markup_Env_Token markup_true ||
-        markup Keyword.is_document_raw (Raw_Token o #3) "") >> single ||
+        markup Keyword.is_document_raw (Raw_Token o #2) "") >> single ||
       command ||
       (cmt || other) >> single;
 
@@ -470,13 +428,13 @@ fun present_thy thy command_results toks =
     val cmd = Scan.one (is_some o fst);
     val non_cmd = Scan.one (is_none o fst andf not o is_eof) >> #2;
 
-    val comments = Scan.many (comment_token o fst o snd);
+    val white_comments = Scan.many (white_comment_token o fst o snd);
     val blank = Scan.one (blank_token o fst o snd);
     val newline = Scan.one (newline_token o fst o snd);
     val before_cmd =
-      Scan.option (newline -- comments) --
-      Scan.option (newline -- comments) --
-      Scan.option (blank -- comments) -- cmd;
+      Scan.option (newline -- white_comments) --
+      Scan.option (newline -- white_comments) --
+      Scan.option (blank -- white_comments) -- cmd;
 
     val span =
       Scan.repeat non_cmd -- cmd --
@@ -485,25 +443,34 @@ fun present_thy thy command_results toks =
       >> (fn (((toks1, (cmd, tok2)), toks3), tok4) =>
           make_span (the cmd) (toks1 @ (tok2 :: (toks3 @ the_default [] tok4))));
 
-    val spans = toks
-      |> take_suffix Token.is_space |> #1
-      |> Source.of_list                                               
+    val spans = segments
+      |> maps (Command_Span.content o #span)
+      |> drop_suffix Token.is_space
+      |> Source.of_list
       |> Source.source' 0 Token.stopper (Scan.error (Scan.bulk tokens >> flat))
       |> Source.source stopper (Scan.error (Scan.bulk span))
       |> Source.exhaust;
 
+    val command_results =
+      segments |> map_filter (fn {command, state, ...} =>
+        if Toplevel.is_ignored command then NONE else SOME (command, state));
+
+
     (* present commands *)
 
+    val command_tag = make_command_tag options keywords;
+
     fun present_command tr span st st' =
-      Toplevel.setmp_thread_position tr (present_span keywords span st st');
+      Toplevel.setmp_thread_position tr (present_span thy command_tag span st st');
 
     fun present _ [] = I
-      | present st (((tr, st'), span) :: rest) = present_command tr span st st' #> present st' rest;
+      | present st ((span, (tr, st')) :: rest) = present_command tr span st st' #> present st' rest;
   in
     if length command_results = length spans then
-      ((NONE, []), NONE, true, Buffer.empty, (I, I))
-      |> present Toplevel.toplevel (command_results ~~ spans)
+      ((NONE, []), NONE, true, [], (I, I))
+      |> present Toplevel.toplevel (spans ~~ command_results)
       |> present_trailer
+      |> rev
     else error "Messed-up outer syntax for presentation"
   end;
 
@@ -513,174 +480,76 @@ end;
 
 
 
-(** setup default output **)
+(** standard output operations **)
 
-(* options *)
+(* pretty printing *)
 
-val _ = Theory.setup
- (add_option @{binding show_types} (Config.put show_types o boolean) #>
-  add_option @{binding show_sorts} (Config.put show_sorts o boolean) #>
-  add_option @{binding show_structs} (Config.put show_structs o boolean) #>
-  add_option @{binding show_question_marks} (Config.put show_question_marks o boolean) #>
-  add_option @{binding show_abbrevs} (Config.put show_abbrevs o boolean) #>
-  add_option @{binding names_long} (Config.put Name_Space.names_long o boolean) #>
-  add_option @{binding names_short} (Config.put Name_Space.names_short o boolean) #>
-  add_option @{binding names_unique} (Config.put Name_Space.names_unique o boolean) #>
-  add_option @{binding eta_contract} (Config.put Syntax_Trans.eta_contract o boolean) #>
-  add_option @{binding display} (Config.put display o boolean) #>
-  add_option @{binding break} (Config.put break o boolean) #>
-  add_option @{binding quotes} (Config.put quotes o boolean) #>
-  add_option @{binding mode} (add_wrapper o Print_Mode.with_modes o single) #>
-  add_option @{binding margin} (Config.put margin o integer) #>
-  add_option @{binding indent} (Config.put indent o integer) #>
-  add_option @{binding source} (Config.put source o boolean) #>
-  add_option @{binding goals_limit} (Config.put Goal_Display.goals_limit o integer));
-
-
-(* basic pretty printing *)
-
-fun perhaps_trim ctxt =
-  not (Config.get ctxt display) ? Symbol.trim_blanks;
-
-fun pretty_text ctxt =
-  Pretty.chunks o map Pretty.str o map (perhaps_trim ctxt) o split_lines;
-
-fun pretty_term ctxt t = Syntax.pretty_term (Variable.auto_fixes t ctxt) t;
+fun pretty_term ctxt t =
+  Syntax.pretty_term (Variable.auto_fixes t ctxt) t;
 
 fun pretty_thm ctxt = pretty_term ctxt o Thm.full_prop_of;
-
-fun pretty_term_style ctxt (style, t) =
-  pretty_term ctxt (style t);
-
-fun pretty_thm_style ctxt (style, th) =
-  pretty_term ctxt (style (Thm.full_prop_of th));
-
-fun pretty_term_typ ctxt (style, t) =
-  let val t' = style t
-  in pretty_term ctxt (Type.constraint (Term.fastype_of t') t') end;
-
-fun pretty_term_typeof ctxt (style, t) =
-  Syntax.pretty_typ ctxt (Term.fastype_of (style t));
-
-fun pretty_const ctxt c =
-  let
-    val t = Const (c, Consts.type_scheme (Proof_Context.consts_of ctxt) c)
-      handle TYPE (msg, _, _) => error msg;
-    val ([t'], _) = Variable.import_terms true [t] ctxt;
-  in pretty_term ctxt t' end;
-
-fun pretty_abbrev ctxt s =
-  let
-    val t = Syntax.read_term (Proof_Context.set_mode Proof_Context.mode_abbrev ctxt) s;
-    fun err () = error ("Abbreviated constant expected: " ^ Syntax.string_of_term ctxt t);
-    val (head, args) = Term.strip_comb t;
-    val (c, T) = Term.dest_Const head handle TERM _ => err ();
-    val (U, u) = Consts.the_abbreviation (Proof_Context.consts_of ctxt) c
-      handle TYPE _ => err ();
-    val t' = Term.betapplys (Envir.expand_atom T (U, u), args);
-    val eq = Logic.mk_equals (t, t');
-    val ctxt' = Variable.auto_fixes eq ctxt;
-  in Proof_Context.pretty_term_abbrev ctxt' eq end;
-
-fun pretty_locale ctxt (name, pos) =
-  let
-    val thy = Proof_Context.theory_of ctxt
-  in (Pretty.str o Locale.extern thy o Locale.check thy) (name, pos) end;
-
-fun pretty_class ctxt =
-  Pretty.str o Proof_Context.extern_class ctxt o Proof_Context.read_class ctxt;
-
-fun pretty_type ctxt s =
-  let val Type (name, _) = Proof_Context.read_type_name {proper = true, strict = false} ctxt s
-  in Pretty.str (Proof_Context.extern_type ctxt name) end;
-
-fun pretty_prf full ctxt = Proof_Syntax.pretty_clean_proof_of ctxt full;
-
-fun pretty_theory ctxt (name, pos) = (Theory.check ctxt (name, pos); Pretty.str name);
 
 
 (* default output *)
 
-val str_of_source = space_implode " " o map Token.unparse o Token.args_of_src;
+val lines = separate (Latex.string "\\isanewline%\n");
+val items = separate (Latex.string "\\isasep\\isanewline%\n");
 
-fun maybe_pretty_source pretty ctxt src xs =
-  map (pretty ctxt) xs  (*always pretty in order to exhibit errors!*)
-  |> (if Config.get ctxt source then K [pretty_text ctxt (str_of_source src)] else I);
+fun isabelle ctxt body =
+  if Config.get ctxt Document_Antiquotation.thy_output_display
+  then Latex.environment_block "isabelle" body
+  else Latex.block (Latex.enclose_body "\\isa{" "}" body);
 
-fun string_of_margin ctxt = Pretty.string_of_margin (Config.get ctxt margin);
+fun isabelle_typewriter ctxt body =
+  if Config.get ctxt Document_Antiquotation.thy_output_display
+  then Latex.environment_block "isabellett" body
+  else Latex.block (Latex.enclose_body "\\isatt{" "}" body);
 
-fun output ctxt prts =
-  prts
-  |> Config.get ctxt quotes ? map Pretty.quote
-  |> (if Config.get ctxt display then
-        map (Pretty.indent (Config.get ctxt indent) #> string_of_margin ctxt #> Output.output)
-        #> space_implode "\\isasep\\isanewline%\n"
-        #> Latex.environment "isabelle"
-      else
-        map
-          ((if Config.get ctxt break then string_of_margin ctxt else Pretty.unformatted_string_of)
-            #> Output.output)
-        #> space_implode "\\isasep\\isanewline%\n"
-        #> enclose "\\isa{" "}");
+fun typewriter ctxt s =
+  isabelle_typewriter ctxt [Latex.string (Latex.output_ascii s)];
 
+fun verbatim ctxt =
+  if Config.get ctxt Document_Antiquotation.thy_output_display
+  then Document_Antiquotation.indent_lines ctxt #> typewriter ctxt
+  else split_lines #> map (typewriter ctxt) #> lines #> Latex.block;
 
-(* verbatim text *)
+fun source ctxt =
+  Token.args_of_src
+  #> map (Token.unparse #> Document_Antiquotation.prepare_lines ctxt)
+  #> space_implode " "
+  #> output_source ctxt
+  #> isabelle ctxt;
 
-fun verbatim_text ctxt =
-  if Config.get ctxt display then
-    split_lines #> map (prefix (Symbol.spaces (Config.get ctxt indent))) #> cat_lines #>
-    Latex.output_ascii #> Latex.environment "isabellett"
-  else
-    split_lines #>
-    map (Latex.output_ascii #> enclose "\\isatt{" "}") #>
-    space_implode "\\isasep\\isanewline%\n";
+fun pretty ctxt =
+  Document_Antiquotation.output ctxt #> Latex.string #> single #> isabelle ctxt;
 
+fun pretty_source ctxt src prt =
+  if Config.get ctxt Document_Antiquotation.thy_output_source
+  then source ctxt src else pretty ctxt prt;
 
-(* antiquotations for basic entities *)
+fun pretty_items ctxt =
+  map (Document_Antiquotation.output ctxt #> Latex.string) #> items #> isabelle ctxt;
 
-local
-
-fun basic_entities name scan pretty =
-  antiquotation name scan (fn {source, context = ctxt, ...} =>
-    output ctxt o maybe_pretty_source pretty ctxt source);
-
-fun basic_entities_style name scan pretty =
-  antiquotation name scan (fn {source, context = ctxt, ...} => fn (style, xs) =>
-    output ctxt
-      (maybe_pretty_source (fn ctxt => fn x => pretty ctxt (style, x)) ctxt source xs));
-
-fun basic_entity name scan = basic_entities name (scan >> single);
-
-in
-
-val _ = Theory.setup
- (basic_entities_style @{binding thm} (Term_Style.parse -- Attrib.thms) pretty_thm_style #>
-  basic_entity @{binding prop} (Term_Style.parse -- Args.prop) pretty_term_style #>
-  basic_entity @{binding term} (Term_Style.parse -- Args.term) pretty_term_style #>
-  basic_entity @{binding term_type} (Term_Style.parse -- Args.term) pretty_term_typ #>
-  basic_entity @{binding typeof} (Term_Style.parse -- Args.term) pretty_term_typeof #>
-  basic_entity @{binding const} (Args.const {proper = true, strict = false}) pretty_const #>
-  basic_entity @{binding abbrev} (Scan.lift Args.embedded_inner_syntax) pretty_abbrev #>
-  basic_entity @{binding typ} Args.typ_abbrev Syntax.pretty_typ #>
-  basic_entity @{binding locale} (Scan.lift (Parse.position Args.name)) pretty_locale #>
-  basic_entity @{binding class} (Scan.lift Args.embedded_inner_syntax) pretty_class #>
-  basic_entity @{binding type} (Scan.lift Args.embedded) pretty_type #>
-  basic_entities @{binding prf} Attrib.thms (pretty_prf false) #>
-  basic_entities @{binding full_prf} Attrib.thms (pretty_prf true) #>
-  basic_entity @{binding theory} (Scan.lift (Parse.position Args.name)) pretty_theory);
-
-end;
+fun pretty_items_source ctxt src prts =
+  if Config.get ctxt Document_Antiquotation.thy_output_source
+  then source ctxt src else pretty_items ctxt prts;
 
 
-(** document command **)
+(* antiquotation variants *)
 
+fun antiquotation_pretty name scan f =
+  Document_Antiquotation.setup name scan
+    (fn {context = ctxt, argument = x, ...} => pretty ctxt (f ctxt x));
 
-fun document_command markdown (loc, txt) =
-  Toplevel.keep (fn state =>
-    (case loc of
-      NONE => ignore (output_text state markdown txt)
-    | SOME (_, pos) =>
-        error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
-  Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt));
+fun antiquotation_pretty_source name scan f =
+  Document_Antiquotation.setup name scan
+    (fn {context = ctxt, source = src, argument = x} => pretty_source ctxt src (f ctxt x));
+
+fun antiquotation_raw name scan f =
+  Document_Antiquotation.setup name scan
+    (fn {context = ctxt, argument = x, ...} => f ctxt x);
+
+fun antiquotation_verbatim name scan f =
+  antiquotation_raw name scan (fn ctxt => verbatim ctxt o f ctxt);
 
 end;

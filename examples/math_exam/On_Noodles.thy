@@ -8,7 +8,7 @@ open_monitor*[this::article]
 title*[t1::title]\<open>On Noodles\<close> 
 
 text*[simon::author]\<open>Simon Foster\<close>
-text*[a::abstract, keywordlist = "[topology]"]
+text*[a::abstract, keywordlist = "[''topology'']"]
 \<open>We present the first fundamental results on the goundbreaking theory of noodles...\<close>
 section*[intro::introduction]\<open>Introduction\<close>
 

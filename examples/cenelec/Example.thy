@@ -8,13 +8,14 @@ begin
 section\<open> Some examples of Isabelle's standard antiquotations. \<close>
 (* some show-off of standard anti-quotations: *) 
 text \<open>THIS IS A TEXT\<close>
+term "[]"
 
 text\<open>  @{thm refl}  of name @{thm [source] refl} 
         @{thm[mode=Rule] conjI}
         @{file "../../Isa_DOF.thy"} 
         @{value "3+4::int"} 
         @{const hd} 
-        @{theory List}}
+        @{theory HOL.List}}
         @{term "3"} 
         @{type bool}  
         @{term [show_types] "f x = a + x"} \<close>
@@ -28,12 +29,13 @@ text\<open>An "anonymous" text-item, automatically coerced into the top-class "t
 text*[tralala] \<open> Brexit means Brexit \<close> 
 
 text\<open>Examples for declaration of typed doc-items "assumption" and "hypothesis",
-     concepts defined in the underlying ontology @{theory "CENELEC_50128"}. \<close>
+     concepts defined in the underlying ontology @{theory "Draft.CENELEC_50128"}. \<close>
 text*[ass1::assumption] \<open> The subsystem Y is safe. \<close>
 text*[hyp1::hypothesis] \<open> P not equal NP \<close>
   
 text\<open>A real example fragment from a larger project, declaring a text-element as a
-     "safety-related application condition", a concept defined in the  @{theory "CENELEC_50128"}
+     "safety-related application condition", a concept defined in the  
+     @{theory "Draft.CENELEC_50128"}
      ontology:\<close>  
 
 text*[new_ass::hypothesis]\<open>Under the assumption @{assumption \<open>ass1\<close>} we establish the following: ... \<close>
@@ -80,7 +82,7 @@ text\<open> @{docitem \<open>lalala\<close>}   -- produces warning. \<close>
 text\<open> @{docitem (unchecked) \<open>lalala\<close>} -- produces no warning. \<close>  
 
 text\<open> @{docitem \<open>ass122\<close>} -- global reference to a text-item in another file. \<close>
-
+  
 text\<open> @{EC \<open>ass122\<close>} -- global reference to a exported constraint in another file.
                          Note that the link is actually a srac, which, according to 
                          the ontology, happens to be an "ec".  \<close>

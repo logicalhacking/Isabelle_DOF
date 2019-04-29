@@ -4,9 +4,10 @@ theory RegExpInterface
 imports "Functional-Automata.Execute"
 begin
 
+
 text\<open> The implementation of the monitoring concept follows the following design decisions:
-\<^enum> We re-use generated code from the AFP submissions @{theory Regular_Set} and 
-  @{theory Automata}, converted by the code-generator into executable SML code
+\<^enum> We re-use generated code from the AFP submissions @{theory "Regular-Sets.Regular_Set"} and 
+  @{theory "Functional-Automata.Automata"}, converted by the code-generator into executable SML code
   (ports to future Isabelle versions should just reuse future versions of these)
 \<^enum> Monitor-Expressions are regular expressions (in some adapted syntax) 
   over Document Class identifiers; they denote the language of all possible document object
@@ -40,7 +41,8 @@ text{* or better equivalently: *}
 value "\<lbrace>(\<lfloor>CHR ''a''\<rfloor> || \<lfloor>CHR ''b''\<rfloor>) ~~ \<lfloor>CHR ''c''\<rfloor>\<rbrace>\<^sup>*"
 
 section{* Some Standard and Derived Semantics *}
-text\<open> This is just a reminder - already defined in @{theory Regular_Exp} as @{term lang}.\<close>
+text\<open> This is just a reminder - already defined in @{theory "Regular-Sets.Regular_Exp"} 
+as @{term lang}.\<close>
 
 text{* In the following, we give a semantics for our regular expressions, which so far have
 just been a term language (i.e. abstract syntax). The semantics is a ``denotational semantics'',
