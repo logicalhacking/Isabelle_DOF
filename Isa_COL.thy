@@ -5,7 +5,7 @@ text\<open> Offering
 \<^item> 
 \<^item> LaTeX support. \<close> 
   
-  
+ 
 theory Isa_COL   
   imports  Isa_DOF  
 begin

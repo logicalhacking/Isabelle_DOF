@@ -174,11 +174,20 @@ val is_black_comment = Token.is_formal_comment;
 
 (* presentation tokens *)
 
+(* orig Isabelle 2018
 datatype token =
     Ignore_Token
   | Basic_Token of Token.T
   | Markup_Token of string * Input.source
   | Markup_Env_Token of string * Input.source
+  | Raw_Token of Input.source;
+*)
+
+datatype token =
+    Ignore_Token
+  | Basic_Token of Token.T
+  | Markup_Token of string * string * Input.source
+  | Markup_Env_Token of string * string * Input.source
   | Raw_Token of Input.source;
 
 fun basic_token pred (Basic_Token tok) = pred tok
@@ -189,6 +198,7 @@ val white_comment_token = basic_token is_white_comment;
 val blank_token = basic_token Token.is_blank;
 val newline_token = basic_token Token.is_newline;
 
+(* orig Isabelle 2018
 fun present_token ctxt tok =
   (case tok of
     Ignore_Token => []
@@ -197,6 +207,21 @@ fun present_token ctxt tok =
       Latex.enclose_body ("%\n\\isamarkup" ^ cmd ^ "{") "%\n}\n"
         (output_document ctxt {markdown = false} source)
   | Markup_Env_Token (cmd, source) =>
+      [Latex.environment_block ("isamarkup" ^ cmd) (output_document ctxt {markdown = true} source)]
+  | Raw_Token source =>
+      Latex.string "%\n" :: output_document ctxt {markdown = true} source @ [Latex.string "\n"]);
+
+*)
+
+(* modified by bu: added meta_args; currently ignored*) 
+fun present_token ctxt tok =
+  (case tok of
+    Ignore_Token => []
+  | Basic_Token tok => output_token ctxt tok
+  | Markup_Token (cmd, meta_args, source) =>
+      Latex.enclose_body ("%\n\\isamarkup" ^ cmd ^ "{") "%\n}\n"
+        (output_document ctxt {markdown = false} source)
+  | Markup_Env_Token (cmd, meta_args,source) =>
       [Latex.environment_block ("isamarkup" ^ cmd) (output_document ctxt {markdown = true} source)]
   | Raw_Token source =>
       Latex.string "%\n" :: output_document ctxt {markdown = true} source @ [Latex.string "\n"]);
@@ -381,6 +406,7 @@ fun present_thy options thy (segments: segment list) =
     val ignored = Scan.state --| ignore
       >> (fn d => (NONE, (Ignore_Token, ("", d))));
 
+    (* orig Isabelle 2018
     fun markup pred mk flag = Scan.peek (fn d =>
       improper |--
         Parse.position (Scan.one (fn tok =>
@@ -390,6 +416,22 @@ fun present_thy options thy (segments: segment list) =
       >> (fn (((tok, pos'), tags), source) =>
         let val name = Token.content_of tok
         in (SOME (name, pos', tags), (mk (name, source), (flag, d))) end));
+    *)
+
+    fun markup pred mk flag = Scan.peek (fn d =>
+      improper |--
+        Parse.position (Scan.one (fn tok =>  Token.is_command tok andalso 
+                                             pred keywords (Token.content_of tok))) --
+      Scan.repeat tag --
+      (improper |--
+      (Parse.!!!! 
+      (  (!meta_args_parser_hook thy)
+         -- (  (improper -- locale -- improper) 
+         |-- (Parse.document_source)) 
+         --| improper_end)))
+      >> (fn (((tok, pos'), tags), (meta_args,source)) =>
+        let val name = Token.content_of tok
+        in (SOME (name, pos', tags), (mk (name, meta_args, source), (flag, d))) end));
 
     val command = Scan.peek (fn d =>
       Scan.optional (Scan.one Token.is_command_modifier ::: improper) [] --
@@ -405,7 +447,7 @@ fun present_thy options thy (segments: segment list) =
     val cmt = Scan.peek (fn d =>
       (Parse.$$$ "--" || Parse.$$$ Symbol.comment) |--
         Parse.!!!! (improper |-- Parse.document_source) >>
-        (fn source => (NONE, (Markup_Token ("cmt", source), ("", d)))));
+        (fn source => (NONE, (Markup_Token ("cmt", "", source), ("", d)))));
 
 
     val other = Scan.peek (fn d =>
@@ -415,7 +457,7 @@ fun present_thy options thy (segments: segment list) =
       (ignored ||
         markup Keyword.is_document_heading Markup_Token markup_true ||
         markup Keyword.is_document_body Markup_Env_Token markup_true ||
-        markup Keyword.is_document_raw (Raw_Token o #2) "") >> single ||
+        markup Keyword.is_document_raw (Raw_Token o #3) "") >> single ||
       command ||
       (cmt || other) >> single;
 

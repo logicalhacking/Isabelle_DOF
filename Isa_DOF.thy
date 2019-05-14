@@ -46,7 +46,7 @@ begin
 
 
 text\<open> @{footnote \<open>sdf\<close>}, @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"}\<close> 
-
+ML_file "patches/thy_output.ML";
 
 section\<open>Primitive Markup Generators\<close>
 ML\<open>
@@ -109,7 +109,7 @@ fun holstring_to_bstring ctxt (x:string) : bstring  =
 
 section\<open> A HomeGrown Document Type Management (the ''Model'') \<close>
   
-ML\<open>
+ML\<open> 
 structure DOF_core = 
 struct
 
@@ -1534,8 +1534,11 @@ end
  *)
 
 val _ = Thy_Output.set_meta_args_parser 
-                       (fn thy => (Scan.optional (   ODL_Command_Parser.attributes 
-                                                  >> meta_args_2_string thy) "")) 
+                       (fn thy => let val _ = writeln "META_ARGS_PARSING"
+                                  in
+                                  (Scan.optional (   ODL_Command_Parser.attributes 
+                                                  >> meta_args_2_string thy) "")
+                                  end) 
 
 
 end
@@ -1685,10 +1688,10 @@ val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.text_input)
 
 
 fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked = x, define = y}, src ) = 
-            let val _ = check_and_mark ctxt cid_decl  
+            let val _ = writeln ("ZZZ" ^ Input.source_content src ^ "::2::" ^ cid_decl)
+                val _ = check_and_mark ctxt cid_decl  
                           ({strict_checking = not x}) 
-                          (Input.pos_of src) (Input.source_content src)
-                val _ = writeln ("ZZZ" ^ Input.source_content src ^ "::" ^ cid_decl)
+                          (Input.pos_of src) (Input.source_content src) 
             in  (if y then Latex.enclose_block "\\label{" "}" 
                       else Latex.enclose_block "\\autoref{" "}")
                 [Latex.string (Input.source_content src)] 
