@@ -225,7 +225,19 @@ fun present_token ctxt tok =
       [Latex.environment_block ("isamarkup" ^ cmd) (output_document ctxt {markdown = true} source)]
   | Raw_Token source =>
       Latex.string "%\n" :: output_document ctxt {markdown = true} source @ [Latex.string "\n"]);
-
+(*
+fun output_token state tok =
+  (case tok of
+    No_Token => ""
+  | Basic_Token tok => Latex.output_token tok
+  | Markup_Token (cmd, meta_args, source) =>
+      "%\n\\isamarkup" ^ cmd ^ meta_args ^ "{" ^ output_text state {markdown = false} source ^ "%\n}\n"
+  | Markup_Env_Token (cmd, meta_args, source) =>
+      Latex.environment ("isamarkup" ^ cmd) 
+            (meta_args ^ output_text state {markdown = true} source)
+  | Raw_Token source =>
+      "%\n" ^ output_text state {markdown = true} source ^ "\n");
+*)
 
 (* command spans *)
 
@@ -398,6 +410,9 @@ type segment = {span: Command_Span.span, command: Toplevel.transition, state: To
 
 fun present_thy options thy (segments: segment list) =
   let
+    val X = if null segments then Command_Span.content (#span(hd segments)) else (writeln "HUMPFLEPUMPF0";[])
+    val Y = (String.concatWith "::") (map Token.content_of X)
+    val _ = writeln("HUMPFLEPUMF"^Y^Context.theory_name thy)
     val keywords = Thy_Header.get_keywords thy;
 
 
@@ -438,17 +453,21 @@ fun present_thy options thy (segments: segment list) =
       Scan.one Token.is_command -- Scan.repeat tag
       >> (fn ((cmd_mod, cmd), tags) =>
         map (fn tok => (NONE, (Basic_Token tok, ("", d)))) cmd_mod @
-          [(SOME (Token.content_of cmd, Token.pos_of cmd, tags),
+          [(SOME (let val _ = writeln("ZZZ::" ^ Token.content_of cmd)
+                  in  
+                  Token.content_of cmd 
+                  end, Token.pos_of cmd, tags),
             (Basic_Token cmd, (markup_false, d)))]));
-(*
+
     val cmt = Scan.peek (fn d =>
-      Scan.one is_black_comment >> (fn tok => (NONE, (Basic_Token tok, ("", d))))); 
- *)
+      Scan.one is_black_comment >> (fn tok => (NONE, (Basic_Token tok, ("", d)))));
+
+(* from 17 - necessary in 18 ?
     val cmt = Scan.peek (fn d =>
       (Parse.$$$ "--" || Parse.$$$ Symbol.comment) |--
         Parse.!!!! (improper |-- Parse.document_source) >>
         (fn source => (NONE, (Markup_Token ("cmt", "", source), ("", d)))));
-
+*)
 
     val other = Scan.peek (fn d =>
        Parse.not_eof >> (fn tok => (NONE, (Basic_Token tok, ("", d)))));
@@ -485,6 +504,8 @@ fun present_thy options thy (segments: segment list) =
       >> (fn (((toks1, (cmd, tok2)), toks3), tok4) =>
           make_span (the cmd) (toks1 @ (tok2 :: (toks3 @ the_default [] tok4))));
 
+    val _ = writeln("HUMPFLEPUMF'"^Y)
+
     val spans = segments
       |> maps (Command_Span.content o #span)
       |> drop_suffix Token.is_space
@@ -507,6 +528,9 @@ fun present_thy options thy (segments: segment list) =
 
     fun present _ [] = I
       | present st ((span, (tr, st')) :: rest) = present_command tr span st st' #> present st' rest;
+
+    val _ = writeln("HUMPFLEPUMF''"^Y^Context.theory_name thy)
+
   in
     if length command_results = length spans then
       ((NONE, []), NONE, true, [], (I, I))

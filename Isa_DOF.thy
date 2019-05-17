@@ -1533,15 +1533,16 @@ end
    under Isabell_DOF/patches. 
  *)
 
-val _ = Thy_Output.set_meta_args_parser 
+
+end
+
+val _ = Thy_Output.set_meta_args_parser
                        (fn thy => let val _ = writeln "META_ARGS_PARSING"
                                   in
                                   (Scan.optional (   ODL_Command_Parser.attributes 
-                                                  >> meta_args_2_string thy) "")
+                                                  >> ODL_LTX_Converter.meta_args_2_string thy) "")
                                   end) 
 
-
-end
 \<close>
 
 
@@ -1944,5 +1945,7 @@ val _ =
 end (* struct *)
 \<close>  
 
-
+ML\<open>Pretty.text_fold; Pretty.unformatted_string_of\<close>
+ML\<open> (String.concatWith ","); Token.content_of\<close>
+ML\<open>open Theory\<close>
 end

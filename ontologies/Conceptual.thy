@@ -46,12 +46,13 @@ doc_class M =
    accepts "A ~~ \<lbrace>C || D\<rbrace>\<^sup>* ~~ \<lbrakk>F\<rbrakk>"
 
 
-section*[test::A]\<open> Test and Validation\<close>
+text\<open>fdgh\<close>
+ML\<open>\<close>
+section* [ test :: A ] \<open> Test and Validation\<close>
 text\<open>Defining some document elements to be referenced in later on in another theory: \<close>
-text*[sdf] {* f @{thm refl}*}  
-text*[sdfg] {* fg @{thm refl}*}  
- 
-text*[xxxy] {* dd @{docitem \<open>sdfg\<close>}  @{thm refl}*}    
+text* [ sdf ] \<open> f @{thm refl}\<close> 
+text* [ sdfg ] \<open> fg @{thm refl}\<close>  
+text* [ xxxy ] \<open> dd @{docitem \<open>sdfg\<close>}  @{thm refl}\<close>  
 
 
 end     
