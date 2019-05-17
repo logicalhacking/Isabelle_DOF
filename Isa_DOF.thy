@@ -13,7 +13,8 @@ text\<open> Offering
 \<^item> LaTeX support. \<close> 
   
 text\<open> In this section, we develop on the basis of a management of references Isar-markups
-that provide direct support in the PIDE framework. \<close> 
+that provide direct support in the PIDE framework.
+ \<close>
 
   
 theory Isa_DOF                (* Isabelle Document Ontology Framework *)
@@ -44,6 +45,8 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   
 begin
 
+text\<open> @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"} 
+\<close>
 
 section\<open>Primitive Markup Generators\<close>
 ML\<open>
@@ -1527,9 +1530,9 @@ end
    Currently of *all* commands, no distinction between text* and text command. 
    This code depends on a MODIFIED Isabelle2017 version resulting fro; applying the files
    under Isabell_DOF/patches. 
- *)
+ *)                   
 val _ = Thy_Output.set_meta_args_parser 
-                       (fn thy => (Scan.optional (ODL_Command_Parser.attributes >> meta_args_2_string thy) "")) 
+                       (fn thy => (Scan.optional (ODL_Command_Parser.attributes >> meta_args_2_string thy) ""))
 
 
 end
