@@ -9,11 +9,11 @@ text\<open>@{theory \<open>Draft.Conceptual\<close>} provides a monitor @{typ M}
      \<^theory_text>\<open>doc_class\<close>es @{typ M} is enabled for.\<close>
 open_monitor*[struct::M]  
 
-section*[a::A, x = "3"] \<open> Lorem ipsum dolor sit amet, ... \<close>
+sectionX[a::A, x = "3"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
-text*[c1::C, x = "''beta''"] \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
+textX[c1::C, x = "''beta''"] \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
                
-text*[d::D, a1 = "X3"] \<open> ... phasellus amet id massa nunc, pede suscipit repellendus, 
+textX[d::D, a1 = "X3"] \<open> ... phasellus amet id massa nunc, pede suscipit repellendus, 
                          ... @{C c1} @{thm "refl"}\<close>
 
 
@@ -21,9 +21,9 @@ update_instance*[d::D, a1 := X2]
 
 text\<open> ... in ut tortor ... @{docitem \<open>a\<close>} ... @{A \<open>a\<close>}\<close>  
     
-text*[c2::C, x = "''delta''"]  \<open> ... in ut tortor eleifend augue pretium consectetuer.  \<close>
+textX[c2::C, x = "''delta''"]  \<open> ... in ut tortor eleifend augue pretium consectetuer.  \<close>
 
-text*[f::F] \<open> Lectus accumsan velit ultrices, ... }\<close>
+textX[f::F] \<open> Lectus accumsan velit ultrices, ... }\<close>
   
 theorem some_proof : "P" sorry
 

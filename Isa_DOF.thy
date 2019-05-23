@@ -24,8 +24,8 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   keywords "+=" ":=" "accepts" "rejects"
 
   and      "title*"     "subtitle*"
-           "chapter*"  "section*"    "subsection*"   "subsubsection*" 
-           "paragraph*"  "subparagraph*" 
+           "chapter*"   "section*"    "subsection*"   "subsubsection*" 
+           "paragraph*" "subparagraph*" 
            "text*"       
            "figure*"
            "side_by_side_figure*" 
@@ -1537,7 +1537,7 @@ end
 end
 
 val _ = Thy_Output.set_meta_args_parser
-                       (fn thy => let val _ = writeln "META_ARGS_PARSING"
+                       (fn thy => let val _ = error "META_ARGS_PARSING"
                                   in
                                   (Scan.optional (   ODL_Command_Parser.attributes 
                                                   >> ODL_LTX_Converter.meta_args_2_string thy) "")
@@ -1948,4 +1948,27 @@ end (* struct *)
 ML\<open>Pretty.text_fold; Pretty.unformatted_string_of\<close>
 ML\<open> (String.concatWith ","); Token.content_of\<close>
 ML\<open>open Theory\<close>
+
+
+ML\<open>
+val _ = Thy_Output.set_meta_args_parser
+                       (fn thy => (Scan.optional (   ODL_Command_Parser.attributes 
+                                                  >> ODL_LTX_Converter.meta_args_2_string thy) ""))
+val _ = Thy_Output.set_meta_args_parser
+                       (fn thy => (Scan.optional (   ODL_Command_Parser.attributes 
+                                                  >> ODL_LTX_Converter.meta_args_2_string thy) ""))
+\<close>
+ML\<open>
+ Document.state;
+Session.get_keywords();
+ Parse.command;
+ Parse.tags;
+\<close>
+ML\<open>
+ Outer_Syntax.print_commands @{theory};
+ Outer_Syntax.parse_spans;
+ Parse.!!!;
+
+\<close>
+
 end
