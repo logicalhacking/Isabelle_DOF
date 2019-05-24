@@ -46,7 +46,7 @@ begin
 
 
 text\<open> @{footnote \<open>sdf\<close>}, @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"}\<close> 
-ML_file "patches/thy_output.ML";
+(*ML_file "patches/thy_output.ML";*)
 
 section\<open>Primitive Markup Generators\<close>
 ML\<open>
