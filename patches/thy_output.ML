@@ -194,10 +194,12 @@ fun present_token ctxt tok =
     Ignore_Token => []
   | Basic_Token tok => output_token ctxt tok
   | Markup_Token (cmd, meta_args, source) =>
-      Latex.enclose_body ("%\n\\isamarkup" ^ cmd ^ "{") "%\n}\n"
+      Latex.enclose_body ("%\n\\isamarkup" ^ cmd ^ meta_args ^ "{") "%\n}\n"
         (output_document ctxt {markdown = false} source)
   | Markup_Env_Token (cmd, meta_args, source) =>
-      [Latex.environment_block ("isamarkup" ^ cmd) (output_document ctxt {markdown = true} source)]
+      [Latex.environment_block
+         ("isamarkup" ^ cmd)
+         (Latex.string meta_args :: output_document ctxt {markdown = true} source)]
   | Raw_Token source =>
       Latex.string "%\n" :: output_document ctxt {markdown = true} source @ [Latex.string "\n"]);
 
