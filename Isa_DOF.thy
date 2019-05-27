@@ -46,6 +46,10 @@ begin
 
 
 text\<open> @{footnote \<open>sdf\<close>}, @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"}\<close> 
+<<<<<<< HEAD
+=======
+(*ML_file "patches/thy_output.ML";*)
+>>>>>>> d2e5bea25a311ff8210d30366b61b78bd7056efe
 
 section\<open>Primitive Markup Generators\<close>
 ML\<open>
