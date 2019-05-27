@@ -32,9 +32,13 @@ update_instance*[f::F,r:="[@{thm ''Concept_Example.some_proof''}]"]
 
 text\<open> ..., mauris amet, id elit aliquam aptent id,  ... @{docitem \<open>a\<close>} \<close>
 
-text\<open>Here we add and maintain a link that is actually modeled as m-to-n relation ...\<close>
-update_instance*[f::F,b:="{(@{docitem  ''a''}::A,@{docitem  ''c1''}::C), 
-                           (@{docitem  ''a''},   @{docitem  ''c2''})}"] 
+text\<open>Here we add and maintain a link that is actually modeled as m-to-n relation ...
+     The type annotations with @{typ A} and @{typ C} are optional and may help to get 
+     additional information at the HOL level, the arguments of the inner-syntax antiquotation
+     are strings that can be denoted in two different syntactic variants; the former is
+     more robust that the traditional latter.\<close>
+update_instance*[f::F,b:="{(@{docitem  \<open>a\<close>}::A,@{docitem  \<open>c1\<close>}::C), 
+                           (@{docitem  ''a''}, @{docitem  ''c2''})}"] 
   
 close_monitor*[struct]
 
