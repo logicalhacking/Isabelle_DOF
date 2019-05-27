@@ -366,12 +366,8 @@ val locale =
   Scan.option ((Parse.$$$ "(" -- improper -- Parse.$$$ "in") |--
     Parse.!!! (improper |-- Parse.name --| (improper -- Parse.$$$ ")")));
 
-<<<<<<< HEAD
 val meta_args_parser_hook =  Synchronized.var "meta args parder hook" 
                              ((fn thy => fn s => ("",s)): theory -> string parser);
-=======
-val meta_args_parser_hook = Unsynchronized.ref ((fn thy => fn s => ("",s)): theory -> string parser)
->>>>>>> d2e5bea25a311ff8210d30366b61b78bd7056efe
 
 
 in
@@ -380,10 +376,7 @@ type segment = {span: Command_Span.span, command: Toplevel.transition, state: To
 
 fun present_thy options thy (segments: segment list) =
   let
-<<<<<<< HEAD
- 
-=======
->>>>>>> d2e5bea25a311ff8210d30366b61b78bd7056efe
+
     val keywords = Thy_Header.get_keywords thy;
 
 
@@ -399,11 +392,7 @@ fun present_thy options thy (segments: segment list) =
       Scan.repeat tag --
       (improper |--
       (Parse.!!!! 
-<<<<<<< HEAD
       (  (Synchronized.value meta_args_parser_hook thy)
-=======
-      ((!meta_args_parser_hook thy)
->>>>>>> d2e5bea25a311ff8210d30366b61b78bd7056efe
          -- (  (improper -- locale -- improper) 
          |-- (Parse.document_source)) 
          --| improper_end)))
