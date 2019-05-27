@@ -401,7 +401,8 @@ val locale =
   Scan.option ((Parse.$$$ "(" -- improper -- Parse.$$$ "in") |--
     Parse.!!! (improper |-- Parse.name --| (improper -- Parse.$$$ ")")));
 
-val meta_args_parser_hook =  Unsynchronized.ref((fn thy => fn s => ("",s)): theory -> string parser)
+val meta_args_parser_hook =  Synchronized.var "meta args parder hook" 
+                             ((fn thy => fn s => ("",s)): theory -> string parser);
 
 
 in
@@ -410,12 +411,6 @@ type segment = {span: Command_Span.span, command: Toplevel.transition, state: To
 
 fun present_thy options thy (segments: segment list) =
   let
-
-    val X =  List.concat(map (fn X => Command_Span.content (#span X)) segments)
-    val Y = (String.concatWith "::") (map Token.content_of X)
-    val _ = writeln("present_thy BEGIN:"^Context.theory_name thy^"\n"
-                    ^Y^
-                    "present_thy END:"^Context.theory_name thy^"\n")
  
     val keywords = Thy_Header.get_keywords thy;
 
@@ -444,7 +439,7 @@ fun present_thy options thy (segments: segment list) =
       Scan.repeat tag --
       (improper |--
       (Parse.!!!! 
-      (  (!meta_args_parser_hook thy)
+      (  (Synchronized.value meta_args_parser_hook thy)
          -- (  (improper -- locale -- improper) 
          |-- (Parse.document_source)) 
          --| improper_end)))
@@ -457,11 +452,7 @@ fun present_thy options thy (segments: segment list) =
       Scan.one Token.is_command -- Scan.repeat tag
       >> (fn ((cmd_mod, cmd), tags) =>
         map (fn tok => (NONE, (Basic_Token tok, ("", d)))) cmd_mod @
-          [(SOME (let val _ = writeln("present_thy ZZZ:"^ Context.theory_name thy 
-                                       ^ Token.content_of cmd^"\n")
-                  in  
-                  Token.content_of cmd 
-                  end, Token.pos_of cmd, tags),
+          [(SOME (Token.content_of cmd, Token.pos_of cmd, tags),
             (Basic_Token cmd, (markup_false, d)))]));
 
     val cmt = Scan.peek (fn d =>
@@ -509,8 +500,6 @@ fun present_thy options thy (segments: segment list) =
       >> (fn (((toks1, (cmd, tok2)), toks3), tok4) =>
           make_span (the cmd) (toks1 @ (tok2 :: (toks3 @ the_default [] tok4))));
 
-    val _ = writeln("HUMPFLEPUMF'")
-
     val spans = segments
       |> maps (Command_Span.content o #span)
       |> drop_suffix Token.is_space
@@ -534,8 +523,6 @@ fun present_thy options thy (segments: segment list) =
     fun present _ [] = I
       | present st ((span, (tr, st')) :: rest) = present_command tr span st st' #> present st' rest;
 
-    val _ = writeln("HUMPFLEPUMF''"^Context.theory_name thy)
-
   in
     if length command_results = length spans then
       ((NONE, []), NONE, true, [], (I, I))
@@ -546,7 +533,7 @@ fun present_thy options thy (segments: segment list) =
   end;
 
 fun set_meta_args_parser f = let val _ = writeln "Meta-args parser set to new value" 
-                             in  (meta_args_parser_hook:= f) end
+                             in  (Synchronized.assign meta_args_parser_hook  f) end
 
 end;
 

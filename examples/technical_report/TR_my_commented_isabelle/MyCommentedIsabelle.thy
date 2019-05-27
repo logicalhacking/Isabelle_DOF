@@ -1768,6 +1768,14 @@ Thy_Output.output_text : Toplevel.state -> {markdown: bool} -> Input.source -> s
                          (* this is where antiquotation expansion happens : uses eval_antiquote *)
 
 *)
+(* stuff over global environment : *)
+(*
+ML\<open> Document.state();\<close>
+ML\<open> Session.get_keywords(); (* this looks to be really session global. *)
+    Outer_Syntax.command; \<close>
+ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>
+*)
+
 
 section\<open>Inner Syntax\<close>
 text\<open>MORE TO COME\<close>

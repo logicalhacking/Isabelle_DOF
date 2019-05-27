@@ -46,10 +46,9 @@ doc_class M =
    accepts "A ~~ \<lbrace>C || D\<rbrace>\<^sup>* ~~ \<lbrakk>F\<rbrakk>"
 
 
-text\<open>fdgh\<close>
 
-ML\<open> Document.state();\<close>
 (*
+ML\<open> Document.state();\<close>
 ML\<open> Session.get_keywords(); (* this looks to be really session global. *)
     Outer_Syntax.command; \<close>
 ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>

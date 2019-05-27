@@ -46,7 +46,6 @@ begin
 
 
 text\<open> @{footnote \<open>sdf\<close>}, @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"}\<close> 
-ML_file "patches/thy_output.ML";
 
 section\<open>Primitive Markup Generators\<close>
 ML\<open>
@@ -1532,16 +1531,18 @@ end
    This code depends on a MODIFIED Isabelle2017 version resulting from applying the files
    under Isabell_DOF/patches. 
  *)
+(* REMARK PORT 2018 : transmission of meta-args to LaTeX crude and untested. Can be found in
+   present_token. *)
 
 
 end
-
+\<close>
+ML\<open>                    
 val _ = Thy_Output.set_meta_args_parser
-                       (fn thy => let val _ = error "META_ARGS_PARSING"
-                                  in
-                                  (Scan.optional (   ODL_Command_Parser.attributes 
-                                                  >> ODL_LTX_Converter.meta_args_2_string thy) "")
-                                  end) 
+                       (fn thy => let val _ = writeln "META_ARGS_PARSING"
+                                  in  (Scan.optional (   ODL_Command_Parser.attributes 
+                                                      >> ODL_LTX_Converter.meta_args_2_string thy) "")
+                                  end); 
 
 \<close>
 
@@ -1947,17 +1948,18 @@ end (* struct *)
 
 ML\<open>Pretty.text_fold; Pretty.unformatted_string_of\<close>
 ML\<open> (String.concatWith ","); Token.content_of\<close>
-ML\<open>open Theory\<close>
 
-
+(*
 ML\<open>
 val _ = Thy_Output.set_meta_args_parser
                        (fn thy => (Scan.optional (   ODL_Command_Parser.attributes 
-                                                  >> ODL_LTX_Converter.meta_args_2_string thy) ""))
+                                                  >> ODL_LTX_Converter.meta_args_2_string thy) ""));
 val _ = Thy_Output.set_meta_args_parser
                        (fn thy => (Scan.optional (   ODL_Command_Parser.attributes 
-                                                  >> ODL_LTX_Converter.meta_args_2_string thy) ""))
+                                                  >> ODL_LTX_Converter.meta_args_2_string thy) ""));
 \<close>
+*)
+
 ML\<open>
  Document.state;
 Session.get_keywords();
