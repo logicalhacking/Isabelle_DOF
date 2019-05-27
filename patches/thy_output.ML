@@ -198,7 +198,7 @@ fun present_token ctxt tok =
         (output_document ctxt {markdown = false} source)
   | Markup_Env_Token (cmd, meta_args, source) =>
       [Latex.environment_block
-         ("isamarkup" ^ cmd)
+         ("isamarkup" ^ cmd ^ meta_args)
          (Latex.string meta_args :: output_document ctxt {markdown = true} source)]
   | Raw_Token source =>
       Latex.string "%\n" :: output_document ctxt {markdown = true} source @ [Latex.string "\n"]);
