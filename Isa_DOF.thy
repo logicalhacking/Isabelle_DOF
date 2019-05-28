@@ -1475,7 +1475,7 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Command_Parse
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
 
 
-        fun ltx_of_term _ _ (((Const ("List.list.Cons", t1) $  (Const ("String.Char", t2 ) $ t))) $ t') 
+        fun (* ltx_of_term _ _ (((Const ("List.list.Cons", t1) $  (Const ("String.Char", t2 ) $ t))) $ t') 
                            = (HOLogic.dest_string (((Const ("List.list.Cons", t1) $  (Const ("String.Char", t2 ) $ t))) $ t'))
           | ltx_of_term _ _ (Const ("List.list.Nil", _)) = ""
           | ltx_of_term _ _ (@{term "numeral :: _ \<Rightarrow> _"} $ t) = Int.toString(HOLogic.dest_numeral t)
@@ -1487,7 +1487,7 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Command_Parse
                                                in if encl then enclose "{" "}" inner else inner end
           | ltx_of_term _ _ (Const ("Option.option.None", _)) = ""
           | ltx_of_term ctxt _ (Const ("Option.option.Some", _)$t) = ltx_of_term ctxt true t
-          | ltx_of_term ctxt _ t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
+          | *)ltx_of_term ctxt _ t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
 
 
         fun ltx_of_term_dbg ctx encl term  = let 
@@ -1637,11 +1637,6 @@ ML\<open>
   Latex.output_text: Latex.text list -> string;
 \<close>
 
-ML\<open>
-   Pretty.text;
-   Pretty.str;
-   Pretty.block_enclose;
-\<close>
 
 ML\<open>
 structure OntoLinkParser = 
@@ -1689,7 +1684,7 @@ val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.text_input)
 
 
 fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked = x, define = y}, src ) = 
-            let val _ = writeln ("ZZZ" ^ Input.source_content src ^ "::2::" ^ cid_decl)
+            let (* val _ = writeln ("ZZZ" ^ Input.source_content src ^ "::2::" ^ cid_decl) *)
                 val _ = check_and_mark ctxt cid_decl  
                           ({strict_checking = not x}) 
                           (Input.pos_of src) (Input.source_content src) 
@@ -1945,19 +1940,16 @@ val _ =
 end (* struct *)
 \<close>  
 
+(*
+ML\<open>
+   Pretty.text;
+   Pretty.str;
+   Pretty.block_enclose;
+\<close>
+
 ML\<open>Pretty.text_fold; Pretty.unformatted_string_of\<close>
 ML\<open> (String.concatWith ","); Token.content_of\<close>
 
-(*
-ML\<open>
-val _ = Thy_Output.set_meta_args_parser
-                       (fn thy => (Scan.optional (   ODL_Command_Parser.attributes 
-                                                  >> ODL_LTX_Converter.meta_args_2_string thy) ""));
-val _ = Thy_Output.set_meta_args_parser
-                       (fn thy => (Scan.optional (   ODL_Command_Parser.attributes 
-                                                  >> ODL_LTX_Converter.meta_args_2_string thy) ""));
-\<close>
-*)
 
 ML\<open>
  Document.state;
@@ -1971,5 +1963,6 @@ ML\<open>
  Parse.!!!;
 
 \<close>
+*)
 
 end

@@ -194,11 +194,11 @@ fun present_token ctxt tok =
     Ignore_Token => []
   | Basic_Token tok => output_token ctxt tok
   | Markup_Token (cmd, meta_args, source) =>
-      Latex.enclose_body ("%\n\\isamarkup" ^ cmd ^ meta_args ^ "{") "%\n}\n"
+      Latex.enclose_body ("%\n\\isamarkup" ^ cmd (* ^ meta_args *) ^ "{") "%\n}\n"
         (output_document ctxt {markdown = false} source)
   | Markup_Env_Token (cmd, meta_args, source) =>
       [Latex.environment_block
-         ("isamarkup" ^ cmd ^ meta_args)
+         ("isamarkup" ^ cmd (* ^ meta_args*))
          (Latex.string meta_args :: output_document ctxt {markdown = true} source)]
   | Raw_Token source =>
       Latex.string "%\n" :: output_document ctxt {markdown = true} source @ [Latex.string "\n"]);
@@ -366,7 +366,11 @@ val locale =
   Scan.option ((Parse.$$$ "(" -- improper -- Parse.$$$ "in") |--
     Parse.!!! (improper |-- Parse.name --| (improper -- Parse.$$$ ")")));
 
-val meta_args_parser_hook =  Synchronized.var "meta args parder hook" 
+(*
+val meta_args_parser_hook =  Synchronized.var "meta args parser hook" 
+                             ((fn thy => fn s => ("",s)): theory -> string parser);
+*)
+val meta_args_parser_hook =  Unsynchronized.ref 
                              ((fn thy => fn s => ("",s)): theory -> string parser);
 
 
@@ -392,7 +396,7 @@ fun present_thy options thy (segments: segment list) =
       Scan.repeat tag --
       (improper |--
       (Parse.!!!! 
-      (  (Synchronized.value meta_args_parser_hook thy)
+      (  (!meta_args_parser_hook thy)
          -- (  (improper -- locale -- improper) 
          |-- (Parse.document_source)) 
          --| improper_end)))
@@ -479,8 +483,13 @@ fun present_thy options thy (segments: segment list) =
     else error "Messed-up outer syntax for presentation"
   end;
 
+(*
 fun set_meta_args_parser f = let val _ = writeln "Meta-args parser set to new value" 
-                             in  (Synchronized.assign meta_args_parser_hook  f) end
+                             in  (Unsynchronized.assign meta_args_parser_hook  f) end
+*)
+fun set_meta_args_parser f = let val _ = writeln "Meta-args parser set to new value" 
+                             in  ( meta_args_parser_hook := f) end
+
 
 end;
 

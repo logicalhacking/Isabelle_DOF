@@ -6,10 +6,7 @@ session "Isabelle_DOF" = "Functional-Automata" +
     Isa_DOF
     "ontologies/Conceptual"
     "ontologies/CENELEC_50128"
-    (*
     "ontologies/scholarly_paper"
     "ontologies/technical_report"
     "ontologies/mathex_onto"
-    *)
-
 
