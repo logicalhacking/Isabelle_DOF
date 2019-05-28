@@ -20,8 +20,8 @@ text*[paolo::author,
       email      = "''paolo.crisafulli@irt-systemx.fr''",
       affiliation= "''IRT-SystemX, Paris, France''"]\<open>Paolo Crisafulli\<close>
 text*[bu::author,
-      email       = "''wolff@lri.fr''",
-      affiliation = "''Universit\\'e Paris-Sud, Paris, France''"]\<open>Burkhart Wolff\<close>
+      email       = "\<open>wolff@lri.fr\<close>",
+      affiliation = "\<open>Université Paris-Sud, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
     
 
 text*[abs::abstract,
