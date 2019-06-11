@@ -30,14 +30,14 @@
 shopt -s nocasematch
 
 # Global configuration  
-ISABELLE_VERSION="Isabelle2017: October 2017"
-ISABELLE_URL="https://isabelle.in.tum.de/website-Isabelle2017/"
-AFP_URL="https://sourceforge.net/projects/afp/files/afp-Isabelle2017/afp-2018-08-14.tar.gz"
+ISABELLE_VERSION="Isabelle2018: August 2018"
+ISABELLE_URL="https://isabelle.in.tum.de/website-Isabelle2018/"
+AFP_URL="https://sourceforge.net/projects/afp/files/afp-Isabelle2018/afp-2019-06-04.tar.gz"
 
 ISABELLE=`which isabelle`
 GEN_DIR=document-generator
 PROG=`echo $0 | sed 's|.*/||'`;
-ISABELLE_VERSION=`$ISABELLE version`
+ACTUAL_ISABELLE_VERSION=`$ISABELLE version`
 SKIP="false"
 VARS=`$ISABELLE getenv ISABELLE_HOME_USER ISABELLE_HOME ISABELLE_TOOLS`
 for i in $VARS; do 
@@ -69,14 +69,14 @@ exit_error() {
 
 check_isabelle_version() {
     echo "* Checking Isabelle version:"
-    if [ "$ISABELLE_VERSION" != "$ISABELLE_VERSION" ]; then
+    if [ "$ISABELLE_VERSION" != "$ACTUAL_ISABELLE_VERSION" ]; then
         echo "  WARNING:"
-        echo "    The version of Isabelle (i.e., $ISABELLE_VERSION) you are using"
+        echo "    The version of Isabelle (i.e., $ACTUAL_ISABELLE_VERSION) you are using"
         echo "                        IS NOT SUPPORTED"
         echo "    by the current version of Isabelle/DOF. Please install a supported"
         echo "    version of Isabelle and rerun the install script, providing the"
         echo "    the \"isabelle\" command as argument."
-        echo "    Isabelle 2017 can be obtained from:"
+        echo "    Isabelle ($ISABELLE_VERSION) can be obtained from:"
         echo "    $ISABELLE_URL"
         echo 
         read -p "    Still continue (y/N)? " -n 1 -r
@@ -109,7 +109,7 @@ check_afp_entries() {
         echo "           Trying to install AFP (this might take a few *minutes*) ...."
 	extract=""
 	for e in $missing; do
-	    extract="$extract afp-2018-08-14/thys/$e"
+	    extract="$extract afp-2019-06-04/thys/$e"
 	done
 	mkdir -p .afp
         if curl -s -L $AFP_URL | tar zxf - -C .afp $extract; then 
