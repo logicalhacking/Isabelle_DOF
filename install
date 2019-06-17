@@ -38,7 +38,6 @@ AFP_URL="https://sourceforge.net/projects/afp/files/afp-Isabelle2018/afp-2019-06
 ISABELLE=`which isabelle`
 GEN_DIR=document-generator
 PROG=`echo $0 | sed 's|.*/||'`;
-ACTUAL_ISABELLE_VERSION=`$ISABELLE version`
 SKIP="false"
 VARS=`$ISABELLE getenv ISABELLE_HOME_USER ISABELLE_HOME ISABELLE_TOOLS`
 for i in $VARS; do 
@@ -225,6 +224,7 @@ do
     shift
 done
 
+ACTUAL_ISABELLE_VERSION=`$ISABELLE version`
 
 echo "Isabelle/DOF Installer"
 echo "======================"
