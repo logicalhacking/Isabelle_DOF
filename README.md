@@ -156,3 +156,9 @@ SPDX-License-Identifier: BSD-2-Clause
   with the Informal]({https://www.brucker.ch/bibliography/download/2018/brucker.ea-isabelle-ontologies-2018.pdf). 
   In Conference on Intelligent Computer Mathematics (CICM). Lecture 
   Notes in Computer Science (11006), Springer-Verlag, 2018.
+
+## Master Repository
+
+The master git repository for this project is hosted 
+<https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF>.
+
