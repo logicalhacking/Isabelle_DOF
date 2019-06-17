@@ -35,15 +35,6 @@ ISABELLE_VERSION="Isabelle2018: August 2018"
 ISABELLE_URL="https://isabelle.in.tum.de/website-Isabelle2018/"
 AFP_URL="https://sourceforge.net/projects/afp/files/afp-Isabelle2018/afp-2019-06-04.tar.gz"
 
-ISABELLE=`which isabelle`
-GEN_DIR=document-generator
-PROG=`echo $0 | sed 's|.*/||'`;
-SKIP="false"
-VARS=`$ISABELLE getenv ISABELLE_HOME_USER ISABELLE_HOME ISABELLE_TOOLS`
-for i in $VARS; do 
-	export "$i"
-done
-
 print_help()
 {
     echo "Usage: $PROG [OPTION] "
@@ -224,7 +215,16 @@ do
     shift
 done
 
+
+ISABELLE=`which isabelle`
 ACTUAL_ISABELLE_VERSION=`$ISABELLE version`
+GEN_DIR=document-generator
+PROG=`echo $0 | sed 's|.*/||'`;
+SKIP="false"
+VARS=`$ISABELLE getenv ISABELLE_HOME_USER ISABELLE_HOME ISABELLE_TOOLS`
+for i in $VARS; do 
+	export "$i"
+done
 
 echo "Isabelle/DOF Installer"
 echo "======================"
