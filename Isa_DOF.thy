@@ -1457,9 +1457,7 @@ val _ =
 
 
 end (* struct *)
-
 \<close>
-
 
 ML\<open>
 structure ODL_LTX_Converter = 
@@ -1474,20 +1472,19 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Command_Parse
                               | SOME(cid,_) => DOF_core.name2doc_class_name thy cid        
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
 
-
-        fun (* ltx_of_term _ _ (((Const ("List.list.Cons", t1) $  (Const ("String.Char", t2 ) $ t))) $ t') 
-                           = (HOLogic.dest_string (((Const ("List.list.Cons", t1) $  (Const ("String.Char", t2 ) $ t))) $ t'))
+        fun ltx_of_term _ _ (Const ("List.list.Cons", @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $ t2) 
+                  = HOLogic.dest_string (Const ("List.list.Cons", @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $  t2)
           | ltx_of_term _ _ (Const ("List.list.Nil", _)) = ""
           | ltx_of_term _ _ (@{term "numeral :: _ \<Rightarrow> _"} $ t) = Int.toString(HOLogic.dest_numeral t)
           | ltx_of_term ctx encl ((Const ("List.list.Cons", _) $ t1) $ t2) = 
                                                let val inner = (case t2 of 
-                                                                  Const ("List.list.Nil", _) => (ltx_of_term ctx true t1)
+                                                                  Const ("List.list.Nil", _) =>  (ltx_of_term ctx true t1) 
                                                                 | _ => ((ltx_of_term ctx false t1)^", " ^(ltx_of_term ctx false t2))
                                                              )
                                                in if encl then enclose "{" "}" inner else inner end
           | ltx_of_term _ _ (Const ("Option.option.None", _)) = ""
           | ltx_of_term ctxt _ (Const ("Option.option.Some", _)$t) = ltx_of_term ctxt true t
-          | *)ltx_of_term ctxt _ t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
+          | ltx_of_term ctxt _ t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
 
 
         fun ltx_of_term_dbg ctx encl term  = let 
@@ -1688,13 +1685,10 @@ fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked = x, define =
                 val _ = check_and_mark ctxt cid_decl  
                           ({strict_checking = not x}) 
                           (Input.pos_of src) (Input.source_content src) 
-            in  (*(if y then Latex.enclose_block "\\label{" "}" 
-                      else Latex.enclose_block "\\autoref{" "}")
-                [Latex.string (Input.source_content src)]*) 
-                (if y  then Latex.enclose_block ("\\labelX[type="^cid_decl^"]{") "}" 
-                       else Latex.enclose_block ("\\autorefX[type="^cid_decl^"]{") "}")
+            in  
+                (if y  then Latex.enclose_block ("\\csname isadof.label[type={"^cid_decl^"}]{") "}\\endcsname" 
+                       else Latex.enclose_block ("\\csname isadof.ref[type={"^cid_decl^"}]{") "}\\endcsname")
                 [Latex.string (Input.source_content src)] 
-                
             end
           
 
