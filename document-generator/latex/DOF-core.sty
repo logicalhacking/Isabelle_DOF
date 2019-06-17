@@ -1,5 +1,6 @@
 %% Copyright (C) 2018 The University of Sheffield
 %%               2018 The University of Paris-Sud
+%%               2019 The University of Exeter
 %%
 %% License:
 %%   This program can be redistributed and/or modified under the terms
@@ -126,3 +127,9 @@
 % end: chapter/section default implementations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: label and ref
+\newisadof{label}[label=,type=][1]{\label{#1}}
+\newisadof{ref}[label=,type=][1]{\autoref{#1}}
+% end: label and ref
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
