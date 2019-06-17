@@ -197,6 +197,7 @@ install_and_register(){
 }
 
 
+ISABELLE=`which isabelle`
 
 while [ $# -gt 0 ]
 do
@@ -216,7 +217,6 @@ do
 done
 
 
-ISABELLE=`which isabelle`
 ACTUAL_ISABELLE_VERSION=`$ISABELLE version`
 GEN_DIR=document-generator
 PROG=`echo $0 | sed 's|.*/||'`;
