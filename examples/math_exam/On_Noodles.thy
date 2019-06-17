@@ -1,5 +1,6 @@
-theory "On_Noodle"
-  imports small_math
+theory "On_Noodles"
+  imports "../../ontologies/small_math"
+          "../../ontologies/technical_report"
 begin
 
 open_monitor*[this::article]
@@ -7,7 +8,7 @@ open_monitor*[this::article]
 title*[t1::title]\<open>On Noodles\<close> 
 
 text*[simon::author]\<open>Simon Foster\<close>
-text*[a::abstract, keyword_list = "[topology]"]
+text*[a::abstract, keywordlist = "[''topology'']"]
 \<open>We present the first fundamental results on the goundbreaking theory of noodles...\<close>
 section*[intro::introduction]\<open>Introduction\<close>
 
@@ -28,3 +29,4 @@ update_instance*[def1, formal_results:="[@{thm ''noodle_def''}]"]
 
 close_monitor*[this::article]
 
+end

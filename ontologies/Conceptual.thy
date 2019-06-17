@@ -46,12 +46,19 @@ doc_class M =
    accepts "A ~~ \<lbrace>C || D\<rbrace>\<^sup>* ~~ \<lbrakk>F\<rbrakk>"
 
 
-section*[test::A]\<open> Test and Validation\<close>
+
+(*
+ML\<open> Document.state();\<close>
+ML\<open> Session.get_keywords(); (* this looks to be really session global. *)
+    Outer_Syntax.command; \<close>
+ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>
+*)
+
+section* [ test :: A ] \<open> Test and Validation\<close>
 text\<open>Defining some document elements to be referenced in later on in another theory: \<close>
-text*[sdf] {* f @{thm refl}*}  
-text*[sdfg] {* fg @{thm refl}*}  
- 
-text*[xxxy] {* dd @{docitem \<open>sdfg\<close>}  @{thm refl}*}    
+text* [ sdf  ] \<open> f @{thm refl}\<close> 
+text* [ sdfg ] \<open> fg @{thm refl}\<close>  
+text* [ xxxy ] \<open> dd @{docitem \<open>sdfg\<close>}  @{thm refl}\<close>  
 
 
 end     

@@ -177,8 +177,8 @@ val is_black_comment = Token.is_formal_comment;
 datatype token =
     Ignore_Token
   | Basic_Token of Token.T
-  | Markup_Token of string * string * Input.source
-  | Markup_Env_Token of string * string * Input.source
+  | Markup_Token of string * Input.source
+  | Markup_Env_Token of string * Input.source
   | Raw_Token of Input.source;
 
 fun basic_token pred (Basic_Token tok) = pred tok
@@ -193,13 +193,11 @@ fun present_token ctxt tok =
   (case tok of
     Ignore_Token => []
   | Basic_Token tok => output_token ctxt tok
-  | Markup_Token (cmd, meta_args, source) =>
-      Latex.enclose_body ("%\n\\isamarkup" ^ cmd (* ^ meta_args *) ^ "{") "%\n}\n"
+  | Markup_Token (cmd, source) =>
+      Latex.enclose_body ("%\n\\isamarkup" ^ cmd ^ "{") "%\n}\n"
         (output_document ctxt {markdown = false} source)
-  | Markup_Env_Token (cmd, meta_args, source) =>
-      [Latex.environment_block
-         ("isamarkup" ^ cmd (* ^ meta_args*))
-         (Latex.string meta_args :: output_document ctxt {markdown = true} source)]
+  | Markup_Env_Token (cmd, source) =>
+      [Latex.environment_block ("isamarkup" ^ cmd) (output_document ctxt {markdown = true} source)]
   | Raw_Token source =>
       Latex.string "%\n" :: output_document ctxt {markdown = true} source @ [Latex.string "\n"]);
 
@@ -366,12 +364,7 @@ val locale =
   Scan.option ((Parse.$$$ "(" -- improper -- Parse.$$$ "in") |--
     Parse.!!! (improper |-- Parse.name --| (improper -- Parse.$$$ ")")));
 
-(*
-val meta_args_parser_hook =  Synchronized.var "meta args parser hook" 
-                             ((fn thy => fn s => ("",s)): theory -> string parser);
-*)
-val meta_args_parser_hook =  Unsynchronized.ref 
-                             ((fn thy => fn s => ("",s)): theory -> string parser);
+val meta_args_parser_hook =  Unsynchronized.ref((fn thy => fn s => ("",s)): theory -> string parser)
 
 
 in
@@ -380,7 +373,6 @@ type segment = {span: Command_Span.span, command: Toplevel.transition, state: To
 
 fun present_thy options thy (segments: segment list) =
   let
-
     val keywords = Thy_Header.get_keywords thy;
 
 
@@ -394,15 +386,10 @@ fun present_thy options thy (segments: segment list) =
         Parse.position (Scan.one (fn tok =>
           Token.is_command tok andalso pred keywords (Token.content_of tok))) --
       Scan.repeat tag --
-      (improper |--
-      (Parse.!!!! 
-      (  (!meta_args_parser_hook thy)
-         -- (  (improper -- locale -- improper) 
-         |-- (Parse.document_source)) 
-         --| improper_end)))
-      >> (fn (((tok, pos'), tags), (meta_args, source)) =>
+      Parse.!!!! ((improper -- locale -- improper) |-- Parse.document_source --| improper_end)
+      >> (fn (((tok, pos'), tags), source) =>
         let val name = Token.content_of tok
-        in (SOME (name, pos', tags), (mk (name, meta_args, source), (flag, d))) end));
+        in (SOME (name, pos', tags), (mk (name, source), (flag, d))) end));
 
     val command = Scan.peek (fn d =>
       Scan.optional (Scan.one Token.is_command_modifier ::: improper) [] --
@@ -411,9 +398,15 @@ fun present_thy options thy (segments: segment list) =
         map (fn tok => (NONE, (Basic_Token tok, ("", d)))) cmd_mod @
           [(SOME (Token.content_of cmd, Token.pos_of cmd, tags),
             (Basic_Token cmd, (markup_false, d)))]));
-
+(*
     val cmt = Scan.peek (fn d =>
-      Scan.one is_black_comment >> (fn tok => (NONE, (Basic_Token tok, ("", d)))));
+      Scan.one is_black_comment >> (fn tok => (NONE, (Basic_Token tok, ("", d))))); 
+ *)
+    val cmt = Scan.peek (fn d =>
+      (Parse.$$$ "--" || Parse.$$$ Symbol.comment) |--
+        Parse.!!!! (improper |-- Parse.document_source) >>
+        (fn source => (NONE, (Markup_Token ("cmt", "", source), ("", d)))));
+
 
     val other = Scan.peek (fn d =>
        Parse.not_eof >> (fn tok => (NONE, (Basic_Token tok, ("", d)))));
@@ -422,7 +415,7 @@ fun present_thy options thy (segments: segment list) =
       (ignored ||
         markup Keyword.is_document_heading Markup_Token markup_true ||
         markup Keyword.is_document_body Markup_Env_Token markup_true ||
-        markup Keyword.is_document_raw (Raw_Token o #3) "") >> single ||
+        markup Keyword.is_document_raw (Raw_Token o #2) "") >> single ||
       command ||
       (cmt || other) >> single;
 
@@ -471,9 +464,7 @@ fun present_thy options thy (segments: segment list) =
       Toplevel.setmp_thread_position tr (present_span thy command_tag span st st');
 
     fun present _ [] = I
-      | present st ((span, (tr, st')) :: rest) = present_command tr span st st' 
-                                                 #> present st' rest;
-
+      | present st ((span, (tr, st')) :: rest) = present_command tr span st st' #> present st' rest;
   in
     if length command_results = length spans then
       ((NONE, []), NONE, true, [], (I, I))
@@ -483,13 +474,7 @@ fun present_thy options thy (segments: segment list) =
     else error "Messed-up outer syntax for presentation"
   end;
 
-(*
-fun set_meta_args_parser f = let val _ = writeln "Meta-args parser set to new value" 
-                             in  (Unsynchronized.assign meta_args_parser_hook  f) end
-*)
-fun set_meta_args_parser f = let val _ = writeln "Meta-args parser set to new value" 
-                             in  ( meta_args_parser_hook := f) end
-
+fun set_meta_args_parser f = (meta_args_parser_hook:= f)
 
 end;
 

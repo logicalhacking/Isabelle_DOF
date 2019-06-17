@@ -111,7 +111,7 @@ local
 fun group f g cidS [] = []
    |group f g cidS (a::S) = case find_first (f a) cidS of
                             NONE => [a] :: group f g cidS S
-                          | SOME cid => let val (pref,suff) =  take_prefix  (g cid) S
+                          | SOME cid => let val (pref,suff) =  chop_prefix  (g cid) S
                                         in (a::pref)::(group f g cidS suff) end;
 
 fun partition ctxt cidS trace = 

@@ -16,7 +16,7 @@ val {docobj_tab={tab = docitem_tab, ...},docclass_tab, ISA_transformer_tab, moni
 Symtab.dest docitem_tab;
 Symtab.dest docclass_tab;
 \<close>
-
+ 
 ML\<open>
 fun fac x = if x = 0 then 1 else x * (fac(x -1));
 fac 3;

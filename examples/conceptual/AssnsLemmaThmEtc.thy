@@ -13,7 +13,8 @@ print_doc_items
 section\<open>Definitions, Lemmas, Theorems, Assertions\<close>
 
 
-text*[aa::F, property = "[@{term ''True''}]"]\<open>Our definition of the HOL-Logic has the following properties:\<close>
+text*[aa::F, property = "[@{term ''True''}]"]
+\<open>Our definition of the HOL-Logic has the following properties:\<close>
 assert*[aa::F] "True"
 
 

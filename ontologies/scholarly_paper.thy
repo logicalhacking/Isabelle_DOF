@@ -10,13 +10,14 @@ doc_class title =
 doc_class subtitle =
    abbrev :: "string option"       <=  "None"
    
--- \<open>adding a contribution list and checking that it is cited as well in tech as in conclusion. ? \<close>
+(* adding a contribution list and checking that it is cited as well in tech as in conclusion. ? *)
 
 doc_class author =
    email       :: "string" <= "''''"
    http_site   :: "string" <= "''''"
    orcid       :: "string" <= "''''"
    affiliation :: "string"
+
 
 doc_class abstract =
    keywordlist        :: "string list"   <= "[]" 
@@ -64,7 +65,7 @@ doc_class annex = "text_section" +
 
 
 text\<open> Besides subtyping, there is another relation between
-doc_classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
+doc\_classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
 which is expressed by occurrence in the where clause.
 While sub-classing refers to data-inheritance of attributes,
 a monitor captures structural constraints -- the order --
@@ -111,7 +112,7 @@ local
 fun group f g cidS [] = []
    |group f g cidS (a::S) = case find_first (f a) cidS of
                             NONE => [a] :: group f g cidS S
-                          | SOME cid => let val (pref,suff) =  take_prefix  (g cid) S
+                          | SOME cid => let val (pref,suff) =  chop_prefix  (g cid) S
                                         in (a::pref)::(group f g cidS suff) end;
 
 fun partition ctxt cidS trace = 

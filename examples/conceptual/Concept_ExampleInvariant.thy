@@ -43,6 +43,9 @@ subsection*[d::A, x = "4"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 (* test : update should not fail, invariant still valid *)
 update_instance*[d::A, x += "1"]
 
+(* test : with the next step it should fail :
+update_instance*[d::A, x += "1"]
+*)
 
 section\<open>Example: Monitor Class Invariant\<close>
 

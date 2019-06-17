@@ -1,6 +1,7 @@
 (*<*)
 theory MyCommentedIsabelle
-  imports "Isabelle_DOF.technical_report"
+(*  imports "Isabelle_DOF.technical_report" *)
+  imports "../../../ontologies/technical_report"
 begin
  
 
@@ -62,7 +63,7 @@ code-base. The preferred programming style is purely functional: \<close>
 ML\<open> fun fac x = if x = 0 then 1 else x * fac(x-1) ;
     fac 10;
   \<close>
--- or 
+(* or *) 
 ML\<open> type state = {  a : int,   b : string}
     fun incr_state ({a, b}:state) =  {a=a+1, b=b}
   \<close>
@@ -664,7 +665,7 @@ datatype thy = Thy of
 
 *)
 
-Theory.check: Proof.context -> string * Position.T -> theory;
+Theory.check: {long: bool} -> Proof.context -> string * Position.T -> theory;
 
 Theory.local_setup: (Proof.context -> Proof.context) -> unit;
 Theory.setup: (theory -> theory) -> unit;  (* The thing to extend the table of "command"s with parser - callbacks. *)
@@ -803,107 +804,31 @@ Goal.prove_global :  theory -> string list -> term list -> term ->
 \<close>
 
 section\<open>The Isar Engine\<close>
-  
+
+text\<open>The main structure of the Isar-engine is @{ ML_structure Toplevel} and provides and
+internal @{ ML_type state} with the necessary infrastructure --- 
+i.e. the operations to pack and unpack theories and Proof.contexts  --- on it:
+\<close>
 ML\<open> 
-Toplevel.theory; 
-Toplevel.presentation_context_of; (* Toplevel is a kind of table with call-back functions *)
 
-Consts.the_const; (* T is a kind of signature ... *)
-Variable.import_terms;
-Vartab.update;
-
-fun control_antiquotation name s1 s2 =
-  Thy_Output.antiquotation name (Scan.lift Args.cartouche_input)
-    (fn {state, ...} => enclose s1 s2 o Thy_Output.output_text state {markdown = false});
-
-Output.output;
-
-Syntax.read_input ;
-Input.source_content;
-
-(*
-  basic_entity @{binding const} (Args.const {proper = true, strict = false}) pretty_const #>
-*)
-\<close>
-  
-ML\<open>
-Config.get @{context} Thy_Output.display;
-Config.get @{context} Thy_Output.source;
-Config.get @{context} Thy_Output.modes;
-Thy_Output.document_command;
-(* is:
-fun document_command markdown (loc, txt) =
-  Toplevel.keep (fn state =>
-    (case loc of
-      NONE => ignore (output_text state markdown txt)
-    | SOME (_, pos) =>
-        error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
-  Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt));
-
-end;
-
-*)
-\<close>
-
-
-
-  
-ML\<open> Thy_Output.document_command {markdown = true} \<close>  
-(* Structures related to LaTeX Generation *)
-ML\<open>  Latex.output_ascii;
-
-      Latex.output_token
-(* Hm, generierter output for
-subsection*[Shaft_Encoder_characteristics]{ * Shaft Encoder Characteristics * } :
-
-\begin{isamarkuptext}%
-\isa{{\isacharbackslash}label{\isacharbraceleft}general{\isacharunderscore}hyps{\isacharbraceright}}%
-\end{isamarkuptext}\isamarkuptrue%
-\isacommand{subsection{\isacharasterisk}}\isamarkupfalse%
-{\isacharbrackleft}Shaft{\isacharunderscore}Encoder{\isacharunderscore}characteristics{\isacharbrackright}{\isacharverbatimopen}\ Shaft\ Encoder\ Characteristics\ {\isacharverbatimclose}%
-
-Generierter output for: text\<open>\label{sec:Shaft-Encoder-characteristics}\<close>
-
-\begin{isamarkuptext}%
-\label{sec:Shaft-Encoder-characteristics}%
-\end{isamarkuptext}\isamarkuptrue%
-
-
-*)
-
-
-\<close>  
-  
-ML\<open>
-Thy_Output.maybe_pretty_source : 
-     (Proof.context -> 'a -> Pretty.T) -> Proof.context -> Token.src -> 'a list -> Pretty.T list;
-
-Thy_Output.output: Proof.context -> Pretty.T list -> string;
-
- (* nuescht besonderes *)
-
-fun document_antiq check_file ctxt (name, pos) =
-  let
-   (* val dir = master_directory (Proof_Context.theory_of ctxt); *)
-   (* val _ = check_path check_file ctxt dir (name, pos); *)
-  in
-    space_explode "/" name
-    |> map Latex.output_ascii
-    |> space_implode (Latex.output_ascii "/" ^ "\\discretionary{}{}{}")
-    |> enclose "\\isatt{" "}"
-  end;
+ Toplevel.theory_toplevel: theory -> Toplevel.state;
+ Toplevel.toplevel: Toplevel.state;
+ Toplevel.is_toplevel: Toplevel.state -> bool;
+ Toplevel.is_theory: Toplevel.state -> bool;
+ Toplevel.is_proof: Toplevel.state -> bool;
+ Toplevel.is_skipped_proof: Toplevel.state -> bool;
+ Toplevel.level: Toplevel.state -> int;
+ Toplevel.context_of: Toplevel.state -> Proof.context;
+ Toplevel.generic_theory_of: Toplevel.state -> generic_theory;
+ Toplevel.theory_of: Toplevel.state -> theory;
+ Toplevel.proof_of: Toplevel.state -> Proof.state;
+ Toplevel.presentation_context: Toplevel.state -> Proof.context;
 
 \<close>
-ML\<open> Type_Infer_Context.infer_types \<close>
-ML\<open> Type_Infer_Context.prepare_positions \<close>
-
-  
   
 subsection \<open>Transaction Management in the Isar-Engine : The Toplevel \<close>
   
 ML\<open>
-Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
-Thy_Output.document_command;
 
 Toplevel.exit: Toplevel.transition -> Toplevel.transition;
 Toplevel.keep: (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
@@ -926,8 +851,6 @@ Toplevel.present_local_theory:
     | SOME (_, pos) =>
         error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
   Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt)); *)
-Thy_Output.document_command :  {markdown: bool} -> (xstring * Position.T) option * Input.source -> 
-                               Toplevel.transition -> Toplevel.transition;
 
 (* Isar Toplevel Steuerung *)
 Toplevel.keep :  (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
@@ -958,22 +881,6 @@ Toplevel.theory : (theory -> theory) -> Toplevel.transition -> Toplevel.transiti
                 | _ => raise UNDEF));
 
       fun theory f = theory' (K f); *)
-
-Thy_Output.document_command : {markdown: bool} -> (xstring * Position.T) option * Input.source ->
-    Toplevel.transition -> Toplevel.transition;
-    (*  fun document_command markdown (loc, txt) =
-            Toplevel.keep (fn state =>
-               (case loc of
-                   NONE => ignore (output_text state markdown txt)
-                         | SOME (_, pos) =>
-                   error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
-             Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt));
-
-    *)
-
-Thy_Output.output_text : Toplevel.state -> {markdown: bool} -> Input.source -> string ; 
-                         (* this is where antiquotation expansion happens : uses eval_antiquote *)
-
 
 \<close>  
   
@@ -1011,50 +918,48 @@ Toplevel.theory : (theory -> theory) -> Toplevel.transition -> Toplevel.transiti
 
       fun theory f = theory' (K f); *)
 
-Thy_Output.document_command : {markdown: bool} -> (xstring * Position.T) option * Input.source ->
-    Toplevel.transition -> Toplevel.transition;
-    (*  fun document_command markdown (loc, txt) =
-            Toplevel.keep (fn state =>
-               (case loc of
-                   NONE => ignore (output_text state markdown txt)
-                         | SOME (_, pos) =>
-                   error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
-             Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt));
-
-    *)
-
-Thy_Output.output_text : Toplevel.state -> {markdown: bool} -> Input.source -> string ; 
-                         (* this is where antiquotation expansion happens : uses eval_antiquote *)
-
 
 \<close>
   
   
 subsection\<open> Configuration flags of fixed type in the Isar-engine. \<close>
-
+text\<open>The toplevel also provides an infrastructure for managing configuration options 
+for system components. Based on a sum-type @{ML_type Config.value } 
+with the alternatives \<^verbatim>\<open> Bool of bool | Int of int | Real of real | String of string\<close>
+and building the parametric configuration types @{ML_type "'a Config.T" } and the
+instance  \<^verbatim>\<open>type raw = value T\<close>, for all registered configurations the protocol:
+\<close>
 ML\<open>
-Config.get @{context} Thy_Output.quotes;
-Config.get @{context} Thy_Output.display;
+ Config.get: Proof.context -> 'a Config.T -> 'a;
+ Config.map: 'a Config.T -> ('a -> 'a) -> Proof.context -> Proof.context;
+ Config.put: 'a Config.T -> 'a -> Proof.context -> Proof.context;
+ Config.get_global: theory -> 'a Config.T -> 'a;
+ Config.map_global: 'a Config.T -> ('a -> 'a) -> theory -> theory;
+ Config.put_global: 'a Config.T -> 'a -> theory -> theory;
+\<close>
+text\<open>... etc. is defined.\<close>
 
+text\<open>Example registration of an config attribute XS232: \<close>
+ML\<open>
+val (XS232, XS232_setup)
+     = Attrib.config_bool \<^binding>\<open>XS232\<close> (K false);
+
+val _ = Theory.setup XS232_setup;
+\<close>
+
+(* or: just command:
+
+setup\<open>XS232_setup\<close>
+
+*)
+
+text\<open>Another mechanism are global synchronised variables:\<close>
+ML\<open> (* For example *)
+           
 val C = Synchronized.var "Pretty.modes" "latEEex"; 
 (* Synchronized: a mechanism to bookkeep global
    variables with synchronization mechanism included *)
 Synchronized.value C;
-(*
-fun output ctxt prts =
-   603   prts
-   604   |> Config.get ctxt quotes ? map Pretty.quote
-   605   |> (if Config.get ctxt display then
-   606         map (Pretty.indent (Config.get ctxt indent) #> string_of_margin ctxt #> Output.output)
-   607         #> space_implode "\\isasep\\isanewline%\n"
-   608         #> Latex.environment "isabelle"
-   609       else
-   610         map
-   611           ((if Config.get ctxt break then string_of_margin ctxt else Pretty.unformatted_string_of)
-   612             #> Output.output)
-   613         #> space_implode "\\isasep\\isanewline%\n"
-   614         #> enclose "\\isa{" "}");
-*)
 \<close>  
   
 chapter\<open>Front-End \<close>  
@@ -1388,11 +1293,16 @@ val Z = let val attribute = Parse.position Parse.name --
                             Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.name) "";
         in (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) end ;
 (* this leads to constructions like the following, where a parser for a *)
-fn name => (Thy_Output.antiquotation name (Scan.lift (Parse.position Args.cartouche_input)));
+
+
+
+Thy_Output.antiquotation_pretty_source \<^binding>\<open>theory\<close> (Scan.lift (Parse.position Args.embedded));
+
+Thy_Output.antiquotation_raw \<^binding>\<open>file\<close> (Scan.lift (Parse.position Parse.path))  ;
+
+fn name => (Thy_Output.antiquotation_pretty_source name (Scan.lift (Parse.position Args.cartouche_input)));
 \<close>
 
-section\<open>\<close>
-ML\<open>Sign.add_trrules\<close>
 
 section\<open> The PIDE Framework \<close>  
 subsection\<open> Markup \<close>  
@@ -1512,19 +1422,35 @@ Output.output "bla_1:";
 \<close>
 
 section \<open> Output: LaTeX \<close>
-  
-ML\<open> 
-Thy_Output.verbatim_text;
-Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
-Thy_Output.antiquotation:
-   binding ->
-     'a context_parser ->
-       ({context: Proof.context, source: Token.src, state: Toplevel.state} -> 'a -> string) ->
-         theory -> theory;
-Thy_Output.output: Proof.context -> Pretty.T list -> string;
-Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
 
-Thy_Output.output : Proof.context -> Pretty.T list -> string;
+
+ML\<open> open Thy_Output; 
+
+ output_document: Proof.context -> {markdown: bool} -> Input.source -> Latex.text list;
+ output_source: Proof.context -> string -> Latex.text list;
+ present_thy: Options.T -> theory -> segment list -> Latex.text list;
+ pretty_term: Proof.context -> term -> Pretty.T;
+ pretty_thm: Proof.context -> thm -> Pretty.T;
+ lines: Latex.text list -> Latex.text list;
+ items: Latex.text list -> Latex.text list;
+ isabelle: Proof.context -> Latex.text list -> Latex.text;
+ isabelle_typewriter: Proof.context -> Latex.text list -> Latex.text;
+ typewriter: Proof.context -> string -> Latex.text;
+ verbatim: Proof.context -> string -> Latex.text;
+ source: Proof.context -> Token.src -> Latex.text;
+ pretty: Proof.context -> Pretty.T -> Latex.text;
+ pretty_source: Proof.context -> Token.src -> Pretty.T -> Latex.text;
+ pretty_items: Proof.context -> Pretty.T list -> Latex.text;
+ pretty_items_source: Proof.context -> Token.src -> Pretty.T list -> Latex.text;
+ antiquotation_pretty:
+      binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
+ antiquotation_pretty_source:
+    binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
+ antiquotation_raw:
+    binding -> 'a context_parser -> (Proof.context -> 'a -> Latex.text) -> theory -> theory;
+ antiquotation_verbatim:
+      binding -> 'a context_parser -> (Proof.context -> 'a -> string) -> theory -> theory;
+
 \<close>
 
 
@@ -1533,7 +1459,7 @@ ML\<open>
 Syntax_Phases.reports_of_scope;
 \<close>
 
-
+(* STOP HERE JUNK ZONE :
 
 (* Pretty.T, pretty-operations. *)  
 ML\<open>
@@ -1731,6 +1657,130 @@ which is the real implementation behind Syntax.check_term
 As one can see, check-routines internally generate the markup.
 
 *)  
+
+
+
+Consts.the_const; (* T is a kind of signature ... *)
+Variable.import_terms;
+Vartab.update;
+
+fun control_antiquotation name s1 s2 =
+  Thy_Output.antiquotation name (Scan.lift Args.cartouche_input)
+    (fn {state, ...} => enclose s1 s2 o Thy_Output.output_text state {markdown = false});
+
+Output.output;
+
+Syntax.read_input ;
+Input.source_content;
+
+(*
+  basic_entity @{binding const} (Args.const {proper = true, strict = false}) pretty_const #>
+*)
+
+
+
+
+chapter\<open>LaTeX Document Generation\<close>  
+text\<open>MORE TO COME\<close>
+
+  
+ML\<open> Thy_Output.document_command {markdown = true} \<close>  
+(* Structures related to LaTeX Generation *)
+ML\<open>  Latex.output_ascii;
+
+      Latex.output_token
+(* Hm, generierter output for
+subsection*[Shaft_Encoder_characteristics]{ * Shaft Encoder Characteristics * } :
+
+\begin{isamarkuptext}%
+\isa{{\isacharbackslash}label{\isacharbraceleft}general{\isacharunderscore}hyps{\isacharbraceright}}%
+\end{isamarkuptext}\isamarkuptrue%
+\isacommand{subsection{\isacharasterisk}}\isamarkupfalse%
+{\isacharbrackleft}Shaft{\isacharunderscore}Encoder{\isacharunderscore}characteristics{\isacharbrackright}{\isacharverbatimopen}\ Shaft\ Encoder\ Characteristics\ {\isacharverbatimclose}%
+
+Generierter output for: text\<open>\label{sec:Shaft-Encoder-characteristics}\<close>
+
+\begin{isamarkuptext}%
+\label{sec:Shaft-Encoder-characteristics}%
+\end{isamarkuptext}\isamarkuptrue%
+
+
+*)
+
+
+\<close>  
+  
+ML\<open>
+Thy_Output.maybe_pretty_source : 
+     (Proof.context -> 'a -> Pretty.T) -> Proof.context -> Token.src -> 'a list -> Pretty.T list;
+
+Thy_Output.output: Proof.context -> Pretty.T list -> string;
+
+ (* nuescht besonderes *)
+
+fun document_antiq check_file ctxt (name, pos) =
+  let
+   (* val dir = master_directory (Proof_Context.theory_of ctxt); *)
+   (* val _ = check_path check_file ctxt dir (name, pos); *)
+  in
+    space_explode "/" name
+    |> map Latex.output_ascii
+    |> space_implode (Latex.output_ascii "/" ^ "\\discretionary{}{}{}")
+    |> enclose "\\isatt{" "}"
+  end;
+
+\<close>
+
+ML\<open> 
+
+Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
+Thy_Output.document_command;
+
+Thy_Output.document_command : {markdown: bool} -> (xstring * Position.T) option * Input.source ->
+    Toplevel.transition -> Toplevel.transition;
+    (*  fun document_command markdown (loc, txt) =
+            Toplevel.keep (fn state =>
+               (case loc of
+                   NONE => ignore (output_text state markdown txt)
+                         | SOME (_, pos) =>
+                   error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
+             Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt));
+
+    *)
+
+Thy_Output.output_text : Toplevel.state -> {markdown: bool} -> Input.source -> string ; 
+                         (* this is where antiquotation expansion happens : uses eval_antiquote *)
+
+
+Thy_Output.document_command : {markdown: bool} -> (xstring * Position.T) option * Input.source ->
+    Toplevel.transition -> Toplevel.transition;
+    (*  fun document_command markdown (loc, txt) =
+            Toplevel.keep (fn state =>
+               (case loc of
+                   NONE => ignore (output_text state markdown txt)
+                         | SOME (_, pos) =>
+                   error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
+             Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt));
+
+    *)
+
+Thy_Output.output_text : Toplevel.state -> {markdown: bool} -> Input.source -> string ; 
+                         (* this is where antiquotation expansion happens : uses eval_antiquote *)
+
+*)
+(* stuff over global environment : *)
+(*
+ML\<open> Document.state();\<close>
+ML\<open> Session.get_keywords(); (* this looks to be really session global. *)
+    Outer_Syntax.command; \<close>
+ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>
+*)
+
+
+section\<open>Inner Syntax\<close>
+text\<open>MORE TO COME\<close>
+ML\<open>Sign.add_trrules\<close>
+
 
 section*[c::conclusion]\<open>Conclusion\<close>
 text\<open>More to come\<close>

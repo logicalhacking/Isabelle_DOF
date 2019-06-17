@@ -17,10 +17,10 @@ where the author of the exam is not expected to be physically present.
   
   
 datatype ContentClass =   
-      setter            -- \<open>the 'author' of the exam\<close>
-    | checker           -- \<open>the 'proof-reader' of the exam\<close>
-    | externalExaminer -- \<open>an external 'proof-reader' of the exam\<close>
-    | student           -- \<open>the victim ;-) ... \<close>
+      setter            (* \<open>the 'author' of the exam\<close> *)
+    | checker           (* \<open>the 'proof-reader' of the exam\<close> *)
+    | externalExaminer  (* \<open>an external 'proof-reader' of the exam\<close> *)
+    | student           (* \<open>the victim ;-) ... \<close> *)
 
   
 doc_class Author =
@@ -47,7 +47,7 @@ doc_class Exam_item =
 doc_class Header = Exam_item +
   examSubject :: "(Subject) list"
   date :: string
-  timeAllowed :: int --  minutes
+  timeAllowed :: int (*  minutes *)
 
 
 type_synonym SubQuestion = string
@@ -58,7 +58,7 @@ doc_class Answer_Formal_Step =  Exam_item +
   
 doc_class Answer_YesNo =  Exam_item +
   step_label :: string
-  yes_no     :: bool  -- \<open>for checkboxes\<close>
+  yes_no     :: bool  (* \<open>for checkboxes\<close> *)
 
 datatype Question_Type =   
   formal | informal | mixed 

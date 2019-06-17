@@ -14,7 +14,7 @@ They are the key-mechanism to denote
 \<^item> Ontological Links, i.e. attributes refering to document classes defined by the ontology
 \<^item> Ontological F-Links, i.e. attributes referring to formal entities inside Isabelle (such as thm's)
 
-This file contains a number of examples resulting from the @{theory "Conceptual"} - ontology;
+This file contains a number of examples resulting from the @{theory "Draft.Conceptual"} - ontology;
 the emphasis of this presentation is to present the expressivity of ODL on a paradigmatical example.
 \<close>
 
