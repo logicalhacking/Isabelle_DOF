@@ -24,7 +24,7 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-FROM logicalhacking:isabelle2018
+FROM logicalhacking:isabelle2019
 
 WORKDIR /home/isabelle
 COPY thy_output.ML /home/isabelle/Isabelle/src/Pure/Thy
