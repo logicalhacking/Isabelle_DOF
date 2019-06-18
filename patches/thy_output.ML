@@ -153,7 +153,7 @@ fun check_comments ctxt =
       val pos = #1 (Symbol_Pos.range syms);
       val _ =
         comment |> Option.app (fn kind =>
-          Context_Position.reports ctxt (map (pair pos) (Markup.cartouche :: Comment.markups kind)));
+          Context_Position.reports ctxt (map (pair pos) (Markup.cartouche :: Comment.kind_markups kind)));
       val _ = output_comment_symbols ctxt {antiq = false} (comment, syms);
     in if comment = SOME Comment.Comment then check_comments ctxt syms else () end);
 
@@ -360,7 +360,7 @@ val ignore =
     (if d = 0 then Scan.fail_with (K (fn () => "Bad nesting of meta-comments")) else opt_newline)
     >> pair (d - 1));
 
-val tag = (improper -- Parse.$$$ "%" -- improper) |-- Parse.!!! (Parse.tag_name --| blank_end);
+val tag = (improper -- Parse.$$$ "%" -- improper) |-- Parse.!!! (Document_Source.tag_name --| blank_end);
 
 val locale =
   Scan.option ((Parse.$$$ "(" -- improper -- Parse.$$$ "in") |--
@@ -477,7 +477,7 @@ fun present_thy options thy (segments: segment list) =
   in
     if length command_results = length spans then
       ((NONE, []), NONE, true, [], (I, I))
-      |> present Toplevel.toplevel (spans ~~ command_results)
+      |> present (Toplevel.init_toplevel ()) (spans ~~ command_results)
       |> present_trailer
       |> rev
     else error "Messed-up outer syntax for presentation"
