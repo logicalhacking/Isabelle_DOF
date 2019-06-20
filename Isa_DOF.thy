@@ -1536,13 +1536,14 @@ end
 
 end
 \<close>
-ML\<open>                    
+ML\<open> 
+(*                   
 val _ = Thy_Output.set_meta_args_parser
                        (fn thy => let val _ = writeln "META_ARGS_PARSING"
                                   in  (Scan.optional (   ODL_Command_Parser.attributes 
                                                       >> ODL_LTX_Converter.meta_args_2_string thy) "")
                                   end); 
-
+*)
 \<close>
 
 
@@ -1685,15 +1686,15 @@ val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.text_input)
 
 fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked = x, define = y}, src ) = 
             let (* val _ = writeln ("ZZZ" ^ Input.source_content src ^ "::2::" ^ cid_decl) *)
-                val _ = check_and_mark ctxt cid_decl  
-                          ({strict_checking = not x}) 
-                          (Input.pos_of src) (Input.source_content src) 
+                val (str,pos) = Input.source_content src
+                val _ = check_and_mark ctxt cid_decl
+                          ({strict_checking = not x}) pos str 
             in  (*(if y then Latex.enclose_block "\\label{" "}" 
                       else Latex.enclose_block "\\autoref{" "}")
                 [Latex.string (Input.source_content src)]*) 
                 (if y  then Latex.enclose_block ("\\labelX[type="^cid_decl^"]{") "}" 
                        else Latex.enclose_block ("\\autorefX[type="^cid_decl^"]{") "}")
-                [Latex.string (Input.source_content src)] 
+                [Latex.text (Input.source_content src)] 
                 
             end
           
@@ -1722,7 +1723,7 @@ fun check_and_mark_term ctxt oid  =
 fun ML_antiquotation_docitem_value (ctxt, toks) = 
               (Scan.lift (Args.cartouche_input) 
                >> (fn inp => (ML_Syntax.atomic o ML_Syntax.print_term) 
-                             ((check_and_mark_term ctxt o Input.source_content) inp)))
+                             ((check_and_mark_term ctxt o fst o Input.source_content) inp)))
                (ctxt, toks)
 
 (* Setup for general docrefs of the global DOF_core.default_cid - class ("text")*)
