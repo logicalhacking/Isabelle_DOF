@@ -54,11 +54,11 @@ ML\<open> Session.get_keywords(); (* this looks to be really session global. *)
 ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>
 *)
 
-section* [ test :: A ] \<open> Test and Validation\<close>
+section*[test::A]\<open>Test and Validation\<close>
 text\<open>Defining some document elements to be referenced in later on in another theory: \<close>
-text* [ sdf  ] \<open> f @{thm refl}\<close> 
-text* [ sdfg ] \<open> fg @{thm refl}\<close>  
-text* [ xxxy ] \<open> dd @{docitem \<open>sdfg\<close>}  @{thm refl}\<close>  
+text*[sdf]\<open> f @{thm refl}\<close> 
+text*[ sdfg] \<open> fg @{thm refl}\<close>  
+text*[ xxxy ] \<open> dd @{docitem \<open>sdfg\<close>}  @{thm refl}\<close>  
 
 
 end     
