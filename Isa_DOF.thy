@@ -1497,7 +1497,8 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Command_Parse
             in ltx end 
 
 
-        fun markup2string s = String.concat (List.filter (fn c => c <> Symbol.DEL) (Symbol.explode (YXML.content_of s)))
+        fun markup2string s = String.concat (List.filter (fn c => c <> Symbol.DEL) 
+                                            (Symbol.explode (YXML.content_of s)))
         fun ltx_of_markup ctxt s = let
   	                            val term = (Syntax.check_term ctxt o Syntax.parse_term ctxt) s
                                 val str_of_term = ltx_of_term  ctxt true term 
@@ -1510,7 +1511,8 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Command_Parse
         val ctxt = Proof_Context.init_global thy
         val actual_args =  map (fn ((lhs,_),rhs) => (toLong lhs, ltx_of_markup ctxt rhs))
                                attr_list  
-	      val default_args = map (fn (b,_,t) => (toLong (Long_Name.base_name ( Sign.full_name thy b)), ltx_of_term ctxt true t))
+	      val default_args = map (fn (b,_,t) => (toLong (Long_Name.base_name ( Sign.full_name thy b)), 
+                                                       ltx_of_term ctxt true t))
                                (DOF_core.get_attribute_defaults cid_long thy)
 
         val default_args_filtered = filter (fn (a,_) => not (exists (fn b => b = a) 
@@ -1533,15 +1535,14 @@ end
 
 end
 \<close>
-ML\<open> 
-(*                   
+ML\<open> (* Setting in thy_output.ML a parser for the syntactic handling of the meta-informations of 
+       text elements - so text*[m<meta-info>]\<open> ... dfgdfg .... \<close> *)
+                 
 val _ = Thy_Output.set_meta_args_parser
-                       (fn thy => let val _ = writeln "META_ARGS_PARSING"
-                                  in  (Scan.optional (   ODL_Command_Parser.attributes 
-                                                      >> ODL_LTX_Converter.meta_args_2_string thy) "")
-                                  end); 
-*)
-\<close>
+            (fn thy => let val _ = writeln "META_ARGS_PARSING"
+                       in  (Scan.optional (   ODL_Command_Parser.attributes 
+                                           >> ODL_LTX_Converter.meta_args_2_string thy) "")
+                       end); \<close>
 
 
 
