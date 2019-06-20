@@ -163,7 +163,7 @@ fun check_comments ctxt =
       val pos = #1 (Symbol_Pos.range syms);
       val _ =
         comment |> Option.app (fn kind =>
-          Context_Position.reports ctxt (map (pair pos) (Comment.kind_markups kind)));
+          Context_Position.reports ctxt (map (pair pos) (Markup.cartouche :: Comment.kind_markups kind)));
       val _ = output_comment_symbols ctxt {antiq = false} (comment, syms);
     in if comment = SOME Comment.Comment then check_comments ctxt syms else () end);
 
@@ -352,6 +352,7 @@ val ignore =
   Scan.depend (fn d => Scan.one Token.is_end_ignore --|
     (if d = 0 then Scan.fail_with (K (fn () => "Bad nesting of meta-comments")) else opt_newline)
     >> pair (d - 1));
+
 
 val locale =
   Scan.option ((Parse.$$$ "(" -- Document_Source.improper -- Parse.$$$ "in") |--

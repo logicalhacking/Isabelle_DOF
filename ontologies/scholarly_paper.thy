@@ -65,7 +65,7 @@ doc_class annex = "text_section" +
 
 
 text\<open> Besides subtyping, there is another relation between
-doc_classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
+doc\_classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
 which is expressed by occurrence in the where clause.
 While sub-classing refers to data-inheritance of attributes,
 a monitor captures structural constraints -- the order --

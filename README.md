@@ -6,9 +6,9 @@ well as formal development.
 
 ## Prerequisites
 
-Isabelle/DOF requires [Isabelle 2017](http://isabelle.in.tum.de/website-Isabelle2017/). 
-Please download the Isabelle 2017 distribution for your operating
-system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2017/).
+Isabelle/DOF requires [Isabelle 2019](http://isabelle.in.tum.de/website-Isabelle2019/). 
+Please download the Isabelle 2019 distribution for your operating
+system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2019/).
 
 ## Installation 
 
@@ -22,7 +22,7 @@ If a specific Isabelle version should be used (i.e., not the default
 one), the full path to the ``isabelle`` command needs to be passed as 
 using the ``-i`` command line argument of the ``install`` script:
 ```console 
-foo@bar:~$ ./install -i /usr/local/Isabelle2017/bin/isabelle
+foo@bar:~$ ./install -i /usr/local/Isabelle2019/bin/isabelle
 ```
 
 For further command line options of the installer, please use the 
@@ -36,22 +36,22 @@ foo@bar:~$ ./install -h
 The installer will 
 * apply a patch to Isabelle that is necessary to use Isabelle/DOF. 
   If this patch installations fails, you need to manually replace 
-  the file ``Isabelle2017/src/Pure/Thy/thy_output.ML`` in the Isabelle
+  the file ``Isabelle2019/src/Pure/Thy/thy_output.ML`` in the Isabelle
   distribution with the file ``patches/thy_output.ML`` from the  
   Isabelle/DOF distribution:        
         ```console
         cp patches/thy_output.ML `isabelle getenv -b ISABELLE_HOME`/src/Pure/Thy/
         ```
 * install required entries from the [AFP](https://www.isa-afp.org). If this
-  installations fails, you need to manually install the AFP for Isabelle 2017 as follows:
-  Download the [AFP for Isabelle 2017](https://sourceforge.net/projects/afp/files/afp-Isabelle2017/afp-2018-08-14.tar.gz") 
+  installations fails, you need to manually install the AFP for Isabelle 2019 as follows:
+  Download the [AFP for Isabelle 2019](https://www.isa-afp.org/release/afp-2019-06-17.tar.gz)
   and follow the [instructions for installing the AFP as Isabelle 
   component](https://www.isa-afp.org/using.html). If you have extracted
   the AFP archive into the directory to `/home/myself/afp`, you should
   run the following command to make the AFP session `ROOTS` available to
   Isabelle:
         ```console
-        echo "/home/myself/afp/thys" >> ~/.isabelle/Isabelle2017/ROOTS
+        echo "/home/myself/afp/thys" >> ~/.isabelle/Isabelle2019/ROOTS
         ```
 * install the Isabelle/DOF-plugin into the Isabelle user directory 
   (the exact location depends on the Isabelle version). 
@@ -156,3 +156,9 @@ SPDX-License-Identifier: BSD-2-Clause
   with the Informal]({https://www.brucker.ch/bibliography/download/2018/brucker.ea-isabelle-ontologies-2018.pdf). 
   In Conference on Intelligent Computer Mathematics (CICM). Lecture 
   Notes in Computer Science (11006), Springer-Verlag, 2018.
+
+## Master Repository
+
+The master git repository for this project is hosted 
+<https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF>.
+
