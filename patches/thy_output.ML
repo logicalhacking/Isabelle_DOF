@@ -21,18 +21,27 @@ sig
   val isabelle_typewriter: Proof.context -> Latex.text list -> Latex.text
   val typewriter: Proof.context -> string -> Latex.text
   val verbatim: Proof.context -> string -> Latex.text
-  val source: Proof.context -> Token.src -> Latex.text
+  val source: Proof.context -> {embedded: bool} -> Token.src -> Latex.text
   val pretty: Proof.context -> Pretty.T -> Latex.text
-  val pretty_source: Proof.context -> Token.src -> Pretty.T -> Latex.text
+  val pretty_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T -> Latex.text
   val pretty_items: Proof.context -> Pretty.T list -> Latex.text
-  val pretty_items_source: Proof.context -> Token.src -> Pretty.T list -> Latex.text
+  val pretty_items_source: Proof.context -> {embedded: bool} -> Token.src ->
+    Pretty.T list -> Latex.text
   val antiquotation_pretty:
+    binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory
+  val antiquotation_pretty_embedded:
     binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory
   val antiquotation_pretty_source:
     binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory
+  val antiquotation_pretty_source_embedded:
+    binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory
   val antiquotation_raw:
     binding -> 'a context_parser -> (Proof.context -> 'a -> Latex.text) -> theory -> theory
+  val antiquotation_raw_embedded:
+    binding -> 'a context_parser -> (Proof.context -> 'a -> Latex.text) -> theory -> theory
   val antiquotation_verbatim:
+    binding -> 'a context_parser -> (Proof.context -> 'a -> string) -> theory -> theory
+  val antiquotation_verbatim_embedded:
     binding -> 'a context_parser -> (Proof.context -> 'a -> string) -> theory -> theory
 end;
 
@@ -54,8 +63,8 @@ fun output_comment ctxt (kind, syms) =
       Symbol_Pos.cartouche_content syms
       |> output_symbols
       |> Latex.enclose_body "%\n\\isamarkupcancel{" "}"
-  | Comment.Latex =>
-      [Latex.symbols (Symbol_Pos.cartouche_content syms)])
+  | Comment.Latex => [Latex.symbols (Symbol_Pos.cartouche_content syms)]
+  | Comment.Marker => [])
 and output_comment_document ctxt (comment, syms) =
   (case comment of
     SOME kind => output_comment ctxt (kind, syms)
@@ -132,6 +141,7 @@ fun output_token ctxt tok =
   in
     (case Token.kind_of tok of
       Token.Comment NONE => []
+    | Token.Comment (SOME Comment.Marker) => []
     | Token.Command => output false "\\isacommand{" "}"
     | Token.Keyword =>
         if Symbol.is_ascii_identifier (Token.content_of tok)
@@ -153,7 +163,7 @@ fun check_comments ctxt =
       val pos = #1 (Symbol_Pos.range syms);
       val _ =
         comment |> Option.app (fn kind =>
-          Context_Position.reports ctxt (map (pair pos) (Markup.cartouche :: Comment.markups kind)));
+          Context_Position.reports ctxt (map (pair pos) (Markup.cartouche :: Comment.kind_markups kind)));
       val _ = output_comment_symbols ctxt {antiq = false} (comment, syms);
     in if comment = SOME Comment.Comment then check_comments ctxt syms else () end);
 
@@ -162,15 +172,6 @@ end;
 
 
 (** present theory source **)
-
-(*NB: arranging white space around command spans is a black art*)
-
-val is_white = Token.is_space orf Token.is_informal_comment;
-val is_black = not o is_white;
-
-val is_white_comment = Token.is_informal_comment;
-val is_black_comment = Token.is_formal_comment;
-
 
 (* presentation tokens *)
 
@@ -184,8 +185,8 @@ datatype token =
 fun basic_token pred (Basic_Token tok) = pred tok
   | basic_token _ _ = false;
 
-val white_token = basic_token is_white;
-val white_comment_token = basic_token is_white_comment;
+val white_token = basic_token Document_Source.is_white;
+val white_comment_token = basic_token Document_Source.is_white_comment;
 val blank_token = basic_token Token.is_blank;
 val newline_token = basic_token Token.is_newline;
 
@@ -199,14 +200,14 @@ fun present_token ctxt tok =
   | Markup_Env_Token (cmd, meta_args, source) =>
       [Latex.environment_block
          ("isamarkup" ^ cmd (* ^ meta_args*))
-         (Latex.string meta_args :: output_document ctxt {markdown = true} source)]
+         (Latex.string meta_args :: output_document ctxt {markdown = true} source)]      
   | Raw_Token source =>
       Latex.string "%\n" :: output_document ctxt {markdown = true} source @ [Latex.string "\n"]);
 
 
 (* command spans *)
 
-type command = string * Position.T * string list;   (*name, position, tags*)
+type command = string * Position.T;   (*name, position*)
 type source = (token * (string * int)) list;        (*token, markup flag, meta-comment depth*)
 
 datatype span = Span of command * (source * source * source * source) * bool;
@@ -230,8 +231,8 @@ fun make_span cmd src =
 
 local
 
-fun err_bad_nesting pos =
-  error ("Bad nesting of commands in presentation" ^ pos);
+fun err_bad_nesting here =
+  error ("Bad nesting of commands in presentation" ^ here);
 
 fun edge which f (x: string option, y) =
   if x = y then I
@@ -241,6 +242,23 @@ val begin_tag = edge #2 Latex.begin_tag;
 val end_tag = edge #1 Latex.end_tag;
 fun open_delim delim e = edge #2 Latex.begin_delim e #> delim #> edge #2 Latex.end_delim e;
 fun close_delim delim e = edge #1 Latex.begin_delim e #> delim #> edge #1 Latex.end_delim e;
+
+fun document_tag cmd_pos state state' tagging_stack =
+  let
+    val ctxt' = Toplevel.presentation_context state';
+    val nesting = Toplevel.level state' - Toplevel.level state;
+
+    val (tagging, taggings) = tagging_stack;
+    val (tag', tagging') = Document_Source.update_tagging ctxt' tagging;
+
+    val tagging_stack' =
+      if nesting = 0 andalso not (Toplevel.is_proof state) then tagging_stack
+      else if nesting >= 0 then (tagging', replicate nesting tagging @ taggings)
+      else
+        (case drop (~ nesting - 1) taggings of
+          tg :: tgs => (tg, tgs)
+        | [] => err_bad_nesting (Position.here cmd_pos));
+  in (tag', tagging_stack') end;
 
 fun read_tag s =
   (case space_explode "%" s of
@@ -257,60 +275,43 @@ fun make_command_tag options keywords =
     val document_tags_default = map_filter #1 document_tags;
     val document_tags_command = map_filter #2 document_tags;
   in
-    fn {cmd_name, cmd_tags, tag, active_tag} => fn state => fn state' =>
+    fn cmd_name => fn state => fn state' => fn active_tag =>
       let
-        val tag' = try hd (fold (update (op =)) cmd_tags (the_list tag));
-
         val keyword_tags =
           if cmd_name = "end" andalso Toplevel.is_end_theory state' then ["theory"]
           else Keyword.command_tags keywords cmd_name;
         val command_tags =
           the_list (AList.lookup (op =) document_tags_command cmd_name) @
           keyword_tags @ document_tags_default;
-
         val active_tag' =
-          if is_some tag' then tag'
-          else
-            (case command_tags of
-              default_tag :: _ => SOME default_tag
-            | [] =>
-                if Keyword.is_vacuous keywords cmd_name andalso Toplevel.is_proof state
-                then active_tag
-                else NONE);
-      in {tag' = tag', active_tag' = active_tag'} end
+          (case command_tags of
+            default_tag :: _ => SOME default_tag
+          | [] =>
+              if Keyword.is_vacuous keywords cmd_name andalso Toplevel.is_proof state
+              then active_tag
+              else NONE);
+      in active_tag' end
   end;
 
-fun present_span thy command_tag span state state'
-    (tag_stack, active_tag, newline, latex, present_cont) =
+fun present_span command_tag span state state'
+    (tagging_stack, active_tag, newline, latex, present_cont) =
   let
-    val ctxt' =
-      Toplevel.presentation_context state'
-        handle Toplevel.UNDEF => Proof_Context.get_global thy Context.PureN;
+    val ctxt' = Toplevel.presentation_context state';
     val present = fold (fn (tok, (flag, 0)) =>
         fold cons (present_token ctxt' tok)
         #> cons (Latex.string flag)
       | _ => I);
 
-    val Span ((cmd_name, cmd_pos, cmd_tags), srcs, span_newline) = span;
+    val Span ((cmd_name, cmd_pos), srcs, span_newline) = span;
 
-    val (tag, tags) = tag_stack;
-    val {tag', active_tag'} =
-      command_tag {cmd_name = cmd_name, cmd_tags = cmd_tags, tag = tag, active_tag = active_tag}
-        state state';
+    val (tag', tagging_stack') = document_tag cmd_pos state state' tagging_stack;
+    val active_tag' =
+      if is_some tag' then Option.map #1 tag'
+      else command_tag cmd_name state state' active_tag;
     val edge = (active_tag, active_tag');
-
-    val nesting = Toplevel.level state' - Toplevel.level state;
 
     val newline' =
       if is_none active_tag' then span_newline else newline;
-
-    val tag_stack' =
-      if nesting = 0 andalso not (Toplevel.is_proof state) then tag_stack
-      else if nesting >= 0 then (tag', replicate nesting tag @ tags)
-      else
-        (case drop (~ nesting - 1) tags of
-          tg :: tgs => (tg, tgs)
-        | [] => err_bad_nesting (Position.here cmd_pos));
 
     val latex' =
       latex
@@ -323,7 +324,7 @@ fun present_span thy command_tag span state state'
     val present_cont' =
       if newline then (present (#3 srcs), present (#4 srcs))
       else (I, present (#3 srcs) #> present (#4 srcs));
-  in (tag_stack', active_tag', newline', latex', present_cont') end;
+  in (tagging_stack', active_tag', newline', latex', present_cont') end;
 
 fun present_trailer ((_, tags), active_tag, _, latex, present_cont) =
   if not (null tags) then err_bad_nesting " at end of theory"
@@ -343,14 +344,6 @@ local
 val markup_true = "\\isamarkuptrue%\n";
 val markup_false = "\\isamarkupfalse%\n";
 
-val space_proper =
-  Scan.one Token.is_blank -- Scan.many is_white_comment -- Scan.one is_black;
-
-val is_improper = not o (is_black orf Token.is_begin_ignore orf Token.is_end_ignore);
-val improper = Scan.many is_improper;
-val improper_end = Scan.repeat (Scan.unless space_proper (Scan.one is_improper));
-val blank_end = Scan.repeat (Scan.unless space_proper (Scan.one Token.is_blank));
-
 val opt_newline = Scan.option (Scan.one Token.is_newline);
 
 val ignore =
@@ -360,19 +353,19 @@ val ignore =
     (if d = 0 then Scan.fail_with (K (fn () => "Bad nesting of meta-comments")) else opt_newline)
     >> pair (d - 1));
 
-val tag = (improper -- Parse.$$$ "%" -- improper) |-- Parse.!!! (Parse.tag_name --| blank_end);
 
 val locale =
-  Scan.option ((Parse.$$$ "(" -- improper -- Parse.$$$ "in") |--
-    Parse.!!! (improper |-- Parse.name --| (improper -- Parse.$$$ ")")));
+  Scan.option ((Parse.$$$ "(" -- Document_Source.improper -- Parse.$$$ "in") |--
+    Parse.!!!
+      (Document_Source.improper |-- Parse.name --| (Document_Source.improper -- Parse.$$$ ")")));
+
 
 (*
 val meta_args_parser_hook =  Synchronized.var "meta args parser hook" 
                              ((fn thy => fn s => ("",s)): theory -> string parser);
 *)
 val meta_args_parser_hook =  Unsynchronized.ref 
-                             ((fn thy => fn s => ("",s)): theory -> string parser);
-
+                             ((fn _ => fn s => ("",s)): theory -> string parser);
 
 in
 
@@ -380,7 +373,6 @@ type segment = {span: Command_Span.span, command: Toplevel.transition, state: To
 
 fun present_thy options thy (segments: segment list) =
   let
-
     val keywords = Thy_Header.get_keywords thy;
 
 
@@ -389,31 +381,34 @@ fun present_thy options thy (segments: segment list) =
     val ignored = Scan.state --| ignore
       >> (fn d => (NONE, (Ignore_Token, ("", d))));
 
+
     fun markup pred mk flag = Scan.peek (fn d =>
-      improper |--
-        Parse.position (Scan.one (fn tok =>
-          Token.is_command tok andalso pred keywords (Token.content_of tok))) --
-      Scan.repeat tag --
-      (improper |--
-      (Parse.!!!! 
-      (  (!meta_args_parser_hook thy)
-         -- (  (improper -- locale -- improper) 
-         |-- (Parse.document_source)) 
-         --| improper_end)))
-      >> (fn (((tok, pos'), tags), (meta_args, source)) =>
-        let val name = Token.content_of tok
-        in (SOME (name, pos', tags), (mk (name, meta_args, source), (flag, d))) end));
+      Document_Source.improper 
+      |-- Parse.position (Scan.one (fn tok => Token.is_command tok andalso 
+                                              pred keywords (Token.content_of tok))) 
+      --   (Document_Source.annotation |--
+            (Parse.!!!!
+              (     (!meta_args_parser_hook thy)
+               -- ( (Document_Source.improper -- locale -- Document_Source.improper) 
+                |-- Parse.document_source )
+                --| Document_Source.improper_end)
+              )
+        
+           )
+        >> (fn ((tok, pos'), (meta_args, source)) =>
+           let val name = Token.content_of tok
+           in (SOME (name, pos'), (mk (name,  meta_args , source), (flag, d))) end));
 
     val command = Scan.peek (fn d =>
-      Scan.optional (Scan.one Token.is_command_modifier ::: improper) [] --
-      Scan.one Token.is_command -- Scan.repeat tag
-      >> (fn ((cmd_mod, cmd), tags) =>
+      Scan.optional (Scan.one Token.is_command_modifier ::: Document_Source.improper) [] --
+      Scan.one Token.is_command --| Document_Source.annotation
+      >> (fn (cmd_mod, cmd) =>
         map (fn tok => (NONE, (Basic_Token tok, ("", d)))) cmd_mod @
-          [(SOME (Token.content_of cmd, Token.pos_of cmd, tags),
+          [(SOME (Token.content_of cmd, Token.pos_of cmd),
             (Basic_Token cmd, (markup_false, d)))]));
 
     val cmt = Scan.peek (fn d =>
-      Scan.one is_black_comment >> (fn tok => (NONE, (Basic_Token tok, ("", d)))));
+      Scan.one Document_Source.is_black_comment >> (fn tok => (NONE, (Basic_Token tok, ("", d)))));
 
     val other = Scan.peek (fn d =>
        Parse.not_eof >> (fn tok => (NONE, (Basic_Token tok, ("", d)))));
@@ -468,25 +463,19 @@ fun present_thy options thy (segments: segment list) =
     val command_tag = make_command_tag options keywords;
 
     fun present_command tr span st st' =
-      Toplevel.setmp_thread_position tr (present_span thy command_tag span st st');
+      Toplevel.setmp_thread_position tr (present_span command_tag span st st');
 
     fun present _ [] = I
-      | present st ((span, (tr, st')) :: rest) = present_command tr span st st' 
-                                                 #> present st' rest;
-
+      | present st ((span, (tr, st')) :: rest) = present_command tr span st st' #> present st' rest;
   in
     if length command_results = length spans then
-      ((NONE, []), NONE, true, [], (I, I))
-      |> present Toplevel.toplevel (spans ~~ command_results)
+      (([], []), NONE, true, [], (I, I))
+      |> present (Toplevel.init_toplevel ()) (spans ~~ command_results)
       |> present_trailer
       |> rev
     else error "Messed-up outer syntax for presentation"
   end;
 
-(*
-fun set_meta_args_parser f = let val _ = writeln "Meta-args parser set to new value" 
-                             in  (Unsynchronized.assign meta_args_parser_hook  f) end
-*)
 fun set_meta_args_parser f = let val _ = writeln "Meta-args parser set to new value" 
                              in  ( meta_args_parser_hook := f) end
 
@@ -528,9 +517,19 @@ fun verbatim ctxt =
   then Document_Antiquotation.indent_lines ctxt #> typewriter ctxt
   else split_lines #> map (typewriter ctxt) #> lines #> Latex.block;
 
-fun source ctxt =
+fun token_source ctxt {embedded} tok =
+  if Token.is_kind Token.Cartouche tok andalso embedded andalso
+    not (Config.get ctxt Document_Antiquotation.thy_output_source_cartouche)
+  then Token.content_of tok
+  else Token.unparse tok;
+
+fun is_source ctxt =
+  Config.get ctxt Document_Antiquotation.thy_output_source orelse
+  Config.get ctxt Document_Antiquotation.thy_output_source_cartouche;
+
+fun source ctxt embedded =
   Token.args_of_src
-  #> map (Token.unparse #> Document_Antiquotation.prepare_lines ctxt)
+  #> map (token_source ctxt embedded #> Document_Antiquotation.prepare_lines ctxt)
   #> space_implode " "
   #> output_source ctxt
   #> isabelle ctxt;
@@ -538,33 +537,53 @@ fun source ctxt =
 fun pretty ctxt =
   Document_Antiquotation.output ctxt #> Latex.string #> single #> isabelle ctxt;
 
-fun pretty_source ctxt src prt =
-  if Config.get ctxt Document_Antiquotation.thy_output_source
-  then source ctxt src else pretty ctxt prt;
+fun pretty_source ctxt embedded src prt =
+  if is_source ctxt then source ctxt embedded src else pretty ctxt prt;
 
 fun pretty_items ctxt =
   map (Document_Antiquotation.output ctxt #> Latex.string) #> items #> isabelle ctxt;
 
-fun pretty_items_source ctxt src prts =
-  if Config.get ctxt Document_Antiquotation.thy_output_source
-  then source ctxt src else pretty_items ctxt prts;
+fun pretty_items_source ctxt embedded src prts =
+  if is_source ctxt then source ctxt embedded src else pretty_items ctxt prts;
 
 
 (* antiquotation variants *)
 
-fun antiquotation_pretty name scan f =
-  Document_Antiquotation.setup name scan
-    (fn {context = ctxt, argument = x, ...} => pretty ctxt (f ctxt x));
+local
 
-fun antiquotation_pretty_source name scan f =
-  Document_Antiquotation.setup name scan
-    (fn {context = ctxt, source = src, argument = x} => pretty_source ctxt src (f ctxt x));
+fun gen_setup name embedded =
+  if embedded
+  then Document_Antiquotation.setup_embedded name
+  else Document_Antiquotation.setup name;
 
-fun antiquotation_raw name scan f =
-  Document_Antiquotation.setup name scan
-    (fn {context = ctxt, argument = x, ...} => f ctxt x);
+fun gen_antiquotation_pretty name embedded scan f =
+  gen_setup name embedded scan (fn {context = ctxt, argument = x, ...} => pretty ctxt (f ctxt x));
 
-fun antiquotation_verbatim name scan f =
-  antiquotation_raw name scan (fn ctxt => verbatim ctxt o f ctxt);
+fun gen_antiquotation_pretty_source name embedded scan f =
+  gen_setup name embedded scan
+    (fn {context = ctxt, source = src, argument = x} =>
+      pretty_source ctxt {embedded = embedded} src (f ctxt x));
+
+fun gen_antiquotation_raw name embedded scan f =
+  gen_setup name embedded scan (fn {context = ctxt, argument = x, ...} => f ctxt x);
+
+fun gen_antiquotation_verbatim name embedded scan f =
+  gen_antiquotation_raw name embedded scan (fn ctxt => verbatim ctxt o f ctxt);
+
+in
+
+fun antiquotation_pretty name = gen_antiquotation_pretty name false;
+fun antiquotation_pretty_embedded name = gen_antiquotation_pretty name true;
+
+fun antiquotation_pretty_source name = gen_antiquotation_pretty_source name false;
+fun antiquotation_pretty_source_embedded name = gen_antiquotation_pretty_source name true;
+
+fun antiquotation_raw name = gen_antiquotation_raw name false;
+fun antiquotation_raw_embedded name = gen_antiquotation_raw name true;
+
+fun antiquotation_verbatim name = gen_antiquotation_verbatim name false;
+fun antiquotation_verbatim_embedded name = gen_antiquotation_verbatim name true;
+
+end;
 
 end;

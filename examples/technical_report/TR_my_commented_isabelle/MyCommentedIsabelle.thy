@@ -810,9 +810,8 @@ internal @{ ML_type state} with the necessary infrastructure ---
 i.e. the operations to pack and unpack theories and Proof.contexts  --- on it:
 \<close>
 ML\<open> 
-
  Toplevel.theory_toplevel: theory -> Toplevel.state;
- Toplevel.toplevel: Toplevel.state;
+ Toplevel.init_toplevel: unit -> Toplevel.state;
  Toplevel.is_toplevel: Toplevel.state -> bool;
  Toplevel.is_theory: Toplevel.state -> bool;
  Toplevel.is_proof: Toplevel.state -> bool;
@@ -1427,6 +1426,7 @@ section \<open> Output: LaTeX \<close>
 ML\<open> open Thy_Output; 
 
  output_document: Proof.context -> {markdown: bool} -> Input.source -> Latex.text list;
+ output_token: Proof.context -> Token.T -> Latex.text list;
  output_source: Proof.context -> string -> Latex.text list;
  present_thy: Options.T -> theory -> segment list -> Latex.text list;
  pretty_term: Proof.context -> term -> Pretty.T;
@@ -1437,11 +1437,11 @@ ML\<open> open Thy_Output;
  isabelle_typewriter: Proof.context -> Latex.text list -> Latex.text;
  typewriter: Proof.context -> string -> Latex.text;
  verbatim: Proof.context -> string -> Latex.text;
- source: Proof.context -> Token.src -> Latex.text;
+ source: Proof.context -> {embedded: bool} -> Token.src -> Latex.text;
  pretty: Proof.context -> Pretty.T -> Latex.text;
- pretty_source: Proof.context -> Token.src -> Pretty.T -> Latex.text;
+ pretty_source: Proof.context -> {embedded: bool} -> src -> Pretty.T -> Latex.text;
  pretty_items: Proof.context -> Pretty.T list -> Latex.text;
- pretty_items_source: Proof.context -> Token.src -> Pretty.T list -> Latex.text;
+ pretty_items_source: Proof.context -> {embedded: bool} -> src -> Pretty.T list -> Latex.text;
  antiquotation_pretty:
       binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
  antiquotation_pretty_source:

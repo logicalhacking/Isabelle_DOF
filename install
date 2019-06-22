@@ -31,11 +31,11 @@
 shopt -s nocasematch
 
 # Global configuration  
-ISABELLE_VERSION="Isabelle2018: August 2018"
-ISABELLE_URL="https://isabelle.in.tum.de/website-Isabelle2018/"
+ISABELLE_VERSION="Isabelle2019: June 2019"
+ISABELLE_URL="https://isabelle.in.tum.de/website-Isabelle2019/"
 
-AFP_DATE="afp-2019-06-04"
-AFP_URL="https://sourceforge.net/projects/afp/files/afp-Isabelle2018/"$AFP_DATE".tar.gz"
+AFP_DATE="afp-2019-06-17"
+AFP_URL="https://www.isa-afp.org/release/"$AFP_DATE".tar.gz"
 
 print_help()
 {
