@@ -200,7 +200,7 @@ install_and_register(){
 
 
 ISABELLE=`which isabelle`
-
+SKIP="false"
 while [ $# -gt 0 ]
 do
     case "$1" in
@@ -222,7 +222,6 @@ done
 ACTUAL_ISABELLE_VERSION=`$ISABELLE version`
 GEN_DIR=document-generator
 PROG=`echo $0 | sed 's|.*/||'`;
-SKIP="false"
 VARS=`$ISABELLE getenv ISABELLE_HOME_USER ISABELLE_HOME ISABELLE_TOOLS`
 for i in $VARS; do 
 	export "$i"
