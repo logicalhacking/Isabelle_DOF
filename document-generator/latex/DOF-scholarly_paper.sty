@@ -1,5 +1,6 @@
 %% Copyright (C) 2018 The University of Sheffield
 %%               2018 The University of Paris-Sud
+%%               2019 The University of Exeter
 %%
 %% License:
 %%   This program can be redistributed and/or modified under the terms
@@ -40,12 +41,23 @@
     {%
       \@ifclassloaded{lipics-v2019}%
       {%
-      \newcommand{\institute}[1]{}%
-      \newcommand{\inst}[1]{}%
-      \newcommand{\orcidID}[1]{}%
-      \newcommand{\email}[1]{}%
+        \newcommand{\institute}[1]{}%
+        \newcommand{\inst}[1]{}%
+        \newcommand{\orcidID}[1]{}%
+        \newcommand{\email}[1]{}%
       }%
-      {\PackageError{DOF-scholarly_paper}{Scholarly Paper only supports LNCS or scrartcl as document class.}{}\stop}%
+      {%
+        \@ifclassloaded{eptcs}%
+        {%
+          \newcommand{\inst}[1]{}%
+          \newcommand{\orcidID}[1]{}%
+        }%
+        {%
+          \PackageError{DOF-scholarly_paper}
+                       {Scholarly Paper only supports LNCS or scrartcl as document class.}
+                       {}\stop%
+        }%
+      }%
     }
   }
 }
