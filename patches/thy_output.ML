@@ -388,10 +388,10 @@ fun present_thy options thy (segments: segment list) =
                                               pred keywords (Token.content_of tok))) 
       --   (Document_Source.annotation |--
             (Parse.!!!!
-              (     (!meta_args_parser_hook thy)
+              (   (Document_Source.improper |-- (!meta_args_parser_hook thy))
                -- ( (Document_Source.improper -- locale -- Document_Source.improper) 
-                |-- Parse.document_source )
-                --| Document_Source.improper_end)
+                    |-- Parse.document_source )
+                     --| Document_Source.improper_end)
               )
         
            )
