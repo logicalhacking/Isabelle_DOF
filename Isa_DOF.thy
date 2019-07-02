@@ -1540,7 +1540,7 @@ ML\<open> (* Setting in thy_output.ML a parser for the syntactic handling of the
                  
 val _ = Thy_Output.set_meta_args_parser
             (fn thy => let val _ = writeln "META_ARGS_PARSING"
-                       in  (Scan.optional (   ODL_Command_Parser.attributes 
+                       in  (Scan.optional (Document_Source.improper |--   ODL_Command_Parser.attributes 
                                            >> ODL_LTX_Converter.meta_args_2_string thy) "")
                        end); \<close>
 
@@ -1657,7 +1657,7 @@ fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) pos name  =
          in () end
     else if   DOF_core.is_declared_oid_global name thy 
          then (if #strict_checking str 
-               then warning("declared but undefined document reference:"^name)
+               then  warning("declared but undefined document reference:"^name)(* HACK bu 29/6.19 *)
                else ())
          else error("undefined document reference:"^name)
   end
