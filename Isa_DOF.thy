@@ -1657,7 +1657,7 @@ fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) pos name  =
          in () end
     else if   DOF_core.is_declared_oid_global name thy 
          then (if #strict_checking str 
-               then  warning("declared but undefined document reference:"^name)(* HACK bu 29/6.19 *)
+               then warning("declared but undefined document reference:"^name)(* HACK bu 29/6.19 *)
                else ())
          else error("undefined document reference:"^name)
   end
