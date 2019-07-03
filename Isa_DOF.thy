@@ -1688,8 +1688,8 @@ fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked = x, define =
                 val _ = check_and_mark ctxt cid_decl
                           ({strict_checking = not x}) pos str 
             in  
-                (if y  then Latex.enclose_block ("\\csname isadof.label[type={"^cid_decl^"}]{") "}\\endcsname" 
-                       else Latex.enclose_block ("\\csname isadof.ref[type={"^cid_decl^"}]{") "}\\endcsname")
+                (if y  then Latex.enclose_block ("\\csname isaDof.label\\endcsname[type={"^cid_decl^"}]{") "}" 
+                       else Latex.enclose_block ("\\csname isaDof.ref\\endcsname[type={"^cid_decl^"}]{") "}")
                 [Latex.text (Input.source_content src)] 
             end
           
