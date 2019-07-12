@@ -1,8 +1,9 @@
 chapter\<open> Example : Forward and Standard (use-after-define) Referencing\<close>
 
 theory Example
-  imports  "../../ontologies/CENELEC_50128" 
-           "../../ontologies/scholarly_paper"
+  imports  
+    Isabelle_DOF.CENELEC_50128
+    Isabelle_DOF.scholarly_paper
 begin
 
 section\<open> Some examples of Isabelle's standard antiquotations. \<close>

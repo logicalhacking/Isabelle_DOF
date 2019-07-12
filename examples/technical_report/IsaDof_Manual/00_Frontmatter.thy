@@ -1,7 +1,6 @@
 (*<*)
 theory "00_Frontmatter"
-(*  imports "Isabelle_DOF.technical_report" *)
-  imports "../../../ontologies/technical_report" 
+  imports "Isabelle_DOF.technical_report"
 begin
 
 open_monitor*[this::report] 
