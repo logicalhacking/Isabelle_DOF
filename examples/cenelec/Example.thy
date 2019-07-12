@@ -86,7 +86,17 @@ text\<open> @{docitem \<open>ass122\<close>} -- global reference to a text-item 
 text\<open> @{EC \<open>ass122\<close>} -- global reference to a exported constraint in another file.
                          Note that the link is actually a srac, which, according to 
                          the ontology, happens to be an "ec".  \<close>
-   
+
+
+section*[h2::example]\<open> Snippets ... \<close> 
+
+text*[req1::requirement, is_concerned="UNIV"] 
+\<open>The operating system shall provide secure 
+memory separation. \<close>
+
+
+text\<open>The recurring issue of the certification 
+     is @{requirement \<open>req1\<close>} ...\<close>
 
   
 end
