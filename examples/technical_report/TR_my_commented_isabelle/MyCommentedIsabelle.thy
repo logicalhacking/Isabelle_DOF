@@ -39,13 +39,40 @@ which makes this text re-checkable at each load and easier maintainable.
 
 chapter*[intro::introduction]\<open> Introduction  \<close>    
 
+text\<open>
+While Isabelle is mostly known as part of Isabelle/HOL (an interactive theorem prover), it actually 
+provides a system framework for developing a wide spectrum of applications. A particular strength of 
+the Isabelle framework is the combination of text editing, formal verification, and code generation.
+This is a programming-tutorial of Isabelle and Isabelle/HOL, a complementary text to the 
+unfortunately somewhat outdated "The Isabelle Cookbook" in 
+\url{https://nms.kcl.ac.uk/christian.urban/Cookbook/}. The reader is encouraged not only to consider 
+the generated .pdf, but also consult the loadable version in Isabelle/jedit in order to make 
+experiments on the running code. This text is written itself in Isabelle/Isar using a specific 
+document ontology for technical reports. It is intended to be a "living document", i.e. it is not 
+only used for generating a static, conventional .pdf, but also for direct interactive exploration 
+in Isabelle/jedit. This way, types, intermediate results of computations and checks can be 
+repeated by the reader who is invited to interact with this document. Moreover, the textual 
+parts have been enriched with a maximum of formal content which makes this text re-checkable at 
+each load and easier maintainable.\<close>
+
+figure*[architecture::figure,relative_width="80",src="''figures/isabelle-architecture''"]\<open> 
+     The system architecture of Isabelle (left-hand side) and the 
+     asynchronous communication between the Isabelle system and 
+     the IDE (right-hand side). \<close>
+
+text\<open>This cookbook roughly follows the Isabelle system architecture shown in 
+@{figure "architecture"}, and, to be more precise, more or less in the bottom-up order.
+
+We start from the basic underlying SML platform over the Kernels to the tactical layer 
+and end with a discussion over the front-end technologies.
+\<close>
 
 chapter*[t1::technical]\<open> SML and Fundamental SML libraries  \<close>    
 
 section*[t11::technical] "ML, Text and Antiquotations"
 
-text\<open>Isabelle is written in SML, the "Standard Meta-Language", which is
-is an impure functional programming language allowing, in principle, mutable variables and side-effects. 
+text\<open>Isabelle is written in SML, the "Standard Meta-Language", which is is an impure functional 
+programming language allowing, in principle, mutable variables and side-effects. 
 The following Isabelle/Isar commands allow for accessing the underlying SML interpreter
 of Isabelle directly. In the example, a mutable variable X is declared, defined to 0 and updated; 
 and finally re-evaluated leading to output: \<close>
@@ -140,12 +167,8 @@ text\<open>It is instructive to study the fundamental bootstrapping sequence of 
      command key in Isabelle/jedit and activating it) allows the Isabelle IDE 
      to support hyperlinking \<^emph>\<open>inside\<close> the Isabelle source.\<close>
 
-text\<open>The bootstrapping sequence is also reflected in the following diagram: \<close>
-
-figure*[architecture::figure,relative_width="100",src="''figures/isabelle-architecture''"]\<open> 
-     The system architecture of Isabelle (left-hand side) and the 
-     asynchronous communication between the Isabelle system and 
-     the IDE (right-hand side). \<close>
+text\<open>The bootstrapping sequence is also reflected in the following diagram
+@{figure "architecture"}.  \<close>
 
 
 section*[t12::technical] "Elements of the SML library";  
