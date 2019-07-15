@@ -1328,8 +1328,16 @@ worked out @{cite "DBLP:journals/jfp/Hutton92"}. Parsing combinators are one of 
 major parsing technologies of the Isabelle front-end, in particular for the outer-syntax used
 for the parsing of toplevel-commands. The core of the combinator library is 
 @{ML_structure \<open>Scan\<close>} providing the @{ML_type "'a parser"} which is a synonym for
-@{ML_type " Token.T list -> 'a * Token.T list"}. The library also provides a bunch of 
-infix parsing combinators, notably:\<close>
+@{ML_type " Token.T list -> 'a * Token.T list"}. 
+
+ "parsers" are actually  interpreters; an 'a parser is a function that parses
+an input stream and computes(=evaluates, computes) it into 'a. 
+Since the semantics of an Isabelle command is a transition => transition 
+or theory $\Rightarrow$ theory  function, i.e. a global system transition.
+parsers of that type can be constructed and be bound as call-back functions
+to a table in the Toplevel-structure of Isar.
+
+The library also provides a bunch of infix parsing combinators, notably:\<close>
 
 ML\<open>
   val _ = op !! : ('a * message option -> message) -> ('a -> 'b) -> 'a -> 'b
@@ -1369,10 +1377,113 @@ fun parser2contextparser pars (ctxt, toks) = let val (a, toks') = pars toks
 val _ = parser2contextparser : 'a parser -> 'a context_parser;
 
 (* bah, is the same as Scan.lift *)
-val _ = Scan.lift Args.cartouche_input : Input.source context_parser;
+val _ = Scan.lift Args.cartouche_input : Input.source context_parser;\<close>
 
+subsection\<open>Advanced Parser Library\<close>
+
+text\<open>There are two parts. A general multi-purpose parsing combinator library is 
+found under @{ML_structure "Parse"}, providing basic functionality for parsing strings
+or integers. There is also an important combinator that reads the current position information
+out of the input stream:\<close>
+ML\<open>
+Parse.nat: int parser;  
+Parse.int: int parser;
+Parse.enum_positions: string -> 'a parser -> ('a list * Position.T list) parser;
+Parse.enum: string -> 'a parser -> 'a list parser;
+Parse.input: 'a parser -> Input.source parser;
+
+Parse.enum : string -> 'a parser -> 'a list parser;
+Parse.!!! : (Token.T list -> 'a) -> Token.T list -> 'a;
+Parse.position: 'a parser -> ('a * Position.T) parser;
+
+(* Examples *)                                     
+Parse.position Args.cartouche_input;
+\<close>
+
+text\<open>The second part is much more high-level, and can be found under @{ML_structure Args}.
+In parts, these combinators are again based on more low-level combinators, in parts they serve as 
+an an interface to the underlying Earley-parser for mathematical notation used in types and terms.
+This is perhaps meant with the fairly cryptic comment:
+"Quasi-inner syntax based on outer tokens: concrete argument syntax of
+attributes, methods etc." at the beginning of this structure.
+\<close>
+
+ML\<open>
+
+local 
+
+  open Args
+
+  (* some more combinaotrs *)
+  val _ =  symbolic: Token.T parser
+  val _ =  $$$ : string -> string parser
+  val _ =  maybe: 'a parser -> 'a option parser
+  val _ =  name_token: Token.T parser
+
+
+  (* common isar syntax *)
+  val _ =  colon: string parser
+  val _ =  query: string parser
+  val _ =  bang: string parser
+  val _ =  query_colon: string parser
+  val _ =  bang_colon: string parser
+  val _ =  parens: 'a parser -> 'a parser
+  val _ =  bracks: 'a parser -> 'a parser
+  val _ =  mode: string -> bool parser
+  val _ =  name: string parser
+  val _ =  name_position: (string * Position.T) parser
+  val _ =  cartouche_inner_syntax: string parser
+  val _ =  cartouche_input: Input.source parser
+  val _ =  text_token: Token.T parser
+
+  (* advanced string stuff *)
+  val _ =  embedded_token: Token.T parser
+  val _ =  embedded_inner_syntax: string parser
+  val _ =  embedded_input: Input.source parser
+  val _ =  embedded: string parser
+  val _ =  embedded_position: (string * Position.T) parser
+  val _ =  text_input: Input.source parser
+  val _ =  text: string parser
+  val _ =  binding: binding parser
+
+  (* stuff related to INNER SYNTAX PARSING *)
+  val _ =  alt_name: string parser
+  val _ =  liberal_name: string parser
+  val _ =  var: indexname parser
+  val _ =  internal_source: Token.src parser
+  val _ =  internal_name: Token.name_value parser
+  val _ =  internal_typ: typ parser
+  val _ =  internal_term: term parser
+  val _ =  internal_fact: thm list parser
+  val _ =  internal_attribute: (morphism -> attribute) parser
+  val _ =  internal_declaration: declaration parser
+
+
+  val _ =  named_source: (Token.T -> Token.src) -> Token.src parser
+  val _ =  named_typ: (string -> typ) -> typ parser
+  val _ =  named_term: (string -> term) -> term parser
+
+  val _ =  text_declaration: (Input.source -> declaration) -> declaration parser
+  val _ =  cartouche_declaration: (Input.source -> declaration) -> declaration parser
+  val _ =  typ_abbrev: typ context_parser
+
+  val _ =  typ: typ context_parser
+  val _ =  term: term context_parser
+  val _ =  term_pattern: term context_parser
+  val _ =  term_abbrev: term context_parser
+
+  (* syntax for some major Pure commands in Isar *)
+  val _ =  prop: term context_parser
+  val _ =  type_name: {proper: bool, strict: bool} -> string context_parser
+  val _ =  const: {proper: bool, strict: bool} -> string context_parser
+  val _ =  goal_spec: ((int -> tactic) -> tactic) context_parser
+  val _ =  context: Proof.context context_parser   
+  val _ =  theory: theory context_parser
+
+in val _ = () end
 
 \<close>
+
 
 subsection\<open> Bindings \<close>  
 
@@ -1401,34 +1512,9 @@ ML\<open>
         ("l", {offset=26, id=-2769}), ("}", {offset=27, id=-2769})]
      *)\<close> 
   
-subsection \<open>Scanning and combinator parsing. \<close> 
-text\<open>Is used on two levels: 
-\<^enum> outer syntax, that is the syntax in which Isar-commands are written, and 
-\<^enum> inner-syntax, that is the syntax in which lambda-terms, and in particular HOL-terms were written.
-\<close>
-text\<open> A constant problem for newbies is this distinction, which makes it necessary that
-  the " ... " quotes have to be used when switching to inner-syntax, except when only one literal
-  is expected when an inner-syntax term is expected. 
-\<close>
 
-ML\<open>
-Scan.peek  : ('a -> 'b -> 'c * 'd) -> 'a * 'b -> 'c * ('a * 'd);
-Scan.optional: ('a -> 'b * 'a) -> 'b -> 'a -> 'b * 'a;
-Scan.option: ('a -> 'b * 'a) -> 'a -> 'b option * 'a;
-Scan.repeat: ('a -> 'b * 'a) -> 'a -> 'b list * 'a;
-Scan.lift  : ('a -> 'b * 'c) -> 'd * 'a -> 'b * ('d * 'c);
-Scan.lift (Parse.position Args.cartouche_input);
-\<close>
   
-text\<open> "parsers" are actually  interpreters; an 'a parser is a function that parses
-   an input stream and computes(=evaluates, computes) it into 'a. 
-   Since the semantics of an Isabelle command is a transition => transition 
-   or theory $\Rightarrow$ theory  function, i.e. a global system transition.
-   parsers of that type can be constructed and be bound as call-back functions
-   to a table in the Toplevel-structure of Isar.
 
-   The type 'a parser is already defined in the structure Token.
-\<close>
   
 text\<open> Syntax operations : Interface for parsing, type-checking, "reading" 
                        (both) and pretty-printing.
@@ -1440,20 +1526,7 @@ text\<open> Syntax operations : Interface for parsing, type-checking, "reading"
    context via @{ML Proof_Context.syn_of}.
 \<close>
   
-ML\<open>
-Parse.nat: int parser;  
-Parse.int: int parser;
-Parse.enum_positions: string -> 'a parser -> ('a list * Position.T list) parser;
-Parse.enum: string -> 'a parser -> 'a list parser;
-Parse.input: 'a parser -> Input.source parser;
 
-Parse.enum : string -> 'a parser -> 'a list parser;
-Parse.!!! : (Token.T list -> 'a) -> Token.T list -> 'a;
-Parse.position: 'a parser -> ('a * Position.T) parser;
-
-(* Examples *)                                     
-Parse.position Args.cartouche_input;
-\<close>
 
 text\<open> Inner Syntax Parsing combinators for elementary Isabelle Lexems\<close>  
 ML\<open>
@@ -2004,10 +2077,12 @@ ML\<open>Sign.add_trrules\<close>
 
 section*[c::conclusion]\<open>Conclusion\<close>
 text\<open>More to come\<close>
+(*<*)
+
 section*[bib::bibliography]\<open>Bibliography\<close>
 
-(*<*)
 close_monitor*[this] 
 check_doc_global
-(*>*)
+
 end
+(*>*)
