@@ -152,11 +152,11 @@ particular document into the context of our conceptual example
 ontology shown above:
 \begin{isar}
 theory Concept_Example
-  imports "../../ontologies/Conceptual"
+  imports Isabelle_DOF.Conceptual
 begin
 \end{isar}
 which is contained contained a theory file
-\verb+../../ontologies/Conceptual.thy+.  Then we can continue to annotate
+\verb+ontologies/Conceptual.thy+ in the \isadof distribution.  Then we can continue to annotate
 our text as follows:
 \begin{isar}
   section*[a::A, x = "''alpha''"] {* Lorem ipsum dolor sit amet, ... *}
@@ -322,7 +322,7 @@ monitors may be nested.
 text\<open>
 \begin{isar}[float, caption={Our running example},label={lst:example}]
  theory Concept_Example
-   imports "../../ontologies/Conceptual"
+   imports "Isabelle_DOF.Conceptual"
  begin
  
  open_monitor*[struct::M]  
