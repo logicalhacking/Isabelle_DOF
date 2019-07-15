@@ -1,5 +1,5 @@
 (*<*)
-theory MyCommentedIsabelle
+theory TR_MyCommentedIsabelle
   imports "Isabelle_DOF.technical_report" 
    (*imports "../../../ontologies/technical_report"*)
 begin
@@ -1061,13 +1061,13 @@ were said to be processed by processed by two types of parsers:
 \<close>
 
 text\<open>This picture is less and less true for a number of reasons:
-\<^enum> With the advent of \inlineisar+\<Open> ... \<Close>+, a mechanism for
+\<^enum> With the advent of \<open>(\<open>)... (\<close>)\<close>, a mechanism for
   \<^emph>\<open>cascade-syntax\<close> came to the Isabelle platform that introduce a flexible means
   to change parsing contexts \<^emph>\<open>and\<close> parsing technologies. 
 \<^enum> Inside the term-parser levels, the concept of \<^emph>\<open>cartouche\<close> can be used 
   to escape the parser and its underlying parsing technology.
 \<^enum> Outside, in the traditional toplevel-parsers, the 
-  \inlineisar+\<Open> ... \<Close>+ is becoming more and more enforced
+  \<open>(\<open>)... (\<close>)\<close> is becoming more and more enforced
   (some years ago, syntax like \<open>term{* ... *}\<close> was replaced by 
    syntax \<open>term(\<open>)... (\<close>)\<close>. This makes technical support of cascade syntax
    more and more easy.
@@ -1264,7 +1264,7 @@ mathematical notations. The basic data-structure for the lexical treatment of th
 
 subsection\<open>Tokens\<close>
 
-text\<open>The basic entity that lexers treat are \<^emph>\<open>tokens\<close>. defined in @{ML_structure "Token"}}
+text\<open>The basic entity that lexers treat are \<^emph>\<open>tokens\<close>. defined in @{ML_structure "Token"}
 It provides a classification infrastructure, the references to positions and Markup 
 as well as way's to annotate tokens with (some) values they denote:
 \<close>
@@ -1324,18 +1324,43 @@ ML\<open>
 
 section\<open> Combinator Parsing \<close>  
 text\<open>Parsing Combinators go back to monadic programming as advocated by Wadler et. al, and has been 
-worked out @{cite "DBLP:journals/jfp/Hutton92"}\<close>
+worked out @{cite "DBLP:journals/jfp/Hutton92"}. Parsing combinators are one of the two
+major parsing technologies of the Isabelle front-end, in particular for the outer-syntax used
+for the parsing of toplevel-commands. The core of the combinator library is 
+@{ML_structure \<open>Scan\<close>} providing the @{ML_type "'a parser"} which is a synonym for
+@{ML_type " Token.T list -> 'a * Token.T list"}. The library also provides a bunch of 
+infix parsing combinators, notably:\<close>
 
+ML\<open>
+  val _ = op !! : ('a * message option -> message) -> ('a -> 'b) -> 'a -> 'b
+               (*apply function*)
+  val _ = op >> : ('a -> 'b * 'c) * ('b -> 'd) -> 'a -> 'd * 'c
+  (*alternative*)
+  val _ = op || : ('a -> 'b) * ('a -> 'b) -> 'a -> 'b
+  (*sequential pairing*)
+  val _ = op -- : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> ('b * 'd) * 'e
+  (*dependent pairing*)
+  val _ = op :-- : ('a -> 'b * 'c) * ('b -> 'c -> 'd * 'e) -> 'a -> ('b * 'd) * 'e
+  (*projections*)
+  val _ = op :|-- : ('a -> 'b * 'c) * ('b -> 'c -> 'd * 'e) -> 'a -> 'd * 'e
+  val _ = op |-- : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> 'd * 'e
+  val _ = op --| : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> 'b * 'e
+  (*concatenation*)
+  val _ = op ^^ : ('a -> string * 'b) * ('b -> string * 'c) -> 'a -> string * 'c
+  val _ = op ::: : ('a -> 'b * 'c) * ('c -> 'b list * 'd) -> 'a -> 'b list * 'd
+  val _ = op @@@ : ('a -> 'b list * 'c) * ('c -> 'b list * 'd) -> 'a -> 'b list * 'd
+  (*one element literal*)
+  val _ = op $$ : string -> string list -> string * string list
+  val _ = op ~$$ : string -> string list -> string * string list
+ \<close>
 
-ML\<open> \<close>
+text\<open>Usually, combinators were used in one of these following instances:\<close>
 
 ML\<open>
 
-(* Provided types : *)
-(*
-  type 'a parser = T list -> 'a * T list
-  type 'a context_parser = Context.generic * T list -> 'a * (Context.generic * T list)
-*)
+  type 'a parser = Token.T list -> 'a * Token.T list
+  type 'a context_parser = Context.generic * Token.T list -> 'a * (Context.generic * Token.T list)
+
 
 (* conversion between these two : *)
 
@@ -1349,7 +1374,7 @@ val _ = Scan.lift Args.cartouche_input : Input.source context_parser;
 
 \<close>
 
-text\<open> Tokens and Bindings \<close>  
+subsection\<open> Bindings \<close>  
 
 
 ML\<open>
@@ -1423,7 +1448,7 @@ Parse.enum: string -> 'a parser -> 'a list parser;
 Parse.input: 'a parser -> Input.source parser;
 
 Parse.enum : string -> 'a parser -> 'a list parser;
-Parse.!!! : (T list -> 'a) -> T list -> 'a;
+Parse.!!! : (Token.T list -> 'a) -> Token.T list -> 'a;
 Parse.position: 'a parser -> ('a * Position.T) parser;
 
 (* Examples *)                                     
@@ -1634,9 +1659,9 @@ ML\<open> open Thy_Output;
  verbatim: Proof.context -> string -> Latex.text;
  source: Proof.context -> {embedded: bool} -> Token.src -> Latex.text;
  pretty: Proof.context -> Pretty.T -> Latex.text;
- pretty_source: Proof.context -> {embedded: bool} -> src -> Pretty.T -> Latex.text;
+ pretty_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T -> Latex.text;
  pretty_items: Proof.context -> Pretty.T list -> Latex.text;
- pretty_items_source: Proof.context -> {embedded: bool} -> src -> Pretty.T list -> Latex.text;
+ pretty_items_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T list -> Latex.text;
  antiquotation_pretty:
       binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
  antiquotation_pretty_source:
