@@ -1132,13 +1132,45 @@ display is hyperlinked to the position of @{ML "@{here}"} in the ML sample above
 
 section\<open>Markup and Low-level Markup Reporting\<close>
 text\<open>The structures @{ML_structure Markup} and @{ML_structure Properties} represent the basic 
-annotation data which is part of the protocol sent from Isabelle to the frontend.
+annotation data which is part of the protocol sent from Isabelle to the front-end.
 They are qualified as "quasi-abstract", which means they are intended to be an abstraction of 
 the serialized, textual presentation of the protocol. Markups are structurally a pair of a key
 and properties; @{ML_structure Markup} provides a number of of such \<^emph>\<open>key\<close>s for annotation classes
 such as "constant", "fixed", "cartouche", some of them quite obscure. Here is a code sample
 from \<^theory_text>\<open>Isabelle_DOF\<close>. A markup must be tagged with an id; this is done by the @{ML serial}-function
-discussed earlier.\<close>
+discussed earlier. Markup Operations, were used for hyperlinking applications to binding
+occurrences, info for hovering, infors for type ... \<close>  
+ML\<open>
+
+(* Position.report is also a type consisting of a pair of a position and markup. *)
+(* It would solve all my problems if I find a way to infer the defining Position.report
+   from a type definition occurence ... *)
+
+Position.report: Position.T -> Markup.T -> unit;
+Position.reports: Position.report list -> unit; 
+     (* ? ? ? I think this is the magic thing that sends reports to the GUI. *)
+Markup.entity : string -> string -> Markup.T;
+Markup.properties : Properties.T -> Markup.T -> Markup.T ;
+Properties.get : Properties.T -> string -> string option;
+Markup.enclose : Markup.T -> string -> string; 
+     
+(* example for setting a link, the def flag controls if it is a defining or a binding 
+occurence of an item *)
+fun theory_markup (def:bool) (name:string) (id:serial) (pos:Position.T) =
+  if id = 0 then Markup.empty
+  else
+    Markup.properties (Position.entity_properties_of def id pos)
+      (Markup.entity Markup.theoryN name);
+Markup.theoryN : string;
+
+serial();   (* A global, lock-guarded seriel counter used to produce unique identifiers,
+               be it on the level of thy-internal states or as reference in markup in
+               PIDE *)
+
+\<close>
+
+
+
 subsection\<open>A simple Example\<close>
 ML\<open>
 local 
@@ -1596,115 +1628,6 @@ fn name => (Thy_Output.antiquotation_pretty_source name (Scan.lift (Parse.positi
 \<close>
 
 
-section\<open> The PIDE Framework \<close>  
-subsection\<open> Markup \<close>  
-text\<open> Markup Operations, and reporting. Diag in Isa\_DOF Foundations TR.
-       Markup operation send via side-effect annotations to the GUI (precisely:
-       to the PIDE Framework) that were used for hyperlinking applicating to binding
-       occurrences, info for hovering, ... \<close>  
-ML\<open>
-
-(* Position.report is also a type consisting of a pair of a position and markup. *)
-(* It would solve all my problems if I find a way to infer the defining Position.report
-   from a type definition occurence ... *)
-
-Position.report: Position.T -> Markup.T -> unit;
-Position.reports: Position.report list -> unit; 
-     (* ? ? ? I think this is the magic thing that sends reports to the GUI. *)
-Markup.entity : string -> string -> Markup.T;
-Markup.properties : Properties.T -> Markup.T -> Markup.T ;
-Properties.get : Properties.T -> string -> string option;
-Markup.enclose : Markup.T -> string -> string; 
-     
-(* example for setting a link, the def flag controls if it is a defining or a binding 
-occurence of an item *)
-fun theory_markup (def:bool) (name:string) (id:serial) (pos:Position.T) =
-  if id = 0 then Markup.empty
-  else
-    Markup.properties (Position.entity_properties_of def id pos)
-      (Markup.entity Markup.theoryN name);
-Markup.theoryN : string;
-
-serial();   (* A global, lock-guarded seriel counter used to produce unique identifiers,
-               be it on the level of thy-internal states or as reference in markup in
-               PIDE *)
-
-(* From Theory:
-fun check ctxt (name, pos) =
-  let
-    val thy = Proof_Context.theory_of ctxt;
-    val thy' =
-      Context.get_theory thy name
-        handle ERROR msg =>
-          let
-            val completion =
-              Completion.make (name, pos)
-                (fn completed =>
-                  map Context.theory_name (ancestors_of thy)
-                  |> filter completed
-                  |> sort_strings
-                  |> map (fn a => (a, (Markup.theoryN, a))));
-            val report = Markup.markup_report (Completion.reported_text completion);
-          in error (msg ^ Position.here pos ^ report) end;
-    val _ = Context_Position.report ctxt pos (get_markup thy');
-  in thy' end;
-
-fun init_markup (name, pos) thy =
-  let
-    val id = serial ();
-    val _ = Position.report pos (theory_markup true name id pos);
-  in map_thy (fn (_, _, axioms, defs, wrappers) => (pos, id, axioms, defs, wrappers)) thy end;
-
-fun get_markup thy =
-  let val {pos, id, ...} = rep_theory thy
-  in theory_markup false (Context.theory_name thy) id pos end;
-
-
-*)
-
-(*
-fun theory_markup def thy_name id pos =
-  if id = 0 then Markup.empty
-  else
-    Markup.properties (Position.entity_properties_of def id pos)
-      (Markup.entity Markup.theoryN thy_name);
-
-fun get_markup thy =
-  let val {pos, id, ...} = rep_theory thy
-  in theory_markup false (Context.theory_name thy) id pos end;
-
-
-fun init_markup (name, pos) thy =
-  let
-    val id = serial ();
-    val _ = Position.report pos (theory_markup true name id pos);
-  in map_thy (fn (_, _, axioms, defs, wrappers) => (pos, id, axioms, defs, wrappers)) thy end;
-
-
-fun check ctxt (name, pos) =
-  let
-    val thy = Proof_Context.theory_of ctxt;
-    val thy' =
-      Context.get_theory thy name
-        handle ERROR msg =>
-          let
-            val completion =
-              Completion.make (name, pos)
-                (fn completed =>
-                  map Context.theory_name (ancestors_of thy)
-                  |> filter completed
-                  |> sort_strings
-                  |> map (fn a => (a, (Markup.theoryN, a))));
-            val report = Markup.markup_report (Completion.reported_text completion);
-          in error (msg ^ Position.here pos ^ report) end;
-    val _ = Context_Position.report ctxt pos (get_markup thy');
-  in thy' end;
-
-
-*)
-
-\<close>
-
   
   
 section \<open> Output: Very Low Level \<close>
@@ -2071,11 +1994,11 @@ ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory gl
 
 
 section\<open>Inner Syntax\<close>
-text\<open>MORE TO COME\<close>
+text\<open>MORE TO COME : cartouches\<close>
 ML\<open>Sign.add_trrules\<close>
 
 
-section*[c::conclusion]\<open>Conclusion\<close>
+chapter*[c::conclusion]\<open>Conclusion\<close>
 text\<open>More to come\<close>
 (*<*)
 
