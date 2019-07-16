@@ -540,12 +540,22 @@ val t'' = Term.map_types (Term_Subst.instantiateT S') (t)
 
 subsection\<open> Type-Inference (= inferring consistent type information if possible) \<close>
 
+ML\<open>
+Consts.the_const; (* T is a kind of signature ... *)
+Variable.import_terms;
+Vartab.update;
+\<close>
+
+subsection\<open> Type-Inference (= inferring consistent type information if possible) \<close>
+
 text\<open> Type inference eliminates also joker-types such as @{ML dummyT} and produces
        instances for schematic type variables where necessary. In the case of success,
        it produces a certifiable term. \<close>  
 ML\<open>  
 Type_Infer_Context.infer_types: Proof.context -> term list -> term list  
 \<close>
+
+
   
 subsection\<open> thy and the signature interface\<close>  
 ML\<open>
@@ -1519,46 +1529,66 @@ in val _ = () end
 
 subsection\<open> Bindings \<close>  
 
+text\<open> The structure @{ML_structure "Binding"} serves as 
+\<open>structured name bindings\<close>, as says the description, i.e. a mechanism to basically 
+associate an input string-fragment to its position. This concept is vital in all parsing processes
+and the interaction with PIDE.
 
+Key are two things:
+\<^enum> the type-synonym @{ML_type "bstring"} which is synonym to @{ML_type "string"}
+  and intended for "primitive names to be bound"
+\<^enum> the projection @{ML "Binding.pos_of :  binding -> Position.T"} 
+\<^enum> the constructor establishing a binding @{ML "Binding.make: bstring * Position.T -> binding"}
+
+\<close>
+
+text\<open>Since this is so common in interface programming, there are a number of antiquotations\<close>
 ML\<open>
 val H = @{binding here}; (* There are "bindings" consisting of a text-span and a position, 
-                    where \<dieresis>positions\<dieresis> are absolute references to a file *)                                  
+                            where \<dieresis>positions\<dieresis> are absolute references to a file *)                                  
 
-Binding.make: bstring * Position.T -> binding;
-Binding.pos_of @{binding erzerzer};
-Position.here: Position.T -> string;
-(* Bindings *)
-ML\<open>val X = @{here};\<close>  
+Binding.pos_of H;  (* clicking on "H" activates the hyperlink to the defining occ of "H" above *)
+(*  {offset=23, end_offset=27, id=-17214}: Position.T *)
+
+(* a modern way to construct a binding is by the following code antiquotation : *)
+\<^binding>\<open>theory\<close>
 
 \<close>  
 
 subsection \<open>Input streams. \<close>  
+text\<open>Reads as : Generic input with position information.\<close>
+
 ML\<open>  
   Input.source_explode : Input.source -> Symbol_Pos.T list;
-     (* conclusion: Input.source_explode converts " f @{thm refl}" 
-        into: 
+  Input.source_explode (Input.string " f @{thm refl}");
+  
+   (* If stemming from the input window, this can be s th like: 
+      
         [(" ", {offset=14, id=-2769}), ("f", {offset=15, id=-2769}), (" ", {offset=16, id=-2769}),
         ("@", {offset=17, id=-2769}), ("{", {offset=18, id=-2769}), ("t", {offset=19, id=-2769}),
         ("h", {offset=20, id=-2769}), ("m", {offset=21, id=-2769}), (" ", {offset=22, id=-2769}),
         ("r", {offset=23, id=-2769}), ("e", {offset=24, id=-2769}), ("f", {offset=25, id=-2769}),
         ("l", {offset=26, id=-2769}), ("}", {offset=27, id=-2769})]
-     *)\<close> 
-  
+   *)
 
-  
-
-  
-text\<open> Syntax operations : Interface for parsing, type-checking, "reading" 
-                       (both) and pretty-printing.
-   Note that this is a late-binding interface, i.e. a collection of "hooks".
-   The real work is done ... see below. 
-   
-   Encapsulates the data structure "syntax" --- the table with const symbols, 
-   print and ast translations, ... The latter is accessible, e.g. from a Proof
-   context via @{ML Proof_Context.syn_of}.
 \<close>
   
 
+section\<open>Term Parsing\<close>  
+
+text\<open>The heart of the parsers for mathematical notation, based on an Earley parser that can cope
+with incremental changes of the grammar as required for sophisticated mathematical output, is hidden
+behind the API described in this section.\<close>
+  
+text\<open> Note that the naming underlies the following convention : 
+   there are:
+   \<^enum> "parser"s and type-"checker"s 
+   \<^enum> "reader"s which do both together with pretty-printing
+   
+   This is encapsulated the data structure @{ML_structure Syntax} --- 
+   the table with const symbols,  print and ast translations, ... The latter is accessible, e.g. 
+   from a Proof context via @{ML Proof_Context.syn_of}.
+\<close>
 
 text\<open> Inner Syntax Parsing combinators for elementary Isabelle Lexems\<close>  
 ML\<open>
@@ -1600,35 +1630,77 @@ Syntax.string_of_term: Proof.context -> term -> string;
 Syntax.string_of_typ: Proof.context -> typ -> string;
 Syntax.lookup_const : Syntax.syntax -> string -> string option;
 \<close>
+ 
+text\<open>
+  Note that @{ML "Syntax.install_operations"} is a late-binding interface, i.e. a collection of 
+  "hooks" used to resolve an apparent architectural cycle.
+  The real work is done in @{file "~~/src/Pure/Syntax/syntax_phases.ML"} 
+  
+  Even the parsers and type checkers stemming from the theory-structure are registered via
+  hooks (this can be confusing at times). Main phases of inner syntax processing, with standard 
+  implementations of parse/unparse operations were treated this way.
+  At the very very end in  , it sets up the entire syntax engine 
+  (the hooks) via:
+\<close>
+
+
+(* 
+val _ =
+  Theory.setup
+   (Syntax.install_operations
+     {parse_sort = parse_sort,
+      parse_typ = parse_typ,
+      parse_term = parse_term false,
+      parse_prop = parse_term true,
+      unparse_sort = unparse_sort,
+      unparse_typ = unparse_typ,
+      unparse_term = unparse_term,
+      check_typs = check_typs,
+      check_terms = check_terms,
+      check_props = check_props,
+      uncheck_typs = uncheck_typs,
+      uncheck_terms = uncheck_terms});
+*)
+
+subsection \<open>Example\<close>
 
 ML\<open>
-fun read_terms ctxt =
-  grouped 10 Par_List.map_independent (Syntax.parse_term ctxt) #> Syntax.check_terms ctxt;
-\<close>  
-
-ML\<open>
-(* More High-level, more Isar-specific Parsers *)
-Args.name;
-Args.const;
+(* Recall the Arg-interface to the more high-level, more Isar-specific parsers: *)
+Args.name           : string parser ;
+Args.const          : {proper: bool, strict: bool} -> string context_parser;
 Args.cartouche_input: Input.source parser; 
-Args.text_token: Token.T parser;
+Args.text_token     : Token.T parser;
 
+
+(* here follows the definition of the attribute parser : *)
 val Z = let val attribute = Parse.position Parse.name -- 
                             Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.name) "";
-        in (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) end ;
-(* this leads to constructions like the following, where a parser for a *)
+        in   (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) end ;
 
 
-
+(* Here is the code to register the above parsers as text antiquotations into the Isabelle
+   Framework: *)
 Thy_Output.antiquotation_pretty_source \<^binding>\<open>theory\<close> (Scan.lift (Parse.position Args.embedded));
 
 Thy_Output.antiquotation_raw \<^binding>\<open>file\<close> (Scan.lift (Parse.position Parse.path))  ;
 
-fn name => (Thy_Output.antiquotation_pretty_source name (Scan.lift (Parse.position Args.cartouche_input)));
+
+(* where we have the registration of the action
+   
+        (Scan.lift (Parse.position Args.cartouche_input))))
+    
+   to be bound to the 
+ 
+        name
+
+   as a whole is a system transaction that, of course, has the type
+
+        theory -> theory  : *)
+(fn name => (Thy_Output.antiquotation_pretty_source name 
+                                                   (Scan.lift (Parse.position Args.cartouche_input))))
+  : binding -> (Proof.context -> Input.source * Position.T -> Pretty.T) -> theory -> theory;
 \<close>
 
-
-  
   
 section \<open> Output: Very Low Level \<close>
 ML\<open> 
@@ -1804,31 +1876,6 @@ val _ =
 Thy_Output.present_thy;
 \<close>  
 
-text\<open> Even the parsers and type checkers stemming from the theory-structure are registered via
-hooks (this can be confusing at times). Main phases of inner syntax processing, with standard 
-implementations of parse/unparse operations were treated this way.
-At the very very end in  @{file "~~/src/Pure/Syntax/syntax_phases.ML"}, it sets up the entire syntax engine 
-(the hooks) via:
-\<close>
-
-
-(* 
-val _ =
-  Theory.setup
-   (Syntax.install_operations
-     {parse_sort = parse_sort,
-      parse_typ = parse_typ,
-      parse_term = parse_term false,
-      parse_prop = parse_term true,
-      unparse_sort = unparse_sort,
-      unparse_typ = unparse_typ,
-      unparse_term = unparse_term,
-      check_typs = check_typs,
-      check_terms = check_terms,
-      check_props = check_props,
-      uncheck_typs = uncheck_typs,
-      uncheck_terms = uncheck_terms});
-*)
   
 text\<open> Thus, Syntax\_Phases does the actual work, including 
         markup generation and  generation of reports. Look at: \<close>
@@ -1876,9 +1923,6 @@ As one can see, check-routines internally generate the markup.
 
 
 
-Consts.the_const; (* T is a kind of signature ... *)
-Variable.import_terms;
-Vartab.update;
 
 fun control_antiquotation name s1 s2 =
   Thy_Output.antiquotation name (Scan.lift Args.cartouche_input)
