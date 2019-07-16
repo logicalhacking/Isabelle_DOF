@@ -26,8 +26,8 @@ combination of text editing, formal verification, and code generation.
 This is a programming-tutorial of Isabelle and Isabelle/HOL, a complementary
 text to the unfortunately somewhat outdated "The Isabelle Cookbook" in
 \url{https://nms.kcl.ac.uk/christian.urban/Cookbook/}. The reader is encouraged
-not only to consider the generated .pdf, but also consult the loadable version in Isabelle/jedit
-in order to make experiments on the running code. 
+not only to consider the generated .pdf, but also consult the loadable version in Isabelle/jEdit
+@{cite "DBLP:journals/corr/Wenzel14"}in order to make experiments on the running code.
 
 This text is written itself in Isabelle/Isar using a specific document ontology
 for technical reports. It is intended to be a "living document", i.e. it is not only
@@ -41,7 +41,7 @@ which makes this text re-checkable at each load and easier maintainable.
 chapter*[intro::introduction]\<open> Introduction  \<close>    
 
 text\<open>
-While Isabelle is mostly known as part of Isabelle/HOL (an interactive theorem prover), it actually 
+While Isabelle @{cite "DBLP:books/sp/NipkowPW02"} is mostly known as part of Isabelle/HOL (an interactive theorem prover), it actually 
 provides a system framework for developing a wide spectrum of applications. A particular strength of 
 the Isabelle framework is the combination of text editing, formal verification, and code generation.
 This is a programming-tutorial of Isabelle and Isabelle/HOL, a complementary text to the 
@@ -86,7 +86,8 @@ ML\<open> val X = Unsynchronized.ref 0;
 text\<open>However, since Isabelle is a platform involving parallel execution, concurrent computing, and,
 as an interactive environment, involves backtracking / re-evaluation as a consequence of user-
 interaction, imperative programming is discouraged and nearly never used in the entire Isabelle
-code-base. The preferred programming style is purely functional: \<close>
+code-base @{cite "DBLP:conf/mkm/BarrasGHRTWW13"}.
+The preferred programming style is purely functional: \<close>
 
 ML\<open> fun fac x = if x = 0 then 1 else x * fac(x-1) ;
     fac 10;
@@ -309,8 +310,7 @@ ML\<open>
 \<close>
 
 
-subsection*[t213::example]\<open>Mechanism 2 : global arbitrary data structure that is attached to 
-                          the global and local Isabelle context $\theta$ \<close>
+subsection*[t213::example]\<open>Mechanism 2 : Extending the Global Context $\theta$ by User Data \<close>
 ML \<open>
 
 datatype X = mt
@@ -860,7 +860,42 @@ ML\<open>
  Toplevel.presentation_context: Toplevel.state -> Proof.context;
 
 \<close>
-  
+
+text\<open> The extensibility of Isabelle as a system framework depends on a number of tables,
+  into which various concepts commands, ML-antiquotations, text-antiquotations, cartouches, ...
+  can be entered via a late-binding on the fly. 
+ 
+  A paradigmatic example is the @{ML "Outer_Syntax.command"}-operation, which ---
+  representing in itself a toplevel system transition --- allows to define a new 
+  command section and bind its syntax and semantics at a specific keyword.
+  Calling @{ML "Outer_Syntax.command"} 
+  creates an implicit  @{ML Theory.setup}  with an entry for a call-back function, which happens
+  to be a parser that must have as side-effect a Toplevel-transition-transition. 
+  Registers @{ML_type "Toplevel.transition -> Toplevel.transition"} parsers to the 
+  Isar interpreter.
+\<close>
+
+
+ML\<open> Outer_Syntax.command : Outer_Syntax.command_keyword -> string -> 
+                           (Toplevel.transition -> Toplevel.transition) parser -> unit;\<close>
+
+text\<open>A paradigmatic example: "text" is defined by: \<close>
+
+(*
+val _ =
+  Outer_Syntax.command ("text", @{here}) "formal comment (primary style)"
+    (Parse.opt_target -- Parse.document_source >> Thy_Output.document_command {markdown = true});
+*)
+ 
+
+text\<open>Here are a few queries relevant for the global config of the isar engine:\<close>
+ML\<open> Document.state();\<close>
+ML\<open> Session.get_keywords(); (* this looks to be really session global. *) \<close>
+ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>
+
+
+
+
 subsection \<open>Transaction Management in the Isar-Engine : The Toplevel \<close>
   
 ML\<open>
@@ -1000,7 +1035,8 @@ Synchronized.value C;
 chapter\<open>Front-End \<close>  
 text\<open>In the following chapter, we turn to the right part of the system architecture 
 shown in @{docitem \<open>architecture\<close>}: 
-The PIDE ("Prover-IDE") layer consisting of a part written in SML and another in SCALA. 
+The PIDE ("Prover-IDE") layer @{cite "DBLP:conf/itp/Wenzel14"}
+consisting of a part written in SML and another in SCALA.
 Roughly speaking, PIDE implements "continuous build - continuous check" - functionality
 over a textual, albeit generic document model. It transforms user modifications
 of text elements in an instance of this model into increments (edits) and communicates
@@ -1703,33 +1739,91 @@ Thy_Output.antiquotation_raw \<^binding>\<open>file\<close> (Scan.lift (Parse.po
 
   
 section \<open> Output: Very Low Level \<close>
+text\<open> For re-directing the output channels, the structure @{ML_structure Output} may be relevant:\<close>
+
 ML\<open> 
 Output.output; (* output is the  structure for the "hooks" with the target devices. *)
 Output.output "bla_1:";
 \<close>
 
+text\<open>It provides a number of hooks that can be used for redirection hacks ...\<close>
+
 section \<open> Output: LaTeX \<close>
+text\<open>The heart of the LaTeX generator is to be found in the structure @{ML_structure Thy_Output}.
+This is an own parsing and writing process, with the risc that a parsed file in the IDE parsing
+process can not be parsed for the LaTeX Generator. The reason is twofold:
+\<^enum> The LaTeX Generator makes a rough attempt to mimic the LayOut if the thy-file; thus, its
+  spacing is relevant.
+\<^enum> there is a special bracket \<open>(*<*)\<close> ... \<open>(*>*)\<close> that allows to specify input that is checked by
+  Isabelle, but excluded from the LaTeX generator (this is handled in an own sub-parser
+  called @{ML "Document_Source.improper"} where also other forms of comment parsers are provided.
 
+Since Isabelle2018, an own AST is provided for the LaTeX syntax, analogously to 
+@{ML_structure "Pretty"}. Key functions of this structure @{ML_structure "Latex"} are:
+\<close>
 
-ML\<open> open Thy_Output; 
+ML\<open>
+local 
 
+  open Latex
+
+  type dummy = text
+
+  val _ = string: string -> text;
+  val _ = text: string * Position.T -> text
+
+  val _ = output_text: text list -> string
+  val _ = output_positions: Position.T -> text list -> string
+  val _ = output_name: string -> string
+  val _ = output_ascii: string -> string
+  val _ = output_symbols: Symbol.symbol list -> string
+
+  val _ = begin_delim: string -> string
+  val _ = end_delim: string -> string
+  val _ = begin_tag: string -> string
+  val _ = end_tag: string -> string
+  val _ = environment_block: string -> text list -> text
+  val _ = environment: string -> string -> string
+
+  val _ = block: text list -> text
+  val _ = enclose_body: string -> string -> text list -> text list
+  val _ = enclose_block: string -> string -> text list -> text
+
+in val _ = ()
+end;
+
+Latex.output_ascii;
+Latex.environment "isa" "bg";
+Latex.output_ascii "a_b:c'é";
+(* Note: *)
+space_implode "sd &e sf dfg" ["qs","er","alpa"];
+
+\<close>
+
+text\<open>Here is an abstract of the main interface to @{ML_structure Thy_Output}:\<close>
+
+ML\<open> 
  output_document: Proof.context -> {markdown: bool} -> Input.source -> Latex.text list;
  output_token: Proof.context -> Token.T -> Latex.text list;
  output_source: Proof.context -> string -> Latex.text list;
  present_thy: Options.T -> theory -> segment list -> Latex.text list;
- pretty_term: Proof.context -> term -> Pretty.T;
- pretty_thm: Proof.context -> thm -> Pretty.T;
- lines: Latex.text list -> Latex.text list;
- items: Latex.text list -> Latex.text list;
+
  isabelle: Proof.context -> Latex.text list -> Latex.text;
+
  isabelle_typewriter: Proof.context -> Latex.text list -> Latex.text;
+
  typewriter: Proof.context -> string -> Latex.text;
+
  verbatim: Proof.context -> string -> Latex.text;
+
  source: Proof.context -> {embedded: bool} -> Token.src -> Latex.text;
+
  pretty: Proof.context -> Pretty.T -> Latex.text;
  pretty_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T -> Latex.text;
  pretty_items: Proof.context -> Pretty.T list -> Latex.text;
  pretty_items_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T list -> Latex.text;
+
+(* finally a number of antiquotation registries : *)
  antiquotation_pretty:
       binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
  antiquotation_pretty_source:
@@ -1742,143 +1836,9 @@ ML\<open> open Thy_Output;
 \<close>
 
 
-
+text\<open> Thus, @{ML_structure Syntax_Phases} does the actual work of markup generation, including 
+        markup generation and  generation of reports. Look at the following snippet: \<close>
 ML\<open>
-Syntax_Phases.reports_of_scope;
-\<close>
-
-(* STOP HERE JUNK ZONE :
-
-(* Pretty.T, pretty-operations. *)  
-ML\<open>
-
-(* interesting piece for LaTeX Generation: 
-fun verbatim_text ctxt =
-  if Config.get ctxt display then
-    split_lines #> map (prefix (Symbol.spaces (Config.get ctxt indent))) #> cat_lines #>
-    Latex.output_ascii #> Latex.environment "isabellett"
-  else
-    split_lines #>
-    map (Latex.output_ascii #> enclose "\\isatt{" "}") #>
-    space_implode "\\isasep\\isanewline%\n";
-
-(* From structure Thy_Output *)
-fun pretty_const ctxt c =
-  let
-    val t = Const (c, Consts.type_scheme (Proof_Context.consts_of ctxt) c)
-      handle TYPE (msg, _, _) => error msg;
-    val ([t'], _) = Variable.import_terms true [t] ctxt;
-  in pretty_term ctxt t' end;
-
-  basic_entity @{binding const} (Args.const {proper = true, strict = false}) pretty_const #>
-
-*)
-
-Pretty.enclose : string -> string -> Pretty.T list -> Pretty.T; (* not to confuse with: String.enclose *)
-
-(* At times, checks where attached to Pretty - functions and exceptions used to
-   stop the execution/validation of a command *)
-fun pretty_theory ctxt (name, pos) = (Theory.check ctxt (name, pos); Pretty.str name);
-Pretty.enclose;
-Pretty.str;
-Pretty.mark_str;
-Pretty.text "bla_d";
-
-Pretty.quote; (* Pretty.T transformation adding " " *) 
-Pretty.unformatted_string_of : Pretty.T -> string ;
-
-Latex.output_ascii;
-Latex.environment "isa" "bg";
-Latex.output_ascii "a_b:c'é";
-(* Note: *)
-space_implode "sd &e sf dfg" ["qs","er","alpa"];
-
-
-(*
-fun pretty_command (cmd as (name, Command {comment, ...})) =
-  Pretty.block
-    (Pretty.marks_str
-      ([Active.make_markup Markup.sendbackN {implicit = true, properties = [Markup.padding_line]},
-        command_markup false cmd], name) :: Pretty.str ":" :: Pretty.brk 2 :: Pretty.text comment);
-*)
-
-
-\<close>  
-
-ML\<open>
-Thy_Output.output_text;
-(* is:
-fun output_text state {markdown} source =
-  let
-    val is_reported =
-      (case try Toplevel.context_of state of
-        SOME ctxt => Context_Position.is_visible ctxt
-      | NONE => true);
-
-    val pos = Input.pos_of source;
-    val syms = Input.source_explode source;
-
-    val _ =
-      if is_reported then
-        Position.report pos (Markup.language_document (Input.is_delimited source))
-      else ();
-
-    val output_antiquotes = map (eval_antiquote state) #> implode;
-
-    fun output_line line =
-      (if Markdown.line_is_item line then "\\item " else "") ^
-        output_antiquotes (Markdown.line_content line);
-
-    fun output_blocks blocks = space_implode "\n\n" (map output_block blocks)
-    and output_block (Markdown.Par lines) = cat_lines (map output_line lines)
-      | output_block (Markdown.List {kind, body, ...}) =
-          Latex.environment (Markdown.print_kind kind) (output_blocks body);
-  in
-    if Toplevel.is_skipped_proof state then ""
-    else if markdown andalso exists (Markdown.is_control o Symbol_Pos.symbol) syms
-    then
-      let
-        val ants = Antiquote.parse pos syms;
-        val reports = Antiquote.antiq_reports ants;
-        val blocks = Markdown.read_antiquotes ants;
-        val _ = if is_reported then Position.reports (reports @ Markdown.reports blocks) else ();
-      in output_blocks blocks end
-    else
-      let
-        val ants = Antiquote.parse pos (Symbol_Pos.trim_blanks syms);
-        val reports = Antiquote.antiq_reports ants;
-        val _ = if is_reported then Position.reports (reports @ Markdown.text_reports ants) else ();
-      in output_antiquotes ants end
-  end;
-*)
-
-\<close>  
-  
-  
-ML\<open> 
-Outer_Syntax.print_commands @{theory};
-
-Outer_Syntax.command : Outer_Syntax.command_keyword -> string -> 
-                           (Toplevel.transition -> Toplevel.transition) parser -> unit;
-(* creates an implicit thy_setup with an entry for a call-back function, which happens
-   to be a parser that must have as side-effect a Toplevel-transition-transition. 
-   Registers "Toplevel.transition -> Toplevel.transition" parsers to the Isar interpreter.
-   *)
-
-(*Example: text is :
- 
-val _ =
-  Outer_Syntax.command ("text", @{here}) "formal comment (primary style)"
-    (Parse.opt_target -- Parse.document_source >> Thy_Output.document_command {markdown = true});
-*)
- 
-(* not exported: Thy_Output.output_token; Ich glaub, da passierts ... *)
-Thy_Output.present_thy;
-\<close>  
-
-  
-text\<open> Thus, Syntax\_Phases does the actual work, including 
-        markup generation and  generation of reports. Look at: \<close>
 (*
 fun check_typs ctxt raw_tys =
   let
@@ -1920,130 +1880,116 @@ which is the real implementation behind Syntax.check_term
 As one can see, check-routines internally generate the markup.
 
 *)  
-
-
-
-
-fun control_antiquotation name s1 s2 =
-  Thy_Output.antiquotation name (Scan.lift Args.cartouche_input)
-    (fn {state, ...} => enclose s1 s2 o Thy_Output.output_text state {markdown = false});
-
-Output.output;
-
-Syntax.read_input ;
-Input.source_content;
-
-(*
-  basic_entity @{binding const} (Args.const {proper = true, strict = false}) pretty_const #>
-*)
-
-
-
-
-chapter\<open>LaTeX Document Generation\<close>  
-text\<open>MORE TO COME\<close>
-
-  
-ML\<open> Thy_Output.document_command {markdown = true} \<close>  
-(* Structures related to LaTeX Generation *)
-ML\<open>  Latex.output_ascii;
-
-      Latex.output_token
-(* Hm, generierter output for
-subsection*[Shaft_Encoder_characteristics]{ * Shaft Encoder Characteristics * } :
-
-\begin{isamarkuptext}%
-\isa{{\isacharbackslash}label{\isacharbraceleft}general{\isacharunderscore}hyps{\isacharbraceright}}%
-\end{isamarkuptext}\isamarkuptrue%
-\isacommand{subsection{\isacharasterisk}}\isamarkupfalse%
-{\isacharbrackleft}Shaft{\isacharunderscore}Encoder{\isacharunderscore}characteristics{\isacharbrackright}{\isacharverbatimopen}\ Shaft\ Encoder\ Characteristics\ {\isacharverbatimclose}%
-
-Generierter output for: text\<open>\label{sec:Shaft-Encoder-characteristics}\<close>
-
-\begin{isamarkuptext}%
-\label{sec:Shaft-Encoder-characteristics}%
-\end{isamarkuptext}\isamarkuptrue%
-
-
-*)
-
-
 \<close>  
   
-ML\<open>
-Thy_Output.maybe_pretty_source : 
-     (Proof.context -> 'a -> Pretty.T) -> Proof.context -> Token.src -> 'a list -> Pretty.T list;
 
-Thy_Output.output: Proof.context -> Pretty.T list -> string;
+section\<open>Inner Syntax Cartouches\<close>
+text\<open> The cascade-syntax principle underlying recent isabelle versions requires a 
+particular mechanism, called "cartouche" by Makarius who was influenced by French 
+Wine and French culture when designing this.
 
- (* nuescht besonderes *)
-
-fun document_antiq check_file ctxt (name, pos) =
-  let
-   (* val dir = master_directory (Proof_Context.theory_of ctxt); *)
-   (* val _ = check_path check_file ctxt dir (name, pos); *)
-  in
-    space_explode "/" name
-    |> map Latex.output_ascii
-    |> space_implode (Latex.output_ascii "/" ^ "\\discretionary{}{}{}")
-    |> enclose "\\isatt{" "}"
-  end;
-
+When parsing terms or types (via the Earley Parser), a standard mechanism for
+calling another parser inside the current process is needed that is bound to the 
+\<open>(\<open>)\<close> ... \<open>(\<close>)\<close> paranthesis'. 
 \<close>
 
-ML\<open> 
+text\<open>The following example --- drawn from the Isabelle/DOF implementation --- allows
+to parse UTF8 - Unicode strings as alternative to @{term "''abc''"} HOL-strings.\<close>
 
-Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string;
-Thy_Output.document_command;
-
-Thy_Output.document_command : {markdown: bool} -> (xstring * Position.T) option * Input.source ->
-    Toplevel.transition -> Toplevel.transition;
-    (*  fun document_command markdown (loc, txt) =
-            Toplevel.keep (fn state =>
-               (case loc of
-                   NONE => ignore (output_text state markdown txt)
-                         | SOME (_, pos) =>
-                   error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
-             Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt));
-
-    *)
-
-Thy_Output.output_text : Toplevel.state -> {markdown: bool} -> Input.source -> string ; 
-                         (* this is where antiquotation expansion happens : uses eval_antiquote *)
+ML\<open>\<comment> \<open>Dynamic setup of inner syntax cartouche\<close>
 
 
-Thy_Output.document_command : {markdown: bool} -> (xstring * Position.T) option * Input.source ->
-    Toplevel.transition -> Toplevel.transition;
-    (*  fun document_command markdown (loc, txt) =
-            Toplevel.keep (fn state =>
-               (case loc of
-                   NONE => ignore (output_text state markdown txt)
-                         | SOME (_, pos) =>
-                   error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
-             Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt));
+(*  Author:     Frédéric Tuong, Université Paris-Saclay *)
+(*  Title:      HOL/ex/Cartouche_Examples.thy
+    Author:     Makarius *)
+  local
+    fun mk_char (f_char, f_cons, _) (s, _) accu =
+        fold
+          (fn c => fn (accu, l) =>
+            (f_char c accu, f_cons c l))
+          (rev (map Char.ord (String.explode s)))
+          accu;
 
-    *)
+    fun mk_string (_, _, f_nil) accu [] = (accu, f_nil)
+      | mk_string f accu (s :: ss) = mk_char f s (mk_string f accu ss);
+  in
+    fun string_tr f f_mk accu content args =
+      let fun err () = raise TERM ("string_tr", args) in
+        (case args of
+          [(c as Const (@{syntax_const "_constrain"}, _)) $ Free (s, _) $ p] =>
+            (case Term_Position.decode_position p of
+              SOME (pos, _) => c $ f (mk_string f_mk accu (content (s, pos))) $ p
+            | NONE => err ())
+        | _ => err ())
+      end;
+  end;
+\<close>
 
-Thy_Output.output_text : Toplevel.state -> {markdown: bool} -> Input.source -> string ; 
-                         (* this is where antiquotation expansion happens : uses eval_antiquote *)
+syntax "_cartouche_string" :: "cartouche_position \<Rightarrow> _"  ("_")
 
-*)
-(* stuff over global environment : *)
+ML\<open>
+structure Cartouche_Grammar = struct
+  fun list_comb_mk cst n c = list_comb (Syntax.const cst, String_Syntax.mk_bits_syntax n c)
+  val nil1 = Syntax.const @{const_syntax String.empty_literal}
+  fun cons1 c l = list_comb_mk @{const_syntax String.Literal} 7 c $ l
+
+  val default =
+    [ ( "char list"
+      , ( Const (@{const_syntax Nil}, @{typ "char list"})
+        , fn c => fn l => Syntax.const @{const_syntax Cons} $ list_comb_mk @{const_syntax Char} 8 c $ l
+        , snd))
+    , ( "String.literal", (nil1, cons1, snd))]
+end
+\<close>
+
+ML\<open>
+fun parse_translation_cartouche binding l f_integer accu =
+  let val cartouche_type = Attrib.setup_config_string binding (K (fst (hd l)))
+      (* if there is no type specified, by default we set the first element
+         to be the default type of cartouches *) in
+  fn ctxt =>
+    let val cart_type = Config.get ctxt cartouche_type in
+    case List.find (fn (s, _) => s = cart_type) l of
+      NONE => error ("Unregistered return type for the cartouche: \"" ^ cart_type ^ "\"")
+    | SOME (_, (nil0, cons, f)) =>
+        string_tr f (f_integer, cons, nil0) accu (Symbol_Pos.cartouche_content o Symbol_Pos.explode)
+    end
+  end
+\<close>
+
+text\<open>The following registration of this cartouche for strings is fails because it has
+ already been done in the surrounding Isabelle/DOF environment... \<close>
 (*
-ML\<open> Document.state();\<close>
-ML\<open> Session.get_keywords(); (* this looks to be really session global. *)
-    Outer_Syntax.command; \<close>
-ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>
+parse_translation \<open>
+  [( @{syntax_const "_cartouche_string"}
+   , parse_translation_cartouche \<^binding>\<open>cartouche_type\<close> Cartouche_Grammar.default (K I) ())]
+\<close>
 *)
 
+(* test for this cartouche... *) 
+term  "\<open>A \<Longrightarrow> B\<close> = ''''"
 
-section\<open>Inner Syntax\<close>
-text\<open>MORE TO COME : cartouches\<close>
-ML\<open>Sign.add_trrules\<close>
 
 
 chapter*[c::conclusion]\<open>Conclusion\<close>
-text\<open>More to come\<close>
+text\<open> This interactive Isabelle Programming Cook-Book represents my current way 
+to view and explain Isabelle programming API's to students and collaborators. 
+It differs from the reference  manual in some places on purpose, since I believe 
+that a lot of internal Isabelle API's need a more conceptual view on what is happening 
+(even if this conceptual view is at times over-abstracting a little).
+It also offers a deliberately different abstraction  to the explanations in form of comments
+in the sources or in the Reference Manual.
+
+The descriptions of some sources may appear lengthy and repetitive and redundant - but this kind 
+of repetition not only give an idea of the chosen abstraction levels on some interfaces, but also
+represents --- since this is a "living document" (a notion I owe Simon Foster) --- a continuous check
+for each port of our material to  each more recent Isabelle version, where the first attempts
+to load it will fail, but give another source of information over the modifications of
+the system interface for parts relevant to our own development work.
+
+All hints and contributions of collegues and collaborators are greatly welcomed; all errors
+and the roughness of this presentation is entirely my fault.
+\<close>
 (*<*)
 
 section*[bib::bibliography]\<open>Bibliography\<close>
