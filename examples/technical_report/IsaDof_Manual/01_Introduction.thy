@@ -34,7 +34,7 @@ types, terms, proven theorems, code, or established assertions.
 Based on a novel adaption of the Isabelle IDE, a document is checked to be 
 \<^emph>\<open>conform\<close> to a particular ontology---\isadof is designed to give fast user-feedback 
 \<^emph>\<open>during the capture of content\<close>. This is particularly valuable in case of document 
-changes, where the \<^emph>\<open>coherence\<close> between the formal and the informal parts of the
+evolution, where the \<^emph>\<open>coherence\<close> between the formal and the informal parts of the
 content can be mechanically checked.
 
 To avoid any misunderstanding: \isadof  is \<^emph>\<open>not a theory in HOL\<close>   
@@ -45,6 +45,8 @@ scientific papers---as the present one, which is written in \isadof
 itself. \isadof is a plugin into the Isabelle/Isar
 framework in the style of~@{cite "wenzel.ea:building:2007"}.
 \<close>
+
+
 
 (* declaring the forward references used in the subsequent section *)  
 (*<*)

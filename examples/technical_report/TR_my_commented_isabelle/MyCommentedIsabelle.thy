@@ -7,15 +7,16 @@ begin
 open_monitor*[this::report] 
 (*>*)
 
-title*[tit::title]\<open>An Account with my Personal, Ecclectic Comments on the Isabelle Architecture\<close> 
-subtitle*[stit::subtitle]\<open>Version : Isabelle 2017\<close>
+title*[tit::title]\<open>My Personal, Ecclectic Isabelle Programming Manual\<close> 
+subtitle*[stit::subtitle]\<open>Version : Isabelle 2019\<close>
 text*[bu::author,     
       email       = "''wolff@lri.fr''",
-      affiliation = "''Universit\\'e Paris-Saclay, Paris, France''"]\<open>Burkhart Wolff\<close>
+      affiliation = "\<open>Université Paris-Saclay, LRI, France\<close>"]\<open>Burkhart Wolff\<close>
     
 
 text*[abs::abstract,
-      keywordlist="[''LCF-Architecture'',''Isabelle'',''SML'',''PIDE'',''Tactic Programming'']"]\<open>
+      keywordlist="[''LCF-Architecture'',''Isabelle'',''SML'',''PIDE'',''Programming Guide'',
+                    ''Tactic Programming'']"]\<open>
 While Isabelle is mostly known as part of Isabelle/HOL (an interactive 
 theorem prover), it actually provides a system framework for developing a wide
 spectrum of applications. A particular strength of the Isabelle framework is the 
@@ -126,9 +127,11 @@ figure*[fig2::figure, relative_width="100",src="''figures/text-element''"]
 text\<open> text-commands, ML- commands (and in principle any other command) can be seen as 
 \<^emph>\<open>quotations\<close> over the underlying SML environment (similar to OCaml or Haskell).
 Linking these different sorts of quotations with each other and the underlying SML-envirnment
-is supported via \<^emph>\<open>antiquotations\<close>'s. Generally speaking, antiquotations are a programming technique 
-to specify expressions or patterns in a quotation, parsed in the context of the enclosing expression 
-or pattern where the quotation is.
+is supported via \<^emph>\<open>antiquotations\<close>'s. Generally speaking, antiquotations are a programming 
+technique to specify expressions or patterns in a quotation, parsed in the context of the 
+enclosing expression or pattern where the quotation is. Another way to understand this concept:
+anti-quotations are "semantic macros" that produce a value for the surrounding context
+(ML, text, HOL, whatever) depending on local arguments and the underlying logical context.
 
 The way an antiquotation is specified depends on the quotation expander: typically a specific 
 character and an identifier, or specific parentheses and a complete expression or pattern.\<close>
@@ -305,8 +308,8 @@ ML\<open>
 \<close>
 
 
-subsection*[t213::example]\<open>Mechanism 2 : global arbitrary data structure that is attached to the global and
-   local Isabelle context $\theta$ \<close>
+subsection*[t213::example]\<open>Mechanism 2 : global arbitrary data structure that is attached to 
+                          the global and local Isabelle context $\theta$ \<close>
 ML \<open>
 
 datatype X = mt
@@ -1047,11 +1050,31 @@ function. Thus, the Isar-toplevel supports the generic document model
 and allows for user-programmed extensions.
 \<close>
 
-text\<open>Isabelle \<^verbatim>\<open>.thy\<close>-files were processed by two types of parsers:
+text\<open>In the traditional literature, Isabelle \<^verbatim>\<open>.thy\<close>-files were 
+were said to be processed by processed by two types of parsers:
 \<^enum> the "outer-syntax" (i.e. the syntax for commands) is processed 
   by a lexer-library and parser combinators built on top, and
 \<^enum> the "inner-syntax" (i.e. the syntax for @{term \<open>\<Lambda>\<close>} - terms) 
-  with an evolved, eight-layer parsing and pretty-printing process.
+  with an evolved, eight-layer parsing and pretty-printing process
+  based on an Early-algorithm.
+\<close>
+
+text\<open>This picture is less and less true for a number of reasons:
+\<^enum> With the advent of \inlineisar+\<Open> ... \<Close>+, a mechanism for
+  \<^emph>\<open>cascade-syntax\<close> came to the Isabelle platform that introduce a flexible means
+  to change parsing contexts \<^emph>\<open>and\<close> parsing technologies. 
+\<^enum> Inside the term-parser levels, the concept of \<^emph>\<open>cartouche\<close> can be used 
+  to escape the parser and its underlying parsing technology.
+\<^enum> Outside, in the traditional toplevel-parsers, the 
+  \inlineisar+\<Open> ... \<Close>+ is becoming more and more enforced
+  (some years ago, syntax like \<open>term{* ... *}\<close> was replaced by 
+   syntax \<open>term(\<open>)... (\<close>)\<close>. This makes technical support of cascade syntax
+   more and more easy.
+\<^enum> The Lexer infra-structure is already rather generic; nothing prevents to
+  add beside the lexer - configurations for ML-Parsers, Toplevel Command Syntax 
+  parsers, mathematical notation parsers for $\lambda$-terms new pillars
+  of parsing technologies, say, for parsing C or Rust or JavaScript inside 
+  Isabelle.
 \<close>
 
 
@@ -1115,7 +1138,8 @@ and properties; @{ML_structure Markup} provides a number of of such \<^emph>\<op
 such as "constant", "fixed", "cartouche", some of them quite obscure. Here is a code sample
 from \<^theory_text>\<open>Isabelle_DOF\<close>. A markup must be tagged with an id; this is done by the @{ML serial}-function
 discussed earlier.\<close>
-ML\<open> 
+subsection\<open>A simple Example\<close>
+ML\<open>
 local 
   
 val docclassN = "doc_class";    
@@ -1142,17 +1166,167 @@ in the Front-End, converts this into markup together with a unique number identi
 markup, and sends this as a report to the Front-End. \<close>
 
 
-section\<open>Environment Structured Reporting\<close>
+subsection\<open>A Slightly more Complex Example\<close>
 
+ML \<open>
+
+fun markup_tvar def_name ps (name, id) =
+  let 
+    fun markup_elem name = (name, (name, []): Markup.T);
+    val (tvarN, tvar) = markup_elem ((case def_name of SOME name => name | _ => "") ^ "'s nickname is");
+    val entity = Markup.entity tvarN name
+    val def = def_name = NONE
+  in
+    tvar ::
+    (if def then I else cons (Markup.keyword_properties Markup.ML_keyword3))
+      (map (fn pos => Markup.properties (Position.entity_properties_of def id pos) entity) ps)
+  end
+
+fun report [] _ _ = I
+  | report ps markup x =
+      let val ms = markup x
+      in fold (fn p => fold (fn m => cons ((p, m), "")) ms) ps end
+\<close>
+
+ML \<open>
+local
+val data = \<comment> \<open>Derived from Yakoub's example ;-)\<close>
+
+  [ (\<open>Frédéric 1er\<close>,  \<open>King of Naples\<close>)
+  , (\<open>Frédéric II\<close>,   \<open>King of Sicily\<close>)
+  , (\<open>Frédéric III\<close>,  \<open>the Handsome\<close>)
+  , (\<open>Frédéric IV\<close>,   \<open>of the Empty Pockets\<close>)
+  , (\<open>Frédéric V\<close>,    \<open>King of Denmark–Norway\<close>)
+  , (\<open>Frédéric VI\<close>,   \<open>the Knight\<close>)
+  , (\<open>Frédéric VII\<close>,  \<open>Count of Toggenburg\<close>)
+  , (\<open>Frédéric VIII\<close>, \<open>Count of Zollern\<close>)
+  , (\<open>Frédéric IX\<close>,   \<open>the Old\<close>)
+  , (\<open>Frédéric X\<close>,    \<open>the Younger\<close>) ]
+
+val (tab0, markup) =
+  fold_map (fn (name, msg) => fn reports =>
+             let val id = serial ()
+                 val pos = [Input.pos_of name]
+             in 
+                ( (fst(Input.source_content msg), (name, pos, id))
+                , report pos (markup_tvar NONE pos) (fst(Input.source_content name), id) reports)
+             end)
+           data
+           []
+
+val () = Position.reports_text markup
+in
+val tab = Symtab.make tab0
+end
+\<close>
+
+ML \<open>
+val _ =
+  fold (fn input =>
+        let
+          val pos1' = Input.pos_of input
+          fun ctnt name0  = fst(Input.source_content name0)
+          val pos1 = [pos1']
+          val msg1 = fst(Input.source_content input)
+          val msg2 = "No persons were found to have such nickname"
+        in
+          case Symtab.lookup tab (fst(Input.source_content input)) of
+            NONE => tap (fn _ => Output.information (msg2 ^ Position.here_list pos1))
+                        (cons ((pos1', Markup.bad ()), ""))
+          | SOME (name0, pos0, id) => report pos1 (markup_tvar (SOME (ctnt name0)) pos0) (msg1, id)
+        end)
+      [ \<open>the Knight\<close>   \<comment> \<open>Example of a correct retrieval (CTRL + Hovering shows what we are expecting)\<close>
+      , \<open>the Handsome\<close> \<comment> \<open>Example of a correct retrieval (CTRL + Hovering shows what we are expecting)\<close>
+      , \<open>the Spy\<close>      \<comment> \<open>Example of a failure to retrieve the person in \<^ML>\<open>tab\<close>\<close>
+ ]
+      []
+  |> Position.reports_text
+\<close>
+
+text\<open>The pudding comes with the eating: \<close>
+
+subsection\<open>Environment Structured Reporting\<close>
+
+text\<open> The structure @{ML_structure \<open>Name_Space\<close>} offers an own infra-structure for names and
+manages the markup accordingly.  MORE TO COME\<close>
 text\<open> @{ML_type "'a Name_Space.table"} \<close>
 
-section\<open> Parsing issues \<close>  
 
-text\<open> Parsing combinators represent the ground building blocks of both generic input engines
-as well as the specific Isar framework. They are implemented in the  structure \verb+Token+ 
-providing core type \verb+Token.T+. 
+section\<open> The System Lexer and Token Issues\<close>
+text\<open>Four syntactic contexts are predefined in Isabelle (others can be added): 
+the ML context, the text context, the Isar-command context and the teerm-context, referring
+to different needs of the Isabelle Framework as an extensible framework supporting incremental,
+partially programmable extensions and as a Framework geared towards Formal Proofs and therefore
+mathematical notations. The basic data-structure for the lexical treatment of these  
+
 \<close>
-ML\<open> open Token\<close>  
+
+subsection\<open>Tokens\<close>
+
+text\<open>The basic entity that lexers treat are \<^emph>\<open>tokens\<close>. defined in @{ML_structure "Token"}}
+It provides a classification infrastructure, the references to positions and Markup 
+as well as way's to annotate tokens with (some) values they denote:
+\<close>
+
+ML\<open>
+local
+  open Token 
+
+  type dummy = Token.T
+  type src = Token.T list
+  type file = {src_path: Path.T, lines: string list, digest: SHA1.digest, pos: Position.T}
+
+  type name_value = {name: string, kind: string, print: Proof.context -> Markup.T * xstring}
+
+
+  val _ = Token.is_command : Token.T -> bool;
+  val _ = Token.content_of : Token.T -> string; (* textueller kern eines Tokens. *)
+
+
+  val _ = pos_of: T -> Position.T
+
+(*
+datatype kind =
+    (*immediate source*)
+    Command | Keyword | Ident | Long_Ident | Sym_Ident | Var | Type_Ident | Type_Var | Nat |
+    Float | Space |
+    (*delimited content*)
+    String | Alt_String | Verbatim | Cartouche | Comment of Comment.kind option |
+    (*special content*)
+    Error of string | EOF
+
+ datatype value =
+    Source of src |
+    Literal of bool * Markup.T |
+    Name of name_value * morphism |
+    Typ of typ |
+    Term of term |
+    Fact of string option * thm list |
+    Attribute of morphism -> attribute |
+    Declaration of declaration |
+    Files of file Exn.result list
+
+
+*)
+in val _ = ()
+end
+\<close>
+
+
+
+subsection\<open>A Lexer Configuration Example\<close>
+
+ML\<open>
+
+\<close>
+
+
+section\<open> Combinator Parsing \<close>  
+text\<open>Parsing Combinators go back to monadic programming as advocated by Wadler et. al, and has been 
+worked out @{cite "DBLP:journals/jfp/Hutton92"}\<close>
+
+
+ML\<open> \<close>
 
 ML\<open>
 
@@ -1171,8 +1345,6 @@ val _ = parser2contextparser : 'a parser -> 'a context_parser;
 (* bah, is the same as Scan.lift *)
 val _ = Scan.lift Args.cartouche_input : Input.source context_parser;
 
-Token.is_command;
-Token.content_of; (* textueller kern eines Tokens. *)
 
 \<close>
 
