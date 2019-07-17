@@ -843,11 +843,42 @@ in backward-style via tactics as described in @{technical "t24"}. Given a contex
 --- be it global as @{ML_type theory} or be it inside a proof-context as @{ML_type Proof.context},
 user-programmed verification of (type-checked) terms or just strings can be done via the operations:
 \<close>
-ML\<open> 
+
+
+ML\<open>
 Goal.prove_internal : Proof.context -> cterm list -> cterm -> (thm list -> tactic) -> thm;
 
 Goal.prove_global :  theory -> string list -> term list -> term -> 
-                   ({context: Proof.context, prems: thm list} -> tactic) -> thm
+                   ({context: Proof.context, prems: thm list} -> tactic) -> thm;
+(* ... and many more variants. *)
+\<close>
+
+subsection*[ex211::example]\<open>Proof example\<close>
+
+text\<open>The proof:\<close>
+
+lemma "(10::int) + 2 = 12" by simp
+
+text\<open>... represents itself at the SML interface as follows:\<close>
+
+ML\<open>val tt = HOLogic.mk_Trueprop (Syntax.read_term @{context} "(10::int) + 2 = 12");
+         (* read_term parses and type-checks its string argument;
+            HOLogic.mk_Trueprop wraps the embedder from @{ML_type "bool"} to  
+            @{ML_type "prop"} from Pure. *)
+
+val thm1 = Goal.prove_global @{theory}                         (* global context *)
+                             []                                (* name ? *)
+                             []                                (* local assumption context *)
+                             (tt)                              (* parsed goal *)
+                             (fn _ => simp_tac  @{context} 1)  (* proof tactic *)
+\<close>               
+
+
+
+subsection*[exo44::example]\<open>Example\<close>
+
+ML\<open>
+Goal.prove_global @{theory} ["2::int + 3 = 5"] 
 \<close>
 
 section\<open>The Isar Engine\<close>

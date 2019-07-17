@@ -744,8 +744,6 @@ consts ISA_docitem_attr :: "string \<Rightarrow> string \<Rightarrow> 'a"      (
 
 \<comment> \<open>Dynamic setup of inner syntax cartouche\<close>
 
-
-(* PORT TO ISABELLE2018 *)
 ML \<open>
 (*  Author:     Frédéric Tuong, Université Paris-Saclay *)
 (*  Title:      HOL/ex/Cartouche_Examples.thy
