@@ -63,16 +63,6 @@ of documents via the language specified by the regular expression
 enforcing a sequence of text-elements that must belong to the corresponding classes. 
 \<close>
 
-text\<open>
-\<^rail>\<open>
-    (@@{command "chapter*"} | @@{command "section*"} | @@{command "subsection*"} |
-      @@{command "subsubsection*"} | @@{command "paragraph*"} | @@{command "subparagraph*"})
-    (@@{command "text*"} | @@{command "figure*"} | @@{command "side_by_side_figure*"} | 
-      @@{command "open_monitor*"} | @@{command "close_monitor*"} | 
-      @@{command "update_instance*"} | @@{command "declare_reference*"})
-  \<close>              
-\<close>
-
 
 section*[install::technical]\<open>Installation\<close>
 text\<open>
@@ -90,6 +80,59 @@ article in PDF using the  following command:
 \end{bash}
 \<close>
 
+
+
+section*["core-manual"::technical]\<open>Annotatable Text-Elements for Core-Documents\<close>
+text\<open>In general, all standard text-elements from the Isabelle document model such
+as @{command "chapter"}, @{command "section"}, @{command "text"}, have in the \isadof
+implementation their counterparts in the family of text-elements that are "ontology-aware",
+\ie they dispose on a meta-argument list that allows to define that a test-element
+\<^enum> has an identity as a text-object labelled as \<open>obj_id\<close>
+\<^enum> belongs to a document class \<open>class_id\<close> that has been defined earlier
+\<^enum> has its class-attributes set with particular values
+  (which are denotable in Isabelle/HOL mathematical term syntax)
+\<close>
+
+subsection*["core-manual1"::technical]\<open>Syntax\<close>
+
+text\<open>The syntax of toplevel \isadof commands reads as follows: 
+\<^item> \<open>annotated_text_element\<close> :
+\<^rail>\<open>
+    (  ( @@{command "title*"}
+       | @@{command "subtitle*"}
+       | @@{command "chapter*"} 
+       | @@{command "section*"} | @@{command "subsection*"} 
+       | @@{command "subsubsection*"} | @@{command "paragraph*"} | @@{command "subparagraph*"} 
+       | @@{command "text*"} | @@{command "figure*"} | @@{command "side_by_side_figure*"}
+       | @@{command "open_monitor*"} | @@{command "close_monitor*"} 
+       | @@{command "Definition*"} | @@{command "Lemma*"} 
+       | @@{command "Theorem*"}  | @@{command "Conjecture*"} 
+       ) 
+       '[' meta_args ']' '\<open>' text '\<close>'
+     ) 
+     | change_status_command
+     | inspection_command
+  \<close>
+\<^item> \<open>meta_args\<close> : 
+   \<^rail>\<open>(obj_id ('::' class_id) ((attribute '=' term)) * ',')\<close>
+\<^item> \<open>rich_meta_args\<close> :
+   \<^rail>\<open> (obj_id ('::' class_id) ((attribute (('=' | '+=') term)) * ','))\<close>
+\<^item> \isadof\<open>change_status_command\<close> :
+  \<^rail>\<open>  (@@{command "update_instance*"} '[' rich_meta_args ']')
+       |  (@@{command "declare_reference*"} (obj_id ('::' class_id)))\<close>
+\<^item> \isadof\<open>inspection_command\<close> :
+   \<^rail>\<open>  @@{command "print_doc_classes"}
+        |  @@{command "print_doc_items"} 
+        |  @@{command "check_doc_global"}\<close>
+\<close>
+
+subsection*["commonlib"::technical]\<open>Common Ontology Library (COL)\<close>
+
+subsection*["core-manual2"::technical]\<open>Examples\<close>
+
+section*["odl-manual"::technical]\<open>The ODL Manual\<close>
+
+subsection*["odl-manual1"::technical]\<open>The ODL Command Syntax\<close>
 
 section*["odl-design"::technical]\<open>The Design of ODL\<close>
 
@@ -119,18 +162,10 @@ monitor are \<^emph>\<open>independent\<close> from a monitor; instances of inde
 may occur freely. \<close>
 
 
-section*["odl-manual"::technical]\<open>The ODL Manual\<close>
-
-subsection*["odl-manual1"::technical]\<open>The ODL Command Syntax\<close>
-
 subsection*["odl-manual2"::technical]\<open>Examples\<close>
 
 
-section*["core-manual"::technical]\<open>Text-Elements for Core-Documents\<close>
 
-subsection*["core-manual1"::technical]\<open>Syntax\<close>
-
-subsection*["core-manual2"::technical]\<open>Examples\<close>
 
 (*<*)
 end

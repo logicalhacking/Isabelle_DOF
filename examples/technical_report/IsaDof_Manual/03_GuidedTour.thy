@@ -153,6 +153,78 @@ text\<open> The document class \inlineisar+figure+ --- supported by the \isadof 
 such as @{docitem_ref \<open>fig_figures\<close>}.
 \<close>
      
+
+section*[cenelec_onto::example]\<open> The Certification Scenario following CENELEC \<close>
+text\<open> Documents to be provided in formal certifications (such as CENELEC
+50126/50128, the DO-178B/C, or Common Criteria) can much profit from the control of ontological consistency: 
+a lot of an evaluators work consists in tracing down the links from requirements over 
+assumptions down to elements of evidence, be it in the models, the code, or the tests. 
+In a certification process, traceability becomes a major concern; and providing
+mechanisms to ensure complete traceability already at the development of the
+global document will clearly increase speed and reduce risk and cost of a
+certification process. Making the link-structure machine-checkable, be it between requirements, 
+assumptions, their implementation and their discharge by evidence (be it tests, proofs, or
+authoritative arguments), is therefore natural and has the potential to decrease the cost 
+of developments targeting certifications. Continuously checking the links between the formal
+and the semi-formal parts of such documents is particularly valuable during the (usually
+collaborative) development effort. 
+
+As in many other cases, formal certification documents come with an own terminology and
+pragmatics of what has to be demonstrated and where, and how the trace-ability of requirements through
+design-models over code to system environment assumptions has to be assured.  
+\<close>
+text\<open> In the sequel, we present a simplified version of an ontological model used in a 
+case-study~ @{cite "bezzecchi.ea:making:2018"}. We start with an introduction of the concept of requirement 
+(see \autoref{fig:conceptual}). 
+\begin{figure}
+\begin{isar}
+doc_class requirement = long_name :: "string option"
+
+doc_class requirement_analysis = no :: "nat"
+   where "requirement_item +"
+
+doc_class hypothesis = requirement +
+      hyp_type :: hyp_type <= physical  (* default *)
+  
+datatype ass_kind = informal | semiformal | formal
+  
+doc_class assumption = requirement +
+     assumption_kind :: ass_kind <= informal 
+\end{isar}
+\caption{Modeling requirements.}
+\label{fig:conceptual}
+\end{figure}
+Such ontologies can be enriched by larger explanations and examples, which may help
+the team of engineers substantially when developing the central document for a certification, 
+like an explication what is precisely the difference between an \<^emph>\<open>hypothesis\<close> and an 
+\<^emph>\<open>assumption\<close> in the context of the evaluation standard. Since the PIDE makes for each 
+document class its definition available by a simple mouse-click, this kind on meta-knowledge 
+can be made far more accessible during the document evolution.
+
+For example, the term of category \<^emph>\<open>assumption\<close> is used for domain-specific assumptions. 
+It has formal, semi-formal and informal sub-categories. They have to be 
+tracked and discharged by appropriate validation procedures within a 
+certification process, by it by test or proof. It is different from a hypothesis, which is
+globally assumed and accepted.
+
+In the sequel, the category \<^emph>\<open>exported constraint\<close> (or \<^emph>\<open>ec\<close> for short)
+is used for formal assumptions, that arise during the analysis,
+design or implementation and have to be tracked till the final
+evaluation target, and discharged by appropriate validation procedures 
+within the certification process, by it by test or proof.  A particular class of interest 
+is the category \<^emph>\<open>safety related application condition\<close> (or \<^emph>\<open>srac\<close> 
+for short) which is used for \<^emph>\<open>ec\<close>'s that establish safety properties
+of the evaluation target. Their track-ability throughout the certification
+is therefore particularly critical. This is naturally modeled as follows:
+\begin{isar}  
+doc_class ec = assumption  +
+     assumption_kind :: ass_kind <= (*default *) formal
+                        
+doc_class srac = ec  +
+     assumption_kind :: ass_kind <= (*default *) formal
+\end{isar}
+\<close>
+
 section*[mathex_onto::example]\<open> The Math-Exam Scenario \<close> 
 text\<open> The Math-Exam Scenario is an application with mixed formal and 
 semi-formal content. It addresses applications where the author of the exam is not present 
@@ -277,77 +349,7 @@ figure*[fig_qcm::figure,spawn_columns=False,
         relative_width="90",src="''figures/InteractiveMathSheet''"]
         \<open> A Generated QCM Fragment \ldots \<close>  
 
-section*[cenelec_onto::example]\<open> The Certification Scenario following CENELEC \<close>
-text\<open> Documents to be provided in formal certifications (such as CENELEC
-50126/50128, the DO-178B/C, or Common Criteria) can much profit from the control of ontological consistency: 
-a lot of an evaluators work consists in tracing down the links from requirements over 
-assumptions down to elements of evidence, be it in the models, the code, or the tests. 
-In a certification process, traceability becomes a major concern; and providing
-mechanisms to ensure complete traceability already at the development of the
-global document will clearly increase speed and reduce risk and cost of a
-certification process. Making the link-structure machine-checkable, be it between requirements, 
-assumptions, their implementation and their discharge by evidence (be it tests, proofs, or
-authoritative arguments), is therefore natural and has the potential to decrease the cost 
-of developments targeting certifications. Continuously checking the links between the formal
-and the semi-formal parts of such documents is particularly valuable during the (usually
-collaborative) development effort. 
 
-As in many other cases, formal certification documents come with an own terminology and
-pragmatics of what has to be demonstrated and where, and how the trace-ability of requirements through
-design-models over code to system environment assumptions has to be assured.  
-\<close>
-text\<open> In the sequel, we present a simplified version of an ontological model used in a 
-case-study~ @{cite "bezzecchi.ea:making:2018"}. We start with an introduction of the concept of requirement 
-(see \autoref{fig:conceptual}). 
-\begin{figure}
-\begin{isar}
-doc_class requirement = long_name :: "string option"
-
-doc_class requirement_analysis = no :: "nat"
-   where "requirement_item +"
-
-doc_class hypothesis = requirement +
-      hyp_type :: hyp_type <= physical  (* default *)
-  
-datatype ass_kind = informal | semiformal | formal
-  
-doc_class assumption = requirement +
-     assumption_kind :: ass_kind <= informal 
-\end{isar}
-\caption{Modeling requirements.}
-\label{fig:conceptual}
-\end{figure}
-Such ontologies can be enriched by larger explanations and examples, which may help
-the team of engineers substantially when developing the central document for a certification, 
-like an explication what is precisely the difference between an \<^emph>\<open>hypothesis\<close> and an 
-\<^emph>\<open>assumption\<close> in the context of the evaluation standard. Since the PIDE makes for each 
-document class its definition available by a simple mouse-click, this kind on meta-knowledge 
-can be made far more accessible during the document evolution.
-
-For example, the term of category \<^emph>\<open>assumption\<close> is used for domain-specific assumptions. 
-It has formal, semi-formal and informal sub-categories. They have to be 
-tracked and discharged by appropriate validation procedures within a 
-certification process, by it by test or proof. It is different from a hypothesis, which is
-globally assumed and accepted.
-
-In the sequel, the category \<^emph>\<open>exported constraint\<close> (or \<^emph>\<open>ec\<close> for short)
-is used for formal assumptions, that arise during the analysis,
-design or implementation and have to be tracked till the final
-evaluation target, and discharged by appropriate validation procedures 
-within the certification process, by it by test or proof.  A particular class of interest 
-is the category \<^emph>\<open>safety related application condition\<close> (or \<^emph>\<open>srac\<close> 
-for short) which is used for \<^emph>\<open>ec\<close>'s that establish safety properties
-of the evaluation target. Their track-ability throughout the certification
-is therefore particularly critical. This is naturally modeled as follows:
-\begin{isar}  
-doc_class ec = assumption  +
-     assumption_kind :: ass_kind <= (*default *) formal
-                        
-doc_class srac = ec  +
-     assumption_kind :: ass_kind <= (*default *) formal
-\end{isar}
-\<close>
-   
 section*[ontopide::technical]\<open> Ontology-based IDE support \<close>  
 text\<open> We present a selection of interaction scenarios  @{example \<open>scholar_onto\<close>}
 and @{example \<open>cenelec_onto\<close>} with Isabelle/PIDE instrumented by \isadof. \<close>
