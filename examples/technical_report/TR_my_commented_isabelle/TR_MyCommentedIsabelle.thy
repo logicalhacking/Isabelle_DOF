@@ -564,10 +564,10 @@ Type_Infer_Context.infer_types: Proof.context -> term list -> term list
 
 
   
-subsection*[t233::technical]\<open> theories and the signature interface\<close>  
+subsection*[t233::technical]\<open> Theories and the Signature API\<close>  
 ML\<open>
-Sign.tsig_of: theory -> Type.tsig;
-Sign.syn_of : theory -> Syntax.syntax;
+Sign.tsig_of : theory -> Type.tsig;
+Sign.syn_of  : theory -> Syntax.syntax;
 Sign.of_sort : theory -> typ * sort -> bool ;
 \<close>
 
