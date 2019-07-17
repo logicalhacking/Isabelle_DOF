@@ -4,6 +4,9 @@ theory IsaDofManual
 begin
 (*<*) 
 
+
+
+
 text*[bib::bibliography]\<open>References\<close>
 
 (*<*)

@@ -1,11 +1,11 @@
 (*<*)
-theory "03_IsaDof"
-  imports "02_Background"
+theory "04_RefMan"
+  imports "03_GuidedTour"
 begin
 (*>*)
 
-chapter*[isadof::technical,main_author="Some(@{docitem ''adb''}::author)"]
-\<open> \isadof : Design and Use of its Commands\<close>
+chapter*[isadof::technical,main_author="Some(@{docitem ''bu''}::author)"]
+\<open> \isadof : Syntax and Semantics of Commands\<close>
    
 text\<open> An \isadof document consists of three components: 
 \<^item> the \<^emph>\<open>ontology definition\<close> which is an Isabelle theory file with definitions
@@ -61,8 +61,18 @@ While document classes and their inheritance relation structure meta-data of tex
 in an object-oriented manner, monitor classes enforce structural organization
 of documents via the language specified by the regular expression 
 enforcing a sequence of text-elements that must belong to the corresponding classes. 
-
 \<close>
+
+text\<open>
+\<^rail>\<open>
+    (@@{command "chapter*"} | @@{command "section*"} | @@{command "subsection*"} |
+      @@{command "subsubsection*"} | @@{command "paragraph*"} | @@{command "subparagraph*"})
+    (@@{command "text*"} | @@{command "figure*"} | @@{command "side_by_side_figure*"} | 
+      @@{command "open_monitor*"} | @@{command "close_monitor*"} | 
+      @@{command "update_instance*"} | @@{command "declare_reference*"})
+  \<close>              
+\<close>
+
 
 section*[install::technical]\<open>Installation\<close>
 text\<open>
@@ -83,7 +93,6 @@ article in PDF using the  following command:
 
 section*["odl-design"::technical]\<open>The Design of ODL\<close>
 
-declare_reference*[scholar_onto::example]
 subsection*[onto_future::technical]\<open> Monitor Classes \<close>  
 (*
 text\<open> Besides sub-typing, there is another relation between

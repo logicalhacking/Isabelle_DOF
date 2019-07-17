@@ -43,10 +43,19 @@ it is an \<^emph>\<open>environment to write structured text\<close> which \<^em
 Isabelle/HOL definitions and proofs like mathematical articles, tech-reports and
 scientific papers---as the present one, which is written in \isadof 
 itself. \isadof is a plugin into the Isabelle/Isar
-framework in the style of~@{cite "wenzel.ea:building:2007"}.
+framework in the style of~@{cite "wenzel.ea:building:2007"}.\<close>
+
+
+text\<open>This manual adresses at three different types of users:
+\<^enum> users that just want to edit a core document, be it for a paper or a technical report,
+  using a given ontology,
+\<^enum> users that want to develop ontologies and/or modify the generated PDF-presentations,
+\<^enum> users that want to add text-elements or new features to \isadof.
+
+This manual gives priority to the former two groups; users with an interest in \isadof implementation
+might find complementary information in  @{cite "brucker.wolff19:isadof-design-impl:2019"}.
+
 \<close>
-
-
 
 (* declaring the forward references used in the subsequent section *)  
 (*<*)
@@ -57,13 +66,17 @@ declare_reference*[ontopide::text_section]
 declare_reference*[conclusion::text_section]
 (*>*)
 text*[plan::introduction]\<open> The plan of the paper is follows: we start by introducing  the underlying 
-Isabelle sytem (@{docitem_ref (unchecked) \<open>bgrnd\<close>}) followed by presenting the 
-essentials of  \isadof and its ontology language (@{docitem_ref (unchecked) \<open>isadof\<close>}). 
-It follows @{docitem_ref (unchecked) \<open>casestudies\<close>}, where we present three application 
+Isabelle system (@{docitem_ref (unchecked) \<open>bgrnd\<close>}) followed guided tour or tutorial
+adressing the needs of the first intended user group. 
+It follows the chapter @{docitem_ref (unchecked) \<open>isadof\<close>} for the second user group 
+with essentials of  \isadof and its ontology language (@{docitem_ref (unchecked) \<open>isadof\<close>}). 
+
+XXX
+
+It follows @{docitem_ref (unchecked) \<open>casestudies\<close>}, where we present three application
 scenarios from the point of view of the ontology modeling. In @{docitem_ref (unchecked) \<open>ontopide\<close>}
 we discuss the user-interaction generated from the ontological definitions.  Finally, we draw 
 conclusions  and discuss related work in @{docitem_ref (unchecked) \<open>conclusion\<close>}. \<close>  
-
 
 (*<*) 
 end

@@ -1,6 +1,6 @@
 (*<*)
 theory "05_IsaDofLaTeX"
-  imports "04_IsaDofCaseStudies"
+  imports "04_RefMan"
 begin
 (*>*)
 

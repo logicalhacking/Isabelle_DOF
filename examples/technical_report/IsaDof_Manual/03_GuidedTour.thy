@@ -1,10 +1,10 @@
 (*<*)
-theory "04_IsaDofCaseStudies"
-  imports "03_IsaDof"
+theory "03_GuidedTour"
+  imports "02_Background"
 begin
 (*>*)
 
-chapter*[casestudies::example,main_author="Some(@{docitem ''adb''}::author)"]\<open> \isadof Case Studies \<close>
+chapter*[casestudies::example,main_author="Some(@{docitem ''adb''}::author)"]\<open> \isadof: A Guided Tour \<close>
    
 text\<open> In this section, we will use the \isadof document ontology language
 for three different application scenarios: for scholarly papers, for mathematical 
@@ -348,11 +348,11 @@ doc_class srac = ec  +
 \end{isar}
 \<close>
    
-chapter*[ontopide::technical]\<open> Ontology-based IDE support \<close>  
+section*[ontopide::technical]\<open> Ontology-based IDE support \<close>  
 text\<open> We present a selection of interaction scenarios  @{example \<open>scholar_onto\<close>}
 and @{example \<open>cenelec_onto\<close>} with Isabelle/PIDE instrumented by \isadof. \<close>
 
-section*[scholar_pide::example]\<open> A Scholarly Paper \<close>  
+subsection*[scholar_pide::example]\<open> A Scholarly Paper \<close>  
 text\<open> In \autoref{fig-Dogfood-II-bgnd1} and \autoref{fig-bgnd-text_section} we show how
 hovering over links permits to explore its meta-information. 
 Clicking on a document class identifier permits to hyperlink into the corresponding
@@ -391,7 +391,7 @@ non-compatible type, the text is not validated.  \<close>
 
 figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-V-attribute''"]
        \<open> Exploring an attribute (hyperlinked to the class). \<close> 
-section*[cenelec_pide::example]\<open> CENELEC  \<close>
+subsection*[cenelec_pide::example]\<open> CENELEC  \<close>
 declare_reference*[figfig3::figure]  
 text\<open> The corresponding view in @{docitem_ref (unchecked) \<open>figfig3\<close>} shows core part of a document,  
 coherent to the @{example \<open>cenelec_onto\<close>}. The first sample shows standard Isabelle antiquotations 
