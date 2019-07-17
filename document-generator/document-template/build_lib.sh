@@ -35,56 +35,56 @@ ROOT_NAME="root_$NAME"
 [ ! -f "$DIR/$ROOT_NAME.tex" ] && ROOT_NAME="root"
 
 if [ ! -f $ISABELLE_HOME_USER/DOF/latex/DOF-core.sty ]; then
-    echo ""
-    echo "Error: Isabelle/DOF not installed"
-    echo "====="
-    echo "This is a Isabelle/DOF project. The document preparation requires"
-    echo "the Isabelle/DOF framework. Please obtain the framework by cloning"
-    echo "the Isabelle/DOF git repository, i.e.: "
-    echo "    git clone https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF"
-    echo "You can install the framework as follows:"
-    echo "    cd Isabelle_DOF/document-generator"
-    echo "    ./install"
-    echo ""
+    >&2 echo ""
+    >&2 echo "Error: Isabelle/DOF not installed"
+    >&2 echo "====="
+    >&2 echo "This is a Isabelle/DOF project. The document preparation requires"
+    >&2 echo "the Isabelle/DOF framework. Please obtain the framework by cloning"
+    >&2 echo "the Isabelle/DOF git repository, i.e.: "
+    >&2 echo "    git clone https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF"
+    >&2 echo "You can install the framework as follows:"
+    >&2 echo "    cd Isabelle_DOF/document-generator"
+    >&2 echo "    ./install"
+    >&2 echo ""
     exit 1
 fi
 
 if [ -f "$DIR/$ROOT_NAME.tex" ]; then 
-    echo ""
-    echo "Error: Found root file ($DIR/$ROOT_NAME.tex)"
-    echo "====="
-    echo "Isabelle/DOF does not use the Isabelle root file setup. Please check"
-    echo "your project setup. Your $DIR/isadof.cfg should define a Isabelle/DOF"
-    echo "template and your project should not include a root file."
-    echo ""
+    >&2 echo ""
+    >&2 echo "Error: Found root file ($DIR/$ROOT_NAME.tex)"
+    >&2 echo "====="
+    >&2 echo "Isabelle/DOF does not use the Isabelle root file setup. Please check"
+    >&2 echo "your project setup. Your $DIR/isadof.cfg should define a Isabelle/DOF"
+    >&2 echo "template and your project should not include a root file."
+    >&2 echo ""
     exit 1
 fi
 
 if [ -f "$DIR/ontologies.tex" ]; then 
-    echo ""
-    echo "Error: Old project setup, found a ontologies file ($DIR/ontologies.tex)"
-    echo "====="
-    echo "Isabelle/DOF does no longer support the use of $DIR/ontologies.tex. The"
-    echo "required ontologies should be defined in $DIR/isadof.cfg."
-    echo ""
+    >&2 echo ""
+    >&2 echo "Error: Old project setup, found a ontologies file ($DIR/ontologies.tex)"
+    >&2 echo "====="
+    >&2 echo "Isabelle/DOF does no longer support the use of $DIR/ontologies.tex. The"
+    >&2 echo "required ontologies should be defined in $DIR/isadof.cfg."
+    >&2 echo ""
     exit 1
 fi
 
 if [ -f "$DIR/$ROOT_NAME.tex" ]; then 
-    echo ""
-    echo "Error: Found root file ($DIR/$ROOT_NAME.tex)"
-    echo "====="
-    echo "Isabelle/DOF does not make use of the Isabelle root file mechanism."
-    echo "Please check your Isabelle/DOF setup."
+    >&2 echo ""
+    >&2 echo "Error: Found root file ($DIR/$ROOT_NAME.tex)"
+    >&2 echo "====="
+    >&2 echo "Isabelle/DOF does not make use of the Isabelle root file mechanism."
+    >&2 echo "Please check your Isabelle/DOF setup."
     exit 1
 fi
 
 if [ ! -f isadof.cfg ]; then 
-    echo ""
-    echo "Error: Isabelle/DOF document setup not correct"
-    echo "====="
-    echo "Could not find isadof.cfg. Please upgrade your Isabelle/DOF document"
-    echo "setup manually."
+    >&2 echo ""
+    >&2 echo "Error: Isabelle/DOF document setup not correct"
+    >&2 echo "====="
+    >&2 echo "Could not find isadof.cfg. Please upgrade your Isabelle/DOF document"
+    >&2 echo "setup manually."
     exit 1
 fi
 
@@ -102,16 +102,16 @@ while IFS= read -r line;do
 done < $CONFIG
 
 for o in $ONTOLOGY; do
-  echo "\usepackage{DOF-$o}" >> ontologies.tex;
+  >&2 echo "\usepackage{DOF-$o}" >> ontologies.tex;
 done
 
 ROOT="$ISABELLE_HOME_USER/DOF/document-template/root-$TEMPLATE.tex"
 if [ ! -f $ROOT ]; then 
-    echo ""
-    echo "Error: Isabelle/DOF document setup not correct"
-    echo "====="
-    echo "Could not find root file ($ROOT)."
-    echo "Please upgrade your Isabelle/DOF document setup manually."
+    >&2 echo ""
+    >&2 echo "Error: Isabelle/DOF document setup not correct"
+    >&2 echo "====="
+    >&2 echo "Could not find root file ($ROOT)."
+    >&2 echo "Please upgrade your Isabelle/DOF document setup manually."
     exit 1
 fi
 
@@ -131,35 +131,35 @@ $ISABELLE_TOOL latex -o "$OUTFORMAT" "root.tex"
 
 MISSING_CITATIONS=`grep 'Warning.*Citation' root.log | awk '{print $5}' | sort  -u`
 if [ "$MISSING_CITATIONS" != "" ]; then
-    echo ""
-    echo "ERROR (Isabelle/DOF): document referencing inconsistent due to missing citations: "
-    echo "$MISSING_CITATIONS"
+    >&2 echo ""
+    >&2 echo "ERROR (Isabelle/DOF): document referencing inconsistent due to missing citations: "
+    >&2 echo "$MISSING_CITATIONS"
     exit 1
 fi
 DANGLING_REFS=`grep 'Warning.*Refer' root.log | awk '{print $4}' | sort  -u`
 if [ "$DANGLING_REFS" != "" ]; then
-    echo ""
-    echo "ERROR (Isabelle/DOF): document referencing inconsistent due to dangling references:"
-    echo "$DANGLING_REFS"
-    echo ""
+    >&2 echo ""
+    >&2 echo "ERROR (Isabelle/DOF): document referencing inconsistent due to dangling references:"
+    >&2 echo "$DANGLING_REFS"
+    >&2 echo ""
     exit 1
 fi
 if [ -f "root.blg" ]; then 
-    echo "BibTeX Warnings:"
-    echo "================"
-    grep Warning  root.blg | sed -e 's/Warning--//'
-    echo ""
+    >&2 echo "BibTeX Warnings:"
+    >&2 echo "================"
+    >&2 grep Warning  root.blg | sed -e 's/Warning--//'
+    >&2 echo ""
 fi
-echo "Layout Glitches:"
-echo "================"
-echo -n "Number of overfull hboxes: "
-grep 'Overfull .hbox' root.log | wc -l
-echo -n "Number of underfull hboxes: "
-grep 'Underfull .hbox' root.log | wc -l
-echo -n "Number of overfull vboxes: "
+>&2 echo "Layout Glitches:"
+>&2 echo "================"
+>&2 echo -n "Number of overfull hboxes: "
+>&2 grep 'Overfull .hbox' root.log | wc -l
+>&2 echo -n "Number of underfull hboxes: "
+>&2 grep 'Underfull .hbox' root.log | wc -l
+>&2 echo -n "Number of overfull vboxes: "
 grep 'Overfull .vbox' root.log | wc -l
-echo -n "Number of underfull vboxes: "
+>&2 echo -n "Number of underfull vboxes: "
 grep 'Underfull .vbox' root.log | wc -l
-echo ""
+>&2 echo ""
 
 exit 0
