@@ -4,7 +4,8 @@ theory "03_IsaDof"
 begin
 (*>*)
 
-chapter*[isadof::technical,main_author="Some(@{docitem ''adb''}::author)"]\<open> \isadof \<close>
+chapter*[isadof::technical,main_author="Some(@{docitem ''adb''}::author)"]
+\<open> \isadof : Design and Use of its Commands\<close>
    
 text\<open> An \isadof document consists of three components: 
 \<^item> the \<^emph>\<open>ontology definition\<close> which is an Isabelle theory file with definitions

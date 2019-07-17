@@ -52,14 +52,14 @@ framework in the style of~@{cite "wenzel.ea:building:2007"}.
 (*<*)
 declare_reference*[bgrnd::text_section]
 declare_reference*[isadof::text_section]
-declare_reference*[ontomod::text_section]
+declare_reference*[casestudies::text_section]
 declare_reference*[ontopide::text_section]
 declare_reference*[conclusion::text_section]
 (*>*)
 text*[plan::introduction]\<open> The plan of the paper is follows: we start by introducing  the underlying 
-Isabelel sytem (@{docitem_ref (unchecked) \<open>bgrnd\<close>}) followed by presenting the 
+Isabelle sytem (@{docitem_ref (unchecked) \<open>bgrnd\<close>}) followed by presenting the 
 essentials of  \isadof and its ontology language (@{docitem_ref (unchecked) \<open>isadof\<close>}). 
-It follows @{docitem_ref (unchecked) \<open>ontomod\<close>}, where we present three application 
+It follows @{docitem_ref (unchecked) \<open>casestudies\<close>}, where we present three application 
 scenarios from the point of view of the ontology modeling. In @{docitem_ref (unchecked) \<open>ontopide\<close>}
 we discuss the user-interaction generated from the ontological definitions.  Finally, we draw 
 conclusions  and discuss related work in @{docitem_ref (unchecked) \<open>conclusion\<close>}. \<close>  

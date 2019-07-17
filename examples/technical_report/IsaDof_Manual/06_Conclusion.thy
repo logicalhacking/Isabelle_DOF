@@ -1,7 +1,6 @@
 (*<*)
 theory "06_Conclusion"
-  imports "04_IsaDofCaseStudies"
-  (* imports "05_DesignImpl *)
+  imports "05_IsaDofLaTeX"
 begin
 (*>*)
 
