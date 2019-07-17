@@ -85,7 +85,7 @@ Isabelle's PIDE offers auto-completion and error-messages while typing the above
 *)
 
 
-section*["sec:background"::introduction]\<open>The Document Model\<close>
+section*["sec:background"::introduction]\<open>The Required Document Model\<close>
 text\<open>
 In this section, we explain the assumed document model underlying
 \dof in general; in particular the concepts \<^emph>\<open>integrated document\<close>, 
@@ -166,9 +166,8 @@ typeset. They represent the device for linking the formal with the informal. \<c
 
 
 
-subsection*[bgrnd21::introduction]\<open>Implementability of the Assumed Document Model.\<close>
-text\<open>
-Batch-mode checkers for \dof can be implemented in all systems of the
+section*[bgrnd21::introduction]\<open>Implementability of the Required Document Model.\<close>
+text\<open> Batch-mode checkers for \dof can be implemented in all systems of the
 LCF-style prover family, \ie, systems with a type-checked
 \inlinesml{term}, and abstract \inlinesml{thm}-type for
 theorems (protected by a kernel).  This includes, \eg, ProofPower,
