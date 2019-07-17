@@ -124,7 +124,7 @@ text\<open>\verb+text\<open>\<^emph>\<open>This is a text.\<close>\<close>+\<clo
 text\<open>and desplayed in the Isabelle/jedit front-end at the sceen by:\<close>
 
 figure*[fig2::figure, relative_width="100",src="''figures/text-element''"]
-        \<open>A text-element as presented in Isabelle/jedit. \<close>
+        \<open>A text-element as presented in Isabelle/jedit.\<close>
 
 text\<open> text-commands, ML- commands (and in principle any other command) can be seen as 
 \<^emph>\<open>quotations\<close> over the underlying SML environment (similar to OCaml or Haskell).
@@ -311,8 +311,14 @@ ML\<open>
 
 
 subsection*[t213::example]\<open>Mechanism 2 : Extending the Global Context $\theta$ by User Data \<close>
+text\<open>A central mechanism for constructing user-defined data is by the \<^verbatim>\<open>Generic_Data\<close> SML functor.
+A plugin needing some data \<^verbatim>\<open>T\<close> and providing it with implementations for an 
+\<^verbatim>\<open>empty\<close>, and operations  \<^verbatim>\<open>merge\<close> and \<^verbatim>\<open>extend\<close>, can construct a lense with operations
+\<^verbatim>\<open>get\<close> and \<^verbatim>\<open>put\<close> that attach this data into the generic system context. Rather than using
+unsynchronized SML mutable variables, this is the mechanism to introduce component local
+data in Isabelle, which allows to manage this data for the necessary backtrack- and synchronization
+features in the pervasively parallel evaluation framework that Isabelle as a system represents.\<close>
 ML \<open>
-
 datatype X = mt
 val init = mt;
 val ext = I
@@ -334,7 +340,7 @@ structure Data = Generic_Data
 \<close>
 
 
-section\<open>  The LCF-Kernel: terms, types, theories, proof\_contexts, thms \<close>  
+section*[lcfk::technical]\<open>  The LCF-Kernel: terms, types, theories, proof\_contexts, thms \<close>  
 text\<open>The classical LCF-style \<^emph>\<open>kernel\<close> is about 
 \<^enum> Types and terms of a typed $\lambda$-Calculus including constant symbols,
   free variables, $\lambda$-binder and application,
@@ -346,7 +352,7 @@ text\<open>The classical LCF-style \<^emph>\<open>kernel\<close> is about
 \<close>
 
 
-subsection\<open> Terms and Types \<close>
+subsection*[termstypes::technical]\<open> Terms and Types \<close>
 text \<open>A basic data-structure of the kernel is @{file "$ISABELLE_HOME/src/Pure/term.ML"} \<close>  
 ML\<open> open Term;
 signature TERM' = sig
@@ -405,28 +411,28 @@ operators of the HOL logic specific constructors and destructors:
 \<close>
 
 ML\<open>
-HOLogic.boolT : typ;
-HOLogic.mk_Trueprop: term -> term;
-HOLogic.dest_Trueprop: term -> term;
-HOLogic.Trueprop_conv: conv -> conv;
-HOLogic.mk_setT: typ -> typ;
-HOLogic.dest_setT: typ -> typ;
-HOLogic.Collect_const: typ -> term;
-HOLogic.mk_Collect: string * typ * term -> term;
-HOLogic.mk_mem: term * term -> term;
-HOLogic.dest_mem: term -> term * term;
-HOLogic.mk_set: typ -> term list -> term;
-HOLogic.conj_intr: Proof.context -> thm -> thm -> thm;
-HOLogic.conj_elim: Proof.context -> thm -> thm * thm;
-HOLogic.conj_elims: Proof.context -> thm -> thm list;
-HOLogic.conj: term;
-HOLogic.disj: term;
-HOLogic.imp: term;
-HOLogic.Not: term;
-HOLogic.mk_not: term -> term;
-HOLogic.mk_conj: term * term -> term;
-HOLogic.dest_conj: term -> term list;
-HOLogic.conjuncts: term -> term list;
+HOLogic.boolT         : typ;
+HOLogic.mk_Trueprop   : term -> term; (* the embedder of bool to prop fundamenyal for HOL *)
+HOLogic.dest_Trueprop : term -> term; 
+HOLogic.Trueprop_conv : conv -> conv;
+HOLogic.mk_setT       : typ -> typ;   (* ML level type constructor set *)
+HOLogic.dest_setT     : typ -> typ;
+HOLogic.Collect_const : typ -> term;
+HOLogic.mk_Collect    : string * typ * term -> term;
+HOLogic.mk_mem        : term * term -> term;
+HOLogic.dest_mem      : term -> term * term;
+HOLogic.mk_set        : typ -> term list -> term;
+HOLogic.conj_intr     : Proof.context -> thm -> thm -> thm; (* some HOL-level derived-inferences *)
+HOLogic.conj_elim     : Proof.context -> thm -> thm * thm;
+HOLogic.conj_elims    : Proof.context -> thm -> thm list;
+HOLogic.conj          : term;         (* some ML level logical constructors *)
+HOLogic.disj          : term;
+HOLogic.imp           : term;
+HOLogic.Not           : term;
+HOLogic.mk_not        : term -> term;
+HOLogic.mk_conj       : term * term -> term;
+HOLogic.dest_conj     : term -> term list;
+HOLogic.conjuncts     : term -> term list;
 (* ... *)
 \<close>
 
@@ -499,7 +505,7 @@ val true = Sign.typ_instance @{theory} (ty', generalize_typ ty)
 text\<open>... or more general variants thereof that are parameterized by the indexes for schematic
 type variables instead of assuming just @{ML "0"}. \<close>
 
-text\<open> Example:\<close> 
+text*[exo4::example]\<open> Example:\<close> 
 ML\<open>val t = generalize_term @{term "[]"}\<close>
 
 text
@@ -538,7 +544,8 @@ val t' = Term_Subst.map_types_same (Term_Subst.instantiateT S') (t)
 val t'' = Term.map_types (Term_Subst.instantiateT S') (t)
 \<close>
 
-subsection\<open> Type-Inference (= inferring consistent type information if possible) \<close>
+text\<open>A more abstract env for variable management in tactic proofs. A bit difficult to use
+outside the very closed-up tracks of conventional use...\<close>
 
 ML\<open>
 Consts.the_const; (* T is a kind of signature ... *)
@@ -546,7 +553,7 @@ Variable.import_terms;
 Vartab.update;
 \<close>
 
-subsection\<open> Type-Inference (= inferring consistent type information if possible) \<close>
+subsection*[t232::technical]\<open> Type-Inference (= inferring consistent type information if possible) \<close>
 
 text\<open> Type inference eliminates also joker-types such as @{ML dummyT} and produces
        instances for schematic type variables where necessary. In the case of success,
@@ -557,14 +564,14 @@ Type_Infer_Context.infer_types: Proof.context -> term list -> term list
 
 
   
-subsection\<open> thy and the signature interface\<close>  
+subsection*[t233::technical]\<open> theories and the signature interface\<close>  
 ML\<open>
 Sign.tsig_of: theory -> Type.tsig;
 Sign.syn_of : theory -> Syntax.syntax;
 Sign.of_sort : theory -> typ * sort -> bool ;
 \<close>
 
-subsection\<open> Thm's and the LCF-Style, "Mikro"-Kernel \<close>  
+subsection*[t234::technical]\<open>Thm's and the LCF-Style, "Mikro"-Kernel \<close>  
 text\<open> 
   The basic constructors and operations on theorems@{file "$ISABELLE_HOME/src/Pure/thm.ML"},
   a set of derived (Pure) inferences can be found in @{file "$ISABELLE_HOME/src/Pure/drule.ML"}.
@@ -681,7 +688,7 @@ ML\<open>
 \<close>
 
 
-subsection\<open> Theories \<close>
+subsection*[t235::technical]\<open> Theories \<close>
 
 text \<open> This structure yields the datatype \verb*thy* which becomes the content of 
 \verb*Context.theory*. In a way, the LCF-Kernel registers itself into the Nano-Kernel,
@@ -719,7 +726,7 @@ Theory.end_theory: theory -> theory;
 \<close>
 
 
-section\<open>Backward Proofs: Tactics, Tacticals and Goal-States\<close>
+section*[t24::technical]\<open>Backward Proofs: Tactics, Tacticals and Goal-States\<close>
 
 text\<open>At this point, we leave the Pure-Kernel and start to describe the first layer on top
 of it, involving support for specific styles of reasoning and automation of reasoning.\<close>
@@ -830,9 +837,13 @@ Gentzen Natural Deduction (to which Isabelle/Pure is geared) reasoning and
 Gentzen Sequent Deduction.\<close>
 
 
-section\<open>The classical goal package\<close>
-
-ML\<open> open Goal;
+section*[goalp::technical]\<open>The classical goal package\<close>
+text\<open>The main mechanism in Isabelle as an LCF-style system is to produce @{ML_type thm}'s 
+in backward-style via tactics as described in @{technical "t24"}. Given a context
+--- be it global as @{ML_type theory} or be it inside a proof-context as @{ML_type Proof.context},
+user-programmed verification of (type-checked) terms or just strings can be done via the operations:
+\<close>
+ML\<open> 
 Goal.prove_internal : Proof.context -> cterm list -> cterm -> (thm list -> tactic) -> thm;
 
 Goal.prove_global :  theory -> string list -> term list -> term -> 
@@ -881,7 +892,7 @@ ML\<open> Outer_Syntax.command : Outer_Syntax.command_keyword -> string ->
 
 text\<open>A paradigmatic example: "text" is defined by: \<close>
 
-(*
+(* --- commented out since this code is not re-executable
 val _ =
   Outer_Syntax.command ("text", @{here}) "formal comment (primary style)"
     (Parse.opt_target -- Parse.document_source >> Thy_Output.document_command {markdown = true});
@@ -896,7 +907,7 @@ ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory gl
 
 
 
-subsection \<open>Transaction Management in the Isar-Engine : The Toplevel \<close>
+subsection*[transmgt::technical] \<open>Transaction Management in the Isar-Engine : The Toplevel \<close>
   
 ML\<open>
 
@@ -992,7 +1003,7 @@ Toplevel.theory : (theory -> theory) -> Toplevel.transition -> Toplevel.transiti
 \<close>
   
   
-subsection\<open> Configuration flags of fixed type in the Isar-engine. \<close>
+subsection*[conf::technical]\<open> Configuration flags of fixed type in the Isar-engine. \<close>
 text\<open>The toplevel also provides an infrastructure for managing configuration options 
 for system components. Based on a sum-type @{ML_type Config.value } 
 with the alternatives \<^verbatim>\<open> Bool of bool | Int of int | Real of real | String of string\<close>
@@ -1032,7 +1043,7 @@ val C = Synchronized.var "Pretty.modes" "latEEex";
 Synchronized.value C;
 \<close>  
   
-chapter\<open>Front-End \<close>  
+chapter*[frontend::technical]\<open>Front-End \<close>  
 text\<open>In the following chapter, we turn to the right part of the system architecture 
 shown in @{docitem \<open>architecture\<close>}: 
 The PIDE ("Prover-IDE") layer @{cite "DBLP:conf/itp/Wenzel14"}
@@ -1396,7 +1407,7 @@ end
 subsection\<open>A Lexer Configuration Example\<close>
 
 ML\<open>
-
+(* MORE TO COME *)
 \<close>
 
 
@@ -1698,7 +1709,7 @@ val _ =
       uncheck_terms = uncheck_terms});
 *)
 
-subsection \<open>Example\<close>
+subsection*[ex33::example] \<open>Example\<close>
 
 ML\<open>
 (* Recall the Arg-interface to the more high-level, more Isar-specific parsers: *)
@@ -1883,7 +1894,7 @@ As one can see, check-routines internally generate the markup.
 \<close>  
   
 
-section\<open>Inner Syntax Cartouches\<close>
+section*[cartouches::technical]\<open>Inner Syntax Cartouches\<close>
 text\<open> The cascade-syntax principle underlying recent isabelle versions requires a 
 particular mechanism, called "cartouche" by Makarius who was influenced by French 
 Wine and French culture when designing this.
