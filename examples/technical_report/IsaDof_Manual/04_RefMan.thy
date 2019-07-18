@@ -7,34 +7,87 @@ begin
 chapter*[isadof::technical,main_author="Some(@{docitem ''bu''}::author)"]
 \<open> \isadof : Syntax and Semantics of Commands\<close>
    
-text\<open> An \isadof document consists of three components: 
+text\<open> \isadof is embedded in the underlying generic
+document model of Isabelle as described in @{docitem "sec:background"}.  
+Recall that the document language can be extended dynamically, \ie, new
+\<open>user-defined\<close> can be introduced at run-time.  This is similar to
+the definition of new functions in an interpreter. \isadof as a system plugin is
+is a number of new command definitions in Isabelle's document model.
+
+\isadof consists consists basically of three components:
+\<^item> an own \<^emph>\<open>family of text-element\<close> such as \<open>title*\<close>, \<open>chapter*\<close>  
+  \<open>text*\<close>, etc., which can be annotated with meta-information defined in the underlying  
+  ontology definition and allow to build a \<^emph>\<open>core\<close> document,
 \<^item> the \<^emph>\<open>ontology definition\<close> which is an Isabelle theory file with definitions
-  for document-classes and all auxiliary datatypes.  
-\<^item> the \<^emph>\<open>core\<close> of the document itself which is an Isabelle theory
-  importing the ontology definition. \isadof provides an own family of text-element
-  commands such as \inlineisar+title*+, \inlineisar+chapter*+,  \inlineisar+text*+, etc., 
-  which can be annotated with meta-information defined in the underlying  ontology definition.
+  for document-classes and all auxiliary datatypes 
+  (we call this the Ontology Definition Language (ODL))  
 \<^item> the \<^emph>\<open>layout definition\<close> for the given ontology exploiting this meta-information.
 \<close>
-text\<open>\isadof is a novel Isabelle system component providing specific support for all these 
-three parts. Note that the document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not 
+
+text\<open> Note that the document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not
 use Isabelle definitions or proofs for checking the formal content---the 
 present paper is actually an example of a document not containing any proof.
+Consequently, the document editing and checking facility provided by 
+\isadof addresses the needs of common users for an advanced text-editing environment,
+neither modeling nor proof knowledge is inherently required.
 
- The document generation process of \isadof is currently restricted to \LaTeX, which means
+We expect authors of ontologies to have experience in the use of \isadof, basic
+modeling (and evtl. SML programming) experience and, last but not least, domain knowledge
+of the ontology to be modeled. Users with experience in UML-like meta-modeling 
+will feel familiar with most concepts; however, we expect  no need for insight 
+in the Isabelle proof language, for example, or other more advanced concepts.
+
+The document generation process of \isadof is currently restricted to \LaTeX, which means
 that the layout is defined by a set of \LaTeX{} style files. Several layout 
-definitions for one ontology are possible and pave the way that different \<^emph>\<open>views\<close> for
-the same central document were generated, addressing the needs of different purposes `
-and/or target readers. 
+definitions for one ontology are possible which paves the way for different \<^emph>\<open>views\<close> on
+the same integrated document, addressing the needs of different purposes 
+and/or target readers. Conceiving new style files will definitively require knowledge
+over \LaTeX{} and some knowledge over the Isabelle document generation process.
 
- While the ontology and the layout definition will have to be developed by an expert
-with knowledge over Isabelle and \isadof and the back end technology depending on the layout 
-definition, the core is intended to require only minimal knowledge of these two. The situation
-is similar to \LaTeX{}-users, who usually have minimal knowledge about the content in 
-style-files (\<^verbatim>\<open>.sty\<close>-files). In the document core authors \<^emph>\<open>can\<close>  use \LaTeX{}  commands in 
-their source, but this limits the possibility of using different representation technologies, 
-\eg, HTML, and increases the risk of arcane error-messages in generated \LaTeX{}. 
+The situation is roughly similar to \LaTeX{}-users, who usually have minimal knowledge about 
+the content in  style-files (\<^verbatim>\<open>.sty\<close>-files). In the document core authors \<^emph>\<open>can\<close>  use \LaTeX{}  
+commands in  their source, but this limits the possibility of using different representation 
+technologies, \eg, HTML, and increases the risk of arcane error-messages in the generated \LaTeX{}.
+Using low-level \LaTeX{} commands is at the users risk. A correctly checked \isadof document
+should typeset, provided that a few basic pitfalls are avoided: no dangling \<^verbatim>\<open>{\<close> or \<^verbatim>\<open>}\<close>, no 
+spontaneous unprotected \<^verbatim>\<open>_\<close>, etc. It is also helpful to execute the final
+@{command "check_doc_global"} command to check the global reference stucture.
+\<close>
 
+
+
+section\<open>Ontology Modeling in ODL\<close>
+
+
+text\<open>As already mentioned, ODL has some similarities to meta-modeling languages
+such as UML class models: It builds upon concepts like class, inheritance, class-instances, 
+attributes, references to instances, and class-invariants. Some more advanced concepts like 
+advanced type-checking, referencing to formal entities of Isabelle, and monitors are due
+to its specific application in the Isabelle context.  
+
+Conceptually, ontologies specified in ODL consist of:
+
+\<^item> \<^emph>\<open>document classes\<close> (syntactically marked by the
+  \inlineisar{doc_class} keyword) that describe concepts;
+\<^item> an optional document base class expressing single inheritance
+  extensions;
+\<^item> \<^emph>\<open>attributes\<close> specific to document classes, where
+  
+  \<^item> attributes are typed;
+  \<^item> attributes of instances of document elements are mutable;
+  \<^item> attributes can refer to other document classes, thus, document
+    classes must also be HOL-types (such attributes are called
+    \<^emph>\<open>links\<close>);
+\<^item> a special link, the reference to a super-class, establishes an
+  \<^emph>\<open>is-a\<close> relation between classes;
+\<^item> classes may refer to other classes via a regular expression in a
+  \<^emph>\<open>where\<close> clause (classes with a where clauses are
+  called \<^emph>\<open>monitor classes\<close>);
+\<^item> attributes may have default values in order to facilitate notation.
+
+\<close>
+
+text\<open>
  The \isadof ontology specification language consists basically on a notation for
 document classes, where the attributes were typed with HOL-types and can be instantiated 
 by terms HOL-terms, \ie, the actual parsers and type-checkers of the Isabelle system were reused.
@@ -47,6 +100,7 @@ as enumerations. In particular, document class definitions provide:
 \<^item>  text-elements annotated with document classes; they are mutable 
    instances of document classes.
 \<close>
+
 text\<open>
 Attributes referring to other ontological concepts are called \<^emph>\<open>links\<close>.
 The HOL-types inside the document specification language support built-in types for Isabelle/HOL 
@@ -63,24 +117,379 @@ of documents via the language specified by the regular expression
 enforcing a sequence of text-elements that must belong to the corresponding classes. 
 \<close>
 
-
-section*[install::technical]\<open>Installation\<close>
 text\<open>
-To start using \isadof, one creates an Isabelle project (with the name 
-\inlinebash{IsaDofApplications}):
-\begin{bash}
-  isabelle DOF_mkroot -o scholarly_paper -t lncs -d  IsaDofApplications
-\end{bash}
-where the \inlinebash{-o scholarly_paper} specifies the ontology for writing scientific articles and 
-\inlinebash{-t lncs} specifies the use of Springer's \LaTeX-configuration for the Lecture Notes in 
-Computer Science series. The project can be formally checked, including the generation of the 
-article in PDF using the  following command:
-\begin{bash}
-  isabelle build -d . IsaDofApplications
-\end{bash}
+A major design decision of ODL is to denote attribute values by HOL-terms and
+HOL-types. Consequently, ODL can refer to any predefined
+type defined in the HOL library, \eg, \inlineisar+string+ or
+\inlineisar+int+ as well as parameterized types, \eg, %
+\inlineisar+_ option+, \inlineisar+_ list+, \inlineisar+_ set+, or
+products \inlineisar+_ \<times> _+. As a consequence of the document
+model, ODL definitions may be arbitrarily intertwined with standard
+HOL type definitions. Finally, document class definitions result in
+themselves in a HOL-types in order to allow \<^emph>\<open>links\<close> to and
+between ontological concepts.
 \<close>
 
 
+
+
+subsection\<open>Annotating with Ontology Meta-Data: Outer Syntax\<close>
+text\<open>\dof introduces its own family of text-commands, which allows 
+having side effects of the global context \inlineisar+\<theta>+ and thus to 
+store and manage own meta-information. Among others, \dof provides the commands
+\inlineisar+section*[<meta-args>]\<Open>...\<Close>+, 
+\inlineisar+subsection*[<meta-args>]\<Open>...\Cclose>+, or
+\inlineisar+text*[<meta-args>]\<Open>...\<Close>+. Here, the argument 
+\inlineisar+<meta-args>+ is a syntax for declaring instance, class and
+attributes for this text element, following the scheme
+\begin{isar}
+  <ref> :: <class_id>, attr_1 = <expr>, ..., attr_n = <expr>  
+\end{isar}
+The \inlineisar+<class_id>+ can be  omitted, which
+represents the implicit superclass \inlineisar+text+, where
+\inlineisar+attr_i+ must be declared attributes in the class and where
+the HOL \inlineisar+<expr>+ must have the corresponding HOL type. Attributes
+from a class definition may be left undefined; definitions of
+attribute values \<^emph>\<open>override\<close> default values or values of
+super-classes. Overloading of attributes is not permitted in
+\dof. 
+\<close>
+
+text\<open>
+We can now annotate a text as follows. First, we have to place a
+particular document into the context of our conceptual example
+ontology (\autoref{lst:doc}):
+\begin{isar}
+theory Steam_Boiler
+  imports
+    tiny_cert  (* The ontology defined in Listing 1.1. *)
+begin
+\end{isar}
+This opens a new document (theory), called
+\texttt{Steam\_Boiler} that imports our conceptual example ontology
+``\texttt{tiny\_cert}'' (stored in a file
+\texttt{tiny\_cert.thy}).\footnote{The usual import-mechanisms of the
+  Isabelle document model applies also to ODL: ontologies can be
+  extended, several ontologies may be imported, a document can
+  validate several  ontologies.}
+
+\noindent Now we can continue to annotate our text as follows:
+\begin{isar}
+title*[a] \<Open>The Steam Boiler Controller\<Close>
+abstract*[abs, safety_level="SIL4", keywordlist = "[''controller'']"]\<Open>
+  We present a formalization of a program which serves to control the
+  level of water in a steam boiler.
+\<Close>
+
+section*[intro::introduction]\<Open>Introduction\<Close>
+text\<Open>We present ...\<Close>
+
+section*[T1::technical]\<Open>Physical Environment\<Close>
+text\<Open>
+  The system comprises the following units
+  [*] the steam-boiler
+  [*] a device to measure the quantity of water in the steam-boiler
+  [*] ... 
+\<Close>
+\end{isar}
+
+\<close>
+
+text\<open>
+Where \inlineisar+title*[a ...]+ is a predefined macro for
+\inlineisar+text*[a::title,...]\<Open>...\<Close>+ (similarly \inlineisar+abstract*+). 
+The macro \inlineisar+section*+ assumes a class-id referring to a class that has 
+a \inlineisar+level+ attribute. We continue our example text:
+\begin{isar}
+text*[c1::contrib_claim, based_on="[''pumps'',''steam boiler'']" ]\<Open>
+  As indicated in @{introduction "intro"}, we the water level of the
+  boiler is always between the minimum and the maximum allowed level.
+\<Close>
+\end{isar}
+\<close>
+text\<open>
+The first text element in this example fragment \<^emph>\<open>defines\<close> the
+text entity \inlineisar+c1+ and also references the formerly defined
+text element \inlineisar+intro+ (which will be represented in the PDF
+output, for example, by a text anchor ``Section 1'' and a hyperlink to
+its beginning). The antiquotation \inlineisar+<At>{introduction ...}+,
+which is automatically generated from the ontology, is immediately
+validated (the link to \inlineisar+intro+ is defined) and type-checked (it
+is indeed a link to an \inlineisar+introduction+
+text-element). Moreover, the IDE automatically provides editing and
+development support such as auto-completion or the possibility to
+``jump'' to its definition by clicking on the antiquotation. The
+consistency checking ensures, among others, that the final document
+will not contain any ``dangling references'' or references to entities of
+another type.
+\<close>
+text\<open>
+\dof as such does not require a particular evaluation strategy;
+however, if the underlying implementation is based on a
+declaration-before-use strategy, a mechanism for forward declarations
+of references is necessary:  
+\begin{isar}
+declare_reference* [<meta-args>]
+\end{isar}
+This command declares the existence of a text-element and allows for
+referencing it, although the actual text-element will occur later in
+the document.
+\<close>
+
+text \<open>
+\subsection{Editing Documents with Ontology Meta-Data: Inner Syntax}
+We continue our running example as follows:
+\begin{isar}[mathescape]
+text*[d1::definition]\<Open>
+  We define the water level <AT>{term "level"} of a system state
+  <AT>{term "\<sigma>"} of the steam boiler as follows: 
+\<Close>
+definition level :: "state \<rightarrow> real" where
+          "level \<sigma> =  level0 + ..." 
+update_instance*[d1::definition,
+                 property += "[<AT>{term ''level \<sigma> =  level0 + ...''}]"]
+
+text*[only::result,evidence="proof"]\<Open>
+  The water level is never lower than <AT>{term "level0"}:
+\<Close>
+theorem level_always_above_level_0: "\<forall> \<sigma>. level \<sigma> \<geq> level0"
+  unfolding level_def
+  by auto
+update_instance*[only::result,
+                 property += "[<AT>{thm ''level_always_above_level_0''}]"]
+\end{isar}
+\<close>
+text\<open>
+As mentioned earlier, instances of document classes are mutable. We
+use this feature to modify meta-data of these text-elements and
+``assign'' them to the property-list afterwards and add results
+from Isabelle definitions and proofs. The notation
+\inlineisar|A+=X| stands for \inlineisar|A := A + X|. This mechanism
+can also be used to define the required relation between \<^emph>\<open>claims\<close>
+and \<^emph>\<open>results\<close> required in the \inlineisar|establish|-relation
+required in a \inlineisar|summary|.
+\<close>
+
+
+section*["odl-manual"::technical]\<open>The ODL Manual\<close>
+text\<open>
+
+
+\<close>
+subsection*["odl-manual1"::technical]\<open>The ODL Command Syntax\<close>
+
+section*["odl-design"::technical]\<open>The Design of ODL\<close>
+
+text\<open>
+
+We illustrate the design of \dof by modeling a small ontology
+that can be used for writing formal specifications that, \eg, could
+build the basis for an ontology for certification documents used in
+processes such as Common Criteria~@{cite "cc:cc-part3:2006"} or CENELEC
+50128~@{cite "bsi:50128:2014"}.@{footnote \<open>The \isadof distribution
+  contains an ontology for writing documents for a certification
+  according to CENELEC 50128.\<close>} Moreover, in examples of certification
+documents, we refer to a controller of a steam boiler that is
+inspired by the famous steam boiler formalization
+challenge~@{cite "abrial:steam-boiler:1996"}.
+\<close>
+text\<open>
+
+\begin{isar}[float,mathescape,label={lst:doc},caption={An example ontology modeling
+simple certification documents, including scientific papers such
+as~@{cite "brucker.ea:isabelle-ontologies:2018"}; also recall
+\autoref{fig:dof-ide}.}]
+doc_class title  = short_title :: "string option" <= "None"
+doc_class author = email      :: "string" <= "''''"
+
+datatype classification = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
+    
+doc_class abstract =
+    keywordlist :: "string list"      <= []
+    safety_level :: "classification"  <= "SIL3" 
+doc_class text_section = 
+    authored_by :: "author set"       <= "{}"
+    level       :: "int  option"      <= "None"   
+
+type_synonym notion = string
+
+doc_class introduction = text_section +
+    authored_by :: "author set"       <= "UNIV"
+    uses :: "notion set"
+doc_class claim = introduction +
+    based_on :: "notion list"
+doc_class technical = text_section +
+    formal_results  :: "thm list"
+doc_class "d$$efinition" = technical +
+    is_formal :: "bool"
+    property  :: "term list"          <= "[]"
+
+datatype kind = expert_opinion | argument | proof
+
+doc_class result = technical +
+    evidence  :: kind 
+    property  :: "thm list"           <= "[]"
+doc_class example = technical +
+    referring_to :: "(notion + d$$efinition) set" <=  "{}"
+doc_class "conclusion" = text_section +
+    establish   :: "(claim \<times> result) set"
+\end{isar}%$
+
+\<close>
+text\<open>
+\autoref{lst:doc} shows an example ontology for mathematical papers
+(an extended version of this ontology was used for writing
+@{cite "brucker.ea:isabelle-ontologies:2018"}, also recall
+\autoref{fig:dof-ide}). The commands \inlineisar+datatype+ (modeling
+fixed enumerations) and \inlineisar+type_synonym+ (defining type
+synonyms) are standard mechanisms in HOL systems.  Since ODL is an
+add-on, we have to quote sometimes constant symbols (\eg,
+\inlineisar+"proof"+) to avoid confusion with predefined keywords. ODL
+admits overriding (such as \inlineisar+authored_by+ in the document
+class \inlineisar+introduction+), where it is set to another library
+constant, but no overloading. All \inlineisar+text_section+ elements
+have an optional \inlineisar+level+ attribute, which will be used in
+the output generation for the decision if the context is a section
+header and its level (\eg, chapter, section, subsection). While
+\<open>within\<close> an inheritance hierarchy overloading is prohibited,
+attributes may be re-declared freely in independent parts (as is the
+case for \inlineisar+property+).
+
+\<close>
+
+subsection*[onto_future::technical]\<open> Monitor Classes \<close>  
+(*
+text\<open> Besides sub-typing, there is another relation between
+document classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
+which is expressed by the occurrence of a \inlineisar+where+ clause
+in the document class definition containing a regular
+expression (see @{example (unchecked) \<open>scholar_onto\<close>}).
+While class-extension refers to data-inheritance of attributes,
+a monitor imposes structural constraints -- the order --
+in which instances of monitored classes may occur. \<close>
+*)
+text\<open>
+The control of monitors is done by the commands:
+\<^item> \inlineisar+open_monitor* +  <doc-class>
+\<^item> \inlineisar+close_monitor* + <doc-class> 
+\<close>
+text\<open>
+where the automaton of the monitor class is expected
+to be in a final state. In the final state, user-defined SML 
+Monitors can be nested, so it is possible to "overlay" one or more monitoring 
+classes and imposing different sets of structural constraints in a 
+Classes which are neither directly nor indirectly (via inheritance) mentioned in the 
+monitor are \<^emph>\<open>independent\<close> from a monitor; instances of independent test elements 
+may occur freely. \<close>
+
+subsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
+text\<open>
+We call a document class with an accept-clause a
+\<^emph>\<open>monitor\<close>.  Syntactically, an accept-clause contains a regular
+expression over class identifiers. We can extend our
+\inlineisar+tiny_cert+ ontology with the following example:
+\begin{isar}
+doc_class article = 
+    style_id :: string   <= "''CENELEC50128''"
+    accepts "(title ~~ \<lbrace>author\<rbrace>\<bsup>+\<esup> ~~ abstract ~~ \<lbrace>introduction\<rbrace>\<bsup>+\<esup>  ~~
+             \<lbrace>technical || example\<rbrace>\<bsup>+\<esup> ~~ \<lbrace>conclusion\<rbrace>\<bsup>+\<esup>)"
+\end{isar}
+Semantically, monitors introduce a behavioral element into ODL: 
+\begin{isar}
+open_monitor*[this::article]  (* begin of scope of monitor "this" *)
+  ...
+close_monitor*[this]          (* end of scope of monitor "this"   *)
+\end{isar}
+Inside the scope of a monitor, all instances of classes mentioned in its accept-clause (the
+\<^emph>\<open>accept-set\<close>) have to appear in the order specified by the
+regular expression; instances not covered by an accept-set may freely
+occur. Monitors may additionally contain a reject-clause with a list
+of class-ids (the reject-list). This allows specifying ranges of
+admissible instances along the class hierarchy:
+\begin{compactitem}
+\item a superclass in the reject-list and a subclass in the
+  accept-expression forbids instances superior to the subclass, and
+\item a subclass $S$ in the reject-list and a superclass $T$ in the
+  accept-list allows instances of superclasses of $T$ to occur freely,
+  instances of $T$ to occur in the specified order and forbids
+  instances of $S$.
+\end{compactitem}
+Monitored document sections can be nested and overlap; thus, it is
+possible to combine the effect of different monitors. For example, it
+would be possible to refine the \inlineisar+example+ section by its own
+monitor and enforce a particular structure in the presentation of
+examples.
+
+Monitors manage an implicit attribute \inlineisar+trace+ containing
+the list of ``observed'' text element instances belonging to the
+accept-set. Together with the concept of ODL class invariants, it is
+possible to specify properties of a sequence of instances occurring in
+the document section. For example, it is possible to express that in
+the sub-list of \inlineisar+introduction+-elements, the first has an
+\inlineisar+introduction+ element with a \inlineisar+level+ strictly
+smaller than the others. Thus, an introduction is forced to have a
+header delimiting the borders of its representation. Class invariants
+on monitors allow for specifying structural properties on document
+sections.
+\<close>
+
+subsection*["odl-manual2"::technical]\<open>Examples\<close>
+
+subsection\<open>Meta-types as Types\<close>
+
+text\<open>To express the dependencies between text elements to the formal
+entities, \eg, \inlinesml+term+ ($\lambda$-term), \inlinesml+typ+, or
+\inlinesml+thm+, we represent the types of the implementation language
+\<^emph>\<open>inside\<close> the HOL type system.  We do, however, not reflect the data of
+these types. They are just declared abstract types, 
+``inhabited'' by special constant symbols carrying strings, for
+example of the format \inlineisar+<AT>{thm <string>}+. When HOL
+expressions were used to denote values of \inlineisar+doc_class+
+instance attributes, this requires additional checks after
+conventional type-checking that this string represents actually a
+defined entity in the context of the system state
+\inlineisar+\<theta>+.  For example, the \inlineisar+establish+
+attribute in the previous section is the power of the ODL: here, we model
+a relation between \<^emph>\<open>claims\<close> and \<^emph>\<open>results\<close> which may be a
+formal, machine-check theorem of type \inlinesml+thm+ denoted by, for
+example: \inlineisar+property = "[<AT>{thm ''system_is_safe''}]"+ in a
+system context \inlineisar+\<theta>+ where this theorem is
+established. Similarly, attribute values like 
+\inlineisar+property = "<AT>{term \<Open>A \<leftrightarrow> B\<Close>}"+
+require that the HOL-string \inlineisar+A \<leftrightarrow> B+ is 
+again type-checked and represents indeed a formula in $\theta$. Another instance of 
+this process, which we call \<open>second-level type-checking\<close>, are term-constants
+generated from the ontology such as 
+\inlineisar+<AT>{definition <string>}+. For the latter, the argument string
+must be checked that it  represents a reference to a text-element
+having the type \inlineisar+definition+ according to the ontology in \autoref{lst:doc}.\<close>
+
+
+subsection*["sec:class_inv"::technical]\<open>ODL Class Invariants\<close>
+text\<open>
+Ontological classes as described so far are too liberal in many
+situations. For example, one would like to express that any instance
+of a \inlineisar+result+ class finally has a non-empty property list,
+if its \inlineisar+kind+ is \inlineisar+proof+, or that the
+\inlineisar+establish+ relation between \inlineisar+claim+ and
+\inlineisar+result+ is surjective.
+
+In a high-level syntax, this type of constraints could be expressed, \eg, by:
+\begin{isar}
+\<forall> x \<in> result. x@kind = proof \<leftrightarrow> x@kind \<noteq> []
+\<forall> x \<in> conclusion. \<forall> y \<in> Domain(x@establish)
+                  \<rightarrow> \<exists> y\<in> Range(x@establish). (y,z) \<in> x@establish
+\<forall> x \<in> introduction. finite(x@authored_by)
+\end{isar}
+where \inlineisar+result+, \inlineisar+conclusion+, and
+\inlineisar+introduction+ are the set of all possible instances of
+these document classes.  All specified constraints are already checked
+in the IDE of \dof while editing; it is however possible to delay a
+final error message till the closing of a monitor (see next
+section). The third constraint enforces that the
+user sets the \inlineisar+authored_by+ set, otherwise an error will be
+reported.
+\<close>
 
 section*["core-manual"::technical]\<open>Annotatable Text-Elements for Core-Documents\<close>
 text\<open>In general, all standard text-elements from the Isabelle document model such
@@ -129,42 +538,6 @@ text\<open>The syntax of toplevel \isadof commands reads as follows:
 subsection*["commonlib"::technical]\<open>Common Ontology Library (COL)\<close>
 
 subsection*["core-manual2"::technical]\<open>Examples\<close>
-
-section*["odl-manual"::technical]\<open>The ODL Manual\<close>
-
-subsection*["odl-manual1"::technical]\<open>The ODL Command Syntax\<close>
-
-section*["odl-design"::technical]\<open>The Design of ODL\<close>
-
-subsection*[onto_future::technical]\<open> Monitor Classes \<close>  
-(*
-text\<open> Besides sub-typing, there is another relation between
-document classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
-which is expressed by the occurrence of a \inlineisar+where+ clause
-in the document class definition containing a regular
-expression (see @{example (unchecked) \<open>scholar_onto\<close>}).
-While class-extension refers to data-inheritance of attributes,
-a monitor imposes structural constraints -- the order --
-in which instances of monitored classes may occur. \<close>
-*)
-text\<open>
-The control of monitors is done by the commands:
-\<^item> \inlineisar+open_monitor* +  <doc-class>
-\<^item> \inlineisar+close_monitor* + <doc-class> 
-\<close>
-text\<open>
-where the automaton of the monitor class is expected
-to be in a final state. In the final state, user-defined SML 
-Monitors can be nested, so it is possible to "overlay" one or more monitoring 
-classes and imposing different sets of structural constraints in a 
-Classes which are neither directly nor indirectly (via inheritance) mentioned in the 
-monitor are \<^emph>\<open>independent\<close> from a monitor; instances of independent test elements 
-may occur freely. \<close>
-
-
-subsection*["odl-manual2"::technical]\<open>Examples\<close>
-
-
 
 
 (*<*)

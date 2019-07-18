@@ -12,6 +12,32 @@ exam sheets as well as standardization documents where the concepts of the
 standard are captured in the ontology. For space reasons, we will concentrate in all three
 cases on aspects of the modeling due to space limitations.\<close>
 
+
+
+section*[install::technical]\<open>Getting Started\<close>
+text\<open>
+
+DOWNLOAD INFO MISSING
+
+INSTALLATION INFO MISSING
+
+CREATING A PROJECT:
+
+To start using \isadof, one creates an Isabelle project (with the name 
+\inlinebash{IsaDofApplications}):
+\begin{bash}
+  isabelle DOF_mkroot -o scholarly_paper -t lncs -d  IsaDofApplications
+\end{bash}
+where the \inlinebash{-o scholarly_paper} specifies the ontology for writing scientific articles and 
+\inlinebash{-t lncs} specifies the use of Springer's \LaTeX-configuration for the Lecture Notes in 
+Computer Science series. The project can be formally checked, including the generation of the 
+article in PDF using the  following command:
+\begin{bash}
+  isabelle build -d . IsaDofApplications
+\end{bash}
+\<close>
+
+
 section*[scholar_onto::example]\<open> The Scholar Paper Scenario: Eating One's Own Dog Food. \<close>  
 text\<open> The following ontology is a simple ontology modeling scientific papers. In this 
 \isadof application scenario, we deliberately refrain from integrating references to
