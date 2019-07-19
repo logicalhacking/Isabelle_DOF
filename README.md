@@ -102,7 +102,6 @@ Usage: isabelle DOF_mkroot [OPTIONS] [DIR]
 
   Options are:
     -h           print this help text and exit
-    -d           enable document preparation
     -n NAME      alternative session name (default: DIR base name)
     -o ONTOLOGY  (default: core)
        Available ontologies:
