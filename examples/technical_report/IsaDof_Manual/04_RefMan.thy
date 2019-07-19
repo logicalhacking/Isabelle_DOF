@@ -1,6 +1,7 @@
 (*<*)
 theory "04_RefMan"
-  imports "03_GuidedTour"
+  imports "03_GuidedTour" (* apparently inaccessible; for railroads "Isar_Ref.Base" *)
+
 begin
 (*>*)
 
@@ -130,7 +131,9 @@ themselves in a HOL-types in order to allow \<^emph>\<open>links\<close> to and
 between ontological concepts.
 \<close>
 
+text\<open>
 
+\<close>
 
 
 subsection\<open>Annotating with Ontology Meta-Data: Outer Syntax\<close>
@@ -272,10 +275,51 @@ required in a \inlineisar|summary|.
 
 
 section*["odl-manual"::technical]\<open>The ODL Manual\<close>
+subsection*["odl-manual0"::technical]\<open>The Isabelle/HOL Specification Language\<close>
+text\<open>The \isadof ontology definition language (ODL) is an extension of Isabelle/HOL;
+document class definitions can therefore be arbitrarily mixed with standard HOL
+specification constructs. In order to spare the user of ODL a lenghty analysis of
+@{cite "isaisarrefman19" and "datarefman19" and "functions19"}, we  present 
+syntax and semantics of the specification constructs that are most likely relevant for
+the developer of ontologies. Note that our presentation is actually a simplification
+of the original sources following the needs of our target audience here; for a full-
+blown account, the reader is referred to the original descriptions.\<close>
+
 text\<open>
-
-
+\<^item> \<open>tyargs\<close> : 
+     \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
+     \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) @{cite "isaisarrefman19"}
+\<^item> \<open>dt_name\<close> :
+     \<^rail>\<open>  (tyargs?) name (mixfix?)\<close>   
+     The syntactic entity \<open>name\<close> denotes an identifier, \<open>mixfix\<close> denotes the usual 
+     parenthesized mixfix notation (see @{cite "isaisarrefman19"}).
+     The \<open>name\<close>'s referred here are type names such as \<^verbatim>\<open>int\<close>, \<^verbatim>\<open>string\<close>, \<^verbatim>\<open>list\<close>, \<^verbatim>\<open>set\<close>, etc. 
+\<^item> \<open>type_spec\<close> :
+     \<^rail>\<open>  (tyargs?) name\<close>
+     The \<open>name\<close>'s referred here are type names such as \<^verbatim>\<open>int\<close>, \<^verbatim>\<open>string\<close>, \<^verbatim>\<open>list\<close>, \<^verbatim>\<open>set\<close>, etc. 
+\<^item> \<open>type\<close> :
+     \<^rail>\<open>  ( '(' ((typefree | type) * ',')  ')' )? name \<close>     
+\<^item> \<open>dt_ctor\<close> :
+     \<^rail>\<open> name (type*) (mixfix?)\<close>
+\<^item> \<open>datatype_specification\<close> :
+     \<^rail>\<open> @@{command "datatype"} dt_name '=' (dt_ctor * '|' )\<close>
+\<^item> \<open>type_synonym_specification\<close> :
+     \<^rail>\<open> @@{command "type_synonym"} type_spec '=' type\<close>
+\<^item> \<open>constant_definition\<close> :
+     \<^rail>\<open> @@{command "definition"} name '::' type 'where' '"' name '=' expr '"'\<close>
+     where the syntactic category \<open>expr\<close> is the very rich language of mathematical 
+     notations for $\lambda$-terms in Isabelle/HOL. Examples of expressions are:
+     \inlineisar|1+2| (arithmetics), \inlineisar|[1,2,3]| (lists), \inlineisar|''ab c''| (strings), 
+     \inlineisar|{1,2,3}| (sets), \inlineisar|(1,2,3)| (tuples), 
+     \inlineisar|\<forall> x. P(x) \<and> Q x = C| (formulas), etc. 
+     For a comprehensive overview, consult the text ``What's in Main'' 
+     @{cite "nipkowMain19"}
 \<close>
+text\<open>Other specification constructs, which are potentially relevant for an (advanced) ontology 
+developer, might be recursive function definitions with pattern-matching @{cite "functions19"}, 
+extensible record specifications, @{cite "isaisarrefman19"} and abstract type declarations.\<close>
+
+
 subsection*["odl-manual1"::technical]\<open>The ODL Command Syntax\<close>
 
 section*["odl-design"::technical]\<open>The Design of ODL\<close>
