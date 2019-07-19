@@ -286,9 +286,14 @@ of the original sources following the needs of our target audience here; for a f
 blown account, the reader is referred to the original descriptions.\<close>
 
 text\<open>
+\<^item> \<open>name\<close> : 
+     with the syntactic category of \<open>name\<close>'s we refer to alpha-numerical identifiers 
+     (called \<open>short_id\<close>'s in @{cite "isaisarrefman19"}) and identifiers
+     in \inlineisar+" ... "+ which might additionally contain certian ``quasi-letters'' such 
+     as \inlineisar+_+, \inlineisar+-+, \inlineisar+.+, etc. Details in @{cite "isaisarrefman19"}.
 \<^item> \<open>tyargs\<close> : 
      \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
-     \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) @{cite "isaisarrefman19"}
+     \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (c.f. @{cite "isaisarrefman19"})
 \<^item> \<open>dt_name\<close> :
      \<^rail>\<open>  (tyargs?) name (mixfix?)\<close>   
      The syntactic entity \<open>name\<close> denotes an identifier, \<open>mixfix\<close> denotes the usual 
@@ -298,7 +303,7 @@ text\<open>
      \<^rail>\<open>  (tyargs?) name\<close>
      The \<open>name\<close>'s referred here are type names such as \<^verbatim>\<open>int\<close>, \<^verbatim>\<open>string\<close>, \<^verbatim>\<open>list\<close>, \<^verbatim>\<open>set\<close>, etc. 
 \<^item> \<open>type\<close> :
-     \<^rail>\<open>  ( '(' ((typefree | type) * ',')  ')' )? name \<close>     
+     \<^rail>\<open>  (( '(' ( type * ',')  ')' )? name) | typefree \<close>     
 \<^item> \<open>dt_ctor\<close> :
      \<^rail>\<open> name (type*) (mixfix?)\<close>
 \<^item> \<open>datatype_specification\<close> :
@@ -307,20 +312,44 @@ text\<open>
      \<^rail>\<open> @@{command "type_synonym"} type_spec '=' type\<close>
 \<^item> \<open>constant_definition\<close> :
      \<^rail>\<open> @@{command "definition"} name '::' type 'where' '"' name '=' expr '"'\<close>
-     where the syntactic category \<open>expr\<close> is the very rich language of mathematical 
-     notations for $\lambda$-terms in Isabelle/HOL. Examples of expressions are:
+\<^item> \<open>expr\<close> :
+
+     the syntactic category \<open>expr\<close> here denotes the very rich ``inner-syntax'' language of 
+     mathematical  notations for $\lambda$-terms in Isabelle/HOL. Example expressions are:
      \inlineisar|1+2| (arithmetics), \inlineisar|[1,2,3]| (lists), \inlineisar|''ab c''| (strings), 
      \inlineisar|{1,2,3}| (sets), \inlineisar|(1,2,3)| (tuples), 
      \inlineisar|\<forall> x. P(x) \<and> Q x = C| (formulas), etc. 
-     For a comprehensive overview, consult the text ``What's in Main'' 
-     @{cite "nipkowMain19"}
+     For a comprehensive overview, consult the summary ``What's in Main'' 
+     @{cite "nipkowMain19"}.
 \<close>
-text\<open>Other specification constructs, which are potentially relevant for an (advanced) ontology 
+
+text\<open>Other specification constructs, which are potentially relevant for an (advanced) ontology
 developer, might be recursive function definitions with pattern-matching @{cite "functions19"}, 
 extensible record specifications, @{cite "isaisarrefman19"} and abstract type declarations.\<close>
 
 
-subsection*["odl-manual1"::technical]\<open>The ODL Command Syntax\<close>
+subsection*["odl-manual1"::technical]\<open>The Command Syntax for Document Class Specifications\<close>
+text\<open>
+\<^item> \<open>class_id\<close> : \<open>class_id\<close>'s are type-\<open>name\<close>'s that have been introduced via
+  a \<open>doc_class_specification\<close>.
+\<^item> \<open>doc_class_specification\<close> : 
+     \<^rail>\<open> @@{command "doc_class"} class_id '=' (class_id '+')? (attribute_decl+) \<newline>
+           (accepts_clause rejects_clause?)?\<close>
+     document classes whose specification contains an \<open>accepts_clause\<close> are called 
+     \<^emph>\<open>monitor classes\<close> or \<^emph>\<open>monitors\<close> for short. 
+\<^item> \<open>attribute_decl\<close> :
+     \<^rail>\<open> name '::' '"' type '"' default_clause? \<close>
+\<^item> \<open>accepts_clause\<close> :
+     \<^rail>\<open> 'accepts' '"' regexpr '"'\<close>
+\<^item> \<open>rejects_clause\<close> :
+     \<^rail>\<open> 'rejects' (class_id * ',') \<close>
+\<^item> \<open>default_clause\<close> :
+     \<^rail>\<open> '<=' '"' expr '"' \<close>
+\<^item> \<open>regexpr\<close> :
+     \<^rail>\<open> class_id | '(' regexpr ')' | (regexpr '||' regexpr) | (regexpr '~~' regexpr)\<close>
+           
+\<close> 
+
 
 section*["odl-design"::technical]\<open>The Design of ODL\<close>
 
