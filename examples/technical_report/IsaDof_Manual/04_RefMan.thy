@@ -346,8 +346,11 @@ text\<open>
 \<^item> \<open>default_clause\<close> :
      \<^rail>\<open> '<=' '"' expr '"' \<close>
 \<^item> \<open>regexpr\<close> :
-     \<^rail>\<open> class_id | '(' regexpr ')' | (regexpr '||' regexpr) | (regexpr '~~' regexpr)\<close>
-           
+     \<^rail>\<open> '\<lfloor>' class_id '\<rfloor>' | '(' regexpr ')' | (regexpr '||' regexpr) | (regexpr '~~' regexpr)
+            | ('\<lbrace>' regexpr '\<rbrace>') | ( '\<lbrace>' regexpr '\<rbrace>\<^sup>*')  \<close>
+     regular expressions describe sequences of \<open>class_id\<close>s (and indirect sequences of document
+     items corresponding to the \<open>class_id\<close>s). The constructors for alternative, sequence, 
+     repetitions and non-empty sequence follow in the top-down order of the above diagram. 
 \<close> 
 
 
