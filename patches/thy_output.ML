@@ -353,19 +353,16 @@ val ignore =
     (if d = 0 then Scan.fail_with (K (fn () => "Bad nesting of meta-comments")) else opt_newline)
     >> pair (d - 1));
 
-
 val locale =
   Scan.option ((Parse.$$$ "(" -- Document_Source.improper -- Parse.$$$ "in") |--
     Parse.!!!
       (Document_Source.improper |-- Parse.name --| (Document_Source.improper -- Parse.$$$ ")")));
 
-
 (*
 val meta_args_parser_hook =  Synchronized.var "meta args parser hook" 
                              ((fn thy => fn s => ("",s)): theory -> string parser);
 *)
-val meta_args_parser_hook =  Unsynchronized.ref 
-                             ((fn _ => fn s => ("",s)): theory -> string parser);
+val meta_args_parser_hook =  Unsynchronized.ref ((fn _ => fn s => ("",s)): theory -> string parser);
 
 in
 
@@ -380,7 +377,6 @@ fun present_thy options thy (segments: segment list) =
 
     val ignored = Scan.state --| ignore
       >> (fn d => (NONE, (Ignore_Token, ("", d))));
-
 
     fun markup pred mk flag = Scan.peek (fn d =>
       Document_Source.improper 
@@ -476,9 +472,12 @@ fun present_thy options thy (segments: segment list) =
     else error "Messed-up outer syntax for presentation"
   end;
 
-fun set_meta_args_parser f = let val _ = writeln "Meta-args parser set to new value" 
-                             in  ( meta_args_parser_hook := f) end
-
+  fun set_meta_args_parser f = 
+    let
+      val _ = writeln "Meta-args parser set to new value"                          
+    in  
+      (meta_args_parser_hook := f)
+    end
 
 end;
 
