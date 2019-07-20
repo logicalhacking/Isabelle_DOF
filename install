@@ -180,7 +180,7 @@ install_and_register(){
     echo "  - Installing document templates in $DIR"
     mkdir -p "$DIR"
     cp $GEN_DIR/scripts/* "$DIR"
-    cp $GEN_DIR/document-template/* "$DIR"
+    cp $GEN_DIR/document-templates/* "$DIR"
 
     DIR="$ISABELLE_HOME_USER/DOF/latex"
     echo "  - Installing LaTeX styles in $DIR"
