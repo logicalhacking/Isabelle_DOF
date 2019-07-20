@@ -19,6 +19,7 @@ pipeline {
         }
         stage('Build Isabelle/DOF') {
             steps {
+                sh 'find -type d -name "output" -exec rm -rf {} \\; || true'
                 sh 'docker run -v $PWD:/DOF logicalhacking:isabelle4dof  sh -c "cd /DOF && ./install && isabelle build -D ."'
             } 
 	}
