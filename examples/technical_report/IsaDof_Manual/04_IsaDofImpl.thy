@@ -26,7 +26,7 @@ is based on several design-decisions:
 \<close>
 
 
-subsection*["sec:plugins"::technical]{*Writing \isadof as User-Defined Plugin in Isabelle/Isar*}
+subsection*["sec:plugins"::technical]\<open>Writing \isadof as User-Defined Plugin in Isabelle/Isar\<close>
 text\<open>
 Writing an own plugin in Isabelle starts with defining the local data
 and registering it in the framework.  As mentioned before, contexts
@@ -142,7 +142,7 @@ front-end supporting PIDE, a popup window with the text: ``declare
 document reference'' will appear.
 \<close>
 
-subsection*["sec:prog_anti"::technical]{*Programming Text Antiquotations*}
+subsection*["sec:prog_anti"::technical]\<open>Programming Text Antiquotations\<close>
 text\<open>
 As mentioned in the introduction, Isabelle/Isar is configured with a
 number of standard commands to annotate formal definitions and proofs

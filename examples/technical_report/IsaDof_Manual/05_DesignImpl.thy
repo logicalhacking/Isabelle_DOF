@@ -5,7 +5,7 @@ begin
 (*>*)
 
 chapter*[impl2::technical,main_author="Some(@{docitem ''bu''}::author)"]
-   {* \isadof: Design and Implementation*}
+   \<open>\isadof: Design and Implementation\<close>
 text\<open>
 In this section, we present the design and implementation of \isadof.
 \subsection{Document Ontology Modeling with \isadof}
@@ -110,7 +110,7 @@ expression consisting of the class identifier \inlineisar+A+,
 \inlineisar+B+, etc. Its use is discussed in \autoref{sec:monitor-class}.
 \<close>
 
-subsection*[editing::example]{*Editing a Document with Ontology-Conform Meta-Data*}
+subsection*[editing::example]\<open>Editing a Document with Ontology-Conform Meta-Data\<close>
 text\<open>
 As already mentioned, Isabelle/Isar comes with a number of standard
 \emph{text commands} such as \inlineisar+section{* ... *}+ or
@@ -193,7 +193,7 @@ referencing it, although the actual text-element will occur later in
 the document.\<close>
 
 
-subsection*[ontolinks::technical]{*Ontology-Conform Logical Links: \isadof Antiquotations*}
+subsection*[ontolinks::technical]\<open>Ontology-Conform Logical Links: \isadof Antiquotations\<close>
 text\<open>
 Up to this point, the world of the formal and the informal document
 parts are strictly separated. The main objective of \isadof are ways
@@ -305,7 +305,7 @@ enforce that terms or theorems have a particular form or correspond to
 ``claims'' (contributions) listed in the introduction of the paper.
 \<close>
 
-subsection*["sec:monitor-class"::technical]{*Monitor Document Classes*}
+subsection*["sec:monitor-class"::technical]\<open>Monitor Document Classes\<close>
 text\<open>
 \autoref{lst:example} shows our conceptual running example in all
 details. While inheritance on document classes allows for structuring
@@ -353,7 +353,7 @@ text\<open>
 \end{isar}
 \<close>
 
-section{*Document Generation*}
+section\<open>Document Generation\<close>
 text\<open>
 Up to know, we discussed the definition of ontologies and their
 representation in an interactive development environment, \ie,

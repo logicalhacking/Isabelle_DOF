@@ -7,7 +7,7 @@ begin
 
   
   
-ML{*
+ML\<open>
 
 fun value_maybe_select some_name =
   case some_name
@@ -30,11 +30,11 @@ fun value_cmd2 some_name modes raw_t state =
         Pretty.str "::", Pretty.brk 1, Pretty.quote (Syntax.pretty_typ ctxt' ty')]) ();
   in Pretty.writeln p end;
 
-*}
-ML{* value_cmd2*}
+\<close>
+ML\<open>value_cmd2\<close>
 definition ASSERT :: "bool \<Rightarrow> bool" where "ASSERT p == (p=True)"
-ML{* val x = @{code "ASSERT"} *} 
-ML{*
+ML\<open>val x = @{code "ASSERT"}\<close> 
+ML\<open>
 val opt_modes =
   Scan.optional (@{keyword "("} |-- Parse.!!! (Scan.repeat1 Parse.name --| @{keyword ")"})) [];
 
@@ -49,9 +49,9 @@ val _ =
               (* Toplevel.keep (Value_Command.value_cmd some_name modes (enclose "ASSERT(" ")" t)) *)
                 Toplevel.keep (value_cmd2 some_name modes t) 
              end));
-*}    
+\<close>    
 
 assert "True"
 assert "True \<and> True "
-ML{* !TT ;
-      @{term "True"} *}
+ML\<open>!TT ;
+      @{term "True"}\<close>

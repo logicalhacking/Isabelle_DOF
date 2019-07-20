@@ -1,4 +1,4 @@
-section{* An example ontology for a scholarly paper*}
+section\<open>An example ontology for a scholarly paper\<close>
 
 theory technical_report
    imports "scholarly_paper"

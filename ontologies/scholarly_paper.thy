@@ -1,4 +1,4 @@
-section{* An example ontology for a scholarly paper*}
+section\<open>An example ontology for a scholarly paper\<close>
 
 theory scholarly_paper
    imports "../Isa_COL"
@@ -45,7 +45,7 @@ doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
    formal_results  :: "thm list"
    
-text{* A very rough formatting style could be modeled as follows:*}   
+text\<open>A very rough formatting style could be modeled as follows:\<close>   
 
    
 doc_class example    = text_section +

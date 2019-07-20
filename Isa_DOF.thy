@@ -731,7 +731,7 @@ typedecl "thm"
 typedecl "file"
 typedecl "thy"
  
-\<comment> \<open> and others in the future : file, http, thy, ... \<close> 
+\<comment> \<open>and others in the future : file, http, thy, ...\<close> 
 
 consts ISA_typ          :: "string \<Rightarrow> typ"               ("@{typ _}")
 consts ISA_term         :: "string \<Rightarrow> term"              ("@{term _}")

@@ -25,22 +25,22 @@ definition opt :: "'a rexp \<Rightarrow> 'a rexp" ("\<lbrakk>(_)\<rbrakk>")
    where "\<lbrakk>A\<rbrakk> \<equiv>  A || One"
                    
 value "Star (Conc(Alt (Atom(CHR ''a'')) (Atom(CHR ''b''))) (Atom(CHR ''c'')))"
-text{* or better equivalently: *}
+text\<open>or better equivalently:\<close>
 value "\<lbrace>(\<lfloor>CHR ''a''\<rfloor> || \<lfloor>CHR ''b''\<rfloor>) ~~ \<lfloor>CHR ''c''\<rfloor>\<rbrace>\<^sup>*"
 
-section{* Definition of a semantic function: the ``language'' of the regular expression *}
+section\<open>Definition of a semantic function: the ``language'' of the regular expression\<close>
 text\<open> This is just a reminder - already defined in @{theory Regular_Exp} as @{term lang}.\<close>
 
-text{* In the following, we give a semantics for our regular expressions, which so far have
+text\<open>In the following, we give a semantics for our regular expressions, which so far have
 just been a term language (i.e. abstract syntax). The semantics is a ``denotational semantics'',
 i.e. we give a direct meaning for regular expressions in some universe of ``denotations''. 
 
-This universe of denotations is in our concrete case: *}
+This universe of denotations is in our concrete case:\<close>
 
 definition enabled :: "('a,'\<sigma> set)da  \<Rightarrow> '\<sigma> set \<Rightarrow> 'a list \<Rightarrow>  'a list" 
   where   "enabled A \<sigma> = filter (\<lambda>x. next A x \<sigma> \<noteq> {}) "
 
-text{* Now the denotational semantics for regular expression can be defined on a post-card: *}
+text\<open>Now the denotational semantics for regular expression can be defined on a post-card:\<close>
 
 fun              L :: "'a rexp => 'a lang"
   where L_Emp :   "L Zero        = {}"

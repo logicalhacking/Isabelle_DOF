@@ -1,4 +1,4 @@
-section{* An example ontology for a math paper*}
+section\<open>An example ontology for a math paper\<close>
 
 theory small_math
    imports "../Isa_COL"

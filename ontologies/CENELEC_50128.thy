@@ -388,7 +388,7 @@ doc_class TC = requirement +
 section\<open>Software Assurance related Entities and Concepts\<close>
 
 
-text{* subcategories are : *}
+text\<open>subcategories are :\<close>
 
 text\<open>Table A.13:  \<close>
 
