@@ -1,7 +1,7 @@
 (*<*)
 theory MathExam
   imports "Isabelle_DOF.mathex_onto"
-    Real
+    HOL.Real
 begin
 (*>*)   
 open_monitor*[exam::MathExam] 
@@ -22,18 +22,9 @@ text*[idir::Author, affiliation="''CentraleSupelec''",
         {*Idir AIT SADOUNE*}
   
   
-(* should be in DOF-core 
-
-* causes crash on the LaTeX side:
- ( FP-DIV )
-*** ! Undefined control sequence.
-*** <argument> ...ative_width}}{100} \includegraphics
-***                                                   [width=\scale \textwidth ]...
-*** l.44 {A Polynome.}
-*)
 figure*[figure::figure, spawn_columns=False,
         relative_width="80", 
-        src="''figures/Polynomialdeg5.png''"] 
+        src="''figures/Polynomialdeg5''"] 
         \<open>A Polynome.\<close>
 
 
