@@ -1,5 +1,5 @@
 theory Conceptual
-  imports "../Isa_DOF" "../Isa_COL"
+  imports "../../DOF/Isa_DOF" "../../DOF/Isa_COL"
 begin
 
 doc_class A =

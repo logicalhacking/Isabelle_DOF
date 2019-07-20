@@ -4,15 +4,15 @@ pipeline {
     stages {
         stage('Build Docker') {
             steps {
-                sh 'cp patches/thy_output.ML .ci/isabelle4isadof/'
+                sh 'cp src/patches/thy_output.ML .ci/isabelle4isadof/'
                 sh 'docker build -t logicalhacking:isabelle4dof .ci/isabelle4isadof'
                 sh 'rm -f .ci/isabelle4isadof/thy_output.ML'
             }
         }
         stage('Check Docker') {
-            when { changeset "patches/*" } 
+            when { changeset "src/patches/*" } 
             steps {
-                sh 'cp patches/thy_output.ML .ci/isabelle4isadof/'
+                sh 'cp src/patches/thy_output.ML .ci/isabelle4isadof/'
                 sh 'docker build --no-cache -t logicalhacking:isabelle4dof .ci/isabelle4isadof'
                 sh 'rm -f .ci/isabelle4isadof/thy_output.ML'
             }

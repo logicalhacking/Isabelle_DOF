@@ -37,7 +37,7 @@ The installer will
 * apply a patch to Isabelle that is necessary to use Isabelle/DOF. 
   If this patch installations fails, you need to manually replace 
   the file ``Isabelle2019/src/Pure/Thy/thy_output.ML`` in the Isabelle
-  distribution with the file ``patches/thy_output.ML`` from the  
+  distribution with the file ``src/patches/thy_output.ML`` from the  
   Isabelle/DOF distribution:        
         ```console
         cp patches/thy_output.ML `isabelle getenv -b ISABELLE_HOME`/src/Pure/Thy/

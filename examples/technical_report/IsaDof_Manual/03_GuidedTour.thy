@@ -251,7 +251,7 @@ doc_class srac = ec  +
 \end{isar}
 \<close>
 
-section*[mathex_onto::example]\<open> The Math-Exam Scenario \<close> 
+section*[mathex::example]\<open> The Math-Exam Scenario \<close> 
 text\<open> The Math-Exam Scenario is an application with mixed formal and 
 semi-formal content. It addresses applications where the author of the exam is not present 
 during the exam and the preparation requires a very rigorous process, as the french 

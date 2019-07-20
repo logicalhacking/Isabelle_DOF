@@ -3,7 +3,7 @@ chapter\<open>Setting and modifying attributes of doc-items\<close>
 theory 
   Concept_Example
 imports 
-  "../ontologies/Conceptual" (* we use the generic "Conceptual" ontology *)
+  "../ontologies/Conceptual/Conceptual" (* we use the generic "Conceptual" ontology *)
 begin
 
 text\<open>@{theory "Isabelle_DOF-tests.Conceptual"} provides a monitor @{typ M} enforcing a particular document structure.

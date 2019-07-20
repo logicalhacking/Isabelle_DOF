@@ -12,7 +12,7 @@ proving environment after all ! So this ontology provides:
   
   
 theory math_paper
-  imports  "../Isa_DOF"  
+  imports  "../../DOF/Isa_DOF"  
 begin
   
    

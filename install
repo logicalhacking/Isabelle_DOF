@@ -125,7 +125,7 @@ check_afp_entries() {
 
 check_isa_dof_patch() {
     echo "* Check availability of Isabelle/DOF patch:"
-    src="patches/thy_output.ML"
+    src="src/patches/thy_output.ML"
     dst="$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"
      
     if command -v cmp > /dev/null 2>&1 && cmp -s "$src" "$dst" ; then
@@ -185,7 +185,7 @@ install_and_register(){
     DIR="$ISABELLE_HOME_USER/DOF/latex"
     echo "  - Installing LaTeX styles in $DIR"
     mkdir -p "$DIR"
-    cp $GEN_DIR/latex/*.sty "$DIR"
+    cp $GEN_DIR/*/*/*.sty "$DIR"
 
     DIR="$ISABELLE_HOME_USER/etc"
     echo "  - Registering Isabelle/DOF"
@@ -221,7 +221,7 @@ done
 
 
 ACTUAL_ISABELLE_VERSION=`$ISABELLE version`
-GEN_DIR=document-generator
+GEN_DIR=src
 PROG=`echo $0 | sed 's|.*/||'`;
 VARS=`$ISABELLE getenv ISABELLE_HOME_USER ISABELLE_HOME ISABELLE_TOOLS`
 for i in $VARS; do 

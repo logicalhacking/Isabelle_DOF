@@ -3,7 +3,7 @@ chapter\<open>Setting and modifying attributes of doc-items\<close>
 theory 
   Concept_ExampleInvariant
 imports 
-  "../ontologies/Conceptual" (* we use the generic "Conceptual" ontology *)
+  "../ontologies/Conceptual/Conceptual" (* we use the generic "Conceptual" ontology *)
 begin
 
 section\<open>Example: Standard Class Invariant\<close>

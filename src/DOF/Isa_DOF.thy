@@ -1525,7 +1525,7 @@ end
 (* the following 2 lines set parser and converter for LaTeX generation of meta-attributes. 
    Currently of *all* commands, no distinction between text* and text command. 
    This code depends on a MODIFIED Isabelle2017 version resulting from applying the files
-   under Isabell_DOF/patches. 
+   under src/patches. 
  *)
 (* REMARK PORT 2018 : transmission of meta-args to LaTeX crude and untested. Can be found in
    present_token. *)

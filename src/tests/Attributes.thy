@@ -1,7 +1,7 @@
 theory 
   Attributes
 imports 
-  "../ontologies/Conceptual"
+  "../ontologies/Conceptual/Conceptual"
 begin
 
 section\<open>Elementary Creation of Doc-items and Access of their Attibutes\<close>

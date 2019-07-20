@@ -1,11 +1,10 @@
 (*<*)
 theory MathExam
-  imports "Isabelle_DOF.mathex_onto"
+  imports "Isabelle_DOF.mathex"
     HOL.Real
 begin
 (*>*)   
-open_monitor*[exam::MathExam] 
-
+(* open_monitor*[exam::MathExam]  *)
 
 section*[header::Header,examSubject= "[algebra]", 
             date="''02-05-2018''", timeAllowed="90::int"] \<open>Exam number 1\<close>
@@ -94,6 +93,6 @@ text*[q2::Task, local_grade="threeStars", mark="3::int", type="formal"]
    with a difference of 5.
 \<close> 
 (* this does not work on the level of the LaTeX output for known restrictions of the Toplevel. *)
-close_monitor*[exam :: MathExam] 
+(* close_monitor*[exam :: MathExam] *)
 
 end

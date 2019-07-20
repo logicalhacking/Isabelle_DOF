@@ -12,7 +12,7 @@ identifies:
 
 (*<<*)  
 theory CENELEC_50128
-  imports  "../Isa_COL"
+  imports  "../../DOF/Isa_COL"
 begin
 (*>>*) 
 
