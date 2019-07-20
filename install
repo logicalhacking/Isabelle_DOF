@@ -47,8 +47,8 @@ print_help()
     echo "  --isabelle, -i isabelle   isabelle command used for installation"
     echo "                            (default: $ISABELLE)"
     echo "  --skip-patch-and-afp, -s  skip installation of Isabelle/DOF patch for" 
-    echo "                            Isabelle and required AFP entries. USE AT"
-    echo "                            YOUR OWN RISK (default: $SKIP)"
+    echo "                            Isabelle and required AFP entries. "
+    echo "                            USE AT YOUR OWN RISK (default: $SKIP)"
 }
 
 
