@@ -179,6 +179,7 @@ install_and_register(){
     DIR="$ISABELLE_HOME_USER/DOF/document-template"
     echo "  - Installing document templates in $DIR"
     mkdir -p "$DIR"
+    cp $GEN_DIR/scripts/* "$DIR"
     cp $GEN_DIR/document-template/* "$DIR"
 
     DIR="$ISABELLE_HOME_USER/DOF/latex"
