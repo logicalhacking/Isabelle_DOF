@@ -3,7 +3,7 @@ theory
 imports
   "CENELEC_50128/CENELEC_50128"
   "Conceptual/Conceptual"
-  "mathex/mathex"
+  "math_exam/math_exam"
   "math_paper/math_paper"
   "scholarly_paper/scholarly_paper"
   "small_math/small_math"

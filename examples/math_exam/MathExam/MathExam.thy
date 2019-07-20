@@ -1,6 +1,6 @@
 (*<*)
 theory MathExam
-  imports "Isabelle_DOF.mathex"
+  imports "Isabelle_DOF.math_exam"
     HOL.Real
 begin
 (*>*)   

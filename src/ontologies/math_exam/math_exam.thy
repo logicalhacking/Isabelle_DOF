@@ -1,4 +1,4 @@
-theory mathex
+theory math_exam
  imports "../../DOF/Isa_COL"
 begin
   
