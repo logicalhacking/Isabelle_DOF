@@ -10,3 +10,11 @@ session "Isabelle_DOF" = "Functional-Automata" +
     "ontologies/technical_report"
     "ontologies/mathex_onto"
 
+session "Isabelle_DOF-tests" = "Isabelle_DOF" + 
+  options [document = false]
+  theories
+    "tests/AssnsLemmaThmEtc" 
+    "tests/Concept_ExampleInvariant"
+    "tests/Concept_Example"
+    "tests/InnerSyntaxAntiquotations"
+    "tests/Attributes"

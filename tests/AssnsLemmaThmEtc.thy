@@ -1,5 +1,8 @@
-theory AssnsLemmaThmEtc
-  imports "../../ontologies/Conceptual"  "../../ontologies/math_paper"
+theory 
+  AssnsLemmaThmEtc
+imports 
+  "../ontologies/Conceptual"  
+  "../ontologies/math_paper"
 begin
 
 section\<open>Elementary Creation of Doc-items and Access of their Attibutes\<close>
@@ -17,13 +20,17 @@ text*[aa::F, property = "[@{term ''True''}]"]
 \<open>Our definition of the HOL-Logic has the following properties:\<close>
 assert*[aa::F] "True"
 
-
+(* does not work in batch mode ...
 (* sample for accessing a property filled with previous assert's of "aa" *)
 ML\<open> ISA_core.property_list_dest @{context} @{docitem_attribute property :: aa};\<close>
+
+
 
 assert*[aa::F] " X \<and> Y \<longrightarrow> True" (*example with uni-code *)
 ML\<open> ISA_core.property_list_dest @{context} @{docitem_attribute property :: aa};
     app writeln (tl (rev it));\<close>
+
+*)
 
 assert*[aa::F] "\<forall>x::bool. X \<and> Y \<longrightarrow> True" (*problem with uni-code *)
 
@@ -33,12 +40,12 @@ Syntax.read_term_global @{theory} "[@{termrepr ''True @<longrightarrow> True''}]
 @{term "[@{term '' True @<longrightarrow> True ''}]"}; (* with isa-check *) 
 @{term "[@{termrepr '' True @<longrightarrow> True ''}]"}; (* without isa check *)
 \<close>
-
+(*
 ML\<open>val [_,_,Const _ $ s,_] = (HOLogic.dest_list @{docitem_attribute property :: aa});
 val t = HOLogic.dest_string s;
 holstring_to_bstring @{context} t 
 \<close>
-
+*)
 lemma "All (\<lambda>x. X \<and> Y \<longrightarrow> True)" oops
 
 

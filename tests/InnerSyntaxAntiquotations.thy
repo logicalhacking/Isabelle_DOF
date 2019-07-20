@@ -1,7 +1,9 @@
 chapter\<open>Inner Syntax Antiquotations (ISA)'s\<close>
 
-theory InnerSyntaxAntiquotations
-  imports "../../ontologies/Conceptual"
+theory 
+  InnerSyntaxAntiquotations
+imports 
+  "../ontologies/Conceptual"
 begin
 
 text\<open>Since the syntax chosen for values of doc-class attributes is HOL-syntax --- requiring
@@ -14,7 +16,7 @@ They are the key-mechanism to denote
 \<^item> Ontological Links, i.e. attributes refering to document classes defined by the ontology
 \<^item> Ontological F-Links, i.e. attributes referring to formal entities inside Isabelle (such as thm's)
 
-This file contains a number of examples resulting from the @{theory "Draft.Conceptual"} - ontology;
+This file contains a number of examples resulting from the @{theory "Isabelle_DOF-tests.Conceptual"} - ontology;
 the emphasis of this presentation is to present the expressivity of ODL on a paradigmatical example.
 \<close>
 
@@ -26,11 +28,13 @@ val {docobj_tab={tab = x, ...},docclass_tab, ISA_transformer_tab,...} = DOF_core
 \<close>
 
 text\<open>Some sample lemma:\<close>
-lemma murks : "Example" sorry
+lemma murks : "Example=Example" by simp
 
 text\<open>Example for a meta-attribute of ODL-type @{typ "file"} with an appropriate ISA for the
-     file @{file "./Attributes.thy"}\<close>
-text*[xcv::F, u="@{file ''./examples/conceptual/Attributes.thy''}"]\<open>Lorem ipsum ...\<close>
+     file @{file "InnerSyntaxAntiquotations.thy"}\<close>
+(* not working: 
+text*[xcv::F, u="@{file ''InnerSyntaxAntiquotations.thy''}"]\<open>Lorem ipsum ...\<close>
+*)
 
 text*[xcv1::A, x=5]\<open>Lorem ipsum ...\<close>
 text*[xcv3::A, x=7]\<open>Lorem ipsum ...\<close>

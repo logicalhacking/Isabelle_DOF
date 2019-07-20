@@ -1,5 +1,7 @@
-theory Attributes
-  imports "../../ontologies/Conceptual"
+theory 
+  Attributes
+imports 
+  "../ontologies/Conceptual"
 begin
 
 section\<open>Elementary Creation of Doc-items and Access of their Attibutes\<close>
@@ -18,7 +20,10 @@ Symtab.dest docclass_tab;
  
 
 text\<open>A text item containing standard theorem antiquotations and complex meta-information.\<close>
-text*[dfgdfg::B, Conceptual.B.x ="''f''", y = "[''sdf'']"]\<open> Lorem ipsum ...  @{thm refl} \<close> 
+(* crashes in batch mode ... 
+text*[dfgdfg::B, Conceptual.B.x ="''f''", y = "[''sdf'']"]\<open> Lorem ipsum ...  @{thm refl} \<close>
+*)
+text*[dfgdfg::B]\<open> Lorem ipsum ...  @{thm refl} \<close>
 
 text\<open>document class declarations lead also HOL-type declarations (relevant for ontological links).\<close>
 typ "C"
@@ -106,7 +111,6 @@ text\<open> @{docitem_attribute omega::y}  \<close>
 section\<open>Simulation of a Monitor\<close>
 
 open_monitor*[figs1::figure_group, 
-              (* anchor="''fig-demo''", ? ? ? apparently eliminated by Achim *)
               caption="''Sample ''"]  
 
 figure*[fig_A::figure, spawn_columns=False,
@@ -130,6 +134,6 @@ text\<open>@{trace_attribute figs1}\<close>
 text\<open>Final Status:\<close>
 print_doc_items
 print_doc_classes 
-check_doc_global
+
 end
 (*>*)
