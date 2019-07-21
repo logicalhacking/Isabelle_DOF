@@ -6,7 +6,7 @@ begin
 (*>*)
 
 chapter*[isadof::technical,main_author="Some(@{docitem ''bu''}::author)"]
-\<open> \isadof : Syntax and Semantics of Commands\<close>
+\<open> \isadof : Syntax and Semantics\<close>
    
 text\<open> \isadof is embedded in the underlying generic
 document model of Isabelle as described in @{docitem "sec:background"}.  
@@ -16,9 +16,9 @@ the definition of new functions in an interpreter. \isadof as a system plugin is
 is a number of new command definitions in Isabelle's document model.
 
 \isadof consists consists basically of three components:
-\<^item> an own \<^emph>\<open>family of text-element\<close> such as \<open>title*\<close>, \<open>chapter*\<close>  
-  \<open>text*\<close>, etc., which can be annotated with meta-information defined in the underlying  
-  ontology definition and allow to build a \<^emph>\<open>core\<close> document,
+\<^item> an own \<^emph>\<open>family of text-element\<close> such as @{command "title*"}, @{command "chapter*"}  
+  @{command "text*"}, etc., which can be annotated with meta-information defined in the 
+  underlying  ontology definition and allow to build a \<^emph>\<open>core\<close> document,
 \<^item> the \<^emph>\<open>ontology definition\<close> which is an Isabelle theory file with definitions
   for document-classes and all auxiliary datatypes 
   (we call this the Ontology Definition Language (ODL))  
@@ -433,8 +433,9 @@ case for \inlineisar+property+).
 
 \<close>
 
-subsection*[onto_future::technical]\<open> Monitor Classes \<close>  
 (*
+subsection*[onto_future::technical]\<open> Monitor Classes \<close>  
+
 text\<open> Besides sub-typing, there is another relation between
 document classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
 which is expressed by the occurrence of a \inlineisar+where+ clause
@@ -443,7 +444,7 @@ expression (see @{example (unchecked) \<open>scholar_onto\<close>}).
 While class-extension refers to data-inheritance of attributes,
 a monitor imposes structural constraints -- the order --
 in which instances of monitored classes may occur. \<close>
-*)
+
 text\<open>
 The control of monitors is done by the commands:
 \<^item> \inlineisar+open_monitor* +  <doc-class>
@@ -457,7 +458,7 @@ classes and imposing different sets of structural constraints in a
 Classes which are neither directly nor indirectly (via inheritance) mentioned in the 
 monitor are \<^emph>\<open>independent\<close> from a monitor; instances of independent test elements 
 may occur freely. \<close>
-
+*)
 subsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
 text\<open>
 We call a document class with an accept-clause a
@@ -557,6 +558,13 @@ In a high-level syntax, this type of constraints could be expressed, \eg, by:
                   \<rightarrow> \<exists> y\<in> Range(x@establish). (y,z) \<in> x@establish
 \<forall> x \<in> introduction. finite(x@authored_by)
 \end{isar}
+@{cartouche [display=true] \<open>  
+   \<forall> x \<in> result. x@kind = proof \<leftrightarrow> x@kind \<noteq> [] 
+   \<forall> x \<in> conclusion. \<forall> y \<in> Domain(x@establish) 
+                     \<rightarrow> \<exists> y\<in> Range(x@establish). (y,z) \<in> x@establish  
+   \<forall> x \<in> introduction. finite(x@authored_by)
+\<close>}
+\fixme{experiment... }
 where \inlineisar+result+, \inlineisar+conclusion+, and
 \inlineisar+introduction+ are the set of all possible instances of
 these document classes.  All specified constraints are already checked
