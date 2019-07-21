@@ -4,9 +4,9 @@ theory IsaDofApplications
 begin
 
 open_monitor*[this::article] 
+declare[[strict_monitor_checking=false]]
 (*>*)
 
-declare[[strict_monitor_checking=false]]
 title*[tit::title]\<open>Using the Isabelle Ontology Framework\<close> 
 subtitle*[stit::subtitle]\<open>Linking the Formal with the Informal\<close>
 text*[adb:: author,
