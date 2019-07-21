@@ -13,8 +13,8 @@
 
 %% This is a placeholder for user-specific configuration and packages. 
 
-\IfFileExists{beramono.sty}{\usepackage[scaled=0.88]{beramono}}{}%
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}%
+\usepackage[scaled=0.88]{beramono}%
+\usepackage{upquote}%
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{paralist}
@@ -22,6 +22,39 @@
 \usepackage{lstisadof}
 \usepackage{xspace}
 \usepackage[draft]{fixme}
+
+\lstloadlanguages{TeX}
+
+
+\lstdefinestyle{ltx}{language=[AlLaTeX]TeX,
+  ,basicstyle=\ttfamily%
+  ,showspaces=false%
+  ,showlines=false%
+  ,columns=flexible%
+  ,morekeywords={newisadof}
+ %  ,keywordstyle=\bfseries%
+   % Defining 2-keywords
+   ,keywordstyle=[1]{\color{BrickRed!60}\bfseries}%
+   % Defining 3-keywords
+   ,keywordstyle=[2]{\color{OliveGreen!60}\bfseries}%
+   % Defining 4-keywords
+   ,keywordstyle=[3]{\color{black!60}\bfseries}%
+   % Defining 5-keywords
+   ,keywordstyle=[4]{\color{Blue!70}\bfseries}%
+   % Defining 6-keywords
+   ,keywordstyle=[5]{\itshape}%
+  % 
+}
+\lstdefinestyle{displayltx}{style=ltx,
+                basicstyle=\ttfamily\footnotesize,
+                backgroundcolor=\color{yellow!4}, frame=lines}%
+
+\lstnewenvironment{ltx}[1][]{\lstset{style=displayltx, #1}}{}
+\def\inlineltx{\lstinline[style=ltx, breaklines=true,columns=fullflexible]}
+
+
+
+
 
 \lstloadlanguages{bash}
 \lstdefinestyle{bash}{language=bash,

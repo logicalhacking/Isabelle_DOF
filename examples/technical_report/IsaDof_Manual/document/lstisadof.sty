@@ -1,4 +1,3 @@
-
 \definecolor{OliveGreen}    {cmyk}{0.64,0,0.95,0.40}
 \definecolor{BrickRed}      {cmyk}{0,0.89,0.94,0.28}
 \definecolor{Blue}          {cmyk}{1,1,0,0}
@@ -60,8 +59,8 @@
     \def\endlstdelim{\texttt{\textbf{\color{black!60}#2}}\egroup}%
     \ttfamily\textbf{\color{black!60}#1}\bgroup\rmfamily\color{#3}\aftergroup\endlstdelim%
 }
-\newcommand{\subscr}[1]{\ensuremath{_{\text{#1}}}}
-\newcommand{\supscr}[1]{\ensuremath{^{\text{#1}}}}
+\newcommand{\subscr}[1]{\ensuremath{_{\mbox{#1}}}}
+\newcommand{\supscr}[1]{\ensuremath{^{\mbox{#1}}}}
 \lstdefinestyle{ISAR}{%
   language=%
   ,basicstyle=\ttfamily%
@@ -69,54 +68,35 @@
   ,showlines=false%
   ,columns=flexible%
   ,keepspaces
-  ,mathescape=false,
   ,morecomment=[s]{(*}{*)}%
   % ,moredelim=*[s][\rmfamily]{\{*}{*\}}%
   ,moredelim = **[is][\beginlstdelim{\{*}{*\}}{black}]{\{*}{*\}}
   ,showstringspaces=false%
-  ,moredelim=*[is][\supscr]{<bsup>}{<esup>}%
-  ,moredelim=*[is][\subscr]{<bsub>}{<esub>}%
+  ,moredelim=*[is][\supscr]{\\<^bsup>}{\\<^esup>}%
   ,literate={%
     {...}{\,\ldots\,}3%
-    {<Open>}{\ensuremath{\isacartoucheopen}}1%
-    {<open>}{\ensuremath{\isacartoucheopen}}1%
-    {<@>}{@}1%
-    {"}{}0%
-    {~}{\ }1%
-    {::}{:\!:}1%
-    {<Close>}{\ensuremath{\isacartoucheclose}}1%
-    {<close>}{\ensuremath{\isacartoucheclose}}1%
+    {[*]}{\textbullet}1%
     {\\<Gamma>}{\ensuremath{\Gamma}}1%
+    {\\<theta>}{\ensuremath{\theta}}1%
     {\\<times>}{\ensuremath{\times}}1%
     {\\<equiv>}{\ensuremath{\equiv}}1%
+    {\\<sigma>}{\ensuremath{\sigma}}1%
+    {\\<geq>}{\ensuremath{\geq}}1%
+    {level0}{level\textsubscript{0}}6%
     {\\<Rightarrow>}{\ensuremath{\Rightarrow}}1%
     {\\<rightarrow>}{\ensuremath{\rightarrow}}1%
-    {\\<longrightarrow>}{\ensuremath{\rightarrow}}1%
-    {\\<and>}{\ensuremath{\land}}1%  
-    {\\<or>}{\ensuremath{\lor}}1%
-    {\\<lfloor>}{\ensuremath{\lfloor}}1%
-    {\\<rfloor>}{\ensuremath{\rfloor}}1%  
-    %{\\<lparr>}{\ensuremath{\lparr}}1% 
-    %{\\<rparr>}{\ensuremath{\rparr}}1%
-    {\\<le>}{\ensuremath{\le}}1%
-    {\\<delta>}{\ensuremath{\delta}}1%
-    {\\<lambda>}{\ensuremath{\lambda}}1%
-    {\\<bar>}{\ensuremath{\vert}}1%
-    {\<sigma>}{\ensuremath{\sigma}}1%
-    {\\<lparr>}{\ensuremath{\isasymlparr}}1%  
-    {\\<rparr>}{\ensuremath{\isasymrparr}}1% 
     {\\<leftrightarrow>}{\ensuremath{\leftrightarrow}}1%
     {\{*}{\raise.3ex\hbox{$\scriptscriptstyle\langle$}}1%
     {*\}}{\raise.3ex\hbox{$\scriptscriptstyle\rangle$}}1%
     {\\<open>}{\raise.3ex\hbox{$\scriptscriptstyle\langle$}}1%
     {\\<close>}{\raise.3ex\hbox{$\scriptscriptstyle\rangle$}}1%
     {\\<forall>}{\ensuremath{\forall}}1%
-    {\\<exists>}{\ensuremath{\exists}}1%
     {\\<in>}{\ensuremath{\in}}1%
-    {\\<delta>}{\ensuremath{\delta}}1%
-    {\\<real>}{\ensuremath{\mathbb{R}}}1%
+    {¥}{}0%
     {\\<noteq>}{\ensuremath{\neq}}1%
+    {\\<exists>}{\ensuremath{\exists}}1%
     {\\<Forall>}{\ensuremath{\bigwedge\,}}1%
+    {<string>}{<\ensuremath{\text{\textit{string}}}>}9%
     {\\<lbrakk>}{\ensuremath{\mathopen{\lbrack\mkern-3mu\lbrack}}}1%
     {\\<lbrace>}{\ensuremath{\mathopen{\lbrace\mkern-4.5mu\mid}}}1%
     {\\<rbrakk>}{\ensuremath{\mathclose{\rbrack\mkern-3mu\rbrack}}}1%
@@ -131,18 +111,18 @@
    % Defining 2-keywords
    ,keywordstyle=[2]{\color{Blue!60}\bfseries}%
    ,alsoletter={*,-}
-   ,morekeywords=[2]{case, then, show, theory, begin, end, ML,section,subsection,paragraph,chapter,text}%
+   ,morekeywords=[2]{theory, begin, end, ML,section,subsection,paragraph,chapter,text,setup}%
    %,moredelim=[s][\textit]{<}{>}
    % Defining 3-keywords
    ,keywordstyle=[3]{\color{OliveGreen!60}\bfseries}%
    ,morekeywords=[3]{doc_class,declare_reference,update_instance*,
-     open_monitor*,  close_monitor*, declare_reference*,section*,text*,title*,abstract*}%
+     open_monitor*, close_monitor*, declare_reference*,section*,subsection*,text*,title*,abstract*}%
    % Defining 4-keywords
    ,keywordstyle=[4]{\color{black!60}\bfseries}%
    ,morekeywords=[4]{where, imports, keywords}%
    % Defining 5-keywords
    ,keywordstyle=[5]{\color{BrickRed!70}\bfseries}%
-   ,morekeywords=[5]{datatype, by, fun, Definition*, definition, type_synonym, typedecl, consts, assumes, and, shows, proof, next, qed, lemma, theorem}%
+   ,morekeywords=[5]{datatype, definition, type_synonym, typedecl, consts, theorem}%
    % Defining 6-keywords
    ,keywordstyle=[6]{\itshape}%
    ,morekeywords=[6]{meta-args, ref, expr, class_id}%
@@ -150,14 +130,14 @@
 }%
 %% 
 \lstnewenvironment{isar}[1][]{\lstset{style=ISAR,
-    backgroundcolor=\color{black!2},
-    frame=lines,mathescape,
+    backgroundcolor=\color{black!4},
+    frame=lines,
     basicstyle=\footnotesize\ttfamily,#1}}{}
 %%% 
 \def\inlineisar{\lstinline[style=ISAR,breaklines=true,mathescape,breakatwhitespace=true]}
 
 \lstnewenvironment{out}[1][]{\lstset{
-    backgroundcolor=\color{green!2},
+    backgroundcolor=\color{green!4},
     frame=lines,mathescape,breakatwhitespace=true
     ,columns=flexible%
     ,basicstyle=\footnotesize\rmfamily,#1}}{}
@@ -166,17 +146,62 @@
 %%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%
 \lstloadlanguages{ML}
-\lstdefinestyle{sml}{basicstyle=\ttfamily,%
-                     commentstyle=\itshape,%
-                     keywordstyle=\bfseries\color{CornflowerBlue},%
-                     ndkeywordstyle=\color{red},%
-                     language=ML,
-                      ,keywordstyle=[6]{\itshape}%
-                      ,morekeywords=[6]{args_type}%
-                    }%
+\lstdefinestyle{sml}{%
+  basicstyle=\ttfamily%
+  ,showspaces=false%
+  ,showlines=false%
+  ,columns=flexible%
+  ,keepspaces
+  ,morecomment=[s]{(*}{*)}%
+   ,commentstyle=\itshape%
+  % ,moredelim=*[s][\rmfamily]{\{*}{*\}}%
+  ,moredelim = **[is][\beginlstdelim{\{*}{*\}}{black}]{\{*}{*\}}
+  ,showstringspaces=false%
+  ,moredelim=*[is][\supscr]{\\<^bsup>}{\\<^esup>}%
+   ,language=ML%
+  ,literate={%
+    {...}{\,\ldots\,}3%
+    {[*]}{\textbullet}1%
+    {\\<Gamma>}{\ensuremath{\Gamma}}1%
+    {\\<theta>}{\ensuremath{\theta}}1%
+    {\\<times>}{\ensuremath{\times}}1%
+    {\\<equiv>}{\ensuremath{\equiv}}1%
+    {\\<sigma>}{\ensuremath{\sigma}}1%
+    {\\<geq>}{\ensuremath{\geq}}1%
+    {level0}{level\textsubscript{0}}6%
+    {\\<Rightarrow>}{\ensuremath{\Rightarrow}}1%
+    {\\<rightarrow>}{\ensuremath{\rightarrow}}1%
+    {\\<leftrightarrow>}{\ensuremath{\leftrightarrow}}1%
+    {\{*}{\raise.3ex\hbox{$\scriptscriptstyle\langle$}}1%
+    {*\}}{\raise.3ex\hbox{$\scriptscriptstyle\rangle$}}1%
+    {\\<open>}{\raise.3ex\hbox{$\scriptscriptstyle\langle$}}1%
+    {\\<close>}{\raise.3ex\hbox{$\scriptscriptstyle\rangle$}}1%
+    {\\<forall>}{\ensuremath{\forall}}1%
+    {\\<in>}{\ensuremath{\in}}1%
+    {¥}{}0%
+    {\\<noteq>}{\ensuremath{\neq}}1%
+    {\\<exists>}{\ensuremath{\exists}}1%
+    {\\<Forall>}{\ensuremath{\bigwedge\,}}1%
+    {\\<lbrakk>}{\ensuremath{\mathopen{\lbrack\mkern-3mu\lbrack}}}1%
+    {\\<lbrace>}{\ensuremath{\mathopen{\lbrace\mkern-4.5mu\mid}}}1%
+    {\\<rbrakk>}{\ensuremath{\mathclose{\rbrack\mkern-3mu\rbrack}}}1%
+    {\\<rbrace>}{\ensuremath{\mathclose{\mid\mkern-4.5mu\rbrace}}}1%
+  }%
+  % % Defining "tags" (text-antiquotations) based on 1-keywords
+   ,tag=**[s]{@\{}{\}}%
+   ,tagstyle=\color{CornflowerBlue}%
+   ,markfirstintag=true%
+   ,keywordstyle=\bfseries%
+   %,keywords={}
+  % 
+   ,keywordstyle=\bfseries\color{CornflowerBlue}%
+   ,ndkeywordstyle=\color{red}%
+   ,keywordstyle=[6]{\itshape}%
+   ,morekeywords=[6]{args_type}%
+}%
 
 \lstnewenvironment{sml}[1][]{\lstset{style=sml,
-    backgroundcolor=\color{Blue!4},
+    backgroundcolor=\color{red!4},
     frame=lines,
     basicstyle=\footnotesize\ttfamily,#1}}{}
 %%% 
