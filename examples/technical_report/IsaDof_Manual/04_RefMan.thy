@@ -565,8 +565,10 @@ In a high-level syntax, this type of constraints could be expressed, \eg, by:
 (* 3 *)     \<forall> x \<in> introduction. finite(x@authored_by)
 \<close>}
 \fixme{experiment... }
-where \inlineisar+result+, \inlineisar+conclusion+, and
-\inlineisar+introduction+ are the set of all possible instances of
+%% where \inlineisar+result+, \inlineisar+conclusion+, and
+%% 
+where \<open>result\<close>, \<open>conclusion\<close>, and
+\<open>introduction\<close> are the set of all possible instances of
 these document classes.  All specified constraints are already checked
 in the IDE of \dof while editing; it is however possible to delay a
 final error message till the closing of a monitor (see next
