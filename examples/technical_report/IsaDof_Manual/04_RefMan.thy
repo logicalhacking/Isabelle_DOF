@@ -559,10 +559,10 @@ In a high-level syntax, this type of constraints could be expressed, \eg, by:
 \<forall> x \<in> introduction. finite(x@authored_by)
 \end{isar}
 @{cartouche [display=true] \<open>  
-   \<forall> x \<in> result. x@kind = proof \<leftrightarrow> x@kind \<noteq> [] 
-   \<forall> x \<in> conclusion. \<forall> y \<in> Domain(x@establish) 
-                     \<rightarrow> \<exists> y\<in> Range(x@establish). (y,z) \<in> x@establish  
-   \<forall> x \<in> introduction. finite(x@authored_by)
+(* 1 *)     \<forall> x \<in> result. x@kind = proof \<leftrightarrow> x@kind \<noteq> [] 
+(* 2 *)     \<forall> x \<in> conclusion. \<forall> y \<in> Domain(x@establish) 
+                         \<rightarrow> \<exists> y\<in> Range(x@establish). (y,z) \<in> x@establish  
+(* 3 *)     \<forall> x \<in> introduction. finite(x@authored_by)
 \<close>}
 \fixme{experiment... }
 where \inlineisar+result+, \inlineisar+conclusion+, and
