@@ -156,10 +156,5 @@ setup\<open> let val cidS = ["small_math.introduction","small_math.technical", "
                                        true)
        in  DOF_core.update_class_invariant "small_math.article" body end\<close>
 
-
-
-gen_sty_template
-
-
 end
 

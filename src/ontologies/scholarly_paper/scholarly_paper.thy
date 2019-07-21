@@ -185,9 +185,5 @@ fun check_group a = map (check_group_elem (check_level_hd (hd a))) (tl a) ;
 *)
 \<close>
 
-
-gen_sty_template
-
-
 end
 
