@@ -555,7 +555,7 @@ In a high-level syntax, this type of constraints could be expressed, \eg, by:
 \begin{isar}
 \<forall> x \<in> result. x@kind = proof \<leftrightarrow> x@kind \<noteq> []
 \<forall> x \<in> conclusion. \<forall> y \<in> Domain(x@establish)
-                  \<rightarrow> \<exists> y\<in> Range(x@establish). (y,z) \<in> x@establish
+                  \<rightarrow> \<exists> y \<in> Range(x@establish). (y,z) \<in> x@establish
 \<forall> x \<in> introduction. finite(x@authored_by)
 \end{isar}
 @{cartouche [display=true] \<open>  
@@ -573,7 +573,8 @@ these document classes.  All specified constraints are already checked
 in the IDE of \dof while editing; it is however possible to delay a
 final error message till the closing of a monitor (see next
 section). The third constraint enforces that the
-user sets the \inlineisar+authored_by+ set, otherwise an error will be
+user sets the \<open>authored_by\<close> set, otherwise an error will be
+%%user sets the \inlineisar+authored_by+ set, otherwise an error will be
 reported.
 \<close>
 
