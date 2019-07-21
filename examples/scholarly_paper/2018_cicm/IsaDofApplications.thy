@@ -4,9 +4,9 @@ theory IsaDofApplications
 begin
 
 open_monitor*[this::article] 
+declare[[strict_monitor_checking=false]]
 (*>*)
 
-declare[[strict_monitor_checking=false]]
 title*[tit::title]\<open>Using the Isabelle Ontology Framework\<close> 
 subtitle*[stit::subtitle]\<open>Linking the Formal with the Informal\<close>
 text*[adb:: author,
@@ -389,7 +389,7 @@ text\<open> The document class \inlineisar+figure+ --- supported by the \isadof 
 such as @{docitem_ref \<open>fig_figures\<close>}.
 \<close>
          
-subsection*[mathex_onto::example]\<open> The Math-Exam Scenario \<close> 
+subsection*[math_exam::example]\<open> The Math-Exam Scenario \<close> 
 text\<open> The Math-Exam Scenario is an application with mixed formal and 
 semi-formal content. It addresses applications where the author of the exam is not present 
 during the exam and the preparation requires a very rigorous process, as the french 
@@ -729,7 +729,7 @@ text\<open> \isadof in its present form has a number of technical short-comings 
 paragraph\<open> Availability. \<close> 
 text\<open> The implementation of the framework, the discussed ontology definitions, 
         and examples  are available at 
-        \url{https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF/}.\<close>
+        \url{https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/}.\<close>
 paragraph\<open> Acknowledgement. \<close> 
 text\<open> This work was partly supported by  the framework of IRT SystemX, Paris-Saclay, France, 
 and therefore granted with public funds within the scope of the Program ``Investissements d’Avenir''.\<close>

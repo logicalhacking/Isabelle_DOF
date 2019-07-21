@@ -1,0 +1,16 @@
+session "Isabelle_DOF" = "Functional-Automata" + 
+  options [document = pdf, document_output = "output"]
+  sessions
+    "Regular-Sets"
+  theories
+    "DOF/Isa_DOF"
+    "ontologies/ontologies"
+
+session "Isabelle_DOF-tests" = "Isabelle_DOF" + 
+  options [document = false]
+  theories
+    "tests/AssnsLemmaThmEtc" 
+    "tests/Concept_ExampleInvariant"
+    "tests/Concept_Example"
+    "tests/InnerSyntaxAntiquotations"
+    "tests/Attributes"
