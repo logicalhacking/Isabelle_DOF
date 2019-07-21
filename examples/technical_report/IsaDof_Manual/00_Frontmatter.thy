@@ -9,19 +9,14 @@ open_monitor*[this::report]
 
 title*[tit::title]\<open>The Isabelle/DOF User and Implementation Manual\<close> 
 text*[adb:: author,
-      email="''a.brucker@sheffield.ac.uk''",
-      orcid="''0000-0002-6355-1200''",
-      affiliation="''The University of Sheffield, Sheffield, UK''"]\<open>Achim D. Brucker\<close>
-text*[idir::author,
-      email       = "''idir.aitsadoune@centralesupelec.fr''",
-      affiliation = "''CentraleSupelec, Paris, France''"]\<open>Idir Ait-Sadoune\<close>
-text*[paolo::author,
-      email      = "''paolo.crisafulli@irt-systemx.fr''",
-      affiliation= "''IRT-SystemX, Paris, France''"]\<open>Paolo Crisafulli\<close>
+      email="\<open>a.brucker@exeter.ac.uk\<close>",
+      orcid="\<open>0000-0002-6355-1200\<close>",
+      http_site="\<open>https://www.brucker.ch/\<close>",
+      affiliation="\<open>University of Exeter, Exeter, UK\<close>"]\<open>Achim D. Brucker\<close>
 text*[bu::author,
-      email       = "''wolff@lri.fr''",
-      affiliation = "''Universit\\'e Paris-Sud, Paris, France''"]\<open>Burkhart Wolff\<close>
-    
+      email       = "\<open>wolff@lri.fr\<close>",
+      affiliation = "\<open>Université Paris-Saclay, LRI, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
+ 
 
 text*[abs::abstract,
       keywordlist="[''Ontology'',''Ontological Modeling'',''Isabelle/DOF'']"]\<open>
