@@ -29,7 +29,7 @@ and code generation.
 Up to now, Isabelle's document preparation system lacks a mechanism
 for ensuring the structure of different document types (as, e.g.,
 required in certification processes) in general and, in particular,
-mechanism for linking informal and formal parts of a document. 
+a \<^emph>\<open>systematic\<close> mechanism for linking informal and formal parts of a document. 
 
 In this paper, we present \isadof, a novel Document Ontology Framework 
 on top of Isabelle. \isadof allows for conventional typesetting
