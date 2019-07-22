@@ -45,7 +45,7 @@ text\<open> While Isabelle @{cite "DBLP:books/sp/NipkowPW02"} is mostly known as
   spectrum of applications. A particular strength of the Isabelle framework is the combination 
   of text editing, formal verification, and code generation. This is a programming-tutorial of 
   Isabelle and Isabelle/HOL, a complementary text to the unfortunately somewhat outdated 
-  "The Isabelle Cookbook" in \url{https://nms.kcl.ac.uk/christian.urban/Cookbook/}. The reader 
+  "The Isabelle Cookbook" in \<^url>\<open>https://nms.kcl.ac.uk/christian.urban/Cookbook/\<close>. The reader 
   is encouraged not only to consider the generated .pdf, but also consult the loadable version 
   in Isabelle/jedit in order to make experiments on the running code. This text is written 
   itself in Isabelle/Isar using a specific document ontology for technical reports. It is 
@@ -554,7 +554,41 @@ text\<open> Type inference eliminates also joker-types such as @{ML dummyT} and 
        it produces a certifiable term. \<close>  
 ML\<open>  Type_Infer_Context.infer_types: Proof.context -> term list -> term list \<close>
 
-  
+subsection*[t237::technical]\<open>Constructing Terms without Type-Inference\<close>
+text\<open>Using @{ML "Type_Infer_Context.infer_types"} is not quite unproblematic: since the type
+inference can construct types for largely underspecified terms, it may happen that under 
+some circumstances, tactics and proof-attempts fail since just some internal term representation
+was too general. A more defensive strategy is already sketched --- but neither explicitely 
+mentioned nor worked out in the interface in @{ML_structure HOLogic}. The idea is to have
+advanced term constructors that construct the right term from the leaves, which were by convention
+fully type-annotated (so: this does not work for terms with dangling @(ML Bound)'s).
+
+Operations like  @{ML "HOLogic.mk_prod"} or @{ML "HOLogic.mk_fst"}  or  @{ML "HOLogic.mk_eq"} do
+exactly this by using an internal pure bottom-up type-inference  @{ML "fastype_of"}.
+The following routines are written in the same style complement the existing API
+@{ML_structure HOLogic}.
+\<close>
+
+ML\<open>
+fun mk_None ty = let val none = \<^const_name>\<open>Option.option.None\<close>
+                     val none_ty = ty --> Type(\<^type_name>\<open>option\<close>,[ty])
+                in  Const(none, none_ty)
+                end;
+fun mk_Some t = let val some = \<^const_name>\<open>Option.option.Some\<close> 
+                    val ty = fastype_of t
+                    val some_ty = ty --> Type(\<^type_name>\<open>option\<close>,[ty])
+                in  Const(some, some_ty) $  t
+                end;
+
+fun  mk_undefined (@{typ "unit"}) = Const (\<^const_name>\<open>Product_Type.Unity\<close>, \<^typ>\<open>unit\<close>)
+    |mk_undefined t               = Const (\<^const_name>\<open>HOL.undefined\<close>, t)
+
+fun meta_eq_const T = Const (\<^const_name>\<open>Pure.eq\<close>, T --> T --> propT);
+
+fun mk_meta_eq (t, u) = meta_eq_const (fastype_of t) $ t $ u;
+
+\<close>
+
 subsection*[t233::technical]\<open> Theories and the Signature API\<close>  
 ML\<open>
 Sign.tsig_of : theory -> Type.tsig;
@@ -713,6 +747,79 @@ Theory.at_end: (theory -> theory option) -> theory -> theory;
 Theory.begin_theory: string * Position.T -> theory list -> theory;
 Theory.end_theory: theory -> theory;\<close>
 
+section*[t26::technical]\<open>Advanced Specification Constructs\<close>
+text\<open>Isabelle is built around the idea that system components were built on top
+of the kernel in order to give the user high-level specification constructs 
+--- rather than inside as in the Coq kernel that foresees, for example, data-types
+and primitive recursors already in the basic $\lambda$-term language.
+Therefore, records, definitions, type-definitions, recursive function definitions
+are supported by packages that belong to the \<^emph>\<open>components\<close> strata. 
+With the exception of the @{ML "Specification.axiomatization"} construct, they
+are all-together built as composition of conservative extensions.
+
+The components are a bit scattered in the architecture. A relatively recent and
+high-level component (more low-level components such as @{ML "Global_Theory.add_defs"}
+exist) for definitions and axiomatizations is here:
+\<close>
+
+
+ML\<open>
+local open Specification
+  val _= definition: (binding * typ option * mixfix) option ->
+        (binding * typ option * mixfix) list -> term list -> Attrib.binding * term ->
+        local_theory -> (term * (string * thm)) * local_theory
+  val _= definition': (binding * typ option * mixfix) option ->
+        (binding * typ option * mixfix) list ->  term list -> Attrib.binding * term ->
+        bool -> local_theory -> (term * (string * thm)) * local_theory
+  val _= definition_cmd: (binding * string option * mixfix) option ->
+        (binding * string option * mixfix) list -> string list -> Attrib.binding * string ->
+         bool -> local_theory -> (term * (string * thm)) * local_theory
+  val _= axiomatization: (binding * typ option * mixfix) list ->
+        (binding * typ option * mixfix) list -> term list ->
+        (Attrib.binding * term) list -> theory -> (term list * thm list) * theory
+  val _= axiomatization_cmd: (binding * string option * mixfix) list ->
+        (binding * string option * mixfix) list -> string list ->
+        (Attrib.binding * string) list -> theory -> (term list * thm list) * theory
+  val _= axiom: Attrib.binding * term -> theory -> thm * theory
+  val _= abbreviation: Syntax.mode -> (binding * typ option * mixfix) option ->
+        (binding * typ option * mixfix) list -> term -> bool -> local_theory -> local_theory
+  val _= abbreviation_cmd: Syntax.mode -> (binding * string option * mixfix) option ->
+        (binding * string option * mixfix) list -> string -> bool -> local_theory -> local_theory
+in val _ = () end
+\<close>
+
+text\<open>Note that the interface is mostly based on @{ML_type "local_theory"}, which is a synonym to
+@{ML_type "Proof.context"}. Need to lift this to a global system transition ?
+Don't worry, @{ML "Named_Target.theory_map: (local_theory -> local_theory) -> theory -> theory"} 
+does the trick.
+\<close>
+
+subsection*[t261::example]\<open>Example\<close>
+
+text\<open>Suppose that we want do  \<open>definition I :: "'a \<Rightarrow> 'a" where "I x = x"\<close> at the ML-level.
+We construct our defining equation and embed it as a @{typ "prop"} into Pure.
+\<close>
+ML\<open> val ty = @{typ "'a"}
+    val term = HOLogic.mk_eq (Free("I",ty -->ty) $ Free("x", ty), Free("x", ty));
+    val term_prop = HOLogic.mk_Trueprop term\<close>
+text\<open>Recall the notes on defensive term construction wrt. typing in @{docitem "t237"}.
+Then the trick is done by:\<close>
+
+setup\<open>
+let
+fun mk_def name p  = 
+    let val nameb =  Binding.make(name,p)
+        val ty_global = ty -->ty
+        val args = (((SOME(nameb,SOME ty_global,NoSyn),(Binding.empty_atts,term_prop)),[]),[])
+        val cmd = (fn (((decl, spec), prems), params) =>
+                        #2 oo Specification.definition' decl params prems spec)
+    in cmd args true
+    end;
+in  Named_Target.theory_map (mk_def "I" @{here} )
+end\<close>
+
+thm I_def
+text\<open>Voilà.\<close>
 
 section*[t24::technical]\<open>Backward Proofs: Tactics, Tacticals and Goal-States\<close>
 
