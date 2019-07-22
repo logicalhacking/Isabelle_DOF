@@ -1,5 +1,5 @@
 (*<*)
-theory IsaDofManual
+theory "Isabelle_DOF-Manual"
   imports "06_Conclusion"
 begin
 (*<*) 
