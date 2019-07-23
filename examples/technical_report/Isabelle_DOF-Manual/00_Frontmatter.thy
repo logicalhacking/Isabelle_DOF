@@ -7,7 +7,8 @@ open_monitor*[this::report]
 
 (*>*)
 
-title*[tit::title]\<open>The Isabelle/DOF User and Implementation Manual\<close> 
+title*[title::title]\<open>Isabelle/DOF\<close> 
+subtitle*[subtitle::subtitle]\<open>User and Implementation Manual\<close> 
 text*[adb:: author,
       email="\<open>a.brucker@exeter.ac.uk\<close>",
       orcid="\<open>0000-0002-6355-1200\<close>",
