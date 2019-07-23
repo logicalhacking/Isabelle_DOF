@@ -809,7 +809,7 @@ setup\<open>
 let
 fun mk_def name p  = 
     let val nameb =  Binding.make(name,p)
-        val ty_global = ty -->ty
+        val ty_global = ty --> ty
         val args = (((SOME(nameb,SOME ty_global,NoSyn),(Binding.empty_atts,term_prop)),[]),[])
         val cmd = (fn (((decl, spec), prems), params) =>
                         #2 oo Specification.definition' decl params prems spec)

@@ -71,14 +71,15 @@ Conceptually, ontologies specified in ODL consist of:
 \<^item> \<^emph>\<open>document classes\<close> (syntactically marked by the
   \inlineisar{doc_class} keyword) that describe concepts;
 \<^item> an optional document base class expressing single inheritance
-  extensions;
+  class extensions;
 \<^item> \<^emph>\<open>attributes\<close> specific to document classes, where
   
-  \<^item> attributes are typed;
+  \<^item> attributes are HOL-typed;
   \<^item> attributes of instances of document elements are mutable;
   \<^item> attributes can refer to other document classes, thus, document
     classes must also be HOL-types (such attributes are called
     \<^emph>\<open>links\<close>);
+  \<^item> attribute values were denoted by HOL-terms;
 \<^item> a special link, the reference to a super-class, establishes an
   \<^emph>\<open>is-a\<close> relation between classes;
 \<^item> classes may refer to other classes via a regular expression in a
@@ -131,10 +132,320 @@ themselves in a HOL-types in order to allow \<^emph>\<open>links\<close> to and
 between ontological concepts.
 \<close>
 
+
+
+section*["odl-manual"::technical]\<open>The ODL Manual\<close>
+subsection*["odl-manual0"::technical]\<open>Some Isabelle/HOL Specification Constructs Revisited\<close>
+text\<open>The \isadof ontology definition language (ODL) is an extension of Isabelle/HOL;
+document class definitions can therefore be arbitrarily mixed with standard HOL
+specification constructs. In order to spare the user of ODL a lenghty analysis of
+@{cite "isaisarrefman19" and "datarefman19" and "functions19"}, we  present 
+syntax and semantics of the specification constructs that are most likely relevant for
+the developer of ontologies. Note that our presentation is actually a simplification
+of the original sources following the needs of our target audience here; for a full-
+blown account, the reader is referred to the original descriptions.\<close>
+
 text\<open>
+\<^item> \<open>name\<close> : 
+     with the syntactic category of \<open>name\<close>'s we refer to alpha-numerical identifiers 
+     (called \<open>short_id\<close>'s in @{cite "isaisarrefman19"}) and identifiers
+     in \inlineisar+" ... "+ which might additionally contain certian ``quasi-letters'' such 
+     as \inlineisar+_+, \inlineisar+-+, \inlineisar+.+, etc. Details in @{cite "isaisarrefman19"}.
+\<^item> \<open>tyargs\<close> : 
+     \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
+     \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (c.f. @{cite "isaisarrefman19"})
+\<^item> \<open>dt_name\<close> :
+     \<^rail>\<open>  (tyargs?) name (mixfix?)\<close>   
+     The syntactic entity \<open>name\<close> denotes an identifier, \<open>mixfix\<close> denotes the usual 
+     parenthesized mixfix notation (see @{cite "isaisarrefman19"}).
+     The \<open>name\<close>'s referred here are type names such as \<^verbatim>\<open>int\<close>, \<^verbatim>\<open>string\<close>, \<^verbatim>\<open>list\<close>, \<^verbatim>\<open>set\<close>, etc. 
+\<^item> \<open>type_spec\<close> :
+     \<^rail>\<open>  (tyargs?) name\<close>
+     The \<open>name\<close>'s referred here are type names such as \<^verbatim>\<open>int\<close>, \<^verbatim>\<open>string\<close>, \<^verbatim>\<open>list\<close>, \<^verbatim>\<open>set\<close>, etc. 
+\<^item> \<open>type\<close> :
+     \<^rail>\<open>  (( '(' ( type * ',')  ')' )? name) | typefree \<close>     
+\<^item> \<open>dt_ctor\<close> :
+     \<^rail>\<open> name (type*) (mixfix?)\<close>
+\<^item> \<open>datatype_specification\<close> :
+     \<^rail>\<open> @@{command "datatype"} dt_name '=' (dt_ctor * '|' )\<close>
+\<^item> \<open>type_synonym_specification\<close> :
+     \<^rail>\<open> @@{command "type_synonym"} type_spec '=' type\<close>
+\<^item> \<open>constant_definition\<close> :
+     \<^rail>\<open> @@{command "definition"} name '::' type 'where' '"' name '=' expr '"'\<close>
+\<^item> \<open>expr\<close> :
+
+     the syntactic category \<open>expr\<close> here denotes the very rich ``inner-syntax'' language of 
+     mathematical  notations for $\lambda$-terms in Isabelle/HOL. Example expressions are:
+     \inlineisar|1+2| (arithmetics), \inlineisar|[1,2,3]| (lists), \inlineisar|''ab c''| (strings), 
+     \inlineisar|{1,2,3}| (sets), \inlineisar|(1,2,3)| (tuples), 
+     \inlineisar|\<forall> x. P(x) \<and> Q x = C| (formulas), etc. 
+     For a comprehensive overview, consult the summary ``What's in Main'' 
+     @{cite "nipkowMain19"}.
+\<close>
+
+text\<open>Other specification constructs, which are potentially relevant for an (advanced) ontology
+developer, might be recursive function definitions with pattern-matching @{cite "functions19"}, 
+extensible record specifications, @{cite "isaisarrefman19"} and abstract type declarations.\<close>
+
+
+subsection*["odl-manual1"::technical]\<open>The Command Syntax for Document Class Specifications\<close>
+text\<open>
+\<^item> \<open>class_id\<close> : \<open>class_id\<close>'s are type-\<open>name\<close>'s that have been introduced via
+  a \<open>doc_class_specification\<close>.
+\<^item> \<open>doc_class_specification\<close> : 
+     \<^rail>\<open> @@{command "doc_class"} class_id '=' (class_id '+')? (attribute_decl+) \<newline>
+           (accepts_clause rejects_clause?)?\<close>
+     document classes whose specification contains an \<open>accepts_clause\<close> are called 
+     \<^emph>\<open>monitor classes\<close> or \<^emph>\<open>monitors\<close> for short. 
+\<^item> \<open>attribute_decl\<close> :
+     \<^rail>\<open> name '::' '"' type '"' default_clause? \<close>
+\<^item> \<open>accepts_clause\<close> :
+     \<^rail>\<open> 'accepts' '"' regexpr '"'\<close>
+\<^item> \<open>rejects_clause\<close> :
+     \<^rail>\<open> 'rejects' (class_id * ',') \<close>
+\<^item> \<open>default_clause\<close> :
+     \<^rail>\<open> '<=' '"' expr '"' \<close>
+\<^item> \<open>regexpr\<close> :
+     \<^rail>\<open> '\<lfloor>' class_id '\<rfloor>' | '(' regexpr ')' | (regexpr '||' regexpr) | (regexpr '~~' regexpr)
+            | ('\<lbrace>' regexpr '\<rbrace>') | ( '\<lbrace>' regexpr '\<rbrace>\<^sup>*')  \<close>
+     regular expressions describe sequences of \<open>class_id\<close>s (and indirect sequences of document
+     items corresponding to the \<open>class_id\<close>s). The constructors for alternative, sequence, 
+     repetitions and non-empty sequence follow in the top-down order of the above diagram. 
+\<close> 
+
+
+subsection*["odl-design"::example]\<open>An Ontology Example\<close>
+
+text\<open>We illustrate the design of \dof by modeling a small ontology
+  that can be used for writing formal specifications that, \eg, could
+  build the basis for an ontology for certification documents used in
+  processes such as Common Criteria~@{cite "cc:cc-part3:2006"} or CENELEC
+  50128~@{cite "bsi:50128:2014"}.@{footnote \<open>The \isadof distribution
+    contains an ontology for writing documents for a certification
+    according to CENELEC 50128.\<close>} Moreover, in examples of certification
+  documents, we refer to a controller of a steam boiler that is
+  inspired by the famous steam boiler formalization
+  challenge~@{cite "abrial:steam-boiler:1996"}.\<close>
+
+text\<open>
+\begin{isar}[float,mathescape,label={lst:doc},caption={An example ontology modeling
+simple certification documents, including scientific papers such
+as~@{cite "brucker.ea:isabelle-ontologies:2018"}; also recall
+\autoref{fig:dof-ide}.}]
+doc_class title  = short_title :: "string option" <= "None"
+doc_class author = email      :: "string" <= "''''"
+
+datatype classification = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
+    
+doc_class abstract =
+    keywordlist :: "string list"      <= []
+    safety_level :: "classification"  <= "SIL3" 
+doc_class text_section = 
+    authored_by :: "author set"       <= "{}"
+    level       :: "int  option"      <= "None"   
+
+type_synonym notion = string
+
+doc_class introduction = text_section +
+    authored_by :: "author set"       <= "UNIV"
+    uses :: "notion set"
+doc_class claim = introduction +
+    based_on :: "notion list"
+doc_class technical = text_section +
+    formal_results  :: "thm list"
+doc_class "d$$efinition" = technical +
+    is_formal :: "bool"
+    property  :: "term list"          <= "[]"
+
+datatype kind = expert_opinion | argument | proof
+
+doc_class result = technical +
+    evidence  :: kind 
+    property  :: "thm list"           <= "[]"
+doc_class example = technical +
+    referring_to :: "(notion + d$$efinition) set" <=  "{}"
+doc_class "conclusion" = text_section +
+    establish   :: "(claim \<times> result) set"
+\end{isar}%$
+
+\<close>
+text\<open>
+  \autoref{lst:doc} shows an example ontology for mathematical papers
+  (an extended version of this ontology was used for writing
+  @{cite "brucker.ea:isabelle-ontologies:2018"}, also recall
+  \autoref{fig:dof-ide}). The commands \inlineisar+datatype+ (modeling
+  fixed enumerations) and \inlineisar+type_synonym+ (defining type
+  synonyms) are standard mechanisms in HOL systems.  Since ODL is an
+  add-on, we have to quote sometimes constant symbols (\eg,
+  \inlineisar+"proof"+) to avoid confusion with predefined keywords. ODL
+  admits overriding (such as \inlineisar+authored_by+ in the document
+  class \inlineisar+introduction+), where it is set to another library
+  constant, but no overloading. All \inlineisar+text_section+ elements
+  have an optional \inlineisar+level+ attribute, which will be used in
+  the output generation for the decision if the context is a section
+  header and its level (\eg, chapter, section, subsection). While
+  \<open>within\<close> an inheritance hierarchy overloading is prohibited,
+  attributes may be re-declared freely in independent parts (as is the
+  case for \inlineisar+property+).\<close>
+
+subsection*["sec:advanced"::technical]\<open>Advanced ODL Concepts\<close>
+subsubsection\<open>Meta-types as Types\<close>
+
+text\<open>To express the dependencies between text elements to the formal
+  entities, \eg, \inlinesml+term+ ($\lambda$-term), \inlinesml+typ+, or
+  \inlinesml+thm+, we represent the types of the implementation language
+  \<^emph>\<open>inside\<close> the HOL type system.  We do, however, not reflect the data of
+  these types. They are just declared abstract types, 
+  ``inhabited'' by special constant symbols carrying strings, for
+  example of the format \inlineisar+<AT>{thm <string>}+. When HOL
+  expressions were used to denote values of \inlineisar+doc_class+
+  instance attributes, this requires additional checks after
+  conventional type-checking that this string represents actually a
+  defined entity in the context of the system state
+  \inlineisar+\<theta>+.  For example, the \inlineisar+establish+
+  attribute in the previous section is the power of the ODL: here, we model
+  a relation between \<^emph>\<open>claims\<close> and \<^emph>\<open>results\<close> which may be a
+  formal, machine-check theorem of type \inlinesml+thm+ denoted by, for
+  example: \inlineisar+property = "[<AT>{thm ''system_is_safe''}]"+ in a
+  system context \inlineisar+\<theta>+ where this theorem is
+  established. Similarly, attribute values like 
+  \inlineisar+property = "<AT>{term \<Open>A \<leftrightarrow> B\<Close>}"+
+  require that the HOL-string \inlineisar+A \<leftrightarrow> B+ is 
+  again type-checked and represents indeed a formula in $\theta$. Another instance of 
+  this process, which we call \<open>second-level type-checking\<close>, are term-constants
+  generated from the ontology such as 
+  \inlineisar+<AT>{definition <string>}+. For the latter, the argument string
+  must be checked that it  represents a reference to a text-element
+  having the type \inlineisar+definition+ according to the ontology in @{example "odl-design"}.\<close>
+
+
+subsubsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
+text\<open>We call a document class with an accept-clause a
+  \<^emph>\<open>monitor\<close>.  Syntactically, an accept-clause contains a regular
+  expression over class identifiers. We can extend our
+  \inlineisar+tiny_cert+ ontology with the following example:
+  \begin{isar}
+  doc_class article = 
+      style_id :: string   <= "''CENELEC50128''"
+      accepts "(title ~~ \<lbrace>author\<rbrace>\<bsup>+\<esup> ~~ abstract ~~ \<lbrace>introduction\<rbrace>\<bsup>+\<esup>  ~~
+               \<lbrace>technical || example\<rbrace>\<bsup>+\<esup> ~~ \<lbrace>conclusion\<rbrace>\<bsup>+\<esup>)"
+  \end{isar}
+  Semantically, monitors introduce a behavioral element into ODL: 
+  \begin{isar}
+  open_monitor*[this::article]  (* begin of scope of monitor "this" *)
+    ...
+  close_monitor*[this]          (* end of scope of monitor "this"   *)
+  \end{isar}
+  Inside the scope of a monitor, all instances of classes mentioned in its accept-clause (the
+  \<^emph>\<open>accept-set\<close>) have to appear in the order specified by the
+  regular expression; instances not covered by an accept-set may freely
+  occur. Monitors may additionally contain a reject-clause with a list
+  of class-ids (the reject-list). This allows specifying ranges of
+  admissible instances along the class hierarchy:
+  \begin{compactitem}
+  \item a superclass in the reject-list and a subclass in the
+    accept-expression forbids instances superior to the subclass, and
+  \item a subclass $S$ in the reject-list and a superclass $T$ in the
+    accept-list allows instances of superclasses of $T$ to occur freely,
+    instances of $T$ to occur in the specified order and forbids
+    instances of $S$.
+  \end{compactitem}
+  Monitored document sections can be nested and overlap; thus, it is
+  possible to combine the effect of different monitors. For example, it
+  would be possible to refine the \inlineisar+example+ section by its own
+  monitor and enforce a particular structure in the presentation of
+  examples.
+  
+  Monitors manage an implicit attribute \inlineisar+trace+ containing
+  the list of ``observed'' text element instances belonging to the
+  accept-set. Together with the concept of ODL class invariants, it is
+  possible to specify properties of a sequence of instances occurring in
+  the document section. For example, it is possible to express that in
+  the sub-list of \inlineisar+introduction+-elements, the first has an
+  \inlineisar+introduction+ element with a \inlineisar+level+ strictly
+  smaller than the others. Thus, an introduction is forced to have a
+  header delimiting the borders of its representation. Class invariants
+  on monitors allow for specifying structural properties on document
+  sections.\<close>
+
+
+subsubsection*["sec:class_inv"::technical]\<open>ODL Class Invariants\<close>
+text\<open>
+Ontological classes as described so far are too liberal in many
+situations. For example, one would like to express that any instance
+of a \inlineisar+result+ class finally has a non-empty property list,
+if its \inlineisar+kind+ is \inlineisar+proof+, or that the
+\inlineisar+establish+ relation between \inlineisar+claim+ and
+\inlineisar+result+ is surjective.
+
+In a high-level syntax, this type of constraints could be expressed, \eg, by:
+\begin{isar}
+(* 1 *) \<forall> x \<in> result. x@kind = proof \<leftrightarrow> x@kind \<noteq> []
+(* 2 *) \<forall> x \<in> conclusion. \<forall> y \<in> Domain(x@establish)
+                  \<rightarrow> \<exists> y \<in> Range(x@establish). (y,z) \<in> x@establish
+(* 3 *) \<forall> x \<in> introduction. finite(x@authored_by)
+\end{isar}
+%% @{cartouche [display=true] \<open>  
+%%(* 1 *)     \<forall> x \<in> result. x@kind = proof \<leftrightarrow> x@kind \<noteq> [] 
+%%(* 2 *)     \<forall> x \<in> conclusion. \<forall> y \<in> Domain(x@establish) 
+%%                        \<rightarrow> \<exists> y\<in> Range(x@establish). (y,z) \<in> x@establish  
+%%(* 3 *)     \<forall> x \<in> introduction. finite(x@authored_by)
+%%\<close>}
+%% \fixme{experiment... }
+where \inlineisar+result+, \inlineisar+conclusion+, and
+%%  where \<open>result\<close>, \<open>conclusion\<close>, and
+\inlineisar+introduction+ are the set of all possible instances of
+these document classes.  All specified constraints are already checked
+in the IDE of \dof while editing; it is however possible to delay a
+final error message till the closing of a monitor (see next
+section). The third constraint enforces that the
+%% user sets the \<open>authored_by\<close> set, otherwise an error will be
+user sets the \inlineisar+authored_by+ set, otherwise an error will be
+reported.
+\<close>
+text\<open>
+For the moment, there is no high-level syntax for the definition of
+class invariants. A formulation, in SML, of the first class-invariant
+in \autoref{sec:class_inv} is straight-forward:
+\begin{sml}
+fun check_result_inv oid {is_monitor:bool} ctxt =
+  let val kind = compute_attr_access ctxt "kind" oid <AT>{here} <AT>{here}
+      val prop = compute_attr_access ctxt "property" oid <AT>{here} <AT>{here}
+      val tS = HOLogic.dest_list prop
+  in  case kind_term of
+       <AT>{term "proof"} => if not(null tS) then true
+                          else error("class result invariant violation")
+      | _ => false
+  end
+ val _ = Theory.setup (DOF_core.update_class_invariant
+                                "tiny_cert.result" check_result_inv)
+\end{sml}
+The \inlinesml{setup}-command (last line) registers the
+\inlineisar+check_result_inv+ function into the \isadof kernel, which
+activates any creation or modification of an instance of
+\inlineisar+result+.  We cannot replace \inlineisar+compute_attr_access+
+by the corresponding antiquotation
+\inlineisar+<AT>{docitem_value kind::oid}+, since \inlineisar+oid+ is
+bound to a variable here and can therefore not be statically expanded.
+
+Isabelle's code generator can in principle generate class invariant code
+from a high-level syntax. Since class-invariant checking can result in an
+efficiency problem ---they are checked on any edit--- and since invariant
+programming involves a deeper understanding of ontology modeling and the
+\isadof implementation, we backed off from using this technique so far.
 
 \<close>
 
+section*["core-manual"::technical]\<open>Annotatable Text-Elements for Core-Documents\<close>
+text\<open>In general, all standard text-elements from the Isabelle document model such
+as @{command "chapter"}, @{command "section"}, @{command "text"}, have in the \isadof
+implementation their counterparts in the family of text-elements that are "ontology-aware",
+\ie they dispose on a meta-argument list that allows to define that a test-element
+\<^enum> has an identity as a text-object labelled as \<open>obj_id\<close>
+\<^enum> belongs to a document class \<open>class_id\<close> that has been defined earlier
+\<^enum> has its class-attributes set with particular values
+  (which are denotable in Isabelle/HOL mathematical term syntax)
+\<close>
 
 subsection\<open>Annotating with Ontology Meta-Data: Outer Syntax\<close>
 text\<open>\dof introduces its own family of text-commands, which allows 
@@ -239,9 +550,9 @@ referencing it, although the actual text-element will occur later in
 the document.
 \<close>
 
-text \<open>
-\subsection{Editing Documents with Ontology Meta-Data: Inner Syntax}
-We continue our running example as follows:
+
+subsection\<open>Editing Documents with Ontology Meta-Data: Inner Syntax\<close>
+text\<open>We continue our running example as follows:
 \begin{isar}[mathescape]
 text*[d1::definition]\<Open>
   We define the water level <AT>{term "level"} of a system state
@@ -273,323 +584,7 @@ and \<^emph>\<open>results\<close> required in the \inlineisar|establish|-relati
 required in a \inlineisar|summary|.
 \<close>
 
-
-section*["odl-manual"::technical]\<open>The ODL Manual\<close>
-subsection*["odl-manual0"::technical]\<open>The Isabelle/HOL Specification Language\<close>
-text\<open>The \isadof ontology definition language (ODL) is an extension of Isabelle/HOL;
-document class definitions can therefore be arbitrarily mixed with standard HOL
-specification constructs. In order to spare the user of ODL a lenghty analysis of
-@{cite "isaisarrefman19" and "datarefman19" and "functions19"}, we  present 
-syntax and semantics of the specification constructs that are most likely relevant for
-the developer of ontologies. Note that our presentation is actually a simplification
-of the original sources following the needs of our target audience here; for a full-
-blown account, the reader is referred to the original descriptions.\<close>
-
-text\<open>
-\<^item> \<open>name\<close> : 
-     with the syntactic category of \<open>name\<close>'s we refer to alpha-numerical identifiers 
-     (called \<open>short_id\<close>'s in @{cite "isaisarrefman19"}) and identifiers
-     in \inlineisar+" ... "+ which might additionally contain certian ``quasi-letters'' such 
-     as \inlineisar+_+, \inlineisar+-+, \inlineisar+.+, etc. Details in @{cite "isaisarrefman19"}.
-\<^item> \<open>tyargs\<close> : 
-     \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
-     \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (c.f. @{cite "isaisarrefman19"})
-\<^item> \<open>dt_name\<close> :
-     \<^rail>\<open>  (tyargs?) name (mixfix?)\<close>   
-     The syntactic entity \<open>name\<close> denotes an identifier, \<open>mixfix\<close> denotes the usual 
-     parenthesized mixfix notation (see @{cite "isaisarrefman19"}).
-     The \<open>name\<close>'s referred here are type names such as \<^verbatim>\<open>int\<close>, \<^verbatim>\<open>string\<close>, \<^verbatim>\<open>list\<close>, \<^verbatim>\<open>set\<close>, etc. 
-\<^item> \<open>type_spec\<close> :
-     \<^rail>\<open>  (tyargs?) name\<close>
-     The \<open>name\<close>'s referred here are type names such as \<^verbatim>\<open>int\<close>, \<^verbatim>\<open>string\<close>, \<^verbatim>\<open>list\<close>, \<^verbatim>\<open>set\<close>, etc. 
-\<^item> \<open>type\<close> :
-     \<^rail>\<open>  (( '(' ( type * ',')  ')' )? name) | typefree \<close>     
-\<^item> \<open>dt_ctor\<close> :
-     \<^rail>\<open> name (type*) (mixfix?)\<close>
-\<^item> \<open>datatype_specification\<close> :
-     \<^rail>\<open> @@{command "datatype"} dt_name '=' (dt_ctor * '|' )\<close>
-\<^item> \<open>type_synonym_specification\<close> :
-     \<^rail>\<open> @@{command "type_synonym"} type_spec '=' type\<close>
-\<^item> \<open>constant_definition\<close> :
-     \<^rail>\<open> @@{command "definition"} name '::' type 'where' '"' name '=' expr '"'\<close>
-\<^item> \<open>expr\<close> :
-
-     the syntactic category \<open>expr\<close> here denotes the very rich ``inner-syntax'' language of 
-     mathematical  notations for $\lambda$-terms in Isabelle/HOL. Example expressions are:
-     \inlineisar|1+2| (arithmetics), \inlineisar|[1,2,3]| (lists), \inlineisar|''ab c''| (strings), 
-     \inlineisar|{1,2,3}| (sets), \inlineisar|(1,2,3)| (tuples), 
-     \inlineisar|\<forall> x. P(x) \<and> Q x = C| (formulas), etc. 
-     For a comprehensive overview, consult the summary ``What's in Main'' 
-     @{cite "nipkowMain19"}.
-\<close>
-
-text\<open>Other specification constructs, which are potentially relevant for an (advanced) ontology
-developer, might be recursive function definitions with pattern-matching @{cite "functions19"}, 
-extensible record specifications, @{cite "isaisarrefman19"} and abstract type declarations.\<close>
-
-
-subsection*["odl-manual1"::technical]\<open>The Command Syntax for Document Class Specifications\<close>
-text\<open>
-\<^item> \<open>class_id\<close> : \<open>class_id\<close>'s are type-\<open>name\<close>'s that have been introduced via
-  a \<open>doc_class_specification\<close>.
-\<^item> \<open>doc_class_specification\<close> : 
-     \<^rail>\<open> @@{command "doc_class"} class_id '=' (class_id '+')? (attribute_decl+) \<newline>
-           (accepts_clause rejects_clause?)?\<close>
-     document classes whose specification contains an \<open>accepts_clause\<close> are called 
-     \<^emph>\<open>monitor classes\<close> or \<^emph>\<open>monitors\<close> for short. 
-\<^item> \<open>attribute_decl\<close> :
-     \<^rail>\<open> name '::' '"' type '"' default_clause? \<close>
-\<^item> \<open>accepts_clause\<close> :
-     \<^rail>\<open> 'accepts' '"' regexpr '"'\<close>
-\<^item> \<open>rejects_clause\<close> :
-     \<^rail>\<open> 'rejects' (class_id * ',') \<close>
-\<^item> \<open>default_clause\<close> :
-     \<^rail>\<open> '<=' '"' expr '"' \<close>
-\<^item> \<open>regexpr\<close> :
-     \<^rail>\<open> '\<lfloor>' class_id '\<rfloor>' | '(' regexpr ')' | (regexpr '||' regexpr) | (regexpr '~~' regexpr)
-            | ('\<lbrace>' regexpr '\<rbrace>') | ( '\<lbrace>' regexpr '\<rbrace>\<^sup>*')  \<close>
-     regular expressions describe sequences of \<open>class_id\<close>s (and indirect sequences of document
-     items corresponding to the \<open>class_id\<close>s). The constructors for alternative, sequence, 
-     repetitions and non-empty sequence follow in the top-down order of the above diagram. 
-\<close> 
-
-
-section*["odl-design"::technical]\<open>The Design of ODL\<close>
-
-text\<open>
-
-We illustrate the design of \dof by modeling a small ontology
-that can be used for writing formal specifications that, \eg, could
-build the basis for an ontology for certification documents used in
-processes such as Common Criteria~@{cite "cc:cc-part3:2006"} or CENELEC
-50128~@{cite "bsi:50128:2014"}.@{footnote \<open>The \isadof distribution
-  contains an ontology for writing documents for a certification
-  according to CENELEC 50128.\<close>} Moreover, in examples of certification
-documents, we refer to a controller of a steam boiler that is
-inspired by the famous steam boiler formalization
-challenge~@{cite "abrial:steam-boiler:1996"}.
-\<close>
-text\<open>
-
-\begin{isar}[float,mathescape,label={lst:doc},caption={An example ontology modeling
-simple certification documents, including scientific papers such
-as~@{cite "brucker.ea:isabelle-ontologies:2018"}; also recall
-\autoref{fig:dof-ide}.}]
-doc_class title  = short_title :: "string option" <= "None"
-doc_class author = email      :: "string" <= "''''"
-
-datatype classification = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
-    
-doc_class abstract =
-    keywordlist :: "string list"      <= []
-    safety_level :: "classification"  <= "SIL3" 
-doc_class text_section = 
-    authored_by :: "author set"       <= "{}"
-    level       :: "int  option"      <= "None"   
-
-type_synonym notion = string
-
-doc_class introduction = text_section +
-    authored_by :: "author set"       <= "UNIV"
-    uses :: "notion set"
-doc_class claim = introduction +
-    based_on :: "notion list"
-doc_class technical = text_section +
-    formal_results  :: "thm list"
-doc_class "d$$efinition" = technical +
-    is_formal :: "bool"
-    property  :: "term list"          <= "[]"
-
-datatype kind = expert_opinion | argument | proof
-
-doc_class result = technical +
-    evidence  :: kind 
-    property  :: "thm list"           <= "[]"
-doc_class example = technical +
-    referring_to :: "(notion + d$$efinition) set" <=  "{}"
-doc_class "conclusion" = text_section +
-    establish   :: "(claim \<times> result) set"
-\end{isar}%$
-
-\<close>
-text\<open>
-\autoref{lst:doc} shows an example ontology for mathematical papers
-(an extended version of this ontology was used for writing
-@{cite "brucker.ea:isabelle-ontologies:2018"}, also recall
-\autoref{fig:dof-ide}). The commands \inlineisar+datatype+ (modeling
-fixed enumerations) and \inlineisar+type_synonym+ (defining type
-synonyms) are standard mechanisms in HOL systems.  Since ODL is an
-add-on, we have to quote sometimes constant symbols (\eg,
-\inlineisar+"proof"+) to avoid confusion with predefined keywords. ODL
-admits overriding (such as \inlineisar+authored_by+ in the document
-class \inlineisar+introduction+), where it is set to another library
-constant, but no overloading. All \inlineisar+text_section+ elements
-have an optional \inlineisar+level+ attribute, which will be used in
-the output generation for the decision if the context is a section
-header and its level (\eg, chapter, section, subsection). While
-\<open>within\<close> an inheritance hierarchy overloading is prohibited,
-attributes may be re-declared freely in independent parts (as is the
-case for \inlineisar+property+).
-
-\<close>
-
-(*
-subsection*[onto_future::technical]\<open> Monitor Classes \<close>  
-
-text\<open> Besides sub-typing, there is another relation between
-document classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
-which is expressed by the occurrence of a \inlineisar+where+ clause
-in the document class definition containing a regular
-expression (see @{example (unchecked) \<open>scholar_onto\<close>}).
-While class-extension refers to data-inheritance of attributes,
-a monitor imposes structural constraints -- the order --
-in which instances of monitored classes may occur. \<close>
-
-text\<open>
-The control of monitors is done by the commands:
-\<^item> \inlineisar+open_monitor* +  <doc-class>
-\<^item> \inlineisar+close_monitor* + <doc-class> 
-\<close>
-text\<open>
-where the automaton of the monitor class is expected
-to be in a final state. In the final state, user-defined SML 
-Monitors can be nested, so it is possible to "overlay" one or more monitoring 
-classes and imposing different sets of structural constraints in a 
-Classes which are neither directly nor indirectly (via inheritance) mentioned in the 
-monitor are \<^emph>\<open>independent\<close> from a monitor; instances of independent test elements 
-may occur freely. \<close>
-*)
-subsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
-text\<open>
-We call a document class with an accept-clause a
-\<^emph>\<open>monitor\<close>.  Syntactically, an accept-clause contains a regular
-expression over class identifiers. We can extend our
-\inlineisar+tiny_cert+ ontology with the following example:
-\begin{isar}
-doc_class article = 
-    style_id :: string   <= "''CENELEC50128''"
-    accepts "(title ~~ \<lbrace>author\<rbrace>\<bsup>+\<esup> ~~ abstract ~~ \<lbrace>introduction\<rbrace>\<bsup>+\<esup>  ~~
-             \<lbrace>technical || example\<rbrace>\<bsup>+\<esup> ~~ \<lbrace>conclusion\<rbrace>\<bsup>+\<esup>)"
-\end{isar}
-Semantically, monitors introduce a behavioral element into ODL: 
-\begin{isar}
-open_monitor*[this::article]  (* begin of scope of monitor "this" *)
-  ...
-close_monitor*[this]          (* end of scope of monitor "this"   *)
-\end{isar}
-Inside the scope of a monitor, all instances of classes mentioned in its accept-clause (the
-\<^emph>\<open>accept-set\<close>) have to appear in the order specified by the
-regular expression; instances not covered by an accept-set may freely
-occur. Monitors may additionally contain a reject-clause with a list
-of class-ids (the reject-list). This allows specifying ranges of
-admissible instances along the class hierarchy:
-\begin{compactitem}
-\item a superclass in the reject-list and a subclass in the
-  accept-expression forbids instances superior to the subclass, and
-\item a subclass $S$ in the reject-list and a superclass $T$ in the
-  accept-list allows instances of superclasses of $T$ to occur freely,
-  instances of $T$ to occur in the specified order and forbids
-  instances of $S$.
-\end{compactitem}
-Monitored document sections can be nested and overlap; thus, it is
-possible to combine the effect of different monitors. For example, it
-would be possible to refine the \inlineisar+example+ section by its own
-monitor and enforce a particular structure in the presentation of
-examples.
-
-Monitors manage an implicit attribute \inlineisar+trace+ containing
-the list of ``observed'' text element instances belonging to the
-accept-set. Together with the concept of ODL class invariants, it is
-possible to specify properties of a sequence of instances occurring in
-the document section. For example, it is possible to express that in
-the sub-list of \inlineisar+introduction+-elements, the first has an
-\inlineisar+introduction+ element with a \inlineisar+level+ strictly
-smaller than the others. Thus, an introduction is forced to have a
-header delimiting the borders of its representation. Class invariants
-on monitors allow for specifying structural properties on document
-sections.
-\<close>
-
-subsection*["odl-manual2"::technical]\<open>Examples\<close>
-
-subsection\<open>Meta-types as Types\<close>
-
-text\<open>To express the dependencies between text elements to the formal
-entities, \eg, \inlinesml+term+ ($\lambda$-term), \inlinesml+typ+, or
-\inlinesml+thm+, we represent the types of the implementation language
-\<^emph>\<open>inside\<close> the HOL type system.  We do, however, not reflect the data of
-these types. They are just declared abstract types, 
-``inhabited'' by special constant symbols carrying strings, for
-example of the format \inlineisar+<AT>{thm <string>}+. When HOL
-expressions were used to denote values of \inlineisar+doc_class+
-instance attributes, this requires additional checks after
-conventional type-checking that this string represents actually a
-defined entity in the context of the system state
-\inlineisar+\<theta>+.  For example, the \inlineisar+establish+
-attribute in the previous section is the power of the ODL: here, we model
-a relation between \<^emph>\<open>claims\<close> and \<^emph>\<open>results\<close> which may be a
-formal, machine-check theorem of type \inlinesml+thm+ denoted by, for
-example: \inlineisar+property = "[<AT>{thm ''system_is_safe''}]"+ in a
-system context \inlineisar+\<theta>+ where this theorem is
-established. Similarly, attribute values like 
-\inlineisar+property = "<AT>{term \<Open>A \<leftrightarrow> B\<Close>}"+
-require that the HOL-string \inlineisar+A \<leftrightarrow> B+ is 
-again type-checked and represents indeed a formula in $\theta$. Another instance of 
-this process, which we call \<open>second-level type-checking\<close>, are term-constants
-generated from the ontology such as 
-\inlineisar+<AT>{definition <string>}+. For the latter, the argument string
-must be checked that it  represents a reference to a text-element
-having the type \inlineisar+definition+ according to the ontology in \autoref{lst:doc}.\<close>
-
-
-subsection*["sec:class_inv"::technical]\<open>ODL Class Invariants\<close>
-text\<open>
-Ontological classes as described so far are too liberal in many
-situations. For example, one would like to express that any instance
-of a \inlineisar+result+ class finally has a non-empty property list,
-if its \inlineisar+kind+ is \inlineisar+proof+, or that the
-\inlineisar+establish+ relation between \inlineisar+claim+ and
-\inlineisar+result+ is surjective.
-
-In a high-level syntax, this type of constraints could be expressed, \eg, by:
-\begin{isar}
-\<forall> x \<in> result. x@kind = proof \<leftrightarrow> x@kind \<noteq> []
-\<forall> x \<in> conclusion. \<forall> y \<in> Domain(x@establish)
-                  \<rightarrow> \<exists> y \<in> Range(x@establish). (y,z) \<in> x@establish
-\<forall> x \<in> introduction. finite(x@authored_by)
-\end{isar}
-@{cartouche [display=true] \<open>  
-(* 1 *)     \<forall> x \<in> result. x@kind = proof \<leftrightarrow> x@kind \<noteq> [] 
-(* 2 *)     \<forall> x \<in> conclusion. \<forall> y \<in> Domain(x@establish) 
-                         \<rightarrow> \<exists> y\<in> Range(x@establish). (y,z) \<in> x@establish  
-(* 3 *)     \<forall> x \<in> introduction. finite(x@authored_by)
-\<close>}
-\fixme{experiment... }
-%% where \inlineisar+result+, \inlineisar+conclusion+, and
-%% 
-where \<open>result\<close>, \<open>conclusion\<close>, and
-\<open>introduction\<close> are the set of all possible instances of
-these document classes.  All specified constraints are already checked
-in the IDE of \dof while editing; it is however possible to delay a
-final error message till the closing of a monitor (see next
-section). The third constraint enforces that the
-user sets the \<open>authored_by\<close> set, otherwise an error will be
-%%user sets the \inlineisar+authored_by+ set, otherwise an error will be
-reported.
-\<close>
-
-section*["core-manual"::technical]\<open>Annotatable Text-Elements for Core-Documents\<close>
-text\<open>In general, all standard text-elements from the Isabelle document model such
-as @{command "chapter"}, @{command "section"}, @{command "text"}, have in the \isadof
-implementation their counterparts in the family of text-elements that are "ontology-aware",
-\ie they dispose on a meta-argument list that allows to define that a test-element
-\<^enum> has an identity as a text-object labelled as \<open>obj_id\<close>
-\<^enum> belongs to a document class \<open>class_id\<close> that has been defined earlier
-\<^enum> has its class-attributes set with particular values
-  (which are denotable in Isabelle/HOL mathematical term syntax)
-\<close>
-
-subsection*["core-manual1"::technical]\<open>Syntax\<close>
+subsection*["core-manual1"::technical]\<open>Annotatable Test-Elements: Syntax\<close>
 
 text\<open>The syntax of toplevel \isadof commands reads as follows: 
 \<^item> \<open>annotated_text_element\<close> :
@@ -623,6 +618,8 @@ text\<open>The syntax of toplevel \isadof commands reads as follows:
 \<close>
 
 subsection*["commonlib"::technical]\<open>Common Ontology Library (COL)\<close>
+
+
 
 subsection*["core-manual2"::technical]\<open>Examples\<close>
 

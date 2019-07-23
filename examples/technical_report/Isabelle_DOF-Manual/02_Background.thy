@@ -46,9 +46,9 @@ automated proof procedures as well as specific support for higher specification 
 were built. \<close>
 
 
-text\<open> Of particular interest for \dof is documentation generation of the architecture,
-which is based on literate specification commands such as \inlineisar+section+ \ldots, 
-\inlineisar+subsection+ \ldots, \inlineisar+text+ \ldots, etc. Moreover, we assume that
+text\<open> Of particular interest for \dof is the  documentation generation component in 
+the architecture, which is based on literate specification commands such as \inlineisar+section+ 
+\ldots, \inlineisar+subsection+ \ldots, \inlineisar+text+ \ldots, etc. Moreover, we assume that
 \<^emph>\<open>inside\<close> text-elements, there are generic and extendible ways to add "semantic", i.e.
 machine-checked sub-elements.
 
