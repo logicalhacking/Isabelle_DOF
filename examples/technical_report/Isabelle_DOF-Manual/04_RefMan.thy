@@ -657,7 +657,7 @@ doc_class F  =
    u        :: "file"
    s        :: "typ list"
 
-(*
+(* BUG BUG BUG 
 assert*[aaa::"04_RefMan.F"] "3 < (4::int)"
 assert*[aaa::F] "0 < (4::int)"
 *)
