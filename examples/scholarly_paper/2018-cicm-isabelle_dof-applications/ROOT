@@ -1,4 +1,4 @@
-session "IsaDofApplications" = "Isabelle_DOF" + 
+session "2018-cicm-isabelle_dof-applications" = "Isabelle_DOF" + 
   options  [document = pdf, document_output = "output", quick_and_dirty = true]
   theories
     IsaDofApplications
