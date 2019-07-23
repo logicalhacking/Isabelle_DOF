@@ -715,8 +715,8 @@ ML\<open>
 
 subsection*[t235::technical]\<open> Theories \<close>
 
-text \<open> This structure yields the datatype \verb*thy* which becomes the content of 
-  \verb*Context.theory*. In a way, the LCF-Kernel registers itself into the Nano-Kernel,
+text \<open> This structure yields the datatype \<^verbatim>\<open>thy\<close> which becomes the content of 
+  @{ML_type "Context.theory"}. In a way, the LCF-Kernel registers itself into the Nano-Kernel,
   which inspired me (bu) to this naming. \<close>
 
 ML\<open>
@@ -2098,6 +2098,9 @@ text\<open> This interactive Isabelle Programming Cook-Book represents my curren
   and the roughness of this presentation is entirely my fault.
 \<close>
 (*<*)
+
+paragraph\<open>Many thanks to Frederic Tuong, who contributed some example such as the string cartouche
+for Unicode Character Denotations as well as many local hints for improvements.\<close>
 
 section*[bib::bibliography]\<open>Bibliography\<close>
 
