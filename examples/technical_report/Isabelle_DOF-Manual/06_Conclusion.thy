@@ -52,18 +52,6 @@ text\<open> \isadof in its present form has a number of technical short-comings 
   order.\<close>
 
 
-
-subsubsection\<open>Availability.\<close>
-text\<open> The implementation of the framework is available at
- @{url \<open>https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/\<close>}.
-\isadof is licensed under a 2-clause BSD license (SPDX-License-Identifier: BSD-2-Clause).\<close>
-
-
-subsubsection\<open>Acknowledgments.\<close>
-text\<open>This work has been partially supported by IRT SystemX, Paris-Saclay, France, and 
-therefore granted with public funds of the Program ``Investissements d'Avenir.''\<close> 
-
-
 (*<*) 
 end
 (*>*) 

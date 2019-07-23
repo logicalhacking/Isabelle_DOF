@@ -514,10 +514,10 @@ Where \inlineisar+title*[a ...]+ is a predefined macro for
 \inlineisar+text*[a::title,...]\<Open>...\<Close>+ (similarly \inlineisar+abstract*+). 
 The macro \inlineisar+section*+ assumes a class-id referring to a class that has 
 a \inlineisar+level+ attribute. We continue our example text:
-\begin{isar}
+\begin{isar}[mathescape]
 text*[c1::contrib_claim, based_on="[''pumps'',''steam boiler'']" ]\<Open>
-  As indicated in @{introduction "intro"}, we the water level of the
-  boiler is always between the minimum and the maximum allowed level.
+  As indicated in <@>{introduction "intro"}, we the water level of the
+  boiler is always between the minimum a$$nd the maximum allowed level.
 \<Close>
 \end{isar}
 \<close>
@@ -526,7 +526,7 @@ The first text element in this example fragment \<^emph>\<open>defines\<close> t
 text entity \inlineisar+c1+ and also references the formerly defined
 text element \inlineisar+intro+ (which will be represented in the PDF
 output, for example, by a text anchor ``Section 1'' and a hyperlink to
-its beginning). The antiquotation \inlineisar+<At>{introduction ...}+,
+its beginning). The antiquotation \inlineisar+<@>{introduction ...}+,
 which is automatically generated from the ontology, is immediately
 validated (the link to \inlineisar+intro+ is defined) and type-checked (it
 is indeed a link to an \inlineisar+introduction+
@@ -599,6 +599,7 @@ text\<open>The syntax of toplevel \isadof commands reads as follows:
        | @@{command "Definition*"} | @@{command "Lemma*"} 
        | @@{command "Theorem*"}  | @@{command "Conjecture*"} 
        ) 
+       \<newline>
        '[' meta_args ']' '\<open>' text '\<close>'
      ) 
      | change_status_command

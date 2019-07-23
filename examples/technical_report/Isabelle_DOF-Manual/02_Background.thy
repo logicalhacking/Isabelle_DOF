@@ -57,34 +57,6 @@ document model, and than explain how Isabelle as a framework fits into this pict
 \<close>
 
 
-(*
-Thus, a user can add a simple text:
-\begin{isar}
-  text\<Open>This is a description.\<Close>
-\end{isar}
-These text-commands can be arbitrarily mixed with other commands stating definitions, proofs, code, etc.,
-and will result in the corresponding output in generated \LaTeX{} or HTML documents. 
-Now, \<^emph>\<open>inside\<close> the textual content, it is possible to embed a \<^emph>\<open>text-antiquotation\<close>:
-\begin{isar}
-  text\<Open>According to the reflexivity axiom \at{thm refl}, we obtain in \<Gamma> 
-           for \at{term "fac 5"} the result \at{value "fac 5"}.\<Close>
-\end{isar}
-which is represented in the generated output by:
-\begin{out}
-  According to the reflexivity axiom $x = x$, we obtain in $\Gamma$ for $\operatorname{fac} 5$ the result $120$.
-\end{out}
-where \inlineisar+refl+ is actually the reference to the axiom of reflexivity in HOL. 
-For the antiquotation \inlineisar+\at{value "fac 5"}+  we assume the usual definition for 
-\inlineisar+fac+ in HOL.
-\<close>
-
-text*[anti]\<open> Thus, antiquotations can refer to formal content, can be type-checked before being 
-displayed and can be used for calculations before actually being typeset. When editing, 
-Isabelle's PIDE offers auto-completion and error-messages while typing the above 
-\<^emph>\<open>semi-formal\<close> content.  \<close>
-*)
-
-
 section*["sec:background"::introduction]\<open>The Required Document Model\<close>
 text\<open>
 In this section, we explain the assumed document model underlying
@@ -146,12 +118,12 @@ However, this translation is not necessarily one-to-one: text
 elements can be enriched by formal, \ie, machine-checked content via
 \emph{semantic macros}, called antiquotations:
 \begin{isar}
-  text\<Open>According to the reflexivity axiom @{thm refl}, we obtain in \<Gamma> 
-        for @{term "fac 5"} the result @{value "fac 5"}.\<Close>
+  text\<Open>According to the reflexivity axiom <@>{thm refl}, we obtain in \<Gamma> 
+        for <@>{term "fac 5"} the result <@>{value "fac 5"}.\<Close>
 \end{isar}
 which is represented in the final document (\eg, a PDF) by:
 \begin{out}
-  According to the reflexivity axiom $x = x$, we obtain in $\Gamma$ for $\operatorname{fac} 5$ the result $120$.
+  According to the reflexivity axiom $\mathrm{x = x}$, we obtain in $\Gamma$ for $\operatorname{fac} \text{\textrm{5}}$ the result $\text{\textrm{120}}$.
 \end{out}
 Semantic macros are partial functions of type %
 \inlineisar+\<theta> \<rightarrow> text+; since they can use the

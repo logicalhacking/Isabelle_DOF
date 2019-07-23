@@ -78,6 +78,36 @@ generation and ways to adapt it to particular purposes.
  Finally, we draw 
 conclusions  and discuss related work in @{docitem_ref (unchecked) \<open>conclusion\<close>}. \<close>  
 
+
+section\<open>Notation and Layout Conventions\<close>
+text\<open>
+  We acknowledge that understanding \isadof and its implementation in all details requires
+  to separate multiple technological layers or languages. To help the reader with this, we 
+  will type-set the different languages in different styles. In particular, we will use 
+  \<^item> a light-blue background for input written in Isabelle's Isar language, \eg:
+    \begin{isar}
+    lemma refl: "x = x" 
+      by simp
+    \end{isar}
+  \<^item> For small examples of generated document, we use a green background:
+    \begin{out}
+    The axiom refl
+    \end{out}
+  \<^item> For (S)ML-code, we use a red background:
+    \begin{sml}
+    fun id x = x
+    \end{sml}
+  \<^item> \LaTeX-code, we use a yellow background:
+    \begin{ltx}
+    \newcommand{\refl}{$x = x$}
+    \end{ltx}
+  \<^item> For shell scripts and interative shell sessions, we use a grey background:
+    \begin{bash}
+    > ls 
+   \end{bash}
+
+\<close>
+
 (*<*) 
 end
 (*>*) 
