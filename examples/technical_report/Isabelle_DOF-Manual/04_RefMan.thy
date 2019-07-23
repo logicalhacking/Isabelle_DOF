@@ -216,21 +216,18 @@ text\<open>
 
 subsection*["odl-design"::example]\<open>An Ontology Example\<close>
 
-text\<open>
+text\<open>We illustrate the design of \dof by modeling a small ontology
+  that can be used for writing formal specifications that, \eg, could
+  build the basis for an ontology for certification documents used in
+  processes such as Common Criteria~@{cite "cc:cc-part3:2006"} or CENELEC
+  50128~@{cite "bsi:50128:2014"}.@{footnote \<open>The \isadof distribution
+    contains an ontology for writing documents for a certification
+    according to CENELEC 50128.\<close>} Moreover, in examples of certification
+  documents, we refer to a controller of a steam boiler that is
+  inspired by the famous steam boiler formalization
+  challenge~@{cite "abrial:steam-boiler:1996"}.\<close>
 
-We illustrate the design of \dof by modeling a small ontology
-that can be used for writing formal specifications that, \eg, could
-build the basis for an ontology for certification documents used in
-processes such as Common Criteria~@{cite "cc:cc-part3:2006"} or CENELEC
-50128~@{cite "bsi:50128:2014"}.@{footnote \<open>The \isadof distribution
-  contains an ontology for writing documents for a certification
-  according to CENELEC 50128.\<close>} Moreover, in examples of certification
-documents, we refer to a controller of a steam boiler that is
-inspired by the famous steam boiler formalization
-challenge~@{cite "abrial:steam-boiler:1996"}.
-\<close>
 text\<open>
-
 \begin{isar}[float,mathescape,label={lst:doc},caption={An example ontology modeling
 simple certification documents, including scientific papers such
 as~@{cite "brucker.ea:isabelle-ontologies:2018"}; also recall
@@ -273,107 +270,103 @@ doc_class "conclusion" = text_section +
 
 \<close>
 text\<open>
-\autoref{lst:doc} shows an example ontology for mathematical papers
-(an extended version of this ontology was used for writing
-@{cite "brucker.ea:isabelle-ontologies:2018"}, also recall
-\autoref{fig:dof-ide}). The commands \inlineisar+datatype+ (modeling
-fixed enumerations) and \inlineisar+type_synonym+ (defining type
-synonyms) are standard mechanisms in HOL systems.  Since ODL is an
-add-on, we have to quote sometimes constant symbols (\eg,
-\inlineisar+"proof"+) to avoid confusion with predefined keywords. ODL
-admits overriding (such as \inlineisar+authored_by+ in the document
-class \inlineisar+introduction+), where it is set to another library
-constant, but no overloading. All \inlineisar+text_section+ elements
-have an optional \inlineisar+level+ attribute, which will be used in
-the output generation for the decision if the context is a section
-header and its level (\eg, chapter, section, subsection). While
-\<open>within\<close> an inheritance hierarchy overloading is prohibited,
-attributes may be re-declared freely in independent parts (as is the
-case for \inlineisar+property+).
-
-\<close>
+  \autoref{lst:doc} shows an example ontology for mathematical papers
+  (an extended version of this ontology was used for writing
+  @{cite "brucker.ea:isabelle-ontologies:2018"}, also recall
+  \autoref{fig:dof-ide}). The commands \inlineisar+datatype+ (modeling
+  fixed enumerations) and \inlineisar+type_synonym+ (defining type
+  synonyms) are standard mechanisms in HOL systems.  Since ODL is an
+  add-on, we have to quote sometimes constant symbols (\eg,
+  \inlineisar+"proof"+) to avoid confusion with predefined keywords. ODL
+  admits overriding (such as \inlineisar+authored_by+ in the document
+  class \inlineisar+introduction+), where it is set to another library
+  constant, but no overloading. All \inlineisar+text_section+ elements
+  have an optional \inlineisar+level+ attribute, which will be used in
+  the output generation for the decision if the context is a section
+  header and its level (\eg, chapter, section, subsection). While
+  \<open>within\<close> an inheritance hierarchy overloading is prohibited,
+  attributes may be re-declared freely in independent parts (as is the
+  case for \inlineisar+property+).\<close>
 
 subsection*["sec:advanced"::technical]\<open>Advanced ODL Concepts\<close>
 subsubsection\<open>Meta-types as Types\<close>
 
 text\<open>To express the dependencies between text elements to the formal
-entities, \eg, \inlinesml+term+ ($\lambda$-term), \inlinesml+typ+, or
-\inlinesml+thm+, we represent the types of the implementation language
-\<^emph>\<open>inside\<close> the HOL type system.  We do, however, not reflect the data of
-these types. They are just declared abstract types, 
-``inhabited'' by special constant symbols carrying strings, for
-example of the format \inlineisar+<AT>{thm <string>}+. When HOL
-expressions were used to denote values of \inlineisar+doc_class+
-instance attributes, this requires additional checks after
-conventional type-checking that this string represents actually a
-defined entity in the context of the system state
-\inlineisar+\<theta>+.  For example, the \inlineisar+establish+
-attribute in the previous section is the power of the ODL: here, we model
-a relation between \<^emph>\<open>claims\<close> and \<^emph>\<open>results\<close> which may be a
-formal, machine-check theorem of type \inlinesml+thm+ denoted by, for
-example: \inlineisar+property = "[<AT>{thm ''system_is_safe''}]"+ in a
-system context \inlineisar+\<theta>+ where this theorem is
-established. Similarly, attribute values like 
-\inlineisar+property = "<AT>{term \<Open>A \<leftrightarrow> B\<Close>}"+
-require that the HOL-string \inlineisar+A \<leftrightarrow> B+ is 
-again type-checked and represents indeed a formula in $\theta$. Another instance of 
-this process, which we call \<open>second-level type-checking\<close>, are term-constants
-generated from the ontology such as 
-\inlineisar+<AT>{definition <string>}+. For the latter, the argument string
-must be checked that it  represents a reference to a text-element
-having the type \inlineisar+definition+ according to the ontology in @{example "odl-design"}.\<close>
+  entities, \eg, \inlinesml+term+ ($\lambda$-term), \inlinesml+typ+, or
+  \inlinesml+thm+, we represent the types of the implementation language
+  \<^emph>\<open>inside\<close> the HOL type system.  We do, however, not reflect the data of
+  these types. They are just declared abstract types, 
+  ``inhabited'' by special constant symbols carrying strings, for
+  example of the format \inlineisar+<AT>{thm <string>}+. When HOL
+  expressions were used to denote values of \inlineisar+doc_class+
+  instance attributes, this requires additional checks after
+  conventional type-checking that this string represents actually a
+  defined entity in the context of the system state
+  \inlineisar+\<theta>+.  For example, the \inlineisar+establish+
+  attribute in the previous section is the power of the ODL: here, we model
+  a relation between \<^emph>\<open>claims\<close> and \<^emph>\<open>results\<close> which may be a
+  formal, machine-check theorem of type \inlinesml+thm+ denoted by, for
+  example: \inlineisar+property = "[<AT>{thm ''system_is_safe''}]"+ in a
+  system context \inlineisar+\<theta>+ where this theorem is
+  established. Similarly, attribute values like 
+  \inlineisar+property = "<AT>{term \<Open>A \<leftrightarrow> B\<Close>}"+
+  require that the HOL-string \inlineisar+A \<leftrightarrow> B+ is 
+  again type-checked and represents indeed a formula in $\theta$. Another instance of 
+  this process, which we call \<open>second-level type-checking\<close>, are term-constants
+  generated from the ontology such as 
+  \inlineisar+<AT>{definition <string>}+. For the latter, the argument string
+  must be checked that it  represents a reference to a text-element
+  having the type \inlineisar+definition+ according to the ontology in @{example "odl-design"}.\<close>
 
 
 subsubsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
-text\<open>
-We call a document class with an accept-clause a
-\<^emph>\<open>monitor\<close>.  Syntactically, an accept-clause contains a regular
-expression over class identifiers. We can extend our
-\inlineisar+tiny_cert+ ontology with the following example:
-\begin{isar}
-doc_class article = 
-    style_id :: string   <= "''CENELEC50128''"
-    accepts "(title ~~ \<lbrace>author\<rbrace>\<bsup>+\<esup> ~~ abstract ~~ \<lbrace>introduction\<rbrace>\<bsup>+\<esup>  ~~
-             \<lbrace>technical || example\<rbrace>\<bsup>+\<esup> ~~ \<lbrace>conclusion\<rbrace>\<bsup>+\<esup>)"
-\end{isar}
-Semantically, monitors introduce a behavioral element into ODL: 
-\begin{isar}
-open_monitor*[this::article]  (* begin of scope of monitor "this" *)
-  ...
-close_monitor*[this]          (* end of scope of monitor "this"   *)
-\end{isar}
-Inside the scope of a monitor, all instances of classes mentioned in its accept-clause (the
-\<^emph>\<open>accept-set\<close>) have to appear in the order specified by the
-regular expression; instances not covered by an accept-set may freely
-occur. Monitors may additionally contain a reject-clause with a list
-of class-ids (the reject-list). This allows specifying ranges of
-admissible instances along the class hierarchy:
-\begin{compactitem}
-\item a superclass in the reject-list and a subclass in the
-  accept-expression forbids instances superior to the subclass, and
-\item a subclass $S$ in the reject-list and a superclass $T$ in the
-  accept-list allows instances of superclasses of $T$ to occur freely,
-  instances of $T$ to occur in the specified order and forbids
-  instances of $S$.
-\end{compactitem}
-Monitored document sections can be nested and overlap; thus, it is
-possible to combine the effect of different monitors. For example, it
-would be possible to refine the \inlineisar+example+ section by its own
-monitor and enforce a particular structure in the presentation of
-examples.
-
-Monitors manage an implicit attribute \inlineisar+trace+ containing
-the list of ``observed'' text element instances belonging to the
-accept-set. Together with the concept of ODL class invariants, it is
-possible to specify properties of a sequence of instances occurring in
-the document section. For example, it is possible to express that in
-the sub-list of \inlineisar+introduction+-elements, the first has an
-\inlineisar+introduction+ element with a \inlineisar+level+ strictly
-smaller than the others. Thus, an introduction is forced to have a
-header delimiting the borders of its representation. Class invariants
-on monitors allow for specifying structural properties on document
-sections.
-\<close>
+text\<open>We call a document class with an accept-clause a
+  \<^emph>\<open>monitor\<close>.  Syntactically, an accept-clause contains a regular
+  expression over class identifiers. We can extend our
+  \inlineisar+tiny_cert+ ontology with the following example:
+  \begin{isar}
+  doc_class article = 
+      style_id :: string   <= "''CENELEC50128''"
+      accepts "(title ~~ \<lbrace>author\<rbrace>\<bsup>+\<esup> ~~ abstract ~~ \<lbrace>introduction\<rbrace>\<bsup>+\<esup>  ~~
+               \<lbrace>technical || example\<rbrace>\<bsup>+\<esup> ~~ \<lbrace>conclusion\<rbrace>\<bsup>+\<esup>)"
+  \end{isar}
+  Semantically, monitors introduce a behavioral element into ODL: 
+  \begin{isar}
+  open_monitor*[this::article]  (* begin of scope of monitor "this" *)
+    ...
+  close_monitor*[this]          (* end of scope of monitor "this"   *)
+  \end{isar}
+  Inside the scope of a monitor, all instances of classes mentioned in its accept-clause (the
+  \<^emph>\<open>accept-set\<close>) have to appear in the order specified by the
+  regular expression; instances not covered by an accept-set may freely
+  occur. Monitors may additionally contain a reject-clause with a list
+  of class-ids (the reject-list). This allows specifying ranges of
+  admissible instances along the class hierarchy:
+  \begin{compactitem}
+  \item a superclass in the reject-list and a subclass in the
+    accept-expression forbids instances superior to the subclass, and
+  \item a subclass $S$ in the reject-list and a superclass $T$ in the
+    accept-list allows instances of superclasses of $T$ to occur freely,
+    instances of $T$ to occur in the specified order and forbids
+    instances of $S$.
+  \end{compactitem}
+  Monitored document sections can be nested and overlap; thus, it is
+  possible to combine the effect of different monitors. For example, it
+  would be possible to refine the \inlineisar+example+ section by its own
+  monitor and enforce a particular structure in the presentation of
+  examples.
+  
+  Monitors manage an implicit attribute \inlineisar+trace+ containing
+  the list of ``observed'' text element instances belonging to the
+  accept-set. Together with the concept of ODL class invariants, it is
+  possible to specify properties of a sequence of instances occurring in
+  the document section. For example, it is possible to express that in
+  the sub-list of \inlineisar+introduction+-elements, the first has an
+  \inlineisar+introduction+ element with a \inlineisar+level+ strictly
+  smaller than the others. Thus, an introduction is forced to have a
+  header delimiting the borders of its representation. Class invariants
+  on monitors allow for specifying structural properties on document
+  sections.\<close>
 
 
 subsubsection*["sec:class_inv"::technical]\<open>ODL Class Invariants\<close>
@@ -557,9 +550,9 @@ referencing it, although the actual text-element will occur later in
 the document.
 \<close>
 
-text \<open>
-\subsection{Editing Documents with Ontology Meta-Data: Inner Syntax}
-We continue our running example as follows:
+
+subsection\<open>Editing Documents with Ontology Meta-Data: Inner Syntax\<close>
+text\<open>We continue our running example as follows:
 \begin{isar}[mathescape]
 text*[d1::definition]\<Open>
   We define the water level <AT>{term "level"} of a system state
@@ -590,7 +583,6 @@ can also be used to define the required relation between \<^emph>\<open>claims\<
 and \<^emph>\<open>results\<close> required in the \inlineisar|establish|-relation
 required in a \inlineisar|summary|.
 \<close>
-
 
 subsection*["core-manual1"::technical]\<open>Annotatable Test-Elements: Syntax\<close>
 
@@ -626,6 +618,8 @@ text\<open>The syntax of toplevel \isadof commands reads as follows:
 \<close>
 
 subsection*["commonlib"::technical]\<open>Common Ontology Library (COL)\<close>
+
+
 
 subsection*["core-manual2"::technical]\<open>Examples\<close>
 
