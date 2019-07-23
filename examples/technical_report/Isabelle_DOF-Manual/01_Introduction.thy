@@ -62,20 +62,20 @@ might find complementary information in  @{cite "brucker.wolff19:isadof-design-i
 declare_reference*[bgrnd::text_section]
 declare_reference*[isadof::text_section]
 declare_reference*[casestudies::text_section]
-declare_reference*[ontopide::text_section]
+declare_reference*[latex::text_section]
 declare_reference*[conclusion::text_section]
 (*>*)
 text*[plan::introduction]\<open> The plan of the paper is follows: we start by introducing  the underlying 
 Isabelle system (@{docitem_ref (unchecked) \<open>bgrnd\<close>}) followed guided tour or tutorial
 adressing the needs of the first intended user group. 
-It follows the chapter @{docitem_ref (unchecked) \<open>isadof\<close>} for the second user group 
-with essentials of  \isadof and its ontology language (@{docitem_ref (unchecked) \<open>isadof\<close>}). 
+It follows the chapter @{docitem_ref (unchecked) \<open>isadof\<close>} for the 
+first user group needing a more systematic introduction as well as the
+second user group with essentials of  \isadof and its ontology language 
+(@{docitem_ref (unchecked) \<open>isadof\<close>}). 
 
-XXX
-
-It follows @{docitem_ref (unchecked) \<open>casestudies\<close>}, where we present three application
-scenarios from the point of view of the ontology modeling. In @{docitem_ref (unchecked) \<open>ontopide\<close>}
-we discuss the user-interaction generated from the ontological definitions.  Finally, we draw 
+It follows @{docitem_ref (unchecked) \<open>latex\<close>}, where we necessary bits on the LaTeX
+generation and ways to adapt it to particular purposes.
+ Finally, we draw 
 conclusions  and discuss related work in @{docitem_ref (unchecked) \<open>conclusion\<close>}. \<close>  
 
 (*<*) 
