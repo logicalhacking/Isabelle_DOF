@@ -1,6 +1,7 @@
 (*<*)
 theory "04_RefMan"
-  imports "03_GuidedTour" (* apparently inaccessible; for railroads "Isar_Ref.Base" *)
+  imports "03_GuidedTour" (* apparently inaccessible; for railroads "Isar_Ref.Base" *) 
+          "Isabelle_DOF.Isa_COL"
 
 begin
 (*>*)
@@ -385,13 +386,6 @@ In a high-level syntax, this type of constraints could be expressed, \eg, by:
                   \<rightarrow> \<exists> y \<in> Range(x@establish). (y,z) \<in> x@establish
 (* 3 *) \<forall> x \<in> introduction. finite(x@authored_by)
 \end{isar}
-%% @{cartouche [display=true] \<open>  
-%%(* 1 *)     \<forall> x \<in> result. x@kind = proof \<leftrightarrow> x@kind \<noteq> [] 
-%%(* 2 *)     \<forall> x \<in> conclusion. \<forall> y \<in> Domain(x@establish) 
-%%                        \<rightarrow> \<exists> y\<in> Range(x@establish). (y,z) \<in> x@establish  
-%%(* 3 *)     \<forall> x \<in> introduction. finite(x@authored_by)
-%%\<close>}
-%% \fixme{experiment... }
 where \inlineisar+result+, \inlineisar+conclusion+, and
 %%  where \<open>result\<close>, \<open>conclusion\<close>, and
 \inlineisar+introduction+ are the set of all possible instances of
@@ -618,6 +612,55 @@ text\<open>The syntax of toplevel \isadof commands reads as follows:
 \<close>
 
 subsection*["commonlib"::technical]\<open>Common Ontology Library (COL)\<close>
+text\<open> The COL library is used to capture a couple of text-elements
+that are expected to be common to all document types, a class
+that is actually not easy to define. After a lot of thought, we excluded
+things like @{command "title*"} and abstract-related classes back again
+to specific ontologies, for example.
+  
+Finally, it is currently reduced to 
+\<^enum> the common infra-structure on text-elements (section is a text-element of a certain "level"),
+\<^enum> common infrastructure to semi-formal Isabelle elements (Definitions, Assertions, Proofs), and
+\<^enum> the common infra-structure for figures.
+
+Future extensions might include, for example, the infra-structure for tables.
+\<close>
+
+text\<open> The super-class \<^verbatim>\<open>text_element\<close> is the root of all text-elements used in \isadof.
+It is defined as follows:
+\begin{isar}
+doc_class text_element = 
+   level         :: "int  option"    <=  "None" 
+   referentiable :: bool <= "False"
+   variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
+\end{isar}
+Of major importance is the @{term "level"} which influences, inspired by a LaTeX convention,
+the following classification:
+\<^enum>             part          = Some -1
+\<^enum>             chapter       = Some 0
+\<^enum>             section       = Some 1
+\<^enum>             subsection    = Some 2
+\<^enum>             subsubsection = Some 3
+\<^enum>             ... 
+for scholarly paper: invariant level > 
+
+The attribute @{term "level"} in the subsequent enables doc-notation --- a kind of macro --- 
+for support of @{command "chapter*"}, @{command "section*"} etc. This class definition forms 
+for a number of invariants; for example, the derived ontology \<open>scholarly_paper\<close> contains an 
+invariant that any sequence of, for example, \<open>technical\<close> - elements must be introduced
+by a text-element with a higher level, \ie{}, must contain a section or subsection header. 
+\<close>
+
+doc_class F  =
+   property :: "term list"
+   r        :: "thm list"
+   u        :: "file"
+   s        :: "typ list"
+
+(*
+assert*[aaa::"04_RefMan.F"] "3 < (4::int)"
+assert*[aaa::F] "0 < (4::int)"
+*)
 
 
 

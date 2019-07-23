@@ -16,7 +16,11 @@ section\<open> Library of Standard Text Ontology \<close>
 
 
 
-datatype placement = pl_h | pl_t | pl_b | pl_ht | pl_hb  
+datatype placement = pl_h  | (*here*) 
+                     pl_t  | (*top*)
+                     pl_b  | (*bottom*)
+                     pl_ht | (*here ->  top*) 
+                     pl_hb   (*here ->  bottom*)
 
 
 doc_class figure   = 
@@ -68,12 +72,16 @@ section\<open>Some attempt to model standardized links to Standard Isabelle Form
 
 doc_class assertions = 
     properties :: "term list"
-
+  
 doc_class "thms" =
     properties :: "thm list"
 
 doc_class formal_item = 
     item :: "(assertions + thms)"
+
+doc_class definitions =
+    requires    :: "formal_item list"
+    establishes :: "thms list"
 
 doc_class formal_content =
     style :: "string option"
