@@ -29,7 +29,7 @@
 \AtEndDocument{\printindex}
 
 \newcommand{\DOFindex}[2]{%
-  #2\marginnote{\normalfont\textbf{#1}: #2}%
+  \marginnote{\normalfont\textbf{#1}: #2}%
   \expandafter\index\expandafter{\expanded{#2 (#1)}}%
 }%
 
@@ -47,15 +47,15 @@ listname={List of SRACs}%
 
 \newtheorem{SRAC}{SRAC}
 \tcolorboxenvironment{SRAC}{
-boxrule=0pt,
-boxsep=0pt,
-colback={white!90!SRAC},
-enhanced jigsaw,
-borderline west={2pt}{0pt}{SRAC},
-sharp corners,
-before skip=10pt,
-after skip=10pt,
-breakable,
+  boxrule=0pt
+ ,boxsep=0pt
+ ,colback={white!90!SRAC}
+ ,enhanced jigsaw
+ ,borderline west={2pt}{0pt}{SRAC}
+ ,sharp corners
+ ,before skip=10pt
+ ,after skip=10pt
+ ,breakable
 }
 
 \newcommand{\SRACautorefname}{SRAC}
@@ -65,14 +65,20 @@ breakable,
 ,Isa_COL.text_element.referentiable=%
 ,Isa_COL.text_element.variants=%
 ,CENELEC_50128.requirement.is_concerned=%
+,CENELEC_50128.requirement.long_name=%
 ,CENELEC_50128.SRAC.formal_repr=%
 ,CENELEC_50128.SRAC.assumption_kind=%
 ,CENELEC_50128.EC.assumption_kind=%
 ][1]{%
   \begin{isamarkuptext}%
-    \begin{SRAC}[\commandkey{label}]\label{\commandkey{label}}
-      \addxcontentsline{tos}{chapter}[]{\autoref{\commandkey{label}}: \commandkey{label}}
-      \DOFindex{SRAC}{\commandkey{label}}
+      \ifthenelse{\equal{\commandkey{CENELEC_50128.requirement.long_name}}{}}{%
+        \begin{SRAC}%
+            \addxcontentsline{tos}{chapter}[]{\autoref{\commandkey{label}}}%
+      }{%
+        \begin{SRAC}[\commandkey{CENELEC_50128.requirement.long_name}]%
+          \addxcontentsline{tos}{chapter}[]{\autoref{\commandkey{label}}: \commandkey{CENELEC_50128.requirement.long_name}}%
+          \DOFindex{SRAC}{\commandkey{CENELEC_50128.requirement.long_name}}%
+      }\label{\commandkey{label}}%
       #1%
     \end{SRAC}
   \end{isamarkuptext}%
@@ -91,15 +97,15 @@ listname={List of ECs}%
 
 \newtheorem{EC}{EC}
 \tcolorboxenvironment{EC}{
-boxrule=0pt,
-boxsep=0pt,
-colback={white!90!EC},
-enhanced jigsaw,
-borderline west={2pt}{0pt}{EC},
-sharp corners,
-before skip=10pt,
-after skip=10pt,
-breakable,
+  boxrule=0pt
+ ,boxsep=0pt
+ ,colback={white!90!EC}
+ ,enhanced jigsaw
+ ,borderline west={2pt}{0pt}{EC}
+ ,sharp corners
+ ,before skip=10pt
+ ,after skip=10pt
+ ,breakable
 }
 
 \newcommand{\ECautorefname}{EC}
@@ -109,17 +115,101 @@ breakable,
 ,Isa_COL.text_element.referentiable=%
 ,Isa_COL.text_element.variants=%
 ,CENELEC_50128.requirement.is_concerned=%
+,CENELEC_50128.requirement.long_name=%
 ,CENELEC_50128.SRAC.formal_repr=%
 ,CENELEC_50128.SRAC.assumption_kind=%
 ,CENELEC_50128.EC.assumption_kind=%
 ][1]{%
   \begin{isamarkuptext}%
-    \begin{EC}[\commandkey{label}]\label{\commandkey{label}}
-      \addxcontentsline{toe}{chapter}[]{\autoref{\commandkey{label}}: \commandkey{label}}
-      \DOFindex{EC}{\commandkey{label}}
+      \ifthenelse{\equal{\commandkey{CENELEC_50128.requirement.long_name}}{}}{%
+        \begin{EC}%
+            \addxcontentsline{tos}{chapter}[]{\autoref{\commandkey{label}}}%
+      }{%
+        \begin{EC}[\commandkey{CENELEC_50128.requirement.long_name}]%
+          \addxcontentsline{toe}{chapter}[]{\autoref{\commandkey{label}}: \commandkey{CENELEC_50128.requirement.long_name}}%
+          \DOFindex{EC}{\commandkey{CENELEC_50128.requirement.long_name}}%
+      }\label{\commandkey{label}}%
       #1%
     \end{EC}
   \end{isamarkuptext}%
 }
 
-% EC
+% assumptions
+\providecolor{assumption}{named}{orange}
+\newtheorem{assumption}{assumption}
+\tcolorboxenvironment{assumption}{
+  boxrule=0pt
+ ,boxsep=0pt
+ ,colback={white!90!assumption}
+ ,enhanced jigsaw
+ ,borderline west={2pt}{0pt}{assumption}
+ ,sharp corners
+ ,before skip=10pt
+ ,after skip=10pt
+ ,breakable
+}
+
+\newcommand{\assumptionautorefname}{assumption}
+\newisadof{text.CENELEC_50128.assumption}%
+[label=,type=%
+,Isa_COL.text_element.level=%
+,Isa_COL.text_element.referentiable=%
+,Isa_COL.text_element.variants=%
+,CENELEC_50128.requirement.is_concerned=%
+,CENELEC_50128.requirement.long_name=%
+,CENELEC_50128.SRAC.formal_repr=%
+,CENELEC_50128.SRAC.assumption_kind=%
+,CENELEC_50128.assumption.assumption_kind=%
+][1]{%
+  \begin{isamarkuptext}%
+      \ifthenelse{\equal{\commandkey{CENELEC_50128.requirement.long_name}}{}}{%
+        \begin{assumption}%
+      }{%
+        \begin{assumption}[\commandkey{CENELEC_50128.requirement.long_name}]%
+          \DOFindex{assumption}{\commandkey{CENELEC_50128.requirement.long_name}}%
+      }\label{\commandkey{label}}%
+      #1%
+    \end{assumption}
+  \end{isamarkuptext}%
+}
+
+
+% hypotheses
+\providecolor{hypothesis}{named}{teal}
+\newtheorem{hypothesis}{hypothesis}
+\tcolorboxenvironment{hypothesis}{
+ ,boxrule=0pt
+ ,boxsep=0pt
+ ,colback={white!90!hypothesis}
+ ,enhanced jigsaw
+ ,borderline west={2pt}{0pt}{hypothesis}
+ ,sharp corners
+ ,before skip=10pt
+ ,after skip=10pt
+ ,breakable
+}
+
+
+\newcommand{\hypothesisautorefname}{hypothesis}
+\newisadof{text.CENELEC_50128.hypothesis}%
+[label=,type=%
+,Isa_COL.text_element.level=%
+,Isa_COL.text_element.referentiable=%
+,Isa_COL.text_element.variants=%
+,CENELEC_50128.requirement.is_concerned=%
+,CENELEC_50128.requirement.long_name=%
+,CENELEC_50128.SRAC.formal_repr=%
+,CENELEC_50128.SRAC.hypothesis_kind=%
+,CENELEC_50128.hypothesis.hyp_type=%
+][1]{%
+  \begin{isamarkuptext}%
+      \ifthenelse{\equal{\commandkey{CENELEC_50128.requirement.long_name}}{}}{%
+        \begin{hypothesis}%
+      }{%
+        \begin{hypothesis}[\commandkey{CENELEC_50128.requirement.long_name}]%
+          \DOFindex{hypothesis}{\commandkey{CENELEC_50128.requirement.long_name}}%
+      }\label{\commandkey{label}}%
+      #1%
+    \end{hypothesis}
+  \end{isamarkuptext}%
+}
