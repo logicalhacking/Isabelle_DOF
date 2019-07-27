@@ -18,21 +18,46 @@
   Document-Type Support Framework for Isabelle (CENELEC 50128).]
 
 \RequirePackage{DOF-COL}
-\usepackage{amsthm}
+\usepackage{etex}
+\reserveinserts{28}
+\usepackage[many]{tcolorbox}
 \usepackage{marginnote}
+
+% Index setup
 \usepackage{index}
 \makeindex
-
-
+\AtEndDocument{\printindex}
 
 \newcommand{\DOFindex}[2]{%
   #2\marginnote{\normalfont\textbf{#1}: #2}%
-  \expandafter\index\expandafter{\expanded{#1!#2}}%
+  \expandafter\index\expandafter{\expanded{#2 (#1)}}%
 }%
 
 
-\AtEndDocument{\printindex}
+%% SRAC
+\providecolor{SRAC}{named}{green}
+\DeclareNewTOC[%
+owner=\jobname,
+type=SRAC,%
+types=SRACs,%
+listname={List of SRACs}%
+]{tos}
+\setuptoc{tos}{chapteratlist}
+\AtEndEnvironment{frontmatter}{\listofSRACs}
+
 \newtheorem{SRAC}{SRAC}
+\tcolorboxenvironment{SRAC}{
+boxrule=0pt,
+boxsep=0pt,
+colback={white!90!SRAC},
+enhanced jigsaw,
+borderline west={2pt}{0pt}{SRAC},
+sharp corners,
+before skip=10pt,
+after skip=10pt,
+breakable,
+}
+
 \newcommand{\SRACautorefname}{SRAC}
 \newisadof{text.CENELEC_50128.SRAC}%
 [label=,type=%
@@ -46,13 +71,37 @@
 ][1]{%
   \begin{isamarkuptext}%
     \begin{SRAC}[\commandkey{label}]\label{\commandkey{label}}
+      \addxcontentsline{tos}{chapter}[]{\autoref{\commandkey{label}}: \commandkey{label}}
       \DOFindex{SRAC}{\commandkey{label}}
       #1%
     \end{SRAC}
   \end{isamarkuptext}%
 }
 
+% EC
+\providecolor{EC}{named}{blue}
+\DeclareNewTOC[%
+owner=\jobname,
+type=EC,%
+types=ECs,%
+listname={List of ECs}%
+]{toe}
+\setuptoc{toe}{chapteratlist}
+\AtEndEnvironment{frontmatter}{\listofECs}
+
 \newtheorem{EC}{EC}
+\tcolorboxenvironment{EC}{
+boxrule=0pt,
+boxsep=0pt,
+colback={white!90!EC},
+enhanced jigsaw,
+borderline west={2pt}{0pt}{EC},
+sharp corners,
+before skip=10pt,
+after skip=10pt,
+breakable,
+}
+
 \newcommand{\ECautorefname}{EC}
 \newisadof{text.CENELEC_50128.EC}%
 [label=,type=%
@@ -66,9 +115,11 @@
 ][1]{%
   \begin{isamarkuptext}%
     \begin{EC}[\commandkey{label}]\label{\commandkey{label}}
+      \addxcontentsline{toe}{chapter}[]{\autoref{\commandkey{label}}: \commandkey{label}}
       \DOFindex{EC}{\commandkey{label}}
       #1%
     \end{EC}
   \end{isamarkuptext}%
 }
 
+% EC
