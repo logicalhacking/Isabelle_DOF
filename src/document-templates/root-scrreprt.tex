@@ -67,11 +67,13 @@
   \DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
   \DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\newenvironment{frontmatter}{}{}
 
 \begin{document}
+\begin{frontmatter}
 \maketitle
 \tableofcontents
+\end{frontmatter}
 \input{session}
 % optional bibliography
 \IfFileExists{root.bib}{%

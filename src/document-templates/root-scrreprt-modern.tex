@@ -24,6 +24,7 @@
 \RequirePackage{ifvtex}
 \documentclass[fontsize=11pt,DIV=9,paper=a4,open=right,twoside=semi,abstract=true]{scrreprt}
 \usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
 \usepackage{textcomp}
 \usepackage[varqu,varl]{zi4}% inconsolata typewriter
 \usepackage{amsmath,amsthm}
@@ -85,11 +86,13 @@
   \DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
   \DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\newenvironment{frontmatter}{}{}
 
 \begin{document}
+\begin{frontmatter}
 \maketitle
 \tableofcontents
+\end{frontmatter}
 \input{session}
 % optional bibliography
 \IfFileExists{root.bib}{%
