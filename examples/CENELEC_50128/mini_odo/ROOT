@@ -7,6 +7,7 @@ session "mini_odo" = "Isabelle_DOF" +
     "preamble.tex"
     "build"
     "root.bib"
+    "root.mst"
     "lstisadof.sty"
     "figures/df-numerics-encshaft.png"
     "figures/odometer.jpeg"
