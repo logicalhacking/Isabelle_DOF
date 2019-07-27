@@ -1,5 +1,6 @@
-%% Copyright (C) 2018 The University of Sheffield
-%%               2018 The University of Paris-Sud
+%% Copyright (C) 2019 University of Exeter
+%%               2018 University of Paris-Sud
+%%               2018 The University of Sheffield
 %%
 %% License:
 %%   This program can be redistributed and/or modified under the terms
@@ -17,3 +18,57 @@
   Document-Type Support Framework for Isabelle (CENELEC 50128).]
 
 \RequirePackage{DOF-COL}
+\usepackage{amsthm}
+\usepackage{marginnote}
+\usepackage{index}
+\makeindex
+
+
+
+\newcommand{\DOFindex}[2]{%
+  #2\marginnote{\normalfont\textbf{#1}: #2}%
+  \expandafter\index\expandafter{\expanded{#1!#2}}%
+}%
+
+
+\AtEndDocument{\printindex}
+\newtheorem{SRAC}{SRAC}
+\newcommand{\SRACautorefname}{SRAC}
+\newisadof{text.CENELEC_50128.SRAC}%
+[label=,type=%
+,Isa_COL.text_element.level=%
+,Isa_COL.text_element.referentiable=%
+,Isa_COL.text_element.variants=%
+,CENELEC_50128.requirement.is_concerned=%
+,CENELEC_50128.SRAC.formal_repr=%
+,CENELEC_50128.SRAC.assumption_kind=%
+,CENELEC_50128.EC.assumption_kind=%
+][1]{%
+  \begin{isamarkuptext}%
+    \begin{SRAC}[\commandkey{label}]\label{\commandkey{label}}
+      \DOFindex{SRAC}{\commandkey{label}}
+      #1%
+    \end{SRAC}
+  \end{isamarkuptext}%
+}
+
+\newtheorem{EC}{EC}
+\newcommand{\ECautorefname}{EC}
+\newisadof{text.CENELEC_50128.EC}%
+[label=,type=%
+,Isa_COL.text_element.level=%
+,Isa_COL.text_element.referentiable=%
+,Isa_COL.text_element.variants=%
+,CENELEC_50128.requirement.is_concerned=%
+,CENELEC_50128.SRAC.formal_repr=%
+,CENELEC_50128.SRAC.assumption_kind=%
+,CENELEC_50128.EC.assumption_kind=%
+][1]{%
+  \begin{isamarkuptext}%
+    \begin{EC}[\commandkey{label}]\label{\commandkey{label}}
+      \DOFindex{EC}{\commandkey{label}}
+      #1%
+    \end{EC}
+  \end{isamarkuptext}%
+}
+
