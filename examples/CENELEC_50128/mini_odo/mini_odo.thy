@@ -11,7 +11,6 @@ declare[[strict_monitor_checking=true]]
 title*[title::title]\<open>The CENELEC 50128 Ontology\<close> 
 subtitle*[subtitle::subtitle]\<open>Case Study: An Odometer-Subsystem\<close> 
 
-
 chapter*[casestudy::technical]\<open>A Case-Study: An Odometer-Subsystem\<close>
 text\<open>
   In our case study, we will follow the phases of analysis, design, and implementation of the 
@@ -521,16 +520,24 @@ text\<open>
 
 text\<open>Examples for declaration of typed doc-items "assumption" and "hypothesis",
      concepts defined in the underlying ontology @{theory "Isabelle_DOF.CENELEC_50128"}. \<close>
-text*[ass1::assumption] \<open> The subsystem Y is safe. \<close>
+text*[ass1::assumption, long_name="Some ''assumption one''"] \<open> The subsystem Y is safe. \<close>
 text*[hyp1::hypothesis] \<open> P not equal NP \<close>
   
 text\<open>A real example fragment from a larger project, declaring a text-element as a
      "safety-related application condition", a concept defined in the 
      @{theory "Isabelle_DOF.CENELEC_50128"} ontology:\<close>  
 
-text*[new_ass::hypothesis]\<open>Under the assumption @{assumption \<open>ass1\<close>} we establish the following: ... \<close>
+text*[hyp2::hypothesis]\<open>Under the assumption @{assumption \<open>ass1\<close>} we establish the following: ... \<close>
 
-text*[ass122::SRAC] \<open> The overall sampling frequence of the odometer
+text*[ass122::SRAC, long_name="Some ''ass122''"] \<open> The overall sampling frequence of the odometer
+subsystem is therefore 14 khz, which includes sampling, computing and
+result communication times... \<close>
+
+text*[ass123::SRAC] \<open> The overall sampling frequence of the odometer
+subsystem is therefore 14 khz, which includes sampling, computing and
+result communication times... \<close>
+
+text*[ass124::EC, long_name="Some ''ass124''"] \<open> The overall sampling frequence of the odometer
 subsystem is therefore 14 khz, which includes sampling, computing and
 result communication times... \<close>
   
@@ -539,7 +546,6 @@ that governs the external test-execution via, eg., a makefile or specific calls
 to a test-environment or test-engine \<close>
 
 
-section\<open> References to doc-items.\<close>
 text\<open>Finally some examples of references to doc-items, i.e. text-elements with declared 
      meta-information and status. \<close> 
 text \<open> As established by @{docref (unchecked) \<open>t10\<close>}, 
@@ -549,28 +555,6 @@ text \<open> the               @{docref \<open>t10\<close>}
 text \<open> represent a justification of the safety related applicability 
        condition @{SRAC \<open>ass122\<close>} aka exported constraint @{EC \<open>ass122\<close>}.\<close> 
 
-
-section\<open> Some Tests for Ontology Framework and its CENELEC Instance \<close>  
-                                                  
-declare_reference* [lalala::requirement, alpha="main", beta=42]
-declare_reference* [blablabla::cid, alpha="beta sdf", beta=gamma, delta=dfg_fgh\<^sub>1]
-
-
-section*[h::example]\<open> Some global inspection commands for the status of docitem and 
-                      doc-class tables ... \<close>  
-
-
-section*[i::example]\<open> Text Antiquotation Infrastructure ... \<close>  
-                 
-(*<*)
-text\<open> @{docitem \<open>lalala\<close>}   -- produces warning. \<close>  
-text\<open> @{docitem (unchecked) \<open>lalala\<close>} -- produces no warning. \<close>  
-(*>*)
-
-text\<open> @{EC \<open>ass122\<close>} -- global reference to a exported constraint in another file.
-                         Note that the link is actually a srac, which, according to 
-                         the ontology, happens to be an "ec".  \<close>
-   
+(*<*)   
 end
-  
-    
+(*>*)
