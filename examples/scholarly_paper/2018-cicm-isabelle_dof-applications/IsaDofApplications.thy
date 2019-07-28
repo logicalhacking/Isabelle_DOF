@@ -21,7 +21,7 @@ text*[paolo::author,
       affiliation= "''IRT-SystemX, Paris, France''"]\<open>Paolo Crisafulli\<close>
 text*[bu::author,
       email       = "\<open>wolff@lri.fr\<close>",
-      affiliation = "\<open>Université Paris-Sud, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
+      affiliation = "\<open>Université Paris-Saclay, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
     
 
 text*[abs::abstract,

@@ -79,7 +79,7 @@ generation and ways to adapt it to particular purposes.
 conclusions  and discuss related work in @{docitem_ref (unchecked) \<open>conclusion\<close>}. \<close>  
 
 
-section\<open>Notation and Layout Conventions\<close>
+section\<open>Typographical Conventions\<close>
 text\<open>
   We acknowledge that understanding \isadof and its implementation in all details requires
   to separate multiple technological layers or languages. To help the reader with this, we 

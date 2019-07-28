@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Copyright (c) 2019 University of Exeter
-#               2018-2019 University of Paris-Sud
+#               2018-2019 University of Paris-Saclay
 #               2018-2019 The University of Sheffield
 #
 # Redistribution and use in source and binary forms, with or without
