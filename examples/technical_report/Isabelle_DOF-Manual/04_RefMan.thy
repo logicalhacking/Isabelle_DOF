@@ -298,7 +298,7 @@ text\<open>To express the dependencies between text elements to the formal
   \<^emph>\<open>inside\<close> the HOL type system.  We do, however, not reflect the data of
   these types. They are just declared abstract types, 
   ``inhabited'' by special constant symbols carrying strings, for
-  example of the format \inlineisar+<AT>{thm <string>}+. When HOL
+  example of the format \inlineisar+<@>{thm <string>}+. When HOL
   expressions were used to denote values of \inlineisar+doc_class+
   instance attributes, this requires additional checks after
   conventional type-checking that this string represents actually a
@@ -307,15 +307,15 @@ text\<open>To express the dependencies between text elements to the formal
   attribute in the previous section is the power of the ODL: here, we model
   a relation between \<^emph>\<open>claims\<close> and \<^emph>\<open>results\<close> which may be a
   formal, machine-check theorem of type \inlinesml+thm+ denoted by, for
-  example: \inlineisar+property = "[<AT>{thm ''system_is_safe''}]"+ in a
+  example: \inlineisar+property = "[<@>{thm ''system_is_safe''}]"+ in a
   system context \inlineisar+\<theta>+ where this theorem is
   established. Similarly, attribute values like 
-  \inlineisar+property = "<AT>{term \<Open>A \<leftrightarrow> B\<Close>}"+
+  \inlineisar+property = "<@>{term \<Open>A \<leftrightarrow> B\<Close>}"+
   require that the HOL-string \inlineisar+A \<leftrightarrow> B+ is 
   again type-checked and represents indeed a formula in $\theta$. Another instance of 
   this process, which we call \<open>second-level type-checking\<close>, are term-constants
   generated from the ontology such as 
-  \inlineisar+<AT>{definition <string>}+. For the latter, the argument string
+  \inlineisar+<@>{definition <string>}+. For the latter, the argument string
   must be checked that it  represents a reference to a text-element
   having the type \inlineisar+definition+ according to the ontology in @{example "odl-design"}.\<close>
 
@@ -403,11 +403,11 @@ class invariants. A formulation, in SML, of the first class-invariant
 in \autoref{sec:class_inv} is straight-forward:
 \begin{sml}
 fun check_result_inv oid {is_monitor:bool} ctxt =
-  let val kind = compute_attr_access ctxt "kind" oid <AT>{here} <AT>{here}
-      val prop = compute_attr_access ctxt "property" oid <AT>{here} <AT>{here}
+  let val kind = compute_attr_access ctxt "kind" oid <@>{here} <@>{here}
+      val prop = compute_attr_access ctxt "property" oid <@>{here} <@>{here}
       val tS = HOLogic.dest_list prop
   in  case kind_term of
-       <AT>{term "proof"} => if not(null tS) then true
+       <@>{term "proof"} => if not(null tS) then true
                           else error("class result invariant violation")
       | _ => false
   end
@@ -419,7 +419,7 @@ The \inlinesml{setup}-command (last line) registers the
 activates any creation or modification of an instance of
 \inlineisar+result+.  We cannot replace \inlineisar+compute_attr_access+
 by the corresponding antiquotation
-\inlineisar+<AT>{docitem_value kind::oid}+, since \inlineisar+oid+ is
+\inlineisar+<@>{docitem_value kind::oid}+, since \inlineisar+oid+ is
 bound to a variable here and can therefore not be statically expanded.
 
 Isabelle's code generator can in principle generate class invariant code
@@ -549,22 +549,22 @@ subsection\<open>Editing Documents with Ontology Meta-Data: Inner Syntax\<close>
 text\<open>We continue our running example as follows:
 \begin{isar}[mathescape]
 text*[d1::definition]\<Open>
-  We define the water level <AT>{term "level"} of a system state
-  <AT>{term "\<sigma>"} of the steam boiler as follows: 
+  We define the water level <@>{term "level"} of a system state
+  <@>{term "\<sigma>"} of the steam boiler as follows: 
 \<Close>
 definition level :: "state \<rightarrow> real" where
           "level \<sigma> =  level0 + ..." 
 update_instance*[d1::definition,
-                 property += "[<AT>{term ''level \<sigma> =  level0 + ...''}]"]
+                 property += "[<@>{term ''level \<sigma> =  level0 + ...''}]"]
 
 text*[only::result,evidence="proof"]\<Open>
-  The water level is never lower than <AT>{term "level0"}:
+  The water level is never lower than <@>{term "level0"}:
 \<Close>
 theorem level_always_above_level_0: "\<forall> \<sigma>. level \<sigma> \<geq> level0"
   unfolding level_def
   by auto
 update_instance*[only::result,
-                 property += "[<AT>{thm ''level_always_above_level_0''}]"]
+                 property += "[<@>{thm ''level_always_above_level_0''}]"]
 \end{isar}
 \<close>
 text\<open>
