@@ -31,14 +31,16 @@
 \usepackage{newtxsf}
 \renewcommand\familydefault{\sfdefault}
 \usepackage{xcolor}
-\addtokomafont{chapterentrypagenumber}{\color{blue!40!black}}
-\addtokomafont{chapterentry}{\color{blue!40!black}}
-\addtokomafont{chapter}{\color{blue!40!black}}
-\addtokomafont{section}{\color{blue!40!black}}
-\addtokomafont{subsection}{\color{blue!40!black}}
-\addtokomafont{subsubsection}{\color{blue!40!black}}
-\addtokomafont{paragraph}{\color{blue!40!black}}
-\addtokomafont{subparagraph}{\color{blue!40!black}}
+\colorlet{DOFsectioncolor}{blue!60!black}
+\addtokomafont{chapterentrypagenumber}{\color{DOFsectioncolor}}
+\addtokomafont{chapterentry}{\color{DOFsectioncolor}}
+\addtokomafont{title}{\color{DOFsectioncolor}\bfseries}
+\addtokomafont{chapter}{\color{DOFsectioncolor}\bfseries}
+\addtokomafont{section}{\color{DOFsectioncolor}}
+\addtokomafont{subsection}{\color{DOFsectioncolor}}
+\addtokomafont{subsubsection}{\color{DOFsectioncolor}}
+\addtokomafont{paragraph}{\color{DOFsectioncolor}}
+\addtokomafont{subparagraph}{\color{DOFsectioncolor}}
 
 \usepackage[english]{babel}
 \RequirePackage[caption]{subfig}
@@ -89,6 +91,10 @@
 \newenvironment{frontmatter}{}{}
 
 \begin{document}
+\renewcommand{\chapterautorefname}{Chapter}
+\renewcommand{\sectionautorefname}{Section}
+\renewcommand{\subsectionautorefname}{Section}
+\renewcommand{\subsubsectionautorefname}{Section}
 \begin{frontmatter}
 \maketitle
 \tableofcontents
