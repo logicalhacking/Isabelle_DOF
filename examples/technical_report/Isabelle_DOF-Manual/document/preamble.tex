@@ -23,64 +23,6 @@
 \usepackage{xspace}
 \usepackage[draft]{fixme}
 
-\lstloadlanguages{TeX}
-
-
-\lstdefinestyle{ltx}{language=[AlLaTeX]TeX,
-  ,basicstyle=\ttfamily%
-  ,showspaces=false%
-  ,showlines=false%
-  ,columns=flexible%
-  ,morekeywords={newisadof}
- %  ,keywordstyle=\bfseries%
-   % Defining 2-keywords
-   ,keywordstyle=[1]{\color{BrickRed!60}\bfseries}%
-   % Defining 3-keywords
-   ,keywordstyle=[2]{\color{OliveGreen!60}\bfseries}%
-   % Defining 4-keywords
-   ,keywordstyle=[3]{\color{black!60}\bfseries}%
-   % Defining 5-keywords
-   ,keywordstyle=[4]{\color{Blue!70}\bfseries}%
-   % Defining 6-keywords
-   ,keywordstyle=[5]{\itshape}%
-  % 
-}
-\lstdefinestyle{displayltx}{style=ltx,
-                basicstyle=\ttfamily\footnotesize,
-                backgroundcolor=\color{yellow!7}, frame=lines}%
-
-\lstnewenvironment{ltx}[1][]{\lstset{style=displayltx, #1}}{}
-\def\inlineltx{\lstinline[style=ltx, breaklines=true,columns=fullflexible]}
-
-
-
-
-
-\lstloadlanguages{bash}
-\lstdefinestyle{bash}{language=bash,
-  ,basicstyle=\ttfamily%
-  ,showspaces=false%
-  ,showlines=false%
-  ,columns=flexible%
- %  ,keywordstyle=\bfseries%
-   % Defining 2-keywords
-   ,keywordstyle=[1]{\color{BrickRed!60}\bfseries}%
-   % Defining 3-keywords
-   ,keywordstyle=[2]{\color{OliveGreen!60}\bfseries}%
-   % Defining 4-keywords
-   ,keywordstyle=[3]{\color{black!60}\bfseries}%
-   % Defining 5-keywords
-   ,keywordstyle=[4]{\color{Blue!70}\bfseries}%
-   % Defining 6-keywords
-   ,keywordstyle=[5]{\itshape}%
-  % 
-}
-\lstdefinestyle{displaybash}{style=bash,
-                basicstyle=\ttfamily\footnotesize,
-                backgroundcolor=\color{black!5}, frame=lines}%
-
-\lstnewenvironment{bash}[1][]{\lstset{style=displaybash, #1}}{}
-\def\inlinebash{\lstinline[style=bash, breaklines=true,columns=fullflexible]}
 
 \usepackage[caption]{subfig}
 \usepackage[size=footnotesize]{caption}

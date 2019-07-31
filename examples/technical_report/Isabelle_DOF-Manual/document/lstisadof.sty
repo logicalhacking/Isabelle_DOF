@@ -156,10 +156,17 @@
   % 
 }%
 %% 
+
+\newcommand{\lstlabel}[2]{%
+  \mbox{}\hfill\begin{picture}(0,0)%
+    \put(-47,25){\fcolorbox{black}{#1}{\parbox{1.4cm}{\centering\footnotesize #2}}}
+  \end{picture}%
+}
 \lstnewenvironment{isar}[1][]{\lstset{style=ISAR,
     backgroundcolor=\color{blue!6},
     frame=lines,mathescape,
-    basicstyle=\footnotesize\ttfamily,#1}}{}
+    basicstyle=\footnotesize\ttfamily,#1}}%
+    {\lstlabel{blue!60!black}{\textcolor{white}{Isar}}}
 %%% 
 \def\inlineisar{\lstinline[style=ISAR,breaklines=true,mathescape,breakatwhitespace=true]}
 
@@ -167,7 +174,8 @@
     backgroundcolor=\color{green!6},
     frame=lines,mathescape,breakatwhitespace=true
     ,columns=flexible%
-    ,basicstyle=\footnotesize\rmfamily,#1}}{}
+    ,basicstyle=\footnotesize\rmfamily,#1}}
+    {\lstlabel{green!60!black}{\textcolor{white}{Document}}}
 
 
 %%%%%%%%%%%%%%%%%%
@@ -185,6 +193,67 @@
 \lstnewenvironment{sml}[1][]{\lstset{style=sml,
     backgroundcolor=\color{red!6},
     frame=lines,
-    basicstyle=\footnotesize\ttfamily,#1}}{}
+    basicstyle=\footnotesize\ttfamily,#1}}%{}
+    {\lstlabel{red!60!black}{\textcolor{white}{SML}}}
 %%% 
 \def\inlinesml{\lstinline[style=sml,breaklines=true,mathescape,breakatwhitespace=true]}
+
+
+\lstloadlanguages{TeX}
+\lstdefinestyle{ltx}{language=[AlLaTeX]TeX,
+  ,basicstyle=\ttfamily%
+  ,showspaces=false%
+  ,showlines=false%
+  ,columns=flexible%
+  ,morekeywords={newisadof}
+ %  ,keywordstyle=\bfseries%
+   % Defining 2-keywords
+   ,keywordstyle=[1]{\color{BrickRed!60}\bfseries}%
+   % Defining 3-keywords
+   ,keywordstyle=[2]{\color{OliveGreen!60}\bfseries}%
+   % Defining 4-keywords
+   ,keywordstyle=[3]{\color{black!60}\bfseries}%
+   % Defining 5-keywords
+   ,keywordstyle=[4]{\color{Blue!70}\bfseries}%
+   % Defining 6-keywords
+   ,keywordstyle=[5]{\itshape}%
+  % 
+}
+\lstdefinestyle{displayltx}{style=ltx,
+                basicstyle=\ttfamily\footnotesize,
+                backgroundcolor=\color{yellow!7}, frame=lines}%
+
+\lstnewenvironment{ltx}[1][]{\lstset{style=displayltx, #1}}%
+    {\lstlabel{yellow!60!black}{\textcolor{white}{\LaTeX}}}
+\def\inlineltx{\lstinline[style=ltx, breaklines=true,columns=fullflexible]}
+
+
+
+
+
+\lstloadlanguages{bash}
+\lstdefinestyle{bash}{language=bash,
+  ,basicstyle=\ttfamily%
+  ,showspaces=false%
+  ,showlines=false%
+  ,columns=flexible%
+ %  ,keywordstyle=\bfseries%
+   % Defining 2-keywords
+   ,keywordstyle=[1]{\color{BrickRed!60}\bfseries}%
+   % Defining 3-keywords
+   ,keywordstyle=[2]{\color{OliveGreen!60}\bfseries}%
+   % Defining 4-keywords
+   ,keywordstyle=[3]{\color{black!60}\bfseries}%
+   % Defining 5-keywords
+   ,keywordstyle=[4]{\color{Blue!70}\bfseries}%
+   % Defining 6-keywords
+   ,keywordstyle=[5]{\itshape}%
+  % 
+}
+\lstdefinestyle{displaybash}{style=bash,
+                basicstyle=\ttfamily\footnotesize,
+                backgroundcolor=\color{black!5}, frame=lines}%
+
+\lstnewenvironment{bash}[1][]{\lstset{style=displaybash, #1}}%{}
+    {\lstlabel{black!60!white}{\textcolor{white}{Bash}}}
+\def\inlinebash{\lstinline[style=bash, breaklines=true,columns=fullflexible]}
