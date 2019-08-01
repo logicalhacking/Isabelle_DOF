@@ -1,9 +1,44 @@
+% Copyright (c) 2019 The University of Exeter. 
+%
+% Redistribution and use in source and binary forms, with or without
+% modification, are permitted provided that the following conditions
+% are met:
+% 1. Redistributions of source code must retain the above copyright
+%    notice, this list of conditions and the following disclaimer.
+% 2. Redistributions in binary form must reproduce the above copyright
+%    notice, this list of conditions and the following disclaimer in
+%    the documentation and/or other materials provided with the
+%    distribution.
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+% "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+% LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+% FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+% COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+% INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+% BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+% LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+% CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+% LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+% ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+% POSSIBILITY OF SUCH DAMAGE.
+%
+% SPDX-License-Identifier: BSD-2-Clause
+
+
+\usepackage{tikz}
+\usepackage[many]{tcolorbox}
+\tcbuselibrary{listings}
+\tcbuselibrary{skins}
+
 \definecolor{OliveGreen}    {cmyk}{0.64,0,0.95,0.40}
 \definecolor{BrickRed}      {cmyk}{0,0.89,0.94,0.28}
 \definecolor{Blue}          {cmyk}{1,1,0,0}
 \definecolor{CornflowerBlue}{cmyk}{0.65,0.13,0,0}
 
-%%%\lst@BeginAspect[keywords]{isar}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% <antiquotations>
+%% Hack: re-defining tag types for supporting highlighting of antiquotations
 \gdef\lst@tagtypes{s}
 \gdef\lst@TagKey#1#2{%
     \lst@Delim\lst@tagstyle #2\relax
@@ -43,25 +78,20 @@
     \lst@TrackNewLines \lst@PrintToken
     \lst@EnterMode\lst@GPmode{}\let\lst@ifmode\iffalse
     \lst@mode\lst@tagmode #1\lst@mode\lst@GPmode\relax\lst@modetrue}
-%%\lst@EndAspect
-
-
-
-% \gdef\lst@BeginTag{%
-%     \lst@DelimOpen
-%     \lst@ifextags\else
-%         {\let\lst@ifkeywords\iftrue
-%          \lst@ifmarkfirstintag\lst@firstintagtrue\fi\color{green}}}
-% \gdef\lst@EndTag{\lst@DelimClose\lst@ifextags\else\color{green}}
-
+%
 \def\beginlstdelim#1#2#3%
 {%
     \def\endlstdelim{\texttt{\textbf{\color{black!60}#2}}\egroup}%
     \ttfamily\textbf{\color{black!60}#1}\bgroup\rmfamily\color{#3}\aftergroup\endlstdelim%
 }
+%% </antiquotations>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% <isar>
 \newcommand{\subscr}[1]{\ensuremath{_{\text{#1}}}}
 \newcommand{\supscr}[1]{\ensuremath{^{\text{#1}}}}
-\lstdefinestyle{ISAR}{%
+\lstdefinestyle{isar}{%
   language=%
   ,basicstyle=\ttfamily%
   ,showspaces=false%
@@ -78,7 +108,7 @@
     {...}{\,\ldots\,}3%
     {<Open>}{\ensuremath{\isacartoucheopen}}1%
     {<open>}{\ensuremath{\isacartoucheopen}}1%
-    {<@>}{@}1%
+    %{<@>}{@}1%
     {"}{}0%
     {~}{\ }1%
     {::}{:\!:}1%
@@ -119,7 +149,6 @@
     {\\<in>}{\ensuremath{\in}}1%
     {\\<delta>}{\ensuremath{\delta}}1%
     {\\<real>}{\ensuremath{\mathbb{R}}}1%
-    {¥}{}0%
     {\\<noteq>}{\ensuremath{\neq}}1%
     {\\<exists>}{\ensuremath{\exists}}1%
     {\\<Forall>}{\ensuremath{\bigwedge\,}}1%
@@ -149,7 +178,9 @@
    ,morekeywords=[4]{where, imports, keywords}%
    % Defining 5-keywords
    ,keywordstyle=[5]{\color{BrickRed!70}\bfseries}%
-   ,morekeywords=[5]{datatype, by, fun, Definition*, definition, type_synonym, typedecl, consts, assumes, and, shows, proof, next, qed, lemma, theorem}%
+   ,morekeywords=[5]{datatype, by, fun, Definition*, definition,
+     type_synonym, typedecl, 
+     consts, assumes, and, shows, proof, next, qed, lemma, theorem}%
    % Defining 6-keywords
    ,keywordstyle=[6]{\itshape}%
    ,morekeywords=[6]{meta-args, ref, expr, class_id}%
@@ -157,54 +188,113 @@
 }%
 %% 
 
-\newcommand{\lstlabel}[2]{%
-  \mbox{}\hfill\begin{picture}(0,0)%
-    \put(-47,25){\fcolorbox{black}{#1}{\parbox{1.4cm}{\centering\footnotesize #2}}}
-  \end{picture}\vspace{-5ex}%
-}
-\lstnewenvironment{isar}[1][]{\lstset{style=ISAR,
-    backgroundcolor=\color{blue!6},
-    frame=lines,mathescape,
-    basicstyle=\footnotesize\ttfamily,#1}}%
-    {\lstlabel{blue!60!black}{\textcolor{white}{Isar}}}
-%%% 
-\def\inlineisar{\lstinline[style=ISAR,breaklines=true,mathescape,breakatwhitespace=true]}
+\providecolor{isar}{named}{blue}
+\def\inlineisar{\lstinline[style=isar,breaklines=true,mathescape,breakatwhitespace=true]}
+\newtcblisting{isar}[1][]{%
+      listing only%
+     ,boxrule=0pt
+     ,boxsep=0pt
+     ,colback=white!90!isar
+     ,enhanced jigsaw
+     ,borderline west={2pt}{0pt}{isar!60!black}
+     ,sharp corners
+     % ,before skip=10pt
+     % ,after skip=10pt
+     ,enlarge top by=0mm
+     ,enhanced
+     ,overlay={\node[draw,fill=isar!60!black,xshift=0pt,anchor=north
+       east,font=\bfseries\footnotesize\color{white}]
+                at (frame.north east) {Isar};}
+     ,listing options={
+          style=isar
+          ,basicstyle=\small\ttfamily
+         ,mathescape
+         ,#1
+      }
+  }%
+%% </isar>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\lstnewenvironment{out}[1][]{\lstset{
-    backgroundcolor=\color{green!6},
-    frame=lines,mathescape,breakatwhitespace=true
-    ,columns=flexible%
-    ,basicstyle=\footnotesize\rmfamily,#1}}
-    {\lstlabel{green!60!black}{\textcolor{white}{Document}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%% <out>
+\providecolor{out}{named}{green}
+\newtcblisting{out}[1][]{%
+      listing only%
+     ,boxrule=0pt
+     ,boxsep=0pt
+     ,colback=white!90!out
+     ,enhanced jigsaw
+     ,borderline west={2pt}{0pt}{out!60!black}
+     ,sharp corners
+     % ,before skip=10pt
+     % ,after skip=10pt
+     ,enlarge top by=0mm
+     ,enhanced
+     ,overlay={\node[draw,fill=out!60!black,xshift=0pt,anchor=north
+       east,font=\bfseries\footnotesize\color{white}]
+                at (frame.north east) {Document};}
+        ,listing options={
+           breakatwhitespace=true
+          ,columns=flexible%
+          ,basicstyle=\small\rmfamily
+          ,mathescape
+          ,#1
+      }
+  }%
+%% </out>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-
-%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%% <sml>
 \lstloadlanguages{ML}
-\lstdefinestyle{sml}{basicstyle=\ttfamily,%
-                     commentstyle=\itshape,%
-                     keywordstyle=\bfseries\color{CornflowerBlue},%
-                     ndkeywordstyle=\color{red},%
-                     language=ML,
+\providecolor{sml}{named}{red}
+\lstdefinestyle{sml}{
+   basicstyle=\ttfamily,%
+   commentstyle=\itshape,%
+   keywordstyle=\bfseries\color{CornflowerBlue},%
+   ndkeywordstyle=\color{green},%
+   language=ML
+%  ,literate={%
+%     {<@>}{@}1%
+%    }
    ,keywordstyle=[6]{\itshape}%
    ,morekeywords=[6]{args_type}%
 }%
-
-\lstnewenvironment{sml}[1][]{\lstset{style=sml,
-    backgroundcolor=\color{red!6},
-    frame=lines,
-    basicstyle=\footnotesize\ttfamily,#1}}%{}
-    {\lstlabel{red!60!black}{\textcolor{white}{SML}}}
-%%% 
 \def\inlinesml{\lstinline[style=sml,breaklines=true,mathescape,breakatwhitespace=true]}
+\newtcblisting{sml}[1][]{%
+      listing only%
+     ,boxrule=0pt
+     ,boxsep=0pt
+     ,colback=white!90!sml
+     ,enhanced jigsaw
+     ,borderline west={2pt}{0pt}{sml!60!black}
+     ,sharp corners
+     % ,before skip=10pt
+     % ,after skip=10pt
+     ,enlarge top by=0mm
+     ,enhanced
+     ,overlay={\node[draw,fill=sml!60!black,xshift=0pt,anchor=north
+       east,font=\bfseries\footnotesize\color{white}]
+                at (frame.north east) {SML};}
+        ,listing options={
+          style=sml
+          ,columns=flexible%
+          ,basicstyle=\small\ttfamily
+          ,mathescape
+          ,#1
+      }
+  }%
+%% </sml>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%% <latex>
 \lstloadlanguages{TeX}
-\lstdefinestyle{ltx}{language=[AlLaTeX]TeX,
+\providecolor{ltx}{named}{yellow}
+\lstdefinestyle{lltx}{language=[AlLaTeX]TeX,
   ,basicstyle=\ttfamily%
   ,showspaces=false%
   ,showlines=false%
-  ,columns=flexible%
   ,morekeywords={newisadof}
  %  ,keywordstyle=\bfseries%
    % Defining 2-keywords
@@ -219,18 +309,39 @@
    ,keywordstyle=[5]{\itshape}%
   % 
 }
-\lstdefinestyle{displayltx}{style=ltx,
-                basicstyle=\ttfamily\footnotesize,
-                backgroundcolor=\color{yellow!7}, frame=lines}%
-
-\lstnewenvironment{ltx}[1][]{\lstset{style=displayltx, #1}}%
-    {\lstlabel{yellow!60!black}{\textcolor{white}{\LaTeX}}}
+\lstdefinestyle{ltx}{style=lltx,
+                basicstyle=\ttfamily\small}%
 \def\inlineltx{\lstinline[style=ltx, breaklines=true,columns=fullflexible]}
+% see
+% https://tex.stackexchange.com/questions/247643/problem-with-tcblisting-first-listed-latex-command-is-missing
+\NewTCBListing{ltx}{ !O{} }{%
+     listing only%
+     ,boxrule=0pt
+     ,boxsep=0pt
+     ,colback=white!90!ltx
+     ,enhanced jigsaw
+     ,borderline west={2pt}{0pt}{ltx!60!black}
+     ,sharp corners
+     % ,before skip=10pt
+     % ,after skip=10pt
+     ,enlarge top by=0mm
+     ,enhanced
+     ,overlay={\node[draw,fill=ltx!60!black,xshift=0pt,anchor=north
+       east,font=\bfseries\footnotesize\color{white}]
+                at (frame.north east) {\LaTeX};}
+      ,listing options={
+             style=lltx,
+            ,columns=flexible%
+            ,basicstyle=\small\ttfamily
+            ,#1
+       }
+  }%
+%% </latex>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%% <bash>
+\providecolor{bash}{named}{black}
 \lstloadlanguages{bash}
 \lstdefinestyle{bash}{language=bash,
   ,basicstyle=\ttfamily%
@@ -250,10 +361,28 @@
    ,keywordstyle=[5]{\itshape}%
   % 
 }
-\lstdefinestyle{displaybash}{style=bash,
-                basicstyle=\ttfamily\footnotesize,
-                backgroundcolor=\color{black!5}, frame=lines}%
-
-\lstnewenvironment{bash}[1][]{\lstset{style=displaybash, #1}}%{}
-    {\lstlabel{black!60!white}{\textcolor{white}{Bash}}}
 \def\inlinebash{\lstinline[style=bash, breaklines=true,columns=fullflexible]}
+\newtcblisting{bash}[1][]{%
+      listing only%
+     ,boxrule=0pt
+     ,boxsep=0pt
+     ,colback=white!90!bash
+     ,enhanced jigsaw
+     ,borderline west={2pt}{0pt}{bash!60!black}
+     ,sharp corners
+     % ,before skip=10pt
+     % ,after skip=10pt
+     ,enlarge top by=0mm
+     ,enhanced
+     ,overlay={\node[draw,fill=bash!60!black,xshift=0pt,anchor=north
+       east,font=\bfseries\footnotesize\color{white}]
+                at (frame.north east) {Bash};}
+     ,listing options={
+           style=bash
+           ,columns=flexible%
+           ,basicstyle=\small\ttfamily
+           ,#1
+      }
+  }%
+%% </bash>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 

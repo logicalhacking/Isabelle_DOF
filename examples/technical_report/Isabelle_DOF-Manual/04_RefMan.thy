@@ -229,10 +229,8 @@ text\<open>We illustrate the design of \dof by modeling a small ontology
   challenge~@{cite "abrial:steam-boiler:1996"}.\<close>
 
 text\<open>
-\begin{isar}[float,mathescape,label={lst:doc},caption={An example ontology modeling
-simple certification documents, including scientific papers such
-as~@{cite "brucker.ea:isabelle-ontologies:2018"}; also recall
-\autoref{fig:dof-ide}.}]
+\begin{figure}
+\begin{isar}
 doc_class title  = short_title :: "string option" <= "None"
 doc_class author = email      :: "string" <= "''''"
 
@@ -269,6 +267,10 @@ doc_class "conclusion" = text_section +
     establish   :: "(claim \<times> result) set"
 \end{isar}%$
 
+\caption{An example ontology modeling simple certification documents, including 
+  scientific papers such as~@{cite "brucker.ea:isabelle-ontologies:2018"}; also 
+  recall \autoref{fig:dof-ide}.}\label{lst:doc}
+\end{figure}
 \<close>
 text\<open>
   \autoref{lst:doc} shows an example ontology for mathematical papers
