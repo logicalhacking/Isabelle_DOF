@@ -123,6 +123,8 @@ cp $ISABELLE_HOME_USER/DOF/latex/*.sty .
 # delete outdated aux files from previous runs
 rm -f *.aux 
 
+sed -i -e 's/<@>/@/g' *.tex 
+
 $ISABELLE_TOOL latex -o sty "root.tex" && \
 $ISABELLE_TOOL latex -o "$OUTFORMAT" "root.tex" && \
 { [ ! -f "$ROOT_NAME.bib" ] || $ISABELLE_TOOL latex -o bbl "root.tex"; } && \
