@@ -74,24 +74,50 @@ text\<open>
     lemma refl: "x = x" 
       by simp
     \end{isar}
-  \<^item> For small examples of generated document, we use a green background:
+  \<^item> a green background for examples of generated document fragments (\ie, PDF output):
     \begin{out}
     The axiom refl
     \end{out}
-  \<^item> For (S)ML-code, we use a red background:
+  \<^item> a red background for For (S)ML-code:
     \begin{sml}
     fun id x = x
     \end{sml}
-  \<^item> \LaTeX-code, we use a yellow background:
+  \<^item> a yellow background for \LaTeX-code:
     \begin{ltx}
     \newcommand{\refl}{$x = x$}
     \end{ltx}
-  \<^item> For shell scripts and interative shell sessions, we use a grey background:
+  \<^item> a grey background for shell scripts and interactive shell sessions:
     \begin{bash}
     achim@logicalhacking:~/Isabelle_DOF$ ls
     CHANGELOG.md  CITATION  examples  install  LICENSE  README.md  ROOTS  src
    \end{bash}
+\<close>
 
+subsubsection\<open>How to Cite \isadof\<close>
+text\<open>
+  If you use or extend \isadof in your publications, please use 
+  \<^item> for the \isadof system~@{cite "brucker.ea:isabelle-ontologies:2018"}:
+    \begin{quote}\small
+      A.~D. Brucker, I.~Ait-Sadoune, P.~Crisafulli, and B.~Wolff. Using the {Isabelle} ontology 
+      framework: Linking the formal with the informal. In \emph{Conference on Intelligent Computer 
+      Mathematics (CICM)}, number 11006 in Lecture Notes in Computer Science. Springer-Verlag,
+      Heidelberg, 2018. \href{https://doi.org/10.1007/978-3-319-96812-4\_3}
+      {10.1007/978-3-319-96812-4\_3}.
+    \end{quote}
+    A \BibTeX-entry is available at: 
+    \url{https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelle-ontologies-2018}. 
+  \<^item> for the implementation of \isadof~@{cite "brucker.ea:isabelledof:2019"}:
+    \begin{quote}\small
+      A.~D. Brucker and B.~Wolff. \isadof: Design and implementation. In P.~{\"O}lveczky and 
+      G.~Sala{\"u}n, editors, \emph{Software Engineering and Formal Methods (SEFM)}, Lecture Notes 
+      in Computer Science. Springer-Verlag, Heidelberg, 2019.
+    \end{quote}
+    A \BibTeX-entry is available at: 
+    \url{https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelledof-2019}.
+
+
+  The source code of \isadof is available at 
+  \url{https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF}.
 \<close>
 
 (*<*) 
