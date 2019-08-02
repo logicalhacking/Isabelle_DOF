@@ -76,7 +76,7 @@ text\<open>
   separate commands from each other.
 
   We distinguish fundamentally two different syntactic levels:
-  \<^item> the \emph{outer-syntax}\bindex{syntax!outer}\index{outer syntax|see {syntax, inner}} (\ie, the 
+  \<^item> the \emph{outer-syntax}\bindex{syntax!outer}\index{outer syntax|see {syntax, outer}} (\ie, the 
     syntax for commands) is processed by a lexer-library and parser combinators built on top, and
   \<^item> the \emph{inner-syntax}\bindex{syntax!inner}\index{inner syntax|see {syntax, inner}} (\ie, the 
     syntax for \inlineisar|\<lambda>|-terms in HOL) with its own parametric polymorphism type 
