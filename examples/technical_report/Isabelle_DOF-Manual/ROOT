@@ -14,8 +14,6 @@ session "Isabelle_DOF-Manual" = "Isabelle_DOF" +
     "figures/cicm2018-pdf.png"
     "figures/document-hierarchy.pdf"
     "figures/document-hierarchy.svg"
-    "figures/document-model.key"
-    "figures/document-model.pdf"
     "figures/Dogfood-figures.png"
     "figures/Dogfood-II-bgnd1.png"
     "figures/Dogfood-III-bgnd-text_section.png"
