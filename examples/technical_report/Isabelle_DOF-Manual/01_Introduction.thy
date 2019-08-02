@@ -18,7 +18,7 @@ libraries, and in the engineering discourse of standardized software certificati
 documents~@{cite "boulanger:cenelec-50128:2015" and "cc:cc-part3:2006"}: certification documents 
 have to follow a structure.  In practice, large groups of developers have to produce a substantial
 set of documents where the consistency is notoriously difficult to maintain. In particular, 
-certifications are centered around the \emph{traceability} of requirements throughout the entire 
+certifications are centered around the \<^emph>\<open>traceability\<close> of requirements throughout the entire 
 set of documents. While technical solutions for the traceability problem exists (most notably:
 DOORS~\cite{doors}), they are weak in the treatment of formal entities (such as formulas and their 
 logical contexts).
@@ -58,7 +58,7 @@ different main user groups:
   @{docitem_ref (unchecked) \<open>isadof_tour\<close>} and, depending on their knowledge of Isabelle/HOL, also
   @{docitem_ref (unchecked) \<open>background\<close>}. 
 \<^enum> \<^emph>\<open>Ontology developers\<close>, \ie,  users that want to develop new ontologies or modify existing 
-  document ontologies. These users should, after having gained a acquaintance as a user, focus 
+  document ontologies. These users should, after having gained acquaintance as a user, focus 
   on @{docitem_ref (unchecked) \<open>isadof_ontologies\<close>}. 
 \<^enum> \<^emph>\<open>\isadof developers\<close>, \ie, users that want to extend or modify \isadof, \eg, by adding new 
   text-elements. These users should read @{docitem_ref (unchecked) \<open>isadof_developers\<close>}
@@ -67,7 +67,7 @@ different main user groups:
 subsubsection\<open>Typographical Conventions\<close>
 text\<open>
   We acknowledge that understanding \isadof and its implementation in all details requires
-  to separate multiple technological layers or languages. To help the reader with this, we 
+  separating multiple technological layers or languages. To help the reader with this, we 
   will type-set the different languages in different styles. In particular, we will use 
   \<^item> a light-blue background for input written in Isabelle's Isar language, \eg:
     \begin{isar}
@@ -99,8 +99,8 @@ text\<open>
   \<^item> for the \isadof system~@{cite "brucker.ea:isabelle-ontologies:2018"}:
     \begin{quote}\small
       A.~D. Brucker, I.~Ait-Sadoune, P.~Crisafulli, and B.~Wolff. Using the {Isabelle} ontology 
-      framework: Linking the formal with the informal. In \emph{Conference on Intelligent Computer 
-      Mathematics (CICM)}, number 11006 in Lecture Notes in Computer Science. Springer-Verlag,
+      framework: Linking the formal with the informal. In \<^emph>\<open>Conference on Intelligent Computer 
+      Mathematics (CICM)\<close>, number 11006 in Lecture Notes in Computer Science. Springer-Verlag,
       Heidelberg, 2018. \href{https://doi.org/10.1007/978-3-319-96812-4\_3}
       {10.1007/978-3-319-96812-4\_3}.
     \end{quote}
@@ -109,7 +109,7 @@ text\<open>
   \<^item> for the implementation of \isadof~@{cite "brucker.ea:isabelledof:2019"}:
     \begin{quote}\small
       A.~D. Brucker and B.~Wolff. \isadof: Design and implementation. In P.~{\"O}lveczky and 
-      G.~Sala{\"u}n, editors, \emph{Software Engineering and Formal Methods (SEFM)}, Lecture Notes 
+      G.~Sala{\"u}n, editors, \<^emph>\<open>Software Engineering and Formal Methods (SEFM)\<close>, Lecture Notes 
       in Computer Science. Springer-Verlag, Heidelberg, 2019.
     \end{quote}
     A \BibTeX-entry is available at: 
