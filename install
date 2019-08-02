@@ -197,6 +197,7 @@ install_and_register(){
         echo 'ISABELLE_TOOLS=$ISABELLE_TOOLS:$ISABELLE_HOME_USER/DOF/Tools' \
              >> "$DIR/settings"
     fi
+    grep -q $PWD\$ $ISABELLE_HOME_USER/ROOTS || echo "$PWD" >> $ISABELLE_HOME_USER/ROOTS 
 }
 
 
