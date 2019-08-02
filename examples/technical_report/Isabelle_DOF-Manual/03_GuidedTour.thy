@@ -4,7 +4,7 @@ theory "03_GuidedTour"
 begin
 (*>*)
 
-chapter*[casestudies::example,main_author="Some(@{docitem ''adb''}::author)"]\<open> \isadof: A Guided Tour \<close>
+chapter*[isadof_tour::text_section]\<open>\isadof: A Guided Tour\<close>
    
 text\<open> In this section, we will use the \isadof document ontology language
 for three different application scenarios: for scholarly papers, for mathematical 

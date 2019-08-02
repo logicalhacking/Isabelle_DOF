@@ -4,10 +4,9 @@ theory "02_Background"
 begin
 (*>*)
 
-chapter*[bgrnd::text_section,main_author="Some(@{docitem ''adb''}::author)"]
-        \<open> Background: The Isabelle System \<close>
+chapter*[background::text_section]\<open> Background: The Isabelle System \<close>
 section*[bgrnd1::introduction]\<open>Document Processing in Isabelle\<close>
-text*[background::introduction]\<open>
+text*[bg::introduction]\<open>
 While Isabelle @{cite "nipkow.ea:isabelle:2002"} is widely perceived as an interactive theorem prover
 for HOL (Higher-order Logic)~@{cite "nipkow.ea:isabelle:2002"}, we
 would like to emphasize the view that Isabelle is far more than that:

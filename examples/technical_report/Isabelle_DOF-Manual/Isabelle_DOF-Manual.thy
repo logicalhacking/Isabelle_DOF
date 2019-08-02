@@ -1,6 +1,6 @@
 (*<*)
 theory "Isabelle_DOF-Manual"
-  imports "06_Conclusion"
+  imports "05_Implementation"
 begin
 (*<*) 
 

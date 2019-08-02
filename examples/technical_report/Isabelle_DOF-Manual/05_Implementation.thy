@@ -1,12 +1,11 @@
 (*<*)
-theory "04_IsaDofImpl"
-  imports "02_Background"
+theory "05_Implementation"
+  imports "04_RefMan"
 begin
 (*>*)
 
 
-chapter*[impl1::introduction,main_author="Some(@{docitem ''adb''}::author)"]
-        \<open>Isabelle Ontology Framework \isadof\<close>
+chapter*[isadof_developers::text_section]\<open>Extending \isadof\<close>
 text\<open>
 In this section, we introduce our framework, called \isadof. \isadof
 is based on several design-decisions:
@@ -108,7 +107,7 @@ smoothlessly integrated into standard programs and allows for dynamic
 grammar extensions.  There is a more high-level structure
 \inlinesml{Parse} providing specific combinators for the
 command-language Isar:
-\begin{sml}
+\begin{sml}[mathescape=false]
   val attribute = Parse.position Parse.name 
         -- Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.name) "";
   val reference = Parse.position Parse.name 
