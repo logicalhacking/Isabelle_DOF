@@ -5,6 +5,7 @@ session "Isabelle_DOF-Manual" = "Isabelle_DOF" +
   document_files
     "isadof.cfg"
     "root.bib"
+    "root.mst"
     "preamble.tex"
     "build"
     "lstisadof-manual.sty"
