@@ -8,7 +8,7 @@ begin
 chapter*[isadof_ontologies::text_section]\<open>Developing Ontologies and Document Representations\<close>
    
 text\<open> \isadof is embedded in the underlying generic
-document model of Isabelle as described in @{docitem "sec:background"}.  
+document model of Isabelle as described in @{docitem "dof"}.  
 Recall that the document language can be extended dynamically, \ie, new
 \<open>user-defined\<close> can be introduced at run-time.  This is similar to
 the definition of new functions in an interpreter. \isadof as a system plugin is
