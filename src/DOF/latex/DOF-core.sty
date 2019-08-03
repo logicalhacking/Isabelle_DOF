@@ -24,12 +24,21 @@
 \RequirePackage{etoolbox}
 \RequirePackage{fp}
 
-\newcommand{\isadof}{Isabelle/DOF\xspace}
-\newcommand{\isabelleversion}{2019\xspace}
-\newcommand{\dofversion}{Unreleased\xspace}
-\newcommand{\isadofbaseurl}{https://artifacts.logicalhacking.com}
-\newcommand{\isadofarchiveurl}{\isadofbaseurl/Isabelle\_DOF-\dofversion-\isabelleversion.tar.xz}
+
+\newcommand{\dof@isabelleversion}{2019}
+\newcommand{\dof@version}{Unreleased}
+\newcommand{\dof@baseurl}{https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF}
+
+\newcommand{\isabelleversion}{\dof@isabelleversion\xspace}
+\newcommand{\dofversion}{\dof@version\xspace}
 \newcommand{\isadofversion}{\dofversion/\isabelleversion\xspace}
+\newcommand{\isadofdir}{Isabelle_DOF-\dof@version_\dof@isabelleversion}
+\newcommand{\isadofdirn}{Isabelle\_DOF-\dof@version\_\dof@isabelleversion}
+\newcommand{\isadofarchive}{\isadofdir.tar.xz}
+\newcommand{\isadofarchiven}{\isadofdirn.tar.xz}
+\newcommand{\isadofarchiveurl}{\dof@baseurl/\isadofarchive}
+
+\newcommand{\isadof}{Isabelle/DOF\xspace}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: newcommand wrapper
