@@ -178,18 +178,18 @@ install_and_register(){
     cp $GEN_DIR/scripts/* "$DIR"
     cp $GEN_DIR/document-templates/* "$DIR"
     cp $GEN_DIR/DOF/*/*.sty "$DIR"
-
-    DIR="$ISABELLE_HOME_USER/DOF/latex"
-    echo "  - Installing LaTeX styles in $DIR"
-    mkdir -p "$DIR"
-    cp $GEN_DIR/ontologies/*/*.sty "$DIR"
-
+    
     ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/^Isabelle\(.*\):.*/\1/'`
     sed -i -e "s|%%% CONFIG %%%| \
       \\\\renewcommand{\\\\dof@isabelleversion}{$ISABELLE_SHORT_VERSION}\n \
       \\\\renewcommand{\\\\dof@version}{$DOF_VERSION}\n \
       \\\\renewcommand{\\\\dof@baseurl}{$DOF_BASE_URL}|" \
       "$DIR/DOF-core.sty"
+
+    DIR="$ISABELLE_HOME_USER/DOF/latex"
+    echo "  - Installing LaTeX styles in $DIR"
+    mkdir -p "$DIR"
+    cp $GEN_DIR/ontologies/*/*.sty "$DIR"
     
     DIR="$ISABELLE_HOME_USER/etc"
     echo "  - Registering Isabelle/DOF"
