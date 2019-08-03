@@ -710,7 +710,7 @@ The general process as such is straight-forward:
   in config files and also will be shown in the help text
   shown by executing 
 
-      \<^verbatim>\<open>isabelle DOF_mkroot -h\<close>
+      \<^verbatim>\<open>isabelle mkroot_DOF -h\<close>
 
 \<^enum> Edit the new template as necessary (using the provided 
   example from the target class as reference):
@@ -730,7 +730,7 @@ The general process as such is straight-forward:
 
 \<^enum> Now the new template should be available, you can check this  with 
  
-     \<^verbatim>\<open>isabelle DOF_mkroot -h\<close>
+     \<^verbatim>\<open>isabelle mkroot_DOF -h\<close>
 
 \<^enum> Create an "tiny/empty" Isabelle project using the ontology "core"
   and test your template. If everything works, celebrate. If it does 

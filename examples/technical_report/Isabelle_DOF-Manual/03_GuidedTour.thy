@@ -14,31 +14,38 @@ cases on aspects of the modeling due to space limitations.\<close>
 
 
 
-section*[install::technical]\<open>Getting Started\<close>
+section*[getting_started::technical]\<open>Getting Started\<close>
+
+subsection*[installation::technical]\<open>Installing \isadof\<close>
+
+subsubsection*[prereq::technical]\<open>Installing \isadof\<close>
+text\<open>You need to have Isabelle \isabelleversion, which can be downloaded ....\<close>
+
+subsection*[first_project::technical]\<open>Creating an \isadof Project\<close>
+
+text\<open>\url{\isadofarchiveurl}\<close>
+
 text\<open>
-
-DOWNLOAD INFO MISSING
-
-INSTALLATION INFO MISSING
-
-CREATING A PROJECT:
-
 To start using \isadof, one creates an Isabelle project (with the name 
 \inlinebash{IsaDofApplications}):
 \begin{bash}
-  isabelle DOF_mkroot -o scholarly_paper -t lncs -d  IsaDofApplications
+ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë
+ë\prompt{}ë cd ë\isadofdirnë
+ë\prompt{\isadofdirn}ë ./install 
+  isabelle mkroot_DOF -o scholarly_paper -t lncs -d  IsaDofApplications
 \end{bash}
 where the \inlinebash{-o scholarly_paper} specifies the ontology for writing scientific articles and 
 \inlinebash{-t lncs} specifies the use of Springer's \LaTeX-configuration for the Lecture Notes in 
 Computer Science series. The project can be formally checked, including the generation of the 
 article in PDF using the  following command:
 \begin{bash}
-  isabelle build -d . IsaDofApplications
+ë\prompt{\isadofdirn}ë  isabelle build -d . IsaDofApplications
 \end{bash}
 \<close>
 
 
-section*[scholar_onto::example]\<open> The Scholar Paper Scenario: Eating One's Own Dog Food. \<close>  
+section\<open>Using Document Ontologies\<close>
+subsection*[scholar_onto::example]\<open>Academic Publications (scholarly\_paper)\<close>  
 text\<open> The following ontology is a simple ontology modeling scientific papers. In this 
 \isadof application scenario, we deliberately refrain from integrating references to
 (Isabelle) formal content in order  demonstrate that \isadof is not a framework from 
@@ -180,7 +187,7 @@ such as @{docitem_ref \<open>fig_figures\<close>}.
 \<close>
      
 
-section*[cenelec_onto::example]\<open> The Certification Scenario following CENELEC \<close>
+subsection*[cenelec_onto::example]\<open>Documents for Certifiations (CENELEC\_50128)\<close>
 text\<open> Documents to be provided in formal certifications (such as CENELEC
 50126/50128, the DO-178B/C, or Common Criteria) can much profit from the control of ontological consistency: 
 a lot of an evaluators work consists in tracing down the links from requirements over 
@@ -251,7 +258,7 @@ doc_class srac = ec  +
 \end{isar}
 \<close>
 
-section*[math_exam::example]\<open> The Math-Exam Scenario \<close> 
+subsection*[math_exam::example]\<open> The Math-Exam Scenario \<close> 
 text\<open> The Math-Exam Scenario is an application with mixed formal and 
 semi-formal content. It addresses applications where the author of the exam is not present 
 during the exam and the preparation requires a very rigorous process, as the french 

@@ -86,9 +86,9 @@ editor.
 The DOF-plugin provides an alternative to Isabelle's ``mkroot`` command.
 Isabelle projects that use DOF need to be created using
 ```console 
-foo@bar:~$ isabelle DOF_mkroot 
+foo@bar:~$ isabelle mkroot_DOF 
 ```
-The ``DOF_mkroot`` command takes the same parameter as the standard
+The ``mkroot_DOF`` command takes the same parameter as the standard
 ``mkroot`` command of Isabelle. Thereafter, the normal Isabelle 
 command for building documents can be used. 
 
@@ -96,9 +96,9 @@ Using the ``-o`` option, different ontology setups can be
 selected and using the ``-t`` option, different LaTeX setups 
 can be selected (use ``-h`` to obtain a list of all installed setups):
 ```console 
-foo@bar:~$ isabelle DOF_mkroot -h
+foo@bar:~$ isabelle mkroot_DOF -h
 
-Usage: isabelle DOF_mkroot [OPTIONS] [DIR]
+Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
 
   Options are:
     -h           print this help text and exit
@@ -118,7 +118,7 @@ Usage: isabelle DOF_mkroot [OPTIONS] [DIR]
 ```
 For example, 
 ```console 
-foo@bar:~$ isabelle DOF_mkroot -o scholarly_paper -t lncs
+foo@bar:~$ isabelle mkroot_DOF -o scholarly_paper -t lncs
 ```
 creates a setup using the scholarly_paper ontology and Springer's
 LNCS LaTeX class as document class. Note that the generated setup

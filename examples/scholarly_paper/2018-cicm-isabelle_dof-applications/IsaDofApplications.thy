@@ -230,7 +230,7 @@ enforcing a sequence of text-elements that must belong to the corresponding clas
 To start using \isadof, one creates an Isabelle project (with the name 
 \inlinebash{IsaDofApplications}):
 \begin{bash}
-  isabelle DOF_mkroot -o scholarly_paper -t lncs -d  IsaDofApplications
+  isabelle mkroot_DOF -o scholarly_paper -t lncs -d  IsaDofApplications
 \end{bash}
 where the \inlinebash{-o scholarly_paper} specifies the ontology for writing scientific articles and 
 \inlinebash{-t lncs} specifies the use of Springer's \LaTeX-configuration for the Lecture Notes in 
