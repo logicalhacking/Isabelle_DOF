@@ -30,12 +30,8 @@
 #set -e
 shopt -s nocasematch
 
-# Global configuration  
-ISABELLE_VERSION="Isabelle2019: June 2019"
-ISABELLE_URL="https://isabelle.in.tum.de/website-Isabelle2019/"
-
-AFP_DATE="afp-2019-06-17"
-AFP_URL="https://www.isa-afp.org/release/"$AFP_DATE".tar.gz"
+# get global configuration  
+source .config
 
 print_help()
 {
@@ -187,6 +183,13 @@ install_and_register(){
     mkdir -p "$DIR"
     cp $GEN_DIR/*/*/*.sty "$DIR"
 
+    ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/^Isabelle\(.*\):.*/\1/'`
+    sed -i -e "s|%%% CONFIG %%%| \
+      \\\\renewcommand{\\\\dof@isabelleversion}{$ISABELLE_SHORT_VERSION}\n \
+      \\\\renewcommand{\\\\dof@version}{$DOF_VERSION}\n \
+      \\\\renewcommand{\\\\dof@baseurl}{$DOF_BASE_URL}|" \
+      "$DIR/DOF-core.sty"
+    
     DIR="$ISABELLE_HOME_USER/etc"
     echo "  - Registering Isabelle/DOF"
     mkdir -p "$DIR"
