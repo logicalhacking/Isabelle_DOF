@@ -35,7 +35,7 @@ set -e
 ROOT_NAME="root_$NAME"
 [ ! -f "$DIR/$ROOT_NAME.tex" ] && ROOT_NAME="root"
 
-if [ ! -f $ISABELLE_HOME_USER/DOF/latex/DOF-core.sty ]; then
+if [ ! -f $ISABELLE_HOME_USER/DOF/document-template/DOF-core.sty ]; then
     >&2 echo ""
     >&2 echo "Error: Isabelle/DOF not installed"
     >&2 echo "====="
@@ -118,7 +118,7 @@ fi
 
 cp $ROOT root.tex
 cp $ISABELLE_HOME_USER/DOF/latex/*.sty .
-cp $ISABELLE_HOME_USER/DOF/latex/*.sty .
+cp $ISABELLE_HOME_USER/DOF/document-template/*.sty .
 
 # delete outdated aux files from previous runs
 rm -f *.aux 
