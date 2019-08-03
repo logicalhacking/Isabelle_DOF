@@ -2,11 +2,14 @@
 \usepackage[many]{tcolorbox}
 \tcbuselibrary{listings}
 \tcbuselibrary{skins}
+\usepackage{xstring}
 
 \definecolor{OliveGreen}    {cmyk}{0.64,0,0.95,0.40}
 \definecolor{BrickRed}      {cmyk}{0,0.89,0.94,0.28}
 \definecolor{Blue}          {cmyk}{1,1,0,0}
 \definecolor{CornflowerBlue}{cmyk}{0.65,0.13,0,0}
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -319,7 +322,9 @@
 %% <bash>
 \providecolor{bash}{named}{black}
 \lstloadlanguages{bash}
-\lstdefinestyle{bash}{language=bash,
+\lstdefinestyle{bash}{%
+   language=bash
+  ,escapechar=ë
   ,basicstyle=\ttfamily%
   ,showspaces=false%
   ,showlines=false%
@@ -334,12 +339,25 @@
    % Defining 5-keywords
    ,keywordstyle=[4]{\color{Blue!80}\bfseries}%
    ,alsoletter={*,-,:,~,/}
-   ,morekeywords=[4]{achim@logicalhacking:~/Isabelle_DOF$,achim@logicalhacking:~$}%
+   ,morekeywords=[4]{}%
    % Defining 6-keywords
    ,keywordstyle=[5]{\itshape}%
   % 
 }
 \def\inlinebash{\lstinline[style=bash, breaklines=true,columns=fullflexible]}
+\newcommand\@isabsolutepath[3]{%
+  \StrLeft{#1}{1}[\firstchar]%
+  \IfStrEq{\firstchar}{/}{#2}{#3}%
+}
+
+\newcommand{\@homeprefix}[1]{%
+  \ifthenelse{\equal{#1}{}}{\textasciitilde}{\textasciitilde/}%
+}
+
+\newcommand{\prompt}[1]{%
+  \color{Blue!80}\textbf{\texttt{%
+    achim@logicalhacking:{\@isabsolutepath{#1}{#1}{\@homeprefix{#1}#1}}\$}}%
+}
 \newtcblisting{bash}[1][]{%
       listing only%
      ,boxrule=0pt

@@ -90,7 +90,7 @@ text\<open>
     \end{ltx}
   \<^item> a grey background for shell scripts and interactive shell sessions:
     \begin{bash}
-    achim@logicalhacking:~/Isabelle_DOF$ ls
+    ë\prompt{}ë ls
     CHANGELOG.md  CITATION  examples  install  LICENSE  README.md  ROOTS  src
    \end{bash}
 \<close>
