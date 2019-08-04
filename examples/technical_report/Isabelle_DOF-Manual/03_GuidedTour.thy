@@ -166,7 +166,7 @@ text\<open>
   For creating an \isadof project, \isadof provides its own variant of Isabelles 
   \inlinebash|mkroot| tool, called \inlinebash|mkroot_DOF|:
 
-\begin{bash}
+\begin{bash} 
 ë\prompt{}ë isabelle mkroot_DOF -h 
 
 Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
@@ -190,7 +190,7 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
        * scrreprt
 
   Prepare session root DIR (default: current directory).
-\end{bash}
+\end{bash} 
 
   Creating a new document setup requires two decisions:
   \<^item> which ontologies (\eg, scholarly\_paper) are required and 
@@ -221,16 +221,77 @@ Now use the following coëëmmand line to build the session:
 \begin{bash}
 ë\prompt{}ë  isabelle build -d . myproject
 \end{bash}
+
+This will create the directory \inlinebash|myproject|: 
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\dirtree{%
+.1 .
+.2 myproject.
+.3 document.
+.4 build\DTcomment{Build Script}.
+.4 isadof.cfg\DTcomment{\isadof configuraiton}.
+.4 preamble.tex\DTcomment{Manual \LaTeX-configuration}.
+.3 ROOT\DTcomment{Isabelle build-configuration}.
+}
+\end{minipage}
+\end{center}
+The \isadof configuration (\inlinebash|isadof.cfg|) specifies the required
+ontologies and the document template using a YAML syntax.\<^footnote>\<open>Isabelle power users will recognize that 
+\isadof's document setup does not make use of a file \inlinebash|root.tex|: this file is 
+replaced by built-in document templates.\<close> The main two configuration files for 
+users are:
+\<^item> The file \inlinebash|ROOT|, which defines the Isabelle session. New theory files as well as new 
+  files required by the document generation (\eg, images, bibliography database using \BibTeX, local
+  \LaTeX-styles) need to be registered in this file. For details of Isabelle's build system, please 
+  consult the Isabelle System Manual~@{cite "wenzel:system-manual:2019"}.
+\<^item> The file \inlinebash|praemble.tex|, which allows users to add additional 
+  \LaTeX-packages or to add/modify \LaTeX-commands. 
 \<close>
 
+
+
+
+
 section\<open>Using Document Ontologies\<close>
+text\<open>
+  In this section, we will demonstrate the use of three different ontologies that are 
+  part of the \isadof distribution. 
+\<close>
+
 subsection*[scholar_onto::example]\<open>Academic Publications (scholarly\_paper)\<close>  
-text\<open> The following ontology is a simple ontology modeling scientific papers. In this 
-\isadof application scenario, we deliberately refrain from integrating references to
-(Isabelle) formal content in order  demonstrate that \isadof is not a framework from 
-Isabelle users to Isabelle users only.
-Of course, such references can be added easily and represent a particular strength  
-of \isadof.
+text\<open> 
+  The ontology ``scholarly\_paper'' is a small ontology modeling academic/scientific papers. In 
+  this \isadof application scenario, we deliberately refrain from integrating references to 
+  (Isabelle) formal content in order  demonstrate that \isadof is not a framework from Isabelle 
+  users to Isabelle users only. Of course, such references can be added easily and represent a 
+  particular strength of \isadof.
+
+  The \isadof distribution contains an example (actually, our CICM 2018 
+  paper~@{cite "brucker.ea:isabelle-ontologies:2018"}) using the ontology ``scholarly\_paper'' in 
+  the directory \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/}. You 
+  can inspect/jedit the example in Isabelle's IDE, by either 
+  \<^item> starting Isabelle/jedit using your graphical user interface (\eg, by clicking on the 
+    Isabelle-Icon provided by the Isabelle installation) and loading the file 
+    \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy}.
+  \<^item> starting Isabelle/jedit from the command line by calling:
+
+    \begin{bash}
+ë\prompt{\isadofdirn}ë 
+  isabelle jedit examples/scholarly_paper/2018-cicm-isabelle_dof-applications/\
+  IsaDofApplications.thy
+\end{bash}
+ 
+  
+  You can build the PDF-document by calling:
+
+  \begin{bash}
+ë\prompt{}ë isabelle build \
+2018-cicm-isabelle_dof-applications                                                   
+\end{bash}
+
+
+
 
 
 \begin{figure}
