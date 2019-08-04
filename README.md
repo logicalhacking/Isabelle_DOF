@@ -4,41 +4,52 @@ Isabelle/DOF is a novel Document Ontology Framework on top of
 Isabelle. Isabelle/DOF allows for both conventional typesetting as
 well as formal development.
 
-## Prerequisites
+## Pre-requisites
 
-Isabelle/DOF requires [Isabelle 2019](http://isabelle.in.tum.de/website-Isabelle2019/). 
-Please download the Isabelle 2019 distribution for your operating
-system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2019/).
+Isabelle/DOF has two major pre-requisites:
 
-## Installation 
+* **Isabelle:** Isabelle/DOF requires [Isabelle 2019](http://isabelle.in.tum.de/website-Isabelle2019/).
+  Please download the Isabelle 2019 distribution for your operating
+  system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2019/).
+* **LaTeX:** Isabelle/DOF requires a modern pdfTeX-engine supporting the \expanded{}-primitive. This
+  is, for example, included in the [TeXLive 2019](https://www.tug.org/texlive/) (or later)
+  distribution. Please follow the [TeXLive installation instructions](https://www.tug.org/texlive/acquire-netinstall.html)
+  for installing TeXLive.
+
+## Installation
 
 ### Quick Installation Guide
 
 In most case, the DOF-plugin can be installed as follows:
-```console 
+
+```console
 foo@bar:~$ ./install
 ```
-If a specific Isabelle version should be used (i.e., not the default 
-one), the full path to the ``isabelle`` command needs to be passed as 
-using the ``-i`` command line argument of the ``install`` script:
-```console 
-foo@bar:~$ ./install -i /usr/local/Isabelle2019/bin/isabelle
+
+If a specific Isabelle version should be used (i.e., not the default
+one), the full path to the ``isabelle`` command needs to be passed as
+using the ``--isabelle`` command line argument of the ``install`` script:
+
+```console
+foo@bar:~$ ./install --isabelle /usr/local/Isabelle2019/bin/isabelle
 ```
 
-For further command line options of the installer, please use the 
+For further command line options of the installer, please use the
 built-in help:
-```console 
-foo@bar:~$ ./install -h
+
+```console
+foo@bar:~$ ./install --help
 ```
 
 ### What The Installer Actually Does
 
-The installer will 
-* apply a patch to Isabelle that is necessary to use Isabelle/DOF. 
-  If this patch installations fails, you need to manually replace 
+The installer will
+
+* apply a patch to Isabelle that is necessary to use Isabelle/DOF.
+  If this patch installations fails, you need to manually replace
   the file ``Isabelle2019/src/Pure/Thy/thy_output.ML`` in the Isabelle
   distribution with the file ``src/patches/thy_output.ML`` from the  
-  Isabelle/DOF distribution:        
+  Isabelle/DOF distribution:
 
         cp patches/thy_output.ML `isabelle getenv -b ISABELLE_HOME`/src/Pure/Thy/
 
