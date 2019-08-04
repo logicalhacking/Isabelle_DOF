@@ -102,7 +102,6 @@ text\<open>
 ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë
 \end{bash}
 This will create a directory \texttt{\isadofdirn} containing \isadof distribution.
-
 Next, we need to invoke the \inlinebash|install| script. If necessary, the installations 
 automatically downloads additional dependencies from the AFP (\url{https://www.isa-afp.org}), 
 namely the AFP  entries ``Functional Automata''~@{cite "Functional-Automata-AFP"} and ``Regular 
@@ -123,6 +122,8 @@ Isabelle/DOF Installer
 ======================
 * Checking Isabelle version:
   Success: found supported Isabelle version ë(\isabellefullversion)ë
+* Checking (La)TeX installation:
+  Success: pdftex supports \expanded{} primitive.
 * Check availability of Isabelle/DOF patch:
   Warning: Isabelle/DOF patch is not available or outdated.
            Trying to patch system ....
@@ -149,7 +150,7 @@ Isabelle/DOF Installer
   - Registering Isabelle/DOF
     * Registering tools iëën 
        /home/achim/.isabelle/Isabelleë\isabelleversion/etc/settingsë
-* Installation successful. Enjoy Isabelle/DOF, you can now build the session
+* Installation successful. Enjoy Isabelle/DOF, you can build the session
   Isabelle_DOF and all example documents by executing:
   /usr/local/Isabelleë\isabelleversion/bin/isabelleë build -D .
 \end{bash}
@@ -219,9 +220,9 @@ Now use the following coëëmmand line to build the session:
   isabelle build -D myproject
 \end{bash}
 
-  This will create a directory \inlinebash|myproject| containing the \isadof-setup for your 
+  This creates a directory \inlinebash|myproject| containing the \isadof-setup for your 
   new document. To check the document formally, including the generation of the document in PDF,
-  you only need to execute the following command:
+  you only need to execute
 
 \begin{bash}
 ë\prompt{}ë  isabelle build -d . myproject
