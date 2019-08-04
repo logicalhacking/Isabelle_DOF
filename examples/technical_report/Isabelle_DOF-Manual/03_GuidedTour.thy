@@ -166,7 +166,7 @@ session and all example documents, execute:
 
 subsection*[first_project::technical]\<open>Creating an \isadof Project\<close>
 text\<open>
-  For creating an \isadof project, \isadof provides its own variant of Isabelles 
+  \isadof provides its own variant of Isabelle's 
   \inlinebash|mkroot| tool, called \inlinebash|mkroot_DOF|:\index{mkroot\_DOF}
 
 \begin{bash} 
@@ -197,8 +197,10 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
 
   Creating a new document setup requires two decisions:
   \<^item> which ontologies (\eg, scholarly\_paper) are required and 
-  \<^item> which document template (layout)\index{document template} should be used as a 
-    basis (\eg, scrartcl\index{scrartcl}).
+  \<^item> which document template (layout)\index{document template} should be used 
+    (\eg, scrartcl\index{scrartcl}). Some templates (\eg, lncs) require that the users manually 
+    obtains and adds the necessary \LaTeX class file (\eg, \inlinebash|llncs.cls|. 
+    This is mostly due to licensing restrictions.
 \<close>
 text\<open>
   If you are happy with the defaults, \ie, using the ontology for writing academic papers 
@@ -214,7 +216,6 @@ Preparing session "myproject" iëën "myproject"
   creating "myproject/document/root.tex"
 
 Now use the following coëëmmand line to build the session:
-
   isabelle build -D myproject
 \end{bash}
 
