@@ -276,7 +276,7 @@ else
 fi
 check_old_installation
 install_and_register
-echo "* Installation successful. Enjoy Isabelle/DOF, you can now build the session"
+echo "* Installation successful. Enjoy Isabelle/DOF, you can build the session"
 echo "  Isabelle_DOF and all example documents by executing:"
 echo "  $ISABELLE build -D ."
 exit 0
