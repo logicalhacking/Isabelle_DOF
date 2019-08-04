@@ -73,7 +73,7 @@ function fail()
 # options
 
 NAME=""
-DEFAULT_TEMPLATE="scrreprt"
+DEFAULT_TEMPLATE="scrartcl"
 DEFAULT_ONTOLOGY="scholarly_paper"
 
 TEMPLATE="$DEFAULT_TEMPLATE"
