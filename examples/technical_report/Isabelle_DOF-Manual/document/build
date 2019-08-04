@@ -34,7 +34,7 @@ if [ ! -f $ISABELLE_HOME_USER/DOF/document-template/build_lib.sh ]; then
     echo "This is a Isabelle/DOF project. The document preparation requires"
     echo "the Isabelle/DOF framework. Please obtain the framework by cloning"
     echo "the Isabelle/DOF git repository, i.e.: "
-    echo "    git clone https://git.logicalhacking.com/HOL-OCL/Isabelle_DOF"
+    echo "    git clone https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF"
     echo "You can install the framework as follows:"
     echo "    cd Isabelle_DOF/document-generator"
     echo "    ./install"
