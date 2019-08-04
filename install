@@ -182,7 +182,9 @@ install_and_register(){
     ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/^Isabelle\(.*\):.*/\1/'`
     sed -i -e "s|%%% CONFIG %%%| \
       \\\\renewcommand{\\\\dof@isabelleversion}{$ISABELLE_SHORT_VERSION}\n \
+      \\\\renewcommand{\\\\isabellefullversion}{$ISABELLE_VERSION\\\\xspace}\n \
       \\\\renewcommand{\\\\dof@version}{$DOF_VERSION}\n \
+      \\\\renewcommand{\\\\isabelleurl}{$ISABELLE_URL}\n \
       \\\\renewcommand{\\\\dof@baseurl}{$DOF_BASE_URL}|" \
       "$DIR/DOF-core.sty"
 
@@ -197,7 +199,7 @@ install_and_register(){
     if [[ $ISABELLE_TOOLS = *DOF* ]]; then
         echo "    * Tools already registered in $DIR/settings"
     else
-        echo "    * Registering tools in Tools already registered in $DIR/settings"
+        echo "    * Registering tools in $DIR/settings"
         echo 'ISABELLE_TOOLS=$ISABELLE_TOOLS:$ISABELLE_HOME_USER/DOF/Tools' \
              >> "$DIR/settings"
     fi
