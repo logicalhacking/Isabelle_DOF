@@ -49,8 +49,10 @@ text\<open>
   a typed \inlineisar|\<lambda>|-calculus and some Higher-order Logic (HOL).
 \<close>
 
-figure*["fig:dependency"::figure,relative_width="70",src="''figures/document-hierarchy''"]
-       \<open>A Theory-Graph in the Document Model. \<close>
+(*<*)
+declare_reference*["fig:dependency"::text_section]
+(*>*)
+
 
 text\<open>
   We assume a hierarchical document model\index{document model}, \ie, an \<^emph>\<open>integrated\<close> document 
@@ -59,7 +61,7 @@ text\<open>
   documentation, models, proofs, code of various forms and other technical artifacts.  We call the 
   main sub-document type, for historical reasons, \<^emph>\<open>theory\<close>-files.  A theory file\bindex{theory!file}
   consists of a \<^emph>\<open>header\<close>\bindex{header}, a \<^emph>\<open>context definition\<close>\index{context}, and a body 
-  consisting of a sequence of \<^emph>\<open>command\<close>s (see @{figure "fig:dependency"}). Even the header consists 
+  consisting of a sequence of \<^emph>\<open>command\<close>s (see @{figure (unchecked) "fig:dependency"}). Even the header consists 
   of a sequence of commands used for introductory text elements not depending on any context.  
   The context-definition contains an \inlineisar{import} and a 
   \inlineisar{keyword} section, for example:
@@ -111,6 +113,9 @@ According to the reflexivity axiom $\mathrm{x = x}$, we obtain in $\Gamma$ for $
   type-checked before being displayed and can be used for calculations before being 
   typeset. They represent the device for linking the formal with the informal. 
 \<close>
+
+figure*["fig:dependency"::figure,relative_width="70",src="''figures/document-hierarchy''"]
+       \<open>A Theory-Graph in the Document Model. \<close>
 
 section*[bgrnd21::introduction]\<open>Implementability of the Required Document Model.\<close>
 text\<open> 
