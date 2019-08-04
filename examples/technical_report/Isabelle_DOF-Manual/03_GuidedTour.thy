@@ -5,44 +5,223 @@ begin
 (*>*)
 
 chapter*[isadof_tour::text_section]\<open>\isadof: A Guided Tour\<close>
-   
-text\<open> In this section, we will use the \isadof document ontology language
-for three different application scenarios: for scholarly papers, for mathematical 
-exam sheets as well as standardization documents where the concepts of the
-standard are captured in the ontology. For space reasons, we will concentrate in all three
-cases on aspects of the modeling due to space limitations.\<close>
 
-
+text\<open>
+  In this chapter, we will give a introduction into using \isadof for users that want to create and 
+  maintain documents following an existing document ontology.
+\<close>
 
 section*[getting_started::technical]\<open>Getting Started\<close>
 
-subsection*[installation::technical]\<open>Installing \isadof\<close>
-
-subsubsection*[prereq::technical]\<open>Installing \isadof\<close>
-text\<open>You need to have Isabelle \isabelleversion, which can be downloaded ....\<close>
-
-subsection*[first_project::technical]\<open>Creating an \isadof Project\<close>
-
-text\<open>\url{\isadofarchiveurl}\<close>
-
+subsection*[installation::technical]\<open>Installation\<close>
 text\<open>
-To start using \isadof, one creates an Isabelle project (with the name 
-\inlinebash{IsaDofApplications}):
+  In this section, we will show how to install \isadof and its pre-requisites: Isabelle and 
+  \LaTeX. We assume a basic familiarity with a Linux/Unix-like command line (i.e., a shell). 
+\<close>
+
+subsubsection*[prerequisites::technical]\<open>Prerequisites\<close>
+text\<open>
+  \isadof has to major pre-requisites: 
+  \<^item> \<^bold>\<open>Isabelle \isabelleversion\<close>\bindex{Isabelle}. \isadof will not work 
+    with a different version of Isabelle. If you need \isadof for a different version of 
+    Isabelle, please check the \isadof website if there is a version available supporting 
+    the required version of Isabelle. \isadof uses a two-part version system (e.g., 1.0/2019), 
+    where the first part is the version of \isadof (using semantic versioning) and the second 
+    part is the supported version of Isabelle. Thus, the same version of \isadof might be 
+    available for different versions of Isabelle. 
+  \<^item> \<^bold>\<open>\TeXLive 2019\<close>\bindex{TexLive@\TeXLive} or any other modern 
+    \LaTeX-distribution that ships a \pdftex-binary supporting the 
+    \inlineltx|\expanded|-primitive 
+    (for details, please see \url{https://www.texdev.net/2018/12/06/a-new-primitive-expanded}).
+\<close>
+
+paragraph\<open>Installing Isabelle\<close>
+text\<open>
+  Please download and install the Isabelle \isabelleversion distribution for your operating system 
+  from the \href{\isabelleurl}{Isabelle website} (\url{isabelleurl}). After the successful 
+  installation of Isabelle, you should be able to call the \inlinebash|isabelle| tool on the 
+  command line:
+
 \begin{bash}
-ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë
-ë\prompt{}ë cd ë\isadofdirnë
-ë\prompt{\isadofdirn}ë ./install 
-  isabelle mkroot_DOF -o scholarly_paper -t lncs -d  IsaDofApplications
+ë\prompt{}ë isabelle version
+ë\isabellefullversionë
 \end{bash}
-where the \inlinebash{-o scholarly_paper} specifies the ontology for writing scientific articles and 
-\inlinebash{-t lncs} specifies the use of Springer's \LaTeX-configuration for the Lecture Notes in 
-Computer Science series. The project can be formally checked, including the generation of the 
-article in PDF using the  following command:
+
+Depending on your operating system and depending if you put Isabelle's \inlinebash{bin} directory
+in your \inlinebash|PATH|, you will need to invoke \inlinebash|isabelle| using its
+full qualified path, \eg:
+
 \begin{bash}
-ë\prompt{\isadofdirn}ë  isabelle build -d . IsaDofApplications
+ë\prompt{}ë /usr/local/Isabelleë\isabelleversionë/bin/isabelle version
+ë\isabellefullversionë
 \end{bash}
 \<close>
 
+paragraph\<open>Installing \TeXLive\<close>
+text\<open>
+  Modern Linux distribution will allow you to install \TeXLive using their respective package 
+  managers. On a modern Debian system or a Debian derivative (\eg, Ubuntu), the following command 
+  should install all required \LaTeX{} packages:
+
+\begin{bash}
+ë\prompt{}ë sudo aptitute install texlive-latex-extra texlive-fonts-extra
+\end{bash}
+
+  Please check that this, indeed, installs a version of \pdftex{} that supports the 
+  \inlineltx|\expanded|-primitive. To check if your \pdfTeX-binary, execute 
+
+\begin{bash}
+ë\prompt{}ë pdftex \\expanded{Success}\\end
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdftex)
+ restricted \write18 enabled.
+entering extended mode
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]</usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
+Output written on texput.pdf (1 page, 8650 bytes).
+Transcript written on texput.log.
+\end{bash}
+
+  If this generates successfully a file \inlinebash|texput.pdf|, your \pdftex-binary supports
+  the \inlineltx|\expanded|-primitive. If your Linux distribution does not (yet) ship \TeXLive{} 
+  2019 or your are running Windows or OS X, please follow the installation instructions from the 
+  \href{https://www.tug.org/texlive/acquire-netinstall.html}{\TeXLive}{} website 
+  (\url{https://www.tug.org/texlive/acquire-netinstall.html}). 
+\<close>
+
+subsubsection*[isadof::technical]\<open>Installing \isadof\<close>
+text\<open>
+  In the following, we assume that you already downloaded the \isadof distribution 
+  (\href{\isadofarchiveurl}{\isadofarchiven}) from the \isadof web site. The main steps for 
+  installing are extracting the \isadof distribution and calling its \inlinebash|install| script. 
+  We start by extracting the \isadof archive:
+
+\begin{bash}
+ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë
+\end{bash}
+This will create a directory \texttt{\isadofdirn} containing \isadof distribution.
+
+Next, we need to invoke the \inlinebash|install| script. If necessary, the installations 
+automatically downloads additional dependencies from the AFP (\url{https://www.isa-afp.org}), 
+namely the AFP  entries ``Functional Automata''~@{cite "Functional-Automata-AFP"} and ``Regular 
+Sets and Expressions''~@{cite "Regular-Sets-AFP"}. This might take a few minutes to complete. 
+Moreover, the installation script applies a patch to the Isabelle system, which requires 
+\<^emph>\<open>write permissions for the Isabelle system directory\<close> and registers \isadof as Isabelle component. 
+
+If the \inlinebash|isabelle| tool is not in your \inlinebash|PATH|, you need to call the 
+\inlinebash|install| script with the \inlinebash|--isabelle| option, passing the full-qualified
+path of the \inlinebash|isabelle| tool (\inlinebash|install --help| gives 
+you an overview of all available configuration options):
+
+\begin{bash}
+ë\prompt{}ë cd ë\isadofdirnë
+ë\prompt{\isadofdirn}ë ./install --isabelle /usr/local/Isabelleë\isabelleversion/bin/isabelleë
+
+Isabelle/DOF Installer
+======================
+* Checking Isabelle version:
+  Success: found supported Isabelle version ë(\isabellefullversion)ë
+* Check availability of Isabelle/DOF patch:
+  Warning: Isabelle/DOF patch is not available or outdated.
+           Trying to patch system ....
+       Applied patch successfully, Isabelle/HOL will be rebuilt during
+       the next start of Isabelle.
+* Checking availability of AFP entries:
+  Warning: could not find AFP entry Regular-Sets.
+  Warning: could not find AFP entry Functional-Automata.
+           Trying to install AFP (this might take a few *minutes*) ....
+           Registering Regular-Sets iëën 
+                 /home/achim/.isabelle/Isabelleë\isabelleversion/ROOTSë
+           Registering Functional-Automata iëën 
+                 /home/achim/.isabelle/Isabelleë\isabelleversion/ROOTSë
+           AFP installation successful.
+* Searching fëëor existing installation:
+  No old installation found.
+* Installing Isabelle/DOF
+  - Installing Tools iëën 
+        /home/achim/.isabelle/Isabelleë\isabelleversion/DOF/Toolsë
+  - Installing document templates iëën 
+        /home/achim/.isabelle/Isabelleë\isabelleversion/DOF/document-templateë
+  - Installing LaTeX styles iëën 
+       /home/brucker/.isabelle/Isabelleë\isabelleversion/DOF/latexë
+  - Registering Isabelle/DOF
+    * Registering tools iëën 
+       /home/achim/.isabelle/Isabelleë\isabelleversion/etc/settingsë
+* Installation successful. Enjoy Isabelle/DOF, you can now build the session
+  Isabelle_DOF and all example documents by executing:
+  /usr/local/Isabelleë\isabelleversion/bin/isabelleë build -D .
+\end{bash}
+
+After the successful installation, you can now explore the examples (in the sub-directory 
+\inlinebash|examples| or create your own project. On the first start, the session 
+\inlinebash|Isabelle_DOF| will be built automatically. If you want to pre-build this 
+session and all example documents, execute:
+
+\begin{bash}
+ë\prompt{\isadofdirn}ë isabelle build -D . 
+\end{bash}
+\<close>
+
+subsection*[first_project::technical]\<open>Creating an \isadof Project\<close>
+text\<open>
+  For creating an \isadof project, \isadof provides its own variant of Isabelles 
+  \inlinebash|mkroot| tool, called \inlinebash|mkroot_DOF|:
+
+\begin{bash}
+ë\prompt{}ë isabelle mkroot_DOF -h 
+
+Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
+
+  Options are:
+    -h           print this hëëelp text and exëëit
+    -n NAME      alternative session name (default: DIR base name)
+    -o ONTOLOGY  (default: scholarly_paper)
+       Available ontologies:
+       * CENELEC_50128
+       * math_exam
+       * scholarly_paper
+       * technical_report
+    -t TEMPLATE   (default: scrartcl)
+       Available document templates:
+       * eptcs-UNSUPPORTED
+       * lipics-v2019-UNSUPPORTED
+       * lncs
+       * scrartcl
+       * scrreprt-modern
+       * scrreprt
+
+  Prepare session root DIR (default: current directory).
+\end{bash}
+
+  Creating a new document setup requires two decisions:
+  \<^item> which ontologies (\eg, scholarly\_paper) are required and 
+  \<^item> which document layout should be used as a basis (\eg, scrartcl).
+\<close>
+text\<open>
+  If you are happy with the defaults, \ie, using the ontology for writing academic papers 
+  (scholarly\_paper) using a report layout based on the article class (\inlineltx|scrartcl|) of 
+  the KOMA-Script bundle~@{cite "kohm:koma-script:2019"}, you can create your first project 
+  \inlinebash|myproject| as follows:
+
+\begin{bash}
+ë\prompt{}ë isabelle mkroot_DOF myproject
+
+Preparing session "myproject" iëën "myproject"
+  creating "myproject/ROOT"
+  creating "myproject/document/root.tex"
+
+Now use the following coëëmmand line to build the session:
+
+  isabelle build -D myproject
+\end{bash}
+
+  This will create a directory \inlinebash|myproject| containing the \isadof-setup for your 
+  new document. To check the document formally, including the generation of the document in PDF,
+  you only need to execute the following command:
+
+\begin{bash}
+ë\prompt{}ë  isabelle build -d . myproject
+\end{bash}
+\<close>
 
 section\<open>Using Document Ontologies\<close>
 subsection*[scholar_onto::example]\<open>Academic Publications (scholarly\_paper)\<close>  
