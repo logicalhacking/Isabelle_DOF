@@ -1,6 +1,9 @@
 (*<*)
-theory "03_GuidedTour"
-  imports "02_Background"
+theory 
+    "03_GuidedTour"
+  imports 
+    "02_Background"
+    "Isabelle_DOF.CENELEC_50128"
 begin
 (*>*)
 
@@ -273,8 +276,8 @@ text\<open>
   isabelle jedit examples/scholarly_paper/2018-cicm-isabelle_dof-applications/\
   IsaDofApplications.thy
 \end{bash}
- 
-  
+\<close> 
+text\<open>  
   You can build the PDF-document by calling:
 
   \begin{bash}
@@ -417,28 +420,55 @@ text\<open>
 \<close>
 
 section*[cenelec_onto::example]\<open>Writing Certification Documents (CENELEC\_50128)\<close>
-text\<open> Documents to be provided in formal certifications (such as CENELEC
-50126/50128, the DO-178B/C, or Common Criteria) can much profit from the control of ontological consistency: 
-a lot of an evaluators work consists in tracing down the links from requirements over 
-assumptions down to elements of evidence, be it in the models, the code, or the tests. 
-In a certification process, traceability becomes a major concern; and providing
-mechanisms to ensure complete traceability already at the development of the
-global document will clearly increase speed and reduce risk and cost of a
-certification process. Making the link-structure machine-checkable, be it between requirements, 
-assumptions, their implementation and their discharge by evidence (be it tests, proofs, or
-authoritative arguments), is therefore natural and has the potential to decrease the cost 
-of developments targeting certifications. Continuously checking the links between the formal
-and the semi-formal parts of such documents is particularly valuable during the (usually
-collaborative) development effort. 
+subsection\<open>The CENELEC 50128 Example\<close>
+text\<open> 
+  The ontology ``CENELEC\_50128''\index{ontology!CENELEC\_50128} is a small ontology modeling 
+  documents for a certification following CENELEC 50128~@{cite "boulanger:cenelec-50128:2015"}.
+  The \isadof distribution contains a small example  using the ontology ``CENELEC\_50128'' in 
+  the directory \nolinkurl{examples/CENELEC_50128/mini_odo/}. You can inspect/jedit the example 
+  in Isabelle's IDE, by either 
+  \<^item> starting Isabelle/jedit using your graphical user interface (\eg, by clicking on the 
+    Isabelle-Icon provided by the Isabelle installation) and loading the file 
+    \nolinkurl{examples/CENELEC_50128/mini_odo/mini_odo.thy}.
+  \<^item> starting Isabelle/jedit from the command line by calling:
 
-As in many other cases, formal certification documents come with an own terminology and
-pragmatics of what has to be demonstrated and where, and how the trace-ability of requirements through
-design-models over code to system environment assumptions has to be assured.  
+    \begin{bash}
+ë\prompt{\isadofdirn}ë 
+  isabelle jedit examples/CENELEC_50128/mini_odo/mini_odo.thy
+\end{bash}
+\<close> 
+text\<open>  
+  You can build the PDF-document by calling:
+
+  \begin{bash}
+ë\prompt{}ë isabelle build mini_odo
+\end{bash}
 \<close>
-text\<open> In the sequel, we present a simplified version of an ontological model used in a 
-case-study~ @{cite "bezzecchi.ea:making:2018"}. We start with an introduction of the concept of requirement 
-(see \autoref{fig:conceptual}). 
-\begin{figure}
+ 
+subsection\<open>Modeling CENELEC 50128\<close>
+text\<open>
+  Documents to be provided in formal certifications (such as CENELEC 
+  50128~@{cite "boulanger:cenelec-50128:2015"} or Common Criteria~@{cite "cc:cc-part3:2006"}) can 
+  much profit from the control of ontological consistency:  a lot of an evaluators work consists in 
+  tracing down the links from requirements over assumptions down to elements of evidence, be it in 
+  the models, the code, or the tests.  In a certification process, traceability becomes a major 
+  concern; and providing mechanisms to ensure complete traceability already at the development of 
+  the global document will clearly increase speed and reduce risk and cost of a certification 
+  process. Making the link-structure machine-checkable, be it between requirements, assumptions, 
+  their implementation and their discharge by evidence (be it tests, proofs, or authoritative 
+  arguments), is therefore natural and has the potential to decrease the cost of developments 
+  targeting certifications. Continuously checking the links between the formal and the semi-formal 
+  parts of such documents is particularly valuable during the (usually collaborative) development 
+  effort. 
+
+  As in many other cases, formal certification documents come with an own terminology and pragmatics
+  of what has to be demonstrated and where, and how the trace-ability of requirements through 
+  design-models over code to system environment assumptions has to be assured.  
+
+  In the sequel, we present a simplified version of an ontological model used in a 
+  case-study~@{cite "bezzecchi.ea:making:2018"}. We start with an introduction of the concept of 
+  requirement:
+
 \begin{isar}
 doc_class requirement = long_name :: "string option"
 
@@ -453,9 +483,7 @@ datatype ass_kind = informal | semiformal | formal
 doc_class assumption = requirement +
      assumption_kind :: ass_kind <= informal 
 \end{isar}
-\caption{Modeling requirements.}
-\label{fig:conceptual}
-\end{figure}
+
 Such ontologies can be enriched by larger explanations and examples, which may help
 the team of engineers substantially when developing the central document for a certification, 
 like an explication what is precisely the difference between an \<^emph>\<open>hypothesis\<close> and an 
@@ -485,45 +513,47 @@ doc_class ec = assumption  +
 doc_class srac = ec  +
      assumption_kind :: ass_kind <= (*default *) formal
 \end{isar}
+
+We now can, \eg, write 
+
+\begin{isar}
+text*[ass123::SRAC]\<Open> 
+  The overall sampling frequence of the odometer subsystem is therefore 
+  14 khz, which includes sampling, computing a$$nd result communication 
+  times \ldots
+\<Close>
+\end{isar}
+
+This will be shown in the PDF as follows:
 \<close>
+text*[ass123::SRAC] \<open> The overall sampling frequence of the odometer
+subsystem is therefore 14 khz, which includes sampling, computing and
+result communication times \ldots \<close>
 
-subsection*[ontopide::technical]\<open>CENELEC: Ontology-based IDE support \<close>  
-text\<open> We present a selection of interaction scenarios  @{example \<open>scholar_onto\<close>}
-and @{example \<open>cenelec_onto\<close>} with Isabelle/PIDE instrumented by \isadof. \<close>
-
-subsection*[cenelec_pide::example]\<open> CENELEC  \<close>
-declare_reference*[figfig3::figure]  
-text\<open> The corresponding view in @{docitem_ref (unchecked) \<open>figfig3\<close>} shows core part of a document,  
-coherent to the @{example \<open>cenelec_onto\<close>}. The first sample shows standard Isabelle antiquotations 
+subsection*[ontopide::technical]\<open>Editing Support for CENELEC 50128\<close>  
+figure*[figfig3::figure,relative_width="95",src="''figures/antiquotations-PIDE''"]
+\<open> Standard antiquotations referring to theory elements.\<close>
+text\<open> The corresponding view in @{docitem_ref  \<open>figfig3\<close>} shows core part of a document 
+conformimg to the CENELEC 50128 ontology. The first sample shows standard Isabelle antiquotations 
 @{cite "wenzel:isabelle-isar:2017"} into formal entities of a theory. This way, the informal parts 
 of a document get ``formal content'' and become more robust under change.\<close>
 
-figure*[figfig3::figure,relative_width="80",src="''figures/antiquotations-PIDE''"]
-\<open> Standard antiquotations referring to theory elements.\<close>
-
-declare_reference*[figfig5::figure]  
-text\<open> The subsequent sample in @{docitem_ref (unchecked) \<open>figfig5\<close>} shows the definition of an 
+figure*[figfig5::figure, relative_width="95", src="''figures/srac-definition''"]
+        \<open> Defining a SRAC reference \ldots \<close>
+figure*[figfig7::figure, relative_width="95", src="''figures/srac-as-es-application''"]
+        \<open> Using a SRAC as EC document reference. \<close>
+text\<open> The subsequent sample in @{docitem_ref \<open>figfig5\<close>} shows the definition of an
 \<^emph>\<open>safety-related application condition\<close>, a side-condition of a theorem which 
 has the consequence that a certain calculation must be executed sufficiently fast on an embedded 
 device. This condition can not be established inside the formal theory but has to be 
-checked by system integration tests.\<close>
-  
-figure*[figfig5::figure, relative_width="80", src="''figures/srac-definition''"]
-        \<open> Defining a SRAC reference \ldots \<close>
-figure*[figfig7::figure, relative_width="80", src="''figures/srac-as-es-application''"]
-        \<open> Using a SRAC as EC document reference. \<close>
-       
-text\<open> Now we reference in @{docitem_ref (unchecked) \<open>figfig7\<close>} this safety-related condition; 
-however, this happens in a context where general \<^emph>\<open>exported constraints\<close> are listed. 
-\isadof's checks establish that this is legal in the given ontology. 
+checked by system integration tests. Now we reference in @{docitem_ref  \<open>figfig7\<close>} this 
+safety-related condition; however, this happens in a context where general \<^emph>\<open>exported constraints\<close> 
+are listed. \isadof's checks establish that this is legal in the given ontology. 
 
 This example shows that ontological modeling is indeed adequate for large technical,
 collaboratively developed documentations, where modifications can lead easily to incoherence. 
 The current checks help to systematically avoid this type of incoherence between formal and 
 informal parts. \<close>    
-
-
-
 
 section*[math_exam::example]\<open> The Math-Exam Scenario \<close> 
 text\<open> The Math-Exam Scenario is an application with mixed formal and 
