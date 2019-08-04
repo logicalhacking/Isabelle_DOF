@@ -265,7 +265,7 @@ text\<open>
   The \isadof distribution contains an example (actually, our CICM 2018 
   paper~@{cite "brucker.ea:isabelle-ontologies:2018"}) using the ontology ``scholarly\_paper'' in 
   the directory \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/}. You 
-  can inspect/jedit the example in Isabelle's IDE, by either 
+  can inspect/edit the example in Isabelle's IDE, by either 
   \<^item> starting Isabelle/jedit using your graphical user interface (\eg, by clicking on the 
     Isabelle-Icon provided by the Isabelle installation) and loading the file 
     \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy}.
@@ -425,7 +425,7 @@ text\<open>
   The ontology ``CENELEC\_50128''\index{ontology!CENELEC\_50128} is a small ontology modeling 
   documents for a certification following CENELEC 50128~@{cite "boulanger:cenelec-50128:2015"}.
   The \isadof distribution contains a small example  using the ontology ``CENELEC\_50128'' in 
-  the directory \nolinkurl{examples/CENELEC_50128/mini_odo/}. You can inspect/jedit the example 
+  the directory \nolinkurl{examples/CENELEC_50128/mini_odo/}. You can inspect/edit the example 
   in Isabelle's IDE, by either 
   \<^item> starting Isabelle/jedit using your graphical user interface (\eg, by clicking on the 
     Isabelle-Icon provided by the Isabelle installation) and loading the file 
@@ -549,67 +549,80 @@ device. This condition can not be established inside the formal theory but has t
 checked by system integration tests. Now we reference in @{docitem_ref  \<open>figfig7\<close>} this 
 safety-related condition; however, this happens in a context where general \<^emph>\<open>exported constraints\<close> 
 are listed. \isadof's checks establish that this is legal in the given ontology. 
+\<close>    
 
-This example shows that ontological modeling is indeed adequate for large technical,
-collaboratively developed documentations, where modifications can lead easily to incoherence. 
-The current checks help to systematically avoid this type of incoherence between formal and 
-informal parts. \<close>    
+section*[math_exam::example]\<open>Writing Exams (math\_exam)\<close> 
+subsection\<open>The Math Exam Example\<close>
+text\<open> 
+  The ontology ``math\_exam''\index{ontology!math\_exam} is an experimental ontology modeling 
+  the process of writing exams at higher education institution in the United Kingdom, where exams 
+  undergo both an internal and external review process. The \isadof distribution contains a tiny 
+  example  using the ontology ``math\_exam'' in the directory 
+  \nolinkurl{examples/math_exam/MathExam/}. You can inspect/edit the example 
+  in Isabelle's IDE, by either 
+  \<^item> starting Isabelle/jedit using your graphical user interface (\eg, by clicking on the 
+    Isabelle-Icon provided by the Isabelle installation) and loading the file 
+    \nolinkurl{examples/math_exam/MathExam/MathExam.thy}.
+  \<^item> starting Isabelle/jedit from the command line by calling:
 
-section*[math_exam::example]\<open> The Math-Exam Scenario \<close> 
-text\<open> The Math-Exam Scenario is an application with mixed formal and 
-semi-formal content. It addresses applications where the author of the exam is not present 
-during the exam and the preparation requires a very rigorous process, as the french 
-\<^emph>\<open>baccaleaureat\<close> and exams at The University of Sheffield.
+    \begin{bash}
+ë\prompt{\isadofdirn}ë 
+  isabelle jedit examples/math_exam/MathExam/MathExam.thy
+\end{bash}
+\<close> 
+text\<open>  
+  You can build the PDF-document by calling:
 
-We assume that the content has four different types of addressees, which have a different
-\<^emph>\<open>view\<close> on the integrated document: 
-
-\<^item> the \<^emph>\<open>setter\<close>, \ie, the author of the exam,
-\<^item> the \<^emph>\<open>checker\<close>, \ie, an internal person that checks 
-  the exam for feasibility and non-ambiguity, 
-\<^item> the \<^emph>\<open>external examiner\<close>, \ie, an external person that checks 
-  the exam for feasibility and non-ambiguity, and 
-\<^item> the \<^emph>\<open>student\<close>, \ie, the addressee of the exam. 
+  \begin{bash}
+ë\prompt{}ë isabelle build MathExam
+\end{bash}
 \<close>
-text\<open> The latter quality assurance mechanism is used in many universities,
-where for organizational reasons the execution of an exam takes place in facilities
-where the author of the exam is not expected to be physically present.
-Furthermore, we assume a simple grade system (thus, some calculation is required). 
+ 
+subsection\<open>Modeling Exams\<close>
+text\<open>
+  The math-exam scenario is an application with mixed formal and semi-formal content. It addresses 
+  applications where the author of the exam is not present  during the exam and the preparation 
+  requires a very rigorous process.
 
-\begin{figure}
+  We assume that the content has four different types of addressees, which have a different
+  \<^emph>\<open>view\<close> on the integrated document: 
+  \<^item> the \<^emph>\<open>setter\<close>, \ie, the author of the exam,
+  \<^item> the \<^emph>\<open>checker\<close>, \ie, an internal person that checks 
+   the exam for feasibility and non-ambiguity, 
+  \<^item> the \<^emph>\<open>external\<close>, \ie, an external person that checks 
+    the exam for feasibility and non-ambiguity, and 
+  \<^item> the \<^emph>\<open>student\<close>, \ie, the addressee of the exam. 
+\<close>
+text\<open> 
+  The latter quality assurance mechanism is used in many universities,
+  where for organizational reasons the execution of an exam takes place in facilities
+  where the author of the exam is not expected to be physically present.
+  Furthermore, we assume a simple grade system (thus, some calculation is required). We 
+  can model this as follows: 
+
 \begin{isar}
 doc_class Author = ...
 datatype Subject =  algebra | geometry | statistical
 datatype Grade =  A1 | A2 | A3
-
 doc_class Header =  examTitle   :: string
                     examSubject :: Subject
                     date        :: string
                     timeAllowed :: int --  minutes
-
 datatype ContentClass =  setter
                       | checker 
                       | external_examiner   
                       | student   
-
-doc_class Exam_item = 
-  concerns :: "ContentClass set"  
-
-doc_class Exam_item = 
-  concerns :: "ContentClass set"  
+doc_class Exam_item =  concerns :: "ContentClass set"  
+doc_class Exam_item =  concerns :: "ContentClass set"  
 
 type_synonym SubQuestion = string
 \end{isar}
-\caption{The core of the ontology modeling math exams.}
-\label{fig:onto-exam}
-\end{figure}
-The heart of this ontology (see \autoref{fig:onto-exam}) is an alternation of questions and answers, 
-where the answers can consist of simple yes-no answers (QCM style check-boxes) or lists of formulas. 
-Since we do not
-assume familiarity of the students with Isabelle (\inlineisar+term+ would assume that this is a 
-parse-able and type-checkable entity), we basically model a derivation as a sequence of strings
-(see \autoref{fig:onto-questions}).
-\begin{figure}
+
+  The heart of this ontology is an alternation of questions and answers, where the answers can 
+  consist of simple yes-no answers or lists of formulas. Since we do not assume familiarity of 
+  the students with Isabelle (\inlineisar+term+ would assume that this is a parse-able and 
+  type-checkable entity), we basically model a derivation as a sequence of strings:
+
 \begin{isar}
 doc_class Answer_Formal_Step =  Exam_item +
   justification :: string
@@ -635,17 +648,11 @@ doc_class Exercise = Exam_item +
   concerns :: "ContentClass set" <= "UNIV" 
   mark     :: int
 \end{isar}
-\caption{An exam can contain different types of questions.}
-\label{fig:onto-questions}
-\end{figure}
 
-In many institutions, it makes sense to have a rigorous process of validation
-for exam subjects: is the initial question correct? Is a proof in the sense of the
-question possible? We model the possibility that the @{term examiner} validates a 
-question by a sample proof validated by Isabelle (see \autoref{fig:onto-exam-monitor}). 
-In our scenario this sample proofs are completely \<^emph>\<open>intern\<close>, \ie, not exposed to the 
-students but just additional material for the internal review process of the exam.
-\begin{figure}
+In many institutions, having a rigorous process of validation for exam subjects makes sense: is 
+the initial question correct? Is a proof in the sense of the question possible? We model the 
+possibility that the @{term examiner} validates a question by a sample proof validated by Isabelle:
+
 \begin{isar}
 doc_class Validation = 
    tests  :: "term list"  <="[]"
@@ -661,26 +668,10 @@ doc_class MathExam=
   global_grade :: Grade 
   where "\<lbrace>Author\<rbrace>$^+$  ~~  Header ~~  \<lbrace>Exercise ~~ Solution\<rbrace>$^+$ "
 \end{isar}
-\caption{Validating exams.}
-\label{fig:onto-exam-monitor}
-\end{figure}
+
+In our scenario this sample proofs are completely \<^emph>\<open>intern\<close>, \ie, not exposed to the 
+students but just additional material for the internal review process of the exam.
 \<close>
-
-  
-declare_reference*["fig_qcm"::figure]
-
-text\<open> Using the \LaTeX{} package hyperref, it is possible to conceive an interactive 
-exam-sheets with multiple-choice and/or free-response elements 
-(see @{docitem_ref (unchecked) \<open>fig_qcm\<close>}). With the 
-help of the latter, it is possible that students write in a browser a formal mathematical 
-derivation---as part of an algebra exercise, for example---which is submitted to the examiners 
-electronically. \<close>
-figure*[fig_qcm::figure,spawn_columns=False,
-        relative_width="90",src="''figures/InteractiveMathSheet''"]
-        \<open> A Generated QCM Fragment \ldots \<close>  
-
-
-
 (*<*)
 end
 (*>*) 

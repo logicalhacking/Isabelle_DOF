@@ -21,7 +21,6 @@ session "Isabelle_DOF-Manual" = "Isabelle_DOF" +
     "figures/Dogfood-Intro.png"
     "figures/Dogfood-IV-jumpInDocCLass.png"
     "figures/Dogfood-V-attribute.png"
-    "figures/InteractiveMathSheet.png"
     "figures/IsaArchGlobal.png"
     "figures/IsaArchInteract.png"
     "figures/IsaArch.odp"
