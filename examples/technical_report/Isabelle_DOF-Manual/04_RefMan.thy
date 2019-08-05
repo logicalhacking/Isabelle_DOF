@@ -1,63 +1,135 @@
 (*<*)
-theory "04_RefMan"
-  imports "03_GuidedTour" (* apparently inaccessible; for railroads "Isar_Ref.Base" *) 
-          "Isabelle_DOF.Isa_COL"
-
+theory 
+  "04_RefMan"
+  imports 
+    "03_GuidedTour" 
+    "Isabelle_DOF.Isa_COL"
 begin
 (*>*)
-chapter*[isadof_ontologies::text_section]\<open>Developing Ontologies and Document Representations\<close>
-   
-text\<open> \isadof is embedded in the underlying generic
-document model of Isabelle as described in @{docitem "dof"}.  
-Recall that the document language can be extended dynamically, \ie, new
-\<open>user-defined\<close> can be introduced at run-time.  This is similar to
-the definition of new functions in an interpreter. \isadof as a system plugin is
-is a number of new command definitions in Isabelle's document model.
 
-\isadof consists consists basically of three components:
-\<^item> an own \<^emph>\<open>family of text-element\<close> such as @{command "title*"}, @{command "chapter*"}  
-  @{command "text*"}, etc., which can be annotated with meta-information defined in the 
-  underlying  ontology definition and allow to build a \<^emph>\<open>core\<close> document,
-\<^item> the \<^emph>\<open>ontology definition\<close> which is an Isabelle theory file with definitions
-  for document-classes and all auxiliary datatypes 
-  (we call this the Ontology Definition Language (ODL))  
-\<^item> the \<^emph>\<open>layout definition\<close> for the given ontology exploiting this meta-information.
+chapter*[isadof_ontologies::text_section]\<open>Developing Ontologies\<close>
+
+text\<open>
+  In this chapter, we explain the concepts for modeling new ontologies, developing a document 
+  representation for them, as well as developing new document templates. 
 \<close>
 
-text\<open> Note that the document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not
-use Isabelle definitions or proofs for checking the formal content---the 
-present paper is actually an example of a document not containing any proof.
-Consequently, the document editing and checking facility provided by 
-\isadof addresses the needs of common users for an advanced text-editing environment,
-neither modeling nor proof knowledge is inherently required.
+section*[infrastructure::text_section]\<open>Overview and Technical Infrastructure\<close>
+text\<open>
+  \isadof is embedded in the underlying generic document model of Isabelle as described in 
+  @{docitem "dof"}. Recall that the document language can be extended dynamically, \ie, new
+  \<open>user-defined\<close> can be introduced at run-time.  This is similar to the definition of new functions 
+  in an interpreter. \isadof as a system plugin is is a number of new command definitions in 
+  Isabelle's document model.
 
-We expect authors of ontologies to have experience in the use of \isadof, basic
-modeling (and evtl. SML programming) experience and, last but not least, domain knowledge
-of the ontology to be modeled. Users with experience in UML-like meta-modeling 
-will feel familiar with most concepts; however, we expect  no need for insight 
-in the Isabelle proof language, for example, or other more advanced concepts.
+  \isadof consists consists basically of four components:
+  \<^item> an own \<^emph>\<open>family of text-element\<close> such as @{command "title*"}, @{command "chapter*"}  
+    @{command "text*"}, etc., which can be annotated with meta-information defined in the 
+    underlying  ontology definition and allow to build a \<^emph>\<open>core\<close> document,
+  \<^item> the \<^emph>\<open>ontology definition\<close> which is an Isabelle theory file with definitions
+    for document-classes and all auxiliary datatypes 
+    (we call this the Ontology Definition Language (ODL)),
+  \<^item> the ontology-specific \<^emph>\<open>layout definition\<close>, exploiting this meta-information, and 
+  \<^item> the generic \<^emph>\<open>layout definition\<close> for documents following, \eg, the format guidelines of publishers
+    or standardization bodies. 
+\<close>
 
-The document generation process of \isadof is currently restricted to \LaTeX, which means
-that the layout is defined by a set of \LaTeX{} style files. Several layout 
-definitions for one ontology are possible which paves the way for different \<^emph>\<open>views\<close> on
-the same integrated document, addressing the needs of different purposes 
-and/or target readers. Conceiving new style files will definitively require knowledge
-over \LaTeX{} and some knowledge over the Isabelle document generation process.
+subsection\<open>Ontologies\<close>
+text\<open>
+  Technically, ontologies\index{ontology!directory structure} are stored in a directory 
+  \inlinebash|src/ontologies| and consist of a Isabelle theory file and a \LaTeX-style file:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\dirtree{%
+.1 .
+.2 src.
+.3 ontologies\DTcomment{Ontologies}.
+.4 ontologies.thy\DTcomment{Ontology Registration}.
+.4 CENELEC\_50128\DTcomment{CENELEC\_50128}.
+.5 CENELEC\_50128.thy.
+.5 DOF-CENELEC\_50128.sty.
+.4 scholarly\_paper\DTcomment{scholarly\_paper}.
+.5 scholarly\_paper.thy.
+.5 DOF-scholarly\_paper.sty.
+.4 \ldots.
+}
+\end{minipage}
+\end{center}
+\<close>
+text\<open>
+  Developing a new ontology ``\inlinebash|foo|'' requires, from a technical perspective, the 
+  following steps:
+  \<^item> create a new sub-directory \inlinebash|foo| in the directory \inlinebash|src/ontologies|
+  \<^item> definition of the ontological concepts, using \isadof's Ontology Definition Language (ODL), in 
+    a new theory file \path{src/ontologies/foo/foo.thy}.  
+  \<^item> definition of the document representation for the ontological concepts in a \LaTeX-style 
+    file \path{src/ontologies/foo/DOF-foo.sty}
+  \<^item> registration of the new ontology in the file 
+   \path{src/ontologies/ontologies.thy} (as theory import). 
+  \<^item> activation of the new document setup by executing the install script. You can skip the lengthy 
+    checks for the AFP entries and the installation of the Isabelle patch by using the 
+    \inlinebash|--skip-patch-and-afp| option:
+  
+  \begin{bash}
+ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp
+  \end{bash}
 
-The situation is roughly similar to \LaTeX{}-users, who usually have minimal knowledge about 
-the content in  style-files (\<^verbatim>\<open>.sty\<close>-files). In the document core authors \<^emph>\<open>can\<close>  use \LaTeX{}  
-commands in  their source, but this limits the possibility of using different representation 
-technologies, \eg, HTML, and increases the risk of arcane error-messages in the generated \LaTeX{}.
-Using low-level \LaTeX{} commands is at the users risk. A correctly checked \isadof document
-should typeset, provided that a few basic pitfalls are avoided: no dangling \<^verbatim>\<open>{\<close> or \<^verbatim>\<open>}\<close>, no 
-spontaneous unprotected \<^verbatim>\<open>_\<close>, etc. It is also helpful to execute the final
-@{command "check_doc_global"} command to check the global reference stucture.
+  The document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not use Isabelle definitions or proofs for checking the 
+  formal content---this manual is actually an example of a document not containing any proof.
+  Consequently, the document editing and checking facility provided by \isadof addresses the needs 
+  of common users for an advanced text-editing environment, neither modeling nor proof knowledge is 
+  inherently required.
+
+  In general, we expect authors of ontologies to have experience in the use of \isadof, basic
+  modeling (and, potentially, some basic SML programming) experience, basic \LaTeX{} knowledge, and, 
+  last but not least, domain knowledge of the ontology to be modeled. Users with experience in 
+  UML-like meta-modeling will feel familiar with most concepts; however, we expect  no need for 
+  insight in the Isabelle proof language, for example, or other more advanced concepts.
+\<close>
+
+subsection\<open>Document Templates\<close>
+text\<open>
+  Document-templates define the overall layout (page size, margins, fonts, etc.) of the generated 
+  documents and are the the main technical means for implementing layout requirements that are, \eg,
+  required by publishers or standardization bodies. Document-templates are stored in a directory 
+  \path{src/document-templates}:\index{document template!directory structure}
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\dirtree{%
+.1 .
+.2 src.
+.3 document-templates\DTcomment{Document templates}.
+.4 root-lncs.tex.
+.4 root-scrartcl.tex.
+.4 root-scrreprt-modern.tex.
+.4 root-scrreprt.tex.
+}
+\end{minipage}
+\end{center}
+\<close>
+
+text\<open>
+  Developing a new document template ``\inlinebash|bar|'' requires the following steps:
+  \<^item> develop a new \LaTeX-template \inlinebash|src/document-templates/root-bar.tex|
+  \<^item> activation of the new document template  by executing the install script. You can skip the lengthy 
+    checks for the AFP entries and the installation of the Isabelle patch by using the 
+    \inlinebash|--skip-patch-and-afp| option:
+  
+  \begin{bash}
+ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp
+  \end{bash}
+\<close>
+
+
+text\<open>
+  As the document generation of \isadof is based 
+  on \LaTeX, the \isadof document templates can (and should) make use of any \LaTeX-classes provided
+  by publishers or standardization bodies.
 \<close>
 
 
 
-section\<open>Ontology Modeling in ODL\<close>
-
+section\<open>The Ontology Definition Language (ODL)\<close>
 
 text\<open>As already mentioned, ODL has some similarities to meta-modeling languages
 such as UML class models: It builds upon concepts like class, inheritance, class-instances, 
@@ -131,9 +203,6 @@ themselves in a HOL-types in order to allow \<^emph>\<open>links\<close> to and
 between ontological concepts.
 \<close>
 
-
-
-section*["odl-manual"::technical]\<open>The ODL Manual\<close>
 subsection*["odl-manual0"::technical]\<open>Some Isabelle/HOL Specification Constructs Revisited\<close>
 text\<open>The \isadof ontology definition language (ODL) is an extension of Isabelle/HOL;
 document class definitions can therefore be arbitrarily mixed with standard HOL
@@ -658,17 +727,10 @@ doc_class F  =
    u        :: "file"
    s        :: "typ list"
 
-(* BUG BUG BUG 
-assert*[aaa::"04_RefMan.F"] "3 < (4::int)"
-assert*[aaa::F] "0 < (4::int)"
-*)
 
 
 
-subsection*["core-manual2"::technical]\<open>Examples\<close>
-
-
-section*[latex1::technical]\<open>How to adapt \isadof to a new document style file\<close>
+section*["document-templates"::technical]\<open>Defining Document Templates\<close>
 
 text\<open>Current \isadof comes with a number of setups for the PDF generation, notably
 Springer LNCS, lipics, ..., as well as setupqs of technical reports this the present one.
@@ -758,7 +820,68 @@ The general process as such is straight-forward:
   your new LaTeX template and the required styles. In case
   of errors, go back to step 7.
 
+\begin{ltx}
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{isabelle}
+\usepackage{xcolor}
+\usepackage{isabellesym}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\IfFileExists{DOF-core.sty}{}{%
+  \PackageError{DOF-core}{Isabelle/DOF not installed. 
+    This is a Isabelle_DOF project. The document preparation requires
+    the Isabelle_DOF framework. Please obtain the framework by cloning
+    the Isabelle_DOF git repository, i.e.: 
+         "git clone https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF"
+    You can install the framework as follows:
+         "cd Isabelle_DOF/document-generator && ./install"}{%
+    For further help, see 
+    https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF}
+}
+\input{ontologies}
+\IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
+\usepackage{graphicx}
+\usepackage{hyperref}
+\urlstyle{rm}
+\isabellestyle{it}
+\usepackage[caption]{subfig}
+\usepackage[size=footnotesize]{caption}
+
+\begin{document}
+\maketitle
+\input{session}
+% optional bibliography
+\IfFileExists{root.bib}{%
+  \bibliographystyle{abbrv}
+  \bibliography{root}
+}{}
+\end{document}
+\end{ltx}
 \<close>
+section\<open>Old Stuff \<close>
+
+text\<open>
+
+\begin{ltx}
+\newisadof{text.CENELEC_50128.hypothesis}%
+[label=,type=%
+,Isa_COL.text_element.level=%
+,Isa_COL.text_element.referentiable=%
+,Isa_COL.text_element.variants=%
+,CENELEC_50128.requirement.is_concerned=%
+,CENELEC_50128.requirement.long_name=%
+,CENELEC_50128.SRAC.formal_repr=%
+,CENELEC_50128.SRAC.hypothesis_kind=%
+,CENELEC_50128.hypothesis.hyp_type=%
+][1]{
+#1
+}
+\end{ltx}
+
+\<close>
+
 
 (*<*)
 end
