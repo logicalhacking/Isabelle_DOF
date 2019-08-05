@@ -674,6 +674,45 @@ doc_class MathExam=
 In our scenario this sample proofs are completely \<^emph>\<open>intern\<close>, \ie, not exposed to the 
 students but just additional material for the internal review process of the exam.
 \<close>
+
+
+section\<open>Style Guide\<close>
+text\<open>
+  The document generation process of \isadof is based on Isabelle's document generation framework, 
+  using \LaTeX{} as the underlying back-end. As Isabelle's document generation framework, it is 
+  possible to embed (nearly) arbitrary \LaTeX-commands in text-commands, \eg:
+
+\begin{isar}
+text\<Open> This is \emph{emphasized} a$$nd this is a 
+       citation~\cite{brucker.ea:isabelle-ontologies:2018}\<Close>
+\end{isar}
+
+  In general, we advise against this practice and, whenever positive, use the \isadof (respetively
+  Isabelle) provided alternatives:
+
+\begin{isar}
+text\<Open> This is *\<Open>emphasized\<Close> a$$nd this is a 
+        citation <@>{cite "brucker.ea:isabelle-ontologies:2018"}.\<Close>
+\end{isar}
+
+Clearly, this is not always possible and, in fact, often \isadof documents will contain 
+\LaTeX-commands, this should be restricted to layout improvements that otherwise are (currently)
+not possible. As far as possible, the use of \LaTeX-commands should be restricted to the definition 
+of ontologies and document templates (see @{docitem_ref (unchecked) \<open>isadof_ontologies\<close>}).
+
+Restricting the use of \LaTeX has two advantages: first, \LaTeX commands can circumvent the 
+consistency checks of \isadof and, hence, only if no \LaTeX commands are used, \isadof can 
+ensure that a document that does not generate any error messages in Isabelle/jedit also generated
+a PDF document. Second, future version of \isadof might support different targets for the 
+document generation (\eg, HTML) which, naturally, are only available to documents not using 
+native \LaTeX-commands. 
+
+Similarly, (unchecked) forward references should, if possible, be avoided, as they also might
+create dangeling references during the document generation that break the document generation.  
+
+Finally, we recommend to use the @{command "check_doc_global"} command at the end of your 
+document to check the global reference structure. 
+\<close>
 (*<*)
 end
 (*>*) 
