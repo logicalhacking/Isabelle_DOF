@@ -16,7 +16,7 @@ text\<open>
 
 section*[infrastructure::text_section]\<open>Overview and Technical Infrastructure\<close>
 text\<open>
-  \isadof is embedded in the underlying generic document model of Isabelle as described in 
+  \isadof is embedded in the underlying generic document model of Isabelle as described in
   @{docitem "dof"}. Recall that the document language can be extended dynamically, \ie, new
   \<open>user-defined\<close> can be introduced at run-time.  This is similar to the definition of new functions 
   in an interpreter. \isadof as a system plugin is is a number of new command definitions in 
@@ -28,7 +28,7 @@ text\<open>
     underlying  ontology definition and allow to build a \<^emph>\<open>core\<close> document,
   \<^item> the \<^emph>\<open>ontology definition\<close> which is an Isabelle theory file with definitions
     for document-classes and all auxiliary datatypes 
-    (we call this the Ontology Definition Language (ODL)),
+    (called Ontology Definition Language (ODL)),
   \<^item> the ontology-specific \<^emph>\<open>layout definition\<close>, exploiting this meta-information, and 
   \<^item> the generic \<^emph>\<open>layout definition\<close> for documents following, \eg, the format guidelines of publishers
     or standardization bodies. 
@@ -36,6 +36,18 @@ text\<open>
 
 subsection\<open>Ontologies\<close>
 text\<open>
+  The document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not use Isabelle definitions or proofs for checking the 
+  formal content---this manual is actually an example of a document not containing any proof.
+  Consequently, the document editing and checking facility provided by \isadof addresses the needs 
+  of common users for an advanced text-editing environment, neither modeling nor proof knowledge is 
+  inherently required.
+
+  We expect authors of ontologies to have experience in the use of \isadof, basic modeling (and, 
+  potentially, some basic SML programming) experience, basic \LaTeX{} knowledge, and, last but not 
+  least, domain knowledge of the ontology to be modeled. Users with experience in UML-like 
+  meta-modeling will feel familiar with most concepts; however, we expect  no need for insight in 
+  the Isabelle proof language, for example, or other more advanced concepts.
+
   Technically, ontologies\index{ontology!directory structure} are stored in a directory 
   \inlinebash|src/ontologies| and consist of a Isabelle theory file and a \LaTeX-style file:
 \begin{center}
@@ -64,8 +76,8 @@ text\<open>
     a new theory file \path{src/ontologies/foo/foo.thy}.  
   \<^item> definition of the document representation for the ontological concepts in a \LaTeX-style 
     file \path{src/ontologies/foo/DOF-foo.sty}
-  \<^item> registration of the new ontology in the file 
-   \path{src/ontologies/ontologies.thy} (as theory import). 
+  \<^item> registration (as import) of the new ontology in the file. 
+   \path{src/ontologies/ontologies.thy}. 
   \<^item> activation of the new document setup by executing the install script. You can skip the lengthy 
     checks for the AFP entries and the installation of the Isabelle patch by using the 
     \inlinebash|--skip-patch-and-afp| option:
@@ -73,18 +85,6 @@ text\<open>
   \begin{bash}
 ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp
   \end{bash}
-
-  The document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not use Isabelle definitions or proofs for checking the 
-  formal content---this manual is actually an example of a document not containing any proof.
-  Consequently, the document editing and checking facility provided by \isadof addresses the needs 
-  of common users for an advanced text-editing environment, neither modeling nor proof knowledge is 
-  inherently required.
-
-  In general, we expect authors of ontologies to have experience in the use of \isadof, basic
-  modeling (and, potentially, some basic SML programming) experience, basic \LaTeX{} knowledge, and, 
-  last but not least, domain knowledge of the ontology to be modeled. Users with experience in 
-  UML-like meta-modeling will feel familiar with most concepts; however, we expect  no need for 
-  insight in the Isabelle proof language, for example, or other more advanced concepts.
 \<close>
 
 subsection\<open>Document Templates\<close>
@@ -127,153 +127,138 @@ text\<open>
   by publishers or standardization bodies.
 \<close>
 
-
-
 section\<open>The Ontology Definition Language (ODL)\<close>
 
-text\<open>As already mentioned, ODL has some similarities to meta-modeling languages
-such as UML class models: It builds upon concepts like class, inheritance, class-instances, 
-attributes, references to instances, and class-invariants. Some more advanced concepts like 
-advanced type-checking, referencing to formal entities of Isabelle, and monitors are due
-to its specific application in the Isabelle context.  
-
-Conceptually, ontologies specified in ODL consist of:
-
-\<^item> \<^emph>\<open>document classes\<close> (syntactically marked by the
-  \inlineisar{doc_class} keyword) that describe concepts;
-\<^item> an optional document base class expressing single inheritance
+text\<open>
+  ODL shares some similarities with meta-modeling languages such as UML class 
+  models: It builds upon concepts like class, inheritance, class-instances, attributes, references 
+  to instances, and class-invariants. Some concepts like  advanced type-checking, referencing to 
+  formal entities of Isabelle, and monitors are due to its specific application in the 
+  Isabelle context. Conceptually, ontologies specified in ODL consist of:
+  \<^item> \<^emph>\<open>document classes\<close> (\inlineisar{doc_class}) that describe concepts;
+  \<^item> an optional document base class expressing single inheritance
   class extensions;
-\<^item> \<^emph>\<open>attributes\<close> specific to document classes, where
-  
-  \<^item> attributes are HOL-typed;
-  \<^item> attributes of instances of document elements are mutable;
-  \<^item> attributes can refer to other document classes, thus, document
-    classes must also be HOL-types (such attributes are called
-    \<^emph>\<open>links\<close>);
-  \<^item> attribute values were denoted by HOL-terms;
-\<^item> a special link, the reference to a super-class, establishes an
+  \<^item> \<^emph>\<open>attributes\<close> specific to document classes, where
+    \<^item> attributes are HOL-typed;
+    \<^item> attributes of instances of document elements are mutable;
+    \<^item> attributes can refer to other document classes, thus, document
+      classes must also be HOL-types (such attributes are called
+      \<^emph>\<open>links\<close>);
+    \<^item> attribute values were denoted by HOL-terms;
+  \<^item> a special link, the reference to a super-class, establishes an
   \<^emph>\<open>is-a\<close> relation between classes;
-\<^item> classes may refer to other classes via a regular expression in a
-  \<^emph>\<open>where\<close> clause (classes with a where clauses are
-  called \<^emph>\<open>monitor classes\<close>);
-\<^item> attributes may have default values in order to facilitate notation.
-
+  \<^item> classes may refer to other classes via a regular expression in a
+    \<^emph>\<open>where\<close> clause;
+  \<^item> attributes may have default values in order to facilitate notation.
 \<close>
 
 text\<open>
- The \isadof ontology specification language consists basically on a notation for
-document classes, where the attributes were typed with HOL-types and can be instantiated 
-by terms HOL-terms, \ie, the actual parsers and type-checkers of the Isabelle system were reused.
-This has the particular advantage that \isadof commands can be arbitrarily mixed with 
-Isabelle/HOL commands providing the machinery for type declarations and term specifications such
-as enumerations. In particular, document class definitions provide:
-\<^item>  a HOL-type for each document class as well as inheritance, 
-\<^item>  support for attributes with HOL-types and optional default values,
-\<^item>  support for overriding of attribute defaults but not overloading, and
-\<^item>  text-elements annotated with document classes; they are mutable 
-   instances of document classes.
+  The \isadof ontology specification language consists basically on a notation for document classes, 
+  where the attributes were typed with HOL-types and can be instantiated by terms HOL-terms, \ie, 
+  the actual parsers and type-checkers of the Isabelle system were reused. This has the particular 
+  advantage that \isadof commands can be arbitrarily mixed with Isabelle/HOL commands providing the 
+  machinery for type declarations and term specifications such
+  as enumerations. In particular, document class definitions provide:
+  \<^item> a HOL-type for each document class as well as inheritance, 
+  \<^item> support for attributes with HOL-types and optional default values,
+  \<^item> support for overriding of attribute defaults but not overloading, and
+  \<^item> text-elements annotated with document classes; they are mutable 
+    instances of document classes.
 \<close>
 
 text\<open>
-Attributes referring to other ontological concepts are called \<^emph>\<open>links\<close>.
-The HOL-types inside the document specification language support built-in types for Isabelle/HOL 
-\inlineisar+typ+'s,  \inlineisar+term+'s, and \inlineisar+thm+'s reflecting internal Isabelle's 
-internal types  for these entities; when denoted in HOL-terms to instantiate an attribute, for 
-example, there is a  specific syntax (called \<^emph>\<open>inner syntax antiquotations\<close>) that is checked by 
-\isadof for consistency.
+  Attributes referring to other ontological concepts are called \<^emph>\<open>links\<close>. The HOL-types inside the 
+  document specification language support built-in types for Isabelle/HOL \inlineisar+typ+'s,  
+  \inlineisar+term+'s, and \inlineisar+thm+'s reflecting internal Isabelle's  internal types for 
+  these entities; when denoted in HOL-terms to instantiate an attribute, for example, there is a  
+  specific syntax (called \<^emph>\<open>inner syntax antiquotations\<close>) that is checked by 
+  \isadof for consistency.
 
-Document classes can have a \inlineisar+where+ clause containing a regular 
-expression over class names. Classes with such a \inlineisar+where+ were called \<^emph>\<open>monitor classes\<close>.
-While document classes and their inheritance relation structure meta-data of text-elements
-in an object-oriented manner, monitor classes enforce structural organization
-of documents via the language specified by the regular expression 
-enforcing a sequence of text-elements that must belong to the corresponding classes. 
-\<close>
+  Document classes\bindex{document class}\index{class!document@see document class} support 
+  \inlineisar+where+-clauses\index{where clause} containing a regular expression over class 
+  names. Classes with a \inlineisar+where+ were called 
+  \<^emph>\<open>monitor classes\<close>.\bindex{monitor class}\index{class!monitor@see monitor class} While document 
+  classes and their inheritance relation structure meta-data of text-elements in an object-oriented 
+  manner, monitor classes enforce structural organization of documents via the language specified 
+  by the regular expression enforcing a sequence of text-elements.
 
-text\<open>
-A major design decision of ODL is to denote attribute values by HOL-terms and
-HOL-types. Consequently, ODL can refer to any predefined
-type defined in the HOL library, \eg, \inlineisar+string+ or
-\inlineisar+int+ as well as parameterized types, \eg, %
-\inlineisar+_ option+, \inlineisar+_ list+, \inlineisar+_ set+, or
-products \inlineisar+_ \<times> _+. As a consequence of the document
-model, ODL definitions may be arbitrarily intertwined with standard
-HOL type definitions. Finally, document class definitions result in
-themselves in a HOL-types in order to allow \<^emph>\<open>links\<close> to and
-between ontological concepts.
+  A major design decision of ODL is to denote attribute values by HOL-terms and HOL-types. 
+  Consequently, ODL can refer to any predefined type defined in the HOL library, \eg, 
+  \inlineisar+string+ or \inlineisar+int+ as well as parameterized types, \eg, \inlineisar+_ option+, 
+  \inlineisar+_ list+, \inlineisar+_ set+, or products \inlineisar+_ \<times> _+. As a consequence of the 
+  document model, ODL definitions may be arbitrarily intertwined with standard HOL type definitions. 
+  Finally, document class definitions result in themselves in a HOL-types in order to allow \<^emph>\<open>links\<close> 
+  to and between ontological concepts.
 \<close>
 
 subsection*["odl-manual0"::technical]\<open>Some Isabelle/HOL Specification Constructs Revisited\<close>
-text\<open>The \isadof ontology definition language (ODL) is an extension of Isabelle/HOL;
-document class definitions can therefore be arbitrarily mixed with standard HOL
-specification constructs. In order to spare the user of ODL a lenghty analysis of
-@{cite "isaisarrefman19" and "datarefman19" and "functions19"}, we  present 
-syntax and semantics of the specification constructs that are most likely relevant for
-the developer of ontologies. Note that our presentation is actually a simplification
-of the original sources following the needs of our target audience here; for a full-
-blown account, the reader is referred to the original descriptions.\<close>
-
 text\<open>
-\<^item> \<open>name\<close> : 
+  As ODL is an extension of Isabelle/HOL, document class definitions can therefore be arbitrarily 
+  mixed with standard HOL specification constructs. To make this manual self-contained, we present 
+  syntax and semantics of the specification constructs that are most likely relevant for
+  the developer of ontologies (for more details, see~@{cite "isaisarrefman19" and "datarefman19" 
+  and "functions19"}. Our presentation is a simplification of the original sources following the 
+  needs of ontology developers in \isadof:
+  \<^item> \<open>name\<close>:\index{name@\<open>name\<close>}
      with the syntactic category of \<open>name\<close>'s we refer to alpha-numerical identifiers 
      (called \<open>short_id\<close>'s in @{cite "isaisarrefman19"}) and identifiers
-     in \inlineisar+" ... "+ which might additionally contain certian ``quasi-letters'' such 
-     as \inlineisar+_+, \inlineisar+-+, \inlineisar+.+, etc. Details in @{cite "isaisarrefman19"}.
-\<^item> \<open>tyargs\<close> : 
+     in \inlineisar+" ... "+ which might contain certain ``quasi-letters'' such 
+     as \inlineisar+_+, \inlineisar+-+, \inlineisar+.+. See~@{cite "isaisarrefman19"} for details.
+  \clearpage"
+  \<^item> \<open>tyargs\<close>:\index{tyargs@\<open>tyargs\<close>} 
      \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
-     \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (c.f. @{cite "isaisarrefman19"})
-\<^item> \<open>dt_name\<close> :
+     \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (see~@{cite "isaisarrefman19"})
+  \<^item> \<open>dt_name\<close>:\index{dt\_npurdahame@\<open>dt_name\<close>}
      \<^rail>\<open>  (tyargs?) name (mixfix?)\<close>   
      The syntactic entity \<open>name\<close> denotes an identifier, \<open>mixfix\<close> denotes the usual 
      parenthesized mixfix notation (see @{cite "isaisarrefman19"}).
      The \<open>name\<close>'s referred here are type names such as \<^verbatim>\<open>int\<close>, \<^verbatim>\<open>string\<close>, \<^verbatim>\<open>list\<close>, \<^verbatim>\<open>set\<close>, etc. 
-\<^item> \<open>type_spec\<close> :
+  \<^item> \<open>type_spec\<close>:\index{type_spec@\<open>type_spec\<close>}
      \<^rail>\<open>  (tyargs?) name\<close>
      The \<open>name\<close>'s referred here are type names such as \<^verbatim>\<open>int\<close>, \<^verbatim>\<open>string\<close>, \<^verbatim>\<open>list\<close>, \<^verbatim>\<open>set\<close>, etc. 
-\<^item> \<open>type\<close> :
+  \<^item> \<open>type\<close>:\index{type@\<open>type\<close>}
      \<^rail>\<open>  (( '(' ( type * ',')  ')' )? name) | typefree \<close>     
-\<^item> \<open>dt_ctor\<close> :
+  \<^item> \<open>dt_ctor\<close>:\index{dt\_ctor@\<open>dt_ctor\<close>}
      \<^rail>\<open> name (type*) (mixfix?)\<close>
-\<^item> \<open>datatype_specification\<close> :
+  \<^item> \<open>datatype_specification\<close>:\index{datatype\_specification@\<open>datatype_specification\<close>}
      \<^rail>\<open> @@{command "datatype"} dt_name '=' (dt_ctor * '|' )\<close>
-\<^item> \<open>type_synonym_specification\<close> :
+  \<^item> \<open>type_synonym_specification\<close>:\index{type\_synonym\_specification@\<open>type_synonym_specification\<close>}
      \<^rail>\<open> @@{command "type_synonym"} type_spec '=' type\<close>
-\<^item> \<open>constant_definition\<close> :
-     \<^rail>\<open> @@{command "definition"} name '::' type 'where' '"' name '=' expr '"'\<close>
-\<^item> \<open>expr\<close> :
-
+  \<^item> \<open>constant_definition\<close> :\index{constant\_definition@\<open>constant_definition\<close>}
+     \<^rail>\<open> @@{command "definition"} name '::' type 'where' '"' name '=' \<newline> expr '"'\<close>
+  \<^item> \<open>expr\<close>:\index{expr@\<open>expr\<close>}
      the syntactic category \<open>expr\<close> here denotes the very rich ``inner-syntax'' language of 
      mathematical  notations for $\lambda$-terms in Isabelle/HOL. Example expressions are:
      \inlineisar|1+2| (arithmetics), \inlineisar|[1,2,3]| (lists), \inlineisar|''ab c''| (strings), 
      \inlineisar|{1,2,3}| (sets), \inlineisar|(1,2,3)| (tuples), 
-     \inlineisar|\<forall> x. P(x) \<and> Q x = C| (formulas), etc. 
-     For a comprehensive overview, consult the summary ``What's in Main'' 
-     @{cite "nipkowMain19"}.
+     \inlineisar|\<forall> x. P(x) \<and> Q x = C| (formulas). For details, see~@{cite "nipkowMain19"}.
 \<close>
 
-text\<open>Other specification constructs, which are potentially relevant for an (advanced) ontology
-developer, might be recursive function definitions with pattern-matching @{cite "functions19"}, 
-extensible record specifications, @{cite "isaisarrefman19"} and abstract type declarations.\<close>
+text\<open>
+  Other specification constructs, which are potentially relevant for an (advanced) ontology
+  developer, might be recursive function definitions with pattern-matching~@{cite "functions19"}, 
+  extensible record specifications~@{cite "isaisarrefman19"}, and abstract type declarations.
+\<close>
 
 
 subsection*["odl-manual1"::technical]\<open>The Command Syntax for Document Class Specifications\<close>
 text\<open>
-\<^item> \<open>class_id\<close> : \<open>class_id\<close>'s are type-\<open>name\<close>'s that have been introduced via
-  a \<open>doc_class_specification\<close>.
-\<^item> \<open>doc_class_specification\<close> : 
+\<^item> \<open>class_id\<close>:\index{class\_id@\<open>class_id\<close>} a \<open>class_id\<close> is a type-\<open>name\<close> that has been introduced 
+  via a \<open>doc_class_specification\<close>.
+\<^item> \<open>doc_class_specification\<close>:\index{doc\_class\_specification@\<open>doc_class_specification\<close>} 
      \<^rail>\<open> @@{command "doc_class"} class_id '=' (class_id '+')? (attribute_decl+) \<newline>
            (accepts_clause rejects_clause?)?\<close>
      document classes whose specification contains an \<open>accepts_clause\<close> are called 
      \<^emph>\<open>monitor classes\<close> or \<^emph>\<open>monitors\<close> for short. 
-\<^item> \<open>attribute_decl\<close> :
+\<^item> \<open>attribute_decl\<close>:\index{attribute\_decl@\<open>attribute_decl\<close>}
      \<^rail>\<open> name '::' '"' type '"' default_clause? \<close>
-\<^item> \<open>accepts_clause\<close> :
+\<^item> \<open>accepts_clause\<close>:\index{accepts\_clause@\<open>accepts_clause\<close>}
      \<^rail>\<open> 'accepts' '"' regexpr '"'\<close>
-\<^item> \<open>rejects_clause\<close> :
+\<^item> \<open>rejects_clause\<close>:\index{rejects\_clause@\<open>rejects_clause\<close>}
      \<^rail>\<open> 'rejects' (class_id * ',') \<close>
-\<^item> \<open>default_clause\<close> :
+\<^item> \<open>default_clause\<close>:\index{default\_clause@\<open>default_clause\<close>}
      \<^rail>\<open> '<=' '"' expr '"' \<close>
-\<^item> \<open>regexpr\<close> :
+\<^item> \<open>regexpr\<close>:\index{regexpr@\<open>regexpr\<close>}
      \<^rail>\<open> '\<lfloor>' class_id '\<rfloor>' | '(' regexpr ')' | (regexpr '||' regexpr) | (regexpr '~~' regexpr)
             | ('\<lbrace>' regexpr '\<rbrace>') | ( '\<lbrace>' regexpr '\<rbrace>\<^sup>*')  \<close>
      regular expressions describe sequences of \<open>class_id\<close>s (and indirect sequences of document
