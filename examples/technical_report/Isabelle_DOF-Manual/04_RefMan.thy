@@ -267,81 +267,75 @@ text\<open>
 \<close> 
 
 
-subsection*["odl-design"::example]\<open>An Ontology Example\<close>
-
-text\<open>We illustrate the design of \dof by modeling a small ontology
-  that can be used for writing formal specifications that, \eg, could
-  build the basis for an ontology for certification documents used in
-  processes such as Common Criteria~@{cite "cc:cc-part3:2006"} or CENELEC
-  50128~@{cite "bsi:50128:2014"}.@{footnote \<open>The \isadof distribution
-    contains an ontology for writing documents for a certification
-    according to CENELEC 50128.\<close>} Moreover, in examples of certification
-  documents, we refer to a controller of a steam boiler that is
-  inspired by the famous steam boiler formalization
-  challenge~@{cite "abrial:steam-boiler:1996"}.\<close>
-
 text\<open>
-\begin{figure}
-\begin{isar}
-doc_class title  = short_title :: "string option" <= "None"
-doc_class author = email      :: "string" <= "''''"
-
-datatype classification = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
-    
-doc_class abstract =
-    keywordlist :: "string list"      <= []
-    safety_level :: "classification"  <= "SIL3" 
-doc_class text_section = 
-    authored_by :: "author set"       <= "{}"
-    level       :: "int  option"      <= "None"   
-
-type_synonym notion = string
-
-doc_class introduction = text_section +
-    authored_by :: "author set"       <= "UNIV"
-    uses :: "notion set"
-doc_class claim = introduction +
-    based_on :: "notion list"
-doc_class technical = text_section +
-    formal_results  :: "thm list"
-doc_class "d$$efinition" = technical +
-    is_formal :: "bool"
-    property  :: "term list"          <= "[]"
-
-datatype kind = expert_opinion | argument | proof
-
-doc_class result = technical +
-    evidence  :: kind 
-    property  :: "thm list"           <= "[]"
-doc_class example = technical +
-    referring_to :: "(notion + d$$efinition) set" <=  "{}"
-doc_class "conclusion" = text_section +
-    establish   :: "(claim \<times> result) set"
-\end{isar}%$
-
-\caption{An example ontology modeling simple certification documents, including 
-  scientific papers such as~@{cite "brucker.ea:isabelle-ontologies:2018"}; also 
-  recall \autoref{fig:dof-ide}.}\label{lst:doc}
-\end{figure}
+\begin{ltx}
+\newisadof{text.CENELEC_50128.hypothesis}%
+[label=,type=%
+,Isa_COL.text_element.level=%
+,Isa_COL.text_element.referentiable=%
+,Isa_COL.text_element.variants=%
+,CENELEC_50128.requirement.is_concerned=%
+,CENELEC_50128.requirement.long_name=%
+,CENELEC_50128.SRAC.formal_repr=%
+,CENELEC_50128.SRAC.hypothesis_kind=%
+,CENELEC_50128.hypothesis.hyp_type=%
+][1]{
+#1
+}
+\end{ltx}
 \<close>
+
+subsection*["core-manual1"::technical]\<open>Annotatable Test-Elements: Syntax\<close>
+
+text\<open>The syntax of toplevel \isadof commands reads as follows: 
+\<^item> \<open>annotated_text_element\<close> :
+\<^rail>\<open>
+    (  ( @@{command "title*"}
+       | @@{command "subtitle*"}
+       | @@{command "chapter*"} 
+       | @@{command "section*"} | @@{command "subsection*"} 
+       | @@{command "subsubsection*"} | @@{command "paragraph*"} | @@{command "subparagraph*"} 
+       | @@{command "text*"} | @@{command "figure*"} | @@{command "side_by_side_figure*"}
+       | @@{command "open_monitor*"} | @@{command "close_monitor*"} 
+       | @@{command "Definition*"} | @@{command "Lemma*"} 
+       | @@{command "Theorem*"}  | @@{command "Conjecture*"} 
+       ) 
+       \<newline>
+       '[' meta_args ']' '\<open>' text '\<close>'
+     ) 
+     | change_status_command
+     | inspection_command
+  \<close>
+\<^item> \<open>meta_args\<close> : 
+   \<^rail>\<open>(obj_id ('::' class_id) ((attribute '=' term)) * ',')\<close>
+\<^item> \<open>rich_meta_args\<close> :
+   \<^rail>\<open> (obj_id ('::' class_id) ((attribute (('=' | '+=') term)) * ','))\<close>
+\<^item> \isadof\<open>change_status_command\<close> :
+  \<^rail>\<open>  (@@{command "update_instance*"} '[' rich_meta_args ']')
+       |  (@@{command "declare_reference*"} (obj_id ('::' class_id)))\<close>
+\<^item> \isadof\<open>inspection_command\<close> :
+   \<^rail>\<open>  @@{command "print_doc_classes"}
+        |  @@{command "print_doc_items"} 
+        |  @@{command "check_doc_global"}\<close>
+\<close>
+
+subsubsection\<open>Experts: Defining new top-level commands\<close>
+
 text\<open>
-  \autoref{lst:doc} shows an example ontology for mathematical papers
-  (an extended version of this ontology was used for writing
-  @{cite "brucker.ea:isabelle-ontologies:2018"}, also recall
-  \autoref{fig:dof-ide}). The commands \inlineisar+datatype+ (modeling
-  fixed enumerations) and \inlineisar+type_synonym+ (defining type
-  synonyms) are standard mechanisms in HOL systems.  Since ODL is an
-  add-on, we have to quote sometimes constant symbols (\eg,
-  \inlineisar+"proof"+) to avoid confusion with predefined keywords. ODL
-  admits overriding (such as \inlineisar+authored_by+ in the document
-  class \inlineisar+introduction+), where it is set to another library
-  constant, but no overloading. All \inlineisar+text_section+ elements
-  have an optional \inlineisar+level+ attribute, which will be used in
-  the output generation for the decision if the context is a section
-  header and its level (\eg, chapter, section, subsection). While
-  \<open>within\<close> an inheritance hierarchy overloading is prohibited,
-  attributes may be re-declared freely in independent parts (as is the
-  case for \inlineisar+property+).\<close>
+\begin{sml}
+...
+\end{sml}
+\<close>
+
+
+text\<open>
+\begin{ltx}
+...
+\end{ltx}
+\<close>
+
+
+
 
 subsection*["sec:advanced"::technical]\<open>Advanced ODL Concepts\<close>
 subsubsection\<open>Meta-types as Types\<close>
@@ -371,7 +365,7 @@ text\<open>To express the dependencies between text elements to the formal
   generated from the ontology such as 
   \inlineisar+<@>{definition <string>}+. For the latter, the argument string
   must be checked that it  represents a reference to a text-element
-  having the type \inlineisar+definition+ according to the ontology in @{example "odl-design"}.\<close>
+  having the type \inlineisar+definition+ according to the ontology in example ... .\<close>
 
 
 subsubsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
@@ -517,6 +511,126 @@ super-classes. Overloading of attributes is not permitted in
 \dof. 
 \<close>
 
+
+
+
+subsection*["commonlib"::technical]\<open>Common Ontology Library (COL)\<close>
+text\<open> The COL library is used to capture a couple of text-elements
+that are expected to be common to all document types, a class
+that is actually not easy to define. After a lot of thought, we excluded
+things like @{command "title*"} and abstract-related classes back again
+to specific ontologies, for example.
+  
+Finally, it is currently reduced to 
+\<^enum> the common infra-structure on text-elements (section is a text-element of a certain "level"),
+\<^enum> common infrastructure to semi-formal Isabelle elements (Definitions, Assertions, Proofs), and
+\<^enum> the common infra-structure for figures.
+
+Future extensions might include, for example, the infra-structure for tables.
+\<close>
+
+text\<open> The super-class \<^verbatim>\<open>text_element\<close> is the root of all text-elements used in \isadof.
+It is defined as follows:
+\begin{isar}
+doc_class text_element = 
+   level         :: "int  option"    <=  "None" 
+   referentiable :: bool <= "False"
+   variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
+\end{isar}
+Of major importance is the @{term "level"} which influences, inspired by a LaTeX convention,
+the following classification:
+\<^enum>             part          = Some -1
+\<^enum>             chapter       = Some 0
+\<^enum>             section       = Some 1
+\<^enum>             subsection    = Some 2
+\<^enum>             subsubsection = Some 3
+\<^enum>             ... 
+for scholarly paper: invariant level > 
+
+The attribute @{term "level"} in the subsequent enables doc-notation --- a kind of macro --- 
+for support of @{command "chapter*"}, @{command "section*"} etc. This class definition forms 
+for a number of invariants; for example, the derived ontology \<open>scholarly_paper\<close> contains an 
+invariant that any sequence of, for example, \<open>technical\<close> - elements must be introduced
+by a text-element with a higher level, \ie{}, must contain a section or subsection header. 
+\<close>
+
+
+section\<open>Example\<close>
+text\<open>We illustrate the design of \dof by modeling a small ontology
+  that can be used for writing formal specifications that, \eg, could
+  build the basis for an ontology for certification documents used in
+  processes such as Common Criteria~@{cite "cc:cc-part3:2006"} or CENELEC
+  50128~@{cite "bsi:50128:2014"}.@{footnote \<open>The \isadof distribution
+    contains an ontology for writing documents for a certification
+    according to CENELEC 50128.\<close>} Moreover, in examples of certification
+  documents, we refer to a controller of a steam boiler that is
+  inspired by the famous steam boiler formalization
+  challenge~@{cite "abrial:steam-boiler:1996"}.\<close>
+
+text\<open>
+\begin{figure}
+\begin{isar}
+doc_class title  = short_title :: "string option" <= "None"
+doc_class author = email      :: "string" <= "''''"
+
+datatype classification = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
+    
+doc_class abstract =
+    keywordlist :: "string list"      <= []
+    safety_level :: "classification"  <= "SIL3" 
+doc_class text_section = 
+    authored_by :: "author set"       <= "{}"
+    level       :: "int  option"      <= "None"   
+
+type_synonym notion = string
+
+doc_class introduction = text_section +
+    authored_by :: "author set"       <= "UNIV"
+    uses :: "notion set"
+doc_class claim = introduction +
+    based_on :: "notion list"
+doc_class technical = text_section +
+    formal_results  :: "thm list"
+doc_class "d$$efinition" = technical +
+    is_formal :: "bool"
+    property  :: "term list"          <= "[]"
+
+datatype kind = expert_opinion | argument | proof
+
+doc_class result = technical +
+    evidence  :: kind 
+    property  :: "thm list"           <= "[]"
+doc_class example = technical +
+    referring_to :: "(notion + d$$efinition) set" <=  "{}"
+doc_class "conclusion" = text_section +
+    establish   :: "(claim \<times> result) set"
+\end{isar}%$
+
+\caption{An example ontology modeling simple certification documents, including 
+  scientific papers such as~@{cite "brucker.ea:isabelle-ontologies:2018"}; also 
+  recall \autoref{fig:dof-ide}.}\label{lst:doc}
+\end{figure}
+\<close>
+text\<open>
+  \autoref{lst:doc} shows an example ontology for mathematical papers
+  (an extended version of this ontology was used for writing
+  @{cite "brucker.ea:isabelle-ontologies:2018"}, also recall
+  \autoref{fig:dof-ide}). The commands \inlineisar+datatype+ (modeling
+  fixed enumerations) and \inlineisar+type_synonym+ (defining type
+  synonyms) are standard mechanisms in HOL systems.  Since ODL is an
+  add-on, we have to quote sometimes constant symbols (\eg,
+  \inlineisar+"proof"+) to avoid confusion with predefined keywords. ODL
+  admits overriding (such as \inlineisar+authored_by+ in the document
+  class \inlineisar+introduction+), where it is set to another library
+  constant, but no overloading. All \inlineisar+text_section+ elements
+  have an optional \inlineisar+level+ attribute, which will be used in
+  the output generation for the decision if the context is a section
+  header and its level (\eg, chapter, section, subsection). While
+  \<open>within\<close> an inheritance hierarchy overloading is prohibited,
+  attributes may be re-declared freely in independent parts (as is the
+  case for \inlineisar+property+).\<close>
+
+
 text\<open>
 We can now annotate a text as follows. First, we have to place a
 particular document into the context of our conceptual example
@@ -631,87 +745,6 @@ can also be used to define the required relation between \<^emph>\<open>claims\<
 and \<^emph>\<open>results\<close> required in the \inlineisar|establish|-relation
 required in a \inlineisar|summary|.
 \<close>
-
-subsection*["core-manual1"::technical]\<open>Annotatable Test-Elements: Syntax\<close>
-
-text\<open>The syntax of toplevel \isadof commands reads as follows: 
-\<^item> \<open>annotated_text_element\<close> :
-\<^rail>\<open>
-    (  ( @@{command "title*"}
-       | @@{command "subtitle*"}
-       | @@{command "chapter*"} 
-       | @@{command "section*"} | @@{command "subsection*"} 
-       | @@{command "subsubsection*"} | @@{command "paragraph*"} | @@{command "subparagraph*"} 
-       | @@{command "text*"} | @@{command "figure*"} | @@{command "side_by_side_figure*"}
-       | @@{command "open_monitor*"} | @@{command "close_monitor*"} 
-       | @@{command "Definition*"} | @@{command "Lemma*"} 
-       | @@{command "Theorem*"}  | @@{command "Conjecture*"} 
-       ) 
-       \<newline>
-       '[' meta_args ']' '\<open>' text '\<close>'
-     ) 
-     | change_status_command
-     | inspection_command
-  \<close>
-\<^item> \<open>meta_args\<close> : 
-   \<^rail>\<open>(obj_id ('::' class_id) ((attribute '=' term)) * ',')\<close>
-\<^item> \<open>rich_meta_args\<close> :
-   \<^rail>\<open> (obj_id ('::' class_id) ((attribute (('=' | '+=') term)) * ','))\<close>
-\<^item> \isadof\<open>change_status_command\<close> :
-  \<^rail>\<open>  (@@{command "update_instance*"} '[' rich_meta_args ']')
-       |  (@@{command "declare_reference*"} (obj_id ('::' class_id)))\<close>
-\<^item> \isadof\<open>inspection_command\<close> :
-   \<^rail>\<open>  @@{command "print_doc_classes"}
-        |  @@{command "print_doc_items"} 
-        |  @@{command "check_doc_global"}\<close>
-\<close>
-
-subsection*["commonlib"::technical]\<open>Common Ontology Library (COL)\<close>
-text\<open> The COL library is used to capture a couple of text-elements
-that are expected to be common to all document types, a class
-that is actually not easy to define. After a lot of thought, we excluded
-things like @{command "title*"} and abstract-related classes back again
-to specific ontologies, for example.
-  
-Finally, it is currently reduced to 
-\<^enum> the common infra-structure on text-elements (section is a text-element of a certain "level"),
-\<^enum> common infrastructure to semi-formal Isabelle elements (Definitions, Assertions, Proofs), and
-\<^enum> the common infra-structure for figures.
-
-Future extensions might include, for example, the infra-structure for tables.
-\<close>
-
-text\<open> The super-class \<^verbatim>\<open>text_element\<close> is the root of all text-elements used in \isadof.
-It is defined as follows:
-\begin{isar}
-doc_class text_element = 
-   level         :: "int  option"    <=  "None" 
-   referentiable :: bool <= "False"
-   variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
-\end{isar}
-Of major importance is the @{term "level"} which influences, inspired by a LaTeX convention,
-the following classification:
-\<^enum>             part          = Some -1
-\<^enum>             chapter       = Some 0
-\<^enum>             section       = Some 1
-\<^enum>             subsection    = Some 2
-\<^enum>             subsubsection = Some 3
-\<^enum>             ... 
-for scholarly paper: invariant level > 
-
-The attribute @{term "level"} in the subsequent enables doc-notation --- a kind of macro --- 
-for support of @{command "chapter*"}, @{command "section*"} etc. This class definition forms 
-for a number of invariants; for example, the derived ontology \<open>scholarly_paper\<close> contains an 
-invariant that any sequence of, for example, \<open>technical\<close> - elements must be introduced
-by a text-element with a higher level, \ie{}, must contain a section or subsection header. 
-\<close>
-
-doc_class F  =
-   property :: "term list"
-   r        :: "thm list"
-   u        :: "file"
-   s        :: "typ list"
-
 
 
 
@@ -845,27 +878,10 @@ The general process as such is straight-forward:
 \end{document}
 \end{ltx}
 \<close>
-section\<open>Old Stuff \<close>
 
-text\<open>
 
-\begin{ltx}
-\newisadof{text.CENELEC_50128.hypothesis}%
-[label=,type=%
-,Isa_COL.text_element.level=%
-,Isa_COL.text_element.referentiable=%
-,Isa_COL.text_element.variants=%
-,CENELEC_50128.requirement.is_concerned=%
-,CENELEC_50128.requirement.long_name=%
-,CENELEC_50128.SRAC.formal_repr=%
-,CENELEC_50128.SRAC.hypothesis_kind=%
-,CENELEC_50128.hypothesis.hyp_type=%
-][1]{
-#1
-}
-\end{ltx}
 
-\<close>
+
 
 
 (*<*)
