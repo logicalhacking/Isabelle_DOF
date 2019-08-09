@@ -30,8 +30,8 @@ text\<open>
     for document-classes and all auxiliary datatypes 
     (called Ontology Definition Language (ODL)),
   \<^item> the ontology-specific \<^emph>\<open>layout definition\<close>, exploiting this meta-information, and 
-  \<^item> the generic \<^emph>\<open>layout definition\<close> for documents following, \eg, the format guidelines of publishers
-    or standardization bodies. 
+  \<^item> the generic \<^emph>\<open>layout definition\<close> for documents following, \eg, the format guidelines of 
+    publishers or standardization bodies. 
 \<close>
 
 subsection\<open>Ontologies\<close>
@@ -204,7 +204,7 @@ text\<open>
      (called \<open>short_id\<close>'s in @{cite "isaisarrefman19"}) and identifiers
      in \inlineisar+" ... "+ which might contain certain ``quasi-letters'' such 
      as \inlineisar+_+, \inlineisar+-+, \inlineisar+.+. See~@{cite "isaisarrefman19"} for details.
-  \clearpage"
+  \clearpage
   \<^item> \<open>tyargs\<close>:\index{tyargs@\<open>tyargs\<close>} 
      \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
      \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (see~@{cite "isaisarrefman19"})
@@ -235,20 +235,21 @@ text\<open>
 \<close>
 
 text\<open>
-  Other specification constructs, which are potentially relevant for an (advanced) ontology
-  developer, might be recursive function definitions with pattern-matching~@{cite "functions19"}, 
-  extensible record specifications~@{cite "isaisarrefman19"}, and abstract type declarations.
+  Advanced ontology might make use of concepts such as recursive function definitions with 
+  pattern-matching~@{cite "functions19"}, extensible record 
+  pecifications~@{cite "isaisarrefman19"}, and abstract type declarations.
 \<close>
 
 
-subsection*["odl-manual1"::technical]\<open>The Command Syntax for Document Class Specifications\<close>
+subsection*["odl-manual1"::technical]\<open>Defining Document Classes\<close>
 text\<open>
-\<^item> \<open>class_id\<close>:\index{class\_id@\<open>class_id\<close>} a \<open>class_id\<close> is a type-\<open>name\<close> that has been introduced 
+A document class\bindex{document class} can be defined using the @{command "doc_class"} keyword: 
+\<^item> \<open>class_id\<close>:\index{class\_id@\<open>class_id\<close>} a type-\<open>name\<close> that has been introduced 
   via a \<open>doc_class_specification\<close>.
 \<^item> \<open>doc_class_specification\<close>:\index{doc\_class\_specification@\<open>doc_class_specification\<close>} 
      \<^rail>\<open> @@{command "doc_class"} class_id '=' (class_id '+')? (attribute_decl+) \<newline>
            (accepts_clause rejects_clause?)?\<close>
-     document classes whose specification contains an \<open>accepts_clause\<close> are called 
+     Document classes whose specification contains an \<open>accepts_clause\<close> are called 
      \<^emph>\<open>monitor classes\<close> or \<^emph>\<open>monitors\<close> for short. 
 \<^item> \<open>attribute_decl\<close>:\index{attribute\_decl@\<open>attribute_decl\<close>}
      \<^rail>\<open> name '::' '"' type '"' default_clause? \<close>
@@ -266,24 +267,89 @@ text\<open>
      repetitions and non-empty sequence follow in the top-down order of the above diagram. 
 \<close> 
 
-
 text\<open>
+  \isadof provides a default document representation (\ie, content and layout of the generated 
+  PDF) that only prints the main text, omitting all attributes. \isadof provides the 
+  \inlineltx|\newisadof[]{}|\index{newisadof@\inlineltx{\newisadof}}\index{document class!PDF}
+  command for defining a dedicated layout for a document class in \LaTeX. Such a document 
+  class-specific \LaTeX-definition can not only provide a specific layout (\eg, a specific 
+  highlighting, printing of certain attributes), it can also generate entries in in the table of 
+  contents or an index. Overall, the \inlineltx|\newisadof[]{}| command follows the structure
+  of the \inlineisar|doc_class|-command:
+
+\begin{ltx}[escapechar=ë]
+\newisadof{ë\<open>class_id\<close>ë}[label=,type=, ë\<open>attribute_decl\<close>ë][1]{%
+  % ë\LaTeXë-definition of the document class representation
+  \begin{isamarkuptext}%
+  #1%
+  \end{isamarkuptext}%
+}
+\end{ltx}
+
+  The \<open>class_id\<close> is the full-qualified name of the document class and the list of \<open>attribute_decl\<close>
+  needs to declare all attributes of the document class. Within the \LaTeX-definition of the document
+  class representation, the identifier \inlineltx|#1| refers to the content of the main text of the 
+  document class (written in \inlineisar|\<Open> ... \<Close>|) and the attributes can be referenced
+  by their name using the \inlineltx|\commandkey{...}|-command (see the documentation of the 
+  \LaTeX-package ``keycommand''~@{cite "chervet:keycommand:2010"} for details). Usually, the 
+  representations definition needs to be wrapped in a 
+  \inlineltx|\begin{isarmarkup}...\end{isamarkup}|-environment, to ensure the correct context 
+  within Isabelle's \LaTeX-setup. 
+\<close>
+
+subsubsection\<open>Example\<close>
+text\<open>
+  The category ``exported constraint (EC)'' is, in the file 
+  \path{ontologies/CENELEC_50128/CENELEC_50128.thy} defined as follows:
+
+\begin{isar}
+doc_class requirement = text_element +
+   long_name    :: "string option"
+   is_concerned :: "role set"
+doc_class AC = requirement +
+   is_concerned :: "role set" <= "UNIV"
+doc_class EC = AC  +
+     assumption_kind :: ass_kind <= (*default *) formal
+\end{isar}
+
+  As this definition is part of the theory \inlineisar|CENELEC_50128|, the full-quallified
+  name of the document class is \inlineisar|t$$ext.CENELEC_50128.EC| and, \eg, the full-qualified
+  name of the attribute \inlineisar|long_name|, inherited from the document class 
+  \inlineisar|requirement|, is \inlineisar|CENELEC_50128.requirement.long_name|. 
+
+  Let us assume that we want to register the ECs in a dedicated table of contents (\inlineltx{tos}) 
+  and use an earlier defined environment \inlineltx|\begin{EC}...\end{EC}| for the graphical 
+  representation. We can implement this the corresponding document representation in 
+  \path{ontologies/CENELEC_50128/DOF-CENELEC_50128.sty} as follows:
+
 \begin{ltx}
-\newisadof{text.CENELEC_50128.hypothesis}%
+\newisadof{text.CENELEC_50128.EC}%
 [label=,type=%
 ,Isa_COL.text_element.level=%
 ,Isa_COL.text_element.referentiable=%
 ,Isa_COL.text_element.variants=%
 ,CENELEC_50128.requirement.is_concerned=%
 ,CENELEC_50128.requirement.long_name=%
-,CENELEC_50128.SRAC.formal_repr=%
-,CENELEC_50128.SRAC.hypothesis_kind=%
-,CENELEC_50128.hypothesis.hyp_type=%
-][1]{
-#1
+,CENELEC_50128.EC.assumption_kind=%
+][1]{%
+\begin{isamarkuptext}%
+   \ifthenelse{\equal{\commandkey{CENELEC_50128.requirement.long_name}}{}}{%
+      \begin{EC}%
+          \addxcontentsline{tos}{chapter}[]{\autoref{\commandkey{label}}}%
+    }{%
+      \begin{EC}[\commandkey{CENELEC_50128.requirement.long_name}]%
+        \addxcontentsline{toe}{chapter}[]{\autoref{\commandkey{label}}: %
+              \commandkey{CENELEC_50128.requirement.long_name}}%
+        \DOFindex{EC}{\commandkey{CENELEC_50128.requirement.long_name}}%
+    }\label{\commandkey{label}}%
+    #1%
+  \end{EC}
+\end{isamarkuptext}%
 }
 \end{ltx}
 \<close>
+
+
 
 subsection*["core-manual1"::technical]\<open>Annotatable Test-Elements: Syntax\<close>
 
