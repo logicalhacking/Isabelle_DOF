@@ -309,6 +309,29 @@ text\<open>
   within Isabelle's \LaTeX-setup. 
 \<close>
 
+subsubsection\<open>Common Ontology Library (COL)\<close>
+text\<open>
+  \isadof provides a Common Ontology Library (COL)\index{Common Ontology Library@see COL}\bindex{COL}
+  that introduces ontology concepts that are so generic that they we expect them to be useful for 
+  all types of documents. In particular it defines the super-class \inlineisar|text_element|: the 
+  root of all text-elements,
+
+\begin{isar}
+doc_class text_element = 
+   level         :: "int  option"    <=  "None" 
+   referentiable :: bool <= "False"
+   variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
+\end{isar}
+
+  Here, \inlineisar|level| defines the section-level (\eg, using a \LaTeX-inspired hierarchy:
+  from \inlineisar|Some -1| (corresponding to \inlineltx|\part|) to 
+  \inlineisar|Some 0| (corresponding to \inlineltx|\chapter|, respectively, \inlineisar|chapter*|) 
+  to \inlineisar|Some 3| (corresponding to \inlineltx|\subsubsection|, respectively, 
+  \inlineisar|subsubsection*|). Using an invariant, a derived ontology could, \eg, require that
+  any sequence of technical-elements must be introduced by a text-element with a higher level
+  (this would require that technical text section are introduce by a section element).
+\<close>
+
 subsubsection\<open>Example\<close>
 text\<open>
   The category ``exported constraint (EC)'' is, in the file 
@@ -324,15 +347,8 @@ doc_class EC = AC  +
      assumption_kind :: ass_kind <= (*default *) formal
 \end{isar}
 
-  As this definition is part of the theory \inlineisar|CENELEC_50128|, the full-quallified
-  name of the document class is \inlineisar|t$$ext.CENELEC_50128.EC| and, \eg, the full-qualified
-  name of the attribute \inlineisar|long_name|, inherited from the document class 
-  \inlineisar|requirement|, is \inlineisar|CENELEC_50128.requirement.long_name|. 
-
-  Let us assume that we want to register the ECs in a dedicated table of contents (\inlineltx{tos}) 
-  and use an earlier defined environment \inlineltx|\begin{EC}...\end{EC}| for the graphical 
-  representation. We can implement this the corresponding document representation in 
-  \path{ontologies/CENELEC_50128/DOF-CENELEC_50128.sty} as follows:
+  We now define the document representations, in the file 
+  \path{ontologies/CENELEC_50128/DOF-CENELEC_50128.sty}, as follows:
 
 \begin{ltx}
 \newisadof{text.CENELEC_50128.EC}%
@@ -366,6 +382,13 @@ doc_class EC = AC  +
 }
 \end{ltx}
 
+  This definition registers the ECs in a dedicated table of contents (\inlineltx{tos}) 
+  and uses an earlier defined environment \inlineltx|\begin{EC}...\end{EC}| for the graphical 
+  representation. Note that this definitions requires teh full-qualified names, \eg, 
+  \inlineisar|t$$ext.CENELEC_50128.EC| for the document class and 
+  \inlineisar|CENELEC_50128.requirement.long_name| for the  attribute \inlineisar|long_name|, 
+  inherited from the document class \inlineisar|requirement|.
+
   While arbitrary \LaTeX-commands can be used within the \inlineltx|\newisadof|-command,
   special care is required for arguments containing special characters (\eg, the 
   underscore ``\_'') that do have a special meaning in \LaTeX.  
@@ -384,7 +407,34 @@ text\<open>
   While the default user interface for class definitions via the  
   \inlineisar|text*\<Open> ... \<Close>|-command allow to access all features of the document 
   class, \isadof provides short-hands for certain, widely-used, concepts such as 
-  \inlineisar|title*\<Open> ... \<Close>| or \inlineisar|section*\<Open> ... \<Close>|.
+  \inlineisar|title*\<Open> ... \<Close>| or \inlineisar|section*\<Open> ... \<Close>|, \eg:
+
+\begin{isar}
+title*[title::title]\<Open>Isabelle/DOF\<Close>
+subtitle*[subtitle::subtitle]\<Open>User and Implementation Manual\<Close>
+text*[adb:: author,
+      email="\<Open>a.brucker@exeter.ac.uk\<Close>",
+      orcid="\<Open>0000-0002-6355-1200\<Close>",
+      http_site="\<Open>https://www.brucker.ch/\<Close>",
+      affiliation="\<Open>University of Exeter, Exeter, UK\<Close>"]
+      \<Open>Achim D. Brucker\<Close>
+text*[bu::author,
+      email       = "\<Open>wolff@lri.fr\<Close>",
+      affiliation = "\<Open>Université Paris-Saclay, LRI, Paris, France\<Close>"]
+      \<Open>Burkhart Wolff\<Close>
+\end{isar}
+
+  In general, all standard text-elements from the Isabelle document model such
+  as @{command "chapter"}, @{command "section"}, @{command "text"}, have in the \isadof
+  implementation their counterparts in the family of text-elements that are "ontology-aware",
+  \ie they dispose on a meta-argument list that allows to define that a test-element
+  \<^enum> has an identity as a text-object labelled as \<open>obj_id\<close>
+  \<^enum> belongs to a document class \<open>class_id\<close> that has been defined earlier
+  \<^enum> has its class-attributes set with particular values
+  (which are denotable in Isabelle/HOL mathematical term syntax)
+
+\clearpage
+
 \<^item> \<open>annotated_text_element\<close> :
 \<^rail>\<open>
     (  ( @@{command "title*"}
@@ -403,6 +453,7 @@ text\<open>
      | change_status_command
      | inspection_command
   \<close>
+\clearpage
 \<^item> \<open>meta_args\<close> : 
    \<^rail>\<open>(obj_id ('::' class_id) ((attribute '=' term)) * ',')\<close>
 \<^item> \<open>rich_meta_args\<close> :
@@ -623,80 +674,6 @@ efficiency problem ---they are checked on any edit--- and since invariant
 programming involves a deeper understanding of ontology modeling and the
 \isadof implementation, we backed off from using this technique so far.
 
-\<close>
-
-section*["core-manual"::technical]\<open>Annotatable Text-Elements for Core-Documents\<close>
-text\<open>In general, all standard text-elements from the Isabelle document model such
-as @{command "chapter"}, @{command "section"}, @{command "text"}, have in the \isadof
-implementation their counterparts in the family of text-elements that are "ontology-aware",
-\ie they dispose on a meta-argument list that allows to define that a test-element
-\<^enum> has an identity as a text-object labelled as \<open>obj_id\<close>
-\<^enum> belongs to a document class \<open>class_id\<close> that has been defined earlier
-\<^enum> has its class-attributes set with particular values
-  (which are denotable in Isabelle/HOL mathematical term syntax)
-\<close>
-
-subsection\<open>Annotating with Ontology Meta-Data: Outer Syntax\<close>
-text\<open>\dof introduces its own family of text-commands, which allows 
-having side effects of the global context \inlineisar+\<theta>+ and thus to 
-store and manage own meta-information. Among others, \dof provides the commands
-\inlineisar+section*[<meta-args>]\<Open>...\<Close>+, 
-\inlineisar+subsection*[<meta-args>]\<Open>...\Cclose>+, or
-\inlineisar+text*[<meta-args>]\<Open>...\<Close>+. Here, the argument 
-\inlineisar+<meta-args>+ is a syntax for declaring instance, class and
-attributes for this text element, following the scheme
-\begin{isar}
-  <ref> :: <class_id>, attr_1 = <expr>, ..., attr_n = <expr>  
-\end{isar}
-The \inlineisar+<class_id>+ can be  omitted, which
-represents the implicit superclass \inlineisar+text+, where
-\inlineisar+attr_i+ must be declared attributes in the class and where
-the HOL \inlineisar+<expr>+ must have the corresponding HOL type. Attributes
-from a class definition may be left undefined; definitions of
-attribute values \<^emph>\<open>override\<close> default values or values of
-super-classes. Overloading of attributes is not permitted in
-\dof. 
-\<close>
-
-
-subsection*["commonlib"::technical]\<open>Common Ontology Library (COL)\<close>
-text\<open> The COL library is used to capture a couple of text-elements
-that are expected to be common to all document types, a class
-that is actually not easy to define. After a lot of thought, we excluded
-things like @{command "title*"} and abstract-related classes back again
-to specific ontologies, for example.
-  
-Finally, it is currently reduced to 
-\<^enum> the common infra-structure on text-elements (section is a text-element of a certain "level"),
-\<^enum> common infrastructure to semi-formal Isabelle elements (Definitions, Assertions, Proofs), and
-\<^enum> the common infra-structure for figures.
-
-Future extensions might include, for example, the infra-structure for tables.
-\<close>
-
-text\<open> The super-class \<^verbatim>\<open>text_element\<close> is the root of all text-elements used in \isadof.
-It is defined as follows:
-\begin{isar}
-doc_class text_element = 
-   level         :: "int  option"    <=  "None" 
-   referentiable :: bool <= "False"
-   variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
-\end{isar}
-Of major importance is the @{term "level"} which influences, inspired by a LaTeX convention,
-the following classification:
-\<^enum>             part          = Some -1
-\<^enum>             chapter       = Some 0
-\<^enum>             section       = Some 1
-\<^enum>             subsection    = Some 2
-\<^enum>             subsubsection = Some 3
-\<^enum>             ... 
-for scholarly paper: invariant level > 
-
-The attribute @{term "level"} in the subsequent enables doc-notation --- a kind of macro --- 
-for support of @{command "chapter*"}, @{command "section*"} etc. This class definition forms 
-for a number of invariants; for example, the derived ontology \<open>scholarly_paper\<close> contains an 
-invariant that any sequence of, for example, \<open>technical\<close> - elements must be introduced
-by a text-element with a higher level, \ie{}, must contain a section or subsection header. 
 \<close>
 
 
