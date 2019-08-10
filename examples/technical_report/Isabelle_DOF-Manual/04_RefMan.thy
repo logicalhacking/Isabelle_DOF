@@ -461,7 +461,7 @@ text*[bu::author,
 \<close>
 
 
-subsubsection\<open>Experts: Defining new top-level commands\<close>
+subsubsection\<open>Experts: Defining New Top-Level Commands\<close>
 
 text\<open>
   Defining such new top-level commands requires some Isabelle knowledge as well as 
@@ -538,7 +538,8 @@ text\<open>
 subsection*["sec:advanced"::technical]\<open>Advanced ODL Concepts\<close>
 subsubsection\<open>Meta-types as Types\<close>
 
-text\<open>To express the dependencies between text elements to the formal
+text\<open>
+  To express the dependencies between text elements to the formal
   entities, \eg, \inlinesml+term+ ($\lambda$-term), \inlinesml+typ+, or
   \inlinesml+thm+, we represent the types of the implementation language
   \<^emph>\<open>inside\<close> the HOL type system.  We do, however, not reflect the data of
@@ -561,42 +562,43 @@ text\<open>To express the dependencies between text elements to the formal
   again type-checked and represents indeed a formula in $\theta$. Another instance of 
   this process, which we call \<open>second-level type-checking\<close>, are term-constants
   generated from the ontology such as 
-  \inlineisar+<@>{definition <string>}+. For the latter, the argument string
-  must be checked that it  represents a reference to a text-element
-  having the type \inlineisar+definition+ according to the ontology in example ... .\<close>
+  \inlineisar+<@>{definition <string>}+. 
+\<close>
 
 
 subsubsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
-text\<open>We call a document class with an accept-clause a
-  \<^emph>\<open>monitor\<close>.  Syntactically, an accept-clause contains a regular
-  expression over class identifiers. We can extend our
-  \inlineisar+tiny_cert+ ontology with the following example:
+text\<open>
+  We call a document class with an accept-clause a \<^emph>\<open>monitor\<close>.\bindex{monitor}  Syntactically, an 
+  accept-clause\index{accept-clause} contains a regular expression over class identifiers. 
+  For example:
+
   \begin{isar}
-  doc_class article = 
-      style_id :: string   <= "''CENELEC50128''"
+  doc_class article = style_id :: string   <= "''CENELEC_50128''"
       accepts "(title ~~ \<lbrace>author\<rbrace>\<bsup>+\<esup> ~~ abstract ~~ \<lbrace>introduction\<rbrace>\<bsup>+\<esup>  ~~
                \<lbrace>technical || example\<rbrace>\<bsup>+\<esup> ~~ \<lbrace>conclusion\<rbrace>\<bsup>+\<esup>)"
   \end{isar}
-  Semantically, monitors introduce a behavioral element into ODL: 
+
+  Semantically, monitors introduce a behavioral element into ODL:
+
   \begin{isar}
   open_monitor*[this::article]  (* begin of scope of monitor "this" *)
     ...
   close_monitor*[this]          (* end of scope of monitor "this"   *)
   \end{isar}
+
   Inside the scope of a monitor, all instances of classes mentioned in its accept-clause (the
-  \<^emph>\<open>accept-set\<close>) have to appear in the order specified by the
-  regular expression; instances not covered by an accept-set may freely
-  occur. Monitors may additionally contain a reject-clause with a list
-  of class-ids (the reject-list). This allows specifying ranges of
+  \<^emph>\<open>accept-set\<close>) have to appear in the order specified by the regular expression; instances not 
+  covered by an accept-set may freely occur. Monitors may additionally contain a reject-clause 
+  with a list of class-ids (the reject-list). This allows specifying ranges of
   admissible instances along the class hierarchy:
-  \begin{compactitem}
-  \item a superclass in the reject-list and a subclass in the
+  \<^item> a superclass in the reject-list and a subclass in the
     accept-expression forbids instances superior to the subclass, and
-  \item a subclass $S$ in the reject-list and a superclass $T$ in the
+  \<^item> a subclass $S$ in the reject-list and a superclass $T$ in the
     accept-list allows instances of superclasses of $T$ to occur freely,
     instances of $T$ to occur in the specified order and forbids
     instances of $S$.
-  \end{compactitem}
+\<close>
+text\<open>
   Monitored document sections can be nested and overlap; thus, it is
   possible to combine the effect of different monitors. For example, it
   would be possible to refine the \inlineisar+example+ section by its own
@@ -618,35 +620,29 @@ text\<open>We call a document class with an accept-clause a
 
 subsubsection*["sec:class_inv"::technical]\<open>ODL Class Invariants\<close>
 text\<open>
-Ontological classes as described so far are too liberal in many
-situations. For example, one would like to express that any instance
-of a \inlineisar+result+ class finally has a non-empty property list,
-if its \inlineisar+kind+ is \inlineisar+proof+, or that the
-\inlineisar+establish+ relation between \inlineisar+claim+ and
-\inlineisar+result+ is surjective.
+  Ontological classes as described so far are too liberal in many situations. For example, one 
+  would like to express that any instance of a \inlineisar+result+ class finally has a non-empty 
+  property list, if its \inlineisar+kind+ is \inlineisar+p$$roof+, or that the \inlineisar+establish+ 
+  relation between \inlineisar+claim+ and \inlineisar+result+ is surjective.
 
-In a high-level syntax, this type of constraints could be expressed, \eg, by:
+  In a high-level syntax, this type of constraints could be expressed, \eg, by:
+
 \begin{isar}
-(* 1 *) \<forall> x \<in> result. x@kind = proof \<leftrightarrow> x@kind \<noteq> []
+(* 1 *) \<forall> x \<in> result. x@kind = pr$$oof \<leftrightarrow> x@kind \<noteq> []
 (* 2 *) \<forall> x \<in> conclusion. \<forall> y \<in> Domain(x@establish)
                   \<rightarrow> \<exists> y \<in> Range(x@establish). (y,z) \<in> x@establish
 (* 3 *) \<forall> x \<in> introduction. finite(x@authored_by)
 \end{isar}
-where \inlineisar+result+, \inlineisar+conclusion+, and
-%%  where \<open>result\<close>, \<open>conclusion\<close>, and
-\inlineisar+introduction+ are the set of all possible instances of
-these document classes.  All specified constraints are already checked
-in the IDE of \dof while editing; it is however possible to delay a
-final error message till the closing of a monitor (see next
-section). The third constraint enforces that the
-%% user sets the \<open>authored_by\<close> set, otherwise an error will be
-user sets the \inlineisar+authored_by+ set, otherwise an error will be
-reported.
-\<close>
-text\<open>
-For the moment, there is no high-level syntax for the definition of
-class invariants. A formulation, in SML, of the first class-invariant
-in \autoref{sec:class_inv} is straight-forward:
+
+  where \inlineisar+result+, \inlineisar+conclusion+, and \inlineisar+introduction+ are the set of
+  all possible instances of these document classes.  All specified constraints are already checked
+  in the IDE of \dof while editing; it is however possible to delay a final error message till the 
+  closing of a monitor (see next section). The third constraint enforces that the user sets the 
+  \inlineisar+authored_by+ set, otherwise an error will be reported.
+
+  For the moment, there is no high-level syntax for the definition of class invariants. A 
+  formulation, in SML, of the first class-invariant in \autoref{sec:class_inv} is straight-forward:
+
 \begin{sml}
 fun check_result_inv oid {is_monitor:bool} ctxt =
   let val kind = compute_attr_access ctxt "kind" oid <@>{here} <@>{here}
@@ -660,20 +656,12 @@ fun check_result_inv oid {is_monitor:bool} ctxt =
  val _ = Theory.setup (DOF_core.update_class_invariant
                                 "tiny_cert.result" check_result_inv)
 \end{sml}
-The \inlinesml{setup}-command (last line) registers the
-\inlineisar+check_result_inv+ function into the \isadof kernel, which
-activates any creation or modification of an instance of
-\inlineisar+result+.  We cannot replace \inlineisar+compute_attr_access+
-by the corresponding antiquotation
-\inlineisar+<@>{docitem_value kind::oid}+, since \inlineisar+oid+ is
-bound to a variable here and can therefore not be statically expanded.
 
-Isabelle's code generator can in principle generate class invariant code
-from a high-level syntax. Since class-invariant checking can result in an
-efficiency problem ---they are checked on any edit--- and since invariant
-programming involves a deeper understanding of ontology modeling and the
-\isadof implementation, we backed off from using this technique so far.
-
+  The \inlinesml{setup}-command (last line) registers the \inlineisar+check_result_inv+ function 
+  into the \isadof kernel, which activates any creation or modification of an instance of 
+  \inlineisar+result+. We cannot replace \inlineisar+compute_attr_access+ by the corresponding 
+  antiquotation \inlineisar+<@>{docitem_value kind::oid}+, since \inlineisar+oid+ is bound to a 
+  variable here and can therefore not be statically expanded.
 \<close>
 
 
