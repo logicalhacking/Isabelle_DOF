@@ -146,7 +146,7 @@ Isabelle/DOF Installer
   - Installing document templates iëën 
         /home/achim/.isabelle/Isabelleë\isabelleversion/DOF/document-templateë
   - Installing LaTeX styles iëën 
-       /home/brucker/.isabelle/Isabelleë\isabelleversion/DOF/latexë
+       /home/achim/.isabelle/Isabelleë\isabelleversion/DOF/latexë
   - Registering Isabelle/DOF
     * Registering tools iëën 
        /home/achim/.isabelle/Isabelleë\isabelleversion/etc/settingsë
