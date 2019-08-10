@@ -334,26 +334,49 @@ doc_class EC = AC  +
 ][1]{%
 \begin{isamarkuptext}%
    \ifthenelse{\equal{\commandkey{CENELEC_50128.requirement.long_name}}{}}{%
+      % If long_name is not defined, we only create an entry in the table tos
+      % using the auto-generated number of the EC 
       \begin{EC}%
           \addxcontentsline{tos}{chapter}[]{\autoref{\commandkey{label}}}%
     }{%
+      % If long_name is defined, we use the long_name as title in the 
+      % layout of the EC. Moreover, we use the long_name in the table tos
+      % and also automatically generate an index entry for the EC.
       \begin{EC}[\commandkey{CENELEC_50128.requirement.long_name}]%
         \addxcontentsline{toe}{chapter}[]{\autoref{\commandkey{label}}: %
               \commandkey{CENELEC_50128.requirement.long_name}}%
         \DOFindex{EC}{\commandkey{CENELEC_50128.requirement.long_name}}%
-    }\label{\commandkey{label}}%
-    #1%
+    }%
+    \label{\commandkey{label}}% we use the label attribute as anchor 
+    #1% The main text of the EC
   \end{EC}
 \end{isamarkuptext}%
 }
 \end{ltx}
+
+  While, in principle, any \LaTeX-commands can be used within the \inlineltx|\newisadof|-command,
+  one has to take special care for arguments containing special characters (\eg, the 
+  underscore ``\_'') that do not have a special meaning in Isabelle but are commands in \LaTeX. 
+  Moreover, as usual, special care has to be taken for commands that write into aux-files
+  that are included in a following \LaTeX-run. For such complex examples, we refer the interested 
+  reader, in general, to  the style files provided in the \isadof distribution. In particular 
+  the definitions of the concepts \inlineisar|title*| and \inlineisar|author*| in the file 
+  \path{ontologies/scholarly_paper/DOF-scholarly_paper.sty} show examples of protecting special 
+  characters in definitions that need to make use of a entries in an aux-file. 
 \<close>
 
 
 
-subsection*["core-manual1"::technical]\<open>Annotatable Test-Elements: Syntax\<close>
+subsection*["text-elements"::technical]\<open>Annotatable Top-level Text-Elements\<close>
+text\<open>
+  While the default user interface for class definitions via the  
+  \inlineisar|text*\<Open> ... \<Close>|-command allow to access all features of the document 
+  class, \isadof provides short-hands for certain, widely-used, concepts such as 
+  \inlineisar|title*\<Open> ... \<Close>| or \inlineisar|section*\<Open> ... \<Close>|.
 
-text\<open>The syntax of toplevel \isadof commands reads as follows: 
+  \clearpage
+
+  The syntax of top-level \isadof text commands reads as follows:
 \<^item> \<open>annotated_text_element\<close> :
 \<^rail>\<open>
     (  ( @@{command "title*"}
@@ -372,10 +395,77 @@ text\<open>The syntax of toplevel \isadof commands reads as follows:
      | change_status_command
      | inspection_command
   \<close>
+\clearpage
 \<^item> \<open>meta_args\<close> : 
    \<^rail>\<open>(obj_id ('::' class_id) ((attribute '=' term)) * ',')\<close>
 \<^item> \<open>rich_meta_args\<close> :
    \<^rail>\<open> (obj_id ('::' class_id) ((attribute (('=' | '+=') term)) * ','))\<close>
+\<close>
+
+
+subsubsection\<open>Experts: Defining new top-level commands\<close>
+
+text\<open>
+  Defining such new top-level commands requires some Isabelle knowledge as well as 
+  extending the dispatcher of the \LaTeX-backend. For the details of defining top-level 
+  commands, we refer the reader to the Isar manual~@{cite "wenzel:isabelle-isar:2017"}. 
+  Here, we only give a brief example how the \inlineisar|section*|-command is defined; we 
+  refer the reader to the source code of \isadof for details.
+
+  First, new top-level keywords need to be declared in the \inlineisar|keywords|-section of 
+  the theory header defining new keywords:
+
+\begin{isar}
+theory 
+    ...
+  imports
+    ... 
+  keywords
+    "section*"
+begin 
+...
+end
+\end{isar}
+
+  Second, given an implementation of the functionality of the new keyword (implemented in SML), 
+  the new keyword needs to be registered, together with its parser, as outer syntax:
+
+\begin{sml}
+val _ =
+  Outer_Syntax.command ("section*", <@>{here}) "section heading"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 1)) 
+           {markdown = false} )));
+\end{sml}
+\<close>
+
+text\<open>
+Finally, for the document generation, a new dispatcher has to be defined in \LaTeX---this is 
+mandatory, otherwise the document generation will break. These dispatcher always follow the same 
+schemata:
+
+\begin{ltx}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: section*-dispatcher
+\NewEnviron{isamarkupsection*}[1][]{\isaDof[env={section},#1]{\BODY}}
+% end: section*-dispatcher
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{ltx}
+
+  After the definition of the dispatcher, one can, optionally, define a custom representation 
+  using the \inlineltx|newisadof|-command, as introduced in the previous section: 
+
+\begin{ltx}
+\newisadof{section}[label=,type=][1]{%
+  \isamarkupfalse%
+    \isamarkupsection{#1}\label{\commandkey{label}}%
+  \isamarkuptrue%
+}
+\end{ltx}
+\<close>
+
+subsection*["inspections-commands"::technical]\<open>Status and Inspection Commands\<close>
+text\<open>
 \<^item> \isadof\<open>change_status_command\<close> :
   \<^rail>\<open>  (@@{command "update_instance*"} '[' rich_meta_args ']')
        |  (@@{command "declare_reference*"} (obj_id ('::' class_id)))\<close>
@@ -384,22 +474,6 @@ text\<open>The syntax of toplevel \isadof commands reads as follows:
         |  @@{command "print_doc_items"} 
         |  @@{command "check_doc_global"}\<close>
 \<close>
-
-subsubsection\<open>Experts: Defining new top-level commands\<close>
-
-text\<open>
-\begin{sml}
-...
-\end{sml}
-\<close>
-
-
-text\<open>
-\begin{ltx}
-...
-\end{ltx}
-\<close>
-
 
 
 
