@@ -34,6 +34,17 @@ text\<open>
     publishers or standardization bodies. 
 \<close>
 
+text\<open> 
+  The list of fully supported (\ie, supporting both interactive ontological modeling and 
+  document generation) ontologies and the list of supported document templates can be 
+  obtained by calling \inlinebash|isabelle mkroot_DOF -h| (see @{docitem "first_project"}).
+  Note that the postfix \inlinebash|-UNSUPPORTED| denoted experimental ontologies or templates 
+  for which further manual setup steps might be required or that are not fully tested. Also note 
+  that the \LaTeX-class files required by the templates need to be already installed on your 
+  system. This is mostly a problem for publisher specific templates (\eg, Springer's 
+  \path{llncs.cls}), which, due to copyright restrictions, cannot be distributed legally.
+\<close>
+
 subsection\<open>Ontologies\<close>
 text\<open>
   The document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not use Isabelle definitions or proofs for checking the 
@@ -89,9 +100,10 @@ text\<open>
 
 subsection\<open>Document Templates\<close>
 text\<open>
-  Document-templates define the overall layout (page size, margins, fonts, etc.) of the generated 
-  documents and are the the main technical means for implementing layout requirements that are, \eg,
-  required by publishers or standardization bodies. Document-templates are stored in a directory 
+  Document-templates\index{document template} define the overall layout (page size, margins, fonts, 
+  etc.) of the generated documents and are the the main technical means for implementing layout 
+  requirements that are, \eg, required by publishers or standardization bodies. Document-templates 
+  are stored in a directory 
   \path{src/document-templates}:\index{document template!directory structure}
 \begin{center}
 \begin{minipage}{.9\textwidth}
@@ -204,7 +216,6 @@ text\<open>
      (called \<open>short_id\<close>'s in @{cite "isaisarrefman19"}) and identifiers
      in \inlineisar+" ... "+ which might contain certain ``quasi-letters'' such 
      as \inlineisar+_+, \inlineisar+-+, \inlineisar+.+. See~@{cite "isaisarrefman19"} for details.
-  \clearpage
   \<^item> \<open>tyargs\<close>:\index{tyargs@\<open>tyargs\<close>} 
      \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
      \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (see~@{cite "isaisarrefman19"})
@@ -218,6 +229,7 @@ text\<open>
      The \<open>name\<close>'s referred here are type names such as \<^verbatim>\<open>int\<close>, \<^verbatim>\<open>string\<close>, \<^verbatim>\<open>list\<close>, \<^verbatim>\<open>set\<close>, etc. 
   \<^item> \<open>type\<close>:\index{type@\<open>type\<close>}
      \<^rail>\<open>  (( '(' ( type * ',')  ')' )? name) | typefree \<close>     
+\clearpage
   \<^item> \<open>dt_ctor\<close>:\index{dt\_ctor@\<open>dt_ctor\<close>}
      \<^rail>\<open> name (type*) (mixfix?)\<close>
   \<^item> \<open>datatype_specification\<close>:\index{datatype\_specification@\<open>datatype_specification\<close>}
@@ -235,7 +247,7 @@ text\<open>
 \<close>
 
 text\<open>
-  Advanced ontology might make use of concepts such as recursive function definitions with 
+  Advanced ontologies can, \eg,  use recursive function definitions with 
   pattern-matching~@{cite "functions19"}, extensible record 
   pecifications~@{cite "isaisarrefman19"}, and abstract type declarations.
 \<close>
@@ -246,11 +258,11 @@ text\<open>
 A document class\bindex{document class} can be defined using the @{command "doc_class"} keyword: 
 \<^item> \<open>class_id\<close>:\index{class\_id@\<open>class_id\<close>} a type-\<open>name\<close> that has been introduced 
   via a \<open>doc_class_specification\<close>.
-\<^item> \<open>doc_class_specification\<close>:\index{doc\_class\_specification@\<open>doc_class_specification\<close>} 
+\<^item> \<open>doc_class_specification\<close>:\index{doc\_class\_specification@\<open>doc_class_specification\<close>}
+     We call document classes with an \<open>accepts_clause\<close> 
+     \<^emph>\<open>monitor classes\<close> or \<^emph>\<open>monitors\<close> for short.
      \<^rail>\<open> @@{command "doc_class"} class_id '=' (class_id '+')? (attribute_decl+) \<newline>
            (accepts_clause rejects_clause?)?\<close>
-     Document classes whose specification contains an \<open>accepts_clause\<close> are called 
-     \<^emph>\<open>monitor classes\<close> or \<^emph>\<open>monitors\<close> for short. 
 \<^item> \<open>attribute_decl\<close>:\index{attribute\_decl@\<open>attribute_decl\<close>}
      \<^rail>\<open> name '::' '"' type '"' default_clause? \<close>
 \<^item> \<open>accepts_clause\<close>:\index{accepts\_clause@\<open>accepts_clause\<close>}
@@ -262,7 +274,7 @@ A document class\bindex{document class} can be defined using the @{command "doc_
 \<^item> \<open>regexpr\<close>:\index{regexpr@\<open>regexpr\<close>}
      \<^rail>\<open> '\<lfloor>' class_id '\<rfloor>' | '(' regexpr ')' | (regexpr '||' regexpr) | (regexpr '~~' regexpr)
             | ('\<lbrace>' regexpr '\<rbrace>') | ( '\<lbrace>' regexpr '\<rbrace>\<^sup>*')  \<close>
-     regular expressions describe sequences of \<open>class_id\<close>s (and indirect sequences of document
+     Regular expressions describe sequences of \<open>class_id\<close>s (and indirect sequences of document
      items corresponding to the \<open>class_id\<close>s). The constructors for alternative, sequence, 
      repetitions and non-empty sequence follow in the top-down order of the above diagram. 
 \<close> 
@@ -354,9 +366,9 @@ doc_class EC = AC  +
 }
 \end{ltx}
 
-  While, in principle, any \LaTeX-commands can be used within the \inlineltx|\newisadof|-command,
-  one has to take special care for arguments containing special characters (\eg, the 
-  underscore ``\_'') that do not have a special meaning in Isabelle but are commands in \LaTeX. 
+  While arbitrary \LaTeX-commands can be used within the \inlineltx|\newisadof|-command,
+  special care is required for arguments containing special characters (\eg, the 
+  underscore ``\_'') that do have a special meaning in \LaTeX.  
   Moreover, as usual, special care has to be taken for commands that write into aux-files
   that are included in a following \LaTeX-run. For such complex examples, we refer the interested 
   reader, in general, to  the style files provided in the \isadof distribution. In particular 
@@ -373,10 +385,6 @@ text\<open>
   \inlineisar|text*\<Open> ... \<Close>|-command allow to access all features of the document 
   class, \isadof provides short-hands for certain, widely-used, concepts such as 
   \inlineisar|title*\<Open> ... \<Close>| or \inlineisar|section*\<Open> ... \<Close>|.
-
-  \clearpage
-
-  The syntax of top-level \isadof text commands reads as follows:
 \<^item> \<open>annotated_text_element\<close> :
 \<^rail>\<open>
     (  ( @@{command "title*"}
@@ -395,7 +403,6 @@ text\<open>
      | change_status_command
      | inspection_command
   \<close>
-\clearpage
 \<^item> \<open>meta_args\<close> : 
    \<^rail>\<open>(obj_id ('::' class_id) ((attribute '=' term)) * ',')\<close>
 \<^item> \<open>rich_meta_args\<close> :
@@ -890,7 +897,15 @@ required in a \inlineisar|summary|.
 
 section*["document-templates"::technical]\<open>Defining Document Templates\<close>
 
-text\<open>Current \isadof comes with a number of setups for the PDF generation, notably
+text\<open>
+  Document-templates\index{document template} define the overall layout (page size, margins, fonts, 
+  etc.) of the generated documents and are the the main technical means for implementing layout 
+  requirements that are, \eg, required by publishers or standardization bodies. Document-templates 
+
+
+
+
+Current \isadof comes with a number of setups for the PDF generation, notably
 Springer LNCS, lipics, ..., as well as setupqs of technical reports this the present one.
 
 The question arises, what to do if \isadof has to be accoustomed to a new LaTeX style
