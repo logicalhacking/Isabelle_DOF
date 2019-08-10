@@ -1,4 +1,4 @@
-# Isabelle/DOF: Document Preparation Setup
+# [Isabelle/DOF](https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF): Document Preparation Setup
 
 Isabelle/DOF is a novel Document Ontology Framework on top of
 Isabelle. Isabelle/DOF allows for both conventional typesetting as
