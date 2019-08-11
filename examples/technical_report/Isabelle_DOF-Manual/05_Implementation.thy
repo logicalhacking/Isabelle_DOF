@@ -218,7 +218,70 @@ text\<open>
   is, in large parts, generated from a formalization of functional automata~\cite{Functional-Automata-AFP}.
 \<close>
 
+section\<open>The \LaTeX-Core of \isadof\<close>
+text\<open>
+  The \LaTeX-implementation of \isadof heavily relies on the 
+  ``keycommand''~@{cite "chervet:keycommand:2010"} package. In fact, the core \isadof \LaTeX-commands
+  are just wrappers for the corresponding commands from the keycommand package:
 
+\begin{ltx}
+\newcommand\newisadof[1]{%
+  \expandafter\newkeycommand\csname isaDof.#1\endcsname}%
+\newcommand\renewisadof[1]{%
+  \expandafter\renewkeycommand\csname isaDof.#1\endcsname}%
+\newcommand\provideisadof[1]{%
+  \expandafter\providekeycommand\csname isaDof.#1\endcsname}%
+\end{ltx}
+
+  The \LaTeX-generator of \isadof maps each \inlineisar{doc_item} to an \LaTeX-environment (recall
+  @{docref "text-elements"}). As generic \inlineisar{doc_item} are derived from the text element, 
+  the enviornment \inlineltx|{isamarkuptext*}| builds the core of \isadof's \LaTeX{} implementation. 
+  For example, the @{docref "ass123"} from page \pageref{ass123} is mapped to
+
+\begin{ltx}
+\begin{isamarkuptext*}%
+[label = {ass122},type = {CENELEC_50128.SRAC}, 
+ args={label = {ass122}, type = {CENELEC_50128.SRAC}, 
+       CENELEC_50128.EC.assumption_kind = {formal}}
+] The overall sampling frequence of the odometer subsystem is therefore 
+ 14 khz, which includes sampling, computing and result communication 
+ times ...
+\end{isamarkuptext*}
+\end{ltx}
+
+This environment is mapped to a plain \LaTeX command via (again, recall @{docref "text-elements"}):
+\begin{ltx}
+  \NewEnviron{isamarkuptext*}[1][]{\isaDof[env={text},#1]{\BODY}}
+\end{ltx}
+
+For the command-based setup, \isadof provides a dispatcher that selects the most specific 
+implementation for a given \inlineisar|doc_class|:
+
+\begin{ltx}
+%% The Isabelle/DOF dispatcher:
+\newkeycommand+[\|]\isaDof[env={UNKNOWN},label=,type={dummyT},args={}][1]{%
+  \ifcsname isaDof.\commandkey{type}\endcsname%
+      \csname isaDof.\commandkey{type}\endcsname%
+              [label=\commandkey{label},\commandkey{args}]{#1}%
+  \else\relax\fi%
+  \ifcsname isaDof.\commandkey{env}.\commandkey{type}\endcsname%
+      \csname isaDof.\commandkey{env}.\commandkey{type}\endcsname%
+              [label=\commandkey{label},\commandkey{args}]{#1}%
+  \else%
+      \message{Isabelle/DOF: Using default LaTeX representation for concept %
+        "\commandkey{env}.\commandkey{type}".}%
+      \ifcsname isaDof.\commandkey{env}\endcsname%
+         \csname isaDof.\commandkey{env}\endcsname%
+                [label=\commandkey{label}]{#1}%
+      \else%
+      \errmessage{Isabelle/DOF: No LaTeX representation for concept %
+        "\commandkey{env}.\commandkey{type}" defined and no default %
+        definition for "\commandkey{env}" available either.}%
+      \fi%
+  \fi%
+}
+\end{ltx}
+\<close>
 
 (*<*)
 end
