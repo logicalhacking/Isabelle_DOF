@@ -200,29 +200,24 @@ fun check_result_inv oid {is_monitor:bool} ctxt =
 
 section\<open>Implementing Monitors\<close>
 text\<open>
-Since monitor-clauses have a regular expression syntax, it is natural
-to implement them as deterministic automata. These are stored in the 
-\inlineisar+docobj_tab+ for monitor-objects in the \isadof component. 
-We implemented the functions:
+  Since monitor-clauses have a regular expression syntax, it is natural to implement them as 
+  deterministic automata. These are stored in the  \inlineisar+docobj_tab+ for monitor-objects 
+  in the \isadof component. We implemented the functions:
 
 \begin{sml}
    val  enabled : automaton -> env -> cid list
    val  next    : automaton -> env -> cid -> automaton
 \end{sml}
-
-where \inlineisar+env+ is basically a map between internal automaton
-states and class-id's (\inlineisar+cid+'s). An automaton is said to be
-\emph{enabled} for a class-id, iff it either occurs in its accept-set
-or its reject-set (see \autoref{sec:monitors}). During top-down
-document validation, whenever a text-element is encountered, it is
-checked if a monitor is \emph{enabled} for this class; in this case,
-the \inlineisar+next+-operation is executed. The transformed automaton
-recognizing the rest-language is stored in \inlineisar+docobj_tab+ if
-possible; otherwise, if \inlineisar+next+ fails, an error is
-reported. The automata implementation is, in large parts, generated
-from a formalization of functional automata~\cite{Functional-Automata-AFP}.
-
+  where \inlineisar+env+ is basically a map between internal automaton states and class-id's 
+  (\inlineisar+cid+'s). An automaton is said to be \<^emph>\<open>enabled\<close> for a class-id, 
+  iff it either occurs in its accept-set or its reject-set (see @{docref "sec:monitors"}). During 
+  top-down document validation, whenever a text-element is encountered, it is checked if a monitor 
+  is \emph{enabled} for this class; in this case, the \inlineisar+next+-operation is executed. The 
+  transformed automaton recognizing the rest-language is stored in \inlineisar+docobj_tab+ if
+  possible; otherwise, if \inlineisar+next+ fails, an error is reported. The automata implementation 
+  is, in large parts, generated from a formalization of functional automata~\cite{Functional-Automata-AFP}.
 \<close>
+
 
 
 (*<*)
