@@ -307,6 +307,23 @@ text\<open>
   representations definition needs to be wrapped in a 
   \inlineltx|\begin{isarmarkup}...\end{isamarkup}|-environment, to ensure the correct context 
   within Isabelle's \LaTeX-setup. 
+
+  Moreover, \isadof also provides the following two variants of \inlineltx|\newisadof{}[]{}|:
+  \<^item>  \inlineltx|\renewisadof{}[]{}|\index{renewisadof@\inlineltx{\renewisadof}} for re-defining 
+     (over-writing) an already defined command, and  
+  \<^item>  \inlineltx|\provideisadof{}[]{}|\index{provideisadof@\inlineltx{\provideisadof}} for providing 
+     a definition if it is not yet defined. 
+\<close>
+text\<open>
+  While arbitrary \LaTeX-commands can be used within these commands,
+  special care is required for arguments containing special characters (\eg, the 
+  underscore ``\_'') that do have a special meaning in \LaTeX.  
+  Moreover, as usual, special care has to be taken for commands that write into aux-files
+  that are included in a following \LaTeX-run. For such complex examples, we refer the interested 
+  reader, in general, to  the style files provided in the \isadof distribution. In particular 
+  the definitions of the concepts \inlineisar|title*| and \inlineisar|author*| in the file 
+  \path{ontologies/scholarly_paper/DOF-scholarly_paper.sty} show examples of protecting special 
+  characters in definitions that need to make use of a entries in an aux-file. 
 \<close>
 
 subsubsection\<open>Common Ontology Library (COL)\<close>
@@ -348,7 +365,14 @@ doc_class EC = AC  +
 \end{isar}
 
   We now define the document representations, in the file 
-  \path{ontologies/CENELEC_50128/DOF-CENELEC_50128.sty}, as follows:
+  \path{ontologies/CENELEC_50128/DOF-CENELEC_50128.sty}. Let us assume that we want to 
+  register the definition of ECs in a dedicated table of contents (\inlineltx{tos}) 
+  and use an earlier defined environment \inlineltx|\begin{EC}...\end{EC}| for their graphical 
+  representation. Note that the \inlineltx|\newisadof{}[]{}|-command requires the 
+  full-qualified names, \eg,  \inlineisar|t$$ext.CENELEC_50128.EC| for the document class and 
+  \inlineisar|CENELEC_50128.requirement.long_name| for the  attribute \inlineisar|long_name|, 
+  inherited from the document class \inlineisar|requirement|. The document representation of ECs
+  can now be defined as follows:
 
 \begin{ltx}
 \newisadof{text.CENELEC_50128.EC}%
@@ -358,8 +382,7 @@ doc_class EC = AC  +
 ,Isa_COL.text_element.variants=%
 ,CENELEC_50128.requirement.is_concerned=%
 ,CENELEC_50128.requirement.long_name=%
-,CENELEC_50128.EC.assumption_kind=%
-][1]{%
+,CENELEC_50128.EC.assumption_kind=][1]{%
 \begin{isamarkuptext}%
    \ifthenelse{\equal{\commandkey{CENELEC_50128.requirement.long_name}}{}}{%
       % If long_name is not defined, we only create an entry in the table tos
@@ -368,8 +391,7 @@ doc_class EC = AC  +
           \addxcontentsline{tos}{chapter}[]{\autoref{\commandkey{label}}}%
     }{%
       % If long_name is defined, we use the long_name as title in the 
-      % layout of the EC. Moreover, we use the long_name in the table tos
-      % and also automatically generate an index entry for the EC.
+      % layout of the EC, in the table "tos" and as index entry. .
       \begin{EC}[\commandkey{CENELEC_50128.requirement.long_name}]%
         \addxcontentsline{toe}{chapter}[]{\autoref{\commandkey{label}}: %
               \commandkey{CENELEC_50128.requirement.long_name}}%
@@ -382,22 +404,6 @@ doc_class EC = AC  +
 }
 \end{ltx}
 
-  This definition registers the ECs in a dedicated table of contents (\inlineltx{tos}) 
-  and uses an earlier defined environment \inlineltx|\begin{EC}...\end{EC}| for the graphical 
-  representation. Note that this definitions requires teh full-qualified names, \eg, 
-  \inlineisar|t$$ext.CENELEC_50128.EC| for the document class and 
-  \inlineisar|CENELEC_50128.requirement.long_name| for the  attribute \inlineisar|long_name|, 
-  inherited from the document class \inlineisar|requirement|.
-
-  While arbitrary \LaTeX-commands can be used within the \inlineltx|\newisadof|-command,
-  special care is required for arguments containing special characters (\eg, the 
-  underscore ``\_'') that do have a special meaning in \LaTeX.  
-  Moreover, as usual, special care has to be taken for commands that write into aux-files
-  that are included in a following \LaTeX-run. For such complex examples, we refer the interested 
-  reader, in general, to  the style files provided in the \isadof distribution. In particular 
-  the definitions of the concepts \inlineisar|title*| and \inlineisar|author*| in the file 
-  \path{ontologies/scholarly_paper/DOF-scholarly_paper.sty} show examples of protecting special 
-  characters in definitions that need to make use of a entries in an aux-file. 
 \<close>
 
 
@@ -410,30 +416,23 @@ text\<open>
   \inlineisar|title*\<Open> ... \<Close>| or \inlineisar|section*\<Open> ... \<Close>|, \eg:
 
 \begin{isar}
-title*[title::title]\<Open>Isabelle/DOF\<Close>
-subtitle*[subtitle::subtitle]\<Open>User and Implementation Manual\<Close>
-text*[adb:: author,
-      email="\<Open>a.brucker@exeter.ac.uk\<Close>",
-      orcid="\<Open>0000-0002-6355-1200\<Close>",
-      http_site="\<Open>https://www.brucker.ch/\<Close>",
-      affiliation="\<Open>University of Exeter, Exeter, UK\<Close>"]
-      \<Open>Achim D. Brucker\<Close>
-text*[bu::author,
-      email       = "\<Open>wolff@lri.fr\<Close>",
-      affiliation = "\<Open>Université Paris-Saclay, LRI, Paris, France\<Close>"]
-      \<Open>Burkhart Wolff\<Close>
+ title*[title::title]\<Open>Isabelle/DOF\<Close>
+ subtitle*[subtitle::subtitle]\<Open>User and Implementation Manual\<Close>
+ text*[adb:: author, email="\<Open>a.brucker@exeter.ac.uk\<Close>",
+       orcid="\<Open>0000-0002-6355-1200\<Close>",
+       http_site="\<Open>https://brucker.ch/\<Close>",
+       affiliation="\<Open>University of Exeter, Exeter, UK\<Close>"] \<Open>Achim D. Brucker\<Close>
+ text*[bu::author, email = "\<Open>wolff@lri.fr\<Close>",
+       affiliation = "\<Open>Université Paris-Saclay, LRI, Paris, France\<Close>"]\<Open>Burkhart Wolff\<Close>
 \end{isar}
 
   In general, all standard text-elements from the Isabelle document model such
   as @{command "chapter"}, @{command "section"}, @{command "text"}, have in the \isadof
-  implementation their counterparts in the family of text-elements that are "ontology-aware",
-  \ie they dispose on a meta-argument list that allows to define that a test-element
-  \<^enum> has an identity as a text-object labelled as \<open>obj_id\<close>
-  \<^enum> belongs to a document class \<open>class_id\<close> that has been defined earlier
-  \<^enum> has its class-attributes set with particular values
-  (which are denotable in Isabelle/HOL mathematical term syntax)
-
-\clearpage
+  implementation their counterparts in the family of text-elements that are ontology-aware,
+  \ie, they dispose on a meta-argument list that allows to define that a test-element
+  that has an identity as a text-object labelled as \<open>obj_id\<close>, belongs to a document class 
+  \<open>class_id\<close> that has been defined earlier, and  has its class-attributes set with particular 
+  values (which are denotable in Isabelle/HOL mathematical term syntax).
 
 \<^item> \<open>annotated_text_element\<close> :
 \<^rail>\<open>
