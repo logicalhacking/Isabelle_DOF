@@ -20,7 +20,7 @@ text\<open>
 \<close>
 text\<open>
   Semantic macros, as required by our document model, are called \<^emph>\<open>document antiquotations\<close>
-  in the Isabelle literature~@{cite "wenzel:isabelle-isar:2017"}. While Isabelle's code-antiquotations 
+  in the Isabelle literature~@{cite "wenzel:isabelle-isar:2019"}. While Isabelle's code-antiquotations 
   are an old concept going back to Lisp and having found via SML and OCaml their ways into modern 
   proof systems, special annotation syntax inside documentation comments have their roots in 
   documentation generators such as Javadoc. Their use, however, as a mechanism to embed 

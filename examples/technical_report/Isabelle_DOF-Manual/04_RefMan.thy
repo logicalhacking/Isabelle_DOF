@@ -207,22 +207,22 @@ subsection*["odl-manual0"::technical]\<open>Some Isabelle/HOL Specification Cons
 text\<open>
   As ODL is an extension of Isabelle/HOL, document class definitions can therefore be arbitrarily 
   mixed with standard HOL specification constructs. To make this manual self-contained, we present 
-  syntax and semantics of the specification constructs that are most likely relevant for
-  the developer of ontologies (for more details, see~@{cite "isaisarrefman19" and "datarefman19" 
-  and "functions19"}. Our presentation is a simplification of the original sources following the 
-  needs of ontology developers in \isadof:
+  syntax and semantics of the specification constructs that are most likely relevant for the 
+  developer of ontologies (for more details, see~@{cite "wenzel:isabelle-isar:2019"}.  Our 
+  presentation is a simplification of the original sources following the needs of ontology developers 
+  in \isadof:
   \<^item> \<open>name\<close>:\index{name@\<open>name\<close>}
      with the syntactic category of \<open>name\<close>'s we refer to alpha-numerical identifiers 
-     (called \<open>short_id\<close>'s in @{cite "isaisarrefman19"}) and identifiers
+     (called \<open>short_id\<close>'s in @{cite "wenzel:isabelle-isar:2019"}) and identifiers
      in \inlineisar+" ... "+ which might contain certain ``quasi-letters'' such 
-     as \inlineisar+_+, \inlineisar+-+, \inlineisar+.+. See~@{cite "isaisarrefman19"} for details.
+     as \inlineisar+_+, \inlineisar+-+, \inlineisar+.+. See~@{cite "wenzel:isabelle-isar:2019"} for details.
   \<^item> \<open>tyargs\<close>:\index{tyargs@\<open>tyargs\<close>} 
      \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
-     \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (see~@{cite "isaisarrefman19"})
+     \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (see~@{cite "wenzel:isabelle-isar:2019"})
   \<^item> \<open>dt_name\<close>:\index{dt\_npurdahame@\<open>dt_name\<close>}
      \<^rail>\<open>  (tyargs?) name (mixfix?)\<close>   
      The syntactic entity \<open>name\<close> denotes an identifier, \<open>mixfix\<close> denotes the usual 
-     parenthesized mixfix notation (see @{cite "isaisarrefman19"}).
+     parenthesized mixfix notation (see @{cite "wenzel:isabelle-isar:2019"}).
      The \<open>name\<close>'s referred here are type names such as \<^verbatim>\<open>int\<close>, \<^verbatim>\<open>string\<close>, \<^verbatim>\<open>list\<close>, \<^verbatim>\<open>set\<close>, etc. 
   \<^item> \<open>type_spec\<close>:\index{type_spec@\<open>type_spec\<close>}
      \<^rail>\<open>  (tyargs?) name\<close>
@@ -249,7 +249,7 @@ text\<open>
 text\<open>
   Advanced ontologies can, \eg,  use recursive function definitions with 
   pattern-matching~@{cite "functions19"}, extensible record 
-  pecifications~@{cite "isaisarrefman19"}, and abstract type declarations.
+  pecifications~@{cite "wenzel:isabelle-isar:2019"}, and abstract type declarations.
 \<close>
 
 
@@ -465,7 +465,7 @@ subsubsection\<open>Experts: Defining New Top-Level Commands\<close>
 text\<open>
   Defining such new top-level commands requires some Isabelle knowledge as well as 
   extending the dispatcher of the \LaTeX-backend. For the details of defining top-level 
-  commands, we refer the reader to the Isar manual~@{cite "wenzel:isabelle-isar:2017"}. 
+  commands, we refer the reader to the Isar manual~@{cite "wenzel:isabelle-isar:2019"}. 
   Here, we only give a brief example how the \inlineisar|section*|-command is defined; we 
   refer the reader to the source code of \isadof for details.
 

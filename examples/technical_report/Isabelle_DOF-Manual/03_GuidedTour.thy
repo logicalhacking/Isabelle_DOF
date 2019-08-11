@@ -537,7 +537,7 @@ figure*[figfig3::figure,relative_width="95",src="''figures/antiquotations-PIDE''
 \<open> Standard antiquotations referring to theory elements.\<close>
 text\<open> The corresponding view in @{docitem_ref  \<open>figfig3\<close>} shows core part of a document 
 conformimg to the CENELEC 50128 ontology. The first sample shows standard Isabelle antiquotations 
-@{cite "wenzel:isabelle-isar:2017"} into formal entities of a theory. This way, the informal parts 
+@{cite "wenzel:isabelle-isar:2019"} into formal entities of a theory. This way, the informal parts 
 of a document get ``formal content'' and become more robust under change.\<close>
 
 figure*[figfig5::figure, relative_width="95", src="''figures/srac-definition''"]

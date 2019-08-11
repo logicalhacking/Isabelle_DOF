@@ -1,5 +1,33 @@
+@STRING{pub-springer={Springer} }
+@STRING{pub-springer:adr="" }
+@STRING{s-lncs	= "LNCS" }
 
+@Misc{		  w3c:ontologies:2015,
+  author        = {W3C},
+  title		= {Ontologies},
+  organisation	= {W3c},
+  url		= {https://www.w3.org/standards/semanticweb/ontology},
+  year		= 2015
+}
 
+@Misc{		  doors,
+  author        = {IBM},
+  title		= {{IBM} Engineering Requirements Management {DOORS} Family},
+  note		= {\url{https://www.ibm.com/us-en/marketplace/requirements-management}},
+  year		= 2019
+}
+
+@Manual{ wenzel:isabelle-isar:2019,
+  title =        {The Isabelle/Isar Reference Manual},
+  author =    {Makarius Wenzel},
+  OPTorganization = {},
+  OPTaddress =   {},
+  OPTedition =   {},
+  OPTmonth =     {},
+  year =      {2019},
+  note =      {Part of the Isabelle distribution.},
+  OPTannote =    {}
+}
 
 
 @InCollection{	  brucker.ea:isabelledof:2019,
@@ -45,7 +73,7 @@
   classification= {conference},
   areas		= {formal methods, software},
   categories	= {isadof},
-  year		= {2019},
+  year		= 2019,
   public	= {yes}
 }
 
@@ -79,7 +107,7 @@
   publisher	= {Springer-Verlag},
   address	= {Heidelberg},
   series	= {Lecture Notes in Computer Science},
-  number	= {11006},
+  number	= 11006,
   url		= {https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelle-ontologies-2018},
   title		= {Using the {Isabelle} Ontology Framework: Linking the
 		  Formal with the Informal},
@@ -87,160 +115,80 @@
   areas		= {formal methods, software},
   categories	= {isadof},
   public	= {yes},
-  year		= {2018},
-  doi		= {10.1007/978-3-319-96812-4_3},
+  year		= 2018,
   pdf		= {https://www.brucker.ch/bibliography/download/2018/brucker.ea-isabelle-ontologies-2018.pdf}
 }
 
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@STRING{pub-springer={Springer} }
-@STRING{pub-springer:adr=""}
-@STRING{s-lncs  = "LNCS" }
-
-
-@Manual{ wenzel:isabelle-isar:2017,
-  title =        {The Isabelle/Isar Reference Manual},
-  author =    {Makarius Wenzel},
-  OPTorganization = {},
-  OPTaddress =   {},
-  OPTedition =   {},
-  OPTmonth =     {},
-  year =      {2017},
-  note =      {Part of the Isabelle distribution.},
-  OPTannote =    {}
+@Book{		  boulanger:cenelec-50128:2015,
+  author	= {Boulanger, Jean-Louis},
+  title		= {{CENELEC} 50128 and {IEC} 62279 Standards},
+  publisher	= {Wiley-ISTE},
+  year		= 2015,
+  address	= {Boston},
 }
 
-@Book{            adler:r:2010,
-  abstract      = {Presents a guide to the R computer language, covering such
-                  topics as the user interface, packages, syntax, objects,
-                  functions, object-oriented programming, data sets, lattice
-                  graphics, regression models, and bioconductor.},
-  added-at      = {2013-01-10T22:39:38.000+0100},
-  address       = {Sebastopol, CA},
-  author        = {Adler, Joseph},
-  isbn          = {9780596801700 059680170X},
-  keywords      = {R},
-  publisher     = {O'Reilly},
-  refid         = 432987461,
-  title         = {R in a nutshell},
-  year          = 2010
-}
-
-
-
-@InCollection{    wenzel.ea:building:2007,
-  abstract      = {We present the generic system framework of
-                  Isabelle/Isarunderlying recent versions of Isabelle. Among
-                  other things, Isar provides an infrastructure for Isabelle
-                  plug-ins, comprising extensible state components and
-                  extensible syntax that can be bound to tactical ML
-                  programs. Thus the Isabelle/Isar architecture may be
-                  understood as an extension and refinement of the
-                  traditional LCF approach, with explicit infrastructure for
-                  building derivative systems. To demonstrate the technical
-                  potential of the framework, we apply it to a concrete
-                  formalmethods tool: the HOL-Z 3.0 environment, which is
-                  geared towards the analysis of Z specifications and formal
-                  proof of forward-refinements.},
-  author        = {Makarius Wenzel and Burkhart Wolff},
-  booktitle     = {TPHOLs 2007},
-  editor        = {Klaus Schneider and Jens Brandt},
-  language      = {USenglish},
-  acknowledgement={none},
-  pages         = {352--367},
-  publisher     = pub-springer,
-  address       = pub-springer:adr,
-  number        = 4732,
-  series        = s-lncs,
-  title         = {Building Formal Method Tools in the {Isabelle}/{Isar}
-                  Framework},
-  doi           = {10.1007/978-3-540-74591-4_26},
-  year          = 2007
-}
-
-@Misc{w3c:ontologies:2015,
-  title={Ontologies},
-  organisation={W3c},
-  url={https://www.w3.org/standards/semanticweb/ontology},
-  year=2018
-}
-
-@BOOK{boulanger:cenelec-50128:2015,
-  AUTHOR       = "Boulanger, Jean-Louis",
-  TITLE        = "{CENELEC} 50128 and {IEC} 62279 Standards",
-  PUBLISHER    = "Wiley-ISTE",
-  YEAR         = "2015",
-  ADDRESS      = "Boston",
-  NOTE         = "The reference on the standard."
-}
-
-@Booklet{         cc:cc-part3:2006,
-  bibkey        = {cc:cc-part3:2006},
-  key           = {Common Criteria},
-  institution   = {Common Criteria},
-  language      = {USenglish},
-  month         = sep,
-  year          = 2006,
-  public        = {yes},
-  title         = {Common Criteria for Information Technology Security
-                  Evaluation (Version 3.1), {Part} 3: Security assurance
-                  components},
-  note          = {Available as document
-                  \href{http://www.commoncriteriaportal.org/public/files/CCPART3V3.1R1.pdf}
-                  {CCMB-2006-09-003}},
-  number        = {CCMB-2006-09-003},
+@Booklet{	  cc:cc-part3:2006,
+  bibkey	= {cc:cc-part3:2006},
+  key		= {Common Criteria},
+  institution	= {Common Criteria},
+  language	= {USenglish},
+  month		= sep,
+  year		= 2006,
+  public	= {yes},
+  title		= {Common Criteria for Information Technology Security
+		  Evaluation (Version 3.1), {Part} 3: Security assurance
+		  components},
+  note		= {Available as document
+		  \href{http://www.commoncriteriaportal.org/public/files/CCPART3V3.1R1.pdf}
+		  {CCMB-2006-09-003}},
+  number	= {CCMB-2006-09-003},
   acknowledgement={brucker, 2007-04-24}
 }
 
-
-@Book{            nipkow.ea:isabelle:2002,
-  author        = {Tobias Nipkow and Lawrence C. Paulson and Markus Wenzel},
-  title         = {Isabelle/HOL---A Proof Assistant for Higher-Order
-                  Logic},
-  publisher     = pub-springer,
-  address       = pub-springer:adr,
-  series        = s-lncs,
-  volume        = 2283,
-  doi           = {10.1007/3-540-45949-9},
-  abstract      = {This book is a self-contained introduction to interactive
-                  proof in higher-order logic (\acs{hol}), using the proof
-                  assistant Isabelle2002. It is a tutorial for potential
-                  users rather than a monograph for researchers. The book has
-                  three parts.
-
-                  1. Elementary Techniques shows how to model functional
-                  programs in higher-order logic. Early examples involve
-                  lists and the natural numbers. Most proofs are two steps
-                  long, consisting of induction on a chosen variable followed
-                  by the auto tactic. But even this elementary part covers
-                  such advanced topics as nested and mutual recursion. 2.
-                  Logic and Sets presents a collection of lower-level tactics
-                  that you can use to apply rules selectively. It also
-                  describes Isabelle/\acs{hol}'s treatment of sets, functions
-                  and relations and explains how to define sets inductively.
-                  One of the examples concerns the theory of model checking,
-                  and another is drawn from a classic textbook on formal
-                  languages. 3. Advanced Material describes a variety of
-                  other topics. Among these are the real numbers, records and
-                  overloading. Advanced techniques are described involving
-                  induction and recursion. A whole chapter is devoted to an
-                  extended example: the verification of a security protocol. },
-  year          = 2002,
+@Book{		  nipkow.ea:isabelle:2002,
+  author	= {Tobias Nipkow and Lawrence C. Paulson and Markus Wenzel},
+  title		= {Isabelle/HOL---A Proof Assistant for Higher-Order Logic},
+  publisher	= pub-springer,
+  address	= pub-springer:adr,
+  series	= s-lncs,
+  volume	= 2283,
+  doi		= {10.1007/3-540-45949-9},
+  abstract	= {This book is a self-contained introduction to interactive
+		  proof in higher-order logic (\acs{hol}), using the proof
+		  assistant Isabelle2002. It is a tutorial for potential
+		  users rather than a monograph for researchers. The book has
+		  three parts.
+		  
+		  1. Elementary Techniques shows how to model functional
+		  programs in higher-order logic. Early examples involve
+		  lists and the natural numbers. Most proofs are two steps
+		  long, consisting of induction on a chosen variable followed
+		  by the auto tactic. But even this elementary part covers
+		  such advanced topics as nested and mutual recursion. 2.
+		  Logic and Sets presents a collection of lower-level tactics
+		  that you can use to apply rules selectively. It also
+		  describes Isabelle/\acs{hol}'s treatment of sets, functions
+		  and relations and explains how to define sets inductively.
+		  One of the examples concerns the theory of model checking,
+		  and another is drawn from a classic textbook on formal
+		  languages. 3. Advanced Material describes a variety of
+		  other topics. Among these are the real numbers, records and
+		  overloading. Advanced techniques are described involving
+		  induction and recursion. A whole chapter is devoted to an
+		  extended example: the verification of a security protocol. },
+  year		= 2002,
   acknowledgement={brucker, 2007-02-19},
-  bibkey        = {nipkow.ea:isabelle:2002},
-  tags          = {noTAG},
-  clearance     = {unclassified},
-  timestap      = {2008-05-26}
+  bibkey	= {nipkow.ea:isabelle:2002},
+  tags		= {noTAG},
+  clearance	= {unclassified},
+  timestap	= {2008-05-26}
 }
 
 @InProceedings{	  wenzel:asynchronous:2014,
   author	= {Makarius Wenzel},
   title		= {Asynchronous User Interaction and Tool Integration in
-		  Isabelle/{PIDE}},
-  booktitle	= {Interactive Theorem Proving (ITP)},
+		  {Isabelle}/{PIDE}},
+  booktitle	= {ITP},
   pages		= {515--530},
   year		= 2014,
   crossref	= {klein.ea:interactive:2014},
@@ -281,8 +229,7 @@
 		  additional GUI panels with separate input and output (e.g.
 		  for Sledgehammer or find-theorems). Thus the Prover IDE
 		  provides continuous proof processing, augmented by add-on
-		  tools that help the user to continue writing proofs.
-		  }
+		  tools that help the user to continue writing proofs. }
 }
 
 @Proceedings{	  klein.ea:interactive:2014,
@@ -296,7 +243,6 @@
   publisher	= pub-springer,
   year		= 2014,
   doi		= {10.1007/978-3-319-08970-6},
-  isbn		= {978-3-319-08969-0}
 }
 
 @InProceedings{	  bezzecchi.ea:making:2018,
@@ -338,295 +284,273 @@
   location	= {Toulouse}
 }
 
-@MISC{owl2012,
-   title = {OWL 2 Web Ontology Language},
-   note={\url{https://www.w3.org/TR/owl2-overview/}, Document Overview (Second Edition)},
-   author = {World Wide Web Consortium}
-}
-    
-
-@MISC{ protege,
-  title = {Prot{\'e}g{\'e}},
-  note={\url{https://protege.stanford.edu}},
-  year = {2018}
-}
-
-@MISC{ cognitum,
-  title = {Fluent Editor},
-  note={\url{http://www.cognitum.eu/Semantics/FluentEditor/}},
-  year = {2018}
-}
-
-@MISC{ neon,
-  title = {The NeOn Toolkit},
-  note = {\url{http://neon-toolkit.org}},
-  year = {2018}
-}
-
-@MISC{ owlgred,
-  title = {OWLGrEd},
-  note={\url{http://owlgred.lumii.lv/}},
-  year = {2018}
-}
-
-@MISC{ rontorium,
-  title = {R Language Package for FLuent Editor (rOntorion)},
-  note={\url{http://www.cognitum.eu/semantics/FluentEditor/rOntorionFE.aspx}},
-  year = {2018}
+@InCollection{    wenzel.ea:building:2007,
+  abstract      = {We present the generic system framework of
+                  Isabelle/Isarunderlying recent versions of Isabelle. Among
+                  other things, Isar provides an infrastructure for Isabelle
+                  plug-ins, comprising extensible state components and
+                  extensible syntax that can be bound to tactical ML
+                  programs. Thus the Isabelle/Isar architecture may be
+                  understood as an extension and refinement of the
+                  traditional LCF approach, with explicit infrastructure for
+                  building derivative systems. To demonstrate the technical
+                  potential of the framework, we apply it to a concrete
+                  formalmethods tool: the HOL-Z 3.0 environment, which is
+                  geared towards the analysis of Z specifications and formal
+                  proof of forward-refinements.},
+  author        = {Makarius Wenzel and Burkhart Wolff},
+  booktitle     = {TPHOLs 2007},
+  editor        = {Klaus Schneider and Jens Brandt},
+  language      = {USenglish},
+  acknowledgement={none},
+  pages         = {352--367},
+  publisher     = pub-springer,
+  address       = pub-springer:adr,
+  number        = 4732,
+  series        = s-lncs,
+  title         = {Building Formal Method Tools in the {Isabelle}/{Isar}
+                  Framework},
+  doi           = {10.1007/978-3-540-74591-4_26},
+  year          = 2007
 }
 
-@MISC{isaisarrefman19,
-  title = {The Isabelle/Isar Reference Manual},
-  author = {Makarius Wenzel},
-  note={\url{https://isabelle. in.tum.de/doc/isar-ref.pdf}},
-  year = {2019}
+%%%%%%%%%%%%%%%%%%%%%%
+
+@Misc{		  datarefman19,
+  title		= {Defining (Co)datatypes and Primitively (Co)recursive
+		  Functions in Isabelle/HOL},
+  author	= {Julian Biendarra and Jasmin Christian Blanchette and
+		  Martin Desharnais and Lorenz Panny and Andrei Popescu and
+		  Dmitriy Traytel},
+  note		= {\url{https://isabelle.in.tum.de/doc/datatypes.pdf}},
+  year		= 2019
 }
 
-@MISC{datarefman19,
-  title = {Defining (Co)datatypes and Primitively (Co)recursive Functions in Isabelle/HOL},
-  author = {Julian Biendarra and Jasmin Christian Blanchette and Martin Desharnais and Lorenz Panny 
-            and Andrei Popescu and Dmitriy Traytel},
-  note={\url{https://isabelle.in.tum.de/doc/datatypes.pdf}},
-  year = {2019}
+@Misc{		  functions19,
+  title		= {Defining Recursive Functions in Isabelle/HOL},
+  author	= {Alexander Kraus},
+  note		= {\url{https://isabelle.in.tum.de/doc/functions.pdf}},
+  year		= 2019
 }
 
-@MISC{functions19,
-  title = {Defining Recursive Functions in Isabelle/HOL},
-  author = {Alexander Kraus},
-  note={\url{https://isabelle.in.tum.de/doc/functions.pdf}},
-  year = {2019}
+@Misc{		  nipkowMain19,
+  title		= {What's in Main},
+  author	= {Tobias Nipkow},
+  note		= {\url{https://isabelle.in.tum.de/doc/main.pdf}},
+  year		= 2019
 }
 
-@MISC{nipkowMain19,
-  title = {What's in Main},
-  author = {Tobias Nipkow},
-  note={\url{https://isabelle.in.tum.de/doc/main.pdf}},
-  year = {2019}
+@InProceedings{	  DBLP:conf/itp/Wenzel14,
+  author	= {Makarius Wenzel},
+  title		= {Asynchronous User Interaction and Tool Integration in
+		  Isabelle/PIDE},
+  booktitle	= {Interactive Theorem Proving (ITP)},
+  pages		= {515--530},
+  year		= 2014,
+  doi		= {10.1007/978-3-319-08970-6_33},
+  timestamp	= {Sun, 21 May 2017 00:18:59 +0200},
+  biburl	= {https://dblp.org/rec/bib/conf/itp/Wenzel14},
+  bibsource	= {dblp computer science bibliography, https://dblp.org}
+}
+
+@InProceedings{	  DBLP:journals/corr/Wenzel14,
+  author	= {Makarius Wenzel},
+  title		= {System description: Isabelle/{jEdit} in 2014},
+  booktitle	= {UITP},
+  pages		= {84--94},
+  year		= 2014,
+  doi		= {10.4204/EPTCS.167.10},
+}
+
+@InProceedings{	  DBLP:conf/mkm/BarrasGHRTWW13,
+  author	= {Bruno Barras and Lourdes Del Carmen
+		  Gonz{\'{a}}lez{-}Huesca and Hugo Herbelin and Yann
+		  R{\'{e}}gis{-}Gianas and Enrico Tassi and Makarius Wenzel
+		  and Burkhart Wolff},
+  title		= {Pervasive Parallelism in Highly-Trustable Interactive
+		  Theorem Proving Systems},
+  booktitle	= {MKM},
+  pages		= {359--363},
+  year		= 2013,
+  doi		= {10.1007/978-3-642-39320-4_29},
+}
+
+@Article{	  Faithfull:2018:COQ:3204179.3204223,
+  author	= {Faithfull, Alexander and Bengtson, Jesper and Tassi,
+		  Enrico and Tankink, Carst},
+  title		= {Coqoon},
+  journal	= {Int. J. Softw. Tools Technol. Transf.},
+  issue_date	= {April 2018},
+  volume	= 20,
+  number	= 2,
+  month		= apr,
+  year		= 2018,
+  issn		= {1433-2779},
+  pages		= {125--137},
+  numpages	= 13,
+  url		= {https://doi.org/10.1007/s10009-017-0457-2},
+  doi		= {10.1007/s10009-017-0457-2},
+  acmid		= 3204223,
+  publisher	= {Springer-Verlag},
+  address	= {Berlin, Heidelberg}
+}
+
+@InCollection{	  brucker.wolff19:isadof-design-impl:2019,
+  abstract	= {DOF is a novel framework for \emph{defining} ontologies
+		  and \emph{enforcing} them during document development and
+		  document evolution. A major goal of DOF is the integrated
+		  development of formal certification documents (\eg, for
+		  Common Criteria or CENELEC 50128) that require consistency
+		  across both formal and informal arguments.
+		  
+		  To support a consistent development of formal and informal
+		  parts of a document, we provide Isabelle/DOF, an
+		  implementation of DOF on top of Isabelle/HOL. \isadof is
+		  integrated into Isabelle's IDE, which allows for smooth
+		  ontology development as well as immediate ontological
+		  feedback during the editing of a document.
+		  
+		  In this paper, we give an in-depth presentation of the
+		  design concepts of DOF's Ontology Definition Language (ODL)
+		  and key aspects of the technology of its implementation.
+		  \isadof is the first ontology language supporting
+		  machine-checked links between the formal and informal parts
+		  in an LCF-style interactive theorem proving environment.
+		  
+		  Sufficiently annotated, large documents can easily be
+		  developed collaboratively, while \emph{ensuring their
+		  consistency}, and the impact of changes (in the formal and
+		  the semi-formal content) is tracked automatically.},
+  address	= {Heidelberg},
+  author	= {Achim D. Brucker and Burkhart Wolff},
+  booktitle	= {International Conference on Software Engineering and
+		  Formal Methods (SEFM)},
+  doi		= {10.1007/978-3-319-96812-4_3},
+  keywords	= {Isabelle, HOL, Ontologies, Certification},
+  language	= {USenglish},
+  location	= {Oslo, Norway},
+  number	= {TO APPEAR},
+  pdf		= {https://www.lri.fr/~wolff/papers/conf/2019-sefm-isa_dof-framework.pdf},
+  publisher	= {Springer-Verlag},
+  series	= {Lecture Notes in Computer Science},
+  title		= {{I}sabelle/{DOF}: {D}esign and {I}mplementation},
+  year		= 2019
+}
+
+@InProceedings{	  abrial:steam-boiler:1996,
+  author	= {Abrial, Jean-Raymond},
+  title		= {Steam-Boiler Control Specification Problem},
+  booktitle	= {Formal Methods for Industrial Applications, Specifying and
+		  Programming the Steam Boiler Control (the Book Grow out of
+		  a Dagstuhl Seminar, June 1995).},
+  year		= 1996,
+  isbn		= {3-540-61929-1},
+  pages		= {500--509},
+  numpages	= 10,
+  url		= {http://dl.acm.org/citation.cfm?id=647370.723886},
+  acmid		= 723886,
+  publisher	= {Springer-Verlag},
+  address	= {London, UK, UK}
+}
+
+@TechReport{	  bsi:50128:2014,
+  type		= {Standard},
+  key		= {BS EN 50128:2011},
+  month		= apr,
+  year		= 2014,
+  series	= {British Standards Publication},
+  title		= {BS EN 50128:2011: Railway applications -- Communication,
+		  signalling and processing systems -- Software for railway
+		  control and protecting systems},
+  institution	= {Britisch Standards Institute (BSI)},
+  keywords	= {CENELEC},
+  abstract	= {This European Standard is part of a group of related
+		  standards. The others are EN 50126-1:1999 "Railway
+		  applications -- The specification and demonstration of
+		  Reliability, Availability, Maintainability and Safety
+		  (RAMS) -- Part 1: Basic requirements and generic process --
+		  and EN 50129:2003 "Railway applications -- Communication,
+		  signalling and processing systems -- Safety related
+		  electronic systems for signalling". EN 50126-1 addresses
+		  system issues on the widest scale, while EN 50129 addresses
+		  the approval process for individual systems which can exist
+		  within the overall railway control and protection system.
+		  This European Standard concentrates on the methods which
+		  need to be used in order to provide software which meets
+		  the demands for safety integrity which are placed upon it
+		  by these wider considerations. This European Standard
+		  provides a set of requirements with which the development,
+		  deployment and maintenance of any safety-related software
+		  intended for railway control and protection applications
+		  shall comply. It defines requirements concerning
+		  organisational structure, the relationship between
+		  organisations and division of responsibility involved in
+		  the development, deployment and maintenanceactivities.}
 }
 
 
-
-
-@InProceedings{   DBLP:conf/itp/Wenzel14,
-  author        = {Makarius Wenzel},
-  title         = {Asynchronous User Interaction and Tool Integration in
-                  Isabelle/PIDE},
-  booktitle     = {Interactive Theorem Proving (ITP)},
-  pages         = {515--530},
-  year          = 2014,
-  doi           = {10.1007/978-3-319-08970-6_33},
-  timestamp     = {Sun, 21 May 2017 00:18:59 +0200},
-  biburl        = {https://dblp.org/rec/bib/conf/itp/Wenzel14},
-  bibsource     = {dblp computer science bibliography, https://dblp.org}
+@Article{	  Regular-Sets-AFP,
+  author	= {Alexander Krauss and Tobias Nipkow},
+  title		= {Regular Sets and Expressions},
+  journal	= {Archive of Formal Proofs},
+  month		= may,
+  year		= 2010,
+  note		= {\url{http://isa-afp.org/entries/Regular-Sets.html}, Formal
+		  proof development},
+  issn		= {2150-914x}
 }
 
-
-@InProceedings{   DBLP:journals/corr/Wenzel14,
-  author        = {Makarius Wenzel},
-  title         = {System description: Isabelle/jEdit in 2014},
-  booktitle     = {Proceedings Eleventh Workshop on User Interfaces for
-                  Theorem Provers, {UITP} 2014, Vienna, Austria, 17th July
-                  2014.},
-  pages         = {84--94},
-  year          = 2014,
-  doi           = {10.4204/EPTCS.167.10},
-  timestamp     = {Wed, 03 May 2017 14:47:58 +0200},
-  biburl        = {https://dblp.org/rec/bib/journals/corr/Wenzel14},
-  bibsource     = {dblp computer science bibliography, https://dblp.org}
+@Article{	  Functional-Automata-AFP,
+  author	= {Tobias Nipkow},
+  title		= {Functional Automata},
+  journal	= {Archive of Formal Proofs},
+  month		= mar,
+  year		= 2004,
+  note		= {\url{http://isa-afp.org/entries/Functional-Automata.html},
+		  Formal proof development},
+  issn		= {2150-914x}
 }
 
-@InProceedings{   DBLP:conf/mkm/BarrasGHRTWW13,
-  author        = {Bruno Barras and Lourdes Del Carmen
-                  Gonz{\'{a}}lez{-}Huesca and Hugo Herbelin and Yann
-                  R{\'{e}}gis{-}Gianas and Enrico Tassi and Makarius Wenzel
-                  and Burkhart Wolff},
-  title         = {Pervasive Parallelism in Highly-Trustable Interactive
-                  Theorem Proving Systems},
-  booktitle     = {Intelligent Computer Mathematics - MKM, Calculemus, DML,
-                  and Systems and Projects},
-  pages         = {359--363},
-  year          = 2013,
-  doi           = {10.1007/978-3-642-39320-4_29},
-  timestamp     = {Sun, 04 Jun 2017 10:10:26 +0200},
-  biburl        = {https://dblp.org/rec/bib/conf/mkm/BarrasGHRTWW13},
-  bibsource     = {dblp computer science bibliography, https://dblp.org}
+@Booklet{	  kohm:koma-script:2019,
+  author	= {Markus Kohm},
+  title		= {{KOMA-Script}: a versatile {\LaTeXe{}} bundle},
+  year		= 2019
 }
 
-@article{Faithfull:2018:COQ:3204179.3204223,
- author = {Faithfull, Alexander and Bengtson, Jesper and Tassi, Enrico and Tankink, Carst},
- title = {Coqoon},
- journal = {Int. J. Softw. Tools Technol. Transf.},
- issue_date = {April     2018},
- volume = {20},
- number = {2},
- month = apr,
- year = {2018},
- issn = {1433-2779},
- pages = {125--137},
- numpages = {13},
- url = {https://doi.org/10.1007/s10009-017-0457-2},
- doi = {10.1007/s10009-017-0457-2},
- acmid = {3204223},
- publisher = {Springer-Verlag},
- address = {Berlin, Heidelberg},
-} 
-
-@incollection{brucker.wolff19:isadof-design-impl:2019,
-  abstract = {DOF is a novel framework for \emph{defining} ontologies and
-  \emph{enforcing} them during document development and document
-  evolution. A major goal of DOF is the integrated development of
-  formal certification documents (\eg, for Common Criteria or CENELEC
-  50128) that require consistency across both formal and informal
-  arguments.
-
-  To support a consistent development of formal and informal parts of
-  a document, we provide Isabelle/DOF, an implementation of DOF on top of
-  Isabelle/HOL.  \isadof is integrated into Isabelle's IDE, which
-  allows for smooth ontology development as well as immediate
-  ontological feedback during the editing of a document.
-
-  In this paper, we give an in-depth presentation of the design
-  concepts of DOF's Ontology Definition Language (ODL) and key
-  aspects of the technology of its implementation.  \isadof is the
-  first ontology language supporting machine-checked
-  links between the formal and informal parts in an LCF-style
-  interactive theorem proving environment.
-
-  Sufficiently annotated, large documents can easily be developed
-  collaboratively, while \emph{ensuring their consistency}, and the
-  impact of changes (in the formal and the semi-formal content) is
-  tracked automatically.},
-  address = {Heidelberg},
-  author = {Achim D. Brucker and Burkhart Wolff},
-  booktitle = {International Conference on Software Engineering and Formal Methods (SEFM)},
-  doi = {10.1007/978-3-319-96812-4_3},
-  keywords = {Isabelle, HOL, Ontologies, Certification},
-  language = {USenglish},
-  location = {Oslo, Norway},
-  number = {TO APPEAR},
-  pdf = {https://www.lri.fr/~wolff/papers/conf/2019-sefm-isa_dof-framework.pdf},
-  publisher = {Springer-Verlag},
-  series = {Lecture Notes in Computer Science},
-  title = {{I}sabelle/{DOF}: {D}esign and {I}mplementation},
-  year = {2019}
+@Booklet{	  wenzel:system-manual:2019,
+  author	= {Makarius Wenzel},
+  title		= {The {Isabelle} System Manual},
+  year		= 2019,
+  note          = {Part of the Isabelle distribution.}
 }
 
-@inproceedings{abrial:steam-boiler:1996,
- author = {Abrial, Jean-Raymond},
- title = {Steam-Boiler Control Specification Problem},
- booktitle = {Formal Methods for Industrial Applications, Specifying and Programming the Steam Boiler Control (the Book Grow out of a Dagstuhl Seminar, June 1995).},
- year = {1996},
- isbn = {3-540-61929-1},
- pages = {500--509},
- numpages = {10},
- url = {http://dl.acm.org/citation.cfm?id=647370.723886},
- acmid = {723886},
- publisher = {Springer-Verlag},
- address = {London, UK, UK},
-} 
-
-
-@TechReport{      bsi:50128:2014,
-  type          = {Standard},
-  key           = {BS EN 50128:2011},
-  month         = apr,
-  year          = 2014,
-  series        = {British Standards Publication},
-  title         = {BS EN 50128:2011: Railway applications -- Communication,
-                  signalling and processing systems -- Software for railway
-                  control and protecting systems},
-  institution   = {Britisch Standards Institute (BSI)},
-  keywords      = {CENELEC},
-  abstract      = {This European Standard is part of a group of related
-                  standards. The others are EN 50126-1:1999 "Railway
-                  applications -- The specification and demonstration of
-                  Reliability, Availability, Maintainability and Safety
-                  (RAMS) -- Part 1: Basic requirements and generic process --
-                  and EN 50129:2003 "Railway applications -- Communication,
-                  signalling and processing systems -- Safety related
-                  electronic systems for signalling". EN 50126-1 addresses
-                  system issues on the widest scale, while EN 50129 addresses
-                  the approval process for individual systems which can exist
-                  within the overall railway control and protection system.
-                  This European Standard concentrates on the methods which
-                  need to be used in order to provide software which meets
-                  the demands for safety integrity which are placed upon it
-                  by these wider considerations. This European Standard
-                  provides a set of requirements with which the development,
-                  deployment and maintenance of any safety-related software
-                  intended for railway control and protection applications
-                  shall comply. It defines requirements concerning
-                  organisational structure, the relationship between
-                  organisations and division of responsibility involved in
-                  the development, deployment and maintenanceactivities.}
-}
-@Misc{            doors,
-  title         = {IBM Engineering Requirements Management DOORS Family},
-  note          = {\url{https://www.ibm.com/us-en/marketplace/requirements-management}},
-  year          = 2019
+@Booklet{	  chervet:keycommand:2010,
+  author	= {Florent Chervet},
+  title		= {The free and open source keycommand package: key-value
+		  interface for commands and environments in {\LaTeX}.},
+  year		= 2010
 }
 
-@article{Regular-Sets-AFP,
-  author  = {Alexander Krauss and Tobias Nipkow},
-  title   = {Regular Sets and Expressions},
-  journal = {Archive of Formal Proofs},
-  month   = may,
-  year    = 2010,
-  note    = {\url{http://isa-afp.org/entries/Regular-Sets.html},
-            Formal proof development},
-  ISSN    = {2150-914x},
+@Book{		  knuth:texbook:1986,
+  author	= {Knuth, Donald E.},
+  title		= {The TeXbook},
+  year		= 1986,
+  isbn		= 0201134470,
+  publisher	= {Addison-Wesley Professional}
 }
 
-@article{Functional-Automata-AFP,
-  author  = {Tobias Nipkow},
-  title   = {Functional Automata},
-  journal = {Archive of Formal Proofs},
-  month   = mar,
-  year    = 2004,
-  note    = {\url{http://isa-afp.org/entries/Functional-Automata.html},
-            Formal proof development},
-  ISSN    = {2150-914x},
+@Book{		  mittelbach.ea:latex:1999,
+  author	= {Mittelbach, Frank and Goossens, Michel and Braams,
+		  Johannes and Carlisle, David and Rowley, Chris},
+  title		= {The LaTeX Companion},
+  year		= 2004,
+  edition	= {2nd},
+  publisher	= {Addison-Wesley Longman Publishing Co., Inc.},
+  address	= {Boston, MA, USA}
 }
 
-@Booklet{ kohm:koma-script:2019,
-  author={Markus Kohm},
-  title={{KOMA-Script}: a versatile {\LaTeXe{}} bundle},
-  year = 2019,
-}
-
-@Booklet{ wenzel:system-manual:2019,
-  author={Makarius Wenzel},
-  title={The Isabelle System Manual},
-  year = 2019
-}
-
-@Booklet{ chervet:keycommand:2010,
-  author={Florent Chervet},
-  title={The free and open source keycommand package: key-value interface 
-         for commands and environments in {\LaTeX}.},
-  year = 2010
-}
-
-@book{knuth:texbook:1986,
- author = {Knuth, Donald E.},
- title = {The TeXbook},
- year = {1986},
- isbn = {0201134470},
- publisher = {Addison-Wesley Professional},
-} 
-
-@book{mittelbach.ea:latex:1999,
- author = {Mittelbach, Frank and Goossens, Michel and Braams, Johannes and Carlisle, David and Rowley, Chris},
- title = {The LaTeX Companion (Tools and Techniques for Computer Typesetting)},
- year = {2004},
- isbn = {0201362996},
- edition = {2nd},
- publisher = {Addison-Wesley Longman Publishing Co., Inc.},
- address = {Boston, MA, USA},
-} 
-
-@book{ eijkhout:latex-cs:2012,
-  author={Victor Eijkhout},
-  title={The Computer Science of TeX and LaTeX},
-  year=2012,
+@Book{		  eijkhout:latex-cs:2012,
+  author	= {Victor Eijkhout},
+  title		= {The Computer Science of TeX and LaTeX},
+  year		= 2012,
 }
