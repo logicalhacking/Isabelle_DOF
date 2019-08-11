@@ -666,142 +666,234 @@ fun check_result_inv oid {is_monitor:bool} ctxt =
 
 
 section*["document-templates"::technical]\<open>Defining Document Templates\<close>
+subsection\<open>The Core Template\<close>
 
 text\<open>
-  Document-templates\index{document template} define the overall layout (page size, margins, fonts, 
+  Document-templates\bindex{document template} define the overall layout (page size, margins, fonts, 
   etc.) of the generated documents and are the the main technical means for implementing layout 
-  requirements that are, \eg, required by publishers or standardization bodies. Document-templates 
+  requirements that are, \eg, required by publishers or standardization bodies.   
+  The common structure of an \isadof document template looks as follows: 
 
-
-
-
-Current \isadof comes with a number of setups for the PDF generation, notably
-Springer LNCS, lipics, ..., as well as setupqs of technical reports this the present one.
-
-The question arises, what to do if \isadof has to be accoustomed to a new LaTeX style
-file configuration in order to generate PDF.
-\<close>
-text\<open> 
-In theory, this is simple - in practice, the efforts required
-depends mostly on two factors:
-
-\<^item> how compatible is the required LaTeX class with Isabelle's LateX 
- setup in general (e.g., does it work with an antique version 
- of \<open>comment.sty\<close> required by Isabelle)
-
-\<^item>  how much magic does the required LaTeX class wrt the title page
- information (author, affiliation). 
-
-\<^item>  which ontologies should be supported. While most ontologies are 
- generic, some only support a very specific subset of LaTeX 
- templates (classes).  For example, \<^theory_text>\<open>scholarly_paper\<close> does currently 
- \<^emph>\<open>only\<close> support \<open>llncs\<close>, \<open>rartcl\<close>, and \<open>lipics\<close>. 
-
-The general process as such is straight-forward:
-
-\<^enum> From the supported LaTeX classes, try to find the one that is 
-  most similar to the one that you want to support. For the sake
-  of the this example, let's assume this is llncs
-\<^enum> Use the template for this class (llncs) as starting point, i.e.,
-  \<^verbatim>\<open>cp document-generator/document-template/root-lncs.tex 
-   document-generator/document-template/root-eptcs.tex\<close>
-
-  The mandatory naming scheme for the templates is 
-
-      \<^verbatim>\<open>root-<TEMPLATE_NAME>.tex\<close>
-
-  That is to say that \<^verbatim>\<open><TEMPLATE_NAME>\<close> should be the name of the
-  new LaTeX class (all lowercase preferred) that will be used
-  in config files and also will be shown in the help text
-  shown by executing 
-
-      \<^verbatim>\<open>isabelle mkroot_DOF -h\<close>
-
-\<^enum> Edit the new template as necessary (using the provided 
-  example from the target class as reference):
-
-     \<^verbatim>\<open>vim document-generator/document-template/root-foo.tex\<close>
-
-  and do the needful.
-
-\<^enum> Install the new template:
-
-     \<^verbatim>\<open>./install\<close>
-
-  (If you have a working installation of the required AFP entries
-   and the Isabelle/DOF patch, you can use \<^verbatim>\<open>./install -s\<close>
-   which will \<^emph>\<open>ONLY\<close> install the \<^verbatim>\<open>LaTeX styles/templates\<close>, see 
-   \<^verbatim>\<open>./install -h)\<close>
-
-\<^enum> Now the new template should be available, you can check this  with 
- 
-     \<^verbatim>\<open>isabelle mkroot_DOF -h\<close>
-
-\<^enum> Create an "tiny/empty" Isabelle project using the ontology "core"
-  and test your template. If everything works, celebrate. If it does 
-  not work, understand what you need to change and continue 
-  with step 3. 
-
-  (of course, if the new class is not available in TeXLive, you need
-  to add them locally to the documents folder of your Isabelle 
-  project and, as usual, it needs to be registered in your ROOTS
-  file)
-
-\<^enum> If the ontologies that should be used together with this LaTeX
-  class do not require specific adaptions (e.g., CENELEC 50128), 
-  everything should work. If one of the required ontology LaTeX
-  setups only supports a subset of LaTeX classes (e.g., \<^theory_text>\<open>scholarly_paper\<close> 
-  due to the different setups for authors/affiliations blurb), 
-  you need to develop support for you new class in the ontology 
-  specific LaTeX styles, e.g., 
-  \<open>document-generator/latex/DOF-scholarly_paper.sty\<close>
-  (mandatory naming convention: \<open>DOF-<ONTOLOGY_NAME>.sty\<close>)
-
-\<^enum> After updating the ontology style (or styles), you need 
-  to install them (again, you might want to use ./install -s)
-  and test your setup with a paper configuration using 
-  your new LaTeX template and the required styles. In case
-  of errors, go back to step 7.
-
-\begin{ltx}
-\documentclass{article}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{isabelle}
+\begin{ltx}[escapechar=ë, numbers=left,numberstyle=\tiny,xleftmargin=5mm]
+\documentclass{article}        % The LaTeX-class of your template ë\label{lst:dc}ë  
+%% The following part is (mostly) required by Isabelle/DOF, do not modify
+\usepackage[T1]{fontenc}       % Font encoding
+\usepackage[utf8]{inputenc}    % UTF8 support
+\usepackage{isabelle}          % Required (by Isabelle)
 \usepackage{xcolor}
-\usepackage{isabellesym}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\IfFileExists{DOF-core.sty}{}{%
+\usepackage{isabellesym}       % Required (by Isabelle)
+\usepackage{amsmath}           % Used by some ontologies  
+\usepackage{amssymb}           % Strongly recommended (by Isabelle)  
+\bibliographystyle{abbrv}
+\IfFileExists{DOF-core.sty}{}{ % Required by Isabelle/DOF
   \PackageError{DOF-core}{Isabelle/DOF not installed. 
-    This is a Isabelle_DOF project. The document preparation requires
-    the Isabelle_DOF framework. Please obtain the framework by cloning
-    the Isabelle_DOF git repository, i.e.: 
-         "git clone https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF"
-    You can install the framework as follows:
-         "cd Isabelle_DOF/document-generator && ./install"}{%
+    This is a Isabelle_DOF project. The doëëcument preparation requires
+    the Isabelle_DOF framework. }{%
     For further help, see 
     https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF}
 }
-\input{ontologies}
-\IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
-\usepackage{graphicx}
-\usepackage{hyperref}
-\urlstyle{rm}
-\isabellestyle{it}
+\input{ontologies}             % This will include the document specific 
+                               % ontologies from isadof.cfg
+\IfFileExists{preamble.tex}    % Include preamble.tex, if it exists.
+             {\input{preamble.tex}}{}  
+\usepackage{graphicx}          % Required for images. 
 \usepackage[caption]{subfig}
 \usepackage[size=footnotesize]{caption}
+\usepackage{hyperref}          % Required by Isabelle/DOF
 
+%% Begin of template specific configuration ë\label{lst:config-start}ë
+\urlstyle{rm}
+\isabellestyle{it}     ë\label{lst:config-end}ë
+
+%% Main document, do not modify
 \begin{document}
 \maketitle
 \input{session}
-% optional bibliography
-\IfFileExists{root.bib}{%
-  \bibliographystyle{abbrv}
-  \bibliography{root}
-}{}
+\IfFileExists{root.bib}{\bibliography{root}}{}
 \end{document}
 \end{ltx}
+
+  If a new layout is already supported by a \LaTeX-class, then developing basic support for it 
+  is straight forwards: after reading the authors guidelines of the new template, 
+  Developing basic support for a new document template is straight forwards In most cases, it is 
+  sufficient to replace the document class in \autoref{lst:dc} of the template and add the 
+  \LaTeX-packages that are (strictly) required by the used \LaTeX-setup. In general, we recommend
+  to only add \LaTeX-packages that are always necessary fro this particular template, as loading
+  packages in the templates minimizes the freedom users have by adapting the \path{preample.tex}.
+  Moreover, you might want to add/modify the template specific configuration 
+  (\autoref{lst:config-start}-\ref{lst:config-end}). The new template should be stored in 
+  \path{src/document-templates} and its file name should start with the prefix \path{root-}. After
+  adding a new template, call the \inlinebash{install} script (see @{docref "infrastructure"}
+\<close>
+
+subsection\<open>Tips, Tricks, and Known Limitations\<close>
+text\<open>
+  For readers with basic knowledge of \LaTeX{}, adapting existing templates and ontologies) to 
+  support new layouts should be rather straight forward, there are several things to consider that 
+  we discuss in this section.
+\<close>
+
+subsubsection\<open>Getting Started\<close>
+text\<open>
+  In general, we recommend to create a test project (\eg, using \inlinebash|isabelle mkroot_DOF|)
+  to develop new document templates or ontology representations. The default setup of the \isadof
+  build system generated a \path{output/document} directory with a self-contained \LaTeX-setup. In 
+  this directory, you can directly use \LaTeX on the main file, called \path{root.tex}:
+
+\begin{bash}
+ë\prompt{MyProject/output/document}ë pdflatex root.tex
+\end{bash}
+
+  This allows you to develop and check your \LaTeX-setup without the overhead of running 
+  \inlinebash|isabelle build| after each change of your template (or ontology-style). Note that 
+  the content of the \path{output} directory is overwritten by executing 
+  \inlinebash|isabelle build|.
+\<close>
+
+subsubsection\<open>Truncated Warning and Error Messages\<close>
+text\<open>
+  By default, \LaTeX{} cuts of many warning or error messages after 79 characters. Due to the 
+  use of full-qualified names in \isadof, this can often result in important information being 
+  cut off. Thus, it can be very helpful to configure \LaTeX{} in such a way that it prints 
+  long error or warning messages. This can easily be done on the command line for individual 
+  \LaTeX{} invocations: 
+
+\begin{bash}
+ë\prompt{MyProject/output/document}ë max_print_line=200 error_line=200 half_error_line=100  pdflatex root.tex
+\end{bash}
+\<close>
+
+subsubsection\<open>Deferred Declaration of Information\<close>
+text\<open>
+  During document generation, sometimes, information needs to be printed prior to its 
+  declaration in a \isadof theory. This violation the declaration-before-use-principle
+  requires that information is written into an auxiliary file during the first run of \LaTeX{}
+  so that the information is available at further runs of \LaTeX{}. While, on the one hand, 
+  this is a standard process (\eg, used for updating references), implementing it correctly
+  requires a solid understanding of \LaTeX's expansion mechanism. In this context, the recently 
+  introduced \inlineltx|\expanded{}|-primitive 
+  (see \url{https://www.texdev.net/2018/12/06/a-new-primitive-expanded}) is particularly useful. 
+  Examples of its use can be found, \eg, in the ontology-styles 
+  \path{ontologies/scholarly_paper/DOF-scholarly_paper.sty} or 
+  \path{ontologies/CENELEC_50128/DOF-CENELEC_50128.sty}.  For details about the expansion mechanism 
+  in general, we refer the reader to the \LaTeX{} literature (\eg,~@{cite "knuth:texbook:1986"
+  and "mittelbach.ea:latex:1999" and "eijkhout:latex-cs:2012"}).  
+\<close>
+
+
+subsubsection\<open>Authors and Affiliation Information\<close>
+text\<open>
+  In the context of academic papers, the defining the representations for the author and
+  affiliation information is particularly challenges as, firstly, they inherently are breaking
+  the declare-before-use-principle and, secondly, each publisher uses a different \LaTeX-setup 
+  for their declaration. Moreover, the mapping from the ontological modeling to the document
+  representation might also need to bridge the gap between different common modeling styles of 
+  authors and their affiliations, namely: affiliations as attributes of authors vs. authors and 
+  affiliations both as entities with a many-to-many relationship.
+
+  The ontology representation
+  \path{ontologies/scholarly_paper/DOF-scholarly_paper.sty} contains an example that, firstly, 
+  shows how to write the author and affiliation information into the auxiliary file for re-use 
+  in the next \LaTeX-run and, secondly, shows how to collect the author and affiliation 
+  information into an \inlineltx|\author| and a \inlineltx|\institution| statement, each of 
+  which containing the information for all authors. The collection of the author information 
+  is provided by the following \LaTeX-code:
+
+\begin{ltx}
+\def\dof@author{}%
+\newcommand{\DOFauthor}{\author{\dof@author}}
+\AtBeginDocument{\DOFauthor}
+\def\leftadd#1#2{\expandafter\leftaddaux\expandafter{#1}{#2}{#1}}
+\def\leftaddaux#1#2#3{\gdef#3{#1#2}}
+\newcounter{dof@cnt@author}
+\newcommand{\addauthor}[1]{%
+  \ifthenelse{\equal{\dof@author}{}}{%
+    \gdef\dof@author{#1}%
+  }{%
+    \leftadd\dof@author{\protect\and #1}%
+  }
+}
+\end{ltx}
+
+The new command \inlineltx|\addauthor| and a similarly defined command \inlineltx|\addaffiliation|
+can now be used in the definition of the representation of the concept 
+\inlineisar|text.scholarly_paper.author|, which writes the collected information in the 
+job's aux-file. The intermediate step of writing this information into the job's aux-file is necessary,
+as the author and affiliation information is required right at the begin of the document 
+(\ie, when \LaTeX's \inlineltx|\maketitle| is invoked) while  \isadof allows to define authors at 
+any place within a document:
+
+\begin{ltx}
+\provideisadof{text.scholarly_paper.author}%
+[label=,type=%
+,scholarly_paper.author.email=%
+,scholarly_paper.author.affiliation=%
+,scholarly_paper.author.orcid=%
+,scholarly_paper.author.http_site=%
+][1]{%
+  \stepcounter{dof@cnt@author}
+  \def\dof@a{\commandkey{scholarly_paper.author.affiliation}}
+  \ifthenelse{\equal{\commandkey{scholarly_paper.author.orcid}}{}}{%
+    \immediate\write\@auxout%
+       {\noexpand\addauthor{#1\noexpand\inst{\thedof@cnt@author}}}%
+  }{%
+    \immediate\write\@auxout%
+        {\noexpand\addauthor{#1\noexpand%
+            \inst{\thedof@cnt@author}%
+                 \orcidID{\commandkey{scholarly_paper.author.orcid}}}}%
+  }
+  \protected@write\@auxout{}{%
+               \string\addaffiliation{\dof@a\\\string\email{%
+                    \commandkey{scholarly_paper.author.email}}}}%
+}
+\end{ltx}
+
+Finally, the collected information is used in the  \inlineltx|\author| command using the 
+\inlineltx|AtBeginDocument|-hook:
+
+\begin{ltx}
+\newcommand{\DOFauthor}{\author{\dof@author}}
+\AtBeginDocument{%
+  \DOFauthor
+}
+
+\end{ltx}
+
+
+\<close>
+
+subsubsection\<open>Restricting the Use of Ontologies to Specific Templates\<close>
+
+text\<open>
+  As ontology representations might rely on features only provided by certain templates 
+  (\LaTeX-classes), authors of ontology representations might restrict their use to 
+  specific classes. This can, \eg, be done using the \inlineltx|\@ifclassloaded{}| command:
+
+\begin{ltx}
+\@ifclassloaded{llncs}{}%
+{% LLNCS class not loaded
+    \PackageError{DOF-scholarly_paper}
+    {Scholarly Paper only supports LNCS as document class.}{}\stop%
+}
+\end{ltx}
+
+  For a real-world example testing for multiple classes, see 
+  \path{ontologies/scholarly_paper/DOF-scholarly_paper.sty}):
+
+  We encourage this clear and machine-checkable enforcement of restrictions while, at the same
+  time, we also encourage to provide a package option to overwrite them. The latter allows 
+  inherited ontologies to overwrite these restrictions and, therefore, to provide also support
+  for additional document templates. For example, the ontology \inlineisar|technical_report| 
+  extends the \inlineisar|scholarly_paper| ontology and its \LaTeX supports provides support
+  for the \inlineltx|scrrept|-class which is not supported by the \LaTeX support for 
+  \inlineisar|scholarly_paper|.
+\<close>
+
+subsubsection\<open>Outdated Version of \path{comment.sty}\<close>
+text\<open>
+  Isabelle's \LaTeX-setup relies on an ancient version of \path{comment.sty} that, moreover, 
+  is used in plain\TeX-mode. This is known to cause issues with some modern \LaTeX-classes
+  such as LPICS. Such a conflict might require the help of an Isabelle wizard.
 \<close>
 
 
