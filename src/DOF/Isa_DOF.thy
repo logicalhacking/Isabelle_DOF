@@ -39,7 +39,7 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            "lemma*" "theorem*" (* -- intended replacement of Isar std commands.*) 
            "assert*"  ::thy_decl
 
-  and      "print_doc_classes" "print_doc_items" "gen_sty_template"  "check_doc_global" :: diag
+  and      "print_doc_classes" "print_doc_items" "check_doc_global" :: diag
            
   
 begin
@@ -633,82 +633,6 @@ val _ =
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>check_doc_global\<close> "check global document consistency"
     (Parse.opt_bang >> (fn b => Toplevel.keep (check_doc_global b o Toplevel.context_of)));
-
-
-
-fun write_ontology_latex_sty_template thy = 
-    let 
-        (* 
-        val raw_name = Context.theory_long_name thy
-
-        val curr_thy_name = if String.isPrefix "Draft." raw_name 
-                   then String.substring(raw_name, 6, (String.size raw_name)-6)
-                   else error "Not in ontology definition context"
-        *)
-        val curr_thy_name = Context.theory_name thy
-        val {docobj_tab={tab = x, ...},docclass_tab,...}= get_data_global thy;
-
-        fun toStringLaTeXNewKeyCommand env long_name =
-            "\\expandafter\\newkeycommand\\csname"^" "^"isaDof."^env^"."^long_name^"\\endcsname%\n" 
-        
-        fun toStringMetaArgs true attr_long_names = 
-               enclose "[" "][1]" (commas ("label=,type=%\n" :: attr_long_names))
-           |toStringMetaArgs false attr_long_names = 
-               enclose "[" "][1]" (commas attr_long_names) 
-        
-        fun toStringDocItemBody env =
-            enclose "{%\n\\isamarkupfalse\\isamarkup" 
-                    "{#1}\\label{\\commandkey{label}}\\isamarkuptrue%\n}\n"
-                    env
-                    
-        fun toStringDocItemCommand env long_name attr_long_names = 
-            toStringLaTeXNewKeyCommand env long_name ^
-            toStringMetaArgs true attr_long_names ^
-            toStringDocItemBody env ^"\n"
-        
-        fun toStringDocItemLabel long_name attr_long_names = 
-            toStringLaTeXNewKeyCommand "Label" long_name ^
-            toStringMetaArgs false attr_long_names ^
-            "{%\n\\autoref{#1}\n}\n"
-        
-        fun toStringDocItemRef long_name label attr_long_namesNvalues = 
-            "\\isaDof.Label." ^ long_name ^
-            enclose "[" "]" (commas attr_long_namesNvalues) ^
-            enclose "{" "}" label
-        
-        fun write_file thy filename content =
-            let 
-               val filename = Path.explode filename
-               val master_dir = Resources.master_directory thy
-               val abs_filename = if (Path.is_absolute filename) 
-                                  then filename 
-                                  else Path.append master_dir filename
-            in
-              File.write (abs_filename) content
-              handle (IO.Io{name=name,...}) 
-                     => warning ("Could not write \""^(name)^"\".")
-            end
-
-        fun  write_attr (n, ty, _) = YXML.content_of(Binding.print n)^ "=\n"
-
-        fun write_class (n, {attribute_decl,id,inherits_from,name,params,thy_name,rex,rejectS}) =
-            if curr_thy_name = thy_name then
-                   toStringDocItemCommand "section" n (map write_attr attribute_decl) ^
-                   toStringDocItemCommand "text" n (map write_attr attribute_decl) ^
-                   toStringDocItemLabel n (map write_attr attribute_decl)
-                   (* or parameterising with "env" ? ? ?*)
-            else ""
-        val content = String.concat(map write_class (Symtab.dest docclass_tab))
-        (* val _ = writeln content  -- for interactive testing only, breaks LaTeX compilation *) 
-    in 
-        warning("LaTeX Style file  generation not supported.")
-        (*  write_file thy ("Isa-DOF."^curr_thy_name^".template.sty") content *)
-    end
-
-
-val _ =
-  Outer_Syntax.command \<^command_keyword>\<open>gen_sty_template\<close> "generate a  LaTeX style template"
-    (Parse.opt_bang>>(fn b => Toplevel.keep(write_ontology_latex_sty_template o Toplevel.theory_of)));
 
 val (strict_monitor_checking, strict_monitor_checking_setup) 
      = Attrib.config_bool \<^binding>\<open>strict_monitor_checking\<close> (K false);
