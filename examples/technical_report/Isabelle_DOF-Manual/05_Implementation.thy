@@ -183,7 +183,7 @@ fun check_result_inv oid {is_monitor:bool} ctxt =
       val prop = compute_attr_access ctxt "property" oid <@>{here} <@>{here} 
       val tS = HOLogic.dest_list prop
   in  case kind_term of
-       @{term "proof"} => if not(null tS) then true
+       <@>{term "proof"} => if not(null tS) then true
                           else error("class result invariant violation") 
       | _ => false
   end
@@ -191,19 +191,11 @@ fun check_result_inv oid {is_monitor:bool} ctxt =
                                 "tiny_cert.result" check_result_inv)
 \end{sml}
 
-The \inlinesml{setup}-command (last line) registers the
-\inlineisar+check_result_inv+ function into the \isadof kernel, which
-activates any creation or modification of an instance of
-\inlineisar+result+.  We cannot replace \inlineisar+compute_attr_access+ 
-by the corresponding antiquotation
-\inlineisar+<@>{docitem_value kind::oid}+, since \inlineisar+oid+ is
-bound to a variable here and can therefore not be statically expanded.
-
-Isabelle's code generator can in principle generate class invariant code 
-from a high-level syntax. Since class-invariant checking can result in an
-efficiency problem ---they are checked on any edit--- and since invariant 
-programming involves a deeper understanding of ontology modeling and the
-\isadof implementation, we backed off from using this technique so far.
+  The \inlinesml{setup}-command (last line) registers the \inlineisar+check_result_inv+ function 
+  into the \isadof kernel, which activates any creation or modification of an instance of
+  \inlineisar+result+.  We cannot replace \inlineisar+compute_attr_access+ by the corresponding 
+  antiquotation \inlineisar+<@>{docitem_value kind::oid}+, since \inlineisar+oid+ is
+  bound to a variable here and can therefore not be statically expanded.
 \<close>
 
 section\<open>Implementing Monitors\<close>
