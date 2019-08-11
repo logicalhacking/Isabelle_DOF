@@ -155,30 +155,27 @@ text\<Open>as defined in <@>{docitem \<Open>d1\<Close>} ...\<Close>
 
 section\<open>Implementing Second-level Type-Checking\<close>
 text\<open>
-On expressions for attribute values, for which we chose to use HOL syntax
-to avoid that users need to learn another syntax, we implemented
-an own pass over type-checked terms. Stored in the late-binding table
-\inlineisar+ISA_transformer_tab+, we register for each inner-syntax-annotation (ISA's),
-a function of type
+  On expressions for attribute values, for which we chose to use HOL syntax to avoid that users 
+  need to learn another syntax, we implemented an own pass over type-checked terms. Stored in the 
+  late-binding table \inlineisar+ISA_transformer_tab+, we register for each inner-syntax-annotation 
+  (ISA's), a function of type
 
 \begin{sml}
    theory -> term * typ * Position.T -> term option
 \end{sml}
 
-Executed in a second pass of term parsing, ISA's may just return
-\inlineisar+None+. This is adequate for ISA's just performing some checking in
-the logical context \inlineisar+theory+; ISA's of this kind report errors 
-by exceptions. In contrast, \emph{transforming} ISA's will yield a term; this
-is adequate, for example, by replacing a string-reference to some term denoted by it.
-This late-binding table is also used to generate standard
-inner-syntax-antiquotations from a \inlineisar+doc_class+.
+  Executed in a second pass of term parsing, ISA's may just return \inlineisar+None+. This is 
+  adequate for ISA's just performing some checking in the logical context \inlineisar+theory+; 
+  ISA's of this kind report errors  by exceptions. In contrast, \<^emph>\<open>transforming\<close> ISA's will 
+  yield a term; this is adequate, for example, by replacing a string-reference to some term denoted 
+  by it. This late-binding table is also used to generate standard inner-syntax-antiquotations from 
+  a \inlineisar+doc_class+.
 \<close>
 
 section\<open>Programming Class Invariants\<close>
 text\<open>
-For the moment, there is no high-level syntax for the definition of
-class invariants. A formulation, in SML, of the first class-invariant
-in \autoref{sec:class_inv} is straight-forward:
+  For the moment, there is no high-level syntax for the definition of class invariants. A 
+  formulation, in SML, of the first class-invariant in @{docref "sec:class_inv"} is straight-forward:
 
 \begin{sml}
 fun check_result_inv oid {is_monitor:bool} ctxt =
