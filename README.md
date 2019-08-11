@@ -1,8 +1,8 @@
 # [Isabelle/DOF](https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF): Document Preparation Setup
 
-Isabelle/DOF is a novel Document Ontology Framework on top of
-Isabelle. Isabelle/DOF allows for both conventional typesetting as
-well as formal development.
+Isabelle/DOF is a novel Document Ontology Framework on top of Isabelle.
+Isabelle/DOF allows for both conventional typesetting as well as formal
+development.
 
 ## Pre-requisites
 
@@ -17,8 +17,6 @@ Isabelle/DOF has two major pre-requisites:
   for installing TeXLive.
 
 ## Installation
-
-### Quick Installation Guide
 
 In most case, the DOF-plugin can be installed as follows:
 
@@ -69,17 +67,30 @@ editor.
 
 The DOF-plugin provides an alternative to Isabelle's ``mkroot`` command.
 Isabelle projects that use DOF need to be created using
-```console 
+
+```console
 foo@bar:~$ isabelle mkroot_DOF
 ```
+
 The ``mkroot_DOF`` command takes the same parameter as the standard
 ``mkroot`` command of Isabelle. Thereafter, the normal Isabelle
 command for building documents can be used.
 
 Using the ``-o`` option, different ontology setups can be
 selected and using the ``-t`` option, different LaTeX setups 
-can be selected (use ``-h`` to obtain a list of all installed setups):
-```console 
+can be selected. For example,
+
+```console
+foo@bar:~$ isabelle mkroot_DOF -o scholarly_paper -t scrartcl
+```
+
+creates a setup using the scholarly_paper ontology and the article
+class from the KOMA-Script bundle.
+
+The help (option ``-h``) show a list of all supported ontologies and
+document templates:
+
+```console
 foo@bar:~$ isabelle mkroot_DOF -h
 
 Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
@@ -102,12 +113,6 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
 
   Prepare session root DIR (default: current directory).
 ```
-For example,
-```console 
-foo@bar:~$ isabelle mkroot_DOF -o scholarly_paper -t scrartcl
-```
-creates a setup using the scholarly_paper ontology and the article
-class from the KOMA-Script bundle.
 
 ## Team
 
@@ -143,6 +148,5 @@ SPDX-License-Identifier: BSD-2-Clause
 
 ## Master Repository
 
-The master git repository for this project is hosted 
+The master git repository for this project is hosted
 <https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF>.
-
