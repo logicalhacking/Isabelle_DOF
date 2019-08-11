@@ -41,35 +41,6 @@ built-in help:
 foo@bar:~$ ./install --help
 ```
 
-### What The Installer Actually Does
-
-The installer will
-
-* apply a patch to Isabelle that is necessary to use Isabelle/DOF.
-  If this patch installations fails, you need to manually replace
-  the file ``Isabelle2019/src/Pure/Thy/thy_output.ML`` in the Isabelle
-  distribution with the file ``src/patches/thy_output.ML`` from the  
-  Isabelle/DOF distribution:
-
-        cp patches/thy_output.ML `isabelle getenv -b ISABELLE_HOME`/src/Pure/Thy/
-
-* install required entries from the [AFP](https://www.isa-afp.org). If this
-  installations fails, you need to manually install the AFP for Isabelle 2019 as follows:
-  Download the [AFP for Isabelle 2019](https://www.isa-afp.org/release/afp-2019-06-17.tar.gz)
-  and follow the [instructions for installing the AFP as Isabelle 
-  component](https://www.isa-afp.org/using.html). If you have extracted
-  the AFP archive into the directory to `/home/myself/afp`, you should
-  run the following command to make the AFP session `ROOTS` available to
-  Isabelle:
-
-        echo "/home/myself/afp/thys" >> ~/.isabelle/Isabelle2019/ROOTS
-
-* registers Isabelle/DOF as Isabelle component
-
-* install the Isabelle/DOF-plugin into the Isabelle user directory
-  (the exact location depends on the Isabelle version).
-* check that the AFP has been installed successfully.
-
 ## Usage
 
 ### Opening an Example
