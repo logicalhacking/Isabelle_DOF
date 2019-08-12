@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Copyright (c) 2018-2019 The University of Sheffield.
 #               2019-2019 The University of Exeter. 
-#               2018-2019 The University of Paris-Sud. 
+#               2018-2019 The University of Paris-Saclay. 
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,12 +30,8 @@
 #set -e
 shopt -s nocasematch
 
-# Global configuration  
-ISABELLE_VERSION="Isabelle2018: August 2018"
-ISABELLE_URL="https://isabelle.in.tum.de/website-Isabelle2018/"
-
-AFP_DATE="afp-2019-06-04"
-AFP_URL="https://sourceforge.net/projects/afp/files/afp-Isabelle2018/"$AFP_DATE".tar.gz"
+# get global configuration  
+source .config
 
 print_help()
 {
@@ -47,8 +43,8 @@ print_help()
     echo "  --isabelle, -i isabelle   isabelle command used for installation"
     echo "                            (default: $ISABELLE)"
     echo "  --skip-patch-and-afp, -s  skip installation of Isabelle/DOF patch for" 
-    echo "                            Isabelle and required AFP entries. USE AT"
-    echo "                            YOUR OWN RISK (default: $SKIP)"
+    echo "                            Isabelle and required AFP entries. "
+    echo "                            USE AT YOUR OWN RISK (default: $SKIP)"
 }
 
 
@@ -83,6 +79,34 @@ check_isabelle_version() {
      else
         echo "  Success: found supported Isabelle version ($ISABELLE_VERSION)"
     fi
+}
+
+check_pdftex() {
+    echo "* Checking (La)TeX installation:"
+    OLDDIR=`pwd`
+    DIR=`mktemp -d`
+    cd $DIR; 
+    pdftex -interaction=nonstopmode \\expanded{Success}\\end > /dev/null
+    if [ $? -eq 0 ]; then
+        echo "  Success: pdftex supports \\expanded{} primitive."
+    else 
+        cd $OLDDIR
+        echo "  WARNING:"
+        echo "    The version of pdf(La)TeX you are using is outdated (and does"
+        echo "    not support the \\expanded primitive). It is not supported by the"
+        echo "    current version of Isabelle/DOF. Please install a supported TeX"
+        echo "    distribution (e.g., TeXLive 2019 or later)."
+        echo 
+        read -p "    Still continue (y/N)? " -n 1 -r
+        echo 
+        if [[ $REPLY =~ ^[Yy]$ ]];
+        then 
+            echo "    Continuing installation on your OWN risk."
+        else
+            exit_error
+        fi
+    fi
+    cd $OLDDIR
 }
 
 check_afp_entries() {
@@ -125,7 +149,7 @@ check_afp_entries() {
 
 check_isa_dof_patch() {
     echo "* Check availability of Isabelle/DOF patch:"
-    src="patches/thy_output.ML"
+    src="src/patches/thy_output.ML"
     dst="$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"
      
     if command -v cmp > /dev/null 2>&1 && cmp -s "$src" "$dst" ; then
@@ -179,28 +203,41 @@ install_and_register(){
     DIR="$ISABELLE_HOME_USER/DOF/document-template"
     echo "  - Installing document templates in $DIR"
     mkdir -p "$DIR"
-    cp $GEN_DIR/document-template/* "$DIR"
+    cp $GEN_DIR/scripts/* "$DIR"
+    cp $GEN_DIR/document-templates/* "$DIR"
+    cp $GEN_DIR/DOF/*/*.sty "$DIR"
+    
+    ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/^Isabelle\(.*\):.*/\1/'`
+    sed -i -e "s|%%% CONFIG %%%| \
+      \\\\renewcommand{\\\\dof@isabelleversion}{$ISABELLE_SHORT_VERSION}\n \
+      \\\\renewcommand{\\\\isabellefullversion}{$ISABELLE_VERSION\\\\xspace}\n \
+      \\\\renewcommand{\\\\dof@version}{$DOF_VERSION}\n \
+      \\\\renewcommand{\\\\isabelleurl}{$ISABELLE_URL}\n \
+      \\\\renewcommand{\\\\dofurl}{$DOF_URL}\n \
+      \\\\renewcommand{\\\\dof@artifacturl}{$DOF_ARTIFACT_URL}|" \
+      "$DIR/DOF-core.sty"
 
     DIR="$ISABELLE_HOME_USER/DOF/latex"
     echo "  - Installing LaTeX styles in $DIR"
     mkdir -p "$DIR"
-    cp $GEN_DIR/latex/*.sty "$DIR"
-
+    cp $GEN_DIR/ontologies/*/*.sty "$DIR"
+    
     DIR="$ISABELLE_HOME_USER/etc"
     echo "  - Registering Isabelle/DOF"
     mkdir -p "$DIR"
     if [[ $ISABELLE_TOOLS = *DOF* ]]; then
         echo "    * Tools already registered in $DIR/settings"
     else
-        echo "    * Registering tools in Tools already registered in $DIR/settings"
+        echo "    * Registering tools in $DIR/settings"
         echo 'ISABELLE_TOOLS=$ISABELLE_TOOLS:$ISABELLE_HOME_USER/DOF/Tools' \
              >> "$DIR/settings"
     fi
+    grep -q $PWD\$ $ISABELLE_HOME_USER/ROOTS || echo "$PWD" >> $ISABELLE_HOME_USER/ROOTS 
 }
 
 
 ISABELLE=`which isabelle`
-
+SKIP="false"
 while [ $# -gt 0 ]
 do
     case "$1" in
@@ -220,26 +257,27 @@ done
 
 
 ACTUAL_ISABELLE_VERSION=`$ISABELLE version`
-GEN_DIR=document-generator
+GEN_DIR=src
 PROG=`echo $0 | sed 's|.*/||'`;
-SKIP="false"
 VARS=`$ISABELLE getenv ISABELLE_HOME_USER ISABELLE_HOME ISABELLE_TOOLS`
 for i in $VARS; do 
 	export "$i"
 done
 
+echo ""
 echo "Isabelle/DOF Installer"
 echo "======================"
 check_isabelle_version
+check_pdftex
 if [ "$SKIP" = "true" ]; then
-  echo "  Warning: skipping installation of Isabelle patch and AFP entries."
+  echo "* Warning: skipping installation of Isabelle patch and AFP entries."
 else
   check_isa_dof_patch
   check_afp_entries
 fi
 check_old_installation
 install_and_register
-echo "* Installation successful. Enjoy Isabelle/DOF, you can now build the session"
+echo "* Installation successful. Enjoy Isabelle/DOF, you can build the session"
 echo "  Isabelle_DOF and all example documents by executing:"
 echo "  $ISABELLE build -D ."
 exit 0

@@ -1,8 +1,9 @@
-session "TR_mycommentedisabelle" = "Isabelle_DOF" +
+session "TR_MyCommentedIsabelle" = "Isabelle_DOF" +
   options [document = pdf, document_output = "output",quick_and_dirty = true]
   theories
-    "MyCommentedIsabelle"
+    "TR_MyCommentedIsabelle"
   document_files
+    "root.bib"
     "isadof.cfg"
     "preamble.tex"
     "prooftree.sty"

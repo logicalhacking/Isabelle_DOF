@@ -1,0 +1,115 @@
+%% Copyright (c) 2019 University of Exeter
+%%               2018-2019 University of Paris-Saclay
+%%               2018-2019 The University of Sheffield
+%%
+%% License:
+%%   This program can be redistributed and/or modified under the terms
+%%   of the LaTeX Project Public License Distributed from CTAN
+%%   archives in directory macros/latex/base/lppl.txt; either
+%%   version 1 of the License, or any later version.
+%%   OR
+%%   The 2-clause BSD-style license.
+%%  
+%%   SPDX-License-Identifier: LPPL-1
+
+%% Warning: Do Not Edit!
+%% =====================
+%% This is the root file for the Isabelle/DOF using the scrreprt class with 
+%% as "modern" layout that is more common to technical standardisation 
+%% documents (e.g. using sans serif fonts).
+%%
+%% All customization and/or additional packages should be added to the file
+%% preamble.tex.
+
+\RequirePackage{ifvtex}
+\documentclass[fontsize=11pt,paper=a4,open=right,twoside,abstract=true]{scrreprt}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp}
+\bibliographystyle{abbrvnat}
+\usepackage[varqu,varl]{zi4}% inconsolata typewriter
+\usepackage{amsmath,amsthm}
+\usepackage{newtxsf}
+\renewcommand\familydefault{\sfdefault}
+\usepackage{xcolor}
+\colorlet{DOFsectioncolor}{blue!60!black}
+\addtokomafont{chapterentrypagenumber}{\color{DOFsectioncolor}}
+\addtokomafont{chapterentry}{\color{DOFsectioncolor}}
+\addtokomafont{title}{\color{DOFsectioncolor}\bfseries}
+\addtokomafont{chapter}{\color{DOFsectioncolor}\bfseries}
+\addtokomafont{section}{\color{DOFsectioncolor}}
+\addtokomafont{subsection}{\color{DOFsectioncolor}}
+\addtokomafont{subsubsection}{\color{DOFsectioncolor}}
+\addtokomafont{paragraph}{\color{DOFsectioncolor}}
+\addtokomafont{subparagraph}{\color{DOFsectioncolor}}
+
+\usepackage[english]{babel}
+\RequirePackage[caption]{subfig}
+\usepackage{isabelle}
+\usepackage{isabellesym}
+\renewcommand{\isastyletext}{\normalsize\normalfont\sffamily}
+\renewcommand{\isastyletxt}{\normalfont\sffamily}
+\renewcommand{\isastylecmt}{\normalfont\sffamily}
+\IfFileExists{DOF-core.sty}{}{%
+  \PackageError{DOF-core}{Isabelle/DOF not installed. 
+    This is a Isabelle_DOF project. The document preparation requires
+    the Isabelle_DOF framework. Please obtain the framework by cloning
+    the Isabelle_DOF git repository, i.e.: 
+         "git clone https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF"
+    You can install the framework as follows:
+         "cd Isabelle_DOF/document-generator && ./install"}{%
+    For further help, see https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF}
+}
+\input{ontologies}
+\IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[numbers, sort&compress, sectionbib]{natbib}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\setcounter{tocdepth}{2} 
+\hypersetup{%
+   bookmarksdepth=3
+  ,pdfpagelabels
+  ,pageanchor=true
+  ,bookmarksnumbered
+  ,plainpages=false
+} % more detailed digital TOC (aka bookmarks)
+\sloppy
+\allowdisplaybreaks[4]
+\urlstyle{sf}
+\isabellestyle{it}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Overrides the (rightfully issued) warning by Koma Script that \rm
+%%% etc. should not be used (they are deprecated since more than a
+%%% decade)
+  \DeclareOldFontCommand{\rm}{\normalfont\rmfamily}{\mathrm}
+  \DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
+  \DeclareOldFontCommand{\tt}{\normalfont\ttfamily}{\mathtt}
+  \DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
+  \DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newenvironment{frontmatter}{}{}
+
+\begin{document}
+\renewcommand{\chapterautorefname}{Chapter}
+\renewcommand{\sectionautorefname}{Section}
+\renewcommand{\subsectionautorefname}{Section}
+\renewcommand{\subsubsectionautorefname}{Section}
+\newcommand{\subtableautorefname}{\tableautorefname}
+\newcommand{\subfigureautorefname}{\figureautorefname}
+\begin{frontmatter}
+\maketitle
+\tableofcontents
+\end{frontmatter}
+\input{session}
+% optional bibliography
+\IfFileExists{root.bib}{%
+    \bibliography{root}
+}{}
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

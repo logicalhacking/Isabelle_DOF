@@ -10,7 +10,7 @@ pipeline {
             }
         }
         stage('Check Docker') {
-            when { changeset "patches/*" } 
+            when { changeset "src/patches/*" } 
             steps {
                 sh 'cp patches/thy_output.ML .ci/isabelle4isadof/'
                 sh 'docker build --no-cache -t logicalhacking:isabelle4dof-2018 .ci/isabelle4isadof'
@@ -19,6 +19,7 @@ pipeline {
         }
         stage('Build Isabelle/DOF') {
             steps {
+                sh 'find -type d -name "output" -exec rm -rf {} \\; || true'
                 sh 'docker run -v $PWD:/DOF logicalhacking:isabelle4dof-2018  sh -c "cd /DOF && ./install && isabelle build -D ."'
             } 
 	}
