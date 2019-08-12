@@ -67,7 +67,7 @@ text\<open>
   should install all required \LaTeX{} packages:
 
 \begin{bash}
-ë\prompt{}ë sudo aptitute install texlive-latex-extra texlive-fonts-extra
+ë\prompt{}ë sudo aptitude install texlive-latex-extra texlive-fonts-extra
 \end{bash}
 
   Please check that this, indeed, installs a version of \pdftex{} that supports the 
