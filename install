@@ -35,7 +35,7 @@ source .config
 
 print_help()
 {
-    echo "Usage: $PROG [OPTION] "
+    echo "Usage: install [OPTION] "
     echo ""
     echo "Run ..."
     echo ""
