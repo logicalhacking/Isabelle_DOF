@@ -214,7 +214,7 @@ install_and_register(){
       \\\\renewcommand{\\\\dof@version}{$DOF_VERSION} \
       \\\\renewcommand{\\\\isabelleurl}{$ISABELLE_URL} \
       \\\\renewcommand{\\\\dofurl}{$DOF_URL} \
-      \\\\renewcommand{\\\\dof@artifacturl}{$DOF_ARTIFACT_URL}|" \
+      \\\\renewcommand{\\\\dof@artifacturl}{https://$DOF_ARTIFACT_HOST/$DOF_ARTIFACT_DIR}|" \
       "$DIR/DOF-core.sty"
 
     DIR="$ISABELLE_HOME_USER/DOF/latex"
