@@ -207,7 +207,7 @@ install_and_register(){
     cp $GEN_DIR/document-templates/* "$DIR"
     cp $GEN_DIR/DOF/*/*.sty "$DIR"
     
-    ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/^Isabelle\(.*\):.*/\1/'`
+    ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/:.*$//'`
     sed -i -e "s|%%% CONFIG %%%| \
       \\\\renewcommand{\\\\dof@isabelleversion}{$ISABELLE_SHORT_VERSION} \
       \\\\renewcommand{\\\\isabellefullversion}{$ISABELLE_VERSION\\\\xspace} \
