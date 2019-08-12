@@ -35,7 +35,7 @@ source .config
 
 print_help()
 {
-    echo "Usage: $PROG [OPTION] "
+    echo "Usage: install [OPTION] "
     echo ""
     echo "Run ..."
     echo ""
@@ -207,14 +207,14 @@ install_and_register(){
     cp $GEN_DIR/document-templates/* "$DIR"
     cp $GEN_DIR/DOF/*/*.sty "$DIR"
     
-    ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/^Isabelle\(.*\):.*/\1/'`
+    ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/:.*$//'`
     sed -i -e "s|%%% CONFIG %%%| \
-      \\\\renewcommand{\\\\dof@isabelleversion}{$ISABELLE_SHORT_VERSION}\n \
-      \\\\renewcommand{\\\\isabellefullversion}{$ISABELLE_VERSION\\\\xspace}\n \
-      \\\\renewcommand{\\\\dof@version}{$DOF_VERSION}\n \
-      \\\\renewcommand{\\\\isabelleurl}{$ISABELLE_URL}\n \
-      \\\\renewcommand{\\\\dofurl}{$DOF_URL}\n \
-      \\\\renewcommand{\\\\dof@artifacturl}{$DOF_ARTIFACT_URL}|" \
+      \\\\renewcommand{\\\\dof@isabelleversion}{$ISABELLE_SHORT_VERSION} \
+      \\\\renewcommand{\\\\isabellefullversion}{$ISABELLE_VERSION\\\\xspace} \
+      \\\\renewcommand{\\\\dof@version}{$DOF_VERSION} \
+      \\\\renewcommand{\\\\isabelleurl}{$ISABELLE_URL} \
+      \\\\renewcommand{\\\\dofurl}{$DOF_URL} \
+      \\\\renewcommand{\\\\dof@artifacturl}{https://$DOF_ARTIFACT_HOST/$DOF_ARTIFACT_DIR}|" \
       "$DIR/DOF-core.sty"
 
     DIR="$ISABELLE_HOME_USER/DOF/latex"
