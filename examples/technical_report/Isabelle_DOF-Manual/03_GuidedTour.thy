@@ -71,7 +71,7 @@ text\<open>
 \end{bash}
 
   Please check that this, indeed, installs a version of \pdftex{} that supports the 
-  \inlineltx|\expanded|-primitive. To check if your \pdfTeX-binary, execute 
+  \inlineltx|\expanded|-primitive. To check your \pdfTeX-binary, execute 
 
 \begin{bash}
 ë\prompt{}ë pdftex \\expanded{Success}\\end
