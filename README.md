@@ -101,7 +101,6 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
     -o ONTOLOGY  (default: scholarly_paper)
        Available ontologies:
        * cenelec_50128
-       * core
        * mathex
        * scholarly_paper
     -t TEMPLATE   (default: scrartcl)
