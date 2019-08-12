@@ -209,11 +209,11 @@ install_and_register(){
     
     ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/^Isabelle\(.*\):.*/\1/'`
     sed -i -e "s|%%% CONFIG %%%| \
-      \\\\renewcommand{\\\\dof@isabelleversion}{$ISABELLE_SHORT_VERSION}\n \
-      \\\\renewcommand{\\\\isabellefullversion}{$ISABELLE_VERSION\\\\xspace}\n \
-      \\\\renewcommand{\\\\dof@version}{$DOF_VERSION}\n \
-      \\\\renewcommand{\\\\isabelleurl}{$ISABELLE_URL}\n \
-      \\\\renewcommand{\\\\dofurl}{$DOF_URL}\n \
+      \\\\renewcommand{\\\\dof@isabelleversion}{$ISABELLE_SHORT_VERSION} \
+      \\\\renewcommand{\\\\isabellefullversion}{$ISABELLE_VERSION\\\\xspace} \
+      \\\\renewcommand{\\\\dof@version}{$DOF_VERSION} \
+      \\\\renewcommand{\\\\isabelleurl}{$ISABELLE_URL} \
+      \\\\renewcommand{\\\\dofurl}{$DOF_URL} \
       \\\\renewcommand{\\\\dof@artifacturl}{$DOF_ARTIFACT_URL}|" \
       "$DIR/DOF-core.sty"
 
