@@ -213,6 +213,7 @@ install_and_register(){
       \\\\renewcommand{\\\\isabellefullversion}{$ISABELLE_VERSION\\\\xspace}\n \
       \\\\renewcommand{\\\\dof@version}{$DOF_VERSION}\n \
       \\\\renewcommand{\\\\isabelleurl}{$ISABELLE_URL}\n \
+      \\\\renewcommand{\\\\dofurl}{$DOF_URL}\n \
       \\\\renewcommand{\\\\dof@artifacturl}{$DOF_ARTIFACT_URL}|" \
       "$DIR/DOF-core.sty"
 

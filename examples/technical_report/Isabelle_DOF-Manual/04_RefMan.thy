@@ -689,7 +689,7 @@ text\<open>
     This is a Isabelle_DOF project. The doëëcument preparation requires
     the Isabelle_DOF framework. }{%
     For further help, see 
-    https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF}
+    ë\url{\dofurl}ë
 }
 \input{ontologies}             % This will include the document specific 
                                % ontologies from isadof.cfg

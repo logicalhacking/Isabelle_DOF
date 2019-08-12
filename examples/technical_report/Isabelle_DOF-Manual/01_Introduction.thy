@@ -120,9 +120,8 @@ text\<open>
 subsubsection\<open>Availability\<close>
 text\<open>
   The implementation of the framework is available at 
-  \url{https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/}. The website also provides
-  links to the latest releases. \isadof is licensed under a 2-clause BSD license 
-  (SPDX-License-Identifier: BSD-2-Clause).
+  \url{\dofurl}. The website also provides links to the latest releases. \isadof is licensed 
+  under a 2-clause BSD license (SPDX-License-Identifier: BSD-2-Clause).
 \<close>
 
 (*<*) 
