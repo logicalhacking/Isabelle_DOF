@@ -215,7 +215,8 @@ text\<open>
      with the syntactic category of \<open>name\<close>'s we refer to alpha-numerical identifiers 
      (called \<open>short_id\<close>'s in @{cite "wenzel:isabelle-isar:2019"}) and identifiers
      in \inlineisar+" ... "+ which might contain certain ``quasi-letters'' such 
-     as \inlineisar+_+, \inlineisar+-+, \inlineisar+.+. See~@{cite "wenzel:isabelle-isar:2019"} for details.
+     as \inlineisar+_+, \inlineisar+-+, \inlineisar+.+ (see~@{cite "wenzel:isabelle-isar:2019"} for 
+     details).
   \<^item> \<open>tyargs\<close>:\index{tyargs@\<open>tyargs\<close>} 
      \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
      \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (see~@{cite "wenzel:isabelle-isar:2019"})
@@ -280,6 +281,7 @@ A document class\bindex{document class} can be defined using the @{command "doc_
      \<^rail>\<open> 'rejects' (class_id * ',') \<close>
 \<^item> \<open>default_clause\<close>:\index{default\_clause@\<open>default_clause\<close>}
      \<^rail>\<open> '<=' '"' expr '"' \<close>
+  \clearpage
 \<^item> \<open>regexpr\<close>:\index{regexpr@\<open>regexpr\<close>}
      \<^rail>\<open> '\<lfloor>' class_id '\<rfloor>' | '(' regexpr ')' | (regexpr '||' regexpr) | (regexpr '~~' regexpr)
             | ('\<lbrace>' regexpr '\<rbrace>') | ( '\<lbrace>' regexpr '\<rbrace>\<^sup>*')  \<close>
@@ -380,7 +382,7 @@ doc_class EC = AC  +
   representation. Note that the \inlineltx|\newisadof{}[]{}|-command requires the 
   full-qualified names, \eg,  \inlineisar|t$$ext.CENELEC_50128.EC| for the document class and 
   \inlineisar|CENELEC_50128.requirement.long_name| for the  attribute \inlineisar|long_name|, 
-  inherited from the document class \inlineisar|requirement|. The document representation of ECs
+  inherited from the document class \inlineisar|requirement|. The representation of ECs
   can now be defined as follows:
 
 \begin{ltx}
@@ -415,12 +417,11 @@ doc_class EC = AC  +
 
 \<close>
 
-
+(*<*)
 text*[aaa::assertions]\<open>description with validations I and II\<close>
 assert*[aaa::assertions] "3 < (4::int)"
 assert*[aaa::assertions] "0 < (4::int)"
-
-
+(*>*)
 
 subsection*["text-elements"::technical]\<open>Annotatable Top-level Text-Elements\<close>
 text\<open>
@@ -433,8 +434,7 @@ text\<open>
  title*[title::title]\<Open>Isabelle/DOF\<Close>
  subtitle*[subtitle::subtitle]\<Open>User and Implementation Manual\<Close>
  text*[adb:: author, email="\<Open>a.brucker@exeter.ac.uk\<Close>",
-       orcid="\<Open>0000-0002-6355-1200\<Close>",
-       http_site="\<Open>https://brucker.ch/\<Close>",
+       orcid="\<Open>0000-0002-6355-1200\<Close>", http_site="\<Open>https://brucker.ch/\<Close>",
        affiliation="\<Open>University of Exeter, Exeter, UK\<Close>"] \<Open>Achim D. Brucker\<Close>
  text*[bu::author, email = "\<Open>wolff@lri.fr\<Close>",
        affiliation = "\<Open>Université Paris-Saclay, LRI, Paris, France\<Close>"]\<Open>Burkhart Wolff\<Close>
@@ -447,7 +447,11 @@ text\<open>
   that has an identity as a text-object labelled as \<open>obj_id\<close>, belongs to a document class 
   \<open>class_id\<close> that has been defined earlier, and  has its class-attributes set with particular 
   values (which are denotable in Isabelle/HOL mathematical term syntax).
-
+\<^item> \<open>meta_args\<close> : 
+   \<^rail>\<open>(obj_id ('::' class_id) ((attribute '=' term)) * ',')\<close>
+\<^item> \<open>rich_meta_args\<close> :
+   \<^rail>\<open> (obj_id ('::' class_id) ((attribute (('=' | '+=') term)) * ','))\<close>
+\clearpage
 \<^item> \<open>annotated_text_element\<close> :
 \<^rail>\<open>
     (  ( @@{command "title*"}
@@ -466,11 +470,6 @@ text\<open>
      | change_status_command
      | inspection_command
   \<close>
-\clearpage
-\<^item> \<open>meta_args\<close> : 
-   \<^rail>\<open>(obj_id ('::' class_id) ((attribute '=' term)) * ',')\<close>
-\<^item> \<open>rich_meta_args\<close> :
-   \<^rail>\<open> (obj_id ('::' class_id) ((attribute (('=' | '+=') term)) * ','))\<close>
 \<close>
 
 

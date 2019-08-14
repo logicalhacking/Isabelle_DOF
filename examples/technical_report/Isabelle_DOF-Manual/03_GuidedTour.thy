@@ -55,7 +55,7 @@ in your \inlinebash|PATH|, you will need to invoke \inlinebash|isabelle| using i
 full qualified path, \eg:
 
 \begin{bash}
-ë\prompt{}ë /usr/local/Isabelleë\isabelleversionë/bin/isabelle version
+ë\prompt{}ë /usr/local/Isabelleë\isabelleversion/ëbin/isabelle version
 ë\isabellefullversionë
 \end{bash}
 \<close>
@@ -75,11 +75,9 @@ text\<open>
 
 \begin{bash}
 ë\prompt{}ë pdftex \\expanded{Success}\\end
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdftex)
- restricted \write18 enabled.
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian).
 entering extended mode
-[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]</usr/share/texlive/texmf
--dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
+[1{dftex.map}]<cmr10.pfb>
 Output written on texput.pdf (1 page, 8650 bytes).
 Transcript written on texput.log.
 \end{bash}
@@ -113,6 +111,7 @@ If the \inlinebash|isabelle| tool is not in your \inlinebash|PATH|, you need to 
 \inlinebash|install| script with the \inlinebash|--isabelle| option, passing the full-qualified
 path of the \inlinebash|isabelle| tool (\inlinebash|install --help| gives 
 you an overview of all available configuration options):
+\clearpage
 
 \begin{bash}
 ë\prompt{}ë cd ë\isadofdirnë
