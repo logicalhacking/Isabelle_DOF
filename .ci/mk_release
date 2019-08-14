@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+# Copyright (c) 2019The University of Exeter. 
+#               2019 The University of Paris-Saclay. 
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in
+#    the documentation and/or other materials provided with the
+#    distribution.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# SPDX-License-Identifier: BSD-2-Clause
+
+#set -e
+shopt -s nocasematch
+
+
+print_help()
+{
+    echo "Usage: mk_release [OPTION] "
+    echo ""
+    echo "       A tool for building $ISADOF_TAR.tar.xz"
+    echo ""
+    echo "Run ..."
+    echo ""
+    echo "  --help, -h                display this help message"
+    echo "  --sign -s                 sign release archive"
+    echo "                            (default: $SIGN)"
+    echo "  --isabelle, -i isabelle   isabelle command used for installation"
+    echo "                            (default: $ISABELLE)"
+    echo "  --tag -t tag              use tag for release archive"
+    echo "  --p --publish             publish generated artefact"
+    echo "                            (use master: $PUBLISH)"
+}
+
+read_config() {
+    if [ ! -f .config ]; then
+        echo "Error: .config not found (not started in the main directory?)!"
+        exit 1
+    else
+        source .config
+    fi
+}
+
+
+check_isabelle_version() {
+    ACTUAL_ISABELLE_VERSION=`$ISABELLE version`
+    echo "* Checking Isabelle version:"
+    if [ "$ISABELLE_VERSION" != "$ACTUAL_ISABELLE_VERSION" ]; then
+        echo "* Expecting $ISABELLE_VERSION, found $ACTUAL_ISABELLE_VERSION: ERROR"
+        exit 1
+    else
+        echo "* Expecting $ISABELLE_VERSION, found $ACTUAL_ISABELLE_VERSION: success"
+    fi
+}
+
+clone_repo()
+{
+    echo "* Cloning into $ISADOF_DIR"
+    git clone . $ISADOF_DIR
+    if [ "$USE_TAG" = "true" ]; then
+        echo "  * Switching to tag $DOF_VERSION/$ISABELLE_SHORT_VERSION"
+        (cd $ISADOF_DIR && git checkout $DOF_VERSION/$ISABELLE_SHORT_VERSION)
+    else
+        echo "  * Not tag specified, using master branch"
+    fi
+}
+
+build_and_install_manual()
+{
+    echo "* Building manual"
+    ROOTS=$ISABELLE_HOME_USER/ROOTS
+    if [ -f $ROOTS ]; then
+        mv $ROOTS $ROOTS.backup
+    fi
+    (cd $ISADOF_DIR && ./install)
+    (cd $ISADOF_DIR && $ISABELLE build -c Isabelle_DOF-Manual)
+    mkdir -p $ISADOF_DIR/doc
+    cp $ISADOF_DIR/examples/technical_report/Isabelle_DOF-Manual/output/document.pdf \
+        $ISADOF_DIR/doc/Isabelle_DOF-Manual.pdf
+    find $ISADOF_DIR -type d -name "output" -exec rm -rf {} \; || true
+    rm -rf $ISADOF_DIR/.git* $ISADOF_DIR/.ci $ISADOF_DIR/.afp 
+    if [ -f $ROOTS.backup ]; then
+        mv $ROOTS.backup $ROOTS
+    fi
+}
+
+create_archive()
+{    
+    echo "* Creating archive"
+    (cd $BUILD_DIR && tar cf $ISADOF_TAR.tar $ISADOF_TAR && xz $ISADOF_DIR.tar)
+    mv $BUILD_DIR/$ISADOF_TAR.tar.xz .
+    rm -rf $BUILD_DIR
+}
+
+sign_archive()
+{
+    echo "* Publish archive not yet implemented"
+    gpg --armor --output $ISADOF_TAR.tar.xz.asc --detach-sig $ISADOF_TAR.tar.xz
+}
+
+publish_archive()
+{
+    echo "* Publish archive"
+    ssh 0x5f.org mkdir -p www/$DOF_ARTIFACT_HOST/htdocs/$DOF_ARTIFACT_DIR
+    scp $ISADOF_TAR.tar.xz* 0x5f.org:www/$DOF_ARTIFACT_HOST/htdocs/$DOF_ARTIFACT_DIR/
+    ssh 0x5f.org chmod go+u-w -R www/$DOF_ARTIFACT_HOST/htdocs/$DOF_ARTIFACT_DIR
+}
+
+
+read_config
+ISABELLE=`which isabelle`
+USE_TAG="false"
+SIGN="false"
+PUBLISH="false"
+ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/:.*$//'`
+TAG="$DOF_VERSION/$ISABELLE_SHORT_VERSION"
+BUILD_DIR=`mktemp -d`
+ISADOF_TAR="Isabelle_DOF-"$DOF_VERSION"_"$ISABELLE_SHORT_VERSION
+ISADOF_DIR="$BUILD_DIR/$ISADOF_TAR"
+while [ $# -gt 0 ]
+do
+    case "$1" in
+        --isabelle|-i)
+            ISABELLE="$2";
+            shift;;
+        --tag|-t)
+            TAG="$2";
+            USE_TAG="true"
+            shift;;
+        --sign|-s)
+            SIGN="true";;
+        --publish|-p)
+            PUBLISH="true";;
+        --help|-h)
+            print_help
+            exit 0;;
+        *)  print_help
+            exit 1;;
+    esac
+    shift
+done
+
+check_isabelle_version
+VARS=`$ISABELLE getenv ISABELLE_HOME_USER`
+for i in $VARS; do
+        export "$i"
+done
+
+clone_repo
+build_and_install_manual
+create_archive
+
+if [ "$SIGN" = "true" ]; then
+    sign_archive
+fi
+
+if [ "$PUBLISH" = "true" ]; then
+    publish_archive
+fi
+
+exit 0 

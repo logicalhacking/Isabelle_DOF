@@ -41,7 +41,7 @@ text\<open>
 paragraph\<open>Installing Isabelle\<close>
 text\<open>
   Please download and install the Isabelle \isabelleversion distribution for your operating system 
-  from the \href{\isabelleurl}{Isabelle website} (\url{isabelleurl}). After the successful 
+  from the \href{\isabelleurl}{Isabelle website} (\url{\isabelleurl}). After the successful 
   installation of Isabelle, you should be able to call the \inlinebash|isabelle| tool on the 
   command line:
 
