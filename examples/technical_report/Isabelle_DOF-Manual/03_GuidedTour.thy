@@ -712,7 +712,9 @@ create dangeling references during the document generation that break the docume
 
 Finally, we recommend to use the @{command "check_doc_global"} command at the end of your 
 document to check the global reference structure. 
+
 \<close>
+
 (*<*)
 end
 (*>*) 

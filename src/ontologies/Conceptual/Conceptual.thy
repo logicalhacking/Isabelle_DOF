@@ -31,11 +31,11 @@ doc_class E = D +
    x :: "string"              <= "''qed''"  (* overriding default *)
    
 doc_class F  = 
-   property :: "term list"
-   r        :: "thm list"
-   u        :: "file"
-   s        :: "typ list"
-   b        :: "(A \<times> C) set"  <= "{}"       (* This is a relation link, roughly corresponding
+   properties :: "term list"
+   r          :: "thm list"
+   u          :: "file"
+   s          :: "typ list"
+   b          :: "(A \<times> C) set"  <= "{}"       (* This is a relation link, roughly corresponding
                                                 to an association class. It can be used to track
                                                 claims to result - relations, for example.*) 
 doc_class G = C +                                               
@@ -56,9 +56,9 @@ ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory gl
 
 section*[test::A]\<open>Test and Validation\<close>
 text\<open>Defining some document elements to be referenced in later on in another theory: \<close>
-text*[sdf]\<open> f @{thm refl}\<close> 
-text*[ sdfg] \<open> fg @{thm refl}\<close>  
-text*[ xxxy ] \<open> dd @{docitem \<open>sdfg\<close>}  @{thm refl}\<close>  
+text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> 
+text*[ sdfg] \<open> Lorem ipsum @{thm refl}\<close>  
+text*[ xxxy ] \<open> Lorem ipsum @{docitem \<open>sdfg\<close>} rate @{thm refl}\<close>  
 
 
 end     

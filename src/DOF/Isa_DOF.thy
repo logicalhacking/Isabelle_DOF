@@ -254,34 +254,28 @@ fun get_automatas      ({automatas, ... }     : open_monitor_info) = automatas
 fun is_subclass (ctxt) s t = is_subclass0(#docclass_tab(get_data ctxt)) s t
 fun is_subclass_global thy s t = is_subclass0(#docclass_tab(get_data_global thy)) s t
 
-fun type_name2doc_class_name thy str =  (*  Long_Name.qualifier *) str
 
 fun typ_to_cid (Type(s,[@{typ "unit"}])) = Long_Name.qualifier s
    |typ_to_cid (Type(_,[T])) = typ_to_cid T
    |typ_to_cid _ = error("type is not an ontological type.")
 
-fun name2doc_class_name thy str =
-         case Syntax.parse_typ (Proof_Context.init_global thy) str of
-                 Type(tyn, _)  => type_name2doc_class_name thy tyn
-                | _ => error "illegal format for doc-class-name."
-         handle ERROR _ => ""
 
-fun name2doc_class_name_local ctxt str =
-         (case Syntax.parse_typ ctxt str of
-                 Type(tyn, _)  => type_name2doc_class_name ctxt tyn
+fun name2doc_class_name_local ctxt cid =
+         (case Syntax.parse_typ ctxt cid of
+                 Type(tyname, _)  =>  tyname
                 | _ => error "illegal format for doc-class-name.")
-         handle ERROR _ => ""
+         handle ERROR _ => "" (* ignore error *)
 
-
+fun re_check_class_id thy cid = name2doc_class_name_local (Proof_Context.init_global thy) cid
+        
 
 fun is_defined_cid_global cid thy = let val t = #docclass_tab(get_data_global thy)
                                     in  cid=default_cid orelse 
-                                        Symtab.defined t (name2doc_class_name thy cid) 
+                                        Symtab.defined t (re_check_class_id thy cid) 
                                     end
 
 fun is_defined_cid_global' cid_long thy = let val t = #docclass_tab(get_data_global thy)
                                     in  cid_long=default_cid orelse  Symtab.defined t cid_long end
-
 
 
 fun is_defined_cid_local cid ctxt  = let val t = #docclass_tab(get_data ctxt)
@@ -364,10 +358,6 @@ fun check_reject_atom cid_long term =
                    (n,_)::_ => error("No schematic variables allowed in monitor regexp:" ^ n)
                  | _ => ()
         (* Missing: Checks on constants such as undefined, ... *)
-(*        val _ = case term of
-                  Const(_ ,Type(@{type_name "rexp"},[_])) => ()
-                 | _ => error("current restriction: only atoms allowed here!") 
-*)
     in  term end
 
 
@@ -389,7 +379,9 @@ fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms t
                                if   not (is_defined_cid_global cid_parent thy)
                                then error("document class undefined : " ^ cid_parent)
                                else ()
-        val cid_long = name2doc_class_name thy cid
+        val cid_long = re_check_class_id thy cid
+        val _ = if re_check_class_id thy cid_long <> "" then ()
+                else error"Could not construct type from doc_class (lexical problem?)"
         val id = serial ();
         val _ = Position.report pos (docclass_markup true cid id pos);
     
@@ -478,9 +470,10 @@ fun is_defined_cid_local cid ctxt  = let val t = #docclass_tab(get_data ctxt)
 fun get_attributes_local cid ctxt =
     if cid = default_cid then []
     else let val t = #docclass_tab(get_data ctxt)
-             val cid_long = name2doc_class_name_local ctxt cid
+             val cid_long = name2doc_class_name_local ctxt cid (* to assure that the given cid is 
+                                                                  really a long_cid *)
          in  case Symtab.lookup t cid_long of
-               NONE => error("undefined doc class id :"^cid)
+               NONE => error("undefined doc class id for attributes :"^cid)
              | SOME ({inherits_from=NONE,
                        attribute_decl = X, ...}) => [(cid_long,X)]
              | SOME ({inherits_from=SOME(_,father),
@@ -1078,7 +1071,7 @@ fun base_default_term thy cid_long = Const(@{const_name "undefined"},cid_2_cidTy
 fun check_classref is_monitor (SOME(cid,pos')) thy = 
           let val _ = if not (DOF_core.is_defined_cid_global cid thy) 
                       then error("document class undefined") else ()
-              val cid_long = DOF_core.name2doc_class_name thy cid 
+              val cid_long = DOF_core.re_check_class_id thy cid 
               val {id, name=bind_target,rex,...} = the(DOF_core.get_doc_class_global cid_long thy)
               val _ = if is_monitor andalso (null rex orelse cid_long= DOF_core.default_cid ) 
                       then error("should be monitor class!")
@@ -1409,7 +1402,7 @@ val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
       >> (Toplevel.theory o (enriched_document_command NONE {markdown = true} )));
-
+                                            
 val _ =
   Outer_Syntax.command @{command_keyword "declare_reference*"} 
                        "declare document reference"
@@ -1436,9 +1429,8 @@ val _ =
 fun assert_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
                 prop) =
     let fun conv_2_holstring thy =  (bstring_to_holstring (Proof_Context.init_global thy))
-        fun conv_attrs thy = (("property",pos),"[@{termrepr ''"^conv_2_holstring thy prop ^" ''}]")
+        fun conv_attrs thy = (("properties",pos),"[@{termrepr ''"^conv_2_holstring thy prop ^" ''}]")
                              ::doc_attrs  
-        (* fun conv_attrs thy = (("property",pos),"[@{term ''"^parse_convert thy ^"''}]")::doc_attrs *)
         fun conv_attrs' thy = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) (conv_attrs thy)
         fun mks thy = case DOF_core.get_object_global_opt oid thy of
                    SOME NONE => (error("update of declared but not created doc_item:" ^ oid))
@@ -1469,7 +1461,7 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Command_Parse
     let val l   = "label = "^ (enclose "{" "}" lab)
         val cid_long = case cid_opt of
                                 NONE => DOF_core.default_cid
-                              | SOME(cid,_) => DOF_core.name2doc_class_name thy cid        
+                              | SOME(cid,_) => DOF_core.re_check_class_id thy cid        
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
 
         fun ltx_of_term _ _ (Const ("List.list.Cons", @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $ t2) 
@@ -1585,18 +1577,6 @@ end\<close>
  
 section\<open> Syntax for Ontological Antiquotations (the '' View'' Part II) \<close>
 
-text\<open> @{theory Main} @{file "Isa_DOF.thy"}\<close>
-
-(* Paradigm theory or paradigm file ?
-
-  val basic_entity = Thy_Output.antiquotation_pretty_source;
-  ...
-  basic_entity \<^binding>\<open>theory\<close> (Scan.lift (Parse.position Args.embedded)) pretty_theory #>
-
-  Thy_Output.antiquotation_raw \<^binding>\<open>file\<close>
-    (Scan.lift (Parse.position Parse.path)) (document_antiq check_file) #>
-
-*)
 
 ML\<open>
 (* 2017: used eg by ::: text\<open> @{theory Main}\<close>
@@ -1617,22 +1597,9 @@ val basic_entity = Thy_Output.antiquotation_pretty_source
       (Proof.context -> 'a -> Pretty.T) 
       -> theory -> theory;
 
-(* or ? *)
-val docref_scan = (Scan.lift (Parse.position Args.embedded)) 
-                   : (string * Position.T) context_parser;
-(*val X = Document_Antiquotation.setup \<^binding>\<open>docref\<close> docref_scan ; *)
+
 \<close>
 
-text\<open> @{theory Main}\<close>
-
-ML\<open> 
-  Latex.string : string -> Latex.text ;
-  Latex.text: string * Position.T -> Latex.text;
-  Latex.block: Latex.text list -> Latex.text;
-  Latex.enclose_body: string -> string -> Latex.text list -> Latex.text list;
-  Latex.enclose_block: string -> string -> Latex.text list -> Latex.text;
-  Latex.output_text: Latex.text list -> string;
-\<close>
 
 
 ML\<open>
@@ -1877,7 +1844,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
       val ctxt = Proof_Context.init_global thy;
       val params = map (apsnd (Typedecl.read_constraint ctxt)) raw_params;
       val ctxt1 = fold (Variable.declare_typ o TFree) params ctxt;
-      fun cid thy = DOF_core.name2doc_class_name thy (Binding.name_of binding)
+      fun cid thy = DOF_core.re_check_class_id thy (Binding.name_of binding)    
       val (parent, ctxt2) = read_parent raw_parent ctxt1;
       val parent_cid_long = case parent of
                               NONE => DOF_core.default_cid
