@@ -695,8 +695,8 @@ section\<open> META : Testing and Validation \<close>
 text\<open>Test : @{concept \<open>COTS\<close>}\<close>
 
 ML\<open>
-DOF_core.name2doc_class_name @{theory} "requirement";
-DOF_core.name2doc_class_name @{theory} "SRAC";
+DOF_core.re_check_class_id @{theory} "requirement";
+DOF_core.re_check_class_id @{theory} "SRAC";
 DOF_core.is_defined_cid_global "SRAC" @{theory};
 DOF_core.is_defined_cid_global "EC" @{theory};
 \<close>
@@ -718,7 +718,7 @@ val internal_data_of_SRAC_definition = DOF_core.get_attributes_local "SRAC" @{co
 \<close> 
 
 ML\<open>
-DOF_core.name2doc_class_name @{theory} "requirement";
+DOF_core.re_check_class_id @{theory} "requirement";
 Syntax.parse_typ @{context} "requirement";
 val Type(t,_) = Syntax.parse_typ @{context} "requirement" handle ERROR _ => dummyT;
 Syntax.read_typ  @{context} "hypothesis" handle  _ => dummyT;

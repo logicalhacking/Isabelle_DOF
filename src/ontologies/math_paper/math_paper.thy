@@ -70,20 +70,20 @@ text*[dil_fun :: "definition"]\<open>A dilating function for a run @{term "\<rho
 
 doc_class assertion = formal_stmt +
     relevance :: "relevance option"
-    property  :: "term list" <= "[]"
+    properties  :: "term list" <= "[]"
 
 doc_class "lemma" = formal_stmt +
     relevance :: "relevance"
-    property  :: "term list" <= "[]"
+    properties  :: "term list" <= "[]"
 
 doc_class "theorem" = formal_stmt +
     relevance :: "relevance"
-    property  :: "term list" <= "[]"
+    properties  :: "term list" <= "[]"
 
 
 doc_class "corrollary" = formal_stmt +
     relevance :: "relevance"
-    property  :: "term list" <= "[]"
+    properties  :: "term list" <= "[]"
 
 text\<open>This monitor is used to group formal content in a way to classify the
 relevance. On the presentation level, this gives the possibility to adapt or omit

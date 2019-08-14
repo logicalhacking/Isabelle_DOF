@@ -16,11 +16,11 @@ print_doc_items
 section\<open>Definitions, Lemmas, Theorems, Assertions\<close>
 
 
-text*[aa::F, property = "[@{term ''True''}]"]
+text*[aa::F, properties = "[@{term ''True''}]"]
 \<open>Our definition of the HOL-Logic has the following properties:\<close>
 assert*[aa::F] "True"
 
-(* does not work in batch mode ...
+(* does not work in batch mode ... 
 (* sample for accessing a property filled with previous assert's of "aa" *)
 ML\<open> ISA_core.property_list_dest @{context} @{docitem_attribute property :: aa};\<close>
 
@@ -30,10 +30,10 @@ assert*[aa::F] " X \<and> Y \<longrightarrow> True" (*example with uni-code *)
 ML\<open> ISA_core.property_list_dest @{context} @{docitem_attribute property :: aa};
     app writeln (tl (rev it));\<close>
 
-*)
+
 
 assert*[aa::F] "\<forall>x::bool. X \<and> Y \<longrightarrow> True" (*problem with uni-code *)
-
+*)
 ML\<open>
 Syntax.read_term_global @{theory} "[@{termrepr ''True @<longrightarrow> True''}]";
 (* this only works  because the isa check is not activated in "term" !!! *)

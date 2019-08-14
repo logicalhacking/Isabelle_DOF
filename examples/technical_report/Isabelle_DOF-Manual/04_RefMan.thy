@@ -252,6 +252,15 @@ text\<open>
   pecifications~@{cite "wenzel:isabelle-isar:2019"}, and abstract type declarations.
 \<close>
 
+text\<open>Note that \isadof works internally with fully qualified names in order to avoid 
+confusions occurring otherwise, for example, in disjoint class hierarchies. This also extends to 
+names for \inlineisar|doc_class|es, which must be representable as type-names as well since they
+can be used in attribute types. Since theory names are lexically very liberal (\inlineisar|0.thy|
+is a legal theory name), this can lead to subtle problems when constructing a class: \inlineisar|foo| 
+can be a legal name for a type definition, the corresponding type-name \inlineisar|0.foo| is not.
+For this reason, additional checks at the definition of a \inlineisar|doc_class| reject problematic
+lexical overlaps.\<close>
+
 
 subsection*["odl-manual1"::technical]\<open>Defining Document Classes\<close>
 text\<open>
@@ -405,6 +414,11 @@ doc_class EC = AC  +
 \end{ltx}
 
 \<close>
+
+
+text*[aaa::assertions]\<open>description with validations I and II\<close>
+assert*[aaa::assertions] "3 < (4::int)"
+assert*[aaa::assertions] "0 < (4::int)"
 
 
 
