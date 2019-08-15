@@ -75,7 +75,7 @@ clone_repo()
     echo "* Cloning into $ISADOF_WORK_DIR"
     git clone . $ISADOF_WORK_DIR
     if [ "$USE_TAG" = "true" ]; then
-        echo "  * Switching to tag $DOF_VERSION/$ISABELLE_SHORT_VERSION"
+        echo "  * Switching to tag $TAG"
         (cd $ISADOF_WORK_DIR && git checkout $TAG)
     else
         echo "  * Not tag specified, using master branch"
@@ -157,12 +157,11 @@ do
     shift
 done
 
-ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/:.*$//'`
 
 clone_repo
 
 source $ISADOF_WORK_DIR/.config
-
+ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/:.*$//'`
 ISADOF_TAR="Isabelle_DOF-"$DOF_VERSION"_"$ISABELLE_SHORT_VERSION
 ISADOF_DIR="$BUILD_DIR/$ISADOF_TAR"
 
