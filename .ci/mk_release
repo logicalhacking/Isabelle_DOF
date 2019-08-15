@@ -72,14 +72,16 @@ check_isabelle_version() {
 
 clone_repo()
 {
-    echo "* Cloning into $ISADOF_DIR"
-    git clone . $ISADOF_DIR
+    echo "* Cloning into $ISADOF_WORK_DIR"
+    git clone . $ISADOF_WORK_DIR
     if [ "$USE_TAG" = "true" ]; then
         echo "  * Switching to tag $DOF_VERSION/$ISABELLE_SHORT_VERSION"
-        (cd $ISADOF_DIR && git checkout $TAG)
+        (cd $ISADOF_WORK_DIR && git checkout $TAG)
     else
         echo "  * Not tag specified, using master branch"
     fi
+    (cd $ISADOF_WORK_DIR && git show -s --format="COMMIT=%H%nDATE=%cd" --date=short | sed -e 's|-|/|g') >> $ISADOF_WORK_DIR/.config
+    
 }
 
 build_and_install_manual()
@@ -89,13 +91,13 @@ build_and_install_manual()
     if [ -f $ROOTS ]; then
         mv $ROOTS $ROOTS.backup
     fi
-    (cd $ISADOF_DIR && ./install)
-    (cd $ISADOF_DIR && $ISABELLE build -c Isabelle_DOF-Manual)
-    mkdir -p $ISADOF_DIR/doc
-    cp $ISADOF_DIR/examples/technical_report/Isabelle_DOF-Manual/output/document.pdf \
-        $ISADOF_DIR/doc/Isabelle_DOF-Manual.pdf
-    find $ISADOF_DIR -type d -name "output" -exec rm -rf {} \; || true
-    rm -rf $ISADOF_DIR/.git* $ISADOF_DIR/.ci $ISADOF_DIR/.afp 
+    (cd $ISADOF_WORK_DIR && ./install)
+    (cd $ISADOF_WORK_DIR && $ISABELLE build -c Isabelle_DOF-Manual)
+    mkdir -p $ISADOF_WORK_DIR/doc
+    cp $ISADOF_WORK_DIR/examples/technical_report/Isabelle_DOF-Manual/output/document.pdf \
+        $ISADOF_WORK_DIR/doc/Isabelle_DOF-Manual.pdf
+    find $ISADOF_WORK_DIR -type d -name "output" -exec rm -rf {} \; &> /dev/null || true
+    rm -rf $ISADOF_WORK_DIR/.git* $ISADOF_WORK_DIR/.ci $ISADOF_WORK_DIR/.afp 
     if [ -f $ROOTS.backup ]; then
         mv $ROOTS.backup $ROOTS
     fi
@@ -104,6 +106,7 @@ build_and_install_manual()
 create_archive()
 {    
     echo "* Creating archive"
+    (mv $ISADOF_WORK_DIR $ISADOF_DIR)    
     (cd $BUILD_DIR && tar cf $ISADOF_TAR.tar $ISADOF_TAR && xz $ISADOF_DIR.tar)
     mv $BUILD_DIR/$ISADOF_TAR.tar.xz .
     rm -rf $BUILD_DIR
@@ -126,16 +129,11 @@ publish_archive()
 
 read_config
 ISABELLE=`which isabelle`
-
-
-TAG="$DOF_VERSION/$ISABELLE_SHORT_VERSION"
 USE_TAG="false"
 SIGN="false"
 PUBLISH="false"
-ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/:.*$//'`
 BUILD_DIR=`mktemp -d`
-ISADOF_TAR="Isabelle_DOF-"$DOF_VERSION"_"$ISABELLE_SHORT_VERSION
-ISADOF_DIR="$BUILD_DIR/$ISADOF_TAR"
+ISADOF_WORK_DIR="$BUILD_DIR/Isabelle_DOF"
 while [ $# -gt 0 ]
 do
     case "$1" in
@@ -159,14 +157,23 @@ do
     shift
 done
 
+ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/:.*$//'`
+
+clone_repo
+
+source $ISADOF_WORK_DIR/.config
+
+ISADOF_TAR="Isabelle_DOF-"$DOF_VERSION"_"$ISABELLE_SHORT_VERSION
+ISADOF_DIR="$BUILD_DIR/$ISADOF_TAR"
+
 check_isabelle_version
 VARS=`$ISABELLE getenv ISABELLE_HOME_USER`
 for i in $VARS; do
         export "$i"
 done
 
-clone_repo
 build_and_install_manual
+
 create_archive
 
 if [ "$SIGN" = "true" ]; then
