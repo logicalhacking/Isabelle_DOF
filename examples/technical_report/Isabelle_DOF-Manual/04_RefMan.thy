@@ -463,13 +463,22 @@ doc_class EC = AC  +
 subsubsection\<open>Example: Assertions\<close>
 text\<open>Assertions are a common feature to validate properties of models, presented as a collection
 of Isabelle/HOL definitions. They are particularly relevant for highlighting corner cases of a 
-formal model.\<close>
+formal model. For example, assume a definition: \<close>
 
 definition last :: "'a list \<Rightarrow> 'a" where "last S = hd(rev S)"
 
+(*<*)
 text*[claim::assertions]\<open>For non-empty lists, our definition yields indeed the last element of a list.\<close>
 assert*[claim::assertions] "last[4::int] = 4"
 assert*[claim::assertions] "last[1,2,3,4::int] = 4"
+(*>*)
+text\<open>We want to check the consequences of this definition and can add the following sdtatements:
+\begin{isar}
+text*[claim::assertions]\<open>For non-empty lists, our definition yields indeed the last element of a list.\<close>
+assert*[claim::assertions] "last[4::int] = 4"
+assert*[claim::assertions] "last[1,2,3,4::int] = 4"
+\end{isar}
+\<close>
 
 text\<open>As an \inlineisar+ASSERTION_ALIKES+, the \inlineisar+assertions+ class possesses a 
 \inlineisar+properties+ attribute. The \inlineisar+assert*+ command evaluates its argument;
