@@ -11,7 +11,7 @@ declare[[strict_monitor_checking=true]]
 title*[title::title]\<open>The CENELEC 50128 Ontology\<close> 
 subtitle*[subtitle::subtitle]\<open>Case Study: An Odometer-Subsystem\<close> 
 
-chapter*[casestudy::technical]\<open>A Case-Study: An Odometer-Subsystem\<close>
+chapter*[casestudy::technical]\<open>An Odometer-Subsystem\<close>
 text\<open>
   In our case study, we will follow the phases of analysis, design, and implementation of the 
   odometry function of a train. This software processes data from an odometer to compute the position, 
@@ -32,7 +32,7 @@ text\<open>
   development.
 \<close>
 
-section\<open>System Requirements Specification as an \<^emph>\<open>Integrated Source\<close>\<close>
+section\<open>System Requirements as an \<^emph>\<open>Integrated Source\<close>\<close>
 text\<open>Accurate information of a train's location along a track is in an important prerequisite   
 to safe railway operation. Position, speed and acceleration measurement usually lies on a 
 set of independent measurements based on different physical principles---as a way to enhance 
@@ -46,9 +46,9 @@ text\<open>
   related to the trains progress.  By measuring the fractional rotation of the encoders shaft and 
   considering the wheels effective ratio, relative movement of the train can be calculated.
 
-  \begin{wrapfigure}[8]{l}{3.9cm}
+  \begin{wrapfigure}[8]{l}{4.6cm}
     \centering
-    \vspace{-.7cm}
+    \vspace{-.5cm}
     \includegraphics[width=3.4cm]{figures/wheel-df}
     \caption{Motion sensing via an odometer.}
     \label{wheel-df}
