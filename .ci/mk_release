@@ -75,7 +75,7 @@ clone_repo()
     git clone . $ISADOF_DIR
     if [ "$USE_TAG" = "true" ]; then
         echo "  * Switching to tag $DOF_VERSION/$ISABELLE_SHORT_VERSION"
-        (cd $ISADOF_DIR && git checkout $DOF_VERSION/$ISABELLE_SHORT_VERSION)
+        (cd $ISADOF_DIR && git checkout $TAG)
     else
         echo "  * Not tag specified, using master branch"
     fi
