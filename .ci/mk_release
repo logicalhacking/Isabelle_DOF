@@ -44,6 +44,7 @@ print_help()
     echo "  --isabelle, -i isabelle   isabelle command used for installation"
     echo "                            (default: $ISABELLE)"
     echo "  --tag -t tag              use tag for release archive"
+    echo "                            (default: use master branch)"
     echo "  --p --publish             publish generated artefact"
     echo "                            (use master: $PUBLISH)"
 }
@@ -125,11 +126,13 @@ publish_archive()
 
 read_config
 ISABELLE=`which isabelle`
+
+
+TAG="$DOF_VERSION/$ISABELLE_SHORT_VERSION"
 USE_TAG="false"
 SIGN="false"
 PUBLISH="false"
 ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/:.*$//'`
-TAG="$DOF_VERSION/$ISABELLE_SHORT_VERSION"
 BUILD_DIR=`mktemp -d`
 ISADOF_TAR="Isabelle_DOF-"$DOF_VERSION"_"$ISABELLE_SHORT_VERSION
 ISADOF_DIR="$BUILD_DIR/$ISADOF_TAR"
