@@ -472,9 +472,10 @@ text*[claim::assertions]\<open>For non-empty lists, our definition yields indeed
 assert*[claim::assertions] "last[4::int] = 4"
 assert*[claim::assertions] "last[1,2,3,4::int] = 4"
 (*>*)
-text\<open>We want to check the consequences of this definition and can add the following sdtatements:
+text\<open>We want to check the consequences of this definition and can add the following statements:
 \begin{isar}
-text*[claim::assertions]\<open>For non-empty lists, our definition yields indeed the last element of a list.\<close>
+text*[claim::assertions]\<Open>For non-empty lists, our definition yields indeed 
+                               the last element of a list.\<Close>
 assert*[claim::assertions] "last[4::int] = 4"
 assert*[claim::assertions] "last[1,2,3,4::int] = 4"
 \end{isar}
