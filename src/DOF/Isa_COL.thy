@@ -15,7 +15,6 @@ section\<open> Library of Standard Text Ontology \<close>
 
 
 
-
 datatype placement = pl_h  | (*here*) 
                      pl_t  | (*top*)
                      pl_b  | (*bottom*)
@@ -86,7 +85,6 @@ doc_class definitions =
 doc_class formal_content =
     style :: "string option"
     accepts "\<lbrace>formal_item\<rbrace>\<^sup>+"
-
 
 doc_class concept = 
     tag        :: "string"   <= "''''"

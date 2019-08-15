@@ -1348,7 +1348,7 @@ val _ =
                         (attributes_upd >> (Toplevel.theory o update_instance_command)); 
 
 
-fun assert_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
+fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
                 prop) =
     let fun conv_2_holstring thy =  (bstring_to_holstring (Proof_Context.init_global thy))
         fun conv_attrs thy = (("properties",pos),"[@{termrepr ''"^conv_2_holstring thy prop ^" ''}]")
@@ -1367,7 +1367,7 @@ fun assert_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes 
 val _ =
   Outer_Syntax.command @{command_keyword "assert*"} 
                        "evaluate and print term"
-                       (attributes -- opt_evaluator -- opt_modes  -- Parse.term  >> assert_cmd'); 
+                       (attributes -- opt_evaluator -- opt_modes  -- Parse.term  >> assertion_cmd'); 
 
 
 end (* struct *)
@@ -1500,34 +1500,12 @@ end\<close>
  
 section\<open> Syntax for Ontological Antiquotations (the '' View'' Part II) \<close>
 
-
-ML\<open>
-(* 2017: used eg by ::: text\<open> @{theory Main}\<close>
-antiquotation: 
-    binding -> 'a context_parser ->
-    ({source: Token.src, state: Toplevel.state, context: Proof.context} -> 'a -> string) 
-    -> theory -> theory
-*)
-
-(* 2018 >>> *)
-val basic_entity' = Thy_Output.antiquotation_raw
-    : binding -> 'a context_parser -> 
-      (Proof.context -> 'a -> Latex.text) 
-      -> theory -> theory;
-
-val basic_entity = Thy_Output.antiquotation_pretty_source 
-    : binding -> 'a context_parser -> 
-      (Proof.context -> 'a -> Pretty.T) 
-      -> theory -> theory;
-
-
-\<close>
-
-
-
 ML\<open>
 structure OntoLinkParser = 
 struct
+
+val basic_entity = Thy_Output.antiquotation_pretty_source
+    : binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
 
 fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) pos name  =
   let
@@ -1545,7 +1523,7 @@ fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) pos name  =
          in () end
     else if   DOF_core.is_declared_oid_global name thy 
          then (if #strict_checking str 
-               then warning("declared but undefined document reference: "^name) (* HACK bu 29/6.19 *)
+               then warning("declared but undefined document reference: "^name) 
                else ())
          else error("undefined document reference: "^name)
   end
@@ -1627,6 +1605,9 @@ end (* struct *)
 ML\<open> 
 structure AttributeAccess = 
 struct
+
+val basic_entity = Thy_Output.antiquotation_pretty_source 
+    : binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
 
 fun symbex_attr_access0 ctxt proj_term term =
     (* term assumed to be ground type, (f term) not necessarily *)

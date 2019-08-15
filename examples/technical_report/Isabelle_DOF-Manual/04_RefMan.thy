@@ -336,10 +336,44 @@ text\<open>
 \<close>
 
 subsubsection\<open>Common Ontology Library (COL)\<close>
+
+text\<open>\isadof uses the concept of implicit abstract classes (or: \emph{shadow classes}).
+These refer to the set of possible \inlineisar+doc_class+ declarations that posses a number
+of attributes with their types in common. Shadow classes represent an implicit requirement
+(or pre-condition) on a given class to posses these attributes in order to work properly
+for certain \isadof commands. 
+
+shadow classes will find concrete instances in COL, but \isadof text elements do not \emph{depend}
+on our COL definitions: Ontology developers are free to use to build own instances for these 
+shadow classes, with own attributes and, last not least, own definitions of invariants independent
+from ours.
+
+In particular, these shadow classes are used at present in  \isadof:
+\begin{isar}
+DOCUMENT_ALIKES = 
+   level         :: "int  option"    <=  "None" 
+
+ASSERTION_ALIKES = 
+    properties :: "term list"
+  
+FORMAL_STATEMENT_ALIKE =
+    properties :: "thm list"
+\end{isar}
+
+These shadow-classes correspond to semantic macros 
+ @{ML "ODL_Command_Parser.enriched_document_command"},
+ @{ML "ODL_Command_Parser.assertion_cmd'"}, and
+ @{ML "ODL_Command_Parser.enriched_formal_statement_command"}.\<close>
+
+text\<open>  \isadof provides a Common Ontology Library (COL)\index{Common Ontology Library@see COL}\bindex{COL}
+  that introduces ontology concepts that are either sample instances for shadow classes as we use
+  them in our own document generation processes or, in some cases, are 
+  so generic that they we expect them to be useful for all types of documents (figures, for example). 
+\<close>
+
+
 text\<open>
-  \isadof provides a Common Ontology Library (COL)\index{Common Ontology Library@see COL}\bindex{COL}
-  that introduces ontology concepts that are so generic that they we expect them to be useful for 
-  all types of documents. In particular it defines the super-class \inlineisar|text_element|: the 
+In particular it defines the super-class \inlineisar|text_element|: the
   root of all text-elements,
 
 \begin{isar}
@@ -356,9 +390,19 @@ doc_class text_element =
   \inlineisar|subsubsection*|). Using an invariant, a derived ontology could, \eg, require that
   any sequence of technical-elements must be introduced by a text-element with a higher level
   (this would require that technical text section are introduce by a section element).
+
+Similarly, we provide "minimal" instances of the \inlineisar+ASSERTION_ALIKES+ 
+and \inlineisar+FORMAL_STATEMENT_ALIKE+ shadow classes:
+\begin{isar}
+doc_class assertions = 
+    properties :: "term list"
+  
+doc_class "thms" =
+    properties :: "thm list"
+\end{isar}
 \<close>
 
-subsubsection\<open>Example\<close>
+subsubsection\<open>Example: Text Elemens with Levels\<close>
 text\<open>
   The category ``exported constraint (EC)'' is, in the file 
   \path{ontologies/CENELEC_50128/CENELEC_50128.thy} defined as follows:
@@ -412,14 +456,23 @@ doc_class EC = AC  +
 \end{isamarkuptext}%
 }
 \end{ltx}
-
 \<close>
 
+subsubsection\<open>Example: Assertions\<close>
+text\<open>Assertions are a common feature to validate properties of models, presented as a collection
+of Isabelle/HOL definitions. They are particularly relevant for highlighting corner cases of a 
+formal model.\<close>
 
-text*[aaa::assertions]\<open>description with validations I and II\<close>
-assert*[aaa::assertions] "3 < (4::int)"
-assert*[aaa::assertions] "0 < (4::int)"
+definition last :: "'a list \<Rightarrow> 'a" where "last S = hd(rev S)"
 
+text*[claim::assertions]\<open>For non-empty lists, our definition yields indeed the last element of a list.\<close>
+assert*[claim::assertions] "last[4::int] = 4"
+assert*[claim::assertions] "last[1,2,3,4::int] = 4"
+
+text\<open>As an \inlineisar+ASSERTION_ALIKES+, the \inlineisar+assertions+ class possesses a 
+\inlineisar+properties+ attribute. The \inlineisar+assert*+ command evaluates its argument;
+in case it evaluates to true the property is added to the property list of the \inlineisar+claim+ - 
+text-element. Commands like \inlineisar+Definitions*+ or \inlineisar+Theorem*+ work analogously.\<close>
 
 
 subsection*["text-elements"::technical]\<open>Annotatable Top-level Text-Elements\<close>
