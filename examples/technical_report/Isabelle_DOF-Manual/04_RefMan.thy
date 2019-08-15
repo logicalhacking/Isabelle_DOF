@@ -747,7 +747,18 @@ subsection\<open>The Core Template\<close>
 text\<open>
   Document-templates\bindex{document template} define the overall layout (page size, margins, fonts, 
   etc.) of the generated documents and are the the main technical means for implementing layout 
-  requirements that are, \eg, required by publishers or standardization bodies.   
+  requirements that are, \eg, required by publishers or standardization bodies. 
+  If a new layout is already supported by a \LaTeX-class, then developing basic support for it 
+  is straight forwards: after reading the authors guidelines of the new template, 
+  Developing basic support for a new document template is straight forwards In most cases, it is 
+  sufficient to replace the document class in \autoref{lst:dc} of the template and add the 
+  \LaTeX-packages that are (strictly) required by the used \LaTeX-setup. In general, we recommend
+  to only add \LaTeX-packages that are always necessary fro this particular template, as loading
+  packages in the templates minimizes the freedom users have by adapting the \path{preample.tex}.
+  Moreover, you might want to add/modify the template specific configuration 
+  (\autoref{lst:config-start}-\ref{lst:config-end}). The new template should be stored in 
+  \path{src/document-templates} and its file name should start with the prefix \path{root-}. After
+  adding a new template, call the \inlinebash{install} script (see @{docref "infrastructure"}  
   The common structure of an \isadof document template looks as follows: 
 
 \begin{ltx}[escapechar=ë, numbers=left,numberstyle=\tiny,xleftmargin=5mm]
@@ -755,23 +766,18 @@ text\<open>
 %% The following part is (mostly) required by Isabelle/DOF, do not modify
 \usepackage[T1]{fontenc}       % Font encoding
 \usepackage[utf8]{inputenc}    % UTF8 support
-\usepackage{isabelle}          % Required (by Isabelle)
 \usepackage{xcolor}
-\usepackage{isabellesym}       % Required (by Isabelle)
+\usepackage{isabelle,isabellesym,amssymb} % Required (by Isabelle)
 \usepackage{amsmath}           % Used by some ontologies  
-\usepackage{amssymb}           % Strongly recommended (by Isabelle)  
 \bibliographystyle{abbrv}
 \IfFileExists{DOF-core.sty}{}{ % Required by Isabelle/DOF
-  \PackageError{DOF-core}{Isabelle/DOF not installed. 
-    This is a Isabelle_DOF project. The doëëcument preparation requires
-    the Isabelle_DOF framework. }{%
-    For further help, see 
-    ë\url{\dofurl}ë
+  \PackageError{DOF-core}{The doëëcument preparation 
+   requires the Isabelle/DOF framework.}{For further help, see 
+   ë\url{\dofurl}ë
 }
 \input{ontologies}             % This will include the document specific 
                                % ontologies from isadof.cfg
-\IfFileExists{preamble.tex}    % Include preamble.tex, if it exists.
-             {\input{preamble.tex}}{}  
+\IfFileExists{preamble.tex}{\input{preamble.tex}}{}  
 \usepackage{graphicx}          % Required for images. 
 \usepackage[caption]{subfig}
 \usepackage[size=footnotesize]{caption}
@@ -783,30 +789,16 @@ text\<open>
 
 %% Main document, do not modify
 \begin{document}
-\maketitle
-\input{session}
+\maketitle\input{session}
 \IfFileExists{root.bib}{\bibliography{root}}{}
 \end{document}
 \end{ltx}
-
-  If a new layout is already supported by a \LaTeX-class, then developing basic support for it 
-  is straight forwards: after reading the authors guidelines of the new template, 
-  Developing basic support for a new document template is straight forwards In most cases, it is 
-  sufficient to replace the document class in \autoref{lst:dc} of the template and add the 
-  \LaTeX-packages that are (strictly) required by the used \LaTeX-setup. In general, we recommend
-  to only add \LaTeX-packages that are always necessary fro this particular template, as loading
-  packages in the templates minimizes the freedom users have by adapting the \path{preample.tex}.
-  Moreover, you might want to add/modify the template specific configuration 
-  (\autoref{lst:config-start}-\ref{lst:config-end}). The new template should be stored in 
-  \path{src/document-templates} and its file name should start with the prefix \path{root-}. After
-  adding a new template, call the \inlinebash{install} script (see @{docref "infrastructure"}
 \<close>
 
 subsection\<open>Tips, Tricks, and Known Limitations\<close>
 text\<open>
-  For readers with basic knowledge of \LaTeX{}, adapting existing templates and ontologies) to 
-  support new layouts should be rather straight forward, there are several things to consider that 
-  we discuss in this section.
+  In this sectin, we sill discuss several tips and tricks for developing 
+  new or adapting existing document templates or \LaTeX-represenations of ontologies.
 \<close>
 
 subsubsection\<open>Getting Started\<close>
@@ -814,7 +806,7 @@ text\<open>
   In general, we recommend to create a test project (\eg, using \inlinebash|isabelle mkroot_DOF|)
   to develop new document templates or ontology representations. The default setup of the \isadof
   build system generated a \path{output/document} directory with a self-contained \LaTeX-setup. In 
-  this directory, you can directly use \LaTeX on the main file, called \path{root.tex}:
+  this directory, you can directly use \LaTeX{} on the main file, called \path{root.tex}:
 
 \begin{bash}
 ë\prompt{MyProject/output/document}ë pdflatex root.tex
