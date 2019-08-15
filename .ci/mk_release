@@ -34,7 +34,7 @@ print_help()
 {
     echo "Usage: mk_release [OPTION] "
     echo ""
-    echo "       A tool for building $ISADOF_TAR.tar.xz"
+    echo "       A tool for building an Isabelle/DOF release archive."
     echo ""
     echo "Run ..."
     echo ""
