@@ -26,7 +26,7 @@
 #
 # SPDX-License-Identifier: BSD-2-Clause
 
-#set -e
+set -e
 shopt -s nocasematch
 
 
@@ -84,18 +84,30 @@ clone_repo()
     
 }
 
-build_and_install_manual()
+build_and_install_manuals()
 {
     echo "* Building manual"
     ROOTS=$ISABELLE_HOME_USER/ROOTS
     if [ -f $ROOTS ]; then
         mv $ROOTS $ROOTS.backup
     fi
+
     (cd $ISADOF_WORK_DIR && ./install)
+
+    echo "Isabelle/DOF Manuals!" > $ISADOF_WORK_DIR/doc/Contents
+    
     (cd $ISADOF_WORK_DIR && $ISABELLE build -c Isabelle_DOF-Manual)
     mkdir -p $ISADOF_WORK_DIR/doc
     cp $ISADOF_WORK_DIR/examples/technical_report/Isabelle_DOF-Manual/output/document.pdf \
         $ISADOF_WORK_DIR/doc/Isabelle_DOF-Manual.pdf
+    echo "  Isabelle_DOF-Manual                       User and Implementation Manual for Isabelle/DOF" >> $ISADOF_WORK_DIR/doc/Contents
+
+    (cd $ISADOF_WORK_DIR && $ISABELLE build -c 2018-cicm-isabelle_dof-applications)
+    mkdir -p $ISADOF_WORK_DIR/doc
+    cp $ISADOF_WORK_DIR/examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/document.pdf \
+        $ISADOF_WORK_DIR/doc/2018-cicm-isabelle_dof-applications.pdf
+    echo "  2018-cicm-isabelle_dof-applications       Example academic paper" >> $ISADOF_WORK_DIR/doc/Contents
+
     find $ISADOF_WORK_DIR -type d -name "output" -exec rm -rf {} \; &> /dev/null || true
     rm -rf $ISADOF_WORK_DIR/.git* $ISADOF_WORK_DIR/.ci $ISADOF_WORK_DIR/.afp 
     if [ -f $ROOTS.backup ]; then
@@ -171,7 +183,7 @@ for i in $VARS; do
         export "$i"
 done
 
-build_and_install_manual
+build_and_install_manuals
 
 create_archive
 
