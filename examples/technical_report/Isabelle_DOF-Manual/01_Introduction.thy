@@ -124,8 +124,8 @@ text\<open>
   \<^item> for the implementation of \isadof~@{cite "brucker.ea:isabelledof:2019"}:
     \begin{quote}\small
       A.~D. Brucker and B.~Wolff. \isadof: Design and implementation. In P.~{\"O}lveczky and 
-      G.~Sala{\"u}n, editors, \<^emph>\<open>Software Engineering and Formal Methods (SEFM)\<close>, Lecture Notes 
-      in Computer Science. Springer-Verlag, Heidelberg, 2019.
+      G.~Sala{\"u}n, editors, \<^emph>\<open>Software Engineering and Formal Methods (SEFM)\<close>, number 11724 in
+      Lecture Notes in Computer Science. Springer-Verlag, Heidelberg, 2019.
     \end{quote}
     A \BibTeX-entry is available at: 
     \url{https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelledof-2019}.
