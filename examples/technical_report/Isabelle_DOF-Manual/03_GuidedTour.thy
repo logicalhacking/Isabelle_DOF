@@ -374,10 +374,10 @@ defined in the core ontology of \isadof):
 \begin{isar}
 datatype placement = h | t | b | ht | hb   
 doc_class figure   = text_section +
-   relative_width   :: "int" (* percent of textwidth *)    
-   src     :: "string"
-   placement :: placement 
-   spawn_columns :: bool <= True 
+   relative_width  :: "int" (* percent of textwidth *)    
+   src             :: "string"
+   placement       :: placement 
+   spawn_columns   :: bool <= True 
 \end{isar}
 \<close>
 figure*[fig_figures::figure,spawn_columns=False,relative_width="85",src="''figures/Dogfood-figures''"]

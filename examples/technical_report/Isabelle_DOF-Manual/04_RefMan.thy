@@ -55,7 +55,7 @@ text\<open>
   for which further manual setup steps might be required or that are not fully tested. Also note 
   that the \LaTeX-class files required by the templates need to be already installed on your 
   system. This is mostly a problem for publisher specific templates (\eg, Springer's 
-  \path{llncs.cls}), which, due to copyright restrictions, cannot be distributed legally.
+  \path{llncs.cls}), which cannot be re-distributed due to copyright restrictions.
 \<close>
 
 subsection\<open>Ontologies\<close>
