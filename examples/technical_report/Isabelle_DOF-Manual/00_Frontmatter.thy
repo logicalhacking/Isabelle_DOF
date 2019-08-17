@@ -37,7 +37,9 @@ text*[abs::abstract,
 \<open> \isadof provides an implementation of \dof on top of Isabelle/HOL. 
   \dof itself is a novel framework for \<^emph>\<open>defining\<close> ontologies
   and \<^emph>\<open>enforcing\<close> them during document development and document
-  evolution. A major goal of \dof is the integrated development of
+  evolution. \isadof targets use-cases such as mathematical texts referring
+  to a theory development or technical reports requiring a particular structure.
+  A major application of \dof is the integrated development of
   formal certification documents (\eg, for Common Criteria or CENELEC
   50128) that require consistency across both formal and informal
   arguments.
@@ -45,10 +47,14 @@ text*[abs::abstract,
   \isadof is integrated into Isabelle's IDE, which
   allows for smooth ontology development as well as immediate
   ontological feedback during the editing of a document.
+  Its checking facilities leverage the collaborative 
+  development of documents required to be consistent with an
+  underlying ontological structure.
   
-  In this paper, we give an in-depth presentation of the design
-  concepts of \dof's Ontology Definition Language (ODL) and key
-  aspects of the technology of its implementation.  \isadof is the
+  In this user-manual, we give an in-depth presentation of the design
+  concepts of \dof's Ontology Definition Language (ODL) and describe
+  comprehensively its major commands. Many examples show typical best-practice
+  applications of the system. \isadof is the
   first ontology language supporting machine-checked
   links between the formal and informal parts in an LCF-style
   interactive theorem proving environment.

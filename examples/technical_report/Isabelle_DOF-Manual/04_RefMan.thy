@@ -350,7 +350,7 @@ text\<open>
   characters in definitions that need to make use of a entries in an aux-file. 
 \<close>
 
-subsubsection\<open>Common Ontology Library (COL)\<close>
+subsection\<open>Common Ontology Library (COL)\<close>
 
 text\<open>\isadof uses the concept of implicit abstract classes (or: \emph{shadow classes}).
 These refer to the set of possible \inlineisar+doc_class+ declarations that posses a number
@@ -359,7 +359,7 @@ of attributes with their types in common. Shadow classes represent an implicit r
 for certain \isadof commands. 
 
 shadow classes will find concrete instances in COL, but \isadof text elements do not \emph{depend}
-on our COL definitions: Ontology developers are free to use to build own instances for these 
+on our COL definitions: Ontology developers are free to build own class instances for these 
 shadow classes, with own attributes and, last not least, own definitions of invariants independent
 from ours.
 
