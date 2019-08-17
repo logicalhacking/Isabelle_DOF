@@ -112,7 +112,7 @@ export_code   zero one Suc Int.nat  nat_of_integer int_of_integer  (* for debugg
              NA.accepts   DA.accepts  
              in SML   module_name RegExpChecker 
 
-subsection\<open>Infrastructure for Reflecting expoted SML code\<close>
+subsection\<open>Infrastructure for Reflecting exported SML code\<close>
 ML\<open>
   fun reflect_local_ML_exports args trans =  let
     fun eval_ML_context ctxt = let 
