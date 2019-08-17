@@ -2,3 +2,4 @@ output
 *.template.sty
 .afp
 *~
+src/DOF/RegExpChecker.sml
