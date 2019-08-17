@@ -163,7 +163,7 @@ Isabelle/DOF Installer
     * Registering tools iëën 
        /home/achim/.isabelle/Isabelleë\isabelleversion/etc/settingsë
 * Installation successful. Enjoy Isabelle/DOF, you can build the session
-  Isabelle_DOF and all example documents by executing:
+  Isabelle/DOF and all example documents by executing:
   /usr/local/Isabelleë\isabelleversion/bin/isabelleë build -D .
 \end{bash}
 
