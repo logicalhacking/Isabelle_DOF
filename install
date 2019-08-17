@@ -235,6 +235,13 @@ install_and_register(){
         echo 'ISABELLE_TOOLS=$ISABELLE_TOOLS:$ISABELLE_HOME_USER/DOF/Tools' \
              >> "$DIR/settings"
     fi
+    if [[ $ISABELLE_DOCS = *DOF* ]]; then
+        echo "    * Docs already registered in $DIR/settings"
+    else
+        echo "    * Registering docs in $DIR/settings"
+        echo "ISABELLE_DOCS=$PWD/doc"':$ISABELLE_DOCS' \
+             >> "$DIR/settings"
+    fi
     sed -i -e "s|<isadofurl>|$DOF_URL|" $ISABELLE_HOME_USER/DOF/*/*
     LTX_VERSION="$DATE $DOF_VERSION/$ISABELLE_SHORT_VERSION"
     sed -i -e "s|<isadofltxversion>|$LTX_VERSION|" $ISABELLE_HOME_USER/DOF/*/*
