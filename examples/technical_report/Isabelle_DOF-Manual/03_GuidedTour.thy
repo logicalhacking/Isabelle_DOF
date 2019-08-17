@@ -392,9 +392,8 @@ text\<open>
 
 \begin{isar}
 doc_class article = 
-   trace :: "(title + subtitle + author+ abstract +
-              introduction + technical + example +
-              conclusion + bibliography) list"
+   style_id :: string                <= "''LNCS''"
+   version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
    where "(title       ~~ \<lbrakk>subtitle\<rbrakk>   ~~ \<lbrace>author\<rbrace>$^+$+  ~~  abstract    ~~
              introduction ~~  \<lbrace>technical || example\<rbrace>$^+$  ~~  conclusion ~~  
              bibliography)"
