@@ -42,11 +42,11 @@ In general, an ontology is a formal explicit description of \<^emph>\<open>conce
 as \<^emph>\<open>links\<close> between them. A particular link between concepts is the \<^emph>\<open>is-a\<close> relation declaring 
 the instances of a subclass to be instances of the super-class.
 
-To adress this challenge, we present developed the Document Ontology Framework (\dof). \dof is 
-designed for building scalable and user-friendly tools on top of interactive theorem provers, 
-and an implementation of DOF called \isadof. \isadof is a novel framework, extending of 
+To adress this challenge, we present the Document Ontology Framework (\dof) and an 
+implementation of DOF called \isadof. \dof is designed for building scalable and user-friendly 
+tools on top of interactive theorem provers. \isadof is a novel framework, implemented as extension of 
 Isabelle/HOL, to \<^emph>\<open>model\<close> typed ontologies and to \<^emph>\<open>enforce\<close> them during document evolution. Based 
-on Isabelle infrastructures, ontologies may refer to types, terms, proven theorems, code, or 
+on Isabelle's infrastructures, ontologies may refer to types, terms, proven theorems, code, or 
 established assertions. Based on a novel adaption of the Isabelle IDE, a document is checked to be 
 \<^emph>\<open>conform\<close> to a particular ontology---\isadof is designed to give fast user-feedback \<^emph>\<open>during the 
 capture of content\<close>. This is particularly valuable in case of document evolution, where the 
