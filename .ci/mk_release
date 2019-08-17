@@ -126,7 +126,7 @@ create_archive()
 
 sign_archive()
 {
-    echo "* Publish archive not yet implemented"
+    echo "* Signing archive"
     gpg --armor --output $ISADOF_TAR.tar.xz.asc --detach-sig $ISADOF_TAR.tar.xz
 }
 
