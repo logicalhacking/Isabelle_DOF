@@ -39,6 +39,13 @@ built-in help:
 foo@bar:~$ ./install --help
 ```
 
+A final step for the installation is:
+```console
+foo@bar:~$ isabelle build -D .
+```
+This will compile Isabelle_DOF and run the example suite.
+
+
 ## Usage
 
 ### Opening an Example
