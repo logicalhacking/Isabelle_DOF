@@ -36,22 +36,21 @@ text\<open>
   Isabelle's document model.
 
   \isadof consists consists basically of four components:
-  \<^item> an own \<^emph>\<open>family of text-element\<close> such as @{command "title*"}, @{command "chapter*"}  
+  \<^item> an own \<^emph>\<open>family of text-elements\<close> such as @{command "title*"}, @{command "chapter*"}  
     @{command "text*"}, etc., which can be annotated with meta-information defined in the 
     underlying  ontology definition and allow to build a \<^emph>\<open>core\<close> document,
-  \<^item> the \<^emph>\<open>ontology definition\<close> which is an Isabelle theory file with definitions
-    for document-classes and all auxiliary datatypes 
-    (called Ontology Definition Language (ODL)),
-  \<^item> the ontology-specific \<^emph>\<open>layout definition\<close>, exploiting this meta-information, and 
-  \<^item> the generic \<^emph>\<open>layout definition\<close> for documents following, \eg, the format guidelines of 
-    publishers or standardization bodies. 
+  \<^item> the \<^emph>\<open>ontology definition language\<close> (called ODL) which allow for the definitions
+    of document-classes and necessary auxiliary datatypes,
+  \<^item> an infrastructure for ontology-specific \<^emph>\<open>layout definitions\<close>, exploiting this meta-information, and 
+  \<^item> an infrastructure for generic \<^emph>\<open>layout definitions\<close> for documents following, \eg, the format 
+    guidelines of publishers or standardization bodies. 
 \<close>
 
 text\<open> 
   The list of fully supported (\ie, supporting both interactive ontological modeling and 
   document generation) ontologies and the list of supported document templates can be 
   obtained by calling \inlinebash|isabelle mkroot_DOF -h| (see @{docitem "first_project"}).
-  Note that the postfix \inlinebash|-UNSUPPORTED| denoted experimental ontologies or templates 
+  Note that the postfix \inlinebash|-UNSUPPORTED| denotes experimental ontologies or templates 
   for which further manual setup steps might be required or that are not fully tested. Also note 
   that the \LaTeX-class files required by the templates need to be already installed on your 
   system. This is mostly a problem for publisher specific templates (\eg, Springer's 
