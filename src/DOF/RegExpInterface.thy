@@ -14,7 +14,10 @@
 chapter\<open>The High-Level Interface to the Automata-Library\<close>
 
 theory RegExpInterface
-imports "Functional-Automata.Execute"
+  imports "Functional-Automata.Execute"
+  keywords
+  "reflect_ML_exports" :: thy_decl
+
 begin
 
 
@@ -100,23 +103,50 @@ definition enabled :: "('a,'\<sigma> set)da  \<Rightarrow> '\<sigma> set \<Right
 definition zero where "zero = (0::nat)"
 definition one where "one = (1::nat)"
 
-
-export_code  zero one Suc Int.nat  nat_of_integer int_of_integer  (* for debugging *)
+export_code   zero one Suc Int.nat  nat_of_integer int_of_integer  (* for debugging *)
              example_expression                                   (* for debugging *)
 
              Zero One     Atom     Plus  Times  Star              (* regexp abstract syntax *)
 
              rexp2na      na2da    enabled                        (* low-level automata interface *)
              NA.accepts   DA.accepts  
+             in SML   module_name RegExpChecker 
 
-             in SML  module_name RegExpChecker 
-                     file "RegExpChecker.sml"                     (* writing it to a file *)
-                                                                  
-(* potentially susceptible to race conditions ... *)                                                                 
-SML_file "RegExpChecker.sml"                                      (* reads and eval generated file  
-                                                                     into SML toplevel  *)
-SML_export \<open>structure RegExpChecker = RegExpChecker\<close>              (* copies from SML toplevel into 
-                                                                     Isabelle/ML toplevel *)
+subsection\<open>Infrastructure for Reflecting expoted SML code\<close>
+ML\<open>
+  fun reflect_local_ML_exports args trans =  let
+    fun eval_ML_context ctxt = let 
+      fun is_sml_file f = String.isSuffix ".ML" (Path.implode (#path f))
+      val files = (map (Generated_Files.check_files_in (Context.proof_of ctxt)) args) 
+      val ml_files = filter is_sml_file (map #1 (maps Generated_Files.get_files_in files))
+      val ml_content = map (fn f => Syntax.read_input (#content f)) ml_files
+      fun eval ml_content   = fold (fn sml => (ML_Context.exec 
+                                           (fn () => ML_Context.eval_source ML_Compiler.flags sml))) 
+                                   ml_content 
+    in 
+      (eval ml_content #> Local_Theory.propagate_ml_env) ctxt
+    end
+  in
+    Toplevel.generic_theory eval_ML_context trans
+  end
+
+
+  val files_in_theory =
+    (Parse.underscore >> K [] || Scan.repeat1 Parse.path_binding) --
+      Scan.option (\<^keyword>\<open>(\<close> |-- Parse.!!! (\<^keyword>\<open>in\<close> 
+                     |-- Parse.theory_name --| \<^keyword>\<open>)\<close>));
+
+  val _ =
+    Outer_Syntax.command \<^command_keyword>\<open>reflect_ML_exports\<close> 
+      "evaluate generated Standard ML files"
+      (Parse.and_list1 files_in_theory  >> (fn args => reflect_local_ML_exports args));
+\<close>
+
+
+
+reflect_ML_exports _
+
+
 
 section\<open>The Abstract Interface For Monitor Expressions\<close>
 text\<open>Here comes the hic : The reflection of the HOL-Automata module into an SML module 
@@ -209,3 +239,4 @@ end  (* struct *)
 no_notation Atom ("\<lfloor>_\<rfloor>")  
 
 end
+  
