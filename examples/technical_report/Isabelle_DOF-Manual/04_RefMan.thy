@@ -257,12 +257,12 @@ text\<open>
      mathematical  notations for $\lambda$-terms in Isabelle/HOL. Example expressions are:
      \inlineisar|1+2| (arithmetics), \inlineisar|[1,2,3]| (lists), \inlineisar|''ab c''| (strings), 
      \inlineisar|{1,2,3}| (sets), \inlineisar|(1,2,3)| (tuples), 
-     \inlineisar|\<forall> x. P(x) \<and> Q x = C| (formulas). For details, see~@{cite "nipkowMain19"}.
+     \inlineisar|\<forall> x. P(x) \<and> Q x = C| (formulas). For details, see~@{cite "nipkow:whats:2019"}.
 \<close>
 
 text\<open>
   Advanced ontologies can, \eg,  use recursive function definitions with 
-  pattern-matching~@{cite "functions19"}, extensible record 
+  pattern-matching~@{cite "kraus:defining:2019"}, extensible record 
   pecifications~@{cite "wenzel:isabelle-isar:2019"}, and abstract type declarations.
 \<close>
 
