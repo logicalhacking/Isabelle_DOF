@@ -151,7 +151,7 @@ SPDX-License-Identifier: BSD-2-Clause
 * Achim D. Brucker and Burkhart Wolff. [Isabelle/DOF: Design and
   Implementation](https://www.brucker.ch/bibliography/download/2019/brucker.ea-isabelledof-2019.pdf).
   In Software Engineering and Formal Methods (SEFM). Lecture Notes in
-  Computer Science, Springer-Verlag, 2019.
+  Computer Science (11724), Springer-Verlag, 2019.
 
 ## Master Repository
 
