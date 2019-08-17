@@ -115,8 +115,8 @@ text\<open>
 This will create a directory \texttt{\isadofdirn} containing \isadof distribution.
 Next, we need to invoke the \inlinebash|install| script. If necessary, the installations 
 automatically downloads additional dependencies from the AFP (\url{https://www.isa-afp.org}), 
-namely the AFP  entries ``Functional Automata''~@{cite "Functional-Automata-AFP"} and ``Regular 
-Sets and Expressions''~@{cite "Regular-Sets-AFP"}. This might take a few minutes to complete. 
+namely the AFP  entries ``Functional Automata''~@{cite "nipkow.ea:functional-Automata-afp:2004"} and ``Regular 
+Sets and Expressions''~@{cite "kraus.ea:regular-sets-afp:2010"}. This might take a few minutes to complete. 
 Moreover, the installation script applies a patch to the Isabelle system, which requires 
 \<^emph>\<open>write permissions for the Isabelle system directory\<close> and registers \isadof as Isabelle component. 
 

@@ -137,9 +137,9 @@ text\<open>
   theorems (protected by a kernel).  This includes, \eg, ProofPower, HOL4, HOL-light, Isabelle, or 
   Coq and its derivatives. \dof is, however, designed for fast interaction in an IDE. If a user wants
   to benefit from this experience, only Isabelle and Coq have the necessary infrastructure of 
-  asynchronous proof-processing and support by a PIDE~@{cite "DBLP:conf/itp/Wenzel14" and 
-  "DBLP:journals/corr/Wenzel14" and "DBLP:conf/mkm/BarrasGHRTWW13"
-  and "Faithfull:2018:COQ:3204179.3204223"} which in many features over-accomplishes the required 
+  asynchronous proof-processing and support by a PIDE~@{cite "wenzel:asynchronous:2014" and 
+  "wenzel:system:2014" and "barras.ea:pervasive:2013"
+  and "faithfull.ea:coqoon:2018"} which in many features over-accomplishes the required 
   features of \dof. For example, current Isabelle versions offer cascade-syntaxes (different 
   syntaxes and even parser-technologies which can be nested along the 
   \inlineisar+\<Open> ... \<Close> + barriers, while \dof actually only requires a two-level 
@@ -158,8 +158,8 @@ text\<open>
 
   Isabelle provides, beyond the features required for \dof, a lot of additional benefits. For 
   example, it also allows the asynchronous evaluation and checking of the document 
-  content~@{cite "DBLP:conf/itp/Wenzel14" and "DBLP:journals/corr/Wenzel14" and
-  "DBLP:conf/mkm/BarrasGHRTWW13"} and is dynamically extensible. Its PIDE provides a 
+  content~@{cite "wenzel:asynchronous:2014" and "wenzel:system:2014" and
+  "barras.ea:pervasive:2013"} and is dynamically extensible. Its PIDE provides a 
   \<^emph>\<open>continuous build, continuous check\<close>  functionality, syntax highlighting, and auto-completion. 
   It also provides infrastructure for displaying meta-information (\eg, binding and type annotation)
   as pop-ups, while hovering over sub-expressions.  A fine-grained dependency analysis allows the 

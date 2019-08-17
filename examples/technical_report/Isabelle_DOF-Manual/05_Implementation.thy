@@ -228,7 +228,7 @@ text\<open>
   is \emph{enabled} for this class; in this case, the \inlineisar+next+-operation is executed. The 
   transformed automaton recognizing the rest-language is stored in \inlineisar+docobj_tab+ if
   possible; otherwise, if \inlineisar+next+ fails, an error is reported. The automata implementation 
-  is, in large parts, generated from a formalization of functional automata~\cite{Functional-Automata-AFP}.
+  is, in large parts, generated from a formalization of functional automata~\cite{nipkow.ea:functional-Automata-afp:2004}.
 \<close>
 
 section\<open>The \LaTeX-Core of \isadof\<close>
