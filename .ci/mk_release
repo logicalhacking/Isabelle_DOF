@@ -93,17 +93,15 @@ build_and_install_manuals()
     fi
 
     (cd $ISADOF_WORK_DIR && ./install)
+    (cd $ISADOF_WORK_DIR && $ISABELLE build -c -D . )
 
     mkdir -p $ISADOF_WORK_DIR/doc
     echo "Isabelle/DOF Manuals!" > $ISADOF_WORK_DIR/doc/Contents
     
-    (cd $ISADOF_WORK_DIR && $ISABELLE build -c Isabelle_DOF-Manual)
     cp $ISADOF_WORK_DIR/examples/technical_report/Isabelle_DOF-Manual/output/document.pdf \
         $ISADOF_WORK_DIR/doc/Isabelle_DOF-Manual.pdf
     echo "  Isabelle_DOF-Manual                       User and Implementation Manual for Isabelle/DOF" >> $ISADOF_WORK_DIR/doc/Contents
 
-    (cd $ISADOF_WORK_DIR && $ISABELLE build -c 2018-cicm-isabelle_dof-applications)
-    mkdir -p $ISADOF_WORK_DIR/doc
     cp $ISADOF_WORK_DIR/examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/document.pdf \
         $ISADOF_WORK_DIR/doc/2018-cicm-isabelle_dof-applications.pdf
     echo "  2018-cicm-isabelle_dof-applications       Example academic paper" >> $ISADOF_WORK_DIR/doc/Contents
@@ -118,10 +116,10 @@ build_and_install_manuals()
 create_archive()
 {    
     echo "* Creating archive"
+    cp $ISADOF_WORK_DIR/doc/Isabelle_DOF-Manual.pdf  $ISADOF_TAR.pdf
     (mv $ISADOF_WORK_DIR $ISADOF_DIR)    
     (cd $BUILD_DIR && tar cf $ISADOF_TAR.tar $ISADOF_TAR && xz $ISADOF_DIR.tar)
     mv $BUILD_DIR/$ISADOF_TAR.tar.xz .
-    cp $ISADOF_WORK_DIR/doc/Isabelle_DOF-Manual.pdf  $ISADOF_TAR.pdf
     rm -rf $BUILD_DIR
 }
 
