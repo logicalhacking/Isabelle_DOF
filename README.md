@@ -168,11 +168,14 @@ SPDX-License-Identifier: BSD-2-Clause
   with the Informal](https://www.brucker.ch/bibliography/download/2018/brucker.ea-isabelle-ontologies-2018.pdf).
   In Conference on Intelligent Computer Mathematics (CICM). Lecture
   Notes in Computer Science (11006), Springer-Verlag, 2018.
+  [doi:10.1007/978-3-319-96812-4_3](https://doi.org/10.1007/978-3-319-96812-4_3).
+
 
 * Achim D. Brucker and Burkhart Wolff. [Isabelle/DOF: Design and
   Implementation](https://www.brucker.ch/bibliography/download/2019/brucker.ea-isabelledof-2019.pdf).
   In Software Engineering and Formal Methods (SEFM). Lecture Notes in
   Computer Science (11724), Springer-Verlag, 2019.
+  [doi:10.1007/978-3-030-30446-1_15](https://doi.org/10.1007/978-3-030-30446-1_15).
 
 ## Master Repository
 
