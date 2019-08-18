@@ -28,6 +28,15 @@ text\<open>
 \<close>
 
 section*[getting_started::technical]\<open>Getting Started\<close>
+text\<open>
+As an alternative to installing \isadof{} locally, the latest official release  \isadof is also 
+available on \href{https://cloud.docker.com/u/logicalhacking/}{Docker Hub}. Thus, if you have \href{https://www.docker.com}{Docker} installed and 
+your installation of Docker supports X11 application, you can start \isadof as follows:
+
+\begin{bash}
+ë\prompt{}ë docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix logicalhacking/isabelle_dof-ë\doflatestversionë_ë\MakeLowercase{\isabellelatestversion}ë isabelle jedit
+\end{bash}
+\<close>
 
 subsection*[installation::technical]\<open>Installation\<close>
 text\<open>
@@ -38,21 +47,20 @@ text\<open>
 subsubsection*[prerequisites::technical]\<open>Pre-requisites\<close>
 text\<open>
   \isadof has to major pre-requisites: 
-  \<^item> \<^bold>\<open>Isabelle \isabelleversion\<close>\bindex{Isabelle}. \isadof will not work 
-    with a different version of Isabelle. If you need \isadof for a different version of 
-    Isabelle, please check the \isadof website if there is a version available supporting 
-    the required version of Isabelle. \isadof uses a two-part version system (e.g., 1.0/2019), 
+  \<^item> \<^bold>\<open>Isabelle\<close>\bindex{Isabelle} (\isabellefullversion). 
+    \isadof uses a two-part version system (e.g., 1.0.0/2019), 
     where the first part is the version of \isadof (using semantic versioning) and the second 
     part is the supported version of Isabelle. Thus, the same version of \isadof might be 
     available for different versions of Isabelle. 
   \<^item> \<^bold>\<open>\TeXLive 2019\<close>\bindex{TexLive@\TeXLive} or any other modern 
-    \LaTeX-distribution that ships a \pdftex-binary supporting the 
-    \inlineltx|\expanded|-primitive 
-    (for details, please see \url{https://www.texdev.net/2018/12/06/a-new-primitive-expanded}).
+    \LaTeX-distribution where \pdftex{} supports
+    \inlineltx|\expanded| 
+    (\url{https://www.texdev.net/2018/12/06/a-new-primitive-expanded}).
 \<close>
 
 paragraph\<open>Installing Isabelle\<close>
 text\<open>
+\enlargethispage{\baselineskip}
   Please download and install the Isabelle \isabelleversion distribution for your operating system 
   from the \href{\isabelleurl}{Isabelle website} (\url{\isabelleurl}). After the successful 
   installation of Isabelle, you should be able to call the \inlinebash|isabelle| tool on the 
@@ -89,17 +97,13 @@ text\<open>
 \begin{bash}
 ë\prompt{}ë pdftex \\expanded{Success}\\end
 This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian).
-entering extended mode
-[1{dftex.map}]<cmr10.pfb>
 Output written on texput.pdf (1 page, 8650 bytes).
 Transcript written on texput.log.
 \end{bash}
 
   If this generates successfully a file \inlinebash|texput.pdf|, your \pdftex-binary supports
   the \inlineltx|\expanded|-primitive. If your Linux distribution does not (yet) ship \TeXLive{} 
-  2019 or your are running Windows or OS X, please follow the installation instructions from the 
-  \href{https://www.tug.org/texlive/acquire-netinstall.html}{\TeXLive}{} website 
-  (\url{https://www.tug.org/texlive/acquire-netinstall.html}). 
+  2019 or your are running Windows or OS X, please follow the installation instructions from \url{https://www.tug.org/texlive/acquire-netinstall.html}. 
 \<close>
 
 subsubsection*[isadof::technical]\<open>Installing \isadof\<close>
@@ -124,7 +128,6 @@ If the \inlinebash|isabelle| tool is not in your \inlinebash|PATH|, you need to 
 \inlinebash|install| script with the \inlinebash|--isabelle| option, passing the full-qualified
 path of the \inlinebash|isabelle| tool (\inlinebash|install --help| gives 
 you an overview of all available configuration options):
-\clearpage
 
 \begin{bash}
 ë\prompt{}ë cd ë\isadofdirnë
@@ -198,8 +201,6 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
        * technical_report
     -t TEMPLATE   (default: scrartcl)
        Available document templates:
-       * eptcs-UNSUPPORTED
-       * lipics-v2019-UNSUPPORTED
        * lncs
        * scrartcl
        * scrreprt-modern

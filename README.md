@@ -4,6 +4,18 @@ Isabelle/DOF is a novel Document Ontology Framework on top of Isabelle.
 Isabelle/DOF allows for both conventional typesetting as well as formal
 development.
 
+## Running Isabelle/DOF using Docker
+
+As an alternative to installing Isabelle/DOF locally, the latest official release Isabelle/DOF
+is also available on Docker Hub. Thus, if you have Docker installed and your installation of
+Docker supports X11 application, you can start Isabelle/DOF as follows:
+
+```console
+foo@bar:~$ achim@logicalhacking:~$ docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/. \
+           X11-unix:/tmp/.X11-unix logicalhacking/isabelle_dof-1.0.0_isabelle2019 \
+           isabelle jedit
+```
+
 ## Pre-requisites
 
 Isabelle/DOF has two major pre-requisites:
@@ -120,6 +132,16 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
 
   Prepare session root DIR (default: current directory).
 ```
+
+## Releases
+
+For releases, signed archives including a PDF version of the Isabelle/DOF manual are
+are available:
+
+* Isabelle/DOF 1.0.0/Isabelle2019
+  * [Isabelle_DOF-1.0.0_Isabelle2019.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.0.0_Isabelle2019.pdf)
+  * [Isabelle_DOF-1.0.0_Isabelle2019.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.0.0_Isabelle2019.tar.xz)
+  * [Isabelle_DOF-1.0.0_Isabelle2019.tar.xz.asc](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.0.0_Isabelle2019.tar.xz.asc)
 
 ## Team
 

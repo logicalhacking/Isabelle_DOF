@@ -213,8 +213,10 @@ install_and_register(){
     ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/:.*$//'`
     sed -i -e "s|%%% CONFIG %%%| \
       \\\\renewcommand{\\\\dof@isabelleversion}{$ISABELLE_SHORT_VERSION} \
+      \\\\renewcommand{\\\\isabellelatestversion}{$DOF_LATEST_ISABELLE} \
       \\\\renewcommand{\\\\isabellefullversion}{$ISABELLE_VERSION\\\\xspace} \
       \\\\renewcommand{\\\\dof@version}{$DOF_VERSION} \
+      \\\\renewcommand{\\\\doflatestversion}{$DOF_LATEST_VERSION} \
       \\\\renewcommand{\\\\isabelleurl}{$ISABELLE_URL} \
       \\\\renewcommand{\\\\dofurl}{$DOF_URL} \
       \\\\renewcommand{\\\\dof@artifacturl}{https://$DOF_ARTIFACT_HOST/$DOF_ARTIFACT_DIR}|" \
