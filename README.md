@@ -11,9 +11,8 @@ is also available on Docker Hub. Thus, if you have Docker installed and your ins
 Docker supports X11 application, you can start Isabelle/DOF as follows:
 
 ```console
-foo@bar:~$ achim@logicalhacking:~$ docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/. \
-           X11-unix:/tmp/.X11-unix logicalhacking/isabelle_dof-1.0.0_isabelle2019 \
-           isabelle jedit
+foo@bar:~$ docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix \ 
+           logicalhacking/isabelle_dof-1.0.0_isabelle2019 isabelle jedit
 ```
 
 ## Pre-requisites
