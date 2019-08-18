@@ -34,7 +34,10 @@ available on \href{https://cloud.docker.com/u/logicalhacking/}{Docker Hub}. Thus
 your installation of Docker supports X11 application, you can start \isadof as follows:
 
 \begin{bash}
-ë\prompt{}ë docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix logicalhacking/isabelle_dof-ë\doflatestversionë_ë\MakeLowercase{\isabellelatestversion}ë isabelle jedit
+ë\prompt{}ë docker run -ti --rm -e DISPLAY=$DISPLAY \
+   -v /tmp/.X11-unix:/tmp/.X11-unix \ 
+   logicalhacking/isabelle_dof-ë\doflatestversionë_ë\MakeLowercase{\isabellelatestversion}ë \
+   isabelle jedit
 \end{bash}
 \<close>
 
