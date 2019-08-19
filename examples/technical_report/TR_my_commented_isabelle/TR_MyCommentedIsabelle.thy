@@ -2097,16 +2097,10 @@ text\<open> This interactive Isabelle Programming Cook-Book represents my curren
   It differs from the reference  manual in some places on purpose, since I believe 
   that a lot of internal Isabelle API's need a more conceptual view on what is happening 
   (even if this conceptual view is at times over-abstracting a little).
-  It also offers a deliberately different abstraction  to the explanations in form of comments
-  in the sources or in the Reference Manual.
-  
-  The descriptions of some sources may appear lengthy and repetitive and redundant - but this kind 
-  of repetition not only give an idea of the chosen abstraction levels on some interfaces, but also
-  represents --- since this is a "living document" (a notion I owe Simon Foster) --- a continuous check
-  for each port of our material to  each more recent Isabelle version, where the first attempts
-  to load it will fail, but give another source of information over the modifications of
-  the system interface for parts relevant to our own development work.
-  
+  It is written in Isabelle/DOF and conceived as "living document" (a term that 
+  I owe Simon Foster), i.e. as hypertext-heavy text making direct references to 
+  the Isabelle API's which were checked whenever this document is re-visited in Isabelle/jEdit.
+      
   All hints and contributions of collegues and collaborators are greatly welcomed; all errors
   and the roughness of this presentation is entirely my fault.
 \<close>
