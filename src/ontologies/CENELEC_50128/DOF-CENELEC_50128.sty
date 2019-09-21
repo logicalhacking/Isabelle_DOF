@@ -14,7 +14,7 @@
 
 \NeedsTeXFormat{LaTeX2e}\relax
 \ProvidesPackage{DOF-cenelec_50128}
-  [<isadofltxversion>%
+  [2019/08/18 Unreleased/Isabelle2019%
   Document-Type Support Framework for Isabelle (CENELEC 50128).]
 
 \RequirePackage{DOF-COL}
@@ -36,14 +36,16 @@
 
 %% SRAC
 \providecolor{SRAC}{named}{green}
-\DeclareNewTOC[%
-owner=\jobname,
-type=SRAC,%
-types=SRACs,%
-listname={List of SRACs}%
-]{tos}
-\setuptoc{tos}{chapteratlist}
-\AtEndEnvironment{frontmatter}{\listofSRACs}
+\ifcsdef{DeclareNewTOC}{%
+  \DeclareNewTOC[%
+    owner=\jobname,
+    type=SRAC,%
+    types=SRACs,%
+    listname={List of SRACs}%
+  ]{tos}
+  \setuptoc{tos}{chapteratlist}
+  \AtEndEnvironment{frontmatter}{\listofSRACs}
+}{}
 
 \newtheorem{SRAC}{SRAC}
 \tcolorboxenvironment{SRAC}{
@@ -86,14 +88,16 @@ listname={List of SRACs}%
 
 % EC
 \providecolor{EC}{named}{blue}
-\DeclareNewTOC[%
-owner=\jobname,
-type=EC,%
-types=ECs,%
-listname={List of ECs}%
-]{toe}
-\setuptoc{toe}{chapteratlist}
-\AtEndEnvironment{frontmatter}{\listofECs}
+\ifcsdef{DeclareNewTOC}{%
+  \DeclareNewTOC[%
+    owner=\jobname,
+    type=EC,%
+    types=ECs,%
+    listname={List of ECs}%
+  ]{toe}
+  \setuptoc{toe}{chapteratlist}
+  \AtEndEnvironment{frontmatter}{\listofECs}
+}{}
 
 \newtheorem{EC}{EC}
 \tcolorboxenvironment{EC}{
