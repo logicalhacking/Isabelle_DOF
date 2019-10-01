@@ -602,6 +602,36 @@ fun mk_meta_eq (t, u) = meta_eq_const (fastype_of t) $ t $ u;
 
 \<close>
 
+subsection\<open>Another Approach for Typed Parsing\<close>
+
+text\<open>Another example for influencing @{ML "Syntax.read_term"} by modifying
+the @{ML_type "Proof.context"}: \<close>
+
+definition "zz = ()" 
+ML\<open>@{term zz}\<close>  (* So : @(term "zz"} is now a constant*) 
+ML\<open>val  Free ("zz", ty) = Proof_Context.add_fixes 
+                            [(@{binding "zz"}, SOME @{typ nat}, NoSyn)] @{context}
+                          |> (fn (S, ctxt) => (writeln (String.concat S); 
+                                               Syntax.read_term ctxt "zz"));
+                (* So : @(term "zz"} is here a free variable. *) \<close>
+ML\<open>@{term zz}\<close>  (* So : @(term "zz"} is now a constant again.*) 
+locale Z =
+  fixes zz :: nat
+begin
+  ML\<open>@{term "(zz)"}\<close>
+end
+
+lemma True
+proof - fix a :: nat
+  show True
+    ML_prf \<open>@{term a}\<close>
+    term a
+    oops
+
+
+
+
+
 subsection*[t233::technical]\<open> Theories and the Signature API\<close>  
 ML\<open>
 Sign.tsig_of : theory -> Type.tsig;

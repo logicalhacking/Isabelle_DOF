@@ -29,7 +29,7 @@ section*[a::A, x = "3"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 text*[c1::C, x = "''beta''"] \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
 
 text*[d::D, a1 = "X3"] \<open> ... phasellus amet id massa nunc, pede suscipit repellendus, 
-                         ... @{docitem "c1"} @{thm "refl"} \<close>
+                         ... @{C "c1"} @{thm "refl"} \<close>
 
 
 update_instance*[d::D, a1 := X2]

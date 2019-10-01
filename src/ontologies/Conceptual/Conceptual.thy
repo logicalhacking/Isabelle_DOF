@@ -42,7 +42,9 @@ doc_class D = B +
 
 doc_class E = D +
    x :: "string"              <= "''qed''"  (* overriding default *)
-   
+
+
+
 doc_class F  = 
    properties :: "term list"
    r          :: "thm list"
