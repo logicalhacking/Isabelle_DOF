@@ -556,7 +556,7 @@ result communication times... \<close>
   
 text*[t10::test_result] \<open> This is a meta-test. This could be an ML-command
 that governs the external test-execution via, eg., a makefile or specific calls
-to a test-environment or test-engine \<close>
+to a test-environment or test-engine. \<close>
 
 
 text\<open>Finally some examples of references to doc-items, i.e. text-elements with declared 

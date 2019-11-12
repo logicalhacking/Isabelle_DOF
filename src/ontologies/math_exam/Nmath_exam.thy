@@ -116,19 +116,21 @@ exercise - (header ~ context_description ~ task list)
 *)
 
 (*
-tasks & subtask
+tasks  > subtask
 
 answer > subanswer
 
 answer_element
  - text
+ - program-text ? ? ? 
  - checkbox
  - radiobutton
  - equational derivation
  - proof derivation
 
 solution > subsolution
- - test
+ - text
+ - program-text
  - checkbox
  - radiobutton
  - equational derivation
@@ -143,6 +145,7 @@ Invarianten:
 
 2 : invariants over markings and grades
 
+3 : distribution constraints: subtask should have more than 25 % of overall grade 
 
 *)
 
