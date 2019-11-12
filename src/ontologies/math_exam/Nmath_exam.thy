@@ -29,46 +29,54 @@ where the author of the exam is not expected to be physically present.
 \<close>  
   
   
-datatype ContentClass =   
-      setter            (* \<open>the 'author' of the exam\<close> *)
-    | checker           (* \<open>the 'proof-reader' of the exam\<close> *)
-    | externalExaminer  (* \<open>an external 'proof-reader' of the exam\<close> *)
-    | student           (* \<open>the victim ;-) ... \<close> *)
+datatype ContentClass =   setter   | checker   | externalExaminer  |  student         
 
   
 doc_class Author =
    affiliation :: "string"
-   email :: "string"
-
-    
-   
-datatype Subject =
-  algebra | geometry | statistical | analysis
-
-datatype Level =
-  oneStar | twoStars | threeStars
-
-  
-datatype Grade =
-  A1 | A2 | A3
+   roles       :: "ContentClass set"
+   email       :: "string"
 
 
 doc_class Exam_item = 
   level        :: "int option"
   concerns     :: "ContentClass set"  
+  visible_for  :: "ContentClass set"  
 
 doc_class Header = Exam_item +
-  examSubject  :: "(Subject) list"
-  date         :: string
-  timeAllowed  :: int (*  minutes *)
+  date          :: string
+  authors       :: "Author list"
+  timeAllowed   :: int (*  minutes *)
 
+doc_class marking = Exam_item +
+   marks        :: int
 
-type_synonym SubQuestion = string
- 
-doc_class Answer_Formal_Step =  Exam_item +
+doc_class Answer_Element =  Exam_item +
   justification :: string
   "term"        :: "string" 
-  
+
+doc_class text_answer =  Answer_Element +
+  "term"        :: "string" 
+
+doc_class program_text =  Answer_Element +
+  "term"        :: "string" 
+
+doc_class formula_text =  Answer_Element +
+  "term"        :: "string" 
+
+doc_class checkbox =  Answer_Element +
+  "term"        :: "string" 
+
+doc_class radiobuttons =  Answer_Element +
+  "term"        :: "string" 
+
+doc_class equational_derivation =  Answer_Element +
+  "term"        :: "string" 
+
+doc_class proof_derivation =  Answer_Element +
+  "term"        :: "string" 
+
+
 doc_class Answer_YesNo =  Exam_item +
   step_label    :: string
   yes_no        :: bool  (* \<open>for checkboxes\<close> *)
@@ -77,12 +85,15 @@ datatype Question_Type =
   formal | informal | mixed 
   
 doc_class Task = Exam_item +
-  local_grade :: Level
+  local_grade :: marking
   type        :: Question_Type
   subitems    :: "(SubQuestion * (Answer_Formal_Step list + Answer_YesNo)list) list"
   concerns    :: "ContentClass set" <= "{setter,student,checker,externalExaminer}" 
   mark        :: int
-   
+
+
+doc_class SubTask = Task + 
+  local_grade :: Level
 
 doc_class Exercise = Exam_item +
   content  :: "(Task) list"
@@ -101,13 +112,11 @@ doc_class Validation =
    proofs :: "thm list"   <="[]"
   
 doc_class Solution = Exam_item +
-  content  :: "Exercise list"
   valids   :: "Validation list"
   concerns :: "ContentClass set" <= "{setter,checker,externalExaminer}"
   
 doc_class MathExam =
-  content :: "(Header + Author + Exercise) list"
-  global_grade :: Grade 
+  global_grade :: Mark 
   accepts "\<lbrace>Author\<rbrace>\<^sup>+  ~~  Header ~~  \<lbrace>Exercise ~~ Solution\<rbrace>\<^sup>+ "
 
 
@@ -120,6 +129,7 @@ tasks  > subtask
 
 answer > subanswer
 
+ 
 answer_element
  - text
  - program-text ? ? ? 
