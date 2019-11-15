@@ -146,7 +146,7 @@ solution > subsolution
  - proof derivation
 
 marking > submarking
-  
+    
 grade
 
 Invarianten:
