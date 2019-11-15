@@ -87,13 +87,12 @@ datatype Question_Type =
 doc_class Task = Exam_item +
   local_grade :: marking
   type        :: Question_Type
-  subitems    :: "(SubQuestion * (Answer_Formal_Step list + Answer_YesNo)list) list"
   concerns    :: "ContentClass set" <= "{setter,student,checker,externalExaminer}" 
   mark        :: int
 
 
 doc_class SubTask = Task + 
-  local_grade :: Level
+  local_grade :: marking
 
 doc_class Exercise = Exam_item +
   content  :: "(Task) list"
@@ -114,15 +113,15 @@ doc_class Validation =
 doc_class Solution = Exam_item +
   valids   :: "Validation list"
   concerns :: "ContentClass set" <= "{setter,checker,externalExaminer}"
-  
+
+doc_class Context_Description = Exam_item +
+  label :: string
+
 doc_class MathExam =
-  global_grade :: Mark 
-  accepts "\<lbrace>Author\<rbrace>\<^sup>+  ~~  Header ~~  \<lbrace>Exercise ~~ Solution\<rbrace>\<^sup>+ "
+  global_grade :: int 
+  accepts "Header ~~ \<lbrace>Author\<rbrace>\<^sup>+ ~~ Context_Description ~~ \<lbrace>Task ~~ Solution\<rbrace>\<^sup>+ "
 
 
-(*
-exercise - (header ~ context_description ~ task list)
-*)
 
 (*
 tasks  > subtask
