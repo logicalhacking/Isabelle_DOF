@@ -29,134 +29,134 @@ where the author of the exam is not expected to be physically present.
 \<close>  
   
   
-datatype ContentClass =   setter   | checker   | externalExaminer  |  student         
+datatype content_class =   setter   | checker   | external_examiner  |  student         
 
+text\<open>Tasks, Answers and Solutions are grouped into the \<^emph>\<open>categories\<close> 
+\<^enum> \<open>main\<close> and 
+\<^enum> \<open>sub\<close>. \<close>
+
+datatype category = main | sub
   
-doc_class Author =
+doc_class author =
    affiliation :: "string"
-   roles       :: "ContentClass set"
+   roles       :: "content_class set"
    email       :: "string"
 
 
-doc_class Exam_item = 
-  level        :: "int option"
-  concerns     :: "ContentClass set"  
-  visible_for  :: "ContentClass set"  
+doc_class exam_item = 
+   level        :: "int option"
+   concerns     :: "content_class set"  
+   visible_for  :: "content_class set"  
 
-doc_class Header = Exam_item +
-  date          :: string
-  authors       :: "Author list"
-  timeAllowed   :: int (*  minutes *)
+doc_class header = exam_item +
+   date          :: string
+   authors       :: "author list"
+   timeAllowed   :: int (*  minutes *)
 
-doc_class marking = Exam_item +
+
+datatype prog_lang = python | C | java | Haskell | SML
+
+
+doc_class marking = exam_item +
    marks        :: int
 
-doc_class Answer_Element =  Exam_item +
-  justification :: string
-  "term"        :: "string" 
-
-doc_class text_answer =  Answer_Element +
-  "term"        :: "string" 
-
-doc_class program_text =  Answer_Element +
-  "term"        :: "string" 
-
-doc_class formula_text =  Answer_Element +
-  "term"        :: "string" 
-
-doc_class checkbox =  Answer_Element +
-  "term"        :: "string" 
-
-doc_class radiobuttons =  Answer_Element +
-  "term"        :: "string" 
-
-doc_class equational_derivation =  Answer_Element +
-  "term"        :: "string" 
-
-doc_class proof_derivation =  Answer_Element +
-  "term"        :: "string" 
+doc_class answer_element =  exam_item +
+   cat           :: category
+(* justification :: string
+  "term"        :: "string"  *)
 
 
-doc_class Answer_YesNo =  Exam_item +
-  step_label    :: string
-  yes_no        :: bool  (* \<open>for checkboxes\<close> *)
+doc_class text_answer =  answer_element +
+   "term"        :: "string" 
 
-datatype Question_Type =   
-  formal | informal | mixed 
+doc_class program_text =  answer_element +
+   prog_lang    :: prog_lang
+   pre_filled   :: "string"  <= "\<open>This is a text with \<alpha>, \<beta>, \<gamma>\<close>" 
+
+doc_class formula_text =  answer_element +
+   "term"        :: "string" 
+
+doc_class checkbox = exam_item  +
+   "value"       :: "bool option"
+
+doc_class checkboxes = answer_element +
+   marks         :: int
+   accepts       "\<lbrace>checkbox\<rbrace>\<^sup>+"
+           
+doc_class radiobutton =  exam_item +
+   "value"       :: "bool option"
+   "term"        :: "string" 
+
+doc_class radiobuttons =  answer_element +
+   "term"        :: "string" 
+   accepts       "\<lbrace>radiobutton\<rbrace>\<^sup>+ "
+
+datatype opn = eq | equiv | refines | refined_by
+
+doc_class equational_derivation =  answer_element +
+   eq_deriv        :: "(opn option \<times> term option) list" 
+
+(* these two could be refined substantially *)
+doc_class proof_derivation =  answer_element +
+   "term"        :: "term list" 
+
+doc_class answer = exam_item +
+   cat         :: category
+   accepts "\<lbrace>answer_element\<rbrace>\<^sup>+ "
+    
+
+datatype task_type =  formal | informal | mixed 
   
-doc_class Task = Exam_item +
-  local_grade :: marking
-  type        :: Question_Type
-  concerns    :: "ContentClass set" <= "{setter,student,checker,externalExaminer}" 
-  mark        :: int
+doc_class task = exam_item +
+   cat         :: category
+   local_grade :: marking
+   type        :: task_type
+   concerns    :: "content_class set" <= "{setter,student,checker,external_examiner}" 
+   mark        :: int
 
-
-doc_class SubTask = Task + 
-  local_grade :: marking
-
-doc_class Exercise = Exam_item +
-  content  :: "(Task) list"
-  concerns :: "ContentClass set" <= "{setter,student,checker,externalExaminer}"
-
-
-text\<open>In many institutions, it makes sense to have a rigorous process of validation
-for exam subjects : is the initial question correct ? Is a proof in the sense of the
-question possible ? We model the possibility that the @{term setter} validates a 
-question by a sample proof validated by Isabelle. In our scenario this sample proofs
-are completely @{emph \<open>intern\<close>}, i.e. not exposed to the students but just additional
-material for the internal review process of the exam.\<close>
-  
-doc_class Validation = 
+doc_class validation = 
    tests  :: "term list"  <="[]"
    proofs :: "thm list"   <="[]"
+
+doc_class solution = exam_item +
+   cat         :: category
+   motivation  :: string
+   valids      :: "validation list"
+   objectives  :: string 
+   concerns    :: "content_class set" <= "{setter,checker,external_examiner}" 
   
-doc_class Solution = Exam_item +
-  valids   :: "Validation list"
-  concerns :: "ContentClass set" <= "{setter,checker,externalExaminer}"
-
-doc_class Context_Description = Exam_item +
-  label :: string
-
-doc_class MathExam =
-  global_grade :: int 
-  accepts "Header ~~ \<lbrace>Author\<rbrace>\<^sup>+ ~~ Context_Description ~~ \<lbrace>Task ~~ Solution\<rbrace>\<^sup>+ "
 
 
+doc_class exercise = exam_item +
+   concerns :: "content_class set" <= "{setter,student,checker,external_examiner}"
+   accepts "\<lbrace>task ~~ answer\<rbrace>\<^sup>+ ~~ \<lbrace>solution\<rbrace>\<^sup>+"
 
-(*
-tasks  > subtask
 
-answer > subanswer
+doc_class context_description = exam_item +
+   label :: string
 
- 
-answer_element
- - text
- - program-text ? ? ? 
- - checkbox
- - radiobutton
- - equational derivation
- - proof derivation
+doc_class math_exam =
+   global_grade :: int 
+   accepts "header ~~ \<lbrace>author\<rbrace>\<^sup>+ ~~ context_description ~~ \<lbrace>exercise\<rbrace>\<^sup>+ "
 
-solution > subsolution
- - text
- - program-text
- - checkbox
- - radiobutton
- - equational derivation
- - proof derivation
 
-marking > submarking
-    
-grade
 
-Invarianten:
-1 : n Relation answer_element \<longrightarrow> subsolution
+text\<open> Invariants (not yet implemented):
 
-2 : invariants over markings and grades
+\<^enum> the task list must start with a \<open>main\<close> category.
 
-3 : distribution constraints: subtask should have more than 25 % of overall grade 
+\<^enum> solutions must structurally match to answer blocks, i.e. coincide in
+  category and corresponding answer elements
 
-*)
+\<^enum> one-to-n relation between answer_elements and solutions
+
+\<^enum> invariants over markings and grades : sub-task must sum up to task grades, exo
+  marks to the global grade.
+
+\<^enum> distribution constraints: subtask should have no more than 25 % of overall grade.
+
+\<close>
+
 
 
 
