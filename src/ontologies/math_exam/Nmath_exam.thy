@@ -132,6 +132,31 @@ doc_class exercise = exam_item +
    accepts "\<lbrace>task ~~ answer\<rbrace>\<^sup>+ ~~ \<lbrace>solution\<rbrace>\<^sup>+"
 
 
+ML\<open>fun check_exercise_inv_1 oid {is_monitor} ctxt = 
+      let fun get_attr oid attr =  AttributeAccess.compute_attr_access ctxt attr oid @{here} @{here} 
+          (* val term =  AttributeAccess.compute_attr_access ctxt "trace" oid @{here} @{here} *)
+          fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
+          val string_pair_list = map conv (HOLogic.dest_list (get_attr oid "trace" )) 
+          val cid_list = map fst string_pair_list
+          val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
+          fun is_task x = DOF_core.is_subclass ctxt' x "Nmath_exam.task"
+          fun is_answer x = DOF_core.is_subclass ctxt' x "Nmath_exam.answer"
+          val task_answer_part = (filter (fn x => is_task x orelse is_answer x) cid_list)
+          val _ = case get_attr (hd task_answer_part) "cat" of
+                     @{term "main"} => ()
+                  |  _ => error("class exercise invariant violation: must start with main category. ")
+          fun check_match [] = ()
+             |check_match (task_id::answer_id::S) = 
+                    (if get_attr task_id "cat" = get_attr answer_id "cat" 
+                     then check_match S
+                     else error("class exercise invariant violation: \
+                                \ task and answer category does not match. "))
+          val _ = check_match task_answer_part
+      in  true end
+\<close>
+
+setup\<open>DOF_core.update_class_invariant "Nmath_exam.exercise" check_exercise_inv_1\<close>
+
 doc_class context_description = exam_item +
    label :: string
 
