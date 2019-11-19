@@ -123,13 +123,17 @@ doc_class solution = exam_item +
    motivation  :: string
    valids      :: "validation list"
    objectives  :: string 
+   responds_to :: answer
    concerns    :: "content_class set" <= "{setter,checker,external_examiner}" 
+   accepts     "\<lbrace>answer_element\<rbrace>\<^sup>+"
   
 
 
 doc_class exercise = exam_item +
-   concerns :: "content_class set" <= "{setter,student,checker,external_examiner}"
-   accepts "\<lbrace>task ~~ answer\<rbrace>\<^sup>+ ~~ \<lbrace>solution\<rbrace>\<^sup>+"
+   concerns    :: "content_class set" <= "{setter,student,checker,external_examiner}"
+(* accepts     "\<lbrace>task ~~ answer\<rbrace>\<^sup>+ ~~ \<lbrace>solution\<rbrace>\<^sup>+" PSud style*)
+   accepts     "\<lbrace>task ~~ answer ~~ \<lbrace>solution\<rbrace>\<^sup>+ \<rbrace>\<^sup>+ " (*Exeter style *)
+
 
 
 ML\<open>fun check_exercise_inv_1 oid {is_monitor} ctxt = 
@@ -155,7 +159,9 @@ ML\<open>fun check_exercise_inv_1 oid {is_monitor} ctxt =
       in  true end
 \<close>
 
-setup\<open>DOF_core.update_class_invariant "Nmath_exam.exercise" check_exercise_inv_1\<close>
+setup\<open>DOF_core.update_class_invariant 
+          "Nmath_exam.exercise" 
+          check_exercise_inv_1\<close>
 
 doc_class context_description = exam_item +
    label :: string
@@ -170,7 +176,7 @@ text\<open> Invariants (not yet implemented):
 
 \<^enum> the task list must start with a \<open>main\<close> category.
 
-\<^enum> solutions must structurally match to answer blocks, i.e. coincide in
+\<^enum> \<open>solutions\<close> must structurally match to answer blocks, i.e. coincide in
   category and corresponding answer elements
 
 \<^enum> one-to-n relation between answer_elements and solutions
