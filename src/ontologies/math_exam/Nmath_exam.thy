@@ -14,8 +14,7 @@
 theory Nmath_exam
  imports "../../DOF/Isa_COL"
 begin
-  
-(*<<*)  
+
 text\<open>In our scenario, content has four different types of addressees: 
 \<^item> the @{emph \<open>setter\<close>}, i.e. the author of the exam, 
 \<^item> the @{emph \<open>student\<close>}, i.e. the addressee of the exam, 
@@ -42,6 +41,8 @@ doc_class author =
    roles       :: "content_class set"
    email       :: "string"
 
+doc_class context_description = 
+   label :: string
 
 doc_class exam_item = 
    level        :: "int option"
@@ -94,15 +95,15 @@ doc_class radiobuttons =  answer_element +
 datatype opn = eq | equiv | refines | refined_by
 
 doc_class equational_derivation =  answer_element +
-   eq_deriv        :: "(opn option \<times> term option) list" 
+   eq_deriv      :: "(opn option \<times> term option) list" 
 
 (* these two could be refined substantially *)
 doc_class proof_derivation =  answer_element +
    "term"        :: "term list" 
 
 doc_class answer = exam_item +
-   cat         :: category
-   accepts "\<lbrace>answer_element\<rbrace>\<^sup>+ "
+   cat           :: category
+   accepts       "\<lbrace>answer_element\<rbrace>\<^sup>+ "
     
 
 datatype task_type =  formal | informal | mixed 
@@ -131,8 +132,8 @@ doc_class solution = exam_item +
 
 doc_class exercise = exam_item +
    concerns    :: "content_class set" <= "{setter,student,checker,external_examiner}"
-(* accepts     "\<lbrace>task ~~ answer\<rbrace>\<^sup>+ ~~ \<lbrace>solution\<rbrace>\<^sup>+" PSud style*)
-   accepts     "\<lbrace>task ~~ answer ~~ \<lbrace>solution\<rbrace>\<^sup>+ \<rbrace>\<^sup>+ " (*Exeter style *)
+   accepts     "header ~~ \<lbrace>author\<rbrace>\<^sup>+ ~~ context_description ~~ \<lbrace>task ~~ answer\<rbrace>\<^sup>+ ~~ \<lbrace>solution\<rbrace>\<^sup>+" (* PSud style*)
+(*   accepts     "\<lbrace>task ~~ answer ~~ \<lbrace>solution\<rbrace>\<^sup>+ \<rbrace>\<^sup>+ " (*Exeter style *) *)
 
 
 
@@ -163,8 +164,6 @@ setup\<open>DOF_core.update_class_invariant
           "Nmath_exam.exercise" 
           check_exercise_inv_1\<close>
 
-doc_class context_description = exam_item +
-   label :: string
 
 doc_class math_exam =
    global_grade :: int 
@@ -191,5 +190,6 @@ text\<open> Invariants (not yet implemented):
 
 
 
-(*>>*)
+(*>*)
 end
+(*<*)
