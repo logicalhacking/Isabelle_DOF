@@ -14,8 +14,7 @@
 theory Nmath_exam
  imports "../../DOF/Isa_COL"
 begin
-  
-(*<<*)  
+
 text\<open>In our scenario, content has four different types of addressees: 
 \<^item> the @{emph \<open>setter\<close>}, i.e. the author of the exam, 
 \<^item> the @{emph \<open>student\<close>}, i.e. the addressee of the exam, 
@@ -42,6 +41,8 @@ doc_class author =
    roles       :: "content_class set"
    email       :: "string"
 
+doc_class context_description = 
+   label :: string
 
 doc_class exam_item = 
    level        :: "int option"
@@ -94,15 +95,15 @@ doc_class radiobuttons =  answer_element +
 datatype opn = eq | equiv | refines | refined_by
 
 doc_class equational_derivation =  answer_element +
-   eq_deriv        :: "(opn option \<times> term option) list" 
+   eq_deriv      :: "(opn option \<times> term option) list" 
 
 (* these two could be refined substantially *)
 doc_class proof_derivation =  answer_element +
    "term"        :: "term list" 
 
 doc_class answer = exam_item +
-   cat         :: category
-   accepts "\<lbrace>answer_element\<rbrace>\<^sup>+ "
+   cat           :: category
+   accepts       "\<lbrace>answer_element\<rbrace>\<^sup>+ "
     
 
 datatype task_type =  formal | informal | mixed 
@@ -123,17 +124,46 @@ doc_class solution = exam_item +
    motivation  :: string
    valids      :: "validation list"
    objectives  :: string 
+   responds_to :: answer
    concerns    :: "content_class set" <= "{setter,checker,external_examiner}" 
+   accepts     "\<lbrace>answer_element\<rbrace>\<^sup>+"
   
 
 
 doc_class exercise = exam_item +
-   concerns :: "content_class set" <= "{setter,student,checker,external_examiner}"
-   accepts "\<lbrace>task ~~ answer\<rbrace>\<^sup>+ ~~ \<lbrace>solution\<rbrace>\<^sup>+"
+   concerns    :: "content_class set" <= "{setter,student,checker,external_examiner}"
+   accepts     "header ~~ \<lbrace>author\<rbrace>\<^sup>+ ~~ context_description ~~ \<lbrace>task ~~ answer\<rbrace>\<^sup>+ ~~ \<lbrace>solution\<rbrace>\<^sup>+" (* PSud style*)
+(*   accepts     "\<lbrace>task ~~ answer ~~ \<lbrace>solution\<rbrace>\<^sup>+ \<rbrace>\<^sup>+ " (*Exeter style *) *)
 
 
-doc_class context_description = exam_item +
-   label :: string
+
+ML\<open>fun check_exercise_inv_1 oid {is_monitor} ctxt = 
+      let fun get_attr oid attr =  AttributeAccess.compute_attr_access ctxt attr oid @{here} @{here} 
+          (* val term =  AttributeAccess.compute_attr_access ctxt "trace" oid @{here} @{here} *)
+          fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
+          val string_pair_list = map conv (HOLogic.dest_list (get_attr oid "trace" )) 
+          val cid_list = map fst string_pair_list
+          val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
+          fun is_task x = DOF_core.is_subclass ctxt' x "Nmath_exam.task"
+          fun is_answer x = DOF_core.is_subclass ctxt' x "Nmath_exam.answer"
+          val task_answer_part = (filter (fn x => is_task x orelse is_answer x) cid_list)
+          val _ = case get_attr (hd task_answer_part) "cat" of
+                     @{term "main"} => ()
+                  |  _ => error("class exercise invariant violation: must start with main category. ")
+          fun check_match [] = ()
+             |check_match (task_id::answer_id::S) = 
+                    (if get_attr task_id "cat" = get_attr answer_id "cat" 
+                     then check_match S
+                     else error("class exercise invariant violation: \
+                                \ task and answer category does not match. "))
+          val _ = check_match task_answer_part
+      in  true end
+\<close>
+
+setup\<open>DOF_core.update_class_invariant 
+          "Nmath_exam.exercise" 
+          check_exercise_inv_1\<close>
+
 
 doc_class math_exam =
    global_grade :: int 
@@ -145,7 +175,7 @@ text\<open> Invariants (not yet implemented):
 
 \<^enum> the task list must start with a \<open>main\<close> category.
 
-\<^enum> solutions must structurally match to answer blocks, i.e. coincide in
+\<^enum> \<open>solutions\<close> must structurally match to answer blocks, i.e. coincide in
   category and corresponding answer elements
 
 \<^enum> one-to-n relation between answer_elements and solutions
@@ -160,5 +190,6 @@ text\<open> Invariants (not yet implemented):
 
 
 
-(*>>*)
+(*>*)
 end
+(*<*)
