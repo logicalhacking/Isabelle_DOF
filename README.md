@@ -2,7 +2,8 @@
 
 Isabelle/DOF is a novel Document Ontology Framework on top of Isabelle.
 Isabelle/DOF allows for both conventional typesetting as well as formal
-development.
+development. The manual for [Isabelle/DOF 1.0.0/Isabelle2019 is available 
+online.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.0.0_Isabelle2019.pdf)
 
 ## Running Isabelle/DOF using Docker
 
