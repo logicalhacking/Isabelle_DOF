@@ -445,6 +445,8 @@ definition degree :: "real[meter / meter]" where
 abbreviation degrees ("_\<degree>" [999] 999) where "n\<degree> \<equiv> n\<cdot>degree" 
 
 definition [si_def]: "litre = 1/1000 \<cdot> meter\<^sup>\<two>"
+definition [si_def]: "litre' = 1/1000 \<cdot> (Unit_cube meter)"
+
 
 definition [si_def]: "pint = 0.56826125 \<cdot> litre"
 
