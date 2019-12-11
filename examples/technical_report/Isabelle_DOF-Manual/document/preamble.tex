@@ -14,8 +14,7 @@
 
 %% This is a placeholder for user-specific configuration and packages. 
 \usepackage{etex}
-\reserveinserts{28}
-
+\ifdef{\reserveinserts{0}}{\reserveinserts{28}}{} 
 \usepackage{dirtree}
 \renewcommand*\DTstylecomment{\ttfamily\itshape}
 \usepackage{textcomp}
