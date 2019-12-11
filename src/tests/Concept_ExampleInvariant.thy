@@ -109,7 +109,7 @@ text*[c2:: C, x = "''delta''"] \<open> ... in ut tortor eleifend augue pretium c
 
 subsection*[f::E]                \<open> Lectus accumsan velit ultrices, ... }\<close>
 
-(* test : close_monitor should fail : 
+(*
 section*[f2::E]               \<open> Lectus accumsan velit ultrices, ... }\<close>
 *)
 

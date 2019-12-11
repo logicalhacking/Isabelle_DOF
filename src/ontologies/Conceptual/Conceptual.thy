@@ -34,7 +34,7 @@ doc_class C = B +
 datatype enum = X1 | X2 | X3
    
 doc_class D = B +
-   x  :: "string"              <= "''def''" (* overriding default *)
+   x  :: "string"              <= "\<open>def \<longrightarrow>\<close>" (* overriding default *)
    a1 :: enum                  <= "X2"      (* class - definitions may be mixed 
                                                with arbitrary HOL-commands, thus 
                                                also local definitions of enumerations *)
