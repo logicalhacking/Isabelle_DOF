@@ -446,7 +446,9 @@ ML\<open>
    (* ... *)
 \<close>
 
+text\<open>In this style, extensions can be defined such as:\<close>
 
+ML\<open>fun optionT t = Type(@{type_name "Option.option"},[t]); \<close>
 
 subsection\<open> Type-Certification (=checking that a type annotation is consistent) \<close>
 
@@ -989,24 +991,54 @@ Goal.prove_global :  theory -> string list -> term list -> term ->
 (* ... and many more variants. *)
 \<close>
 
-subsection*[ex211::example]\<open>Proof Example\<close>
+subsection*[ex211::example]\<open>Proof Example (Low-level)\<close>  
 
-text\<open>The proof:\<close>
+text\<open>Take this proof at Isar Level as example:\<close>
 
-lemma "(10::int) + 2 = 12" by simp
+lemma X  : "(10::int) + 2 = 12" by simp
 
-text\<open>... represents itself at the SML interface as follows:\<close>
+declare X[simp]
 
-ML\<open>val tt = HOLogic.mk_Trueprop (Syntax.read_term @{context} "(10::int) + 2 = 12");
+text\<open>This represents itself at the SML interface as follows:\<close>
+
+ML\<open>
+structure SimpleSampleProof =
+struct
+
+val tt = HOLogic.mk_Trueprop (Syntax.read_term @{context} "(10::int) + 2 = 12");
          (* read_term parses and type-checks its string argument;
             HOLogic.mk_Trueprop wraps the embedder from @{ML_type "bool"} to  
             @{ML_type "prop"} from Pure. *)
 
-val thm1 = Goal.prove_global @{theory}                         (* global context *)
-                             []                                (* name ? *)
-                             []                                (* local assumption context *)
-                             (tt)                              (* parsed goal *)
-                             (fn _ => simp_tac  @{context} 1)  (* proof tactic *)\<close>               
+fun derive_thm name term lthy = 
+          Goal.prove lthy          (* global context *)
+         [name]                    (* name ? *)
+         []                        (* local assumption context *)
+         (term)                    (* parsed goal *)
+         (fn _ => simp_tac lthy 1) (* proof tactic *)
+         |> Thm.close_derivation   (* some cleanups *);
+
+val thm111_intern = derive_thm "thm111" tt @{context} (* just for fun at the ML level *)
+
+fun store_thm name thm lthy = 
+         lthy |> snd o Local_Theory.note ((Binding.name name, []), [thm]) 
+
+
+val prove_n_store = (Named_Target.theory_map(fn lthy => 
+                                       let val thm = derive_thm "thm111" tt lthy
+                                       in lthy |> store_thm "thm111" thm end));
+
+end
+\<close>
+
+text\<open>Converting a local theory transformation into a global one:\<close>
+setup\<open>SimpleSampleProof.prove_n_store\<close>
+
+text\<open>... and there it is in the global (Isar) context:\<close>
+thm thm111  
+
+
+
 
 
 section\<open>The Isar Engine\<close>
@@ -1182,6 +1214,15 @@ setup\<open>XS232_setup\<close>
 
 *)
 
+text\<open>Defining a high-level attribute:\<close>
+ML\<open> 
+Attrib.setup \<^binding>\<open>simp\<close> (Attrib.add_del Simplifier.simp_add Simplifier.simp_del)
+                            "declaration of Simplifier rewrite rule"
+\<close>
+
+
+
+
 text\<open>Another mechanism are global synchronised variables:\<close>
 ML\<open> (* For example *)
            
@@ -1189,7 +1230,90 @@ ML\<open> (* For example *)
   (* Synchronized: a mechanism to bookkeep global
      variables with synchronization mechanism included *)
   Synchronized.value C;\<close>  
-  
+
+subsection*[ex213::example]\<open>A Definition (High-level)\<close>  
+
+text\<open>Example drawn from theory \<^verbatim>\<open>Clean\<close>:\<close>
+
+ML\<open>
+structure HLDefinitionSample = 
+struct
+fun cmd (decl, spec, prems, params) = #2 oo Specification.definition' decl params prems spec
+
+fun MON_SE_T res state = state --> optionT(HOLogic.mk_prodT(res,state));
+
+fun push_eq binding  name_op rty sty lthy = 
+         let val mty = MON_SE_T rty sty 
+             val thy = Proof_Context.theory_of lthy
+             val term = Free("\<sigma>",sty)
+         in  mk_meta_eq((Free(name_op, mty) $ Free("\<sigma>",sty)), 
+                         mk_Some ( HOLogic.mk_prod (mk_undefined rty,term)))
+                          
+         end;
+
+fun mk_push_name binding = Binding.prefix_name "push_" binding
+
+fun mk_push_def binding sty lthy =
+    let val name =  mk_push_name binding
+        val rty = \<^typ>\<open>unit\<close>
+        val eq = push_eq binding  (Binding.name_of name) rty sty lthy
+        val mty = MON_SE_T rty sty 
+        val args = (SOME(name, SOME mty, NoSyn), (Binding.empty_atts,eq),[],[])
+    in cmd args true lthy  end;
+
+val define_test =  Named_Target.theory_map (mk_push_def (Binding.name "test") @{typ "'a"})
+
+end
+\<close>
+
+setup\<open>HLDefinitionSample.define_test\<close>
+
+subsection*[ex212::example]\<open>Proof Example (High-level)\<close>  
+
+text\<open>The Isar-engine refers to a level of "specification constructs"; i.e. to a level with
+more high-level commands that represent internally quite complex theory transformations;
+with the exception of the axiomatization constructs, they are alltogether logically conservative.
+The proof command interface bhind \<open>lemma\<close> or \<open>theorem\<close> uses a structure capturing the 
+syntactic @{ML_structure Element}'s of the \<open>fix\<close>, \<open>assume\<close>, \<open>shows\<close> structuring.
+\<close>
+
+text\<open>By the way, the Isar-language Element interface can by found under @{ML_structure Element}:
+\<^enum> @{ML "Element.Fixes : (binding * 'a option * mixfix) list -> ('a, 'b, 'c) Element.ctxt"}
+\<^enum> @{ML "Element.Assumes: (Attrib.binding * ('a * 'a list) list) list -> ('b, 'a, 'c) Element.ctxt"}
+\<^enum> @{ML "Element.Notes: string * (Attrib.binding * ('a * Token.src list) list) list 
+                       -> ('b, 'c, 'a) Element.ctxt"}
+\<^enum> @{ML "Element.Shows: (Attrib.binding * ('a * 'a list) list) list -> ('b, 'a) Element.stmt"}
+\<close>
+
+(* UNCHECKED ! ! ! *)
+
+ML\<open>
+fun lemma1 lemma_name goals_to_prove  a lthy = 
+    let val lemma_name_bdg =(Binding.make (lemma_name, @{here}), []) 
+        val attrs' = ["simp"] (* ?????? *)
+    in  lthy |>
+        Specification.theorem_cmd true 
+                                  Thm.theoremK NONE (K I)
+                                  Binding.empty_atts [] [] 
+                                  (Element.Shows [(lemma_name_bdg,[(goals_to_prove, attrs')])])
+                                  true (* disp ??? *)
+    end
+
+fun lemma1' lemma_name goals_to_prove a b lthy =
+    let fun gen_attribute_token simp lthy = 
+        List.map (fn s => Attrib.check_src lthy [Token.make_string (s, Position.none)])
+                 (if simp then ["simp", "code_unfold"] else [])
+        val lemma_name_bdg =(Binding.make (lemma_name, @{here}), gen_attribute_token true lthy) 
+    in  lthy |> #2 o Specification.theorems Thm.theoremK a b true end
+\<close>
+
+
+text\<open>MORE TO COME\<close>
+
+
+
+
+
 chapter*[frontend::technical]\<open>Front-End \<close>  
 text\<open>In the following chapter, we turn to the right part of the system architecture 
   shown in @{docitem \<open>architecture\<close>}: 
@@ -1673,7 +1797,7 @@ local
   val _ =  embedded_position: (string * Position.T) parser
   val _ =  text_input: Input.source parser
   val _ =  text: string parser
-  val _ =  binding: binding parser
+  val _ =  binding: Binding.binding parser
 
   (* stuff related to INNER SYNTAX PARSING *)
   val _ =  alt_name: string parser
@@ -1724,8 +1848,8 @@ text\<open> The structure @{ML_structure "Binding"} serves as
   Key are two things:
 \<^enum> the type-synonym @{ML_type "bstring"} which is synonym to @{ML_type "string"}
   and intended for "primitive names to be bound"
-\<^enum> the projection @{ML "Binding.pos_of :  binding -> Position.T"} 
-\<^enum> the constructor establishing a binding @{ML "Binding.make: bstring * Position.T -> binding"}
+\<^enum> the projection @{ML "Binding.pos_of :  Binding.binding -> Position.T"} 
+\<^enum> the constructor establishing a binding @{ML "Binding.make: bstring * Position.T -> Binding.binding"}
 
 \<close>
 
@@ -1982,11 +2106,11 @@ ML\<open>
  antiquotation_raw:
     binding -> 'a context_parser -> (Proof.context -> 'a -> Latex.text) -> theory -> theory;
  antiquotation_verbatim:
-      binding -> 'a context_parser -> (Proof.context -> 'a -> string) -> theory -> theory;
+    binding -> 'a context_parser -> (Proof.context -> 'a -> string) -> theory -> theory;
 
 \<close>
 
-
+datatype qsd = zef
 text\<open> Thus, @{ML_structure Syntax_Phases} does the actual work of markup generation, including 
         markup generation and  generation of reports. Look at the following snippet: \<close>
 ML\<open>

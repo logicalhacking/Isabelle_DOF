@@ -1614,6 +1614,14 @@ end (* struct *)
 \<close>
 
 
+ML\<open>
+Goal.prove_global;
+Specification.theorems_cmd;
+Goal.prove_common;
+\<close>
+
+ML\<open>open Proof
+\<close>
 
 ML\<open> 
 structure AttributeAccess = 
