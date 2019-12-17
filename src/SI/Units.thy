@@ -4,63 +4,98 @@ theory Units
   imports Groups_mult HOL.Transcendental "HOL-Eisbach.Eisbach"
 begin
 
+text\<open>
+The International System of Units (SI, abbreviated from the French 
+Système international (d'unités)) is the modern form of the metric 
+system and is the most widely used system of measurement. It comprises
+a coherent system of units of measurement built on seven base units, 
+which are the second, metre, kilogram, ampere, kelvin, mole, candela, 
+and a set of twenty prefixes to the unit names and unit symbols that
+may be used when specifying multiples and fractions of the units. 
+The system also specifies names for 22 derived units, such as lumen and 
+watt, for other common physical quantities.
+
+(cited from \<^url>\<open>https://en.wikipedia.org/wiki/International_System_of_Units\<close>).\<close>
+
+text\<open> This is an attempt to model the system and its derived entities (cf.
+\<^url>\<open>https://www.quora.com/What-are-examples-of-SI-units\<close>) in Isabelle/HOL.
+The design objective are twofold (and for the case of Isabelle somewhat
+contradictory, see below)
+\<close>
+
 subsection \<open> Data-level Units \<close>
 
-text \<open> We first specify the seven base units \<close>
+text \<open> An SI unit associates with each of the seven base unit an integer that denotes the power 
+  to which it is raised. We use a record to represent this 7-tuple, to enable code generation. \<close>
 
-datatype SIBaseUnit = Second | Meter | Kilogram | Ampere | Kelvin | Mole | Candela
-
-text \<open> An SI unit associates with each base unit an integer that denotes the 
-  power to which it is raised. \<close>
-
-typedef SIUnit = "UNIV :: (SIBaseUnit \<Rightarrow> int) set" ..
-
-setup_lifting type_definition_SIUnit
+record SIUnit = 
+  Seconds   :: int 
+  Meters    :: int 
+  Kilograms :: int 
+  Amperes   :: int 
+  Kelvins   :: int 
+  Moles     :: int
+  Candelas  :: int
 
 text \<open> We define a commutative monoid for SI units. \<close>
 
-instantiation SIUnit :: comm_monoid_mult
+instantiation SIUnit_ext :: (one) one
 begin
   \<comment> \<open> Here, $1$ is the dimensionless unit \<close>
-  lift_definition one_SIUnit :: "SIUnit" is "\<lambda> u. 0" .
-  \<comment> \<open> Multiplication is defined by adding together the powers \<close>
-  lift_definition times_SIUnit :: "SIUnit \<Rightarrow> SIUnit \<Rightarrow> SIUnit" is
-  "\<lambda> f g u. f u + g u" .
-  instance proof
-    fix a b c :: "SIUnit"
-    show "a * b * c = a * (b * c)"
-      by (transfer, simp add: fun_eq_iff)
-    show "a * b = b * a"
-      by (transfer, simp add: fun_eq_iff)
-    show "1 * a = a"
-      by (transfer, simp add: fun_eq_iff)
-  qed
+  definition one_SIUnit_ext :: "'a SIUnit_ext" where
+  [code_unfold]:
+  "1 = \<lparr> Seconds = 0, Meters = 0, Kilograms = 0, Amperes = 0
+       , Kelvins = 0, Moles = 0, Candelas = 0, \<dots> = 1 \<rparr>"
+  instance ..
 end
+
+instantiation SIUnit_ext :: (times) times
+begin
+  \<comment> \<open> Multiplication is defined by adding together the powers \<close>
+  definition times_SIUnit_ext :: "'a SIUnit_ext \<Rightarrow> 'a SIUnit_ext \<Rightarrow> 'a SIUnit_ext" where
+  [code_unfold]:
+  "x * y = \<lparr> Seconds = Seconds x + Seconds y, Meters = Meters x + Meters y
+           , Kilograms = Kilograms x + Kilograms y, Amperes = Amperes x + Amperes y
+           , Kelvins = Kelvins x + Kelvins y, Moles = Moles x + Moles y
+           , Candelas = Candelas x + Candelas y, \<dots> = more x * more y \<rparr>"
+  instance ..
+end
+
+instance SIUnit_ext :: (comm_monoid_mult) comm_monoid_mult
+proof
+  fix a b c :: "'a SIUnit_ext"
+  show "a * b * c = a * (b * c)"
+    by (simp add: times_SIUnit_ext_def mult.assoc)
+  show "a * b = b * a"
+    by (simp add: times_SIUnit_ext_def mult.commute)
+  show "1 * a = a"
+    by (simp add: times_SIUnit_ext_def one_SIUnit_ext_def)
+qed
 
 text \<open> We also define the inverse and division operations, and an abelian group. \<close>
 
-instantiation SIUnit :: ab_group_mult
+instantiation SIUnit_ext :: ("{times,inverse}") inverse
 begin
-  lift_definition inverse_SIUnit :: "SIUnit \<Rightarrow> SIUnit" is "\<lambda> f u. - (f u)" .
-  definition divide_SIUnit :: "SIUnit \<Rightarrow> SIUnit \<Rightarrow> SIUnit" where
-    "divide_SIUnit x y = x * (inverse y)"
-  instance proof
-    fix a b :: SIUnit
-    show "inverse a \<cdot> a  = 1"
-      by (transfer, simp add: fun_eq_iff)
-    show "a \<cdot> inverse b = a div b"
-      by (simp add: divide_SIUnit_def)
-  qed
+  definition inverse_SIUnit_ext :: "'a SIUnit_ext \<Rightarrow> 'a SIUnit_ext" where 
+  [code_unfold]:
+  "inverse x = \<lparr> Seconds = - Seconds x , Meters = - Meters x
+               , Kilograms = - Kilograms x, Amperes = - Amperes x
+               , Kelvins = - Kelvins x, Moles = - Moles x
+               , Candelas = - Candelas x, \<dots> = inverse (more x) \<rparr>"
+
+  definition divide_SIUnit_ext :: "'a SIUnit_ext \<Rightarrow> 'a SIUnit_ext \<Rightarrow> 'a SIUnit_ext" where
+  [code_unfold]: "divide_SIUnit_ext x y = x * (inverse y)"
+  instance ..
 end
 
-text \<open> A base unit is an SI unit here precisely one unit has power 1. \<close>
-
-lift_definition mk_BaseUnit :: "SIBaseUnit \<Rightarrow> SIUnit" is "\<lambda> u. (\<lambda> i. 0)(u := 1)" .
-
-lift_definition is_BaseUnit :: "SIUnit \<Rightarrow> bool" is "\<lambda> x. (\<exists> u::SIBaseUnit. x = (\<lambda> i. 0)(u := 1))" .
-
-lemma is_BaseUnit_mk [simp]: "is_BaseUnit (mk_BaseUnit u)"
-  by (transfer, auto simp add: mk_BaseUnit_def is_BaseUnit_def)
+instance SIUnit_ext :: (ab_group_mult) ab_group_mult
+proof
+  fix a b :: "'a SIUnit_ext"
+  show "inverse a \<cdot> a  = 1"
+    by (simp add: inverse_SIUnit_ext_def times_SIUnit_ext_def one_SIUnit_ext_def)
+  show "a \<cdot> inverse b = a div b"
+    by (simp add: divide_SIUnit_ext_def)
+qed
 
 record 'a SI =
   factor :: 'a
@@ -115,6 +150,13 @@ end
 instance SI_ext :: (comm_monoid_mult, comm_monoid_mult) comm_monoid_mult
   by (intro_classes, simp_all add: one_SI_ext_def times_SI_ext_def mult.assoc, simp add: mult.commute)
 
+text \<open> A base unit is an SI unit here precisely one unit has power 1. \<close>
+
+definition is_BaseUnit :: "SIUnit \<Rightarrow> bool" where
+"is_BaseUnit u = (\<exists> n. u = 1\<lparr>Meters := n\<rparr> \<or> u = 1\<lparr>Kilograms := n\<rparr> \<or> u = 1\<lparr>Seconds := n\<rparr>
+                     \<or> u = 1\<lparr>Amperes := n\<rparr> \<or> u = 1\<lparr>Kelvins := n\<rparr> \<or> u = 1\<lparr>Moles := n\<rparr>
+                     \<or> u = 1\<lparr>Candelas := n\<rparr>)"
+
 subsection \<open> Type-level Units \<close>
 
 subsubsection \<open> Classes \<close>
@@ -136,17 +178,6 @@ text \<open> An SI base unit type has a value-level base unit. \<close>
 
 class sibaseunit = siunit +
   assumes is_BaseUnit: "is_BaseUnit SI('a)"
-
-text \<open> Two SI types are equivalent if they have the same value-level units. \<close>
-
-definition unit_equiv :: "'a::siunit \<Rightarrow> 'b::siunit \<Rightarrow> bool" (infix "=\<^sub>U" 50) where
-"a =\<^sub>U b \<longleftrightarrow> SI('a) = SI('b)"
-
-lemma unit_equiv_refl [simp]: "a =\<^sub>U a"
-  by (simp add: unit_equiv_def)
-
-lemma unit_equiv_sym [simp]: "a =\<^sub>U b \<Longrightarrow> b =\<^sub>U a"
-  by (simp add: unit_equiv_def)
 
 subsubsection \<open> Arithmetic \<close>
 
@@ -204,53 +235,55 @@ print_translation \<open>
 
 subsubsection \<open> SI base type constructors \<close>
 
+declare [[show_sorts]]
+
 typedef meter = "UNIV :: unit set" .. setup_lifting type_definition_meter
 instantiation meter :: sibaseunit
 begin
-  definition siunit_of_meter :: "meter itself \<Rightarrow> SIUnit" where "siunit_of_meter x = mk_BaseUnit Meter"
-instance by (intro_classes, simp_all add: siunit_of_meter_def, (transfer, simp)+)
+  definition siunit_of_meter :: "meter itself \<Rightarrow> SIUnit" where "siunit_of_meter x = 1\<lparr>Meters := 1\<rparr>"
+instance by (intro_classes, auto simp add: siunit_of_meter_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 typedef kilogram = "UNIV :: unit set" .. setup_lifting type_definition_kilogram
 instantiation kilogram :: sibaseunit
 begin
-  definition siunit_of_kilogram :: "kilogram itself \<Rightarrow> SIUnit" where "siunit_of_kilogram x = mk_BaseUnit Kilogram"
-instance by (intro_classes, simp_all add: siunit_of_kilogram_def, (transfer, simp)+)
+  definition siunit_of_kilogram :: "kilogram itself \<Rightarrow> SIUnit" where "siunit_of_kilogram x = 1\<lparr>Kilograms := 1\<rparr>"
+instance by (intro_classes, auto simp add: siunit_of_kilogram_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 typedef second = "UNIV :: unit set" .. setup_lifting type_definition_second
 instantiation second :: sibaseunit
 begin
-  definition siunit_of_second :: "second itself \<Rightarrow> SIUnit" where "siunit_of_second x = mk_BaseUnit Second"
-instance by (intro_classes, simp_all add: siunit_of_second_def, (transfer, simp)+)
+  definition siunit_of_second :: "second itself \<Rightarrow> SIUnit" where "siunit_of_second x = 1\<lparr>Seconds := 1\<rparr>"
+instance by (intro_classes, auto simp add: siunit_of_second_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 typedef ampere = "UNIV :: unit set" .. setup_lifting type_definition_ampere
 instantiation ampere :: sibaseunit
 begin
-  definition siunit_of_ampere :: "ampere itself \<Rightarrow> SIUnit" where "siunit_of_ampere x = mk_BaseUnit Second"
-instance by (intro_classes, simp_all add: siunit_of_ampere_def, (transfer, simp)+)
+  definition siunit_of_ampere :: "ampere itself \<Rightarrow> SIUnit" where "siunit_of_ampere x = 1\<lparr>Amperes := 1\<rparr>"
+instance by (intro_classes, auto simp add: siunit_of_ampere_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 typedef kelvin = "UNIV :: unit set" .. setup_lifting type_definition_kelvin
 instantiation kelvin :: sibaseunit
 begin
-  definition siunit_of_kelvin :: "kelvin itself \<Rightarrow> SIUnit" where "siunit_of_kelvin x = mk_BaseUnit Second"
-instance by (intro_classes, simp_all add: siunit_of_kelvin_def, (transfer, simp)+)
+  definition siunit_of_kelvin :: "kelvin itself \<Rightarrow> SIUnit" where "siunit_of_kelvin x = 1\<lparr>Kelvins := 1\<rparr>"
+instance by (intro_classes, auto simp add: siunit_of_kelvin_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 typedef mole = "UNIV :: unit set" .. setup_lifting type_definition_mole
 instantiation mole :: sibaseunit
 begin
-  definition siunit_of_mole :: "mole itself \<Rightarrow> SIUnit" where "siunit_of_mole x = mk_BaseUnit Second"
-instance by (intro_classes, simp_all add: siunit_of_mole_def, (transfer, simp)+)
+  definition siunit_of_mole :: "mole itself \<Rightarrow> SIUnit" where "siunit_of_mole x = 1\<lparr>Moles := 1\<rparr>"
+instance by (intro_classes, auto simp add: siunit_of_mole_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 typedef candela = "UNIV :: unit set" .. setup_lifting type_definition_candela
 instantiation candela :: sibaseunit
 begin
-  definition siunit_of_candela :: "candela itself \<Rightarrow> SIUnit" where "siunit_of_candela x = mk_BaseUnit Second"
-instance by (intro_classes, simp_all add: siunit_of_candela_def, (transfer, simp)+)
+  definition siunit_of_candela :: "candela itself \<Rightarrow> SIUnit" where "siunit_of_candela x = 1\<lparr>Candelas := 1\<rparr>"
+instance by (intro_classes, auto simp add: siunit_of_candela_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 subsection \<open> SI tagged types \<close>
@@ -260,8 +293,28 @@ typedef (overloaded) ('n, 'u::siunit) Unit ("_[_]" [999,0] 999) = "{x :: 'n SI. 
 
 text \<open> Coerce values when their units are equivalent \<close>
 
-definition coerceUnit :: "'a['u\<^sub>1::siunit] \<Rightarrow> 'u\<^sub>2 itself \<Rightarrow> 'a['u\<^sub>2::siunit]" where
-"coerceUnit x t = (if SI('u\<^sub>1) = SI('u\<^sub>2) then toUnit (fromUnit x) else undefined)"
+definition coerceUnit :: "'u\<^sub>2 itself \<Rightarrow> 'a['u\<^sub>1::siunit] \<Rightarrow> 'a['u\<^sub>2::siunit]" where
+"coerceUnit t x = (if SI('u\<^sub>1) = SI('u\<^sub>2) then toUnit (fromUnit x) else undefined)"
+
+text \<open> Two SI types are equivalent if they have the same value-level units. \<close>
+
+definition Unit_equiv :: "'n['a::siunit] \<Rightarrow> 'n['b::siunit] \<Rightarrow> bool" (infix "\<approx>\<^sub>U" 50) where
+"a \<approx>\<^sub>U b \<longleftrightarrow> fromUnit a = fromUnit b"
+
+lemma Unit_equiv_refl [simp]: "a \<approx>\<^sub>U a"
+  by (simp add: Unit_equiv_def)
+
+lemma Unit_equiv_sym: "a \<approx>\<^sub>U b \<Longrightarrow> b \<approx>\<^sub>U a"
+  by (simp add: Unit_equiv_def)
+
+lemma Unit_equiv_trans: "\<lbrakk> a \<approx>\<^sub>U b; b \<approx>\<^sub>U c \<rbrakk> \<Longrightarrow> a \<approx>\<^sub>U c"
+  by (simp add: Unit_equiv_def)
+
+lemma coerceUnit_eq_iff:
+  fixes x :: "'a['u\<^sub>1::siunit]"
+  assumes "SI('u\<^sub>1) = SI('u\<^sub>2::siunit)"
+  shows "(coerceUnit TYPE('u\<^sub>2) x) \<approx>\<^sub>U x"
+  by (metis Unit_equiv_def assms coerceUnit_def fromUnit toUnit_inverse)
 
 setup_lifting type_definition_Unit
 
@@ -422,6 +475,9 @@ lemma factorUnit_plus [si_def]: "\<lbrakk>x + y\<rbrakk>\<^sub>U = \<lbrakk>x\<r
 lemma factorUnit_times [si_def]: "\<lbrakk>x * y\<rbrakk>\<^sub>U = \<lbrakk>x\<rbrakk>\<^sub>U * \<lbrakk>y\<rbrakk>\<^sub>U"
   by (simp add: factorUnit_def, transfer, simp)
 
+lemma factorUnit_div [si_def]: "\<lbrakk>x / y\<rbrakk>\<^sub>U = \<lbrakk>x\<rbrakk>\<^sub>U / \<lbrakk>y\<rbrakk>\<^sub>U"
+  by (simp add: factorUnit_def, transfer, simp)
+
 lemma factorUnit_numeral [si_def]: "\<lbrakk>numeral n\<rbrakk>\<^sub>U = numeral n"
   apply (induct n, simp_all add: si_def)
   apply (metis factorUnit_plus numeral_code(2))
@@ -432,8 +488,7 @@ lemma factorUnit_mk [si_def]: "\<lbrakk>UNIT(n, 'u::siunit)\<rbrakk>\<^sub>U = n
   by (simp add: factorUnit_def, transfer, simp)
 
 method si_calc = 
-  (simp add: unit_eq_iff_factor_eq unit_le_iff_factor_le si_def 
-             zero_Unit.rep_eq less_eq_Unit_def less_Unit_def)
+  (simp add: unit_eq_iff_factor_eq unit_le_iff_factor_le si_def)
 
 subsubsection \<open> Derived Units \<close>
 
@@ -444,9 +499,7 @@ definition degree :: "real[meter / meter]" where
 
 abbreviation degrees ("_\<degree>" [999] 999) where "n\<degree> \<equiv> n\<cdot>degree" 
 
-definition [si_def]: "litre = 1/1000 \<cdot> meter\<^sup>\<two>"
-definition [si_def]: "litre' = 1/1000 \<cdot> (Unit_cube meter)"
-
+definition [si_def]: "litre = 1/1000 \<cdot> meter\<^sup>\<three>"
 
 definition [si_def]: "pint = 0.56826125 \<cdot> litre"
 
