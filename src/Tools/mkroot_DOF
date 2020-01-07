@@ -77,7 +77,7 @@ DEFAULT_TEMPLATE="scrartcl"
 DEFAULT_ONTOLOGY="scholarly_paper"
 
 TEMPLATE="$DEFAULT_TEMPLATE"
-ONTOLOGY="$DEFAULT_ONTOLOGY"
+ONTOLOGY=""
 
 while getopts "t:o:n:dh" OPT
 do
@@ -112,6 +112,7 @@ done
 
 shift $(($OPTIND - 1))
 
+ONTOLOGY="${ONTOLOGY:-$DEFAULT_ONTOLOGY}"
 
 # args
 
