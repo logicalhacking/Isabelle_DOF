@@ -118,7 +118,7 @@ proof
 qed
 
 
-(* kaputt 
+
 instance SI_domain_ext :: (field) field
 proof
   fix a b :: "'a SI_domain_ext"
@@ -128,7 +128,7 @@ proof
   show "a \<cdot> inverse b = a div b"
     by (simp add: divide_SI_domain_ext_def)
 qed
-*)
+
 
 
 
@@ -779,8 +779,17 @@ lemma Unit_mult_cancel:
   sorry
 
 
-lemma "watt *\<^sub>U hour \<approx>\<^sub>U 3600 *\<^sub>U joule"
+lemma Unit_mult_mult_Left_cancel:
+  fixes  X::"'a::{field}['b::si_type]"
+  shows  "(1::'a['b/'b]) *\<^sub>U X  \<approx>\<^sub>U  X"
   unfolding Unit_equiv_def
+  apply transfer
+  unfolding Unit_equiv_def
+  sorry
+
+
+lemma "watt *\<^sub>U hour \<approx>\<^sub>U 3600 *\<^sub>U joule"
+  unfolding Unit_equiv_def hour_def
   apply(simp add: Units.Unit_times.rep_eq si_def 
                  zero_SI_tagged_domain_ext_def times_SI_tagged_domain_ext_def 
                  inverse_SI_tagged_domain_ext_def 
