@@ -30,7 +30,10 @@ begin
 
 lemma mult_distrib_inverse' [simp]: "(a * b) / a = b"
   using local.mult_distrib_inverse mult_commute by fastforce
-  
+
+lemma inverse_distrib: "inverse (a * b)  =  (inverse a) * (inverse b)"
+  by (simp add: local.mult.inverse_distrib_swap mult_commute)
+
 end
 
 end
