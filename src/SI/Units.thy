@@ -1,7 +1,10 @@
 section \<open> SI Units \<close>
 
 theory Units
-  imports Groups_mult HOL.Transcendental "HOL-Eisbach.Eisbach"
+  imports Groups_mult 
+          (* HOL.Fields *)
+          HOL.Transcendental 
+          "HOL-Eisbach.Eisbach"
 begin
 
 text\<open>
@@ -103,6 +106,8 @@ definition divide_SI_domain_ext :: "'a SI_domain_ext \<Rightarrow> 'a SI_domain_
   instance ..
 end
 
+print_classes 
+
 instance SI_domain_ext :: (ab_group_mult) ab_group_mult
 proof
   fix a b :: "'a SI_domain_ext"
@@ -111,6 +116,20 @@ proof
   show "a \<cdot> inverse b = a div b"
     by (simp add: divide_SI_domain_ext_def)
 qed
+
+
+(* kaputt 
+instance SI_domain_ext :: (field) field
+proof
+  fix a b :: "'a SI_domain_ext"
+  show "inverse a \<cdot> a  = 1"
+    sledgehammer
+    by (simp add: inverse_SI_domain_ext_def times_SI_domain_ext_def one_SI_domain_ext_def)
+  show "a \<cdot> inverse b = a div b"
+    by (simp add: divide_SI_domain_ext_def)
+qed
+*)
+
 
 
 subsection \<open> The \<^theory_text>\<open>SI_tagged_domain\<close>-type and its operations \<close>
@@ -617,10 +636,10 @@ abbreviation "volt \<equiv> kilogram *\<^sub>U meter\<^sup>\<two> *\<^sub>U seco
 
 abbreviation "watt \<equiv> kilogram *\<^sub>U meter\<^sup>\<two> *\<^sub>U second\<^sup>-\<^sup>\<three>"
 
-abbreviation "joule \<equiv> kilogram *\<^sub>U meter\<^sup>\<two> *\<^sub>U second\<^sup>\<two>"
+abbreviation "joule \<equiv> kilogram *\<^sub>U meter\<^sup>\<two> *\<^sub>U  second\<^sup>-\<^sup>\<two>"
 
-text\<open>The full beauty of the approach is perhaps revealed here, with the type of a classical 
-     three-dimensional gravitation field:\<close>
+text\<open>The full beauty of the approach is perhaps revealed here, with the 
+     type of a classical three-dimensional gravitation field:\<close>
 type_synonym gravitation_field = "(real\<^sup>3 \<Rightarrow> real\<^sup>3)[meter \<cdot> (second)\<^sup>-\<^sup>2]"
 
 section \<open> Tactic Support for SI type expressions. \<close>
@@ -689,19 +708,75 @@ lemma [si_def]:"fromUnit UNIT(x::'a::one, candela) =
 
 
 lemma Unit_times_commute:
-  "((X::'a::{one,ab_semigroup_mult}['b::si_type]) *\<^sub>U (Y::'a['c::si_type]))  \<approx>\<^sub>U  (Y *\<^sub>U X)"
+  fixes X::"'a::{one,ab_semigroup_mult}['b::si_type]"and Y::"'a['c::si_type]"
+  shows "X *\<^sub>U Y  \<approx>\<^sub>U  Y *\<^sub>U X"
   unfolding Unit_equiv_def
   by (simp add: Unit_times.rep_eq linordered_field_class.sign_simps(5) times_SI_tagged_domain_ext_def)
 
-
+text\<open>Observe that this commutation law also commutes the types.\<close>
+ 
 (* just a check that instantiation works for special cases ... *)
 lemma "    (UNIT(x, candela) *\<^sub>U UNIT(y::'a::{one,ab_semigroup_mult}, mole))
         \<approx>\<^sub>U (UNIT(y, mole) *\<^sub>U UNIT(x, candela)) "
   by(simp add: Unit_times_commute)
 
 
+lemma Unit_times_assoc:
+  fixes X::"'a::{one,ab_semigroup_mult}['b::si_type]"
+    and Y::"'a['c::si_type]"
+    and Z::"'a['d::si_type]"
+  shows  "(X *\<^sub>U Y) *\<^sub>U Z  \<approx>\<^sub>U  X *\<^sub>U (Y *\<^sub>U Z)"
+  unfolding Unit_equiv_def
+  by (simp add: Unit_times.rep_eq mult.assoc times_SI_tagged_domain_ext_def)
+
+text\<open>The following weak congruences will allow for replacing equivalences in contexts
+     built from product and inverse. \<close>
+lemma Unit_times_weak_cong_left:
+  fixes X::"'a::{one,ab_semigroup_mult}['b::si_type]"
+    and Y::"'a['c::si_type]"
+    and Z::"'a['d::si_type]"
+  assumes "X \<approx>\<^sub>U Y"
+  shows  "(X *\<^sub>U Z)  \<approx>\<^sub>U  (Y *\<^sub>U Z)"
+  by (metis Unit_equiv_def Unit_times.rep_eq assms)
+
+lemma Unit_times_weak_cong_right:
+  fixes X::"'a::{one,ab_semigroup_mult}['b::si_type]"
+    and Y::"'a['c::si_type]"
+    and Z::"'a['d::si_type]"
+  assumes "X \<approx>\<^sub>U Y"
+  shows  "(Z *\<^sub>U X)  \<approx>\<^sub>U  (Z *\<^sub>U Y)"
+  by (metis Unit_equiv_def Unit_times.rep_eq assms)
+
+lemma Unit_inverse_weak_cong:
+  fixes   X::"'a::{field}['b::si_type]"
+    and   Y::"'a['c::si_type]"
+  assumes "X  \<approx>\<^sub>U Y"
+  shows   "(X)\<^sup>-\<^sup>\<one>  \<approx>\<^sub>U  (Y)\<^sup>-\<^sup>\<one>"
+  unfolding Unit_equiv_def
+  by (metis Unit_equiv_def Unit_inverse.rep_eq assms)
 
 
+text\<open>In order to compute a normal form, we would additionally need these three:\<close>
+(* field ? *)
+lemma Unit_inverse_distrib:
+  fixes X::"'a::{field}['b::si_type]"
+    and Y::"'a['c::si_type]"
+  shows "(X *\<^sub>U Y)\<^sup>-\<^sup>\<one>  \<approx>\<^sub>U  X\<^sup>-\<^sup>\<one> *\<^sub>U Y\<^sup>-\<^sup>\<one>"
+  sorry
+
+(* field ? *)
+lemma Unit_inverse_inverse:
+  fixes X::"'a::{field}['b::si_type]"
+  shows "((X)\<^sup>-\<^sup>\<one>)\<^sup>-\<^sup>\<one>  \<approx>\<^sub>U  X"
+  unfolding Unit_equiv_def
+  sorry
+
+(* field ? *)
+lemma Unit_mult_cancel:
+  fixes  X::"'a::{field}['b::si_type]"
+  shows  "X /\<^sub>U X  \<approx>\<^sub>U  1"
+  unfolding Unit_equiv_def
+  sorry
 
 
 lemma "watt *\<^sub>U hour \<approx>\<^sub>U 3600 *\<^sub>U joule"
@@ -715,10 +790,6 @@ lemma "watt *\<^sub>U hour \<approx>\<^sub>U 3600 *\<^sub>U joule"
 
   thm Units.Unit.toUnit_inverse
 
-lemma "factor(fromUnit(toUnit\<lparr>factor = X:: 'a :: {inverse,times,numeral},
-                              unit   = SI('b::si_type)  \<rparr>)) = X"
-  apply(subst Units.Unit.toUnit_inverse,auto)
-  oops
 
 lemma "watt *\<^sub>U hour \<approx>\<^sub>U 3.6 *\<^sub>U kilo *\<^sub>U joule"
   oops
