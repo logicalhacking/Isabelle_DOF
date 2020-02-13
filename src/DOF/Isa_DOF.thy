@@ -1675,8 +1675,11 @@ fun compute_trace_ML ctxt oid pos pos' =
     in  map conv (HOLogic.dest_list term) end
 
 val parse_oid = Scan.lift(Parse.position Args.name) 
+val parse_cid = Scan.lift(Parse.position Args.name) 
 val parse_oid' = Term_Style.parse -- parse_oid
-val parse_attribute_access = (parse_oid 
+val parse_cid' = Term_Style.parse -- parse_cid
+
+val parse_attribute_access = (parse_oid
                               --| (Scan.lift @{keyword "::"}) 
                               -- Scan.lift (Parse.position Args.name))
                               : ((string *Position.T) * (string * Position.T)) context_parser 
@@ -1693,6 +1696,10 @@ fun trace_attr_2_ML ctxt (oid:string,pos) =
         val toML = (ML_Syntax.atomic o (ML_Syntax.print_list print_string_pair))
     in  toML (compute_trace_ML ctxt oid @{here} pos) end
 
+fun compute_cid_repr ctxt cid pos = 
+      if DOF_core.is_defined_cid_local  cid ctxt then Const(cid,dummyT)
+      else ISA_core.err "Undefined Class Id" pos
+
 local
 
 fun pretty_attr_access_style ctxt (style, ((oid,pos),(attr,pos'))) = 
@@ -1701,13 +1708,17 @@ fun pretty_attr_access_style ctxt (style, ((oid,pos),(attr,pos'))) =
 fun pretty_trace_style ctxt (style, (oid,pos)) = 
           Thy_Output.pretty_term ctxt (style (compute_attr_access  (Context.Proof ctxt) 
                                                                    "trace" oid pos pos));
-in  
+fun pretty_cid_style ctxt (style, (cid,pos)) = 
+          Thy_Output.pretty_term ctxt (style (compute_cid_repr ctxt cid pos));
+
+in
 val _ = Theory.setup 
            (ML_Antiquotation.inline  \<^binding>\<open>docitem_attribute\<close> 
                (fn (ctxt,toks) => (parse_attribute_access >>  attr_2_ML ctxt) (ctxt, toks))  #>
             ML_Antiquotation.inline  \<^binding>\<open>trace_attribute\<close>  
                (fn (ctxt,toks) => (parse_oid >> trace_attr_2_ML ctxt) (ctxt, toks)) #>
             basic_entity  \<^binding>\<open>trace_attribute\<close>  parse_oid'  pretty_trace_style #>
+            basic_entity  \<^binding>\<open>doc_class\<close>  parse_cid'  pretty_cid_style #>
             basic_entity  \<^binding>\<open>docitem_attribute\<close>  parse_attribute_access' pretty_attr_access_style
            )
 end

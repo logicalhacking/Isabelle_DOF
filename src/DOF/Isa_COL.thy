@@ -104,7 +104,7 @@ doc_class concept =
     properties :: "thm list" <= "[]"
 
 section\<open>Tests\<close>
-
+   
 ML\<open>@{term "side_by_side_figure"};
 @{typ "doc_class rexp"}; 
 DOF_core.SPY;

@@ -54,15 +54,52 @@ doc_class introduction = text_section +
    comment :: string
    claims  :: "thm list"
 
+text\<open>Technical text-elements posses a status: they can be either an \<^emph>\<open>informal explanation\<close> /
+description or a kind of introductory text to definition etc. or a \<^emph>\<open>formal statement\<close> similar
+to :
+
+\<^bold>\<open>Definition\<close> 3.1: Security. 
+As Security of the system we define etc...
+
+A formal statement can, but must not have a reference to true formal Isabelle/Isar definition. 
+\<close>
+datatype status = formal | description
+
 doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
+   status :: status <= "description"
    formal_results  :: "thm list"
    
 text\<open>A very rough formatting style could be modeled as follows:\<close>   
 
-   
-doc_class example    = text_section +
-   comment :: "string"
+
+doc_class "experiment"  = technical +
+   tag :: "string" <=  "''''"
+
+doc_class example       = technical +
+   tag :: "string" <=  "''''"
+
+doc_class "definition"  = technical +
+   tag :: "string" <=  "''''"
+
+doc_class "theorem"     = technical +
+   tag :: "string" <=  "''''"
+
+doc_class "code"     = technical +
+   checked :: bool <=  "False"
+   tag :: "string" <=  "''''"
+
+text\<open>The @{doc_class "code"} is a general stub for free-form and type-checked code-fragments
+such as:
+\<^enum> SML code
+\<^enum> bash code
+\<^enum> isar code (although this might be an unwanted concurrence to the Isabelle standard cartouche)
+\<^enum> C code.
+
+it is intended that later refinements of this "stub" as done in \<^verbatim>\<open>Isabelle_C\<close> which come with their
+own content checking and, of course, presentation styles. 
+\<close>
+
 
 doc_class "conclusion" = text_section +
    main_author :: "author option"  <=  None
@@ -197,6 +234,7 @@ fun check_group_elem level_hd a = case (get_level (snd a)) of
 fun check_group a = map (check_group_elem (check_level_hd (hd a))) (tl a) ;
 *)
 \<close>
+
 
 end
 

@@ -118,17 +118,19 @@ proof
 qed
 
 
-
-instance SI_domain_ext :: (field) field
+(*
+instance SI_domain_ext :: ("{field,inverse}") field
 proof
-  fix a b :: "'a SI_domain_ext"
+  fix a b :: "'a::field SI_domain_ext"
   show "inverse a \<cdot> a  = 1"
+    unfolding inverse_SI_domain_ext_def times_SI_domain_ext_def one_SI_domain_ext_def
+    apply auto
     sledgehammer
     by (simp add: inverse_SI_domain_ext_def times_SI_domain_ext_def one_SI_domain_ext_def)
   show "a \<cdot> inverse b = a div b"
     by (simp add: divide_SI_domain_ext_def)
 qed
-
+*)
 
 
 
@@ -800,7 +802,7 @@ lemma "watt *\<^sub>U hour \<approx>\<^sub>U 3600 *\<^sub>U joule"
   thm Units.Unit.toUnit_inverse
 
 
-lemma "watt *\<^sub>U hour \<approx>\<^sub>U 3.6 *\<^sub>U kilo *\<^sub>U joule"
+lemma "watt *\<^sub>U hour = 3.6 *\<^sub>U kilo *\<^sub>U joule"
   oops
 
 end
