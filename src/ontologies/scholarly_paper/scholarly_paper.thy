@@ -63,7 +63,7 @@ As Security of the system we define etc...
 
 A formal statement can, but must not have a reference to true formal Isabelle/Isar definition. 
 \<close>
-datatype status = formal | description
+datatype status = semiformal | description
 
 doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
