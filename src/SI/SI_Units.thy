@@ -114,6 +114,9 @@ proof
     by (simp add: divide_Unit_ext_def)
 qed
 
+text \<open> It makes no sense to define a plus operator for SI units because we can only add together
+  identical units, and this makes for a useless function. \<close>
+
 instantiation unit :: comm_monoid_add
 begin
   definition "zero_unit = ()"
@@ -135,6 +138,9 @@ begin
   instance ..
 end
 
+instance unit :: ab_group_mult
+  by (intro_classes, simp_all)
+
 text \<open> A base unit is an SI_tagged_domain unit here precisely one unit has power 1. \<close>
 
 definition is_BaseUnit :: "Unit \<Rightarrow> bool" where
@@ -149,13 +155,13 @@ subsection \<open> Basic SI-types \<close>
 text \<open> We provide a syntax for type-expressions; The definition of
 the basic type constructors is straight-forward via a one-elementary set. \<close>
 
-typedef meter    = "UNIV :: unit set" .. setup_lifting type_definition_meter
-typedef kilogram = "UNIV :: unit set" .. setup_lifting type_definition_kilogram
-typedef second   = "UNIV :: unit set" .. setup_lifting type_definition_second
-typedef ampere   = "UNIV :: unit set" .. setup_lifting type_definition_ampere
-typedef kelvin   = "UNIV :: unit set" .. setup_lifting type_definition_kelvin
-typedef mole     = "UNIV :: unit set" .. setup_lifting type_definition_mole
-typedef candela  = "UNIV :: unit set" .. setup_lifting type_definition_candela
+typedef Length ("L")      = "UNIV :: unit set" .. setup_lifting type_definition_Length
+typedef Mass ("M")        = "UNIV :: unit set" .. setup_lifting type_definition_Mass
+typedef Time ("T")        = "UNIV :: unit set" .. setup_lifting type_definition_Time
+typedef Current ("I")     = "UNIV :: unit set" .. setup_lifting type_definition_Current
+typedef Temperature ("\<Theta>") = "UNIV :: unit set" .. setup_lifting type_definition_Temperature
+typedef Amount ("N")      = "UNIV :: unit set" .. setup_lifting type_definition_Amount
+typedef Intensity ("J")   = "UNIV :: unit set" .. setup_lifting type_definition_Intensity
 
 subsection \<open> SI-type expressions and SI-type interpretation \<close>
 
@@ -189,54 +195,53 @@ class si_baseunit = si_type +
 subsubsection \<open> SI base type constructors \<close>
 
 text\<open>We embed the basic SI types into the SI type expressions: \<close>
-declare [[show_sorts]]
 
-instantiation meter :: si_baseunit
+instantiation Length :: si_baseunit
 begin
-  definition si_sem_meter :: "meter itself \<Rightarrow> Unit" where "si_sem_meter x = 1\<lparr>Meters := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_meter_def is_BaseUnit_def, (transfer, simp)+)
+  definition si_sem_Length :: "Length itself \<Rightarrow> Unit" where "si_sem_Length x = 1\<lparr>Meters := 1\<rparr>"
+instance by (intro_classes, auto simp add: si_sem_Length_def is_BaseUnit_def, (transfer, simp)+)
 end
 
-instantiation kilogram :: si_baseunit
+instantiation Mass :: si_baseunit
 begin
-  definition si_sem_kilogram :: "kilogram itself \<Rightarrow> Unit" where "si_sem_kilogram x = 1\<lparr>Kilograms := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_kilogram_def is_BaseUnit_def, (transfer, simp)+)
+  definition si_sem_Mass :: "Mass itself \<Rightarrow> Unit" where "si_sem_Mass x = 1\<lparr>Kilograms := 1\<rparr>"
+instance by (intro_classes, auto simp add: si_sem_Mass_def is_BaseUnit_def, (transfer, simp)+)
 end
 
-instantiation second :: si_baseunit
+instantiation Time :: si_baseunit
 begin
-  definition si_sem_second :: "second itself \<Rightarrow> Unit" where "si_sem_second x = 1\<lparr>Seconds := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_second_def is_BaseUnit_def, (transfer, simp)+)
+  definition si_sem_Time :: "Time itself \<Rightarrow> Unit" where "si_sem_Time x = 1\<lparr>Seconds := 1\<rparr>"
+instance by (intro_classes, auto simp add: si_sem_Time_def is_BaseUnit_def, (transfer, simp)+)
 end
 
-instantiation ampere :: si_baseunit
+instantiation Current :: si_baseunit
 begin
-  definition si_sem_ampere :: "ampere itself \<Rightarrow> Unit" where "si_sem_ampere x = 1\<lparr>Amperes := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_ampere_def is_BaseUnit_def, (transfer, simp)+)
+  definition si_sem_Current :: "Current itself \<Rightarrow> Unit" where "si_sem_Current x = 1\<lparr>Amperes := 1\<rparr>"
+instance by (intro_classes, auto simp add: si_sem_Current_def is_BaseUnit_def, (transfer, simp)+)
 end
 
-instantiation kelvin :: si_baseunit
+instantiation Temperature :: si_baseunit
 begin
-  definition si_sem_kelvin :: "kelvin itself \<Rightarrow> Unit" where "si_sem_kelvin x = 1\<lparr>Kelvins := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_kelvin_def is_BaseUnit_def, (transfer, simp)+)
+  definition si_sem_Temperature :: "Temperature itself \<Rightarrow> Unit" where "si_sem_Temperature x = 1\<lparr>Kelvins := 1\<rparr>"
+instance by (intro_classes, auto simp add: si_sem_Temperature_def is_BaseUnit_def, (transfer, simp)+)
 end
 
-instantiation mole :: si_baseunit
+instantiation Amount :: si_baseunit
 begin
-  definition si_sem_mole :: "mole itself \<Rightarrow> Unit" where "si_sem_mole x = 1\<lparr>Moles := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_mole_def is_BaseUnit_def, (transfer, simp)+)
+  definition si_sem_Amount :: "Amount itself \<Rightarrow> Unit" where "si_sem_Amount x = 1\<lparr>Moles := 1\<rparr>"
+instance by (intro_classes, auto simp add: si_sem_Amount_def is_BaseUnit_def, (transfer, simp)+)
 end   
 
-instantiation candela :: si_baseunit
+instantiation Intensity :: si_baseunit
 begin
-  definition si_sem_candela :: "candela itself \<Rightarrow> Unit" where "si_sem_candela x = 1\<lparr>Candelas := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_candela_def is_BaseUnit_def, (transfer, simp)+)
+  definition si_sem_Intensity :: "Intensity itself \<Rightarrow> Unit" where "si_sem_Intensity x = 1\<lparr>Candelas := 1\<rparr>"
+instance by (intro_classes, auto simp add: si_sem_Intensity_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 lemma base_units [simp]: 
-  "is_BaseUnit SI(meter)" "is_BaseUnit SI(kilogram)" "is_BaseUnit SI(second)"
-  "is_BaseUnit SI(ampere)" "is_BaseUnit SI(kelvin)" "is_BaseUnit SI(mole)"
-  "is_BaseUnit SI(candela)" by (simp_all add: is_BaseUnit)
+  "is_BaseUnit SI(Length)" "is_BaseUnit SI(Mass)" "is_BaseUnit SI(Time)"
+  "is_BaseUnit SI(Current)" "is_BaseUnit SI(Temperature)" "is_BaseUnit SI(Amount)"
+  "is_BaseUnit SI(Intensity)" by (simp_all add: is_BaseUnit)
 
 subsubsection \<open> Higher SI Type Constructors: Inner Product and Inverse \<close>
 text\<open>On the class of SI-types (in which we have already inserted the base SI types), 
@@ -273,11 +278,14 @@ type_synonym ('a, 'b) UnitDiv = "'a \<cdot> ('b\<^sup>-\<^sup>1)" (infixl "'/" 6
 
 type_synonym 'a UnitSquare = "'a \<cdot> 'a" ("(_)\<^sup>2" [999] 999)
 type_synonym 'a UnitCube = "'a \<cdot> 'a \<cdot> 'a" ("(_)\<^sup>3" [999] 999)
+type_synonym 'a UnitQuart = "'a \<cdot> 'a \<cdot> 'a" ("(_)\<^sup>4" [999] 999)
 type_synonym 'a UnitInvSquare = "('a\<^sup>2)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>2" [999] 999)
 type_synonym 'a UnitInvCube = "('a\<^sup>3)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>3" [999] 999)
+type_synonym 'a UnitInvQuart = "('a\<^sup>4)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>4" [999] 999)
 
 translations (type) "'a\<^sup>-\<^sup>2" <= (type) "('a\<^sup>2)\<^sup>-\<^sup>1"
 translations (type) "'a\<^sup>-\<^sup>3" <= (type) "('a\<^sup>3)\<^sup>-\<^sup>1"
+translations (type) "'a\<^sup>-\<^sup>4" <= (type) "('a\<^sup>4)\<^sup>-\<^sup>1"
 
 print_translation \<open>
   [(@{type_syntax UnitTimes}, 
@@ -296,4 +304,14 @@ print_translation \<open>
             _ => raise Match)]
 \<close>
 
+subsection \<open> Derived Dimensions \<close>
+
+type_synonym Area = "L\<^sup>2"
+type_synonym Volume = "L\<^sup>3"
+type_synonym Acceleration = "L\<cdot>T\<^sup>-\<^sup>1"
+type_synonym Frequency = "T\<^sup>-\<^sup>1"
+type_synonym Energy = "L\<^sup>2\<cdot>M\<cdot>T\<^sup>-\<^sup>2"
+type_synonym Power = "L\<^sup>2\<cdot>M\<cdot>T\<^sup>-\<^sup>3"
+type_synonym Force = "L\<cdot>M\<cdot>T\<^sup>-\<^sup>2"
+  
 end

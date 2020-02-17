@@ -4,65 +4,65 @@ begin
 
 section \<open> Tactic Support for SI type expressions. \<close>
 
-lemmas [si_def] =  si_sem_meter_def si_sem_kilogram_def si_sem_second_def 
-                   si_sem_ampere_def si_sem_kelvin_def si_sem_mole_def
-                   si_sem_candela_def 
+lemmas [si_def] =  si_sem_Length_def si_sem_Mass_def si_sem_Time_def 
+                   si_sem_Current_def si_sem_Temperature_def si_sem_Amount_def
+                   si_sem_Intensity_def 
 
                    si_sem_UnitTimes_def si_sem_UnitInv_def
                    times_Unit_ext_def one_Unit_ext_def
                    
 (* renaming and putting defs into the rewrite set (which is usually not a good idea) *)
-lemma "SI(meter)   = 1\<lparr>Meters := 1\<rparr>"     by(simp add: si_def)
-lemma "SI(kilogram)= 1\<lparr>Kilograms := 1\<rparr>"  by(simp add: si_def)
-lemma "SI(second)  = 1\<lparr>Seconds := 1\<rparr> "   by(simp add: si_def)
-lemma "SI(ampere)  = 1\<lparr>Amperes := 1\<rparr>"    by(simp add: si_def)
-lemma "SI(kelvin)  = 1\<lparr>Kelvins := 1\<rparr> "   by(simp add: si_def)
-lemma "SI(mole)    = 1\<lparr>Moles := 1\<rparr>"      by(simp add: si_def)
-lemma "SI(candela) = 1\<lparr>Candelas := 1\<rparr>"   by(simp add: si_def)
+lemma "SI(L)  = 1\<lparr>Meters := 1\<rparr>"     by(simp add: si_def)
+lemma "SI(M)  = 1\<lparr>Kilograms := 1\<rparr>"  by(simp add: si_def)
+lemma "SI(T)  = 1\<lparr>Seconds := 1\<rparr> "   by(simp add: si_def)
+lemma "SI(I)  = 1\<lparr>Amperes := 1\<rparr>"    by(simp add: si_def)
+lemma "SI(\<Theta>)  = 1\<lparr>Kelvins := 1\<rparr> "   by(simp add: si_def)
+lemma "SI(N)  = 1\<lparr>Moles := 1\<rparr>"      by(simp add: si_def)
+lemma "SI(J)  = 1\<lparr>Candelas := 1\<rparr>"   by(simp add: si_def)
 
-lemma "SI(mole \<cdot> kelvin \<cdot> mole) = SI(kelvin \<cdot> (mole)\<^sup>2)" by(simp add: si_def)
+lemma "SI(N \<cdot> \<Theta> \<cdot> N) = SI(\<Theta> \<cdot> N\<^sup>2)" by(simp add: si_def)
 
-lemma [si_def]:"fromUnit UNIT(x::'a::one, second) = 
+lemma [si_def]:"fromUnit UNIT(x::'a::one, Time) = 
                   \<lparr>magn = x,
                    unit = \<lparr>Seconds = 1, Meters = 0, Kilograms = 0, Amperes = 0, 
                            Kelvins = 0, Moles = 0, Candelas = 0\<rparr>\<rparr>"
-  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_second_def)
+  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Time_def)
 
-lemma [si_def]:"fromUnit UNIT(x::'a::one, meter) = 
+lemma [si_def]:"fromUnit UNIT(x::'a::one, Length) = 
                   \<lparr>magn = x,
                    unit = \<lparr>Seconds = 0, Meters = 1, Kilograms = 0, Amperes = 0, 
                            Kelvins = 0, Moles = 0, Candelas = 0\<rparr>\<rparr>"
-  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_meter_def)
+  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Length_def)
 
-lemma [si_def]:"fromUnit UNIT(x::'a::one, kilogram) = 
+lemma [si_def]:"fromUnit UNIT(x::'a::one, Mass) = 
                   \<lparr>magn = x,
                    unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 1, Amperes = 0, 
                            Kelvins = 0, Moles = 0, Candelas = 0\<rparr>\<rparr>"
-  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_kilogram_def)
+  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Mass_def)
 
-lemma [si_def]:"fromUnit UNIT(x::'a::one, ampere) = 
+lemma [si_def]:"fromUnit UNIT(x::'a::one, Current) = 
                   \<lparr>magn = x,
                    unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 0, Amperes = 1, 
                            Kelvins = 0, Moles = 0, Candelas = 0\<rparr>\<rparr>"
-  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_ampere_def)
+  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Current_def)
 
-lemma [si_def]:"fromUnit UNIT(x::'a::one, kelvin) = 
+lemma [si_def]:"fromUnit UNIT(x::'a::one, Temperature) = 
                   \<lparr>magn = x,
                    unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 0, Amperes = 0, 
                            Kelvins = 1, Moles = 0, Candelas = 0\<rparr>\<rparr>"
-  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_kelvin_def)
+  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Temperature_def)
 
-lemma [si_def]:"fromUnit UNIT(x::'a::one, mole) = 
+lemma [si_def]:"fromUnit UNIT(x::'a::one, Amount) = 
                   \<lparr>magn = x,
                    unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 0, Amperes = 0, 
                            Kelvins = 0, Moles = 1, Candelas = 0\<rparr>\<rparr>"
-  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_mole_def)
+  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Amount_def)
 
-lemma [si_def]:"fromUnit UNIT(x::'a::one, candela) = 
+lemma [si_def]:"fromUnit UNIT(x::'a::one, Intensity) = 
                   \<lparr>magn = x,
                    unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 0, Amperes = 0, 
                            Kelvins = 0, Moles = 0, Candelas = 1\<rparr>\<rparr>"
-  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_candela_def)
+  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Intensity_def)
 
 lemma Unit_times_commute:
   fixes X::"'a::{one,ab_semigroup_mult}['b::si_type]"and Y::"'a['c::si_type]"
@@ -72,8 +72,8 @@ lemma Unit_times_commute:
 text\<open>Observe that this commutation law also commutes the types.\<close>
  
 (* just a check that instantiation works for special cases ... *)
-lemma "    (UNIT(x, candela) \<^bold>\<cdot> UNIT(y::'a::{one,ab_semigroup_mult}, mole))
-        \<approx>\<^sub>Q (UNIT(y, mole) \<^bold>\<cdot> UNIT(x, candela)) "
+lemma "    (UNIT(x, J) \<^bold>\<cdot> UNIT(y::'a::{one,ab_semigroup_mult}, N))
+        \<approx>\<^sub>Q (UNIT(y, N) \<^bold>\<cdot> UNIT(x, J)) "
   by(simp add: Unit_times_commute)
 
 
@@ -141,7 +141,6 @@ lemma Unit_mult_mult_Left_cancel:
 
 
 lemma "watt \<^bold>\<cdot> hour \<approx>\<^sub>Q 3600 \<^bold>\<cdot> joule"
-  apply (transfer)
   unfolding Unit_equiv_def hour_def
   apply(simp add: Units.Unit_times.rep_eq si_def 
                  zero_SI_tagged_domain_ext_def times_SI_tagged_domain_ext_def 

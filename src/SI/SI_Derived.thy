@@ -6,7 +6,7 @@ begin
 
 definition "radian = 1 \<cdot> (meter \<^bold>\<cdot> meter\<^sup>-\<^sup>\<one>)"                                  
 
-definition degree :: "real[meter / meter]" where
+definition degree :: "real[L/L]" where
 [si_def]: "degree = (2\<cdot>(UNIT(pi,_)) / 180)\<cdot>radian"
 
 abbreviation degrees ("_\<degree>" [999] 999) where "n\<degree> \<equiv> n\<cdot>degree" 
@@ -29,7 +29,6 @@ abbreviation "joule \<equiv> kilogram \<^bold>\<cdot> meter\<^sup>\<two> \<^bold
 
 text\<open>The full beauty of the approach is perhaps revealed here, with the 
      type of a classical three-dimensional gravitation field:\<close>
-type_synonym gravitation_field = "(real\<^sup>3 \<Rightarrow> real\<^sup>3)[meter \<cdot> (second)\<^sup>-\<^sup>2]"
-
+type_synonym gravitation_field = "(real\<^sup>3 \<Rightarrow> real\<^sup>3)[L \<cdot> T\<^sup>-\<^sup>2]"
 
 end

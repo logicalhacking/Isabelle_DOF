@@ -1,8 +1,9 @@
 section \<open> SI Quantities \<close>
 
 theory SI_Quantities
-  imports SI_Units
+  imports SI_Units Optics.Lenses
 begin
+
 
 subsection \<open> The \<^theory_text>\<open>Quantity\<close>-type and its operations \<close>
 
@@ -21,17 +22,29 @@ begin
 instance ..
 end
 
+lemma magn_times [simp]: "magn (x \<cdot> y) = magn x \<cdot> magn y" by (simp add: times_Quantity_ext_def)
+lemma unit_times [simp]: "unit (x \<cdot> y) = unit x \<cdot> unit y" by (simp add: times_Quantity_ext_def)
+lemma more_times [simp]: "more (x \<cdot> y) = more x \<cdot> more y" by (simp add: times_Quantity_ext_def)
+
 instantiation Quantity_ext :: (zero, zero) zero
 begin
   definition "zero_Quantity_ext = \<lparr> magn = 0, unit = 1, \<dots> = 0 \<rparr>"
 instance ..
 end
 
+lemma magn_zero [simp]: "magn 0 = 0" by (simp add: zero_Quantity_ext_def)
+lemma unit_zero [simp]: "unit 0 = 1" by (simp add: zero_Quantity_ext_def)
+lemma more_zero [simp]: "more 0 = 0" by (simp add: zero_Quantity_ext_def)
+
 instantiation Quantity_ext :: (one, one) one
 begin
   definition "one_Quantity_ext = \<lparr> magn = 1, unit = 1, \<dots> = 1 \<rparr>"
 instance ..
 end
+
+lemma magn_one [simp]: "magn 1 = 1" by (simp add: one_Quantity_ext_def)
+lemma unit_one [simp]: "unit 1 = 1" by (simp add: one_Quantity_ext_def)
+lemma more_one [simp]: "more 1 = 1" by (simp add: one_Quantity_ext_def)
 
 instantiation Quantity_ext :: (inverse, inverse) inverse
 begin
@@ -40,12 +53,30 @@ begin
 instance ..
 end
 
+lemma magn_inverse [simp]: "magn (inverse x) = inverse (magn x)" 
+  by (simp add: inverse_Quantity_ext_def)
+
+lemma unit_inverse [simp]: "unit (inverse x) = inverse (unit x)" 
+  by (simp add: inverse_Quantity_ext_def)
+
+lemma more_inverse [simp]: "more (inverse x) = inverse (more x)" 
+  by (simp add: inverse_Quantity_ext_def)
+
+lemma magn_divide [simp]: "magn (x / y) = magn x / magn y" 
+  by (simp add: divide_Quantity_ext_def)
+
+lemma unit_divide [simp]: "unit (x / y) = unit x / unit y" 
+  by (simp add: divide_Quantity_ext_def)
+
+lemma more_divide [simp]: "more (x / y) = more x / more y" 
+  by (simp add: divide_Quantity_ext_def)
+
 instance Quantity_ext :: (comm_monoid_mult, comm_monoid_mult) comm_monoid_mult
   by (intro_classes, simp_all add: one_Quantity_ext_def 
                                    times_Quantity_ext_def mult.assoc, simp add: mult.commute)
 
 instance Quantity_ext :: (ab_group_mult, ab_group_mult) ab_group_mult
-  oops
+  by (intro_classes, rule Quantity_eq_intro, simp_all)
 
 subsection \<open> SI Tagged Types \<close>
 text\<open>We 'lift' SI type expressions to SI tagged type expressions as follows:\<close>
@@ -129,9 +160,11 @@ abbreviation
 
 abbreviation Quant_sq ("(_)\<^sup>\<two>" [999] 999) where "u\<^sup>\<two> \<equiv> u\<^bold>\<cdot>u"
 abbreviation Quant_cube ("(_)\<^sup>\<three>" [999] 999) where "u\<^sup>\<three> \<equiv> u\<^bold>\<cdot>u\<^bold>\<cdot>u"
+abbreviation Quant_quart ("(_)\<^sup>\<four>" [999] 999) where "u\<^sup>\<four> \<equiv> u\<^bold>\<cdot>u\<^bold>\<cdot>u\<^bold>\<cdot>u"
 
 abbreviation Quant_neq_sq ("(_)\<^sup>-\<^sup>\<two>" [999] 999) where "u\<^sup>-\<^sup>\<two> \<equiv> (u\<^sup>\<two>)\<^sup>-\<^sup>\<one>"
 abbreviation Quant_neq_cube ("(_)\<^sup>-\<^sup>\<three>" [999] 999) where "u\<^sup>-\<^sup>\<three> \<equiv> (u\<^sup>\<three>)\<^sup>-\<^sup>\<one>"
+abbreviation Quant_neq_quart ("(_)\<^sup>-\<^sup>\<four>" [999] 999) where "u\<^sup>-\<^sup>\<four> \<equiv> (u\<^sup>\<three>)\<^sup>-\<^sup>\<one>"
 
 instantiation tQuant :: (zero,si_type) zero
 begin
@@ -184,6 +217,9 @@ end
 
 instance tQuant :: (numeral,si_type) numeral ..
 
+instance tQuant :: (ab_group_add,si_type) ab_group_add
+  by (intro_classes, (transfer, simp)+)
+
 instantiation tQuant :: (times,si_type) times
 begin
 lift_definition times_tQuant :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> 'a['b]" 
@@ -200,10 +236,32 @@ instance tQuant :: (semigroup_mult,si_type) semigroup_mult
 instance tQuant :: (ab_semigroup_mult,si_type) ab_semigroup_mult
   by (intro_classes, (transfer, simp add: mult.commute))
 
+instance tQuant :: (semiring,si_type) semiring
+  by (intro_classes, (transfer, simp add: distrib_left distrib_right)+)
+
+instance tQuant :: (semiring_0,si_type) semiring_0
+  by (intro_classes, (transfer, simp)+)
+
 instance tQuant :: (comm_semiring,si_type) comm_semiring
   by (intro_classes, transfer, simp add: linordered_field_class.sign_simps(18) mult.commute)
 
+instance tQuant :: (mult_zero,si_type) mult_zero
+  by (intro_classes, (transfer, simp)+)
+
 instance tQuant :: (comm_semiring_0,si_type) comm_semiring_0
+  by (intro_classes, (transfer, simp)+)
+
+instantiation tQuant :: (real_vector,si_type) real_vector
+begin
+
+lift_definition scaleR_tQuant :: "real \<Rightarrow> 'a['b] \<Rightarrow> 'a['b]" 
+  is "\<lambda> r x. \<lparr> magn = r *\<^sub>R magn x, unit = unit x \<rparr>" by simp
+
+instance
+  by (intro_classes, (transfer, simp add: scaleR_add_left scaleR_add_right)+)
+end
+
+instance tQuant :: (ring,si_type) ring
   by (intro_classes, (transfer, simp)+)
 
 instance tQuant :: (comm_monoid_mult,si_type) comm_monoid_mult
@@ -233,6 +291,7 @@ begin
   instance by (intro_classes, (transfer, simp add: less_le_not_le)+)
 end
 
+
 lift_definition mk_unit :: "'a \<Rightarrow> 'u itself \<Rightarrow> ('a::one)['u::si_type]" 
   is "\<lambda> n u. \<lparr> magn = n, unit = SI('u) \<rparr>" by simp
 
@@ -243,13 +302,13 @@ subsection \<open>Polymorphic Operations for Elementary SI Units \<close>
 
 named_theorems si_def
 
-definition [si_def]: "meter    = UNIT(1, meter)"
-definition [si_def]: "second   = UNIT(1, second)"
-definition [si_def]: "kilogram = UNIT(1, kilogram)"
-definition [si_def]: "ampere   = UNIT(1, ampere)"
-definition [si_def]: "kelvin   = UNIT(1, kelvin)"
-definition [si_def]: "mole     = UNIT(1, mole)"
-definition [si_def]: "candela  = UNIT(1, candela)"
+definition [si_def]: "meter    = UNIT(1, Length)"
+definition [si_def]: "second   = UNIT(1, Time)"
+definition [si_def]: "kilogram = UNIT(1, Mass)"
+definition [si_def]: "ampere   = UNIT(1, Current)"
+definition [si_def]: "kelvin   = UNIT(1, Temperature)"
+definition [si_def]: "mole     = UNIT(1, Amount)"
+definition [si_def]: "candela  = UNIT(1, Intensity)"
 
 subsubsection \<open>The Projection: Stripping the SI-Tags \<close>
 
@@ -292,6 +351,5 @@ lemma magnQuant_mk [si_def]: "\<lbrakk>UNIT(n, 'u::si_type)\<rbrakk>\<^sub>Q = n
 
 method si_calc = 
   (simp add: unit_eq_iff_magn_eq unit_le_iff_magn_le si_def)
-
 
 end
