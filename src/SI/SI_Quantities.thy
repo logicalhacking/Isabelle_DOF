@@ -18,7 +18,8 @@ lemma Quantity_eq_intro:
 
 instantiation Quantity_ext :: (times, times) times
 begin
-  definition "times_Quantity_ext x y = \<lparr> magn = magn x \<cdot> magn y, unit = unit x \<cdot> unit y, \<dots> = more x \<cdot> more y \<rparr>"
+  definition [si_def]:
+    "times_Quantity_ext x y = \<lparr> magn = magn x \<cdot> magn y, unit = unit x \<cdot> unit y, \<dots> = more x \<cdot> more y \<rparr>"
 instance ..
 end
 
@@ -38,7 +39,7 @@ lemma more_zero [simp]: "more 0 = 0" by (simp add: zero_Quantity_ext_def)
 
 instantiation Quantity_ext :: (one, one) one
 begin
-  definition "one_Quantity_ext = \<lparr> magn = 1, unit = 1, \<dots> = 1 \<rparr>"
+  definition [si_def]: "one_Quantity_ext = \<lparr> magn = 1, unit = 1, \<dots> = 1 \<rparr>"
 instance ..
 end
 
@@ -48,8 +49,8 @@ lemma more_one [simp]: "more 1 = 1" by (simp add: one_Quantity_ext_def)
 
 instantiation Quantity_ext :: (inverse, inverse) inverse
 begin
-  definition "inverse_Quantity_ext x = \<lparr> magn = inverse (magn x), unit = inverse (unit x), \<dots> = inverse (more x) \<rparr>"
-  definition "divide_Quantity_ext x y = \<lparr> magn = magn x / magn y, unit = unit x / unit y, \<dots> = more x / more y \<rparr>"
+  definition [si_def]: "inverse_Quantity_ext x = \<lparr> magn = inverse (magn x), unit = inverse (unit x), \<dots> = inverse (more x) \<rparr>"
+  definition [si_def]: "divide_Quantity_ext x y = \<lparr> magn = magn x / magn y, unit = unit x / unit y, \<dots> = more x / more y \<rparr>"
 instance ..
 end
 
@@ -300,8 +301,6 @@ translations "UNIT(n, 'a)" == "CONST mk_unit n TYPE('a)"
 
 subsection \<open>Polymorphic Operations for Elementary SI Units \<close>
 
-named_theorems si_def
-
 definition [si_def]: "meter    = UNIT(1, Length)"
 definition [si_def]: "second   = UNIT(1, Time)"
 definition [si_def]: "kilogram = UNIT(1, Mass)"
@@ -321,6 +320,16 @@ lemma unit_eq_iff_magn_eq:
   "x = y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q = \<lbrakk>y\<rbrakk>\<^sub>Q"
   by (auto simp add: magnQuant_def, transfer, simp)
 
+lemma unit_equiv_iff:
+  fixes x :: "'a['u\<^sub>1::si_type]" and y :: "'a['u\<^sub>2::si_type]"
+  shows "x \<approx>\<^sub>Q y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q = \<lbrakk>y\<rbrakk>\<^sub>Q \<and> SI('u\<^sub>1) = SI('u\<^sub>2)"
+proof -
+  have "\<forall>t ta. (ta::'a['u\<^sub>2]) = t \<or> magn (fromUnit ta) \<noteq> magn (fromUnit t)"
+    by (simp add: magnQuant_def unit_eq_iff_magn_eq)
+  then show ?thesis
+    by (metis (full_types) Quant_equiv.rep_eq coerceQuant_eq_iff2 eq_ magnQuant_def)
+qed
+
 lemma unit_le_iff_magn_le:
   "x \<le> y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q \<le> \<lbrakk>y\<rbrakk>\<^sub>Q"
   by (auto simp add: magnQuant_def; (transfer, simp))
@@ -339,6 +348,12 @@ lemma magnQuant_times [si_def]: "\<lbrakk>x * y\<rbrakk>\<^sub>Q = \<lbrakk>x\<r
 
 lemma magnQuant_div [si_def]: "\<lbrakk>x / y\<rbrakk>\<^sub>Q = \<lbrakk>x\<rbrakk>\<^sub>Q / \<lbrakk>y\<rbrakk>\<^sub>Q"
   by (simp add: magnQuant_def, transfer, simp)
+
+lemma magnQuant_qinv [si_def]: "\<lbrakk>x\<^sup>-\<^sup>\<one>\<rbrakk>\<^sub>Q = inverse \<lbrakk>x\<rbrakk>\<^sub>Q"
+  by (simp add: magnQuant_def, transfer, simp)
+
+lemma magnQuant_qdiv [si_def]: "\<lbrakk>(x::('a::field)[_]) \<^bold>/ y\<rbrakk>\<^sub>Q = \<lbrakk>x\<rbrakk>\<^sub>Q / \<lbrakk>y\<rbrakk>\<^sub>Q"
+  by (simp add: magnQuant_def, transfer, simp add: field_class.field_divide_inverse)
 
 lemma magnQuant_numeral [si_def]: "\<lbrakk>numeral n\<rbrakk>\<^sub>Q = numeral n"
   apply (induct n, simp_all add: si_def)

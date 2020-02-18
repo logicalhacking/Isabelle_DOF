@@ -1,7 +1,7 @@
 section \<open> SI Prefixes \<close>
 
 theory SI_Prefix
-  imports SI_Quantities
+  imports SI_Constants
 begin
 
 definition [si_def]: "giga = UNIT(1000000000, _)"

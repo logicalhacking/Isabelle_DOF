@@ -1,12 +1,12 @@
 theory SI_Proof
-  imports SI_Derived
+  imports SI_Quantities
 begin
 
 section \<open> Tactic Support for SI type expressions. \<close>
 
 lemmas [si_def] =  si_sem_Length_def si_sem_Mass_def si_sem_Time_def 
                    si_sem_Current_def si_sem_Temperature_def si_sem_Amount_def
-                   si_sem_Intensity_def 
+                   si_sem_Intensity_def si_sem_NoDimension_def
 
                    si_sem_UnitTimes_def si_sem_UnitInv_def
                    times_Unit_ext_def one_Unit_ext_def
@@ -19,48 +19,49 @@ lemma "SI(I)  = 1\<lparr>Amperes := 1\<rparr>"    by(simp add: si_def)
 lemma "SI(\<Theta>)  = 1\<lparr>Kelvins := 1\<rparr> "   by(simp add: si_def)
 lemma "SI(N)  = 1\<lparr>Moles := 1\<rparr>"      by(simp add: si_def)
 lemma "SI(J)  = 1\<lparr>Candelas := 1\<rparr>"   by(simp add: si_def)
+lemma "SI(\<one>)  = 1"                 by(simp add: si_def)
 
 lemma "SI(N \<cdot> \<Theta> \<cdot> N) = SI(\<Theta> \<cdot> N\<^sup>2)" by(simp add: si_def)
 
 lemma [si_def]:"fromUnit UNIT(x::'a::one, Time) = 
                   \<lparr>magn = x,
-                   unit = \<lparr>Seconds = 1, Meters = 0, Kilograms = 0, Amperes = 0, 
+                   unit = \<lparr>Meters = 0, Kilograms = 0, Seconds = 1, Amperes = 0, 
                            Kelvins = 0, Moles = 0, Candelas = 0\<rparr>\<rparr>"
   by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Time_def)
 
 lemma [si_def]:"fromUnit UNIT(x::'a::one, Length) = 
                   \<lparr>magn = x,
-                   unit = \<lparr>Seconds = 0, Meters = 1, Kilograms = 0, Amperes = 0, 
+                   unit = \<lparr>Meters = 1, Kilograms = 0, Seconds = 0, Amperes = 0, 
                            Kelvins = 0, Moles = 0, Candelas = 0\<rparr>\<rparr>"
   by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Length_def)
 
 lemma [si_def]:"fromUnit UNIT(x::'a::one, Mass) = 
                   \<lparr>magn = x,
-                   unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 1, Amperes = 0, 
+                   unit = \<lparr>Meters = 0, Kilograms = 1, Seconds = 0, Amperes = 0, 
                            Kelvins = 0, Moles = 0, Candelas = 0\<rparr>\<rparr>"
   by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Mass_def)
 
 lemma [si_def]:"fromUnit UNIT(x::'a::one, Current) = 
                   \<lparr>magn = x,
-                   unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 0, Amperes = 1, 
+                   unit = \<lparr>Meters = 0, Kilograms = 0, Seconds = 0, Amperes = 1, 
                            Kelvins = 0, Moles = 0, Candelas = 0\<rparr>\<rparr>"
   by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Current_def)
 
 lemma [si_def]:"fromUnit UNIT(x::'a::one, Temperature) = 
                   \<lparr>magn = x,
-                   unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 0, Amperes = 0, 
+                   unit = \<lparr>Meters = 0, Kilograms = 0, Seconds = 0, Amperes = 0, 
                            Kelvins = 1, Moles = 0, Candelas = 0\<rparr>\<rparr>"
   by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Temperature_def)
 
 lemma [si_def]:"fromUnit UNIT(x::'a::one, Amount) = 
                   \<lparr>magn = x,
-                   unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 0, Amperes = 0, 
+                   unit = \<lparr>Meters = 0, Kilograms = 0, Seconds = 0, Amperes = 0, 
                            Kelvins = 0, Moles = 1, Candelas = 0\<rparr>\<rparr>"
   by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Amount_def)
 
 lemma [si_def]:"fromUnit UNIT(x::'a::one, Intensity) = 
                   \<lparr>magn = x,
-                   unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 0, Amperes = 0, 
+                   unit = \<lparr>Meters = 0, Kilograms = 0, Seconds = 0, Amperes = 0, 
                            Kelvins = 0, Moles = 0, Candelas = 1\<rparr>\<rparr>"
   by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Intensity_def)
 
@@ -109,6 +110,7 @@ lemma Unit_inverse_weak_cong:
   shows   "(X)\<^sup>-\<^sup>\<one>  \<approx>\<^sub>Q  (Y)\<^sup>-\<^sup>\<one>"
   using assms by (transfer, simp)
 
+(*
 text\<open>In order to compute a normal form, we would additionally need these three:\<close>
 (* field ? *)
 lemma Unit_inverse_distrib:
@@ -154,6 +156,6 @@ lemma "watt \<^bold>\<cdot> hour \<approx>\<^sub>Q 3600 \<^bold>\<cdot> joule"
 
 lemma "watt \<^bold>\<cdot> hour \<approx>\<^sub>Q 3.6 \<^bold>\<cdot> kilo \<^bold>\<cdot> joule"
   oops
-
+*)
 
 end
