@@ -7,33 +7,33 @@ begin
 definition degree :: "'a::{inverse,real_algebra_1}[L/L]" where
 [si_def]: "degree = (2\<cdot>(UNIT(of_real pi,_)) / 180)\<cdot>radian"
 
-abbreviation degrees ("_\<degree>" [999] 999) where "n\<degree> \<equiv> n\<cdot>degree"
+abbreviation degrees ("_\<degree>" [999] 999) where "n\<degree> \<equiv> n \<odot> degree"
 
-definition degrees_celcius :: "'a::division_ring[\<Theta>] \<Rightarrow> 'a[\<Theta>]" ("_\<degree>C" [999] 999) 
-  where [si_def]: "degrees_celcius x = (x + 273.151)\<cdot>kelvin"
+definition degrees_celcius :: "'a::division_ring \<Rightarrow> 'a[\<Theta>]" ("_\<degree>C" [999] 999) 
+  where [si_def]: "degrees_celcius x = x + 273.151 \<odot> kelvin"
 
-definition degrees_farenheit :: "'a::division_ring[\<Theta>] \<Rightarrow> 'a[\<Theta>]" ("_\<degree>F" [999] 999)
-  where [si_def]: "degrees_farenheit x = (x + 459.67)\<cdot>5/9\<cdot>kelvin"
+definition degrees_farenheit :: "'a::division_ring \<Rightarrow> 'a[\<Theta>]" ("_\<degree>F" [999] 999)
+  where [si_def]: "degrees_farenheit x = (x + 459.67)\<cdot>5/9 \<odot> kelvin"
 
-definition [si_def]: "litre = 1/1000 \<cdot> meter\<^sup>\<three>"
+definition [si_def]: "litre = 1/1000 \<odot> meter\<^sup>\<three>"
 
-definition [si_def]: "pint = 0.56826125 \<cdot> litre"
+definition [si_def]: "pint = 0.56826125 \<odot> litre"
 
-definition [si_def]: "hour = 3600 \<cdot> second"
+definition [si_def]: "hour = 3600 \<odot> second"
 
-definition [si_def]: "gram = milli\<cdot>kilogram"
+definition [si_def]: "gram = milli \<odot> kilogram"
 
-abbreviation "tonne \<equiv> kilo\<cdot>kilogram"
+abbreviation "tonne \<equiv> kilo \<odot> kilogram"
 
 abbreviation "newton \<equiv> (kilogram \<^bold>\<cdot> meter) \<^bold>/ second\<^sup>\<two>"
 
 abbreviation "volt \<equiv> kilogram \<^bold>\<cdot> meter\<^sup>\<two> \<^bold>\<cdot> second\<^sup>-\<^sup>\<three> \<^bold>\<cdot> ampere\<^sup>-\<^sup>\<one>"
 
-definition "inch = 25.5\<cdot>milli\<cdot>meter"
+definition "inch = 25.5 \<odot> milli \<odot> meter"
 
-definition "foot = 0.3048\<cdot>meter"
+definition "foot = 0.3048 \<odot> meter"
 
-definition "yard = 0.9144\<cdot>meter"
+definition "yard = 0.9144 \<odot> meter"
 
 
 text\<open>The full beauty of the approach is perhaps revealed here, with the 

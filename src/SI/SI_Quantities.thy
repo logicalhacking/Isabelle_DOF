@@ -292,6 +292,10 @@ begin
   instance by (intro_classes, (transfer, simp add: less_le_not_le)+)
 end
 
+lift_definition scaleQ :: "'a \<Rightarrow> 'a::times['u::si_type] \<Rightarrow> 'a['u]" (infixr "*\<^sub>Q" 63)
+  is "\<lambda> r x. \<lparr> magn = r * magn x, unit = SI('u) \<rparr>" by simp
+
+notation scaleQ (infixr "\<odot>" 63)
 
 lift_definition mk_unit :: "'a \<Rightarrow> 'u itself \<Rightarrow> ('a::one)['u::si_type]" 
   is "\<lambda> n u. \<lparr> magn = n, unit = SI('u) \<rparr>" by simp
@@ -308,6 +312,9 @@ definition [si_def]: "ampere   = UNIT(1, Current)"
 definition [si_def]: "kelvin   = UNIT(1, Temperature)"
 definition [si_def]: "mole     = UNIT(1, Amount)"
 definition [si_def]: "candela  = UNIT(1, Intensity)"
+
+definition dimless ("\<one>") 
+  where [si_def]: "dimless  = UNIT(1, NoDimension)"
 
 subsubsection \<open>The Projection: Stripping the SI-Tags \<close>
 
@@ -344,6 +351,9 @@ lemma magnQuant_plus [si_def]: "\<lbrakk>x + y\<rbrakk>\<^sub>Q = \<lbrakk>x\<rb
   by (simp add: magnQuant_def, transfer, simp)
 
 lemma magnQuant_times [si_def]: "\<lbrakk>x * y\<rbrakk>\<^sub>Q = \<lbrakk>x\<rbrakk>\<^sub>Q * \<lbrakk>y\<rbrakk>\<^sub>Q"
+  by (simp add: magnQuant_def, transfer, simp)
+
+lemma magnQuant_scaleQ [si_def]: "\<lbrakk>x *\<^sub>Q y\<rbrakk>\<^sub>Q = x * \<lbrakk>y\<rbrakk>\<^sub>Q"
   by (simp add: magnQuant_def, transfer, simp)
 
 lemma magnQuant_div [si_def]: "\<lbrakk>x / y\<rbrakk>\<^sub>Q = \<lbrakk>x\<rbrakk>\<^sub>Q / \<lbrakk>y\<rbrakk>\<^sub>Q"
