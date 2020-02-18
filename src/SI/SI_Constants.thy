@@ -56,10 +56,7 @@ theorem Quant_eq_iff_same_dim:
   "x \<approx>\<^sub>Q y \<longleftrightarrow> x = y"
   by (transfer, simp)
 
-theorem hertz_definition: "1\<cdot>hertz = \<Delta>v\<^sub>C\<^sub>s / 9192631770"
-  by (simp add: unit_eq_iff_magn_eq si_def)
-
-theorem second_definition: "1\<cdot>second \<approx>\<^sub>Q (9192631770 \<odot> \<one>) \<^bold>/ \<Delta>v\<^sub>C\<^sub>s"
+theorem second_definition: "1 \<odot> second \<approx>\<^sub>Q (9192631770 \<odot> \<one>) \<^bold>/ \<Delta>v\<^sub>C\<^sub>s"
   by (simp add: unit_equiv_iff, simp add: Quant_equiv_def unit_eq_iff_magn_eq si_def)
 
 default_sort type

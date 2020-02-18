@@ -5,7 +5,7 @@ theory SI_Derived
 begin                                  
 
 definition degree :: "'a::{inverse,real_algebra_1}[L/L]" where
-[si_def]: "degree = (2\<cdot>(UNIT(of_real pi,_)) / 180)\<cdot>radian"
+[si_def]: "degree = (2\<cdot>(of_real pi) / 180) \<odot> radian"
 
 abbreviation degrees ("_\<degree>" [999] 999) where "n\<degree> \<equiv> n \<odot> degree"
 
@@ -34,7 +34,6 @@ definition "inch = 25.5 \<odot> milli \<odot> meter"
 definition "foot = 0.3048 \<odot> meter"
 
 definition "yard = 0.9144 \<odot> meter"
-
 
 text\<open>The full beauty of the approach is perhaps revealed here, with the 
      type of a classical three-dimensional gravitation field:\<close>

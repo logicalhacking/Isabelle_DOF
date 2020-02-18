@@ -221,70 +221,6 @@ instance tQuant :: (numeral,si_type) numeral ..
 instance tQuant :: (ab_group_add,si_type) ab_group_add
   by (intro_classes, (transfer, simp)+)
 
-instantiation tQuant :: (times,si_type) times
-begin
-lift_definition times_tQuant :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> 'a['b]" 
-  is "\<lambda> x y. \<lparr> magn = magn x * magn y, unit = SI('b) \<rparr>"
-  by simp
-instance ..
-end
-
-instance tQuant :: (power,si_type) power ..
-
-instance tQuant :: (semigroup_mult,si_type) semigroup_mult
-  by (intro_classes, transfer, simp add: mult.assoc)
-
-instance tQuant :: (ab_semigroup_mult,si_type) ab_semigroup_mult
-  by (intro_classes, (transfer, simp add: mult.commute))
-
-instance tQuant :: (semiring,si_type) semiring
-  by (intro_classes, (transfer, simp add: distrib_left distrib_right)+)
-
-instance tQuant :: (semiring_0,si_type) semiring_0
-  by (intro_classes, (transfer, simp)+)
-
-instance tQuant :: (comm_semiring,si_type) comm_semiring
-  by (intro_classes, transfer, simp add: linordered_field_class.sign_simps(18) mult.commute)
-
-instance tQuant :: (mult_zero,si_type) mult_zero
-  by (intro_classes, (transfer, simp)+)
-
-instance tQuant :: (comm_semiring_0,si_type) comm_semiring_0
-  by (intro_classes, (transfer, simp)+)
-
-instantiation tQuant :: (real_vector,si_type) real_vector
-begin
-
-lift_definition scaleR_tQuant :: "real \<Rightarrow> 'a['b] \<Rightarrow> 'a['b]" 
-  is "\<lambda> r x. \<lparr> magn = r *\<^sub>R magn x, unit = unit x \<rparr>" by simp
-
-instance
-  by (intro_classes, (transfer, simp add: scaleR_add_left scaleR_add_right)+)
-end
-
-instance tQuant :: (ring,si_type) ring
-  by (intro_classes, (transfer, simp)+)
-
-instance tQuant :: (comm_monoid_mult,si_type) comm_monoid_mult
-  by (intro_classes, (transfer, simp add: mult.commute)+)
-
-instance tQuant :: (comm_semiring_1,si_type) comm_semiring_1
-  by (intro_classes; (transfer, simp add: semiring_normalization_rules(1-8,24)))
-
-instantiation tQuant :: (divide,si_type) divide
-begin
-lift_definition divide_tQuant :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> 'a['b]" 
-  is "\<lambda> x y. \<lparr> magn = magn x div magn y, unit = SI('b) \<rparr>" by simp
-instance ..
-end
-
-instantiation tQuant :: (inverse,si_type) inverse
-begin
-lift_definition inverse_tQuant :: "'a['b] \<Rightarrow> 'a['b]" 
-  is "\<lambda> x. \<lparr> magn = inverse (magn x), unit = SI('b) \<rparr>" by simp
-instance ..
-end
-
 instantiation tQuant :: (order,si_type) order
 begin
   lift_definition less_eq_tQuant :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> bool" is "\<lambda> x y. magn x \<le> magn y" .
@@ -350,13 +286,7 @@ lemma magnQuant_one [si_def]: "\<lbrakk>1\<rbrakk>\<^sub>Q = 1"
 lemma magnQuant_plus [si_def]: "\<lbrakk>x + y\<rbrakk>\<^sub>Q = \<lbrakk>x\<rbrakk>\<^sub>Q + \<lbrakk>y\<rbrakk>\<^sub>Q"
   by (simp add: magnQuant_def, transfer, simp)
 
-lemma magnQuant_times [si_def]: "\<lbrakk>x * y\<rbrakk>\<^sub>Q = \<lbrakk>x\<rbrakk>\<^sub>Q * \<lbrakk>y\<rbrakk>\<^sub>Q"
-  by (simp add: magnQuant_def, transfer, simp)
-
 lemma magnQuant_scaleQ [si_def]: "\<lbrakk>x *\<^sub>Q y\<rbrakk>\<^sub>Q = x * \<lbrakk>y\<rbrakk>\<^sub>Q"
-  by (simp add: magnQuant_def, transfer, simp)
-
-lemma magnQuant_div [si_def]: "\<lbrakk>x / y\<rbrakk>\<^sub>Q = \<lbrakk>x\<rbrakk>\<^sub>Q / \<lbrakk>y\<rbrakk>\<^sub>Q"
   by (simp add: magnQuant_def, transfer, simp)
 
 lemma magnQuant_qinv [si_def]: "\<lbrakk>x\<^sup>-\<^sup>\<one>\<rbrakk>\<^sub>Q = inverse \<lbrakk>x\<rbrakk>\<^sub>Q"
