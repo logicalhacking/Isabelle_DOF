@@ -29,8 +29,10 @@ They are the key-mechanism to denote
 \<^item> Ontological Links, i.e. attributes refering to document classes defined by the ontology
 \<^item> Ontological F-Links, i.e. attributes referring to formal entities inside Isabelle (such as thm's)
 
-This file contains a number of examples resulting from the @{theory "Isabelle_DOF-tests.Conceptual"} - ontology;
-the emphasis of this presentation is to present the expressivity of ODL on a paradigmatical example.
+This file contains a number of examples resulting from the 
+% @ {theory "Isabelle_DOF-tests.Conceptual"} does not work here --- why ?
+\<^theory_text>\<open>Conceptual\<close> - ontology; the emphasis of this presentation is to present the expressivity of 
+ODL on a paradigmatical example.
 \<close>
 
 
@@ -56,20 +58,20 @@ text\<open>Example for a meta-attribute of ODL-type @{typ "typ"} with an appropr
      theorem @{thm "refl"}}\<close>
 text*[xcv2::C, g="@{thm ''HOL.refl''}"]\<open>Lorem ipsum ...\<close>
 
-text\<open>Major sample: test-item of doc-class \verb+F+ with a relational link, and links to formal 
-     Isabelle items. \<close>
+text\<open>Major sample: test-item of doc-class \<open>F\<close> with a relational link between class instances, 
+     and links to formal Isabelle items like \<open>typ\<close>, \<open>term\<close> and \<open>thm\<close>. \<close>
 text*[xcv4::F, r="[@{thm ''HOL.refl''}, 
-                   @{thm ''InnerSyntaxAntiquotations.murks''}]", 
-               b="{(@{docitem ''xcv1''},@{docitem ''xcv2''})}",  
-               s="[@{typ ''int list''}]",
-               properties = "[@{term ''H --> H''}]"
+                   @{thm \<open>InnerSyntaxAntiquotations.murks\<close>}]", (* long names required *)
+               b="{(@{docitem ''xcv1''},@{docitem \<open>xcv2\<close>})}",  (* notations \<open>...\<close> vs. ''...'' *)
+               s="[@{typ \<open>int list\<close>}]",                        
+               properties = "[@{term \<open>H \<longrightarrow> H\<close>}]"              (* notation \<open>...\<close> required for UTF8*)
 ]\<open>Lorem ipsum ...\<close>
 
-text*[xcv5::G, g="@{thm ''HOL.sym''}"]\<open>Lorem ipsum ...\<close>
+text*[xcv5::G, g="@{thm \<open>HOL.sym\<close>}"]\<open>Lorem ipsum ...\<close>
 
 text\<open>... and here we add a relation between @{docitem \<open>xcv3\<close>} and @{docitem \<open>xcv2\<close>} 
 into the relation \verb+b+ of @{docitem \<open>xcv5\<close>}. Note that in the link-relation,
-a @{typ "C"}-type is required, but a  @{typ "G"}-type is offered which is leagal in
+a @{typ "C"}-type is required, but a  @{typ "G"}-type is offered which is legal in
 \verb+Isa_DOF+ because of the sub-class relation between those classes: \<close>
 update_instance*[xcv4::F, b+="{(@{docitem ''xcv3''},@{docitem ''xcv5''})}"]
 

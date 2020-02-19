@@ -65,19 +65,20 @@ A formal statement can, but must not have a reference to true formal Isabelle/Is
 \<close>
 datatype status = semiformal | description
 
+text\<open>The class \<^verbatim>\<open>technical\<close> regroups a number of text-elements that contain typical 
+"technical content" in mathematical or engineering papers: definitions, theorems, lemmas, examples.  \<close>
+
+(* OPEN PROBLEM: connection between referentiable and status. This should be explicit 
+   and computable. *)
+
+(* TODO : RENAME "tag" by "short_name" *)
+
 doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
    status :: status <= "description"
    formal_results  :: "thm list"
    
-text\<open>A very rough formatting style could be modeled as follows:\<close>   
-
-
-doc_class "experiment"  = technical +
-   tag :: "string" <=  "''''"
-
-doc_class example       = technical +
-   tag :: "string" <=  "''''"
+text\<open>A rough structuring is modeled as follows:\<close>   
 
 doc_class "definition"  = technical +
    tag :: "string" <=  "''''"
@@ -85,8 +86,37 @@ doc_class "definition"  = technical +
 doc_class "theorem"     = technical +
    tag :: "string" <=  "''''"
 
+text\<open>Note that the following two text-elements are currently set to no-keyword in LNCS style.\<close>
+doc_class "lemma"     = technical +
+   tag :: "string" <=  "''''"
+
+doc_class "corollary"     = technical +
+   tag :: "string" <=  "''''"
+
+
+text\<open> \<^verbatim>\<open>examples\<close> are currently considered \<^verbatim>\<open>technical\<close>. Another alternative would be to group the
+      following classes into an own class: "evaluation" or "explanation" or ... \<close> 
+
+doc_class example       = technical +
+   tag :: "string" <=  "''''"
+
+doc_class assertion     = technical +
+   tag :: "string" <=  "''''"
+
+ 
+(* TODO :*)
+(* attention : no LaTeX support yet >>> *)
 doc_class "code"     = technical +
    checked :: bool <=  "False"
+   tag :: "string" <=  "''''"
+
+doc_class "experiment"  = technical +
+   tag :: "string" <=  "''''"
+
+doc_class "evaluation"  = technical +
+   tag :: "string" <=  "''''"
+
+doc_class "data"  = technical +
    tag :: "string" <=  "''''"
 
 text\<open>The @{doc_class "code"} is a general stub for free-form and type-checked code-fragments
@@ -143,14 +173,14 @@ text \<open>underlying idea: a monitor class automatically receives a
 doc_class article = 
    style_id :: string                <= "''LNCS''"
    version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
-   accepts "(title        ~~ 
-            \<lbrakk>subtitle\<rbrakk>    ~~
-            \<lbrace>author\<rbrace>\<^sup>+     ~~ 
-            abstract      ~~
+   accepts "(title           ~~ 
+            \<lbrakk>subtitle\<rbrakk>        ~~
+            \<lbrace>author\<rbrace>\<^sup>+         ~~ 
+            abstract          ~~
             \<lbrace>introduction\<rbrace>\<^sup>+   ~~ 
-            \<lbrace>technical || example\<rbrace>\<^sup>+ ~~
-            \<lbrace>conclusion\<rbrace>\<^sup>+    ~~  
-            bibliography     ~~
+            \<lbrace>technical\<rbrace>\<^sup>+      ~~
+            \<lbrace>conclusion\<rbrace>\<^sup>+     ~~  
+            bibliography      ~~
             \<lbrace>annex\<rbrace>\<^sup>* )"
 
 

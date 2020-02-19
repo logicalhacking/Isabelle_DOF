@@ -1860,6 +1860,16 @@ ML\<open>
 
 \<close>
 *)
+ML\<open>open Thread\<close>
 
+(* concurrency experiments:
+ML\<open>open Thread\<close>
+ML\<open>open Future\<close>
+ML\<open>open OS.Process\<close>
+ML\<open>ALLGOALS\<close>
+
+ML\<open>open Goal\<close>
+ML \<open>future_result;\<close>
+*)
 
 end
