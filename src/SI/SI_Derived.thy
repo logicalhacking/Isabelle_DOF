@@ -4,22 +4,24 @@ theory SI_Derived
   imports SI_Prefix
 begin                                  
 
-definition degree :: "'a::{inverse,real_algebra_1}[L/L]" where
+subsection \<open> Definitions \<close>
+
+definition degree :: "'a::real_field[L/L]" where
 [si_def]: "degree = (2\<cdot>(of_real pi) / 180) \<odot> radian"
 
 abbreviation degrees ("_\<degree>" [999] 999) where "n\<degree> \<equiv> n \<odot> degree"
 
-definition degrees_celcius :: "'a::division_ring \<Rightarrow> 'a[\<Theta>]" ("_\<degree>C" [999] 999) 
+definition degrees_celcius :: "'a::field \<Rightarrow> 'a[\<Theta>]" ("_\<degree>C" [999] 999) 
   where [si_def]: "degrees_celcius x = x + 273.151 \<odot> kelvin"
 
-definition degrees_farenheit :: "'a::division_ring \<Rightarrow> 'a[\<Theta>]" ("_\<degree>F" [999] 999)
+definition degrees_farenheit :: "'a::field \<Rightarrow> 'a[\<Theta>]" ("_\<degree>F" [999] 999)
   where [si_def]: "degrees_farenheit x = (x + 459.67)\<cdot>5/9 \<odot> kelvin"
 
 definition [si_def]: "litre = 1/1000 \<odot> meter\<^sup>\<three>"
 
 definition [si_def]: "pint = 0.56826125 \<odot> litre"
 
-definition [si_def]: "hour = 3600 \<odot> second"
+definition [si_def, si_eq]: "hour = 3600 \<odot> second"
 
 definition [si_def]: "gram = milli \<odot> kilogram"
 
@@ -38,5 +40,10 @@ definition "yard = 0.9144 \<odot> meter"
 text\<open>The full beauty of the approach is perhaps revealed here, with the 
      type of a classical three-dimensional gravitation field:\<close>
 type_synonym gravitation_field = "(real\<^sup>3 \<Rightarrow> real\<^sup>3)[L \<cdot> T\<^sup>-\<^sup>2]"
+
+subsection \<open> Examples \<close>
+
+lemma "watt \<^bold>\<cdot> hour \<cong>\<^sub>Q 3600 \<odot> joule"
+  by (si_calc)
 
 end

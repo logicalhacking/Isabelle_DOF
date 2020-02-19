@@ -6,7 +6,7 @@ theory SI_Units
           "HOL-Eisbach.Eisbach"
 begin
 
-named_theorems si_def
+named_theorems si_def and si_eq
 
 text\<open>
 The International System of Units (SI, abbreviated from the French 
