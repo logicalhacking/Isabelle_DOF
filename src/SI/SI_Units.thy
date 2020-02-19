@@ -6,6 +6,8 @@ theory SI_Units
           "HOL-Eisbach.Eisbach"
 begin
 
+named_theorems si_def and si_eq
+
 text\<open>
 The International System of Units (SI, abbreviated from the French 
 Système international (d'unités)) is the modern form of the metric 
@@ -46,13 +48,20 @@ text \<open> An SI unit associates with each of the seven base unit an integer t
   to which it is raised. We use a record to represent this 7-tuple, to enable code generation. \<close>
 
 record Unit = 
-  Seconds   :: int 
-  Meters    :: int 
-  Kilograms :: int 
+  Meters    :: int
+  Kilograms :: int
+  Seconds   :: int
   Amperes   :: int 
   Kelvins   :: int 
   Moles     :: int
   Candelas  :: int
+
+text \<open> Units scaled by a power of 10 \<close>
+
+type_synonym SUnit = "int Unit_ext"
+
+abbreviation scale :: "SUnit \<Rightarrow> int" where
+"scale \<equiv> more"
 
 text \<open> We define a commutative monoid for SI units. \<close>
 
@@ -60,7 +69,7 @@ instantiation Unit_ext :: (one) one
 begin
   \<comment> \<open> Here, $1$ is the dimensionless unit \<close>
 definition one_Unit_ext :: "'a Unit_ext" 
-  where  [code_unfold]:  "1 = \<lparr> Seconds = 0, Meters = 0, Kilograms = 0, Amperes = 0
+  where  [code_unfold, si_def]:  "1 = \<lparr> Meters = 0, Kilograms = 0, Seconds = 0, Amperes = 0
                                , Kelvins = 0, Moles = 0, Candelas = 0, \<dots> = 1 \<rparr>"
   instance ..
 end
@@ -69,9 +78,9 @@ instantiation Unit_ext :: (times) times
 begin
   \<comment> \<open> Multiplication is defined by adding together the powers \<close>
 definition times_Unit_ext :: "'a Unit_ext \<Rightarrow> 'a Unit_ext \<Rightarrow> 'a Unit_ext" 
-  where [code_unfold]:
-  "x * y = \<lparr> Seconds = Seconds x + Seconds y, Meters = Meters x + Meters y
-           , Kilograms = Kilograms x + Kilograms y, Amperes = Amperes x + Amperes y
+  where [code_unfold, si_def]:
+  "x * y = \<lparr> Meters = Meters x + Meters y, Kilograms = Kilograms x + Kilograms y
+           , Seconds = Seconds x + Seconds y, Amperes = Amperes x + Amperes y
            , Kelvins = Kelvins x + Kelvins y, Moles = Moles x + Moles y
            , Candelas = Candelas x + Candelas y, \<dots> = more x * more y \<rparr>"
   instance ..
@@ -93,9 +102,9 @@ text \<open> We also define the inverse and division operations, and an abelian 
 instantiation Unit_ext :: ("{times,inverse}") inverse
 begin
 definition inverse_Unit_ext :: "'a Unit_ext \<Rightarrow> 'a Unit_ext" 
-  where [code_unfold]:
-  "inverse x = \<lparr> Seconds = - Seconds x , Meters = - Meters x
-               , Kilograms = - Kilograms x, Amperes = - Amperes x
+  where [code_unfold, si_def]:
+  "inverse x = \<lparr> Meters = - Meters x, Kilograms = - Kilograms x
+               , Seconds = - Seconds x, Amperes = - Amperes x
                , Kelvins = - Kelvins x, Moles = - Moles x
                , Candelas = - Candelas x, \<dots> = inverse (more x) \<rparr>"
 
@@ -155,13 +164,32 @@ subsection \<open> Basic SI-types \<close>
 text \<open> We provide a syntax for type-expressions; The definition of
 the basic type constructors is straight-forward via a one-elementary set. \<close>
 
-typedef Length ("L")      = "UNIV :: unit set" .. setup_lifting type_definition_Length
-typedef Mass ("M")        = "UNIV :: unit set" .. setup_lifting type_definition_Mass
-typedef Time ("T")        = "UNIV :: unit set" .. setup_lifting type_definition_Time
-typedef Current ("I")     = "UNIV :: unit set" .. setup_lifting type_definition_Current
-typedef Temperature ("\<Theta>") = "UNIV :: unit set" .. setup_lifting type_definition_Temperature
-typedef Amount ("N")      = "UNIV :: unit set" .. setup_lifting type_definition_Amount
-typedef Intensity ("J")   = "UNIV :: unit set" .. setup_lifting type_definition_Intensity
+typedef Length      = "UNIV :: unit set" .. setup_lifting type_definition_Length
+typedef Mass        = "UNIV :: unit set" .. setup_lifting type_definition_Mass
+typedef Time        = "UNIV :: unit set" .. setup_lifting type_definition_Time
+typedef Current     = "UNIV :: unit set" .. setup_lifting type_definition_Current
+typedef Temperature = "UNIV :: unit set" .. setup_lifting type_definition_Temperature
+typedef Amount      = "UNIV :: unit set" .. setup_lifting type_definition_Amount
+typedef Intensity   = "UNIV :: unit set" .. setup_lifting type_definition_Intensity
+typedef NoDimension = "UNIV :: unit set" .. setup_lifting type_definition_NoDimension
+
+type_synonym M = Mass
+type_synonym L = Length
+type_synonym T = Time
+type_synonym I = Current
+type_synonym \<Theta> = Temperature
+type_synonym N = Amount
+type_synonym J = Intensity
+type_notation NoDimension ("\<one>")
+
+translations
+  (type) "M" <= (type) "Mass"
+  (type) "L" <= (type) "Length"
+  (type) "T" <= (type) "Time"
+  (type) "I" <= (type) "Current"
+  (type) "\<Theta>" <= (type) "Temperature"
+  (type) "N" <= (type) "Amount"
+  (type) "J" <= (type) "Intensity"
 
 subsection \<open> SI-type expressions and SI-type interpretation \<close>
 
@@ -238,6 +266,12 @@ begin
 instance by (intro_classes, auto simp add: si_sem_Intensity_def is_BaseUnit_def, (transfer, simp)+)
 end
 
+instantiation NoDimension :: si_type
+begin
+  definition si_sem_NoDimension :: "NoDimension itself \<Rightarrow> Unit" where "si_sem_NoDimension x = 1"
+  instance by (intro_classes, auto simp add: si_sem_NoDimension_def is_BaseUnit_def, (transfer, simp)+)
+end
+
 lemma base_units [simp]: 
   "is_BaseUnit SI(Length)" "is_BaseUnit SI(Mass)" "is_BaseUnit SI(Time)"
   "is_BaseUnit SI(Current)" "is_BaseUnit SI(Temperature)" "is_BaseUnit SI(Amount)"
@@ -278,7 +312,7 @@ type_synonym ('a, 'b) UnitDiv = "'a \<cdot> ('b\<^sup>-\<^sup>1)" (infixl "'/" 6
 
 type_synonym 'a UnitSquare = "'a \<cdot> 'a" ("(_)\<^sup>2" [999] 999)
 type_synonym 'a UnitCube = "'a \<cdot> 'a \<cdot> 'a" ("(_)\<^sup>3" [999] 999)
-type_synonym 'a UnitQuart = "'a \<cdot> 'a \<cdot> 'a" ("(_)\<^sup>4" [999] 999)
+type_synonym 'a UnitQuart = "'a \<cdot> 'a \<cdot> 'a \<cdot> 'a" ("(_)\<^sup>4" [999] 999)
 type_synonym 'a UnitInvSquare = "('a\<^sup>2)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>2" [999] 999)
 type_synonym 'a UnitInvCube = "('a\<^sup>3)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>3" [999] 999)
 type_synonym 'a UnitInvQuart = "('a\<^sup>4)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>4" [999] 999)
@@ -286,6 +320,8 @@ type_synonym 'a UnitInvQuart = "('a\<^sup>4)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^su
 translations (type) "'a\<^sup>-\<^sup>2" <= (type) "('a\<^sup>2)\<^sup>-\<^sup>1"
 translations (type) "'a\<^sup>-\<^sup>3" <= (type) "('a\<^sup>3)\<^sup>-\<^sup>1"
 translations (type) "'a\<^sup>-\<^sup>4" <= (type) "('a\<^sup>4)\<^sup>-\<^sup>1"
+
+(* Need to add UnitQuart to the print translation *)
 
 print_translation \<open>
   [(@{type_syntax UnitTimes}, 
@@ -296,11 +332,11 @@ print_translation \<open>
             Const (@{type_syntax UnitTimes}, _) $ a1 $ a2 =>
               if (a1 = a2 andalso a2 = b) 
                 then Const (@{type_syntax UnitCube}, dummyT) $ a1 
-                else raise Match |
-            Const (@{type_syntax UnitSquare}, _) $ a' =>
-              if (@{print} a' = b) 
-                then Const (@{type_syntax UnitCube}, dummyT) $ a'
-                else raise Match |
+                else case a1 of
+                  Const (@{type_syntax UnitTimes}, _) $ a11 $ a12 =>
+                    if (a11 = a12 andalso a12 = a2 andalso a2 = b)
+                      then Const (@{type_syntax UnitQuart}, dummyT) $ a11
+                      else raise Match |
             _ => raise Match)]
 \<close>
 
@@ -313,5 +349,9 @@ type_synonym Frequency = "T\<^sup>-\<^sup>1"
 type_synonym Energy = "L\<^sup>2\<cdot>M\<cdot>T\<^sup>-\<^sup>2"
 type_synonym Power = "L\<^sup>2\<cdot>M\<cdot>T\<^sup>-\<^sup>3"
 type_synonym Force = "L\<cdot>M\<cdot>T\<^sup>-\<^sup>2"
-  
+type_synonym Pressure = "L\<^sup>-\<^sup>1\<cdot>M\<cdot>T\<^sup>-\<^sup>2"
+type_synonym Charge = "I\<cdot>T"
+type_synonym PotentialDifference = "L\<^sup>2\<cdot>M\<cdot>T\<^sup>-\<^sup>3\<cdot>I\<^sup>-\<^sup>1"
+type_synonym Capacitance = "L\<^sup>-\<^sup>2\<cdot>M\<^sup>-\<^sup>1\<cdot>T\<^sup>4\<cdot>I\<^sup>2"
+
 end

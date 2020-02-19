@@ -1,12 +1,73 @@
+section \<open> Tactic Support for SI type expressions. \<close>
+
 theory SI_Proof
-  imports SI_Derived
+  imports SI_Quantities
 begin
 
-section \<open> Tactic Support for SI type expressions. \<close>
+definition magnQuant :: "'a['u::si_type] \<Rightarrow> 'a" ("\<lbrakk>_\<rbrakk>\<^sub>Q") where
+[si_def]: "magnQuant x = magn (fromQ x)"
+
+lemma unit_eq_iff_magn_eq:
+  "x = y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q = \<lbrakk>y\<rbrakk>\<^sub>Q"
+  by (auto simp add: magnQuant_def, transfer, simp)
+
+lemma unit_equiv_iff:
+  fixes x :: "'a['u\<^sub>1::si_type]" and y :: "'a['u\<^sub>2::si_type]"
+  shows "x \<cong>\<^sub>Q y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q = \<lbrakk>y\<rbrakk>\<^sub>Q \<and> SI('u\<^sub>1) = SI('u\<^sub>2)"
+proof -
+  have "\<forall>t ta. (ta::'a['u\<^sub>2]) = t \<or> magn (fromQ ta) \<noteq> magn (fromQ t)"
+    by (simp add: magnQuant_def unit_eq_iff_magn_eq)
+  then show ?thesis
+    by (metis (full_types) qequiv.rep_eq coerceQuant_eq_iff2 eq_ magnQuant_def)
+qed
+
+lemma unit_le_iff_magn_le:
+  "x \<le> y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q \<le> \<lbrakk>y\<rbrakk>\<^sub>Q"
+  by (auto simp add: magnQuant_def; (transfer, simp))
+
+lemma magnQuant_zero [si_eq]: "\<lbrakk>0\<rbrakk>\<^sub>Q = 0"
+  by (simp add: magnQuant_def, transfer, simp)
+
+lemma magnQuant_one [si_eq]: "\<lbrakk>1\<rbrakk>\<^sub>Q = 1"
+  by (simp add: magnQuant_def, transfer, simp)
+
+lemma magnQuant_plus [si_eq]: "\<lbrakk>x + y\<rbrakk>\<^sub>Q = \<lbrakk>x\<rbrakk>\<^sub>Q + \<lbrakk>y\<rbrakk>\<^sub>Q"
+  by (simp add: magnQuant_def, transfer, simp)
+
+lemma magnQuant_scaleQ [si_eq]: "\<lbrakk>x *\<^sub>Q y\<rbrakk>\<^sub>Q = x * \<lbrakk>y\<rbrakk>\<^sub>Q"
+  by (simp add: magnQuant_def, transfer, simp)
+
+lemma magnQuant_qtimes [si_eq]: "\<lbrakk>x \<^bold>\<cdot> y\<rbrakk>\<^sub>Q = \<lbrakk>x\<rbrakk>\<^sub>Q \<cdot> \<lbrakk>y\<rbrakk>\<^sub>Q"
+  by (simp add: magnQuant_def, transfer, simp)
+
+lemma magnQuant_qinverse [si_eq]: "\<lbrakk>x\<^sup>-\<^sup>\<one>\<rbrakk>\<^sub>Q = inverse \<lbrakk>x\<rbrakk>\<^sub>Q"
+  by (simp add: magnQuant_def, transfer, simp)
+
+lemma magnQuant_qdivivide [si_eq]: "\<lbrakk>(x::('a::field)[_]) \<^bold>/ y\<rbrakk>\<^sub>Q = \<lbrakk>x\<rbrakk>\<^sub>Q / \<lbrakk>y\<rbrakk>\<^sub>Q"
+  by (simp add: magnQuant_def, transfer, simp add: field_class.field_divide_inverse)
+
+lemma magnQuant_numeral [si_eq]: "\<lbrakk>numeral n\<rbrakk>\<^sub>Q = numeral n"
+  apply (induct n, simp_all add: si_def)
+  apply (metis magnQuant_def magnQuant_one)
+  apply (metis magnQuant_def magnQuant_plus numeral_code(2))
+  apply (metis magnQuant_def magnQuant_one magnQuant_plus numeral_code(3))
+  done
+
+lemma magnQuant_mk [si_eq]: "\<lbrakk>UNIT(n, 'u::si_type)\<rbrakk>\<^sub>Q = n"
+  by (simp add: magnQuant_def, transfer, simp)
+
+method si_calc uses simps = 
+  (simp add: unit_equiv_iff unit_eq_iff_magn_eq unit_le_iff_magn_le si_eq simps)
+
+lemmas [si_eq] = si_sem_Length_def si_sem_Mass_def si_sem_Time_def 
+                   si_sem_Current_def si_sem_Temperature_def si_sem_Amount_def
+                   si_sem_Intensity_def si_sem_NoDimension_def
+                   si_sem_UnitTimes_def si_sem_UnitInv_def
+                   inverse_Unit_ext_def times_Unit_ext_def one_Unit_ext_def
 
 lemmas [si_def] =  si_sem_Length_def si_sem_Mass_def si_sem_Time_def 
                    si_sem_Current_def si_sem_Temperature_def si_sem_Amount_def
-                   si_sem_Intensity_def 
+                   si_sem_Intensity_def si_sem_NoDimension_def
 
                    si_sem_UnitTimes_def si_sem_UnitInv_def
                    times_Unit_ext_def one_Unit_ext_def
@@ -19,141 +80,8 @@ lemma "SI(I)  = 1\<lparr>Amperes := 1\<rparr>"    by(simp add: si_def)
 lemma "SI(\<Theta>)  = 1\<lparr>Kelvins := 1\<rparr> "   by(simp add: si_def)
 lemma "SI(N)  = 1\<lparr>Moles := 1\<rparr>"      by(simp add: si_def)
 lemma "SI(J)  = 1\<lparr>Candelas := 1\<rparr>"   by(simp add: si_def)
+lemma "SI(\<one>)  = 1"                 by(simp add: si_def)
 
 lemma "SI(N \<cdot> \<Theta> \<cdot> N) = SI(\<Theta> \<cdot> N\<^sup>2)" by(simp add: si_def)
-
-lemma [si_def]:"fromUnit UNIT(x::'a::one, Time) = 
-                  \<lparr>magn = x,
-                   unit = \<lparr>Seconds = 1, Meters = 0, Kilograms = 0, Amperes = 0, 
-                           Kelvins = 0, Moles = 0, Candelas = 0\<rparr>\<rparr>"
-  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Time_def)
-
-lemma [si_def]:"fromUnit UNIT(x::'a::one, Length) = 
-                  \<lparr>magn = x,
-                   unit = \<lparr>Seconds = 0, Meters = 1, Kilograms = 0, Amperes = 0, 
-                           Kelvins = 0, Moles = 0, Candelas = 0\<rparr>\<rparr>"
-  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Length_def)
-
-lemma [si_def]:"fromUnit UNIT(x::'a::one, Mass) = 
-                  \<lparr>magn = x,
-                   unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 1, Amperes = 0, 
-                           Kelvins = 0, Moles = 0, Candelas = 0\<rparr>\<rparr>"
-  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Mass_def)
-
-lemma [si_def]:"fromUnit UNIT(x::'a::one, Current) = 
-                  \<lparr>magn = x,
-                   unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 0, Amperes = 1, 
-                           Kelvins = 0, Moles = 0, Candelas = 0\<rparr>\<rparr>"
-  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Current_def)
-
-lemma [si_def]:"fromUnit UNIT(x::'a::one, Temperature) = 
-                  \<lparr>magn = x,
-                   unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 0, Amperes = 0, 
-                           Kelvins = 1, Moles = 0, Candelas = 0\<rparr>\<rparr>"
-  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Temperature_def)
-
-lemma [si_def]:"fromUnit UNIT(x::'a::one, Amount) = 
-                  \<lparr>magn = x,
-                   unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 0, Amperes = 0, 
-                           Kelvins = 0, Moles = 1, Candelas = 0\<rparr>\<rparr>"
-  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Amount_def)
-
-lemma [si_def]:"fromUnit UNIT(x::'a::one, Intensity) = 
-                  \<lparr>magn = x,
-                   unit = \<lparr>Seconds = 0, Meters = 0, Kilograms = 0, Amperes = 0, 
-                           Kelvins = 0, Moles = 0, Candelas = 1\<rparr>\<rparr>"
-  by (simp add: mk_unit.rep_eq one_Unit_ext_def si_sem_Intensity_def)
-
-lemma Unit_times_commute:
-  fixes X::"'a::{one,ab_semigroup_mult}['b::si_type]"and Y::"'a['c::si_type]"
-  shows "X \<^bold>\<cdot> Y  \<approx>\<^sub>Q  Y \<^bold>\<cdot> X"
-  by (transfer, simp add: mult.commute times_Quantity_ext_def)
-
-text\<open>Observe that this commutation law also commutes the types.\<close>
- 
-(* just a check that instantiation works for special cases ... *)
-lemma "    (UNIT(x, J) \<^bold>\<cdot> UNIT(y::'a::{one,ab_semigroup_mult}, N))
-        \<approx>\<^sub>Q (UNIT(y, N) \<^bold>\<cdot> UNIT(x, J)) "
-  by(simp add: Unit_times_commute)
-
-
-lemma Unit_times_assoc:
-  fixes X::"'a::{one,ab_semigroup_mult}['b::si_type]"
-    and Y::"'a['c::si_type]"
-    and Z::"'a['d::si_type]"
-  shows  "(X \<^bold>\<cdot> Y) \<^bold>\<cdot> Z  \<approx>\<^sub>Q  X \<^bold>\<cdot> (Y \<^bold>\<cdot> Z)"
-  by (transfer, simp add: mult.commute mult.left_commute times_Quantity_ext_def)
-
-text\<open>The following weak congruences will allow for replacing equivalences in contexts
-     built from product and inverse. \<close>
-lemma Unit_times_weak_cong_left:
-  fixes X::"'a::{one,ab_semigroup_mult}['b::si_type]"
-    and Y::"'a['c::si_type]"
-    and Z::"'a['d::si_type]"
-  assumes "X \<approx>\<^sub>Q Y"
-  shows  "(X \<^bold>\<cdot> Z)  \<approx>\<^sub>Q  (Y \<^bold>\<cdot> Z)"
-  using assms by (transfer, simp)
-
-lemma Unit_times_weak_cong_right:
-  fixes X::"'a::{one,ab_semigroup_mult}['b::si_type]"
-    and Y::"'a['c::si_type]"
-    and Z::"'a['d::si_type]"
-  assumes "X \<approx>\<^sub>Q Y"
-  shows  "(Z \<^bold>\<cdot> X)  \<approx>\<^sub>Q  (Z \<^bold>\<cdot> Y)"
-  using assms by (transfer, simp)
-
-lemma Unit_inverse_weak_cong:
-  fixes   X::"'a::{field}['b::si_type]"
-    and   Y::"'a['c::si_type]"
-  assumes "X  \<approx>\<^sub>Q Y"
-  shows   "(X)\<^sup>-\<^sup>\<one>  \<approx>\<^sub>Q  (Y)\<^sup>-\<^sup>\<one>"
-  using assms by (transfer, simp)
-
-text\<open>In order to compute a normal form, we would additionally need these three:\<close>
-(* field ? *)
-lemma Unit_inverse_distrib:
-  fixes X::"'a::{field}['b::si_type]"
-    and Y::"'a['c::si_type]"
-  shows "(X \<^bold>\<cdot> Y)\<^sup>-\<^sup>\<one>  \<approx>\<^sub>Q  X\<^sup>-\<^sup>\<one> \<^bold>\<cdot> Y\<^sup>-\<^sup>\<one>"
-  apply (transfer)
-  sorry
-
-(* field ? *)
-lemma Unit_inverse_inverse:
-  fixes X::"'a::{field}['b::si_type]"
-  shows "((X)\<^sup>-\<^sup>\<one>)\<^sup>-\<^sup>\<one>  \<approx>\<^sub>Q  X"
-  apply transfer
-  sorry
-
-(* field ? *)
-lemma Unit_mult_cancel:
-  fixes  X::"'a::{field}['b::si_type]"
-  shows  "X \<^bold>/ X  \<approx>\<^sub>Q  1"
-  apply transfer
-  sorry
-
-
-lemma Unit_mult_mult_Left_cancel:
-  fixes  X::"'a::{field}['b::si_type]"
-  shows  "(1::'a['b/'b]) \<^bold>\<cdot> X  \<approx>\<^sub>Q  X"
-  apply transfer
-  sorry
-
-
-lemma "watt \<^bold>\<cdot> hour \<approx>\<^sub>Q 3600 \<^bold>\<cdot> joule"
-  unfolding Unit_equiv_def hour_def
-  apply(simp add: Units.Unit_times.rep_eq si_def 
-                 zero_SI_tagged_domain_ext_def times_SI_tagged_domain_ext_def 
-                 inverse_SI_tagged_domain_ext_def 
-                 Unit_inverse_def Unit_times_def)
-  find_theorems fromUnit
-  oops
-
-  thm Units.Unit.toUnit_inverse
-
-
-lemma "watt \<^bold>\<cdot> hour \<approx>\<^sub>Q 3.6 \<^bold>\<cdot> kilo \<^bold>\<cdot> joule"
-  oops
-
 
 end

@@ -18,7 +18,8 @@ lemma Quantity_eq_intro:
 
 instantiation Quantity_ext :: (times, times) times
 begin
-  definition "times_Quantity_ext x y = \<lparr> magn = magn x \<cdot> magn y, unit = unit x \<cdot> unit y, \<dots> = more x \<cdot> more y \<rparr>"
+  definition [si_def]:
+    "times_Quantity_ext x y = \<lparr> magn = magn x \<cdot> magn y, unit = unit x \<cdot> unit y, \<dots> = more x \<cdot> more y \<rparr>"
 instance ..
 end
 
@@ -38,7 +39,7 @@ lemma more_zero [simp]: "more 0 = 0" by (simp add: zero_Quantity_ext_def)
 
 instantiation Quantity_ext :: (one, one) one
 begin
-  definition "one_Quantity_ext = \<lparr> magn = 1, unit = 1, \<dots> = 1 \<rparr>"
+  definition [si_def]: "one_Quantity_ext = \<lparr> magn = 1, unit = 1, \<dots> = 1 \<rparr>"
 instance ..
 end
 
@@ -48,8 +49,8 @@ lemma more_one [simp]: "more 1 = 1" by (simp add: one_Quantity_ext_def)
 
 instantiation Quantity_ext :: (inverse, inverse) inverse
 begin
-  definition "inverse_Quantity_ext x = \<lparr> magn = inverse (magn x), unit = inverse (unit x), \<dots> = inverse (more x) \<rparr>"
-  definition "divide_Quantity_ext x y = \<lparr> magn = magn x / magn y, unit = unit x / unit y, \<dots> = more x / more y \<rparr>"
+  definition [si_def]: "inverse_Quantity_ext x = \<lparr> magn = inverse (magn x), unit = inverse (unit x), \<dots> = inverse (more x) \<rparr>"
+  definition [si_def]: "divide_Quantity_ext x y = \<lparr> magn = magn x / magn y, unit = unit x / unit y, \<dots> = more x / more y \<rparr>"
 instance ..
 end
 
@@ -78,19 +79,33 @@ instance Quantity_ext :: (comm_monoid_mult, comm_monoid_mult) comm_monoid_mult
 instance Quantity_ext :: (ab_group_mult, ab_group_mult) ab_group_mult
   by (intro_classes, rule Quantity_eq_intro, simp_all)
 
+instantiation Quantity_ext :: (ord, ord) ord
+begin
+  definition less_eq_Quantity_ext :: "('a, 'b) Quantity_scheme \<Rightarrow> ('a, 'b) Quantity_scheme \<Rightarrow> bool"
+    where "less_eq_Quantity_ext x y = (magn x \<le> magn y \<and> unit x = unit y \<and> more x \<le> more y)"
+  definition less_Quantity_ext :: "('a, 'b) Quantity_scheme \<Rightarrow> ('a, 'b) Quantity_scheme \<Rightarrow> bool"
+    where "less_Quantity_ext x y = (x \<le> y \<and> \<not> y \<le> x)"
+
+instance ..
+
+end
+
+instance Quantity_ext :: (order, order) order
+  by (intro_classes, auto simp add: less_Quantity_ext_def less_eq_Quantity_ext_def)
+
 subsection \<open> SI Tagged Types \<close>
 text\<open>We 'lift' SI type expressions to SI tagged type expressions as follows:\<close>
 
 typedef (overloaded) ('n, 'u::si_type) tQuant ("_[_]" [999,0] 999) 
                      = "{x :: 'n Quantity. unit x = SI('u)}"
-  morphisms fromUnit toUnit by (rule_tac x="\<lparr> magn = undefined, unit = SI('u) \<rparr>" in exI, simp)
+  morphisms fromQ toQ by (rule_tac x="\<lparr> magn = undefined, unit = SI('u) \<rparr>" in exI, simp)
 
 setup_lifting type_definition_tQuant
 
 text \<open> Coerce values when their units are equivalent \<close>
 
 definition coerceUnit :: "'u\<^sub>2 itself \<Rightarrow> 'a['u\<^sub>1::si_type] \<Rightarrow> 'a['u\<^sub>2::si_type]" where
-"SI('u\<^sub>1) = SI('u\<^sub>2) \<Longrightarrow> coerceUnit t x = (toUnit (fromUnit x))"
+"SI('u\<^sub>1) = SI('u\<^sub>2) \<Longrightarrow> coerceUnit t x = (toQ (fromQ x))"
 
 section\<open>Operations SI-tagged types via their Semantic Domains\<close>
 
@@ -98,73 +113,81 @@ subsection\<open>Predicates on SI-tagged types\<close>
 
 text \<open> Two SI types are equivalent if they have the same value-level units. \<close>
 
-lift_definition Quant_equiv :: "'n['a::si_type] \<Rightarrow> 'n['b::si_type] \<Rightarrow> bool" (infix "\<approx>\<^sub>Q" 50) is
+lift_definition qless_eq :: "'n::order['a::si_type] \<Rightarrow> 'n['b::si_type] \<Rightarrow> bool" (infix "\<lesssim>\<^sub>Q" 50) is
+"(\<le>)" .
+
+lift_definition qequiv :: "'n['a::si_type] \<Rightarrow> 'n['b::si_type] \<Rightarrow> bool" (infix "\<cong>\<^sub>Q" 50) is
 "(=)" .
 
 text\<open>This gives us an equivalence, but, unfortunately, not a congruence.\<close>
 
-lemma Quant_equiv_refl [simp]: "a \<approx>\<^sub>Q a"
-  by (simp add: Quant_equiv_def)
+lemma qequiv_refl [simp]: "a \<cong>\<^sub>Q a"
+  by (simp add: qequiv_def)
 
-lemma Quant_equiv_sym: "a \<approx>\<^sub>Q b \<Longrightarrow> b \<approx>\<^sub>Q a"
-  by (simp add: Quant_equiv_def)
+lemma qequiv_sym: "a \<cong>\<^sub>Q b \<Longrightarrow> b \<cong>\<^sub>Q a"
+  by (simp add: qequiv_def)
 
-lemma Quant_equiv_trans: "\<lbrakk> a \<approx>\<^sub>Q b; b \<approx>\<^sub>Q c \<rbrakk> \<Longrightarrow> a \<approx>\<^sub>Q c"
-  by (simp add: Quant_equiv_def)
+lemma qequiv_trans: "\<lbrakk> a \<cong>\<^sub>Q b; b \<cong>\<^sub>Q c \<rbrakk> \<Longrightarrow> a \<cong>\<^sub>Q c"
+  by (simp add: qequiv_def)
+
+theorem qeq_iff_same_dim:
+  fixes x y :: "'a['u::si_type]"
+  shows "x \<cong>\<^sub>Q y \<longleftrightarrow> x = y"
+  by (transfer, simp)
 
 (* the following series of equivalent statements ... *)
 
 lemma coerceQuant_eq_iff:
   fixes x :: "'a['u\<^sub>1::si_type]"
   assumes "SI('u\<^sub>1) = SI('u\<^sub>2::si_type)"
-  shows "(coerceUnit TYPE('u\<^sub>2) x) \<approx>\<^sub>Q x"
-  by (metis Quant_equiv.rep_eq assms coerceUnit_def toUnit_cases toUnit_inverse)
+  shows "(coerceUnit TYPE('u\<^sub>2) x) \<cong>\<^sub>Q x"
+  by (metis qequiv.rep_eq assms coerceUnit_def toQ_cases toQ_inverse)
 
 (* or equivalently *)
 
 lemma coerceQuant_eq_iff2:
   fixes x :: "'a['u\<^sub>1::si_type]"
   assumes "SI('u\<^sub>1) = SI('u\<^sub>2::si_type)" and "y = (coerceUnit TYPE('u\<^sub>2) x)"
-  shows "x \<approx>\<^sub>Q y"
-  using Quant_equiv_sym assms(1) assms(2) coerceQuant_eq_iff by blast
+  shows "x \<cong>\<^sub>Q y"
+  using qequiv_sym assms(1) assms(2) coerceQuant_eq_iff by blast
 
 lemma updown_eq_iff:
   fixes x :: "'a['u\<^sub>1::si_type]" fixes y :: "'a['u\<^sub>2::si_type]"
-  assumes "SI('u\<^sub>1) = SI('u\<^sub>2::si_type)" and "y = (toUnit (fromUnit x))"
-  shows "x \<approx>\<^sub>Q y"
+  assumes "SI('u\<^sub>1) = SI('u\<^sub>2::si_type)" and "y = (toQ (fromQ x))"
+  shows "x \<cong>\<^sub>Q y"
   by (simp add: assms(1) assms(2) coerceQuant_eq_iff2 coerceUnit_def)
 
-text\<open>This is more general that \<open>y = x \<Longrightarrow> x \<approx>\<^sub>Q y\<close>, since x and y may have different type.\<close>
+text\<open>This is more general that \<open>y = x \<Longrightarrow> x \<cong>\<^sub>Q y\<close>, since x and y may have different type.\<close>
 
-find_theorems "(toUnit (fromUnit _))"
+find_theorems "(toQ (fromQ _))"
 
 lemma eq_ : 
   fixes x :: "'a['u\<^sub>1::si_type]" fixes y :: "'a['u\<^sub>2::si_type]"
-  assumes  "x \<approx>\<^sub>Q y"
+  assumes  "x \<cong>\<^sub>Q y"
   shows "SI('u\<^sub>1) = SI('u\<^sub>2::si_type)"
-  by (metis (full_types) Quant_equiv.rep_eq assms fromUnit mem_Collect_eq)
+  by (metis (full_types) qequiv.rep_eq assms fromQ mem_Collect_eq)
 
 subsection\<open>Operations on SI-tagged types\<close>
 
 lift_definition 
-  Quant_times :: "('n::times)['a::si_type] \<Rightarrow> 'n['b::si_type] \<Rightarrow> 'n['a \<cdot>'b]" (infixl "\<^bold>\<cdot>" 69) is "(*)"
+  qtimes :: "('n::comm_ring_1)['a::si_type] \<Rightarrow> 'n['b::si_type] \<Rightarrow> 'n['a \<cdot>'b]" (infixl "\<^bold>\<cdot>" 69) is "(*)"
   by (simp add: si_sem_UnitTimes_def times_Quantity_ext_def)
   
 lift_definition 
-  Quant_inverse :: "('n::inverse)['a::si_type] \<Rightarrow> 'n['a\<^sup>-\<^sup>1]" ("(_\<^sup>-\<^sup>\<one>)" [999] 999) is "inverse"
+  qinverse :: "('n::field)['a::si_type] \<Rightarrow> 'n['a\<^sup>-\<^sup>1]" ("(_\<^sup>-\<^sup>\<one>)" [999] 999) is "inverse"
   by (simp add: inverse_Quantity_ext_def si_sem_UnitInv_def)
 
 abbreviation 
-  Quant_divide :: "('n::{times,inverse})['a::si_type] \<Rightarrow> 'n['b::si_type] \<Rightarrow> 'n['a/'b]" (infixl "\<^bold>'/" 70) where
-"Quant_divide x y \<equiv> x \<^bold>\<cdot> y\<^sup>-\<^sup>\<one>"
+  qdivide :: "('n::field)['a::si_type] \<Rightarrow> 'n['b::si_type] \<Rightarrow> 'n['a/'b]" (infixl "\<^bold>'/" 70) where
+"qdivide x y \<equiv> x \<^bold>\<cdot> y\<^sup>-\<^sup>\<one>"
 
-abbreviation Quant_sq ("(_)\<^sup>\<two>" [999] 999) where "u\<^sup>\<two> \<equiv> u\<^bold>\<cdot>u"
-abbreviation Quant_cube ("(_)\<^sup>\<three>" [999] 999) where "u\<^sup>\<three> \<equiv> u\<^bold>\<cdot>u\<^bold>\<cdot>u"
-abbreviation Quant_quart ("(_)\<^sup>\<four>" [999] 999) where "u\<^sup>\<four> \<equiv> u\<^bold>\<cdot>u\<^bold>\<cdot>u\<^bold>\<cdot>u"
+abbreviation qsq ("(_)\<^sup>\<two>" [999] 999) where "u\<^sup>\<two> \<equiv> u\<^bold>\<cdot>u"
+abbreviation qcube ("(_)\<^sup>\<three>" [999] 999) where "u\<^sup>\<three> \<equiv> u\<^bold>\<cdot>u\<^bold>\<cdot>u"
+abbreviation qquart ("(_)\<^sup>\<four>" [999] 999) where "u\<^sup>\<four> \<equiv> u\<^bold>\<cdot>u\<^bold>\<cdot>u\<^bold>\<cdot>u"
 
-abbreviation Quant_neq_sq ("(_)\<^sup>-\<^sup>\<two>" [999] 999) where "u\<^sup>-\<^sup>\<two> \<equiv> (u\<^sup>\<two>)\<^sup>-\<^sup>\<one>"
-abbreviation Quant_neq_cube ("(_)\<^sup>-\<^sup>\<three>" [999] 999) where "u\<^sup>-\<^sup>\<three> \<equiv> (u\<^sup>\<three>)\<^sup>-\<^sup>\<one>"
-abbreviation Quant_neq_quart ("(_)\<^sup>-\<^sup>\<four>" [999] 999) where "u\<^sup>-\<^sup>\<four> \<equiv> (u\<^sup>\<three>)\<^sup>-\<^sup>\<one>"
+abbreviation qneq_sq ("(_)\<^sup>-\<^sup>\<two>" [999] 999) where "u\<^sup>-\<^sup>\<two> \<equiv> (u\<^sup>\<two>)\<^sup>-\<^sup>\<one>"
+abbreviation qneq_cube ("(_)\<^sup>-\<^sup>\<three>" [999] 999) where "u\<^sup>-\<^sup>\<three> \<equiv> (u\<^sup>\<three>)\<^sup>-\<^sup>\<one>"
+abbreviation qneq_quart ("(_)\<^sup>-\<^sup>\<four>" [999] 999) where "u\<^sup>-\<^sup>\<four> \<equiv> (u\<^sup>\<three>)\<^sup>-\<^sup>\<one>"
 
 instantiation tQuant :: (zero,si_type) zero
 begin
@@ -220,70 +243,6 @@ instance tQuant :: (numeral,si_type) numeral ..
 instance tQuant :: (ab_group_add,si_type) ab_group_add
   by (intro_classes, (transfer, simp)+)
 
-instantiation tQuant :: (times,si_type) times
-begin
-lift_definition times_tQuant :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> 'a['b]" 
-  is "\<lambda> x y. \<lparr> magn = magn x * magn y, unit = SI('b) \<rparr>"
-  by simp
-instance ..
-end
-
-instance tQuant :: (power,si_type) power ..
-
-instance tQuant :: (semigroup_mult,si_type) semigroup_mult
-  by (intro_classes, transfer, simp add: mult.assoc)
-
-instance tQuant :: (ab_semigroup_mult,si_type) ab_semigroup_mult
-  by (intro_classes, (transfer, simp add: mult.commute))
-
-instance tQuant :: (semiring,si_type) semiring
-  by (intro_classes, (transfer, simp add: distrib_left distrib_right)+)
-
-instance tQuant :: (semiring_0,si_type) semiring_0
-  by (intro_classes, (transfer, simp)+)
-
-instance tQuant :: (comm_semiring,si_type) comm_semiring
-  by (intro_classes, transfer, simp add: linordered_field_class.sign_simps(18) mult.commute)
-
-instance tQuant :: (mult_zero,si_type) mult_zero
-  by (intro_classes, (transfer, simp)+)
-
-instance tQuant :: (comm_semiring_0,si_type) comm_semiring_0
-  by (intro_classes, (transfer, simp)+)
-
-instantiation tQuant :: (real_vector,si_type) real_vector
-begin
-
-lift_definition scaleR_tQuant :: "real \<Rightarrow> 'a['b] \<Rightarrow> 'a['b]" 
-  is "\<lambda> r x. \<lparr> magn = r *\<^sub>R magn x, unit = unit x \<rparr>" by simp
-
-instance
-  by (intro_classes, (transfer, simp add: scaleR_add_left scaleR_add_right)+)
-end
-
-instance tQuant :: (ring,si_type) ring
-  by (intro_classes, (transfer, simp)+)
-
-instance tQuant :: (comm_monoid_mult,si_type) comm_monoid_mult
-  by (intro_classes, (transfer, simp add: mult.commute)+)
-
-instance tQuant :: (comm_semiring_1,si_type) comm_semiring_1
-  by (intro_classes; (transfer, simp add: semiring_normalization_rules(1-8,24)))
-
-instantiation tQuant :: (divide,si_type) divide
-begin
-lift_definition divide_tQuant :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> 'a['b]" 
-  is "\<lambda> x y. \<lparr> magn = magn x div magn y, unit = SI('b) \<rparr>" by simp
-instance ..
-end
-
-instantiation tQuant :: (inverse,si_type) inverse
-begin
-lift_definition inverse_tQuant :: "'a['b] \<Rightarrow> 'a['b]" 
-  is "\<lambda> x. \<lparr> magn = inverse (magn x), unit = SI('b) \<rparr>" by simp
-instance ..
-end
-
 instantiation tQuant :: (order,si_type) order
 begin
   lift_definition less_eq_tQuant :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> bool" is "\<lambda> x y. magn x \<le> magn y" .
@@ -291,6 +250,10 @@ begin
   instance by (intro_classes, (transfer, simp add: less_le_not_le)+)
 end
 
+lift_definition scaleQ :: "'a \<Rightarrow> 'a::comm_ring_1['u::si_type] \<Rightarrow> 'a['u]" (infixr "*\<^sub>Q" 63)
+  is "\<lambda> r x. \<lparr> magn = r * magn x, unit = SI('u) \<rparr>" by simp
+
+notation scaleQ (infixr "\<odot>" 63)
 
 lift_definition mk_unit :: "'a \<Rightarrow> 'u itself \<Rightarrow> ('a::one)['u::si_type]" 
   is "\<lambda> n u. \<lparr> magn = n, unit = SI('u) \<rparr>" by simp
@@ -300,56 +263,15 @@ translations "UNIT(n, 'a)" == "CONST mk_unit n TYPE('a)"
 
 subsection \<open>Polymorphic Operations for Elementary SI Units \<close>
 
-named_theorems si_def
+definition [si_def, si_eq]: "meter    = UNIT(1, Length)"
+definition [si_def, si_eq]: "second   = UNIT(1, Time)"
+definition [si_def, si_eq]: "kilogram = UNIT(1, Mass)"
+definition [si_def, si_eq]: "ampere   = UNIT(1, Current)"
+definition [si_def, si_eq]: "kelvin   = UNIT(1, Temperature)"
+definition [si_def, si_eq]: "mole     = UNIT(1, Amount)"
+definition [si_def, si_eq]: "candela  = UNIT(1, Intensity)"
 
-definition [si_def]: "meter    = UNIT(1, Length)"
-definition [si_def]: "second   = UNIT(1, Time)"
-definition [si_def]: "kilogram = UNIT(1, Mass)"
-definition [si_def]: "ampere   = UNIT(1, Current)"
-definition [si_def]: "kelvin   = UNIT(1, Temperature)"
-definition [si_def]: "mole     = UNIT(1, Amount)"
-definition [si_def]: "candela  = UNIT(1, Intensity)"
-
-subsubsection \<open>The Projection: Stripping the SI-Tags \<close>
-
-definition magnQuant :: "'a['u::si_type] \<Rightarrow> 'a" ("\<lbrakk>_\<rbrakk>\<^sub>Q") where
-"magnQuant x = magn (fromUnit x)"
-
-subsubsection \<open>More Operations \<close>
-
-lemma unit_eq_iff_magn_eq:
-  "x = y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q = \<lbrakk>y\<rbrakk>\<^sub>Q"
-  by (auto simp add: magnQuant_def, transfer, simp)
-
-lemma unit_le_iff_magn_le:
-  "x \<le> y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q \<le> \<lbrakk>y\<rbrakk>\<^sub>Q"
-  by (auto simp add: magnQuant_def; (transfer, simp))
-
-lemma magnQuant_zero [si_def]: "\<lbrakk>0\<rbrakk>\<^sub>Q = 0"
-  by (simp add: magnQuant_def, transfer, simp)
-
-lemma magnQuant_one [si_def]: "\<lbrakk>1\<rbrakk>\<^sub>Q = 1"
-  by (simp add: magnQuant_def, transfer, simp)
-
-lemma magnQuant_plus [si_def]: "\<lbrakk>x + y\<rbrakk>\<^sub>Q = \<lbrakk>x\<rbrakk>\<^sub>Q + \<lbrakk>y\<rbrakk>\<^sub>Q"
-  by (simp add: magnQuant_def, transfer, simp)
-
-lemma magnQuant_times [si_def]: "\<lbrakk>x * y\<rbrakk>\<^sub>Q = \<lbrakk>x\<rbrakk>\<^sub>Q * \<lbrakk>y\<rbrakk>\<^sub>Q"
-  by (simp add: magnQuant_def, transfer, simp)
-
-lemma magnQuant_div [si_def]: "\<lbrakk>x / y\<rbrakk>\<^sub>Q = \<lbrakk>x\<rbrakk>\<^sub>Q / \<lbrakk>y\<rbrakk>\<^sub>Q"
-  by (simp add: magnQuant_def, transfer, simp)
-
-lemma magnQuant_numeral [si_def]: "\<lbrakk>numeral n\<rbrakk>\<^sub>Q = numeral n"
-  apply (induct n, simp_all add: si_def)
-  apply (metis magnQuant_plus numeral_code(2))
-  apply (metis magnQuant_one magnQuant_plus numeral_code(3))
-  done
-
-lemma magnQuant_mk [si_def]: "\<lbrakk>UNIT(n, 'u::si_type)\<rbrakk>\<^sub>Q = n"
-  by (simp add: magnQuant_def, transfer, simp)
-
-method si_calc = 
-  (simp add: unit_eq_iff_magn_eq unit_le_iff_magn_le si_def)
+definition dimless ("\<one>") 
+  where [si_def, si_eq]: "dimless  = UNIT(1, NoDimension)"
 
 end

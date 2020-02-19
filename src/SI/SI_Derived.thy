@@ -2,30 +2,35 @@ section \<open> Derived Units\<close>
 
 theory SI_Derived
   imports SI_Prefix
-begin
+begin                                  
 
-definition "radian = 1 \<cdot> (meter \<^bold>\<cdot> meter\<^sup>-\<^sup>\<one>)"                                  
+subsection \<open> Definitions \<close>
 
-definition degree :: "real[L/L]" where
-[si_def]: "degree = (2\<cdot>(UNIT(pi,_)) / 180)\<cdot>radian"
+abbreviation "newton \<equiv> kilogram \<^bold>\<cdot> meter \<^bold>\<cdot> second\<^sup>-\<^sup>\<two>"
 
-abbreviation degrees ("_\<degree>" [999] 999) where "n\<degree> \<equiv> n\<cdot>degree" 
-
-definition [si_def]: "litre = 1/1000 \<cdot> meter\<^sup>\<three>"
-
-definition [si_def]: "pint = 0.56826125 \<cdot> litre"
-
-definition [si_def]: "hour = 3600 \<cdot> second"
-
-abbreviation "tonne \<equiv> kilo\<cdot>kilogram"
-
-abbreviation "newton \<equiv> (kilogram \<^bold>\<cdot> meter) \<^bold>/ second\<^sup>\<two>"
+abbreviation "pascal \<equiv> kilogram \<^bold>\<cdot> meter\<^sup>-\<^sup>\<one> \<^bold>\<cdot> second\<^sup>-\<^sup>\<two>"
 
 abbreviation "volt \<equiv> kilogram \<^bold>\<cdot> meter\<^sup>\<two> \<^bold>\<cdot> second\<^sup>-\<^sup>\<three> \<^bold>\<cdot> ampere\<^sup>-\<^sup>\<one>"
 
-abbreviation "watt \<equiv> kilogram \<^bold>\<cdot> meter\<^sup>\<two> \<^bold>\<cdot> second\<^sup>-\<^sup>\<three>"
+abbreviation "farad \<equiv> kilogram\<^sup>-\<^sup>\<one> \<^bold>\<cdot> meter\<^sup>-\<^sup>\<two> \<^bold>\<cdot> second\<^sup>\<four> \<^bold>\<cdot> ampere\<^sup>\<two>"
 
-abbreviation "joule \<equiv> kilogram \<^bold>\<cdot> meter\<^sup>\<two> \<^bold>\<cdot>  second\<^sup>-\<^sup>\<two>"
+abbreviation "ohm \<equiv> kilogram \<^bold>\<cdot> meter\<^sup>\<two> \<^bold>\<cdot> second\<^sup>-\<^sup>\<three> \<^bold>\<cdot> ampere\<^sup>-\<^sup>\<two>"
+
+abbreviation "siemens \<equiv> kilogram\<^sup>-\<^sup>\<one> \<^bold>\<cdot> meter\<^sup>-\<^sup>\<two> \<^bold>\<cdot> second\<^sup>\<three> \<^bold>\<cdot> ampere\<^sup>\<two>"
+
+abbreviation "weber \<equiv> kilogram \<^bold>\<cdot> meter\<^sup>\<two> \<^bold>\<cdot> second\<^sup>-\<^sup>\<two> \<^bold>\<cdot> ampere\<^sup>-\<^sup>\<one>"
+
+abbreviation "tesla \<equiv> kilogram \<^bold>\<cdot> meter\<^sup>-\<^sup>\<two> \<^bold>\<cdot> ampere\<^sup>-\<^sup>\<one>"
+
+abbreviation "henry \<equiv> kilogram \<^bold>\<cdot> meter\<^sup>\<two> \<^bold>\<cdot> second\<^sup>-\<^sup>\<two> \<^bold>\<cdot> ampere\<^sup>-\<^sup>\<two>"
+
+definition degrees_celcius :: "'a::field \<Rightarrow> 'a[\<Theta>]" ("_\<degree>C" [999] 999) 
+  where [si_def, si_eq]: "degrees_celcius x = x + 273.151 \<odot> kelvin"
+
+definition degrees_farenheit :: "'a::field \<Rightarrow> 'a[\<Theta>]" ("_\<degree>F" [999] 999)
+  where [si_def, si_eq]: "degrees_farenheit x = (x + 459.67)\<cdot>5/9 \<odot> kelvin"
+
+definition [si_def, si_eq]: "gram = milli \<odot> kilogram"
 
 text\<open>The full beauty of the approach is perhaps revealed here, with the 
      type of a classical three-dimensional gravitation field:\<close>
