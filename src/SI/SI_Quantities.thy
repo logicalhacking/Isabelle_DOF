@@ -98,14 +98,14 @@ text\<open>We 'lift' SI type expressions to SI tagged type expressions as follow
 
 typedef (overloaded) ('n, 'u::si_type) tQuant ("_[_]" [999,0] 999) 
                      = "{x :: 'n Quantity. unit x = SI('u)}"
-  morphisms fromUnit toUnit by (rule_tac x="\<lparr> magn = undefined, unit = SI('u) \<rparr>" in exI, simp)
+  morphisms fromQ toQ by (rule_tac x="\<lparr> magn = undefined, unit = SI('u) \<rparr>" in exI, simp)
 
 setup_lifting type_definition_tQuant
 
 text \<open> Coerce values when their units are equivalent \<close>
 
 definition coerceUnit :: "'u\<^sub>2 itself \<Rightarrow> 'a['u\<^sub>1::si_type] \<Rightarrow> 'a['u\<^sub>2::si_type]" where
-"SI('u\<^sub>1) = SI('u\<^sub>2) \<Longrightarrow> coerceUnit t x = (toUnit (fromUnit x))"
+"SI('u\<^sub>1) = SI('u\<^sub>2) \<Longrightarrow> coerceUnit t x = (toQ (fromQ x))"
 
 section\<open>Operations SI-tagged types via their Semantic Domains\<close>
 
@@ -141,7 +141,7 @@ lemma coerceQuant_eq_iff:
   fixes x :: "'a['u\<^sub>1::si_type]"
   assumes "SI('u\<^sub>1) = SI('u\<^sub>2::si_type)"
   shows "(coerceUnit TYPE('u\<^sub>2) x) \<cong>\<^sub>Q x"
-  by (metis qequiv.rep_eq assms coerceUnit_def toUnit_cases toUnit_inverse)
+  by (metis qequiv.rep_eq assms coerceUnit_def toQ_cases toQ_inverse)
 
 (* or equivalently *)
 
@@ -153,19 +153,19 @@ lemma coerceQuant_eq_iff2:
 
 lemma updown_eq_iff:
   fixes x :: "'a['u\<^sub>1::si_type]" fixes y :: "'a['u\<^sub>2::si_type]"
-  assumes "SI('u\<^sub>1) = SI('u\<^sub>2::si_type)" and "y = (toUnit (fromUnit x))"
+  assumes "SI('u\<^sub>1) = SI('u\<^sub>2::si_type)" and "y = (toQ (fromQ x))"
   shows "x \<cong>\<^sub>Q y"
   by (simp add: assms(1) assms(2) coerceQuant_eq_iff2 coerceUnit_def)
 
 text\<open>This is more general that \<open>y = x \<Longrightarrow> x \<cong>\<^sub>Q y\<close>, since x and y may have different type.\<close>
 
-find_theorems "(toUnit (fromUnit _))"
+find_theorems "(toQ (fromQ _))"
 
 lemma eq_ : 
   fixes x :: "'a['u\<^sub>1::si_type]" fixes y :: "'a['u\<^sub>2::si_type]"
   assumes  "x \<cong>\<^sub>Q y"
   shows "SI('u\<^sub>1) = SI('u\<^sub>2::si_type)"
-  by (metis (full_types) qequiv.rep_eq assms fromUnit mem_Collect_eq)
+  by (metis (full_types) qequiv.rep_eq assms fromQ mem_Collect_eq)
 
 subsection\<open>Operations on SI-tagged types\<close>
 

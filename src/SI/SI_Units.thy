@@ -312,7 +312,7 @@ type_synonym ('a, 'b) UnitDiv = "'a \<cdot> ('b\<^sup>-\<^sup>1)" (infixl "'/" 6
 
 type_synonym 'a UnitSquare = "'a \<cdot> 'a" ("(_)\<^sup>2" [999] 999)
 type_synonym 'a UnitCube = "'a \<cdot> 'a \<cdot> 'a" ("(_)\<^sup>3" [999] 999)
-type_synonym 'a UnitQuart = "'a \<cdot> 'a \<cdot> 'a" ("(_)\<^sup>4" [999] 999)
+type_synonym 'a UnitQuart = "'a \<cdot> 'a \<cdot> 'a \<cdot> 'a" ("(_)\<^sup>4" [999] 999)
 type_synonym 'a UnitInvSquare = "('a\<^sup>2)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>2" [999] 999)
 type_synonym 'a UnitInvCube = "('a\<^sup>3)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>3" [999] 999)
 type_synonym 'a UnitInvQuart = "('a\<^sup>4)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>4" [999] 999)
@@ -320,6 +320,8 @@ type_synonym 'a UnitInvQuart = "('a\<^sup>4)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^su
 translations (type) "'a\<^sup>-\<^sup>2" <= (type) "('a\<^sup>2)\<^sup>-\<^sup>1"
 translations (type) "'a\<^sup>-\<^sup>3" <= (type) "('a\<^sup>3)\<^sup>-\<^sup>1"
 translations (type) "'a\<^sup>-\<^sup>4" <= (type) "('a\<^sup>4)\<^sup>-\<^sup>1"
+
+(* Need to add UnitQuart to the print translation *)
 
 print_translation \<open>
   [(@{type_syntax UnitTimes}, 
@@ -330,11 +332,11 @@ print_translation \<open>
             Const (@{type_syntax UnitTimes}, _) $ a1 $ a2 =>
               if (a1 = a2 andalso a2 = b) 
                 then Const (@{type_syntax UnitCube}, dummyT) $ a1 
-                else raise Match |
-            Const (@{type_syntax UnitSquare}, _) $ a' =>
-              if (@{print} a' = b) 
-                then Const (@{type_syntax UnitCube}, dummyT) $ a'
-                else raise Match |
+                else case a1 of
+                  Const (@{type_syntax UnitTimes}, _) $ a11 $ a12 =>
+                    if (a11 = a12 andalso a12 = a2 andalso a2 = b)
+                      then Const (@{type_syntax UnitQuart}, dummyT) $ a11
+                      else raise Match |
             _ => raise Match)]
 \<close>
 

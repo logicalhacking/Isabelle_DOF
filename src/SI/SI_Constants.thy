@@ -4,6 +4,8 @@ theory SI_Constants
   imports SI_Proof
 begin
 
+subsection \<open> Core Derived Units \<close>
+
 abbreviation "hertz \<equiv> second\<^sup>-\<^sup>\<one>"
 
 abbreviation "radian \<equiv> meter \<^bold>\<cdot> meter\<^sup>-\<^sup>\<one>"
@@ -17,6 +19,8 @@ abbreviation "watt \<equiv> kilogram \<^bold>\<cdot> meter\<^sup>\<two> \<^bold>
 abbreviation "coulomb \<equiv> ampere \<^bold>\<cdot> second"
 
 abbreviation "lumen \<equiv> candela \<^bold>\<cdot> steradian"
+
+subsection \<open> Constants \<close>
 
 text \<open> The most general types we support must form a field into which the natural numbers can 
   be injected. \<close>
