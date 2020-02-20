@@ -217,11 +217,13 @@ subsubsection \<open> SI base type constructors \<close>
 
 text\<open>We embed the basic SI types into the SI type expressions: \<close>
 
+
 instantiation Length :: si_baseunit
 begin
 definition si_sem_Length :: "Length itself \<Rightarrow> Unit" 
   where [si_def]: "si_sem_Length x = 1\<lparr>Meters := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_Length_def is_BaseUnit_def, (transfer, simp)+)
+instance
+  by (intro_classes, auto simp add: si_sem_Length_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 instantiation Mass :: si_baseunit

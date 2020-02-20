@@ -1,7 +1,7 @@
 section \<open> SI Quantities \<close>
 
 theory SI_Quantities
-  imports SI_Units Optics.Lenses
+  imports SI_Units (* Optics.Lenses *)
 begin
 
 
