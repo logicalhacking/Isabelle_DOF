@@ -4,28 +4,34 @@ theory SI_Prefix
   imports SI_Constants
 begin
 
-definition [si_def]: "deca = 10^1"
+default_sort ring_char_0
 
-definition [si_def]: "hecto = 10^2"
+definition deca :: "'a" where [si_eq]: "deca = 10^1"
 
-definition [si_def]: "kilo = 10^3"
+definition hecto :: "'a" where [si_eq]: "hecto = 10^2"
 
-definition [si_def]: "mega = 10^6"
+definition kilo :: "'a" where [si_eq]: "kilo = 10^3"
 
-definition [si_def]: "giga = 10^9"
+definition mega :: "'a" where [si_eq]: "mega = 10^6"
 
-definition [si_def]: "tera = 10^12"
+definition giga :: "'a" where [si_eq]: "giga = 10^9"
 
-definition [si_def]: "peta = 10^15"
+definition tera :: "'a" where [si_eq]: "tera = 10^12"
 
-definition [si_def]: "deci = 1/10^1"
+definition peta :: "'a" where [si_eq]: "peta = 10^15"
 
-definition [si_def]: "centi = 1/10^2"
+default_sort field_char_0
 
-definition [si_def]: "milli = 1/10^3"
+definition deci :: "'a" where [si_eq]: "deci = 1/10^1"
 
-definition [si_def]: "micro = 1/10^6"
+definition centi :: "'a" where [si_eq]: "centi = 1/10^2"
 
-definition [si_def]: "nano = 1/10^9"
+definition milli :: "'a" where [si_eq]: "milli = 1/10^3"
+
+definition micro :: "'a" where [si_eq]: "micro = 1/10^6"
+
+definition nano :: "'a" where [si_eq]: "nano = 1/10^9"
+
+default_sort type
 
 end
