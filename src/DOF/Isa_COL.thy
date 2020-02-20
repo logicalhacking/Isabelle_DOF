@@ -35,11 +35,13 @@ datatype placement = pl_h  | (*here*)
                      pl_hb   (*here ->  bottom*)
 
 
+
 doc_class figure   = 
    relative_width   :: "int" (* percent of textwidth *)    
    src              :: "string"
    placement        :: placement 
    spawn_columns    :: bool <= True 
+
 
 doc_class side_by_side_figure = figure +
    anchor           :: "string"

@@ -2077,36 +2077,35 @@ space_implode "sd &e sf dfg" ["qs","er","alpa"];
 
 text\<open>Here is an abstract of the main interface to @{ML_structure Thy_Output}:\<close>
 
-ML\<open> 
- output_document: Proof.context -> {markdown: bool} -> Input.source -> Latex.text list;
- output_token: Proof.context -> Token.T -> Latex.text list;
- output_source: Proof.context -> string -> Latex.text list;
- present_thy: Options.T -> theory -> segment list -> Latex.text list;
+ML\<open>
+ Thy_Output.output_document: Proof.context -> {markdown: bool} -> Input.source -> Latex.text list;
+ Thy_Output.output_token: Proof.context -> Token.T -> Latex.text list;
+ Thy_Output.output_source: Proof.context -> string -> Latex.text list;
+ Thy_Output.present_thy: Options.T -> theory -> Thy_Output.segment list -> Latex.text list;
 
- isabelle: Proof.context -> Latex.text list -> Latex.text;
+ Thy_Output.isabelle: Proof.context -> Latex.text list -> Latex.text;
 
- isabelle_typewriter: Proof.context -> Latex.text list -> Latex.text;
+ Thy_Output.isabelle_typewriter: Proof.context -> Latex.text list -> Latex.text;
 
- typewriter: Proof.context -> string -> Latex.text;
+ Thy_Output.typewriter: Proof.context -> string -> Latex.text;
 
- verbatim: Proof.context -> string -> Latex.text;
+ Thy_Output.verbatim: Proof.context -> string -> Latex.text;
 
- source: Proof.context -> {embedded: bool} -> Token.src -> Latex.text;
+ Thy_Output.source: Proof.context -> {embedded: bool} -> Token.src -> Latex.text;
 
- pretty: Proof.context -> Pretty.T -> Latex.text;
- pretty_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T -> Latex.text;
- pretty_items: Proof.context -> Pretty.T list -> Latex.text;
- pretty_items_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T list -> Latex.text;
-
+ Thy_Output.pretty: Proof.context -> Pretty.T -> Latex.text;
+ Thy_Output.pretty_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T -> Latex.text;
+ Thy_Output.pretty_items: Proof.context -> Pretty.T list -> Latex.text;
+ Thy_Output.pretty_items_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T list -> Latex.text;
 (* finally a number of antiquotation registries : *)
- antiquotation_pretty:
-      binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
- antiquotation_pretty_source:
-    binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
- antiquotation_raw:
-    binding -> 'a context_parser -> (Proof.context -> 'a -> Latex.text) -> theory -> theory;
- antiquotation_verbatim:
-    binding -> 'a context_parser -> (Proof.context -> 'a -> string) -> theory -> theory;
+ Thy_Output.antiquotation_pretty:
+              binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
+ Thy_Output.antiquotation_pretty_source:
+              binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
+ Thy_Output.antiquotation_raw:
+              binding -> 'a context_parser -> (Proof.context -> 'a -> Latex.text) -> theory -> theory;
+ Thy_Output.antiquotation_verbatim:
+             binding -> 'a context_parser -> (Proof.context -> 'a -> string) -> theory -> theory;
 
 \<close>
 

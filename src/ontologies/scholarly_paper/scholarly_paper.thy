@@ -77,20 +77,26 @@ doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
    status :: status <= "description"
    formal_results  :: "thm list"
+
+type_synonym tc = technical
    
 text\<open>A rough structuring is modeled as follows:\<close>   
 
 doc_class "definition"  = technical +
+   referentiable :: bool <= "True"
    tag :: "string" <=  "''''"
 
 doc_class "theorem"     = technical +
+   referentiable :: bool <= "True"
    tag :: "string" <=  "''''"
 
 text\<open>Note that the following two text-elements are currently set to no-keyword in LNCS style.\<close>
 doc_class "lemma"     = technical +
+   referentiable :: bool <= "True"
    tag :: "string" <=  "''''"
 
 doc_class "corollary"     = technical +
+   referentiable :: bool <= "True"
    tag :: "string" <=  "''''"
 
 
@@ -98,9 +104,11 @@ text\<open> \<^verbatim>\<open>examples\<close> are currently considered \<^verb
       following classes into an own class: "evaluation" or "explanation" or ... \<close> 
 
 doc_class example       = technical +
+   referentiable :: bool <= "True"
    tag :: "string" <=  "''''"
 
 doc_class assertion     = technical +
+   referentiable :: bool <= "True"
    tag :: "string" <=  "''''"
 
  
