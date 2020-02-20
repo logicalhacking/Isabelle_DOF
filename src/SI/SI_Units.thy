@@ -56,13 +56,6 @@ record Unit =
   Moles     :: int
   Candelas  :: int
 
-text \<open> Units scaled by a power of 10 \<close>
-
-type_synonym SUnit = "int Unit_ext"
-
-abbreviation scale :: "SUnit \<Rightarrow> int" where
-"scale \<equiv> more"
-
 text \<open> We define a commutative monoid for SI units. \<close>
 
 instantiation Unit_ext :: (one) one
@@ -109,7 +102,7 @@ definition inverse_Unit_ext :: "'a Unit_ext \<Rightarrow> 'a Unit_ext"
                , Candelas = - Candelas x, \<dots> = inverse (more x) \<rparr>"
 
 definition divide_Unit_ext :: "'a Unit_ext \<Rightarrow> 'a Unit_ext \<Rightarrow> 'a Unit_ext" 
-  where [code_unfold]: 
+  where [code_unfold, si_def]: 
   "divide_Unit_ext x y = x * (inverse y)"
   instance ..
 end
@@ -226,50 +219,58 @@ text\<open>We embed the basic SI types into the SI type expressions: \<close>
 
 instantiation Length :: si_baseunit
 begin
-  definition si_sem_Length :: "Length itself \<Rightarrow> Unit" where "si_sem_Length x = 1\<lparr>Meters := 1\<rparr>"
+definition si_sem_Length :: "Length itself \<Rightarrow> Unit" 
+  where [si_def]: "si_sem_Length x = 1\<lparr>Meters := 1\<rparr>"
 instance by (intro_classes, auto simp add: si_sem_Length_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 instantiation Mass :: si_baseunit
 begin
-  definition si_sem_Mass :: "Mass itself \<Rightarrow> Unit" where "si_sem_Mass x = 1\<lparr>Kilograms := 1\<rparr>"
+definition si_sem_Mass :: "Mass itself \<Rightarrow> Unit" 
+  where [si_def]: "si_sem_Mass x = 1\<lparr>Kilograms := 1\<rparr>"
 instance by (intro_classes, auto simp add: si_sem_Mass_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 instantiation Time :: si_baseunit
 begin
-  definition si_sem_Time :: "Time itself \<Rightarrow> Unit" where "si_sem_Time x = 1\<lparr>Seconds := 1\<rparr>"
+definition si_sem_Time :: "Time itself \<Rightarrow> Unit" 
+  where [si_def]: "si_sem_Time x = 1\<lparr>Seconds := 1\<rparr>"
 instance by (intro_classes, auto simp add: si_sem_Time_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 instantiation Current :: si_baseunit
 begin
-  definition si_sem_Current :: "Current itself \<Rightarrow> Unit" where "si_sem_Current x = 1\<lparr>Amperes := 1\<rparr>"
+definition si_sem_Current :: "Current itself \<Rightarrow> Unit" 
+  where [si_def]: "si_sem_Current x = 1\<lparr>Amperes := 1\<rparr>"
 instance by (intro_classes, auto simp add: si_sem_Current_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 instantiation Temperature :: si_baseunit
 begin
-  definition si_sem_Temperature :: "Temperature itself \<Rightarrow> Unit" where "si_sem_Temperature x = 1\<lparr>Kelvins := 1\<rparr>"
+definition si_sem_Temperature :: "Temperature itself \<Rightarrow> Unit" 
+  where [si_def]: "si_sem_Temperature x = 1\<lparr>Kelvins := 1\<rparr>"
 instance by (intro_classes, auto simp add: si_sem_Temperature_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 instantiation Amount :: si_baseunit
 begin
-  definition si_sem_Amount :: "Amount itself \<Rightarrow> Unit" where "si_sem_Amount x = 1\<lparr>Moles := 1\<rparr>"
+definition si_sem_Amount :: "Amount itself \<Rightarrow> Unit" 
+  where [si_def]: "si_sem_Amount x = 1\<lparr>Moles := 1\<rparr>"
 instance by (intro_classes, auto simp add: si_sem_Amount_def is_BaseUnit_def, (transfer, simp)+)
 end   
 
 instantiation Intensity :: si_baseunit
 begin
-  definition si_sem_Intensity :: "Intensity itself \<Rightarrow> Unit" where "si_sem_Intensity x = 1\<lparr>Candelas := 1\<rparr>"
+definition si_sem_Intensity :: "Intensity itself \<Rightarrow> Unit" 
+  where [si_def]: "si_sem_Intensity x = 1\<lparr>Candelas := 1\<rparr>"
 instance by (intro_classes, auto simp add: si_sem_Intensity_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 instantiation NoDimension :: si_type
 begin
-  definition si_sem_NoDimension :: "NoDimension itself \<Rightarrow> Unit" where "si_sem_NoDimension x = 1"
-  instance by (intro_classes, auto simp add: si_sem_NoDimension_def is_BaseUnit_def, (transfer, simp)+)
+definition si_sem_NoDimension :: "NoDimension itself \<Rightarrow> Unit" 
+  where [si_def]: "si_sem_NoDimension x = 1"
+instance by (intro_classes, auto simp add: si_sem_NoDimension_def is_BaseUnit_def, (transfer, simp)+)
 end
 
 lemma base_units [simp]: 
@@ -289,7 +290,7 @@ text \<open> We can prove that multiplication of two SI types yields an SI type.
 instantiation UnitTimes :: (si_type, si_type) si_type
 begin
   definition si_sem_UnitTimes :: "('a \<cdot> 'b) itself \<Rightarrow> Unit" where
-  "si_sem_UnitTimes x = SI('a) * SI('b)"
+  [si_eq]: "si_sem_UnitTimes x = SI('a) * SI('b)"
   instance by (intro_classes, simp_all add: si_sem_UnitTimes_def, (transfer, simp)+)
 end
 
@@ -300,7 +301,7 @@ setup_lifting type_definition_UnitInv
 instantiation UnitInv :: (si_type) si_type
 begin
   definition si_sem_UnitInv :: "('a\<^sup>-\<^sup>1) itself \<Rightarrow> Unit" where
-  "si_sem_UnitInv x = inverse SI('a)"
+  [si_eq]: "si_sem_UnitInv x = inverse SI('a)"
   instance by (intro_classes, simp_all add: si_sem_UnitInv_def, (transfer, simp)+)
 end
 

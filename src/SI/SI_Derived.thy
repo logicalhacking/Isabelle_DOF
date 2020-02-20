@@ -24,16 +24,18 @@ abbreviation "tesla \<equiv> kilogram \<^bold>\<cdot> meter\<^sup>-\<^sup>\<two>
 
 abbreviation "henry \<equiv> kilogram \<^bold>\<cdot> meter\<^sup>\<two> \<^bold>\<cdot> second\<^sup>-\<^sup>\<two> \<^bold>\<cdot> ampere\<^sup>-\<^sup>\<two>"
 
-definition degrees_celcius :: "'a::field \<Rightarrow> 'a[\<Theta>]" ("_\<degree>C" [999] 999) 
-  where [si_def, si_eq]: "degrees_celcius x = x + 273.151 \<odot> kelvin"
+definition degrees_celcius :: "'a::field_char_0 \<Rightarrow> 'a[\<Theta>]" ("_\<degree>C" [999] 999) 
+  where [si_eq]: "degrees_celcius x = x + 273.151 \<odot> kelvin"
 
-definition degrees_farenheit :: "'a::field \<Rightarrow> 'a[\<Theta>]" ("_\<degree>F" [999] 999)
-  where [si_def, si_eq]: "degrees_farenheit x = (x + 459.67)\<cdot>5/9 \<odot> kelvin"
-
-definition [si_def, si_eq]: "gram = milli \<odot> kilogram"
+definition [si_eq]: "gram = milli \<odot> kilogram"
 
 text\<open>The full beauty of the approach is perhaps revealed here, with the 
      type of a classical three-dimensional gravitation field:\<close>
 type_synonym gravitation_field = "(real\<^sup>3 \<Rightarrow> real\<^sup>3)[L \<cdot> T\<^sup>-\<^sup>2]"
+
+subsection \<open> Properties \<close>
+
+lemma kilogram: "kilo \<odot> gram = kilogram"
+  by (si_simp)
 
 end

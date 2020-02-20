@@ -7,44 +7,36 @@ begin
 subsection \<open> Quantity Scale \<close>
 
 lemma scaleQ_add_right: "a \<odot> x + y = (a \<odot> x) + (a \<odot> y)"
-  by (transfer, simp add: distrib_left)
+  by (si_simp add: distrib_left)
 
 lemma scaleQ_add_left: "a + b \<odot> x = (a \<odot> x) + (b \<odot> x)"
-  by (transfer, simp add: distrib_right)
+  by (si_simp add: distrib_right)
 
 lemma scaleQ_scaleQ: "a \<odot> b \<odot> x = a \<cdot> b \<odot> x"
-  by (transfer, simp add: mult.assoc)
+  by si_simp
 
 lemma scaleQ_one [simp]: "1 \<odot> x = x"
-  by (transfer, simp)
+  by si_simp
 
 lemma scaleQ_zero [simp]: "0 \<odot> x = 0"
-  by (transfer, simp)
+  by si_simp
 
 lemma scaleQ_inv: "-a \<odot> x = a \<odot> -x"
-  by (transfer, simp)
+  by si_calc
 
 lemma scaleQ_as_qprod: "a \<odot> x \<cong>\<^sub>Q (a \<odot> \<one>) \<^bold>\<cdot> x"
-  unfolding si_def
-  by (transfer, simp add: si_sem_NoDimension_def)
+  by si_calc
 
 lemma mult_scaleQ_left [simp]: "(a \<odot> x) \<^bold>\<cdot> y = a \<odot> x \<^bold>\<cdot> y"
-  by (transfer, simp add: si_sem_UnitTimes_def mult.assoc)
+  by (si_simp add: mult.assoc)
 
 lemma mult_scaleQ_right [simp]: "x \<^bold>\<cdot> (a \<odot> y) = a \<odot> x \<^bold>\<cdot> y"
-  by (transfer, simp add: si_sem_UnitTimes_def times_Quantity_ext_def mult.assoc)
+  by si_simp
 
 subsection \<open> Field Laws \<close>
 
 lemma qtimes_commute: "x \<^bold>\<cdot> y \<cong>\<^sub>Q y \<^bold>\<cdot> x"
   by si_calc
-
-text\<open>Observe that this commutation law also commutes the types.\<close>
- 
-(* just a check that instantiation works for special cases ... *)
-lemma "    (UNIT(x, J) \<^bold>\<cdot> UNIT(y::'a::comm_ring_1, N))
-        \<cong>\<^sub>Q (UNIT(y, N) \<^bold>\<cdot> UNIT(x, J)) "
-  by(simp add: qtimes_commute)
 
 lemma qtimes_assoc: "(x \<^bold>\<cdot> y) \<^bold>\<cdot> z  \<cong>\<^sub>Q  x \<^bold>\<cdot> (y \<^bold>\<cdot> z)"
   by (si_calc)

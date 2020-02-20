@@ -255,23 +255,23 @@ lift_definition scaleQ :: "'a \<Rightarrow> 'a::comm_ring_1['u::si_type] \<Right
 
 notation scaleQ (infixr "\<odot>" 63)
 
-lift_definition mk_unit :: "'a \<Rightarrow> 'u itself \<Rightarrow> ('a::one)['u::si_type]" 
-  is "\<lambda> n u. \<lparr> magn = n, unit = SI('u) \<rparr>" by simp
+lift_definition mk_unit :: "'u itself \<Rightarrow> ('a::one)['u::si_type]" 
+  is "\<lambda> u. \<lparr> magn = 1, unit = SI('u) \<rparr>" by simp
 
-syntax "_mk_unit" :: "logic \<Rightarrow> type \<Rightarrow> logic" ("UNIT'(_, _')")
-translations "UNIT(n, 'a)" == "CONST mk_unit n TYPE('a)"
+syntax "_mk_unit" :: "type \<Rightarrow> logic" ("UNIT'(_')")
+translations "UNIT('a)" == "CONST mk_unit TYPE('a)"
 
 subsection \<open>Polymorphic Operations for Elementary SI Units \<close>
 
-definition [si_def, si_eq]: "meter    = UNIT(1, Length)"
-definition [si_def, si_eq]: "second   = UNIT(1, Time)"
-definition [si_def, si_eq]: "kilogram = UNIT(1, Mass)"
-definition [si_def, si_eq]: "ampere   = UNIT(1, Current)"
-definition [si_def, si_eq]: "kelvin   = UNIT(1, Temperature)"
-definition [si_def, si_eq]: "mole     = UNIT(1, Amount)"
-definition [si_def, si_eq]: "candela  = UNIT(1, Intensity)"
+definition [si_eq]: "meter    = UNIT(Length)"
+definition [si_eq]: "second   = UNIT(Time)"
+definition [si_eq]: "kilogram = UNIT(Mass)"
+definition [si_eq]: "ampere   = UNIT(Current)"
+definition [si_eq]: "kelvin   = UNIT(Temperature)"
+definition [si_eq]: "mole     = UNIT(Amount)"
+definition [si_eq]: "candela  = UNIT(Intensity)"
 
 definition dimless ("\<one>") 
-  where [si_def, si_eq]: "dimless  = UNIT(1, NoDimension)"
+  where [si_eq]: "dimless  = UNIT(NoDimension)"
 
 end
