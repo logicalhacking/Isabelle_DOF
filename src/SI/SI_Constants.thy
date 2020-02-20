@@ -59,6 +59,8 @@ abbreviation max_luminous_frequency :: "'a[T\<^sup>-\<^sup>1]" where
 abbreviation luminous_efficacy :: "'a[J \<cdot> (L\<^sup>2 \<cdot> L\<^sup>-\<^sup>2) \<cdot> (M \<cdot> L\<^sup>2 \<cdot> T\<^sup>-\<^sup>3)\<^sup>-\<^sup>1]" ("K\<^sub>c\<^sub>d") where
 "luminous_efficacy \<equiv> 683 \<odot> (lumen\<^bold>/watt)"
 
+subsection \<open> Basis Theorems \<close>
+
 theorem second_definition: 
   "1 \<odot> second \<cong>\<^sub>Q (9192631770 \<odot> \<one>) \<^bold>/ \<Delta>v\<^sub>C\<^sub>s"
   by si_calc
@@ -68,8 +70,11 @@ theorem meter_definition:
   "1 \<odot> meter \<cong>\<^sub>Q (9192631770 / 299792458) \<odot> (\<^bold>c \<^bold>/ \<Delta>v\<^sub>C\<^sub>s)"
   by si_calc+
 
-abbreviation gravitational_constant :: "'a[L\<^sup>3 \<cdot> M\<^sup>-\<^sup>1 \<cdot> T\<^sup>-\<^sup>2]" where
-  "gravitational_constant \<equiv> (6.6743015 \<cdot> 1/(10 ^ 11)) \<odot> (meter\<^sup>\<three>\<^bold>\<cdot>kilogram\<^sup>-\<^sup>\<one>\<^bold>\<cdot>second\<^sup>-\<^sup>\<two>)"
+theorem kilogram_definition:
+  "1 \<odot> kilogram \<cong>\<^sub>Q (\<^bold>h \<^bold>/ (6.62607015 \<cdot> 1/(10^34) \<odot> \<one>))\<^bold>\<cdot>meter\<^sup>-\<^sup>\<two>\<^bold>\<cdot>second" 
+  by si_calc
+
+abbreviation "approx_ice_point \<equiv> 273.15 \<odot> kelvin"
 
 default_sort type
 

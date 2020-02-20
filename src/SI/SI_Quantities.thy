@@ -1,72 +1,71 @@
 section \<open> SI Quantities \<close>
 
 theory SI_Quantities
-  imports SI_Units (* Optics.Lenses *)
+  imports SI_Units
 begin
-
 
 subsection \<open> The \<^theory_text>\<open>Quantity\<close>-type and its operations \<close>
 
 record 'a Quantity =
-  magn :: 'a   \<comment> \<open> Magnitude of the quantity \<close>
-  unit :: Unit \<comment> \<open> Unit of the quantity \<close>
+  mag :: 'a   \<comment> \<open> Magnitude of the quantity \<close>
+  dim  :: Dimension \<comment> \<open> Dimension of the quantity \<close>
 
 lemma Quantity_eq_intro:
-  assumes "magn x = magn y" "unit x = unit y" "more x = more y"
+  assumes "mag x = mag y" "dim x = dim y" "more x = more y"
   shows "x = y"
   by (simp add: assms)
 
 instantiation Quantity_ext :: (times, times) times
 begin
   definition [si_def]:
-    "times_Quantity_ext x y = \<lparr> magn = magn x \<cdot> magn y, unit = unit x \<cdot> unit y, \<dots> = more x \<cdot> more y \<rparr>"
+    "times_Quantity_ext x y = \<lparr> mag = mag x \<cdot> mag y, dim = dim x \<cdot> dim y, \<dots> = more x \<cdot> more y \<rparr>"
 instance ..
 end
 
-lemma magn_times [simp]: "magn (x \<cdot> y) = magn x \<cdot> magn y" by (simp add: times_Quantity_ext_def)
-lemma unit_times [simp]: "unit (x \<cdot> y) = unit x \<cdot> unit y" by (simp add: times_Quantity_ext_def)
+lemma mag_times [simp]: "mag (x \<cdot> y) = mag x \<cdot> mag y" by (simp add: times_Quantity_ext_def)
+lemma dim_times [simp]: "dim (x \<cdot> y) = dim x \<cdot> dim y" by (simp add: times_Quantity_ext_def)
 lemma more_times [simp]: "more (x \<cdot> y) = more x \<cdot> more y" by (simp add: times_Quantity_ext_def)
 
 instantiation Quantity_ext :: (zero, zero) zero
 begin
-  definition "zero_Quantity_ext = \<lparr> magn = 0, unit = 1, \<dots> = 0 \<rparr>"
+  definition "zero_Quantity_ext = \<lparr> mag = 0, dim = 1, \<dots> = 0 \<rparr>"
 instance ..
 end
 
-lemma magn_zero [simp]: "magn 0 = 0" by (simp add: zero_Quantity_ext_def)
-lemma unit_zero [simp]: "unit 0 = 1" by (simp add: zero_Quantity_ext_def)
+lemma mag_zero [simp]: "mag 0 = 0" by (simp add: zero_Quantity_ext_def)
+lemma dim_zero [simp]: "dim 0 = 1" by (simp add: zero_Quantity_ext_def)
 lemma more_zero [simp]: "more 0 = 0" by (simp add: zero_Quantity_ext_def)
 
 instantiation Quantity_ext :: (one, one) one
 begin
-  definition [si_def]: "one_Quantity_ext = \<lparr> magn = 1, unit = 1, \<dots> = 1 \<rparr>"
+  definition [si_def]: "one_Quantity_ext = \<lparr> mag = 1, dim = 1, \<dots> = 1 \<rparr>"
 instance ..
 end
 
-lemma magn_one [simp]: "magn 1 = 1" by (simp add: one_Quantity_ext_def)
-lemma unit_one [simp]: "unit 1 = 1" by (simp add: one_Quantity_ext_def)
+lemma mag_one [simp]: "mag 1 = 1" by (simp add: one_Quantity_ext_def)
+lemma dim_one [simp]: "dim 1 = 1" by (simp add: one_Quantity_ext_def)
 lemma more_one [simp]: "more 1 = 1" by (simp add: one_Quantity_ext_def)
 
 instantiation Quantity_ext :: (inverse, inverse) inverse
 begin
-  definition [si_def]: "inverse_Quantity_ext x = \<lparr> magn = inverse (magn x), unit = inverse (unit x), \<dots> = inverse (more x) \<rparr>"
-  definition [si_def]: "divide_Quantity_ext x y = \<lparr> magn = magn x / magn y, unit = unit x / unit y, \<dots> = more x / more y \<rparr>"
+  definition [si_def]: "inverse_Quantity_ext x = \<lparr> mag = inverse (mag x), dim = inverse (dim x), \<dots> = inverse (more x) \<rparr>"
+  definition [si_def]: "divide_Quantity_ext x y = \<lparr> mag = mag x / mag y, dim = dim x / dim y, \<dots> = more x / more y \<rparr>"
 instance ..
 end
 
-lemma magn_inverse [simp]: "magn (inverse x) = inverse (magn x)" 
+lemma mag_inverse [simp]: "mag (inverse x) = inverse (mag x)" 
   by (simp add: inverse_Quantity_ext_def)
 
-lemma unit_inverse [simp]: "unit (inverse x) = inverse (unit x)" 
+lemma dim_inverse [simp]: "dim (inverse x) = inverse (dim x)" 
   by (simp add: inverse_Quantity_ext_def)
 
 lemma more_inverse [simp]: "more (inverse x) = inverse (more x)" 
   by (simp add: inverse_Quantity_ext_def)
 
-lemma magn_divide [simp]: "magn (x / y) = magn x / magn y" 
+lemma mag_divide [simp]: "mag (x / y) = mag x / mag y" 
   by (simp add: divide_Quantity_ext_def)
 
-lemma unit_divide [simp]: "unit (x / y) = unit x / unit y" 
+lemma dim_divide [simp]: "dim (x / y) = dim x / dim y" 
   by (simp add: divide_Quantity_ext_def)
 
 lemma more_divide [simp]: "more (x / y) = more x / more y" 
@@ -82,7 +81,7 @@ instance Quantity_ext :: (ab_group_mult, ab_group_mult) ab_group_mult
 instantiation Quantity_ext :: (ord, ord) ord
 begin
   definition less_eq_Quantity_ext :: "('a, 'b) Quantity_scheme \<Rightarrow> ('a, 'b) Quantity_scheme \<Rightarrow> bool"
-    where "less_eq_Quantity_ext x y = (magn x \<le> magn y \<and> unit x = unit y \<and> more x \<le> more y)"
+    where "less_eq_Quantity_ext x y = (mag x \<le> mag y \<and> dim x = dim y \<and> more x \<le> more y)"
   definition less_Quantity_ext :: "('a, 'b) Quantity_scheme \<Rightarrow> ('a, 'b) Quantity_scheme \<Rightarrow> bool"
     where "less_Quantity_ext x y = (x \<le> y \<and> \<not> y \<le> x)"
 
@@ -97,12 +96,12 @@ subsection \<open> SI Tagged Types \<close>
 text\<open>We 'lift' SI type expressions to SI tagged type expressions as follows:\<close>
 
 typedef (overloaded) ('n, 'u::si_type) tQuant ("_[_]" [999,0] 999) 
-                     = "{x :: 'n Quantity. unit x = SI('u)}"
-  morphisms fromQ toQ by (rule_tac x="\<lparr> magn = undefined, unit = SI('u) \<rparr>" in exI, simp)
+                     = "{x :: 'n Quantity. dim x = SI('u)}"
+  morphisms fromQ toQ by (rule_tac x="\<lparr> mag = undefined, dim = SI('u) \<rparr>" in exI, simp)
 
 setup_lifting type_definition_tQuant
 
-text \<open> Coerce values when their units are equivalent \<close>
+text \<open> Coerce values when their dimensions are equivalent \<close>
 
 definition coerceUnit :: "'u\<^sub>2 itself \<Rightarrow> 'a['u\<^sub>1::si_type] \<Rightarrow> 'a['u\<^sub>2::si_type]" where
 "SI('u\<^sub>1) = SI('u\<^sub>2) \<Longrightarrow> coerceUnit t x = (toQ (fromQ x))"
@@ -111,7 +110,7 @@ section\<open>Operations SI-tagged types via their Semantic Domains\<close>
 
 subsection\<open>Predicates on SI-tagged types\<close>
 
-text \<open> Two SI types are equivalent if they have the same value-level units. \<close>
+text \<open> Two SI types are equivalent if they have the same value-level dimensions. \<close>
 
 lift_definition qless_eq :: "'n::order['a::si_type] \<Rightarrow> 'n['b::si_type] \<Rightarrow> bool" (infix "\<lesssim>\<^sub>Q" 50) is
 "(\<le>)" .
@@ -159,9 +158,7 @@ lemma updown_eq_iff:
 
 text\<open>This is more general that \<open>y = x \<Longrightarrow> x \<cong>\<^sub>Q y\<close>, since x and y may have different type.\<close>
 
-find_theorems "(toQ (fromQ _))"
-
-lemma eq_ : 
+lemma qeq: 
   fixes x :: "'a['u\<^sub>1::si_type]" fixes y :: "'a['u\<^sub>2::si_type]"
   assumes  "x \<cong>\<^sub>Q y"
   shows "SI('u\<^sub>1) = SI('u\<^sub>2::si_type)"
@@ -171,11 +168,11 @@ subsection\<open>Operations on SI-tagged types\<close>
 
 lift_definition 
   qtimes :: "('n::comm_ring_1)['a::si_type] \<Rightarrow> 'n['b::si_type] \<Rightarrow> 'n['a \<cdot>'b]" (infixl "\<^bold>\<cdot>" 69) is "(*)"
-  by (simp add: si_sem_UnitTimes_def times_Quantity_ext_def)
+  by (simp add: si_sem_DimTimes_def times_Quantity_ext_def)
   
 lift_definition 
   qinverse :: "('n::field)['a::si_type] \<Rightarrow> 'n['a\<^sup>-\<^sup>1]" ("(_\<^sup>-\<^sup>\<one>)" [999] 999) is "inverse"
-  by (simp add: inverse_Quantity_ext_def si_sem_UnitInv_def)
+  by (simp add: inverse_Quantity_ext_def si_sem_DimInv_def)
 
 abbreviation 
   qdivide :: "('n::field)['a::si_type] \<Rightarrow> 'n['b::si_type] \<Rightarrow> 'n['a/'b]" (infixl "\<^bold>'/" 70) where
@@ -191,14 +188,14 @@ abbreviation qneq_quart ("(_)\<^sup>-\<^sup>\<four>" [999] 999) where "u\<^sup>-
 
 instantiation tQuant :: (zero,si_type) zero
 begin
-lift_definition zero_tQuant :: "('a, 'b) tQuant" is "\<lparr> magn = 0, unit = SI('b) \<rparr>" 
+lift_definition zero_tQuant :: "('a, 'b) tQuant" is "\<lparr> mag = 0, dim = SI('b) \<rparr>" 
   by simp
 instance ..
 end
 
 instantiation tQuant :: (one,si_type) one
 begin
-lift_definition one_tQuant :: "('a, 'b) tQuant" is "\<lparr> magn = 1, unit = SI('b) \<rparr>"
+lift_definition one_tQuant :: "('a, 'b) tQuant" is "\<lparr> mag = 1, dim = SI('b) \<rparr>"
   by simp
 instance ..
 end
@@ -206,7 +203,7 @@ end
 instantiation tQuant :: (plus,si_type) plus
 begin
 lift_definition plus_tQuant :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> 'a['b]"
-  is "\<lambda> x y. \<lparr> magn = magn x + magn y, unit = SI('b) \<rparr>"
+  is "\<lambda> x y. \<lparr> mag = mag x + mag y, dim = SI('b) \<rparr>"
   by (simp)
 instance ..
 end
@@ -226,14 +223,14 @@ instance tQuant :: (comm_monoid_add,si_type) comm_monoid_add
 instantiation tQuant :: (uminus,si_type) uminus
 begin
 lift_definition uminus_tQuant :: "'a['b] \<Rightarrow> 'a['b]" 
-  is "\<lambda> x. \<lparr> magn = - magn x, unit = unit x \<rparr>" by (simp)
+  is "\<lambda> x. \<lparr> mag = - mag x, dim = dim x \<rparr>" by (simp)
 instance ..
 end
 
 instantiation tQuant :: (minus,si_type) minus
 begin
 lift_definition minus_tQuant :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> 'a['b]"
-  is "\<lambda> x y. \<lparr> magn = magn x - magn y, unit = unit x \<rparr>" by (simp)
+  is "\<lambda> x y. \<lparr> mag = mag x - mag y, dim = dim x \<rparr>" by (simp)
 
 instance ..
 end
@@ -245,18 +242,18 @@ instance tQuant :: (ab_group_add,si_type) ab_group_add
 
 instantiation tQuant :: (order,si_type) order
 begin
-  lift_definition less_eq_tQuant :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> bool" is "\<lambda> x y. magn x \<le> magn y" .
-  lift_definition less_tQuant :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> bool" is "\<lambda> x y. magn x < magn y" .
+  lift_definition less_eq_tQuant :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> bool" is "\<lambda> x y. mag x \<le> mag y" .
+  lift_definition less_tQuant :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> bool" is "\<lambda> x y. mag x < mag y" .
   instance by (intro_classes, (transfer, simp add: less_le_not_le)+)
 end
 
 lift_definition scaleQ :: "'a \<Rightarrow> 'a::comm_ring_1['u::si_type] \<Rightarrow> 'a['u]" (infixr "*\<^sub>Q" 63)
-  is "\<lambda> r x. \<lparr> magn = r * magn x, unit = SI('u) \<rparr>" by simp
+  is "\<lambda> r x. \<lparr> mag = r * mag x, dim = SI('u) \<rparr>" by simp
 
 notation scaleQ (infixr "\<odot>" 63)
 
 lift_definition mk_unit :: "'u itself \<Rightarrow> ('a::one)['u::si_type]" 
-  is "\<lambda> u. \<lparr> magn = 1, unit = SI('u) \<rparr>" by simp
+  is "\<lambda> u. \<lparr> mag = 1, dim = SI('u) \<rparr>" by simp
 
 syntax "_mk_unit" :: "type \<Rightarrow> logic" ("UNIT'(_')")
 translations "UNIT('a)" == "CONST mk_unit TYPE('a)"
