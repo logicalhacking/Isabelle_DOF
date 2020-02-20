@@ -50,11 +50,34 @@ definition zepto :: "'a" where [si_eq]: "zepto = 1/10^21"
 
 definition yocto :: "'a" where [si_eq]: "yocto = 1/10^24"
 
-default_sort type
-
 subsection \<open> Examples \<close>
 
-lemma "2.3 \<odot> (centi \<odot> meter)\<^sup>\<three> \<cong>\<^sub>Q 2.3 \<cdot> 1/10^6 \<odot> meter\<^sup>\<three>"
+lemma "2.3 \<odot> (centi \<odot> meter)\<^sup>\<three> = 2.3 \<cdot> 1/10^6 \<odot> meter\<^sup>\<three>"
   by (si_simp)
+
+lemma "1 \<odot> (centi \<odot> meter)\<^sup>-\<^sup>\<one> = 100 \<odot> meter\<^sup>-\<^sup>\<one>"
+  by (si_simp)
+
+subsection \<open> Binary Prefixes \<close>
+
+default_sort ring_char_0
+
+definition kibi :: "'a" where [si_eq]: "kibi = 2^10"
+
+definition mebi :: "'a" where [si_eq]: "mebi = 2^20"
+
+definition gibi :: "'a" where [si_eq]: "gibi = 2^30"
+
+definition tebi :: "'a" where [si_eq]: "tebi = 2^40"
+
+definition pebi :: "'a" where [si_eq]: "pebi = 2^50"
+
+definition exbi :: "'a" where [si_eq]: "exbi = 2^60"
+
+definition zebi :: "'a" where [si_eq]: "zebi = 2^70"
+
+definition yobi :: "'a" where [si_eq]: "yobi = 2^80"
+
+default_sort type
 
 end

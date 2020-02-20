@@ -23,7 +23,6 @@ abbreviation "tonne \<equiv> 10^3 \<odot> kilogram"
 
 subsection \<open> Examples \<close>
 
-declare[[show_types]]
 lemma "watt \<^bold>\<cdot> hour \<cong>\<^sub>Q 3600 \<odot> joule"
   by (si_calc)
 
