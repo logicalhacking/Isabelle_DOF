@@ -47,73 +47,73 @@ subsection \<open> The \<^theory_text>\<open>Unit\<close>-type and its operation
 text \<open> An SI unit associates with each of the seven base unit an integer that denotes the power 
   to which it is raised. We use a record to represent this 7-tuple, to enable code generation. \<close>
 
-record Unit = 
-  Meters    :: int
-  Kilograms :: int
-  Seconds   :: int
-  Amperes   :: int 
-  Kelvins   :: int 
-  Moles     :: int
-  Candelas  :: int
+record Dimension = 
+  Length      :: int
+  Mass        :: int
+  Time        :: int
+  Current     :: int 
+  Temperature :: int 
+  Amount      :: int
+  Intensity   :: int
 
 text \<open> We define a commutative monoid for SI units. \<close>
 
-instantiation Unit_ext :: (one) one
+instantiation Dimension_ext :: (one) one
 begin
   \<comment> \<open> Here, $1$ is the dimensionless unit \<close>
-definition one_Unit_ext :: "'a Unit_ext" 
-  where  [code_unfold, si_def]:  "1 = \<lparr> Meters = 0, Kilograms = 0, Seconds = 0, Amperes = 0
-                               , Kelvins = 0, Moles = 0, Candelas = 0, \<dots> = 1 \<rparr>"
+definition one_Dimension_ext :: "'a Dimension_ext" 
+  where  [code_unfold, si_def]:  "1 = \<lparr> Length = 0, Mass = 0, Time = 0, Current = 0
+                               , Temperature = 0, Amount = 0, Intensity = 0, \<dots> = 1 \<rparr>"
   instance ..
 end
 
-instantiation Unit_ext :: (times) times
+instantiation Dimension_ext :: (times) times
 begin
   \<comment> \<open> Multiplication is defined by adding together the powers \<close>
-definition times_Unit_ext :: "'a Unit_ext \<Rightarrow> 'a Unit_ext \<Rightarrow> 'a Unit_ext" 
+definition times_Dimension_ext :: "'a Dimension_ext \<Rightarrow> 'a Dimension_ext \<Rightarrow> 'a Dimension_ext" 
   where [code_unfold, si_def]:
-  "x * y = \<lparr> Meters = Meters x + Meters y, Kilograms = Kilograms x + Kilograms y
-           , Seconds = Seconds x + Seconds y, Amperes = Amperes x + Amperes y
-           , Kelvins = Kelvins x + Kelvins y, Moles = Moles x + Moles y
-           , Candelas = Candelas x + Candelas y, \<dots> = more x * more y \<rparr>"
+  "x * y = \<lparr> Length = Length x + Length y, Mass = Mass x + Mass y
+           , Time = Time x + Time y, Current = Current x + Current y
+           , Temperature = Temperature x + Temperature y, Amount = Amount x + Amount y
+           , Intensity = Intensity x + Intensity y, \<dots> = more x * more y \<rparr>"
   instance ..
 end
 
-instance Unit_ext :: (comm_monoid_mult) comm_monoid_mult
+instance Dimension_ext :: (comm_monoid_mult) comm_monoid_mult
 proof
-  fix a b c :: "'a Unit_ext"
+  fix a b c :: "'a Dimension_ext"
   show "a * b * c = a * (b * c)"
-    by (simp add: times_Unit_ext_def mult.assoc)
+    by (simp add: times_Dimension_ext_def mult.assoc)
   show "a * b = b * a"
-    by (simp add: times_Unit_ext_def mult.commute)
+    by (simp add: times_Dimension_ext_def mult.commute)
   show "1 * a = a"
-    by (simp add: times_Unit_ext_def one_Unit_ext_def)
+    by (simp add: times_Dimension_ext_def one_Dimension_ext_def)
 qed
 
 text \<open> We also define the inverse and division operations, and an abelian group. \<close>
 
-instantiation Unit_ext :: ("{times,inverse}") inverse
+instantiation Dimension_ext :: ("{times,inverse}") inverse
 begin
-definition inverse_Unit_ext :: "'a Unit_ext \<Rightarrow> 'a Unit_ext" 
+definition inverse_Dimension_ext :: "'a Dimension_ext \<Rightarrow> 'a Dimension_ext" 
   where [code_unfold, si_def]:
-  "inverse x = \<lparr> Meters = - Meters x, Kilograms = - Kilograms x
-               , Seconds = - Seconds x, Amperes = - Amperes x
-               , Kelvins = - Kelvins x, Moles = - Moles x
-               , Candelas = - Candelas x, \<dots> = inverse (more x) \<rparr>"
+  "inverse x = \<lparr> Length = - Length x, Mass = - Mass x
+               , Time = - Time x, Current = - Current x
+               , Temperature = - Temperature x, Amount = - Amount x
+               , Intensity = - Intensity x, \<dots> = inverse (more x) \<rparr>"
 
-definition divide_Unit_ext :: "'a Unit_ext \<Rightarrow> 'a Unit_ext \<Rightarrow> 'a Unit_ext" 
+definition divide_Dimension_ext :: "'a Dimension_ext \<Rightarrow> 'a Dimension_ext \<Rightarrow> 'a Dimension_ext" 
   where [code_unfold, si_def]: 
-  "divide_Unit_ext x y = x * (inverse y)"
+  "divide_Dimension_ext x y = x * (inverse y)"
   instance ..
 end
  
-instance Unit_ext :: (ab_group_mult) ab_group_mult
+instance Dimension_ext :: (ab_group_mult) ab_group_mult
 proof
-  fix a b :: "'a Unit_ext"
+  fix a b :: "'a Dimension_ext"
   show "inverse a \<cdot> a  = 1"
-    by (simp add: inverse_Unit_ext_def times_Unit_ext_def one_Unit_ext_def)
+    by (simp add: inverse_Dimension_ext_def times_Dimension_ext_def one_Dimension_ext_def)
   show "a \<cdot> inverse b = a div b"
-    by (simp add: divide_Unit_ext_def)
+    by (simp add: divide_Dimension_ext_def)
 qed
 
 text \<open> It makes no sense to define a plus operator for SI units because we can only add together
@@ -145,10 +145,10 @@ instance unit :: ab_group_mult
 
 text \<open> A base unit is an SI_tagged_domain unit here precisely one unit has power 1. \<close>
 
-definition is_BaseUnit :: "Unit \<Rightarrow> bool" where
-"is_BaseUnit u = (\<exists> n. u = 1\<lparr>Meters := n\<rparr> \<or> u = 1\<lparr>Kilograms := n\<rparr> \<or> u = 1\<lparr>Seconds := n\<rparr>
-                     \<or> u = 1\<lparr>Amperes := n\<rparr> \<or> u = 1\<lparr>Kelvins := n\<rparr> \<or> u = 1\<lparr>Moles := n\<rparr>
-                     \<or> u = 1\<lparr>Candelas := n\<rparr>)"
+definition is_BaseDim :: "Dimension \<Rightarrow> bool" where
+"is_BaseDim u = (\<exists> n. u = 1\<lparr>Length := n\<rparr> \<or> u = 1\<lparr>Mass := n\<rparr> \<or> u = 1\<lparr>Time := n\<rparr>
+                     \<or> u = 1\<lparr>Current := n\<rparr> \<or> u = 1\<lparr>Temperature := n\<rparr> \<or> u = 1\<lparr>Amount := n\<rparr>
+                     \<or> u = 1\<lparr>Intensity := n\<rparr>)"
 
 section\<open>The Syntax and Semantics of SI types and SI-tagged types\<close>
 
@@ -193,12 +193,12 @@ are restricted to the set of SI-type expressions.
 The mechanism in Isabelle to characterize a certain sub-class of Isabelle-type expressions 
 are \<^emph>\<open>type classes\<close>. We therefore need such a sub-class; for reasons of convenience,
 we combine its construction also with the "semantics" of SI types in terms of  
-@{typ Unit}. \<close>
+@{typ Dimension}. \<close>
 
 subsubsection \<open> SI-type expression definition as type-class \<close>
 
 class si_type = finite +
-  fixes   si_sem :: "'a itself \<Rightarrow> Unit"
+  fixes   si_sem :: "'a itself \<Rightarrow> Dimension"
   assumes unitary_unit_pres: "card (UNIV::'a set) = 1"
 
 syntax
@@ -210,135 +210,133 @@ translations
 text \<open> The sub-set of basic SI type expressions can be characterized by the following
 operation: \<close>
 
-class si_baseunit = si_type +
-  assumes is_BaseUnit: "is_BaseUnit SI('a)"
+class si_basedim = si_type +
+  assumes is_BaseDim: "is_BaseDim SI('a)"
 
 subsubsection \<open> SI base type constructors \<close>
 
 text\<open>We embed the basic SI types into the SI type expressions: \<close>
 
-
-instantiation Length :: si_baseunit
+instantiation Length :: si_basedim
 begin
-definition si_sem_Length :: "Length itself \<Rightarrow> Unit" 
-  where [si_def]: "si_sem_Length x = 1\<lparr>Meters := 1\<rparr>"
-instance
-  by (intro_classes, auto simp add: si_sem_Length_def is_BaseUnit_def, (transfer, simp)+)
+definition si_sem_Length :: "Length itself \<Rightarrow> Dimension" 
+  where [si_def]: "si_sem_Length x = 1\<lparr>Length := 1\<rparr>"
+instance by (intro_classes, auto simp add: si_sem_Length_def is_BaseDim_def, (transfer, simp)+)
 end
 
-instantiation Mass :: si_baseunit
+instantiation Mass :: si_basedim
 begin
-definition si_sem_Mass :: "Mass itself \<Rightarrow> Unit" 
-  where [si_def]: "si_sem_Mass x = 1\<lparr>Kilograms := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_Mass_def is_BaseUnit_def, (transfer, simp)+)
+definition si_sem_Mass :: "Mass itself \<Rightarrow> Dimension" 
+  where [si_def]: "si_sem_Mass x = 1\<lparr>Mass := 1\<rparr>"
+instance by (intro_classes, auto simp add: si_sem_Mass_def is_BaseDim_def, (transfer, simp)+)
 end
 
-instantiation Time :: si_baseunit
+instantiation Time :: si_basedim
 begin
-definition si_sem_Time :: "Time itself \<Rightarrow> Unit" 
-  where [si_def]: "si_sem_Time x = 1\<lparr>Seconds := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_Time_def is_BaseUnit_def, (transfer, simp)+)
+definition si_sem_Time :: "Time itself \<Rightarrow> Dimension" 
+  where [si_def]: "si_sem_Time x = 1\<lparr>Time := 1\<rparr>"
+instance by (intro_classes, auto simp add: si_sem_Time_def is_BaseDim_def, (transfer, simp)+)
 end
 
-instantiation Current :: si_baseunit
+instantiation Current :: si_basedim
 begin
-definition si_sem_Current :: "Current itself \<Rightarrow> Unit" 
-  where [si_def]: "si_sem_Current x = 1\<lparr>Amperes := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_Current_def is_BaseUnit_def, (transfer, simp)+)
+definition si_sem_Current :: "Current itself \<Rightarrow> Dimension" 
+  where [si_def]: "si_sem_Current x = 1\<lparr>Current := 1\<rparr>"
+instance by (intro_classes, auto simp add: si_sem_Current_def is_BaseDim_def, (transfer, simp)+)
 end
 
-instantiation Temperature :: si_baseunit
+instantiation Temperature :: si_basedim
 begin
-definition si_sem_Temperature :: "Temperature itself \<Rightarrow> Unit" 
-  where [si_def]: "si_sem_Temperature x = 1\<lparr>Kelvins := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_Temperature_def is_BaseUnit_def, (transfer, simp)+)
+definition si_sem_Temperature :: "Temperature itself \<Rightarrow> Dimension" 
+  where [si_def]: "si_sem_Temperature x = 1\<lparr>Temperature := 1\<rparr>"
+instance by (intro_classes, auto simp add: si_sem_Temperature_def is_BaseDim_def, (transfer, simp)+)
 end
 
-instantiation Amount :: si_baseunit
+instantiation Amount :: si_basedim
 begin
-definition si_sem_Amount :: "Amount itself \<Rightarrow> Unit" 
-  where [si_def]: "si_sem_Amount x = 1\<lparr>Moles := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_Amount_def is_BaseUnit_def, (transfer, simp)+)
+definition si_sem_Amount :: "Amount itself \<Rightarrow> Dimension" 
+  where [si_def]: "si_sem_Amount x = 1\<lparr>Amount := 1\<rparr>"
+instance by (intro_classes, auto simp add: si_sem_Amount_def is_BaseDim_def, (transfer, simp)+)
 end   
 
-instantiation Intensity :: si_baseunit
+instantiation Intensity :: si_basedim
 begin
-definition si_sem_Intensity :: "Intensity itself \<Rightarrow> Unit" 
-  where [si_def]: "si_sem_Intensity x = 1\<lparr>Candelas := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_Intensity_def is_BaseUnit_def, (transfer, simp)+)
+definition si_sem_Intensity :: "Intensity itself \<Rightarrow> Dimension" 
+  where [si_def]: "si_sem_Intensity x = 1\<lparr>Intensity := 1\<rparr>"
+instance by (intro_classes, auto simp add: si_sem_Intensity_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation NoDimension :: si_type
 begin
-definition si_sem_NoDimension :: "NoDimension itself \<Rightarrow> Unit" 
+definition si_sem_NoDimension :: "NoDimension itself \<Rightarrow> Dimension" 
   where [si_def]: "si_sem_NoDimension x = 1"
-instance by (intro_classes, auto simp add: si_sem_NoDimension_def is_BaseUnit_def, (transfer, simp)+)
+instance by (intro_classes, auto simp add: si_sem_NoDimension_def is_BaseDim_def, (transfer, simp)+)
 end
 
 lemma base_units [simp]: 
-  "is_BaseUnit SI(Length)" "is_BaseUnit SI(Mass)" "is_BaseUnit SI(Time)"
-  "is_BaseUnit SI(Current)" "is_BaseUnit SI(Temperature)" "is_BaseUnit SI(Amount)"
-  "is_BaseUnit SI(Intensity)" by (simp_all add: is_BaseUnit)
+  "is_BaseDim SI(Length)" "is_BaseDim SI(Mass)" "is_BaseDim SI(Time)"
+  "is_BaseDim SI(Current)" "is_BaseDim SI(Temperature)" "is_BaseDim SI(Amount)"
+  "is_BaseDim SI(Intensity)" by (simp_all add: is_BaseDim)
 
 subsubsection \<open> Higher SI Type Constructors: Inner Product and Inverse \<close>
 text\<open>On the class of SI-types (in which we have already inserted the base SI types), 
 the definitions of the type constructors for inner product and inverse is straight) forward.\<close>
 
-typedef ('a::si_type, 'b::si_type) UnitTimes (infixl "\<cdot>" 69) = "UNIV :: unit set" ..
-setup_lifting type_definition_UnitTimes
+typedef ('a::si_type, 'b::si_type) DimTimes (infixl "\<cdot>" 69) = "UNIV :: unit set" ..
+setup_lifting type_definition_DimTimes
 
 text \<open> We can prove that multiplication of two SI types yields an SI type. \<close>
 
-instantiation UnitTimes :: (si_type, si_type) si_type
+instantiation DimTimes :: (si_type, si_type) si_type
 begin
-  definition si_sem_UnitTimes :: "('a \<cdot> 'b) itself \<Rightarrow> Unit" where
-  [si_eq]: "si_sem_UnitTimes x = SI('a) * SI('b)"
-  instance by (intro_classes, simp_all add: si_sem_UnitTimes_def, (transfer, simp)+)
+  definition si_sem_DimTimes :: "('a \<cdot> 'b) itself \<Rightarrow> Dimension" where
+  [si_eq]: "si_sem_DimTimes x = SI('a) * SI('b)"
+  instance by (intro_classes, simp_all add: si_sem_DimTimes_def, (transfer, simp)+)
 end
 
 text \<open> Similarly, we define division of two SI types and prove that SI types are closed under this. \<close>
 
-typedef 'a UnitInv ("(_\<^sup>-\<^sup>1)" [999] 999) = "UNIV :: unit set" ..
-setup_lifting type_definition_UnitInv
-instantiation UnitInv :: (si_type) si_type
+typedef 'a DimInv ("(_\<^sup>-\<^sup>1)" [999] 999) = "UNIV :: unit set" ..
+setup_lifting type_definition_DimInv
+instantiation DimInv :: (si_type) si_type
 begin
-  definition si_sem_UnitInv :: "('a\<^sup>-\<^sup>1) itself \<Rightarrow> Unit" where
-  [si_eq]: "si_sem_UnitInv x = inverse SI('a)"
-  instance by (intro_classes, simp_all add: si_sem_UnitInv_def, (transfer, simp)+)
+  definition si_sem_DimInv :: "('a\<^sup>-\<^sup>1) itself \<Rightarrow> Dimension" where
+  [si_eq]: "si_sem_DimInv x = inverse SI('a)"
+  instance by (intro_classes, simp_all add: si_sem_DimInv_def, (transfer, simp)+)
 end
 
 
 subsubsection \<open> Syntactic Support for SI type expressions. \<close>
 
 text\<open>A number of type-synonyms allow for more compact notation: \<close>
-type_synonym ('a, 'b) UnitDiv = "'a \<cdot> ('b\<^sup>-\<^sup>1)" (infixl "'/" 69)
+type_synonym ('a, 'b) DimDiv = "'a \<cdot> ('b\<^sup>-\<^sup>1)" (infixl "'/" 69)
 
-type_synonym 'a UnitSquare = "'a \<cdot> 'a" ("(_)\<^sup>2" [999] 999)
-type_synonym 'a UnitCube = "'a \<cdot> 'a \<cdot> 'a" ("(_)\<^sup>3" [999] 999)
-type_synonym 'a UnitQuart = "'a \<cdot> 'a \<cdot> 'a \<cdot> 'a" ("(_)\<^sup>4" [999] 999)
-type_synonym 'a UnitInvSquare = "('a\<^sup>2)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>2" [999] 999)
-type_synonym 'a UnitInvCube = "('a\<^sup>3)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>3" [999] 999)
-type_synonym 'a UnitInvQuart = "('a\<^sup>4)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>4" [999] 999)
+type_synonym 'a DimSquare = "'a \<cdot> 'a" ("(_)\<^sup>2" [999] 999)
+type_synonym 'a DimCube = "'a \<cdot> 'a \<cdot> 'a" ("(_)\<^sup>3" [999] 999)
+type_synonym 'a DimQuart = "'a \<cdot> 'a \<cdot> 'a \<cdot> 'a" ("(_)\<^sup>4" [999] 999)
+type_synonym 'a DimInvSquare = "('a\<^sup>2)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>2" [999] 999)
+type_synonym 'a DimInvCube = "('a\<^sup>3)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>3" [999] 999)
+type_synonym 'a DimInvQuart = "('a\<^sup>4)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup>4" [999] 999)
 
 translations (type) "'a\<^sup>-\<^sup>2" <= (type) "('a\<^sup>2)\<^sup>-\<^sup>1"
 translations (type) "'a\<^sup>-\<^sup>3" <= (type) "('a\<^sup>3)\<^sup>-\<^sup>1"
 translations (type) "'a\<^sup>-\<^sup>4" <= (type) "('a\<^sup>4)\<^sup>-\<^sup>1"
 
-(* Need to add UnitQuart to the print translation *)
+(* Need to add DimQuart to the print translation *)
 
 print_translation \<open>
-  [(@{type_syntax UnitTimes}, 
+  [(@{type_syntax DimTimes}, 
     fn ctx => fn [a, b] => 
       if (a = b) 
-          then Const (@{type_syntax UnitSquare}, dummyT) $ a
+          then Const (@{type_syntax DimSquare}, dummyT) $ a
           else case a of
-            Const (@{type_syntax UnitTimes}, _) $ a1 $ a2 =>
+            Const (@{type_syntax DimTimes}, _) $ a1 $ a2 =>
               if (a1 = a2 andalso a2 = b) 
-                then Const (@{type_syntax UnitCube}, dummyT) $ a1 
+                then Const (@{type_syntax DimCube}, dummyT) $ a1 
                 else case a1 of
-                  Const (@{type_syntax UnitTimes}, _) $ a11 $ a12 =>
+                  Const (@{type_syntax DimTimes}, _) $ a11 $ a12 =>
                     if (a11 = a12 andalso a12 = a2 andalso a2 = b)
-                      then Const (@{type_syntax UnitQuart}, dummyT) $ a11
+                      then Const (@{type_syntax DimQuart}, dummyT) $ a11
                       else raise Match |
             _ => raise Match)]
 \<close>
