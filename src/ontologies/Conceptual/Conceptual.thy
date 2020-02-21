@@ -55,15 +55,18 @@ doc_class F  =
    u          :: "file"
    s          :: "typ list"
    b          :: "(A \<times> C) set"  <= "{}"       (* This is a relation link, roughly corresponding
-                                                to an association class. It can be used to track
-                                                claims to result - relations, for example.*) 
-doc_class G = C +                                               
+                                                 to an association class. It can be used to track
+                                                 claims to result - relations, for example.*) 
+   invs      bxxx :: "\<lambda>\<sigma>. r \<sigma> \<noteq> [] \<and> card(b \<sigma>) \<ge> 3"
+        and  xxx  :: "\<lambda>\<sigma>. properties \<sigma> \<noteq> []"
+
+
+doc_class G = C +
    g :: "thm"  <= "@{thm ''HOL.refl''}"
 
 doc_class M = 
    trace :: "(A + C + D + F) list"
    accepts "A ~~ \<lbrace>C || D\<rbrace>\<^sup>* ~~ \<lbrakk>F\<rbrakk>"
-
 
 
 (*

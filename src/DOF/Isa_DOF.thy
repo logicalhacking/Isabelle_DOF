@@ -34,7 +34,7 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            RegExpInterface    (* Interface to functional regular automata for monitoring *)
            Assert 
            
-  keywords "+=" ":=" "accepts" "rejects"
+  keywords "+=" ":=" "accepts" "rejects" "invs"
 
   and      "title*"     "subtitle*"
            "chapter*"   "section*"    "subsection*"   "subsubsection*" 
@@ -140,7 +140,8 @@ struct
                            inherits_from  : (typ list * string) option,    (* imports *)
                            attribute_decl : (binding*typ*term option)list, (* class local *)
                            rejectS        : term list,
-                           rex            : term list  } (* monitoring regexps --- product semantics*)
+                           rex            : term list,
+                           invs           : ((string * Position.T) * term) list  } (* monitoring regexps --- product semantics*)
 
 
    type docclass_tab = docclass_struct Symtab.table
@@ -410,7 +411,7 @@ fun check_reject_atom cid_long term =
     in  term end
 
 
-fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms thy  = 
+fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms invs thy  = 
 (* This operation is executed in a context where the record has amready been defined, but
    its conversion into a class is not yet done. *)
     let val nn = Context.theory_name thy (* in case that we need the thy-name to identify
@@ -439,7 +440,11 @@ fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms t
         val reg_exps = map (Syntax.read_term_global thy) rexp;
         val _ = map check_regexps reg_exps
         val _ = if not(null rejectS) andalso (null reg_exps) 
-                then  error ("reject clause requires accept clause ! ") else ();
+                then  error ("reject clause requires accept clause ! " ) else ();
+        val _ = if has_duplicates (op =) (map (fst o fst) invs) 
+                then error("invariant labels must be unique"^  Position.here (snd(fst(hd invs)))) 
+                else ()
+        val invs' = map (map_snd(Syntax.read_term_global thy)) invs 
         val info = {params=params', 
                     name = binding, 
                     thy_name = nn, 
@@ -449,7 +454,8 @@ fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms t
                     inherits_from = parent',
                     attribute_decl = fields , 
                     rejectS = rejectS,
-                    rex = reg_exps }
+                    rex = reg_exps, 
+                    invs =  invs'}
     
     in   map_data_global(upd_docclass_tab(Symtab.update(cid_long,info)))(thy)
     end
@@ -638,14 +644,16 @@ fun print_doc_classes b ctxt =
     let val {docobj_tab={tab = x, ...},docclass_tab, ...} = get_data ctxt;
         val _ = writeln "=====================================";    
         fun print_attr (n, ty, NONE) = (Binding.print n)
-          | print_attr (n, ty, SOME t) = (Binding.print n^"("^Syntax.string_of_term ctxt t^")")
-        fun print_class (n, {attribute_decl, id, inherits_from, name, params, thy_name, rejectS, rex}) =
+          | print_attr (n, ty, SOME t)= (Binding.print n^"("^Syntax.string_of_term ctxt t^")")
+        fun print_inv ((lab,pos),trm) = (lab ^"::"^Syntax.string_of_term ctxt trm)
+        fun print_class (n, {attribute_decl, id, inherits_from, name, params, thy_name, rejectS, rex,invs}) =
            (case inherits_from of 
                NONE => writeln ("docclass: "^n)
              | SOME(_,nn) => writeln ("docclass: "^n^" = "^nn^" + ");
             writeln ("    name:    "^(Binding.print name));
             writeln ("    origin:  "^thy_name);
-            writeln ("    attrs:   "^commas (map print_attr attribute_decl))
+            writeln ("    attrs:   "^commas (map print_attr attribute_decl));
+            writeln ("    invs:    "^commas (map print_inv invs))
            );
     in  map print_class (Symtab.dest docclass_tab); 
         writeln "=====================================\n\n\n" 
@@ -1805,7 +1813,7 @@ val trace_attr = ((Binding.make("trace",@{here}), "(doc_class rexp \<times> stri
                   SOME "[]"): ((binding * string * mixfix) * string option)
 
 fun add_doc_class_cmd overloaded (raw_params, binding) 
-                      raw_parent raw_fieldsNdefaults reject_Atoms regexps thy =
+                      raw_parent raw_fieldsNdefaults reject_Atoms regexps invariants thy =
     let
       val ctxt = Proof_Context.init_global thy;
       val params = map (apsnd (Typedecl.read_constraint ctxt)) raw_params;
@@ -1841,13 +1849,13 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
 
     in thy |> Record.add_record overloaded (params', binding) parent' (tag_attr::fields)
            |> (Sign.add_consts_cmd [(binding,  "doc_class Regular_Exp.rexp", Mixfix.NoSyn)])
-           |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms' regexps reject_Atoms
+           |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms' regexps 
+                                                                  reject_Atoms invariants
               (* adding const symbol representing doc-class for Monitor-RegExps.*)
            |> (fn thy => OntoLinkParser.docitem_antiquotation binding (cid thy) thy)
               (* defines the ontology-checked text antiquotation to this document class *)
            
     end;
-
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>doc_class\<close> "define document class"
@@ -1858,10 +1866,12 @@ val _ =
           -- Scan.repeat1 (Parse.const_binding -- Scan.option (\<^keyword>\<open><=\<close> |-- Parse.term))
           )
       -- (   Scan.optional (\<^keyword>\<open>rejects\<close> |-- Parse.enum1 "," Parse.term) []
-          -- Scan.repeat   (\<^keyword>\<open>accepts\<close> |-- Parse.term))
+          -- Scan.repeat   (\<^keyword>\<open>accepts\<close> |-- Parse.term)
+          -- Scan.repeats ((\<^keyword>\<open>invs\<close>) |-- 
+                              Parse.and_list (Args.name_position --| Parse.$$$ "::" -- Parse.term)))
      ) 
-    >> (fn (((overloaded, x), (y, z)),(rejectS,accept_rex)) =>
-           Toplevel.theory (add_doc_class_cmd {overloaded = overloaded} x y z rejectS accept_rex)));
+    >> (fn (((overloaded, x), (y, z)),((rejectS,accept_rex),invs)) =>
+           Toplevel.theory (add_doc_class_cmd {overloaded = overloaded} x y z rejectS accept_rex invs)));
 
 end (* struct *)
 \<close>  

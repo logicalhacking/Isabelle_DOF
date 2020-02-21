@@ -82,20 +82,20 @@ type_synonym tc = technical
    
 text\<open>A rough structuring is modeled as follows:\<close>   
 
-doc_class "definition"  = technical +
+doc_class "definition"  = tc +
    referentiable :: bool <= "True"
    tag :: "string" <=  "''''"
 
-doc_class "theorem"     = technical +
+doc_class "theorem"     = tc +
    referentiable :: bool <= "True"
    tag :: "string" <=  "''''"
 
 text\<open>Note that the following two text-elements are currently set to no-keyword in LNCS style.\<close>
-doc_class "lemma"     = technical +
+doc_class "lemma"     = tc +
    referentiable :: bool <= "True"
    tag :: "string" <=  "''''"
 
-doc_class "corollary"     = technical +
+doc_class "corollary"     = tc +
    referentiable :: bool <= "True"
    tag :: "string" <=  "''''"
 
