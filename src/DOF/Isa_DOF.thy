@@ -122,6 +122,10 @@ fun map_option _ NONE = NONE
 fun map_optional _ s NONE = s 
    |map_optional f _ (SOME x) = f x;
 
+fun map_fst f (x,y) = (f x,y)
+fun map_snd f (x,y) = (x,f y)
+
+
 \<close>
 
 section\<open> A HomeGrown Document Type Management (the ''Model'') \<close>
@@ -303,7 +307,7 @@ fun read_cid ctxt "text" = default_cid (* text = default_cid *)
          handle ERROR _ =>  error("type identifier not a class id:"^cid) 
 
 fun parse_cid_global thy cid = parse_cid (Proof_Context.init_global thy) cid
-fun read_cid_global thy cid = read_cid (Proof_Context.init_global thy) cid
+fun read_cid_global thy cid  = read_cid (Proof_Context.init_global thy) cid
         
 
 fun is_defined_cid_global cid thy = 
@@ -417,16 +421,13 @@ fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms t
         val _   = if is_defined_cid_global cid thy
                   then error("redefinition of document class:"^cid )
                   else ()
+        
+        val parent' = map_option (map_snd (read_cid_global thy)) parent
 
-        val _ = map_option ((read_cid_global thy) o snd) parent
-
-        (* weird construction. TODO replace by some read version *)
-        val _ = writeln ("X::"^cid)
-        val cid_long = parse_cid_global thy cid
-        val _ = writeln ("Y::"^cid_long)
+        (* weird construction. Necessary since parse produces at rare cases 
+           string representations that do no longer have the lexis of a type name. *)
+        val cid_long  = parse_cid_global thy cid
         val cid_long' = parse_cid_global thy cid_long
-        val _ = writeln ("Z::"^cid_long')
-        val _ = writeln ("define_doc_class::" ^ cid_long ^"::"^ cid_long')
         val _ = if cid_long' <> "" then ()
                 else error("Could not construct type from doc_class (lexical problem?)")
 
@@ -445,7 +446,7 @@ fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms t
                     id = id, (* for pide --- really fresh or better reconstruct 
                                 from prior record definition ? For the moment: own
                                 generation of serials ... *)
-                    inherits_from = parent,
+                    inherits_from = parent',
                     attribute_decl = fields , 
                     rejectS = rejectS,
                     rex = reg_exps }
@@ -518,9 +519,9 @@ fun is_defined_cid_local cid ctxt  = let val t = #docclass_tab(get_data ctxt)
 fun get_attributes_local cid ctxt =
     if cid = default_cid then []
     else let val t = #docclass_tab(get_data ctxt)
-             val cid_long = parse_cid ctxt cid (* to assure that the given cid is really a long_cid *)
+             val cid_long = read_cid ctxt cid (* to assure that the given cid is really a long_cid *)
          in  case Symtab.lookup t cid_long of
-               NONE => error("undefined class id for attributes :"^cid)
+               NONE => error("undefined class id for attributes: "^cid)
              | SOME ({inherits_from=NONE,
                        attribute_decl = X, ...}) => [(cid_long,X)]
              | SOME ({inherits_from=SOME(_,father),
@@ -1036,14 +1037,7 @@ fun base_default_term thy cid_long = Const(@{const_name "undefined"},cid_2_cidTy
 
 fun check_classref is_monitor (SOME(cid,pos')) thy = 
           let 
-              (*
-              val _ = if not (DOF_core.is_defined_cid_global cid thy) 
-                      then error("document class undefined") else () *)
-              val cid_long' = DOF_core.parse_cid_global thy cid 
-              
-              
               val cid_long = DOF_core.read_cid_global thy cid  
-              val _ = writeln ("check_classref ::"^cid_long^"::"^cid_long')
                             
               val {id, name=bind_target,rex,...} = the(DOF_core.get_doc_class_global cid_long thy)
               val _ = if is_monitor andalso (null rex orelse cid_long= DOF_core.default_cid ) 
@@ -1051,7 +1045,7 @@ fun check_classref is_monitor (SOME(cid,pos')) thy =
                       else ()
               val markup = docclass_markup false cid id (Binding.pos_of bind_target);
               val ctxt = Context.Theory thy
-              val _ = Context_Position.report_generic ctxt pos' markup;
+              val _    = Context_Position.report_generic ctxt pos' markup;
           in  cid_long 
           end
    | check_classref _ NONE _ = DOF_core.default_cid 
@@ -1819,6 +1813,8 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
       fun cid thy = DOF_core.parse_cid_global thy (Binding.name_of binding)    
       val (parent, ctxt2) = read_parent raw_parent ctxt1;
       val parent_cid_long =  map_optional snd DOF_core.default_cid parent;
+      (* takes class synonyms into account *) 
+      val parent' = map_option (map_snd (K (DOF_core.read_cid_global thy parent_cid_long))) parent
       val raw_fieldsNdefaults' = filter (fn((bi,_,_),_) => Binding.name_of bi <> "trace") 
                                         raw_fieldsNdefaults
       val _ = if length raw_fieldsNdefaults' <> length raw_fieldsNdefaults 
@@ -1843,7 +1839,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
       val _ = map_filter (check_n_filter thy) fields
 
 
-    in thy |> Record.add_record overloaded (params', binding) parent (tag_attr::fields)
+    in thy |> Record.add_record overloaded (params', binding) parent' (tag_attr::fields)
            |> (Sign.add_consts_cmd [(binding,  "doc_class Regular_Exp.rexp", Mixfix.NoSyn)])
            |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms' regexps reject_Atoms
               (* adding const symbol representing doc-class for Monitor-RegExps.*)

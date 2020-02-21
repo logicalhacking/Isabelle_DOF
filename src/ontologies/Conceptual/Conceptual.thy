@@ -15,6 +15,7 @@ theory Conceptual
   imports "../../DOF/Isa_DOF" "../../DOF/Isa_COL"
 begin
 
+
 doc_class A =
    level :: "int option"
    x :: int  
@@ -24,8 +25,11 @@ doc_class B =
    x :: "string"                            (* attributes live in their own name-space *)
    y :: "string list"          <= "[]"      (* and can have arbitrary type constructors *)
                                             (* LaTeX may have problems with this, though *)
-                                            
-doc_class C = B +                           
+
+text\<open>We may even use type-synonyms for class synonyms ...\<close>
+type_synonym XX = B
+
+doc_class C = XX +                           
    z :: "A option"             <= None      (* A LINK, i.e. an attribute that has a type
                                                referring to a document class. Mathematical
                                                relations over document items can be modeled. *)

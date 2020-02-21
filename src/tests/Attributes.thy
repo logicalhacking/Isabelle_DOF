@@ -118,7 +118,9 @@ update_instance*[omega::E, a2+="6"]
 ML\<open> @{docitem_attribute a2::omega};
     val s =  HOLogic.dest_number @{docitem_attribute a2::omega} \<close>
 
-update_instance*[omega::E, x+="''inition''"]
+type_synonym ALFACENTAURI = E
+
+update_instance*[omega::ALFACENTAURI, x+="''inition''"]
 
 ML\<open> val s = HOLogic.dest_string ( @{docitem_attribute x::omega}) \<close>
                             
