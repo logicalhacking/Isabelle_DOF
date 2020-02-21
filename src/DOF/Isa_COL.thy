@@ -42,6 +42,10 @@ doc_class figure   =
    placement        :: placement 
    spawn_columns    :: bool <= True 
 
+ML\<open>(Symtab.defined (#docclass_tab(DOF_core.get_data_global @{theory}))) "side_by_side_figure"\<close>
+
+
+print_doc_classes
 
 doc_class side_by_side_figure = figure +
    anchor           :: "string"
@@ -51,6 +55,8 @@ doc_class side_by_side_figure = figure +
    anchor2          :: "string"
    caption2         :: "string"
 
+print_doc_classes
+
 
 doc_class figure_group = 
    (*  trace :: "doc_class rexp list" <= "[]" automatically generated since monitor clause *)
@@ -59,6 +65,7 @@ doc_class figure_group =
                                         by the current LaTeX style-file. *)
    accepts             "\<lbrace>figure\<rbrace>\<^sup>+"
 
+print_doc_classes
 
 
 (* dito the future table *)
