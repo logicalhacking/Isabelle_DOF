@@ -1,7 +1,7 @@
 section \<open> Tactic Support for SI type expressions. \<close>
 
 theory SI_Proof
-  imports SI_Quantities
+  imports SI_Units
 begin
 
 named_theorems si_transfer
