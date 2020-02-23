@@ -6,7 +6,7 @@ begin
 
 named_theorems si_transfer
 
-definition magQuant :: "'a['u::si_type] \<Rightarrow> 'a" ("\<lbrakk>_\<rbrakk>\<^sub>Q") where
+definition magQuant :: "'a['u::dim_type] \<Rightarrow> 'a" ("\<lbrakk>_\<rbrakk>\<^sub>Q") where
 [si_def]: "magQuant x = mag (fromQ x)"
 
 lemma unit_eq_iff_mag_eq [si_transfer]:
@@ -14,7 +14,7 @@ lemma unit_eq_iff_mag_eq [si_transfer]:
   by (auto simp add: magQuant_def, transfer, simp)
 
 lemma unit_equiv_iff [si_transfer]:
-  fixes x :: "'a['u\<^sub>1::si_type]" and y :: "'a['u\<^sub>2::si_type]"
+  fixes x :: "'a['u\<^sub>1::dim_type]" and y :: "'a['u\<^sub>2::dim_type]"
   shows "x \<cong>\<^sub>Q y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q = \<lbrakk>y\<rbrakk>\<^sub>Q \<and> SI('u\<^sub>1) = SI('u\<^sub>2)"
 proof -
   have "\<forall>t ta. (ta::'a['u\<^sub>2]) = t \<or> mag (fromQ ta) \<noteq> mag (fromQ t)"
@@ -61,7 +61,7 @@ lemma magQuant_numeral [si_eq]: "\<lbrakk>numeral n\<rbrakk>\<^sub>Q = numeral n
   apply (metis magQuant_def magQuant_one magQuant_plus numeral_code(3))
   done
 
-lemma magQuant_mk [si_eq]: "\<lbrakk>UNIT('u::si_type)\<rbrakk>\<^sub>Q = 1"
+lemma magQuant_mk [si_eq]: "\<lbrakk>UNIT('u::dim_type)\<rbrakk>\<^sub>Q = 1"
   by (simp add: magQuant_def, transfer, simp)
 
 text \<open> The following tactic breaks an SI conjecture down to numeric and unit properties \<close>

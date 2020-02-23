@@ -1,6 +1,6 @@
 section \<open> SI Units \<close>
 
-theory SI_Units
+theory SI_Dimensions
   imports Groups_mult 
           HOL.Transcendental 
           "HOL-Eisbach.Eisbach"
@@ -61,9 +61,9 @@ The construction proceeds in three phases:
 
 \<close>
 
-section\<open>The Domains of SI types and SI-tagged types\<close>
+section\<open>The Semantic Domain of Dimensions\<close>
 
-subsection \<open> The \<^theory_text>\<open>Unit\<close>-type and its operations \<close>
+subsection \<open> The DimS-type and its operations \<close>
 
 text \<open> An SI unit associates with each of the seven base unit an integer that denotes the power 
   to which it is raised. We use a record to represent this 7-tuple, to enable code generation. \<close>
@@ -171,12 +171,15 @@ definition is_BaseDim :: "Dimension \<Rightarrow> bool" where
                      \<or> u = 1\<lparr>Current := n\<rparr> \<or> u = 1\<lparr>Temperature := n\<rparr> \<or> u = 1\<lparr>Amount := n\<rparr>
                      \<or> u = 1\<lparr>Intensity := n\<rparr>)"
 
-section\<open>The Syntax and Semantics of SI types and SI-tagged types\<close>
+section\<open>The Syntax and Semantics of Dimension Types\<close>
 
-subsection \<open> Basic SI-types \<close>
+subsection \<open> Dimensions as Types (Basic SI-types)\<close>
 
 text \<open> We provide a syntax for type-expressions; The definition of
-the basic type constructors is straight-forward via a one-elementary set. \<close>
+the basic type constructors is straight-forward via a one-elementary set. 
+The latter is adequate since we need just an abstract syntax for type-expressions,
+so just one value for the \<^verbatim>\<open>dimension\<close>-type symbols. 
+\<close>
 
 typedef Length      = "UNIV :: unit set" .. setup_lifting type_definition_Length
 typedef Mass        = "UNIV :: unit set" .. setup_lifting type_definition_Mass
@@ -218,7 +221,7 @@ we combine its construction also with the "semantics" of SI types in terms of
 
 subsubsection \<open> SI-type expression definition as type-class \<close>
 
-class si_type = finite +
+class dim_type = finite +
   fixes   si_sem :: "'a itself \<Rightarrow> Dimension"
   assumes unitary_unit_pres: "card (UNIV::'a set) = 1"
 
@@ -231,7 +234,7 @@ translations
 text \<open> The sub-set of basic SI type expressions can be characterized by the following
 operation: \<close>
 
-class si_basedim = si_type +
+class si_basedim = dim_type +
   assumes is_BaseDim: "is_BaseDim SI('a)"
 
 subsubsection \<open> SI base type constructors \<close>
@@ -287,7 +290,7 @@ definition si_sem_Intensity :: "Intensity itself \<Rightarrow> Dimension"
 instance by (intro_classes, auto simp add: si_sem_Intensity_def is_BaseDim_def, (transfer, simp)+)
 end
 
-instantiation NoDimension :: si_type
+instantiation NoDimension :: dim_type
 begin
 definition si_sem_NoDimension :: "NoDimension itself \<Rightarrow> Dimension" 
   where [si_def]: "si_sem_NoDimension x = 1"
@@ -303,12 +306,12 @@ subsubsection \<open> Higher SI Type Constructors: Inner Product and Inverse \<c
 text\<open>On the class of SI-types (in which we have already inserted the base SI types), 
 the definitions of the type constructors for inner product and inverse is straight) forward.\<close>
 
-typedef ('a::si_type, 'b::si_type) DimTimes (infixl "\<cdot>" 69) = "UNIV :: unit set" ..
+typedef ('a::dim_type, 'b::dim_type) DimTimes (infixl "\<cdot>" 69) = "UNIV :: unit set" ..
 setup_lifting type_definition_DimTimes
 
 text \<open> We can prove that multiplication of two SI types yields an SI type. \<close>
 
-instantiation DimTimes :: (si_type, si_type) si_type
+instantiation DimTimes :: (dim_type, dim_type) dim_type
 begin
   definition si_sem_DimTimes :: "('a \<cdot> 'b) itself \<Rightarrow> Dimension" where
   [si_eq]: "si_sem_DimTimes x = SI('a) * SI('b)"
@@ -319,7 +322,7 @@ text \<open> Similarly, we define division of two SI types and prove that SI typ
 
 typedef 'a DimInv ("(_\<^sup>-\<^sup>1)" [999] 999) = "UNIV :: unit set" ..
 setup_lifting type_definition_DimInv
-instantiation DimInv :: (si_type) si_type
+instantiation DimInv :: (dim_type) dim_type
 begin
   definition si_sem_DimInv :: "('a\<^sup>-\<^sup>1) itself \<Rightarrow> Dimension" where
   [si_eq]: "si_sem_DimInv x = inverse SI('a)"
