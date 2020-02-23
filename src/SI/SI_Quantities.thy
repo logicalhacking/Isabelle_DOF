@@ -168,11 +168,11 @@ subsection\<open>Operations on SI-tagged types\<close>
 
 lift_definition 
   qtimes :: "('n::comm_ring_1)['a::dim_type] \<Rightarrow> 'n['b::dim_type] \<Rightarrow> 'n['a \<cdot>'b]" (infixl "\<^bold>\<cdot>" 69) is "(*)"
-  by (simp add: si_sem_DimTimes_def times_Quantity_ext_def)
+  by (simp add: dim_ty_sem_DimTimes_def times_Quantity_ext_def)
   
 lift_definition 
   qinverse :: "('n::field)['a::dim_type] \<Rightarrow> 'n['a\<^sup>-\<^sup>1]" ("(_\<^sup>-\<^sup>\<one>)" [999] 999) is "inverse"
-  by (simp add: inverse_Quantity_ext_def si_sem_DimInv_def)
+  by (simp add: inverse_Quantity_ext_def dim_ty_sem_DimInv_def)
 
 abbreviation 
   qdivide :: "('n::field)['a::dim_type] \<Rightarrow> 'n['b::dim_type] \<Rightarrow> 'n['a/'b]" (infixl "\<^bold>'/" 70) where
