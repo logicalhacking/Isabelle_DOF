@@ -17,6 +17,9 @@ theory scholarly_paper
    imports "../../DOF/Isa_COL"
 begin
 
+text\<open>Scholarly Paper provides a number of standard text - elements for scientific papers.
+They were introduced in the following.\<close>
+
 doc_class title =
    short_title :: "string option"  <=  "None"
     
@@ -35,6 +38,16 @@ doc_class author =
 doc_class abstract =
    keywordlist        :: "string list"   <= "[]" 
    principal_theorems :: "thm list"
+
+text\<open>Scholarly Paper is oriented towards the classical domains in science:
+\<^enum> mathematics
+\<^enum> informatics
+\<^enum> natural sciences
+\<^enum> technology (= engineering)
+
+which we formalize into:\<close>
+
+datatype sc_dom = math | info | natsc | eng 
 
 doc_class text_section = text_element +
    main_author :: "author option"  <=  None

@@ -19,16 +19,37 @@ may be used when specifying multiples and fractions of the units.
 The system also specifies names for 22 derived units, such as lumen and 
 watt, for other common physical quantities.
 
-(cited from \<^url>\<open>https://en.wikipedia.org/wiki/International_System_of_Units\<close>).\<close>
+(cited from \<^url>\<open>https://en.wikipedia.org/wiki/International_System_of_Units\<close>).
+
+In more detail, the SI provides the following fundamental concepts:
+\<^enum> \<^emph>\<open>quantities\<close>, i.e. \<^emph>\<open>time\<close>, \<^emph>\<open>length\<close>, \<^emph>\<open>mass\<close>, \<^emph>\<open>electric current\<close>, 
+                       \<^emph>\<open>temperature\<close>, \<^emph>\<open>amount of substance\<close>,\<^emph>\<open>luminous intensity\<close>, 
+                       and other derived quantities such as \<^emph>\<open>volume\<close>;
+\<^enum> \<^emph>\<open>dimensions\<close>, i.e. a set of the symbols  \<^emph>\<open>T\<close>, \<^emph>\<open>L\<close>, \<^emph>\<open>M\<close>, \<^emph>\<open>I\<close>,  \<^emph>\<open>\<Theta>\<close>, \<^emph>\<open>N\<close>, \<^emph>\<open>J\<close>  corresponding
+                      to the above mentioned base quantities,  indexed by an integer exponent
+                 (dimensions were also called \<^emph>\<open>base unit names\<close> or just \<^emph>\<open>base units\<close>);
+\<^enum> \<^emph>\<open>magnitudes\<close>, i.e. a factor or \<^emph>\<open>prefix\<close>
+                 (typically integers, reals, vectors on real or complex numbers);
+\<^enum> \<^emph>\<open>units\<close>, which are basically pairs of magnitudes and dimensions denoting quantities.
+
+
+The purpose of this theory is to model SI units with polymorphic magnitudes in terms of the
+Isabelle/HOL type system. The objective of this construction is reflecting the types of the 
+magnitudes as well as their dimensions in order to allow type-safe calculations on SI units.
+
+Thus, it is possible to express "4500.0 kilogram times meter per second square" which will
+have the type \<open>\<real> [M \<^sup>. L \<^sup>. T\<^sup>-\<^sup>2\<close>, which can be used to infer that this corresponds to the derived
+unit "4.5 kN" (kilo-Newton).  
+\<close>
 
 text\<open> This is an attempt to model the system and its derived entities (cf.
 \<^url>\<open>https://www.quora.com/What-are-examples-of-SI-units\<close>) in Isabelle/HOL.
 The design objective are twofold (and for the case of Isabelle somewhat
-contradictory, see below)
+contradictory, see below).
 
 The construction proceeds in three phases:
-\<^enum> We construct a generic type \<^theory_text>\<open>Unit\<close> which is basically an "inner representation" or
-  "semantic domain" of all SI types. Since SI-types have an interpretation in this domain, 
+\<^enum> We construct a type \<^theory_text>\<open>Dimension\<close> which is basically a "semantic representation" or
+  "semantic domain" of all SI dimensions. Since SI-types have an interpretation in this domain, 
   it serves to give semantics to type-constructors by operations on this domain, too.
   We construct a multiplicative group on it.
 \<^enum> From \<^theory_text>\<open>Unit\<close> we build a  \<^theory_text>\<open>'a SI_tagged_domain\<close> types, i.e. a polymorphic family of values
