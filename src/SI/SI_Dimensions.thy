@@ -222,14 +222,14 @@ we combine its construction also with the "semantics" of SI types in terms of
 subsubsection \<open> SI-type expression definition as type-class \<close>
 
 class dim_type = finite +
-  fixes   si_sem :: "'a itself \<Rightarrow> Dimension"
+  fixes   dim_ty_sem :: "'a itself \<Rightarrow> Dimension"
   assumes unitary_unit_pres: "card (UNIV::'a set) = 1"
 
 syntax
   "_SI" :: "type \<Rightarrow> logic" ("SI'(_')")
 
 translations
-  "SI('a)" == "CONST si_sem TYPE('a)"
+  "SI('a)" == "CONST dim_ty_sem TYPE('a)"
 
 text \<open> The sub-set of basic SI type expressions can be characterized by the following
 operation: \<close>
@@ -243,58 +243,58 @@ text\<open>We embed the basic SI types into the SI type expressions: \<close>
 
 instantiation Length :: si_basedim
 begin
-definition si_sem_Length :: "Length itself \<Rightarrow> Dimension" 
-  where [si_def]: "si_sem_Length x = 1\<lparr>Length := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_Length_def is_BaseDim_def, (transfer, simp)+)
+definition dim_ty_sem_Length :: "Length itself \<Rightarrow> Dimension" 
+  where [si_def]: "dim_ty_sem_Length x = 1\<lparr>Length := 1\<rparr>"
+instance by (intro_classes, auto simp add: dim_ty_sem_Length_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Mass :: si_basedim
 begin
-definition si_sem_Mass :: "Mass itself \<Rightarrow> Dimension" 
-  where [si_def]: "si_sem_Mass x = 1\<lparr>Mass := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_Mass_def is_BaseDim_def, (transfer, simp)+)
+definition dim_ty_sem_Mass :: "Mass itself \<Rightarrow> Dimension" 
+  where [si_def]: "dim_ty_sem_Mass x = 1\<lparr>Mass := 1\<rparr>"
+instance by (intro_classes, auto simp add: dim_ty_sem_Mass_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Time :: si_basedim
 begin
-definition si_sem_Time :: "Time itself \<Rightarrow> Dimension" 
-  where [si_def]: "si_sem_Time x = 1\<lparr>Time := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_Time_def is_BaseDim_def, (transfer, simp)+)
+definition dim_ty_sem_Time :: "Time itself \<Rightarrow> Dimension" 
+  where [si_def]: "dim_ty_sem_Time x = 1\<lparr>Time := 1\<rparr>"
+instance by (intro_classes, auto simp add: dim_ty_sem_Time_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Current :: si_basedim
 begin
-definition si_sem_Current :: "Current itself \<Rightarrow> Dimension" 
-  where [si_def]: "si_sem_Current x = 1\<lparr>Current := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_Current_def is_BaseDim_def, (transfer, simp)+)
+definition dim_ty_sem_Current :: "Current itself \<Rightarrow> Dimension" 
+  where [si_def]: "dim_ty_sem_Current x = 1\<lparr>Current := 1\<rparr>"
+instance by (intro_classes, auto simp add: dim_ty_sem_Current_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Temperature :: si_basedim
 begin
-definition si_sem_Temperature :: "Temperature itself \<Rightarrow> Dimension" 
-  where [si_def]: "si_sem_Temperature x = 1\<lparr>Temperature := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_Temperature_def is_BaseDim_def, (transfer, simp)+)
+definition dim_ty_sem_Temperature :: "Temperature itself \<Rightarrow> Dimension" 
+  where [si_def]: "dim_ty_sem_Temperature x = 1\<lparr>Temperature := 1\<rparr>"
+instance by (intro_classes, auto simp add: dim_ty_sem_Temperature_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Amount :: si_basedim
 begin
-definition si_sem_Amount :: "Amount itself \<Rightarrow> Dimension" 
-  where [si_def]: "si_sem_Amount x = 1\<lparr>Amount := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_Amount_def is_BaseDim_def, (transfer, simp)+)
+definition dim_ty_sem_Amount :: "Amount itself \<Rightarrow> Dimension" 
+  where [si_def]: "dim_ty_sem_Amount x = 1\<lparr>Amount := 1\<rparr>"
+instance by (intro_classes, auto simp add: dim_ty_sem_Amount_def is_BaseDim_def, (transfer, simp)+)
 end   
 
 instantiation Intensity :: si_basedim
 begin
-definition si_sem_Intensity :: "Intensity itself \<Rightarrow> Dimension" 
-  where [si_def]: "si_sem_Intensity x = 1\<lparr>Intensity := 1\<rparr>"
-instance by (intro_classes, auto simp add: si_sem_Intensity_def is_BaseDim_def, (transfer, simp)+)
+definition dim_ty_sem_Intensity :: "Intensity itself \<Rightarrow> Dimension" 
+  where [si_def]: "dim_ty_sem_Intensity x = 1\<lparr>Intensity := 1\<rparr>"
+instance by (intro_classes, auto simp add: dim_ty_sem_Intensity_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation NoDimension :: dim_type
 begin
-definition si_sem_NoDimension :: "NoDimension itself \<Rightarrow> Dimension" 
-  where [si_def]: "si_sem_NoDimension x = 1"
-instance by (intro_classes, auto simp add: si_sem_NoDimension_def is_BaseDim_def, (transfer, simp)+)
+definition dim_ty_sem_NoDimension :: "NoDimension itself \<Rightarrow> Dimension" 
+  where [si_def]: "dim_ty_sem_NoDimension x = 1"
+instance by (intro_classes, auto simp add: dim_ty_sem_NoDimension_def is_BaseDim_def, (transfer, simp)+)
 end
 
 lemma base_units [simp]: 
@@ -313,9 +313,9 @@ text \<open> We can prove that multiplication of two SI types yields an SI type.
 
 instantiation DimTimes :: (dim_type, dim_type) dim_type
 begin
-  definition si_sem_DimTimes :: "('a \<cdot> 'b) itself \<Rightarrow> Dimension" where
-  [si_eq]: "si_sem_DimTimes x = SI('a) * SI('b)"
-  instance by (intro_classes, simp_all add: si_sem_DimTimes_def, (transfer, simp)+)
+  definition dim_ty_sem_DimTimes :: "('a \<cdot> 'b) itself \<Rightarrow> Dimension" where
+  [si_eq]: "dim_ty_sem_DimTimes x = SI('a) * SI('b)"
+  instance by (intro_classes, simp_all add: dim_ty_sem_DimTimes_def, (transfer, simp)+)
 end
 
 text \<open> Similarly, we define division of two SI types and prove that SI types are closed under this. \<close>
@@ -324,9 +324,9 @@ typedef 'a DimInv ("(_\<^sup>-\<^sup>1)" [999] 999) = "UNIV :: unit set" ..
 setup_lifting type_definition_DimInv
 instantiation DimInv :: (dim_type) dim_type
 begin
-  definition si_sem_DimInv :: "('a\<^sup>-\<^sup>1) itself \<Rightarrow> Dimension" where
-  [si_eq]: "si_sem_DimInv x = inverse SI('a)"
-  instance by (intro_classes, simp_all add: si_sem_DimInv_def, (transfer, simp)+)
+  definition dim_ty_sem_DimInv :: "('a\<^sup>-\<^sup>1) itself \<Rightarrow> Dimension" where
+  [si_eq]: "dim_ty_sem_DimInv x = inverse SI('a)"
+  instance by (intro_classes, simp_all add: dim_ty_sem_DimInv_def, (transfer, simp)+)
 end
 
 
