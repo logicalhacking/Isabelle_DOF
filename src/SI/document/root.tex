@@ -1,0 +1,151 @@
+\documentclass[11pt,a4paper]{book}
+\usepackage{isabelle,isabellesym}
+\usepackage{graphicx}
+\graphicspath {{figures/}}
+
+% further packages required for unusual symbols (see also
+% isabellesym.sty), use only when needed
+
+
+\usepackage{latexsym}
+\usepackage{amssymb}
+  %for \<leadsto>, \<box>, \<diamond>, \<sqsupset>, \<mho>, \<Join>,
+  %\<lhd>, \<lesssim>, \<greatersim>, \<lessapprox>, \<greaterapprox>,
+  %\<triangleq>, \<yen>, \<lozenge>
+
+%\usepackage[greek,english]{babel}
+  %option greek for \<euro>
+  %option english (default language) for \<guillemotleft>, \<guillemotright>
+
+%\usepackage[latin1]{inputenc}
+  %for \<onesuperior>, \<onequarter>, \<twosuperior>, \<onehalf>,
+  %\<threesuperior>, \<threequarters>, \<degree>
+
+%\usepackage[only,bigsqcap]{stmaryrd}
+  %for \<Sqinter>
+
+%\usepackage{eufrak}
+  %for \<AA> ... \<ZZ>, \<aa> ... \<zz> (also included in amssymb)
+
+%\usepackage{textcomp}
+  %for \<cent>, \<currency>
+
+% this should be the last package used
+\usepackage{pdfsetup}
+
+% urls in roman style, theory text in math-similar italics
+\urlstyle{rm}
+\isabellestyle{it}
+\newcommand{\HOL}[1]{\verb{HOL}}
+\newcommand{\eg}[1]{e.g.}
+\renewcommand{\isasymdegree}{XXX}
+
+
+\begin{document}
+
+\title{Type and Proof Support for SI Units}
+\author{ Simon Foster \and Burkhart Wolff}
+\maketitle
+
+\textbf{ Abstract } 
+The International System of Units 
+(SI, abbreviated from the French Syst\`eme international (d’unit\'es)) is the modern form of 
+the metric system and is the most widely used system of measurement. It comprises a coherent 
+system of units of measurement built on seven base units, which are the second, metre, kilogram, 
+ampere, kelvin, mole, candela, and a set of twenty prefixes to the unit names and unit symbols 
+that may be used when specifying multiples and fractions of the units. The system also specifies 
+names for 22 derived units, such as lumen and watt, for other common physical quantities. 
+
+This theory represents a formal model of SI Units together with a deep integration in Isabelle's
+type system: unitswere represented in a way that they have a \emph{unit type} comprising its 
+\emph{magnitude type} and its physical \emph{dimension}. Congruences on dimensions were supported. 
+Our construction is validated by a test-set of known congruences between SI Units.
+
+\tableofcontents
+
+% sane default for proof documents
+\parindent 0pt\parskip 0.5ex
+
+
+\chapter{}
+
+The International System of Units (SI, abbreviated from the French
+Système international (d'unités)) is the modern form of the metric
+system and is the most widely used system of measurement. It comprises
+a coherent system of units of measurement built on seven base units,
+which are the second, metre, kilogram, ampere, kelvin, mole, candela,
+and a set of twenty prefixes to the unit names and unit symbols that
+may be used when specifying multiples and fractions of the units.
+The system also specifies names for 22 derived units, such as lumen and
+watt, for other common physical quantities.
+
+(cited from \url{https://en.wikipedia.org/wiki/International_System_of_Units}).
+
+In more detail, the SI provides the following fundamental concepts:
+
+%
+\begin{enumerate}%
+\item \emph{quantities}, i.e. \emph{time}, \emph{length}, \emph{mass}, \emph{electric current},
+\emph{temperature}, \emph{amount of substance},\emph{luminous intensity},
+and other derived quantities such as \emph{volume};
+
+\item \emph{dimensions}, i.e. a set of the symbols  \isa{T}, \isa{L}, \isa{M}, \isa{I},  \isa{{\isasymTheta}}, \isa{N}, \isa{J}  corresponding
+to the above mentioned base quantities,  indexed by an integer exponent
+(dimensions were also called \emph{base unit names} or just \emph{base units});
+
+\item \emph{magnitudes}, i.e. a factor or \emph{prefix}
+(typically integers, reals, vectors on real or complex numbers);
+
+\item \emph{units}, which are basically pairs of magnitudes and dimensions denoting quantities.
+\end{enumerate}
+
+
+The purpose of this theory is to model SI units with polymorphic magnitudes in terms of the
+Isabelle/HOL type system. The objective of this construction is reflecting the types of the
+magnitudes as well as their dimensions in order to allow type-safe calculations on SI units.
+
+Thus, it is possible to express "4500.0 kilogram times meter per second square" which will
+have the type \isa{{\isasymreal}\ {\isacharbrackleft}M\ \isactrlsup {\isachardot}\ L\ \isactrlsup {\isachardot}\ T\isactrlsup {\isacharminus}\isactrlsup {\isadigit{2}}}, which can be used to infer that this corresponds to the derived
+unit "4.5 kN" (kilo-Newton).  %
+%
+This is an attempt to model the system and its derived entities (cf.
+\url{https://www.quora.com/What-are-examples-of-SI-units}) in Isabelle/HOL.
+The design objective are twofold (and for the case of Isabelle somewhat
+contradictory, see below).
+
+The construction proceeds in three phases:
+
+\begin{enumerate}%
+\item We construct a type \isa{Dimension} which is basically a "semantic representation" or
+"semantic domain" of all SI dimensions. Since SI-types have an interpretation in this domain,
+it serves to give semantics to type-constructors by operations on this domain, too.
+We construct a multiplicative group on it.
+
+\item From \isa{Unit} we build a  \isa{{\isacharprime}a\ SI{\isacharunderscore}tagged{\isacharunderscore}domain} types, i.e. a polymorphic family of values
+tagged with values from \isa{Unit}. We construct multiplicative and additive
+groups over it.
+
+\item We construct a type-class characterizing SI - type expressions
+and types tagged with SI - type expressions; this construction paves the
+way to overloaded interpretation functions from SI type-expressions to
+
+\end{enumerate}%
+
+\cite{nipkow.ea:isabelle:2002}
+
+
+% generated text of all theories
+\chapter{Appendix: The Theories}
+
+\input{session}
+
+% optional bibliography
+\bibliographystyle{abbrv}
+\bibliography{adb-long,root}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
