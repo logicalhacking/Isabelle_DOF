@@ -4,7 +4,7 @@ theory SI_Units
   imports SI_Dimensions
 begin
 
-section \<open> The semantic SI-\<^theory_text>\<open>Unit\<close>-Type and its Operations \<close>
+section \<open> The Semantic SI-Unit-Type and its Operations \<close>
 
 record 'a Unit =
   mag  :: 'a        \<comment> \<open> Magnitude of the unit \<close>
@@ -94,7 +94,7 @@ end
 instance Unit_ext :: (order, order) order
   by (intro_classes, auto simp add: less_Unit_ext_def less_eq_Unit_ext_def)
 
-section \<open> The abstract SI-\<^theory_text>\<open>Unit\<close>-type and its Operations \<close>
+section \<open> The Abstract SI-\<^theory_text>\<open>Unit\<close>-Type and its Operations \<close>
 
 text\<open>We 'lift' SI type expressions to SI unit type expressions as follows:\<close>
 
@@ -111,17 +111,22 @@ definition coerceUnit :: "'u\<^sub>2 itself \<Rightarrow> 'a['u\<^sub>1::dim_typ
 
 subsection\<open>Predicates on Abstract SI-\<^theory_text>\<open>Unit\<close>-types\<close>
 
-text \<open> Two SI Unit types are equivalent if they have the same dimensions
-       (not necessarily dimension types). This is the whole point of the construction. \<close>
+text \<open> Two SI Unit types are orderable if their magnitude type is of class @{class "order"},
+       and have the same dimensions (not necessarily dimension types).\<close>
 
 lift_definition qless_eq :: 
                 "'n::order['a::dim_type] \<Rightarrow> 'n['b::dim_type] \<Rightarrow> bool" (infix "\<lesssim>\<^sub>Q" 50) is "(\<le>)" .
 
-lift_definition qequiv :: 
+
+text\<open> Two SI Unit types are equivalent if they have the same dimensions
+      (not necessarily dimension types). This equivalence the a vital point 
+      of the overall construction of SI Units. \<close>
+
+lift_definition qequiv ::
                 "'n['a::dim_type] \<Rightarrow> 'n['b::dim_type] \<Rightarrow> bool" (infix "\<cong>\<^sub>Q" 50) is  "(=)" .
 
-subsection\<open>The Equivalence on Abstract SI-\<^theory_text>\<open>Unit\<close>-types\<close>
-text\<open>This gives us an equivalence, but, unfortunately, not a congruence.\<close>
+subsection\<open>The Equivalence on Abstract SI-\<^theory_text>\<open>Unit\<close>-Types\<close>
+text\<open>The latter predicate gives us an equivalence, but, unfortunately, not a congruence.\<close>
 
 lemma qequiv_refl [simp]: "a \<cong>\<^sub>Q a"
   by (simp add: qequiv_def)
@@ -167,7 +172,7 @@ lemma qeq:
   shows "SI('u\<^sub>1) = SI('u\<^sub>2::dim_type)"
   by (metis (full_types) qequiv.rep_eq assms fromQ mem_Collect_eq)
 
-subsection\<open>Operations on Abstract Unit types\<close>
+subsection\<open>Operations on Abstract SI-Unit-Types\<close>
 
 lift_definition 
   qtimes :: "('n::comm_ring_1)['a::dim_type] \<Rightarrow> 'n['b::dim_type] \<Rightarrow> 'n['a \<cdot>'b]" (infixl "\<^bold>\<cdot>" 69) is "(*)"
