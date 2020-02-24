@@ -59,7 +59,9 @@ names for 22 derived units, such as lumen and watt, for other common physical qu
 This theory represents a formal model of SI Units together with a deep integration in Isabelle's
 type system: unitswere represented in a way that they have a \emph{unit type} comprising its 
 \emph{magnitude type} and its physical \emph{dimension}. Congruences on dimensions were supported. 
-Our construction is validated by a test-set of known congruences between SI Units.
+Our construction is validated by a test-set of known equivalences between SI Units.
+Moreover, the presented theory can be used for type-safe conversions between the SI system and
+others, like the British Imperial System (BIS).
 
 \tableofcontents
 
@@ -101,20 +103,29 @@ to the above mentioned base quantities,  indexed by an integer exponent
 
 
 The purpose of this theory is to model SI units with polymorphic magnitudes in terms of the
-Isabelle/HOL type system. The objective of this construction is reflecting the types of the
-magnitudes as well as their dimensions in order to allow type-safe calculations on SI units.
+Isabelle/HOL\cite{nipkow.ea:isabelle:2002} type system. The objective of this construction is 
+reflecting the types of the magnitudes as well as their dimensions in order to allow type-safe 
+calculations on SI units.
 
-Thus, it is possible to express "4500.0 kilogram times meter per second square" which will
-have the type \isa{{\isasymreal}\ {\isacharbrackleft}M\ \isactrlsup {\isachardot}\ L\ \isactrlsup {\isachardot}\ T\isactrlsup {\isacharminus}\isactrlsup {\isadigit{2}}}, which can be used to infer that this corresponds to the derived
-unit "4.5 kN" (kilo-Newton).  %
+As a result, it is possible to express "4500.0 kilogram times meter per second square" which will
+have the type \isa{{\isasymreal}\ {\isacharbrackleft}M\ \isactrlsup {\isachardot}\ L\ \isactrlsup 
+{\isachardot}\ T\isactrlsup {\isacharminus}\isactrlsup {\isadigit{2}}}, which can be used to infer 
+that this corresponds to the derived unit "4.5 kN" (kilo-Newton).  %
 %
 This is an attempt to model the system and its derived entities (cf.
-\url{https://www.quora.com/What-are-examples-of-SI-units}) in Isabelle/HOL.
-The design objective are twofold (and for the case of Isabelle somewhat
-contradictory, see below).
+\url{https://www.quora.com/What-are-examples-of-SI-units}) in Isabelle/HOL,
+both on a type-checking as well as a proof-support perspective.
+Our design objective are for the case of Isabelle somewhat contradictory.
+Since the Isabelle type system follows the Curry-style paradigm, which can be 
+characterized by: "as implicit as possible, inference as automatic as possible", it is not
+possible to do computations on type-terms (in contrast to, for example, Coq). We therefore
+need a more involved construction using Isabelle's type-classes to establish a semantic 
+interpretation on a certain class of types, which paves the way to derive rules that
+establish and exploit type isomorphisms implicitely. For example, the implicit
+type isomorhisms for the dimensions $T^{-2} * T$ and $T^{-1}$ is dealt with appropriate
+rules on terms and a special form of equality. 
 
 The construction proceeds in three phases:
-
 \begin{enumerate}%
 \item We construct a type \isa{Dimension} which is basically a "semantic representation" or
 "semantic domain" of all SI dimensions. Since SI-types have an interpretation in this domain,
@@ -128,10 +139,8 @@ groups over it.
 \item We construct a type-class characterizing SI - type expressions
 and types tagged with SI - type expressions; this construction paves the
 way to overloaded interpretation functions from SI type-expressions to
-
 \end{enumerate}%
 
-\cite{nipkow.ea:isabelle:2002}
 
 
 % generated text of all theories
