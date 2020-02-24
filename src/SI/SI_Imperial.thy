@@ -1,4 +1,4 @@
-section \<open> Imperial Units via SI \<close>
+section \<open> Imperial Units via SI-Units\<close>
 
 theory SI_Imperial
   imports SI_Accepted

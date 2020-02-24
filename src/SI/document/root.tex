@@ -69,7 +69,7 @@ others, like the British Imperial System (BIS).
 \parindent 0pt\parskip 0.5ex
 
 
-\chapter{}
+\chapter{Introduction to SI Units in Isabelle}
 
 The International System of Units (SI, abbreviated from the French
 Système international (d'unités)) is the modern form of the metric
@@ -101,47 +101,66 @@ to the above mentioned base quantities,  indexed by an integer exponent
 \item \emph{units}, which are basically pairs of magnitudes and dimensions denoting quantities.
 \end{enumerate}
 
+Note that \emph{quantities} are understood as idealized  \emph{physical concepts}, and are sharply 
+distinguished from  \emph{units} representing \emph{a means to measure} them. The difference is 
+roughly similar between words (or: symbols) and notions. This distinction reflects the fact that
+these concepts have been at times heavily questioned in the history of physics; the interested
+reader is referred to the debate around the "relativistic mass" at in the twenties of the last century.
 
-The purpose of this theory is to model SI units with polymorphic magnitudes in terms of the
-Isabelle/HOL\cite{nipkow.ea:isabelle:2002} type system. The objective of this construction is 
-reflecting the types of the magnitudes as well as their dimensions in order to allow type-safe 
+The purpose of the presented theory is to model SI units with polymorphic magnitudes inside the
+Isabelle/HOL\cite{nipkow.ea:isabelle:2002} system. The objective of our construction is to
+reflect the types of the magnitudes as well as their dimensions in order to allow type-safe 
 calculations on SI units.
 
-As a result, it is possible to express "4500.0 kilogram times meter per second square" which will
-have the type \isa{{\isasymreal}\ {\isacharbrackleft}M\ \isactrlsup {\isachardot}\ L\ \isactrlsup 
-{\isachardot}\ T\isactrlsup {\isacharminus}\isactrlsup {\isadigit{2}}}, which can be used to infer 
-that this corresponds to the derived unit "4.5 kN" (kilo-Newton).  %
-%
-This is an attempt to model the system and its derived entities (cf.
-\url{https://www.quora.com/What-are-examples-of-SI-units}) in Isabelle/HOL,
-both on a type-checking as well as a proof-support perspective.
-Our design objective are for the case of Isabelle somewhat contradictory.
+As a result, it is possible to express "4500.0 kilogram times meter per second square" which can
+have the type 
+\isa{{\isasymreal}\ {\isacharbrackleft}M\ \isactrlsup {\isachardot}\ L\ \isactrlsup 
+ {\isachardot}\ T\isactrlsup {\isacharminus}\isactrlsup {\isadigit{3}} 
+ \isactrlsup {\isachardot}\   T\isactrlsup {\isadigit{1}}{\isacharbrackright}}. 
+For units of this type we can infer that this corresponds to the derived unit "4.5 kN" (kilo-Newton) 
+ of type \isa{{\isasymreal}\ {\isacharbrackleft}M\ \isactrlsup {\isachardot}\ L\ \isactrlsup 
+ {\isachardot}\ T\isactrlsup {\isacharminus}\isactrlsup {\isadigit{2}}{\isacharbrackright}}.  
+
+This is an attempt to model the standard SI system and its derived entities (cf.
+\url{https://www.quora.com/What-are-examples-of-SI-units}),
+both from a type-checking as well as a proof-support perspective.
+These design objectives are for the case of Isabelle system somewhat contradictory.
 Since the Isabelle type system follows the Curry-style paradigm, which can be 
-characterized by: "as implicit as possible, inference as automatic as possible", it is not
+characterized by: "be as implicit as possible, inference as automatic as possible", it is not
 possible to do computations on type-terms (in contrast to, for example, Coq). We therefore
 need a more involved construction using Isabelle's type-classes to establish a semantic 
-interpretation on a certain class of types, which paves the way to derive rules that
+interpretation on certain classes of types. This paves the way to derive rules that
 establish and exploit type isomorphisms implicitely. For example, the implicit
 type isomorhisms for the dimensions $T^{-2} * T$ and $T^{-1}$ is dealt with appropriate
-rules on terms and a special form of equality. 
+rules on terms and a special form of equivalence. 
 
-The construction proceeds in three phases:
+Our construction proceeds in three phases:
 \begin{enumerate}%
 \item We construct a type \isa{Dimension} which is basically a "semantic representation" or
 "semantic domain" of all SI dimensions. Since SI-types have an interpretation in this domain,
 it serves to give semantics to type-constructors by operations on this domain, too.
 We construct a multiplicative group on it.
 
-\item From \isa{Unit} we build a  \isa{{\isacharprime}a\ SI{\isacharunderscore}tagged{\isacharunderscore}domain} types, i.e. a polymorphic family of values
-tagged with values from \isa{Unit}. We construct multiplicative and additive
-groups over it.
-
-\item We construct a type-class characterizing SI - type expressions
-and types tagged with SI - type expressions; this construction paves the
-way to overloaded interpretation functions from SI type-expressions to
+\item From \isa{Dimension} we build a language of type-constructors of \isa{dimS}-types, 
+ captured in a type class \isa{dim-types} giving it a pseudo-inductive structure. Types of
+ this class are required to have  an interpretation function into \isa{Dimension}'s, which
+ allows for establishing equivalences on \isa{dim-types}.
+      
+\item We construct a SI Unit-type as a pair of a polymorphic magnitude and a dimension type.
+  This type will be inhabited by all basic SI units and predicates expressing their relationship.
 \end{enumerate}%
 
+On this basis, an algebra of SI units can be derived; while types can not be "touched" inside
+an Isabelle/HOL logic, it is possible to transform unit types by applying rules of this algebra.
+Tactical support over this algebra is provided enabling the construction of normal forms on 
+both units and their type.  
 
+\subsubsection{Previous Attempts.} The work of \cite{HayesBrendan95} represents to our knowledge a
+first attempt to formalize SI units in Z, thus a similar language of HOL. While our typing
+representation is more rigourous due to the use of type-classes, this works lacks any attempt
+to support formal and automated deduction on Si unit equivalences.
+
+MORE TO COME.
 
 % generated text of all theories
 \chapter{Appendix: The Theories}

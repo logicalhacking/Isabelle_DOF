@@ -2,24 +2,6 @@ theory SI
   imports Main
 begin
 
-text\<open>
-The International System of Units (SI, abbreviated from the French 
-Système international (d'unités)) is the modern form of the metric 
-system and is the most widely used system of measurement. It comprises
-a coherent system of units of measurement built on seven base units, 
-which are the second, metre, kilogram, ampere, kelvin, mole, candela, 
-and a set of twenty prefixes to the unit names and unit symbols that
-may be used when specifying multiples and fractions of the units. 
-The system also specifies names for 22 derived units, such as lumen and 
-watt, for other common physical quantities.
-
-(cited from \<^url>\<open>https://en.wikipedia.org/wiki/International_System_of_Units\<close>).\<close>
-
-text\<open> This is an attempt to model the system and its derived entities (cf.
-\<^url>\<open>https://www.quora.com/What-are-examples-of-SI-units\<close>) in Isabelle/HOL.
-The design objective are twofold (and for the case of Isabelle somewhat
-contradictory, see below)
-\<close>
 
 section\<open>SI's as Values.\<close>
 

@@ -1,4 +1,4 @@
-section \<open> SI Units \<close>
+section \<open> SI Dimensions \<close>
 
 theory SI_Dimensions
   imports Groups_mult 
@@ -10,7 +10,7 @@ named_theorems si_def and si_eq
 
 section\<open>The Semantic Domain of Dimensions\<close>
 
-subsection \<open> The DimS-type and its operations \<close>
+subsection \<open> The Dimension-type and its operations \<close>
 
 text \<open> An SI unit associates with each of the seven base unit an integer that denotes the power 
   to which it is raised. We use a record to represent this 7-tuple, to enable code generation. \<close>
@@ -120,7 +120,7 @@ definition is_BaseDim :: "Dimension \<Rightarrow> bool" where
 
 section\<open>The Syntax and Semantics of Dimension Types\<close>
 
-subsection \<open> Dimensions as Types (Basic SI-types)\<close>
+subsection \<open> Basic Dimensions as Types (Basic SI-types)\<close>
 
 text \<open> We provide a syntax for type-expressions; The definition of
 the basic type constructors is straight-forward via a one-elementary set. 
@@ -155,7 +155,7 @@ translations
   (type) "N" <= (type) "Amount"
   (type) "J" <= (type) "Intensity"
 
-subsection \<open> SI-type expressions and SI-type interpretation \<close>
+subsection \<open>Dimension Type Expressions and their Interpretation \<close>
 
 text \<open> The case for the construction of the multiplicative and inverse operators requires ---
 thus, the unary and binary operators on our SI type language --- require that their arguments
@@ -277,7 +277,7 @@ begin
 end
 
 
-subsubsection \<open> Syntactic Support for SI type expressions. \<close>
+subsection \<open> Syntactic Support for dim-type expressions. \<close>
 
 text\<open>A number of type-synonyms allow for more compact notation: \<close>
 type_synonym ('a, 'b) DimDiv = "'a \<cdot> ('b\<^sup>-\<^sup>1)" (infixl "'/" 69)

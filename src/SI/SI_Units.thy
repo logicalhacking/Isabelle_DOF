@@ -4,7 +4,7 @@ theory SI_Units
   imports SI_Dimensions
 begin
 
-subsection \<open> The \<^theory_text>\<open>Unit\<close>-type and its Operations \<close>
+section \<open> The semantic SI-\<^theory_text>\<open>Unit\<close>-Type and its Operations \<close>
 
 record 'a Unit =
   mag  :: 'a        \<comment> \<open> Magnitude of the unit \<close>
@@ -94,7 +94,8 @@ end
 instance Unit_ext :: (order, order) order
   by (intro_classes, auto simp add: less_Unit_ext_def less_eq_Unit_ext_def)
 
-subsection \<open> SI Unit Types \<close>
+section \<open> The abstract SI-\<^theory_text>\<open>Unit\<close>-type and its Operations \<close>
+
 text\<open>We 'lift' SI type expressions to SI unit type expressions as follows:\<close>
 
 typedef (overloaded) ('n, 'u::dim_type) UnitT ("_[_]" [999,0] 999) 
@@ -108,9 +109,7 @@ text \<open> Coerce values when their dimensions are equivalent \<close>
 definition coerceUnit :: "'u\<^sub>2 itself \<Rightarrow> 'a['u\<^sub>1::dim_type] \<Rightarrow> 'a['u\<^sub>2::dim_type]" where
 "SI('u\<^sub>1) = SI('u\<^sub>2) \<Longrightarrow> coerceUnit t x = (toQ (fromQ x))"
 
-section\<open>Operations Unit types via their Semantic Domains\<close>
-
-subsection\<open>Predicates on SI-tagged types\<close>
+subsection\<open>Predicates on Abstract SI-\<^theory_text>\<open>Unit\<close>-types\<close>
 
 text \<open> Two SI Unit types are equivalent if they have the same dimensions
        (not necessarily dimension types). This is the whole point of the construction. \<close>
@@ -121,6 +120,7 @@ lift_definition qless_eq ::
 lift_definition qequiv :: 
                 "'n['a::dim_type] \<Rightarrow> 'n['b::dim_type] \<Rightarrow> bool" (infix "\<cong>\<^sub>Q" 50) is  "(=)" .
 
+subsection\<open>The Equivalence on Abstract SI-\<^theory_text>\<open>Unit\<close>-types\<close>
 text\<open>This gives us an equivalence, but, unfortunately, not a congruence.\<close>
 
 lemma qequiv_refl [simp]: "a \<cong>\<^sub>Q a"
@@ -167,7 +167,7 @@ lemma qeq:
   shows "SI('u\<^sub>1) = SI('u\<^sub>2::dim_type)"
   by (metis (full_types) qequiv.rep_eq assms fromQ mem_Collect_eq)
 
-subsection\<open>Operations on Unit types\<close>
+subsection\<open>Operations on Abstract Unit types\<close>
 
 lift_definition 
   qtimes :: "('n::comm_ring_1)['a::dim_type] \<Rightarrow> 'n['b::dim_type] \<Rightarrow> 'n['a \<cdot>'b]" (infixl "\<^bold>\<cdot>" 69) is "(*)"

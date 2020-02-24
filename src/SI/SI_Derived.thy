@@ -1,4 +1,4 @@
-section \<open> Derived Units\<close>
+section \<open> Derived SI-Units\<close>
 
 theory SI_Derived
   imports SI_Prefix

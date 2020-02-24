@@ -1,4 +1,4 @@
-section \<open> Tactic Support for SI type expressions. \<close>
+section \<open>Basic Proof Support for SI Units \<close>
 
 theory SI_Proof
   imports SI_Units
