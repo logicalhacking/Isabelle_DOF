@@ -182,6 +182,31 @@
     \end{isamarkuptext}%
  } 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newisadof{text.scholarly_paper.lemma}%
+[label=,type=%
+ , scholarly_paper.lemma.tag     =%
+ , Isa_COL.text_element.level         =%
+ , Isa_COL.text_element.referentiable =%
+ , Isa_COL.text_element.variants      =%
+ , scholarly_paper.text_section.main_author  =%
+ , scholarly_paper.text_section.fixme_list   =%
+ , Isa_COL.text_element.level                =%
+ , scholarly_paper.technical.definition_list =%
+ , scholarly_paper.technical.status          =%
+ ]
+ [1]
+ {%
+    \begin{isamarkuptext}%
+        \ifthenelse{\equal{\commandkey{scholarly_paper.technical.status}}{semiformal}}{
+              \ifthenelse{\equal{\commandkey{scholarly_paper.lemma.tag}} {} }  
+                         {\begin{lemma} \label{\commandkey{label}} #1 \end{lemma} }
+                         {\begin{lemma} [\commandkey{scholarly_paper.theorem.tag}] \label{\commandkey{label}} #1 \end{lemma}}
+          }{%     
+          #1%
+        }%
+    \end{isamarkuptext}%
+ } 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newisadof{text.scholarly_paper.theorem}%
 [label=,type=%
  , scholarly_paper.theorem.tag     =%
@@ -206,57 +231,6 @@
         }%
     \end{isamarkuptext}%
  } 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newisadof{text.scholarly_paper.lemma}%
-[label=,type=%
- , scholarly_paper.lemma.tag     =%
- , Isa_COL.text_element.level         =%
- , Isa_COL.text_element.referentiable =%
- , Isa_COL.text_element.variants      =%
- , scholarly_paper.text_section.main_author  =%
- , scholarly_paper.text_section.fixme_list   =%
- , Isa_COL.text_element.level                =%
- , scholarly_paper.technical.definition_list =%
- , scholarly_paper.technical.status          =%
- ]
- [1]
- {%
-    \begin{isamarkuptext}%
-        \ifthenelse{\equal{\commandkey{scholarly_paper.technical.status}}{semiformal}}{
-              \ifthenelse{\equal{\commandkey{scholarly_paper.lemma.tag}} {} }  
-                         {\begin{lemma} \label{\commandkey{label}} #1 \end{lemma} }
-                         {\begin{{} [\commandkey{scholarly_paper.lemma.tag}] \label{\commandkey{label}} #1 \end{{}}
-          }{%     
-          #1%
-        }%
-    \end{isamarkuptext}%
- } 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newisadof{text.scholarly_paper.corollary}%
-[label=,type=%
- , scholarly_paper.corollary.tag     =%
- , Isa_COL.text_element.level         =%
- , Isa_COL.text_element.referentiable =%
- , Isa_COL.text_element.variants      =%
- , scholarly_paper.text_section.main_author  =%
- , scholarly_paper.text_section.fixme_list   =%
- , Isa_COL.text_element.level                =%
- , scholarly_paper.technical.definition_list =%
- , scholarly_paper.technical.status          =%
- ]
- [1]
- {%
-    \begin{isamarkuptext}%
-        \ifthenelse{\equal{\commandkey{scholarly_paper.technical.status}}{semiformal}}{
-              \ifthenelse{\equal{\commandkey{scholarly_paper.corollary.tag}} {} }  
-                         {\begin{corollary} \label{\commandkey{label}} #1 \end{corollary} }
-                         {\begin{corollary} [\commandkey{scholarly_paper.corollary.tag}] \label{\commandkey{label}} #1 \end{corollary}}
-          }{%     
-          #1%
-        }%
-    \end{isamarkuptext}%
- } 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newisadof{text.scholarly_paper.example}%
 [label=,type=%

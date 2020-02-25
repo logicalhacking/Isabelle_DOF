@@ -172,6 +172,7 @@ class dim_type = finite +
   fixes   dim_ty_sem :: "'a itself \<Rightarrow> Dimension"
   assumes unitary_unit_pres: "card (UNIV::'a set) = 1"
 
+
 syntax
   "_SI" :: "type \<Rightarrow> logic" ("SI'(_')")
 

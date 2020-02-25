@@ -20,6 +20,7 @@ begin
 text\<open>Scholarly Paper provides a number of standard text - elements for scientific papers.
 They were introduced in the following.\<close>
 
+subsection\<open>General Paper Structuring Elements\<close>
 doc_class title =
    short_title :: "string option"  <=  "None"
     
@@ -47,8 +48,6 @@ text\<open>Scholarly Paper is oriented towards the classical domains in science:
 
 which we formalize into:\<close>
 
-datatype sc_dom = math | info | natsc | eng 
-
 doc_class text_section = text_element +
    main_author :: "author option"  <=  None
    fixme_list  :: "string list"    <=  "[]" 
@@ -63,6 +62,26 @@ doc_class text_section = text_element +
        ... *)
    (* for scholarly paper: invariant level > 0 *)
 
+
+doc_class "conclusion" = text_section +
+   main_author :: "author option"  <=  None
+   
+doc_class related_work = "conclusion" +
+   main_author :: "author option"  <=  None
+
+doc_class bibliography = text_section +
+   style       :: "string option"  <=  "Some ''LNCS''"
+
+doc_class annex = "text_section" +
+   main_author :: "author option"  <=  None
+
+(*
+datatype sc_dom = math | info | natsc | eng 
+*)
+
+
+subsection\<open>Introductions\<close>
+
 doc_class introduction = text_section +
    comment :: string
    claims  :: "thm list"
@@ -76,6 +95,10 @@ As Security of the system we define etc...
 
 A formal statement can, but must not have a reference to true formal Isabelle/Isar definition. 
 \<close>
+
+
+subsection\<open>Technical Content and its Formats\<close>
+
 datatype status = semiformal | description
 
 text\<open>The class \<^verbatim>\<open>technical\<close> regroups a number of text-elements that contain typical 
@@ -91,10 +114,28 @@ doc_class technical = text_section +
    status :: status <= "description"
    formal_results  :: "thm list"
 
-type_synonym tc = technical
-   
-text\<open>A rough structuring is modeled as follows:\<close>   
+type_synonym tc = technical 
 
+
+subsection\<open>Mathematical Statements\<close>
+
+datatype math_statement_class = 
+         "definition" | "axiom" | "theorem" | "lemma" | "proposition" | "rule" | "assertion"
+
+doc_class math_statement = tc +
+   short_name :: string <= "''''"
+   "class"    :: "math_statement_class"
+   status     :: status
+
+doc_class math_description  = math_statement +
+   referentiable :: bool <= "False"
+
+doc_class math_semi_formal_stmt  = math_statement +
+   referentiable :: bool <= "True"
+
+
+text\<open>A rough structuring is modeled as follows:\<close>   
+(* non-evident-statement *)
 doc_class "definition"  = tc +
    referentiable :: bool <= "True"
    tag :: "string" <=  "''''"
@@ -112,32 +153,19 @@ doc_class "corollary"     = tc +
    referentiable :: bool <= "True"
    tag :: "string" <=  "''''"
 
+subsection\<open>Example Statements\<close>
 
-text\<open> \<^verbatim>\<open>examples\<close> are currently considered \<^verbatim>\<open>technical\<close>. Another alternative would be to group the
-      following classes into an own class: "evaluation" or "explanation" or ... \<close> 
+text\<open> \<^verbatim>\<open>examples\<close> are currently considered \<^verbatim>\<open>technical\<close>. Is a main category to be refined
+      via inheritance. \<close> 
 
 doc_class example       = technical +
    referentiable :: bool <= "True"
    tag :: "string" <=  "''''"
 
-doc_class assertion     = technical +
-   referentiable :: bool <= "True"
-   tag :: "string" <=  "''''"
+subsection\<open>Code Statement Elements\<close>
 
- 
-(* TODO :*)
-(* attention : no LaTeX support yet >>> *)
 doc_class "code"     = technical +
    checked :: bool <=  "False"
-   tag :: "string" <=  "''''"
-
-doc_class "experiment"  = technical +
-   tag :: "string" <=  "''''"
-
-doc_class "evaluation"  = technical +
-   tag :: "string" <=  "''''"
-
-doc_class "data"  = technical +
    tag :: "string" <=  "''''"
 
 text\<open>The @{doc_class "code"} is a general stub for free-form and type-checked code-fragments
@@ -152,17 +180,33 @@ own content checking and, of course, presentation styles.
 \<close>
 
 
-doc_class "conclusion" = text_section +
-   main_author :: "author option"  <=  None
-   
-doc_class related_work = "conclusion" +
-   main_author :: "author option"  <=  None
+doc_class "SML"     = code +
+   checked :: bool <=  "False"
 
-doc_class bibliography = text_section +
-   style       :: "string option"  <=  "Some ''LNCS''"
+doc_class "ISAR"     = code +
+   checked :: bool <=  "False"
 
-doc_class annex = "text_section" +
-   main_author :: "author option"  <=  None
+doc_class "LATEX"     = code +
+   checked :: bool <=  "False"
+
+subsection\<open>Content in Engineering/Tech Papers \<close>
+
+
+doc_class eng_statement = tc +
+   short_name :: string <= "''''"
+   "class"    :: "math_statement_class"
+   status     :: status
+
+
+doc_class "experiment"  = eng_statement +
+   tag :: "string" <=  "''''"
+
+doc_class "evaluation"  = eng_statement +
+   tag :: "string" <=  "''''"
+
+doc_class "data"  = eng_statement +
+   tag :: "string" <=  "''''"
+
 
 
 text\<open> Besides subtyping, there is another relation between
