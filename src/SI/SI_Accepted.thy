@@ -25,4 +25,7 @@ subsection \<open> Examples \<close>
 
 lemma "watt \<^bold>\<cdot> hour \<cong>\<^sub>Q 3600 \<odot> joule"   by (si_calc)
 
+lemma "25 \<odot> meter \<^bold>/ second = 90 \<odot> (kilo \<odot> meter) \<^bold>/ hour"
+  by (si_calc)
+
 end

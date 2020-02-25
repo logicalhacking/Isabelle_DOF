@@ -252,12 +252,12 @@ lemma base_units [simp]:
 
 subsubsection \<open> Higher SI Type Constructors: Inner Product and Inverse \<close>
 text\<open>On the class of SI-types (in which we have already inserted the base SI types), 
-the definitions of the type constructors for inner product and inverse is straight) forward.\<close>
+the definitions of the type constructors for inner product and inverse is straight forward.\<close>
 
 typedef ('a::dim_type, 'b::dim_type) DimTimes (infixl "\<cdot>" 69) = "UNIV :: unit set" ..
 setup_lifting type_definition_DimTimes
 
-text \<open> We can prove that multiplication of two SI types yields an SI type. \<close>
+text \<open> We can prove that multiplication of two dimension types yields a dimension type. \<close>
 
 instantiation DimTimes :: (dim_type, dim_type) dim_type
 begin
@@ -266,7 +266,8 @@ begin
   instance by (intro_classes, simp_all add: dim_ty_sem_DimTimes_def, (transfer, simp)+)
 end
 
-text \<open> Similarly, we define division of two SI types and prove that SI types are closed under this. \<close>
+text \<open> Similarly, we define inversion of dimension types and prove that dimension types are 
+  closed under this. \<close>
 
 typedef 'a DimInv ("(_\<^sup>-\<^sup>1)" [999] 999) = "UNIV :: unit set" ..
 setup_lifting type_definition_DimInv
@@ -277,11 +278,13 @@ begin
   instance by (intro_classes, simp_all add: dim_ty_sem_DimInv_def, (transfer, simp)+)
 end
 
-
 subsection \<open> Syntactic Support for dim-type expressions. \<close>
 
-text\<open>A number of type-synonyms allow for more compact notation: \<close>
+text \<open> A division is expressed, as usual, by multiplication with an inverted dimension. \<close>
+
 type_synonym ('a, 'b) DimDiv = "'a \<cdot> ('b\<^sup>-\<^sup>1)" (infixl "'/" 69)
+
+text \<open> A number of further type-synonyms allow for more compact notation: \<close>
 
 type_synonym 'a DimSquare = "'a \<cdot> 'a" ("(_)\<^sup>2" [999] 999)
 type_synonym 'a DimCube = "'a \<cdot> 'a \<cdot> 'a" ("(_)\<^sup>3" [999] 999)
@@ -293,8 +296,6 @@ type_synonym 'a DimInvQuart = "('a\<^sup>4)\<^sup>-\<^sup>1" ("(_)\<^sup>-\<^sup
 translations (type) "'a\<^sup>-\<^sup>2" <= (type) "('a\<^sup>2)\<^sup>-\<^sup>1"
 translations (type) "'a\<^sup>-\<^sup>3" <= (type) "('a\<^sup>3)\<^sup>-\<^sup>1"
 translations (type) "'a\<^sup>-\<^sup>4" <= (type) "('a\<^sup>4)\<^sup>-\<^sup>1"
-
-(* Need to add DimQuart to the print translation *)
 
 print_translation \<open>
   [(@{type_syntax DimTimes}, 
