@@ -36,4 +36,7 @@ lemma inverse_distrib: "inverse (a * b)  =  (inverse a) * (inverse b)"
 
 end
 
+abbreviation npower :: "'a::{power,inverse} \<Rightarrow> nat \<Rightarrow> 'a"  ("(_\<^sup>-\<^sup>_)" [1000,999] 999) 
+  where "npower x n \<equiv> inverse (x ^ n)"
+
 end

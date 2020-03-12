@@ -15,7 +15,7 @@ lemma unit_eq_iff_mag_eq [si_transfer]:
 
 lemma unit_equiv_iff [si_transfer]:
   fixes x :: "'a['u\<^sub>1::dim_type]" and y :: "'a['u\<^sub>2::dim_type]"
-  shows "x \<cong>\<^sub>Q y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q = \<lbrakk>y\<rbrakk>\<^sub>Q \<and> SI('u\<^sub>1) = SI('u\<^sub>2)"
+  shows "x \<cong>\<^sub>Q y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q = \<lbrakk>y\<rbrakk>\<^sub>Q \<and> QD('u\<^sub>1) = QD('u\<^sub>2)"
 proof -
   have "\<forall>t ta. (ta::'a['u\<^sub>2]) = t \<or> mag (fromQ ta) \<noteq> mag (fromQ t)"
     by (simp add: magQuant_def unit_eq_iff_mag_eq)
@@ -61,7 +61,7 @@ lemma magQuant_numeral [si_eq]: "\<lbrakk>numeral n\<rbrakk>\<^sub>Q = numeral n
   apply (metis magQuant_def magQuant_one magQuant_plus numeral_code(3))
   done
 
-lemma magQuant_mk [si_eq]: "\<lbrakk>UNIT('u::dim_type)\<rbrakk>\<^sub>Q = 1"
+lemma magQuant_mk [si_eq]: "\<lbrakk>BUNIT('u::dim_type)\<rbrakk>\<^sub>Q = 1"
   by (simp add: magQuant_def, transfer, simp)
 
 text \<open> The following tactic breaks an SI conjecture down to numeric and unit properties \<close>
@@ -89,7 +89,7 @@ lemmas [si_def] =  si_sem_Length_def si_sem_Mass_def si_sem_Time_def
                    times_Unit_ext_def one_Unit_ext_def
 *)
 
-lemma "SI(N \<cdot> \<Theta> \<cdot> N) = SI(\<Theta> \<cdot> N\<^sup>2)" by (simp add: si_eq si_def)
+lemma "QD(N \<cdot> \<Theta> \<cdot> N) = QD(\<Theta> \<cdot> N\<^sup>2)" by (simp add: si_eq si_def)
 
 lemma "(meter \<^bold>\<cdot> second\<^sup>-\<^sup>\<one>) \<^bold>\<cdot> second \<cong>\<^sub>Q meter"
   by (si_calc)
