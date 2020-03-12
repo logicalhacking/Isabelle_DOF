@@ -269,7 +269,7 @@ lift_definition mk_unit :: "'u itself \<Rightarrow> ('a::one)['u::dim_type]"
 syntax "_mk_unit" :: "type \<Rightarrow> logic" ("UNIT'(_')")
 translations "UNIT('a)" == "CONST mk_unit TYPE('a)"
 
-subsection \<open>Polymorphic Operations for Elementary SI Units \<close>
+subsection \<open>Polymorphic Operations for SI Base Units \<close>
 
 definition [si_eq]: "meter    = UNIT(L)"
 definition [si_eq]: "second   = UNIT(T)"
@@ -288,5 +288,11 @@ A magnitude instantiation can be, e.g., an integer, a rational number, a real nu
 type @{typ "real\<^sup>3"}. Note than when considering vectors, dimensions refer to the \<^emph>\<open>norm\<close> of the vector,
 not to its components.
 \<close>
+
+lift_definition is_BaseUnit :: "'a::one['d::dim_type] \<Rightarrow> bool" 
+  is "\<lambda> x. mag x = 1 \<and> is_BaseDim (dim x)" .
+
+lemma meter_is_BaseUnit: "is_BaseUnit meter"
+  by (simp add: si_eq, transfer, simp)
 
 end
