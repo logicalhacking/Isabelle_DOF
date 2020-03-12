@@ -116,7 +116,7 @@ qed
 
 
 text \<open> A base dimension is a dimension where precisely one component has power 1: it is the 
-  dimension of a base quantity. \<close>
+  dimension of a base quantity. Here we define the seven base dimensions. \<close>
 
 definition LengthBD      ("\<^bold>L") where [si_def]: "\<^bold>L = (1::Dimension)\<lparr>Length := 1\<rparr>"
 definition MassBD        ("\<^bold>M") where [si_def]: "\<^bold>M = (1::Dimension)\<lparr>Mass := 1\<rparr>"
@@ -136,17 +136,50 @@ lemma seven_BaseDimensions: "card BaseDimensions = 7"
 definition is_BaseDim :: "Dimension \<Rightarrow> bool" where [si_def]: "is_BaseDim x \<equiv> x \<in> BaseDimensions"
 
 text \<open> We can use the base dimensions and algebra to form dimension expressions. Some examples
-  are shown below \<close>
+  are shown below. \<close>
 
 term "\<^bold>L\<cdot>\<^bold>M\<cdot>\<^bold>T\<^sup>-\<^sup>2"
 term "\<^bold>M\<cdot>\<^bold>L\<^sup>-\<^sup>3"
 
-subsection \<open> Dimensions as Types \<close>
+subsection \<open> Dimensions Type Expressions \<close>
 
-text \<open> We provide a syntax for type expressions, which allows representation of dimensions as
-  types in Isabelle. The definition of the basic type constructors is straightforward via a 
-  one-elementary set.  The latter is adequate since we need just an abstract syntax for 
-  type expressions, so just one value for the \<^verbatim>\<open>dimension\<close>-type symbols. \<close>
+subsubsection \<open> Classification \<close>
+
+text \<open> We provide a syntax for dimension type expressions, which allows representation of 
+  dimensions as types in Isabelle. This will allow us to represent quantities that are parametrised 
+  by a particular dimension type. We first must characterise the subclass of types that represent a 
+  dimension.
+
+  The mechanism in Isabelle to characterize a certain subclass of Isabelle type expressions
+  are \<^emph>\<open>type classes\<close>. The following type class is used to link particular Isabelle types
+  to an instance of the type \<^typ>\<open>Dimension\<close>. It requires that any such type has the cardinality
+  \<^term>\<open>1\<close>, since a dimension type is used only to mark a quantity.
+  \<close>
+
+class dim_type = finite +
+  fixes   dim_ty_sem :: "'a itself \<Rightarrow> Dimension"
+  assumes unitary_unit_pres: "card (UNIV::'a set) = 1"
+
+syntax
+  "_QD" :: "type \<Rightarrow> logic" ("QD'(_')")
+
+translations
+  "QD('a)" == "CONST dim_ty_sem TYPE('a)"
+
+text \<open> The notation \<^term>\<open>QD('a::dim_type)\<close> allows to obtain the dimension of a dimension type
+  \<^typ>\<open>'a\<close>. 
+
+  The subset of basic dimension types can be characterized by the following type class: \<close>
+
+class si_basedim = dim_type +
+  assumes is_BaseDim: "is_BaseDim QD('a)"
+
+subsubsection \<open> Base Dimension Type Expressions \<close>
+
+text \<open> The definition of the basic dimension type constructors is straightforward via a
+  one-elementary set, \<^typ>\<open>unit set\<close>. The latter is adequate since we need just an abstract syntax 
+  for type expressions, so just one value for the \<^verbatim>\<open>dimension\<close>-type symbols. We define types for
+  each of the seven base dimensions, and also for dimensionless quantities. \<close>
 
 typedef Length      = "UNIV :: unit set" .. setup_lifting type_definition_Length
 typedef Mass        = "UNIV :: unit set" .. setup_lifting type_definition_Mass
@@ -175,108 +208,78 @@ translations
   (type) "N" <= (type) "Amount"
   (type) "J" <= (type) "Intensity"
 
-subsection \<open>Dimension Type Expressions and their Interpretation \<close>
-
-text \<open> The case for the construction of the multiplicative and inverse operators requires ---
-thus, the unary and binary operators on our SI type language --- require that their arguments
-are restricted to the set of SI-type expressions.
-
-The mechanism in Isabelle to characterize a certain sub-class of Isabelle-type expressions 
-are \<^emph>\<open>type classes\<close>. We therefore need such a sub-class; for reasons of convenience,
-we combine its construction also with the "semantics" of SI types in terms of  
-@{typ Dimension}. \<close>
-
-subsubsection \<open> SI-type expression definition as type-class \<close>
-
-class dim_type = finite +
-  fixes   dim_ty_sem :: "'a itself \<Rightarrow> Dimension"
-  assumes unitary_unit_pres: "card (UNIV::'a set) = 1"
-
-syntax
-  "_QD" :: "type \<Rightarrow> logic" ("QD'(_')")
-
-translations
-  "QD('a)" == "CONST dim_ty_sem TYPE('a)"
-
-text \<open> The sub-set of basic SI type expressions can be characterized by the following
-operation: \<close>
-
-class si_basedim = dim_type +
-  assumes is_BaseDim: "is_BaseDim QD('a)"
-
-subsubsection \<open> SI base type constructors \<close>
-
-text\<open>We embed the basic SI types into the SI type expressions: \<close>
+text\<open> Next, we embed the base dimensions into the dimension type expressions by instantiating the 
+  class \<^class>\<open>si_basedim\<close> with each of the base dimension types. \<close>
 
 instantiation Length :: si_basedim
 begin
-definition dim_ty_sem_Length :: "Length itself \<Rightarrow> Dimension" 
-  where [si_def]: "dim_ty_sem_Length x = \<^bold>L"
+definition [si_def]: "dim_ty_sem_Length (_::Length itself) = \<^bold>L"
 instance by (intro_classes, auto simp add: dim_ty_sem_Length_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Mass :: si_basedim
 begin
-definition dim_ty_sem_Mass :: "Mass itself \<Rightarrow> Dimension" 
-  where [si_def]: "dim_ty_sem_Mass x = \<^bold>M"
+definition [si_def]: "dim_ty_sem_Mass (_::Mass itself) = \<^bold>M"
 instance by (intro_classes, auto simp add: dim_ty_sem_Mass_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Time :: si_basedim
 begin
-definition dim_ty_sem_Time :: "Time itself \<Rightarrow> Dimension" 
-  where [si_def]: "dim_ty_sem_Time x = \<^bold>T"
+definition [si_def]: "dim_ty_sem_Time (_::Time itself) = \<^bold>T"
 instance by (intro_classes, auto simp add: dim_ty_sem_Time_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Current :: si_basedim
 begin
-definition dim_ty_sem_Current :: "Current itself \<Rightarrow> Dimension" 
-  where [si_def]: "dim_ty_sem_Current x = \<^bold>I"
+definition [si_def]: "dim_ty_sem_Current (_::Current itself) = \<^bold>I"
 instance by (intro_classes, auto simp add: dim_ty_sem_Current_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Temperature :: si_basedim
 begin
-definition dim_ty_sem_Temperature :: "Temperature itself \<Rightarrow> Dimension" 
-  where [si_def]: "dim_ty_sem_Temperature x = \<^bold>\<Theta>"
+definition [si_def]: "dim_ty_sem_Temperature (_::Temperature itself) = \<^bold>\<Theta>"
 instance by (intro_classes, auto simp add: dim_ty_sem_Temperature_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Amount :: si_basedim
 begin
-definition dim_ty_sem_Amount :: "Amount itself \<Rightarrow> Dimension" 
-  where [si_def]: "dim_ty_sem_Amount x = \<^bold>N"
+definition [si_def]: "dim_ty_sem_Amount (_::Amount itself) = \<^bold>N"
 instance by (intro_classes, auto simp add: dim_ty_sem_Amount_def is_BaseDim_def, (transfer, simp)+)
 end   
 
 instantiation Intensity :: si_basedim
 begin
-definition dim_ty_sem_Intensity :: "Intensity itself \<Rightarrow> Dimension" 
-  where [si_def]: "dim_ty_sem_Intensity x = \<^bold>J"
+definition [si_def]: "dim_ty_sem_Intensity (_::Intensity itself) = \<^bold>J"
 instance by (intro_classes, auto simp add: dim_ty_sem_Intensity_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation NoDimension :: dim_type
 begin
-definition dim_ty_sem_NoDimension :: "NoDimension itself \<Rightarrow> Dimension" 
-  where [si_def]: "dim_ty_sem_NoDimension x = 1"
+definition [si_def]: "dim_ty_sem_NoDimension (_::NoDimension itself) = (1::Dimension)"
 instance by (intro_classes, auto simp add: dim_ty_sem_NoDimension_def is_BaseDim_def, (transfer, simp)+)
 end
 
 lemma base_dimension_types [simp]: 
-  "is_BaseDim QD(Length)" "is_BaseDim QD(Mass)" "is_BaseDim QD(Time)"
-  "is_BaseDim QD(Current)" "is_BaseDim QD(Temperature)" "is_BaseDim QD(Amount)"
-  "is_BaseDim QD(Intensity)" by (simp_all add: is_BaseDim)
+  "is_BaseDim QD(Length)" "is_BaseDim QD(Mass)" "is_BaseDim QD(Time)" "is_BaseDim QD(Current)" 
+  "is_BaseDim QD(Temperature)" "is_BaseDim QD(Amount)" "is_BaseDim QD(Intensity)" 
+  by (simp_all add: is_BaseDim)
 
-subsubsection \<open> Higher SI Type Constructors: Inner Product and Inverse \<close>
-text\<open>On the class of SI-types (in which we have already inserted the base SI types), 
-the definitions of the type constructors for inner product and inverse is straight forward.\<close>
+subsubsection \<open> Dimension Type Constructors: Inner Product and Inverse \<close>
+
+text\<open> Dimension type expressions can be constructed by multiplication and division of the base
+  dimension types above. Consequently, we need to define multiplication and inverse operators
+  at the type level as well. On the class of dimension types (in which we have already inserted 
+  the base dimension types), the definitions of the type constructors for inner product and inverse is 
+  straightforward. \<close>
 
 typedef ('a::dim_type, 'b::dim_type) DimTimes (infixl "\<cdot>" 69) = "UNIV :: unit set" ..
 setup_lifting type_definition_DimTimes
 
-text \<open> We can prove that multiplication of two dimension types yields a dimension type. \<close>
+text \<open> The type \<^typ>\<open>('a,'b) DimTimes\<close> is parameterised by two types, \<^typ>\<open>'a\<close> and \<^typ>\<open>'b\<close> that must
+  both be elements of the \<^class>\<open>dim_type\<close> class. As with the base dimensions, it is a unitary type
+  as its purpose is to represent dimension type expressions. We instantiate \<^class>\<open>dim_type\<close> with
+  this type, where the semantics of a product dimension expression is the product of the underlying
+  dimensions. This means that multiplication of two dimension types yields a dimension type. \<close>
 
 instantiation DimTimes :: (dim_type, dim_type) dim_type
 begin
@@ -297,13 +300,13 @@ begin
   instance by (intro_classes, simp_all add: dim_ty_sem_DimInv_def, (transfer, simp)+)
 end
 
-subsection \<open> Syntactic Support for dim-type expressions. \<close>
+subsubsection \<open> Dimension Type Syntax \<close>
 
 text \<open> A division is expressed, as usual, by multiplication with an inverted dimension. \<close>
 
 type_synonym ('a, 'b) DimDiv = "'a \<cdot> ('b\<^sup>-\<^sup>1)" (infixl "'/" 69)
 
-text \<open> A number of further type-synonyms allow for more compact notation: \<close>
+text \<open> A number of further type synonyms allow for more compact notation: \<close>
 
 type_synonym 'a DimSquare = "'a \<cdot> 'a" ("(_)\<^sup>2" [999] 999)
 type_synonym 'a DimCube = "'a \<cdot> 'a \<cdot> 'a" ("(_)\<^sup>3" [999] 999)
@@ -333,7 +336,7 @@ print_translation \<open>
             _ => raise Match)]
 \<close>
 
-subsection \<open> Derived Dimension Types \<close>
+subsubsection \<open> Derived Dimension Types \<close>
 
 type_synonym Area = "L\<^sup>2"
 type_synonym Volume = "L\<^sup>3"
