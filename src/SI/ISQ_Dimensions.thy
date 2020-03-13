@@ -171,7 +171,7 @@ text \<open> The notation \<^term>\<open>QD('a::dim_type)\<close> allows to obta
 
   The subset of basic dimension types can be characterized by the following type class: \<close>
 
-class si_basedim = dim_type +
+class basedim_type = dim_type +
   assumes is_BaseDim: "is_BaseDim QD('a)"
 
 subsubsection \<open> Base Dimension Type Expressions \<close>
@@ -209,45 +209,45 @@ translations
   (type) "J" <= (type) "Intensity"
 
 text\<open> Next, we embed the base dimensions into the dimension type expressions by instantiating the 
-  class \<^class>\<open>si_basedim\<close> with each of the base dimension types. \<close>
+  class \<^class>\<open>basedim_type\<close> with each of the base dimension types. \<close>
 
-instantiation Length :: si_basedim
+instantiation Length :: basedim_type
 begin
 definition [si_def]: "dim_ty_sem_Length (_::Length itself) = \<^bold>L"
 instance by (intro_classes, auto simp add: dim_ty_sem_Length_def is_BaseDim_def, (transfer, simp)+)
 end
 
-instantiation Mass :: si_basedim
+instantiation Mass :: basedim_type
 begin
 definition [si_def]: "dim_ty_sem_Mass (_::Mass itself) = \<^bold>M"
 instance by (intro_classes, auto simp add: dim_ty_sem_Mass_def is_BaseDim_def, (transfer, simp)+)
 end
 
-instantiation Time :: si_basedim
+instantiation Time :: basedim_type
 begin
 definition [si_def]: "dim_ty_sem_Time (_::Time itself) = \<^bold>T"
 instance by (intro_classes, auto simp add: dim_ty_sem_Time_def is_BaseDim_def, (transfer, simp)+)
 end
 
-instantiation Current :: si_basedim
+instantiation Current :: basedim_type
 begin
 definition [si_def]: "dim_ty_sem_Current (_::Current itself) = \<^bold>I"
 instance by (intro_classes, auto simp add: dim_ty_sem_Current_def is_BaseDim_def, (transfer, simp)+)
 end
 
-instantiation Temperature :: si_basedim
+instantiation Temperature :: basedim_type
 begin
 definition [si_def]: "dim_ty_sem_Temperature (_::Temperature itself) = \<^bold>\<Theta>"
 instance by (intro_classes, auto simp add: dim_ty_sem_Temperature_def is_BaseDim_def, (transfer, simp)+)
 end
 
-instantiation Amount :: si_basedim
+instantiation Amount :: basedim_type
 begin
 definition [si_def]: "dim_ty_sem_Amount (_::Amount itself) = \<^bold>N"
 instance by (intro_classes, auto simp add: dim_ty_sem_Amount_def is_BaseDim_def, (transfer, simp)+)
 end   
 
-instantiation Intensity :: si_basedim
+instantiation Intensity :: basedim_type
 begin
 definition [si_def]: "dim_ty_sem_Intensity (_::Intensity itself) = \<^bold>J"
 instance by (intro_classes, auto simp add: dim_ty_sem_Intensity_def is_BaseDim_def, (transfer, simp)+)

@@ -6,6 +6,9 @@ begin
 
 subsection \<open> Definitions \<close>
 
+text \<open> Prefixes are simply numbers that can be composed with units using the scalar 
+  multiplication operator \<^const>\<open>scaleQ\<close>. \<close>
+
 default_sort ring_char_0
 
 definition deca :: "'a" where [si_eq]: "deca = 10^1"
@@ -59,6 +62,9 @@ lemma "1 \<odot> (centi \<odot> meter)\<^sup>-\<^sup>\<one> = 100 \<odot> meter\
   by (si_simp)
 
 subsection \<open> Binary Prefixes \<close>
+
+text \<open> Although not in general applicable to physical quantities, we include these prefixes
+  for completeness. \<close>
 
 default_sort ring_char_0
 
