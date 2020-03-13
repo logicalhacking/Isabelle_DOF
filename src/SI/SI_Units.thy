@@ -1,7 +1,7 @@
 section \<open> SI Units \<close>
 
 theory SI_Units
-  imports SI_Proof
+  imports ISQ_Proof
 begin
 
 lift_definition mk_base_unit :: "'u itself \<Rightarrow> ('a::one)['u::dim_type]" 

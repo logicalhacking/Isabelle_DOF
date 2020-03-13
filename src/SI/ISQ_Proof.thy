@@ -64,7 +64,7 @@ lemma magQuant_numeral [si_eq]: "\<lbrakk>numeral n\<rbrakk>\<^sub>Q = numeral n
 text \<open> The following tactic breaks an SI conjecture down to numeric and unit properties \<close>
 
 method si_simp uses add =
-  (simp add: add si_transfer si_eq)
+  (simp add: add si_transfer si_eq field_simps)
 
 text \<open> The next tactic additionally compiles the semantics of the underlying units \<close>
 

@@ -4,7 +4,7 @@ theory SI_Imperial
   imports SI_Accepted
 begin
 
-subsection \<open> Definition \<close>
+subsection \<open> Definitions \<close>
 
 default_sort field_char_0
 
@@ -28,7 +28,7 @@ definition mile :: "'a[L]" where
 
 default_sort type
 
-subsection \<open> Properties \<close>
+subsection \<open> Unit Equations \<close>
 
 lemma miles_to_yards: "mile = 1760 \<odot> yard"
   by si_simp
@@ -39,7 +39,7 @@ lemma miles_to_feet: "mile = 5280 \<odot> foot"
 lemma mph_to_kmh: "1 \<odot> (mile \<^bold>/ hour) = 1.609344 \<odot> ((kilo \<odot> meter) \<^bold>/ hour)"
   by si_simp
 
-lemma celcius_to_farenheit: "(T::rat)\<degree>C = ((T - 32) \<cdot> 5/9)\<degree>F"
-  oops
+lemma farenheit_to_celcius: "T\<degree>F = ((T - 32) \<cdot> 5/9)\<degree>C"
+  by si_simp
 
 end
