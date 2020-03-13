@@ -1,7 +1,7 @@
 section \<open> SI Units \<close>
 
 theory SI_Units
-  imports ISQ_Quantities
+  imports SI_Proof
 begin
 
 lift_definition mk_base_unit :: "'u itself \<Rightarrow> ('a::one)['u::dim_type]" 
@@ -9,6 +9,9 @@ lift_definition mk_base_unit :: "'u itself \<Rightarrow> ('a::one)['u::dim_type]
 
 syntax "_mk_base_unit" :: "type \<Rightarrow> logic" ("BUNIT'(_')")
 translations "BUNIT('a)" == "CONST mk_base_unit TYPE('a)"
+
+lemma magQuant_mk [si_eq]: "\<lbrakk>BUNIT('u::dim_type)\<rbrakk>\<^sub>Q = 1"
+  by (simp add: magQuant_def, transfer, simp)
 
 subsection \<open>Polymorphic Operations for SI Base Units \<close>
 
@@ -19,9 +22,6 @@ definition [si_eq]: "ampere   = BUNIT(I)"
 definition [si_eq]: "kelvin   = BUNIT(\<Theta>)"
 definition [si_eq]: "mole     = BUNIT(N)"
 definition [si_eq]: "candela  = BUNIT(J)"
-
-definition dimless ("\<one>") 
-  where    [si_eq]: "dimless  = BUNIT(NoDimension)"
 
 text\<open>Note that as a consequence of our construction, the term @{term meter} is a SI Unit constant of 
 SI-type @{typ "'a[L]"}, so a unit of dimension @{typ "Length"} with the magnitude of type @{typ"'a"}.
@@ -35,5 +35,10 @@ lift_definition is_BaseUnit :: "'a::one['d::dim_type] \<Rightarrow> bool"
 
 lemma meter_is_BaseUnit: "is_BaseUnit meter"
   by (simp add: si_eq, transfer, simp)
+
+subsection \<open> Example Unit Equations \<close>
+
+lemma "(meter \<^bold>\<cdot> second\<^sup>-\<^sup>\<one>) \<^bold>\<cdot> second \<cong>\<^sub>Q meter"
+  by (si_calc)
 
 end

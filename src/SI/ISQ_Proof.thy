@@ -1,7 +1,7 @@
-section \<open>Basic Proof Support for SI Units \<close>
+section \<open> Proof Support for Quantities \<close>
 
-theory SI_Proof
-  imports SI_Units
+theory ISQ_Proof
+  imports ISQ_Quantities
 begin
 
 named_theorems si_transfer
@@ -61,9 +61,6 @@ lemma magQuant_numeral [si_eq]: "\<lbrakk>numeral n\<rbrakk>\<^sub>Q = numeral n
   apply (metis magQuant_def magQuant_one magQuant_plus numeral_code(3))
   done
 
-lemma magQuant_mk [si_eq]: "\<lbrakk>BUNIT('u::dim_type)\<rbrakk>\<^sub>Q = 1"
-  by (simp add: magQuant_def, transfer, simp)
-
 text \<open> The following tactic breaks an SI conjecture down to numeric and unit properties \<close>
 
 method si_simp uses add =
@@ -74,24 +71,6 @@ text \<open> The next tactic additionally compiles the semantics of the underlyi
 method si_calc uses add = 
   (si_simp add: add; simp add: si_def add)
 
-(*
-lemmas [si_eq] = si_sem_Length_def si_sem_Mass_def si_sem_Time_def 
-                   si_sem_Current_def si_sem_Temperature_def si_sem_Amount_def
-                   si_sem_Intensity_def si_sem_NoDimension_def
-                   si_sem_UnitTimes_def si_sem_UnitInv_def
-                   inverse_Unit_ext_def times_Unit_ext_def one_Unit_ext_def
-
-lemmas [si_def] =  si_sem_Length_def si_sem_Mass_def si_sem_Time_def 
-                   si_sem_Current_def si_sem_Temperature_def si_sem_Amount_def
-                   si_sem_Intensity_def si_sem_NoDimension_def
-
-                   si_sem_UnitTimes_def si_sem_UnitInv_def
-                   times_Unit_ext_def one_Unit_ext_def
-*)
-
 lemma "QD(N \<cdot> \<Theta> \<cdot> N) = QD(\<Theta> \<cdot> N\<^sup>2)" by (simp add: si_eq si_def)
-
-lemma "(meter \<^bold>\<cdot> second\<^sup>-\<^sup>\<one>) \<^bold>\<cdot> second \<cong>\<^sub>Q meter"
-  by (si_calc)
 
 end

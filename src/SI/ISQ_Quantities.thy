@@ -165,18 +165,20 @@ definition coerceQuantT :: "'d\<^sub>2 itself \<Rightarrow> 'a['d\<^sub>1::dim_t
 
 subsection \<open> Predicates on Typed Quantities \<close>
 
-text \<open> Two SI Unit types are orderable if their magnitude type is of class @{class "order"},
-       and have the same dimensions (not necessarily dimension types).\<close>
+text \<open> The standard HOL order \<^term>\<open>(\<le>)\<close> and equality \<^term>\<open>(=)\<close> have the homogeneous type
+  \<^typ>\<open>'a \<Rightarrow> 'a \<Rightarrow> bool\<close> and so they cannot compare values of different types. Consequently,
+  we define a heterogeneous order and equivalence on typed quantities. \<close>
 
 lift_definition qless_eq :: "'n::order['a::dim_type] \<Rightarrow> 'n['b::dim_type] \<Rightarrow> bool" (infix "\<lesssim>\<^sub>Q" 50) 
   is "(\<le>)" .
 
-text\<open> Two SI Unit types are equivalent if they have the same dimensions
-      (not necessarily dimension types). This equivalence the a vital point 
-      of the overall construction of SI Units. \<close>
-
 lift_definition qequiv :: "'n['a::dim_type] \<Rightarrow> 'n['b::dim_type] \<Rightarrow> bool" (infix "\<cong>\<^sub>Q" 50) 
   is "(=)" .
+
+text \<open> These are both fundamentally the same as the usual order and equality relations, but they
+  permit potentially different dimension types, \<^typ>\<open>'a\<close> and \<^typ>\<open>'b\<close>. Two typed quantities are
+  comparable only when the two dimension types have the same semantic dimension.
+\<close>
 
 lemma qequiv_refl [simp]: "a \<cong>\<^sub>Q a"
   by (simp add: qequiv_def)
@@ -192,15 +194,11 @@ theorem qeq_iff_same_dim:
   shows "x \<cong>\<^sub>Q y \<longleftrightarrow> x = y"
   by (transfer, simp)
 
-(* the following series of equivalent statements ... *)
-
 lemma coerceQuant_eq_iff:
   fixes x :: "'a['d\<^sub>1::dim_type]"
   assumes "QD('d\<^sub>1) = QD('d\<^sub>2::dim_type)"
   shows "(coerceQuantT TYPE('d\<^sub>2) x) \<cong>\<^sub>Q x"
   by (metis qequiv.rep_eq assms coerceQuantT_def toQ_cases toQ_inverse)
-
-(* or equivalently *)
 
 lemma coerceQuant_eq_iff2:
   fixes x :: "'a['d\<^sub>1::dim_type]"
@@ -218,16 +216,20 @@ text\<open>This is more general that \<open>y = x \<Longrightarrow> x \<cong>\<^
 
 lemma qeq: 
   fixes x :: "'a['d\<^sub>1::dim_type]" fixes y :: "'a['d\<^sub>2::dim_type]"
-  assumes  "x \<cong>\<^sub>Q y"
-  shows "QD('d\<^sub>1) = QD('d\<^sub>2::dim_type)"
+  assumes "x \<cong>\<^sub>Q y"
+  shows "QD('d\<^sub>1) = QD('d\<^sub>2)"
   by (metis (full_types) qequiv.rep_eq assms fromQ mem_Collect_eq)
 
-subsection\<open>Operations on Abstract SI-Unit-Types\<close>
+subsection\<open> Operators on Typed Quantities \<close>
+
+text \<open> We define several operators on typed quantities. These variously compose the dimension types
+  as well. Multiplication composes the two dimension types. Inverse constructs and inverted 
+  dimension type. Division is defined in terms of multiplication and inverse. \<close>
 
 lift_definition 
   qtimes :: "('n::comm_ring_1)['a::dim_type] \<Rightarrow> 'n['b::dim_type] \<Rightarrow> 'n['a \<cdot>'b]" (infixl "\<^bold>\<cdot>" 69) 
   is "(*)" by (simp add: dim_ty_sem_DimTimes_def times_Quantity_ext_def)
-  
+
 lift_definition 
   qinverse :: "('n::field)['a::dim_type] \<Rightarrow> 'n['a\<^sup>-\<^sup>1]" ("(_\<^sup>-\<^sup>\<one>)" [999] 999) 
   is "inverse" by (simp add: inverse_Quantity_ext_def dim_ty_sem_DimInv_def)
@@ -236,6 +238,8 @@ abbreviation
   qdivide :: "('n::field)['a::dim_type] \<Rightarrow> 'n['b::dim_type] \<Rightarrow> 'n['a/'b]" (infixl "\<^bold>'/" 70) where
 "qdivide x y \<equiv> x \<^bold>\<cdot> y\<^sup>-\<^sup>\<one>"
 
+text \<open> We also provide some helpful notations for expressing heterogeneous powers. \<close>
+
 abbreviation qsq         ("(_)\<^sup>\<two>"  [999] 999) where "u\<^sup>\<two> \<equiv> u\<^bold>\<cdot>u"
 abbreviation qcube       ("(_)\<^sup>\<three>"  [999] 999) where "u\<^sup>\<three> \<equiv> u\<^bold>\<cdot>u\<^bold>\<cdot>u"
 abbreviation qquart      ("(_)\<^sup>\<four>"  [999] 999) where "u\<^sup>\<four> \<equiv> u\<^bold>\<cdot>u\<^bold>\<cdot>u\<^bold>\<cdot>u"
@@ -243,6 +247,19 @@ abbreviation qquart      ("(_)\<^sup>\<four>"  [999] 999) where "u\<^sup>\<four>
 abbreviation qneq_sq     ("(_)\<^sup>-\<^sup>\<two>" [999] 999) where "u\<^sup>-\<^sup>\<two> \<equiv> (u\<^sup>\<two>)\<^sup>-\<^sup>\<one>"
 abbreviation qneq_cube   ("(_)\<^sup>-\<^sup>\<three>" [999] 999) where "u\<^sup>-\<^sup>\<three> \<equiv> (u\<^sup>\<three>)\<^sup>-\<^sup>\<one>"
 abbreviation qneq_quart  ("(_)\<^sup>-\<^sup>\<four>" [999] 999) where "u\<^sup>-\<^sup>\<four> \<equiv> (u\<^sup>\<three>)\<^sup>-\<^sup>\<one>"
+
+text \<open> Analogous to the \<^const>\<open>scaleR\<close> operator for vectors, we define the following scalar
+  multiplication that scales an existing quantity by a numeric value. This operator is
+  especially important for the representation of quantity values, which consist of a numeric
+  value and a unit. \<close>
+
+lift_definition scaleQ :: "'a \<Rightarrow> 'a::comm_ring_1['d::dim_type] \<Rightarrow> 'a['d]" (infixr "*\<^sub>Q" 63)
+  is "\<lambda> r x. \<lparr> mag = r * mag x, dim = QD('d) \<rparr>" by simp
+
+notation scaleQ (infixr "\<odot>" 63)
+
+text \<open> Finally, we instantiate the arithmetic types classes where possible. We do not instantiate
+  \<^class>\<open>times\<close> because this results in a nonsensical homogeneous product on quantities. \<close>
 
 instantiation QuantT :: (zero,dim_type) zero
 begin
@@ -258,6 +275,14 @@ lift_definition one_QuantT :: "('a, 'b) QuantT" is "\<lparr> mag = 1, dim = QD('
 instance ..
 end
 
+text \<open> The following specialised one element has both magnitude and dimension 1: it is a 
+  dimensionless quantity. \<close>
+
+abbreviation qone :: "'n::one[\<one>]" ("\<one>") where "qone \<equiv> 1"
+
+text \<open> Unlike for semantic quantities, the plus operator on typed quantities is total, since the
+  type system ensures that the dimensions (and the dimension types) must be the same. \<close>
+
 instantiation QuantT :: (plus,dim_type) plus
 begin
 lift_definition plus_QuantT :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> 'a['b]"
@@ -265,6 +290,9 @@ lift_definition plus_QuantT :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> 'a['b]
   by (simp)
 instance ..
 end
+
+text \<open> We can also show that typed quantities are commutative \<^emph>\<open>additive\<close> monoids. Indeed, addition
+  is a much easier operator to deal with in typed quantities, unlike product. \<close>
 
 instance QuantT :: (semigroup_add,dim_type) semigroup_add
   by (intro_classes, transfer, simp add: add.assoc)
@@ -295,8 +323,12 @@ end
 
 instance QuantT :: (numeral,dim_type) numeral ..
 
+text \<open> Moreover, types quantities also form an additive group. \<close>
+
 instance QuantT :: (ab_group_add,dim_type) ab_group_add
   by (intro_classes, (transfer, simp)+)
+
+text \<open> Typed quantities helpfully can be both partially and a linearly ordered. \<close>
 
 instantiation QuantT :: (order,dim_type) order
 begin
@@ -305,11 +337,7 @@ begin
   instance by (intro_classes, (transfer, simp add: less_le_not_le)+)
 end
 
-text\<open>The scaling operator permits to multiply the magnitude of a unit; this scalar product 
-produces what is called "prefixes" in the terminology of the SI system.\<close>
-lift_definition scaleQ :: "'a \<Rightarrow> 'a::comm_ring_1['d::dim_type] \<Rightarrow> 'a['d]" (infixr "*\<^sub>Q" 63)
-  is "\<lambda> r x. \<lparr> mag = r * mag x, dim = QD('d) \<rparr>" by simp
-
-notation scaleQ (infixr "\<odot>" 63)
+instance QuantT :: (linorder,dim_type) linorder
+  by (intro_classes, transfer, auto)
 
 end

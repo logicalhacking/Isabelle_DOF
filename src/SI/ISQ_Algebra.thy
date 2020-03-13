@@ -1,7 +1,7 @@
 section \<open> Algebraic Laws \<close>
 
-theory SI_Algebra
-  imports SI_Proof
+theory ISQ_Algebra
+  imports ISQ_Proof
 begin
 
 subsection \<open> Quantity Scale \<close>

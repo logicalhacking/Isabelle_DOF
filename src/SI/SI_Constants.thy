@@ -1,7 +1,7 @@
 section \<open> Physical Constants \<close>
 
 theory SI_Constants
-  imports SI_Proof
+  imports SI_Units
 begin
 
 subsection \<open> Core Derived Units \<close>
