@@ -154,7 +154,10 @@ setup_lifting type_definition_QuantT
 text \<open> A dimension typed quantity is parameterised by two types: \<^typ>\<open>'a\<close>, the numeric type for the
   magntitude, and \<^typ>\<open>'d\<close> for the dimension expression, which is an element of \<^class>\<open>dim_type\<close>. 
   The type \<^typ>\<open>('n, 'd) QuantT\<close> is to \<^typ>\<open>'n Quantity\<close> as dimension types are to \<^typ>\<open>Dimension\<close>. 
-  Specifically, an element of \<^typ>\<open>('n', 'd) QuantT\<close> is a quantity whose dimension is \<^typ>\<open>'d\<close>. \<close>
+  Specifically, an element of \<^typ>\<open>('n', 'd) QuantT\<close> is a quantity whose dimension is \<^typ>\<open>'d\<close>.
+
+  Intuitively, the formula \<^term>\<open>x :: 'n['d]\<close> can be read as ``$x$ is a quantity of \<^typ>\<open>'d\<close>'',
+  for example it might be a quantity of length, or a quantity of mass. \<close>
 
 text \<open> Since quantities can have dimension type expressions that are distinct, but denote the same
   dimension, it is necessary to define the following function for coercion between two dimension

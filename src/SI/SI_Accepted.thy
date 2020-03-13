@@ -19,9 +19,14 @@ abbreviation degrees ("_\<degree>" [999] 999) where "n\<degree> \<equiv> n \<odo
 
 definition [si_def, si_eq]: "litre = 1/1000 \<odot> meter\<^sup>\<three>"
 
-abbreviation "tonne \<equiv> 10^3 \<odot> kilogram"
+definition [si_def, si_eq]: "tonne = 10^3 \<odot> kilogram"
 
-subsection \<open> Examples \<close>
+definition [si_def, si_eq]: "dalton = 1.66053906660 * (1 / 10^27) \<odot> kilogram"
+
+subsection \<open> Example Unit Equations \<close>
+
+lemma "1 \<odot> hour = 3600 \<odot> second"
+  by (si_simp)
 
 lemma "watt \<^bold>\<cdot> hour \<cong>\<^sub>Q 3600 \<odot> joule"   by (si_calc)
 

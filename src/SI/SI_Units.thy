@@ -4,6 +4,19 @@ theory SI_Units
   imports ISQ_Proof
 begin
 
+text \<open> An SI unit is simply a particular kind of quantity. \<close>
+
+type_synonym ('n, 'd) UnitT = "('n, 'd) QuantT"
+
+text \<open> Parallel to the seven base quantities, there are seven base units. In the implementation of
+  the SI unit system, we fix these to be precisely those quantities that have a base dimension
+  and a magnitude of \<^term>\<open>1\<close>. Consequently, a base unit corresponds to a unit in the algebraic
+  sense. \<close>
+
+lift_definition is_BaseUnit :: "'a::one['d::dim_type] \<Rightarrow> bool" 
+  is "\<lambda> x. mag x = 1 \<and> is_BaseDim (dim x)" .
+
+
 lift_definition mk_base_unit :: "'u itself \<Rightarrow> ('a::one)['u::dim_type]" 
   is "\<lambda> u. \<lparr> mag = 1, dim = QD('u) \<rparr>" by simp
 
@@ -13,7 +26,8 @@ translations "BUNIT('a)" == "CONST mk_base_unit TYPE('a)"
 lemma magQuant_mk [si_eq]: "\<lbrakk>BUNIT('u::dim_type)\<rbrakk>\<^sub>Q = 1"
   by (simp add: magQuant_def, transfer, simp)
 
-subsection \<open>Polymorphic Operations for SI Base Units \<close>
+text \<open> We now define the seven base units. Effectively, these definitions axiomatise give names
+  to the \<^term>\<open>1\<close> elements of the base quantities. \<close>
 
 definition [si_eq]: "meter    = BUNIT(L)"
 definition [si_eq]: "second   = BUNIT(T)"
@@ -29,9 +43,6 @@ A magnitude instantiation can be, e.g., an integer, a rational number, a real nu
 type @{typ "real\<^sup>3"}. Note than when considering vectors, dimensions refer to the \<^emph>\<open>norm\<close> of the vector,
 not to its components.
 \<close>
-
-lift_definition is_BaseUnit :: "'a::one['d::dim_type] \<Rightarrow> bool" 
-  is "\<lambda> x. mag x = 1 \<and> is_BaseDim (dim x)" .
 
 lemma meter_is_BaseUnit: "is_BaseUnit meter"
   by (simp add: si_eq, transfer, simp)
