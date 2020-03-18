@@ -3,7 +3,7 @@ chapter \<open> International System of Units \<close>
 section \<open> SI Units Semantics \<close>
 
 theory SI_Units
-  imports ISQ_Proof
+  imports ISQ
 begin
 
 text \<open> An SI unit is simply a particular kind of quantity. \<close>
@@ -27,8 +27,8 @@ translations "BUNIT('a)" == "CONST mk_base_unit TYPE('a)"
 lemma mk_base_unit: "is_base_unit (mk_base_unit a)"
   by (simp add: si_eq, transfer, simp add: is_BaseDim)
 
-lemma magQuant_mk [si_eq]: "\<lbrakk>BUNIT('u::basedim_type)\<rbrakk>\<^sub>Q = 1"
-  by (simp add: magQuant_def si_eq, transfer, simp)
+lemma magQ_mk [si_eq]: "\<lbrakk>BUNIT('u::basedim_type)\<rbrakk>\<^sub>Q = 1"
+  by (simp add: magQ_def si_eq, transfer, simp)
 
 text \<open> We now define the seven base units. Effectively, these definitions axiomatise given names
   for the \<^term>\<open>1\<close> elements of the base quantities. \<close>

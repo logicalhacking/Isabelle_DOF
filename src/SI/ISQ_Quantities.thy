@@ -166,6 +166,12 @@ text \<open> Since quantities can have dimension type expressions that are disti
 definition coerceQuantT :: "'d\<^sub>2 itself \<Rightarrow> 'a['d\<^sub>1::dim_type] \<Rightarrow> 'a['d\<^sub>2::dim_type]" where
 "QD('d\<^sub>1) = QD('d\<^sub>2) \<Longrightarrow> coerceQuantT t x = (toQ (fromQ x))"
 
+syntax
+  "_QCOERCE" :: "type \<Rightarrow> logic \<Rightarrow> logic" ("QCOERCE[_]")
+
+translations
+  "QCOERCE['t]" == "CONST coerceQuantT TYPE('t)"
+
 subsection \<open> Predicates on Typed Quantities \<close>
 
 text \<open> The standard HOL order \<^term>\<open>(\<le>)\<close> and equality \<^term>\<open>(=)\<close> have the homogeneous type
@@ -237,7 +243,7 @@ lift_definition
   qinverse :: "('n::field)['a::dim_type] \<Rightarrow> 'n['a\<^sup>-\<^sup>1]" ("(_\<^sup>-\<^sup>\<one>)" [999] 999) 
   is "inverse" by (simp add: inverse_Quantity_ext_def dim_ty_sem_DimInv_def)
 
-abbreviation 
+abbreviation (input)
   qdivide :: "('n::field)['a::dim_type] \<Rightarrow> 'n['b::dim_type] \<Rightarrow> 'n['a/'b]" (infixl "\<^bold>'/" 70) where
 "qdivide x y \<equiv> x \<^bold>\<cdot> y\<^sup>-\<^sup>\<one>"
 
