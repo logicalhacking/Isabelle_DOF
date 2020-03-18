@@ -43,14 +43,14 @@
 (* $Id:$ *)
 
 session "SI" = Main + 
-  description {* SI Unit Support *}
+  description \<open> SI Unit Support \<close>
   options [document = pdf, document_output = "document/output",
            document_variants="document:outline=/proof,/ML"]
   sessions  
     "HOL-Eisbach"
   theories
-    "SI_Accepted"
-    "SI_Imperial"
+    "ISQ"
+    "SI"
   document_files
     "root.tex"
     "adb-long.bib"

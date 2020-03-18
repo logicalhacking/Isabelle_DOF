@@ -1,4 +1,6 @@
-section \<open> Dimensions \<close>
+chapter \<open> International System of Quantities \<close>
+
+section \<open> Quantity Dimensions \<close>
 
 theory ISQ_Dimensions
   imports Groups_mult 

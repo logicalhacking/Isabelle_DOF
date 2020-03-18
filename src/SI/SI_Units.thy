@@ -1,4 +1,6 @@
-section \<open> SI Units \<close>
+chapter \<open> International System of Units \<close>
+
+section \<open> SI Units Semantics \<close>
 
 theory SI_Units
   imports ISQ_Proof

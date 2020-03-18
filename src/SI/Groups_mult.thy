@@ -1,4 +1,4 @@
-section \<open> Multiplication Group Classes \<close>
+chapter \<open> Multiplicative Groups \<close>
 
 theory Groups_mult
   imports Main
