@@ -6,7 +6,7 @@ begin
 
 subsection \<open> Core Derived Units \<close>
 
-abbreviation "hertz \<equiv> second\<^sup>-\<^sup>\<one>"
+abbreviation (input) "hertz \<equiv> second\<^sup>-\<^sup>\<one>"
 
 abbreviation "radian \<equiv> meter \<^bold>\<cdot> meter\<^sup>-\<^sup>\<one>"
 
