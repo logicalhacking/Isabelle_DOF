@@ -215,49 +215,49 @@ text\<open> Next, we embed the base dimensions into the dimension type expressio
 
 instantiation Length :: basedim_type
 begin
-definition [si_def]: "dim_ty_sem_Length (_::Length itself) = \<^bold>L"
+definition [si_eq]: "dim_ty_sem_Length (_::Length itself) = \<^bold>L"
 instance by (intro_classes, auto simp add: dim_ty_sem_Length_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Mass :: basedim_type
 begin
-definition [si_def]: "dim_ty_sem_Mass (_::Mass itself) = \<^bold>M"
+definition [si_eq]: "dim_ty_sem_Mass (_::Mass itself) = \<^bold>M"
 instance by (intro_classes, auto simp add: dim_ty_sem_Mass_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Time :: basedim_type
 begin
-definition [si_def]: "dim_ty_sem_Time (_::Time itself) = \<^bold>T"
+definition [si_eq]: "dim_ty_sem_Time (_::Time itself) = \<^bold>T"
 instance by (intro_classes, auto simp add: dim_ty_sem_Time_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Current :: basedim_type
 begin
-definition [si_def]: "dim_ty_sem_Current (_::Current itself) = \<^bold>I"
+definition [si_eq]: "dim_ty_sem_Current (_::Current itself) = \<^bold>I"
 instance by (intro_classes, auto simp add: dim_ty_sem_Current_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Temperature :: basedim_type
 begin
-definition [si_def]: "dim_ty_sem_Temperature (_::Temperature itself) = \<^bold>\<Theta>"
+definition [si_eq]: "dim_ty_sem_Temperature (_::Temperature itself) = \<^bold>\<Theta>"
 instance by (intro_classes, auto simp add: dim_ty_sem_Temperature_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation Amount :: basedim_type
 begin
-definition [si_def]: "dim_ty_sem_Amount (_::Amount itself) = \<^bold>N"
+definition [si_eq]: "dim_ty_sem_Amount (_::Amount itself) = \<^bold>N"
 instance by (intro_classes, auto simp add: dim_ty_sem_Amount_def is_BaseDim_def, (transfer, simp)+)
 end   
 
 instantiation Intensity :: basedim_type
 begin
-definition [si_def]: "dim_ty_sem_Intensity (_::Intensity itself) = \<^bold>J"
+definition [si_eq]: "dim_ty_sem_Intensity (_::Intensity itself) = \<^bold>J"
 instance by (intro_classes, auto simp add: dim_ty_sem_Intensity_def is_BaseDim_def, (transfer, simp)+)
 end
 
 instantiation NoDimension :: dim_type
 begin
-definition [si_def]: "dim_ty_sem_NoDimension (_::NoDimension itself) = (1::Dimension)"
+definition [si_eq]: "dim_ty_sem_NoDimension (_::NoDimension itself) = (1::Dimension)"
 instance by (intro_classes, auto simp add: dim_ty_sem_NoDimension_def is_BaseDim_def, (transfer, simp)+)
 end
 

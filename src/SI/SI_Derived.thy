@@ -39,10 +39,6 @@ definition degrees_celcius :: "'a::field_char_0 \<Rightarrow> 'a[\<Theta>]" ("_\
 
 definition [si_eq]: "gram = milli \<odot> kilogram"
 
-text\<open>The full beauty of the approach is perhaps revealed here, with the 
-     type of a classical three-dimensional gravitation field:\<close>
-type_synonym gravitation_field = "real\<^sup>3[L] \<Rightarrow> (real\<^sup>3[L \<cdot> T\<^sup>-\<^sup>2])"
-
 subsection \<open> Equivalences \<close>
 
 lemma joule_alt_def: "joule \<cong>\<^sub>Q newton \<^bold>\<cdot> meter" 

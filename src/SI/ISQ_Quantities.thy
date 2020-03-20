@@ -164,7 +164,7 @@ text \<open> Since quantities can have dimension type expressions that are disti
   expressions. This requires that the underlying dimensions are the same. \<close>
 
 definition coerceQuantT :: "'d\<^sub>2 itself \<Rightarrow> 'a['d\<^sub>1::dim_type] \<Rightarrow> 'a['d\<^sub>2::dim_type]" where
-"QD('d\<^sub>1) = QD('d\<^sub>2) \<Longrightarrow> coerceQuantT t x = (toQ (fromQ x))"
+[si_def]: "QD('d\<^sub>1) = QD('d\<^sub>2) \<Longrightarrow> coerceQuantT t x = (toQ (fromQ x))"
 
 syntax
   "_QCOERCE" :: "type \<Rightarrow> logic \<Rightarrow> logic" ("QCOERCE[_]")

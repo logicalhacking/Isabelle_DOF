@@ -12,23 +12,45 @@ definition magQ :: "'a['u::dim_type] \<Rightarrow> 'a" ("\<lbrakk>_\<rbrakk>\<^s
 definition dimQ :: "'a['u::dim_type] \<Rightarrow> Dimension" where
 [si_def]: "dimQ x = dim (fromQ x)"
 
-lemma unit_eq_iff_mag_eq [si_transfer]:
+lemma quant_eq_iff_mag_eq [si_eq]:
   "x = y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q = \<lbrakk>y\<rbrakk>\<^sub>Q"
   by (auto simp add: magQ_def, transfer, simp)
 
-lemma unit_equiv_iff [si_transfer]:
+lemma quant_eqI [si_transfer]:
+  "\<lbrakk>x\<rbrakk>\<^sub>Q = \<lbrakk>y\<rbrakk>\<^sub>Q \<Longrightarrow> x = y"
+  by (simp add: quant_eq_iff_mag_eq)
+
+lemma quant_equiv_iff [si_eq]:
   fixes x :: "'a['u\<^sub>1::dim_type]" and y :: "'a['u\<^sub>2::dim_type]"
   shows "x \<cong>\<^sub>Q y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q = \<lbrakk>y\<rbrakk>\<^sub>Q \<and> QD('u\<^sub>1) = QD('u\<^sub>2)"
 proof -
   have "\<forall>t ta. (ta::'a['u\<^sub>2]) = t \<or> mag (fromQ ta) \<noteq> mag (fromQ t)"
-    by (simp add: magQ_def unit_eq_iff_mag_eq)
+    by (simp add: magQ_def quant_eq_iff_mag_eq)
   then show ?thesis
     by (metis (full_types) qequiv.rep_eq coerceQuant_eq_iff2 qeq magQ_def)
 qed
 
-lemma unit_le_iff_magn_le [si_transfer]:
+lemma quant_equivI [si_transfer]:
+  fixes x :: "'a['u\<^sub>1::dim_type]" and y :: "'a['u\<^sub>2::dim_type]"
+  assumes "QD('u\<^sub>1) = QD('u\<^sub>2)" "QD('u\<^sub>1) = QD('u\<^sub>2) \<Longrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q = \<lbrakk>y\<rbrakk>\<^sub>Q"
+  shows "x \<cong>\<^sub>Q y"
+  using assms quant_equiv_iff by blast
+  
+lemma quant_le_iff_magn_le [si_eq]:
   "x \<le> y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q \<le> \<lbrakk>y\<rbrakk>\<^sub>Q"
   by (auto simp add: magQ_def; (transfer, simp))
+
+lemma quant_leI [si_transfer]:
+  "\<lbrakk>x\<rbrakk>\<^sub>Q \<le> \<lbrakk>y\<rbrakk>\<^sub>Q \<Longrightarrow> x \<le> y"
+  by (simp add: quant_le_iff_magn_le)
+
+lemma quant_less_iff_magn_less [si_eq]:
+  "x < y \<longleftrightarrow> \<lbrakk>x\<rbrakk>\<^sub>Q < \<lbrakk>y\<rbrakk>\<^sub>Q"
+  by (auto simp add: magQ_def; (transfer, simp))
+
+lemma quant_lessI [si_transfer]:
+  "\<lbrakk>x\<rbrakk>\<^sub>Q < \<lbrakk>y\<rbrakk>\<^sub>Q \<Longrightarrow> x < y"
+  by (simp add: quant_less_iff_magn_less)
 
 lemma magQ_zero [si_eq]: "\<lbrakk>0\<rbrakk>\<^sub>Q = 0"
   by (simp add: magQ_def, transfer, simp)
@@ -64,10 +86,16 @@ lemma magQ_numeral [si_eq]: "\<lbrakk>numeral n\<rbrakk>\<^sub>Q = numeral n"
   apply (metis magQ_def magQ_one magQ_plus numeral_code(3))
   done
 
+lemma magQ_coerce [si_eq]: 
+  fixes q :: "'a['d\<^sub>1::dim_type]" and t :: "'d\<^sub>2::dim_type itself"
+  assumes "QD('d\<^sub>1) = QD('d\<^sub>2)"
+  shows "\<lbrakk>coerceQuantT t q\<rbrakk>\<^sub>Q = \<lbrakk>q\<rbrakk>\<^sub>Q"
+  by (simp add: coerceQuantT_def magQ_def assms, metis assms qequiv.rep_eq updown_eq_iff)
+
 text \<open> The following tactic breaks an SI conjecture down to numeric and unit properties \<close>
 
 method si_simp uses add =
-  (simp add: add si_transfer si_eq field_simps)
+  (rule_tac si_transfer; simp add: add si_eq field_simps)
 
 text \<open> The next tactic additionally compiles the semantics of the underlying units \<close>
 

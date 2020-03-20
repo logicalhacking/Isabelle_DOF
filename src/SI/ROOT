@@ -47,10 +47,11 @@ session "SI" = Main +
   options [document = pdf, document_output = "document/output",
            document_variants="document:outline=/proof,/ML"]
   sessions  
-    "HOL-Eisbach"
+    "HOL-Eisbach" "HOL-Decision_Procs"
   theories
     "ISQ"
     "SI"
+    "SI_Astronomical"
   document_files
     "root.tex"
     "adb-long.bib"
