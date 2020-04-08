@@ -2,15 +2,32 @@ session "Isabelle_DOF" = "Functional-Automata" +
   options [document = pdf, document_output = "output"]
   sessions
     "Regular-Sets"
+  directories 
+    "DOF"
+    "ontologies"
+    "ontologies/CENELEC_50128"
+    "ontologies/Conceptual"
+    "ontologies/math_exam"
+    "ontologies/math_paper"
+    "ontologies/scholarly_paper"
+    "ontologies/small_math"
+    "ontologies/technical_report"
   theories
     "DOF/Isa_DOF"
     "ontologies/ontologies"
 
+
+
+
+(*
 session "Isabelle_DOF-tests" = "Isabelle_DOF" + 
   options [document = false]
+  directories 
+    tests
   theories
     "tests/AssnsLemmaThmEtc" 
     "tests/Concept_ExampleInvariant"
     "tests/Concept_Example"
     "tests/InnerSyntaxAntiquotations"
     "tests/Attributes"
+*)

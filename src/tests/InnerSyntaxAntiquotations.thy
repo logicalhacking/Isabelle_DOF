@@ -16,7 +16,7 @@ chapter\<open>Inner Syntax Antiquotations (ISA)'s\<close>
 theory 
   InnerSyntaxAntiquotations
 imports 
-  "../ontologies/Conceptual/Conceptual"
+  "Isabelle_DOF.Conceptual"
 begin
 
 text\<open>Since the syntax chosen for values of doc-class attributes is HOL-syntax --- requiring
