@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Copyright (c) 2018-2019 The University of Sheffield.
-#               2019-2019 The University of Exeter. 
-#               2018-2019 The University of Paris-Saclay. 
+#               2019-2020 The University of Exeter. 
+#               2018-2020 The University of Paris-Saclay. 
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -126,6 +126,8 @@ check_afp_entries() {
        fi
     done
     if [ "$missing" != "" ]; then 
+        echo "           Please install development version of AFP for Isabelle 2020 manually."
+        exit_error
         echo "           Trying to install AFP (this might take a few *minutes*) ...."
 	extract=""
 	for e in $missing; do
