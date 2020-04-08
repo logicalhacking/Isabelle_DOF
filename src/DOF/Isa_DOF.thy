@@ -34,7 +34,7 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            RegExpInterface    (* Interface to functional regular automata for monitoring *)
            Assert 
            
-  keywords "+=" ":=" "accepts" "rejects" "invs"
+  keywords "+=" ":=" "accepts" "rejects" "invariant"
 
   and      "title*"     "subtitle*"
            "chapter*"   "section*"    "subsection*"   "subsubsection*" 
@@ -1867,7 +1867,7 @@ val _ =
           )
       -- (   Scan.optional (\<^keyword>\<open>rejects\<close> |-- Parse.enum1 "," Parse.term) []
           -- Scan.repeat   (\<^keyword>\<open>accepts\<close> |-- Parse.term)
-          -- Scan.repeats ((\<^keyword>\<open>invs\<close>) |-- 
+          -- Scan.repeats ((\<^keyword>\<open>invariant\<close>) |-- 
                               Parse.and_list (Args.name_position --| Parse.$$$ "::" -- Parse.term)))
      ) 
     >> (fn (((overloaded, x), (y, z)),((rejectS,accept_rex),invs)) =>

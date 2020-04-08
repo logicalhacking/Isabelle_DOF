@@ -93,7 +93,6 @@ definition YY where "YY = na2da(rexp2na example_expression)"
 value "NA.accepts (rexp2na example_expression) [0,1,1,0,0,1]"
 value "DA.accepts (na2da (rexp2na example_expression)) [0,1,1,0,0,1]"
 
-
 section\<open>HOL - Adaptions and Export to SML\<close>
 
 definition enabled :: "('a,'\<sigma> set)da  \<Rightarrow> '\<sigma> set \<Rightarrow> 'a list \<Rightarrow>  'a list" 

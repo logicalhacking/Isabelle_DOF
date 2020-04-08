@@ -50,15 +50,15 @@ doc_class E = D +
 
 
 doc_class F  = 
-   properties :: "term list"
-   r          :: "thm list"
-   u          :: "file"
-   s          :: "typ list"
-   b          :: "(A \<times> C) set"  <= "{}"       (* This is a relation link, roughly corresponding
+   properties  :: "term list"
+   r           :: "thm list"
+   u           :: "file"
+   s           :: "typ list"
+   b           :: "(A \<times> C) set"  <= "{}"       (* This is a relation link, roughly corresponding
                                                  to an association class. It can be used to track
                                                  claims to result - relations, for example.*) 
-   invs      bxxx :: "\<lambda>\<sigma>. r \<sigma> \<noteq> [] \<and> card(b \<sigma>) \<ge> 3"
-        and  xxx  :: "\<lambda>\<sigma>. properties \<sigma> \<noteq> []"
+   invariant b :: "\<lambda>\<sigma>. r \<sigma> \<noteq> [] \<and> card(b \<sigma>) \<ge> 3"
+        and  c :: "\<lambda>\<sigma>. properties \<sigma> \<noteq> []"
 
 
 doc_class G = C +

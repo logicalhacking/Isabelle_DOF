@@ -156,6 +156,40 @@
 
 
 % end: scholarly_paper.abstract
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newisadof{text.scholarly_paper.math_content}%
+[label=,type=%
+ , scholarly_paper.math_content.short_name     =%
+ , scholarly_paper.math_content.mcc     =%
+ , Isa_COL.text_element.level         =%
+ , Isa_COL.text_element.referentiable =%
+ , Isa_COL.text_element.variants      =%
+ , scholarly_paper.text_section.main_author  =%
+ , scholarly_paper.text_section.fixme_list   =%
+ , Isa_COL.text_element.level                =%
+ , scholarly_paper.technical.definition_list =%
+ , scholarly_paper.technical.status          =%
+ ]
+ [1]
+ {%
+    \begin{isamarkuptext}%
+        \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{def}}{
+              \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+                         {\begin{definition} \label{\commandkey{label}} #1 \end{definition} }
+                         {\begin{definition} [\commandkey{scholarly_paper.math_content.short_name}] 
+                                              \label{\commandkey{label}} #1 
+                          \end{definition}}
+          }{%     
+          #1%
+        }%
+    \end{isamarkuptext}%
+ } 
+
+% end: scholarly_paper.abstract
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newisadof{text.scholarly_paper.definition}%
 [label=,type=%
