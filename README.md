@@ -21,7 +21,7 @@ foo@bar:~$ docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-u
 Isabelle/DOF has two major pre-requisites:
 
 * **Isabelle:** Isabelle/DOF requires [Isabelle 2020](http://isabelle.in.tum.de/website-Isabelle2020-RC4/).
-  Please download the Isabelle 2019 distribution for your operating
+  Please download the Isabelle 2020 distribution for your operating
   system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2020-RC4/).
 * **LaTeX:** Isabelle/DOF requires a modern pdfTeX-engine supporting the \expanded{}-primitive. This
   is, for example, included in the [TeXLive 2019](https://www.tug.org/texlive/) (or later)

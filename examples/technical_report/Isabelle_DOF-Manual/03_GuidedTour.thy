@@ -51,7 +51,7 @@ subsubsection*[prerequisites::technical]\<open>Pre-requisites\<close>
 text\<open>
   \isadof has to major pre-requisites: 
   \<^item> \<^bold>\<open>Isabelle\<close>\bindex{Isabelle} (\isabellefullversion). 
-    \isadof uses a two-part version system (e.g., 1.0.0/2019), 
+    \isadof uses a two-part version system (e.g., 1.0.0/2020), 
     where the first part is the version of \isadof (using semantic versioning) and the second 
     part is the supported version of Isabelle. Thus, the same version of \isadof might be 
     available for different versions of Isabelle. 
@@ -266,7 +266,7 @@ users are:
 \<^item> The file \inlinebash|ROOT|\index{ROOT}, which defines the Isabelle session. New theory files as well as new 
   files required by the document generation (\eg, images, bibliography database using \BibTeX, local
   \LaTeX-styles) need to be registered in this file. For details of Isabelle's build system, please 
-  consult the Isabelle System Manual~@{cite "wenzel:system-manual:2019"}.
+  consult the Isabelle System Manual~@{cite "wenzel:system-manual:2020"}.
 \<^item> The file \inlinebash|praemble.tex|\index{praemble.tex}, which allows users to add additional 
   \LaTeX-packages or to add/modify \LaTeX-commands. 
 \<close>
@@ -552,7 +552,7 @@ figure*[figfig3::figure,relative_width="95",src="''figures/antiquotations-PIDE''
 \<open> Standard antiquotations referring to theory elements.\<close>
 text\<open> The corresponding view in @{docitem_ref  \<open>figfig3\<close>} shows core part of a document 
 conformimg to the CENELEC 50128 ontology. The first sample shows standard Isabelle antiquotations 
-@{cite "wenzel:isabelle-isar:2019"} into formal entities of a theory. This way, the informal parts 
+@{cite "wenzel:isabelle-isar:2020"} into formal entities of a theory. This way, the informal parts 
 of a document get ``formal content'' and become more robust under change.\<close>
 
 figure*[figfig5::figure, relative_width="95", src="''figures/srac-definition''"]

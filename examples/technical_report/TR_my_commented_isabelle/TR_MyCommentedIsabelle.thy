@@ -21,7 +21,7 @@ open_monitor*[this::report]
 (*>*)
 
 title*[tit::title]\<open>My Personal, Ecclectic Isabelle Programming Manual\<close> 
-subtitle*[stit::subtitle]\<open>Version : Isabelle 2019\<close>
+subtitle*[stit::subtitle]\<open>Version : Isabelle 2020\<close>
 text*[bu::author,     
       email       = "''wolff@lri.fr''",
       affiliation = "\<open>Université Paris-Saclay, LRI, France\<close>"]\<open>Burkhart Wolff\<close>
