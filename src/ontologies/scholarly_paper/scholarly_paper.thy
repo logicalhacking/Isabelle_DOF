@@ -131,6 +131,8 @@ doc_class math_content = tc +
    mcc           :: "math_content_class" <= "thm" 
    invariant s1  :: "\<lambda> \<sigma>. \<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
    invariant s2  :: "\<lambda> \<sigma>. status \<sigma> = semiformal"
+type_synonym math_tc = math_content
+
 
 text\<open>The intended use for the \<open>doc_class\<close>es \<^verbatim>\<open>math_motivation\<close> (or \<^verbatim>\<open>math_mtv\<close> for short),
      \<^verbatim>\<open>math_explanation\<close> (or \<^verbatim>\<open>math_exp\<close> for short) and 
