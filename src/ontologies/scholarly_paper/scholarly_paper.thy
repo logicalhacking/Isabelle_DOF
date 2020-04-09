@@ -128,14 +128,15 @@ doc_class math_content = tc +
    referentiable :: bool <= True
    short_name    :: string <= "''''"
    status        :: status <= "semiformal"
-   mcc           :: "math_content_class" <= "lem" 
+   mcc           :: "math_content_class" <= "thm" 
    invariant s1  :: "\<lambda> \<sigma>. \<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
    invariant s2  :: "\<lambda> \<sigma>. status \<sigma> = semiformal"
 
 text\<open>The intended use for the \<open>doc_class\<close>es \<^verbatim>\<open>math_motivation\<close> (or \<^verbatim>\<open>math_mtv\<close> for short),
      \<^verbatim>\<open>math_explanation\<close> (or \<^verbatim>\<open>math_exp\<close> for short) and 
      \<^verbatim>\<open>math_example\<close> (or \<^verbatim>\<open>math_ex\<close> for short)
-     are \<^emph>\<open>informal\<close> descriptions of semi-formal definitions (by inheritance).\<close>
+     are \<^emph>\<open>informal\<close> descriptions of semi-formal definitions (by inheritance).
+     Math-Examples can be made referentiable triggering explicit, numbered presentations.\<close>
 doc_class math_motivation  = tc +  
    referentiable :: bool <= False
 type_synonym math_mtv = math_motivation
