@@ -1597,21 +1597,18 @@ val docitem_modes = Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ unc
 
 
 val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.text_input))
-                                   : ({define: bool, unchecked: bool} * Input.source) context_parser;
-
+                                   : ({define:bool,unchecked:bool} * Input.source) context_parser;
 
 
 fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked = x, define = y}, src ) = 
-            let (* val _ = writeln ("ZZZ" ^ Input.source_content src ^ "::2::" ^ cid_decl) *)
-                val (str,pos) = Input.source_content src
-                val _ = check_and_mark ctxt cid_decl
-                          ({strict_checking = not x}) pos str 
-            in  
-                (if y  then Latex.enclose_block ("\\csname isaDof.label\\endcsname[type={"^cid_decl^"}]{") "}" 
-                       else Latex.enclose_block ("\\csname isaDof.ref\\endcsname[type={"^cid_decl^"}]{") "}")
-                [Latex.text (Input.source_content src)] 
-            end
-          
+    let (* val _ = writeln ("ZZZ" ^ Input.source_content src ^ "::2::" ^ cid_decl) *)
+        val (str,pos) = Input.source_content src
+        val _ = check_and_mark ctxt cid_decl ({strict_checking = not x}) pos str 
+    in  
+        (if y then Latex.enclose_block("\\csname isaDof.label\\endcsname[type={"^cid_decl^"}]{")"}" 
+              else Latex.enclose_block("\\csname isaDof.ref\\endcsname[type={"^cid_decl^"}]{")  "}")
+        [Latex.text (Input.source_content src)] 
+    end      
 
 
 fun docitem_antiquotation bind cid = 
@@ -1635,18 +1632,14 @@ fun check_and_mark_term ctxt oid  =
                  
                                          
 fun ML_antiquotation_docitem_value (ctxt, toks) = 
-              (Scan.lift (Args.cartouche_input) 
-               >> (fn inp => (ML_Syntax.atomic o ML_Syntax.print_term) 
-                             ((check_and_mark_term ctxt o fst o Input.source_content) inp)))
-               (ctxt, toks)
+    (Scan.lift (Args.cartouche_input) 
+     >> (fn inp => (ML_Syntax.atomic o ML_Syntax.print_term) 
+                   ((check_and_mark_term ctxt o fst o Input.source_content) inp)))
+     (ctxt, toks)
 
-(* Setup for general docrefs of the global DOF_core.default_cid - class ("text")*)
+(* Setup for general docitems of the global DOF_core.default_cid - class ("text")*)
 val _ = Theory.setup
-           (docitem_antiquotation \<^binding>\<open>docref\<close>  DOF_core.default_cid #>
-            (* deprecated syntax          ^^^^^^*)
-            docitem_antiquotation \<^binding>\<open>docitem_ref\<close> DOF_core.default_cid #>
-            (* deprecated syntax          ^^^^^^^^^^^*)
-            docitem_antiquotation \<^binding>\<open>docitem\<close>  DOF_core.default_cid #>
+           (docitem_antiquotation   \<^binding>\<open>docitem\<close>  DOF_core.default_cid #>
             
             ML_Antiquotation.inline \<^binding>\<open>docitem_value\<close> ML_antiquotation_docitem_value)
 
@@ -1654,14 +1647,6 @@ end (* struct *)
 \<close>
 
 
-ML\<open>
-Goal.prove_global;
-Specification.theorems_cmd;
-Goal.prove_common;
-\<close>
-
-ML\<open>open Proof
-\<close>
 
 ML\<open> 
 structure AttributeAccess = 

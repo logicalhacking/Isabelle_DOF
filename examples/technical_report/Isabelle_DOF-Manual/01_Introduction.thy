@@ -70,13 +70,13 @@ This manual can be read in different ways, depending on what you want to accompl
 different main user groups: 
 \<^enum> \<^emph>\<open>\isadof users\<close>, \ie, users that just want to edit a core document, be it for a paper or a 
   technical report, using a given ontology. These users should focus on 
-  @{docitem_ref (unchecked) \<open>isadof_tour\<close>} and, depending on their knowledge of Isabelle/HOL, also
-  @{docitem_ref (unchecked) \<open>background\<close>}. 
+  @{docitem (unchecked) \<open>isadof_tour\<close>} and, depending on their knowledge of Isabelle/HOL, also
+  @{docitem (unchecked) \<open>background\<close>}. 
 \<^enum> \<^emph>\<open>Ontology developers\<close>, \ie,  users that want to develop new ontologies or modify existing 
   document ontologies. These users should, after having gained acquaintance as a user, focus 
-  on @{docitem_ref (unchecked) \<open>isadof_ontologies\<close>}. 
+  on @{docitem (unchecked) \<open>isadof_ontologies\<close>}. 
 \<^enum> \<^emph>\<open>\isadof developers\<close>, \ie, users that want to extend or modify \isadof, \eg, by adding new 
-  text-elements. These users should read @{docitem_ref (unchecked) \<open>isadof_developers\<close>}
+  text-elements. These users should read @{docitem (unchecked) \<open>isadof_developers\<close>}
 \<close>
 
 subsubsection\<open>Typographical Conventions\<close>
