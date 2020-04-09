@@ -119,8 +119,7 @@ type_synonym tc = technical (* technical content *)
 
 subsection\<open>Mathematical Content\<close>
 
-datatype math_content_class = 
-         "def" | "axm" | "thm" | "lem" | "prop" | "rule" | "assn"
+datatype math_content_class = "def" | "axm" | "thm" | "lem" | "prop" | "rule" | "assn"
 
 text\<open>Instances of the \<open>doc_class\<close> \<^verbatim>\<open>math_content\<close> are by definition @{term "semiformal"}; they may
 be non-referential, but in this case they will not have a @{term "short_name"}.\<close>
@@ -129,7 +128,7 @@ doc_class math_content = tc +
    referentiable :: bool <= True
    short_name    :: string <= "''''"
    status        :: status <= "semiformal"
-   mcc           :: "math_content_class"
+   mcc           :: "math_content_class" <= "lem" 
    invariant s1  :: "\<lambda> \<sigma>. \<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
    invariant s2  :: "\<lambda> \<sigma>. status \<sigma> = semiformal"
 
@@ -147,6 +146,8 @@ type_synonym math_exp = math_explanation
 
 doc_class math_example  = tc +
    referentiable :: bool <= False
+   short_name    :: string <= "''''"
+   invariant s1  :: "\<lambda> \<sigma>. \<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
 type_synonym math_ex = math_example
 
 

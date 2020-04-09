@@ -1857,21 +1857,23 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
            
     end;
 
+val parse_invariants = Parse.and_list (Args.name_position --| Parse.$$$ "::" -- Parse.term)
+
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>doc_class\<close> "define document class"
     ((Parse_Spec.overloaded 
       -- (Parse.type_args_constrained  -- Parse.binding) 
       -- (\<^keyword>\<open>=\<close>  
-          |-- Scan.option (Parse.typ --| \<^keyword>\<open>+\<close>) 
+         |-- Scan.option (Parse.typ --| \<^keyword>\<open>+\<close>) 
           -- Scan.repeat1 (Parse.const_binding -- Scan.option (\<^keyword>\<open><=\<close> |-- Parse.term))
           )
-      -- (   Scan.optional (\<^keyword>\<open>rejects\<close> |-- Parse.enum1 "," Parse.term) []
-          -- Scan.repeat   (\<^keyword>\<open>accepts\<close> |-- Parse.term)
-          -- Scan.repeats ((\<^keyword>\<open>invariant\<close>) |-- 
-                              Parse.and_list (Args.name_position --| Parse.$$$ "::" -- Parse.term)))
+      -- (   Scan.optional (\<^keyword>\<open>rejects\<close>    |-- Parse.enum1 "," Parse.term) []
+          -- Scan.repeat   (\<^keyword>\<open>accepts\<close>    |-- Parse.term)
+          -- Scan.repeats ((\<^keyword>\<open>invariant\<close>) |-- parse_invariants))
      ) 
-    >> (fn (((overloaded, x), (y, z)),((rejectS,accept_rex),invs)) =>
-           Toplevel.theory (add_doc_class_cmd {overloaded = overloaded} x y z rejectS accept_rex invs)));
+    >> (fn (((overloaded, hdr), (parent, attrs)),((rejects,accept_rex),invars)) =>
+           Toplevel.theory (add_doc_class_cmd {overloaded = overloaded} hdr parent  
+                                              attrs rejects accept_rex invars)));
 
 end (* struct *)
 \<close>  
@@ -1900,22 +1902,5 @@ ML\<open>
 
 \<close>
 *)
-ML\<open>open Thread\<close>
-
-(* concurrency experiments:
-ML\<open>open Thread\<close>
-ML\<open>open Future\<close>
-ML\<open>open OS.Process\<close>
-ML\<open>ALLGOALS\<close>
-
-ML\<open>open Goal\<close>
-ML \<open>future_result;\<close>
-*)
-
-ML\<open> String.isSuffix "_asd" "sdfgsd_asd";
-
-String.substring  ("sdfgsd_asd", 0, size "sdfgsd_asd" - 4)\<close>
-ML\<open>Long_Name.qualifier "dgfdfg.dfgdfg.qwe"\<close>
-
 
 end
