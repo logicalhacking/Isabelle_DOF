@@ -65,7 +65,7 @@ text*[dfgdfg2::C, z = "None"]\<open> Lorem ipsum ... @{thm refl} \<close>
 
 text*[omega::E, x = "''def''"]\<open> Lorem ipsum ... @{thm refl} \<close> 
 
-text\<open> As mentioned in @{docitem_ref \<open>dfgdfg\<close>} \<close>
+text\<open> As mentioned in @{docitem \<open>dfgdfg\<close>} \<close>
 
 text\<open>Here is a simulation what happens on the level of the (HOL)-term representation:\<close>
 term "A.x (undefined\<lparr>A.x := 3\<rparr>)"

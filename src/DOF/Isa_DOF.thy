@@ -34,7 +34,7 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            RegExpInterface    (* Interface to functional regular automata for monitoring *)
            Assert 
            
-  keywords "+=" ":=" "accepts" "rejects" "invs"
+  keywords "+=" ":=" "accepts" "rejects" "invariant"
 
   and      "title*"     "subtitle*"
            "chapter*"   "section*"    "subsection*"   "subsubsection*" 
@@ -1597,21 +1597,25 @@ val docitem_modes = Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ unc
 
 
 val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.text_input))
-                                   : ({define: bool, unchecked: bool} * Input.source) context_parser;
+                                   : ({define:bool,unchecked:bool} * Input.source) context_parser;
 
 
-
-fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked = x, define = y}, src ) = 
-            let (* val _ = writeln ("ZZZ" ^ Input.source_content src ^ "::2::" ^ cid_decl) *)
-                val (str,pos) = Input.source_content src
-                val _ = check_and_mark ctxt cid_decl
-                          ({strict_checking = not x}) pos str 
-            in  
-                (if y  then Latex.enclose_block ("\\csname isaDof.label\\endcsname[type={"^cid_decl^"}]{") "}" 
-                       else Latex.enclose_block ("\\csname isaDof.ref\\endcsname[type={"^cid_decl^"}]{") "}")
-                [Latex.text (Input.source_content src)] 
-            end
-          
+fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked, define}, src ) = 
+    let (* val _ = writeln ("ZZZ" ^ Input.source_content src ^ "::2::" ^ cid_decl) *)
+        val (str,pos) = Input.source_content src
+        val _ = check_and_mark ctxt cid_decl ({strict_checking = not unchecked}) pos str
+        val inline = Config.get ctxt Document_Antiquotation.thy_output_display
+        val _ = if  inline then writeln("HEUREKA") else () 
+        val enc = Latex.enclose_block
+    in  
+        (case (define,inline) of
+            (true,false) => enc("\\csname isaDof.label\\endcsname[type={"^cid_decl^"}]   {")"}" 
+           |(false,false)=> enc("\\csname isaDof.ref\\endcsname[type={"^cid_decl^"}]     {")"}"
+           |(true,true)  => enc("\\csname isaDof.macroDef\\endcsname[type={"^cid_decl^"}]{")"}" 
+           |(false,true) => enc("\\csname isaDof.macroExp\\endcsname[type={"^cid_decl^"}]{")"}"
+        )
+        [Latex.text (Input.source_content src)] 
+    end      
 
 
 fun docitem_antiquotation bind cid = 
@@ -1635,33 +1639,21 @@ fun check_and_mark_term ctxt oid  =
                  
                                          
 fun ML_antiquotation_docitem_value (ctxt, toks) = 
-              (Scan.lift (Args.cartouche_input) 
-               >> (fn inp => (ML_Syntax.atomic o ML_Syntax.print_term) 
-                             ((check_and_mark_term ctxt o fst o Input.source_content) inp)))
-               (ctxt, toks)
+    (Scan.lift (Args.cartouche_input) 
+     >> (fn inp => (ML_Syntax.atomic o ML_Syntax.print_term) 
+                   ((check_and_mark_term ctxt o fst o Input.source_content) inp)))
+     (ctxt, toks)
 
-(* Setup for general docrefs of the global DOF_core.default_cid - class ("text")*)
+(* Setup for general docitems of the global DOF_core.default_cid - class ("text")*)
 val _ = Theory.setup
-           (docitem_antiquotation \<^binding>\<open>docref\<close>  DOF_core.default_cid #>
-            (* deprecated syntax          ^^^^^^*)
-            docitem_antiquotation \<^binding>\<open>docitem_ref\<close> DOF_core.default_cid #>
-            (* deprecated syntax          ^^^^^^^^^^^*)
-            docitem_antiquotation \<^binding>\<open>docitem\<close>  DOF_core.default_cid #>
+           (docitem_antiquotation   \<^binding>\<open>docitem\<close>  DOF_core.default_cid #>
             
             ML_Antiquotation.inline \<^binding>\<open>docitem_value\<close> ML_antiquotation_docitem_value)
 
 end (* struct *)
 \<close>
 
-
-ML\<open>
-Goal.prove_global;
-Specification.theorems_cmd;
-Goal.prove_common;
-\<close>
-
-ML\<open>open Proof
-\<close>
+text\<open> @{thm [] refl}\<close>
 
 ML\<open> 
 structure AttributeAccess = 
@@ -1857,21 +1849,23 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
            
     end;
 
+val parse_invariants = Parse.and_list (Args.name_position --| Parse.$$$ "::" -- Parse.term)
+
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>doc_class\<close> "define document class"
     ((Parse_Spec.overloaded 
       -- (Parse.type_args_constrained  -- Parse.binding) 
       -- (\<^keyword>\<open>=\<close>  
-          |-- Scan.option (Parse.typ --| \<^keyword>\<open>+\<close>) 
+         |-- Scan.option (Parse.typ --| \<^keyword>\<open>+\<close>) 
           -- Scan.repeat1 (Parse.const_binding -- Scan.option (\<^keyword>\<open><=\<close> |-- Parse.term))
           )
-      -- (   Scan.optional (\<^keyword>\<open>rejects\<close> |-- Parse.enum1 "," Parse.term) []
-          -- Scan.repeat   (\<^keyword>\<open>accepts\<close> |-- Parse.term)
-          -- Scan.repeats ((\<^keyword>\<open>invs\<close>) |-- 
-                              Parse.and_list (Args.name_position --| Parse.$$$ "::" -- Parse.term)))
+      -- (   Scan.optional (\<^keyword>\<open>rejects\<close>    |-- Parse.enum1 "," Parse.term) []
+          -- Scan.repeat   (\<^keyword>\<open>accepts\<close>    |-- Parse.term)
+          -- Scan.repeats ((\<^keyword>\<open>invariant\<close>) |-- parse_invariants))
      ) 
-    >> (fn (((overloaded, x), (y, z)),((rejectS,accept_rex),invs)) =>
-           Toplevel.theory (add_doc_class_cmd {overloaded = overloaded} x y z rejectS accept_rex invs)));
+    >> (fn (((overloaded, hdr), (parent, attrs)),((rejects,accept_rex),invars)) =>
+           Toplevel.theory (add_doc_class_cmd {overloaded = overloaded} hdr parent  
+                                              attrs rejects accept_rex invars)));
 
 end (* struct *)
 \<close>  
@@ -1900,22 +1894,5 @@ ML\<open>
 
 \<close>
 *)
-ML\<open>open Thread\<close>
-
-(* concurrency experiments:
-ML\<open>open Thread\<close>
-ML\<open>open Future\<close>
-ML\<open>open OS.Process\<close>
-ML\<open>ALLGOALS\<close>
-
-ML\<open>open Goal\<close>
-ML \<open>future_result;\<close>
-*)
-
-ML\<open> String.isSuffix "_asd" "sdfgsd_asd";
-
-String.substring  ("sdfgsd_asd", 0, size "sdfgsd_asd" - 4)\<close>
-ML\<open>Long_Name.qualifier "dgfdfg.dfgdfg.qwe"\<close>
-
 
 end

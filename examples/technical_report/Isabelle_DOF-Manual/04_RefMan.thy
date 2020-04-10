@@ -770,7 +770,7 @@ text\<open>
   Moreover, you might want to add/modify the template specific configuration 
   (\autoref{lst:config-start}-\ref{lst:config-end}). The new template should be stored in 
   \path{src/document-templates} and its file name should start with the prefix \path{root-}. After
-  adding a new template, call the \inlinebash{install} script (see @{docref "infrastructure"}  
+  adding a new template, call the \inlinebash{install} script (see @{docitem "infrastructure"}  
   The common structure of an \isadof document template looks as follows: 
 
 \begin{ltx}[escapechar=ë, numbers=left,numberstyle=\tiny,xleftmargin=5mm]

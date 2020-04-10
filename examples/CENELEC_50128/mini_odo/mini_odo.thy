@@ -205,7 +205,8 @@ states them as three-fold differentiable function in certain bounds concerning s
 Note that violations, in particular of the constraints on speed and acceleration, \<^emph>\<open>do\<close> occur in practice.
 In such cases, the global system adapts recovery strategies that are out of the scope of our model.
 Concepts like \inlineisar+shaft_encoder_state+ (a triple with the sensor values 
-\inlineisar{C1}, \inlineisar{C2}, \inlineisar{C3})  were formalized as types, while tables were defined as recursive functions:
+\inlineisar{C1}, \inlineisar{C2}, \inlineisar{C3})  were formalized as types, while tables were 
+defined as recursive functions:
 \enlargethispage{2\baselineskip}\begin{isar}
 fun phase$_0$ :: "nat \<Rightarrow> shaft_encoder_state"   where 
    "phase$_0$ (0) =  \<lparr> C1 = False, C2 = False, C3 = True \<rparr>" 
@@ -561,10 +562,10 @@ to a test-environment or test-engine. \<close>
 
 text\<open>Finally some examples of references to doc-items, i.e. text-elements with declared 
      meta-information and status. \<close> 
-text \<open> As established by @{docref (unchecked) \<open>t10\<close>}, 
-                         @{docref (define) \<open>t10\<close>} \<close>
-text \<open> the               @{docref \<open>t10\<close>}                      
-       as well as the    @{docref \<open>ass122\<close>}\<close>  
+text \<open> As established by @{docitem (unchecked) \<open>t10\<close>}, 
+                         @{docitem (define) \<open>t10\<close>} \<close>
+text \<open> the               @{docitem \<open>t10\<close>}                      
+       as well as the    @{docitem \<open>ass122\<close>}\<close>  
 text \<open> represent a justification of the safety related applicability 
        condition @{SRAC \<open>ass122\<close>} aka exported constraint @{EC \<open>ass122\<close>}.\<close> 
 

@@ -111,9 +111,9 @@ text*[plan::introduction]\<open> The plan of the paper is follows: we start by i
 Isabelel sytem (@{docitem (unchecked) \<open>bgrnd\<close>}) followed by presenting the 
 essentials of  \isadof and its ontology language (@{docitem (unchecked) \<open>isadof\<close>}). 
 It follows @{docitem (unchecked) \<open>ontomod\<close>}, where we present three application 
-scenarios from the point of view of the ontology modeling. In @{docitem_ref (unchecked) \<open>ontopide\<close>}
+scenarios from the point of view of the ontology modeling. In @{docitem (unchecked) \<open>ontopide\<close>}
 we discuss the user-interaction generated from the ontological definitions.  Finally, we draw 
-conclusions  and discuss related work in @{docitem_ref (unchecked) \<open>conclusion\<close>}. \<close>  
+conclusions  and discuss related work in @{docitem (unchecked) \<open>conclusion\<close>}. \<close>  
 
 section*[bgrnd::text_section,main_author="Some(@{docitem ''adb''}::author)"]
         \<open> Background: The Isabelle System \<close>
@@ -146,7 +146,7 @@ figure*[architecture::figure,relative_width="100",src="''figures/isabelle-archit
      asynchronous communication between the Isabelle system and 
      the IDE (right-hand side). \<close>
 
-text*[blug::introduction]\<open> The Isabelle system architecture shown in @{docitem_ref \<open>architecture\<close>}
+text*[blug::introduction]\<open> The Isabelle system architecture shown in @{docitem \<open>architecture\<close>}
  comes with many layers, with Standard ML (SML) at the bottom layer as implementation 
 language. The architecture actually foresees a \<^emph>\<open>Nano-Kernel\<close> (our terminology) which 
 resides in the SML structure \texttt{Context}. This structure provides a kind of container called 
@@ -399,7 +399,7 @@ figure*[fig_figures::figure,spawn_columns=False,relative_width="85",src="''figur
 
 text\<open> The document class \inlineisar+figure+ --- supported by the \isadof text command 
 \inlineisar+figure*+ --- makes it possible to express the pictures and diagrams in this paper 
-such as @{docitem_ref \<open>fig_figures\<close>}.
+such as @{docitem \<open>fig_figures\<close>}.
 \<close>
          
 subsection*[math_exam::example]\<open> The Math-Exam Scenario \<close> 
@@ -518,7 +518,7 @@ declare_reference*["fig_qcm"::figure]
 
 text\<open> Using the \LaTeX{} package hyperref, it is possible to conceive an interactive 
 exam-sheets with multiple-choice and/or free-response elements 
-(see @{docitem_ref (unchecked) \<open>fig_qcm\<close>}). With the 
+(see @{docitem (unchecked) \<open>fig_qcm\<close>}). With the 
 help of the latter, it is possible that students write in a browser a formal mathematical 
 derivation---as part of an algebra exercise, for example---which is submitted to the examiners 
 electronically. \<close>
@@ -632,7 +632,7 @@ figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-
        \<open> Exploring an attribute (hyperlinked to the class). \<close> 
 subsection*[cenelec_pide::example]\<open> CENELEC  \<close>
 declare_reference*[figfig3::figure]  
-text\<open> The corresponding view in @{docitem_ref (unchecked) \<open>figfig3\<close>} shows core part of a document,  
+text\<open> The corresponding view in @{docitem (unchecked) \<open>figfig3\<close>} shows core part of a document,  
 coherent to the @{example \<open>cenelec_onto\<close>}. The first sample shows standard Isabelle antiquotations 
 @{cite "wenzel:isabelle-isar:2017"} into formal entities of a theory. This way, the informal parts 
 of a document get ``formal content'' and become more robust under change.\<close>
@@ -641,7 +641,7 @@ figure*[figfig3::figure,relative_width="80",src="''figures/antiquotations-PIDE''
 \<open> Standard antiquotations referring to theory elements.\<close>
 
 declare_reference*[figfig5::figure]  
-text\<open> The subsequent sample in @{docitem_ref (unchecked) \<open>figfig5\<close>} shows the definition of an 
+text\<open> The subsequent sample in @{docitem (unchecked) \<open>figfig5\<close>} shows the definition of an 
 \<^emph>\<open>safety-related application condition\<close>, a side-condition of a theorem which 
 has the consequence that a certain calculation must be executed sufficiently fast on an embedded 
 device. This condition can not be established inside the formal theory but has to be 
@@ -652,7 +652,7 @@ figure*[figfig5::figure, relative_width="80", src="''figures/srac-definition''"]
 figure*[figfig7::figure, relative_width="80", src="''figures/srac-as-es-application''"]
         \<open> Using a SRAC as EC document reference. \<close>
        
-text\<open> Now we reference in @{docitem_ref (unchecked) \<open>figfig7\<close>} this safety-related condition; 
+text\<open> Now we reference in @{docitem (unchecked) \<open>figfig7\<close>} this safety-related condition; 
 however, this happens in a context where general \<^emph>\<open>exported constraints\<close> are listed. 
 \isadof's checks establish that this is legal in the given ontology. 
 

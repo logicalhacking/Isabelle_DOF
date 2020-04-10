@@ -90,7 +90,7 @@ doc_class text_element =
    variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
 
 section\<open>Some attempt to model standardized links to Standard Isabelle Formal Content\<close>
-
+(* Deprecated *)
 doc_class assertions = 
     properties :: "term list"
   

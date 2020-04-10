@@ -389,7 +389,7 @@ figure*[fig_figures::figure,spawn_columns=False,relative_width="85",src="''figur
 
 text\<open> 
   The document class \inlineisar+figure+ (supported by the \isadof command \inlineisar+figure*+) 
-  makes it possible to express the pictures and diagrams such as @{docitem_ref \<open>fig_figures\<close>}.
+  makes it possible to express the pictures and diagrams such as @{docitem \<open>fig_figures\<close>}.
 
   Finally, we define a monitor class definition that enforces a textual ordering
   in the document core by a regular expression:
@@ -430,7 +430,7 @@ figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-
        \<open> Exploring an attribute (hyperlinked to the class). \<close> 
 
 text\<open> 
-  An ontological reference application in @{docitem_ref "figDogfoodVIlinkappl"}: the 
+  An ontological reference application in @{docitem "figDogfoodVIlinkappl"}: the 
   ontology-dependant antiquotation \inlineisar|@ {example ...}| refers to the corresponding 
   text-elements. Hovering allows for inspection, clicking for jumping to the definition.  If the 
   link does not exist or  has a non-compatible type, the text is not validated.
@@ -550,7 +550,7 @@ result communication times \ldots \<close>
 subsection*[ontopide::technical]\<open>Editing Support for CENELEC 50128\<close>  
 figure*[figfig3::figure,relative_width="95",src="''figures/antiquotations-PIDE''"]
 \<open> Standard antiquotations referring to theory elements.\<close>
-text\<open> The corresponding view in @{docitem_ref  \<open>figfig3\<close>} shows core part of a document 
+text\<open> The corresponding view in @{docitem  \<open>figfig3\<close>} shows core part of a document 
 conformimg to the CENELEC 50128 ontology. The first sample shows standard Isabelle antiquotations 
 @{cite "wenzel:isabelle-isar:2020"} into formal entities of a theory. This way, the informal parts 
 of a document get ``formal content'' and become more robust under change.\<close>
@@ -559,11 +559,11 @@ figure*[figfig5::figure, relative_width="95", src="''figures/srac-definition''"]
         \<open> Defining a SRAC reference \ldots \<close>
 figure*[figfig7::figure, relative_width="95", src="''figures/srac-as-es-application''"]
         \<open> Using a SRAC as EC document reference. \<close>
-text\<open> The subsequent sample in @{docitem_ref \<open>figfig5\<close>} shows the definition of an
+text\<open> The subsequent sample in @{docitem \<open>figfig5\<close>} shows the definition of an
 \<^emph>\<open>safety-related application condition\<close>, a side-condition of a theorem which 
 has the consequence that a certain calculation must be executed sufficiently fast on an embedded 
 device. This condition can not be established inside the formal theory but has to be 
-checked by system integration tests. Now we reference in @{docitem_ref  \<open>figfig7\<close>} this 
+checked by system integration tests. Now we reference in @{docitem  \<open>figfig7\<close>} this 
 safety-related condition; however, this happens in a context where general \<^emph>\<open>exported constraints\<close> 
 are listed. \isadof's checks establish that this is legal in the given ontology. 
 \<close>    
@@ -713,7 +713,7 @@ text\<Open> This is *\<Open>emphasized\<Close> a$$nd this is a
 Clearly, this is not always possible and, in fact, often \isadof documents will contain 
 \LaTeX-commands, this should be restricted to layout improvements that otherwise are (currently)
 not possible. As far as possible, the use of \LaTeX-commands should be restricted to the definition 
-of ontologies and document templates (see @{docitem_ref (unchecked) \<open>isadof_ontologies\<close>}).
+of ontologies and document templates (see @{docitem (unchecked) \<open>isadof_ontologies\<close>}).
 
 Restricting the use of \LaTeX has two advantages: first, \LaTeX commands can circumvent the 
 consistency checks of \isadof and, hence, only if no \LaTeX commands are used, \isadof can 

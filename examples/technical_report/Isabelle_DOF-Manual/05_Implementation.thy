@@ -188,7 +188,7 @@ text\<open>
 section\<open>Programming Class Invariants\<close>
 text\<open>
   For the moment, there is no high-level syntax for the definition of class invariants. A 
-  formulation, in SML, of the first class-invariant in @{docref "sec:class_inv"} is straight-forward:
+  formulation, in SML, of the first class-invariant in @{docitem "sec:class_inv"} is straight-forward:
 
 \begin{sml}
 fun check_result_inv oid {is_monitor:bool} ctxt =
@@ -223,7 +223,7 @@ text\<open>
 \end{sml}
   where \inlineisar+env+ is basically a map between internal automaton states and class-id's 
   (\inlineisar+cid+'s). An automaton is said to be \<^emph>\<open>enabled\<close> for a class-id, 
-  iff it either occurs in its accept-set or its reject-set (see @{docref "sec:monitors"}). During 
+  iff it either occurs in its accept-set or its reject-set (see @{docitem "sec:monitors"}). During 
   top-down document validation, whenever a text-element is encountered, it is checked if a monitor 
   is \emph{enabled} for this class; in this case, the \inlineisar+next+-operation is executed. The 
   transformed automaton recognizing the rest-language is stored in \inlineisar+docobj_tab+ if
@@ -247,9 +247,9 @@ text\<open>
 \end{ltx}
 
   The \LaTeX-generator of \isadof maps each \inlineisar{doc_item} to an \LaTeX-environment (recall
-  @{docref "text-elements"}). As generic \inlineisar{doc_item} are derived from the text element, 
+  @{docitem "text-elements"}). As generic \inlineisar{doc_item} are derived from the text element, 
   the enviornment \inlineltx|{isamarkuptext*}| builds the core of \isadof's \LaTeX{} implementation. 
-  For example, the @{docref "ass123"} from page \pageref{ass123} is mapped to
+  For example, the @{docitem "ass123"} from page \pageref{ass123} is mapped to
 
 \begin{ltx}
 \begin{isamarkuptext*}%
@@ -262,7 +262,7 @@ text\<open>
 \end{isamarkuptext*}
 \end{ltx}
 
-This environment is mapped to a plain \LaTeX command via (again, recall @{docref "text-elements"}):
+This environment is mapped to a plain \LaTeX command via (again, recall @{docitem "text-elements"}):
 \begin{ltx}
   \NewEnviron{isamarkuptext*}[1][]{\isaDof[env={text},#1]{\BODY}}
 \end{ltx}

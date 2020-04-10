@@ -25,7 +25,7 @@ doc_class title =
    short_title :: "string option"  <=  "None"
     
 doc_class subtitle =
-   abbrev :: "string option"       <=  "None"
+   abbrev ::      "string option"       <=  "None"
    
 (* adding a contribution list and checking that it is cited as well in tech as in conclusion. ? *)
 
@@ -96,7 +96,6 @@ As Security of the system we define etc...
 A formal statement can, but must not have a reference to true formal Isabelle/Isar definition. 
 \<close>
 
-
 subsection\<open>Technical Content and its Formats\<close>
 
 datatype status = semiformal | description
@@ -114,34 +113,64 @@ doc_class technical = text_section +
    status :: status <= "description"
    formal_results  :: "thm list"
 
-type_synonym tc = technical 
+type_synonym tc = technical (* technical content *)
 
 
-subsection\<open>Mathematical Statements\<close>
 
-datatype math_statement_class = 
-         "definition" | "axiom" | "theorem" | "lemma" | "proposition" | "rule" | "assertion"
+subsection\<open>Mathematical Content\<close>
 
-doc_class math_statement = tc +
-   short_name :: string <= "''''"
-   "class"    :: "math_statement_class"
-   status     :: status
+datatype math_content_class = "def" | "axm" | "thm" | "lem" | "prop" | "rule" | "assn"
 
-doc_class math_description  = math_statement +
-   referentiable :: bool <= "False"
+text\<open>Instances of the \<open>doc_class\<close> \<^verbatim>\<open>math_content\<close> are by definition @{term "semiformal"}; they may
+be non-referential, but in this case they will not have a @{term "short_name"}.\<close>
 
-doc_class math_semi_formal_stmt  = math_statement +
-   referentiable :: bool <= "True"
+doc_class math_content = tc +
+   referentiable :: bool <= True
+   short_name    :: string <= "''''"
+   status        :: status <= "semiformal"
+   mcc           :: "math_content_class" <= "thm" 
+   invariant s1  :: "\<lambda> \<sigma>. \<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
+   invariant s2  :: "\<lambda> \<sigma>. status \<sigma> = semiformal"
+type_synonym math_tc = math_content
 
+
+text\<open>The intended use for the \<open>doc_class\<close>es \<^verbatim>\<open>math_motivation\<close> (or \<^verbatim>\<open>math_mtv\<close> for short),
+     \<^verbatim>\<open>math_explanation\<close> (or \<^verbatim>\<open>math_exp\<close> for short) and 
+     \<^verbatim>\<open>math_example\<close> (or \<^verbatim>\<open>math_ex\<close> for short)
+     are \<^emph>\<open>informal\<close> descriptions of semi-formal definitions (by inheritance).
+     Math-Examples can be made referentiable triggering explicit, numbered presentations.\<close>
+doc_class math_motivation  = tc +  
+   referentiable :: bool <= False
+type_synonym math_mtv = math_motivation
+
+doc_class math_explanation  = tc +
+   referentiable :: bool <= False
+type_synonym math_exp = math_explanation
+
+doc_class math_example  = tc +
+   referentiable :: bool <= False
+   short_name    :: string <= "''''"
+   invariant s1  :: "\<lambda> \<sigma>. \<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
+type_synonym math_ex = math_example
+
+
+text\<open>The intended use for the \<open>doc_class\<close> \<^verbatim>\<open>math_semiformal_statement\<close> (or \<^verbatim>\<open>math_sfs\<close> for short) 
+     are semi-formal mathematical content (definition, lemma, etc.). They are referentiable entities.
+     They are NOT formal, i.e. Isabelle-checked formal content, but can be in close link to these.\<close>
+doc_class math_semiformal  = math_content +
+   referentiable :: bool <= True
+type_synonym math_sfc = math_semiformal
+
+subsection\<open>old style onto model.\<close>
 
 text\<open>A rough structuring is modeled as follows:\<close>   
 (* non-evident-statement *)
 doc_class "definition"  = tc +
-   referentiable :: bool <= "True"
+   referentiable :: bool <= True
    tag :: "string" <=  "''''"
 
 doc_class "theorem"     = tc +
-   referentiable :: bool <= "True"
+   referentiable :: bool <= True
    tag :: "string" <=  "''''"
 
 text\<open>Note that the following two text-elements are currently set to no-keyword in LNCS style.\<close>
@@ -159,7 +188,7 @@ text\<open> \<^verbatim>\<open>examples\<close> are currently considered \<^verb
       via inheritance. \<close> 
 
 doc_class example       = technical +
-   referentiable :: bool <= "True"
+   referentiable :: bool <= True
    tag :: "string" <=  "''''"
 
 subsection\<open>Code Statement Elements\<close>
@@ -189,25 +218,28 @@ doc_class "ISAR"     = code +
 doc_class "LATEX"     = code +
    checked :: bool <=  "False"
 
+
+
 subsection\<open>Content in Engineering/Tech Papers \<close>
 
 
-doc_class eng_statement = tc +
+doc_class engineering_statement = tc +
    short_name :: string <= "''''"
-   "class"    :: "math_statement_class"
    status     :: status
+type_synonym eng_stmt = engineering_statement
 
-
-doc_class "experiment"  = eng_statement +
+doc_class "experiment"  = eng_stmt +
    tag :: "string" <=  "''''"
 
-doc_class "evaluation"  = eng_statement +
+doc_class "evaluation"  = eng_stmt +
    tag :: "string" <=  "''''"
 
-doc_class "data"  = eng_statement +
+doc_class "data"  = eng_stmt +
    tag :: "string" <=  "''''"
 
 
+subsection\<open>Structuring Enforcement in Engineering/Math Papers \<close>
+(* todo : could be finer *)
 
 text\<open> Besides subtyping, there is another relation between
 doc\_classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
