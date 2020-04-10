@@ -1600,13 +1600,20 @@ val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.text_input)
                                    : ({define:bool,unchecked:bool} * Input.source) context_parser;
 
 
-fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked = x, define = y}, src ) = 
+fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked, define}, src ) = 
     let (* val _ = writeln ("ZZZ" ^ Input.source_content src ^ "::2::" ^ cid_decl) *)
         val (str,pos) = Input.source_content src
-        val _ = check_and_mark ctxt cid_decl ({strict_checking = not x}) pos str 
+        val _ = check_and_mark ctxt cid_decl ({strict_checking = not unchecked}) pos str
+        val inline = Config.get ctxt Document_Antiquotation.thy_output_display
+        val _ = if  inline then writeln("HEUREKA") else () 
+        val enc = Latex.enclose_block
     in  
-        (if y then Latex.enclose_block("\\csname isaDof.label\\endcsname[type={"^cid_decl^"}]{")"}" 
-              else Latex.enclose_block("\\csname isaDof.ref\\endcsname[type={"^cid_decl^"}]{")  "}")
+        (case (define,inline) of
+            (true,false) => enc("\\csname isaDof.label\\endcsname[type={"^cid_decl^"}]   {")"}" 
+           |(false,false)=> enc("\\csname isaDof.ref\\endcsname[type={"^cid_decl^"}]     {")"}"
+           |(true,true)  => enc("\\csname isaDof.macroDef\\endcsname[type={"^cid_decl^"}]{")"}" 
+           |(false,true) => enc("\\csname isaDof.macroExp\\endcsname[type={"^cid_decl^"}]{")"}"
+        )
         [Latex.text (Input.source_content src)] 
     end      
 
@@ -1646,7 +1653,7 @@ val _ = Theory.setup
 end (* struct *)
 \<close>
 
-
+text\<open> @{thm [] refl}\<close>
 
 ML\<open> 
 structure AttributeAccess = 
