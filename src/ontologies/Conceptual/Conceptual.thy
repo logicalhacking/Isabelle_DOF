@@ -57,8 +57,8 @@ doc_class F  =
    b           :: "(A \<times> C) set"  <= "{}"       (* This is a relation link, roughly corresponding
                                                  to an association class. It can be used to track
                                                  claims to result - relations, for example.*) 
-   invariant b :: "\<lambda>\<sigma>. r \<sigma> \<noteq> [] \<and> card(b \<sigma>) \<ge> 3"
-        and  c :: "\<lambda>\<sigma>. properties \<sigma> \<noteq> []"
+   invariant b :: "\<lambda>\<sigma>::F. r \<sigma> \<noteq> [] \<and> card(b \<sigma>) \<ge> 3"
+        and  c :: "\<lambda>\<sigma>::F. properties \<sigma> \<noteq> []"
 
 
 doc_class G = C +

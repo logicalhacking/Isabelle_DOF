@@ -39,7 +39,7 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   and      "title*"     "subtitle*"
            "chapter*"   "section*"    "subsection*"   "subsubsection*" 
            "paragraph*" "subparagraph*" 
-           "text*"       
+           "text*"      "text-macro*"      
            "figure*"
            "side_by_side_figure*" 
            "Definition*" "Lemma*" "Theorem*" "Conjecture*"
@@ -1242,11 +1242,13 @@ fun enriched_document_command level =
                 | SOME(SOME x) => (("level",@{here}),"Some("^ Int.toString x ^"::int)")::doc_attrs
    in  gen_enriched_document_command transform end; 
 
+val enriched_document_command_macro = enriched_document_command (* TODO ... *)
+
+
 fun enriched_formal_statement_command (tag:string) =
    let fun transform doc_attrs = (("tag",@{here}),"''"^tag^"''") :: 
                                  (("properties",@{here}),"([]::thm list)")::doc_attrs
    in  gen_enriched_document_command transform end; 
-
 
 
 fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
@@ -1378,6 +1380,11 @@ val _ =
     (attributes -- Parse.opt_target -- Parse.document_source 
       >> (Toplevel.theory o (enriched_document_command NONE {markdown = true} )));
                                             
+val _ =
+  Outer_Syntax.command ("text-macro*", @{here}) "formal comment macro"
+    (attributes -- Parse.opt_target -- Parse.document_source 
+      >> (Toplevel.theory o (enriched_document_command_macro NONE {markdown = true} )));
+
 val _ =
   Outer_Syntax.command @{command_keyword "declare_reference*"} 
                        "declare document reference"
@@ -1542,6 +1549,7 @@ fun theorem spec schematic descr  =
 in
 
 (* Half - fake. activates original Isar commands, but skips meta-arguments for the moment. *)
+(* tendance deprecated - see new scholarly paper setup. *)
 val _ = theorem @{command_keyword "theorem*"}        false "theorem";
 val _ = theorem @{command_keyword "lemma*"}          false "lemma";
 val _ = theorem @{command_keyword "corrollary*"}     false "corollary";
@@ -1605,7 +1613,6 @@ fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked, define}, src
         val (str,pos) = Input.source_content src
         val _ = check_and_mark ctxt cid_decl ({strict_checking = not unchecked}) pos str
         val inline = Config.get ctxt Document_Antiquotation.thy_output_display
-        val _ = if  inline then writeln("HEUREKA") else () 
         val enc = Latex.enclose_block
     in  
         (case (define,inline) of
@@ -1804,6 +1811,25 @@ val tag_attr = (Binding.make("tag_attribute",@{here}), @{typ "int"},Mixfix.NoSyn
 val trace_attr = ((Binding.make("trace",@{here}), "(doc_class rexp \<times> string) list",Mixfix.NoSyn),
                   SOME "[]"): ((binding * string * mixfix) * string option)
 
+fun def_cmd (decl, spec, prems, params) = #2 oo Specification.definition' decl params prems spec
+fun meta_eq_const T = Const (\<^const_name>\<open>Pure.eq\<close>, T --> T --> propT);
+fun mk_meta_eq (t, u) = meta_eq_const (fastype_of t) $ t $ u;
+
+
+fun define_cond binding f_sty   cond_suffix read_cond (ctxt:local_theory) = 
+       let val bdg = Binding.suffix_name cond_suffix binding
+           val eq =  mk_meta_eq(Free(Binding.name_of bdg, f_sty),read_cond ctxt)
+           val args = (SOME(bdg,NONE,NoSyn), (Binding.empty_atts,eq),[],[]) 
+       in def_cmd args true ctxt end
+
+fun define_precond binding sty = define_cond binding sty "_inv" 
+
+fun define_inv cid_long ((lbl, pos), inv) thy = 
+    let val bdg = (* Binding.suffix_name cid_long *) (Binding.make (lbl,pos))
+        fun inv_term ctxt = Syntax.read_term ctxt inv
+        val inv_ty = (Syntax.read_typ_global thy cid_long) --> HOLogic.boolT
+    in  thy |> Named_Target.theory_map (define_precond bdg inv_ty inv_term) end
+
 fun add_doc_class_cmd overloaded (raw_params, binding) 
                       raw_parent raw_fieldsNdefaults reject_Atoms regexps invariants thy =
     let
@@ -1846,9 +1872,9 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
               (* adding const symbol representing doc-class for Monitor-RegExps.*)
            |> (fn thy => OntoLinkParser.docitem_antiquotation binding (cid thy) thy)
               (* defines the ontology-checked text antiquotation to this document class *)
-           
+           |> (fn thy => fold(define_inv (cid thy)) (invariants) thy)
     end;
-
+           
 val parse_invariants = Parse.and_list (Args.name_position --| Parse.$$$ "::" -- Parse.term)
 
 val _ =
