@@ -119,8 +119,26 @@ type_synonym tc = technical (* technical content *)
 
 subsection\<open>Mathematical Content\<close>
 
-datatype math_content_class = "def" | "axm" | "thm" | "lem" | "prop" | "rule" | "assn"
+text\<open>We follow in our enumeration referentiable mathematical content class the AMS style and its
+provided \<^emph>\<open>theorem environments\<close> (see \<^verbatim>\<open>texdoc amslatex\<close>). We add, however, the concepts 
+\<^verbatim>\<open>axiom\<close>, \<^verbatim>\<open>rule\<close> and \<^verbatim>\<open>assertion\<close> to the list. A particular advantage of \<^verbatim>\<open>texdoc amslatex\<close> is 
+that it is well-established and compatible with many LaTeX - styles.\<close>
 
+datatype math_content_class = "defn" | "axm" | "thm" | "lem" | "cor" | "prop" 
+                            | "ex" | "rule" | "assn"
+
+(*
+thm Theorem Italic 
+cor Corollary Italic 
+lem Lemma Italic
+prop Proposition 
+defn Definition
+ex Example 
+
+rem Remark
+notation
+terminology
+*)
 text\<open>Instances of the \<open>doc_class\<close> \<^verbatim>\<open>math_content\<close> are by definition @{term "semiformal"}; they may
 be non-referential, but in this case they will not have a @{term "short_name"}.\<close>
 
@@ -129,10 +147,14 @@ doc_class math_content = tc +
    short_name    :: string <= "''''"
    status        :: status <= "semiformal"
    mcc           :: "math_content_class" <= "thm" 
-   invariant s1  :: "\<lambda> \<sigma>. \<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
-   invariant s2  :: "\<lambda> \<sigma>. status \<sigma> = semiformal"
+   invariant s1  :: "\<lambda> \<sigma>::math_content. \<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
+   invariant s2  :: "\<lambda> \<sigma>::math_content. status \<sigma> = semiformal"
 type_synonym math_tc = math_content
 
+
+find_theorems name:"s1" name:"scholarly"
+
+(* type qualification is a work around *)
 
 text\<open>The intended use for the \<open>doc_class\<close>es \<^verbatim>\<open>math_motivation\<close> (or \<^verbatim>\<open>math_mtv\<close> for short),
      \<^verbatim>\<open>math_explanation\<close> (or \<^verbatim>\<open>math_exp\<close> for short) and 
@@ -150,7 +172,7 @@ type_synonym math_exp = math_explanation
 doc_class math_example  = tc +
    referentiable :: bool <= False
    short_name    :: string <= "''''"
-   invariant s1  :: "\<lambda> \<sigma>. \<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
+   invariant s3  :: "\<lambda> \<sigma>::math_example. \<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
 type_synonym math_ex = math_example
 
 

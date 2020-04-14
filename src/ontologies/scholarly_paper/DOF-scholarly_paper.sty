@@ -158,13 +158,14 @@
 \newtheorem{ruleX}{Rule} % apparent name-clash with s th from libraries...
 \newtheorem{assertion}{Assertion} 
 
+% \newcommand{\formalMathStmt[label, mcc, ]
 % end: scholarly_paper.abstract
-% "def" | "axm" | "thm" | "lem" | "prop" | "rule" | "assn"
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newisadof{text.scholarly_paper.math_content}%
 [label=,type=%
- , scholarly_paper.math_content.short_name ={\relax}% {} or \relax
- , scholarly_paper.math_content.mcc     =%
+ , scholarly_paper.math_content.short_name ={} % {} or \relax
+ , scholarly_paper.math_content.mcc     = % "def" | "axm" | "thm" | "lem" | "prop" | "rule" | "assn"
  , Isa_COL.text_element.level         =%
  , Isa_COL.text_element.referentiable =%
  , Isa_COL.text_element.variants      =%
@@ -179,27 +180,57 @@
     \begin{isamarkuptext}%
         \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{def}}
                    {%
-                    \begin{definition}[\commandkey{scholarly_paper.math_content.short_name}] 
-                                      \label{\commandkey{label}} #1 
-                    \end{definition}%
+                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+                         {\begin{definition} \label{\commandkey{label}} #1 \end{definition} }
+                         {\begin{definition} [\commandkey{scholarly_paper.math_content.short_name}] 
+                                             \label{\commandkey{label}} #1 
+                          \end{definition}}
+                    }%
                    }%
         {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{axm}}    
                    {%
-                    \begin{axiom}[\commandkey{scholarly_paper.math_content.short_name}] 
-                                      \label{\commandkey{label}} #1 
-                    \end{axiom}%
+                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+                         {\begin{axiom} \label{\commandkey{label}} #1 \end{axiom} }
+                         {\begin{axiom} [\commandkey{scholarly_paper.math_content.short_name}] 
+                                        \label{\commandkey{label}} #1 
+                          \end{axiom}}
+                    }%
                    }%
         {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{thm}}    
                    {%
-                    \begin{theorem}[\commandkey{scholarly_paper.math_content.short_name}] 
-                                      \label{\commandkey{label}} #1 
-                    \end{theorem}%
+                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+                         {\begin{theorem} \label{\commandkey{label}} #1 \end{theorem} }
+                         {\begin{theorem} [\commandkey{scholarly_paper.math_content.short_name}] 
+                                          \label{\commandkey{label}} #1 
+                          \end{theorem}}
+                    }%
                    }%
         {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{lem}}    
                    {%
-                    \begin{lemma}[\commandkey{scholarly_paper.math_content.short_name}] 
-                                      \label{\commandkey{label}} #1 
-                    \end{lemma}%
+                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+                         {\begin{lemma} \label{\commandkey{label}} #1 \end{lemma} }
+                         {\begin{lemma} [\commandkey{scholarly_paper.math_content.short_name}] 
+                                             \label{\commandkey{label}} #1 
+                          \end{lemma}}
+                    }%
+                   }%
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{ex}}    
+                   {%
+                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+                         {\begin{example} \label{\commandkey{label}} #1 \end{example} }
+                         {\begin{example} [\commandkey{scholarly_paper.math_content.short_name}] 
+                                             \label{\commandkey{label}} #1 
+                          \end{example}}
+                    }%
+                   }%
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{cor}}    
+                   {%
+                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+                         {\begin{corrollary} \label{\commandkey{label}} #1 \end{corrollary} }
+                         {\begin{corrollary} [\commandkey{scholarly_paper.math_content.short_name}] 
+                                             \label{\commandkey{label}} #1 
+                          \end{corrollary}}
+                    }%
                    }%
         {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{prop}}    
                    {%
@@ -220,7 +251,9 @@
                     \end{assertion}%
                    }%
         {%     
-        ERROR CASE #1%    BETTER: Since enumeration, there should be here the best possible error-msg here 
+           \typeout{Internal error: enumeration out of sync} 
+        }%
+        }%
         }%
         }%
         }%
