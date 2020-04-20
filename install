@@ -126,8 +126,6 @@ check_afp_entries() {
        fi
     done
     if [ "$missing" != "" ]; then 
-        echo "           Please install development version of AFP for Isabelle 2020 manually."
-        exit_error
         echo "           Trying to install AFP (this might take a few *minutes*) ...."
 	extract=""
 	for e in $missing; do
