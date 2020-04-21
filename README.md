@@ -20,9 +20,9 @@ foo@bar:~$ docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-u
 
 Isabelle/DOF has two major pre-requisites:
 
-* **Isabelle:** Isabelle/DOF requires [Isabelle 2019](http://isabelle.in.tum.de/website-Isabelle2019/).
-  Please download the Isabelle 2019 distribution for your operating
-  system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2019/).
+* **Isabelle:** Isabelle/DOF requires [Isabelle 2020](http://isabelle.in.tum.de/website-Isabelle2020/).
+  Please download the Isabelle 2020 distribution for your operating
+  system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2020/).
 * **LaTeX:** Isabelle/DOF requires a modern pdfTeX-engine supporting the \expanded{}-primitive. This
   is, for example, included in the [TeXLive 2019](https://www.tug.org/texlive/) (or later)
   distribution. Please follow the [TeXLive installation instructions](https://www.tug.org/texlive/acquire-netinstall.html)
@@ -41,7 +41,7 @@ one), the full path to the ``isabelle`` command needs to be passed as
 using the ``--isabelle`` command line argument of the ``install`` script:
 
 ```console
-foo@bar:~$ ./install --isabelle /usr/local/Isabelle2019/bin/isabelle
+foo@bar:~$ ./install --isabelle /usr/local/Isabelle2020/bin/isabelle
 ```
 
 For further command line options of the installer, please use the

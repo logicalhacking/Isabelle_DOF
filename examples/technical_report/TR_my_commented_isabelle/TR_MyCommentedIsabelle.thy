@@ -14,7 +14,6 @@
 (*<*)
 theory TR_MyCommentedIsabelle
   imports "Isabelle_DOF.technical_report" 
-   (*imports "../../../ontologies/technical_report"*)
 begin
  
 
@@ -22,7 +21,7 @@ open_monitor*[this::report]
 (*>*)
 
 title*[tit::title]\<open>My Personal, Ecclectic Isabelle Programming Manual\<close> 
-subtitle*[stit::subtitle]\<open>Version : Isabelle 2019\<close>
+subtitle*[stit::subtitle]\<open>Version : Isabelle 2020\<close>
 text*[bu::author,     
       email       = "''wolff@lri.fr''",
       affiliation = "\<open>Université Paris-Saclay, LRI, France\<close>"]\<open>Burkhart Wolff\<close>
@@ -784,9 +783,9 @@ Theory.setup: (theory -> theory) -> unit;  (* The thing to extend the table of "
 Theory.get_markup: theory -> Markup.T;
 Theory.axiom_table: theory -> term Name_Space.table;
 Theory.axiom_space: theory -> Name_Space.T;
-Theory.axioms_of: theory -> (string * term) list;
 Theory.all_axioms_of: theory -> (string * term) list;
 Theory.defs_of: theory -> Defs.T;
+Theory.join_theory: theory list -> theory;
 Theory.at_begin: (theory -> theory option) -> theory -> theory;
 Theory.at_end: (theory -> theory option) -> theory -> theory;
 Theory.begin_theory: string * Position.T -> theory list -> theory;
@@ -1016,7 +1015,7 @@ fun derive_thm name term lthy =
          []                        (* local assumption context *)
          (term)                    (* parsed goal *)
          (fn _ => simp_tac lthy 1) (* proof tactic *)
-         |> Thm.close_derivation   (* some cleanups *);
+         |> Thm.close_derivation \<^here> (* some cleanups *);
 
 val thm111_intern = derive_thm "thm111" tt @{context} (* just for fun at the ML level *)
 
@@ -1035,7 +1034,7 @@ text\<open>Converting a local theory transformation into a global one:\<close>
 setup\<open>SimpleSampleProof.prove_n_store\<close>
 
 text\<open>... and there it is in the global (Isar) context:\<close>
-thm thm111  
+thm "thm111"
 
 
 
@@ -2038,7 +2037,7 @@ text\<open>The heart of the LaTeX generator is to be found in the structure @{ML
 \<close>
 
 ML\<open>
-local 
+local
 
   open Latex
 

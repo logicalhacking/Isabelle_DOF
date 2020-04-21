@@ -14,8 +14,8 @@
 theory 
   AssnsLemmaThmEtc
 imports 
-  "../ontologies/Conceptual/Conceptual"  
-  "../ontologies/math_paper/math_paper"
+  "Isabelle_DOF.Conceptual"  
+  "Isabelle_DOF.math_paper"
 begin
 
 section\<open>Elementary Creation of Doc-items and Access of their Attibutes\<close>

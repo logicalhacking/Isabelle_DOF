@@ -48,7 +48,7 @@ fun assert_cmd some_name modes raw_t ctxt (* state*) =
     val ty' = Term.type_of t';
     val ty' = case ty' of @{typ "bool"} => ty' | _ =>  error "Assertion expressions must be boolean.";
     val t'  = case t'  of @{term "True"} => t' | _ =>  error "Assertion failed.";
-    val ctxt' = Variable.auto_fixes t' ctxt;
+    val ctxt' = Proof_Context.augment t' ctxt;
     val p = Print_Mode.with_modes modes (fn () =>
       Pretty.block [Pretty.quote (Syntax.pretty_term ctxt' t'), Pretty.fbrk,
         Pretty.str "::", Pretty.brk 1, Pretty.quote (Syntax.pretty_typ ctxt' ty')]) ();
