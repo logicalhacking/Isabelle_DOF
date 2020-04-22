@@ -106,15 +106,14 @@ text\<open>The class \<^verbatim>\<open>technical\<close> regroups a number of t
 (* OPEN PROBLEM: connection between referentiable and status. This should be explicit 
    and computable. *)
 
-(* TODO : RENAME "tag" by "short_name" *)
 
 doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
-   status :: status <= "description"
+   status          :: status <= "description"
    formal_results  :: "thm list"
+   invariant L1    :: "\<lambda>\<sigma>::technical. the (level \<sigma>) > 0"
 
 type_synonym tc = technical (* technical content *)
-
 
 
 subsection\<open>Mathematical Content\<close>
@@ -124,8 +123,8 @@ provided \<^emph>\<open>theorem environments\<close> (see \<^verbatim>\<open>tex
 \<^verbatim>\<open>axiom\<close>, \<^verbatim>\<open>rule\<close> and \<^verbatim>\<open>assertion\<close> to the list. A particular advantage of \<^verbatim>\<open>texdoc amslatex\<close> is 
 that it is well-established and compatible with many LaTeX - styles.\<close>
 
-datatype math_content_class = "defn" | "axm" | "thm" | "lem" | "cor" | "prop" 
-                            | "ex" | "rule" | "assn"
+datatype math_content_class = "defn" | "axm"  | "thm"  | "lem" | "cor" | "prop" 
+                            | "ex"   | "rule" | "assn" 
 
 (*
 thm Theorem Italic 
@@ -183,26 +182,22 @@ doc_class math_semiformal  = math_content +
    referentiable :: bool <= True
 type_synonym math_sfc = math_semiformal
 
-subsection\<open>old style onto model.\<close>
+subsection\<open>Instances of the abstract classes Definition / Class / Lemma etc.\<close>
 
 text\<open>A rough structuring is modeled as follows:\<close>   
-(* non-evident-statement *)
-doc_class "definition"  = tc +
-   referentiable :: bool <= True
-   tag :: "string" <=  "''''"
 
-doc_class "theorem"     = tc +
+doc_class "definition"  = math_content +
    referentiable :: bool <= True
-   tag :: "string" <=  "''''"
+
+doc_class "theorem"     = math_content +
+   referentiable :: bool <= True
 
 text\<open>Note that the following two text-elements are currently set to no-keyword in LNCS style.\<close>
-doc_class "lemma"     = tc +
+doc_class "lemma"     = math_content +
    referentiable :: bool <= "True"
-   tag :: "string" <=  "''''"
 
-doc_class "corollary"     = tc +
+doc_class "corollary"     = math_content +
    referentiable :: bool <= "True"
-   tag :: "string" <=  "''''"
 
 subsection\<open>Example Statements\<close>
 

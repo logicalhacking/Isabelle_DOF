@@ -42,7 +42,7 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            "text*"      "text-macro*"      
            "figure*"
            "side_by_side_figure*" 
-           "Definition*" "Lemma*" "Theorem*" "Conjecture*"
+           "Definition*" "Lemma*" "Theorem*" 
            :: document_body
            
   and      "open_monitor*" "close_monitor*" "declare_reference*" 
@@ -1245,9 +1245,9 @@ fun enriched_document_command level =
 val enriched_document_command_macro = enriched_document_command (* TODO ... *)
 
 
-fun enriched_formal_statement_command (tag:string) =
-   let fun transform doc_attrs = (("tag",@{here}),"''"^tag^"''") :: 
-                                 (("properties",@{here}),"([]::thm list)")::doc_attrs
+fun enriched_formal_statement_command (cat:string,tag:string) =
+   let fun transform doc_attrs = (("mcc",@{here}),tag) :: 
+                                 (("formal_results",@{here}),"([]::thm list)")::doc_attrs
    in  gen_enriched_document_command transform end; 
 
 
@@ -1295,6 +1295,15 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
             |> delete_monitor_entry
     end 
 
+end
+\<close>
+
+ML\<open>
+
+structure Macros = 
+struct
+
+local open ODL_Command_Parser in
 (* *********************************************************************** *)
 (* Textual Command Support                                                 *)
 (* *********************************************************************** *)
@@ -1305,22 +1314,17 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
 val _ =
   Outer_Syntax.command ("Definition*", @{here}) "Textual Definition"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_formal_statement_command "definition" {markdown = true} )));
+      >> (Toplevel.theory o (enriched_formal_statement_command ("mcc","defn") {markdown = true} )));
 
 val _ =
   Outer_Syntax.command ("Lemma*", @{here}) "Textual Lemma Outline"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_formal_statement_command "lemma" {markdown = true} )));
+      >> (Toplevel.theory o (enriched_formal_statement_command ("mcc","lem") {markdown = true} )));
 
 val _ =
   Outer_Syntax.command ("Theorem*", @{here}) "Textual Theorem Outline"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_formal_statement_command "theorem" {markdown = true} )));
-
-val _ =
-  Outer_Syntax.command ("Conjecture*", @{here}) "Textual Theorem Outline"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_formal_statement_command "conjecture" {markdown = true} )));
+      >> (Toplevel.theory o (enriched_formal_statement_command ("mcc","thm") {markdown = true} )));
 
 
 val _ =
@@ -1429,7 +1433,7 @@ val _ =
                        "evaluate and print term"
                        (attributes -- opt_evaluator -- opt_modes  -- Parse.term  >> assertion_cmd'); 
 
-
+end 
 end (* struct *)
 \<close>
 

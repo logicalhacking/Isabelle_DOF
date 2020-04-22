@@ -13,20 +13,43 @@
 
 chapter \<open>The Document Ontology Common Library for the Isabelle Ontology Framework\<close>
 
-text\<open> Offering 
-\<^item> ...
-\<^item> 
-\<^item> LaTeX support. \<close> 
-  
- 
+text\<open> Building a fundamental infrastructure for common document elements such as
+      Structuring Text-Elements (the top classes), Figures, Tables (yet todo)
+    \<close> 
+
 theory Isa_COL   
   imports  Isa_DOF  
 begin
   
-   
+section\<open>Basic Text and Text-Structuring Elements\<close>
+
+text\<open> The attribute @{term "level"} in the subsequent enables doc-notation support section* etc.
+we follow LaTeX terminology on levels 
+\<^enum>             part          = Some -1
+\<^enum>             chapter       = Some 0
+\<^enum>             section       = Some 1
+\<^enum>             subsection    = Some 2
+\<^enum>             subsubsection = Some 3
+\<^enum>             ... 
+
+for scholarly paper: invariant level > 0. \<close>
+
+doc_class text_element = 
+   level         :: "int  option"    <=  "None" 
+   referentiable :: bool <= "False"
+   variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
+
+doc_class "chapter" = text_element +
+   level         :: "int  option"    <=  "Some 0" 
+doc_class "section" = text_element +
+   level         :: "int  option"    <=  "Some 1" 
+doc_class "subsection" = text_element +
+   level         :: "int  option"    <=  "Some 2" 
+doc_class "subsubsection" = text_element +
+   level         :: "int  option"    <=  "Some 3" 
+
+
 section\<open> Library of Standard Text Ontology \<close>
-
-
 
 datatype placement = pl_h  | (*here*) 
                      pl_t  | (*top*)
@@ -34,18 +57,17 @@ datatype placement = pl_h  | (*here*)
                      pl_ht | (*here ->  top*) 
                      pl_hb   (*here ->  bottom*)
 
+ML\<open>(Symtab.defined (#docclass_tab(DOF_core.get_data_global @{theory}))) "side_by_side_figure"\<close>
+
+print_doc_classes
 
 
 doc_class figure   = 
    relative_width   :: "int" (* percent of textwidth *)    
    src              :: "string"
-   placement        :: placement 
+   placement        :: placement <= "pl_h"  
    spawn_columns    :: bool <= True 
 
-ML\<open>(Symtab.defined (#docclass_tab(DOF_core.get_data_global @{theory}))) "side_by_side_figure"\<close>
-
-
-print_doc_classes
 
 doc_class side_by_side_figure = figure +
    anchor           :: "string"
@@ -57,7 +79,6 @@ doc_class side_by_side_figure = figure +
 
 print_doc_classes
 
-
 doc_class figure_group = 
    (*  trace :: "doc_class rexp list" <= "[]" automatically generated since monitor clause *)
    caption          :: "string"
@@ -67,31 +88,22 @@ doc_class figure_group =
 
 print_doc_classes
 
-
-(* dito the future table *)
+section\<open>Tables\<close>
+(* TODO ! ! ! *)
 
 (* dito the future monitor: table - block *)
 
 
-text\<open> The attribute @{term "level"} in the subsequent enables doc-notation support section* etc.
-we follow LaTeX terminology on levels 
-\<^enum>             part          = Some -1
-\<^enum>             chapter       = Some 0
-\<^enum>             section       = Some 1
-\<^enum>             subsection    = Some 2
-\<^enum>             subsubsection = Some 3
-\<^enum>             ... 
+section\<open>Tests\<close>
+   
+ML\<open>@{term "side_by_side_figure"};
+@{typ "doc_class rexp"}; 
+DOF_core.SPY;
+\<close>
 
-for scholarly paper: invariant level > 0 \<close>
+section\<open>DEPRECATED : An attempt to model Standard Isabelle Formal Content\<close>
 
-doc_class text_element = 
-   level         :: "int  option"    <=  "None" 
-   referentiable :: bool <= "False"
-   variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
-
-section\<open>Some attempt to model standardized links to Standard Isabelle Formal Content\<close>
-(* Deprecated *)
-doc_class assertions = 
+doc_class assertions =
     properties :: "term list"
   
 doc_class "thms" =
@@ -111,13 +123,6 @@ doc_class formal_content =
 doc_class concept = 
     tag        :: "string"   <= "''''"
     properties :: "thm list" <= "[]"
-
-section\<open>Tests\<close>
-   
-ML\<open>@{term "side_by_side_figure"};
-@{typ "doc_class rexp"}; 
-DOF_core.SPY;
-\<close>
 
 
 end
