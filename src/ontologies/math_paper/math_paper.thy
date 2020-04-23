@@ -26,8 +26,8 @@ proving environment after all ! So this ontology provides:
   
 theory math_paper
   imports  "../../DOF/Isa_DOF"  
-begin
-  
+
+begin  
    
 section\<open>Some attempt to model standardized links to Standard Isabelle Formal Content\<close>
 

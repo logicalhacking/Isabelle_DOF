@@ -14,7 +14,10 @@
 section\<open>An example ontology for a scholarly paper\<close>
 
 theory scholarly_paper
-   imports "../../DOF/Isa_COL"
+  imports "../../DOF/Isa_COL"
+  keywords "Definition*" "Lemma*" "Theorem*"  :: document_body
+
+
 begin
 
 text\<open>Scholarly Paper provides a number of standard text - elements for scientific papers.
@@ -192,7 +195,7 @@ type_synonym math_sfc = math_semiformal
 
 subsection\<open>Instances of the abstract classes Definition / Class / Lemma etc.\<close>
 
-text\<open>The key class definitions are motivated \<close>   
+text\<open>The key class definitions are motivated by the AMS style.\<close>   
 
 doc_class "definition"  = math_content +
    referentiable :: bool <= True
@@ -204,7 +207,6 @@ doc_class "theorem"     = math_content +
    mcc           :: "math_content_class" <= "thm" 
    invariant d2  :: "\<lambda> \<sigma>::theorem. mcc \<sigma> = thm"
 
-text\<open>Note that the following two text-elements are currently set to no-keyword in LNCS style.\<close>
 doc_class "lemma"     = math_content +
    referentiable :: bool <= "True"
    mcc           :: "math_content_class" <= "lem" 
@@ -220,6 +222,32 @@ doc_class "math_example"     = math_content +
    mcc           :: "math_content_class" <= "expl" 
    invariant d5  :: "\<lambda> \<sigma>::math_example. mcc \<sigma> = expl"
 
+subsection\<open>Ontological Macros\<close>
+ML\<open> local open ODL_Command_Parser in
+(* *********************************************************************** *)
+(* Ontological Macro Command Support                                       *)
+(* *********************************************************************** *)
+
+(* {markdown = true} sets the parsing process such that in the text-core markdown elements are
+   accepted. *)
+
+val _ =
+  Outer_Syntax.command ("Definition*", @{here}) "Textual Definition"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_formal_statement_command ("mcc","defn") {markdown = true} )));
+
+val _ =
+  Outer_Syntax.command ("Lemma*", @{here}) "Textual Lemma Outline"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_formal_statement_command ("mcc","lem") {markdown = true} )));
+
+val _ =
+  Outer_Syntax.command ("Theorem*", @{here}) "Textual Theorem Outline"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_formal_statement_command ("mcc","thm") {markdown = true} )));
+
+end 
+\<close>
 
 subsection\<open>Example Statements\<close>
 
@@ -400,6 +428,7 @@ fun check_group_elem level_hd a = case (get_level (snd a)) of
 fun check_group a = map (check_group_elem (check_level_hd (hd a))) (tl a) ;
 *)
 \<close>
+
 
 
 end

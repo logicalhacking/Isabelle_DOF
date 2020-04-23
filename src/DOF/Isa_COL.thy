@@ -19,6 +19,13 @@ text\<open> Building a fundamental infrastructure for common document elements s
 
 theory Isa_COL   
   imports  Isa_DOF  
+  keywords "title*"     "subtitle*"
+           "chapter*"   "section*"    "subsection*"   "subsubsection*" 
+           "paragraph*" "subparagraph*"       :: document_body 
+  and      "figure*" "side_by_side_figure*"   :: document_body 
+
+          
+
 begin
   
 section\<open>Basic Text and Text-Structuring Elements\<close>
@@ -48,6 +55,60 @@ doc_class "subsection" = text_element +
 doc_class "subsubsection" = text_element +
    level         :: "int  option"    <=  "Some 3" 
 
+
+subsection\<open>Ontological Macros\<close>
+
+ML\<open> local open ODL_Command_Parser in
+(* *********************************************************************** *)
+(* Ontological Macro Command Support                                       *)
+(* *********************************************************************** *)
+
+(* {markdown = true} sets the parsing process such that in the text-core markdown elements are
+   accepted. *)
+
+val _ =
+  Outer_Syntax.command ("title*", @{here}) "section heading"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} ))) ;
+
+val _ =
+  Outer_Syntax.command ("subtitle*", @{here}) "section heading"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} )));
+
+val _ =
+  Outer_Syntax.command ("chapter*", @{here}) "section heading"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 0)) {markdown = false} )));
+
+val _ =
+  Outer_Syntax.command ("section*", @{here}) "section heading"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 1)) {markdown = false} )));
+
+
+val _ =
+  Outer_Syntax.command ("subsection*", @{here}) "subsection heading"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 2)) {markdown = false} )));
+
+val _ =
+  Outer_Syntax.command ("subsubsection*", @{here}) "subsubsection heading"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 3)) {markdown = false} )));
+
+val _ =
+  Outer_Syntax.command ("paragraph*", @{here}) "paragraph heading"
+    (attributes --  Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 4)) {markdown = false} )));
+
+val _ =
+  Outer_Syntax.command ("subparagraph*", @{here}) "subparagraph heading"
+    (attributes -- Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 5)) {markdown = false} )));
+
+end 
+\<close>
 
 section\<open> Library of Standard Text Ontology \<close>
 
@@ -88,6 +149,28 @@ doc_class figure_group =
 
 print_doc_classes
 
+subsection\<open>Ontological Macros\<close>
+
+ML\<open> local open ODL_Command_Parser in
+(* *********************************************************************** *)
+(* Ontological Macro Command Support                                       *)
+(* *********************************************************************** *)
+
+val _ =
+  Outer_Syntax.command ("figure*", @{here}) "figure"
+    (attributes --  Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} )));
+
+val _ =
+  Outer_Syntax.command ("side_by_side_figure*", @{here}) "multiple figures"
+    (attributes --  Parse.opt_target -- Parse.document_source --| semi
+      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} )));
+
+
+
+end 
+\<close>
+
 section\<open>Tables\<close>
 (* TODO ! ! ! *)
 
@@ -100,6 +183,8 @@ ML\<open>@{term "side_by_side_figure"};
 @{typ "doc_class rexp"}; 
 DOF_core.SPY;
 \<close>
+
+
 
 section\<open>DEPRECATED : An attempt to model Standard Isabelle Formal Content\<close>
 

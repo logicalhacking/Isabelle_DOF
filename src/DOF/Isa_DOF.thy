@@ -35,24 +35,19 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            Assert 
            
   keywords "+=" ":=" "accepts" "rejects" "invariant"
-
-  and      "title*"     "subtitle*"
-           "chapter*"   "section*"    "subsection*"   "subsubsection*" 
-           "paragraph*" "subparagraph*" 
-           "text*"      "text-macro*"      
-           "figure*"
-           "side_by_side_figure*" 
-           "Definition*" "Lemma*" "Theorem*" 
-           :: document_body
            
   and      "open_monitor*" "close_monitor*" "declare_reference*" 
            "update_instance*" "doc_class" ::thy_decl
 
-  and      (* "definition*" *) "corrollary*" "proposition*" "schematic_goal*" 
+  and      "text*"      "text-macro*"     :: document_body 
+
+  and      "print_doc_classes" "print_doc_items" "check_doc_global" :: diag
+
+  (* experimental *)  
+  and      "corrollary*" "proposition*" "schematic_goal*" 
            "lemma*" "theorem*" (* -- intended replacement of Isar std commands.*) 
            "assert*"  ::thy_decl
 
-  and      "print_doc_classes" "print_doc_items" "check_doc_global" :: diag
            
   
 begin
@@ -1246,7 +1241,7 @@ val enriched_document_command_macro = enriched_document_command (* TODO ... *)
 
 
 fun enriched_formal_statement_command (cat:string,tag:string) =
-   let fun transform doc_attrs = (("mcc",@{here}),tag) :: 
+   let fun transform doc_attrs = ((cat,@{here}),tag) :: 
                                  (("formal_results",@{here}),"([]::thm list)")::doc_attrs
    in  gen_enriched_document_command transform end; 
 
@@ -1312,105 +1307,8 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
             |> delete_monitor_entry
     end 
 
-end
-\<close>
+(* Core Command Definitions *)
 
-ML\<open>
-
-structure Macros = 
-struct
-
-local open ODL_Command_Parser in
-(* *********************************************************************** *)
-(* Textual Command Support                                                 *)
-(* *********************************************************************** *)
-
-(* {markdown = true} sets the parsing process such that in the text-core markdown elements are
-   accepted. *)
-
-val _ =
-  Outer_Syntax.command ("Definition*", @{here}) "Textual Definition"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_formal_statement_command ("mcc","defn") {markdown = true} )));
-
-val _ =
-  Outer_Syntax.command ("Lemma*", @{here}) "Textual Lemma Outline"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_formal_statement_command ("mcc","lem") {markdown = true} )));
-
-val _ =
-  Outer_Syntax.command ("Theorem*", @{here}) "Textual Theorem Outline"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_formal_statement_command ("mcc","thm") {markdown = true} )));
-
-
-val _ =
-  Outer_Syntax.command ("title*", @{here}) "section heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} ))) ;
-
-val _ =
-  Outer_Syntax.command ("subtitle*", @{here}) "section heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("chapter*", @{here}) "section heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 0)) {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("section*", @{here}) "section heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 1)) {markdown = false} )));
-
-
-val _ =
-  Outer_Syntax.command ("subsection*", @{here}) "subsection heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 2)) {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("subsubsection*", @{here}) "subsubsection heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 3)) {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("paragraph*", @{here}) "paragraph heading"
-    (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 4)) {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("subparagraph*", @{here}) "subparagraph heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 5)) {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("figure*", @{here}) "figure"
-    (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("side_by_side_figure*", @{here}) "multiple figures"
-    (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} )));
-
-
-val _ =
-  Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
-    (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (enriched_document_command NONE {markdown = true} )));
-                                            
-val _ =
-  Outer_Syntax.command ("text-macro*", @{here}) "formal comment macro"
-    (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (enriched_document_command_macro NONE {markdown = true} )));
-
-val _ =
-  Outer_Syntax.command @{command_keyword "declare_reference*"} 
-                       "declare document reference"
-                       (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
-                                      (Toplevel.theory (DOF_core.declare_object_global oid))));
 
 val _ =
   Outer_Syntax.command @{command_keyword "open_monitor*"} 
@@ -1430,13 +1328,30 @@ val _ =
 
 
 val _ =
+  Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
+    (attributes -- Parse.opt_target -- Parse.document_source 
+      >> (Toplevel.theory o (enriched_document_command NONE {markdown = true} )));
+                                            
+val _ =
+  Outer_Syntax.command ("text-macro*", @{here}) "formal comment macro"
+    (attributes -- Parse.opt_target -- Parse.document_source 
+      >> (Toplevel.theory o (enriched_document_command_macro NONE {markdown = true} )));
+
+val _ =
+  Outer_Syntax.command @{command_keyword "declare_reference*"} 
+                       "declare document reference"
+                       (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
+                                      (Toplevel.theory (DOF_core.declare_object_global oid))));
+
+
+val _ =
   Outer_Syntax.command @{command_keyword "assert*"} 
                        "evaluate and print term"
                        (attributes -- opt_evaluator -- opt_modes  -- Parse.term  >> assertion_cmd'); 
 
-end 
-end (* struct *)
+end
 \<close>
+
 
 ML\<open>
 structure ODL_LTX_Converter = 
