@@ -308,9 +308,11 @@
 % end: scholarly_paper.math_content
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Besser: Einfach durchreichen wg Vererbung !
 \newisadof{text.scholarly_paper.math_example}%
 [label=,type=%
- , scholarly_paper.math_example.short_name =%
+ , scholarly_paper.math_content.short_name =%
+ , scholarly_paper.math_content.mcc =%
  , Isa_COL.text_element.level         =%
  , Isa_COL.text_element.referentiable =%
  , Isa_COL.text_element.variants      =%
@@ -322,10 +324,10 @@
  [1]
  {%
     \begin{isamarkuptext}%
-        \ifthenelse{\equal{\commandkey{scholarly_paper.technical.status}}{semiformal}}{
-              \ifthenelse{\equal{\commandkey{scholarly_paper.math_example.short_name}} {} }  
+        \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{expl}}{
+              \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{example} \label{\commandkey{label}} #1 \end{example} }
-                         {\begin{example} [\commandkey{scholarly_paper.math_example.short_name}]
+                         {\begin{example} [\commandkey{scholarly_paper.math_content.short_name}]
                                           \label{\commandkey{label}} #1  
                           \end{example}}
           }{%     
@@ -335,9 +337,11 @@
  }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Besser: Einfach durchreichen wg Vererbung !
 \newisadof{text.scholarly_paper.definition}%
 [label=,type=%
- , scholarly_paper.definition.tag     =%
+ , scholarly_paper.math_content.short_name =%
+ , scholarly_paper.math_content.mcc =%
  , Isa_COL.text_element.level         =%
  , Isa_COL.text_element.referentiable =%
  , Isa_COL.text_element.variants      =%
@@ -350,19 +354,21 @@
  [1]
  {%
     \begin{isamarkuptext}%
-        \ifthenelse{\equal{\commandkey{scholarly_paper.technical.status}}{semiformal}}{
-              \ifthenelse{\equal{\commandkey{scholarly_paper.definition.tag}} {} }  
+        \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{defn}}{
+              \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{definition} \label{\commandkey{label}} #1 \end{definition} }
-                         {\begin{definition} [\commandkey{scholarly_paper.definition.tag}] \label{\commandkey{label}} #1 \end{definition}}
+                         {\begin{definition} [\commandkey{scholarly_paper.math_content.short_name}] \label{\commandkey{label}} #1 \end{definition}}
           }{%     
           #1%
         }%
     \end{isamarkuptext}%
  } 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Besser: Einfach durchreichen wg Vererbung !
 \newisadof{text.scholarly_paper.lemma}%
 [label=,type=%
- , scholarly_paper.lemma.tag     =%
+ , scholarly_paper.math_content.short_name =%
+ , scholarly_paper.math_content.mcc =%
  , Isa_COL.text_element.level         =%
  , Isa_COL.text_element.referentiable =%
  , Isa_COL.text_element.variants      =%
@@ -375,19 +381,21 @@
  [1]
  {%
     \begin{isamarkuptext}%
-        \ifthenelse{\equal{\commandkey{scholarly_paper.technical.status}}{semiformal}}{
-              \ifthenelse{\equal{\commandkey{scholarly_paper.lemma.tag}} {} }  
+        \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{lem}}{
+              \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{lemma} \label{\commandkey{label}} #1 \end{lemma} }
-                         {\begin{lemma} [\commandkey{scholarly_paper.theorem.tag}] \label{\commandkey{label}} #1 \end{lemma}}
+                         {\begin{lemma} [\commandkey{scholarly_paper.math_content.short_name}] \label{\commandkey{label}} #1 \end{lemma}}
           }{%     
           #1%
         }%
     \end{isamarkuptext}%
  } 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Besser: Einfach durchreichen wg Vererbung !
 \newisadof{text.scholarly_paper.theorem}%
 [label=,type=%
- , scholarly_paper.theorem.tag     =%
+ , scholarly_paper.math_content.short_name =%
+ , scholarly_paper.math_content.mcc =%
  , Isa_COL.text_element.level         =%
  , Isa_COL.text_element.referentiable =%
  , Isa_COL.text_element.variants      =%
@@ -400,16 +408,17 @@
  [1]
  {%
     \begin{isamarkuptext}%
-        \ifthenelse{\equal{\commandkey{scholarly_paper.technical.status}}{semiformal}}{
-              \ifthenelse{\equal{\commandkey{scholarly_paper.theorem.tag}} {} }  
+        \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{thm}}{
+              \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{theorem} \label{\commandkey{label}} #1 \end{theorem} }
-                         {\begin{theorem} [\commandkey{scholarly_paper.theorem.tag}] \label{\commandkey{label}} #1 \end{theorem}}
+                         {\begin{theorem} [\commandkey{scholarly_paper.math_content.short_name}] \label{\commandkey{label}} #1 \end{theorem}}
           }{%     
           #1%
         }%
     \end{isamarkuptext}%
  } 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Generic Example. Different inheritance hierachy.
 \newisadof{text.scholarly_paper.example}%
 [label=,type=%
  , Isa_COL.text_element.level         =%
