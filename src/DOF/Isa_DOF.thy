@@ -1251,6 +1251,23 @@ fun enriched_formal_statement_command (cat:string,tag:string) =
    in  gen_enriched_document_command transform end; 
 
 
+fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
+                prop) =
+    let fun conv_2_holstring thy =  (bstring_to_holstring (Proof_Context.init_global thy))
+        fun conv_attrs thy = (("properties",pos),"[@{termrepr ''"^conv_2_holstring thy prop ^" ''}]")
+                             ::doc_attrs  
+        fun conv_attrs' thy = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) (conv_attrs thy)
+        fun mks thy = case DOF_core.get_object_global_opt oid thy of
+                   SOME NONE => (error("update of declared but not created doc_item:" ^ oid))
+                 | SOME _ => (update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
+                 | NONE   => (create_and_check_docitem false oid pos cid_pos (conv_attrs thy) thy)
+        val check = (assert_cmd name_opt modes prop) o Proof_Context.init_global
+    in 
+        (* Toplevel.keep (check o Toplevel.context_of) *)
+        Toplevel.theory (fn thy => (check thy; mks thy))
+    end
+
+
 fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
     let fun o_m_c oid pos cid_pos doc_attrs thy = create_and_check_docitem 
                                                          true oid pos cid_pos doc_attrs thy
@@ -1411,22 +1428,6 @@ val _ =
                        "update meta-attributes of an instance of a document class"
                         (attributes_upd >> (Toplevel.theory o update_instance_command)); 
 
-
-fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
-                prop) =
-    let fun conv_2_holstring thy =  (bstring_to_holstring (Proof_Context.init_global thy))
-        fun conv_attrs thy = (("properties",pos),"[@{termrepr ''"^conv_2_holstring thy prop ^" ''}]")
-                             ::doc_attrs  
-        fun conv_attrs' thy = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) (conv_attrs thy)
-        fun mks thy = case DOF_core.get_object_global_opt oid thy of
-                   SOME NONE => (error("update of declared but not created doc_item:" ^ oid))
-                 | SOME _ => (update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
-                 | NONE   => (create_and_check_docitem false oid pos cid_pos (conv_attrs thy) thy)
-        val check = (assert_cmd name_opt modes prop) o Proof_Context.init_global
-    in 
-        (* Toplevel.keep (check o Toplevel.context_of) *)
-        Toplevel.theory (fn thy => (check thy; mks thy))
-    end
 
 val _ =
   Outer_Syntax.command @{command_keyword "assert*"} 

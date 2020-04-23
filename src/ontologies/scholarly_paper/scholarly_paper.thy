@@ -116,6 +116,19 @@ doc_class technical = text_section +
 type_synonym tc = technical (* technical content *)
 
 
+text \<open>This a \<open>doc_class\<close> of \<^verbatim>\<open>examples\<close> in the broadest possible sense : they are \emph{not}
+necessarily considered as technical content, but may occur in an article. 
+Note that there are \<open>doc_class\<close>es of \<^verbatim>\<open>math_example\<close>s and \<^verbatim>\<open>tech_example\<close>s which 
+follow a more specific regime of mathematical or engineering content.
+\<close>
+(* An example for the need of multiple inheritance on classes ? *)
+
+doc_class example  = text_section + 
+   referentiable   :: bool <= True
+   status          :: status <= "description"
+   short_name      :: string <= "''''"
+
+
 subsection\<open>Mathematical Content\<close>
 
 text\<open>We follow in our enumeration referentiable mathematical content class the AMS style and its
@@ -169,12 +182,6 @@ doc_class math_explanation  = tc +
    referentiable :: bool <= False
 type_synonym math_exp = math_explanation
 
-doc_class math_example  = tc +
-   referentiable :: bool <= False
-   short_name    :: string <= "''''"
-   invariant s3  :: "\<lambda> \<sigma>::math_example. \<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
-type_synonym math_ex = math_example
-
 
 text\<open>The intended use for the \<open>doc_class\<close> \<^verbatim>\<open>math_semiformal_statement\<close> (or \<^verbatim>\<open>math_sfs\<close> for short) 
      are semi-formal mathematical content (definition, lemma, etc.). They are referentiable entities.
@@ -208,10 +215,10 @@ doc_class "corollary"     = math_content +
    mcc           :: "math_content_class" <= "cor" 
    invariant d4  :: "\<lambda> \<sigma>::corollary. mcc \<sigma> = thm"
 
-doc_class "example"     = math_content +
+doc_class "math_example"     = math_content +
    referentiable :: bool <= "True"
    mcc           :: "math_content_class" <= "expl" 
-   invariant d5  :: "\<lambda> \<sigma>::example. mcc \<sigma> = expl"
+   invariant d5  :: "\<lambda> \<sigma>::math_example. mcc \<sigma> = expl"
 
 
 subsection\<open>Example Statements\<close>
@@ -255,18 +262,18 @@ doc_class "LATEX"     = code +
 subsection\<open>Content in Engineering/Tech Papers \<close>
 
 
-doc_class engineering_statement = tc +
+doc_class engineering_content = tc +
    short_name :: string <= "''''"
    status     :: status
-type_synonym eng_stmt = engineering_statement
+type_synonym eng_c = engineering_content
 
-doc_class "experiment"  = eng_stmt +
+doc_class "experiment"  = eng_c +
    tag :: "string" <=  "''''"
 
-doc_class "evaluation"  = eng_stmt +
+doc_class "evaluation"  = eng_c +
    tag :: "string" <=  "''''"
 
-doc_class "data"  = eng_stmt +
+doc_class "data"  = eng_c +
    tag :: "string" <=  "''''"
 
 
@@ -307,7 +314,7 @@ doc_class article =
             \<lbrace>author\<rbrace>\<^sup>+         ~~ 
             abstract          ~~
             \<lbrace>introduction\<rbrace>\<^sup>+   ~~ 
-            \<lbrace>technical\<rbrace>\<^sup>+      ~~
+            \<lbrace>technical || example \<rbrace>\<^sup>+      ~~
             \<lbrace>conclusion\<rbrace>\<^sup>+     ~~  
             bibliography      ~~
             \<lbrace>annex\<rbrace>\<^sup>* )"

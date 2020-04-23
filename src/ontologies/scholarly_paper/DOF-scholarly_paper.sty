@@ -412,23 +412,26 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newisadof{text.scholarly_paper.example}%
 [label=,type=%
- , scholarly_paper.example.tag     =%
  , Isa_COL.text_element.level         =%
  , Isa_COL.text_element.referentiable =%
  , Isa_COL.text_element.variants      =%
  , scholarly_paper.text_section.main_author  =%
  , scholarly_paper.text_section.fixme_list   =%
  , scholarly_paper.technical.definition_list =%
- , scholarly_paper.technical.status          =%
+ , scholarly_paper.example.status     =%
+ , scholarly_paper.example.short_name =%
  ]
  [1]
  {%
     \begin{isamarkuptext}%
-        \ifthenelse{\equal{\commandkey{scholarly_paper.technical.status}}{semiformal}}{
-              \ifthenelse{\equal{\commandkey{scholarly_paper.example.tag}} {} }  
+        \ifthenelse{\equal{\commandkey{scholarly_paper.example.status}}{semiformal}}{
+              \ifthenelse{\equal{\commandkey{scholarly_paper.example.short_name}} {} }  
                          {\begin{example} \label{\commandkey{label}} #1 \end{example} }
-                         {\begin{example} [\commandkey{scholarly_paper.example.tag}] \label{\commandkey{label}} #1 \end{example}}
-          }{%     
+                         {\begin{example} [\commandkey{scholarly_paper.example.short_name}] %
+                                          \label{\commandkey{label}} #1 %
+                          \end{example}} %
+                         }%
+        {%     
           #1%
         }%
     \end{isamarkuptext}%

@@ -65,7 +65,7 @@ print_doc_classes
 doc_class figure   = 
    relative_width   :: "int" (* percent of textwidth *)    
    src              :: "string"
-   placement        :: placement <= "pl_h"  
+   placement        :: placement  
    spawn_columns    :: bool <= True 
 
 
