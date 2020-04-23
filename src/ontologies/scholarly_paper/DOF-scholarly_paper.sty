@@ -160,7 +160,7 @@
 
 % \newcommand{\formalMathStmt[label, mcc, ]
 % end: scholarly_paper.abstract
-
+% | "rule" | "assn" | "expl" | rem      | "notation" | "terminology"
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newisadof{text.scholarly_paper.math_content}%
 [label=,type=%
@@ -210,16 +210,16 @@
                     {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{lemma} \label{\commandkey{label}} #1 \end{lemma} }
                          {\begin{lemma} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                             \label{\commandkey{label}} #1 
+                                        \label{\commandkey{label}} #1 
                           \end{lemma}}
                     }%
                    }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{ex}}    
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{expl}}    
                    {%
                     {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{example} \label{\commandkey{label}} #1 \end{example} }
                          {\begin{example} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                             \label{\commandkey{label}} #1 
+                                          \label{\commandkey{label}} #1 
                           \end{example}}
                     }%
                    }%
@@ -234,24 +234,63 @@
                    }%
         {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{prop}}    
                    {%
-                    \begin{property}[\commandkey{scholarly_paper.math_content.short_name}] 
-                                      \label{\commandkey{label}} #1 
-                    \end{property}%
+                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+                         {\begin{property} \label{\commandkey{label}} #1 \end{property} }
+                         {\begin{property} [\commandkey{scholarly_paper.math_content.short_name}] 
+                                           \label{\commandkey{label}} #1 
+                          \end{property}}
+                    }%
                    }%
         {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{rule}}    
                    {%
-                    \begin{ruleX}[\commandkey{scholarly_paper.math_content.short_name}] 
-                                      \label{\commandkey{label}} #1 
-                    \end{ruleX}%
+                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+                         {\begin{ruleX} \label{\commandkey{label}} #1 \end{ruleX} }
+                         {\begin{ruleX} [\commandkey{scholarly_paper.math_content.short_name}] 
+                                        \label{\commandkey{label}} #1 
+                          \end{ruleX}}
+                    }%
+                   }%
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{rem}}    
+                   {%
+                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+                         {\begin{remark}  \label{\commandkey{label}} #1 \end{remark} }
+                         {\begin{remark} [\commandkey{scholarly_paper.math_content.short_name}] 
+                                          \label{\commandkey{label}} #1 
+                          \end{remark}}
+                    }%
                    }%
         {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{assn}}    
                    {%
-                    \begin{assertion}[\commandkey{scholarly_paper.math_content.short_name}] 
-                                      \label{\commandkey{label}} #1 
-                    \end{assertion}%
+                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+                         {\begin{assertion} \label{\commandkey{label}} #1 \end{assertion} }
+                         {\begin{assertion} [\commandkey{scholarly_paper.math_content.short_name}] 
+                                             \label{\commandkey{label}} #1 
+                          \end{assertion}}
+                    }%
+                   }%
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{notation}}    
+                   {%
+                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+                         {\begin{notation} \label{\commandkey{label}} #1 \end{notation} }
+                         {\begin{notation} [\commandkey{scholarly_paper.math_content.short_name}] 
+                                           \label{\commandkey{label}} #1 
+                          \end{notation}}
+                    }%
+                   }%
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{terminology}}    
+                   {%
+                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+                         {\begin{terminology} \label{\commandkey{label}} #1 \end{terminology} }
+                         {\begin{terminology} [\commandkey{scholarly_paper.math_content.short_name}] 
+                                              \label{\commandkey{label}} #1 
+                          \end{terminology}}
+                    }%
                    }%
         {%     
-           \typeout{Internal error: enumeration out of sync} 
+           \typeout{Internal error: enumeration out of sync with ontology scholarly-paper.} 
+        }%
+        }%
+        }%
         }%
         }%
         }%

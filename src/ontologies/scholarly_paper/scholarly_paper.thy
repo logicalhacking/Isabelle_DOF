@@ -123,8 +123,9 @@ provided \<^emph>\<open>theorem environments\<close> (see \<^verbatim>\<open>tex
 \<^verbatim>\<open>axiom\<close>, \<^verbatim>\<open>rule\<close> and \<^verbatim>\<open>assertion\<close> to the list. A particular advantage of \<^verbatim>\<open>texdoc amslatex\<close> is 
 that it is well-established and compatible with many LaTeX - styles.\<close>
 
-datatype math_content_class = "defn" | "axm"  | "thm"  | "lem" | "cor" | "prop" 
-                            | "ex"   | "rule" | "assn" 
+datatype math_content_class = "defn"   | "axm"  | "thm"  | "lem" | "cor" | "prop" 
+                            | "expl"   | "rule" | "assn" 
+                            | rem      | "notation" | "terminology"
 
 (*
 thm Theorem Italic 
@@ -132,7 +133,7 @@ cor Corollary Italic
 lem Lemma Italic
 prop Proposition 
 defn Definition
-ex Example 
+expl Example 
 
 rem Remark
 notation
@@ -184,27 +185,41 @@ type_synonym math_sfc = math_semiformal
 
 subsection\<open>Instances of the abstract classes Definition / Class / Lemma etc.\<close>
 
-text\<open>A rough structuring is modeled as follows:\<close>   
+text\<open>The key class definitions are motivated \<close>   
 
 doc_class "definition"  = math_content +
    referentiable :: bool <= True
+   mcc           :: "math_content_class" <= "defn" 
+   invariant d1  :: "\<lambda> \<sigma>::definition. mcc \<sigma> = defn"
 
 doc_class "theorem"     = math_content +
    referentiable :: bool <= True
+   mcc           :: "math_content_class" <= "thm" 
+   invariant d2  :: "\<lambda> \<sigma>::theorem. mcc \<sigma> = thm"
 
 text\<open>Note that the following two text-elements are currently set to no-keyword in LNCS style.\<close>
 doc_class "lemma"     = math_content +
    referentiable :: bool <= "True"
+   mcc           :: "math_content_class" <= "lem" 
+   invariant d3  :: "\<lambda> \<sigma>::lemma. mcc \<sigma> = lem"
 
 doc_class "corollary"     = math_content +
    referentiable :: bool <= "True"
+   mcc           :: "math_content_class" <= "cor" 
+   invariant d4  :: "\<lambda> \<sigma>::corollary. mcc \<sigma> = thm"
+
+doc_class "example"     = math_content +
+   referentiable :: bool <= "True"
+   mcc           :: "math_content_class" <= "expl" 
+   invariant d5  :: "\<lambda> \<sigma>::example. mcc \<sigma> = expl"
+
 
 subsection\<open>Example Statements\<close>
 
 text\<open> \<^verbatim>\<open>examples\<close> are currently considered \<^verbatim>\<open>technical\<close>. Is a main category to be refined
       via inheritance. \<close> 
 
-doc_class example       = technical +
+doc_class tech_example       = technical +
    referentiable :: bool <= True
    tag :: "string" <=  "''''"
 
