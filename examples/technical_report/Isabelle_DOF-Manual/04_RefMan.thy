@@ -538,7 +538,6 @@ text\<open>
        | @@{command "text*"} | @@{command "figure*"} | @@{command "side_by_side_figure*"}
        | @@{command "open_monitor*"} | @@{command "close_monitor*"} 
        | @@{command "Definition*"} | @@{command "Lemma*"} 
-       | @@{command "Theorem*"}  | @@{command "Conjecture*"} 
        ) 
        \<newline>
        '[' meta_args ']' '\<open>' text '\<close>'

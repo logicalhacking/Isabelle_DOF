@@ -35,24 +35,19 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            Assert 
            
   keywords "+=" ":=" "accepts" "rejects" "invariant"
-
-  and      "title*"     "subtitle*"
-           "chapter*"   "section*"    "subsection*"   "subsubsection*" 
-           "paragraph*" "subparagraph*" 
-           "text*"      "text-macro*"      
-           "figure*"
-           "side_by_side_figure*" 
-           "Definition*" "Lemma*" "Theorem*" "Conjecture*"
-           :: document_body
            
   and      "open_monitor*" "close_monitor*" "declare_reference*" 
            "update_instance*" "doc_class" ::thy_decl
 
-  and      (* "definition*" *) "corrollary*" "proposition*" "schematic_goal*" 
+  and      "text*"      "text-macro*"     :: document_body 
+
+  and      "print_doc_classes" "print_doc_items" "check_doc_global" :: diag
+
+  (* experimental *)  
+  and      "corrollary*" "proposition*" "schematic_goal*" 
            "lemma*" "theorem*" (* -- intended replacement of Isar std commands.*) 
            "assert*"  ::thy_decl
 
-  and      "print_doc_classes" "print_doc_items" "check_doc_global" :: diag
            
   
 begin
@@ -1245,10 +1240,27 @@ fun enriched_document_command level =
 val enriched_document_command_macro = enriched_document_command (* TODO ... *)
 
 
-fun enriched_formal_statement_command (tag:string) =
-   let fun transform doc_attrs = (("tag",@{here}),"''"^tag^"''") :: 
-                                 (("properties",@{here}),"([]::thm list)")::doc_attrs
+fun enriched_formal_statement_command (cat:string,tag:string) =
+   let fun transform doc_attrs = ((cat,@{here}),tag) :: 
+                                 (("formal_results",@{here}),"([]::thm list)")::doc_attrs
    in  gen_enriched_document_command transform end; 
+
+
+fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
+                prop) =
+    let fun conv_2_holstring thy =  (bstring_to_holstring (Proof_Context.init_global thy))
+        fun conv_attrs thy = (("properties",pos),"[@{termrepr ''"^conv_2_holstring thy prop ^" ''}]")
+                             ::doc_attrs  
+        fun conv_attrs' thy = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) (conv_attrs thy)
+        fun mks thy = case DOF_core.get_object_global_opt oid thy of
+                   SOME NONE => (error("update of declared but not created doc_item:" ^ oid))
+                 | SOME _ => (update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
+                 | NONE   => (create_and_check_docitem false oid pos cid_pos (conv_attrs thy) thy)
+        val check = (assert_cmd name_opt modes prop) o Proof_Context.init_global
+    in 
+        (* Toplevel.keep (check o Toplevel.context_of) *)
+        Toplevel.theory (fn thy => (check thy; mks thy))
+    end
 
 
 fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
@@ -1295,101 +1307,8 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
             |> delete_monitor_entry
     end 
 
-(* *********************************************************************** *)
-(* Textual Command Support                                                 *)
-(* *********************************************************************** *)
+(* Core Command Definitions *)
 
-(* {markdown = true} sets the parsing process such that in the text-core markdown elements are
-   accepted. *)
-
-val _ =
-  Outer_Syntax.command ("Definition*", @{here}) "Textual Definition"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_formal_statement_command "definition" {markdown = true} )));
-
-val _ =
-  Outer_Syntax.command ("Lemma*", @{here}) "Textual Lemma Outline"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_formal_statement_command "lemma" {markdown = true} )));
-
-val _ =
-  Outer_Syntax.command ("Theorem*", @{here}) "Textual Theorem Outline"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_formal_statement_command "theorem" {markdown = true} )));
-
-val _ =
-  Outer_Syntax.command ("Conjecture*", @{here}) "Textual Theorem Outline"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_formal_statement_command "conjecture" {markdown = true} )));
-
-
-val _ =
-  Outer_Syntax.command ("title*", @{here}) "section heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} ))) ;
-
-val _ =
-  Outer_Syntax.command ("subtitle*", @{here}) "section heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("chapter*", @{here}) "section heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 0)) {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("section*", @{here}) "section heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 1)) {markdown = false} )));
-
-
-val _ =
-  Outer_Syntax.command ("subsection*", @{here}) "subsection heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 2)) {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("subsubsection*", @{here}) "subsubsection heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 3)) {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("paragraph*", @{here}) "paragraph heading"
-    (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 4)) {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("subparagraph*", @{here}) "subparagraph heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 5)) {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("figure*", @{here}) "figure"
-    (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("side_by_side_figure*", @{here}) "multiple figures"
-    (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} )));
-
-
-val _ =
-  Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
-    (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (enriched_document_command NONE {markdown = true} )));
-                                            
-val _ =
-  Outer_Syntax.command ("text-macro*", @{here}) "formal comment macro"
-    (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (enriched_document_command_macro NONE {markdown = true} )));
-
-val _ =
-  Outer_Syntax.command @{command_keyword "declare_reference*"} 
-                       "declare document reference"
-                       (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
-                                      (Toplevel.theory (DOF_core.declare_object_global oid))));
 
 val _ =
   Outer_Syntax.command @{command_keyword "open_monitor*"} 
@@ -1408,30 +1327,31 @@ val _ =
                         (attributes_upd >> (Toplevel.theory o update_instance_command)); 
 
 
-fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
-                prop) =
-    let fun conv_2_holstring thy =  (bstring_to_holstring (Proof_Context.init_global thy))
-        fun conv_attrs thy = (("properties",pos),"[@{termrepr ''"^conv_2_holstring thy prop ^" ''}]")
-                             ::doc_attrs  
-        fun conv_attrs' thy = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) (conv_attrs thy)
-        fun mks thy = case DOF_core.get_object_global_opt oid thy of
-                   SOME NONE => (error("update of declared but not created doc_item:" ^ oid))
-                 | SOME _ => (update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
-                 | NONE   => (create_and_check_docitem false oid pos cid_pos (conv_attrs thy) thy)
-        val check = (assert_cmd name_opt modes prop) o Proof_Context.init_global
-    in 
-        (* Toplevel.keep (check o Toplevel.context_of) *)
-        Toplevel.theory (fn thy => (check thy; mks thy))
-    end
+val _ =
+  Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
+    (attributes -- Parse.opt_target -- Parse.document_source 
+      >> (Toplevel.theory o (enriched_document_command NONE {markdown = true} )));
+                                            
+val _ =
+  Outer_Syntax.command ("text-macro*", @{here}) "formal comment macro"
+    (attributes -- Parse.opt_target -- Parse.document_source 
+      >> (Toplevel.theory o (enriched_document_command_macro NONE {markdown = true} )));
+
+val _ =
+  Outer_Syntax.command @{command_keyword "declare_reference*"} 
+                       "declare document reference"
+                       (attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
+                                      (Toplevel.theory (DOF_core.declare_object_global oid))));
+
 
 val _ =
   Outer_Syntax.command @{command_keyword "assert*"} 
                        "evaluate and print term"
                        (attributes -- opt_evaluator -- opt_modes  -- Parse.term  >> assertion_cmd'); 
 
-
-end (* struct *)
+end
 \<close>
+
 
 ML\<open>
 structure ODL_LTX_Converter = 

@@ -11,7 +11,11 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-chapter\<open>Inner Syntax Antiquotations (ISA)'s\<close>
+chapter\<open>Term Antiquotations\<close>
+
+text\<open>Terms are represented by "Inner Syntax" parsed by an Earley parser in Isabelle.
+For historical reasons, term antiquotations are called therefore somewhat misleadingly
+"Inner Syntax Antiquotations". \<close>
 
 theory 
   InnerSyntaxAntiquotations

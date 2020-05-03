@@ -11,7 +11,7 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-chapter \<open>The Document Ontology Common Library for the Isabelle Ontology Framework\<close>
+chapter \<open>A Math Paper Ontology (obsolete vs. scholarly_paper)\<close>
 
 text\<open> Offering support for common Isabelle Elements like definitions, lemma- and theorem
 statements, proofs, etc. Isabelle is a lot of things, but it is an interactive theorem
@@ -26,8 +26,8 @@ proving environment after all ! So this ontology provides:
   
 theory math_paper
   imports  "../../DOF/Isa_DOF"  
-begin
-  
+
+begin  
    
 section\<open>Some attempt to model standardized links to Standard Isabelle Formal Content\<close>
 
