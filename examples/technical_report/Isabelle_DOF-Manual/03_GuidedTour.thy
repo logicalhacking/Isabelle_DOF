@@ -55,10 +55,10 @@ text\<open>
     where the first part is the version of \isadof (using semantic versioning) and the second 
     part is the supported version of Isabelle. Thus, the same version of \isadof might be 
     available for different versions of Isabelle. 
-  \<^item> \<^bold>\<open>\TeXLive 2019\<close>\bindex{TexLive@\TeXLive} or any other modern 
-    \LaTeX-distribution where \pdftex{} supports
-    \inlineltx|\expanded| 
-    (\url{https://www.texdev.net/2018/12/06/a-new-primitive-expanded}).
+  \<^item> \<^bold>\<open>\TeXLive 2020\<close>\bindex{TexLive@\TeXLive} (or any other modern 
+    \LaTeX-distribution where \pdftex{} supports 
+    the \inlineltx|\expanded| primitive).\footnote{see 
+    \url{https://www.texdev.net/2018/12/06/a-new-primitive-expanded}}
 \<close>
 
 paragraph\<open>Installing Isabelle\<close>
