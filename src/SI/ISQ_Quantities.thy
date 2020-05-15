@@ -349,4 +349,57 @@ end
 instance QuantT :: (linorder,dim_type) linorder
   by (intro_classes, transfer, auto)
 
+instantiation QuantT :: (scaleR,dim_type) scaleR
+begin
+lift_definition scaleR_QuantT :: "real \<Rightarrow> 'a['b] \<Rightarrow> 'a['b]"
+is "\<lambda> n q. \<lparr> mag = n *\<^sub>R mag q, dim = dim q \<rparr>" by (simp)
+instance ..
+end
+
+instance QuantT :: (real_vector,dim_type) real_vector
+  by (intro_classes, (transfer, simp add: scaleR_add_left scaleR_add_right)+)
+
+instantiation QuantT :: (norm,dim_type) norm
+begin
+lift_definition norm_QuantT :: "'a['b] \<Rightarrow> real" 
+is "\<lambda> x. norm (mag x)" .
+instance ..
+end
+
+instantiation QuantT :: (sgn_div_norm,dim_type) sgn_div_norm
+begin
+definition sgn_QuantT :: "'a['b] \<Rightarrow> 'a['b]" where
+"sgn_QuantT x = x /\<^sub>R norm x"
+instance by (intro_classes, simp add: sgn_QuantT_def)
+end
+
+instantiation QuantT :: (dist_norm,dim_type) dist_norm
+begin
+definition dist_QuantT :: "'a['b] \<Rightarrow> 'a['b] \<Rightarrow> real" where
+"dist_QuantT x y = norm (x - y)"
+instance
+  by (intro_classes, simp add: dist_QuantT_def)
+end
+
+instantiation QuantT :: ("{uniformity_dist,dist_norm}",dim_type) uniformity_dist
+begin
+definition uniformity_QuantT :: "('a['b] \<times> 'a['b]) filter" where
+"uniformity_QuantT = (INF e\<in>{0 <..}. principal {(x, y). dist x y < e})"
+instance
+  by (intro_classes, simp add: uniformity_QuantT_def)
+end
+
+instantiation QuantT :: ("{dist_norm,open_uniformity,uniformity_dist}",dim_type) open_uniformity
+begin
+
+definition open_QuantT :: "('a['b]) set \<Rightarrow> bool" where
+"open_QuantT U = (\<forall>x\<in>U. eventually (\<lambda>(x', y). x' = x \<longrightarrow> y \<in> U) uniformity)"
+instance by (intro_classes, simp add: open_QuantT_def)
+end
+
+text \<open> Quantities form a real normed vector space. \<close>
+
+instance QuantT :: (real_normed_vector,dim_type) real_normed_vector
+  by (intro_classes; transfer, auto simp add: norm_triangle_ineq)
+
 end
