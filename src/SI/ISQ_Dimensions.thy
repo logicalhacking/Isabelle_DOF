@@ -116,7 +116,6 @@ proof
     by (simp add: divide_Dimension_ext_def)
 qed
 
-
 text \<open> A base dimension is a dimension where precisely one component has power 1: it is the 
   dimension of a base quantity. Here we define the seven base dimensions. \<close>
 
