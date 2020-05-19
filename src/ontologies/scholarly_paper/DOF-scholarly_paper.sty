@@ -362,9 +362,41 @@
           #1%
         }%
     \end{isamarkuptext}%
- } 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Besser: Einfach durchreichen wg Vererbung !
+ }
+
+% An experiment in inheritance of the default behaviour.
+%\newisadof{text.scholarly_paper.definition}%
+%[label=,type=%
+% , scholarly_paper.math_content.short_name =%
+% , scholarly_paper.math_content.mcc =%
+% , Isa_COL.text_element.level         =%
+% , Isa_COL.text_element.referentiable =%
+% , Isa_COL.text_element.variants      =%
+% , scholarly_paper.text_section.main_author  =%
+% , scholarly_paper.text_section.fixme_list   =%
+% , scholarly_paper.technical.definition_list =%
+% , scholarly_paper.technical.status          =%
+% ]
+% [1]
+% {%
+%    \begin{text.scholarly_paper.math_content}%
+%    [label=\commandkey{label},type=\commandkey{type}%
+%    , scholarly_paper.math_content.short_name   =\commandkey{scholarly_paper.math_content.short_name}%
+%    , scholarly_paper.math_content.mcc          =\commandkey{scholarly_paper.math_content.mcc}%
+%    , Isa_COL.text_element.level                =\commandkey{Isa_COL.text_element.level}%
+%    , Isa_COL.text_element.referentiable        =\commandkey{Isa_COL.text_element.referentiable}%
+%    , Isa_COL.text_element.variants             =\commandkey{Isa_COL.text_element.variants}%
+%    , scholarly_paper.text_section.main_author  =\commandkey{scholarly_paper.text_section.main_author}%
+%    , scholarly_paper.text_section.fixme_list   =\commandkey{scholarly_paper.text_section.fixme_list}%
+%    , scholarly_paper.technical.definition_list =\commandkey{scholarly_paper.technical.definition_list}%
+%    , scholarly_paper.technical.status          =\commandkey{scholarly_paper.technical.status}%
+%    ]
+%    #1%
+%    \end{text.scholarly_paper.math_content}%
+% }
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Besser: Einfach durchreichen wg Vererbung !
 \newisadof{text.scholarly_paper.lemma}%
 [label=,type=%
  , scholarly_paper.math_content.short_name =%

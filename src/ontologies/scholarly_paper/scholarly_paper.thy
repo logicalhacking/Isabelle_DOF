@@ -200,7 +200,7 @@ text\<open>The key class definitions are motivated by the AMS style.\<close>
 doc_class "definition"  = math_content +
    referentiable :: bool <= True
    mcc           :: "math_content_class" <= "defn" 
-   invariant d1  :: "\<lambda> \<sigma>::definition. mcc \<sigma> = defn"
+   invariant d1  :: "\<lambda> \<sigma>::definition. mcc \<sigma> = defn" (* can not be changed anymore. *)
 
 doc_class "theorem"     = math_content +
    referentiable :: bool <= True
@@ -234,17 +234,26 @@ ML\<open> local open ODL_Command_Parser in
 val _ =
   Outer_Syntax.command ("Definition*", @{here}) "Textual Definition"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_formal_statement_command ("mcc","defn") {markdown = true} )));
+      >> (Toplevel.theory o (Onto_Macros.enriched_formal_statement_command
+                                           (SOME "definition") 
+                                           [("mcc","defn")] 
+                                           {markdown = true} )));
 
 val _ =
   Outer_Syntax.command ("Lemma*", @{here}) "Textual Lemma Outline"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_formal_statement_command ("mcc","lem") {markdown = true} )));
+      >> (Toplevel.theory o (Onto_Macros.enriched_formal_statement_command 
+                                           (SOME "lemma") 
+                                           [("mcc","lem")] 
+                                           {markdown = true} )));
 
 val _ =
   Outer_Syntax.command ("Theorem*", @{here}) "Textual Theorem Outline"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_formal_statement_command ("mcc","thm") {markdown = true} )));
+      >> (Toplevel.theory o (Onto_Macros.enriched_formal_statement_command 
+                                           (SOME "theorem") 
+                                           [("mcc","thm")] 
+                                           {markdown = true} )));
 
 end 
 \<close>

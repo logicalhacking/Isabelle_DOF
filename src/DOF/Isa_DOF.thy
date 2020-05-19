@@ -44,9 +44,9 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   and      "print_doc_classes" "print_doc_items" "check_doc_global" :: diag
 
   (* experimental *)  
-  and      "corrollary*" "proposition*" "schematic_goal*" 
-           "lemma*" "theorem*" (* -- intended replacement of Isar std commands.*) 
-           "assert*"  ::thy_decl
+  and      "corrollary*" "proposition*" "lemma*" "theorem*" :: thy_decl
+           (* -- intended replacement of Isar std commands.*) 
+      
 
            
   
@@ -1214,54 +1214,25 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
 
 
 
-fun gen_enriched_document_command transform 
-                               markdown  
-                              (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
-                                  xstring_opt:(xstring * Position.T) option),
-                                  toks:Input.source) 
-                              : theory -> theory =
+fun gen_enriched_document_command cid_transform attr_transform 
+                                  markdown  
+                                  (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
+                                     xstring_opt:(xstring * Position.T) option),
+                                    toks:Input.source) 
+                                  : theory -> theory =
   let
        (* as side-effect, generates markup *)
        fun check_text thy = (Pure_Syn_Ext.output_document(Toplevel.theory_toplevel thy) markdown toks; 
                              thy)
        (* ... generating the level-attribute syntax *)
   in   
-       (create_and_check_docitem false oid pos cid_pos (transform doc_attrs) #> check_text) 
+       (   create_and_check_docitem false oid pos (cid_transform cid_pos) (attr_transform doc_attrs) 
+        #> check_text) 
        (* Thanks Frederic Tuong! ! ! *)
   end;
 
-fun enriched_document_command level =
-   let fun transform doc_attrs = case level of 
-                  NONE => doc_attrs 
-                | SOME(NONE) => (("level",@{here}),"None")::doc_attrs
-                | SOME(SOME x) => (("level",@{here}),"Some("^ Int.toString x ^"::int)")::doc_attrs
-   in  gen_enriched_document_command transform end; 
-
-val enriched_document_command_macro = enriched_document_command (* TODO ... *)
-
-
-fun enriched_formal_statement_command (cat:string,tag:string) =
-   let fun transform doc_attrs = ((cat,@{here}),tag) :: 
-                                 (("formal_results",@{here}),"([]::thm list)")::doc_attrs
-   in  gen_enriched_document_command transform end; 
-
-
-fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
-                prop) =
-    let fun conv_2_holstring thy =  (bstring_to_holstring (Proof_Context.init_global thy))
-        fun conv_attrs thy = (("properties",pos),"[@{termrepr ''"^conv_2_holstring thy prop ^" ''}]")
-                             ::doc_attrs  
-        fun conv_attrs' thy = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) (conv_attrs thy)
-        fun mks thy = case DOF_core.get_object_global_opt oid thy of
-                   SOME NONE => (error("update of declared but not created doc_item:" ^ oid))
-                 | SOME _ => (update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
-                 | NONE   => (create_and_check_docitem false oid pos cid_pos (conv_attrs thy) thy)
-        val check = (assert_cmd name_opt modes prop) o Proof_Context.init_global
-    in 
-        (* Toplevel.keep (check o Toplevel.context_of) *)
-        Toplevel.theory (fn thy => (check thy; mks thy))
-    end
-
+(* General criticism : attributes like "level" were treated here in the kernel instead of dragging
+   them out into the COL -- bu *)
 
 fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
     let fun o_m_c oid pos cid_pos doc_attrs thy = create_and_check_docitem 
@@ -1330,12 +1301,13 @@ val _ =
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (enriched_document_command NONE {markdown = true} )));
-                                            
+      >> (Toplevel.theory o (gen_enriched_document_command I I {markdown = true} )));
+
+(* This is just a stub at present *)
 val _ =
   Outer_Syntax.command ("text-macro*", @{here}) "formal comment macro"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (enriched_document_command_macro NONE {markdown = true} )));
+      >> (Toplevel.theory o (gen_enriched_document_command I I {markdown = true} )));
 
 val _ =
   Outer_Syntax.command @{command_keyword "declare_reference*"} 
@@ -1344,12 +1316,8 @@ val _ =
                                       (Toplevel.theory (DOF_core.declare_object_global oid))));
 
 
-val _ =
-  Outer_Syntax.command @{command_keyword "assert*"} 
-                       "evaluate and print term"
-                       (attributes -- opt_evaluator -- opt_modes  -- Parse.term  >> assertion_cmd'); 
-
 end
+
 \<close>
 
 
@@ -1474,7 +1442,6 @@ val _ = theorem @{command_keyword "theorem*"}        false "theorem";
 val _ = theorem @{command_keyword "lemma*"}          false "lemma";
 val _ = theorem @{command_keyword "corrollary*"}     false "corollary";
 val _ = theorem @{command_keyword "proposition*"}    false "proposition";
-val _ = theorem @{command_keyword "schematic_goal*"} true  "schematic goal"; 
 
 end\<close>  
 
@@ -1529,8 +1496,7 @@ val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.text_input)
 
 
 fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked, define}, src ) = 
-    let (* val _ = writeln ("ZZZ" ^ Input.source_content src ^ "::2::" ^ cid_decl) *)
-        val (str,pos) = Input.source_content src
+    let val (str,pos) = Input.source_content src
         val _ = check_and_mark ctxt cid_decl ({strict_checking = not unchecked}) pos str
         val inline = Config.get ctxt Document_Antiquotation.thy_output_display
         val enc = Latex.enclose_block

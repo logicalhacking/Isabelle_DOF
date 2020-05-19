@@ -375,9 +375,9 @@ FORMAL_STATEMENT_ALIKE =
 \end{isar}
 
 These shadow-classes correspond to semantic macros 
- @{ML "ODL_Command_Parser.enriched_document_command"},
- @{ML "ODL_Command_Parser.assertion_cmd'"}, and
- @{ML "ODL_Command_Parser.enriched_formal_statement_command"}.\<close>
+ @{ML "Onto_Macros.enriched_document_command"},
+ @{ML "Onto_Macros.assertion_cmd'"}, and
+ @{ML "Onto_Macros.enriched_formal_statement_command"}.\<close>
 
 text\<open>  \isadof provides a Common Ontology Library (COL)\index{Common Ontology Library@see COL}\bindex{COL}
   that introduces ontology concepts that are either sample instances for shadow classes as we use

@@ -87,7 +87,7 @@ Definition*[entity::sfc]
 declare_reference*[fault::sfc]
 Definition*[error::sfc]
 \<open>defect, mistake or inaccuracy which could result in failure or in a deviation 
-from the intended performance or behaviour (cf @{semi_formal_content (unchecked) \<open>fault\<close>}))\<close>
+from the intended performance or behaviour (cf. @{semi_formal_content (unchecked) \<open>fault\<close>}))\<close>
 
 Definition*[fault::sfc]
 \<open>defect, mistake or inaccuracy which could result in failure or in a deviation 
