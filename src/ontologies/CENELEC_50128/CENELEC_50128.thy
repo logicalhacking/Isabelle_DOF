@@ -666,89 +666,90 @@ verification and validation activities to be undertaken effectively.\<close>
 section\<open> Design related Categories \<close>  
 
 doc_class design_item = 
-      description :: string
+             description :: string
       
-datatype design_kind = unit | module | protocol
+datatype  design_kind = unit | module | protocol
       
 doc_class interface =  design_item +
-      kind :: design_kind
+             kind :: design_kind
       
 
 section\<open> Requirements-Analysis related Categories \<close>   
 
 doc_class test_item =
-      nn :: "string option"
+             nn :: "string option"
     
 doc_class test_specification = test_item +
-          short_goal :: string
+             short_goal :: string
       
 doc_class test_case = test_item +
-          descr :: string
+             descr :: string
           
 doc_class test_result = test_item +
              verdict :: bool
              remarks :: string
              covvrit :: test_coverage_criterion
 
-datatype   test_environment_kind = hardware_in_the_loop ("hil") 
-                                 | simulated_hardware_in_the_loop ("shil") 
+datatype  test_environment_kind = hardware_in_the_loop ("hil") 
+                                | simulated_hardware_in_the_loop ("shil") 
   
-doc_class  test_environment = test_item +
+doc_class test_environment = test_item +
              descr :: string
              kind  :: test_environment_kind <= shil
 
-doc_class  test_tool = test_item +
+doc_class test_tool = test_item +
              descr :: string
 
-doc_class  test_requirement = test_item +
+doc_class test_requirement = test_item +
              descr :: string
 
-doc_class  test_adm_role = test_item +
+doc_class test_adm_role = test_item +
              name :: string
 
 doc_class test_documentation = 
-   no :: "nat"
-   accepts "test_specification ~~ \<lbrace>test_case~~test_result\<rbrace>\<^sup>+ ~~ \<lbrace>test_environment||test_tool\<rbrace>\<^sup>+ ~~
-            \<lbrakk>test_requirement\<rbrakk>  ~~ test_adm_role"
-   accepts " test_specification ~~ \<lbrace>test_case~~test_result\<rbrace>\<^sup>+ ~~ \<lbrace>test_environment||test_tool\<rbrace>\<^sup>+ ~~
-            \<lbrakk>test_requirement \<rbrakk> ~~ test_adm_role"
+             no :: "nat"
+             accepts "test_specification ~~ 
+                      \<lbrace>test_case~~test_result\<rbrace>\<^sup>+ ~~ 
+                      \<lbrace>test_environment||test_tool\<rbrace>\<^sup>+ ~~
+                      \<lbrakk>test_requirement\<rbrakk>  ~~ 
+                      test_adm_role"
+             accepts "test_specification ~~ 
+                      \<lbrace>test_case~~test_result\<rbrace>\<^sup>+ ~~ 
+                      \<lbrace>test_environment||test_tool\<rbrace>\<^sup>+ ~~
+                      \<lbrakk>test_requirement \<rbrakk> ~~ 
+                      test_adm_role"
 
 
-  
+
 section\<open> META : Testing and Validation \<close>
 
 text\<open>Test : @{semi_formal_content \<open>COTS\<close>}\<close>
 
-ML\<open>
-DOF_core.read_cid_global @{theory} "requirement";
-DOF_core.read_cid_global @{theory} "SRAC";
-DOF_core.is_defined_cid_global "SRAC" @{theory};
-DOF_core.is_defined_cid_global "EC" @{theory};
-\<close>
+ML
+\<open> DOF_core.read_cid_global @{theory} "requirement";
+  DOF_core.read_cid_global @{theory} "SRAC";
+  DOF_core.is_defined_cid_global "SRAC" @{theory};
+  DOF_core.is_defined_cid_global "EC" @{theory}; \<close>
 
-ML\<open>
-DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.EC";
-DOF_core.is_subclass @{context} "CENELEC_50128.SRAC" "CENELEC_50128.EC";
-DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.SRAC";
-DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.test_requirement";
-\<close>
+ML
+\<open> DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.EC";
+  DOF_core.is_subclass @{context} "CENELEC_50128.SRAC" "CENELEC_50128.EC";
+  DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.SRAC";
+  DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.test_requirement"; \<close>
 
-ML\<open>val {docobj_tab={maxano, tab=ref_tab},docclass_tab=class_tab,...} = DOF_core.get_data @{context};
-Symtab.dest ref_tab;
-Symtab.dest class_tab;
-\<close>
+ML
+\<open> val {docobj_tab={maxano, tab=ref_tab},docclass_tab=class_tab,...} = DOF_core.get_data @{context};
+  Symtab.dest ref_tab;
+  Symtab.dest class_tab; \<close>
 
-ML\<open>
-val internal_data_of_SRAC_definition = DOF_core.get_attributes_local "SRAC" @{context}
-\<close> 
+ML
+\<open> val internal_data_of_SRAC_definition = DOF_core.get_attributes_local "SRAC" @{context} \<close> 
 
-ML\<open>
-DOF_core.read_cid_global @{theory} "requirement";
-Syntax.parse_typ @{context} "requirement";
-val Type(t,_) = Syntax.parse_typ @{context} "requirement" handle ERROR _ => dummyT;
-Syntax.read_typ  @{context} "hypothesis" handle  _ => dummyT;
-Proof_Context.init_global;
-\<close>
+ML
+\<open> DOF_core.read_cid_global         @{theory}  "requirement";
+  Syntax.parse_typ                 @{context} "requirement";
+  val Type(t,_) = Syntax.parse_typ @{context} "requirement" handle ERROR _ => dummyT; 
+  Syntax.read_typ                  @{context} "hypothesis"  handle  _ => dummyT;
+  Proof_Context.init_global; \<close>
 
-end      
-  
+end
