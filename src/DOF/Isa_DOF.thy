@@ -942,28 +942,8 @@ fun document_command markdown (loc, txt) =
 
  *)
 
-ML\<open> Pure_Syn.document_command;
-structure Pure_Syn_Ext = 
-struct
-(* This interface function has not been exported from Pure_Syn (2018); 
-   it should replace 
-   Thy_Output.output_text: Toplevel.state -> {markdown: bool} -> Input.source -> string (2017) *)
 
 
-fun output_document  state markdown src =
-  let
-    val ctxt = Toplevel.presentation_context state;
-    val _ = Context_Position.report ctxt
-                (Input.pos_of src) 
-                (Markup.language_document (Input.is_delimited src));
-  in Thy_Output.output_document ctxt markdown src end;
-  (* this thing converts also source to (latex) string ... *)
-
-end;
-
-Pure_Syn_Ext.output_document : Toplevel.state -> {markdown: bool} -> Input.source -> Latex.text list;
-
-\<close>
 
 ML\<open>
 structure ODL_Command_Parser = 
@@ -1213,6 +1193,31 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
             end
 
 
+(*
+fun gen_enriched_document_command cid_transform attr_transform 
+                                  markdown  
+                                  (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
+                                     xstring_opt:(xstring * Position.T) option),
+                                    toks:Input.source) 
+                                  : theory -> theory =
+  let  val toplvl = Toplevel.theory_toplevel
+
+       fun check thy = let val ctxt = Toplevel.presentation_context (toplvl thy);
+                           val _ =  Context_Position.report ctxt
+                                          (Input.pos_of toks) 
+                                          (Markup.language_document (Input.is_delimited toks));
+                       in thy end
+
+       (* as side-effect, generates markup *)
+       fun check_n_tex_text thy = (Pure_Syn_Ext.output_document(toplvl thy) markdown toks, thy)
+       
+       (* ... generating the level-attribute syntax *)
+  in   
+       (   create_and_check_docitem false oid pos (cid_transform cid_pos) (attr_transform doc_attrs) 
+        #> (* (snd o check_n_tex_text)  *)  check ) 
+       (* Thanks Frederic Tuong! ! ! *)
+  end;
+*)
 
 fun gen_enriched_document_command cid_transform attr_transform 
                                   markdown  
@@ -1220,16 +1225,21 @@ fun gen_enriched_document_command cid_transform attr_transform
                                      xstring_opt:(xstring * Position.T) option),
                                     toks:Input.source) 
                                   : theory -> theory =
-  let
-       (* as side-effect, generates markup *)
-       fun check_text thy = (Pure_Syn_Ext.output_document(Toplevel.theory_toplevel thy) markdown toks; 
-                             thy)
+  let  val toplvl = Toplevel.theory_toplevel
+       (* checking and markup generation *)
+       fun check thy = let val ctxt = Toplevel.presentation_context (toplvl thy);
+                           val _ =  Context_Position.report ctxt
+                                          (Input.pos_of toks) 
+                                          (Markup.language_document (Input.is_delimited toks));
+                       in thy end
+       
        (* ... generating the level-attribute syntax *)
   in   
        (   create_and_check_docitem false oid pos (cid_transform cid_pos) (attr_transform doc_attrs) 
-        #> check_text) 
+        #> check ) 
        (* Thanks Frederic Tuong! ! ! *)
   end;
+
 
 (* General criticism : attributes like "level" were treated here in the kernel instead of dragging
    them out into the COL -- bu *)
