@@ -166,8 +166,10 @@ struct
 
    type docobj =    {pos      : Position.T, 
                      thy_name : string,
-                     value    : term, 
-                     id       : serial, cid : string}
+                     value    : term,
+                     inline   : bool, 
+                     id       : serial, 
+                     cid      : string}
 
    type docobj_tab ={tab      : (docobj option) Symtab.table,
                      maxano   : int
@@ -570,9 +572,10 @@ fun get_value_local oid ctxt  = case get_object_local oid ctxt of
 (* missing : setting terms to ground (no type-schema vars, no schema vars. )*)
 fun update_value_global oid upd thy  = 
           case get_object_global oid thy of
-               SOME{pos,thy_name,value,id,cid} => 
+               SOME{pos,thy_name,value,inline,id,cid} => 
                    let val tab' = Symtab.update(oid,SOME{pos=pos,thy_name=thy_name,
-                                                         value=upd value,id=id, cid=cid})
+                                                         value=upd value,id=id, 
+                                                         inline=inline,cid=cid})
                    in  map_data_global (upd_docobj_tab(fn{tab,maxano}=>{tab=tab' tab,maxano=maxano})) thy end
              | NONE => error("undefined doc object: "^oid)  
 
@@ -623,11 +626,14 @@ fun writeln_docrefs ctxt = let  val {tab,...} = #docobj_tab(get_data ctxt)
 
 fun print_doc_items b ctxt = 
     let val {docobj_tab={tab = x, ...},...}= get_data ctxt;
-        val _ = writeln "=====================================";    
-        fun print_item (n, SOME({cid,id,pos,thy_name,value})) =
+        val _ = writeln "=====================================";  
+        fun dfg true = "true" 
+           |dfg false= "false"   
+        fun print_item (n, SOME({cid,id,pos,thy_name,inline,value})) =
                  (writeln ("docitem: "^n);
                   writeln ("    type:    "^cid);
                   writeln ("    origine: "^thy_name);
+                  writeln ("    inline:  "^dfg inline);
                   writeln ("    value:   "^(Syntax.string_of_term ctxt value))
                  )
           | print_item (n, NONE) = 
@@ -1018,7 +1024,7 @@ fun cid_2_cidType cid_long thy =
 
 fun base_default_term thy cid_long = Const(@{const_name "undefined"},cid_2_cidType thy cid_long) 
 
-fun check_classref is_monitor (SOME(cid,pos')) thy = 
+fun check_classref {is_monitor=is_monitor} (SOME(cid,pos')) thy = 
           let 
               val cid_long = DOF_core.read_cid_global thy cid  
                             
@@ -1129,7 +1135,7 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
                                               rejected_cids=rejected_cids,
                                               automatas=aS}) tab end
           fun update_trace mon_oid = DOF_core.update_value_global mon_oid (def_trans mon_oid)
-          val update_automatons = DOF_core.upd_monitor_tabs(fold update_info delta_autoS)
+          val update_automatons    = DOF_core.upd_monitor_tabs(fold update_info delta_autoS)
       in  thy |> (* update traces of all enabled monitors *)
                  fold (update_trace) (enabled_monitors)
               |> (* check class invariants of enabled monitors *)
@@ -1139,7 +1145,7 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
       end
 
 
-fun create_and_check_docitem is_monitor oid pos cid_pos doc_attrs thy = 
+fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos doc_attrs thy = 
       let val id = serial ();
           val _ = Position.report pos (docref_markup true oid id pos);
           (* creates a markup label for this position and reports it to the PIDE framework;
@@ -1152,11 +1158,12 @@ fun create_and_check_docitem is_monitor oid pos cid_pos doc_attrs thy =
           fun conv_attrs ((lhs, pos), rhs) = (markup2string lhs,pos,"=", Syntax.read_term_global thy rhs)
           val assns' = map conv_attrs doc_attrs
           val (value_term, _(*ty*), _) = calc_update_term thy cid_long assns' defaults 
-          val check_inv =   (DOF_core.get_class_invariant cid_long thy oid {is_monitor=is_monitor}) 
+          val check_inv =   (DOF_core.get_class_invariant cid_long thy oid is_monitor) 
                             o Context.Theory 
       in  thy |> DOF_core.define_object_global (oid, {pos      = pos, 
                                                       thy_name = Context.theory_name thy,
                                                       value    = value_term,
+                                                      inline   = is_inline,
                                                       id       = id,   
                                                       cid      = cid_long})
               |> register_oid_cid_in_open_monitors oid pos cid_long
@@ -1175,7 +1182,7 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                                        val _ = Context_Position.report ctxt pos markup;
                                    in  cid end
                              | NONE => error("undefined doc_class.")
-                val cid_long = check_classref false cid_pos thy
+                val cid_long = check_classref {is_monitor = false} cid_pos thy
                 val _ = if cid_long = DOF_core.default_cid  orelse cid = cid_long 
                         then () 
                         else error("incompatible classes:"^cid^":"^cid_long)
@@ -1193,33 +1200,8 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
             end
 
 
-(*
-fun gen_enriched_document_command cid_transform attr_transform 
-                                  markdown  
-                                  (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
-                                     xstring_opt:(xstring * Position.T) option),
-                                    toks:Input.source) 
-                                  : theory -> theory =
-  let  val toplvl = Toplevel.theory_toplevel
 
-       fun check thy = let val ctxt = Toplevel.presentation_context (toplvl thy);
-                           val _ =  Context_Position.report ctxt
-                                          (Input.pos_of toks) 
-                                          (Markup.language_document (Input.is_delimited toks));
-                       in thy end
-
-       (* as side-effect, generates markup *)
-       fun check_n_tex_text thy = (Pure_Syn_Ext.output_document(toplvl thy) markdown toks, thy)
-       
-       (* ... generating the level-attribute syntax *)
-  in   
-       (   create_and_check_docitem false oid pos (cid_transform cid_pos) (attr_transform doc_attrs) 
-        #> (* (snd o check_n_tex_text)  *)  check ) 
-       (* Thanks Frederic Tuong! ! ! *)
-  end;
-*)
-
-fun gen_enriched_document_command cid_transform attr_transform 
+fun gen_enriched_document_command {inline=is_inline} cid_transform attr_transform 
                                   markdown  
                                   (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
                                      xstring_opt:(xstring * Position.T) option),
@@ -1235,7 +1217,8 @@ fun gen_enriched_document_command cid_transform attr_transform
        
        (* ... generating the level-attribute syntax *)
   in   
-       (   create_and_check_docitem false oid pos (cid_transform cid_pos) (attr_transform doc_attrs) 
+       (   create_and_check_docitem {is_monitor=false} {is_inline=is_inline} 
+                                    oid pos (cid_transform cid_pos) (attr_transform doc_attrs) 
         #> check ) 
        (* Thanks Frederic Tuong! ! ! *)
   end;
@@ -1246,7 +1229,9 @@ fun gen_enriched_document_command cid_transform attr_transform
 
 fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) =
     let fun o_m_c oid pos cid_pos doc_attrs thy = create_and_check_docitem 
-                                                         true oid pos cid_pos doc_attrs thy
+                                                         {is_monitor=true}  (* this is a monitor *)
+                                                         {is_inline=false} (* monitors are always inline *)                                                               
+                                                         oid pos cid_pos doc_attrs thy
         fun compute_enabled_set cid thy = 
                      case DOF_core.get_doc_class_global cid thy of
                        SOME X => let val ralph = RegExpInterface.alphabet (#rejectS X)
@@ -1311,13 +1296,15 @@ val _ =
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (gen_enriched_document_command I I {markdown = true} )));
+      >> (Toplevel.theory o (gen_enriched_document_command {inline=true} 
+                                                           I I {markdown = true} )));
 
 (* This is just a stub at present *)
 val _ =
   Outer_Syntax.command ("text-macro*", @{here}) "formal comment macro"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (gen_enriched_document_command I I {markdown = true} )));
+      >> (Toplevel.theory o (gen_enriched_document_command {inline=false} (* declare as macro *)
+                                                           I I {markdown = true} )));
 
 val _ =
   Outer_Syntax.command @{command_keyword "declare_reference*"} 
@@ -1465,12 +1452,15 @@ struct
 val basic_entity = Thy_Output.antiquotation_pretty_source
     : binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
 
-fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) pos name  =
+fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) {inline=inline_req} pos name  =
   let
     val thy = Proof_Context.theory_of ctxt;
   in 
     if DOF_core.is_defined_oid_global name thy 
-    then let val {pos=pos_decl,id,cid,...} = the(DOF_core.get_object_global name thy)
+    then let val {pos=pos_decl,id,cid,inline,...} = the(DOF_core.get_object_global name thy)
+             val _ = if not inline_req 
+                     then if inline then () else error("referred text-element is macro! (try option display)")
+                     else if not inline then () else error("referred text-element is no macro!")
              val markup = docref_markup false name id pos_decl;
              val _ = Context_Position.report ctxt pos markup;
                      (* this sends a report for a ref application to the PIDE interface ... *) 
@@ -1486,7 +1476,8 @@ fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) pos name  =
          else error("undefined document reference: "^name)
   end
 
-val _ =  check_and_mark : Proof.context ->  string ->  {strict_checking: bool} ->
+val _ =  check_and_mark : Proof.context ->  string ->  
+                          {strict_checking: bool} -> {inline:bool} ->
                           Position.T -> Symtab.key -> unit
 
 (* generic syntax for doc_class links. *) 
@@ -1507,8 +1498,9 @@ val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.text_input)
 
 fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked, define}, src ) = 
     let val (str,pos) = Input.source_content src
-        val _ = check_and_mark ctxt cid_decl ({strict_checking = not unchecked}) pos str
         val inline = Config.get ctxt Document_Antiquotation.thy_output_display
+        val _ = check_and_mark ctxt cid_decl {strict_checking = not unchecked} 
+                                             {inline = inline} pos str
         val enc = Latex.enclose_block
     in  
         (case (define,inline) of
@@ -1683,8 +1675,6 @@ fun read_fields raw_fields ctxt =
     let
       val Ts = Syntax.read_typs ctxt (map (fn ((_, raw_T, _),_) => raw_T) raw_fields);
       val terms = map ((map_option (Syntax.read_term ctxt)) o snd) raw_fields
-      val count = Unsynchronized.ref (0 - 1);
-      fun incr () = Unsynchronized.inc count
       fun test t1 t2 = Sign.typ_instance (Proof_Context.theory_of ctxt)
                                          (t1, ODL_Command_Parser.generalize_typ 0 t2) 
       fun check_default (ty,SOME trm) = 
@@ -1750,7 +1740,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
       fun check_n_filter thy (bind,ty,mf) = 
                      case  DOF_core.get_attribute_info parent_cid_long (Binding.name_of bind) thy of
                            NONE => (* no prior declaration *) SOME(bind,ty,mf)
-                         | SOME{def_occurrence,long_name,typ,def_pos} => if ty = typ 
+                         | SOME{def_occurrence,long_name,typ,...} => if ty = typ 
                                                    then (warning("overriding attribute:"^long_name^
                                                                  " in doc class:" ^ def_occurrence);
                                                         SOME(bind,ty,mf))

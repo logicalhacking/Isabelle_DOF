@@ -80,7 +80,7 @@ fun enriched_document_command level =
                   NONE => doc_attrs 
                 | SOME(NONE)   => (("level",@{here}),"None")::doc_attrs
                 | SOME(SOME x) => (("level",@{here}),"Some("^ Int.toString x ^"::int)")::doc_attrs
-   in  gen_enriched_document_command I transform end; 
+   in  gen_enriched_document_command {inline=true} I transform end; 
 
 val enriched_document_command_macro = enriched_document_command (* TODO ... *)
 
@@ -92,7 +92,7 @@ fun enriched_formal_statement_command ncid (S: (string * string) list) =
                                                              | _ => X)  
        fun transform_attr doc_attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ 
                                  (("formal_results",@{here}),"([]::thm list)")::doc_attrs
-   in  gen_enriched_document_command transform_cid transform_attr end;
+   in  gen_enriched_document_command {inline=true} transform_cid transform_attr end;
 
 
 fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
@@ -104,7 +104,9 @@ fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),mod
         fun mks thy = case DOF_core.get_object_global_opt oid thy of
                    SOME NONE => (error("update of declared but not created doc_item:" ^ oid))
                  | SOME _ => (update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
-                 | NONE   => (create_and_check_docitem false oid pos cid_pos (conv_attrs thy) thy)
+                 | NONE   => (create_and_check_docitem 
+                                 {is_monitor = false} {is_inline = false} 
+                                 oid pos cid_pos (conv_attrs thy) thy)
         val check = (assert_cmd name_opt modes prop) o Proof_Context.init_global
     in 
         (* Toplevel.keep (check o Toplevel.context_of) *)

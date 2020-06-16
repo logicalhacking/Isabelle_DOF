@@ -69,7 +69,9 @@ fun gen_enriched_document_command2 cid_transform attr_transform
        
        (* ... generating the level-attribute syntax *)
   in   
-       (   ODL_Command_Parser.create_and_check_docitem false oid pos (cid_transform cid_pos) (attr_transform doc_attrs) 
+       (   ODL_Command_Parser.create_and_check_docitem 
+                              {is_monitor = false} {is_inline = false} 
+                              oid pos (cid_transform cid_pos) (attr_transform doc_attrs)
         #>  check_n_tex_text ) 
   end;
 
@@ -84,6 +86,11 @@ val _ =
 text\<open>And here a tex - text macro.\<close>
 
 text-[dfgdfg::B]\<open> Lorem ipsum ...  @{thm refl} \<close>
+
+text\<open>... and here is its application /macro expansion: 
+     @{B [display] "dfgdfg"}\<close>
+
+
 
 (*<*)
 text\<open>Final Status:\<close>
