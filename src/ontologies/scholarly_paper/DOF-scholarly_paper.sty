@@ -128,9 +128,9 @@
   \stepcounter{dof@cnt@author}
   \def\dof@a{\commandkey{scholarly_paper.author.affiliation}}
   \ifthenelse{\equal{\commandkey{scholarly_paper.author.orcid}}{}}{%
-    \immediate\write\@auxout{\noexpand\addauthor{#1\noexpand\inst{\thedof@cnt@author}}}%
+    \protected@write\@auxout{}{\string\addauthor{#1\string\inst{\thedof@cnt@author}}}%
   }{%
-    \immediate\write\@auxout{\noexpand\addauthor{#1\noexpand\inst{\thedof@cnt@author}\orcidID{\commandkey{scholarly_paper.author.orcid}}}}%
+    \protected@write\@auxout{}{\string\addauthor{#1\string\inst{\thedof@cnt@author}\string\orcidID{\commandkey{scholarly_paper.author.orcid}}}}%
   }
   \protected@write\@auxout{}{\string\addaffiliation{\dof@a\\\string\email{\commandkey{scholarly_paper.author.email}}}}%
 }
