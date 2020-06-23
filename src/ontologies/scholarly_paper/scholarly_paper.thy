@@ -267,32 +267,6 @@ doc_class tech_example       = technical +
    referentiable :: bool <= True
    tag :: "string" <=  "''''"
 
-subsection\<open>Code Statement Elements\<close>
-
-doc_class "code"     = technical +
-   checked :: bool <=  "False"
-   tag :: "string" <=  "''''"
-
-text\<open>The @{doc_class "code"} is a general stub for free-form and type-checked code-fragments
-such as:
-\<^enum> SML code
-\<^enum> bash code
-\<^enum> isar code (although this might be an unwanted concurrence to the Isabelle standard cartouche)
-\<^enum> C code.
-
-it is intended that later refinements of this "stub" as done in \<^verbatim>\<open>Isabelle_C\<close> which come with their
-own content checking and, of course, presentation styles. 
-\<close>
-
-
-doc_class "SML"     = code +
-   checked :: bool <=  "False"
-
-doc_class "ISAR"     = code +
-   checked :: bool <=  "False"
-
-doc_class "LATEX"     = code +
-   checked :: bool <=  "False"
 
 
 

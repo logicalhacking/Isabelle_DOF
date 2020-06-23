@@ -62,8 +62,9 @@ fun gen_enriched_document_command2 cid_transform attr_transform
        fun check_n_tex_text thy = let val text = output_document (toplvl thy) markdown toks
                                       val file = {path = Path.make [oid ^ "_snippet.tex"], 
                                                   pos = @{here}, 
-                                                  content =  Latex.output_text text}
-                                      val _ = Generated_Files.write_file (Path.make ["latex_test"]) file
+                                                  content = Latex.output_text text}
+                                      val _ = Generated_Files.write_file (Path.make ["latex_test"]) 
+                                                                         file
                                       val _ = writeln (Latex.output_text text)
                                   in  thy end
        
@@ -84,11 +85,24 @@ val _ =
 
 
 text\<open>And here a tex - text macro.\<close>
+text\<open>Pythons reStructuredText (RST). @{url \<open>https://de.wikipedia.org/wiki/ReStructuredText\<close>}.
+Tool: Sphinx.
 
-text-[dfgdfg::B]\<open> Lorem ipsum ...  @{thm refl} \<close>
+\<close>
 
-text\<open>... and here is its application /macro expansion: 
-     @{B [display] "dfgdfg"}\<close>
+text*[aaa::B]\<open>dfg\<close>
+
+text-[dfgdfg::B]
+\<open> Lorem ipsum ...  @{thm [display] refl} _ Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
+
+text-[asd::B]
+\<open>... and here is its application macro expansion: 
+     @{B [display] "dfgdfg"} 
+     @{cartouche [display] 
+         \<open>text*[dfgdfg::B]
+           \<open> Lorem ipsum ...  @{thm refl} _ Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
+          \<close>}
+\<close>
 
 
 
