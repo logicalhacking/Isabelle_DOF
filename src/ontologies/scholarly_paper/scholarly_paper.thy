@@ -287,6 +287,12 @@ doc_class "evaluation"  = eng_c +
 doc_class "data"  = eng_c +
    tag :: "string" <=  "''''"
 
+subsection\<open>Some Summary\<close>
+
+print_doc_classes
+
+print_doc_class_template "definition" (* just a sample *)
+
 
 subsection\<open>Structuring Enforcement in Engineering/Math Papers \<close>
 (* todo : could be finer *)
@@ -411,7 +417,6 @@ fun check_group_elem level_hd a = case (get_level (snd a)) of
 fun check_group a = map (check_group_elem (check_level_hd (hd a))) (tl a) ;
 *)
 \<close>
-
 
 
 end

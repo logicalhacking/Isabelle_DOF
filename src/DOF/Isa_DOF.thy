@@ -41,7 +41,8 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
 
   and      "text*"      "text-macro*"     :: document_body 
 
-  and      "print_doc_classes" "print_doc_items" "check_doc_global" :: diag
+  and      "print_doc_classes" "print_doc_items" 
+           "print_doc_class_template" "check_doc_global" :: diag
 
   (* experimental *)  
   and      "corrollary*" "proposition*" "lemma*" "theorem*" :: thy_decl
@@ -641,6 +642,20 @@ fun print_doc_items b ctxt =
     in  map print_item (Symtab.dest x); 
         writeln "=====================================\n\n\n" end;
 
+
+fun print_docclass_template cid ctxt = 
+    let val cid_long = read_cid ctxt cid  (* assure that given cid is really a long_cid *)
+        val brute_hierarchy = (get_attributes_local cid_long ctxt)
+        val flatten_hrchy = flat o (map(fn(lname, attrS) => 
+                                           map (fn (s,_,_)=>(lname,(Binding.name_of s))) attrS))
+        fun filter_overrides [] = []
+           |filter_overrides ((ln,s)::S) = (ln,s):: filter_overrides(filter(fn(_,s')=> s<>s')S) 
+        val hierarchy = map (fn(ln,s)=>ln^"."^s)(filter_overrides(flatten_hrchy brute_hierarchy)) 
+        val args = String.concatWith "=%\n , " ("  label=,type":: hierarchy);
+        val template = "\\newisadof{"^cid_long^"}%\n["^args^"][1]\n{%\n#1%\n}\n\n";
+    in writeln template end;
+
+
 fun print_doc_classes b ctxt = 
     let val {docobj_tab={tab = x, ...},docclass_tab, ...} = get_data ctxt;
         val _ = writeln "=====================================";    
@@ -675,6 +690,12 @@ fun check_doc_global (strict_checking : bool) ctxt =
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>print_doc_classes\<close> "print document classes"
     (Parse.opt_bang >> (fn b => Toplevel.keep (print_doc_classes b o Toplevel.context_of)));
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>print_doc_class_template\<close> 
+                       "print document class latex template"
+    (Parse.string >> (fn b => Toplevel.keep (print_docclass_template b o Toplevel.context_of)));
+
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>print_doc_items\<close>  "print document items"

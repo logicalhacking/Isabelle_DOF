@@ -45,7 +45,7 @@ we follow LaTeX terminology on levels
 
 for scholarly paper: invariant level > 0. \<close>
 
-doc_class text_element = 
+doc_class text_element =     
    level         :: "int  option"    <=  "None" 
    referentiable :: bool <= "False"
    variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
