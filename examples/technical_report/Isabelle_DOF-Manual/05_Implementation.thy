@@ -41,20 +41,20 @@ text\<open>
   IDE support.
 \<close>
 
-(* should be text* *)
-text
-\<open>
-
-\begin{sml}
-structure Data = Generic_Data
+(* should work as text*, but doesn't. *)
+(*
+text*[xxx::SML]
+\<open>structure Data = Generic_Data
 (  type T = docobj_tab * docclass_tab * ...
    val empty  = (initial_docobj_tab, initial_docclass_tab, ...) 
    val extend = I
    fun merge((d1,c1,...),(d2,c2,...)) = (merge_docobj_tab  (d1,d2,...), 
                                          merge_docclass_tab(c1,c2,...))
 );
-\end{sml}
 \<close>
+*)
+
+
 
 section\<open>\isadof: A User-Defined Plugin in Isabelle/Isar\<close>
 text\<open> 

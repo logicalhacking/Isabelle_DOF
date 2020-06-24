@@ -33,3 +33,22 @@
 % \usepackage{xcolor}
 % \usepackage{lstisadof-manual}
 
+\newisadof{text.technical_report.SML}%
+[  label=,type=%
+ , Isa_COL.text_element.level=%
+ , Isa_COL.text_element.referentiable=%
+ , Isa_COL.text_element.variants=%
+ , scholarly_paper.text_section.main_author=%
+ , scholarly_paper.text_section.fixme_list=%
+ , scholarly_paper.technical.definition_list=%
+ , scholarly_paper.technical.status=%
+ , scholarly_paper.technical.formal_results=%
+ , technical_report.code.checked=%
+ , technical_report.code.caption=%
+]
+[1]
+{%
+\begin{sml}%
+#1
+\end{sml}%
+}

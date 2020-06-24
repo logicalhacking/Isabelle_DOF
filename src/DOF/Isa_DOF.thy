@@ -652,7 +652,7 @@ fun print_docclass_template cid ctxt =
            |filter_overrides ((ln,s)::S) = (ln,s):: filter_overrides(filter(fn(_,s')=> s<>s')S) 
         val hierarchy = map (fn(ln,s)=>ln^"."^s)(filter_overrides(flatten_hrchy brute_hierarchy)) 
         val args = String.concatWith "=%\n , " ("  label=,type":: hierarchy);
-        val template = "\\newisadof{"^cid_long^"}%\n["^args^"][1]\n{%\n#1%\n}\n\n";
+        val template = "\\newisadof{"^cid_long^"}%\n["^args^"=%\n][1]\n{%\n#1%\n}\n\n";
     in writeln template end;
 
 

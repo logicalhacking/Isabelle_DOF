@@ -59,6 +59,7 @@ doc_class "ISAR"     = code +
 doc_class "LATEX"     = code +
    checked :: bool <=  "False"
 
+print_doc_class_template "SML" (* just a sample *)
 
 
 doc_class report = 
