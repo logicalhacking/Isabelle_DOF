@@ -285,16 +285,16 @@ datatype phase = SYSDEV_ext (* System Development Phase (external) *)
                | SD    (* Software Deployment       *)
                | SM    (* Software Maintenance      *)
 
-abbreviation software_requirement  :: "phase" where "software_requirement  \<equiv> SR"
-abbreviation software_architecture :: "phase" where "software_architecture \<equiv> SA"
-abbreviation software_design       :: "phase" where "software_design       \<equiv> SD"
-abbreviation software_component_design:: "phase" where "software_component_design \<equiv> SCDES"
+abbreviation software_requirement      :: "phase" where "software_requirement  \<equiv> SR"
+abbreviation software_architecture     :: "phase" where "software_architecture \<equiv> SA"
+abbreviation software_design           :: "phase" where "software_design       \<equiv> SD"
+abbreviation software_component_design :: "phase" where "software_component_design \<equiv> SCDES"
 abbreviation component_implementation_and_testing :: "phase" 
-                                             where "component_implementation_and_testing \<equiv> CInT"
-abbreviation software_integration  :: "phase" where "software_integration \<equiv> SI"
-abbreviation software_validation   :: "phase" where "software_validation  \<equiv> SV"
-abbreviation software_deployment   :: "phase" where "software_deployment  \<equiv> SD"
-abbreviation software_maintenance  :: "phase" where "software_maintenance \<equiv> SM"
+                                                  where "component_implementation_and_testing \<equiv> CInT"
+abbreviation software_integration      :: "phase" where "software_integration \<equiv> SI"
+abbreviation software_validation       :: "phase" where "software_validation  \<equiv> SV"
+abbreviation software_deployment       :: "phase" where "software_deployment  \<equiv> SD"
+abbreviation software_maintenance      :: "phase" where "software_maintenance \<equiv> SM"
 
 term "SR" (* meta-test *)
 
@@ -359,7 +359,8 @@ doc_class FnI = requirement +
 
 doc_class AC = requirement +
    is_concerned :: "role set" <= "UNIV" 
-   type_synonym application_conditions = AC
+
+type_synonym application_conditions = AC
 
 text\<open>The category \<^emph>\<open>assumption\<close> is used for domain-specific assumptions. It has formal, semi-formal 
       and informal sub-categories. They have to be  tracked and discharged by appropriate 
