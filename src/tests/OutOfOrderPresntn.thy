@@ -149,8 +149,8 @@ textN\<open>... and here is its application macro expansion:
 textN\<open> \<^theory_text>\<open>definition df = ...  
         \<close>
        @{theory_text [display] \<open>definition df = ...  
-        \<close>}
-       @{cartouche [display]  \<open> @{figure "cfgdfg"}\<close>} \<close>
+                               \<close>}
+       @{cartouche [display]   \<open> @{figure "cfgdfg"}\<close>} \<close>
 
 (*<*)
 text\<open>Final Status:\<close>
