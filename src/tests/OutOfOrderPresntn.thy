@@ -148,6 +148,10 @@ textN\<open>... and here is its application macro expansion:
 
 textN\<open> \<^theory_text>\<open>definition df = ...  
         \<close>
+       @{ML [display] \<open> let val x = 3 + 4 in true end
+                      \<close>}
+       @{verbatim [display] \<open> Lorem ipsum ...  @{thm refl} _ 
+                              Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close> \<close>}
        @{theory_text [display] \<open>definition df = ...  
                                \<close>}
        @{cartouche [display]   \<open> @{figure "cfgdfg"}\<close>} \<close>

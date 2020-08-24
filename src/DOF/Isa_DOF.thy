@@ -1229,25 +1229,22 @@ fun gen_enriched_document_command {inline=is_inline} cid_transform attr_transfor
                                     toks:Input.source) 
                                   : theory -> theory =
   let  val toplvl = Toplevel.theory_toplevel
-       (* checking and markup generation *)
        fun check thy = let val ctxt = Toplevel.presentation_context (toplvl thy);
-                         (*  val _ =  Context_Position.report ctxt
-                                          (Input.pos_of toks) 
-                                          (Markup.language_document (Input.is_delimited toks));
-                          *)
-    val pos = Input.pos_of toks;
-    val _ =
-      Context_Position.reports ctxt
-        [(pos, Markup.language_document (Input.is_delimited toks)),
-         (pos, Markup.plain_text)];
+                           val pos = Input.pos_of toks;
+                           val _   = Context_Position.reports ctxt
+                                           [(pos, Markup.language_document(Input.is_delimited toks)),
+                                            (pos, Markup.plain_text)];
                        in thy end
        
-       (* ... generating the level-attribute syntax *)
   in   
-       (   create_and_check_docitem {is_monitor=false} {is_inline=is_inline} 
-                                    oid pos (cid_transform cid_pos) (attr_transform doc_attrs) 
+       (* ... level-attribute information management *)
+       (   create_and_check_docitem {is_monitor=false}
+                                    {is_inline=is_inline} 
+                                    oid pos (cid_transform cid_pos) 
+                                    (attr_transform doc_attrs) 
+       (* checking and markup generation *)
         #> check ) 
-       (* Thanks Frederic Tuong! ! ! *)
+       (* Thanks Frederic Tuong for the hints concerning toplevel ! ! ! *)
   end;
 
 
@@ -1812,6 +1809,7 @@ ML\<open>
    Pretty.text;
    Pretty.str;
    Pretty.block_enclose;
+   theory_text_antiquotation in Document_Antiquotations (not exported)
 \<close>
 
 ML\<open>Pretty.text_fold; Pretty.unformatted_string_of\<close>
