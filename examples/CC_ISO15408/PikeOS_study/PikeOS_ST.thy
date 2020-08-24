@@ -14,15 +14,16 @@ subsection*[pkosstrefsubsec::st_ref_cls]\<open> ST Reference \<close>
 
 text"@{docitem st_def}"
 text*[pkosstref::st_ref_cls, title="''PikeOS Security Target''", st_version ="(0,4,5)",
-      authors= "[]", st_date= "''29072020''"]\<open>This document is the @{docitem st_def} for the 
-      Common Criteria evaluation of PikeOS. It complies with the Common Criteria for Information 
-      Technology Security Evaluation Version 3.1 Revision 4.\<close>
+      authors= "[]", st_date= "''29072020''"]
+\<open>This document is the @{docitem st_def} for the Common Criteria evaluation of PikeOS. 
+ It complies with the Common Criteria for Information Technology Security Evaluation 
+ Version 3.1 Revision 4.\<close>
 
 subsection*[pkossttoerefsubsec::st_ref_cls]\<open> TOE Reference \<close>
 
 text*[pkostoeref::toe_ref_cls, dev_name="''''", toe_name="''PikeOS''",
       toe_version= "(0,3,4)", prod_name="Some ''S3725''"]
-  \<open>The @{docitem toe_def} is the operating system PikeOS version 3.4 
+\<open>The @{docitem toe_def} is the operating system PikeOS version 3.4 
    running on the microprocessor family x86 hosting different applications. 
    The @{docitem toe_def} is referenced as PikeOS 3.4 base
    product build S3725 for Linux and Windows development host with PikeOS 3.4

@@ -38,17 +38,7 @@ Symtab.dest docclass_tab;
 ML\<open> 
 Pure_Syn.document_command;
 
-fun output_document state markdown src =
-  let
-    val ctxt = Toplevel.presentation_context state;
-    val _ = Context_Position.report ctxt
-                (Input.pos_of src) 
-                (Markup.language_document (Input.is_delimited src));
-  in Thy_Output.output_document ctxt markdown src end;
-  (* this thing converts also source to (latex) text ... *)
-
-output_document : Toplevel.state -> {markdown: bool} -> Input.source -> Latex.text list;
-
+val _ = Thy_Output.output_document
 
 fun gen_enriched_document_command2 cid_transform attr_transform 
                                   markdown  
@@ -59,7 +49,14 @@ fun gen_enriched_document_command2 cid_transform attr_transform
   let  val toplvl = Toplevel.theory_toplevel
 
        (* as side-effect, generates markup *)
-       fun check_n_tex_text thy = let val text = output_document (toplvl thy) markdown toks
+       fun check_n_tex_text thy = let val ctxt = Toplevel.presentation_context (toplvl thy);
+                                      val pos = Input.pos_of toks;
+                                      val _ =   Context_Position.reports ctxt
+                                                [(pos, Markup.language_document (Input.is_delimited toks)),
+                                                 (pos, Markup.plain_text)];
+                                      val text = Thy_Output.output_document 
+                                                                 (Proof_Context.init_global thy) 
+                                                                 markdown toks
                                       val file = {path = Path.make [oid ^ "_snippet.tex"], 
                                                   pos = @{here}, 
                                                   content = Latex.output_text text}
@@ -95,6 +92,8 @@ text*[aaa::B]\<open>dfg\<close>
 text-[dfgdfg::B]
 \<open> Lorem ipsum ...  @{thm [display] refl} _ Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
 
+
+
 text-[asd::B]
 \<open>... and here is its application macro expansion: 
      @{B [display] "dfgdfg"} 
@@ -104,7 +103,12 @@ text-[asd::B]
           \<close>}
 \<close>
 
-
+text\<open>... and here is its application macro expansion: 
+     @{B [display] "dfgdfg"} 
+     @{cartouche [display] 
+         \<open>text*[dfgdfg::B]
+           \<open> Lorem ipsum ...  @{thm refl} _ Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
+          \<close>}\<close>
 
 (*<*)
 text\<open>Final Status:\<close>

@@ -1231,9 +1231,15 @@ fun gen_enriched_document_command {inline=is_inline} cid_transform attr_transfor
   let  val toplvl = Toplevel.theory_toplevel
        (* checking and markup generation *)
        fun check thy = let val ctxt = Toplevel.presentation_context (toplvl thy);
-                           val _ =  Context_Position.report ctxt
+                         (*  val _ =  Context_Position.report ctxt
                                           (Input.pos_of toks) 
                                           (Markup.language_document (Input.is_delimited toks));
+                          *)
+    val pos = Input.pos_of toks;
+    val _ =
+      Context_Position.reports ctxt
+        [(pos, Markup.language_document (Input.is_delimited toks)),
+         (pos, Markup.plain_text)];
                        in thy end
        
        (* ... generating the level-attribute syntax *)
@@ -1800,6 +1806,7 @@ val _ =
 end (* struct *)
 \<close>  
 
+text\<open>dfgd\<close>
 (*
 ML\<open>
    Pretty.text;
