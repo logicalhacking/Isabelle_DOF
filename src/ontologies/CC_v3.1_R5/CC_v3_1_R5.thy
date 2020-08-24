@@ -13,7 +13,7 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-theory  CommonCriteria_15408
+theory  "CC_v3_1_R5"
   imports  "../technical_report/technical_report" 
            "CC_terminology"
 
