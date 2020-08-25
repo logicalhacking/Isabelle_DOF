@@ -10,16 +10,17 @@ begin
 text\<open>We re-use the class @\<open>typ math_content\<close>, which provides also a framework for
 semi-formal terminology, which we re-use by this definition.\<close>
 
-doc_class semi_formal_content = math_content +
+doc_class concept_definition = "definition" +
       status        :: status <= "semiformal" 
       mcc           :: math_content_class <= "terminology"
       tag           :: string
 
-type_synonym concept = semi_formal_content  
+type_synonym concept = concept_definition  
 
 (*>>*)
 
 section \<open>Terminology\<close>
+
 
 subsection \<open>Terms and definitions common in the CC\<close>
 

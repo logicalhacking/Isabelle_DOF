@@ -12,7 +12,6 @@ section*[pkosstintrosec::st_ref_cls]\<open> ST Introduction \<close>
 open_monitor*[PikosIntro::ST_INTRO_MNT]
 subsection*[pkosstrefsubsec::st_ref_cls]\<open> ST Reference \<close>
 
-text"@{docitem st_def}"
 text*[pkosstref::st_ref_cls, title="''PikeOS Security Target''", st_version ="(0,4,5)",
       authors= "[]", st_date= "''29072020''"]
 \<open>This document is the @{docitem st_def} for the Common Criteria evaluation of PikeOS. 
@@ -30,8 +29,8 @@ text*[pkostoeref::toe_ref_cls, dev_name="''''", toe_name="''PikeOS''",
    Certification Kit build S4250 and PikeOS 3.4 Common Criteria Kit build S4388.\<close>
 
 subsection*[pkossttoeovrvwsubsec::st_ref_cls]\<open> TOE Overview \<close>
-text*[pkosovrw1::toe_ovrw_cls]\<open>The @{definition TOE} is a special kind of operating system, 
-that allows to effectively separate
+text*[pkosovrw1::toe_ovrw_cls]\<open>The @{definition \<open>toe\<close> } is a special kind of operating 
+system, that allows to effectively separate
 different applications running on the same platform from each other. The TOE can host
 user applications that can also be operating systems. User applications can also be
 malicious, and even in that case the TOE ensures that malicious user applications are
@@ -44,6 +43,7 @@ to ensure complete separation of user applications and to prevent unexpected
 interference between user applications. The TOE enforces restrictions on the
 communication between the separated user applications as specified by the configuration
 data.
+
 The major security services provided by the TOE are:
 
 Separation in space of applications hosted in different partitions from each other

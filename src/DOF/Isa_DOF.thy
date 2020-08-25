@@ -910,7 +910,8 @@ fun ML_isa_check_docitem thy (term, req_ty, pos) =
                                        | _ => error("can not infer type for: "^ name)
                          in if cid <> DOF_core.default_cid 
                                andalso not(DOF_core.is_subclass ctxt cid req_class)
-                            then error("reference ontologically inconsistent")
+                            then error("reference ontologically inconsistent: "^ 
+                                       Position.here pos_decl)
                             else ()
                          end
            else err ("faulty reference to docitem: "^name) pos
@@ -1228,7 +1229,7 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
             end
 
 
-
+(* old version :
 fun gen_enriched_document_command {inline=is_inline} cid_transform attr_transform 
                                   markdown  
                                   (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
@@ -1253,9 +1254,9 @@ fun gen_enriched_document_command {inline=is_inline} cid_transform attr_transfor
         #> check ) 
        (* Thanks Frederic Tuong for the hints concerning toplevel ! ! ! *)
   end;
+*)
 
-
-fun gen_enriched_document_command2 {inline=is_inline} cid_transform attr_transform 
+fun gen_enriched_document_command {inline=is_inline} cid_transform attr_transform 
                                   markdown  
                                   (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
                                      xstring_opt:(xstring * Position.T) option),
@@ -1368,7 +1369,7 @@ val _ =
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (gen_enriched_document_command2 {inline=true} 
+      >> (Toplevel.theory o (gen_enriched_document_command {inline=true} 
                                                            I I {markdown = true} )));
 
 (* This is just a stub at present *)
@@ -1538,7 +1539,7 @@ fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) {inline=inline_re
                      (* this sends a report for a ref application to the PIDE interface ... *) 
              val _ = if cid <> DOF_core.default_cid 
                         andalso not(DOF_core.is_subclass ctxt cid cid_decl)
-                     then error("reference ontologically inconsistent")
+                     then error("reference ontologically inconsistent:" ^ Position.here pos_decl)
                      else ()
          in () end
     else if   DOF_core.is_declared_oid_global name thy 

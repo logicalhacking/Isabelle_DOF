@@ -63,7 +63,7 @@ fun gen_enriched_document_command2 cid_transform attr_transform
                                                   pos = @{here}, 
                                                   content = Latex.output_text text}
  
-                                     val _ = Generated_Files.write_file (Path.make ["latex_test"]) 
+                                      val _ = Generated_Files.write_file (Path.make ["latex_test"]) 
                                                                          file
                                       val _ = writeln (Latex.output_text text)
                                   in  thy end
@@ -122,7 +122,7 @@ Tool: Sphinx.
 \<close>
 
 text*[aaa::B]\<open>dfg @{thm [display] refl}\<close>
-
+                            
 text-[dfgdfg::B]
 \<open> Lorem ipsum ...  @{thm [display] refl} _ Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
 
