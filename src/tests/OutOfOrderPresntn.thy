@@ -121,7 +121,7 @@ Tool: Sphinx.
 
 \<close>
 
-text*[aaa::B]\<open>dfg\<close>
+text*[aaa::B]\<open>dfg @{thm [display] refl}\<close>
 
 text-[dfgdfg::B]
 \<open> Lorem ipsum ...  @{thm [display] refl} _ Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>

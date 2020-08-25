@@ -33,7 +33,7 @@ have to follow a structure.  In practice, large groups of developers have to pro
 set of documents where the consistency is notoriously difficult to maintain. In particular, 
 certifications are centered around the \<^emph>\<open>traceability\<close> of requirements throughout the entire 
 set of documents. While technical solutions for the traceability problem exists (most notably:
-DOORS~\cite{ibm:doors:2019}), they are weak in the treatment of formal entities (such as formulas 
+DOORS~@{cite "ibm:doors:2019"}), they are weak in the treatment of formal entities (such as formulas 
 and their logical contexts).
 
 Further applications are the domain-specific discourse in juridical texts or medical reports.  

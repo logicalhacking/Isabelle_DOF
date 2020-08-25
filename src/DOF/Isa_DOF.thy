@@ -714,8 +714,15 @@ end (* struct *)
 
 setup\<open>DOF_core.strict_monitor_checking_setup\<close>
 
+section\<open> Syntax for Term Annotation Antiquotations (TA)\<close>
 
-section\<open> Syntax for Inner Syntax Antiquotations (ISA) \<close>
+text\<open>Isabelle/DOF allows for annotations at the term level, for which an
+antiquotation syntax and semantics is defined at the inner syntax level.
+(For this reasons, the mechanism has been called somewhat misleading
+\<^emph>\<open>inner syntax antiquotations\<close> in earlier versions of Isabelle/DOF.)
+
+For the moment, only a fixed number of builtin TA's is supported, future
+versions might extend this feature substantially.\<close>
 
 subsection\<open> Syntax \<close> 
 
@@ -1248,6 +1255,47 @@ fun gen_enriched_document_command {inline=is_inline} cid_transform attr_transfor
   end;
 
 
+fun gen_enriched_document_command2 {inline=is_inline} cid_transform attr_transform 
+                                  markdown  
+                                  (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
+                                     xstring_opt:(xstring * Position.T) option),
+                                    toks:Input.source) 
+                                  : theory -> theory =
+  let  val toplvl = Toplevel.theory_toplevel
+
+       (* as side-effect, generates markup *)
+       fun check_n_tex_text thy = let val ctxt = Toplevel.presentation_context (toplvl thy);
+                                      val pos = Input.pos_of toks;
+                                      val _ =   Context_Position.reports ctxt
+                                                [(pos, Markup.language_document (Input.is_delimited toks)),
+                                                 (pos, Markup.plain_text)];
+
+                                      val text = Thy_Output.output_document 
+                                                                 (Proof_Context.init_global thy) 
+                                                                 markdown toks
+
+                                      val file = {path = Path.make [oid ^ "_snippet.tex"],
+                                                  pos = @{here}, 
+                                                  content = Latex.output_text text}
+ 
+                                  (*    val _ = Generated_Files.write_file (Path.make ["latex_test"]) 
+                                                                         file
+                                      val _ = writeln (Latex.output_text text) *)
+                                  in  thy end
+       
+       (* ... generating the level-attribute syntax *)
+  in   
+       (* ... level-attribute information management *)
+       (   create_and_check_docitem 
+                              {is_monitor = false} {is_inline = is_inline} 
+                              oid pos (cid_transform cid_pos) (attr_transform doc_attrs)
+       (* checking and markup generation *)
+        #>  check_n_tex_text ) 
+       (* Thanks Frederic Tuong for the hints concerning toplevel ! ! ! *)
+  end;
+
+
+
 (* General criticism : attributes like "level" were treated here in the kernel instead of dragging
    them out into the COL -- bu *)
 
@@ -1320,7 +1368,7 @@ val _ =
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (gen_enriched_document_command {inline=true} 
+      >> (Toplevel.theory o (gen_enriched_document_command2 {inline=true} 
                                                            I I {markdown = true} )));
 
 (* This is just a stub at present *)
