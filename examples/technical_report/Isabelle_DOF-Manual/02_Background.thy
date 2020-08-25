@@ -91,9 +91,9 @@ text\<open>
   separate commands from each other.
 
   We distinguish fundamentally two different syntactic levels:
-  \<^item> the \emph{outer-syntax}\bindex{syntax!outer}\index{outer syntax|see {syntax, outer}} (\ie, the 
+  \<^item> the *\<open>outer-syntax\<close>\bindex{syntax!outer}\index{outer syntax|see {syntax, outer}} (\ie, the 
     syntax for commands) is processed by a lexer-library and parser combinators built on top, and
-  \<^item> the \emph{inner-syntax}\bindex{syntax!inner}\index{inner syntax|see {syntax, inner}} (\ie, the 
+  \<^item> the *\<open>inner-syntax\<close>\bindex{syntax!inner}\index{inner syntax|see {syntax, inner}} (\ie, the 
     syntax for \inlineisar|\<lambda>|-terms in HOL) with its own parametric polymorphism type 
     checking.
 
@@ -108,14 +108,14 @@ text\<open>
   \end{isar}
   This will type-set the corresponding text in, for example, a PDF document.  However, this 
   translation is not necessarily one-to-one: text elements can be enriched by formal, \ie, 
-  machine-checked content via \emph{semantic macros}, called antiquotations\bindex{antiquotation}:
+  machine-checked content via *\<open>semantic macros\<close>, called antiquotations\bindex{antiquotation}:
 \begin{isar}
-text\<Open>According to the reflexivity axiom <@>{thm refl}, we obtain in \<Gamma> 
+text\<Open>According to the *\<Open>reflexivity\<Close> axiom <@>{thm refl}, we obtain in \<Gamma> 
       for <@>{term "fac 5"} the result <@>{value "fac 5"}.\<Close>
 \end{isar}
 which is represented in the final document (\eg, a PDF) by:
 \begin{out}
-According to the reflexivity axiom $\mathrm{x = x}$, we obtain in $\Gamma$ for $\operatorname{fac} \text{\textrm{5}}$ the result $\text{\textrm{120}}$.
+According to the \emph{reflexivity} axiom $\mathrm{x = x}$, we obtain in $\Gamma$ for $\operatorname{fac} \text{\textrm{5}}$ the result $\text{\textrm{120}}$.
 \end{out}
   Semantic macros are partial functions of type \inlineisar+\<theta> \<rightarrow> text+; since they can use the
   system state, they can perform all sorts of specific checks or evaluations (type-checks, 

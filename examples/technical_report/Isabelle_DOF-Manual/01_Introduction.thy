@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019      The University of Exeter 
- *               2018-2019 The University of Paris-Saclay
+ *               2019-2020 The University of Exeter 
+ *               2018-2020 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -33,8 +33,8 @@ have to follow a structure.  In practice, large groups of developers have to pro
 set of documents where the consistency is notoriously difficult to maintain. In particular, 
 certifications are centered around the \<^emph>\<open>traceability\<close> of requirements throughout the entire 
 set of documents. While technical solutions for the traceability problem exists (most notably:
-DOORS~\cite{ibm:doors:2019}), they are weak in the treatment of formal entities (such as formulas and their 
-logical contexts).
+DOORS~\cite{ibm:doors:2019}), they are weak in the treatment of formal entities (such as formulas 
+and their logical contexts).
 
 Further applications are the domain-specific discourse in juridical texts or medical reports.  
 In general, an ontology is a formal explicit description of \<^emph>\<open>concepts\<close> in a domain of discourse
@@ -43,11 +43,12 @@ as \<^emph>\<open>links\<close> between them. A particular link between concepts
 the instances of a subclass to be instances of the super-class.
 
 To adress this challenge, we present the Document Ontology Framework (\dof) and an 
-implementation of DOF called \isadof. \dof is designed for building scalable and user-friendly 
-tools on top of interactive theorem provers. \isadof is a novel framework, implemented as extension of 
-Isabelle/HOL, to \<^emph>\<open>model\<close> typed ontologies and to \<^emph>\<open>enforce\<close> them during document evolution. Based 
-on Isabelle's infrastructures, ontologies may refer to types, terms, proven theorems, code, or 
-established assertions. Based on a novel adaption of the Isabelle IDE, a document is checked to be 
+implementation of \dof called \isadof. \dof is designed for building scalable and user-friendly 
+tools on top of interactive theorem provers. \isadof is an instance of this novel framework, 
+implemented as extension of Isabelle/HOL, to \<^emph>\<open>model\<close> typed ontologies and to \<^emph>\<open>enforce\<close> them 
+during document evolution. Based on Isabelle's infrastructures, ontologies may refer to types, 
+terms, proven theorems, code, or established assertions. Based on a novel adaption of the Isabelle 
+IDE (called PIDE, @{cite "wenzel:asynchronous:2014"}), a document is checked to be 
 \<^emph>\<open>conform\<close> to a particular ontology---\isadof is designed to give fast user-feedback \<^emph>\<open>during the 
 capture of content\<close>. This is particularly valuable in case of document evolution, where the 
 \<^emph>\<open>coherence\<close> between the formal and the informal parts of the content can be mechanically checked.

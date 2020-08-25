@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019      The University of Exeter 
- *               2018-2019 The University of Paris-Saclay
+ *               2019-20   The University of Exeter 
+ *               2018-2020 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -42,7 +42,7 @@ text*[abs::abstract,
   A major application of \dof is the integrated development of
   formal certification documents (\eg, for Common Criteria or CENELEC
   50128) that require consistency across both formal and informal
-  arguments.
+  arguments. 
 
   \isadof is integrated into Isabelle's IDE, which
   allows for smooth ontology development as well as immediate
@@ -54,10 +54,13 @@ text*[abs::abstract,
   In this user-manual, we give an in-depth presentation of the design
   concepts of \dof's Ontology Definition Language (ODL) and describe
   comprehensively its major commands. Many examples show typical best-practice
-  applications of the system. \isadof is the
-  first ontology language supporting machine-checked
-  links between the formal and informal parts in an LCF-style
-  interactive theorem proving environment.
+  applications of the system.
+
+  It is an unique feature of  \isadof  that ontologies may be used to control
+  the link between formal and informal content in documents in a machine
+  checked way. These links can connect both text elements as well as formal
+  modelling elements such as terms, definitions, code  and logical formulas,
+  alltogether *\<open>integrated\<close> in a state-of-the-art interactive theorem prover.
 \<close>
 
 (*<*) 
