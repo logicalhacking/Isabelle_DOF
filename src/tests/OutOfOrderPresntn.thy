@@ -190,13 +190,10 @@ setup \<open>DOF_lib.define_shortcut (Binding.make("bla",\<^here>)) "\\blabla"\<
    using the alternative \<^binding> notation (see above).*)
 
 
-ML\<open>
+setup\<open>DOF_lib.define_macro (Binding.make("blong",\<^here>)) "\\blong{" "}"\<close>
 
-fun control_antiquotation name s1 s2 =
-  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.cartouche_input)
-    (fn ctxt => Latex.enclose_block s1 s2 o Thy_Output.output_document ctxt {markdown = false});
+textN\<open> \<^blong>\<open>asd\<close> outer  \<^blong>\<open>syntax| ! see {syntax, outer}\<close> \<close>
 
-\<close>
 
 end
 (*>*)

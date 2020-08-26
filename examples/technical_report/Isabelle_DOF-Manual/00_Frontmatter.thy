@@ -21,15 +21,22 @@ text\<open>Some internal setup, introducing document specific abbreviations and 
 
 setup \<open>DOF_lib.define_shortcut    \<^binding>\<open>dof\<close>    "\\dof"\<close>
 setup \<open>DOF_lib.define_shortcut    \<^binding>\<open>isadof\<close> "\\isadof"\<close>
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>     "\\eg"
+setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>     "\\eg"  
+          (* Latin: „exempli gratia“  meaning  „for example“. *)
        #> DOF_lib.define_shortcut \<^binding>\<open>ie\<close>     "\\ie"\<close> 
-      (* this is an alternative style for macro definitions eauivalent to setup ... setup  ...*)
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>TeXLive\<close>"\\TeXLife"
-       #> DOF_lib.define_shortcut \<^binding>\<open>LaTeX\<close>  "\\LaTeX{}"\<close>
+          (* Latin: „id est“  meaning „that is to say“. *) 
+      (* this is an alternative style for macro definitions equivalent to setup ... setup  ...*)
+setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>TeXLive\<close>"\\TeXLive"
+       #> DOF_lib.define_shortcut \<^binding>\<open>BibTeX\<close> "\\BibTeX{}"
+       #> DOF_lib.define_shortcut \<^binding>\<open>LaTeX\<close>  "\\LaTeX{}"
+       #> DOF_lib.define_shortcut \<^binding>\<open>pdftex\<close> "\\pdftex{}"
+\<close>
 
-text\<open>Note that these setups assume that the \<^LaTeX> macros are defined in the 
-     document prelude. \<close>
+text\<open>Note that these setups assume that the associated \<^LaTeX> macros are defined, \<^eg>, 
+     in the document prelude. \<close>
 
+setup\<open>    DOF_lib.define_macro \<^binding>\<open>index\<close>     "\\index{" "}"
+       #> DOF_lib.define_macro \<^binding>\<open>bindex\<close>    "\\bindex{" "}"\<close> 
 
 open_monitor*[this::report] 
 

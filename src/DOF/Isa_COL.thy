@@ -227,7 +227,7 @@ end
 \<close>
 
 section\<open>Shortcuts, Macros, Environments\<close>
-text\<open>This is actually \<^emph>\<open>not\<close> a real DOF feature, rather a slightly more abstract layer over
+text\<open>This is actually \<^emph>\<open>not\<close> a real ISADOF feature, rather a slightly more abstract layer over
      somewhat buried standard features of the Isabelle document generator ... \<close>
 
 ML\<open>

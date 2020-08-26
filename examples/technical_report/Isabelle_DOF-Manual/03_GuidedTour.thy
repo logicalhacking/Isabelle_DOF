@@ -20,18 +20,19 @@ theory
 begin
 (*>*)
 
-chapter*[isadof_tour::text_section]\<open>\isadof: A Guided Tour\<close>
+chapter*[isadof_tour::text_section]\<open>\<^isadof>: A Guided Tour\<close>
 
 text\<open>
-  In this chapter, we will give a introduction into using \isadof for users that want to create and 
+  In this chapter, we will give a introduction into using \<^isadof> for users that want to create and 
   maintain documents following an existing document ontology.
 \<close>
 
 section*[getting_started::technical]\<open>Getting Started\<close>
 text\<open>
-As an alternative to installing \isadof{} locally, the latest official release  \isadof is also 
-available on \href{https://cloud.docker.com/u/logicalhacking/}{Docker Hub}. Thus, if you have \href{https://www.docker.com}{Docker} installed and 
-your installation of Docker supports X11 application, you can start \isadof as follows:
+As an alternative to installing \<^isadof>{} locally, the latest official release  \<^isadof> is also 
+available on \href{https://cloud.docker.com/u/logicalhacking/}{Docker Hub}. Thus, if you have 
+\href{https://www.docker.com}{Docker} installed and 
+your installation of Docker supports X11 application, you can start \<^isadof> as follows:
 
 \begin{bash}
 ë\prompt{}ë docker run -ti --rm -e DISPLAY=$DISPLAY \
@@ -43,22 +44,22 @@ your installation of Docker supports X11 application, you can start \isadof as f
 
 subsection*[installation::technical]\<open>Installation\<close>
 text\<open>
-  In this section, we will show how to install \isadof and its pre-requisites: Isabelle and 
-  \LaTeX. We assume a basic familiarity with a Linux/Unix-like command line (i.e., a shell). 
+  In this section, we will show how to install \<^isadof> and its pre-requisites: Isabelle and 
+  \<^LaTeX>. We assume a basic familiarity with a Linux/Unix-like command line (i.e., a shell). 
 \<close>
 
 subsubsection*[prerequisites::technical]\<open>Pre-requisites\<close>
 text\<open>
-  \isadof has to major pre-requisites: 
+  \<^isadof> has to major pre-requisites: 
   \<^item> \<^bold>\<open>Isabelle\<close>\bindex{Isabelle} (\isabellefullversion). 
-    \isadof uses a two-part version system (e.g., 1.0.0/2020), 
-    where the first part is the version of \isadof (using semantic versioning) and the second 
-    part is the supported version of Isabelle. Thus, the same version of \isadof might be 
+    \<^isadof> uses a two-part version system (e.g., 1.0.0/2020), 
+    where the first part is the version of \<^isadof> (using semantic versioning) and the second 
+    part is the supported version of Isabelle. Thus, the same version of \<^isadof> might be 
     available for different versions of Isabelle. 
   \<^item> \<^bold>\<open>\TeXLive 2020\<close>\bindex{TexLive@\TeXLive} (or any other modern 
-    \LaTeX-distribution where \pdftex{} supports 
-    the \inlineltx|\expanded| primitive).\footnote{see 
-    \url{https://www.texdev.net/2018/12/06/a-new-primitive-expanded}}
+    \<^LaTeX>-distribution where \<^pdftex> supports 
+    the \inlineltx|\expanded| primitive).
+    \<^footnote>\<open>see \<^url>\<open>https://www.texdev.net/2018/12/06/a-new-primitive-expanded\<close>\<close>
 \<close>
 
 paragraph\<open>Installing Isabelle\<close>
@@ -76,7 +77,7 @@ text\<open>
 
 Depending on your operating system and depending if you put Isabelle's \inlinebash{bin} directory
 in your \inlinebash|PATH|, you will need to invoke \inlinebash|isabelle| using its
-full qualified path, \eg:
+full qualified path, \<^eg>:
 
 \begin{bash}
 ë\prompt{}ë /usr/local/Isabelleë\isabelleversion/ëbin/isabelle version
@@ -87,14 +88,14 @@ full qualified path, \eg:
 paragraph\<open>Installing \TeXLive\<close>
 text\<open>
   Modern Linux distribution will allow you to install \TeXLive using their respective package 
-  managers. On a modern Debian system or a Debian derivative (\eg, Ubuntu), the following command 
-  should install all required \LaTeX{} packages:
+  managers. On a modern Debian system or a Debian derivative (\<^eg>, Ubuntu), the following command 
+  should install all required \<^LaTeX> packages:
 
 \begin{bash}
 ë\prompt{}ë sudo aptitude install texlive-latex-extra texlive-fonts-extra
 \end{bash}
 
-  Please check that this, indeed, installs a version of \pdftex{} that supports the 
+  Please check that this, indeed, installs a version of \<^pdftex> that supports the 
   \inlineltx|\expanded|-primitive. To check your \pdfTeX-binary, execute 
 
 \begin{bash}
@@ -104,28 +105,30 @@ Output written on texput.pdf (1 page, 8650 bytes).
 Transcript written on texput.log.
 \end{bash}
 
-  If this generates successfully a file \inlinebash|texput.pdf|, your \pdftex-binary supports
-  the \inlineltx|\expanded|-primitive. If your Linux distribution does not (yet) ship \TeXLive{} 
-  2019 or your are running Windows or OS X, please follow the installation instructions from \url{https://www.tug.org/texlive/acquire-netinstall.html}. 
+  If this generates successfully a file \inlinebash|texput.pdf|, your \<^pdftex>-binary supports
+  the \inlineltx|\expanded|-primitive. If your Linux distribution does not (yet) ship \<^TeXLive> 
+  2019 or your are running Windows or OS X, please follow the installation instructions from 
+  \<^url>\<open>https://www.tug.org/texlive/acquire-netinstall.html\<close>. 
 \<close>
 
-subsubsection*[isadof::technical]\<open>Installing \isadof\<close>
+subsubsection*[isadof::technical]\<open>Installing \<^isadof>\<close>
 text\<open>
-  In the following, we assume that you already downloaded the \isadof distribution 
-  (\href{\isadofarchiveurl}{\isadofarchiven}) from the \isadof web site. The main steps for 
-  installing are extracting the \isadof distribution and calling its \inlinebash|install| script. 
-  We start by extracting the \isadof archive:
+  In the following, we assume that you already downloaded the \<^isadof> distribution 
+  (\href{\isadofarchiveurl}{\isadofarchiven}) from the \<^isadof> web site. The main steps for 
+  installing are extracting the \<^isadof> distribution and calling its \inlinebash|install| script. 
+  We start by extracting the \<^isadof> archive:
 
 \begin{bash}
 ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë
 \end{bash}
-This will create a directory \texttt{\isadofdirn} containing \isadof distribution.
+This will create a directory \texttt{\isadofdirn} containing \<^isadof> distribution.
 Next, we need to invoke the \inlinebash|install| script. If necessary, the installations 
 automatically downloads additional dependencies from the AFP (\url{https://www.isa-afp.org}), 
-namely the AFP  entries ``Functional Automata''~@{cite "nipkow.ea:functional-Automata-afp:2004"} and ``Regular 
-Sets and Expressions''~@{cite "kraus.ea:regular-sets-afp:2010"}. This might take a few minutes to complete. 
-Moreover, the installation script applies a patch to the Isabelle system, which requires 
-\<^emph>\<open>write permissions for the Isabelle system directory\<close> and registers \isadof as Isabelle component. 
+namely the AFP  entries ``Functional Automata''~@{cite "nipkow.ea:functional-Automata-afp:2004"} 
+and ``Regular Sets and Expressions''~@{cite "kraus.ea:regular-sets-afp:2010"}. This might take a 
+few minutes to complete. Moreover, the installation script applies a patch to the Isabelle system, 
+which requires  \<^emph>\<open>write permissions for the Isabelle system directory\<close> and registers \<^isadof> as 
+Isabelle component. 
 
 If the \inlinebash|isabelle| tool is not in your \inlinebash|PATH|, you need to call the 
 \inlinebash|install| script with the \inlinebash|--isabelle| option, passing the full-qualified
@@ -183,9 +186,9 @@ session and all example documents, execute:
 \end{bash}
 \<close>
 
-subsection*[first_project::technical]\<open>Creating an \isadof Project\<close>
+subsection*[first_project::technical]\<open>Creating an \<^isadof> Project\<close>
 text\<open>
-  \isadof provides its own variant of Isabelle's 
+  \<^isadof> provides its own variant of Isabelle's 
   \inlinebash|mkroot| tool, called \inlinebash|mkroot_DOF|:\index{mkroot\_DOF}
 
 \begin{bash} 
@@ -213,10 +216,10 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
 \end{bash} 
 
   Creating a new document setup requires two decisions:
-  \<^item> which ontologies (\eg, scholarly\_paper) are required and 
+  \<^item> which ontologies (\<^eg>, scholarly\_paper) are required and 
   \<^item> which document template (layout)\index{document template} should be used 
-    (\eg, scrartcl\index{scrartcl}). Some templates (\eg, lncs) require that the users manually 
-    obtains and adds the necessary \LaTeX class file (\eg, \inlinebash|llncs.cls|. 
+    (\<^eg>, scrartcl\index{scrartcl}). Some templates (\<^eg>, lncs) require that the users manually 
+    obtains and adds the necessary \<^LaTeX> class file (\<^eg>, \inlinebash|llncs.cls|. 
     This is mostly due to licensing restrictions.
 \<close>
 text\<open>
@@ -236,7 +239,7 @@ Now use the following coëëmmand line to build the session:
   isabelle build -D myproject
 \end{bash}
 
-  This creates a directory \inlinebash|myproject| containing the \isadof-setup for your 
+  This creates a directory \inlinebash|myproject| containing the \<^isadof>-setup for your 
   new document. To check the document formally, including the generation of the document in PDF,
   you only need to execute
 
@@ -253,38 +256,38 @@ This will create the directory \inlinebash|myproject|:
 .3 document.
 .4 build\DTcomment{Build Script}.
 .4 isadof.cfg\DTcomment{\isadof configuraiton}.
-.4 preamble.tex\DTcomment{Manual \LaTeX-configuration}.
+.4 preamble.tex\DTcomment{Manual \<^LaTeX>-configuration}.
 .3 ROOT\DTcomment{Isabelle build-configuration}.
 }
 \end{minipage}
 \end{center}
-The \isadof configuration (\inlinebash|isadof.cfg|) specifies the required
+The \<^isadof> configuration (\inlinebash|isadof.cfg|) specifies the required
 ontologies and the document template using a YAML syntax.\<^footnote>\<open>Isabelle power users will recognize that 
-\isadof's document setup does not make use of a file \inlinebash|root.tex|: this file is 
+\<^isadof>'s document setup does not make use of a file \inlinebash|root.tex|: this file is 
 replaced by built-in document templates.\<close> The main two configuration files for 
 users are:
 \<^item> The file \inlinebash|ROOT|\index{ROOT}, which defines the Isabelle session. New theory files as well as new 
-  files required by the document generation (\eg, images, bibliography database using \BibTeX, local
-  \LaTeX-styles) need to be registered in this file. For details of Isabelle's build system, please 
+  files required by the document generation (\<^eg>, images, bibliography database using \<^BibTeX> , local
+  \<^LaTeX>-styles) need to be registered in this file. For details of Isabelle's build system, please 
   consult the Isabelle System Manual~@{cite "wenzel:system-manual:2020"}.
 \<^item> The file \inlinebash|praemble.tex|\index{praemble.tex}, which allows users to add additional 
-  \LaTeX-packages or to add/modify \LaTeX-commands. 
+  \<^LaTeX>-packages or to add/modify \<^LaTeX>-commands. 
 \<close>
 
 section*[scholar_onto::example]\<open>Writing Academic Publications (scholarly\_paper)\<close>  
 subsection\<open>The Scholarly Paper Example\<close>
 text\<open> 
   The ontology ``scholarly\_paper''\index{ontology!scholarly\_paper} is a small ontology modeling 
-  academic/scientific papers. In this \isadof application scenario, we deliberately refrain from 
-  integrating references to (Isabelle) formal content in order  demonstrate that \isadof is not a 
+  academic/scientific papers. In this \<^isadof> application scenario, we deliberately refrain from 
+  integrating references to (Isabelle) formal content in order  demonstrate that \<^isadof> is not a 
   framework from Isabelle users to Isabelle users only. Of course, such references can be added 
-  easily and represent a particular strength of \isadof.
+  easily and represent a particular strength of \<^isadof>.
 
-  The \isadof distribution contains an example (actually, our CICM 2018 
+  The \<^isadof> distribution contains an example (actually, our CICM 2018 
   paper~@{cite "brucker.ea:isabelle-ontologies:2018"}) using the ontology ``scholarly\_paper'' in 
   the directory \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/}. You 
   can inspect/edit the example in Isabelle's IDE, by either 
-  \<^item> starting Isabelle/jedit using your graphical user interface (\eg, by clicking on the 
+  \<^item> starting Isabelle/jedit using your graphical user interface (\<^eg>, by clicking on the 
     Isabelle-Icon provided by the Isabelle installation) and loading the file 
     \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy}.
   \<^item> starting Isabelle/jedit from the command line by calling:
@@ -333,7 +336,7 @@ doc_class text_section =
   todo-list attached to an arbitrary text section; since instances of this class are mutable 
   (meta)-objects of text-elements, they can be modified arbitrarily through subsequent text and of 
   course globally during text evolution. Since \inlineisar+author+ is a HOL-type internally generated 
-  by \isadof framework and can therefore appear in the \inlineisar+main_author+ attribute of the 
+  by \<^isadof> framework and can therefore appear in the \inlineisar+main_author+ attribute of the 
   \inlineisar+text_section+ class; semantic links between concepts can be modeled this way.
 \<close>
 
@@ -342,7 +345,7 @@ figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogf
 
 text\<open> 
   @{docitem \<open>fig1\<close>} shows the corresponding view in the Isabelle/jedit of the start of an academic 
-  paper. The text uses \isadof's own text-commands containing the meta-information provided by the 
+  paper. The text uses \<^isadof>'s own text-commands containing the meta-information provided by the 
   underlying ontology. We proceed by a definition of \inlineisar+introduction+'s, which we define 
   as the extension of \inlineisar+text_section+ which is intended to capture common infrastructure:
 
@@ -373,7 +376,7 @@ doc_class related_work = conclusion +
 \end{isar}
 
 Moreover, we model a document class for including figures (actually, this document class is already 
-defined in the core ontology of \isadof):
+defined in the core ontology of \<^isadof>):
 
 \begin{isar}
 datatype placement = h | t | b | ht | hb   
@@ -388,7 +391,7 @@ figure*[fig_figures::figure,spawn_columns=False,relative_width="85",src="''figur
        \<open> Ouroboros II: figures \ldots \<close>
 
 text\<open> 
-  The document class \inlineisar+figure+ (supported by the \isadof command \inlineisar+figure*+) 
+  The document class \inlineisar+figure+ (supported by the \<^isadof> command \inlineisar+figure*+) 
   makes it possible to express the pictures and diagrams such as @{docitem \<open>fig_figures\<close>}.
 
   Finally, we define a monitor class definition that enforces a textual ordering
@@ -418,7 +421,7 @@ side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-
                       caption2="''Exploring an attribute.''",relative_width2="47",
                       src2="''figures/Dogfood-III-bgnd-text_section''"]\<open> Hyperlinks.\<close>
 text\<open> 
-  From these class definitions, \isadof also automatically generated editing 
+  From these class definitions, \<^isadof> also automatically generated editing 
   support for Isabelle/jedit. In \autoref{fig-Dogfood-II-bgnd1} and 
   \autoref{fig-bgnd-text_section} we show how hovering over links permits to explore its 
   meta-information. Clicking on a document class identifier permits to hyperlink into the 
@@ -430,7 +433,7 @@ figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-
        \<open> Exploring an attribute (hyperlinked to the class). \<close> 
 
 text\<open> 
-  An ontological reference application in @{docitem "figDogfoodVIlinkappl"}: the 
+  An ontological reference application in @{figure "figDogfoodVIlinkappl"}: the 
   ontology-dependant antiquotation \inlineisar|@ {example ...}| refers to the corresponding 
   text-elements. Hovering allows for inspection, clicking for jumping to the definition.  If the 
   link does not exist or  has a non-compatible type, the text is not validated.
@@ -441,10 +444,10 @@ subsection\<open>The CENELEC 50128 Example\<close>
 text\<open> 
   The ontology ``CENELEC\_50128''\index{ontology!CENELEC\_50128} is a small ontology modeling 
   documents for a certification following CENELEC 50128~@{cite "boulanger:cenelec-50128:2015"}.
-  The \isadof distribution contains a small example  using the ontology ``CENELEC\_50128'' in 
+  The \<^isadof> distribution contains a small example  using the ontology ``CENELEC\_50128'' in 
   the directory \nolinkurl{examples/CENELEC_50128/mini_odo/}. You can inspect/edit the example 
   in Isabelle's IDE, by either 
-  \<^item> starting Isabelle/jedit using your graphical user interface (\eg, by clicking on the 
+  \<^item> starting Isabelle/jedit using your graphical user interface (\<^eg>, by clicking on the 
     Isabelle-Icon provided by the Isabelle installation) and loading the file 
     \nolinkurl{examples/CENELEC_50128/mini_odo/mini_odo.thy}.
   \<^item> starting Isabelle/jedit from the command line by calling:
@@ -531,7 +534,7 @@ doc_class srac = ec  +
      assumption_kind :: ass_kind <= (*default *) formal
 \end{isar}
 
-We now can, \eg, write 
+We now can, \<^eg>, write 
 
 \begin{isar}
 text*[ass123::SRAC]\<Open> 
@@ -565,7 +568,7 @@ has the consequence that a certain calculation must be executed sufficiently fas
 device. This condition can not be established inside the formal theory but has to be 
 checked by system integration tests. Now we reference in @{docitem  \<open>figfig7\<close>} this 
 safety-related condition; however, this happens in a context where general \<^emph>\<open>exported constraints\<close> 
-are listed. \isadof's checks establish that this is legal in the given ontology. 
+are listed. \<^isadof>'s checks establish that this is legal in the given ontology. 
 \<close>    
 
 section*[math_exam::example]\<open>Writing Exams (math\_exam)\<close> 
@@ -573,11 +576,11 @@ subsection\<open>The Math Exam Example\<close>
 text\<open> 
   The ontology ``math\_exam''\index{ontology!math\_exam} is an experimental ontology modeling 
   the process of writing exams at higher education institution in the United Kingdom, where exams 
-  undergo both an internal and external review process. The \isadof distribution contains a tiny 
+  undergo both an internal and external review process. The \<^isadof> distribution contains a tiny 
   example  using the ontology ``math\_exam'' in the directory 
   \nolinkurl{examples/math_exam/MathExam/}. You can inspect/edit the example 
   in Isabelle's IDE, by either 
-  \<^item> starting Isabelle/jedit using your graphical user interface (\eg, by clicking on the 
+  \<^item> starting Isabelle/jedit using your graphical user interface (\<^eg>, by clicking on the 
     Isabelle-Icon provided by the Isabelle installation) and loading the file 
     \nolinkurl{examples/math_exam/MathExam/MathExam.thy}.
   \<^item> starting Isabelle/jedit from the command line by calling:
@@ -693,16 +696,16 @@ students but just additional material for the internal review process of the exa
 
 section\<open>Style Guide\<close>
 text\<open>
-  The document generation process of \isadof is based on Isabelle's document generation framework, 
-  using \LaTeX{} as the underlying back-end. As Isabelle's document generation framework, it is 
-  possible to embed (nearly) arbitrary \LaTeX-commands in text-commands, \eg:
+  The document generation process of \<^isadof> is based on Isabelle's document generation framework, 
+  using \<^LaTeX>{} as the underlying back-end. As Isabelle's document generation framework, it is 
+  possible to embed (nearly) arbitrary \<^LaTeX>-commands in text-commands, \<^eg>:
 
 \begin{isar}
 text\<Open> This is \emph{emphasized} a$$nd this is a 
        citation~\cite{brucker.ea:isabelle-ontologies:2018}\<Close>
 \end{isar}
 
-  In general, we advise against this practice and, whenever positive, use the \isadof (respetively
+  In general, we advise against this practice and, whenever positive, use the \<^isadof> (respetively
   Isabelle) provided alternatives:
 
 \begin{isar}
@@ -710,17 +713,17 @@ text\<Open> This is *\<Open>emphasized\<Close> a$$nd this is a
         citation <@>{cite "brucker.ea:isabelle-ontologies:2018"}.\<Close>
 \end{isar}
 
-Clearly, this is not always possible and, in fact, often \isadof documents will contain 
-\LaTeX-commands, this should be restricted to layout improvements that otherwise are (currently)
-not possible. As far as possible, the use of \LaTeX-commands should be restricted to the definition 
+Clearly, this is not always possible and, in fact, often \<^isadof> documents will contain 
+\<^LaTeX>-commands, this should be restricted to layout improvements that otherwise are (currently)
+not possible. As far as possible, the use of \<^LaTeX>-commands should be restricted to the definition 
 of ontologies and document templates (see @{docitem (unchecked) \<open>isadof_ontologies\<close>}).
 
-Restricting the use of \LaTeX has two advantages: first, \LaTeX commands can circumvent the 
-consistency checks of \isadof and, hence, only if no \LaTeX commands are used, \isadof can 
+Restricting the use of \<^LaTeX> has two advantages: first, \<^LaTeX> commands can circumvent the 
+consistency checks of \<^isadof> and, hence, only if no \<^LaTeX> commands are used, \<^isadof> can 
 ensure that a document that does not generate any error messages in Isabelle/jedit also generated
-a PDF document. Second, future version of \isadof might support different targets for the 
-document generation (\eg, HTML) which, naturally, are only available to documents not using 
-native \LaTeX-commands. 
+a PDF document. Second, future version of \<^isadof> might support different targets for the 
+document generation (\<^eg>, HTML) which, naturally, are only available to documents not using 
+native \<^LaTeX>-commands. 
 
 Similarly, (unchecked) forward references should, if possible, be avoided, as they also might
 create dangeling references during the document generation that break the document generation.  

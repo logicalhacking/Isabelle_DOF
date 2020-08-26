@@ -53,7 +53,7 @@ ancestor-list as well as typed, user-defined state for components (plugins) such
 On top of the latter, the LCF-Kernel, tactics,  automated proof procedures as well as specific 
 support for higher specification constructs were built.\<close>
 
-section*[dof::introduction]\<open>The Document Model Required by \<^dof> \<close>
+section*[dof::introduction]\<open>The Document Model Required by \<^dof>\<close>
 text\<open>
   In this section, we explain the assumed document model underlying our Document Ontology Framework 
   (\<^dof>) in general. In particular we discuss the concepts \<^emph>\<open>integrated document\<close>, \<^emph>\<open>sub-document\<close>, 
@@ -68,15 +68,15 @@ declare_reference*["fig:dependency"::text_section]
 
 
 text\<open>
-  We assume a hierarchical document model\index{document model}, \<^ie>, an \<^emph>\<open>integrated\<close> document 
+  We assume a hierarchical document model\<^index>\<open>document model\<close>, \<^ie>, an \<^emph>\<open>integrated\<close> document 
   consist of a hierarchy \<^emph>\<open>sub-documents\<close>  (files) that can depend acyclically on each other. 
   Sub-documents can have different document types in order to capture documentations consisting of 
   documentation, models, proofs, code of various forms and other technical artifacts.  We call the 
-  main sub-document type, for historical reasons, \<^emph>\<open>theory\<close>-files.  A theory file\bindex{theory!file}
-  consists of a \<^emph>\<open>header\<close>\bindex{header}, a \<^emph>\<open>context definition\<close>\index{context}, and a body 
-  consisting of a sequence of \<^emph>\<open>command\<close>s (see @{figure (unchecked) "fig:dependency"}). Even the header consists 
-  of a sequence of commands used for introductory text elements not depending on any context.  
-  The context-definition contains an \inlineisar{import} and a 
+  main sub-document type, for historical reasons, \<^emph>\<open>theory\<close>-files.  A theory file\<^bindex>\<open>theory!file\<close>
+  consists of a \<^emph>\<open>header\<close>\<^bindex>\<open>header\<close>, a \<^emph>\<open>context definition\<close>\<^index>\<open>context\<close>, and a body 
+  consisting of a sequence of \<^emph>\<open>command\<close>s (see @{figure (unchecked) "fig:dependency"}). Even 
+  the header consists of a sequence of commands used for introductory text elements not depending on 
+  any context.   The context-definition contains an \inlineisar{import} and a 
   \inlineisar{keyword} section, for example:
 \begin{isar}
 "  theory Example         (* Name of the 'theory'                     *)
@@ -91,9 +91,9 @@ text\<open>
   separate commands from each other.
 
   We distinguish fundamentally two different syntactic levels:
-  \<^item> the *\<open>outer-syntax\<close>\bindex{syntax!outer}\index{outer syntax|see {syntax, outer}} (\<^ie>, the 
+  \<^item> the \<^emph>\<open>outer-syntax\<close>\<^bindex>\<open>syntax!outer\<close>\<^index>\<open>outer syntax|see {syntax, outer}\<close> (\<^ie>, the 
     syntax for commands) is processed by a lexer-library and parser combinators built on top, and
-  \<^item> the *\<open>inner-syntax\<close>\bindex{syntax!inner}\index{inner syntax|see {syntax, inner}} (\<^ie>, the 
+  \<^item> the \<^emph>\<open>inner-syntax\<close>\<^bindex>\<open>syntax!inner\<close>\<^index>\<open>inner syntax|see {syntax, inner}\<close> (\<^ie>, the 
     syntax for \inlineisar|\<lambda>|-terms in HOL) with its own parametric polymorphism type 
     checking.
 
@@ -101,14 +101,14 @@ text\<open>
   On the semantic level, we assume a validation process for an integrated document, where the 
   semantics of a command is a transformation \inlineisar+\<theta> \<rightarrow> \<theta>+ for some system state 
   \inlineisar+\<theta>+. This document model can be instantiated with outer-syntax commands for common 
-  text elements, \<^eg>, \inlineisar+section{*...*}+ or \inlineisar+text{*...*}+.  Thus, users can add 
-  informal text to a sub-document using a text command:
+  text elements, \<^eg>, \inlineisar+section\<Open>...\<Close>+ or \inlineisar+text\<Open>...\<Close>+.  
+  Thus, users can add informal text to a sub-document using a text command:
   \begin{isar}
     text\<Open>This is a description.\<Close>
   \end{isar}
   This will type-set the corresponding text in, for example, a PDF document.  However, this 
   translation is not necessarily one-to-one: text elements can be enriched by formal, \<^ie>, 
-  machine-checked content via *\<open>semantic macros\<close>, called antiquotations\bindex{antiquotation}:
+  machine-checked content via *\<open>semantic macros\<close>, called antiquotations\<^bindex>\<open>antiquotation\<close>:
 \begin{isar}
 text\<Open>According to the *\<Open>reflexivity\<Close> axiom <@>{thm refl}, we obtain in \<Gamma> 
       for <@>{term "fac 5"} the result <@>{value "fac 5"}.\<Close>
@@ -148,7 +148,7 @@ text\<open>
 
 figure*["fig:dof-ide"::figure,relative_width="95",src="''figures/cicm2018-combined''"]\<open> 
      The \<^isadof> IDE (left) and the corresponding PDF (right), showing the first page
-      of~\cite{brucker.ea:isabelle-ontologies:2018}.\<close>
+      of~@{cite "brucker.ea:isabelle-ontologies:2018"}.\<close>
 
 text\<open> 
   We call the present implementation of \<^dof> on the Isabelle platform  \<^isadof> . 
