@@ -1275,11 +1275,11 @@ fun gen_enriched_document_command {inline=is_inline} cid_transform attr_transfor
                                                                  (Proof_Context.init_global thy) 
                                                                  markdown toks
 
-                                      val file = {path = Path.make [oid ^ "_snippet.tex"],
+                                  (*    val file = {path = Path.make [oid ^ "_snippet.tex"],
                                                   pos = @{here}, 
                                                   content = Latex.output_text text}
  
-                                  (*    val _ = Generated_Files.write_file (Path.make ["latex_test"]) 
+                                        val _ = Generated_Files.write_file (Path.make ["latex_test"]) 
                                                                          file
                                       val _ = writeln (Latex.output_text text) *)
                                   in  thy end
