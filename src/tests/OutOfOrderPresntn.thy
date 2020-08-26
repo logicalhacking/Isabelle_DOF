@@ -163,32 +163,26 @@ print_doc_classes
 
 section\<open>Experiments on Inline-Textelements\<close>
 text\<open>Std Abbreviations. Inspired by the block *\<open>control spacing\<close> 
- in @{file \<open>$ISABELLE_HOME/src/Pure/Thy/document_antiquotations.ML\<close>}.
- We could mechanize the table-construction and even attach the LaTeX 
- quirks to be dumped into the prelude.    
- \<close>
+     in @{file \<open>$ISABELLE_HOME/src/Pure/Thy/document_antiquotations.ML\<close>}.
+     We could mechanize the table-construction and even attach the LaTeX 
+     quirks to be dumped into the prelude.  \<close>
+
 ML\<open>
 val _ =
   Theory.setup
-   (   Thy_Output.antiquotation_raw \<^binding>\<open>dof\<close> (Scan.succeed ())
-          (fn _ => fn () => Latex.string "\\dof")
-    #> Thy_Output.antiquotation_raw \<^binding>\<open>isadof\<close> (Scan.succeed ())
-          (fn _ => fn () => Latex.string "\\isadof")
-    #> Thy_Output.antiquotation_raw \<^binding>\<open>eg\<close> (Scan.succeed ())
-          (fn _ => fn () => Latex.string "\\eg") 
-    #> Thy_Output.antiquotation_raw \<^binding>\<open>TeXLive\<close> (Scan.succeed ())
-          (fn _ => fn () => Latex.string "\\TeXLife") 
-    #> Thy_Output.antiquotation_raw \<^binding>\<open>LaTeX\<close> (Scan.succeed ())
-          (fn _ => fn () => Latex.string "\\LaTeX{}") 
-
-)
+   (   Thy_Output.antiquotation_raw \<^binding>\<open>doof\<close> (Scan.succeed ())
+          (fn _ => fn () => Latex.string "\\emph{doof}")
+    #> Thy_Output.antiquotation_raw \<^binding>\<open>LATEX\<close> (Scan.succeed ())
+          (fn _ => fn () => Latex.string "\\textbf{LaTeX}") 
+   )
 \<close>
 
-textN\<open> \<^eg> \<^TeXLive> \<^dof> \<^isadof> \<^LaTeX> \<close>
+textN\<open>  \<^doof> \<^LATEX> \<close>
 
-text\<open> \<^theory_text>\<open>definition\<close>
+(* the same effect is achieved with : *)
+setup \<open>DOF_lib.define_shortcut ("bla",\<^here>) "\\bla"\<close>
 
-\<close>
+
 
 end
 (*>*)

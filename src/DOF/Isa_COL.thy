@@ -226,6 +226,20 @@ val _ =
 end 
 \<close>
 
+section\<open>Shortcuts, Macros, Environments\<close>
+text\<open>This is actually \<^emph>\<open>not\<close> a real DOF feature, rather a slightly more abstract layer over
+     slightly buried standard features of the Isabelle document generator ... \<close>
+
+ML\<open>
+structure DOF_lib =
+struct
+fun define_shortcut (name, pos) latexshcut = 
+ Thy_Output.antiquotation_raw (Binding.make(name,pos)) (Scan.succeed ())
+          (fn _ => fn () => Latex.string latexshcut) 
+end
+\<close>
+
+
 section\<open>Tables\<close>
 (* TODO ! ! ! *)
 
