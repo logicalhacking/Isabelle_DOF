@@ -177,11 +177,12 @@ val _ =
    )
 \<close>
 
-textN\<open>  \<^doof> \<^LATEX> \<close>
+textN\<open> \<^doof> \<^LATEX> \<close>
 
 (* the same effect is achieved with : *)
-setup \<open>DOF_lib.define_shortcut ("bla",\<^here>) "\\bla"\<close>
-
+setup \<open>DOF_lib.define_shortcut ("bla",\<^here>) "\\blabla"\<close>
+(* Note that this assumes that the generated LaTeX macro "blabla" is defined somewhere in the
+   target document, for example, in the tex prelude. *)
 
 
 end

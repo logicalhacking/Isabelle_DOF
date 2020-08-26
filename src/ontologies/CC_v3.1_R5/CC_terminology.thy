@@ -14,6 +14,9 @@ doc_class concept_definition = "definition" +
       status        :: status <= "semiformal" 
       mcc           :: math_content_class <= "terminology"
       tag           :: string
+      short_tag    :: "string option" <= "None"
+
+text\<open>The \<^verbatim>\<open>short_tag\<close>, if set, is used in the presentation directly.\<close>
 
 type_synonym concept = concept_definition  
 
@@ -316,12 +319,12 @@ the TOE is intended to address This statement consists of a combination of:
  \item the assumptions that are upheld for the operational environment of the TOE.
  \end{itemize}\<close>
 
-Definition* [sr_def::concept, tag="''security requirement''"] 
+Definition* [sr_def::concept, tag="''security requirement''", short_tag="Some(''SR'')"] 
 \<open>requirement, stated in a standardised language, which is meant to contribute 
  to achieving the security objectives for a TOE\<close>
 text \<open>@{docitem toe_def}\<close>
-Definition* [st_def::concept, tag="''Security Target''"] 
-\<open>implementation-dependent statement of security needs for a specific identified @{docitem toe_def}\<close>
+Definition* [st_def::concept, tag="''Security Target''", short_tag="Some(''ST'')"] 
+\<open>implementation-dependent statement of security needs for a specific i\<section>dentified @{docitem toe_def}\<close>
 
 Definition* [slct_def::concept, tag="''selection''"] 
 \<open>specification of one or more items from a list in a component\<close>
@@ -359,9 +362,9 @@ Definition* [toe_eval_def::concept, tag="''TOE evaluation''"]
 Definition* [toe_res_def::concept, tag="''TOE resource''"] 
 \<open>anything useable or consumable in the TOE\<close>
 
-Definition* [toe_sf_def::concept, tag="''TOE security functionality''"] 
-\<open>combined functionality of all hardware, software, and firmware of a TOE that must be relied upon for the correct
-enforcement of the SFRs\<close>
+Definition* [toe_sf_def::concept, tag="''TOE security functionality''", short_tag= "Some(''TSF'')"] 
+\<open>combined functionality of all hardware, software, and firmware of a TOE that must be relied upon 
+ for the correct enforcement of the @{docitem sfr_def}s\<close>
 
 Definition* [tr_vrb_def::concept, tag="''trace, verb''"] 
 \<open>perform an informal correspondence analysis between two entities with only a 
