@@ -23,7 +23,7 @@ The linking of the \<^emph>\<open>formal\<close> to the \<^emph>\<open>informal\
 digitization of knowledge and its propagation. This challenge incites numerous research efforts
 summarized under the labels ``semantic web,'' ``data mining,'' or any form of advanced ``semantic''
 text processing.  A key role in structuring this linking play \<^emph>\<open>document ontologies\<close> (also called
-\<^emph>\<open>vocabulary\<close> in the semantic web community~@{cite "w3c:ontologies:2015"}),  \ie, a machine-readable
+\<^emph>\<open>vocabulary\<close> in the semantic web community~@{cite "w3c:ontologies:2015"}), \<^ie>, a machine-readable
 form of the structure of documents as well as the document discourse.
 
 Such ontologies can be used for the scientific discourse within scholarly articles, mathematical 
@@ -42,21 +42,21 @@ In general, an ontology is a formal explicit description of \<^emph>\<open>conce
 as \<^emph>\<open>links\<close> between them. A particular link between concepts is the \<^emph>\<open>is-a\<close> relation declaring 
 the instances of a subclass to be instances of the super-class.
 
-To adress this challenge, we present the Document Ontology Framework (\dof) and an 
-implementation of \dof called \isadof. \dof is designed for building scalable and user-friendly 
-tools on top of interactive theorem provers. \isadof is an instance of this novel framework, 
+To address this challenge, we present the Document Ontology Framework (\<^dof>) and an 
+implementation of \<^dof> called \<^isadof>. \<^dof> is designed for building scalable and user-friendly 
+tools on top of interactive theorem provers. \<^isadof> is an instance of this novel framework, 
 implemented as extension of Isabelle/HOL, to \<^emph>\<open>model\<close> typed ontologies and to \<^emph>\<open>enforce\<close> them 
 during document evolution. Based on Isabelle's infrastructures, ontologies may refer to types, 
 terms, proven theorems, code, or established assertions. Based on a novel adaption of the Isabelle 
 IDE (called PIDE, @{cite "wenzel:asynchronous:2014"}), a document is checked to be 
-\<^emph>\<open>conform\<close> to a particular ontology---\isadof is designed to give fast user-feedback \<^emph>\<open>during the 
+\<^emph>\<open>conform\<close> to a particular ontology---\<^isadof> is designed to give fast user-feedback \<^emph>\<open>during the 
 capture of content\<close>. This is particularly valuable in case of document evolution, where the 
 \<^emph>\<open>coherence\<close> between the formal and the informal parts of the content can be mechanically checked.
 
-To avoid any misunderstanding: \isadof  is \<^emph>\<open>not a theory in HOL\<close> on ontologies and operations to 
+To avoid any misunderstanding: \<^isadof>  is \<^emph>\<open>not a theory in HOL\<close> on ontologies and operations to 
 track and trace links in texts, it is an \<^emph>\<open>environment to write structured text\<close> which 
 \<^emph>\<open>may contain\<close> Isabelle/HOL definitions and proofs like mathematical articles, tech-reports and
-scientific papers---as the present one, which is written in \isadof itself. \isadof is a plugin 
+scientific papers---as the present one, which is written in \<^isadof> itself. \<^isadof> is a plugin 
 into the Isabelle/Isar framework in the style of~@{cite "wenzel.ea:building:2007"}.\<close>
 
 subsubsection\<open>How to Read This Manual\<close>
@@ -69,28 +69,28 @@ declare_reference*[isadof_developers::text_section]
 text\<open>
 This manual can be read in different ways, depending on what you want to accomplish. We see three
 different main user groups: 
-\<^enum> \<^emph>\<open>\isadof users\<close>, \ie, users that just want to edit a core document, be it for a paper or a 
+\<^enum> \<^emph>\<open>\<^isadof> users\<close>, \<^ie>, users that just want to edit a core document, be it for a paper or a 
   technical report, using a given ontology. These users should focus on 
   @{docitem (unchecked) \<open>isadof_tour\<close>} and, depending on their knowledge of Isabelle/HOL, also
   @{docitem (unchecked) \<open>background\<close>}. 
-\<^enum> \<^emph>\<open>Ontology developers\<close>, \ie,  users that want to develop new ontologies or modify existing 
+\<^enum> \<^emph>\<open>Ontology developers\<close>, \<^ie>,  users that want to develop new ontologies or modify existing 
   document ontologies. These users should, after having gained acquaintance as a user, focus 
   on @{docitem (unchecked) \<open>isadof_ontologies\<close>}. 
-\<^enum> \<^emph>\<open>\isadof developers\<close>, \ie, users that want to extend or modify \isadof, \eg, by adding new 
+\<^enum> \<^emph>\<open>\<^isadof> developers\<close>, \<^ie>, users that want to extend or modify \<^isadof>, \<^eg>, by adding new 
   text-elements. These users should read @{docitem (unchecked) \<open>isadof_developers\<close>}
 \<close>
 
 subsubsection\<open>Typographical Conventions\<close>
 text\<open>
-  We acknowledge that understanding \isadof and its implementation in all details requires
+  We acknowledge that understanding \<^isadof> and its implementation in all details requires
   separating multiple technological layers or languages. To help the reader with this, we 
   will type-set the different languages in different styles. In particular, we will use 
-  \<^item> a light-blue background for input written in Isabelle's Isar language, \eg:
+  \<^item> a light-blue background for input written in Isabelle's Isar language, \<^eg>:
     \begin{isar}
     lemma refl: "x = x" 
       by simp
     \end{isar}
-  \<^item> a green background for examples of generated document fragments (\ie, PDF output):
+  \<^item> a green background for examples of generated document fragments (\<^ie>, PDF output):
     \begin{out}
     The axiom refl
     \end{out}
@@ -111,8 +111,8 @@ text\<open>
 
 subsubsection\<open>How to Cite \isadof\<close>
 text\<open>
-  If you use or extend \isadof in your publications, please use 
-  \<^item> for the \isadof system~@{cite "brucker.ea:isabelle-ontologies:2018"}:
+  If you use or extend \<^isadof> in your publications, please use 
+  \<^item> for the \<^isadof> system~@{cite "brucker.ea:isabelle-ontologies:2018"}:
     \begin{quote}\small
       A.~D. Brucker, I.~Ait-Sadoune, P.~Crisafulli, and B.~Wolff. Using the {Isabelle} ontology 
       framework: Linking the formal with the informal. In \<^emph>\<open>Conference on Intelligent Computer 
@@ -122,9 +122,9 @@ text\<open>
     \end{quote}
     A \BibTeX-entry is available at: 
     \url{https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelle-ontologies-2018}. 
-  \<^item> for the implementation of \isadof~@{cite "brucker.ea:isabelledof:2019"}:
+  \<^item> for the implementation of \<^isadof>~@{cite "brucker.ea:isabelledof:2019"}:
     \begin{quote}\small
-      A.~D. Brucker and B.~Wolff. \isadof: Design and implementation. In P.C.~{\"O}lveczky and 
+      A.~D. Brucker and B.~Wolff. \<^isadof>: Design and implementation. In P.C.~{\"O}lveczky and 
       G.~Sala{\"u}n, editors, \<^emph>\<open>Software Engineering and Formal Methods (SEFM)\<close>, number 11724 in
       Lecture Notes in Computer Science. Springer-Verlag, Heidelberg, 2019.
       \href{https://doi.org/10.1007/978-3-030-30446-1_15}{10.1007/978-3-030-30446-1\_15}.
@@ -136,7 +136,7 @@ text\<open>
 subsubsection\<open>Availability\<close>
 text\<open>
   The implementation of the framework is available at 
-  \url{\dofurl}. The website also provides links to the latest releases. \isadof is licensed 
+  \url{\dofurl}. The website also provides links to the latest releases. \<^isadof> is licensed 
   under a 2-clause BSD license (SPDX-License-Identifier: BSD-2-Clause).
 \<close>
 

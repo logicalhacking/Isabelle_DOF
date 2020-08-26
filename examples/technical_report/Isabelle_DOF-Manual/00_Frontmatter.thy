@@ -19,13 +19,13 @@ begin
 section\<open>Document Local Setup.\<close>
 text\<open>Some internal setup, introducing document specific abbreviations and macros.\<close>
 
-setup \<open>DOF_lib.define_shortcut ("dof",\<^here>) "\\dof"\<close>
-setup \<open>DOF_lib.define_shortcut ("isadof",\<^here>) "\\isadof"\<close>
-setup \<open>   DOF_lib.define_shortcut ("eg",\<^here>) "\\eg"
-       #> DOF_lib.define_shortcut ("ie",\<^here>) "\\ie"\<close> 
+setup \<open>DOF_lib.define_shortcut    \<^binding>\<open>dof\<close>    "\\dof"\<close>
+setup \<open>DOF_lib.define_shortcut    \<^binding>\<open>isadof\<close> "\\isadof"\<close>
+setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>     "\\eg"
+       #> DOF_lib.define_shortcut \<^binding>\<open>ie\<close>     "\\ie"\<close> 
       (* this is an alternative style for macro definitions eauivalent to setup ... setup  ...*)
-setup \<open>   DOF_lib.define_shortcut ("TeXLive",\<^here>) "\\TeXLife"
-       #> DOF_lib.define_shortcut ("LaTeX",\<^here>) "\\LaTeX{}"\<close>
+setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>TeXLive\<close>"\\TeXLife"
+       #> DOF_lib.define_shortcut \<^binding>\<open>LaTeX\<close>  "\\LaTeX{}"\<close>
 
 text\<open>Note that these setups assume that the \<^LaTeX> macros are defined in the 
      document prelude. \<close>

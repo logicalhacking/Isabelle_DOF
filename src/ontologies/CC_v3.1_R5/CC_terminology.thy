@@ -323,7 +323,7 @@ Definition* [sr_def::concept, tag="''security requirement''", short_tag="Some(''
 \<open>requirement, stated in a standardised language, which is meant to contribute 
  to achieving the security objectives for a TOE\<close>
 text \<open>@{docitem toe_def}\<close>
-Definition* [st_def::concept, tag="''Security Target''", short_tag="Some(''ST'')"] 
+Definition* [st::concept, tag="''Security Target''", short_tag="Some(''ST'')"] 
 \<open>implementation-dependent statement of security needs for a specific i\<section>dentified @{docitem toe_def}\<close>
 
 Definition* [slct_def::concept, tag="''selection''"] 
@@ -350,7 +350,7 @@ Definition* [st_eval_def::concept, tag="''ST evaluation''"]
 Definition* [subj_def::concept, tag="''subject''"]
 \<open>active entity in the TOE that performs operations on objects\<close>
 
-Definition* [toe_def::concept, tag= "''target of evaluation''"]
+Definition* [toe::concept, tag= "''target of evaluation''"]
 \<open>set of software, firmware and/or hardware possibly accompanied by guidance\<close>
 
 Definition* [thrt_agnt_def::concept, tag="''threat agent''"] 
@@ -417,7 +417,7 @@ Definition* [dev_def::concept, tag="''Developer''"]
 \<open>who respond to actual or perceived consumer security requirements in 
  constructing a @{docitem toe_def}, reference this  CC_Part_3 
  when interpreting statements of assurance requirements and determining
- assurance approaches of @{docitem toe_def}s.\<close>
+ assurance approaches of @{docitem toe}s.\<close>
 
 Definition*[evalu_def::concept, tag="'' Evaluator''"]
 \<open>who use the assurance requirements defined in CC_Part_3 

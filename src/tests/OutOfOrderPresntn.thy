@@ -148,11 +148,15 @@ textN\<open>... and here is its application macro expansion:
 
 textN\<open> \<^theory_text>\<open>definition df = ...  
         \<close>
-       @{ML       [display] \<open> let val x = 3 + 4 in true end \<close>}
+       @{ML      [display] \<open> let val x = 3 + 4 in true end 
+                           \<close>}
+
+       @{ML_text [display] \<open> val x = ...  
+                           \<close>}
 
        @{verbatim [display] \<open> Lorem ipsum ...  @{thm refl} _ 
                               Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close> \<close>}
-       @{theory_text [display] \<open>definition df = ...  
+       @{theory_text [display] \<open>definition df = ... \<lambda>x.  
                                \<close>}
        @{cartouche [display]   \<open> @{figure "cfgdfg"}\<close>} \<close>
 
@@ -180,10 +184,19 @@ val _ =
 textN\<open> \<^doof> \<^LATEX> \<close>
 
 (* the same effect is achieved with : *)
-setup \<open>DOF_lib.define_shortcut ("bla",\<^here>) "\\blabla"\<close>
-(* Note that this assumes that the generated LaTeX macro "blabla" is defined somewhere in the
-   target document, for example, in the tex prelude. *)
+setup \<open>DOF_lib.define_shortcut (Binding.make("bla",\<^here>)) "\\blabla"\<close>
+(* Note that this assumes that the generated LaTeX macro call "\blabla" is defined somewhere in the
+   target document, for example, in the tex prelude. Note that the "Binding.make" can be avoided
+   using the alternative \<^binding> notation (see above).*)
 
+
+ML\<open>
+
+fun control_antiquotation name s1 s2 =
+  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.cartouche_input)
+    (fn ctxt => Latex.enclose_block s1 s2 o Thy_Output.output_document ctxt {markdown = false});
+
+\<close>
 
 end
 (*>*)
