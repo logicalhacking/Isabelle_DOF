@@ -168,7 +168,7 @@ print_doc_classes
 section\<open>Experiments on Inline-Textelements\<close>
 text\<open>Std Abbreviations. Inspired by the block *\<open>control spacing\<close> 
      in @{file \<open>$ISABELLE_HOME/src/Pure/Thy/document_antiquotations.ML\<close>}.
-     We could mechanize the table-construction and even attach the LaTeX 
+     We mechanize the table-construction and even attach the LaTeX 
      quirks to be dumped into the prelude.  \<close>
 
 ML\<open>
@@ -190,10 +190,73 @@ setup \<open>DOF_lib.define_shortcut (Binding.make("bla",\<^here>)) "\\blabla"\<
    using the alternative \<^binding> notation (see above).*)
 
 
-setup\<open>DOF_lib.define_macro (Binding.make("blong",\<^here>)) "\\blong{" "}"\<close>
+setup\<open>DOF_lib.define_macro (Binding.make("blong",\<^here>)) "\\blong{" "}" (K(K()))\<close>
 
 textN\<open> \<^blong>\<open>asd\<close> outer  \<^blong>\<open>syntax| ! see {syntax, outer}\<close> \<close>
 
+ML\<open>
 
+fun report_text ctxt text =
+  let val pos = Input.pos_of text in
+    Context_Position.reports ctxt
+      [(pos, Markup.language_text (Input.is_delimited text)),
+       (pos, Markup.raw_text)]
+  end;
+
+fun prepare_text ctxt =
+  Input.source_content #> #1 #> Document_Antiquotation.prepare_lines ctxt;
+
+fun text_antiquotation name =
+  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
+    (fn ctxt => fn text =>
+      let
+        val _ = report_text ctxt text;
+      in
+        prepare_text ctxt text
+        |> Thy_Output.output_source ctxt
+        |> Thy_Output.isabelle ctxt
+      end);
+
+fun block_geraffel ctxt block_env body =
+  if Config.get ctxt Document_Antiquotation.thy_output_display
+  then Latex.environment_block block_env [body]
+  else body;
+
+
+
+fun theory_text_antiquotation name =
+  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
+    (fn ctxt => fn text =>
+      let
+        val keywords = Thy_Header.get_keywords' ctxt;
+
+        val _ = report_text ctxt text;
+        val _ =
+          Input.source_explode text
+          |> Token.tokenize keywords {strict = true}
+          |> maps (Token.reports keywords)
+          |> Context_Position.reports_text ctxt;
+      in
+        prepare_text ctxt text
+        |> Token.explode0 keywords
+        |> maps (Thy_Output.output_token ctxt)
+        |> Thy_Output.isabelle ctxt
+        |> block_geraffel ctxt "isarbox"
+      end);
+
+
+  Theory.setup
+   (text_antiquotation        \<^binding>\<open>boxed_text\<close> #>
+    text_antiquotation        \<^binding>\<open>boxed_cartouche\<close> #>
+    theory_text_antiquotation \<^binding>\<open>boxed_theory_text\<close>); (* is overriding possible ?*)
+
+
+
+\<close>
+
+textN\<open> 
+      @{boxed_cartouche  [display] \<open>definition dfg = \<lambda>x. x\<close>}
+      @{boxed_theory_text [display] \<open>doc_class dfg = ...\<close>}  \<close>
+               
 end
 (*>*)

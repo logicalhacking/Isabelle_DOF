@@ -228,7 +228,21 @@ end
 
 section\<open>Shortcuts, Macros, Environments\<close>
 text\<open>This is actually \<^emph>\<open>not\<close> a real ISADOF feature, rather a slightly more abstract layer over
-     somewhat buried standard features of the Isabelle document generator ... \<close>
+somewhat buried standard features of the Isabelle document generator ... (Thanks to Makarius).
+Conceptually, they are \<^emph>\<open>sub-text-elements\<close>. \<close>
+
+text\<open>This module provides mechanisms to define front-end checked:
+\<^enum> \<^emph>\<open>shortcuts\<close>, i.e. machine-checked abbreviations without arguments 
+  that were mapped to user-defined LaTeX code (Example: \<^verbatim>\<open>\ie\<close>)
+\<^enum> macro's with one argument that were mapped to user-defined code. Example: \<^verbatim>\<open>\myurl{bla}\<close>.
+  The argument can be potentially checked and reports can be sent to PIDE;
+  if no such checking is desired, this can be expressed by setting the
+  \<^theory_text>\<open>reportNtest\<close>-parameter to \<^theory_text>\<open>K(K())\<close>.
+\<^enum> macro's with two arguments, potentially independently checked. See above. 
+  Example: \<^verbatim>\<open>\myurl[ding]{dong}\<close>.
+
+Note that we deliberately refrained from a code-template definition mechanism for simplicity.
+\<close>
 
 ML\<open>
 structure DOF_lib =
@@ -237,12 +251,33 @@ fun define_shortcut name latexshcut =
        Thy_Output.antiquotation_raw name (Scan.succeed ())
           (fn _ => fn () => Latex.string latexshcut) 
 
-(* This is just a copy of Isabelle2020 function "control_antiquotation" from 
-   document_antiquotations.ML, where it is unfortunately not exported. (Thanks Makarius!)
- *)
-fun define_macro name s1 s2 =
+(* This is a generalization of the Isabelle2020 function "control_antiquotation" from 
+   document_antiquotations.ML. (Thanks Makarius!) *)
+fun define_macro name s1 s2 reportNtest =
       Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.cartouche_input)
-         (fn ctxt => Latex.enclose_block s1 s2 o Thy_Output.output_document ctxt {markdown = false});
+         (fn ctxt => 
+             fn src => let val () = reportNtest ctxt src 
+                       in  src |>   Latex.enclose_block s1 s2 
+                                  o Thy_Output.output_document ctxt {markdown = false}
+                       end);
+
+local (* hide away really strange local construction *)
+fun enclose_body2 front body1 middle body2 post =
+  (if front = "" then [] else [Latex.string front]) @ body1 @
+  (if middle = "" then [] else [Latex.string middle]) @ body2 @
+  (if post = "" then [] else [Latex.string post]);
+in
+fun define_macro2 name front middle post reportNtest1 reportNtest2 =
+      Thy_Output.antiquotation_raw_embedded name (Scan.lift (   Args.cartouche_input 
+                                                             -- Args.cartouche_input))
+         (fn ctxt => 
+             fn (src1,src2) => let val () = reportNtest1 ctxt src1 
+                                   val () = reportNtest2 ctxt src2 
+                                   val T1 = Thy_Output.output_document ctxt {markdown = false} src1
+                                   val T2 = Thy_Output.output_document ctxt {markdown = false} src2
+                               in  Latex.block(enclose_body2 front T1 middle T2 post)
+                               end);
+end
 
 end
 \<close>
