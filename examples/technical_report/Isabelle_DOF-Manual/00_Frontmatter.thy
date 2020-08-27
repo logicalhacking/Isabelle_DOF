@@ -38,6 +38,32 @@ text\<open>Note that these setups assume that the associated \<^LaTeX> macros ar
 setup\<open>    DOF_lib.define_macro \<^binding>\<open>index\<close>   "\\index{" "}" (K(K())) (*no checking, no reporting*)
        #> DOF_lib.define_macro \<^binding>\<open>bindex\<close>  "\\bindex{" "}"(K(K()))\<close> 
 
+
+ML\<open>
+
+fun boxed_text_antiquotation name (* redefined in these more abstract terms *) =
+    DOF_lib.gen_text_antiquotation name DOF_lib.report_text 
+                           (fn ctxt => DOF_lib.string_2_text_antiquotation ctxt
+                                       #> DOF_lib.enclose_env ctxt "isarbox")
+
+
+fun boxed_theory_text_antiquotation name (* redefined in these more abstract terms *) =
+    DOF_lib.gen_text_antiquotation name DOF_lib.report_theory_text 
+                           (fn ctxt => DOF_lib.string_2_theory_text_antiquotation ctxt 
+                                        #> DOF_lib.enclose_env ctxt "isarbox")
+
+\<close>
+
+setup\<open>(* std_text_antiquotation        \<^binding>\<open>my_text\<close> #> *)
+      boxed_text_antiquotation         \<^binding>\<open>boxed_text\<close> #>
+      (* std_text_antiquotation        \<^binding>\<open>my_cartouche\<close> #> *)
+      boxed_text_antiquotation         \<^binding>\<open>boxed_cartouche\<close> #>
+      (* std_theory_text_antiquotation \<^binding>\<open>my_theory_text\<close>#> *)
+      boxed_theory_text_antiquotation  \<^binding>\<open>boxed_theory_text\<close>\<close>
+
+
+
+
 open_monitor*[this::report] 
 
 (*>*)

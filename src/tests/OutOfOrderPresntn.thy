@@ -245,7 +245,7 @@ fun gen_text_antiquotation name reportNcheck compile =
 fun std_text_antiquotation name (* redefined in these more abstract terms *) =
     gen_text_antiquotation name report_text string_2_text_antiquotation
 
-(* should be the same as:
+(* should be the same as (2020):
 fun text_antiquotation name =
   Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
     (fn ctxt => fn text =>
@@ -261,7 +261,7 @@ fun text_antiquotation name =
 fun std_theory_text_antiquotation name (* redefined in these more abstract terms *) =
     gen_text_antiquotation name report_theory_text string_2_theory_text_antiquotation
 
-(* should be the same as:
+(* should be the same as (2020):
 fun theory_text_antiquotation name =
   Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
     (fn ctxt => fn text =>
