@@ -197,15 +197,55 @@ textN\<open> \<^blong>\<open>asd\<close> outer  \<^blong>\<open>syntax| ! see {s
 ML\<open>
 
 fun report_text ctxt text =
-  let val pos = Input.pos_of text in
-    Context_Position.reports ctxt
-      [(pos, Markup.language_text (Input.is_delimited text)),
-       (pos, Markup.raw_text)]
-  end;
+    let val pos = Input.pos_of text in
+       Context_Position.reports ctxt
+         [(pos, Markup.language_text (Input.is_delimited text)),
+          (pos, Markup.raw_text)]
+    end;
+
+fun report_theory_text ctxt text =
+    let val keywords = Thy_Header.get_keywords' ctxt;
+        val _ = report_text ctxt text;
+        val _ =
+          Input.source_explode text
+          |> Token.tokenize keywords {strict = true}
+          |> maps (Token.reports keywords)
+          |> Context_Position.reports_text ctxt;
+    in () end
 
 fun prepare_text ctxt =
   Input.source_content #> #1 #> Document_Antiquotation.prepare_lines ctxt;
+(* This also produces indent-expansion and changes space to "\_" and the introduction of "\newline",
+   I believe. Otherwise its in Thy_Output.output_source, the compiler from string to LaTeX.text. *)
 
+fun string_2_text_antiquotation ctxt text = 
+        prepare_text ctxt text
+        |> Thy_Output.output_source ctxt
+        |> Thy_Output.isabelle ctxt
+
+fun string_2_theory_text_antiquotation ctxt text =
+      let
+        val keywords = Thy_Header.get_keywords' ctxt;
+      in
+        prepare_text ctxt text
+        |> Token.explode0 keywords
+        |> maps (Thy_Output.output_token ctxt)
+        |> Thy_Output.isabelle ctxt
+      end
+
+fun gen_text_antiquotation name reportNcheck compile =
+  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
+    (fn ctxt => fn text:Input.source =>
+      let
+        val _ = reportNcheck ctxt text;
+      in
+        compile ctxt text    
+      end);
+
+fun std_text_antiquotation name (* redefined in these more abstract terms *) =
+    gen_text_antiquotation name report_text string_2_text_antiquotation
+
+(* should be the same as:
 fun text_antiquotation name =
   Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
     (fn ctxt => fn text =>
@@ -216,14 +256,12 @@ fun text_antiquotation name =
         |> Thy_Output.output_source ctxt
         |> Thy_Output.isabelle ctxt
       end);
+*)
 
-fun block_geraffel ctxt block_env body =
-  if Config.get ctxt Document_Antiquotation.thy_output_display
-  then Latex.environment_block block_env [body]
-  else body;
+fun std_theory_text_antiquotation name (* redefined in these more abstract terms *) =
+    gen_text_antiquotation name report_theory_text string_2_theory_text_antiquotation
 
-
-
+(* should be the same as:
 fun theory_text_antiquotation name =
   Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
     (fn ctxt => fn text =>
@@ -241,16 +279,39 @@ fun theory_text_antiquotation name =
         |> Token.explode0 keywords
         |> maps (Thy_Output.output_token ctxt)
         |> Thy_Output.isabelle ctxt
-        |> block_geraffel ctxt "isarbox"
+        |> enclose_env ctxt "isarbox"
       end);
+*)
 
 
-  Theory.setup
-   (text_antiquotation        \<^binding>\<open>boxed_text\<close> #>
-    text_antiquotation        \<^binding>\<open>boxed_cartouche\<close> #>
-    theory_text_antiquotation \<^binding>\<open>boxed_theory_text\<close>); (* is overriding possible ?*)
+
+fun enclose_env ctxt block_env body =
+  if Config.get ctxt Document_Antiquotation.thy_output_display
+  then Latex.environment_block block_env [body]
+  else body;
 
 
+fun boxed_text_antiquotation name (* redefined in these more abstract terms *) =
+    gen_text_antiquotation name report_text 
+                           (fn ctxt => string_2_text_antiquotation ctxt
+                                       #> enclose_env ctxt "isarbox")
+
+
+fun boxed_theory_text_antiquotation name (* redefined in these more abstract terms *) =
+    gen_text_antiquotation name report_theory_text 
+                           (fn ctxt => string_2_theory_text_antiquotation ctxt 
+                                        #> enclose_env ctxt "isarbox")
+
+
+(*   #> enclose_env ctxt "isarbox" *)
+
+val _ = Theory.setup
+   (std_text_antiquotation          \<^binding>\<open>my_text\<close> #>
+    boxed_text_antiquotation        \<^binding>\<open>boxed_text\<close> #>
+    std_text_antiquotation          \<^binding>\<open>my_cartouche\<close> #>
+    boxed_text_antiquotation        \<^binding>\<open>boxed_cartouche\<close> #>
+    std_theory_text_antiquotation   \<^binding>\<open>my_theory_text\<close>#>
+    boxed_theory_text_antiquotation \<^binding>\<open>boxed_theory_text\<close>); (* is overriding possible ?*)
 
 \<close>
 

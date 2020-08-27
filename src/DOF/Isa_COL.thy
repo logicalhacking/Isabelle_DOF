@@ -227,21 +227,25 @@ end
 \<close>
 
 section\<open>Shortcuts, Macros, Environments\<close>
-text\<open>This is actually \<^emph>\<open>not\<close> a real ISADOF feature, rather a slightly more abstract layer over
-somewhat buried standard features of the Isabelle document generator ... (Thanks to Makarius).
-Conceptually, they are \<^emph>\<open>sub-text-elements\<close>. \<close>
+text\<open>The features described in this section are actually \<^emph>\<open>not\<close> real ISADOF features, rather a 
+slightly more abstract layer over somewhat buried standard features of the Isabelle document 
+generator ... (Thanks to Makarius) Conceptually, they are \<^emph>\<open>sub-text-elements\<close>. \<close>
 
 text\<open>This module provides mechanisms to define front-end checked:
 \<^enum> \<^emph>\<open>shortcuts\<close>, i.e. machine-checked abbreviations without arguments 
   that were mapped to user-defined LaTeX code (Example: \<^verbatim>\<open>\ie\<close>)
-\<^enum> macro's with one argument that were mapped to user-defined code. Example: \<^verbatim>\<open>\myurl{bla}\<close>.
+\<^enum> \<^emph>\<open>macros\<close>  with one argument that were mapped to user-defined code. Example: \<^verbatim>\<open>\myurl{bla}\<close>.
   The argument can be potentially checked and reports can be sent to PIDE;
   if no such checking is desired, this can be expressed by setting the
   \<^theory_text>\<open>reportNtest\<close>-parameter to \<^theory_text>\<open>K(K())\<close>.
-\<^enum> macro's with two arguments, potentially independently checked. See above. 
-  Example: \<^verbatim>\<open>\myurl[ding]{dong}\<close>.
+\<^enum> \<^emph>\<open>macros\<close> with two arguments, potentially independently checked. See above. 
+  Example: \<^verbatim>\<open>\myurl[ding]{dong}\<close>,
+\<^enum> \<^emph>\<open>boxes\<close> which are more complex sub-text-elements in the line of the \<^verbatim>\<open>verbatim\<close> or 
+  \<^verbatim>\<open>theory_text\<close> environments.
 
-Note that we deliberately refrained from a code-template definition mechanism for simplicity.
+Note that we deliberately refrained from a code-template definition mechanism for simplicity,
+so the patterns were just described by strings.  No additional ado with quoting/unquoting 
+mechanisms ... 
 \<close>
 
 ML\<open>

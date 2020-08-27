@@ -35,8 +35,8 @@ setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>TeXLive\<close>"\\TeXL
 text\<open>Note that these setups assume that the associated \<^LaTeX> macros are defined, \<^eg>, 
      in the document prelude. \<close>
 
-setup\<open>    DOF_lib.define_macro \<^binding>\<open>index\<close>     "\\index{" "}"
-       #> DOF_lib.define_macro \<^binding>\<open>bindex\<close>    "\\bindex{" "}"\<close> 
+setup\<open>    DOF_lib.define_macro \<^binding>\<open>index\<close>   "\\index{" "}" (K(K())) (*no checking, no reporting*)
+       #> DOF_lib.define_macro \<^binding>\<open>bindex\<close>  "\\bindex{" "}"(K(K()))\<close> 
 
 open_monitor*[this::report] 
 
