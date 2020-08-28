@@ -34,12 +34,12 @@ available on \href{https://cloud.docker.com/u/logicalhacking/}{Docker Hub}. Thus
 \href{https://www.docker.com}{Docker} installed and 
 your installation of Docker supports X11 application, you can start \<^isadof> as follows:
 
-\begin{bash}
-ë\prompt{}ë docker run -ti --rm -e DISPLAY=$DISPLAY \
+@{boxed_bash [display] 
+\<open>ë\prompt{}ë docker run -ti --rm -e DISPLAY=$DISPLAY \
    -v /tmp/.X11-unix:/tmp/.X11-unix \ 
    logicalhacking/isabelle_dof-ë\doflatestversionë_ë\MakeLowercase{\isabellelatestversion}ë \
    isabelle jedit
-\end{bash}
+\<close>}
 \<close>
 
 subsection*[installation::technical]\<open>Installation\<close>
@@ -51,52 +51,63 @@ text\<open>
 subsubsection*[prerequisites::technical]\<open>Pre-requisites\<close>
 text\<open>
   \<^isadof> has to major pre-requisites: 
-  \<^item> \<^bold>\<open>Isabelle\<close>\bindex{Isabelle} (\isabellefullversion). 
-    \<^isadof> uses a two-part version system (e.g., 1.0.0/2020), 
-    where the first part is the version of \<^isadof> (using semantic versioning) and the second 
-    part is the supported version of Isabelle. Thus, the same version of \<^isadof> might be 
-    available for different versions of Isabelle. 
-  \<^item> \<^bold>\<open>\TeXLive 2020\<close>\bindex{TexLive@\TeXLive} (or any other modern 
-    \<^LaTeX>-distribution where \<^pdftex> supports 
-    the \inlineltx|\expanded| primitive).
+  \<^item> \<^bold>\<open>Isabelle\<close>\<^bindex>\<open>Isabelle\<close> (\isabellefullversion). 
+    \<^isadof> uses a two-part version system (e.g., 1.0.0/2020),  where the first part is the version
+    of \<^isadof> (using semantic versioning) and the second part is the supported version of Isabelle. 
+    Thus, the same version of \<^isadof> might be available for different versions of Isabelle. 
+  \<^item> \<^bold>\<open>\<^TeXLive> 2020\<close>\<^bindex>\<open>TexLive@\<^TeXLive>\<close> (or any other modern  \<^LaTeX>-distribution where
+    \<^pdftex> supports the \<^boxed_latex>\<open>\expanded\<close>  primitive).
     \<^footnote>\<open>see \<^url>\<open>https://www.texdev.net/2018/12/06/a-new-primitive-expanded\<close>\<close>
 \<close>
 
 paragraph\<open>Installing Isabelle\<close>
 text\<open>
-\enlargethispage{\baselineskip}
+%\enlargethispage{\baselineskip}
   Please download and install the Isabelle \isabelleversion distribution for your operating system 
   from the \href{\isabelleurl}{Isabelle website} (\url{\isabelleurl}). After the successful 
-  installation of Isabelle, you should be able to call the \inlinebash|isabelle| tool on the 
+  installation of Isabelle, you should be able to call the \<^boxed_bash>\<open>isabelle\<close> tool on the 
   command line:
 
 \begin{bash}
 ë\prompt{}ë isabelle version
 ë\isabellefullversionë
 \end{bash}
+% bu : do not know why this does not work here ...
+%@ {boxed_bash [display]\<open>
+%ë\prompt{}ë isabelle version
+%ë\isabellefullversionë
+%\<close>}
 
-Depending on your operating system and depending if you put Isabelle's \inlinebash{bin} directory
-in your \inlinebash|PATH|, you will need to invoke \inlinebash|isabelle| using its
+Depending on your operating system and depending if you put Isabelle's  \<^boxed_bash>\<open>bin\<close> directory
+in your  \<^boxed_bash>\<open>PATH\<close>, you will need to invoke  \<^boxed_bash>\<open>isabelle\<close> using its
 full qualified path, \<^eg>:
 
 \begin{bash}
 ë\prompt{}ë /usr/local/Isabelleë\isabelleversion/ëbin/isabelle version
 ë\isabellefullversionë
 \end{bash}
+
+%@ {boxed_bash [display]\<open>
+%ë\prompt{}ë /usr/local/Isabelleë\isabelleversion/ëbin/isabelle version
+%ë\isabellefullversionë
+%\<close>}
 \<close>
 
-paragraph\<open>Installing \TeXLive\<close>
+paragraph\<open>Installing \<^TeXLive>\<close>
 text\<open>
-  Modern Linux distribution will allow you to install \TeXLive using their respective package 
+  Modern Linux distribution will allow you to install \<^TeXLive> using their respective package 
   managers. On a modern Debian system or a Debian derivative (\<^eg>, Ubuntu), the following command 
   should install all required \<^LaTeX> packages:
 
 \begin{bash}
 ë\prompt{}ë sudo aptitude install texlive-latex-extra texlive-fonts-extra
 \end{bash}
+%@ {boxed_bash [display]\<open>
+%ë\prompt{}ë sudo aptitude install texlive-latex-extra texlive-fonts-extra
+%\<close>}
 
   Please check that this, indeed, installs a version of \<^pdftex> that supports the 
-  \inlineltx|\expanded|-primitive. To check your \pdfTeX-binary, execute 
+  \<^boxed_latex>\<open>\expanded\<close>. To check your \<^pdftex>-binary, execute 
 
 \begin{bash}
 ë\prompt{}ë pdftex \\expanded{Success}\\end
@@ -104,9 +115,15 @@ This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian).
 Output written on texput.pdf (1 page, 8650 bytes).
 Transcript written on texput.log.
 \end{bash}
+%@ {boxed_bash [display]\<open>
+%ë\prompt{}ë pdftex \\expanded{Success}\\end
+%This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian).
+%Output written on texput.pdf (1 page, 8650 bytes).
+%Transcript written on texput.log.
+%\<close>}
 
   If this generates successfully a file \inlinebash|texput.pdf|, your \<^pdftex>-binary supports
-  the \inlineltx|\expanded|-primitive. If your Linux distribution does not (yet) ship \<^TeXLive> 
+  the \<^boxed_latex>\<open>\expanded\<close>-primitive. If your Linux distribution does not (yet) ship \<^TeXLive> 
   2019 or your are running Windows or OS X, please follow the installation instructions from 
   \<^url>\<open>https://www.tug.org/texlive/acquire-netinstall.html\<close>. 
 \<close>
@@ -122,17 +139,17 @@ text\<open>
 ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë
 \end{bash}
 This will create a directory \texttt{\isadofdirn} containing \<^isadof> distribution.
-Next, we need to invoke the \inlinebash|install| script. If necessary, the installations 
-automatically downloads additional dependencies from the AFP (\url{https://www.isa-afp.org}), 
+Next, we need to invoke the \<^boxed_bash>\<open>install\<close> script. If necessary, the installations 
+automatically downloads additional dependencies from the AFP (\<^url>\<open>https://www.isa-afp.org\<close>), 
 namely the AFP  entries ``Functional Automata''~@{cite "nipkow.ea:functional-Automata-afp:2004"} 
 and ``Regular Sets and Expressions''~@{cite "kraus.ea:regular-sets-afp:2010"}. This might take a 
 few minutes to complete. Moreover, the installation script applies a patch to the Isabelle system, 
 which requires  \<^emph>\<open>write permissions for the Isabelle system directory\<close> and registers \<^isadof> as 
 Isabelle component. 
 
-If the \inlinebash|isabelle| tool is not in your \inlinebash|PATH|, you need to call the 
-\inlinebash|install| script with the \inlinebash|--isabelle| option, passing the full-qualified
-path of the \inlinebash|isabelle| tool (\inlinebash|install --help| gives 
+If the \<^boxed_bash>\<open>isabelle\<close> tool is not in your  \<^boxed_bash>\<open>PATH\<close>, you need to call the 
+ \<^boxed_bash>\<open>install\<close> script with the  \<^boxed_bash>\<open>--isabelle\<close> option, passing the full-qualified
+path of the \<^boxed_bash>\<open>isabelle\<close> tool ( \<^boxed_bash>\<open>install --help\<close> gives 
 you an overview of all available configuration options):
 
 \begin{bash}
@@ -266,31 +283,41 @@ ontologies and the document template using a YAML syntax.\<^footnote>\<open>Isab
 \<^isadof>'s document setup does not make use of a file \inlinebash|root.tex|: this file is 
 replaced by built-in document templates.\<close> The main two configuration files for 
 users are:
-\<^item> The file \inlinebash|ROOT|\index{ROOT}, which defines the Isabelle session. New theory files as well as new 
-  files required by the document generation (\<^eg>, images, bibliography database using \<^BibTeX> , local
+\<^item> The file \<^boxed_bash>\<open>ROOT\<close>\<^index>\<open>ROOT\<close>, which defines the Isabelle session. New theory files as well as new 
+  files required by the document generation (\<^eg>, images, bibliography database using \<^BibTeX>, local
   \<^LaTeX>-styles) need to be registered in this file. For details of Isabelle's build system, please 
   consult the Isabelle System Manual~@{cite "wenzel:system-manual:2020"}.
-\<^item> The file \inlinebash|praemble.tex|\index{praemble.tex}, which allows users to add additional 
+\<^item> The file \<^boxed_bash>\<open>praemble.tex\<close>\<^index>\<open>praemble.tex\<close>, which allows users to add additional 
   \<^LaTeX>-packages or to add/modify \<^LaTeX>-commands. 
 \<close>
 
 section*[scholar_onto::example]\<open>Writing Academic Publications (scholarly\_paper)\<close>  
-subsection\<open>The Scholarly Paper Example\<close>
+subsection\<open>The Scholarly Paper Examples\<close>
 text\<open> 
-  The ontology ``scholarly\_paper''\index{ontology!scholarly\_paper} is a small ontology modeling 
-  academic/scientific papers. In this \<^isadof> application scenario, we deliberately refrain from 
-  integrating references to (Isabelle) formal content in order  demonstrate that \<^isadof> is not a 
-  framework from Isabelle users to Isabelle users only. Of course, such references can be added 
-  easily and represent a particular strength of \<^isadof>.
+  The ontology ``scholarly\_paper''\<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
+  academic/scientific papers, with a slight bias to texts in the domain of mathematics and engineering. 
+  We explain first the principles of its underlying ontology, and then we present two ''real'' 
+  example instances of our own.
+  \<^enum> The iFM 2020 paper~@{cite "taha.ea:philosophers:2020"} is a typical mathematical text, heavy in 
+    definitions with complex mathematical notation and a lot of complex cross-referencing 
+    between statements, definitions and proofs which is ontologically tracked. However, wrt.
+    to the possible linking between the underlying formal theory and this mathematical presentation,
+    it follows a pragmatic path without any ``deep'' linking to types, terms and theorems, deliberately
+    not exploiting \<^isadof>'s full potential with this regard.
+  \<^enum> In the CICM 2018 paper~@{cite "brucker.ea:isabelle-ontologies:2018"}, we deliberately
+    refrain from integrating references to formal content in order  demonstrate that \<^isadof> is not 
+    a  framework from Isabelle users to Isabelle users only, but people just avoiding as much as
+    possible \<^LaTeX> notation.
 
-  The \<^isadof> distribution contains an example (actually, our CICM 2018 
-  paper~@{cite "brucker.ea:isabelle-ontologies:2018"}) using the ontology ``scholarly\_paper'' in 
-  the directory \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/}. You 
-  can inspect/edit the example in Isabelle's IDE, by either 
+  The \<^isadof> distribution contains both examples using the ontology ``scholarly\_paper'' in 
+  the directory \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/} or
+  \nolinkurl{examples/scholarly_paper/2020-ifm-csp-applications/}.
+
+  You can inspect/edit the example in Isabelle's IDE, by either 
   \<^item> starting Isabelle/jedit using your graphical user interface (\<^eg>, by clicking on the 
     Isabelle-Icon provided by the Isabelle installation) and loading the file 
     \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy}.
-  \<^item> starting Isabelle/jedit from the command line by calling:
+  \<^item> starting Isabelle/jedit from the command line by,\<^eg>, calling:
 
     \begin{bash}
 ë\prompt{\isadofdirn}ë 
@@ -298,46 +325,85 @@ text\<open>
   IsaDofApplications.thy
 \end{bash}
 \<close> 
-text\<open>  
-  You can build the PDF-document by calling:
+(* We should discuss if we shouldn't put the iFM paper more in the foreground *) 
 
-  \begin{bash}
-ë\prompt{}ë isabelle build \
-2018-cicm-isabelle_dof-applications                                                   
-\end{bash}
+text\<open>    You can build the PDF-document at the command line by calling:
+
+@{boxed_bash [display]
+\<open>ë\prompt{}ë isabelle build \
+2018-cicm-isabelle_dof-applications\<close>}
 \<close>
 
+subsection\<open>A Bluffers Guide to the "scholarly\_paper" Ontology\<close>
+text\<open> In this section we give a minimal overview of the ontology formalized in
+      @{theory \<open>Isabelle_DOF.scholarly_paper\<close>}.\<close>
 
-subsection\<open>Modeling Academic Publications\<close>
-text\<open>
-  We start by modeling the usual text-elements of an academic paper: the title and author 
+text\<open>  We start by modeling the usual text-elements of an academic paper: the title and author 
   information, abstract, and text section: 
-
-\begin{isar}
-doc_class title =
-   short_title :: "string option"  <=  None
-     
+@{theory_text [display]
+\<open>doc_class title =
+   short_title :: "string option"  <=  "None"
+    
 doc_class subtitle =
-   abbrev :: "string option"       <=  None
-
+   abbrev ::      "string option"   <=  "None"
+   
 doc_class author =
+   email       :: "string" <= "''''"
+   http_site   :: "string" <= "''''"
+   orcid       :: "string" <= "''''"
    affiliation :: "string"
 
 doc_class abstract =
-   keyword_list :: "string list"  <= None
+   keywordlist        :: "string list"   <= "[]" 
+   principal_theorems :: "thm list"\<close>}
+\<close>
 
-doc_class text_section = 
+text\<open>Note \<open>short_title\<close> and \<open>abbrev\<close> are optional and have the default \<open>None\<close> (no value).
+Note further, that abstracts may have a \<open>principal_theorems\<close> list, where the built-in \<^isadof> type
+\<open>thm list\<close> which contain references to formally proven theorems that must exist in the logical
+context of this document; this is a decisive feature of \<^isadof> that conventional ontological
+languages lack.\<close>
+
+text\<open>We continue by the introduction of a main class: the text-element \<open>text_section\<close> (in contrast
+to \<open>figure\<close> or \<open>table\<close> or similar. Note that
+the \<open>main_author\<close> is typed with the class \<open>author\<close>, a HOL type that is automatically derived from
+the document class definition \<open>author\<close> shown above. It is used to express which author currently
+``owns'' this \<open>text_section\<close>, an information that can give rise to presentational or even
+access-control features in a suitably adapted front-end.
+ 
+@{theory_text [display] \<open>
+doc_class text_section = text_element +
    main_author :: "author option"  <=  None
-   todo_list   :: "string list"    <=  "[]"
-\end{isar}
+   fixme_list  :: "string list"    <=  "[]" 
+   level       :: "int  option"    <=  "None"
+\<close>}
 
-  The attributes \inlineisar+short_title+, \inlineisar+abbrev+ etc are introduced with their types as 
-  well as their default values. Our model prescribes an optional \inlineisar+main_author+ and a 
-  todo-list attached to an arbitrary text section; since instances of this class are mutable 
-  (meta)-objects of text-elements, they can be modified arbitrarily through subsequent text and of 
-  course globally during text evolution. Since \inlineisar+author+ is a HOL-type internally generated 
-  by \<^isadof> framework and can therefore appear in the \inlineisar+main_author+ attribute of the 
-  \inlineisar+text_section+ class; semantic links between concepts can be modeled this way.
+The \<open>level\<close>-attibute \<^index>\<open>level\<close> enables doc-notation support for headers, chapters, sections, and subsections;
+we follow here the \<^LaTeX> terminology on levels to which \<^isadof> is currently targeting at.
+The values are interpreted accordingly to the \<^LaTeX> standard.
+
+\<^enum> part     \<^index>\<open>part\<close>               \<^bigskip>\<^bigskip>  \<open>Some -1\<close>
+\<^enum> chapter   \<^index>\<open>chapter\<close>           \<^bigskip>\<^bigskip>  \<open>Some 0\<close> 
+\<^enum> section    \<^index>\<open>section\<close>          \<^bigskip>\<^bigskip>  \<open>Some 1\<close> 
+\<^enum> subsection  \<^index>\<open>subsection\<close>      \<^bigskip>\<^bigskip>  \<open>Some 2\<close> 
+\<^enum> subsubsection \<^index>\<open>subsubsection\<close> \<^bigskip>\<^bigskip>  \<open>Some 3\<close> 
+
+Additional means assure that the following invariant is maintained in a document 
+conforming to @{theory \<open>Isabelle_DOF.scholarly_paper\<close>}:
+
+\center {\<open>level > 0\<close>}
+\<close>
+
+text\<open> The rest of the ontology introduces concepts for \<open>introductions\<close>, \<open>conclusion\<close>, \<open>related_work\<close>,
+\<open>bibliography\<close> etc. More details can be found in \<close>
+
+subsection\<open>Writing Academic Publications I \<close>
+text*[xxx::technical, main_author = "Some bu"]\<open>The CSP paper. New screenshots to init sequence
+required. Focus: Mathematical content. Definition, theorem, and citations...\<close>
+
+subsection\<open>Writing Academic Publications II (somewhat outdated)\<close>
+text\<open> In our next example we concentrate on non-text-elements. Figures...
+
 \<close>
 
 figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogfood-Intro''"]
@@ -429,6 +495,8 @@ text\<open>
   attribute-definition (which is qualified in order to disambiguate; 
   \autoref{fig:Dogfood-V-attribute}).
 \<close>
+(* Bu : This autoref stuff could be avoided if we would finally have monitors... *)
+
 figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-V-attribute''"]
        \<open> Exploring an attribute (hyperlinked to the class). \<close> 
 

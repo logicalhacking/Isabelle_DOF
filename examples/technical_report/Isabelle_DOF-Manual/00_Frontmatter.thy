@@ -82,6 +82,13 @@ fun boxed_bash_antiquotation name =
                                         #> DOF_lib.enclose_env ctxt "bash") 
                            (* the simplest conversion possible *)
 
+fun boxed_isar_antiquotation name =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env ctxt "isar") 
+                           (* the simplest conversion possible *)
+
 \<close>
 
 setup\<open>(* std_text_antiquotation        \<^binding>\<open>my_text\<close> #> *)
@@ -94,7 +101,9 @@ setup\<open>(* std_text_antiquotation        \<^binding>\<open>my_text\<close> #
       boxed_sml_text_antiquotation     \<^binding>\<open>boxed_sml\<close> #>
       boxed_pdf_antiquotation          \<^binding>\<open>boxed_pdf\<close> #>
       boxed_latex_antiquotation        \<^binding>\<open>boxed_latex\<close>#>
-      boxed_bash_antiquotation         \<^binding>\<open>boxed_bash\<close>\<close>
+      boxed_bash_antiquotation         \<^binding>\<open>boxed_bash\<close> #>
+      boxed_isar_antiquotation         \<^binding>\<open>boxed_isar\<close> (* should be replaced by boxed_theory_text*)
+     \<close>
 
 
 

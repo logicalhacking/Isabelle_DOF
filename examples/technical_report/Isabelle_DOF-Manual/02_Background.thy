@@ -56,10 +56,12 @@ support for higher specification constructs were built.\<close>
 section*[dof::introduction]\<open>The Document Model Required by \<^dof>\<close>
 text\<open>
   In this section, we explain the assumed document model underlying our Document Ontology Framework 
-  (\<^dof>) in general. In particular we discuss the concepts \<^emph>\<open>integrated document\<close>, \<^emph>\<open>sub-document\<close>, 
-  \<^emph>\<open>text-element\<close> and \<^emph>\<open>semantic macros\<close> occurring inside text-elements. Furthermore, we assume two 
-  different levels of parsers (for \<^emph>\<open>outer\<close> and \<^emph>\<open>inner syntax\<close>) where the inner-syntax is basically 
-  a typed \inlineisar|\<lambda>|-calculus and some Higher-order Logic (HOL).
+  (\<^dof>) in general. In particular we discuss the concepts \<^emph>\<open>integrated document\<close>
+  \<^bindex>\<open>integrated document\<close>, \<^emph>\<open>sub-document\<close>, \<^bindex>\<open>sub-document\<close>,  
+  \<^emph>\<open>text-element\<close> \<^bindex>\<open>text-element\<close> and \<^emph>\<open>semantic macros\<close>  \<^bindex>\<open>semantic macros\<close> occurring 
+  inside text-elements. Furthermore, we assume two different levels of parsers 
+  (for \<^emph>\<open>outer\<close> and \<^emph>\<open>inner syntax\<close>) where the inner-syntax is basically a typed \<open>\<lambda>\<close>-calculus 
+  and some Higher-order Logic (HOL)\<^bindex>\<open>HOL\<close>.
 \<close>
 
 (*<*)
@@ -76,8 +78,8 @@ text\<open>
   consists of a \<^emph>\<open>header\<close>\<^bindex>\<open>header\<close>, a \<^emph>\<open>context definition\<close>\<^index>\<open>context\<close>, and a body 
   consisting of a sequence of \<^emph>\<open>command\<close>s (see @{figure (unchecked) "fig:dependency"}). Even 
   the header consists of a sequence of commands used for introductory text elements not depending on 
-  any context.   The context-definition contains an \inlineisar{import} and a 
-  \inlineisar{keyword} section, for example:
+  any context. The context-definition contains an \<^boxed_isar>\<open>import\<close> and a 
+  \<^boxed_isar>\<open>keyword\<close> section, for example:
 \begin{isar}
 "  theory Example         (* Name of the 'theory'                     *)
 "    imports              (* Declaration of 'theory' dependencies     *)
@@ -85,10 +87,9 @@ text\<open>
 "    keywords             (* Registration of keywords defined locally *)
 "      requirement        (* A command for describing requirements    *)
 \end{isar}
-  where \inlineisar{Example} is the abstract name of the text-file,
-  \inlineisar{Main} refers to an imported theory (recall that the import
-  relation must be acyclic) and \inlineisar{keywords} are used to
-  separate commands from each other.
+  where \<^boxed_isar>\<open>Example\<close> is the abstract name of the text-file, \<^boxed_isar>\<open>Main\<close> refers to an 
+  imported theory (recall that the import relation must be acyclic) and \inlineisar{keywords} are 
+  used to separate commands from each other.
 \<close>
 (* experiment starts here *)
 (* somewhere we destroyed the standard antiquotation thm ...
@@ -97,8 +98,14 @@ text\<open> \<^emph>\<open>blabla\<close> @{thm \<open>refl\<close>}\<close>
 text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, we obtain in \<Gamma> 
          for @{term "fac 5"} the result @{value "fac 5"}.\<close>
 *)
-text\<open> \<^theory_text>\<open>text\<open> According to the *\<open>reflexivity\<close> axiom @{thm refl}, we obtain in \<Gamma> 
-         for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>\<close>
+text\<open> A text-element \<^index>\<open>text-element\<close> may look like this:
+
+ \<^theory_text>\<open>text\<open> According to the *\<open>reflexivity\<close> axiom @{thm refl}, we obtain in \<Gamma>
+         for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>
+so it is a command \<^theory_text>\<open>text\<close> followed by an argument (here in  \<open>\<open> ... \<close>\<close> paranthesis) which 
+contains characters and and a special notation for semantic macros \<^bindex>\<open>semantic macros\<close> 
+(here in the notation\<^theory_text>\<open>@{term "fac 5"}).\<close>
+\<close>
 
 text\<open>
 
@@ -172,6 +179,7 @@ text\<open>
   versions offer cascade-syntaxes (different syntaxes and even parser-technologies which can be 
   nested along the \<open>\<open>...\<close>\<close> barriers, while \<^dof> actually only requires a two-level syntax model.
 \<close>
+(* end experiment *)
 
 figure*["fig:dof-ide"::figure,relative_width="95",src="''figures/cicm2018-combined''"]\<open> 
      The \<^isadof> IDE (left) and the corresponding PDF (right), showing the first page
@@ -183,19 +191,21 @@ text\<open>
   \<^isadof>~@{cite "brucker.ea:isabelle-ontologies:2018"}: the \<^isadof> PIDE can be seen on the left, 
   while the generated presentation in PDF is shown on the right.
 
-  Isabelle provides, beyond the features required for \<^dof>, a lot of additional benefits. For 
-  example, it also allows the asynchronous evaluation and checking of the document 
-  content~@{cite "wenzel:asynchronous:2014" and "wenzel:system:2014" and
-  "barras.ea:pervasive:2013"} and is dynamically extensible. Its PIDE provides a 
-  \<^emph>\<open>continuous build, continuous check\<close>  functionality, syntax highlighting, and auto-completion. 
-  It also provides infrastructure for displaying meta-information (\<^eg>, binding and type annotation)
-  as pop-ups, while hovering over sub-expressions.  A fine-grained dependency analysis allows the 
-  processing of individual parts of theory files asynchronously, allowing Isabelle to interactively
-  process large (hundreds of theory files) documents.  Isabelle can group sub-documents into sessions,
-  \<^ie>, sub-graphs of the document-structure that can be ``pre-compiled'' and loaded
-  instantaneously, \<^ie>, without re-processing. \<close>
+  Isabelle provides, beyond the features required for \<^dof>, a lot of additional benefits. 
+  Besides UTF8-support for characters used in text-elements, Isabelle offers built-in already a 
+  mechanism user-programmable antiquotations \<^index>\<open>antiquotations\<close> which we use to implement
+  semantic macros  \<^index>\<open>semantic macros\<close> in \<^isadof> (We will actually use these two terms
+  as synonym in the context of \<^isadof>). Moreover, \<^isadof> allows for the asynchronous 
+  evaluation and checking of the document content~@{cite "wenzel:asynchronous:2014" and 
+  "wenzel:system:2014" and "barras.ea:pervasive:2013"} and is dynamically extensible. Its PIDE 
+  provides a  \<^emph>\<open>continuous build, continuous check\<close>  functionality, syntax highlighting, and 
+  auto-completion. It also provides infrastructure for displaying meta-information (\<^eg>, binding 
+  and type annotation) as pop-ups, while hovering over sub-expressions.  A fine-grained dependency 
+  analysis allows the processing of individual parts of theory files asynchronously, allowing 
+  Isabelle to interactively process large (hundreds of theory files) documents.  Isabelle can group 
+  sub-documents into sessions, \<^ie>, sub-graphs of the document-structure that can be ``pre-compiled'' 
+  and loaded instantaneously, \<^ie>, without re-processing, which is an important means to scale up. \<close>
 
-(* end experiment *)
 
 (*<*) 
 end
