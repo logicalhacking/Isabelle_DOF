@@ -46,11 +46,41 @@ fun boxed_text_antiquotation name (* redefined in these more abstract terms *) =
                            (fn ctxt => DOF_lib.string_2_text_antiquotation ctxt
                                        #> DOF_lib.enclose_env ctxt "isarbox")
 
+val neant = K(Latex.text("",\<^here>))
 
 fun boxed_theory_text_antiquotation name (* redefined in these more abstract terms *) =
     DOF_lib.gen_text_antiquotation name DOF_lib.report_theory_text 
                            (fn ctxt => DOF_lib.string_2_theory_text_antiquotation ctxt 
-                                        #> DOF_lib.enclose_env ctxt "isarbox")
+                                        #> DOF_lib.enclose_env ctxt "isarbox"
+                                        (* #> neant *)) (*debugging *)
+
+fun boxed_sml_text_antiquotation name  =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env ctxt "sml") 
+                           (* the simplest conversion possible *)
+
+fun boxed_pdf_antiquotation name =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env ctxt "out") 
+                           (* the simplest conversion possible *)
+
+fun boxed_latex_antiquotation name =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env ctxt "ltx") 
+                           (* the simplest conversion possible *)
+
+fun boxed_bash_antiquotation name =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env ctxt "bash") 
+                           (* the simplest conversion possible *)
 
 \<close>
 
@@ -59,7 +89,12 @@ setup\<open>(* std_text_antiquotation        \<^binding>\<open>my_text\<close> #
       (* std_text_antiquotation        \<^binding>\<open>my_cartouche\<close> #> *)
       boxed_text_antiquotation         \<^binding>\<open>boxed_cartouche\<close> #>
       (* std_theory_text_antiquotation \<^binding>\<open>my_theory_text\<close>#> *)
-      boxed_theory_text_antiquotation  \<^binding>\<open>boxed_theory_text\<close>\<close>
+      boxed_theory_text_antiquotation  \<^binding>\<open>boxed_theory_text\<close> #>
+
+      boxed_sml_text_antiquotation     \<^binding>\<open>boxed_sml\<close> #>
+      boxed_pdf_antiquotation          \<^binding>\<open>boxed_pdf\<close> #>
+      boxed_latex_antiquotation        \<^binding>\<open>boxed_latex\<close>#>
+      boxed_bash_antiquotation         \<^binding>\<open>boxed_bash\<close>\<close>
 
 
 
@@ -85,7 +120,7 @@ text*[abs::abstract,
 \<open> \<^isadof> provides an implementation of \<^dof> on top of Isabelle/HOL. 
   \<^dof> itself is a novel framework for \<^emph>\<open>defining\<close> ontologies
   and \<^emph>\<open>enforcing\<close> them during document development and document
-  evolution. \<^isadof>  targets use-cases such as mathematical texts referring
+  evolution. \<^isadof> targets use-cases such as mathematical texts referring
   to a theory development or technical reports requiring a particular structure.
   A major application of \<^dof> is the integrated development of
   formal certification documents (\<^eg>, for Common Criteria or CENELEC

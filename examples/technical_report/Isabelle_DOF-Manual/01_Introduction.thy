@@ -90,26 +90,34 @@ text\<open>
     lemma refl: "x = x" 
       by simp
     \end{isar}
+%    @ {boxed_isar [display]
+%      \<open>lemma refl: "x = x" 
+%         by simp\<close>}
+    
+    @{boxed_theory_text [display]
+    \<open>lemma refl: "x = x" 
+      by simp\<close>}
+
   \<^item> a green background for examples of generated document fragments (\<^ie>, PDF output):
-    \begin{out}
-    The axiom refl
-    \end{out}
+    @{boxed_pdf [display] \<open>The axiom refl\<close>}
   \<^item> a red background for For (S)ML-code:
-    \begin{sml}
-    fun id x = x
-    \end{sml}
+    @{boxed_sml [display] \<open>fun id x = x\<close>}
   \<^item> a yellow background for \LaTeX-code:
+    @{boxed_latex [display] \<open>\newcommand{\refl}{$x = x$}\<close>}
     \begin{ltx}
     \newcommand{\refl}{$x = x$}
     \end{ltx}
   \<^item> a grey background for shell scripts and interactive shell sessions:
+    @{boxed_bash [display] 
+    \<open>ë\prompt{}ë ls
+     CHANGELOG.md  CITATION  examples  install  LICENSE  README.md  ROOTS  src\<close>}
     \begin{bash}
     ë\prompt{}ë ls
     CHANGELOG.md  CITATION  examples  install  LICENSE  README.md  ROOTS  src
-   \end{bash}
+    \end{bash}
 \<close>
 
-subsubsection\<open>How to Cite \isadof\<close>
+subsubsection\<open>How to Cite \<^isadof>\<close>
 text\<open>
   If you use or extend \<^isadof> in your publications, please use 
   \<^item> for the \<^isadof> system~@{cite "brucker.ea:isabelle-ontologies:2018"}:
@@ -120,8 +128,8 @@ text\<open>
       Heidelberg, 2018. \href{https://doi.org/10.1007/978-3-319-96812-4\_3}
       {10.1007/978-3-319-96812-4\_3}.
     \end{quote}
-    A \BibTeX-entry is available at: 
-    \url{https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelle-ontologies-2018}. 
+    A \<^BibTeX>-entry is available at: 
+    \<^url>\<open>https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelle-ontologies-2018\<close>. 
   \<^item> for the implementation of \<^isadof>~@{cite "brucker.ea:isabelledof:2019"}:
     \begin{quote}\small
       A.~D. Brucker and B.~Wolff. \<^isadof>: Design and implementation. In P.C.~{\"O}lveczky and 
@@ -130,8 +138,8 @@ text\<open>
       \href{https://doi.org/10.1007/978-3-030-30446-1_15}{10.1007/978-3-030-30446-1\_15}.
 
     \end{quote}
-    A \BibTeX-entry is available at: 
-    \url{https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelledof-2019}.
+    A \<^BibTeX>-entry is available at: 
+    \<^url>\<open>https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelledof-2019\<close>.
 \<close>
 subsubsection\<open>Availability\<close>
 text\<open>

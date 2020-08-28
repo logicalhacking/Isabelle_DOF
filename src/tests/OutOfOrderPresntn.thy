@@ -316,8 +316,8 @@ val _ = Theory.setup
 \<close>
 
 textN\<open> 
-      @{boxed_cartouche  [display] \<open>definition dfg = \<lambda>x. x\<close>}
-      @{boxed_theory_text [display] \<open>doc_class dfg = ...\<close>}  \<close>
+      @{boxed_cartouche  [display]  \<open>definition dfg = \<lambda>x. x\<close>}
+      @{boxed_theory_text [display] \<open>doc_class dfg = \<lambda>x... \<Gamma>\<close>}  \<close>
                
 end
 (*>*)

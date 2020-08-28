@@ -89,38 +89,67 @@ text\<open>
   \inlineisar{Main} refers to an imported theory (recall that the import
   relation must be acyclic) and \inlineisar{keywords} are used to
   separate commands from each other.
+\<close>
+(* experiment starts here *)
+(* somewhere we destroyed the standard antiquotation thm ...
+text\<open> \<^emph>\<open>blabla\<close> @{thm \<open>refl\<close>}\<close>
+
+text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, we obtain in \<Gamma> 
+         for @{term "fac 5"} the result @{value "fac 5"}.\<close>
+*)
+text\<open> \<^theory_text>\<open>text\<open> According to the *\<open>reflexivity\<close> axiom @{thm refl}, we obtain in \<Gamma> 
+         for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>\<close>
+
+text\<open>
 
   We distinguish fundamentally two different syntactic levels:
   \<^item> the \<^emph>\<open>outer-syntax\<close>\<^bindex>\<open>syntax!outer\<close>\<^index>\<open>outer syntax|see {syntax, outer}\<close> (\<^ie>, the 
     syntax for commands) is processed by a lexer-library and parser combinators built on top, and
   \<^item> the \<^emph>\<open>inner-syntax\<close>\<^bindex>\<open>syntax!inner\<close>\<^index>\<open>inner syntax|see {syntax, inner}\<close> (\<^ie>, the 
-    syntax for \inlineisar|\<lambda>|-terms in HOL) with its own parametric polymorphism type 
-    checking.
+    syntax for \<open>\<lambda>\<close>-terms in HOL) with its own parametric polymorphism type  checking.
 
 
   On the semantic level, we assume a validation process for an integrated document, where the 
-  semantics of a command is a transformation \inlineisar+\<theta> \<rightarrow> \<theta>+ for some system state 
-  \inlineisar+\<theta>+. This document model can be instantiated with outer-syntax commands for common 
-  text elements, \<^eg>, \inlineisar+section\<Open>...\<Close>+ or \inlineisar+text\<Open>...\<Close>+.  
+  semantics of a command is a transformation \<open>\<theta> \<rightarrow> \<theta>\<close> for some system state \<open>\<theta>\<close>.
+  This document model can be instantiated with outer-syntax commands for common 
+  text elements, \<^eg>, \<^theory_text>\<open>section\<open>...\<close>\<close> or \<^theory_text>\<open>text\<open>...\<close>\<close>.  
   Thus, users can add informal text to a sub-document using a text command:
+
+  @{boxed_theory_text [display] \<open>text\<open>This is a description.\<close>\<close> }
+
   \begin{isar}
     text\<Open>This is a description.\<Close>
   \end{isar}
   This will type-set the corresponding text in, for example, a PDF document.  However, this 
   translation is not necessarily one-to-one: text elements can be enriched by formal, \<^ie>, 
   machine-checked content via *\<open>semantic macros\<close>, called antiquotations\<^bindex>\<open>antiquotation\<close>:
+  
+  @{boxed_theory_text [display]
+  \<open>text\<open> According to the *\<open>reflexivity\<close> axiom @{thm refl}, we obtain in \<Gamma> 
+         for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>
+  }
+
 \begin{isar}
 text\<Open>According to the *\<Open>reflexivity\<Close> axiom <@>{thm refl}, we obtain in \<Gamma> 
       for <@>{term "fac 5"} the result <@>{value "fac 5"}.\<Close>
 \end{isar}
+
+
 which is represented in the final document (\<^eg>, a PDF) by:
 \begin{out}
-According to the \emph{reflexivity} axiom $\mathrm{x = x}$, we obtain in $\Gamma$ for $\operatorname{fac} \text{\textrm{5}}$ the result $\text{\textrm{120}}$.
+According to the \emph{reflexivity} axiom $\mathrm{x = x}$, we obtain in $\Gamma$ 
+for $\operatorname{fac} \text{\textrm{5}}$ the result $\text{\textrm{120}}$.
 \end{out}
-  Semantic macros are partial functions of type \inlineisar+\<theta> \<rightarrow> text+; since they can use the
+
+@{boxed_pdf [display]
+\<open>According to the \emph{reflexivity} axiom $\mathrm{x = x}$, we obtain in $\Gamma$ 
+for $\operatorname{fac} \text{\textrm{5}}$ the result $\text{\textrm{120}}$.\<close>
+ }
+
+  Semantic macros are partial functions of type \<open>\<theta> \<rightarrow> text\<close>; since they can use the
   system state, they can perform all sorts of specific checks or evaluations (type-checks, 
   executions of code-elements, references to text-elements or proven theorems such as 
-  \inlineisar+refl+, which is the reference to the axiom of reflexivity).
+  \<open>refl\<close>, which is the reference to the axiom of reflexivity).
 
   Semantic macros establish \<^emph>\<open>formal content\<close> inside informal content; they can be 
   type-checked before being displayed and can be used for calculations before being 
@@ -133,17 +162,15 @@ figure*["fig:dependency"::figure,relative_width="70",src="''figures/document-hie
 section*[bgrnd21::introduction]\<open>Implementability of the Required Document Model.\<close>
 text\<open> 
   Batch-mode checkers for \<^dof> can be implemented in all systems of the LCF-style prover family, 
-  \<^ie>, systems with a type-checked \inlinesml{term}, and abstract \inlinesml{thm}-type for
-  theorems (protected by a kernel).  This includes, \<^eg>, ProofPower, HOL4, HOL-light, Isabelle, or 
-  Coq and its derivatives. \<^dof> is, however, designed for fast interaction in an IDE. If a user wants
+  \<^ie>, systems with a type-checked \<open>term\<close>, and abstract \<open>thm\<close>-type for theorems 
+  (protected by a kernel).  This includes, \<^eg>, ProofPower, HOL4, HOL-light, Isabelle, or Coq
+  and its derivatives. \<^dof> is, however, designed for fast interaction in an IDE. If a user wants
   to benefit from this experience, only Isabelle and Coq have the necessary infrastructure of 
   asynchronous proof-processing and support by a PIDE~@{cite "wenzel:asynchronous:2014" and 
-  "wenzel:system:2014" and "barras.ea:pervasive:2013"
-  and "faithfull.ea:coqoon:2018"} which in many features over-accomplishes the required 
-  features of \<^dof>. For example, current Isabelle versions offer cascade-syntaxes (different 
-  syntaxes and even parser-technologies which can be nested along the 
-  \inlineisar+\<Open> ... \<Close> + barriers, while \<^dof> actually only requires a two-level 
-  syntax model.
+  "wenzel:system:2014" and "barras.ea:pervasive:2013" and "faithfull.ea:coqoon:2018"} which 
+  in many features over-accomplishes the required  features of \<^dof>. For example, current Isabelle 
+  versions offer cascade-syntaxes (different syntaxes and even parser-technologies which can be 
+  nested along the \<open>\<open>...\<close>\<close> barriers, while \<^dof> actually only requires a two-level syntax model.
 \<close>
 
 figure*["fig:dof-ide"::figure,relative_width="95",src="''figures/cicm2018-combined''"]\<open> 
@@ -167,6 +194,8 @@ text\<open>
   process large (hundreds of theory files) documents.  Isabelle can group sub-documents into sessions,
   \<^ie>, sub-graphs of the document-structure that can be ``pre-compiled'' and loaded
   instantaneously, \<^ie>, without re-processing. \<close>
+
+(* end experiment *)
 
 (*<*) 
 end
