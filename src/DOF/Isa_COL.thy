@@ -375,7 +375,7 @@ fun theory_text_antiquotation name =
 fun enclose_env ctxt block_env body =
   if Config.get ctxt Document_Antiquotation.thy_output_display
   then Latex.environment_block block_env [body]
-  else Latex.block ([Latex.string (block_env ^"inline{")] @ [body] @ [ Latex.string ("}")]);
+  else Latex.block ([Latex.string ("\\inline"^block_env ^"{")] @ [body] @ [ Latex.string ("}")]);
 
 end
 \<close>
