@@ -378,14 +378,14 @@ doc_class text_section = text_element +
    level       :: "int  option"    <=  "None"
 \<close>}
 
-The \<open>level\<close>-attibute \<^index>\<open>level\<close> enables doc-notation support for headers, chapters, sections, and subsections;
-we follow here the \<^LaTeX> terminology on levels to which \<^isadof> is currently targeting at.
+The \<open>level\<close>-attibute \<^index>\<open>level\<close> enables doc-notation support for headers, chapters, sections, and 
+subsections; we follow here the \<^LaTeX> terminology on levels to which \<^isadof> is currently targeting at.
 The values are interpreted accordingly to the \<^LaTeX> standard.
 
-\<^enum> part     \<^index>\<open>part\<close>               \<^bigskip>\<^bigskip>  \<open>Some -1\<close>
-\<^enum> chapter   \<^index>\<open>chapter\<close>           \<^bigskip>\<^bigskip>  \<open>Some 0\<close> 
-\<^enum> section    \<^index>\<open>section\<close>          \<^bigskip>\<^bigskip>  \<open>Some 1\<close> 
-\<^enum> subsection  \<^index>\<open>subsection\<close>      \<^bigskip>\<^bigskip>  \<open>Some 2\<close> 
+\<^enum> part          \<^index>\<open>part\<close>          \<^bigskip>\<^bigskip>  \<open>Some -1\<close>
+\<^enum> chapter       \<^index>\<open>chapter\<close>       \<^bigskip>\<^bigskip>  \<open>Some 0\<close> 
+\<^enum> section       \<^index>\<open>section\<close>       \<^bigskip>\<^bigskip>  \<open>Some 1\<close> 
+\<^enum> subsection    \<^index>\<open>subsection\<close>    \<^bigskip>\<^bigskip>  \<open>Some 2\<close> 
 \<^enum> subsubsection \<^index>\<open>subsubsection\<close> \<^bigskip>\<^bigskip>  \<open>Some 3\<close> 
 
 Additional means assure that the following invariant is maintained in a document 
@@ -397,12 +397,30 @@ conforming to @{theory \<open>Isabelle_DOF.scholarly_paper\<close>}:
 text\<open> The rest of the ontology introduces concepts for \<open>introductions\<close>, \<open>conclusion\<close>, \<open>related_work\<close>,
 \<open>bibliography\<close> etc. More details can be found in \<close>
 
-subsection\<open>Writing Academic Publications I \<close>
-text*[xxx::technical, main_author = "Some bu"]\<open>The CSP paper. New screenshots to init sequence
-required. Focus: Mathematical content. Definition, theorem, and citations...\<close>
+subsection\<open>Writing Academic Publications `I : A Mathematics Text \<close>
+text*[csp_paper_synthesis::technical, main_author = "Some bu"]\<open>We present a typical mathematical
+paper focussing on its form, not refering in any sense to its content which is out of scope here.
+As mentioned before, we chose the paper~@{cite "taha.ea:philosophers:2020"} for this purpose.
+The corpus of the beginning looks like this (the setup seaquence is described later):\<close>
+(* . Focus: Mathematical content. Definition, theorem, and citations... *)
+figure*[fig0::figure,spawn_columns=False,relative_width="95",src="''figures/header_CSP_source.png''"]
+       \<open> A mathematics paper as a document source ... \<close>  
+text\<open>The document build process converts this to the following \<^pdf>-output:\<close>
+
+figure*[fig0B::figure,spawn_columns=False,relative_width="95",src="''figures/header_CSP_pdf.png''"]
+       \<open> \ldots and as its resulting \<^pdf>-output. \<close>  
+
+text\<open>Recall that the standard syntax for a text-element in \<^isadof> is 
+\<^theory_text>\<open>text*[<id>::<class>,<attrs>]\<open> ... text ...\<close>\<close>, but there are a few built-in abbreviations like
+\<^theory_text>\<open>title*[<id>,<attrs>]\<open> ... text ...\<close>\<close> that provide special command-level syntax for text-elements. 
+The other text-elements provide the authors and the abstract as specified by their class-id referring
+to the \<^theory_text>\<open>doc_class\<close>es of \<^verbatim>\<open>scholarly_paper\<close>; we say that these text elements are \<^emph>\<open>instances\<close> 
+\<^bindex>\<open>instance\<close> of the \<^theory_text>\<open>doc_class\<close>es \<^bindex>\<open>doc_class\<close> of the underlying ontology. \<close>
+
+text\<open>The paper proceeds by providing instances for introduction, technical sections, examples, TODO\<close>
 
 subsection\<open>Writing Academic Publications II (somewhat outdated)\<close>
-text\<open> In our next example we concentrate on non-text-elements. Figures...
+text\<open> In our next example we concentrate on non-text-elements. Focus on Figures...
 
 \<close>
 

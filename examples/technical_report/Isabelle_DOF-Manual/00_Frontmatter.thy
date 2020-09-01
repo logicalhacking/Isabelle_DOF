@@ -29,6 +29,7 @@ setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>     "\\eg"
 setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>TeXLive\<close>"\\TeXLive"
        #> DOF_lib.define_shortcut \<^binding>\<open>BibTeX\<close> "\\BibTeX{}"
        #> DOF_lib.define_shortcut \<^binding>\<open>LaTeX\<close>  "\\LaTeX{}"
+       #> DOF_lib.define_shortcut \<^binding>\<open>pdf\<close>    "PDF"
        #> DOF_lib.define_shortcut \<^binding>\<open>pdftex\<close> "\\pdftex{}"
 \<close>
 
