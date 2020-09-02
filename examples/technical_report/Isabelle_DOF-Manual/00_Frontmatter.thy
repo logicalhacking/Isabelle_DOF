@@ -23,7 +23,8 @@ setup \<open>DOF_lib.define_shortcut    \<^binding>\<open>dof\<close>    "\\dof"
 setup \<open>DOF_lib.define_shortcut    \<^binding>\<open>isadof\<close> "\\isadof"\<close>
 setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>     "\\eg"  
           (* Latin: „exempli gratia“  meaning  „for example“. *)
-       #> DOF_lib.define_shortcut \<^binding>\<open>ie\<close>     "\\ie"\<close> 
+       #> DOF_lib.define_shortcut \<^binding>\<open>ie\<close>     "\\ie"
+       #> DOF_lib.define_shortcut \<^binding>\<open>etc\<close>     "\\etc"\<close> 
           (* Latin: „id est“  meaning „that is to say“. *) 
       (* this is an alternative style for macro definitions equivalent to setup ... setup  ...*)
 setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>TeXLive\<close>"\\TeXLive"

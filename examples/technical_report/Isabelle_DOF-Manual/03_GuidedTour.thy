@@ -411,13 +411,45 @@ figure*[fig0B::figure,spawn_columns=False,relative_width="95",src="''figures/hea
        \<open> \ldots and as its resulting \<^pdf>-output. \<close>  
 
 text\<open>Recall that the standard syntax for a text-element in \<^isadof> is 
-\<^theory_text>\<open>text*[<id>::<class>,<attrs>]\<open> ... text ...\<close>\<close>, but there are a few built-in abbreviations like
+\<^theory_text>\<open>text*[<id>::<class_id>,<attrs>]\<open> ... text ...\<close>\<close>, but there are a few built-in abbreviations like
 \<^theory_text>\<open>title*[<id>,<attrs>]\<open> ... text ...\<close>\<close> that provide special command-level syntax for text-elements. 
 The other text-elements provide the authors and the abstract as specified by their class-id referring
 to the \<^theory_text>\<open>doc_class\<close>es of \<^verbatim>\<open>scholarly_paper\<close>; we say that these text elements are \<^emph>\<open>instances\<close> 
-\<^bindex>\<open>instance\<close> of the \<^theory_text>\<open>doc_class\<close>es \<^bindex>\<open>doc_class\<close> of the underlying ontology. \<close>
+\<^bindex>\<open>instance\<close> of the \<^theory_text>\<open>doc_class\<close>es \<^bindex>\<open>doc\_class\<close> of the underlying ontology. \<close>
 
-text\<open>The paper proceeds by providing instances for introduction, technical sections, examples, TODO\<close>
+text\<open>The paper proceeds by providing instances for introduction, technical sections, examples, \<^etc>.
+We would like to concentrate on one --- mathematical paper oriented --- detail in the ontology 
+\<^verbatim>\<open>scholarly_paper\<close>: 
+@{theory_text [display]
+\<open>doc_class technical = text_section +
+   . . .
+
+type_synonym tc = technical (* technical content *)
+
+datatype math_content_class = "defn"   | "axm"  | "thm"  | "lem" | "cor" | "prop" | ...
+                           
+doc_class math_content = tc +
+   ...
+
+doc_class "definition"  = math_content +
+   mcc           :: "math_content_class" <= "defn" 
+   ...
+
+doc_class "theorem"     = math_content +
+   mcc           :: "math_content_class" <= "thm" 
+   ... 
+\<close>}\<close>
+
+text\<open>The class \<^verbatim>\<open>technical\<close> regroups a number of text-elements that contain typical 
+"technical content" in mathematical or engineering papers: code, definitions, theorems, 
+lemmas, examples. From this class, the more stricter class of @{typ \<open>math_content\<close>} is derived,
+which is grouped into @{typ "definition"}s and @{typ "theorem"}s (the details of these
+class definitions are omitted here). Note, however, that class identifiers can be abbreviated by 
+standard \<^theory_text>\<open>type_synonym\<close>s for convenience and enumeration types can be defined by the 
+standard inductive \<^theory_text>\<open>datatype\<close> definition mechanism in Isabelle, since any HOL type is admitted
+for attibute declarations. Vice-versa, document class definitions imply a corresponding HOL type 
+definition. \<close>
+
 
 subsection\<open>Writing Academic Publications II (somewhat outdated)\<close>
 text\<open> In our next example we concentrate on non-text-elements. Focus on Figures...
@@ -657,6 +689,7 @@ safety-related condition; however, this happens in a context where general \<^em
 are listed. \<^isadof>'s checks establish that this is legal in the given ontology. 
 \<close>    
 
+(*
 section*[math_exam::example]\<open>Writing Exams (math\_exam)\<close> 
 subsection\<open>The Math Exam Example\<close>
 text\<open> 
@@ -779,6 +812,7 @@ In our scenario this sample proofs are completely \<^emph>\<open>intern\<close>,
 students but just additional material for the internal review process of the exam.
 \<close>
 
+*)
 
 section\<open>Style Guide\<close>
 text\<open>
