@@ -87,16 +87,18 @@ text\<open>
   will type-set the different languages in different styles. In particular, we will use 
   \<^item> a light-blue background for input written in Isabelle's Isar language, \<^eg>:
 
-    \<^boxed_isar>\<open>lemma refl: "x = x"\<close>
 
     \begin{isar}
     lemma refl: "x = x" 
       by simp
     \end{isar}
+
 %    @ {boxed_isar [display]
 %      \<open>lemma refl: "x = x" 
 %         by simp\<close>}
-    
+
+    \<^boxed_isar>\<open>lemma refl: "x = x"\<close>
+
     @{boxed_theory_text [display]
     \<open>lemma refl: "x = x" 
       by simp\<close>}
