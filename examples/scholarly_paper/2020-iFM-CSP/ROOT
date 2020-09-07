@@ -4,7 +4,6 @@ session "2020-iFM-csp" = "Isabelle_DOF" +
     "paper"
   document_files
     "isadof.cfg"
-    "lstisadof.sty"
     "root.bib"
     "preamble.tex"
     "build"
