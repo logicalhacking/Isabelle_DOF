@@ -1,0 +1,10 @@
+session "2020-iFM-csp" = "Isabelle_DOF" +
+  options [document = pdf, document_output = "output"]
+  theories
+    "paper"
+  document_files
+    "isadof.cfg"
+    "lstisadof.sty"
+    "root.bib"
+    "preamble.tex"
+    "build"
