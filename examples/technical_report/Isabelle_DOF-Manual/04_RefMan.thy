@@ -29,13 +29,13 @@ text\<open>
 
 section*[infrastructure::text_section]\<open>Overview and Technical Infrastructure\<close>
 text\<open>
-  \isadof is embedded in the underlying generic document model of Isabelle as described in
+  \<^isadof> is embedded in the underlying generic document model of Isabelle as described in
   @{docitem "dof"}. Recall that the document language can be extended dynamically, \ie, new
   \<open>user-defined\<close> can be introduced at run-time.  This is similar to the definition of new functions 
-  in an interpreter. \isadof as a system plugin is is a number of new command definitions in 
+  in an interpreter. \<^isadof> as a system plugin is is a number of new command definitions in 
   Isabelle's document model.
 
-  \isadof consists consists basically of four components:
+  \<^isadof> consists consists basically of four components:
   \<^item> an own \<^emph>\<open>family of text-elements\<close> such as @{command "title*"}, @{command "chapter*"}  
     @{command "text*"}, etc., which can be annotated with meta-information defined in the 
     underlying  ontology definition and allow to build a \<^emph>\<open>core\<close> document,
@@ -61,11 +61,11 @@ subsection\<open>Ontologies\<close>
 text\<open>
   The document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not use Isabelle definitions or proofs for checking the 
   formal content---this manual is actually an example of a document not containing any proof.
-  Consequently, the document editing and checking facility provided by \isadof addresses the needs 
+  Consequently, the document editing and checking facility provided by \<^isadof> addresses the needs 
   of common users for an advanced text-editing environment, neither modeling nor proof knowledge is 
   inherently required.
 
-  We expect authors of ontologies to have experience in the use of \isadof, basic modeling (and, 
+  We expect authors of ontologies to have experience in the use of \<^isadof>, basic modeling (and, 
   potentially, some basic SML programming) experience, basic \LaTeX{} knowledge, and, last but not 
   least, domain knowledge of the ontology to be modeled. Users with experience in UML-like 
   meta-modeling will feel familiar with most concepts; however, we expect  no need for insight in 
@@ -95,7 +95,7 @@ text\<open>
   Developing a new ontology ``\inlinebash|foo|'' requires, from a technical perspective, the 
   following steps:
   \<^item> create a new sub-directory \inlinebash|foo| in the directory \inlinebash|src/ontologies|
-  \<^item> definition of the ontological concepts, using \isadof's Ontology Definition Language (ODL), in 
+  \<^item> definition of the ontological concepts, using \<^isadof>'s Ontology Definition Language (ODL), in 
     a new theory file \path{src/ontologies/foo/foo.thy}.  
   \<^item> definition of the document representation for the ontological concepts in a \LaTeX-style 
     file \path{src/ontologies/foo/DOF-foo.sty}
@@ -146,8 +146,8 @@ text\<open>
 
 
 text\<open>
-  As the document generation of \isadof is based 
-  on \LaTeX, the \isadof document templates can (and should) make use of any \LaTeX-classes provided
+  As the document generation of \<^isadof> is based 
+  on \LaTeX, the \<^isadof> document templates can (and should) make use of any \LaTeX-classes provided
   by publishers or standardization bodies.
 \<close>
 
@@ -177,10 +177,10 @@ text\<open>
 \<close>
 
 text\<open>
-  The \isadof ontology specification language consists basically on a notation for document classes, 
+  The \<^isadof> ontology specification language consists basically on a notation for document classes, 
   where the attributes were typed with HOL-types and can be instantiated by terms HOL-terms, \ie, 
   the actual parsers and type-checkers of the Isabelle system were reused. This has the particular 
-  advantage that \isadof commands can be arbitrarily mixed with Isabelle/HOL commands providing the 
+  advantage that \<^isadof> commands can be arbitrarily mixed with Isabelle/HOL commands providing the 
   machinery for type declarations and term specifications such
   as enumerations. In particular, document class definitions provide:
   \<^item> a HOL-type for each document class as well as inheritance, 
@@ -196,7 +196,7 @@ text\<open>
   \<^boxed_theory_text>\<open>term\<close>'s, and \<^boxed_theory_text>\<open>thm\<close>'s reflecting internal Isabelle's  internal types for 
   these entities; when denoted in HOL-terms to instantiate an attribute, for example, there is a  
   specific syntax (called \<^emph>\<open>inner syntax antiquotations\<close>) that is checked by 
-  \isadof for consistency.
+  \<^isadof> for consistency.
 
   Document classes\bindex{document class}\index{class!document@see document class} support 
   \<^boxed_theory_text>\<open>where\<close>-clauses\index{where clause} containing a regular expression over class 
@@ -222,7 +222,7 @@ text\<open>
   syntax and semantics of the specification constructs that are most likely relevant for the 
   developer of ontologies (for more details, see~@{cite "wenzel:isabelle-isar:2020"}.  Our 
   presentation is a simplification of the original sources following the needs of ontology developers 
-  in \isadof:
+  in \<^isadof>:
   \<^item> \<open>name\<close>:\index{name@\<open>name\<close>}
      with the syntactic category of \<open>name\<close>'s we refer to alpha-numerical identifiers 
      (called \<open>short_id\<close>'s in @{cite "wenzel:isabelle-isar:2020"}) and identifiers
@@ -264,7 +264,7 @@ text\<open>
   pecifications~@{cite "wenzel:isabelle-isar:2020"}, and abstract type declarations.
 \<close>
 
-text\<open>Note that \isadof works internally with fully qualified names in order to avoid 
+text\<open>Note that \<^isadof> works internally with fully qualified names in order to avoid 
 confusions occurring otherwise, for example, in disjoint class hierarchies. This also extends to 
 names for \<^boxed_theory_text>\<open>doc_class\<close>es, which must be representable as type-names as well since they
 can be used in attribute types. Since theory names are lexically very liberal (\<^boxed_theory_text>\<open>0.thy\<close>
@@ -302,8 +302,8 @@ A document class\bindex{document class} can be defined using the @{command "doc_
 \<close> 
 
 text\<open>
-  \isadof provides a default document representation (\ie, content and layout of the generated 
-  PDF) that only prints the main text, omitting all attributes. \isadof provides the 
+  \<^isadof> provides a default document representation (\ie, content and layout of the generated 
+  PDF) that only prints the main text, omitting all attributes. \<^isadof> provides the 
   \inlineltx|\newisadof[]{}|\index{newisadof@\inlineltx{\newisadof}}\index{document class!PDF}
   command for defining a dedicated layout for a document class in \LaTeX. Such a document 
   class-specific \LaTeX-definition can not only provide a specific layout (\eg, a specific 
@@ -330,7 +330,7 @@ text\<open>
   \inlineltx|\begin{isarmarkup}...\end{isamarkup}|-environment, to ensure the correct context 
   within Isabelle's \LaTeX-setup. 
 
-  Moreover, \isadof also provides the following two variants of \inlineltx|\newisadof{}[]{}|:
+  Moreover, \<^isadof> also provides the following two variants of \inlineltx|\newisadof{}[]{}|:
   \<^item>  \inlineltx|\renewisadof{}[]{}|\index{renewisadof@\inlineltx{\renewisadof}} for re-defining 
      (over-writing) an already defined command, and  
   \<^item>  \inlineltx|\provideisadof{}[]{}|\index{provideisadof@\inlineltx{\provideisadof}} for providing 
@@ -342,7 +342,7 @@ text\<open>
   underscore ``\_'') that do have a special meaning in \LaTeX.  
   Moreover, as usual, special care has to be taken for commands that write into aux-files
   that are included in a following \LaTeX-run. For such complex examples, we refer the interested 
-  reader, in general, to  the style files provided in the \isadof distribution. In particular 
+  reader, in general, to  the style files provided in the \<^isadof> distribution. In particular 
   the definitions of the concepts \<^boxed_theory_text>\<open>title*\<close> and \<^boxed_theory_text>\<open>author*\<close> in the file 
   \path{ontologies/scholarly_paper/DOF-scholarly_paper.sty} show examples of protecting special 
   characters in definitions that need to make use of a entries in an aux-file. 
@@ -350,18 +350,18 @@ text\<open>
 
 subsection\<open>Common Ontology Library (COL)\<close>
 
-text\<open>\isadof uses the concept of implicit abstract classes (or: \emph{shadow classes}).
+text\<open>\<^isadof> uses the concept of implicit abstract classes (or: \emph{shadow classes}).
 These refer to the set of possible \<^boxed_theory_text>\<open>doc_class\<close> declarations that posses a number
 of attributes with their types in common. Shadow classes represent an implicit requirement
 (or pre-condition) on a given class to posses these attributes in order to work properly
-for certain \isadof commands. 
+for certain \<^isadof> commands. 
 
-shadow classes will find concrete instances in COL, but \isadof text elements do not \emph{depend}
+shadow classes will find concrete instances in COL, but \<^isadof> text elements do not \emph{depend}
 on our COL definitions: Ontology developers are free to build own class instances for these 
 shadow classes, with own attributes and, last not least, own definitions of invariants independent
 from ours.
 
-In particular, these shadow classes are used at present in  \isadof:
+In particular, these shadow classes are used at present in  \<^isadof>:
 @{boxed_theory_text [display]\<open>
 DOCUMENT_ALIKES = 
    level         :: "int  option"    <=  "None" 
@@ -378,7 +378,7 @@ These shadow-classes correspond to semantic macros
  @{ML "Onto_Macros.assertion_cmd'"}, and
  @{ML "Onto_Macros.enriched_formal_statement_command"}.\<close>
 
-text\<open>  \isadof provides a Common Ontology Library (COL)\index{Common Ontology Library@see COL}\bindex{COL}
+text\<open>  \<^isadof> provides a Common Ontology Library (COL)\index{Common Ontology Library@see COL}\bindex{COL}
   that introduces ontology concepts that are either sample instances for shadow classes as we use
   them in our own document generation processes or, in some cases, are 
   so generic that they we expect them to be useful for all types of documents (figures, for example). 
@@ -502,7 +502,7 @@ subsection*["text-elements"::technical]\<open>Annotatable Top-level Text-Element
 text\<open>
   While the default user interface for class definitions via the  
   \<^boxed_theory_text>\<open>text*\<open> ... \<close>\<close>-command allow to access all features of the document 
-  class, \isadof provides short-hands for certain, widely-used, concepts such as 
+  class, \<^isadof> provides short-hands for certain, widely-used, concepts such as 
   \<^boxed_theory_text>\<open>title*\<open> ... \<close>\<close> or \<^boxed_theory_text>\<open>section*\<open> ... \<close>\<close>, \eg:
 
 @{boxed_theory_text [display]\<open>
@@ -516,7 +516,7 @@ text\<open>
 \<close>}
 
   In general, all standard text-elements from the Isabelle document model such
-  as @{command "chapter"}, @{command "section"}, @{command "text"}, have in the \isadof
+  as @{command "chapter"}, @{command "section"}, @{command "text"}, have in the \<^isadof>
   implementation their counterparts in the family of text-elements that are ontology-aware,
   \ie, they dispose on a meta-argument list that allows to define that a test-element
   that has an identity as a text-object labelled as \<open>obj_id\<close>, belongs to a document class 
@@ -554,7 +554,7 @@ text\<open>
   extending the dispatcher of the \LaTeX-backend. For the details of defining top-level 
   commands, we refer the reader to the Isar manual~@{cite "wenzel:isabelle-isar:2020"}. 
   Here, we only give a brief example how the \<^boxed_theory_text>\<open>section*\<close>-command is defined; we 
-  refer the reader to the source code of \isadof for details.
+  refer the reader to the source code of \<^isadof> for details.
 
   First, new top-level keywords need to be declared in the \<^boxed_theory_text>\<open>keywords\<close>-section of 
   the theory header defining new keywords:
@@ -610,10 +610,10 @@ schemata:
 
 subsection*["inspections-commands"::technical]\<open>Status and Inspection Commands\<close>
 text\<open>
-\<^item> \isadof\<open>change_status_command\<close> :
+\<^item> \<^isadof> \<open>change_status_command\<close> :
   \<^rail>\<open>  (@@{command "update_instance*"} '[' rich_meta_args ']')
        |  (@@{command "declare_reference*"} (obj_id ('::' class_id)))\<close>
-\<^item> \isadof\<open>inspection_command\<close> :
+\<^item> \<^isadof> \<open>inspection_command\<close> :
    \<^rail>\<open>  @@{command "print_doc_classes"}
         |  @@{command "print_doc_items"} 
         |  @@{command "check_doc_global"}\<close>
@@ -744,7 +744,7 @@ fun check_result_inv oid {is_monitor:bool} ctxt =
 \end{sml}
 
   The \inlinesml{setup}-command (last line) registers the \<^boxed_theory_text>\<open>check_result_inv\<close> function 
-  into the \isadof kernel, which activates any creation or modification of an instance of 
+  into the \<^isadof> kernel, which activates any creation or modification of an instance of 
   \<^boxed_theory_text>\<open>result\<close>. We cannot replace \<^boxed_theory_text>\<open>compute_attr_access\<close> by the corresponding 
   antiquotation \<^boxed_theory_text>\<open>@{docitem_value kind::oid}\<close>, since \<^boxed_theory_text>\<open>oid\<close> is bound to a 
   variable here and can therefore not be statically expanded.
@@ -769,7 +769,7 @@ text\<open>
   (\autoref{lst:config-start}-\ref{lst:config-end}). The new template should be stored in 
   \path{src/document-templates} and its file name should start with the prefix \path{root-}. After
   adding a new template, call the \inlinebash{install} script (see @{docitem "infrastructure"}  
-  The common structure of an \isadof document template looks as follows: 
+  The common structure of an \<^isadof> document template looks as follows: 
 
 \begin{ltx}[escapechar=ë, numbers=left,numberstyle=\tiny,xleftmargin=5mm]
 \documentclass{article}        % The LaTeX-class of your template ë\label{lst:dc}ë  
@@ -814,7 +814,7 @@ text\<open>
 subsubsection\<open>Getting Started\<close>
 text\<open>
   In general, we recommend to create a test project (\eg, using \inlinebash|isabelle mkroot_DOF|)
-  to develop new document templates or ontology representations. The default setup of the \isadof
+  to develop new document templates or ontology representations. The default setup of the \<^isadof>
   build system generated a \path{output/document} directory with a self-contained \LaTeX-setup. In 
   this directory, you can directly use \LaTeX{} on the main file, called \path{root.tex}:
 
@@ -831,7 +831,7 @@ text\<open>
 subsubsection\<open>Truncated Warning and Error Messages\<close>
 text\<open>
   By default, \LaTeX{} cuts of many warning or error messages after 79 characters. Due to the 
-  use of full-qualified names in \isadof, this can often result in important information being 
+  use of full-qualified names in \<^isadof>, this can often result in important information being 
   cut off. Thus, it can be very helpful to configure \LaTeX{} in such a way that it prints 
   long error or warning messages. This can easily be done on the command line for individual 
   \LaTeX{} invocations: 
@@ -844,7 +844,7 @@ text\<open>
 subsubsection\<open>Deferred Declaration of Information\<close>
 text\<open>
   During document generation, sometimes, information needs to be printed prior to its 
-  declaration in a \isadof theory. This violation the declaration-before-use-principle
+  declaration in a \<^isadof> theory. This violation the declaration-before-use-principle
   requires that information is written into an auxiliary file during the first run of \LaTeX{}
   so that the information is available at further runs of \LaTeX{}. While, on the one hand, 
   this is a standard process (\eg, used for updating references), implementing it correctly
@@ -898,7 +898,7 @@ can now be used in the definition of the representation of the concept
 \<^boxed_theory_text>\<open>text.scholarly_paper.author\<close>, which writes the collected information in the 
 job's aux-file. The intermediate step of writing this information into the job's aux-file is necessary,
 as the author and affiliation information is required right at the begin of the document 
-(\ie, when \LaTeX's \inlineltx|\maketitle| is invoked) while  \isadof allows to define authors at 
+(\ie, when \LaTeX's \inlineltx|\maketitle| is invoked) while  \<^isadof> allows to define authors at 
 any place within a document:
 
 \begin{ltx}

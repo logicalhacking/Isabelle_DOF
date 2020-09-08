@@ -18,17 +18,17 @@ begin
 (*>*)
 
 
-chapter*[isadof_developers::text_section]\<open>Extending \isadof\<close>
+chapter*[isadof_developers::text_section]\<open>Extending \<^isadof>\<close>
 text\<open>
-  In this chapter, we describe the basic implementation aspects of \isadof, which is based on 
+  In this chapter, we describe the basic implementation aspects of \<^isadof>, which is based on 
   the following design-decisions:
-  \<^item> the entire \isadof is a ``pure add-on,'' \ie, we deliberately resign on the possibility to 
+  \<^item> the entire \<^isadof> is a ``pure add-on,'' \ie, we deliberately resign on the possibility to 
     modify Isabelle itself.
-  \<^item> we made a small exception to this rule: the \isadof package modifies in its installation 
+  \<^item> we made a small exception to this rule: the \<^isadof> package modifies in its installation 
     about 10 lines in the \LaTeX-generator (\path{src/patches/thy_output.ML}).
   \<^item> we decided to make the markup-generation by itself to adapt it as well as possible to the 
     needs of tracking the linking in documents.
-  \<^item> \isadof is deeply integrated into the Isabelle's IDE (PIDE) to give immediate feedback during 
+  \<^item> \<^isadof> is deeply integrated into the Isabelle's IDE (PIDE) to give immediate feedback during 
     editing and other forms of document evolution.
 \<close>
 text\<open>
@@ -56,13 +56,13 @@ text*[xxx::SML]
 
 
 
-section\<open>\isadof: A User-Defined Plugin in Isabelle/Isar\<close>
+section\<open>\<^isadof>: A User-Defined Plugin in Isabelle/Isar\<close>
 text\<open> 
   A plugin in Isabelle starts with defining the local data and registering it in the framework. As 
   mentioned before, contexts are structures with independent cells/compartments having three
   primitives \inlinesml+init+, \inlinesml+extend+ and \inlinesml+merge+. Technically this is done by 
   instantiating a functor \inlinesml+Generic_Data+, and the following fairly typical code-fragment 
-  is drawn from \isadof:
+  is drawn from \<^isadof>:
 
 \begin{sml}
 structure Data = Generic_Data
@@ -220,7 +220,7 @@ fun check_result_inv oid {is_monitor:bool} ctxt =
 \end{sml}
 
   The \inlinesml{setup}-command (last line) registers the \<^boxed_theory_text>\<open>check_result_inv\<close> function 
-  into the \isadof kernel, which activates any creation or modification of an instance of
+  into the \<^isadof> kernel, which activates any creation or modification of an instance of
   \<^boxed_theory_text>\<open>result\<close>.  We cannot replace \<^boxed_theory_text>\<open>compute_attr_access\<close> by the corresponding 
   antiquotation \<^boxed_theory_text>\<open>@{docitem_value kind::oid}\<close>, since \<^boxed_theory_text>\<open>oid\<close> is
   bound to a variable here and can therefore not be statically expanded.
@@ -230,7 +230,7 @@ section\<open>Implementing Monitors\<close>
 text\<open>
   Since monitor-clauses have a regular expression syntax, it is natural to implement them as 
   deterministic automata. These are stored in the  \<^boxed_theory_text>\<open>docobj_tab\<close> for monitor-objects 
-  in the \isadof component. We implemented the functions:
+  in the \<^isadof> component. We implemented the functions:
 
 \begin{sml}
    val  enabled : automaton -> env -> cid list
@@ -246,10 +246,10 @@ text\<open>
   is, in large parts, generated from a formalization of functional automata~\cite{nipkow.ea:functional-Automata-afp:2004}.
 \<close>
 
-section\<open>The \LaTeX-Core of \isadof\<close>
+section\<open>The \LaTeX-Core of \<^isadof>\<close>
 text\<open>
-  The \LaTeX-implementation of \isadof heavily relies on the 
-  ``keycommand''~@{cite "chervet:keycommand:2010"} package. In fact, the core \isadof \LaTeX-commands
+  The \LaTeX-implementation of \<^isadof> heavily relies on the 
+  ``keycommand''~@{cite "chervet:keycommand:2010"} package. In fact, the core \<^isadof> \LaTeX-commands
   are just wrappers for the corresponding commands from the keycommand package:
 
 \begin{ltx}
@@ -261,9 +261,9 @@ text\<open>
   \expandafter\providekeycommand\csname isaDof.#1\endcsname}%
 \end{ltx}
 
-  The \LaTeX-generator of \isadof maps each \<^boxed_theory_text>\<open>doc_item\<close> to an \LaTeX-environment (recall
+  The \LaTeX-generator of \<^isadof> maps each \<^boxed_theory_text>\<open>doc_item\<close> to an \LaTeX-environment (recall
   @{docitem "text-elements"}). As generic \<^boxed_theory_text>\<open>doc_item\<close> are derived from the text element, 
-  the enviornment \inlineltx|{isamarkuptext*}| builds the core of \isadof's \LaTeX{} implementation. 
+  the enviornment \inlineltx|{isamarkuptext*}| builds the core of \<^isadof>'s \LaTeX{} implementation. 
   For example, the @{docitem "ass123"} from page \pageref{ass123} is mapped to
 
 \begin{ltx}
@@ -282,7 +282,7 @@ This environment is mapped to a plain \LaTeX command via (again, recall @{docite
   \NewEnviron{isamarkuptext*}[1][]{\isaDof[env={text},#1]{\BODY}}
 \end{ltx}
 
-For the command-based setup, \isadof provides a dispatcher that selects the most specific 
+For the command-based setup, \<^isadof> provides a dispatcher that selects the most specific 
 implementation for a given \<^boxed_theory_text>\<open>doc_class\<close>:
 
 \begin{ltx}
