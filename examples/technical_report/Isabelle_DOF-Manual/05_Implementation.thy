@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019      The University of Exeter 
- *               2018-2019 The University of Paris-Saclay
+ *               2019-2020 University of Exeter 
+ *               2018-2019 University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -93,7 +93,7 @@ in  (Data.map(apfst decl)(ctxt)
               error("multiple declaration of document reference"))
 end
 \end{sml}                                            
-  where \inlineisar+Data.map+ is the update function resulting from the instantiation of the 
+  where \<^boxed_theory_text>\<open>Data.map\<close> is the update function resulting from the instantiation of the 
   functor \inlinesml|Generic_Data|. This code fragment uses operations from a library structure 
   \inlinesml+Symtab+ that were used to update the appropriate table for document objects in
   the plugin-local state. Possible exceptions to the update operation were mapped to a system-global 
@@ -125,7 +125,7 @@ val attributes =(Parse.$$$ "[" |-- (reference
                    |--(Parse.enum ","attribute)))[]))--| Parse.$$$ "]"              
 \end{sml}                                            
 
-  The ``model'' \inlineisar+declare_reference_opn+ and ``new'' \inlineisar+attributes+ parts were 
+  The ``model'' \<^boxed_theory_text>\<open>declare_reference_opn\<close> and ``new'' \<^boxed_theory_text>\<open>attributes\<close> parts were 
   combined via the piping operator and registered in the Isar toplevel:
 
 \begin{sml}
@@ -144,7 +144,7 @@ declare_reference [lal::requirement, alpha="main", beta=42]
 \<close>}
 
   The construction also generates implicitly some markup information; for example, when hovering
-  over the \inlineisar|declare_reference| command in the IDE, a popup window with the text: 
+  over the \<^boxed_theory_text>\<open>declare_reference\<close> command in the IDE, a popup window with the text: 
   ``declare document reference'' will appear.
 \<close>
 
@@ -162,7 +162,7 @@ val _ = Theory.setup(
           ML_Antiquotation.inline  <@>{binding docitem_value} 
                                    ML_antiq_docitem_value)
 \end{sml}
-  the text antiquotation \inlineisar+docitem+ is declared and bounded to a parser for the argument 
+  the text antiquotation \<^boxed_theory_text>\<open>docitem\<close> is declared and bounded to a parser for the argument 
   syntax and the overall semantics. This code defines a generic antiquotation to be used in text 
   elements such as
 
@@ -170,34 +170,34 @@ val _ = Theory.setup(
 text\<open>as defined in <@>{docitem \<open>d1\<close>} ...\<close>
 \<close>}
 
-  The subsequent registration \inlineisar+docitem_value+ binds code to a ML-antiquotation usable 
+  The subsequent registration \<^boxed_theory_text>\<open>docitem_value\<close> binds code to a ML-antiquotation usable 
   in an ML context for user-defined extensions; it permits the access to the current ``value'' 
   of document element, \ie; a term with the entire update history.
 
   It is possible to generate antiquotations \emph{dynamically}, as a consequence of a class 
-  definition in ODL. The processing of the ODL class \inlineisar+d$$efinition+ also \emph{generates}
-  a text antiquotation \inlineisar+<@>{definition \<open>d1\<close>}+, which works similar to 
-  \inlineisar+<@>{docitem \<open>d1\<close>}+ except for an additional type-check that assures that 
-  \inlineisar+d1+ is a reference to a definition. These type-checks support the subclass hierarchy.
+  definition in ODL. The processing of the ODL class \<^boxed_theory_text>\<open>definition\<close> also \emph{generates}
+  a text antiquotation \<^boxed_theory_text>\<open>@{definition \<open>d1\<close>}\<close>, which works similar to 
+  \<^boxed_theory_text>\<open>@{docitem \<open>d1\<close>}\<close> except for an additional type-check that assures that 
+  \<^boxed_theory_text>\<open>d1\<close> is a reference to a definition. These type-checks support the subclass hierarchy.
 \<close>
 
 section\<open>Implementing Second-level Type-Checking\<close>
 text\<open>
   On expressions for attribute values, for which we chose to use HOL syntax to avoid that users 
   need to learn another syntax, we implemented an own pass over type-checked terms. Stored in the 
-  late-binding table \inlineisar+ISA_transformer_tab+, we register for each inner-syntax-annotation 
+  late-binding table \<^boxed_theory_text>\<open>ISA_transformer_tab\<close>, we register for each inner-syntax-annotation 
   (ISA's), a function of type
 
 \begin{sml}
    theory -> term * typ * Position.T -> term option
 \end{sml}
 
-  Executed in a second pass of term parsing, ISA's may just return \inlineisar+None+. This is 
-  adequate for ISA's just performing some checking in the logical context \inlineisar+theory+; 
+  Executed in a second pass of term parsing, ISA's may just return \<^boxed_theory_text>\<open>None\<close>. This is 
+  adequate for ISA's just performing some checking in the logical context \<^boxed_theory_text>\<open>theory\<close>; 
   ISA's of this kind report errors  by exceptions. In contrast, \<^emph>\<open>transforming\<close> ISA's will 
   yield a term; this is adequate, for example, by replacing a string-reference to some term denoted 
   by it. This late-binding table is also used to generate standard inner-syntax-antiquotations from 
-  a \inlineisar+doc_class+.
+  a \<^boxed_theory_text>\<open>doc_class\<close>.
 \<close>
 
 section\<open>Programming Class Invariants\<close>
@@ -219,30 +219,30 @@ fun check_result_inv oid {is_monitor:bool} ctxt =
                                 "tiny_cert.result" check_result_inv)
 \end{sml}
 
-  The \inlinesml{setup}-command (last line) registers the \inlineisar+check_result_inv+ function 
+  The \inlinesml{setup}-command (last line) registers the \<^boxed_theory_text>\<open>check_result_inv\<close> function 
   into the \isadof kernel, which activates any creation or modification of an instance of
-  \inlineisar+result+.  We cannot replace \inlineisar+compute_attr_access+ by the corresponding 
-  antiquotation \inlineisar+<@>{docitem_value kind::oid}+, since \inlineisar+oid+ is
+  \<^boxed_theory_text>\<open>result\<close>.  We cannot replace \<^boxed_theory_text>\<open>compute_attr_access\<close> by the corresponding 
+  antiquotation \<^boxed_theory_text>\<open>@{docitem_value kind::oid}\<close>, since \<^boxed_theory_text>\<open>oid\<close> is
   bound to a variable here and can therefore not be statically expanded.
 \<close>
 
 section\<open>Implementing Monitors\<close>
 text\<open>
   Since monitor-clauses have a regular expression syntax, it is natural to implement them as 
-  deterministic automata. These are stored in the  \inlineisar+docobj_tab+ for monitor-objects 
+  deterministic automata. These are stored in the  \<^boxed_theory_text>\<open>docobj_tab\<close> for monitor-objects 
   in the \isadof component. We implemented the functions:
 
 \begin{sml}
    val  enabled : automaton -> env -> cid list
    val  next    : automaton -> env -> cid -> automaton
 \end{sml}
-  where \inlineisar+env+ is basically a map between internal automaton states and class-id's 
-  (\inlineisar+cid+'s). An automaton is said to be \<^emph>\<open>enabled\<close> for a class-id, 
+  where \<^boxed_theory_text>\<open>env\<close> is basically a map between internal automaton states and class-id's 
+  (\<^boxed_theory_text>\<open>cid\<close>'s). An automaton is said to be \<^emph>\<open>enabled\<close> for a class-id, 
   iff it either occurs in its accept-set or its reject-set (see @{docitem "sec:monitors"}). During 
   top-down document validation, whenever a text-element is encountered, it is checked if a monitor 
-  is \emph{enabled} for this class; in this case, the \inlineisar+next+-operation is executed. The 
-  transformed automaton recognizing the rest-language is stored in \inlineisar+docobj_tab+ if
-  possible; otherwise, if \inlineisar+next+ fails, an error is reported. The automata implementation 
+  is \emph{enabled} for this class; in this case, the \<^boxed_theory_text>\<open>next\<close>-operation is executed. The 
+  transformed automaton recognizing the rest-language is stored in \<^boxed_theory_text>\<open>docobj_tab\<close> if
+  possible; otherwise, if \<^boxed_theory_text>\<open>next\<close> fails, an error is reported. The automata implementation 
   is, in large parts, generated from a formalization of functional automata~\cite{nipkow.ea:functional-Automata-afp:2004}.
 \<close>
 
@@ -261,8 +261,8 @@ text\<open>
   \expandafter\providekeycommand\csname isaDof.#1\endcsname}%
 \end{ltx}
 
-  The \LaTeX-generator of \isadof maps each \inlineisar{doc_item} to an \LaTeX-environment (recall
-  @{docitem "text-elements"}). As generic \inlineisar{doc_item} are derived from the text element, 
+  The \LaTeX-generator of \isadof maps each \<^boxed_theory_text>\<open>doc_item\<close> to an \LaTeX-environment (recall
+  @{docitem "text-elements"}). As generic \<^boxed_theory_text>\<open>doc_item\<close> are derived from the text element, 
   the enviornment \inlineltx|{isamarkuptext*}| builds the core of \isadof's \LaTeX{} implementation. 
   For example, the @{docitem "ass123"} from page \pageref{ass123} is mapped to
 
@@ -283,7 +283,7 @@ This environment is mapped to a plain \LaTeX command via (again, recall @{docite
 \end{ltx}
 
 For the command-based setup, \isadof provides a dispatcher that selects the most specific 
-implementation for a given \inlineisar|doc_class|:
+implementation for a given \<^boxed_theory_text>\<open>doc_class\<close>:
 
 \begin{ltx}
 %% The Isabelle/DOF dispatcher:

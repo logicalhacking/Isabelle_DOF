@@ -462,17 +462,17 @@ figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogf
 text\<open> 
   @{docitem \<open>fig1\<close>} shows the corresponding view in the Isabelle/jedit of the start of an academic 
   paper. The text uses \<^isadof>'s own text-commands containing the meta-information provided by the 
-  underlying ontology. We proceed by a definition of \inlineisar+introduction+'s, which we define 
-  as the extension of \inlineisar+text_section+ which is intended to capture common infrastructure:
+  underlying ontology. We proceed by a definition of \<^boxed_theory_text>\<open>introduction\<close>'s, which we define 
+  as the extension of \<^boxed_theory_text>\<open>text_section\<close> which is intended to capture common infrastructure:
 
 @{boxed_theory_text [display]\<open>
 doc_class introduction = text_section +
    comment :: string
 \<close>}
 
-  As a consequence of the definition as extension, the \inlineisar+introduction+ class
-  inherits the attributes \inlineisar+main_author+ and \inlineisar+todo_list+ together with 
-  the corresponding default values.
+  As a consequence of the definition as extension, the \<^boxed_theory_text>\<open>introduction\<close> class
+  inherits the attributes \<^boxed_theory_text>\<open>main_author\<close> and \<^boxed_theory_text>\<open>todo_list\<close> 
+  together with the corresponding default values.
 
   We proceed more or less conventionally by the subsequent sections:
 
@@ -507,8 +507,9 @@ figure*[fig_figures::figure,spawn_columns=False,relative_width="85",src="''figur
        \<open> Ouroboros II: figures \ldots \<close>
 
 text\<open> 
-  The document class \inlineisar+figure+ (supported by the \<^isadof> command \inlineisar+figure*+) 
-  makes it possible to express the pictures and diagrams such as @{docitem \<open>fig_figures\<close>}.
+  The document class \<^boxed_theory_text>\<open>figure\<close> (supported by the \<^isadof> command 
+  \<^boxed_theory_text>\<open>figure*\<close>) makes it possible to express the pictures and diagrams 
+  such as @{docitem \<open>fig_figures\<close>}.
 
   Finally, we define a monitor class definition that enforces a textual ordering
   in the document core by a regular expression:
@@ -552,7 +553,7 @@ figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-
 
 text\<open> 
   An ontological reference application in @{figure "figDogfoodVIlinkappl"}: the 
-  ontology-dependant antiquotation \inlineisar|@ {example ...}| refers to the corresponding 
+  ontology-dependant antiquotation \<^boxed_theory_text>\<open>@ {example ...}\<close> refers to the corresponding 
   text-elements. Hovering allows for inspection, clicking for jumping to the definition.  If the 
   link does not exist or  has a non-compatible type, the text is not validated.
 \<close>
@@ -759,7 +760,7 @@ type_synonym SubQuestion = string
 
   The heart of this ontology is an alternation of questions and answers, where the answers can 
   consist of simple yes-no answers or lists of formulas. Since we do not assume familiarity of 
-  the students with Isabelle (\inlineisar+term+ would assume that this is a parse-able and 
+  the students with Isabelle (\<^boxed_theory_text>\<open>term\<close> would assume that this is a parse-able and 
   type-checkable entity), we basically model a derivation as a sequence of strings:
 
 @{boxed_theory_text [display]\<open>
