@@ -80,112 +80,9 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% <isar>
-\newcommand{\subscr}[1]{\ensuremath{_{\text{#1}}}}
-\newcommand{\supscr}[1]{\ensuremath{^{\text{#1}}}}
-\lstdefinestyle{isar}{%
-  language=%
-  ,basicstyle=\ttfamily%
-  ,showspaces=false%
-  ,showlines=false%
-  ,columns=flexible%
-  ,keepspaces
-  ,morecomment=[s]{(*}{*)}%
-  % ,moredelim=*[s][\rmfamily]{\{*}{*\}}%
-  ,moredelim = **[is][\beginlstdelim{\{*}{*\}}{black}]{\{*}{*\}}
-  ,showstringspaces=false%
-  ,moredelim=*[is][\supscr]{<bsup>}{<esup>}%
-  ,moredelim=*[is][\subscr]{<bsub>}{<esub>}%
-  ,literate={%
-    {...}{\,\ldots\,}3%
-    {<Open>}{\ensuremath{\isacartoucheopen}}1%
-    {<open>}{\ensuremath{\isacartoucheopen}}1%
-    %{<@>}{@}1%
-    {"}{}0%
-    {é}{\'e}1%
-    {~}{\ }1%
-    {::}{:\!:}1%
-    {<Close>}{\ensuremath{\isacartoucheclose}}1%
-    {<close>}{\ensuremath{\isacartoucheclose}}1%
-    {\\<Gamma>}{\ensuremath{\Gamma}}1%
-    {\\<theta>}{\ensuremath{\theta}}1%
-    {\\<times>}{\ensuremath{\times}}1%
-    {\\<equiv>}{\ensuremath{\equiv}}1%
-    {\\<sigma>}{\ensuremath{\sigma}}1%
-    {\\<geq>}{\ensuremath{\geq}}1%
-    {level0}{level\textsubscript{0}}6%
-    {\\<Rightarrow>}{\ensuremath{\Rightarrow}}1%
-    {\\<rightarrow>}{\ensuremath{\rightarrow}}1%
-    {\\<longrightarrow>}{\ensuremath{\rightarrow}}1%
-    {\\<and>}{\ensuremath{\land}}1%  
-    {\\<or>}{\ensuremath{\lor}}1%
-    {\\<lfloor>}{\ensuremath{\lfloor}}1%
-    {\\<rfloor>}{\ensuremath{\rfloor}}1%  
-    %{\\<lparr>}{\ensuremath{\lparr}}1% 
-    %{\\<rparr>}{\ensuremath{\rparr}}1%
-    {\\<le>}{\ensuremath{\le}}1%
-    {\\<delta>}{\ensuremath{\delta}}1%
-    {\\<lambda>}{\ensuremath{\lambda}}1%
-    {\\<bar>}{\ensuremath{\vert}}1%
-    {\<sigma>}{\ensuremath{\sigma}}1%
-    {\\<lparr>}{\ensuremath{\isasymlparr}}1%  
-    {\\<rparr>}{\ensuremath{\isasymrparr}}1% 
-    {\\<leftrightarrow>}{\ensuremath{\leftrightarrow}}1%
-    {\{*}{\raise.3ex\hbox{$\scriptscriptstyle\langle$}}1%
-    {*\}}{\raise.3ex\hbox{$\scriptscriptstyle\rangle$}}1%
-    {\\<open>}{\raise.3ex\hbox{$\scriptscriptstyle\langle$}}1%
-    {\\<Open>}{\raise.3ex\hbox{$\scriptscriptstyle\langle$}}1%
-    {\\<close>}{\raise.3ex\hbox{$\scriptscriptstyle\rangle$}}1%
-    {\\<Close>}{\raise.3ex\hbox{$\scriptscriptstyle\rangle$}}1%
-    {\\<forall>}{\ensuremath{\forall}}1%
-    {\\<exists>}{\ensuremath{\exists}}1%
-    {\\<in>}{\ensuremath{\in}}1%
-    {\\<delta>}{\ensuremath{\delta}}1%
-    {\\<real>}{\ensuremath{\mathbb{R}}}1%
-    {\\<noteq>}{\ensuremath{\neq}}1%
-    {\\<exists>}{\ensuremath{\exists}}1%
-    {\\<Forall>}{\ensuremath{\bigwedge\,}}1%
-    {<string>}{<\ensuremath{\text{\textit{string}}}>}9%
-    {\\<lbrakk>}{\ensuremath{\mathopen{\lbrack\mkern-3mu\lbrack}}}1%
-    {\\<lbrace>}{\ensuremath{\mathopen{\lbrace\mkern-4.5mu\mid}}}1%
-    {\\<rbrakk>}{\ensuremath{\mathclose{\rbrack\mkern-3mu\rbrack}}}1%
-    {\\<rbrace>}{\ensuremath{\mathclose{\mid\mkern-4.5mu\rbrace}}}1%
-  }%
-  % % Defining "tags" (text-antiquotations) based on 1-keywords
-   ,tag=**[s]{@\{}{\}}%
-   ,tagstyle=\color{CornflowerBlue}%
-   ,markfirstintag=true%
-   ,keywordstyle=\bfseries%
-   ,keywords={}
-   % Defining 2-keywords
-   ,keywordstyle=[2]{\color{Blue!60}\bfseries}%
-   ,alsoletter={*,-}
-   ,morekeywords=[2]{case, then, show, theory, begin, end, ML,section,subsection,paragraph,chapter,text}%
-   %,moredelim=[s][\textit]{<}{>}
-   % Defining 3-keywords
-   ,keywordstyle=[3]{\color{OliveGreen!60}\bfseries}%
-   ,morekeywords=[3]{doc_class,declare_reference,update_instance*,
-     open_monitor*,  close_monitor*, declare_reference*,section*,text*,title*,abstract*}%
-   % Defining 4-keywords
-   ,keywordstyle=[4]{\color{black!60}\bfseries}%
-   ,morekeywords=[4]{where, imports, keywords}%
-   % Defining 5-keywords
-   ,keywordstyle=[5]{\color{BrickRed!70}\bfseries}%
-   ,morekeywords=[5]{datatype, by, fun, Definition*, definition,
-     type_synonym, typedecl, 
-     consts, assumes, and, shows, proof, next, qed, lemma, theorem}%
-   % Defining 6-keywords
-   ,keywordstyle=[6]{\itshape}%
-   ,morekeywords=[6]{meta-args, ref, expr, class_id}%
-  % 
-}%
-%% 
-
 \providecolor{isar}{named}{blue}
-\def\inlineisar{\lstinline[style=isar,breaklines=true,mathescape,breakatwhitespace=true]}
-
 \renewcommand{\isacommand}[1]{\textcolor{OliveGreen!60}{\ttfamily\bfseries #1}}
 \newcommand{\inlineisarbox}[1]{#1}
-
 \NewTColorBox[]{isarbox}{}{
      ,boxrule=0pt
      ,boxsep=0pt
@@ -201,7 +98,6 @@
        east,font=\bfseries\footnotesize\color{white}]
                 at (frame.north east) {Isar};}
 }
-
 %% </isar>
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

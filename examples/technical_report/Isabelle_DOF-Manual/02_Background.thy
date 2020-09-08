@@ -87,7 +87,7 @@ text\<open>
     keywords             (* Registration of keywords defined locally *)
       requirement        (* A command for describing requirements    *)
 \<close>}
-  where \<^boxed_theory_text>\<open>Example\<close> is the abstract name of the text-file, \<^boxed_isar>\<open>Main\<close> refers to an 
+  where \<^boxed_theory_text>\<open>Example\<close> is the abstract name of the text-file, \<^boxed_theory_text>\<open>Main\<close> refers to an 
   imported theory (recall that the import relation must be acyclic) and \<^boxed_theory_text>\<open>keywords\<close> are 
   used to separate commands from each other.
 \<close>
