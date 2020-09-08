@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019      The University of Exeter 
- *               2018-2019 The University of Paris-Saclay
+ *               2019-2020 University of Exeter 
+ *               2018-2020 University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -659,11 +659,10 @@ text\<open>
   accept-clause\index{accept-clause} contains a regular expression over class identifiers. 
   For example:
 
- TODO bsub/esub
   @{boxed_theory_text [display]\<open>
   doc_class article = style_id :: string   <= "''CENELEC_50128''"
-      accepts "(title ~~ \<lbrace>author\<rbrace> bsup+esup ~~ abstract ~~ \<lbrace>introduction\<rbrace> bsup+esup  ~~
-               \<lbrace>technical || example\<rbrace> bsup+esup ~~ \<lbrace>conclusion\<rbrace> bsup+esup)"
+      accepts "(title ~~ \<lbrace>author\<rbrace>\<^sup>+ ~~ abstract ~~ \<lbrace>introduction\<rbrace>\<^sup>+ ~~
+               \<lbrace>technical || example\<rbrace>\<^sup>+ ~~ \<lbrace>conclusion\<rbrace>\<^sup>+)"
   \<close>}
 
   Semantically, monitors introduce a behavioral element into ODL:

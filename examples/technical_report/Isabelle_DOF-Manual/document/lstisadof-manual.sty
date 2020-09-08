@@ -182,8 +182,11 @@
 
 \providecolor{isar}{named}{blue}
 \def\inlineisar{\lstinline[style=isar,breaklines=true,mathescape,breakatwhitespace=true]}
-\newtcblisting{isar}[1][]{%
-      listing only%
+
+\renewcommand{\isacommand}[1]{\textcolor{OliveGreen!60}{\ttfamily\bfseries #1}}
+\newcommand{\inlineisarbox}[1]{#1}
+
+\NewTColorBox[]{isarbox}{}{
      ,boxrule=0pt
      ,boxsep=0pt
      ,colback=white!90!isar
@@ -197,13 +200,8 @@
      ,overlay={\node[draw,fill=isar!60!black,xshift=0pt,anchor=north
        east,font=\bfseries\footnotesize\color{white}]
                 at (frame.north east) {Isar};}
-     ,listing options={
-          style=isar
-          ,basicstyle=\small\ttfamily
-         ,mathescape
-         ,#1
-      }
-  }%
+}
+
 %% </isar>
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

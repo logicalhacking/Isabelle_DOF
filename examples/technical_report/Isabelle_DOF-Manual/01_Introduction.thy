@@ -86,23 +86,9 @@ text\<open>
   separating multiple technological layers or languages. To help the reader with this, we 
   will type-set the different languages in different styles. In particular, we will use 
   \<^item> a light-blue background for input written in Isabelle's Isar language, \<^eg>:
-
-
-    @{boxed_theory_text [display]\<open>
-    lemma refl: "x = x" 
-      by simp
-    \<close>}
-
-%    @ {boxed_isar [display]
-%      \<open>lemma refl: "x = x" 
-%         by simp\<close>}
-
-    \<^boxed_isar>\<open>lemma refl: "x = x"\<close>
-
     @{boxed_theory_text [display]
     \<open>lemma refl: "x = x" 
       by simp\<close>}
-
   \<^item> a green background for examples of generated document fragments (\<^ie>, PDF output):
     @{boxed_pdf [display] \<open>The axiom refl\<close>}
   \<^item> a red background for For (S)ML-code:

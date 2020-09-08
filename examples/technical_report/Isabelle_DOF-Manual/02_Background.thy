@@ -78,8 +78,8 @@ text\<open>
   consists of a \<^emph>\<open>header\<close>\<^bindex>\<open>header\<close>, a \<^emph>\<open>context definition\<close>\<^index>\<open>context\<close>, and a body 
   consisting of a sequence of \<^emph>\<open>command\<close>s (see @{figure (unchecked) "fig:dependency"}). Even 
   the header consists of a sequence of commands used for introductory text elements not depending on 
-  any context. The context-definition contains an \<^boxed_isar>\<open>import\<close> and a 
-  \<^boxed_isar>\<open>keyword\<close> section, for example:
+  any context. The context-definition contains an \<^boxed_theory_text>\<open>import\<close> and a 
+  \<^boxed_theory_text>\<open>keyword\<close> section, for example:
 @{boxed_theory_text [display]\<open>
   theory Example         (* Name of the 'theory'                     *)
     imports              (* Declaration of 'theory' dependencies     *)
@@ -87,8 +87,8 @@ text\<open>
     keywords             (* Registration of keywords defined locally *)
       requirement        (* A command for describing requirements    *)
 \<close>}
-  where \<^boxed_isar>\<open>Example\<close> is the abstract name of the text-file, \<^boxed_isar>\<open>Main\<close> refers to an 
-  imported theory (recall that the import relation must be acyclic) and \inlineisar{keywords} are 
+  where \<^boxed_theory_text>\<open>Example\<close> is the abstract name of the text-file, \<^boxed_isar>\<open>Main\<close> refers to an 
+  imported theory (recall that the import relation must be acyclic) and \<^boxed_theory_text>\<open>keywords\<close> are 
   used to separate commands from each other.
 \<close>
 (* experiment starts here *)
