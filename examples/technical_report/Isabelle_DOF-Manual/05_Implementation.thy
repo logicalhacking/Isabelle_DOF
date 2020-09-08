@@ -139,9 +139,9 @@ val attributes =(Parse.$$$ "[" |-- (reference
   Altogether, this gives the extension of Isabelle/HOL with Isar syntax and semantics for the 
   new \emph{command}:
 
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 declare_reference [lal::requirement, alpha="main", beta=42]
-\end{isar}
+\<close>}
 
   The construction also generates implicitly some markup information; for example, when hovering
   over the \inlineisar|declare_reference| command in the IDE, a popup window with the text: 
@@ -166,9 +166,9 @@ val _ = Theory.setup(
   syntax and the overall semantics. This code defines a generic antiquotation to be used in text 
   elements such as
 
-\begin{isar}
-text\<Open>as defined in <@>{docitem \<Open>d1\<Close>} ...\<Close>
-\end{isar}
+@{boxed_theory_text [display]\<open>
+text\<open>as defined in <@>{docitem \<open>d1\<close>} ...\<close>
+\<close>}
 
   The subsequent registration \inlineisar+docitem_value+ binds code to a ML-antiquotation usable 
   in an ML context for user-defined extensions; it permits the access to the current ``value'' 
@@ -176,8 +176,8 @@ text\<Open>as defined in <@>{docitem \<Open>d1\<Close>} ...\<Close>
 
   It is possible to generate antiquotations \emph{dynamically}, as a consequence of a class 
   definition in ODL. The processing of the ODL class \inlineisar+d$$efinition+ also \emph{generates}
-  a text antiquotation \inlineisar+<@>{definition \<Open>d1\<Close>}+, which works similar to 
-  \inlineisar+<@>{docitem \<Open>d1\<Close>}+ except for an additional type-check that assures that 
+  a text antiquotation \inlineisar+<@>{definition \<open>d1\<close>}+, which works similar to 
+  \inlineisar+<@>{docitem \<open>d1\<close>}+ except for an additional type-check that assures that 
   \inlineisar+d1+ is a reference to a definition. These type-checks support the subclass hierarchy.
 \<close>
 

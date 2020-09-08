@@ -324,7 +324,7 @@ text\<open>
   The \<open>class_id\<close> is the full-qualified name of the document class and the list of \<open>attribute_decl\<close>
   needs to declare all attributes of the document class. Within the \LaTeX-definition of the document
   class representation, the identifier \inlineltx|#1| refers to the content of the main text of the 
-  document class (written in \inlineisar|\<Open> ... \<Close>|) and the attributes can be referenced
+  document class (written in \inlineisar|\<open> ... \<close>|) and the attributes can be referenced
   by their name using the \inlineltx|\commandkey{...}|-command (see the documentation of the 
   \LaTeX-package ``keycommand''~@{cite "chervet:keycommand:2010"} for details). Usually, the 
   representations definition needs to be wrapped in a 
@@ -363,7 +363,7 @@ shadow classes, with own attributes and, last not least, own definitions of inva
 from ours.
 
 In particular, these shadow classes are used at present in  \isadof:
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 DOCUMENT_ALIKES = 
    level         :: "int  option"    <=  "None" 
 
@@ -372,7 +372,7 @@ ASSERTION_ALIKES =
   
 FORMAL_STATEMENT_ALIKE =
     properties :: "thm list"
-\end{isar}
+\<close>}
 
 These shadow-classes correspond to semantic macros 
  @{ML "Onto_Macros.enriched_document_command"},
@@ -390,12 +390,12 @@ text\<open>
 In particular it defines the super-class \inlineisar|text_element|: the
   root of all text-elements,
 
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class text_element = 
    level         :: "int  option"    <=  "None" 
    referentiable :: bool <= "False"
    variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
-\end{isar}
+\<close>}
 
   Here, \inlineisar|level| defines the section-level (\eg, using a \LaTeX-inspired hierarchy:
   from \inlineisar|Some -1| (corresponding to \inlineltx|\part|) to 
@@ -407,13 +407,13 @@ doc_class text_element =
 
 Similarly, we provide "minimal" instances of the \inlineisar+ASSERTION_ALIKES+ 
 and \inlineisar+FORMAL_STATEMENT_ALIKE+ shadow classes:
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class assertions = 
     properties :: "term list"
   
 doc_class "thms" =
     properties :: "thm list"
-\end{isar}
+\<close>}
 \<close>
 
 subsubsection\<open>Example: Text Elemens with Levels\<close>
@@ -421,7 +421,7 @@ text\<open>
   The category ``exported constraint (EC)'' is, in the file 
   \path{ontologies/CENELEC_50128/CENELEC_50128.thy} defined as follows:
 
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class requirement = text_element +
    long_name    :: "string option"
    is_concerned :: "role set"
@@ -429,7 +429,7 @@ doc_class AC = requirement +
    is_concerned :: "role set" <= "UNIV"
 doc_class EC = AC  +
      assumption_kind :: ass_kind <= (*default *) formal
-\end{isar}
+\<close>}
 
   We now define the document representations, in the file 
   \path{ontologies/CENELEC_50128/DOF-CENELEC_50128.sty}. Let us assume that we want to 
@@ -485,12 +485,12 @@ assert*[claim::assertions] "last[4::int] = 4"
 assert*[claim::assertions] "last[1,2,3,4::int] = 4"
 (*>*)
 text\<open>We want to check the consequences of this definition and can add the following statements:
-\begin{isar}
-text*[claim::assertions]\<Open>For non-empty lists, our definition yields indeed 
-                               the last element of a list.\<Close>
+@{boxed_theory_text [display]\<open>
+text*[claim::assertions]\<open>For non-empty lists, our definition yields indeed 
+                               the last element of a list.\<close>
 assert*[claim::assertions] "last[4::int] = 4"
 assert*[claim::assertions] "last[1,2,3,4::int] = 4"
-\end{isar}
+\<close>}
 \<close>
 
 text\<open>As an \inlineisar+ASSERTION_ALIKES+, the \inlineisar+assertions+ class possesses a 
@@ -502,19 +502,19 @@ text-element. Commands like \inlineisar+Definitions*+ or \inlineisar+Theorem*+ w
 subsection*["text-elements"::technical]\<open>Annotatable Top-level Text-Elements\<close>
 text\<open>
   While the default user interface for class definitions via the  
-  \inlineisar|text*\<Open> ... \<Close>|-command allow to access all features of the document 
+  \inlineisar|text*\<open> ... \<close>|-command allow to access all features of the document 
   class, \isadof provides short-hands for certain, widely-used, concepts such as 
-  \inlineisar|title*\<Open> ... \<Close>| or \inlineisar|section*\<Open> ... \<Close>|, \eg:
+  \inlineisar|title*\<open> ... \<close>| or \inlineisar|section*\<open> ... \<close>|, \eg:
 
-\begin{isar}
- title*[title::title]\<Open>Isabelle/DOF\<Close>
- subtitle*[subtitle::subtitle]\<Open>User and Implementation Manual\<Close>
- text*[adb:: author, email="\<Open>a.brucker@exeter.ac.uk\<Close>",
-       orcid="\<Open>0000-0002-6355-1200\<Close>", http_site="\<Open>https://brucker.ch/\<Close>",
-       affiliation="\<Open>University of Exeter, Exeter, UK\<Close>"] \<Open>Achim D. Brucker\<Close>
- text*[bu::author, email = "\<Open>wolff@lri.fr\<Close>",
-       affiliation = "\<Open>Université Paris-Saclay, LRI, Paris, France\<Close>"]\<Open>Burkhart Wolff\<Close>
-\end{isar}
+@{boxed_theory_text [display]\<open>
+ title*[title::title]\<open>Isabelle/DOF\<close>
+ subtitle*[subtitle::subtitle]\<open>User and Implementation Manual\<close>
+ text*[adb:: author, email="\<open>a.brucker@exeter.ac.uk\<close>",
+       orcid="\<open>0000-0002-6355-1200\<close>", http_site="\<open>https://brucker.ch/\<close>",
+       affiliation="\<open>University of Exeter, Exeter, UK\<close>"] \<open>Achim D. Brucker\<close>
+ text*[bu::author, email = "\<open>wolff@lri.fr\<close>",
+       affiliation = "\<open>Université Paris-Saclay, LRI, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
+\<close>}
 
   In general, all standard text-elements from the Isabelle document model such
   as @{command "chapter"}, @{command "section"}, @{command "text"}, have in the \isadof
@@ -560,7 +560,7 @@ text\<open>
   First, new top-level keywords need to be declared in the \inlineisar|keywords|-section of 
   the theory header defining new keywords:
 
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 theory 
     ...
   imports
@@ -570,7 +570,7 @@ theory
 begin 
 ...
 end
-\end{isar}
+\<close>}
 
   Second, given an implementation of the functionality of the new keyword (implemented in SML), 
   the new keyword needs to be registered, together with its parser, as outer syntax:
@@ -644,7 +644,7 @@ text\<open>
   example: \inlineisar+property = "[<@>{thm ''system_is_safe''}]"+ in a
   system context \inlineisar+\<theta>+ where this theorem is
   established. Similarly, attribute values like 
-  \inlineisar+property = "<@>{term \<Open>A \<leftrightarrow> B\<Close>}"+
+  \inlineisar+property = "<@>{term \<open>A \<leftrightarrow> B\<close>}"+
   require that the HOL-string \inlineisar+A \<leftrightarrow> B+ is 
   again type-checked and represents indeed a formula in $\theta$. Another instance of 
   this process, which we call \<open>second-level type-checking\<close>, are term-constants
@@ -659,19 +659,20 @@ text\<open>
   accept-clause\index{accept-clause} contains a regular expression over class identifiers. 
   For example:
 
-  \begin{isar}
+ TODO bsub/esub
+  @{boxed_theory_text [display]\<open>
   doc_class article = style_id :: string   <= "''CENELEC_50128''"
-      accepts "(title ~~ \<lbrace>author\<rbrace>\<bsup>+\<esup> ~~ abstract ~~ \<lbrace>introduction\<rbrace>\<bsup>+\<esup>  ~~
-               \<lbrace>technical || example\<rbrace>\<bsup>+\<esup> ~~ \<lbrace>conclusion\<rbrace>\<bsup>+\<esup>)"
-  \end{isar}
+      accepts "(title ~~ \<lbrace>author\<rbrace> bsup+esup ~~ abstract ~~ \<lbrace>introduction\<rbrace> bsup+esup  ~~
+               \<lbrace>technical || example\<rbrace> bsup+esup ~~ \<lbrace>conclusion\<rbrace> bsup+esup)"
+  \<close>}
 
   Semantically, monitors introduce a behavioral element into ODL:
 
-  \begin{isar}
+  @{boxed_theory_text [display]\<open>
   open_monitor*[this::article]  (* begin of scope of monitor "this" *)
     ...
   close_monitor*[this]          (* end of scope of monitor "this"   *)
-  \end{isar}
+  \<close>}
 
   Inside the scope of a monitor, all instances of classes mentioned in its accept-clause (the
   \<^emph>\<open>accept-set\<close>) have to appear in the order specified by the regular expression; instances not 
@@ -714,12 +715,12 @@ text\<open>
 
   In a high-level syntax, this type of constraints could be expressed, \eg, by:
 
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 (* 1 *) \<forall> x \<in> result. x@kind = pr$$oof \<leftrightarrow> x@kind \<noteq> []
 (* 2 *) \<forall> x \<in> conclusion. \<forall> y \<in> Domain(x@establish)
                   \<rightarrow> \<exists> y \<in> Range(x@establish). (y,z) \<in> x@establish
 (* 3 *) \<forall> x \<in> introduction. finite(x@authored_by)
-\end{isar}
+\<close>}
 
   where \inlineisar+result+, \inlineisar+conclusion+, and \inlineisar+introduction+ are the set of
   all possible instances of these document classes.  All specified constraints are already checked

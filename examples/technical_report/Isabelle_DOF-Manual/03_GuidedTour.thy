@@ -465,10 +465,10 @@ text\<open>
   underlying ontology. We proceed by a definition of \inlineisar+introduction+'s, which we define 
   as the extension of \inlineisar+text_section+ which is intended to capture common infrastructure:
 
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class introduction = text_section +
    comment :: string
-\end{isar}
+\<close>}
 
   As a consequence of the definition as extension, the \inlineisar+introduction+ class
   inherits the attributes \inlineisar+main_author+ and \inlineisar+todo_list+ together with 
@@ -476,7 +476,7 @@ doc_class introduction = text_section +
 
   We proceed more or less conventionally by the subsequent sections:
 
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
 
@@ -489,19 +489,19 @@ doc_class conclusion = text_section +
 doc_class related_work = conclusion +
    main_author :: "author option"  <=  None
 
-\end{isar}
+\<close>}
 
 Moreover, we model a document class for including figures (actually, this document class is already 
 defined in the core ontology of \<^isadof>):
 
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 datatype placement = h | t | b | ht | hb   
 doc_class figure   = text_section +
    relative_width  :: "int" (* percent of textwidth *)    
    src             :: "string"
    placement       :: placement 
    spawn_columns   :: bool <= True 
-\end{isar}
+\<close>}
 \<close>
 figure*[fig_figures::figure,spawn_columns=False,relative_width="85",src="''figures/Dogfood-figures''"]
        \<open> Ouroboros II: figures \ldots \<close>
@@ -513,14 +513,14 @@ text\<open>
   Finally, we define a monitor class definition that enforces a textual ordering
   in the document core by a regular expression:
 
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class article = 
    style_id :: string                <= "''LNCS''"
    version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
    where "(title       ~~ \<lbrakk>subtitle\<rbrakk>   ~~ \<lbrace>author\<rbrace>$^+$+  ~~  abstract    ~~
              introduction ~~  \<lbrace>technical || example\<rbrace>$^+$  ~~  conclusion ~~  
              bibliography)"
-\end{isar}
+\<close>}
 \<close>
 
 subsection*[scholar_pide::example]\<open>Editing Support for Academic Papers\<close>
@@ -607,7 +607,7 @@ text\<open>
   case-study~@{cite "bezzecchi.ea:making:2018"}. We start with an introduction of the concept of 
   requirement:
 
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class requirement = long_name :: "string option"
 
 doc_class requirement_analysis = no :: "nat"
@@ -620,7 +620,7 @@ datatype ass_kind = informal | semiformal | formal
   
 doc_class assumption = requirement +
      assumption_kind :: ass_kind <= informal 
-\end{isar}
+\<close>}
 
 Such ontologies can be enriched by larger explanations and examples, which may help
 the team of engineers substantially when developing the central document for a certification, 
@@ -644,23 +644,23 @@ is the category \<^emph>\<open>safety related application condition\<close> (or 
 for short) which is used for \<^emph>\<open>ec\<close>'s that establish safety properties
 of the evaluation target. Their track-ability throughout the certification
 is therefore particularly critical. This is naturally modeled as follows:
-\begin{isar}  
+@{boxed_theory_text [display]\<open>  
 doc_class ec = assumption  +
      assumption_kind :: ass_kind <= (*default *) formal
                         
 doc_class srac = ec  +
      assumption_kind :: ass_kind <= (*default *) formal
-\end{isar}
+\<close>}
 
 We now can, \<^eg>, write 
 
-\begin{isar}
-text*[ass123::SRAC]\<Open> 
+@{boxed_theory_text [display]\<open>
+text*[ass123::SRAC]\<open> 
   The overall sampling frequence of the odometer subsystem is therefore 
   14 khz, which includes sampling, computing a$$nd result communication 
   times \ldots
-\<Close>
-\end{isar}
+\<close>
+\<close>}
 
 This will be shown in the PDF as follows:
 \<close>
@@ -739,7 +739,7 @@ text\<open>
   Furthermore, we assume a simple grade system (thus, some calculation is required). We 
   can model this as follows: 
 
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class Author = ...
 datatype Subject =  algebra | geometry | statistical
 datatype Grade =  A1 | A2 | A3
@@ -755,14 +755,14 @@ doc_class Exam_item =  concerns :: "ContentClass set"
 doc_class Exam_item =  concerns :: "ContentClass set"  
 
 type_synonym SubQuestion = string
-\end{isar}
+\<close>}
 
   The heart of this ontology is an alternation of questions and answers, where the answers can 
   consist of simple yes-no answers or lists of formulas. Since we do not assume familiarity of 
   the students with Isabelle (\inlineisar+term+ would assume that this is a parse-able and 
   type-checkable entity), we basically model a derivation as a sequence of strings:
 
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class Answer_Formal_Step =  Exam_item +
   justification :: string
   "term"        :: "string" 
@@ -786,13 +786,13 @@ doc_class Exercise = Exam_item +
   content  :: "(Task) list"
   concerns :: "ContentClass set" <= "UNIV" 
   mark     :: int
-\end{isar}
+\<close>}
 
 In many institutions, having a rigorous process of validation for exam subjects makes sense: is 
 the initial question correct? Is a proof in the sense of the question possible? We model the 
 possibility that the @{term examiner} validates a question by a sample proof validated by Isabelle:
 
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class Validation = 
    tests  :: "term list"  <="[]"
    proofs :: "thm list"   <="[]"
@@ -806,7 +806,7 @@ doc_class MathExam=
   content :: "(Header + Author + Exercise) list"
   global_grade :: Grade 
   where "\<lbrace>Author\<rbrace>$^+$  ~~  Header ~~  \<lbrace>Exercise ~~ Solution\<rbrace>$^+$ "
-\end{isar}
+\<close>}
 
 In our scenario this sample proofs are completely \<^emph>\<open>intern\<close>, \ie, not exposed to the 
 students but just additional material for the internal review process of the exam.
@@ -820,18 +820,18 @@ text\<open>
   using \<^LaTeX>{} as the underlying back-end. As Isabelle's document generation framework, it is 
   possible to embed (nearly) arbitrary \<^LaTeX>-commands in text-commands, \<^eg>:
 
-\begin{isar}
-text\<Open> This is \emph{emphasized} a$$nd this is a 
-       citation~\cite{brucker.ea:isabelle-ontologies:2018}\<Close>
-\end{isar}
+@{boxed_theory_text [display]\<open>
+text\<open> This is \emph{emphasized} a$$nd this is a 
+       citation~\cite{brucker.ea:isabelle-ontologies:2018}\<close>
+\<close>}
 
   In general, we advise against this practice and, whenever positive, use the \<^isadof> (respetively
   Isabelle) provided alternatives:
 
-\begin{isar}
-text\<Open> This is *\<Open>emphasized\<Close> a$$nd this is a 
-        citation <@>{cite "brucker.ea:isabelle-ontologies:2018"}.\<Close>
-\end{isar}
+@{boxed_theory_text [display]\<open>
+text\<open> This is *\<open>emphasized\<close> a$$nd this is a 
+        citation <@>{cite "brucker.ea:isabelle-ontologies:2018"}.\<close>
+\<close>}
 
 Clearly, this is not always possible and, in fact, often \<^isadof> documents will contain 
 \<^LaTeX>-commands, this should be restricted to layout improvements that otherwise are (currently)

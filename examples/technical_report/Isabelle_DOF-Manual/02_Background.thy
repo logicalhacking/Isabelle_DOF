@@ -80,13 +80,13 @@ text\<open>
   the header consists of a sequence of commands used for introductory text elements not depending on 
   any context. The context-definition contains an \<^boxed_isar>\<open>import\<close> and a 
   \<^boxed_isar>\<open>keyword\<close> section, for example:
-\begin{isar}
-"  theory Example         (* Name of the 'theory'                     *)
-"    imports              (* Declaration of 'theory' dependencies     *)
-"      Main               (* Imports a library called 'Main'          *)
-"    keywords             (* Registration of keywords defined locally *)
-"      requirement        (* A command for describing requirements    *)
-\end{isar}
+@{boxed_theory_text [display]\<open>
+  theory Example         (* Name of the 'theory'                     *)
+    imports              (* Declaration of 'theory' dependencies     *)
+      Main               (* Imports a library called 'Main'          *)
+    keywords             (* Registration of keywords defined locally *)
+      requirement        (* A command for describing requirements    *)
+\<close>}
   where \<^boxed_isar>\<open>Example\<close> is the abstract name of the text-file, \<^boxed_isar>\<open>Main\<close> refers to an 
   imported theory (recall that the import relation must be acyclic) and \inlineisar{keywords} are 
   used to separate commands from each other.
@@ -124,9 +124,9 @@ text\<open>
 
   @{boxed_theory_text [display] \<open>text\<open>This is a description.\<close>\<close> }
 
-  \begin{isar}
-    text\<Open>This is a description.\<Close>
-  \end{isar}
+  @{boxed_theory_text [display]\<open>
+    text\<open>This is a description.\<close>
+  \<close>}
   This will type-set the corresponding text in, for example, a PDF document.  However, this 
   translation is not necessarily one-to-one: text elements can be enriched by formal, \<^ie>, 
   machine-checked content via *\<open>semantic macros\<close>, called antiquotations\<^bindex>\<open>antiquotation\<close>:
@@ -136,10 +136,10 @@ text\<open>
          for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>
   }
 
-\begin{isar}
-text\<Open>According to the *\<Open>reflexivity\<Close> axiom <@>{thm refl}, we obtain in \<Gamma> 
-      for <@>{term "fac 5"} the result <@>{value "fac 5"}.\<Close>
-\end{isar}
+@{boxed_theory_text [display]\<open>
+text\<open>According to the *\<open>reflexivity\<close> axiom <@>{thm refl}, we obtain in \<Gamma> 
+      for @{term "fac 5"} the result @{value "fac 5"}.\<close>
+\<close>}
 
 
 which is represented in the final document (\<^eg>, a PDF) by:

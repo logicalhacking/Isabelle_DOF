@@ -119,6 +119,18 @@ France, and therefore granted with public funds of the Program ``Investissements
 \AtBeginDocument{\isabellestyle{literal}\newcommand{\lstnumberautorefname}{Line}}
 \renewcommand{\isacommand}[1]{\textcolor{OliveGreen!60}{\ttfamily\bfseries #1}}
 
-\newenvironment{isarbox}
-{AAA - bu isarbox}
-{ZZZ - bu isarbox}
+\NewTColorBox[]{isarbox}{}{
+     ,boxrule=0pt
+     ,boxsep=0pt
+     ,colback=white!90!isar
+     ,enhanced jigsaw
+     ,borderline west={2pt}{0pt}{isar!60!black}
+     ,sharp corners
+     % ,before skip=10pt
+     % ,after skip=10pt
+     ,enlarge top by=0mm
+     ,enhanced
+     ,overlay={\node[draw,fill=isar!60!black,xshift=0pt,anchor=north
+       east,font=\bfseries\footnotesize\color{white}]
+                at (frame.north east) {Isar};}
+}

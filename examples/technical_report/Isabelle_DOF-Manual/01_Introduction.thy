@@ -88,10 +88,10 @@ text\<open>
   \<^item> a light-blue background for input written in Isabelle's Isar language, \<^eg>:
 
 
-    \begin{isar}
+    @{boxed_theory_text [display]\<open>
     lemma refl: "x = x" 
       by simp
-    \end{isar}
+    \<close>}
 
 %    @ {boxed_isar [display]
 %      \<open>lemma refl: "x = x" 
