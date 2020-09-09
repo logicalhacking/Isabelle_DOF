@@ -291,11 +291,11 @@ users are:
   \<^LaTeX>-packages or to add/modify \<^LaTeX>-commands. 
 \<close>
 
-section*[scholar_onto::example]\<open>Writing Academic Publications in \<^verbatim>\<open>scholarly_paper\<close>)\<close>  
+section*[scholar_onto::example]\<open>Writing Academic Publications in \<^boxed_theory_text>\<open>scholarly_paper\<close>)\<close>  
 subsection\<open>Papers in freeform-style\<close>
 text\<open> 
-  The ontology \<^verbatim>\<open>scholarly_paper\<close> 
-% \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
+  The ontology \<^boxed_theory_text>\<open>scholarly_paper\<close>
+  \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
   academic/scientific papers, with a slight bias to texts in the domain of mathematics and engineering. 
   We explain first the principles of its underlying ontology, and then we present two ''real'' 
   example instances of our own.
@@ -337,7 +337,7 @@ text\<open>    You can build the PDF-document at the command line by calling:
 2018-cicm-isabelle_dof-applications\<close>}
 \<close>
 
-subsection\<open>A Bluffers Guide to the \<^verbatim>\<open>scholarly_paper\<close> Ontology\<close>
+subsection*[sss::technical]\<open>A Bluffers Guide to the \<^verbatim>\<open>scholarly_paper\<close> Ontology\<close>
 text\<open> In this section we give a minimal overview of the ontology formalized in
       @{theory \<open>Isabelle_DOF.scholarly_paper\<close>}.\<close>
 
@@ -457,6 +457,7 @@ standard inductive \<^theory_text>\<open>datatype\<close> definition mechanism i
 for attibute declarations. Vice-versa, document class definitions imply a corresponding HOL type 
 definition. \<close>
 
+(* For Achim zum spielen...
 text\<open>For example, this allows the following presentation in the source:
 @{boxed_theory_text [display] \<open>
 text*[X2::"definition"]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<^vs>\<open>-0.7cm\<close>\<close>
@@ -465,11 +466,12 @@ text*[X4::"definition"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<e
 
 text\<open> The \<open>RUN\<close>-process defined @{definition X2} represents the process that accepts all 
 events, but never stops nor deadlocks. The \<open>CHAOS\<close>-process comes in two variants shown in 
-@{definition X3} and @{definition X4}: the process that 
-non-deterministically stops or accepts any offered event, wheras \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> can additionaly
-terminate.\<close>
+@{definition X3} and @{definition X4}: the process that non-deterministically stops or 
+accepts any offered event, wheras \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> can additionaly terminate.\<close>
 \<close>}
 \<close>
+*)
+
 (* alternative *)
 text\<open>For example, this allows the following presentation in the integrated source:\<close>
 figure*[fig01::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP.png''"]
