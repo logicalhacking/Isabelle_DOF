@@ -13,7 +13,7 @@
 
 (*<*)
 theory 
-    "03_GuidedTour"
+    "03_GuidedTour" 
   imports 
     "02_Background"
     "Isabelle_DOF.CENELEC_50128"
@@ -383,24 +383,26 @@ doc_class text_section = text_element +
 
 The \<open>level\<close>-attibute \<^index>\<open>level\<close> enables doc-notation support for headers, chapters, sections, and 
 subsections; we follow here the \<^LaTeX> terminology on levels to which \<^isadof> is currently targeting at.
-The values are interpreted accordingly to the \<^LaTeX> standard.
+The values are interpreted accordingly to the \<^LaTeX> standard. The correspondance between the levels
+and the structural entities is summarized as follows:
 
-\<^enum> part          \<^index>\<open>part\<close>          \<^bigskip>\<^bigskip>  \<open>Some -1\<close>
-\<^enum> chapter       \<^index>\<open>chapter\<close>       \<^bigskip>\<^bigskip>  \<open>Some 0\<close> 
-\<^enum> section       \<^index>\<open>section\<close>       \<^bigskip>\<^bigskip>  \<open>Some 1\<close> 
-\<^enum> subsection    \<^index>\<open>subsection\<close>    \<^bigskip>\<^bigskip>  \<open>Some 2\<close> 
-\<^enum> subsubsection \<^index>\<open>subsubsection\<close> \<^bigskip>\<^bigskip>  \<open>Some 3\<close> 
+   \<^item> part          \<^index>\<open>part\<close>          \<^bigskip>\<^bigskip>  \<open>Some -1\<close> \vspace{-1cm} 
+   \<^item> chapter       \<^index>\<open>chapter\<close>       \<^bigskip>\<^bigskip>  \<open>Some 0\<close> \vspace{-1cm}
+   \<^item> section       \<^index>\<open>section\<close>       \<^bigskip>\<^bigskip>  \<open>Some 1\<close> \vspace{-1cm}
+   \<^item> subsection    \<^index>\<open>subsection\<close>    \<^bigskip>\<^bigskip>  \<open>Some 2\<close>  \vspace{-1cm}
+   \<^item> subsubsection \<^index>\<open>subsubsection\<close> \<^bigskip>\<^bigskip>  \<open>Some 3\<close>  \vspace{-0.1cm}
 
 Additional means assure that the following invariant is maintained in a document 
-conforming to @{theory \<open>Isabelle_DOF.scholarly_paper\<close>}:
+conforming to \<^verbatim>\<open>scholarly_paper\<close>:
 
 \center {\<open>level > 0\<close>}
 \<close>
 
 text\<open> The rest of the ontology introduces concepts for \<open>introductions\<close>, \<open>conclusion\<close>, \<open>related_work\<close>,
-\<open>bibliography\<close> etc. More details can be found in \<close>
+\<open>bibliography\<close> etc. More details can be found in \<^verbatim>\<open>scholarly_paper\<close> contained ion the
+theory @{theory \<open>Isabelle_DOF.scholarly_paper\<close>}. \<close>
 
-subsection\<open>Writing Academic Publications `I : A Freeform Mathematics Text \<close>
+subsection\<open>Writing Academic Publications I : A Freeform Mathematics Text \<close>
 text*[csp_paper_synthesis::technical, main_author = "Some bu"]\<open>We present a typical mathematical
 paper focussing on its form, not refering in any sense to its content which is out of scope here.
 As mentioned before, we chose the paper~@{cite "taha.ea:philosophers:2020"} for this purpose,
@@ -408,8 +410,8 @@ which is written in the so-called free-form style: Formulas are superficially pa
 type-setted, but no deeper type-checking and checking with the underlying logical context
 is undertaken.
 
-The corpus of the beginning looks like this (the setup seaquence is described later):\<close>
-(* . Focus: Mathematical content. Definition, theorem, and citations... *)
+The corpus of the paper beginning looks like this (the setup sequence is described later). \<close>
+
 figure*[fig0::figure,spawn_columns=False,relative_width="95",src="''figures/header_CSP_source.png''"]
        \<open> A mathematics paper as a document source ... \<close>  
 text\<open>The document build process converts this to the following \<^pdf>-output:\<close>
@@ -428,23 +430,19 @@ text\<open>The paper proceeds by providing instances for introduction, technical
 We would like to concentrate on one --- mathematical paper oriented --- detail in the ontology 
 \<^verbatim>\<open>scholarly_paper\<close>: 
 @{theory_text [display]
-\<open>doc_class technical = text_section +
-   . . .
+\<open>doc_class technical = text_section +  . . .
 
 type_synonym tc = technical (* technical content *)
 
 datatype math_content_class = "defn"   | "axm"  | "thm"  | "lem" | "cor" | "prop" | ...
                            
-doc_class math_content = tc +
-   ...
+doc_class math_content = tc +   ...
 
 doc_class "definition"  = math_content +
-   mcc           :: "math_content_class" <= "defn" 
-   ...
+   mcc           :: "math_content_class" <= "defn"  ...
 
 doc_class "theorem"     = math_content +
-   mcc           :: "math_content_class" <= "thm" 
-   ... 
+   mcc           :: "math_content_class" <= "thm"   ... 
 \<close>}\<close>
 
 text\<open>The class \<^verbatim>\<open>technical\<close> regroups a number of text-elements that contain typical 
@@ -473,28 +471,45 @@ accepts any offered event, wheras \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<
 *)
 
 (* alternative *)
-text\<open>For example, this allows the following presentation in the integrated source:\<close>
 figure*[fig01::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP.png''"]
        \<open> A screenshot of the integrated source with Definitions ...\<close>  
-text\<open>which declares a \<^theory_text>\<open>definition\<close> according to the \<^verbatim>\<open>scholarly_paper\<close>-ontology and uses it 
-subsequently. Note that the use in the ontology-generated antiquotation \<^theory_text>\<open>@{definition X2}\<close>
-is type-checked; referencing \<^verbatim>\<open>X2\<close> as \<^theory_text>\<open>theorem\<close> would be a type-error and be reported directly
-by \<^isadof>. Note further, that if referenced correctly wrt. to the sub-typing hierarchy makes
-\<^verbatim>\<open>X2\<close> \<^emph>\<open>navigable\<close> in Isabelle/jedit.
+text\<open>An example for a sequence of (Isabelle-formula-) texts, their ontological declarations as 
+\<open>"definition"\<close>s in terms of the \<^verbatim>\<open>scholarly_paper\<close>-ontology and their type-conform referencing 
+later is shown in \<^figure>\<open>fig01\<close> in its presentation as the integrated source.
 
-The correspondiong output looks as follows:\<close>
+Note that the use in the ontology-generated antiquotation \<^theory_text>\<open>@{definition X4}\<close>
+is type-checked; referencing \<^verbatim>\<open>X4\<close> as \<^theory_text>\<open>theorem\<close> would be a type-error and be reported directly
+by \<^isadof> in Isabelle/jEdit. Note further, that if referenced correctly wrt. to the sub-typing 
+hierarchy makes \<^verbatim>\<open>X4\<close> \<^emph>\<open>navigable\<close> in Isabelle/jedit; a click will cause the IDE to present the 
+defining occurrence of this text-element in the integrated source.
+
+Note, further, how \<^isadof>-commands like \<^theory_text>\<open>text*\<close> interact with standard Isabelle document 
+antiquotations described in the Isabelle Isar Reference Manual in Chapter 4.2 in great detail. 
+We refrain ourselves here to briefly describe three freeform antiquotations used her in this text:
+
+\<^item>  the freeform term antiquotation, also called \<^emph>\<open>cartouche\<close>, written by
+   \<open>@{cartouche [style-parms] \<open>. . .\<close>\<close> or just by \<open>\<open>...\<close>\<close> if the list of style parameters
+   is empty,
+\<^item>  the freeform antiquotation for theory fragments written \<open>@{theory_text [style-parms] \<open>...\<close>\<close>
+   or just \<^verbatim>\<open>\<^theory_text> \<open>...\<close>\<close>  if the list of style parameters
+   is empty,  
+\<^item>  the freeform antiquotations for verbatim, emphasized, bold, or footnote text elements.
+
+\<^isadof> text-elements such as \<^theory_text>\<open>text*\<close> allow to have such standard term-antiquotations inside their
+text, permitting to give the whole text entity a formal, referentiable status with typed meta-
+information attached to it that may be used for presentation issues, search, or other technical
+purposes. 
+\<close>
 
 figure*[fig02::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP-pdf.png''"]
        \<open> ... and the corresponding pdf-oputput.\<close>  
 
-text\<open>PROBLEM : SHOULD BE Definition 2 and NOT JUST A LINK ...\<close>
+
+text\<open>The corresponding output of this snippet in the integrated source is shown in\<^figure>\<open>fig02\<close>. \<close>
 
 
-subsection\<open>Writing Academic Publications II (somewhat outdated)\<close>
-text\<open> In our next example we concentrate on non-text-elements. Focus on Figures...
-
-\<close>
-
+subsection\<open>More Freeform Publication Elements\<close>
+(*
 figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogfood-Intro''"]
        \<open> Ouroboros I: This paper from inside \ldots \<close>  
 
@@ -529,9 +544,9 @@ doc_class related_work = conclusion +
    main_author :: "author option"  <=  None
 
 \<close>}
-
-Moreover, we model a document class for including figures (actually, this document class is already 
-defined in the core ontology of \<^isadof>):
+*)
+text\<open> In the following, we present some other text-elements provided by the Common Ontology Library
+in @{theory "Isabelle_DOF.Isa_COL"}. it provides a document class for figures:
 
 @{boxed_theory_text [display]\<open>
 datatype placement = h | t | b | ht | hb   
@@ -546,24 +561,38 @@ figure*[fig_figures::figure,spawn_columns=False,relative_width="85",src="''figur
        \<open> Ouroboros II: figures \ldots \<close>
 
 text\<open> 
-  The document class \<^boxed_theory_text>\<open>figure\<close> (supported by the \<^isadof> command 
+  The document class \<^boxed_theory_text>\<open>figure\<close> (supported by the \<^isadof> command abbreviation
   \<^boxed_theory_text>\<open>figure*\<close>) makes it possible to express the pictures and diagrams 
-  such as @{docitem \<open>fig_figures\<close>}.
+  as shown in \<^figure>\<open>fig_figures\<close>, which presents its own representation in the 
+  integrated source as screenshot.\<close>
 
-  Finally, we define a monitor class definition that enforces a textual ordering
+text\<open>
+  Finally, we define a \<^emph>\<open>monitor class\<close> \<^index>\<open>monitor class\<close> that enforces a textual ordering
   in the document core by a regular expression:
 
-@{boxed_theory_text [display]\<open>
-doc_class article = 
-   style_id :: string                <= "''LNCS''"
-   version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
-   where "(title       ~~ \<lbrakk>subtitle\<rbrakk>   ~~ \<lbrace>author\<rbrace>$^+$+  ~~  abstract    ~~
-             introduction ~~  \<lbrace>technical || example\<rbrace>$^+$  ~~  conclusion ~~  
-             bibliography)"
-\<close>}
+  @{boxed_theory_text [display]\<open>
+  doc_class article = 
+     style_id :: string                <= "''LNCS''"
+     version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
+     where "(title       ~~ \<lbrakk>subtitle\<rbrakk>   ~~ \<lbrace>author\<rbrace>$^+$+  ~~  abstract    ~~
+               introduction ~~  \<lbrace>technical || example\<rbrace>$^+$  ~~  conclusion ~~  
+               bibliography)"
+  \<close>}
+
+  In a integrated document source, the body of the content can be paranthesized into:
+
+  @{boxed_theory_text [display]\<open>
+  open_monitor* [this::article] 
+  ...
+  close_monitor*[this]
+  \<close>} 
+
+  which signals to \<^isadof> begin and end of the part of the integrated document 
+  in which the text-elements are expected to appear in a fixed ontological ordering.
 \<close>
 
-subsection*[scholar_pide::example]\<open>Editing Support for Academic Papers\<close>
+subsection*[scholar_pide::example]\<open>Navigation Support induced by an Ontology\<close>
+
 side_by_side_figure*[exploring::side_by_side_figure,anchor="''fig-Dogfood-II-bgnd1''",
                       caption="''Exploring a reference of a text-element.''",relative_width="48",
                       src="''figures/Dogfood-II-bgnd1''",anchor2="''fig-bgnd-text_section''",
@@ -585,7 +614,7 @@ text\<open>
   attribute-definition (which is qualified in order to disambiguate; 
   \autoref{fig:Dogfood-V-attribute}).
 \<close>
-(* Bu : This autoref stuff could be avoided if we would finally have monitors... *)
+(* Bu : This autoref stuff could be avoided if we would finally have monitors over figures... *)
 
 figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-V-attribute''"]
        \<open> Exploring an attribute (hyperlinked to the class). \<close> 
