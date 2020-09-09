@@ -291,25 +291,28 @@ users are:
   \<^LaTeX>-packages or to add/modify \<^LaTeX>-commands. 
 \<close>
 
-section*[scholar_onto::example]\<open>Writing Academic Publications (scholarly\_paper)\<close>  
-subsection\<open>The Scholarly Paper Examples\<close>
+section*[scholar_onto::example]\<open>Writing Academic Publications in \<^verbatim>\<open>scholarly_paper\<close>)\<close>  
+subsection\<open>Papers in freeform-style\<close>
 text\<open> 
-  The ontology ``scholarly\_paper''\<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
+  The ontology \<^verbatim>\<open>scholarly_paper\<close> 
+% \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
   academic/scientific papers, with a slight bias to texts in the domain of mathematics and engineering. 
   We explain first the principles of its underlying ontology, and then we present two ''real'' 
   example instances of our own.
-  \<^enum> The iFM 2020 paper~@{cite "taha.ea:philosophers:2020"} is a typical mathematical text, heavy in 
-    definitions with complex mathematical notation and a lot of complex cross-referencing 
+\<close>
+text\<open>
+  \<^enum> The iFM 2020 paper~@{cite "taha.ea:philosophers:2020"} is a typical mathematical text,
+    heavy in definitions with complex  mathematical notation and a lot of non-trivial cross-referencing
     between statements, definitions and proofs which is ontologically tracked. However, wrt.
     to the possible linking between the underlying formal theory and this mathematical presentation,
-    it follows a pragmatic path without any ``deep'' linking to types, terms and theorems, deliberately
-    not exploiting \<^isadof>'s full potential with this regard.
+    it follows a pragmatic path without any ``deep'' linking to types, terms and theorems, 
+    deliberately not exploiting \<^isadof> 's full potential with this regard.
   \<^enum> In the CICM 2018 paper~@{cite "brucker.ea:isabelle-ontologies:2018"}, we deliberately
     refrain from integrating references to formal content in order  demonstrate that \<^isadof> is not 
     a  framework from Isabelle users to Isabelle users only, but people just avoiding as much as
     possible \<^LaTeX> notation.
 
-  The \<^isadof> distribution contains both examples using the ontology ``scholarly\_paper'' in 
+  The \<^isadof> distribution contains both examples using the ontology \<^verbatim>\<open>scholarly_paper\<close> in 
   the directory \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/} or
   \nolinkurl{examples/scholarly_paper/2020-ifm-csp-applications/}.
 
@@ -334,7 +337,7 @@ text\<open>    You can build the PDF-document at the command line by calling:
 2018-cicm-isabelle_dof-applications\<close>}
 \<close>
 
-subsection\<open>A Bluffers Guide to the "scholarly\_paper" Ontology\<close>
+subsection\<open>A Bluffers Guide to the \<^verbatim>\<open>scholarly_paper\<close> Ontology\<close>
 text\<open> In this section we give a minimal overview of the ontology formalized in
       @{theory \<open>Isabelle_DOF.scholarly_paper\<close>}.\<close>
 
@@ -397,10 +400,14 @@ conforming to @{theory \<open>Isabelle_DOF.scholarly_paper\<close>}:
 text\<open> The rest of the ontology introduces concepts for \<open>introductions\<close>, \<open>conclusion\<close>, \<open>related_work\<close>,
 \<open>bibliography\<close> etc. More details can be found in \<close>
 
-subsection\<open>Writing Academic Publications `I : A Mathematics Text \<close>
+subsection\<open>Writing Academic Publications `I : A Freeform Mathematics Text \<close>
 text*[csp_paper_synthesis::technical, main_author = "Some bu"]\<open>We present a typical mathematical
 paper focussing on its form, not refering in any sense to its content which is out of scope here.
-As mentioned before, we chose the paper~@{cite "taha.ea:philosophers:2020"} for this purpose.
+As mentioned before, we chose the paper~@{cite "taha.ea:philosophers:2020"} for this purpose,
+which is written in the so-called free-form style: Formulas are superficially parsed and 
+type-setted, but no deeper type-checking and checking with the underlying logical context
+is undertaken.
+
 The corpus of the beginning looks like this (the setup seaquence is described later):\<close>
 (* . Focus: Mathematical content. Definition, theorem, and citations... *)
 figure*[fig0::figure,spawn_columns=False,relative_width="95",src="''figures/header_CSP_source.png''"]
@@ -449,6 +456,36 @@ standard \<^theory_text>\<open>type_synonym\<close>s for convenience and enumera
 standard inductive \<^theory_text>\<open>datatype\<close> definition mechanism in Isabelle, since any HOL type is admitted
 for attibute declarations. Vice-versa, document class definitions imply a corresponding HOL type 
 definition. \<close>
+
+text\<open>For example, this allows the following presentation in the source:
+@{boxed_theory_text [display] \<open>
+text*[X2::"definition"]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<^vs>\<open>-0.7cm\<close>\<close>
+text*[X3::"definition"]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>          \<^vs>\<open>-0.7cm\<close>\<close>
+text*[X4::"definition"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<^vs>\<open>-0.7cm\<close>\<close>
+
+text\<open> The \<open>RUN\<close>-process defined @{definition X2} represents the process that accepts all 
+events, but never stops nor deadlocks. The \<open>CHAOS\<close>-process comes in two variants shown in 
+@{definition X3} and @{definition X4}: the process that 
+non-deterministically stops or accepts any offered event, wheras \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> can additionaly
+terminate.\<close>
+\<close>}
+\<close>
+(* alternative *)
+text\<open>For example, this allows the following presentation in the integrated source:\<close>
+figure*[fig01::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP.png''"]
+       \<open> A screenshot of the integrated source with Definitions ...\<close>  
+text\<open>which declares a \<^theory_text>\<open>definition\<close> according to the \<^verbatim>\<open>scholarly_paper\<close>-ontology and uses it 
+subsequently. Note that the use in the ontology-generated antiquotation \<^theory_text>\<open>@{definition X2}\<close>
+is type-checked; referencing \<^verbatim>\<open>X2\<close> as \<^theory_text>\<open>theorem\<close> would be a type-error and be reported directly
+by \<^isadof>. Note further, that if referenced correctly wrt. to the sub-typing hierarchy makes
+\<^verbatim>\<open>X2\<close> \<^emph>\<open>navigable\<close> in Isabelle/jedit.
+
+The correspondiong output looks as follows:\<close>
+
+figure*[fig02::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP-pdf.png''"]
+       \<open> ... and the corresponding pdf-oputput.\<close>  
+
+text\<open>PROBLEM : SHOULD BE Definition 2 and NOT JUST A LINK ...\<close>
 
 
 subsection\<open>Writing Academic Publications II (somewhat outdated)\<close>

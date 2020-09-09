@@ -533,20 +533,23 @@ To handle termination better, we added two new processes \<open>CHAOS\<^sub>S\<^
 %Note that we do not redefine \<open>RUN\<close> with \<open>SKIP\<close> because this process is supposed to never terminate, 
 %thus must be without it. 
 \<close>
-
 (*
-Definition*[XN]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<^vs>-0.7cm}\<close>
+text*[X2::"definition"]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<^vs>\<open>-0.7cm\<close>\<close>
+text*[X3::"definition"]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>          \<^vs>\<open>-0.7cm\<close>\<close>
+text*[X4::"definition"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<^vs>\<open>-0.7cm\<close>\<close>
+
+text\<open> The \<open>RUN\<close>-process defined @{definition X2} represents the process that accepts all 
+events, but never stops nor deadlocks. The \<open>CHAOS\<close>-process comes in two variants shown in 
+@{definition X3} and @{definition X4}: the process that non-deterministically stops or 
+accepts any offered event, whereas \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> can additionally terminate.\<close>
 *)
 
 text*[X2::"definition"]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<^vs>\<open>-0.7cm\<close>\<close>
 text*[X3::"definition"]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>          \<^vs>\<open>-0.7cm\<close>\<close>
 text*[X4::"definition"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<^vs>\<open>-0.7cm\<close>\<close>
 text*[X5::"definition"]\<open>\<open>DF A \<equiv> \<mu> X. (\<sqinter> x \<in> A \<rightarrow> X)\<close>                      \<^vs>\<open>-0.7cm\<close>\<close>
-text*[X6::"definition"]\<open>\<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. ((\<sqinter> x \<in> A \<rightarrow> X) \<sqinter> SKIP)\<close> \<close> 
+text*[X6::"definition"]\<open>\<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. ((\<sqinter> x \<in> A \<rightarrow> X) \<sqinter> SKIP)\<close>          \<^vs>\<open>-0.7cm\<close> \<close> 
 
-(*
-text\<open> As mentioned in @{definition X2} ...\<close>
-*)
 text\<open> \<^vs>\<open>-0.3cm\<close> \<^noindent>
 In the following, we denote \<open> \<R>\<P> = {DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P, DF, RUN, CHAOS, CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P}\<close>. 
 All five  reference processes are divergence-free.
