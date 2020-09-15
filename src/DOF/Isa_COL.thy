@@ -371,10 +371,18 @@ fun theory_text_antiquotation name =
 *)
 
 
+fun environment_delim name =
+ ("%\n\\begin{" ^ Latex.output_name name ^ "}\n",
+  "\n\\end{" ^ Latex.output_name name ^ "}");
 
-fun enclose_env ctxt block_env body =
+fun environment_block name = environment_delim name |-> Latex.enclose_body #> Latex.block;
+
+
+fun enclose_env verbatim ctxt block_env body =
   if Config.get ctxt Document_Antiquotation.thy_output_display
-  then Latex.environment_block block_env [body]
+  then if verbatim 
+       then environment_block block_env [body]
+       else Latex.environment_block block_env [body]
   else Latex.block ([Latex.string ("\\inline"^block_env ^"{")] @ [body] @ [ Latex.string ("}")]);
 
 end
