@@ -106,8 +106,8 @@ text\<open>
 %ë\prompt{}ë sudo aptitude install texlive-latex-extra texlive-fonts-extra
 %\<close>}
 
-  Please check that this, indeed, installs a version of \<^pdftex> that supports the 
-  \<^boxed_latex>\<open>\expanded\<close>. To check your \<^pdftex>-binary, execute 
+  Please check that this really installs a version of \<^pdftex> that supports the 
+  \<^boxed_latex>\<open>\expanded\<close>. To check your \<^pdftex>-binary, execute: 
 
 \begin{bash}
 ë\prompt{}ë pdftex \\expanded{Success}\\end
@@ -237,7 +237,7 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
   \<^item> which document template (layout)\index{document template} should be used 
     (\<^eg>, scrartcl\index{scrartcl}). Some templates (\<^eg>, lncs) require that the users manually 
     obtains and adds the necessary \<^LaTeX> class file (\<^eg>, \inlinebash|llncs.cls|. 
-    This is mostly due to licensing restrictions.
+    This is due to licensing restrictions).
 \<close>
 text\<open>
   If you are happy with the defaults, \ie, using the ontology for writing academic papers 
@@ -291,14 +291,14 @@ users are:
   \<^LaTeX>-packages or to add/modify \<^LaTeX>-commands. 
 \<close>
 
-section*[scholar_onto::example]\<open>Writing Academic Publications in \<^boxed_theory_text>\<open>scholarly_paper\<close>)\<close>  
+section*[scholar_onto::example]\<open>Writing Academic Publications in \<^boxed_theory_text>\<open>scholarly_paper\<close>\<close>  
 subsection\<open>Papers in freeform-style\<close>
 text\<open> 
   The ontology \<^boxed_theory_text>\<open>scholarly_paper\<close>
   \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
   academic/scientific papers, with a slight bias to texts in the domain of mathematics and engineering. 
   We explain first the principles of its underlying ontology, and then we present two ''real'' 
-  example instances of our own.
+  examples from our own publication practice.
 \<close>
 text\<open>
   \<^enum> The iFM 2020 paper~@{cite "taha.ea:philosophers:2020"} is a typical mathematical text,
@@ -324,8 +324,7 @@ text\<open>
 
     \begin{bash}
 ë\prompt{\isadofdirn}ë 
-  isabelle jedit examples/scholarly_paper/2018-cicm-isabelle_dof-applications/\
-  IsaDofApplications.thy
+  isabelle jedit -d . examples/scholarly_paper/2020-iFM-CSP/paper.thy
 \end{bash}
 \<close> 
 (* We should discuss if we shouldn't put the iFM paper more in the foreground *) 
@@ -333,8 +332,7 @@ text\<open>
 text\<open>    You can build the PDF-document at the command line by calling:
 
 @{boxed_bash [display]
-\<open>ë\prompt{}ë isabelle build \
-2018-cicm-isabelle_dof-applications\<close>}
+\<open>ë\prompt{}ë isabelle build -d . 2020-iFM-csp \<close>}
 \<close>
 
 subsection*[sss::technical]\<open>A Bluffers Guide to the \<^verbatim>\<open>scholarly_paper\<close> Ontology\<close>
@@ -343,7 +341,7 @@ text\<open> In this section we give a minimal overview of the ontology formalize
 
 text\<open>  We start by modeling the usual text-elements of an academic paper: the title and author 
   information, abstract, and text section: 
-@{theory_text [display]
+@{boxed_theory_text [display]
 \<open>doc_class title =
    short_title :: "string option"  <=  "None"
     
@@ -374,7 +372,7 @@ the document class definition \<open>author\<close> shown above. It is used to e
 ``owns'' this \<open>text_section\<close>, an information that can give rise to presentational or even
 access-control features in a suitably adapted front-end.
  
-@{theory_text [display] \<open>
+@{boxed_theory_text [display] \<open>
 doc_class text_section = text_element +
    main_author :: "author option"  <=  None
    fixme_list  :: "string list"    <=  "[]" 
@@ -408,16 +406,17 @@ paper focussing on its form, not refering in any sense to its content which is o
 As mentioned before, we chose the paper~@{cite "taha.ea:philosophers:2020"} for this purpose,
 which is written in the so-called free-form style: Formulas are superficially parsed and 
 type-setted, but no deeper type-checking and checking with the underlying logical context
-is undertaken.
+is undertaken. \<close>
 
-The corpus of the paper beginning looks like this (the setup sequence is described later). \<close>
+figure*[fig0::figure,spawn_columns=False,relative_width="90",src="''figures/header_CSP_source.png''"]
+       \<open> A mathematics paper as integrated document source ... \<close>  
 
-figure*[fig0::figure,spawn_columns=False,relative_width="95",src="''figures/header_CSP_source.png''"]
-       \<open> A mathematics paper as a document source ... \<close>  
-text\<open>The document build process converts this to the following \<^pdf>-output:\<close>
+figure*[fig0B::figure,spawn_columns=False,relative_width="90",src="''figures/header_CSP_pdf.png''"]
+       \<open> \ldots and as corresponding \<^pdf>-output. \<close>  
 
-figure*[fig0B::figure,spawn_columns=False,relative_width="95",src="''figures/header_CSP_pdf.png''"]
-       \<open> \ldots and as its resulting \<^pdf>-output. \<close>  
+text\<open>The integrated source of this paper-except is shown in \<^figure>\<open>fig0\<close>, while the
+document build process converts this to the corresponding \<^pdf>-output shown in \<^figure>\<open>fig0B\<close>.\<close>
+
 
 text\<open>Recall that the standard syntax for a text-element in \<^isadof> is 
 \<^theory_text>\<open>text*[<id>::<class_id>,<attrs>]\<open> ... text ...\<close>\<close>, but there are a few built-in abbreviations like
@@ -426,10 +425,11 @@ The other text-elements provide the authors and the abstract as specified by the
 to the \<^theory_text>\<open>doc_class\<close>es of \<^verbatim>\<open>scholarly_paper\<close>; we say that these text elements are \<^emph>\<open>instances\<close> 
 \<^bindex>\<open>instance\<close> of the \<^theory_text>\<open>doc_class\<close>es \<^bindex>\<open>doc\_class\<close> of the underlying ontology. \<close>
 
-text\<open>The paper proceeds by providing instances for introduction, technical sections, examples, \<^etc>.
-We would like to concentrate on one --- mathematical paper oriented --- detail in the ontology 
-\<^verbatim>\<open>scholarly_paper\<close>: 
-@{theory_text [display]
+text\<open>\vspace{1,5cm} The paper proceeds by providing instances for introduction, technical sections, 
+examples, \<^etc>. We would like to concentrate on one --- mathematical paper oriented --- detail in the 
+ontology \<^verbatim>\<open>scholarly_paper\<close>: 
+
+@{boxed_theory_text [display]
 \<open>doc_class technical = text_section +  . . .
 
 type_synonym tc = technical (* technical content *)
@@ -472,7 +472,7 @@ accepts any offered event, wheras \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<
 
 (* alternative *)
 figure*[fig01::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP.png''"]
-       \<open> A screenshot of the integrated source with Definitions ...\<close>  
+       \<open> A screenshot of the integrated source with definitions ...\<close>  
 text\<open>An example for a sequence of (Isabelle-formula-) texts, their ontological declarations as 
 \<open>"definition"\<close>s in terms of the \<^verbatim>\<open>scholarly_paper\<close>-ontology and their type-conform referencing 
 later is shown in \<^figure>\<open>fig01\<close> in its presentation as the integrated source.
@@ -494,7 +494,9 @@ We refrain ourselves here to briefly describe three freeform antiquotations used
    or just \<^verbatim>\<open>\<^theory_text> \<open>...\<close>\<close>  if the list of style parameters
    is empty,  
 \<^item>  the freeform antiquotations for verbatim, emphasized, bold, or footnote text elements.
+\<close>
 
+text\<open>
 \<^isadof> text-elements such as \<^theory_text>\<open>text*\<close> allow to have such standard term-antiquotations inside their
 text, permitting to give the whole text entity a formal, referentiable status with typed meta-
 information attached to it that may be used for presentation issues, search, or other technical
@@ -507,8 +509,7 @@ figure*[fig02::figure,spawn_columns=False,relative_width="95",src="''figures/def
 
 text\<open>The corresponding output of this snippet in the integrated source is shown in\<^figure>\<open>fig02\<close>. \<close>
 
-
-subsection\<open>More Freeform Publication Elements\<close>
+subsection*[scholar_pide::example]\<open>More Freeform Elements, and Resulting Navigation\<close>
 (*
 figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogfood-Intro''"]
        \<open> Ouroboros I: This paper from inside \ldots \<close>  
@@ -558,7 +559,7 @@ doc_class figure   = text_section +
 \<close>}
 \<close>
 figure*[fig_figures::figure,spawn_columns=False,relative_width="85",src="''figures/Dogfood-figures''"]
-       \<open> Ouroboros II: figures \ldots \<close>
+       \<open> Declaring figures in the integrated source \ldots \<close>
 
 text\<open> 
   The document class \<^boxed_theory_text>\<open>figure\<close> (supported by the \<^isadof> command abbreviation
@@ -587,11 +588,11 @@ text\<open>
   close_monitor*[this]
   \<close>} 
 
-  which signals to \<^isadof> begin and end of the part of the integrated document 
-  in which the text-elements are expected to appear in a fixed ontological ordering.
+which signals to \<^isadof> begin and end of the part of the integrated source 
+in which the text-elements instances are expected to appear in the textual ordering 
+defined by \<^theory_text>\<open>article\<close>.
 \<close>
 
-subsection*[scholar_pide::example]\<open>Navigation Support induced by an Ontology\<close>
 
 side_by_side_figure*[exploring::side_by_side_figure,anchor="''fig-Dogfood-II-bgnd1''",
                       caption="''Exploring a reference of a text-element.''",relative_width="48",
@@ -604,7 +605,7 @@ side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-
                       caption="''Hyperlink to class-definition.''",relative_width="48",
                       src="''figures/Dogfood-IV-jumpInDocCLass''",anchor2="''fig:Dogfood-V-attribute''",
                       caption2="''Exploring an attribute.''",relative_width2="47",
-                      src2="''figures/Dogfood-III-bgnd-text_section''"]\<open> Hyperlinks.\<close>
+                      src2="''figures/Dogfood-III-bgnd-text_section''"]\<open>Navigation via generated hyperlinks.\<close>
 text\<open> 
   From these class definitions, \<^isadof> also automatically generated editing 
   support for Isabelle/jedit. In \autoref{fig-Dogfood-II-bgnd1} and 
@@ -620,11 +621,11 @@ figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-
        \<open> Exploring an attribute (hyperlinked to the class). \<close> 
 
 text\<open> 
-  An ontological reference application in @{figure "figDogfoodVIlinkappl"}: the 
-  ontology-dependant antiquotation \<^boxed_theory_text>\<open>@ {example ...}\<close> refers to the corresponding 
-  text-elements. Hovering allows for inspection, clicking for jumping to the definition.  If the 
-  link does not exist or  has a non-compatible type, the text is not validated.
-\<close>
+An ontological reference application in @{figure "figDogfoodVIlinkappl"}: the 
+ontology-dependant antiquotation \<^boxed_theory_text>\<open>@ {example ...}\<close> refers to the corresponding 
+text-elements. Hovering allows for inspection, clicking for jumping to the definition.  If the 
+link does not exist or  has a non-compatible type, the text is not validated,\<^ie>, Isabelle/jEdit
+will respond with an error.\<close>
 
 section*[cenelec_onto::example]\<open>Writing Certification Documents (CENELEC\_50128)\<close>
 subsection\<open>The CENELEC 50128 Example\<close>
@@ -632,8 +633,8 @@ text\<open>
   The ontology ``CENELEC\_50128''\index{ontology!CENELEC\_50128} is a small ontology modeling 
   documents for a certification following CENELEC 50128~@{cite "boulanger:cenelec-50128:2015"}.
   The \<^isadof> distribution contains a small example  using the ontology ``CENELEC\_50128'' in 
-  the directory \nolinkurl{examples/CENELEC_50128/mini_odo/}. You can inspect/edit the example 
-  in Isabelle's IDE, by either 
+  the directory \nolinkurl{examples/CENELEC_50128/mini_odo/}. You can inspect/edit the 
+  integrated source example by either 
   \<^item> starting Isabelle/jedit using your graphical user interface (\<^eg>, by clicking on the 
     Isabelle-Icon provided by the Isabelle installation) and loading the file 
     \nolinkurl{examples/CENELEC_50128/mini_odo/mini_odo.thy}.
@@ -643,10 +644,9 @@ text\<open>
 ë\prompt{\isadofdirn}ë 
   isabelle jedit examples/CENELEC_50128/mini_odo/mini_odo.thy
 \end{bash}
-\<close> 
-text\<open>  
-  You can build the PDF-document by calling:
-
+\<close>
+text\<open>\<^noindent> Finally, you
+  \<^item>   can build the PDF-document by calling:
   \begin{bash}
 ë\prompt{}ë isabelle build mini_odo
 \end{bash}
@@ -656,17 +656,18 @@ subsection\<open>Modeling CENELEC 50128\<close>
 text\<open>
   Documents to be provided in formal certifications (such as CENELEC 
   50128~@{cite "boulanger:cenelec-50128:2015"} or Common Criteria~@{cite "cc:cc-part3:2006"}) can 
-  much profit from the control of ontological consistency:  a lot of an evaluators work consists in 
-  tracing down the links from requirements over assumptions down to elements of evidence, be it in 
-  the models, the code, or the tests.  In a certification process, traceability becomes a major 
+  much profit from the control of ontological consistency:  a substantial amount of the work
+  of evaluators in formal certification processes consists in  tracing down the links from 
+  requirements over assumptions down to elements of evidence, be it in form of semi-formal 
+  documentation, models, code, or  tests.  In a certification process, traceability becomes a major 
   concern; and providing mechanisms to ensure complete traceability already at the development of 
-  the global document will clearly increase speed and reduce risk and cost of a certification 
-  process. Making the link-structure machine-checkable, be it between requirements, assumptions, 
+  the integrated source can in our view increase the speed and reduce the risk certification 
+  processes. Making the link-structure machine-checkable, be it between requirements, assumptions, 
   their implementation and their discharge by evidence (be it tests, proofs, or authoritative 
-  arguments), is therefore natural and has the potential to decrease the cost of developments 
-  targeting certifications. Continuously checking the links between the formal and the semi-formal 
-  parts of such documents is particularly valuable during the (usually collaborative) development 
-  effort. 
+  arguments), has the potential in our view to decrease the cost of software developments 
+  targeting certifications. Note that continuously checking the links between the formal and the 
+  semi-formal parts of such documents is particularly valuable during the development,
+  which is usually a collaborative effort. 
 
   As in many other cases, formal certification documents come with an own terminology and pragmatics
   of what has to be demonstrated and where, and how the trace-ability of requirements through 
@@ -726,7 +727,7 @@ We now can, \<^eg>, write
 @{boxed_theory_text [display]\<open>
 text*[ass123::SRAC]\<open> 
   The overall sampling frequence of the odometer subsystem is therefore 
-  14 khz, which includes sampling, computing a$$nd result communication 
+  14 khz, which includes sampling, computing and result communication 
   times \ldots
 \<close>
 \<close>}
@@ -737,6 +738,8 @@ text*[ass123::SRAC] \<open> The overall sampling frequence of the odometer
 subsystem is therefore 14 khz, which includes sampling, computing and
 result communication times \ldots \<close>
 
+text\<open>Note that this pdf-output is the result of a specific setup for "SRAC"s.\<close>
+
 subsection*[ontopide::technical]\<open>Editing Support for CENELEC 50128\<close>  
 figure*[figfig3::figure,relative_width="95",src="''figures/antiquotations-PIDE''"]
 \<open> Standard antiquotations referring to theory elements.\<close>
@@ -746,14 +749,14 @@ conformimg to the CENELEC 50128 ontology. The first sample shows standard Isabel
 of a document get ``formal content'' and become more robust under change.\<close>
 
 figure*[figfig5::figure, relative_width="95", src="''figures/srac-definition''"]
-        \<open> Defining a SRAC reference \ldots \<close>
+        \<open> Defining a "SRAC" in the integrated source \ldots \<close>
 figure*[figfig7::figure, relative_width="95", src="''figures/srac-as-es-application''"]
-        \<open> Using a SRAC as EC document reference. \<close>
-text\<open> The subsequent sample in @{docitem \<open>figfig5\<close>} shows the definition of an
+        \<open> Using a "SRAC" as "EC" document element. \<close>
+text\<open> The subsequent sample in @{figure \<open>figfig5\<close>} shows the definition of an
 \<^emph>\<open>safety-related application condition\<close>, a side-condition of a theorem which 
 has the consequence that a certain calculation must be executed sufficiently fast on an embedded 
 device. This condition can not be established inside the formal theory but has to be 
-checked by system integration tests. Now we reference in @{docitem  \<open>figfig7\<close>} this 
+checked by system integration tests. Now we reference in @{figure  \<open>figfig7\<close>} this 
 safety-related condition; however, this happens in a context where general \<^emph>\<open>exported constraints\<close> 
 are listed. \<^isadof>'s checks establish that this is legal in the given ontology. 
 \<close>    
@@ -882,6 +885,16 @@ students but just additional material for the internal review process of the exa
 \<close>
 
 *)
+
+section*[tech_onto::example]\<open>Writing Technical Reports in \<^boxed_theory_text>\<open>technical_report\<close>\<close>  
+text\<open>While it is perfectly possible to write documents in the
+\<^boxed_theory_text>\<open>technical_report\<close> ontologie in freeform-style (the present manual is mostly an
+example for this category), we will briefly explain here the tight-checking-style in which
+most Isabelle reference manuals themselves are written. \<close>
+
+subsection\<open>Papers in tight-checking-style\<close>
+
+text\<open>TODO: Write high-level on more text antiquotations and The Isabelle Programming Manual.\<close>
 
 section\<open>Style Guide\<close>
 text\<open>
