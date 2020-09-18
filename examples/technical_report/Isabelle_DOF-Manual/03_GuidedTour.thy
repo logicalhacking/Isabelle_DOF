@@ -888,13 +888,80 @@ students but just additional material for the internal review process of the exa
 
 section*[tech_onto::example]\<open>Writing Technical Reports in \<^boxed_theory_text>\<open>technical_report\<close>\<close>  
 text\<open>While it is perfectly possible to write documents in the
-\<^boxed_theory_text>\<open>technical_report\<close> ontologie in freeform-style (the present manual is mostly an
+\<^boxed_theory_text>\<open>technical_report\<close> ontology in freeform-style (the present manual is mostly an
 example for this category), we will briefly explain here the tight-checking-style in which
-most Isabelle reference manuals themselves are written. \<close>
+most Isabelle reference manuals themselves are written. 
 
-subsection\<open>Papers in tight-checking-style\<close>
+The idea has already been put forward by Isabelle itself; besides the general infrastructure on 
+which this work is also based, current Isabelle versions provide around 20 built-in 
+document and code antiquotations described in the Reference Manual pp.75 ff. in great detail.
 
-text\<open>TODO: Write high-level on more text antiquotations and The Isabelle Programming Manual.\<close>
+Most of them provide strict-checking, \<^ie> the argument strings where parsed and machine-checked in the
+underlying logical context, which turns the arguments into \<^emph>\<open>formal content\<close> in the integrated
+source, in contrast to the free-form antiquotations which basically influence the presentation.
+
+We still mention a few of these document antiquotations here:
+\<^item> \<^theory_text>\<open>@{thm \<open>refl\<close>}\<close> ou \<^theory_text>\<open>@{thm [display] \<open>refl\<close>}\<close> check that \<^theory_text>\<open>refl\<close> is indeed a reference
+  to a theorem; the additional "style" argument changes the presentation by printing the 
+  formula into the output instead of the reference itself,
+\<^item> \<^theory_text>\<open>@{lemma \<open>prop\<close> } by \<open>method\<close>\<close> allows to derive \<open>prop\<close> on the fly, thus garantee 
+  that it is a corrollary of the current context,
+\<^item> \<^theory_text>\<open>@{term \<open>term\<close> }\<close> parses and type-checks \<open>term\<close>,
+\<^item> \<^theory_text>\<open>@{value \<open>term\<close> }\<close> performs the evaluation of \<open>term\<close>,
+\<^item> \<^theory_text>\<open>@{ML \<open>ml-term\<close> }\<close> pa,rses and type-checks \<open>ml-term\<close>,
+\<^item> \<^theory_text>\<open>@{ML_file \<open>ml-file\<close> }\<close> parses the path for \<open>ml-file\<close> and
+  verifies its existance in the (Isabelle-virtual) file-system,
+\<^item> ...
+
+Note that there are options to display sub-parts of formulas etc., but it is a consequence
+of tight-checking that the information must be given complete and exactly in the syntax of
+Isabelle. This may be over-precise and a burden to readers not familiar with Isabelle, which may
+motivate authors to choose the aforementioned freeform-style.
+\<close>
+
+subsection\<open>A \<^verbatim>\<open>technical_report\<close> in tight-checking-style: \<open>MyCommentedIsabelle\<close> - Programming Manual \<close>
+
+text\<open>An example of tight checking is a small programming programming manual developed by the
+second author in order to document programming trick discoveries while implementing in Isabelle.
+While not necessarily a meeting standards of a scientific text, it appears to us that this information
+is often missing in the Isabelle community. 
+
+So, if this text addresses only a very limited audience and will never be famous for its style,
+it is nevertheless important to be \<^emph>\<open>exact\<close> in the sense that code-snippets and interface descriptions
+should be accurate with the most recent version of Isabelle in which this document is generated.
+So its value is that readers can just reuse some of these snippets and adapt them to their 
+purposes.
+\<close>
+
+(*
+@{boxed_theory_text [display] \<open>
+text\<open>Finally, a number of commonly used "squigglish" combinators is listed:
+
+\<^item> @{ML "op !  : 'a Unsynchronized.ref->'a"},  access operation on a program variable 
+\<^item> @{ML "op := : ('a Unsynchronized.ref * 'a)->unit"},  update operation on a program variable 
+\<^item> @{ML "op #> : ('a->'b) * ('b->'c)->'a->'c"}, a reversed function composition 
+\<^item> @{ML "op o  : (('b->'c) * ('a->'b))->'a->'c"}, function composition
+\<^item> @{ML "op || : ('a->'b) * ('a->'b) -> 'a -> 'b"}, parse alternative
+\<^item> @{ML "op -- : ('a->'b*'c) * ('c->'d*'e)->'a->('b*'d)*'e"}, parse pair 
+\<^item> @{ML "op ?  : bool * ('a->'a)->'a->'a"}, if then else 
+\<^item> @{ML "I     : 'a -> 'a"}, the I combinator
+\<^item> @{ML "K     : 'a -> 'b -> 'a"}, the K combinator \<close>
+\<close>}
+*)
+
+figure*[strict_SS::figure, relative_width="95", src="''figures/MyCommentedIsabelle.png''"]
+\<open>A table with a number of SML functions, together with their type.\<close>
+
+text\<open>
+\<open>MyCommentedIsabelle\<close> is written according to the @{theory "Isabelle_DOF.technical_report"}
+ontology. \<^figure>\<open>strict_SS\<close> shows a snippet from this integrated source gives an idea why 
+it tight-checking allows for keeping track of underlying Isabelle changes:
+Any reference to an SML operation in some library module is type-checked, and the displayed
+SML-type really corresponds to the type of the operations in the underlying SML environment.
+In the pdf output, these text-fragments were displayed verbatim.
+\<close>
+
+
 
 section\<open>Style Guide\<close>
 text\<open>
@@ -925,7 +992,7 @@ consistency checks of \<^isadof> and, hence, only if no \<^LaTeX> commands are u
 ensure that a document that does not generate any error messages in Isabelle/jedit also generated
 a PDF document. Second, future version of \<^isadof> might support different targets for the 
 document generation (\<^eg>, HTML) which, naturally, are only available to documents not using 
-native \<^LaTeX>-commands. 
+too complex native \<^LaTeX>-commands. 
 
 Similarly, (unchecked) forward references should, if possible, be avoided, as they also might
 create dangeling references during the document generation that break the document generation.  
