@@ -31,3 +31,4 @@ session "Isabelle_DOF-Manual" = "Isabelle_DOF" +
     "figures/header_CSP_source.png"
     "figures/definition-use-CSP-pdf.png"
     "figures/definition-use-CSP.png"
+    "figures/MyCommentedIsabelle.png"

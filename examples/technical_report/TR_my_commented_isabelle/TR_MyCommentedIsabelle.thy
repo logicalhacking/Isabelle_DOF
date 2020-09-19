@@ -316,17 +316,20 @@ text\<open>
 \<close>
 
 
-text\<open>ML structure @{ML_structure Proof_Context}:\<close>
-ML\<open>
- Proof_Context.init_global: theory -> Proof.context;
- Context.Proof: Proof.context -> Context.generic; (* the path to a generic Context *)
- Proof_Context.get_global: theory -> string -> Proof.context
+text\<open>The structure \<^ML_structure>\<open>Proof_Context\<close> provides a key data-structures concerning contexts:
+
+\<^item> \<^ML>\<open> Proof_Context.init_global: theory -> Proof.context\<close>
+  embeds a global context into a local context
+\<^item> \<^ML>\<open>  Context.Proof: Proof.context -> Context.generic \<close>
+  the path to a generic Context, i.e. a sum-type of global and local contexts
+  in order to simplify system interfaces
+\<^item> \<^ML>\<open> Proof_Context.get_global: theory -> string -> Proof.context\<close>
 \<close>
 
 
-subsection*[t213::example]\<open>Mechanism 2 : Extending the Global Context $\theta$ by User Data \<close>
+subsection*[t213::example]\<open>Mechanism 2 : Extending the Global Context \<open>\<theta>\<close> by User Data \<close>
 
-text\<open>A central mechanism for constructing user-defined data is by the \<^verbatim>\<open>Generic_Data\<close> SML functor.
+text\<open>A central mechanism for constructing user-defined data is by the \<^ML_functor>\<open>Generic_Data\<close>-functor.
   A plugin needing some data \<^verbatim>\<open>T\<close> and providing it with implementations for an 
   \<^verbatim>\<open>empty\<close>, and operations  \<^verbatim>\<open>merge\<close> and \<^verbatim>\<open>extend\<close>, can construct a lense with operations
   \<^verbatim>\<open>get\<close> and \<^verbatim>\<open>put\<close> that attach this data into the generic system context. Rather than using
@@ -335,42 +338,47 @@ text\<open>A central mechanism for constructing user-defined data is by the \<^v
   features in the pervasively parallel evaluation framework that Isabelle as a system represents.\<close>
 
 ML \<open>
-datatype X = mt
-val init = mt;
-val ext = I
-fun merge (X,Y) = mt
+     datatype X = mt
+     val init = mt;
+     val ext = I
+     fun merge (X,Y) = mt
+     
+     structure Data = Generic_Data
+     (
+       type T = X
+       val empty  = init
+       val extend = ext
+       val merge  = merge
+     );  
+\<close>
+text\<open> This generates the result structure \<^ML_structure>\<open>Data\<close> by a functor instantiation 
+with the functions:
 
-structure Data = Generic_Data
-(
-  type T = X
-  val empty  = init
-  val extend = ext
-  val merge  = merge
-);  
-
-
- Data.get : Context.generic -> Data.T;
- Data.put : Data.T -> Context.generic -> Context.generic;
- Data.map : (Data.T -> Data.T) -> Context.generic -> Context.generic;
- (* there are variants to do this on theories ... *)
+\<^item> \<^ML>\<open> Data.get : Context.generic -> Data.T\<close>
+\<^item> \<^ML>\<open> Data.put : Data.T -> Context.generic -> Context.generic\<close>
+\<^item> \<^ML>\<open> Data.map : (Data.T -> Data.T) -> Context.generic -> Context.generic\<close>
+\<^item> ... and other variants to do this on theories ...
 \<close>
 
 
-section*[lcfk::technical]\<open>  The LCF-Kernel: terms, types, theories, proof\_contexts, thms \<close>  
-text\<open>The classical LCF-style \<^emph>\<open>kernel\<close> is about 
-\<^enum> Types and terms of a typed $\lambda$-Calculus including constant symbols,
-  free variables, $\lambda$-binder and application,
-\<^enum> An infrastructure to define types and terms, a \<^emph>\<open>signature\<close>,
-  that also assigns to constant symbols types
-\<^enum> An abstract type of \<^emph>\<open>theorem\<close> and logical operations on them
-\<^enum> (Isabelle specific): a notion of \<^emph>\<open>theory\<close>, i.e. a container 
+section*[lcfk::technical]\<open>  The LCF-Kernel: \<^ML_type>\<open>term\<close>s, \<^ML_type>\<open>typ\<close>es,  \<^ML_type>\<open>theory\<close>s, 
+ \<^ML_type>\<open> Proof.context\<close>s,  \<^ML_type>\<open>thm\<close>s \<close>  
+text\<open>The classical LCF-style \<^emph>\<open>kernel\<close> is about   
+\<^enum> Types and terms of a typed \<open>\<lambda>\<close>-Calculus including constant symbols,
+  free variables, \<open>\<lambda>\<close>-binder and application,
+\<^enum> An infrastructure to define types and terms, a \<^emph>\<open>signature\<close> in structure  \<^ML_structure>\<open>Sign\<close>
+  that also assigns to constant symbols types and concrete syntax managed in structure \<^ML_structure>\<open>Syntax\<close>
+\<^enum> An abstract type  \<^ML_type>\<open>thm\<close> for \<^emph>\<open>theorem\<close> and logical operations on them
+\<^enum> (Isabelle specific): a notion of \<^ML_type>\<open>theory\<close>, i.e. a container 
   providing a signature and set (list) of theorems.   
 \<close>
 
 
 subsection*[termstypes::technical]\<open> Terms and Types \<close>
-text \<open>A basic data-structure of the kernel is @{file "$ISABELLE_HOME/src/Pure/term.ML"} \<close>  
-ML\<open> (* open Term; *)
+text \<open>The basic data-structure  \<^ML_structure>\<open>Term\<close> of the kernel is contained in file
+@{file "$ISABELLE_HOME/src/Pure/term.ML"}. At a glance, the highlights are summarized as follows: \<close>  
+(* Methodologically doubtful: nothing guarantees that TERM' corresponds to what is Isabelle reality*)
+ML\<open> 
 signature TERM' = sig
   (* ... *)
   type indexname = string * int
@@ -387,11 +395,39 @@ signature TERM' = sig
     Var of indexname * typ |
     Bound of int |
     Abs of string * typ * term |
-    $ of term * term
+    $ of term * term  (* the infix operator for the application *)
   exception TYPE of string * typ list * term list
   exception TERM of string * term list
   (* ... *)
 end
+\<close>
+(* methodologically better: *)
+text\<open> Basic types introduced by structure  \<^ML_structure>\<open>Term\<close> are:
+\<^item> \<^ML_type>\<open>Term.indexname\<close> which is a synonym to  \<^ML_type>\<open>string * int\<close>
+\<^item> \<^ML_type>\<open>Term.class\<close> which is a synonym to  \<^ML_type>\<open>string\<close>
+\<^item> \<^ML_type>\<open>Term.sort\<close> which is a synonym to  \<^ML_type>\<open>class list\<close>
+\<^item> \<^ML_type>\<open>Term.arity\<close> which is a synonym to  \<^ML_type>\<open> string * sort list * sort\<close>
+
+\<^item> \<^ML_type>\<open>Term.typ\<close> has the following constructors:
+   \<^enum> \<^ML>\<open>Term.Type: string * typ list -> typ\<close> : The universal type constructor. Note that 
+     \<open>Type("fun", [A,B])\<close> denotes the function space \<open>A \<Rightarrow> B\<close> at the ML level.
+   \<^enum> \<^ML>\<open>Term.TFree: string * sort -> typ\<close> introduces free-type variables, pretty-printed
+     by \<open>'a,'b,'c,...\<close>. In deduction, they are treated as constants.
+   \<^enum> \<^ML>\<open>Term.TVar: indexname * sort -> typ\<close> introduces schematic type variables, pretty-printed
+     by \<open>?'a,?'b,?'c,...\<close>. In deduction, they were instantiated by the unification process.
+
+\<^item> \<^ML_type>\<open>Term.term\<close> implements the heart of a Curry-style typed \<open>\<lambda>\<close>-calculus. 
+  It has the following constructors:
+   \<^enum> \<^ML>\<open>Term.Const: string * typ -> term\<close> for \<^emph>\<open>constant symbols\<close>,
+   \<^enum> \<^ML>\<open>Term.Free: string * typ -> term\<close> for \<^emph>\<open>free variable symbols\<close>,
+   \<^enum> \<^ML>\<open>Term.Var: indexname * typ -> term\<close> for \<^emph>\<open>schematic variables\<close>, \<^eg>, \<open>?X\<close>, \<open>?Y\<close>, \<open>?Z\<close>, ... 
+   \<^enum> \<^ML>\<open>Term.Bound: int -> term\<close> for bound variables encoded as deBruin indices,
+   \<^enum> \<^ML>\<open>Term.Abs: string * typ * term -> term\<close> for the \<^emph>\<open>abstraction\<close>
+   \<^enum> \<^ML>\<open>op $ : term * term -> term\<close> denotes the infix operator for the \<^emph>\<open>application\<close>
+
+\<^item>  \<^ML_structure>\<open>Term\<close> provides also a number of core-exceptions relevant for type inference and
+   term destruction: \<^ML>\<open>Term.TYPE: string * typ list * term list -> exn\<close> and
+   \<^ML>\<open>Term.TERM: string * term list -> exn\<close>.
 \<close>
 
 text\<open>This core-data structure of the Isabelle Kernel is accessible in the Isabelle/ML environment

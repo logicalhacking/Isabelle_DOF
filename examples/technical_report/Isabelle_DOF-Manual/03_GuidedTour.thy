@@ -949,7 +949,7 @@ text\<open>Finally, a number of commonly used "squigglish" combinators is listed
 \<close>}
 *)
 
-figure*[strict_SS::figure, relative_width="95", src="''figures/MyCommentedIsabelle.png''"]
+figure*[strict_SS::figure, relative_width="95", src="''figures/MyCommentedIsabelle.png''"] 
 \<open>A table with a number of SML functions, together with their type.\<close>
 
 text\<open>
