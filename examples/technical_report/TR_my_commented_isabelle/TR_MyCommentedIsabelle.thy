@@ -780,9 +780,9 @@ figure*[kir2::figure,relative_width="100",src="''figures/pure-inferences-II''"]
 text\<open>Note that the transfer rule:
 \[
 \begin{prooftree}
- \Gamma \vdash_\theta \phi            \qquad \qquad       \theta \sqsubseteq \theta'
+ \<open>\<Gamma> \<turnstile>\<^sub>\<theta> \<phi>\<close>   \qquad \qquad     \<open>\<theta> \<sqsubseteq> \<theta>'\<close>  
 \justifies
- \Gamma \vdash_{\theta'} \phi  \qquad \qquad
+ \<open>\<Gamma> \<turnstile>\<^sub>\<theta>\<^sub>' \<phi>\<close>  \qquad \qquad
 \end{prooftree}
 \]
   which is a consequence of explicit theories  characteristic for Isabelle's LCF-kernel design
@@ -822,11 +822,15 @@ subsection*[t235::technical]\<open> \<^ML_structure>\<open>Theory\<close>'s \<cl
 
 text \<open> This structure yields the abstract datatype \<^ML_structure>\<open>Theory\<close> which becomes the content of 
   \<^ML_type>\<open>Context.theory\<close>. In a way, the LCF-Kernel registers itself into the Nano-Kernel,
-  which inspired me (bu) to this naming. \<close>
+  which inspired me (bu) to this naming. However, not that this is a mental model: the Nano-Kernel
+  offers ab initio many operations directly linked to its main purpose: incommodating the 
+  micro-kernel and its management of local and global contexts.
+\<close>
 
-ML\<open>
-
-(* intern Theory.Thy; 
+text\<open>
+@{theory_text [display] 
+\<open>
+intern Theory.Thy; 
 
 datatype thy = Thy of
  {pos: Position.T,
@@ -834,75 +838,73 @@ datatype thy = Thy of
   axioms: term Name_Space.table,
   defs: Defs.T,
   wrappers: wrapper list * wrapper list};
+\<close>}
 
-*)
-
-Theory.check: {long: bool} -> Proof.context -> string * Position.T -> theory;
-
-Theory.local_setup: (Proof.context -> Proof.context) -> unit;
-Theory.setup: (theory -> theory) -> unit;  (* The thing to extend the table of "command"s with parser - callbacks. *)
-Theory.get_markup: theory -> Markup.T;
-Theory.axiom_table: theory -> term Name_Space.table;
-Theory.axiom_space: theory -> Name_Space.T;
-Theory.all_axioms_of: theory -> (string * term) list;
-Theory.defs_of: theory -> Defs.T;
-Theory.join_theory: theory list -> theory;
-Theory.at_begin: (theory -> theory option) -> theory -> theory;
-Theory.at_end: (theory -> theory option) -> theory -> theory;
-Theory.begin_theory: string * Position.T -> theory list -> theory;
-Theory.end_theory: theory -> theory;\<close>
+\<^item>  \<^ML>\<open>Theory.check: {long: bool} -> Proof.context -> string * Position.T -> theory\<close>
+\<^item>  \<^ML>\<open>Theory.local_setup: (Proof.context -> Proof.context) -> unit\<close>
+\<^item>  \<^ML>\<open>Theory.setup: (theory -> theory) -> unit\<close>  (* The thing to extend the table of "command"s with parser - callbacks. *)
+\<^item>  \<^ML>\<open>Theory.get_markup: theory -> Markup.T\<close>
+\<^item>  \<^ML>\<open>Theory.axiom_table: theory -> term Name_Space.table\<close>
+\<^item>  \<^ML>\<open>Theory.axiom_space: theory -> Name_Space.T\<close>
+\<^item>  \<^ML>\<open>Theory.all_axioms_of: theory -> (string * term) list\<close>
+\<^item>  \<^ML>\<open>Theory.defs_of: theory -> Defs.T\<close>
+\<^item>  \<^ML>\<open>Theory.join_theory: theory list -> theory\<close>
+\<^item>  \<^ML>\<open>Theory.at_begin: (theory -> theory option) -> theory -> theory\<close>
+\<^item>  \<^ML>\<open>Theory.at_end: (theory -> theory option) -> theory -> theory\<close>
+\<^item>  \<^ML>\<open>Theory.begin_theory: string * Position.T -> theory list -> theory\<close>
+\<^item>  \<^ML>\<open>Theory.end_theory: theory -> theory\<close>
+\<close>
 
 section*[t26::technical]\<open>Advanced Specification Constructs\<close>
 text\<open>Isabelle is built around the idea that system components were built on top
 of the kernel in order to give the user high-level specification constructs 
 --- rather than inside as in the Coq kernel that foresees, for example, data-types
-and primitive recursors already in the basic $\lambda$-term language.
+and primitive recursors already in the basic \<open>\<lambda>\<close>-term language.
 Therefore, records, definitions, type-definitions, recursive function definitions
 are supported by packages that belong to the \<^emph>\<open>components\<close> strata. 
-With the exception of the @{ML "Specification.axiomatization"} construct, they
+With the exception of the \<^ML>\<open>Specification.axiomatization\<close> construct, they
 are all-together built as composition of conservative extensions.
 
 The components are a bit scattered in the architecture. A relatively recent and
-high-level component (more low-level components such as @{ML "Global_Theory.add_defs"}
+high-level component (more low-level components such as \<^ML>\<open>Global_Theory.add_defs\<close>
 exist) for definitions and axiomatizations is here:
 \<close>
 
 
-ML\<open>
-local open Specification
-  val _= definition: (binding * typ option * mixfix) option ->
+text\<open>
+\<^item>  \<^ML>\<open>Specification.definition: (binding * typ option * mixfix) option ->
         (binding * typ option * mixfix) list -> term list -> Attrib.binding * term ->
-        local_theory -> (term * (string * thm)) * local_theory
-  val _= definition': (binding * typ option * mixfix) option ->
+        local_theory -> (term * (string * thm)) * local_theory\<close>
+\<^item>  \<^ML>\<open>Specification.definition': (binding * typ option * mixfix) option ->
         (binding * typ option * mixfix) list ->  term list -> Attrib.binding * term ->
-        bool -> local_theory -> (term * (string * thm)) * local_theory
-  val _= definition_cmd: (binding * string option * mixfix) option ->
+        bool -> local_theory -> (term * (string * thm)) * local_theory\<close>
+\<^item>  \<^ML>\<open>Specification.definition_cmd: (binding * string option * mixfix) option ->
         (binding * string option * mixfix) list -> string list -> Attrib.binding * string ->
-         bool -> local_theory -> (term * (string * thm)) * local_theory
-  val _= axiomatization: (binding * typ option * mixfix) list ->
+         bool -> local_theory -> (term * (string * thm)) * local_theory\<close>
+\<^item>  \<^ML>\<open>Specification.axiomatization: (binding * typ option * mixfix) list ->
         (binding * typ option * mixfix) list -> term list ->
-        (Attrib.binding * term) list -> theory -> (term list * thm list) * theory
-  val _= axiomatization_cmd: (binding * string option * mixfix) list ->
+        (Attrib.binding * term) list -> theory -> (term list * thm list) * theory\<close>
+\<^item>  \<^ML>\<open>Specification.axiomatization_cmd: (binding * string option * mixfix) list ->
         (binding * string option * mixfix) list -> string list ->
-        (Attrib.binding * string) list -> theory -> (term list * thm list) * theory
-  val _= axiom: Attrib.binding * term -> theory -> thm * theory
-  val _= abbreviation: Syntax.mode -> (binding * typ option * mixfix) option ->
-        (binding * typ option * mixfix) list -> term -> bool -> local_theory -> local_theory
-  val _= abbreviation_cmd: Syntax.mode -> (binding * string option * mixfix) option ->
-        (binding * string option * mixfix) list -> string -> bool -> local_theory -> local_theory
-in val _ = () end
+        (Attrib.binding * string) list -> theory -> (term list * thm list) * theory\<close>
+\<^item>  \<^ML>\<open>Specification.axiom: Attrib.binding * term -> theory -> thm * theory\<close>
+\<^item>  \<^ML>\<open>Specification.abbreviation: Syntax.mode -> (binding * typ option * mixfix) option ->
+        (binding * typ option * mixfix) list -> term -> bool -> local_theory -> local_theory\<close>
+\<^item>  \<^ML>\<open>Specification.abbreviation_cmd: Syntax.mode -> (binding * string option * mixfix) option ->
+        (binding * string option * mixfix) list -> string -> bool -> local_theory -> local_theory\<close>
 \<close>
 
-text\<open>Note that the interface is mostly based on @{ML_type "local_theory"}, which is a synonym to
-@{ML_type "Proof.context"}. Need to lift this to a global system transition ?
-Don't worry, @{ML "Named_Target.theory_map: (local_theory -> local_theory) -> theory -> theory"} 
+text\<open>
+Note that the interface is mostly based on \<^ML_type>\<open>local_theory\<close>, which is a synonym to
+\<^ML_type>\<open>Proof.context\<close>. Need to lift this to a global system transition ?
+Don't worry, \<^ML>\<open>Named_Target.theory_map: (local_theory -> local_theory) -> theory -> theory\<close> 
 does the trick.
 \<close>
 
 subsection*[t261::example]\<open>Example\<close>
 
-text\<open>Suppose that we want do  \<open>definition I :: "'a \<Rightarrow> 'a" where "I x = x"\<close> at the ML-level.
-We construct our defining equation and embed it as a @{typ "prop"} into Pure.
+text\<open>Suppose that we want do  \<^theory_text>\<open>definition I :: "'a \<Rightarrow> 'a" where "I x = x"\<close> at the ML-level.
+We construct our defining equation and embed it as a \<^typ>\<open>prop\<close> into Pure.
 \<close>
 ML\<open> val ty = @{typ "'a"}
     val term = HOLogic.mk_eq (Free("I",ty -->ty) $ Free("x", ty), Free("x", ty));
@@ -931,18 +933,18 @@ section*[t24::technical]\<open>Backward Proofs: Tactics, Tacticals and Goal-Stat
 text\<open>At this point, we leave the Pure-Kernel and start to describe the first layer on top
   of it, involving support for specific styles of reasoning and automation of reasoning.\<close>
 
-text\<open> \<^verbatim>\<open>tactic\<close>'s are in principle \<^emph>\<open>relations\<close> on theorems @{ML_type "thm"}; this gives a natural way 
-  to represent the fact that HO-Unification (and therefore the mechanism of rule-instantiation) 
-  are non-deterministic in principle. Heuristics may choose particular preferences between 
+text\<open> \<^ML_type>\<open>tactic\<close>'s are in principle \<^emph>\<open>relations\<close> on theorems  \<^ML_type>\<open>thm\<close>; this gives a 
+  natural way to represent the fact that HO-Unification (and therefore the mechanism of rule-instan-
+  tiation) are non-deterministic in principle. Heuristics may choose particular preferences between 
   the theorems in the range of this relation, but the Isabelle Design accepts this fundamental 
   fact reflected at this point in the prover architecture. 
   This potentially infinite relation is implemented by a function of theorems to lazy lists 
   over theorems, which gives both sufficient structure for heuristic
-  considerations as well as a nice algebra, called  \<^verbatim>\<open>TACTICAL\<close>'s, providing a bottom element
-  @{ML "no_tac"} (the function that always fails), the top-element @{ML "all_tac"}
-   (the function that never fails), sequential composition @{ML "op THEN"}, (serialized) 
-  non-deterministic composition @{ML "op ORELSE"}, conditionals, repetitions over lists, etc.
-  The following is an excerpt of @{file "~~/src/Pure/tactical.ML"}:\<close>
+  considerations as well as a nice algebra, called \<^ML_structure>\<open>Tactical\<close>'s, providing a bottom element
+  \<^ML>\<open>no_tac\<close> (the function that always fails), the top-element \<^ML>\<open>all_tac\<close>
+   (the function that never fails), sequential composition  \<^ML>\<open>op THEN\<close>, (serialized) 
+  non-deterministic composition  \<^ML>\<open>op ORELSE\<close>, conditionals, repetitions over lists, etc.
+  The following is an excerpt of \<^file>\<open>~~/src/Pure/tactical.ML\<close>:\<close>
 
 ML\<open>
 signature TACTICAL =
