@@ -310,11 +310,12 @@ text\<open>
 \<^item> \<^ML>\<open>Context.ancestors_of: theory -> theory list\<close> gets the imported theories
 \<^item> \<^ML>\<open>Context.proper_subthy : theory * theory -> bool\<close> subcontext test
 \<^item> \<^ML>\<open>Context.Proof: Proof.context -> Context.generic \<close> A constructor embedding local contexts
-\<^item> \<^ML>\<open>Context.proof_of : Context.generic -> Proof.context\<close> the imnverse
+\<^item> \<^ML>\<open>Context.proof_of : Context.generic -> Proof.context\<close> the inverse
 \<^item> \<^ML>\<open>Context.theory_name : theory -> string\<close>
 \<^item> \<^ML>\<open>Context.map_theory: (theory -> theory) -> Context.generic -> Context.generic\<close>
 \<close>
 
+text\<open>\<^ML>\<open>3+4\<close>\<close>
 
 text\<open>The structure \<^ML_structure>\<open>Proof_Context\<close> provides a key data-structures concerning contexts:
 
@@ -361,13 +362,14 @@ with the functions:
 \<close>
 
 
-section*[lcfk::technical]\<open>  The LCF-Kernel: \<^ML_type>\<open>term\<close>s, \<^ML_type>\<open>typ\<close>es,  \<^ML_type>\<open>theory\<close>s, 
- \<^ML_type>\<open> Proof.context\<close>s,  \<^ML_type>\<open>thm\<close>s \<close>  
+section*[lcfk::technical]\<open>The LCF-Kernel: \<^ML_type>\<open>term\<close>s, \<^ML_type>\<open>typ\<close>es,  \<^ML_type>\<open>theory\<close>s, 
+                          \<^ML_type>\<open> Proof.context\<close>s,  \<^ML_type>\<open>thm\<close>s \<close>  
 text\<open>The classical LCF-style \<^emph>\<open>kernel\<close> is about   
 \<^enum> Types and terms of a typed \<open>\<lambda>\<close>-Calculus including constant symbols,
   free variables, \<open>\<lambda>\<close>-binder and application,
 \<^enum> An infrastructure to define types and terms, a \<^emph>\<open>signature\<close> in structure  \<^ML_structure>\<open>Sign\<close>
-  that also assigns to constant symbols types and concrete syntax managed in structure \<^ML_structure>\<open>Syntax\<close>
+  that also assigns to constant symbols types and concrete syntax managed in structure
+  \<^ML_structure>\<open>Syntax\<close>
 \<^enum> An abstract type  \<^ML_type>\<open>thm\<close> for \<^emph>\<open>theorem\<close> and logical operations on them
 \<^enum> (Isabelle specific): a notion of \<^ML_type>\<open>theory\<close>, i.e. a container 
   providing a signature and set (list) of theorems.   
@@ -401,8 +403,10 @@ signature TERM' = sig
   (* ... *)
 end
 \<close>
+
 (* methodologically better: *)
-text\<open> Basic types introduced by structure  \<^ML_structure>\<open>Term\<close> are:
+text\<open>\<^noindent> Basic types introduced by structure  \<^ML_structure>\<open>Term\<close> are:
+
 \<^item> \<^ML_type>\<open>Term.indexname\<close> which is a synonym to  \<^ML_type>\<open>string * int\<close>
 \<^item> \<^ML_type>\<open>Term.class\<close> which is a synonym to  \<^ML_type>\<open>string\<close>
 \<^item> \<^ML_type>\<open>Term.sort\<close> which is a synonym to  \<^ML_type>\<open>class list\<close>
@@ -497,16 +501,16 @@ ML\<open> Type.typ_instance: Type.tsig -> typ * typ -> bool (* raises  TYPE_MATC
 text\<open> there is a joker type that can be added as place-holder during term construction.
        Jokers can be eliminated by the type inference. \<close>
   
-ML\<open>  Term.dummyT : typ \<close>
+text\<open>   \<^ML>\<open> Term.dummyT : typ \<close> \<close>
 
-ML\<open>
-   Sign.typ_instance: theory -> typ * typ -> bool;
-   Sign.typ_match: theory -> typ * typ -> Type.tyenv -> Type.tyenv;
-   Sign.typ_unify: theory -> typ * typ -> Type.tyenv * int -> Type.tyenv * int;
-   Sign.const_type: theory -> string -> typ option;
-   Sign.certify_term: theory -> term -> term * typ * int;   (* core routine for CERTIFICATION of types*)
-   Sign.cert_term: theory -> term -> term;                  (* short-cut for the latter *)
-   Sign.tsig_of: theory -> Type.tsig                        (* projects the type signature *)
+text\<open>
+\<^enum>  \<^ML>\<open>Sign.typ_instance: theory -> typ * typ -> bool\<close>
+\<^enum>  \<^ML>\<open>Sign.typ_match: theory -> typ * typ -> Type.tyenv -> Type.tyenv\<close>
+\<^enum>  \<^ML>\<open> Sign.typ_unify: theory -> typ * typ -> Type.tyenv * int -> Type.tyenv * int\<close>
+\<^enum>  \<^ML>\<open>Sign.const_type: theory -> string -> typ option\<close>
+\<^enum>  \<^ML>\<open>Sign.certify_term: theory -> term -> term * typ * int\<close> (* core routine for CERTIFICATION of types*)
+\<^enum>  \<^ML>\<open>Sign.cert_term: theory -> term -> term\<close>                (* short-cut for the latter *)
+\<^enum>  \<^ML>\<open>Sign.tsig_of: theory -> Type.tsig\<close>                     (* projects the type signature *)
 \<close>
 text\<open> 
   @{ML "Sign.typ_match"} etc. is actually an abstract wrapper on the structure 
@@ -517,7 +521,7 @@ text\<open>
   which in itself is a synonym for @{ML_type "'a Symtab.table"}, so 
   possesses the usual @{ML "Symtab.empty"} and  @{ML "Symtab.dest"} operations. \<close>  
 
-text\<open>Note that @{emph \<open>polymorphic variables\<close>} are treated like constant symbols 
+text\<open>Note that \<^emph>\<open>polymorphic variables\<close> are treated like constant symbols 
   in the type inference; thus, the following test, that one type is an instance of the
   other, yields false:\<close>
 
@@ -563,25 +567,26 @@ text*[exo4::example]\<open> Example:\<close>
 ML\<open>val t = generalize_term @{term "[]"}\<close>
 
 text\<open>Now we turn to the crucial issue of type-instantiation and with a given type environment
-  @{ML "tyenv"}. For this purpose, one has to switch to the low-level interface 
-  @{ML_structure "Term_Subst"}. \<close>
+  \<^ML>\<open>tyenv\<close>. For this purpose, one has to switch to the low-level interface 
+  \<^ML_structure>\<open>Term_Subst\<close>. \<close>
 
-ML\<open>
-Term_Subst.map_types_same : (typ -> typ) -> term -> term;
-Term_Subst.map_aterms_same : (term -> term) -> term -> term;
-Term_Subst.instantiate: ((indexname * sort) * typ) list * ((indexname * typ) * term) list -> term -> term;
-Term_Subst.instantiateT: ((indexname * sort) * typ) list -> typ -> typ;
-Term_Subst.generalizeT: string list -> int -> typ -> typ;
-                        (* this is the standard type generalisation function !!!
-                           only type-frees in the string-list were taken into account. *)
-Term_Subst.generalize: string list * string list -> int -> term -> term
-                        (* this is the standard term generalisation function !!!
-                           only type-frees and frees in the string-lists were taken 
-                           into account. *)
+text\<open>
+\<^item> \<^ML>\<open>Term_Subst.map_types_same : (typ -> typ) -> term -> term\<close>
+\<^item> \<^ML>\<open>Term_Subst.map_aterms_same : (term -> term) -> term -> term\<close>
+\<^item> \<^ML>\<open>Term_Subst.instantiate: ((indexname * sort) * typ) list * ((indexname * typ) * term) list 
+                              -> term -> term\<close>
+\<^item> \<^ML>\<open>Term_Subst.instantiateT: ((indexname * sort) * typ) list -> typ -> typ\<close>
+\<^item> \<^ML>\<open>Term_Subst.generalizeT: string list -> int -> typ -> typ\<close>
+                        this is the standard type generalisation function !!!
+                        only type-frees in the string-list were taken into account. 
+\<^item> \<^ML>\<open>Term_Subst.generalize: string list * string list -> int -> term -> term\<close>
+                        this is the standard term generalisation function !!!
+                        only type-frees and frees in the string-lists were taken 
+                        into account. 
 \<close>
 
 text \<open>Apparently, a bizarre conversion between the old-style interface and 
-  the new-style @{ML "tyenv"} is necessary. See the following example.\<close>
+  the new-style  \<^ML>\<open>tyenv\<close> is necessary. See the following example.\<close>
 ML\<open>
 val S = Vartab.dest tyenv;
 val S' = (map (fn (s,(t,u)) => ((s,t),u)) S) : ((indexname * sort) * typ) list;
@@ -676,23 +681,37 @@ proof - fix a :: nat
 
 
 subsection*[t233::technical]\<open> Theories and the Signature API\<close>  
-ML\<open>
-Sign.tsig_of : theory -> Type.tsig;
-Sign.syn_of  : theory -> Syntax.syntax;
-Sign.of_sort : theory -> typ * sort -> bool ;
+text\<open>
+\<^enum> \<^ML>\<open>Sign.tsig_of : theory -> Type.tsig\<close> extraxts the type-signature of a theory
+\<^enum> \<^ML>\<open>Sign.syn_of  : theory -> Syntax.syntax\<close> extracts the constant-symbol signature 
+\<^enum> \<^ML>\<open>Sign.of_sort : theory -> typ * sort -> bool\<close> decides that a type belongs to a sort.
 \<close>
 
-subsection*[t234::technical]\<open>Thm's and the LCF-Style, "Mikro"-Kernel \<close>  
+subsection*[t234::technical]\<open>\<^ML_structure>\<open>Thm\<close>'s and the LCF-Style, "Mikro"-Kernel \<close>  
 text\<open> 
-  The basic constructors and operations on theorems@{file "$ISABELLE_HOME/src/Pure/thm.ML"},
-  a set of derived (Pure) inferences can be found in @{file "$ISABELLE_HOME/src/Pure/drule.ML"}.
+  The basic constructors and operations on theorems \<^file>\<open>$ISABELLE_HOME/src/Pure/thm.ML\<close>,
+  a set of derived (Pure) inferences can be found in \<^file>\<open>$ISABELLE_HOME/src/Pure/drule.ML\<close>.
 
-  The main types provided by structure \<^verbatim>\<open>thm\<close> are certified types @{ML_type ctyp}, 
-  certified terms @{ML_type cterm}, @{ML_type thm} as well as conversions @{ML_type conv}.
+  The main types provided by structure \<^verbatim>\<open>thm\<close> are certified types \<^ML_type>\<open>Thm.ctyp\<close>, 
+  certified terms \<^ML_type>\<open>Thm.cterm\<close>, \<^ML_type>\<open>Thm.thm\<close> as well as conversions \<^ML_type>\<open>Thm.conv\<close> 
+  \<^ie>, transformation operations of  \<^ML_type>\<open>Thm.thm\<close>s to logically equivalent ones.
+
+  Errors were reported with the  \<^ML>\<open>CTERM: string * cterm list -> exn\<close>-exceptions.
+
+  Over this kernel, two infix main operations were provided:
+  \<^enum> \<^ML>\<open>op RS: thm * thm -> thm\<close> resolved the conclusion of left argument into the left-most
+    assumption of the right arguement, while
+  \<^enum> \<^ML>\<open>op RSN: thm * (int * thm) -> thm\<close> resolves the conclusion of the left argument into
+    the nth assumption of the right argument, so generalizes \<^ML>\<open>op RS\<close>.
+
+  Errors of the resolution operations were reported by 
+  \<^ML>\<open>THM : string * int * thm list -> exn\<close>.
+
+  At a glance, the very heart of the kernel is represented as follows (UNSAFE):
 \<close>
 
 ML\<open>
-signature BASIC_THM =
+signature BASIC_THM' =
 sig
   type ctyp
   type cterm
@@ -700,43 +719,46 @@ sig
   type thm
   type conv = cterm -> thm
   exception THM of string * int * thm list
+  val RSN: thm * (int * thm) -> thm
+  val RS: thm * thm -> thm
 end;
 \<close>
 
 text\<open>Certification of types and terms on the kernel-level is done by the generators:\<close>
-ML\<open>
-  Thm.global_ctyp_of: theory -> typ -> ctyp;
-  Thm.ctyp_of: Proof.context -> typ -> ctyp;
-  Thm.global_cterm_of: theory -> term -> cterm;
-  Thm.cterm_of: Proof.context -> term -> cterm;
+text\<open>
+\<^item> \<^ML>\<open> Thm.global_ctyp_of: theory -> typ -> ctyp\<close>
+\<^item> \<^ML>\<open> Thm.ctyp_of: Proof.context -> typ -> ctyp\<close>
+\<^item> \<^ML>\<open> Thm.global_cterm_of: theory -> term -> cterm\<close>
+\<^item> \<^ML>\<open> Thm.cterm_of: Proof.context -> term -> cterm\<close>
 \<close>
+
+
 text\<open>... which perform type-checking in the given theory context in order to make a type
      or term "admissible" for the kernel.\<close>
+
+text\<open>These operations were internally used in the ML-antiquotation:\<open>ML\<open>\<^cterm>\<open>zero\<close>\<close>\<close> yielding:\<close>
+ML\<open>\<^cterm>\<open>zero\<close>\<close>
 
 text\<open> We come now to the very heart of the LCF-Kernel of Isabelle, which 
      provides the fundamental inference rules of Isabelle/Pure. 
 
-   Besides a number of destructors on @{ML_type thm}'s,
-  the abstract data-type \<^verbatim>\<open>thm\<close> is used for logical objects of the form 
-  $\Gamma \vdash_\theta \phi$, where $\Gamma$ represents a set of local assumptions,
-  $\theta$ the "theory" or more precisely the global context in which a formula $\phi$ 
+   Besides a number of destructors on \<^ML_type>\<open>thm\<close>'s,
+  the abstract data-type \<^ML_type>\<open>thm\<close> is used for logical objects of the form 
+  \<open>\<Gamma> \<turnstile>\<^sub>\<theta> \<phi>\<close>, where \<open>\<Gamma>\<close> represents a set of local assumptions,
+  \<open>\<theta>\<close> the global context or  \<^ML_type>\<open>theory\<close> in which a formula \<open>\<phi>\<close> 
   has been constructed just by applying the following operations representing 
-  logical inference rules:
+  the logical kernel inference rules:
 
+\<^item>  \<^ML>\<open> Thm.assume: cterm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.implies_intr: cterm -> thm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.implies_elim: thm -> thm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.forall_intr: cterm -> thm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.forall_elim: cterm -> thm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.transfer : theory -> thm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.generalize: string list * string list -> int -> thm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.instantiate: ((indexname*sort)*ctyp)list * ((indexname*typ)*cterm) list -> thm -> thm\<close>
 \<close>
-ML\<open>
-  (*inference rules*)
-  Thm.assume: cterm -> thm;
-  Thm.implies_intr: cterm -> thm -> thm;
-  Thm.implies_elim: thm -> thm -> thm;
-  Thm.forall_intr: cterm -> thm -> thm;
-  Thm.forall_elim: cterm -> thm -> thm;
 
-  Thm.transfer : theory -> thm -> thm;
-
-  Thm.generalize: string list * string list -> int -> thm -> thm;
-  Thm.instantiate: ((indexname*sort)*ctyp)list * ((indexname*typ)*cterm) list -> thm -> thm;
-\<close>
 text\<open>  They reflect the Pure logic depicted in a number of presentations such as 
   M. Wenzel, \<^emph>\<open>Parallel Proof Checking in Isabelle/Isar\<close>, PLMMS 2009, or simiular papers.
   Notated as logical inference rules, these operations were presented as follows:
@@ -767,42 +789,39 @@ text\<open>Note that the transfer rule:
   and a remarkable difference to its sisters HOL-Light and HOL4; instead of transfer, these systems
   reconstruct proofs in an enlarged global context instead of taking the result and converting it.\<close>
 
-text\<open>Besides the meta-logical (Pure) implication $\_\Longrightarrow \_$, the Kernel axiomatizes
-  also a Pure-Equality $\_ \equiv \_ $ used for definitions of constant symbols: \<close>
-ML\<open>
-  Thm.reflexive: cterm -> thm;
-  Thm.symmetric: thm -> thm;
-  Thm.transitive: thm -> thm -> thm;
+text\<open>Besides the meta-logical (Pure) implication \<open>_ \<Longrightarrow> _\<close>, the Kernel axiomatizes
+  also a Pure-Equality \<open>_ \<equiv> _\<close> used for definitions of constant symbols: 
+\<^item>  \<^ML>\<open> Thm.reflexive: cterm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.symmetric: thm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.transitive: thm -> thm -> thm\<close>
 \<close>
-text\<open>The operation:\<close>
-ML\<open>  Thm.trivial: cterm -> thm; \<close>
-text\<open>... produces the elementary tautologies of the form @{prop "A \<Longrightarrow> A"},
+
+text\<open>The operation \<^ML>\<open> Thm.trivial: cterm -> thm \<close>
+  ... produces the elementary tautologies of the form \<^prop>\<open>A \<Longrightarrow> A\<close>,
   an operation used to start a backward-style proof.\<close>
 
-text\<open>The elementary conversions are:\<close>
-ML\<open>
-  Thm.beta_conversion: bool -> conv;
-  Thm.eta_conversion: conv;
-  Thm.eta_long_conversion: conv;
+text\<open>The elementary conversions are:
+
+\<^item>  \<^ML>\<open>Thm.beta_conversion: bool -> conv\<close>
+\<^item>  \<^ML>\<open>Thm.eta_conversion: conv\<close>
+\<^item>  \<^ML>\<open>Thm.eta_long_conversion: conv\<close>
 \<close>
 
-text\<open>On the level of @{ML_structure "Drule"}, a number of higher-level operations is established, 
-     which is in part accessible by a number of forward-reasoning notations on Isar-level.\<close>
-ML\<open>
-  op RSN: thm * (int * thm) -> thm;
-  op RS: thm * thm -> thm;
-  op RLN: thm list * (int * thm list) -> thm list;
-  op RL: thm list * thm list -> thm list;
-  op MRS: thm list * thm -> thm;
-  op OF: thm * thm list -> thm;
-  op COMP: thm * thm -> thm;
+text\<open>On the level of \<^ML_structure>\<open>Drule\<close>, a number of higher-level operations is established, 
+     which is in part accessible by a number of forward-reasoning notations on Isar-level.
+
+\<^item>  \<^ML>\<open> op RLN: thm list * (int * thm list) -> thm list\<close>
+\<^item>  \<^ML>\<open> op RL: thm list * thm list -> thm list\<close>
+\<^item>  \<^ML>\<open> op MRS: thm list * thm -> thm\<close>
+\<^item>  \<^ML>\<open> op OF: thm * thm list -> thm\<close>
+\<^item>  \<^ML>\<open> op COMP: thm * thm -> thm\<close>
 \<close>
 
 
-subsection*[t235::technical]\<open> Theories \<close>
+subsection*[t235::technical]\<open> \<^ML_structure>\<open>Theory\<close>'s \<close>
 
-text \<open> This structure yields the datatype \<^verbatim>\<open>thy\<close> which becomes the content of 
-  @{ML_type "Context.theory"}. In a way, the LCF-Kernel registers itself into the Nano-Kernel,
+text \<open> This structure yields the abstract datatype \<^ML_structure>\<open>Theory\<close> which becomes the content of 
+  \<^ML_type>\<open>Context.theory\<close>. In a way, the LCF-Kernel registers itself into the Nano-Kernel,
   which inspired me (bu) to this naming. \<close>
 
 ML\<open>
