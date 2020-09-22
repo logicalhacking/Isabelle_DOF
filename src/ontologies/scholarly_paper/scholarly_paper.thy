@@ -418,10 +418,20 @@ fun check_group a = map (check_group_elem (check_level_hd (hd a))) (tl a) ;
 *)
 \<close>
 
-section\<open>Miscelleous: Layout Trimming Commands\<close>
+section\<open>Miscelleous\<close>
 
+subsection\<open>Layout Trimming Commands\<close>
 setup\<open>    DOF_lib.define_macro    \<^binding>\<open>hs\<close>        "\\hspace{" "}" (K(K())) \<close> 
 setup\<open>    DOF_lib.define_macro    \<^binding>\<open>vs\<close>        "\\vspace{" "}" (K(K())) \<close> 
+
+subsection\<open>Common Abbreviations\<close>
+setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>     "\\eg"  
+          (* Latin: „exempli gratia“  meaning  „for example“. *)
+       #> DOF_lib.define_shortcut \<^binding>\<open>ie\<close>     "\\ie"
+       #> DOF_lib.define_shortcut \<^binding>\<open>etc\<close>     "\\etc"\<close> 
+          (* Latin: „id est“  meaning „that is to say“. *) 
+      (* this is an alternative style for macro definitions equivalent to setup ... setup  ...*)
+
 
 end
 

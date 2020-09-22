@@ -21,12 +21,6 @@ text\<open>Some internal setup, introducing document specific abbreviations and 
 
 setup \<open>DOF_lib.define_shortcut    \<^binding>\<open>dof\<close>    "\\dof"\<close>
 setup \<open>DOF_lib.define_shortcut    \<^binding>\<open>isadof\<close> "\\isadof"\<close>
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>     "\\eg"  
-          (* Latin: „exempli gratia“  meaning  „for example“. *)
-       #> DOF_lib.define_shortcut \<^binding>\<open>ie\<close>     "\\ie"
-       #> DOF_lib.define_shortcut \<^binding>\<open>etc\<close>     "\\etc"\<close> 
-          (* Latin: „id est“  meaning „that is to say“. *) 
-      (* this is an alternative style for macro definitions equivalent to setup ... setup  ...*)
 setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>TeXLive\<close>"\\TeXLive"
        #> DOF_lib.define_shortcut \<^binding>\<open>BibTeX\<close> "\\BibTeX{}"
        #> DOF_lib.define_shortcut \<^binding>\<open>LaTeX\<close>  "\\LaTeX{}"
