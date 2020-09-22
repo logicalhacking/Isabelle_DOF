@@ -933,7 +933,9 @@ section*[t24::technical]\<open>Backward Proofs: Tactics, Tacticals and Goal-Stat
 text\<open>At this point, we leave the Pure-Kernel and start to describe the first layer on top
   of it, involving support for specific styles of reasoning and automation of reasoning.\<close>
 
-text\<open> \<^ML_type>\<open>tactic\<close>'s are in principle \<^emph>\<open>relations\<close> on theorems  \<^ML_type>\<open>thm\<close>; this gives a 
+text\<open> \<^ML_type>\<open>tactic\<close>'s are in principle \<^emph>\<open>relations\<close> on theorems  \<^ML_type>\<open>thm\<close>; the relation is
+  lazy and encoded as function of type \<^ML_type>\<open>thm -> thm Seq.seq\<close>.
+  This gives a
   natural way to represent the fact that HO-Unification (and therefore the mechanism of rule-instan-
   tiation) are non-deterministic in principle. Heuristics may choose particular preferences between 
   the theorems in the range of this relation, but the Isabelle Design accepts this fundamental 
@@ -946,27 +948,19 @@ text\<open> \<^ML_type>\<open>tactic\<close>'s are in principle \<^emph>\<open>r
   non-deterministic composition  \<^ML>\<open>op ORELSE\<close>, conditionals, repetitions over lists, etc.
   The following is an excerpt of \<^file>\<open>~~/src/Pure/tactical.ML\<close>:\<close>
 
-ML\<open>
-signature TACTICAL =
-sig
-  type tactic = thm -> thm Seq.seq
 
-  val all_tac: tactic
-  val no_tac: tactic
-  val COND: (thm -> bool) -> tactic -> tactic -> tactic
+text\<open> More specialized variants of  \<^ML_structure>\<open>Tactical\<close>'s are:
 
-  val THEN: tactic * tactic -> tactic
-  val ORELSE: tactic * tactic -> tactic
-  val THEN': ('a -> tactic) * ('a -> tactic) -> 'a -> tactic
-  val ORELSE': ('a -> tactic) * ('a -> tactic) -> 'a -> tactic
+\<^item>  \<^ML>\<open>op THEN': ('a -> tactic) * ('a -> tactic) -> 'a -> tactic\<close> -- lifted version 
+\<^item>  \<^ML>\<open>op ORELSE': ('a -> tactic) * ('a -> tactic) -> 'a -> tactic\<close> -- lifted version 
+\<^item>  \<^ML>\<open>op TRY: tactic -> tactic\<close>  -- option
+\<^item>  \<^ML>\<open>op EVERY: tactic list -> tactic\<close> -- sequential enchainment
+\<^item>  \<^ML>\<open>op EVERY': ('a -> tactic) list -> 'a -> tactic\<close> -- lifted version
+\<^item>  \<^ML>\<open>op FIRST: tactic list -> tactic\<close> -- alternative enchainment
+\<^item>  etc.
 
-  val TRY: tactic -> tactic
-  val EVERY: tactic list -> tactic
-  val EVERY': ('a -> tactic) list -> 'a -> tactic
-  val FIRST: tactic list -> tactic
-  (* ... *)
-end
 \<close>
+
 
 text\<open>The next layer in the architecture describes @{ML_type \<open>tactic\<close>}'s, i.e. basic operations on 
   theorems  in a backward reasoning style (bottom up development of proof-trees). An initial goal-state 
@@ -982,53 +976,52 @@ text\<open>The next layer in the architecture describes @{ML_type \<open>tactic\
   has no premise @{term "E\<^sub>i"}, the subgoal  @{term C\<^sub>m} is also eliminated ("closed").
   
   The following abstract of the most commonly used @{ML_type \<open>tactic\<close>}'s drawn from
-  @{file "~~/src/Pure/tactic.ML"} looks as follows:\<close>
+  @{file "~~/src/Pure/tactic.ML"} are summarized as follows:
 
-ML\<open>
-  (* ... *)
-  assume_tac: Proof.context -> int -> tactic;
-  compose_tac: Proof.context -> (bool * thm * int) -> int -> tactic;
-  resolve_tac: Proof.context -> thm list -> int -> tactic;
-  eresolve_tac: Proof.context -> thm list -> int -> tactic;
-  forward_tac: Proof.context -> thm list -> int -> tactic;
-  dresolve_tac: Proof.context -> thm list -> int -> tactic;
-  rotate_tac: int -> int -> tactic;
-  defer_tac: int -> tactic;
-  prefer_tac: int -> tactic;
-  (* ... *)
+\<^item>  \<^ML>\<open> assume_tac: Proof.context -> int -> tactic\<close> 
+\<^item>  \<^ML>\<open> compose_tac: Proof.context -> (bool * thm * int) -> int -> tactic\<close>
+\<^item>  \<^ML>\<open> resolve_tac: Proof.context -> thm list -> int -> tactic\<close>
+\<^item>  \<^ML>\<open> eresolve_tac: Proof.context -> thm list -> int -> tactic\<close>
+\<^item>  \<^ML>\<open> forward_tac: Proof.context -> thm list -> int -> tactic\<close>
+\<^item>  \<^ML>\<open> dresolve_tac: Proof.context -> thm list -> int -> tactic\<close>
+\<^item>  \<^ML>\<open> rotate_tac: int -> int -> tactic\<close>
+\<^item>  \<^ML>\<open> defer_tac: int -> tactic\<close>
+\<^item>  \<^ML>\<open> prefer_tac: int -> tactic\<close>
+\<^item>  ...
 \<close>
+
 text\<open>Note that "applying a rule" is a fairly complex operation in the Extended Isabelle Kernel,
   i.e. the tactic layer. It involves at least four phases, interfacing a theorem 
   coming from the global context $\theta$ (=theory), be it axiom or derived, into a given goal-state.
 \<^item> \<^emph>\<open>generalization\<close>. All free variables in the theorem were replaced by schematic variables.
-  For example, @{term "x + y = y + x"} is converted into 
-  @{emph \<open>?x + ?y = ?y + ?x\<close> }. 
+  For example, \<^term>\<open>x + y = y + x\<close> is converted into 
+  \<open>?x + ?y = ?y + ?x\<close>. 
   By the way, type variables were treated equally.
 \<^item> \<^emph>\<open>lifting over assumptions\<close>. If a subgoal is of the form: 
-  @{term "B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> A"} and we have a theorem @{term "D\<^sub>1 \<Longrightarrow> D\<^sub>2 \<Longrightarrow> A"}, then before
+  \<^term>\<open>B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> A\<close> and we have a theorem   \<^term>\<open>D\<^sub>1 \<Longrightarrow> D\<^sub>2 \<Longrightarrow> A\<close>, then before
   applying the theorem, the premisses were \<^emph>\<open>lifted\<close> resulting in the logical refinement:
-  @{term "(B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>1) \<Longrightarrow> (B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>2) \<Longrightarrow> A"}. Now, @{ML "resolve_tac"}, for example,
-  will replace the subgoal @{term "B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> A"} by the subgoals 
-  @{term "B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>1"}  and  @{term "B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>2"}. Of course, if the theorem wouldn't
-  have assumptions @{term "D\<^sub>1"} and @{term "D\<^sub>2"}, the subgoal @{term "A"} would be replaced by 
+  \<^term>\<open>(B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>1) \<Longrightarrow> (B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>2) \<Longrightarrow> A\<close>. Now, \<^ML>\<open>resolve_tac\<close>, for example,
+  will replace the subgoal \<^term>\<open>B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> A\<close> by the subgoals 
+  \<^term>\<open>B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>1\<close>  and \<^term>\<open>B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>2\<close>. Of course, if the theorem wouldn't
+  have assumptions \<^term>\<open>D\<^sub>1\<close> and \<^term>\<open>D\<^sub>2\<close>, the subgoal  \<^term>\<open>A\<close> would be replaced by 
   \<^bold>\<open>nothing\<close>, i.e. deleted.
 \<^item> \<^emph>\<open>lifting over parameters\<close>. If a subgoal is meta-quantified like in:
-  @{term "\<And> x y z. A x y z"}, then a theorem like  @{term "D\<^sub>1 \<Longrightarrow> D\<^sub>2 \<Longrightarrow> A"} is \<^emph>\<open>lifted\<close>  
-  to @{term "\<And> x y z. D\<^sub>1' \<Longrightarrow> D\<^sub>2' \<Longrightarrow> A'"}, too. Since free variables occurring in @{term "D\<^sub>1"}, 
-  @{term "D\<^sub>2"} and @{term "A"} have been replaced by schematic variables (see phase one),
+  \<^term>\<open>\<And> x y z. A x y z\<close>, then a theorem like  \<^term>\<open>D\<^sub>1 \<Longrightarrow> D\<^sub>2 \<Longrightarrow> A\<close> is \<^emph>\<open>lifted\<close>  
+  to \<^term>\<open>\<And> x y z. D\<^sub>1' \<Longrightarrow> D\<^sub>2' \<Longrightarrow> A'\<close>, too. Since free variables occurring in \<^term>\<open>D\<^sub>1\<close>, 
+  \<^term>\<open>D\<^sub>2\<close> and \<^term>\<open>A\<close> have been replaced by schematic variables (see phase one),
   they must be replaced by parameterized schematic variables, i. e. a kind of skolem function.
-  For example, @{emph \<open>?x + ?y = ?y + ?x\<close> } would be lifted to 
-  @{emph \<open>!!  x y z. ?x x y z + ?y x y z = ?y x y z + ?x x y z\<close>}. This way, the lifted theorem
-  can be instantiated by the parameters  @{term "x y z"} representing "fresh free variables"
+  For example, \<open>?x + ?y = ?y + ?x\<close> would be lifted to 
+  \<open>!!  x y z. ?x x y z + ?y x y z = ?y x y z + ?x x y z\<close>. This way, the lifted theorem
+  can be instantiated by the parameters  \<open>x y z\<close> representing "fresh free variables"
   used for this sub-proof. This mechanism implements their logically correct bookkeeping via
   kernel primitives.
 \<^item> \<^emph>\<open>Higher-order unification (of schematic type and term variables)\<close>.
   Finally, for all these schematic variables, a solution must be found.
-  In the case of @{ML resolve_tac}, the conclusion of the (doubly lifted) theorem must
-  be equal to the conclusion of the subgoal, so @{term A} must be $\alpha/\beta$-equivalent to
-  @{term A'} in the example above, which is established by a higher-order unification
+  In the case of \<^ML>\<open>resolve_tac\<close>, the conclusion of the (doubly lifted) theorem must
+  be equal to the conclusion of the subgoal, so  \<^term>\<open>A\<close> must be \<open>\<alpha>/\<beta>\<close>-equivalent to
+  \<^term>\<open>A'\<close> in the example above, which is established by a higher-order unification
   process. It is a bit unfortunate that for implementation efficiency reasons, a very substantial
-  part of the code for HO-unification is in the kernel module @{ML_type "thm"}, which makes this
+  part of the code for HO-unification is in the kernel module \<^ML_type>\<open>thm\<close>, which makes this
   critical component of the architecture larger than necessary.  
 \<close>
 
@@ -1038,19 +1031,16 @@ text\<open>In a way, the two lifting processes represent an implementation of th
 
 
 section*[goalp::technical]\<open>The classical goal package\<close>
-text\<open>The main mechanism in Isabelle as an LCF-style system is to produce @{ML_type thm}'s 
+text\<open>The main mechanism in Isabelle as an LCF-style system is to produce \<^ML_type>\<open>thm\<close>'s 
   in backward-style via tactics as described in @{technical "t24"}. Given a context
-  --- be it global as @{ML_type theory} or be it inside a proof-context as @{ML_type Proof.context},
+  --- be it global as \<^ML_type>\<open>theory\<close> or be it inside a proof-context as  \<^ML_type>\<open>Proof.context\<close>,
   user-programmed verification of (type-checked) terms or just strings can be done via the 
-  operations:\<close>
+  operations:
 
-
-ML\<open>
-Goal.prove_internal : Proof.context -> cterm list -> cterm -> (thm list -> tactic) -> thm;
-
-Goal.prove_global :  theory -> string list -> term list -> term -> 
-                   ({context: Proof.context, prems: thm list} -> tactic) -> thm;
-(* ... and many more variants. *)
+\<^item>  \<^ML>\<open>Goal.prove_internal : Proof.context -> cterm list -> cterm -> (thm list -> tactic) -> thm\<close>
+\<^item>  \<^ML>\<open>Goal.prove_global :  theory -> string list -> term list -> term -> 
+                   ({context: Proof.context, prems: thm list} -> tactic) -> thm\<close>
+\<^item>  ... and many more variants. 
 \<close>
 
 subsection*[ex211::example]\<open>Proof Example (Low-level)\<close>  
@@ -1103,7 +1093,7 @@ thm "thm111"
 
 
 
-section\<open>The Isar Engine\<close>
+section\<open>Toplevel --- aka. ''The Isar Engine''\<close>
 
 text\<open>The main structure of the Isar-engine is @{ ML_structure Toplevel} and provides and
 internal @{ ML_type state} with the necessary infrastructure --- 
