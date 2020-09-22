@@ -16,11 +16,7 @@ theory TR_MyCommentedIsabelle
   imports "Isabelle_DOF.technical_report" 
 begin
 
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>        "\\eg"  
-          (* Latin: „exempli gratia“  meaning  „for example“. *)
-       #> DOF_lib.define_shortcut \<^binding>\<open>ie\<close>        "\\ie"
-          (* Latin: „id est“  meaning „that is to say“. *) 
-       #> DOF_lib.define_shortcut \<^binding>\<open>csp\<close>       "CSP"
+setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>csp\<close>       "CSP"
        #> DOF_lib.define_shortcut \<^binding>\<open>isabelle\<close>  "Isabelle/HOL"\<close> 
 
 open_monitor*[this::report] 

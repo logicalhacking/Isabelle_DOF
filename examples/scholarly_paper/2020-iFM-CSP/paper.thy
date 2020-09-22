@@ -9,11 +9,7 @@ open_monitor*[this::article]
 
 declare[[strict_monitor_checking = false]]
 
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>        "\\eg"  
-          (* Latin: „exempli gratia“  meaning  „for example“. *)
-       #> DOF_lib.define_shortcut \<^binding>\<open>ie\<close>        "\\ie"
-          (* Latin: „id est“  meaning „that is to say“. *) 
-       #> DOF_lib.define_shortcut \<^binding>\<open>csp\<close>       "CSP"
+setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>csp\<close>       "CSP"
        #> DOF_lib.define_shortcut \<^binding>\<open>isabelle\<close>  "Isabelle/HOL"\<close> 
 
 (*>*)
