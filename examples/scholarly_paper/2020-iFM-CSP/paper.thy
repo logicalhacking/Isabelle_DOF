@@ -15,7 +15,6 @@ setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>        "\\e
           (* Latin: „id est“  meaning „that is to say“. *) 
        #> DOF_lib.define_shortcut \<^binding>\<open>csp\<close>       "CSP"
        #> DOF_lib.define_shortcut \<^binding>\<open>isabelle\<close>  "Isabelle/HOL"\<close> 
-setup\<open>    DOF_lib.define_macro    \<^binding>\<open>vs\<close>        "\\vspace{" "}" (K(K())) \<close> 
 
 (*>*)
 

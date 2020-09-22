@@ -418,6 +418,10 @@ fun check_group a = map (check_group_elem (check_level_hd (hd a))) (tl a) ;
 *)
 \<close>
 
+section\<open>Miscelleous: Layout Trimming Commands\<close>
+
+setup\<open>    DOF_lib.define_macro    \<^binding>\<open>hs\<close>        "\\hspace{" "}" (K(K())) \<close> 
+setup\<open>    DOF_lib.define_macro    \<^binding>\<open>vs\<close>        "\\vspace{" "}" (K(K())) \<close> 
 
 end
 
