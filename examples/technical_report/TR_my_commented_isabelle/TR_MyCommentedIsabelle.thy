@@ -889,6 +889,7 @@ text\<open>
         (binding * string option * mixfix) list -> string -> bool -> local_theory -> local_theory\<close>
 \<close>
 
+
 text\<open>
 Note that the interface is mostly based on \<^ML_type>\<open>local_theory\<close>, which is a synonym to
 \<^ML_type>\<open>Proof.context\<close>. Need to lift this to a global system transition ?
@@ -957,21 +958,19 @@ text\<open> More specialized variants of  \<^ML_structure>\<open>Tactical\<close
 \<close>
 
 
-text\<open>The next layer in the architecture describes @{ML_type \<open>tactic\<close>}'s, i.e. basic operations on 
-  theorems  in a backward reasoning style (bottom up development of proof-trees). An initial goal-state 
-  for some property @{term A} --- the \<^emph>\<open>goal\<close> --- is constructed via the kernel 
-  @{ML "Thm.trivial"}-operation into  @{term "A \<Longrightarrow> A"}, and tactics either refine the premises 
-  --- the \<^emph>\<open>subgoals\<close> the of this meta-implication --- 
-  producing more and more of them or eliminate them in subsequent goal-states. Subgoals of the form  
-  @{term "B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> A \<Longrightarrow> B\<^sub>3 \<Longrightarrow> B\<^sub>4 \<Longrightarrow> A"} can be eliminated via 
-  the @{ML Tactic.assume_tac} - tactic, 
-  and a subgoal @{term C\<^sub>m} can be refined via the theorem
-  @{term "E\<^sub>1 \<Longrightarrow> E\<^sub>2 \<Longrightarrow> E\<^sub>3 \<Longrightarrow> C\<^sub>m"} the @{ML Tactic.resolve_tac} - tactic to new subgoals
-  @{term "E\<^sub>1"},@{term "E\<^sub>2"}, @{term "E\<^sub>3"}. In case that a theorem used for resolution
-  has no premise @{term "E\<^sub>i"}, the subgoal  @{term C\<^sub>m} is also eliminated ("closed").
+text\<open>The next layer in the architecture describes  \<^ML_type>\<open>tactic\<close>'s, i.e. basic operations on 
+  theorems  in a backward reasoning style (bottom up development of proof-trees). An initial 
+  goal-state for some property \<^prop>\<open>A\<close> --- the \<^emph>\<open>goal\<close> --- is constructed via the kernel 
+  \<^ML>\<open>Thm.trivial\<close>-operation into  \<^prop>\<open>A \<Longrightarrow> A\<close>, and tactics either refine the premises --- the 
+  \<^emph>\<open>subgoals\<close> the of this meta-implication --- producing  more and more of them or eliminate them 
+  in subsequent goal-states. Subgoals of the form \<^prop>\<open>B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> A \<Longrightarrow> B\<^sub>3 \<Longrightarrow> B\<^sub>4 \<Longrightarrow> A\<close> can be 
+  eliminated via the  \<^ML>\<open>Tactic.assume_tac\<close>-tactic, and a subgoal  \<^prop>\<open>C\<^sub>m\<close> can be refined via the 
+  theorem \<^prop>\<open>E\<^sub>1 \<Longrightarrow> E\<^sub>2 \<Longrightarrow> E\<^sub>3 \<Longrightarrow> C\<^sub>m\<close> the \<^ML>\<open>Tactic.resolve_tac\<close> - tactic to new subgoals
+  \<^prop>\<open>E\<^sub>1\<close>, \<^prop>\<open>E\<^sub>2\<close>, \<^prop>\<open>E\<^sub>3\<close>. In case that a theorem used for resolution has no premise \<^prop>\<open>E\<^sub>i\<close>, 
+  the subgoal  \<^prop>\<open>C\<^sub>m\<close> is also eliminated ("closed").
   
-  The following abstract of the most commonly used @{ML_type \<open>tactic\<close>}'s drawn from
-  @{file "~~/src/Pure/tactic.ML"} are summarized as follows:
+  The following abstract of the most commonly used \<^ML_type>\<open>tactic\<close>'s drawn from
+  \<^file>\<open>~~/src/Pure/tactic.ML\<close> are summarized as follows:
 
 \<^item>  \<^ML>\<open> assume_tac: Proof.context -> int -> tactic\<close> 
 \<^item>  \<^ML>\<open> compose_tac: Proof.context -> (bool * thm * int) -> int -> tactic\<close>
@@ -993,17 +992,17 @@ text\<open>Note that "applying a rule" is a fairly complex operation in the Exte
   \<open>?x + ?y = ?y + ?x\<close>. 
   By the way, type variables were treated equally.
 \<^item> \<^emph>\<open>lifting over assumptions\<close>. If a subgoal is of the form: 
-  \<^term>\<open>B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> A\<close> and we have a theorem   \<^term>\<open>D\<^sub>1 \<Longrightarrow> D\<^sub>2 \<Longrightarrow> A\<close>, then before
+  \<^prop>\<open>B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> A\<close> and we have a theorem \<^prop>\<open>D\<^sub>1 \<Longrightarrow> D\<^sub>2 \<Longrightarrow> A\<close>, then before
   applying the theorem, the premisses were \<^emph>\<open>lifted\<close> resulting in the logical refinement:
-  \<^term>\<open>(B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>1) \<Longrightarrow> (B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>2) \<Longrightarrow> A\<close>. Now, \<^ML>\<open>resolve_tac\<close>, for example,
-  will replace the subgoal \<^term>\<open>B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> A\<close> by the subgoals 
-  \<^term>\<open>B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>1\<close>  and \<^term>\<open>B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>2\<close>. Of course, if the theorem wouldn't
-  have assumptions \<^term>\<open>D\<^sub>1\<close> and \<^term>\<open>D\<^sub>2\<close>, the subgoal  \<^term>\<open>A\<close> would be replaced by 
+  \<^prop>\<open>(B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>1) \<Longrightarrow> (B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>2) \<Longrightarrow> A\<close>. Now, \<^ML>\<open>resolve_tac\<close>, for example,
+  will replace the subgoal  \<^prop>\<open>B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> A\<close> by the subgoals 
+  \<^prop>\<open>B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>1\<close>  and \<^prop>\<open>B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> D\<^sub>2\<close>. Of course, if the theorem wouldn't
+  have assumptions \<^prop>\<open>D\<^sub>1\<close> and \<^prop>\<open>D\<^sub>2\<close>, the subgoal  \<^prop>\<open>A\<close> would be replaced by 
   \<^bold>\<open>nothing\<close>, i.e. deleted.
 \<^item> \<^emph>\<open>lifting over parameters\<close>. If a subgoal is meta-quantified like in:
-  \<^term>\<open>\<And> x y z. A x y z\<close>, then a theorem like  \<^term>\<open>D\<^sub>1 \<Longrightarrow> D\<^sub>2 \<Longrightarrow> A\<close> is \<^emph>\<open>lifted\<close>  
-  to \<^term>\<open>\<And> x y z. D\<^sub>1' \<Longrightarrow> D\<^sub>2' \<Longrightarrow> A'\<close>, too. Since free variables occurring in \<^term>\<open>D\<^sub>1\<close>, 
-  \<^term>\<open>D\<^sub>2\<close> and \<^term>\<open>A\<close> have been replaced by schematic variables (see phase one),
+  \<^prop>\<open>\<And> x y z. A x y z\<close>, then a theorem like  \<^prop>\<open>D\<^sub>1 \<Longrightarrow> D\<^sub>2 \<Longrightarrow> A\<close> is \<^emph>\<open>lifted\<close>  
+  to \<^prop>\<open>\<And> x y z. D\<^sub>1' \<Longrightarrow> D\<^sub>2' \<Longrightarrow> A'\<close>, too. Since free variables occurring in \<^prop>\<open>D\<^sub>1\<close>, 
+  \<^prop>\<open>D\<^sub>2\<close> and \<^prop>\<open>A\<close> have been replaced by schematic variables (see phase one),
   they must be replaced by parameterized schematic variables, i. e. a kind of skolem function.
   For example, \<open>?x + ?y = ?y + ?x\<close> would be lifted to 
   \<open>!!  x y z. ?x x y z + ?y x y z = ?y x y z + ?x x y z\<close>. This way, the lifted theorem
@@ -1033,8 +1032,8 @@ text\<open>The main mechanism in Isabelle as an LCF-style system is to produce \
   operations:
 
 \<^item>  \<^ML>\<open>Goal.prove_internal : Proof.context -> cterm list -> cterm -> (thm list -> tactic) -> thm\<close>
-\<^item>  \<^ML>\<open>Goal.prove_global :  theory -> string list -> term list -> term -> 
-                   ({context: Proof.context, prems: thm list} -> tactic) -> thm\<close>
+\<^item>  \<^ML>\<open>Goal.prove_global   :  theory -> string list -> term list -> term -> 
+                                ({context: Proof.context, prems: thm list} -> tactic) -> thm\<close>
 \<^item>  ... and many more variants. 
 \<close>
 
@@ -1090,56 +1089,64 @@ thm "thm111"
 
 section\<open>Toplevel --- aka. ''The Isar Engine''\<close>
 
-text\<open>The main structure of the Isar-engine is @{ ML_structure Toplevel} and provides and
-internal @{ ML_type state} with the necessary infrastructure --- 
-i.e. the operations to pack and unpack theories and Proof.contexts  --- on it:
+text\<open>The main structure of the Isar-engine is \<^ML_structure>\<open>Toplevel\<close> and provides and
+internal \<^ML_type>\<open>state\<close> with the necessary infrastructure --- 
+i.e. the operations to pack and unpack theories and  \<^ML_type>\<open>Proof.context\<close>'s  --- on it:
+ 
+\<^item> \<^ML>\<open> Toplevel.theory_toplevel: theory -> Toplevel.state\<close>
+\<^item> \<^ML>\<open> Toplevel.init_toplevel: unit -> Toplevel.state\<close>
+\<^item> \<^ML>\<open> Toplevel.is_toplevel: Toplevel.state -> bool\<close>
+\<^item> \<^ML>\<open> Toplevel.is_theory: Toplevel.state -> bool\<close>
+\<^item> \<^ML>\<open> Toplevel.is_proof: Toplevel.state -> bool\<close>
+\<^item> \<^ML>\<open> Toplevel.is_skipped_proof: Toplevel.state -> bool\<close>
+\<^item> \<^ML>\<open> Toplevel.level: Toplevel.state -> int\<close>
+\<^item> \<^ML>\<open> Toplevel.context_of: Toplevel.state -> Proof.context\<close>
+\<^item> \<^ML>\<open> Toplevel.generic_theory_of: Toplevel.state -> generic_theory\<close>
+\<^item> \<^ML>\<open> Toplevel.theory_of: Toplevel.state -> theory\<close>
+\<^item> \<^ML>\<open> Toplevel.proof_of: Toplevel.state -> Proof.state\<close>
+\<^item> \<^ML>\<open> Toplevel.presentation_context: Toplevel.state -> Proof.context\<close>
+\<^item>  ... 
 \<close>
-ML\<open> 
-    Toplevel.theory_toplevel: theory -> Toplevel.state;
-    Toplevel.init_toplevel: unit -> Toplevel.state;
-    Toplevel.is_toplevel: Toplevel.state -> bool;
-    Toplevel.is_theory: Toplevel.state -> bool;
-    Toplevel.is_proof: Toplevel.state -> bool;
-    Toplevel.is_skipped_proof: Toplevel.state -> bool;
-    Toplevel.level: Toplevel.state -> int;
-    Toplevel.context_of: Toplevel.state -> Proof.context;
-    Toplevel.generic_theory_of: Toplevel.state -> generic_theory;
-    Toplevel.theory_of: Toplevel.state -> theory;
-    Toplevel.proof_of: Toplevel.state -> Proof.state;
-    Toplevel.presentation_context: Toplevel.state -> Proof.context;
-    (* ... *) \<close>
 
 text\<open> The extensibility of Isabelle as a system framework depends on a number of tables,
   into which various concepts commands, ML-antiquotations, text-antiquotations, cartouches, ...
   can be entered via a late-binding on the fly. 
  
-  A paradigmatic example is the @{ML "Outer_Syntax.command"}-operation, which ---
+  A paradigmatic example is the \<^ML>\<open>Outer_Syntax.command\<close>-operation, which ---
   representing in itself a toplevel system transition --- allows to define a new 
   command section and bind its syntax and semantics at a specific keyword.
-  Calling @{ML "Outer_Syntax.command"} 
-  creates an implicit  @{ML Theory.setup}  with an entry for a call-back function, which happens
+  Calling \<^ML>\<open>Outer_Syntax.command\<close>
+  creates an implicit \<^ML>\<open>Theory.setup\<close>   with an entry for a call-back function, which happens
   to be a parser that must have as side-effect a Toplevel-transition-transition. 
-  Registers @{ML_type "Toplevel.transition -> Toplevel.transition"} parsers to the 
-  Isar interpreter.\<close>
+  Registers  \<^ML_type>\<open>Toplevel.transition -> Toplevel.transition\<close> parsers to the 
+  Isar interpreter.
+
+  The global type of this key function for extending the Isar toplevel is, together
+  with a few query operations on the state of the toplevel:
+  \<^item>  \<^ML>\<open>Outer_Syntax.command : Outer_Syntax.command_keyword -> string -> 
+                               (Toplevel.transition -> Toplevel.transition) parser -> unit\<close>,
+  \<^item>  \<^ML>\<open>Document.state : unit -> Document.state\<close>, giving the state as a "collection of named
+      nodes, each consisting of an editable list of commands, associated with asynchronous 
+      execution process,
+  \<^item>  \<^ML>\<open>Session.get_keywords : unit -> Keyword.keywords\<close>, this looks to be really session global,
+  \<^item>  \<^ML>\<open>Thy_Header.get_keywords : theory -> Keyword.keywords\<close>
+  
+\<close>
 
 
-ML\<open> Outer_Syntax.command : Outer_Syntax.command_keyword -> string -> 
-                           (Toplevel.transition -> Toplevel.transition) parser -> unit;\<close>
+subsubsection*[ex1137::example]\<open>A paradigmatic example: \<^theory_text>\<open>text\<close>\<close>
+text\<open>
+ @{ML [display]\<open>
 
-text\<open>A paradigmatic example: "text" is defined by: \<close>
-
-(* --- commented out since this code is not re-executable
-val _ =
   Outer_Syntax.command ("text", @{here}) "formal comment (primary style)"
-    (Parse.opt_target -- Parse.document_source >> Thy_Output.document_command {markdown = true});
-*)
- 
+    (Parse.opt_target -- Parse.document_source >> Pure_Syn.document_command {markdown = true})
+ \<close>}
+\<close> 
 
 text\<open>Here are a few queries relevant for the global config of the isar engine:\<close>
 ML\<open> Document.state();\<close>
 ML\<open> Session.get_keywords(); (* this looks to be really session global. *) \<close>
 ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>
-
 
 
 
@@ -1405,14 +1412,14 @@ text\<open>A \<^verbatim>\<open>.thy\<close> file consists of a \<^emph>\<open>h
   information (so: practically excluding any form of text antiquotation (see above)).
   The context-definition contains an \<^emph>\<open>import\<close> and a \<^emph>\<open>keyword\<close> section;  
   for example:
-  \begin{verbatim}
+  @{theory_text [display] \<open>
   theory Isa_DOF                (* Isabelle Document Ontology Framework *)
     imports  Main  
              RegExpInterface    (* Interface to functional regular automata for monitoring *)
              Assert
              
     keywords "+=" ":=" "accepts" "rejects"
-  \end{verbatim}
+  \<close>}
   where \<^verbatim>\<open>Isa_DOF\<close> is the abstract name of the text-file, \<^verbatim>\<open>Main\<close> etc. refer to imported
   text files (recall that the import relation must be acyclic). \<^emph>\<open>keyword\<close>s are used to separate 
   commands form each other;
