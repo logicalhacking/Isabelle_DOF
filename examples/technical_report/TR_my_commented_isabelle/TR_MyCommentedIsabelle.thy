@@ -16,8 +16,7 @@ theory TR_MyCommentedIsabelle
   imports "Isabelle_DOF.technical_report" 
 begin
 
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>csp\<close>       "CSP"
-       #> DOF_lib.define_shortcut \<^binding>\<open>isabelle\<close>  "Isabelle/HOL"\<close> 
+setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>isabelle\<close>  "Isabelle/HOL"\<close> 
 
 open_monitor*[this::report] 
 (*>*)
@@ -32,14 +31,14 @@ text*[bu::author,
 text*[abs::abstract,
       keywordlist="[''LCF-Architecture'',''Isabelle'',''SML'',''PIDE'',''Programming Guide'',
                     ''Tactic Programming'']"]\<open>
-  While Isabelle is mostly known as part of Isabelle/HOL (an interactive 
-  theorem prover), it actually provides a system framework for developing a wide
-  spectrum of applications. A particular strength of the Isabelle framework is the 
-  combination of text editing, formal verification, and code generation. 
+  While Isabelle is mostly known as "logical framework" underlying \<^isabelle> and thus commonly
+  understood as an interactive theorem prover, it actually provides a system framework for 
+  developing a wide spectrum of applications. A particular strength of the Isabelle framework is 
+  the  combination of document editing, formal verification, and code generation. 
   
-  This is a programming-tutorial of Isabelle and Isabelle/HOL, a complementary
+  This is a programming-tutorial of \<^isabelle>, conceived as a complementary
   text to the unfortunately somewhat outdated "The Isabelle Cookbook" in
-  \url{https://nms.kcl.ac.uk/christian.urban/Cookbook/}. The reader is encouraged
+  \<^url>\<open>https://nms.kcl.ac.uk/christian.urban/Cookbook/\<close>. The reader is encouraged
   not only to consider the generated .pdf, but also consult the loadable version in Isabelle/jEdit
   @{cite "DBLP:journals/corr/Wenzel14"}in order to make experiments on the running code.
   
@@ -75,7 +74,7 @@ figure*[architecture::figure,relative_width="80",src="''figures/isabelle-archite
      asynchronous communication between the Isabelle system and 
      the IDE (right-hand side). \<close>
 
-text\<open>This cookbook roughly follows the Isabelle system architecture shown in 
+text\<open>This programming roughly follows the Isabelle system architecture shown in 
   @{figure "architecture"}, and, to be more precise, more or less in the bottom-up order.
 
   We start from the basic underlying SML platform over the Kernels to the tactical layer 
@@ -89,8 +88,8 @@ section*[t11::technical] "ML, Text and Antiquotations"
 text\<open>Isabelle is written in SML, the "Standard Meta-Language", which is is an impure functional 
   programming language allowing, in principle, mutable variables and side-effects. 
   The following Isabelle/Isar commands allow for accessing the underlying SML interpreter
-  of Isabelle directly. In the example, a mutable variable X is declared, defined to 0 and updated; 
-  and finally re-evaluated leading to output: \<close>
+  of Isabelle directly. In the example, a mutable variable X is declared, initialized to 0 and 
+  updated; and finally re-evaluated leading to output: \<close>
 
 ML\<open> val X = Unsynchronized.ref 0;
     X:= !X + 1;
@@ -106,7 +105,7 @@ text\<open>However, since Isabelle is a platform involving parallel execution, c
 ML\<open> fun fac x = if x = 0 then 1 else x * fac(x-1) ;
     fac 10;
   \<close>
-(* or *) 
+text\<open>or:\<close> 
 ML\<open> type state = {  a : int,   b : string}
     fun incr_state ({a, b}:state) =  {a=a+1, b=b}
   \<close>
@@ -123,7 +122,7 @@ text\<open> The Isabelle/Isar interpreter (called \<^emph>\<open>toplevel\<close
   containing such mixtures of Isar commands and SML. \<close>
 
 text\<open> Besides the ML-command used in the above examples, there are a number of commands 
-  representing text-elements in Isabelle/Isar; text commands can be interleaved arbitraryly
+  representing text-elements in Isabelle/Isar; text commands can be interleaved arbitrarily
   with other commands. Text in text-commands may use LaTeX and is used for type-setting 
   documentations in a kind of literate programming style. \<close>
 
@@ -143,13 +142,14 @@ figure*[fig2::figure, relative_width="100",src="''figures/text-element''"]
 text\<open> text-commands, ML- commands (and in principle any other command) can be seen as 
   \<^emph>\<open>quotations\<close> over the underlying SML environment (similar to OCaml or Haskell).
   Linking these different sorts of quotations with each other and the underlying SML-envirnment
-  is supported via \<^emph>\<open>antiquotations\<close>'s. Generally speaking, antiquotations are a programming 
-  technique to specify expressions or patterns in a quotation, parsed in the context of the 
-  enclosing expression or pattern where the quotation is. Another way to understand this concept:
-  anti-quotations are "semantic macros" that produce a value for the surrounding context
+  is supported via \<^emph>\<open>antiquotations\<close>'s. Generally speaking, antiquotations are a kind of semantic
+  macro whose arguments were checked, interpreted and expanded using the underlying system
+  state. This paves the way for a programming technique to specify expressions or patterns in an 
+  anti-quotation in various contexts, be it in an ML fragment or a documentation fragment.
+  Anti-quotations as "semantic macros" can produce a value for the surrounding context
   (ML, text, HOL, whatever) depending on local arguments and the underlying logical context.
   
-  The way an antiquotation is specified depends on the quotation expander: typically a specific 
+  The way an antiquotation is specified depends on the quotation expander: typically, this is a specific 
   character and an identifier, or specific parentheses and a complete expression or pattern.\<close>
 
 text\<open> In Isabelle documentations, antiquotation's were heavily used to enrich literate explanations
@@ -157,19 +157,36 @@ text\<open> In Isabelle documentations, antiquotation's were heavily used to enr
   to all sorts of entities in the context of the interpreting environment. 
   Formal content allows for coping with sources that rapidly evolve and were developed by 
   distributed teams as is typical in open-source developments. 
-  A paradigmatic example for antiquotation in Texts and Program snippets is here:\<close>
 
-text\<open> @{footnote \<open>sdf\<close>}, @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"}\<close> 
+  A paradigmatic example for antiquotation in documentation text snippets and program snippets is here:
+  \<^item> \<^theory_text>\<open>text\<open>@{footnote \<open>sdf\<close>}, @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"}\<close>\<close>
+  \<^item> @{theory_text [display]
+     \<open> val x = @{thm refl};
+       val y = @{term "A \<longrightarrow> B"}
+       val y = @{typ  "'a list"} 
+     \<close>
+    }
+  \<close>
+
+(*<*) (* example to execute: *)
+text\<open> @{footnote \<open>sdf\<close>}, @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"}\<close>
 ML\<open>    val x = @{thm refl};
        val y = @{term "A \<longrightarrow> B"}
        val y = @{typ  "'a list"}
   \<close>
+(*>*)
 
 text\<open>... which we will describe in more detail later. \<close> 
 
-text\<open>In a way, literate specification attempting to maximize its formal content is a way to
-  ensure "Agile Development" in a (theory)-document development, at least for its objectives, 
-  albeit not for its popular methods and processes like SCRUM. \<close>
+text\<open>In a way, anti-quotations implement a kind of 
+  literate specification style in text, models, code, proofs, etc., which become alltogether
+  elements of one global \<^emph>\<open>integrated document\<close> in which mutual dependencies can be machine=checked
+  (i.e. \<open>formal\<close> in this sense).
+  Attempting to maximize the \<open>formal content\<close> is a way to ensure "Agile Development" (AD) of an 
+  integrated document development, in the sense that it allows to give immediate feedback
+  with respect to changes which enable thus the popular AD-objective \<^emph>\<open>embrace change\<close>.
+  Note that while we adhere to this objective, we do not depend or encourage popular AD methods 
+  and processes such as SCRUM. \<close>
 
 paragraph\<open>
   A maximum of formal content inside text documentation also ensures the 
@@ -188,7 +205,7 @@ text\<open>The bootstrapping sequence is also reflected in the following diagram
 
 
 section*[t12::technical] "Elements of the SML library";  
-text\<open>Elements of the @{file "$ISABELLE_HOME/src/Pure/General/basics.ML"} SML library
+text\<open>Elements of the \<^file>\<open>~~/src/Pure/General/basics.ML\<close>  SML library
   are basic exceptions. Note that exceptions should be catched individually, uncatched exceptions 
   except those generated by the specific "error" function are discouraged in Isabelle
   source programming since they might produce races in the internal Isabelle evaluation. 
@@ -1128,8 +1145,8 @@ text\<open> The extensibility of Isabelle as a system framework depends on a num
   \<^item>  \<^ML>\<open>Document.state : unit -> Document.state\<close>, giving the state as a "collection of named
       nodes, each consisting of an editable list of commands, associated with asynchronous 
       execution process,
-  \<^item>  \<^ML>\<open>Session.get_keywords : unit -> Keyword.keywords\<close>, this looks to be really session global,
-  \<^item>  \<^ML>\<open>Thy_Header.get_keywords : theory -> Keyword.keywords\<close>
+  \<^item>  \<^ML>\<open>Session.get_keywords : unit -> Keyword.keywords\<close>, this looks to be session global,
+  \<^item>  \<^ML>\<open>Thy_Header.get_keywords : theory -> Keyword.keywords\<close> this looks to be just theory global.
   
 \<close>
 
@@ -1137,15 +1154,14 @@ text\<open> The extensibility of Isabelle as a system framework depends on a num
 subsubsection*[ex1137::example]\<open>A paradigmatic example: \<^theory_text>\<open>text\<close>\<close>
 text\<open>
  @{ML [display]\<open>
-
   Outer_Syntax.command ("text", @{here}) "formal comment (primary style)"
     (Parse.opt_target -- Parse.document_source >> Pure_Syn.document_command {markdown = true})
  \<close>}
-\<close> 
+\<close>
 
 text\<open>Here are a few queries relevant for the global config of the isar engine:\<close>
 ML\<open> Document.state();\<close>
-ML\<open> Session.get_keywords(); (* this looks to be really session global. *) \<close>
+ML\<open> Session.get_keywords(); (* this looks to be  session global. *) \<close>
 ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>
 
 
@@ -1153,15 +1169,15 @@ ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory gl
 subsection*[transmgt::technical] \<open>Transaction Management in the Isar-Engine : The Toplevel \<close>
   
 ML\<open>Toplevel.exit: Toplevel.transition -> Toplevel.transition;
-  Toplevel.keep: (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
-  Toplevel.keep': (bool -> Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
-  Toplevel.ignored: Position.T -> Toplevel.transition;
-  Toplevel.generic_theory: (generic_theory -> generic_theory) -> Toplevel.transition -> Toplevel.transition;
-  Toplevel.theory': (bool -> theory -> theory) -> Toplevel.transition -> Toplevel.transition;
-  Toplevel.theory: (theory -> theory) -> Toplevel.transition -> Toplevel.transition;
+   Toplevel.keep: (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
+   Toplevel.keep': (bool -> Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
+   Toplevel.ignored: Position.T -> Toplevel.transition;
+   Toplevel.generic_theory: (generic_theory -> generic_theory) -> Toplevel.transition -> Toplevel.transition;
+   Toplevel.theory': (bool -> theory -> theory) -> Toplevel.transition -> Toplevel.transition;
+   Toplevel.theory: (theory -> theory) -> Toplevel.transition -> Toplevel.transition;
   
-  Toplevel.present_local_theory:
-  (xstring * Position.T) option ->
+   Toplevel.present_local_theory:
+   (xstring * Position.T) option ->
        (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
   (* where text treatment and antiquotation parsing happens *)
   
@@ -1324,10 +1340,10 @@ setup\<open>HLDefinitionSample.define_test\<close>
 
 subsection*[ex212::example]\<open>Proof Example (High-level)\<close>  
 
-text\<open>The Isar-engine refers to a level of "specification constructs"; i.e. to a level with
+text\<open>The Isar-toplevel refers to a level of "specification constructs"; i.e. to a level with
 more high-level commands that represent internally quite complex theory transformations;
 with the exception of the axiomatization constructs, they are alltogether logically conservative.
-The proof command interface bhind \<open>lemma\<close> or \<open>theorem\<close> uses a structure capturing the 
+The proof command interface behind \<open>lemma\<close> or \<open>theorem\<close> uses a structure capturing the 
 syntactic @{ML_structure Element}'s of the \<open>fix\<close>, \<open>assume\<close>, \<open>shows\<close> structuring.
 \<close>
 
