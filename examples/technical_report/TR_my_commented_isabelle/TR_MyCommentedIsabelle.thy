@@ -40,7 +40,7 @@ text*[abs::abstract,
   text to the unfortunately somewhat outdated "The Isabelle Cookbook" in
   \<^url>\<open>https://nms.kcl.ac.uk/christian.urban/Cookbook/\<close>. The reader is encouraged
   not only to consider the generated .pdf, but also consult the loadable version in Isabelle/jEdit
-  @{cite "DBLP:journals/corr/Wenzel14"}in order to make experiments on the running code.
+  @{cite "DBLP:journals/corr/Wenzel14"} in order to make experiments on the running code.
   
   This text is written itself in Isabelle/Isar using a specific document ontology
   for technical reports. It is intended to be a "living document", i.e. it is not only
@@ -75,7 +75,7 @@ figure*[architecture::figure,relative_width="80",src="''figures/isabelle-archite
      the IDE (right-hand side). \<close>
 
 text\<open>This programming roughly follows the Isabelle system architecture shown in 
-  @{figure "architecture"}, and, to be more precise, more or less in the bottom-up order.
+  \<^figure>\<open>architecture\<close>, and, to be more precise, more or less in the bottom-up order.
 
   We start from the basic underlying SML platform over the Kernels to the tactical layer 
   and end with a discussion over the front-end technologies.
@@ -299,13 +299,13 @@ text\<open> What I call the 'Nano-Kernel' in Isabelle can also be seen as an acy
   
   
   A context comes in form of three 'flavours':
-  \<^item> theories : @{ML_type theory}'s, containing a syntax and axioms, but also
+  \<^item> theories : \<^ML_type>\<open>theory\<close>'s, containing a syntax and axioms, but also
                user-defined data and configuration information.
-  \<^item> Proof-Contexts:  @{ML_type Proof.context} 
+  \<^item> Proof-Contexts: \<^ML_type>\<open>Proof.context\<close>  
                containing theories but also additional information if Isar goes into prove-mode.
                In general a richer structure than theories coping also with fixes, facts, goals,
                in order to support the structured Isar proof-style.
-  \<^item> Generic:  @{ML_type Context.generic }, i.e. the sum of both.
+  \<^item> Generic:  \<^ML_type>\<open>Context.generic\<close>, i.e. the sum of both.
   
   All context have to be seen as mutable; so there are usually transformations defined on them
   which are possible as long as a particular protocol (\<^verbatim>\<open>begin_thy\<close> - \<^verbatim>\<open>end_thy\<close> etc) are respected.
@@ -477,65 +477,66 @@ text\<open>Note, furthermore, that there is a programming API for the HOL-instan
   it is contained in @{file  "$ISABELLE_HOME/src/HOL/Tools/hologic.ML"}. It offers for many
   operators of the HOL logic specific constructors and destructors:\<close>
 
-ML\<open>
-   HOLogic.boolT         : typ;
-   HOLogic.mk_Trueprop   : term -> term; (* the embedder of bool to prop fundamenyal for HOL *)
-   HOLogic.dest_Trueprop : term -> term; 
-   HOLogic.Trueprop_conv : conv -> conv;
-   HOLogic.mk_setT       : typ -> typ;   (* ML level type constructor set *)
-   HOLogic.dest_setT     : typ -> typ;
-   HOLogic.Collect_const : typ -> term;
-   HOLogic.mk_Collect    : string * typ * term -> term;
-   HOLogic.mk_mem        : term * term -> term;
-   HOLogic.dest_mem      : term -> term * term;
-   HOLogic.mk_set        : typ -> term list -> term;
-   HOLogic.conj_intr     : Proof.context -> thm -> thm -> thm; (* some HOL-level derived-inferences *)
-   HOLogic.conj_elim     : Proof.context -> thm -> thm * thm;
-   HOLogic.conj_elims    : Proof.context -> thm -> thm list;
-   HOLogic.conj          : term;         (* some ML level logical constructors *)
-   HOLogic.disj          : term;
-   HOLogic.imp           : term;
-   HOLogic.Not           : term;
-   HOLogic.mk_not        : term -> term;
-   HOLogic.mk_conj       : term * term -> term;
-   HOLogic.dest_conj     : term -> term list;
-   HOLogic.conjuncts     : term -> term list;
-   (* ... *)
+text*[T2::technical]\<open>
+\<^enum>  \<^ML>\<open>HOLogic.boolT         : typ\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_Trueprop   : term -> term\<close>,  the embedder of bool to prop fundamental for HOL 
+\<^enum>  \<^ML>\<open>HOLogic.dest_Trueprop : term -> term\<close> 
+\<^enum>  \<^ML>\<open>HOLogic.Trueprop_conv : conv -> conv\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_setT       : typ -> typ\<close>,  the ML level type constructor set 
+\<^enum>  \<^ML>\<open>HOLogic.dest_setT     : typ -> typ\<close>,  the ML level type destructor for set 
+\<^enum>  \<^ML>\<open>HOLogic.Collect_const : typ -> term\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_Collect    : string * typ * term -> term\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_mem        : term * term -> term\<close>
+\<^enum>  \<^ML>\<open>HOLogic.dest_mem      : term -> term * term\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_set        : typ -> term list -> term\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conj_intr     : Proof.context -> thm -> thm -> thm\<close>, some HOL-level derived-inferences 
+\<^enum>  \<^ML>\<open>HOLogic.conj_elim     : Proof.context -> thm -> thm * thm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conj_elims    : Proof.context -> thm -> thm list\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conj          : term\<close> , some ML level logical constructors 
+\<^enum>  \<^ML>\<open>HOLogic.disj          : term\<close>
+\<^enum>  \<^ML>\<open>HOLogic.imp           : term\<close>
+\<^enum>  \<^ML>\<open>HOLogic.Not           : term\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_not        : term -> term\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_conj       : term * term -> term\<close>
+\<^enum>  \<^ML>\<open>HOLogic.dest_conj     : term -> term list\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conjuncts     : term -> term list\<close>
+\<^enum>   ... 
 \<close>
 
-text\<open>In this style, extensions can be defined such as:\<close>
+text*[T3::technical]\<open>In this style, extensions can be defined such as:\<close>
 
 ML\<open>fun optionT t = Type(@{type_name "Option.option"},[t]); \<close>
 
 subsection\<open> Type-Certification (=checking that a type annotation is consistent) \<close>
 
-ML\<open> Type.typ_instance: Type.tsig -> typ * typ -> bool (* raises  TYPE_MATCH *) \<close>
-text\<open> there is a joker type that can be added as place-holder during term construction.
-       Jokers can be eliminated by the type inference. \<close>
-  
-text\<open>   \<^ML>\<open> Term.dummyT : typ \<close> \<close>
-
 text\<open>
+\<^enum>  \<^ML>\<open>Type.typ_instance: Type.tsig -> typ * typ -> bool (* raises  TYPE_MATCH *) \<close>
+\<^enum>  \<^ML>\<open> Term.dummyT : typ \<close> is a joker type that can be added as place-holder during term 
+   construction. Jokers can be eliminated by the type inference. \<close>
+  
+
+text*[T4::technical]\<open>
 \<^enum>  \<^ML>\<open>Sign.typ_instance: theory -> typ * typ -> bool\<close>
 \<^enum>  \<^ML>\<open>Sign.typ_match: theory -> typ * typ -> Type.tyenv -> Type.tyenv\<close>
-\<^enum>  \<^ML>\<open> Sign.typ_unify: theory -> typ * typ -> Type.tyenv * int -> Type.tyenv * int\<close>
+\<^enum>  \<^ML>\<open>Sign.typ_unify: theory -> typ * typ -> Type.tyenv * int -> Type.tyenv * int\<close>
 \<^enum>  \<^ML>\<open>Sign.const_type: theory -> string -> typ option\<close>
-\<^enum>  \<^ML>\<open>Sign.certify_term: theory -> term -> term * typ * int\<close> (* core routine for CERTIFICATION of types*)
-\<^enum>  \<^ML>\<open>Sign.cert_term: theory -> term -> term\<close>                (* short-cut for the latter *)
-\<^enum>  \<^ML>\<open>Sign.tsig_of: theory -> Type.tsig\<close>                     (* projects the type signature *)
+\<^enum>  \<^ML>\<open>Sign.certify_term: theory -> term -> term * typ * int\<close>, the function for CERTIFICATION of types
+\<^enum>  \<^ML>\<open>Sign.cert_term: theory -> term -> term\<close>, short-cut for the latter
+\<^enum>  \<^ML>\<open>Sign.tsig_of: theory -> Type.tsig\<close>, projects from a theory the type signature 
 \<close>
 text\<open> 
-  @{ML "Sign.typ_match"} etc. is actually an abstract wrapper on the structure 
-  @{ML_structure "Type"} 
-  which contains the heart of the type inference. 
-  It also contains the type substitution type  @{ML_type "Type.tyenv"} which is
-  is actually a type synonym for @{ML_type "(sort * typ) Vartab.table"} 
-  which in itself is a synonym for @{ML_type "'a Symtab.table"}, so 
-  possesses the usual @{ML "Symtab.empty"} and  @{ML "Symtab.dest"} operations. \<close>  
+  \<^ML>\<open>Sign.typ_match\<close> etc. is actually an abstract wrapper on the structure 
+  \<^ML_structure>\<open>Type\<close>  which contains the heart of the type inference. 
+  It also contains the type substitution type \<^ML_type>\<open>Type.tyenv\<close> which is
+  is actually a type synonym for \<^ML_type>\<open>(sort * typ) Vartab.table\<close> 
+  which in itself is a synonym for \<^ML_type>\<open>'a Symtab.table\<close>, so 
+  possesses the usual \<^ML>\<open>Symtab.empty\<close> and  \<^ML>\<open>Symtab.dest\<close> operations. \<close>  
 
 text\<open>Note that \<^emph>\<open>polymorphic variables\<close> are treated like constant symbols 
   in the type inference; thus, the following test, that one type is an instance of the
   other, yields false:\<close>
+
+subsubsection*[exo4::example]\<open> Example:\<close> 
 
 ML\<open>
 val ty = @{typ "'a option"};
@@ -545,16 +546,16 @@ val Type("List.list",[S]) = @{typ "('a) list"}; (* decomposition example *)
 
 val false = Sign.typ_instance @{theory}(ty', ty);
 \<close>
-text\<open>In order to make the type inference work, one has to consider @{emph \<open>schematic\<close>} 
+text\<open>In order to make the type inference work, one has to consider \<^emph>\<open>schematic\<close> 
   type variables, which are more and more hidden from the Isar interface. Consequently,
   the typ antiquotation above will not work for schematic type variables and we have
   to construct them by hand on the SML level: \<close>
 
 ML\<open> val t_schematic = Type("List.list",[TVar(("'a",0),@{sort "HOL.type"})]); \<close>
 
-text\<open> MIND THE "'" !!!\<close>
+text\<open> MIND THE "'" !!! Ommitting it leads at times to VERY strange behaviour ...\<close>
 
-text \<open>On this basis, the following @{ML_type "Type.tyenv"} is constructed: \<close>
+text \<open>On this basis, the following \<^ML_type>\<open>Type.tyenv\<close> is constructed: \<close>
 ML\<open>
 val tyenv = Sign.typ_match ( @{theory}) 
                (t_schematic, @{typ "int list"})
@@ -564,7 +565,7 @@ val  [(("'a", 0), (["HOL.type"], @{typ "int"}))] = Vartab.dest tyenv;
 
 text\<open> Type generalization --- the conversion between free type variables and schematic 
   type variables ---  is apparently no longer part of the standard API (there is a slightly 
-  more general replacement in @{ML "Term_Subst.generalizeT_same"}, however). Here is a way to
+  more general replacement in \<^ML>\<open>Term_Subst.generalizeT_same\<close>, however). Here is a way to
   overcome this by a self-baked generalization function:\<close>  
 
 ML\<open>
@@ -575,12 +576,14 @@ val true = Sign.typ_instance @{theory} (ty', generalize_typ ty)
 text\<open>... or more general variants thereof that are parameterized by the indexes for schematic
   type variables instead of assuming just @{ML "0"}. \<close>
 
-text*[exo4::example]\<open> Example:\<close> 
+text\<open> Example:\<close> 
 ML\<open>val t = generalize_term @{term "[]"}\<close>
 
 text\<open>Now we turn to the crucial issue of type-instantiation and with a given type environment
   \<^ML>\<open>tyenv\<close>. For this purpose, one has to switch to the low-level interface 
   \<^ML_structure>\<open>Term_Subst\<close>. \<close>
+
+subsection\<open>More operations on types\<close>
 
 text\<open>
 \<^item> \<^ML>\<open>Term_Subst.map_types_same : (typ -> typ) -> term -> term\<close>
@@ -1262,6 +1265,7 @@ text\<open>The toplevel also provides an infrastructure for managing configurati
   and building the parametric configuration types @{ML_type "'a Config.T" } and the
   instance  \<^verbatim>\<open>type raw = value T\<close>, for all registered configurations the protocol:\<close>
 ML\<open>
+
   Config.get: Proof.context -> 'a Config.T -> 'a;
   Config.map: 'a Config.T -> ('a -> 'a) -> Proof.context -> Proof.context;
   Config.put: 'a Config.T -> 'a -> Proof.context -> Proof.context;
@@ -1271,7 +1275,7 @@ ML\<open>
 
 text\<open>... etc. is defined.\<close>
 
-text\<open>Example registration of an config attribute XS232: \<close>
+subsubsection*[ex::example]\<open>Example registration of an config attribute XS232 initialized to false: \<close>
 ML\<open>
 val (XS232, XS232_setup)
      = Attrib.config_bool \<^binding>\<open>XS232\<close> (K false);
@@ -1477,31 +1481,25 @@ text\<open>This picture is less and less true for a number of reasons:
 
 
 section\<open>Basics: string, bstring and xstring\<close>
-text\<open>@{ML_type "string"} is the basic library type from the SML library
-  in structure @{ML_structure "String"}. Many Isabelle operations produce
+text\<open>\<^ML_type>\<open>string\<close> is the basic library type from the SML library
+  in structure \<^ML_structure>\<open>String\<close>. Many Isabelle operations produce
   or require formats thereof introduced as type synonyms 
-  @{ML_type "bstring"} (defined in structure @{ML_structure "Binding"}
-  and @{ML_type "xstring"} (defined in structure @{ML_structure "Name_Space"}.
+  \<^ML_type>\<open>bstring\<close> (defined in structure  \<^ML_structure>\<open>Binding\<close>
+  and \<^ML_type>\<open>xstring\<close> (defined in structure \<^ML_structure>\<open>Name_Space\<close>.
   Unfortunately, the abstraction is not tight and combinations with 
   elementary routines might produce quite crappy results.\<close>
 
-ML\<open>val b = Binding.name_of@{binding "here"}\<close>
-text\<open>... produces the system output \verb+val it = "here": bstring+,
-     but note that it is misleading to believe it is just a string.
-\<close>
+ML\<open>val b = Binding.name_of @{binding \<open>here\<close>}\<close>
+text\<open>... produces the system output \<^verbatim>\<open>val it = "here": bstring\<close>,
+     but note that it is misleading to believe it is just a string.\<close>
 
 ML\<open>String.explode b\<close> (* is harmless, but  *)
 ML\<open>String.explode(Binding.name_of
-(Binding.conglomerate[Binding.qualified_name "X.x",
-              @{binding "here"}]  ))\<close>
-(* Somehow it is possible to smuggle markup into bstrings; and this leads 
-   ML\<open>(((String.explode(!ODL_Command_Parser.SPY6))))\<close>
-   to something like 
-   val it = [#"\^E", #"\^F", #"i", #"n", #"p", #"u", #"t", #"\^F", #"d", #"e", #"l", #"i", #"m", #"i", #"t", #"e", #"d", #"=", #"f", #"a", ...]: char list
-*)
+          (Binding.conglomerate[Binding.qualified_name "X.x", @{binding "here"}]  ))\<close>
+text\<open>... whioch leads to the output \<^verbatim>\<open>val it = [#"x", #"_", #"h", #"e", #"r", #"e"]: char list\<close>\<close>
 
-text\<open> However, there is an own XML parser for this format. See Section Markup. 
-\<close>
+text\<open> However, there is an own XML parser for this format. See Section Markup. \<close>
+
 ML\<open> fun dark_matter x = XML.content_of (YXML.parse_body x)\<close>
 
 (* MORE TO COME *)
@@ -1515,7 +1513,7 @@ val pos = @{here};
 val markup = Position.here pos;
 writeln ("And a link to the declaration of 'here' is "^markup)\<close> 
 
-(* \<^here>  *)
+(* \<^here> *)
 text\<open> ... uses the antiquotation @{ML "@{here}"} to infer from the system lexer the actual position
   of itself in the global document, converts it to markup (a string-representation of it) and sends
   it via the usual @{ML "writeln"} to the interface. \<close>
@@ -1523,7 +1521,7 @@ text\<open> ... uses the antiquotation @{ML "@{here}"} to infer from the system 
 figure*[hyplinkout::figure,relative_width="40",src="''figures/markup-demo''"]
 \<open>Output with hyperlinked position.\<close>
 
-text\<open>@{docitem \<open>hyplinkout\<close>} shows the produced output where the little house-like symbol in the 
+text\<open>@{figure \<open>hyplinkout\<close>} shows the produced output where the little house-like symbol in the 
   display is hyperlinked to the position of @{ML "@{here}"} in the ML sample above.\<close>
 
 section\<open>Markup and Low-level Markup Reporting\<close>
@@ -1837,7 +1835,7 @@ local
 
   open Args
 
-  (* some more combinaotrs *)
+  (* some more combinators *)
   val _ =  symbolic: Token.T parser
   val _ =  $$$ : string -> string parser
   val _ =  maybe: 'a parser -> 'a option parser
@@ -1910,16 +1908,16 @@ in val _ = () end
 
 subsection\<open> Bindings \<close>  
 
-text\<open> The structure @{ML_structure "Binding"} serves as 
+text\<open> The structure @{ML_structure \<open>Binding\<close>} serves as 
   \<open>structured name bindings\<close>, as says the description, i.e. a mechanism to basically 
   associate an input string-fragment to its position. This concept is vital in all parsing processes
   and the interaction with PIDE.
 
   Key are two things:
-\<^enum> the type-synonym @{ML_type "bstring"} which is synonym to @{ML_type "string"}
+\<^enum> the type-synonym @{ML_type \<open>bstring\<close>} which is synonym to @{ML_type \<open>string\<close>}
   and intended for "primitive names to be bound"
-\<^enum> the projection @{ML "Binding.pos_of :  Binding.binding -> Position.T"} 
-\<^enum> the constructor establishing a binding @{ML "Binding.make: bstring * Position.T -> Binding.binding"}
+\<^enum> the projection @{ML \<open>Binding.pos_of :  Binding.binding -> Position.T\<close>} 
+\<^enum> the constructor establishing a binding @{ML \<open>Binding.make: bstring * Position.T -> Binding.binding\<close>}
 
 \<close>
 
