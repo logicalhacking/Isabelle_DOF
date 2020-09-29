@@ -196,7 +196,7 @@ section\<open>The Isabelle/Pure bootstrap\<close>
 
 text\<open>It is instructive to study the fundamental bootstrapping sequence of the Isabelle system;
   it is written in the Isar format and gives an idea of the global module dependencies: 
-  @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"}. Loading this file 
+  \<^file>\<open>~~/src/Pure/ROOT.ML\<close>. Loading this file 
   (for example by hovering over this hyperlink in the antiquotation holding control or
   command key in Isabelle/jedit and activating it) allows the Isabelle IDE 
   to support hyperlinking \<^emph>\<open>inside\<close> the Isabelle source.\<close>
@@ -1154,7 +1154,7 @@ text\<open> The extensibility of Isabelle as a system framework depends on a num
 \<close>
 
 
-subsubsection*[ex1137::example]\<open>A paradigmatic example: \<^theory_text>\<open>text\<close>\<close>
+subsubsection*[ex1137::example]\<open>Examples: \<^theory_text>\<open>text\<close>\<close>
 text\<open>
  @{ML [display]\<open>
   Outer_Syntax.command ("text", @{here}) "formal comment (primary style)"
@@ -1170,7 +1170,23 @@ ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory gl
 
 
 subsection*[transmgt::technical] \<open>Transaction Management in the Isar-Engine : The Toplevel \<close>
-  
+text\<open> The Isar Toplevel (aka "the Isar engine" or the "Isar Interpreter") is an transaction
+   machine sitting over the Isabelle Kernel steering some asynchronous evaluation during the
+   evaluation of Isabelle/Isar input, usually stemming from processing Isabelle \<^verbatim>\<open>.thy\<close>-files.
+   
+\<close>
+
+text\<open>
+\<^enum> Type \<^ML_type>\<open>Toplevel.state\<close> represents Isar toplevel states, which are normally 
+  manipulated through the concept of toplevel transitions only.
+  This type is constructed as the sum of \<^emph>\<open>empty state\<close>,  \<^ML_type>\<open>Context.generic\<close>
+  (synonym to  \<^ML_type>\<open>generic_theory\<close>) and 
+
+TODO XXL
+
+\<close>
+
+
 ML\<open>Toplevel.exit: Toplevel.transition -> Toplevel.transition;
    Toplevel.keep: (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
    Toplevel.keep': (bool -> Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
