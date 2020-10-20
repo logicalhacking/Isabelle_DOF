@@ -1109,10 +1109,17 @@ thm "thm111"
 
 section\<open>Toplevel --- aka. ''The Isar Engine''\<close>
 
-text\<open>The main structure of the Isar-engine is \<^ML_structure>\<open>Toplevel\<close> and provides and
-internal \<^ML_type>\<open>state\<close> with the necessary infrastructure --- 
-i.e. the operations to pack and unpack theories and  \<^ML_type>\<open>Proof.context\<close>'s  --- on it:
- 
+text\<open>  The main structure of the Isar-engine is \<^ML_structure>\<open>Toplevel\<close>.
+   The Isar Toplevel (aka "the Isar engine" or the "Isar Interpreter") is an transaction
+   machine sitting over the Isabelle Kernel steering some asynchronous evaluation during the
+   evaluation of Isabelle/Isar input, usually stemming from processing Isabelle \<^verbatim>\<open>.thy\<close>-files. \<close>
+
+subsection*[tplstate::technical] \<open>Toplevel Transaction Management in the Isar-Engine\<close>
+text\<open>
+   The  structure \<^ML_structure>\<open>Toplevel\<close>  provides and internal \<^ML_type>\<open>state\<close> with the 
+   necessary infrastructure ---  i.e. the operations to pack and unpack theories and
+   queries  on it:
+
 \<^item> \<^ML>\<open> Toplevel.theory_toplevel: theory -> Toplevel.state\<close>
 \<^item> \<^ML>\<open> Toplevel.init_toplevel: unit -> Toplevel.state\<close>
 \<^item> \<^ML>\<open> Toplevel.is_toplevel: Toplevel.state -> bool\<close>
@@ -1121,209 +1128,169 @@ i.e. the operations to pack and unpack theories and  \<^ML_type>\<open>Proof.con
 \<^item> \<^ML>\<open> Toplevel.is_skipped_proof: Toplevel.state -> bool\<close>
 \<^item> \<^ML>\<open> Toplevel.level: Toplevel.state -> int\<close>
 \<^item> \<^ML>\<open> Toplevel.context_of: Toplevel.state -> Proof.context\<close>
+  extracts the local context 
 \<^item> \<^ML>\<open> Toplevel.generic_theory_of: Toplevel.state -> generic_theory\<close>
+  extracts the generic (local or global) context 
 \<^item> \<^ML>\<open> Toplevel.theory_of: Toplevel.state -> theory\<close>
+   extracts the global context 
 \<^item> \<^ML>\<open> Toplevel.proof_of: Toplevel.state -> Proof.state\<close>
 \<^item> \<^ML>\<open> Toplevel.presentation_context: Toplevel.state -> Proof.context\<close>
 \<^item>  ... 
 \<close>
 
+text\<open>  Type \<^ML_type>\<open>Toplevel.state\<close> represents Isar toplevel states, which are normally 
+  manipulated through the concept of toplevel transitions only.
+  This type is constructed as the sum of \<^emph>\<open>empty state\<close>,  \<^ML_type>\<open>Context.generic\<close>
+  (synonym to  \<^ML_type>\<open>generic_theory\<close>) and enriched versions of proof states or
+  abort proofs.
+\<close>
+
+
+subsection*[transmgt::technical] \<open>Toplevel Transaction Management in the Isar-Engine\<close>
+
 text\<open> The extensibility of Isabelle as a system framework depends on a number of tables,
   into which various concepts commands, ML-antiquotations, text-antiquotations, cartouches, ...
   can be entered via a late-binding on the fly. 
  
-  A paradigmatic example is the \<^ML>\<open>Outer_Syntax.command\<close>-operation, which ---
-  representing in itself a toplevel system transition --- allows to define a new 
-  command section and bind its syntax and semantics at a specific keyword.
-  Calling \<^ML>\<open>Outer_Syntax.command\<close>
-  creates an implicit \<^ML>\<open>Theory.setup\<close>   with an entry for a call-back function, which happens
-  to be a parser that must have as side-effect a Toplevel-transition-transition. 
-  Registers  \<^ML_type>\<open>Toplevel.transition -> Toplevel.transition\<close> parsers to the 
-  Isar interpreter.
+  The main operations to toplevel transitions are:
 
-  The global type of this key function for extending the Isar toplevel is, together
-  with a few query operations on the state of the toplevel:
-  \<^item>  \<^ML>\<open>Outer_Syntax.command : Outer_Syntax.command_keyword -> string -> 
-                               (Toplevel.transition -> Toplevel.transition) parser -> unit\<close>,
-  \<^item>  \<^ML>\<open>Document.state : unit -> Document.state\<close>, giving the state as a "collection of named
-      nodes, each consisting of an editable list of commands, associated with asynchronous 
-      execution process,
-  \<^item>  \<^ML>\<open>Session.get_keywords : unit -> Keyword.keywords\<close>, this looks to be session global,
-  \<^item>  \<^ML>\<open>Thy_Header.get_keywords : theory -> Keyword.keywords\<close> this looks to be just theory global.
-  
+ \<^item> \<^ML>\<open>Toplevel.keep: (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition\<close>
+   adjoins a diagnostic command
+ \<^item> \<^ML>\<open>Toplevel.theory: (theory -> theory) -> Toplevel.transition -> Toplevel.transition\<close>
+   adjoins a theory transformer.
+ \<^item> \<^ML>\<open>Toplevel.generic_theory: (generic_theory -> generic_theory) -> Toplevel.transition -> Toplevel.transition\<close>
+ \<^item> \<^ML>\<open>Toplevel.theory': (bool -> theory -> theory) -> Toplevel.transition -> Toplevel.transition\<close>
+ \<^item> \<^ML>\<open>Toplevel.exit: Toplevel.transition -> Toplevel.transition\<close>
+ \<^item> \<^ML>\<open>Toplevel.ignored: Position.T -> Toplevel.transition\<close>
+ \<^item> \<^ML>\<open>Toplevel.present_local_theory: (xstring * Position.T) option ->
+                       (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition\<close>
+
 \<close>
+subsection*[cmdbinding::technical] \<open>Toplevel Transaction Management in the Isar-Engine\<close>
+text\<open>
+ Toplevel transitions can finally be registered together with commandkeywords and 
+ IDE information into the toplevel.
+ The global type of this key function for extending the Isar toplevel is, together
+ with a few query operations on the state of the toplevel:
+ \<^item>  \<^ML>\<open>Outer_Syntax.command : Outer_Syntax.command_keyword -> string -> 
+                              (Toplevel.transition -> Toplevel.transition) parser -> unit\<close>,
+ \<^item>  \<^ML>\<open>Document.state : unit -> Document.state\<close>, giving the state as a "collection of named
+     nodes, each consisting of an editable list of commands, associated with asynchronous 
+     execution process,
+ \<^item>  \<^ML>\<open>Session.get_keywords : unit -> Keyword.keywords\<close>, this looks to be session global,
+ \<^item>  \<^ML>\<open>Thy_Header.get_keywords : theory -> Keyword.keywords\<close> this looks to be just theory global.
 
+
+  A paradigmatic example is the \<^ML>\<open>Outer_Syntax.command\<close>-operation, which ---
+  representing itself as a toplevel system transition --- allows to define a new 
+  command section and bind its syntax and semantics at a specific keyword.
+  Calling \<^ML>\<open>Outer_Syntax.command\<close> creates an implicit \<^ML>\<open>Theory.setup\<close> with an entry
+  for a call-back function, which happens to be a parser that must have as side-effect   
+  a Toplevel-transition-transition. 
+  Registers  \<^ML_type>\<open>Toplevel.transition -> Toplevel.transition\<close> parsers to the 
+  Isar interpreter.\<close>
+
+text\<open>The file \<^file>\<open>~~/src/HOL/ex/Commands.thy\<close> shows some example Isar command definitions, with the 
+     all-important theory header declarations for outer syntax keywords.\<close>
 
 subsubsection*[ex1137::example]\<open>Examples: \<^theory_text>\<open>text\<close>\<close>
-text\<open>
+text\<open> The integration of the  \<^theory_text>\<open>text\<close>-command is done as follows:
+
  @{ML [display]\<open>
   Outer_Syntax.command ("text", @{here}) "formal comment (primary style)"
     (Parse.opt_target -- Parse.document_source >> Pure_Syn.document_command {markdown = true})
  \<close>}
+
+ where \<^ML>\<open>Pure_Syn.document_command\<close> is the defining operation for the 
+ "diagnostic" (=side-effect-free) toplevel operation \<^ML>\<open>Pure_Syn.document_command\<close> looks as follows:
+
+ @{ML [display]\<open> let fun output_document state markdown txt = 
+                           Thy_Output.output_document (Toplevel.presentation_context state) markdown txt
+                     fun document_command markdown (loc, txt) =
+  Toplevel.keep (fn state =>
+    (case loc of
+      NONE => ignore (output_document state markdown txt)
+    | SOME (_, pos) => 
+        error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
+        Toplevel.present_local_theory loc (fn state =>
+              ignore (output_document state markdown txt)) in () end
+   
+\<close>}
+
 \<close>
+subsubsection*[ex1138::example]\<open>Examples: \<^theory_text>\<open>ML\<close>\<close>
+
+text\<open>
+ The integration of the  \<^theory_text>\<open>ML\<close>-command is done as follows:
+
+ @{ML [display]\<open>
+  Outer_Syntax.command ("ML", \<^here>) "ML text within theory or local theory"
+    (Parse.ML_source >> (fn source =>
+      Toplevel.generic_theory
+        (ML_Context.exec (fn () =>
+            ML_Context.eval_source (ML_Compiler.verbose true ML_Compiler.flags) source) #>
+          Local_Theory.propagate_ml_env)))
+  \<close>}
+\<close>
+
+
+subsection\<open>Miscellaneous\<close>
 
 text\<open>Here are a few queries relevant for the global config of the isar engine:\<close>
 ML\<open> Document.state();\<close>
 ML\<open> Session.get_keywords(); (* this looks to be  session global. *) \<close>
 ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>
 
-
-
-subsection*[transmgt::technical] \<open>Transaction Management in the Isar-Engine : The Toplevel \<close>
-text\<open> The Isar Toplevel (aka "the Isar engine" or the "Isar Interpreter") is an transaction
-   machine sitting over the Isabelle Kernel steering some asynchronous evaluation during the
-   evaluation of Isabelle/Isar input, usually stemming from processing Isabelle \<^verbatim>\<open>.thy\<close>-files.
-   
-\<close>
-
-text\<open>
-\<^enum> Type \<^ML_type>\<open>Toplevel.state\<close> represents Isar toplevel states, which are normally 
-  manipulated through the concept of toplevel transitions only.
-  This type is constructed as the sum of \<^emph>\<open>empty state\<close>,  \<^ML_type>\<open>Context.generic\<close>
-  (synonym to  \<^ML_type>\<open>generic_theory\<close>) and 
-
-TODO XXL
-
-\<close>
-
-
-ML\<open>Toplevel.exit: Toplevel.transition -> Toplevel.transition;
-   Toplevel.keep: (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
-   Toplevel.keep': (bool -> Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
-   Toplevel.ignored: Position.T -> Toplevel.transition;
-   Toplevel.generic_theory: (generic_theory -> generic_theory) -> Toplevel.transition -> Toplevel.transition;
-   Toplevel.theory': (bool -> theory -> theory) -> Toplevel.transition -> Toplevel.transition;
-   Toplevel.theory: (theory -> theory) -> Toplevel.transition -> Toplevel.transition;
   
-   Toplevel.present_local_theory:
-   (xstring * Position.T) option ->
-       (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
-  (* where text treatment and antiquotation parsing happens *)
-  
-  
-  (*fun document_command markdown (loc, txt) =
-    Toplevel.keep (fn state =>
-      (case loc of
-        NONE => ignore (output_text state markdown txt)
-      | SOME (_, pos) =>
-          error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
-    Toplevel.present_local_theory loc (fn state => ignore (output_text state markdown txt)); *)
-  
-  (* Isar Toplevel Steuerung *)
-  Toplevel.keep :  (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
-      (* val keep' = add_trans o Keep;
-         fun keep f = add_trans (Keep (fn _ => f));
-       *)
-  
-  Toplevel.present_local_theory : (xstring * Position.T) option -> (Toplevel.state -> unit) ->
-      Toplevel.transition -> Toplevel.transition;
-      (* fun present_local_theory target = present_transaction (fn int =>
-             (fn Theory (gthy, _) =>
-                     let val (finish, lthy) = Named_Target.switch target gthy;
-                     in Theory (finish lthy, SOME lthy) end
-             | _ => raise UNDEF));
-  
-         fun present_transaction f g = add_trans (Transaction (f, g));
-         fun transaction f = present_transaction f (K ());
-      *)
-  
-  Toplevel.theory : (theory -> theory) -> Toplevel.transition -> Toplevel.transition; 
-     (* fun theory' f = transaction (fn int =>
-                  (fn Theory (Context.Theory thy, _) =>
-                        let val thy' = thy
-                                       |> Sign.new_group
-                                       |> f int
-                                       |> Sign.reset_group;
-                        in Theory (Context.Theory thy', NONE) end
-                  | _ => raise UNDEF));
-  
-        fun theory f = theory' (K f); *)\<close>  
-  
-  
-ML\<open>
-
-(* Isar Toplevel Control *)
-Toplevel.keep :  (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition;
-    (* val keep' = add_trans o Keep;
-       fun keep f = add_trans (Keep (fn _ => f));
-     *)
-
-Toplevel.present_local_theory : (xstring * Position.T) option -> (Toplevel.state -> unit) ->
-    Toplevel.transition -> Toplevel.transition;
-    (* fun present_local_theory target = present_transaction (fn int =>
-           (fn Theory (gthy, _) =>
-                   let val (finish, lthy) = Named_Target.switch target gthy;
-                   in Theory (finish lthy, SOME lthy) end
-           | _ => raise UNDEF));
-
-       fun present_transaction f g = add_trans (Transaction (f, g));
-       fun transaction f = present_transaction f (K ());
-    *)
-
-Toplevel.theory : (theory -> theory) -> Toplevel.transition -> Toplevel.transition; 
-   (* fun theory' f = transaction (fn int =>
-                (fn Theory (Context.Theory thy, _) =>
-                      let val thy' = thy
-                                     |> Sign.new_group
-                                     |> f int
-                                     |> Sign.reset_group;
-                      in Theory (Context.Theory thy', NONE) end
-                | _ => raise UNDEF));
-
-      fun theory f = theory' (K f); *)
-\<close>
-  
-  
-subsection*[conf::technical]\<open> Configuration flags of fixed type in the Isar-engine. \<close>
+subsection*[conf::technical]\<open> Configuration Flags in the Isar-engine. \<close>
 text\<open>The toplevel also provides an infrastructure for managing configuration options 
   for system components. Based on a sum-type @{ML_type Config.value } 
   with the alternatives \<^verbatim>\<open> Bool of bool | Int of int | Real of real | String of string\<close>
   and building the parametric configuration types @{ML_type "'a Config.T" } and the
-  instance  \<^verbatim>\<open>type raw = value T\<close>, for all registered configurations the protocol:\<close>
-ML\<open>
+  instance  \<^verbatim>\<open>type raw = value T\<close>, for all registered configurations the protocol:
 
-  Config.get: Proof.context -> 'a Config.T -> 'a;
-  Config.map: 'a Config.T -> ('a -> 'a) -> Proof.context -> Proof.context;
-  Config.put: 'a Config.T -> 'a -> Proof.context -> Proof.context;
-  Config.get_global: theory -> 'a Config.T -> 'a;
-  Config.map_global: 'a Config.T -> ('a -> 'a) -> theory -> theory;
-  Config.put_global: 'a Config.T -> 'a -> theory -> theory;\<close>
 
-text\<open>... etc. is defined.\<close>
+  \<^item>  \<^ML>\<open>Config.get : Proof.context -> 'a Config.T -> 'a\<close>
+  \<^item>  \<^ML>\<open>Config.map: 'a Config.T -> ('a -> 'a) -> Proof.context -> Proof.context\<close>  
+  \<^item>  \<^ML>\<open>Config.put: 'a Config.T -> 'a -> Proof.context -> Proof.context\<close>  
+  \<^item>  \<^ML>\<open>Config.get_global: theory -> 'a Config.T -> 'a\<close>  
+  \<^item>  \<^ML>\<open>Config.map_global: 'a Config.T -> ('a -> 'a) -> theory -> theory\<close>  
+  \<^item>  \<^ML>\<open>Config.put_global: 'a Config.T -> 'a -> theory -> theory\<close>  
+  \<^item>  ... etc. is defined.
+\<close>
 
-subsubsection*[ex::example]\<open>Example registration of an config attribute XS232 initialized to false: \<close>
-ML\<open>
+
+subsubsection*[ex::example]\<open>Example registration of an config attribute \<close>
+text\<open>The attribute XS232 is initialized by false:\<close>
+ML\<open> 
 val (XS232, XS232_setup)
      = Attrib.config_bool \<^binding>\<open>XS232\<close> (K false);
 
 val _ = Theory.setup XS232_setup;\<close>
 
-(* or: just command:
+text \<open>... which could also be achieved by \<open>setup\<open>XS232_setup\<close>\<close>. \<close>
 
-setup\<open>XS232_setup\<close>
-
-*)
-
-text\<open>Defining a high-level attribute:\<close>
+subsubsection*[ex33333::example]\<open>Defining a high-level attribute:\<close>
 ML\<open> 
 Attrib.setup \<^binding>\<open>simp\<close> (Attrib.add_del Simplifier.simp_add Simplifier.simp_del)
                             "declaration of Simplifier rewrite rule"
 \<close>
 
 
-
+subsection*[ex333::example]\<open>A Hack:\<close>
 
 text\<open>Another mechanism are global synchronised variables:\<close>
-ML\<open> (* For example *)
+ML\<open>
            
   val C = Synchronized.var "Pretty.modes" "latEEex"; 
   (* Synchronized: a mechanism to bookkeep global
      variables with synchronization mechanism included *)
   Synchronized.value C;\<close>  
 
-subsection*[ex213::example]\<open>A Definition (High-level)\<close>  
 
-text\<open>Example drawn from theory \<^verbatim>\<open>Clean\<close>:\<close>
+subsection*[ex213::example]\<open>A Definition Command (High-level)\<close>  
+
+text\<open>A quite complex example is drawn from the Theory \<^verbatim>\<open>Clean\<close>; it generates \<close>
 
 ML\<open>
 structure HLDefinitionSample = 
@@ -1398,15 +1365,9 @@ fun lemma1' lemma_name goals_to_prove a b lthy =
 \<close>
 
 
-text\<open>MORE TO COME\<close>
-
-
-
-
-
 chapter*[frontend::technical]\<open>Front-End \<close>  
 text\<open>In the following chapter, we turn to the right part of the system architecture 
-  shown in @{docitem \<open>architecture\<close>}: 
+  shown in \<^figure>\<open>architecture\<close>: 
   The PIDE ("Prover-IDE") layer @{cite "DBLP:conf/itp/Wenzel14"}
   consisting of a part written in SML and another in SCALA.
   Roughly speaking, PIDE implements "continuous build - continuous check" - functionality
@@ -1423,6 +1384,7 @@ text\<open>In the following chapter, we turn to the right part of the system arc
   extent (outdated markup referring to modified text is dropped, and 
   corresponding re-calculations are oriented to the user focus, for example). 
   Four concrete editors --- also called PIDE applications --- have been implemented:
+
 \<^enum> an Eclipse plugin (developped by an Edinburg-group, based on an very old PIDE version),
 \<^enum> a Visual-Studio Code plugin (developed by Makarius Wenzel), 
   currently based on a fairly old PIDE version, 
