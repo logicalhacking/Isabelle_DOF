@@ -1570,7 +1570,8 @@ text\<open>The @\<open>ML report_defining_occurrence\<close>-function above take
 
 
 subsection\<open>A Slightly more Complex Example\<close>
-
+text\<open>Note that this example is only animated in the integrated source of this document;
+     it is essential that is executed inside Isabelle/jedit. \<close>
 ML \<open>
 
 fun markup_tvar def_name ps (name, id) =
@@ -1650,24 +1651,25 @@ text\<open>The pudding comes with the eating: \<close>
 
 subsection\<open>Environment Structured Reporting\<close>
 
-text\<open> The structure @{ML_structure \<open>Name_Space\<close>} offers an own infra-structure for names and
+text\<open> The structure \<^ML_structure>\<open>Name_Space\<close> offers an own infra-structure for names and
       manages the markup accordingly.  MORE TO COME\<close>
-text\<open> @{ML_type "'a Name_Space.table"} \<close>
+text\<open> \<^ML_type>\<open>'a Name_Space.table\<close> \<close>
 
 
-section\<open> The System Lexer and Token Issues\<close>
+section\<open>The System Lexer and Token Issues\<close>
 text\<open>Four syntactic contexts are predefined in Isabelle (others can be added): 
-  the ML context, the text context, the Isar-command context and the teerm-context, referring
+  the ML context, the text context, the Isar-command context and the term-context, referring
   to different needs of the Isabelle Framework as an extensible framework supporting incremental,
   partially programmable extensions and as a Framework geared towards Formal Proofs and therefore
-  mathematical notations. The basic data-structure for the lexical treatment of these elemens
-  are @{ML_structure "Token"}'s. \<close>
+  mathematical notations. The basic data-structure for the lexical treatment of these elements
+  are \<^ML_structure>\<open>Token\<close>'s. \<close>
 
 subsection\<open>Tokens\<close>
 
-text\<open>The basic entity that lexers treat are \<^emph>\<open>tokens\<close>. defined in @{ML_structure "Token"}
+text\<open>The basic entity that lexers treat are \<^emph>\<open>tokens\<close>. defined in \<^ML_structure>\<open>Token\<close>
   It provides a classification infrastructure, the references to positions and Markup 
   as well as way's to annotate tokens with (some) values they denote:\<close>
+
 
 ML\<open>
 local
@@ -1727,48 +1729,49 @@ text\<open>Parsing Combinators go back to monadic programming as advocated by Wa
   worked out @{cite "DBLP:journals/jfp/Hutton92"}. Parsing combinators are one of the two
   major parsing technologies of the Isabelle front-end, in particular for the outer-syntax used
   for the parsing of toplevel-commands. The core of the combinator library is 
-  @{ML_structure \<open>Scan\<close>} providing the @{ML_type "'a parser"} which is a synonym for
-  @{ML_type " Token.T list -> 'a * Token.T list"}. 
+  \<^ML_structure>\<open>Scan\<close> providing the \<^ML_type>\<open>'a parser\<close> which is a synonym for
+  \<^ML_type>\<open>Token.T list -> 'a * Token.T list\<close>. 
   
-   "parsers" are actually  interpreters; an 'a parser is a function that parses
-  an input stream and computes(=evaluates, computes) it into 'a. 
-  Since the semantics of an Isabelle command is a transition => transition 
-  or theory $\Rightarrow$ theory  function, i.e. a global system transition.
-  parsers of that type can be constructed and be bound as call-back functions
+  "parsers" are actually  interpreters; an \<^ML_type>\<open>'a parser\<close> is a function that parses
+  an input stream and computes (=evaluates) it into \<open>'a\<close>. 
+
+  \<^item> \<^theory_text>\<open>type 'a parser = Token.T list -> 'a * Token.T list\<close>
+  \<^item> \<^theory_text>\<open> type 'a context_parser = Context.generic * Token.T list -> 
+      'a * (Context.generic * Token.T list)\<close>
+
+  Since the semantics of an Isabelle command is a \<^ML_type>\<open>Toplevel.transition -> Toplevel.transition \<close>
+  or theory  \<^ML_type>\<open>theory -> theory\<close>  function, i.e. a global system transition.
+  "parsers" of that type can be constructed and be bound as call-back functions
   to a table in the Toplevel-structure of Isar.
   
-  The library also provides a bunch of infix parsing combinators, notably:\<close>
+  The library also provides a bunch of infix parsing combinators, notably:
 
+\<^item> \<^ML>\<open>op !! : ('a * message option -> message) -> ('a -> 'b) -> 'a -> 'b\<close> 
+ (*apply function*)
+\<^item> \<^ML>\<open>op >> : ('a -> 'b * 'c) * ('b -> 'd) -> 'a -> 'd * 'c\<close> 
+ (*alternative*)
+\<^item> \<^ML>\<open> op || : ('a -> 'b) * ('a -> 'b) -> 'a -> 'b\<close>
+ (*sequential pairing*)
+\<^item> \<^ML>\<open>op -- : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> ('b * 'd) * 'e\<close> 
+ (*dependent pairing*)
+\<^item> \<^ML>\<open> op :-- : ('a -> 'b * 'c) * ('b -> 'c -> 'd * 'e) -> 'a -> ('b * 'd) * 'e\<close>
+ (*projections*)
+\<^item> \<^ML>\<open>op :|-- : ('a -> 'b * 'c) * ('b -> 'c -> 'd * 'e) -> 'a -> 'd * 'e\<close> 
+\<^item> \<^ML>\<open>op |-- : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> 'd * 'e\<close> 
+  concatenate and forget first parse result
+\<^item> \<^ML>\<open>op --| : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> 'b * 'e\<close> 
+  concatenation and forget second parse result
+\<^item> \<^ML>\<open>op ^^ : ('a -> string * 'b) * ('b -> string * 'c) -> 'a -> string * 'c\<close> 
+\<^item> \<^ML>\<open>op ::: : ('a -> 'b * 'c) * ('c -> 'b list * 'd) -> 'a -> 'b list * 'd\<close> 
+\<^item> \<^ML>\<open>op @@@ : ('a -> 'b list * 'c) * ('c -> 'b list * 'd) -> 'a -> 'b list * 'd\<close> 
+  parse one element literal
+\<^item> \<^ML>\<open>op $$ : string -> string list -> string * string list\<close> 
+\<^item> \<^ML>\<open>op ~$$ : string -> string list -> string * string list\<close> 
+\<close>
+
+
+subsection\<open>Examples and Useful Glue\<close>
 ML\<open>
-  val _ = op !! : ('a * message option -> message) -> ('a -> 'b) -> 'a -> 'b
-               (*apply function*)
-  val _ = op >> : ('a -> 'b * 'c) * ('b -> 'd) -> 'a -> 'd * 'c
-  (*alternative*)
-  val _ = op || : ('a -> 'b) * ('a -> 'b) -> 'a -> 'b
-  (*sequential pairing*)
-  val _ = op -- : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> ('b * 'd) * 'e
-  (*dependent pairing*)
-  val _ = op :-- : ('a -> 'b * 'c) * ('b -> 'c -> 'd * 'e) -> 'a -> ('b * 'd) * 'e
-  (*projections*)
-  val _ = op :|-- : ('a -> 'b * 'c) * ('b -> 'c -> 'd * 'e) -> 'a -> 'd * 'e
-  val _ = op |-- : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> 'd * 'e
-  val _ = op --| : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> 'b * 'e
-  (*concatenation*)
-  val _ = op ^^ : ('a -> string * 'b) * ('b -> string * 'c) -> 'a -> string * 'c
-  val _ = op ::: : ('a -> 'b * 'c) * ('c -> 'b list * 'd) -> 'a -> 'b list * 'd
-  val _ = op @@@ : ('a -> 'b list * 'c) * ('c -> 'b list * 'd) -> 'a -> 'b list * 'd
-  (*one element literal*)
-  val _ = op $$ : string -> string list -> string * string list
-  val _ = op ~$$ : string -> string list -> string * string list
- \<close>
-
-text\<open>Usually, combinators were used in one of these following instances:\<close>
-
-ML\<open>
-
-  type 'a parser = Token.T list -> 'a * Token.T list
-  type 'a context_parser = Context.generic * Token.T list -> 'a * (Context.generic * Token.T list)
-
 
 (* conversion between these two : *)
 
@@ -1784,120 +1787,122 @@ subsection\<open>Advanced Parser Library\<close>
 text\<open>There are two parts. A general multi-purpose parsing combinator library is 
   found under @{ML_structure "Parse"}, providing basic functionality for parsing strings
   or integers. There is also an important combinator that reads the current position information
-  out of the input stream:\<close>
-ML\<open>
-Parse.nat: int parser;  
-Parse.int: int parser;
-Parse.enum_positions: string -> 'a parser -> ('a list * Position.T list) parser;
-Parse.enum: string -> 'a parser -> 'a list parser;
-Parse.input: 'a parser -> Input.source parser;
+  out of the input stream:
 
-Parse.enum : string -> 'a parser -> 'a list parser;
-Parse.!!! : (Token.T list -> 'a) -> Token.T list -> 'a;
-Parse.position: 'a parser -> ('a * Position.T) parser;
+\<^item> \<^ML>\<open>Parse.nat: int parser\<close>  
+\<^item> \<^ML>\<open>Parse.int: int parser\<close>
+\<^item> \<^ML>\<open>Parse.enum_positions: string -> 'a parser -> ('a list * Position.T list) parser\<close>
+\<^item> \<^ML>\<open>Parse.enum: string -> 'a parser -> 'a list parser\<close>
+\<^item> \<^ML>\<open>Parse.input: 'a parser -> Input.source parser\<close>
 
-(* Examples *)                                     
-Parse.position Args.cartouche_input;
+\<^item> \<^ML>\<open>Parse.enum : string -> 'a parser -> 'a list parser\<close>
+\<^item> \<^ML>\<open>Parse.!!! : (Token.T list -> 'a) -> Token.T list -> 'a\<close>
+\<^item> \<^ML>\<open>Parse.position: 'a parser -> ('a * Position.T) parser\<close>
+
+\<^item> \<^ML>\<open>Parse.position Args.cartouche_input\<close>
 \<close>
 
-text\<open>The second part is much more high-level, and can be found under @{ML_structure Args}.
+text\<open>The second part is much more high-level, and can be found under \<^ML_structure>\<open>Args\<close>.
   In parts, these combinators are again based on more low-level combinators, in parts they serve as 
   an an interface to the underlying Earley-parser for mathematical notation used in types and terms.
   This is perhaps meant with the fairly cryptic comment:
   "Quasi-inner syntax based on outer tokens: concrete argument syntax of
   attributes, methods etc." at the beginning of this structure.\<close>
 
-ML\<open>
+text\<open> Some more combinators
+\<^item>\<^ML>\<open>Args.symbolic : Token.T parser\<close>
+\<^item>\<^ML>\<open>Args.$$$ : string -> string parser\<close>
+\<^item>\<^ML>\<open>Args.maybe : 'a parser -> 'a option parser\<close>
+\<^item>\<^ML>\<open>Args.name_token: Token.T parser\<close>
 
-local 
-
-  open Args
-
-  (* some more combinators *)
-  val _ =  symbolic: Token.T parser
-  val _ =  $$$ : string -> string parser
-  val _ =  maybe: 'a parser -> 'a option parser
-  val _ =  name_token: Token.T parser
-
-
-  (* common isar syntax *)
-  val _ =  colon: string parser
-  val _ =  query: string parser
-  val _ =  bang: string parser
-  val _ =  query_colon: string parser
-  val _ =  bang_colon: string parser
-  val _ =  parens: 'a parser -> 'a parser
-  val _ =  bracks: 'a parser -> 'a parser
-  val _ =  mode: string -> bool parser
-  val _ =  name: string parser
-  val _ =  name_position: (string * Position.T) parser
-  val _ =  cartouche_inner_syntax: string parser
-  val _ =  cartouche_input: Input.source parser
-  val _ =  text_token: Token.T parser
-
-  (* advanced string stuff *)
-  val _ =  embedded_token: Token.T parser
-  val _ =  embedded_inner_syntax: string parser
-  val _ =  embedded_input: Input.source parser
-  val _ =  embedded: string parser
-  val _ =  embedded_position: (string * Position.T) parser
-  val _ =  text_input: Input.source parser
-  val _ =  text: string parser
-  val _ =  binding: Binding.binding parser
-
-  (* stuff related to INNER SYNTAX PARSING *)
-  val _ =  alt_name: string parser
-  val _ =  liberal_name: string parser
-  val _ =  var: indexname parser
-  val _ =  internal_source: Token.src parser
-  val _ =  internal_name: Token.name_value parser
-  val _ =  internal_typ: typ parser
-  val _ =  internal_term: term parser
-  val _ =  internal_fact: thm list parser
-  val _ =  internal_attribute: (morphism -> attribute) parser
-  val _ =  internal_declaration: declaration parser
+Common Isar Syntax
+\<^item>\<^ML>\<open>Args.colon: string parser          \<close>
+\<^item>\<^ML>\<open>Args.query: string parser          \<close>
+\<^item>\<^ML>\<open>Args.bang: string parser           \<close>
+\<^item>\<^ML>\<open>Args.query_colon: string parser    \<close>
+\<^item>\<^ML>\<open>Args.bang_colon: string parser     \<close>
+\<^item>\<^ML>\<open>Args.parens: 'a parser -> 'a parser\<close>
+\<^item>\<^ML>\<open>Args.bracks: 'a parser -> 'a parser\<close>
+\<^item>\<^ML>\<open>Args.mode: string -> bool parser                \<close>
+\<^item>\<^ML>\<open>Args.name: string parser                        \<close>
+\<^item>\<^ML>\<open>Args.name_position: (string * Position.T) parser\<close>
+\<^item>\<^ML>\<open>Args.cartouche_inner_syntax: string parser      \<close>
+\<^item>\<^ML>\<open>Args.cartouche_input: Input.source parser       \<close>
+\<^item>\<^ML>\<open>Args.text_token: Token.T parser                 \<close>
 
 
-  val _ =  named_source: (Token.T -> Token.src) -> Token.src parser
-  val _ =  named_typ: (string -> typ) -> typ parser
-  val _ =  named_term: (string -> term) -> term parser
+Common Isar Syntax
+\<^item>\<^ML>\<open>Args.embedded_token: Token.T parser                 \<close>
+\<^item>\<^ML>\<open>Args.embedded_inner_syntax: string parser           \<close>
+\<^item>\<^ML>\<open>Args.embedded_input: Input.source parser            \<close>
+\<^item>\<^ML>\<open>Args.embedded: string parser                        \<close>
+\<^item>\<^ML>\<open>Args.embedded_position: (string * Position.T) parser\<close>
+\<^item>\<^ML>\<open>Args.text_input: Input.source parser                \<close>
+\<^item>\<^ML>\<open>Args.text: string parser\<close>
+\<^item>\<^ML>\<open>Args.binding:  Binding.binding parser\<close>
 
-  val _ =  text_declaration: (Input.source -> declaration) -> declaration parser
-  val _ =  cartouche_declaration: (Input.source -> declaration) -> declaration parser
-  val _ =  typ_abbrev: typ context_parser
+Common Stuff related to Inner Syntax Parsing
+\<^item>\<^ML>\<open>Args.alt_name: string parser                           \<close>
+\<^item>\<^ML>\<open>Args.liberal_name: string parser                       \<close>
+\<^item>\<^ML>\<open>Args.var: indexname parser                             \<close>
+\<^item>\<^ML>\<open>Args.internal_source: Token.src parser                 \<close>
+\<^item>\<^ML>\<open>Args.internal_name: Token.name_value parser            \<close>
+\<^item>\<^ML>\<open>Args.internal_typ: typ parser                          \<close>
+\<^item>\<^ML>\<open>Args.internal_term: term parser                        \<close>
+\<^item>\<^ML>\<open>Args.internal_fact: thm list parser                    \<close>
+\<^item>\<^ML>\<open>Args.internal_attribute: (morphism -> attribute) parser\<close>
+\<^item>\<^ML>\<open>Args.internal_declaration: declaration parser          \<close>
+\<^item>\<^ML>\<open>Args.alt_name: string parser                           \<close>
+\<^item>\<^ML>\<open>Args.liberal_name: string parser                       \<close>
 
-  val _ =  typ: typ context_parser
-  val _ =  term: term context_parser
-  val _ =  term_pattern: term context_parser
-  val _ =  term_abbrev: term context_parser
 
-  (* syntax for some major Pure commands in Isar *)
-  val _ =  prop: term context_parser
-  val _ =  type_name: {proper: bool, strict: bool} -> string context_parser
-  val _ =  const: {proper: bool, strict: bool} -> string context_parser
-  val _ =  goal_spec: ((int -> tactic) -> tactic) context_parser
-  val _ =  context: Proof.context context_parser   
-  val _ =  theory: theory context_parser
 
-in val _ = () end
+Common Isar Syntax
+\<^item>\<^ML>\<open>Args.named_source: (Token.T -> Token.src) -> Token.src parser                  \<close>
+\<^item>\<^ML>\<open>Args.named_typ: (string -> typ) -> typ parser                                  \<close>
+\<^item>\<^ML>\<open>Args.named_term: (string -> term) -> term parser                               \<close>
+\<^item>\<^ML>\<open>Args.text_declaration: (Input.source -> declaration) -> declaration parser     \<close>
+\<^item>\<^ML>\<open>Args.cartouche_declaration: (Input.source -> declaration) -> declaration parser\<close>
+\<^item>\<^ML>\<open>Args.typ_abbrev: typ context_parser                                            \<close>
+\<^item>\<^ML>\<open>Args.typ: typ context_parser                                                   \<close>
+\<^item>\<^ML>\<open>Args.term: term context_parser                                                 \<close>
+\<^item>\<^ML>\<open>Args.term_pattern: term context_parser                                         \<close>
+\<^item>\<^ML>\<open>Args.term_abbrev: term context_parser                                          \<close>
+\<^item>\<^ML>\<open>Args.named_source: (Token.T -> Token.src) -> Token.src parser                  \<close>
+\<^item>\<^ML>\<open>Args.named_typ: (string -> typ) -> typ parser                                  \<close>
+\<^item>\<^ML>\<open>Args.named_term: (string -> term) -> term parser                               \<close>
+\<^item>\<^ML>\<open>Args.text_declaration: (Input.source -> declaration) -> declaration parser     \<close>
+\<^item>\<^ML>\<open>Args.cartouche_declaration: (Input.source -> declaration) -> declaration parser\<close>
+
+Syntax for some major Pure commands in Isar
+\<^item>\<^ML>\<open>Args.prop: term context_parser                                       \<close>
+\<^item>\<^ML>\<open>Args.type_name: {proper: bool, strict: bool} -> string context_parser\<close>
+\<^item>\<^ML>\<open>Args.const: {proper: bool, strict: bool} -> string context_parser    \<close>
+\<^item>\<^ML>\<open>Args.goal_spec: ((int -> tactic) -> tactic) context_parser           \<close>
+\<^item>\<^ML>\<open>Args.context: Proof.context context_parser                           \<close>
+\<^item>\<^ML>\<open>Args.theory: theory context_parser                                   \<close>
 
 \<close>
 
 
+
 subsection\<open> Bindings \<close>  
 
-text\<open> The structure @{ML_structure \<open>Binding\<close>} serves as 
+text\<open> The structure \<^ML_structure>\<open>Binding\<close> serves as 
   \<open>structured name bindings\<close>, as says the description, i.e. a mechanism to basically 
   associate an input string-fragment to its position. This concept is vital in all parsing processes
   and the interaction with PIDE.
 
   Key are two things:
-\<^enum> the type-synonym @{ML_type \<open>bstring\<close>} which is synonym to @{ML_type \<open>string\<close>}
+\<^enum> the type-synonym \<^ML_type>\<open>bstring\<close> which is synonym to \<^ML_type>\<open>string\<close>
   and intended for "primitive names to be bound"
-\<^enum> the projection @{ML \<open>Binding.pos_of :  Binding.binding -> Position.T\<close>} 
-\<^enum> the constructor establishing a binding @{ML \<open>Binding.make: bstring * Position.T -> Binding.binding\<close>}
+\<^enum> the projection \<^ML>\<open>Binding.pos_of :  Binding.binding -> Position.T\<close>
+\<^enum> the constructor establishing a binding \<^ML>\<open>Binding.make: bstring * Position.T -> Binding.binding\<close>
 
 \<close>
+
+
+subsubsection\<open> Example \<close>  
 
 text\<open>Since this is so common in interface programming, there are a number of antiquotations\<close>
 ML\<open>
@@ -1913,11 +1918,16 @@ Binding.pos_of H;  (* clicking on "H" activates the hyperlink to the defining oc
 \<close>  
 
 subsection \<open>Input streams. \<close>  
-text\<open>Reads as : Generic input with position information.\<close>
+text\<open>Reads as : Generic input with position and range information, to be processed in a 
+left-to right manner. Preferable to strings if used for larger data. 
 
-ML\<open>  
-  Input.source_explode : Input.source -> Symbol_Pos.T list;
-  Input.source_explode (Input.string " f @{thm refl}");
+Constructor: \<^ML>\<open>Input.source_explode : Input.source -> Symbol_Pos.T list\<close>
+
+\<close>
+
+subsubsection \<open>Example :Input streams. \<close>  
+
+ML\<open> Input.source_explode (Input.string " f @{thm refl}");
   
    (* If stemming from the input window, this can be s th like: 
       
@@ -1948,46 +1958,52 @@ text\<open> Note that the naming underlies the following convention :
 \<close>
 
 text\<open> Inner Syntax Parsing combinators for elementary Isabelle Lexems\<close>  
-ML\<open>
-Syntax.parse_sort : Proof.context -> string -> sort;
-Syntax.parse_typ  : Proof.context -> string -> typ;
-Syntax.parse_term : Proof.context -> string -> term;
-Syntax.parse_prop : Proof.context -> string -> term;
-Syntax.check_term : Proof.context -> term -> term;
-Syntax.check_props: Proof.context -> term list -> term list;
-Syntax.uncheck_sort: Proof.context -> sort -> sort;
-Syntax.uncheck_typs: Proof.context -> typ list -> typ list;
-Syntax.uncheck_terms: Proof.context -> term list -> term list;\<close>
+text\<open>
+\<^item> \<^ML>\<open> Syntax.parse_sort : Proof.context -> string -> sort                   \<close>
+\<^item> \<^ML>\<open> Syntax.parse_typ  : Proof.context -> string -> typ                    \<close>
+\<^item> \<^ML>\<open> Syntax.parse_term : Proof.context -> string -> term                   \<close>
+\<^item> \<^ML>\<open> Syntax.parse_prop : Proof.context -> string -> term                   \<close>
+\<^item> \<^ML>\<open> Syntax.check_term : Proof.context -> term -> term                     \<close>
+\<^item> \<^ML>\<open> Syntax.check_props: Proof.context -> term list -> term list           \<close>
+\<^item> \<^ML>\<open> Syntax.uncheck_sort: Proof.context -> sort -> sort                    \<close>
+\<^item> \<^ML>\<open> Syntax.uncheck_typs: Proof.context -> typ list -> typ list            \<close>
+\<^item> \<^ML>\<open> Syntax.uncheck_terms: Proof.context -> term list -> term list         \<close>
+\<close>
 
 text\<open>In contrast to mere parsing, the following operators provide also type-checking
      and internal reporting to PIDE --- see below. I did not find a mechanism to address
      the internal serial-numbers used for the PIDE protocol, however, rumours have it
      that such a thing exists. The variants \<^verbatim>\<open>_global\<close> work on theories instead on 
-     @{ML_type "Proof.context"}s.\<close>
+     \<^ML_type>\<open>Proof.context\<close>s.\<close>
 
-ML\<open>
-Syntax.read_sort: Proof.context -> string -> sort;
-Syntax.read_typ : Proof.context -> string -> typ;
-Syntax.read_term: Proof.context -> string -> term;
-Syntax.read_typs: Proof.context -> string list -> typ list;
-Syntax.read_sort_global: theory -> string -> sort;
-Syntax.read_typ_global: theory -> string -> typ;
-Syntax.read_term_global: theory -> string -> term;
-Syntax.read_prop_global: theory -> string -> term;
-\<close>
+text\<open>
+\<^item> \<^ML>\<open>Syntax.read_sort: Proof.context -> string -> sort                     \<close>
+\<^item> \<^ML>\<open>Syntax.read_typ : Proof.context -> string -> typ                      \<close>
+\<^item> \<^ML>\<open>Syntax.read_term: Proof.context -> string -> term                     \<close>
+\<^item> \<^ML>\<open>Syntax.read_typs: Proof.context -> string list -> typ list            \<close>
+\<^item> \<^ML>\<open>Syntax.read_sort_global: theory -> string -> sort                     \<close>
+\<^item> \<^ML>\<open>Syntax.read_typ_global: theory -> string -> typ                       \<close>
+\<^item> \<^ML>\<open>Syntax.read_term_global: theory -> string -> term                     \<close>
+\<^item> \<^ML>\<open>Syntax.read_prop_global: theory -> string -> term                     \<close>
+                                                                    \<close>
 text \<open>The following operations are concerned with the conversion of pretty-prints
 and, from there, the generation of (non-layouted) strings.\<close>
-ML\<open>
-Syntax.pretty_term:Proof.context -> term -> Pretty.T;
-Syntax.pretty_typ:Proof.context -> typ -> Pretty.T;
-Syntax.pretty_sort:Proof.context -> sort -> Pretty.T;
-Syntax.pretty_classrel: Proof.context -> class list -> Pretty.T;
-Syntax.pretty_arity: Proof.context -> arity -> Pretty.T;
-Syntax.string_of_term: Proof.context -> term -> string;
-Syntax.string_of_typ: Proof.context -> typ -> string;
-Syntax.lookup_const : Syntax.syntax -> string -> string option;
+text\<open>
+\<^item> \<^ML>\<open>Syntax.pretty_term:Proof.context -> term -> Pretty.T                  \<close>
+\<^item> \<^ML>\<open>Syntax.pretty_typ:Proof.context -> typ -> Pretty.T                    \<close>
+\<^item> \<^ML>\<open>Syntax.pretty_sort:Proof.context -> sort -> Pretty.T                  \<close>
+\<^item> \<^ML>\<open>Syntax.pretty_classrel: Proof.context -> class list -> Pretty.T       \<close>
+\<^item> \<^ML>\<open>Syntax.pretty_arity: Proof.context -> arity -> Pretty.T               \<close>
+\<^item> \<^ML>\<open>Syntax.string_of_term: Proof.context -> term -> string                \<close>
+\<^item> \<^ML>\<open>Syntax.string_of_typ: Proof.context -> typ -> string                  \<close>
+\<^item> \<^ML>\<open>Syntax.lookup_const : Syntax.syntax -> string -> string option        \<close>
 \<close>
- 
+
+
+
+
+
+
 text\<open>
   Note that @{ML "Syntax.install_operations"} is a late-binding interface, i.e. a collection of 
   "hooks" used to resolve an apparent architectural cycle.
