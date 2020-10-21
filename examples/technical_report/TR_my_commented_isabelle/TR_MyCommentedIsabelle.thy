@@ -2005,21 +2005,16 @@ text\<open>
 
 
 text\<open>
-  Note that @{ML "Syntax.install_operations"} is a late-binding interface, i.e. a collection of 
+  Note that \<^ML>\<open>Syntax.install_operations\<close> is a late-binding interface, i.e. a collection of 
   "hooks" used to resolve an apparent architectural cycle.
-  The real work is done in @{file "~~/src/Pure/Syntax/syntax_phases.ML"} 
+  The real work is done in \<^file>\<open>~~/src/Pure/Syntax/syntax_phases.ML\<close> 
   
   Even the parsers and type checkers stemming from the theory-structure are registered via
   hooks (this can be confusing at times). Main phases of inner syntax processing, with standard 
   implementations of parse/unparse operations were treated this way.
-  At the very very end in  , it sets up the entire syntax engine 
-  (the hooks) via:
-\<close>
+  At the very very end in, it sets up the entire syntax engine (the hooks) via:
 
-
-(* 
-val _ =
-  Theory.setup
+  \<^theory_text>\<open>Theory.setup
    (Syntax.install_operations
      {parse_sort = parse_sort,
       parse_typ = parse_typ,
@@ -2032,8 +2027,11 @@ val _ =
       check_terms = check_terms,
       check_props = check_props,
       uncheck_typs = uncheck_typs,
-      uncheck_terms = uncheck_terms});
-*)
+      uncheck_terms = uncheck_terms})
+  \<close>
+\<close>
+
+
 
 subsection*[ex33::example] \<open>Example\<close>
 
@@ -2086,7 +2084,7 @@ Output.output "bla_1:";
 text\<open>It provides a number of hooks that can be used for redirection hacks ...\<close>
 
 section \<open> Output: LaTeX \<close>
-text\<open>The heart of the LaTeX generator is to be found in the structure @{ML_structure Thy_Output}.
+text\<open>The heart of the LaTeX generator is to be found in the structure \<^ML_structure>\<open>Thy_Output\<close>.
   This is an own parsing and writing process, with the risc that a parsed file in the IDE parsing
   process can not be parsed for the LaTeX Generator. The reason is twofold:
 \<^enum> The LaTeX Generator makes a rough attempt to mimic the LayOut if the thy-file; thus, its
@@ -2096,7 +2094,7 @@ text\<open>The heart of the LaTeX generator is to be found in the structure @{ML
   called @{ML "Document_Source.improper"} where also other forms of comment parsers are provided.
 
   Since Isabelle2018, an own AST is provided for the LaTeX syntax, analogously to 
-  @{ML_structure "Pretty"}. Key functions of this structure @{ML_structure "Latex"} are:
+   \<^ML_structure>\<open>Pretty\<close>. Key functions of this structure  \<^ML_structure>\<open>Latex\<close> are:
 \<close>
 
 ML\<open>
