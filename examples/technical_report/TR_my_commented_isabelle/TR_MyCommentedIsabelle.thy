@@ -1816,71 +1816,71 @@ text\<open> Some more combinators
 \<^item>\<^ML>\<open>Args.name_token: Token.T parser\<close>
 
 Common Isar Syntax
-\<^item>\<^ML>\<open>Args.colon: string parser          \<close>
-\<^item>\<^ML>\<open>Args.query: string parser          \<close>
-\<^item>\<^ML>\<open>Args.bang: string parser           \<close>
-\<^item>\<^ML>\<open>Args.query_colon: string parser    \<close>
-\<^item>\<^ML>\<open>Args.bang_colon: string parser     \<close>
+\<^item>\<^ML>\<open>Args.colon: string parser\<close>
+\<^item>\<^ML>\<open>Args.query: string parser\<close>
+\<^item>\<^ML>\<open>Args.bang: string parser\<close>
+\<^item>\<^ML>\<open>Args.query_colon: string parser\<close>
+\<^item>\<^ML>\<open>Args.bang_colon: string parser\<close>
 \<^item>\<^ML>\<open>Args.parens: 'a parser -> 'a parser\<close>
 \<^item>\<^ML>\<open>Args.bracks: 'a parser -> 'a parser\<close>
-\<^item>\<^ML>\<open>Args.mode: string -> bool parser                \<close>
-\<^item>\<^ML>\<open>Args.name: string parser                        \<close>
+\<^item>\<^ML>\<open>Args.mode: string -> bool parser\<close>
+\<^item>\<^ML>\<open>Args.name: string parser\<close>
 \<^item>\<^ML>\<open>Args.name_position: (string * Position.T) parser\<close>
-\<^item>\<^ML>\<open>Args.cartouche_inner_syntax: string parser      \<close>
-\<^item>\<^ML>\<open>Args.cartouche_input: Input.source parser       \<close>
-\<^item>\<^ML>\<open>Args.text_token: Token.T parser                 \<close>
+\<^item>\<^ML>\<open>Args.cartouche_inner_syntax: string parser\<close>
+\<^item>\<^ML>\<open>Args.cartouche_input: Input.source parser\<close>
+\<^item>\<^ML>\<open>Args.text_token: Token.T parser \<close>
 
 
 Common Isar Syntax
-\<^item>\<^ML>\<open>Args.embedded_token: Token.T parser                 \<close>
-\<^item>\<^ML>\<open>Args.embedded_inner_syntax: string parser           \<close>
-\<^item>\<^ML>\<open>Args.embedded_input: Input.source parser            \<close>
-\<^item>\<^ML>\<open>Args.embedded: string parser                        \<close>
+\<^item>\<^ML>\<open>Args.embedded_token  : Token.T parser\<close>
+\<^item>\<^ML>\<open>Args.embedded_inner_syntax: string parser\<close>
+\<^item>\<^ML>\<open>Args.embedded_input  : Input.source parser\<close>
+\<^item>\<^ML>\<open>Args.embedded  : string parser\<close>
 \<^item>\<^ML>\<open>Args.embedded_position: (string * Position.T) parser\<close>
-\<^item>\<^ML>\<open>Args.text_input: Input.source parser                \<close>
-\<^item>\<^ML>\<open>Args.text: string parser\<close>
-\<^item>\<^ML>\<open>Args.binding:  Binding.binding parser\<close>
+\<^item>\<^ML>\<open>Args.text_input: Input.source parser\<close>
+\<^item>\<^ML>\<open>Args.text      : string parser\<close>
+\<^item>\<^ML>\<open>Args.binding   : Binding.binding parser\<close>
 
 Common Stuff related to Inner Syntax Parsing
-\<^item>\<^ML>\<open>Args.alt_name: string parser                           \<close>
-\<^item>\<^ML>\<open>Args.liberal_name: string parser                       \<close>
-\<^item>\<^ML>\<open>Args.var: indexname parser                             \<close>
-\<^item>\<^ML>\<open>Args.internal_source: Token.src parser                 \<close>
-\<^item>\<^ML>\<open>Args.internal_name: Token.name_value parser            \<close>
-\<^item>\<^ML>\<open>Args.internal_typ: typ parser                          \<close>
-\<^item>\<^ML>\<open>Args.internal_term: term parser                        \<close>
-\<^item>\<^ML>\<open>Args.internal_fact: thm list parser                    \<close>
+\<^item>\<^ML>\<open>Args.alt_name: string parser\<close>
+\<^item>\<^ML>\<open>Args.liberal_name   : string parser\<close>
+\<^item>\<^ML>\<open>Args.var: indexname parser\<close>
+\<^item>\<^ML>\<open>Args.internal_source: Token.src parser\<close>
+\<^item>\<^ML>\<open>Args.internal_name: Token.name_value parser\<close>
+\<^item>\<^ML>\<open>Args.internal_typ : typ parser\<close>
+\<^item>\<^ML>\<open>Args.internal_term: term parser\<close>
+\<^item>\<^ML>\<open>Args.internal_fact: thm list parser\<close>
 \<^item>\<^ML>\<open>Args.internal_attribute: (morphism -> attribute) parser\<close>
-\<^item>\<^ML>\<open>Args.internal_declaration: declaration parser          \<close>
-\<^item>\<^ML>\<open>Args.alt_name: string parser                           \<close>
-\<^item>\<^ML>\<open>Args.liberal_name: string parser                       \<close>
+\<^item>\<^ML>\<open>Args.internal_declaration: declaration parser\<close>
+\<^item>\<^ML>\<open>Args.alt_name    : string parser\<close>
+\<^item>\<^ML>\<open>Args.liberal_name: string parser\<close>
 
 
 
 Common Isar Syntax
-\<^item>\<^ML>\<open>Args.named_source: (Token.T -> Token.src) -> Token.src parser                  \<close>
-\<^item>\<^ML>\<open>Args.named_typ: (string -> typ) -> typ parser                                  \<close>
-\<^item>\<^ML>\<open>Args.named_term: (string -> term) -> term parser                               \<close>
-\<^item>\<^ML>\<open>Args.text_declaration: (Input.source -> declaration) -> declaration parser     \<close>
+\<^item>\<^ML>\<open>Args.named_source: (Token.T -> Token.src) -> Token.src parser\<close>
+\<^item>\<^ML>\<open>Args.named_typ   : (string -> typ) -> typ parser\<close>
+\<^item>\<^ML>\<open>Args.named_term : (string -> term) -> term parser\<close>
+\<^item>\<^ML>\<open>Args.text_declaration: (Input.source -> declaration) -> declaration parser\<close>
 \<^item>\<^ML>\<open>Args.cartouche_declaration: (Input.source -> declaration) -> declaration parser\<close>
-\<^item>\<^ML>\<open>Args.typ_abbrev: typ context_parser                                            \<close>
-\<^item>\<^ML>\<open>Args.typ: typ context_parser                                                   \<close>
-\<^item>\<^ML>\<open>Args.term: term context_parser                                                 \<close>
-\<^item>\<^ML>\<open>Args.term_pattern: term context_parser                                         \<close>
-\<^item>\<^ML>\<open>Args.term_abbrev: term context_parser                                          \<close>
-\<^item>\<^ML>\<open>Args.named_source: (Token.T -> Token.src) -> Token.src parser                  \<close>
-\<^item>\<^ML>\<open>Args.named_typ: (string -> typ) -> typ parser                                  \<close>
-\<^item>\<^ML>\<open>Args.named_term: (string -> term) -> term parser                               \<close>
-\<^item>\<^ML>\<open>Args.text_declaration: (Input.source -> declaration) -> declaration parser     \<close>
+\<^item>\<^ML>\<open>Args.typ_abbrev  : typ context_parser\<close>
+\<^item>\<^ML>\<open>Args.typ: typ context_parser\<close>
+\<^item>\<^ML>\<open>Args.term: term context_parser\<close>
+\<^item>\<^ML>\<open>Args.term_pattern: term context_parser\<close>
+\<^item>\<^ML>\<open>Args.term_abbrev : term context_parser \<close>
+\<^item>\<^ML>\<open>Args.named_source: (Token.T -> Token.src) -> Token.src parser\<close>
+\<^item>\<^ML>\<open>Args.named_typ : (string -> typ) -> typ parser\<close>
+\<^item>\<^ML>\<open>Args.named_term: (string -> term) -> term parser\<close>
+\<^item>\<^ML>\<open>Args.text_declaration: (Input.source -> declaration) -> declaration parser\<close>
 \<^item>\<^ML>\<open>Args.cartouche_declaration: (Input.source -> declaration) -> declaration parser\<close>
 
 Syntax for some major Pure commands in Isar
-\<^item>\<^ML>\<open>Args.prop: term context_parser                                       \<close>
+\<^item>\<^ML>\<open>Args.prop: term context_parser\<close>
 \<^item>\<^ML>\<open>Args.type_name: {proper: bool, strict: bool} -> string context_parser\<close>
-\<^item>\<^ML>\<open>Args.const: {proper: bool, strict: bool} -> string context_parser    \<close>
-\<^item>\<^ML>\<open>Args.goal_spec: ((int -> tactic) -> tactic) context_parser           \<close>
-\<^item>\<^ML>\<open>Args.context: Proof.context context_parser                           \<close>
-\<^item>\<^ML>\<open>Args.theory: theory context_parser                                   \<close>
+\<^item>\<^ML>\<open>Args.const: {proper: bool, strict: bool} -> string context_parser\<close>
+\<^item>\<^ML>\<open>Args.goal_spec: ((int -> tactic) -> tactic) context_parser\<close>
+\<^item>\<^ML>\<open>Args.context: Proof.context context_parser\<close>
+\<^item>\<^ML>\<open>Args.theory: theory context_parser\<close>
 
 \<close>
 
@@ -1949,7 +1949,8 @@ text\<open>The heart of the parsers for mathematical notation, based on an Earle
   
 text\<open> Note that the naming underlies the following convention : 
    there are:
-   \<^enum> "parser"s and type-"checker"s 
+   \<^enum> "parser"s 
+   \<^enum>  type-"checker"s, which usually also englobe the markup generation for PIDE
    \<^enum> "reader"s which do both together with pretty-printing
    
    This is encapsulated the data structure @{ML_structure Syntax} --- 
@@ -1959,15 +1960,15 @@ text\<open> Note that the naming underlies the following convention :
 
 text\<open> Inner Syntax Parsing combinators for elementary Isabelle Lexems\<close>  
 text\<open>
-\<^item> \<^ML>\<open> Syntax.parse_sort : Proof.context -> string -> sort                   \<close>
-\<^item> \<^ML>\<open> Syntax.parse_typ  : Proof.context -> string -> typ                    \<close>
-\<^item> \<^ML>\<open> Syntax.parse_term : Proof.context -> string -> term                   \<close>
-\<^item> \<^ML>\<open> Syntax.parse_prop : Proof.context -> string -> term                   \<close>
-\<^item> \<^ML>\<open> Syntax.check_term : Proof.context -> term -> term                     \<close>
-\<^item> \<^ML>\<open> Syntax.check_props: Proof.context -> term list -> term list           \<close>
-\<^item> \<^ML>\<open> Syntax.uncheck_sort: Proof.context -> sort -> sort                    \<close>
-\<^item> \<^ML>\<open> Syntax.uncheck_typs: Proof.context -> typ list -> typ list            \<close>
-\<^item> \<^ML>\<open> Syntax.uncheck_terms: Proof.context -> term list -> term list         \<close>
+\<^item> \<^ML>\<open> Syntax.parse_sort : Proof.context  -> string -> sort\<close>
+\<^item> \<^ML>\<open> Syntax.parse_typ  : Proof.context  -> string -> typ\<close>
+\<^item> \<^ML>\<open> Syntax.parse_term : Proof.context  -> string -> term\<close>
+\<^item> \<^ML>\<open> Syntax.parse_prop : Proof.context  -> string -> term\<close>
+\<^item> \<^ML>\<open> Syntax.check_term : Proof.context  -> term -> term\<close>
+\<^item> \<^ML>\<open> Syntax.check_props: Proof.context  -> term list -> term list\<close>
+\<^item> \<^ML>\<open> Syntax.uncheck_sort: Proof.context -> sort -> sort\<close>
+\<^item> \<^ML>\<open> Syntax.uncheck_typs: Proof.context -> typ list -> typ list\<close>
+\<^item> \<^ML>\<open> Syntax.uncheck_terms: Proof.context -> term list -> term list\<close>
 \<close>
 
 text\<open>In contrast to mere parsing, the following operators provide also type-checking
@@ -1977,26 +1978,26 @@ text\<open>In contrast to mere parsing, the following operators provide also typ
      \<^ML_type>\<open>Proof.context\<close>s.\<close>
 
 text\<open>
-\<^item> \<^ML>\<open>Syntax.read_sort: Proof.context -> string -> sort                     \<close>
-\<^item> \<^ML>\<open>Syntax.read_typ : Proof.context -> string -> typ                      \<close>
-\<^item> \<^ML>\<open>Syntax.read_term: Proof.context -> string -> term                     \<close>
-\<^item> \<^ML>\<open>Syntax.read_typs: Proof.context -> string list -> typ list            \<close>
-\<^item> \<^ML>\<open>Syntax.read_sort_global: theory -> string -> sort                     \<close>
-\<^item> \<^ML>\<open>Syntax.read_typ_global: theory -> string -> typ                       \<close>
-\<^item> \<^ML>\<open>Syntax.read_term_global: theory -> string -> term                     \<close>
-\<^item> \<^ML>\<open>Syntax.read_prop_global: theory -> string -> term                     \<close>
+\<^item> \<^ML>\<open>Syntax.read_sort: Proof.context -> string -> sort\<close>
+\<^item> \<^ML>\<open>Syntax.read_typ : Proof.context -> string -> typ\<close>
+\<^item> \<^ML>\<open>Syntax.read_term: Proof.context -> string -> term\<close>
+\<^item> \<^ML>\<open>Syntax.read_typs: Proof.context -> string list -> typ list\<close>
+\<^item> \<^ML>\<open>Syntax.read_sort_global: theory -> string -> sort\<close>
+\<^item> \<^ML>\<open>Syntax.read_typ_global: theory -> string -> typ\<close>
+\<^item> \<^ML>\<open>Syntax.read_term_global: theory -> string -> term\<close>
+\<^item> \<^ML>\<open>Syntax.read_prop_global: theory -> string -> term\<close>
                                                                     \<close>
 text \<open>The following operations are concerned with the conversion of pretty-prints
-and, from there, the generation of (non-layouted) strings.\<close>
-text\<open>
-\<^item> \<^ML>\<open>Syntax.pretty_term:Proof.context -> term -> Pretty.T                  \<close>
-\<^item> \<^ML>\<open>Syntax.pretty_typ:Proof.context -> typ -> Pretty.T                    \<close>
-\<^item> \<^ML>\<open>Syntax.pretty_sort:Proof.context -> sort -> Pretty.T                  \<close>
-\<^item> \<^ML>\<open>Syntax.pretty_classrel: Proof.context -> class list -> Pretty.T       \<close>
-\<^item> \<^ML>\<open>Syntax.pretty_arity: Proof.context -> arity -> Pretty.T               \<close>
-\<^item> \<^ML>\<open>Syntax.string_of_term: Proof.context -> term -> string                \<close>
-\<^item> \<^ML>\<open>Syntax.string_of_typ: Proof.context -> typ -> string                  \<close>
-\<^item> \<^ML>\<open>Syntax.lookup_const : Syntax.syntax -> string -> string option        \<close>
+and, from there, the generation of (non-layouted) strings :
+
+\<^item> \<^ML>\<open>Syntax.pretty_term:Proof.context -> term -> Pretty.T\<close>
+\<^item> \<^ML>\<open>Syntax.pretty_typ:Proof.context -> typ -> Pretty.T \<close>
+\<^item> \<^ML>\<open>Syntax.pretty_sort:Proof.context -> sort -> Pretty.T \<close>
+\<^item> \<^ML>\<open>Syntax.pretty_classrel: Proof.context -> class list -> Pretty.T\<close>
+\<^item> \<^ML>\<open>Syntax.pretty_arity: Proof.context -> arity -> Pretty.T\<close>
+\<^item> \<^ML>\<open>Syntax.string_of_term: Proof.context -> term -> string \<close>
+\<^item> \<^ML>\<open>Syntax.string_of_typ: Proof.context -> typ -> string \<close>
+\<^item> \<^ML>\<open>Syntax.lookup_const : Syntax.syntax -> string -> string option\<close>
 \<close>
 
 
@@ -2036,144 +2037,126 @@ text\<open>
 subsection*[ex33::example] \<open>Example\<close>
 
 ML\<open>
-(* Recall the Arg-interface to the more high-level, more Isar-specific parsers: *)
-Args.name           : string parser ;
-Args.const          : {proper: bool, strict: bool} -> string context_parser;
-Args.cartouche_input: Input.source parser; 
-Args.text_token     : Token.T parser;
+     
+     (* here follows the definition of the attribute parser : *)
+     val Z = let val attribute = Parse.position Parse.name -- 
+                                 Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.name) "";
+             in   (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) end ;
+     
+     
+     (* Here is the code to register the above parsers as text antiquotations into the Isabelle
+        Framework: *)
+     Thy_Output.antiquotation_pretty_source \<^binding>\<open>theory\<close> 
+                                            (Scan.lift (Parse.position Args.embedded));
+     
+     Thy_Output.antiquotation_raw           \<^binding>\<open>file\<close> 
+                                            (Scan.lift (Parse.position Parse.path))  ;
+     
+\<close>
 
+text\<open>where we have the registration of the action
+     \<^ML>\<open>Scan.lift (Parse.position Args.cartouche_input)\<close>
+     to be bound to the  \<open>name\<close>  as a whole is a system 
+     transaction that, of course, has the type \<^ML_type>\<open>theory -> theory\<close> :
 
-(* here follows the definition of the attribute parser : *)
-val Z = let val attribute = Parse.position Parse.name -- 
-                            Scan.optional (Parse.$$$ "=" |-- Parse.!!! Parse.name) "";
-        in   (Scan.optional(Parse.$$$ "," |-- (Parse.enum "," attribute))) end ;
+     @{ML [display] \<open>
+          (fn name => (Thy_Output.antiquotation_pretty_source 
+                 name
+                (Scan.lift (Parse.position Args.cartouche_input))))
+          : binding -> 
+               (Proof.context -> Input.source * Position.T -> Pretty.T) -> 
+               theory -> theory
+     \<close>}
+    \<close>
 
-
-(* Here is the code to register the above parsers as text antiquotations into the Isabelle
-   Framework: *)
-Thy_Output.antiquotation_pretty_source \<^binding>\<open>theory\<close> (Scan.lift (Parse.position Args.embedded));
-
-Thy_Output.antiquotation_raw \<^binding>\<open>file\<close> (Scan.lift (Parse.position Parse.path))  ;
-
-
-(* where we have the registration of the action
-   
-        (Scan.lift (Parse.position Args.cartouche_input))))
-    
-   to be bound to the 
  
-        name
-
-   as a whole is a system transaction that, of course, has the type
-
-        theory -> theory  : *)
-(fn name => (Thy_Output.antiquotation_pretty_source name 
-                                                   (Scan.lift (Parse.position Args.cartouche_input))))
-  : binding -> (Proof.context -> Input.source * Position.T -> Pretty.T) -> theory -> theory;
-\<close>
-
-  
 section \<open> Output: Very Low Level \<close>
-text\<open> For re-directing the output channels, the structure @{ML_structure Output} may be relevant:\<close>
+text\<open> For re-directing the output channels, the structure \<^ML_structure>\<open>Output\<close> may be relevant:
+      \<^ML>\<open>Output.output:string -> string\<close> is the  structure for the "hooks" with the target devices.
+    \<close>
 
-ML\<open> 
-Output.output; (* output is the  structure for the "hooks" with the target devices. *)
-Output.output "bla_1:";
-\<close>
+ML\<open> Output.output "bla_1:" \<close>
 
 text\<open>It provides a number of hooks that can be used for redirection hacks ...\<close>
 
 section \<open> Output: LaTeX \<close>
 text\<open>The heart of the LaTeX generator is to be found in the structure \<^ML_structure>\<open>Thy_Output\<close>.
-  This is an own parsing and writing process, with the risc that a parsed file in the IDE parsing
-  process can not be parsed for the LaTeX Generator. The reason is twofold:
+This is an own parsing and writing process, with the risc that a parsed file in the IDE parsing
+process can not be parsed for the LaTeX Generator. The reason is twofold:
+
 \<^enum> The LaTeX Generator makes a rough attempt to mimic the LayOut if the thy-file; thus, its
   spacing is relevant.
 \<^enum> there is a special bracket \<open>(*<*)\<close> ... \<open>(*>*)\<close> that allows to specify input that is checked by
   Isabelle, but excluded from the LaTeX generator (this is handled in an own sub-parser
-  called @{ML "Document_Source.improper"} where also other forms of comment parsers are provided.
+  called  \<^ML>\<open>Document_Source.improper\<close> where also other forms of comment parsers are provided.
 
-  Since Isabelle2018, an own AST is provided for the LaTeX syntax, analogously to 
-   \<^ML_structure>\<open>Pretty\<close>. Key functions of this structure  \<^ML_structure>\<open>Latex\<close> are:
+Since Isabelle2018, an own AST is provided for the LaTeX syntax, analogously to 
+\<^ML_structure>\<open>Pretty\<close>. Key functions of this structure  \<^ML_structure>\<open>Latex\<close> are:
+
+\<^item>\<^ML>\<open>Latex.string: string -> Latex.text\<close>
+\<^item>\<^ML>\<open>Latex.text: string * Position.T -> Latex.text\<close>
+
+\<^item>\<^ML>\<open>Latex.output_text: Latex.text list -> string\<close>
+\<^item>\<^ML>\<open>Latex.output_positions: Position.T -> Latex.text list -> string\<close>
+\<^item>\<^ML>\<open>Latex.output_name: string -> string\<close>
+\<^item>\<^ML>\<open>Latex.output_ascii: string -> string\<close>
+\<^item>\<^ML>\<open>Latex.output_symbols: Symbol.symbol list -> string\<close>
+                                                                          
+\<^item>\<^ML>\<open>Latex.begin_delim: string -> string\<close>
+\<^item>\<^ML>\<open>Latex.end_delim: string -> string\<close>
+\<^item>\<^ML>\<open>Latex.begin_tag: string -> string\<close>
+\<^item>\<^ML>\<open>Latex.end_tag: string -> string\<close>
+\<^item>\<^ML>\<open>Latex.environment_block: string -> Latex.text list -> Latex.text\<close>
+\<^item>\<^ML>\<open>Latex.environment: string -> string -> string\<close>
+
+\<^item>\<^ML>\<open>Latex.block: Latex.text list -> Latex.text\<close>
+\<^item>\<^ML>\<open>Latex.enclose_body: string -> string -> Latex.text list -> Latex.text list\<close>
+\<^item>\<^ML>\<open>Latex.enclose_block: string -> string -> Latex.text list -> Latex.text\<close>
 \<close>
 
-ML\<open>
-local
 
-  open Latex
 
-  type dummy = text
-
-  val _ = string: string -> text;
-  val _ = text: string * Position.T -> text
-
-  val _ = output_text: text list -> string
-  val _ = output_positions: Position.T -> text list -> string
-  val _ = output_name: string -> string
-  val _ = output_ascii: string -> string
-  val _ = output_symbols: Symbol.symbol list -> string
-
-  val _ = begin_delim: string -> string
-  val _ = end_delim: string -> string
-  val _ = begin_tag: string -> string
-  val _ = end_tag: string -> string
-  val _ = environment_block: string -> text list -> text
-  val _ = environment: string -> string -> string
-
-  val _ = block: text list -> text
-  val _ = enclose_body: string -> string -> text list -> text list
-  val _ = enclose_block: string -> string -> text list -> text
-
-in val _ = ()
-end;
-
-Latex.output_ascii;
-Latex.environment "isa" "bg";
-Latex.output_ascii "a_b:c'é";
-(* Note: *)
-space_implode "sd &e sf dfg" ["qs","er","alpa"];
-
-\<close>
+ML\<open> Latex.output_ascii;
+    Latex.environment "isa" "bg";
+    Latex.output_ascii "a_b:c'é";
+    (* Note: *)
+    space_implode "sd &e sf dfg" ["qs","er","alpa"]; 
+  \<close>
 
 text\<open>Here is an abstract of the main interface to @{ML_structure Thy_Output}:\<close>
 
-ML\<open>
- Thy_Output.output_document: Proof.context -> {markdown: bool} -> Input.source -> Latex.text list;
- Thy_Output.output_token: Proof.context -> Token.T -> Latex.text list;
- Thy_Output.output_source: Proof.context -> string -> Latex.text list;
- Thy_Output.present_thy: Options.T -> theory -> Thy_Output.segment list -> Latex.text list;
+text\<open>
+\<^item>\<^ML>\<open>Thy_Output.output_document: Proof.context -> {markdown: bool} -> Input.source -> Latex.text list\<close>
+\<^item>\<^ML>\<open>Thy_Output.output_token: Proof.context -> Token.T -> Latex.text list\<close>
+\<^item>\<^ML>\<open>Thy_Output.output_source: Proof.context -> string -> Latex.text list\<close>
+\<^item>\<^ML>\<open>Thy_Output.present_thy: Options.T -> theory -> Thy_Output.segment list -> Latex.text list\<close>
 
- Thy_Output.isabelle: Proof.context -> Latex.text list -> Latex.text;
+\<^item>\<^ML>\<open>Thy_Output.isabelle: Proof.context -> Latex.text list -> Latex.text\<close>
+\<^item>\<^ML>\<open>Thy_Output.isabelle_typewriter: Proof.context -> Latex.text list -> Latex.text\<close>
+\<^item>\<^ML>\<open>Thy_Output.typewriter: Proof.context -> string -> Latex.text\<close>
+\<^item>\<^ML>\<open>Thy_Output.verbatim: Proof.context -> string -> Latex.text\<close>
+\<^item>\<^ML>\<open>Thy_Output.source: Proof.context -> {embedded: bool} -> Token.src -> Latex.text\<close>
+\<^item>\<^ML>\<open>Thy_Output.pretty: Proof.context -> Pretty.T -> Latex.text\<close>
+\<^item>\<^ML>\<open>Thy_Output.pretty_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T -> Latex.text\<close>
+\<^item>\<^ML>\<open>Thy_Output.pretty_items: Proof.context -> Pretty.T list -> Latex.text\<close>
+\<^item>\<^ML>\<open>Thy_Output.pretty_items_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T list -> Latex.text\<close>
 
- Thy_Output.isabelle_typewriter: Proof.context -> Latex.text list -> Latex.text;
+Finally a number of antiquotation registries :
 
- Thy_Output.typewriter: Proof.context -> string -> Latex.text;
-
- Thy_Output.verbatim: Proof.context -> string -> Latex.text;
-
- Thy_Output.source: Proof.context -> {embedded: bool} -> Token.src -> Latex.text;
-
- Thy_Output.pretty: Proof.context -> Pretty.T -> Latex.text;
- Thy_Output.pretty_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T -> Latex.text;
- Thy_Output.pretty_items: Proof.context -> Pretty.T list -> Latex.text;
- Thy_Output.pretty_items_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T list -> Latex.text;
-(* finally a number of antiquotation registries : *)
- Thy_Output.antiquotation_pretty:
-              binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
- Thy_Output.antiquotation_pretty_source:
-              binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
- Thy_Output.antiquotation_raw:
-              binding -> 'a context_parser -> (Proof.context -> 'a -> Latex.text) -> theory -> theory;
- Thy_Output.antiquotation_verbatim:
-             binding -> 'a context_parser -> (Proof.context -> 'a -> string) -> theory -> theory;
-
+\<^item>\<^ML>\<open>Thy_Output.antiquotation_pretty:
+                 binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory\<close>
+\<^item>\<^ML>\<open>Thy_Output.antiquotation_pretty_source:
+                 binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory\<close>
+\<^item>\<^ML>\<open>Thy_Output.antiquotation_raw:
+                 binding -> 'a context_parser -> (Proof.context -> 'a -> Latex.text) -> theory -> theory\<close>
+\<^item>\<^ML>\<open>Thy_Output.antiquotation_verbatim:
+               binding -> 'a context_parser -> (Proof.context -> 'a -> string) -> theory -> theory\<close>
 \<close>
 
-datatype qsd = zef
-text\<open> Thus, @{ML_structure Syntax_Phases} does the actual work of markup generation, including 
-        markup generation and  generation of reports. Look at the following snippet: \<close>
-ML\<open>
-(*
+
+text\<open> Thus, \<^ML_structure>\<open>Syntax_Phases\<close> does the actual work of markup generation, including
+        markup generation and  generation of reports. Look at the following snippet: 
+\<open>
 fun check_typs ctxt raw_tys =
   let
     val (sorting_report, tys) = Proof_Context.prepare_sortsT ctxt raw_tys;
@@ -2183,11 +2166,11 @@ fun check_typs ctxt raw_tys =
     |> apply_typ_check ctxt
     |> Term_Sharing.typs (Proof_Context.theory_of ctxt)
   end;
+\<close>
 
-which is the real implementation behind Syntax.check_typ
+which is the real implementation behind \<^ML>\<open>Syntax.check_typ\<close>
 
-or:
-
+\<open>
 fun check_terms ctxt raw_ts =
   let
     val (sorting_report, raw_ts') = Proof_Context.prepare_sorts ctxt raw_ts;
@@ -2208,12 +2191,10 @@ fun check_terms ctxt raw_ts =
       if Context_Position.is_visible ctxt then Output.report (sorting_report @ typing_report)
       else ();
   in Term_Sharing.terms (Proof_Context.theory_of ctxt) ts' end;
+\<close>
 
-which is the real implementation behind Syntax.check_term
-
-As one can see, check-routines internally generate the markup.
-
-*)  
+which is the real implementation behind \<^ML>\<open>Syntax.check_term\<close>. As one can see, check-routines 
+internally generate the markup.
 \<close>  
   
 
@@ -2291,15 +2272,16 @@ fun parse_translation_cartouche binding l f_integer accu =
 \<close>
 
 text\<open>The following registration of this cartouche for strings is fails because it has
-  already been done in the surrounding Isabelle/DOF environment... \<close>
-  (*
+  already been done in the surrounding Isabelle/DOF environment... 
+  \<^verbatim>\<open>
   parse_translation \<open>
     [( @{syntax_const "_cartouche_string"}
      , parse_translation_cartouche \<^binding>\<open>cartouche_type\<close> Cartouche_Grammar.default (K I) ())]
   \<close>
-  *)
+  \<close>
+\<close>
 
-(* test for this cartouche... *) 
+text\<open> Test for this cartouche... \<close>
 term  "\<open>A \<Longrightarrow> B\<close> = ''''"
 
 
@@ -2310,9 +2292,9 @@ text\<open> This interactive Isabelle Programming Cook-Book represents my curren
   It differs from the reference  manual in some places on purpose, since I believe 
   that a lot of internal Isabelle API's need a more conceptual view on what is happening 
   (even if this conceptual view is at times over-abstracting a little).
-  It is written in Isabelle/DOF and conceived as "living document" (a term that 
-  I owe Simon Foster), i.e. as hypertext-heavy text making direct references to 
-  the Isabelle API's which were checked whenever this document is re-visited in Isabelle/jEdit.
+  It is written in Isabelle/DOF and conceived as "living document" (a term that I owe to 
+  Simon Foster), i.e. as hypertext-heavy text making direct references to the Isabelle API's 
+  which were checked whenever this document is re-visited in Isabelle/jEdit.
       
   All hints and contributions of collegues and collaborators are greatly welcomed; all errors
   and the roughness of this presentation is entirely my fault.
