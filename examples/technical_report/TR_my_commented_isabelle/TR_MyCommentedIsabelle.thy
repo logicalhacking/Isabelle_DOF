@@ -53,7 +53,8 @@ text*[abs::abstract,
 
 chapter*[intro::introduction]\<open> Introduction  \<close>    
 
-text\<open> While Isabelle @{cite "DBLP:books/sp/NipkowPW02"} is mostly known as part of Isabelle/HOL 
+text\<open> \<^vs>\<open>-0.5cm\<close> 
+  While Isabelle @{cite "DBLP:books/sp/NipkowPW02"} is mostly known as part of Isabelle/HOL 
   (an interactive theorem prover), it actually provides a system framework for developing a wide 
   spectrum of applications. A particular strength of the Isabelle framework is the combination 
   of text editing, formal verification, and code generation. This is a programming-tutorial of 
@@ -67,18 +68,17 @@ text\<open> While Isabelle @{cite "DBLP:books/sp/NipkowPW02"} is mostly known as
   types, intermediate results of computations and checks can be repeated by the reader who is 
   invited to interact with this document. Moreover, the textual parts have been enriched with a 
   maximum of formal content which makes this text re-checkable at each load and easier 
-  maintainable.\<close>
+  maintainable. \<close>
 
-figure*[architecture::figure,relative_width="80",src="''figures/isabelle-architecture''"]\<open> 
-     The system architecture of Isabelle (left-hand side) and the 
-     asynchronous communication between the Isabelle system and 
-     the IDE (right-hand side). \<close>
+figure*[architecture::figure,relative_width="70",src="''figures/isabelle-architecture''"]\<open> 
+     The system architecture of Isabelle (left-hand side) and the  asynchronous communication 
+     between the Isabelle system and the IDE (right-hand side). \<close>
 
 text\<open>This programming roughly follows the Isabelle system architecture shown in 
   \<^figure>\<open>architecture\<close>, and, to be more precise, more or less in the bottom-up order.
 
   We start from the basic underlying SML platform over the Kernels to the tactical layer 
-  and end with a discussion over the front-end technologies.
+  and end with a discussion over the front-end technologies.  \<^vs>\<open>-1.0cm\<close>
 \<close>
 
 chapter*[t1::technical]\<open> SML and Fundamental SML libraries  \<close>    
@@ -91,7 +91,8 @@ text\<open>Isabelle is written in SML, the "Standard Meta-Language", which is is
   of Isabelle directly. In the example, a mutable variable X is declared, initialized to 0 and 
   updated; and finally re-evaluated leading to output: \<close>
 
-ML\<open> val X = Unsynchronized.ref 0;
+ML\<open> 
+    val X = Unsynchronized.ref 0;
     X:= !X + 1;
     X
   \<close>
@@ -102,11 +103,13 @@ text\<open>However, since Isabelle is a platform involving parallel execution, c
   code-base @{cite "DBLP:conf/mkm/BarrasGHRTWW13"}.
   The preferred programming style is purely functional: \<close>
 
-ML\<open> fun fac x = if x = 0 then 1 else x * fac(x-1) ;
+ML\<open> 
+    fun fac x = if x = 0 then 1 else x * fac(x-1) ;
     fac 10;
   \<close>
 text\<open>or:\<close> 
-ML\<open> type state = {  a : int,   b : string}
+ML\<open> 
+    type state = {  a : int,   b : string}
     fun incr_state ({a, b}:state) =  {a=a+1, b=b}
   \<close>
 
@@ -130,18 +133,18 @@ text\<open>So: the text command for:\<close>
 
 text\<open>\<^emph>\<open>This is a text.\<close>\<close>
 
-text\<open>... is represented in an \<^verbatim>\<open>.thy\<close> file by:\<close>
+text\<open>... is represented in the integrated source (the \<^verbatim>\<open>.thy\<close> file) by:\<close>
 
-text\<open>\verb+text\<open>\<^emph>\<open>This is a text.\<close>\<close>+\<close>
+text\<open> *\<open>\<open>\<close>This is a text.\<open>\<close>\<close>\<close>
 
-text\<open>and desplayed in the Isabelle/jedit front-end at the sceen by:\<close>
+text\<open>and displayed in the Isabelle/jedit front-end at the sceen by:\<close>
 
-figure*[fig2::figure, relative_width="100",src="''figures/text-element''"]
+figure*[fig2::figure, relative_width="60", placement="pl_h", src="''figures/text-element''"]
         \<open>A text-element as presented in Isabelle/jedit.\<close>
 
-text\<open> text-commands, ML- commands (and in principle any other command) can be seen as 
+text\<open>The text-commands, ML- commands (and in principle any other command) can be seen as 
   \<^emph>\<open>quotations\<close> over the underlying SML environment (similar to OCaml or Haskell).
-  Linking these different sorts of quotations with each other and the underlying SML-envirnment
+  Linking these different sorts of quotations with each other and the underlying SML-environment
   is supported via \<^emph>\<open>antiquotations\<close>'s. Generally speaking, antiquotations are a kind of semantic
   macro whose arguments were checked, interpreted and expanded using the underlying system
   state. This paves the way for a programming technique to specify expressions or patterns in an 
@@ -149,8 +152,9 @@ text\<open> text-commands, ML- commands (and in principle any other command) can
   Anti-quotations as "semantic macros" can produce a value for the surrounding context
   (ML, text, HOL, whatever) depending on local arguments and the underlying logical context.
   
-  The way an antiquotation is specified depends on the quotation expander: typically, this is a specific 
-  character and an identifier, or specific parentheses and a complete expression or pattern.\<close>
+  The way an antiquotation is specified depends on the quotation expander: typically, this is a 
+  specific character and an identifier, or specific parentheses and a complete expression or 
+  pattern.\<close>
 
 text\<open> In Isabelle documentations, antiquotation's were heavily used to enrich literate explanations
   and documentations by "formal content", i.e. machine-checked, typed references
@@ -162,7 +166,7 @@ text\<open> In Isabelle documentations, antiquotation's were heavily used to enr
   \<^item> \<^theory_text>\<open>text\<open>@{footnote \<open>sdf\<close>}, @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"}\<close>\<close>
   \<^item> @{theory_text [display]
      \<open> val x = @{thm refl};
-       val y = @{term "A \<longrightarrow> B"}
+       val _ = @{term "A \<longrightarrow> B"}
        val y = @{typ  "'a list"} 
      \<close>
     }
@@ -170,13 +174,14 @@ text\<open> In Isabelle documentations, antiquotation's were heavily used to enr
 
 (*<*) (* example to execute: *)
 text\<open> @{footnote \<open>sdf\<close>}, @{file "$ISABELLE_HOME/src/Pure/ROOT.ML"}\<close>
-ML\<open>    val x = @{thm refl};
-       val y = @{term "A \<longrightarrow> B"}
+ML\<open>    
+       val x = @{thm refl};
+       val _ = @{term "A \<longrightarrow> B"}
        val y = @{typ  "'a list"}
   \<close>
 (*>*)
 
-text\<open>... which we will describe in more detail later. \<close> 
+text\<open>\<^vs>\<open>-1,0cm\<close>... which we will describe in more detail later. \<close> 
 
 text\<open>In a way, anti-quotations implement a kind of 
   literate specification style in text, models, code, proofs, etc., which become alltogether
@@ -478,28 +483,28 @@ text\<open>Note, furthermore, that there is a programming API for the HOL-instan
   operators of the HOL logic specific constructors and destructors:\<close>
 
 text*[T2::technical]\<open>
-\<^enum>  \<^ML>\<open>HOLogic.boolT         : typ\<close>
-\<^enum>  \<^ML>\<open>HOLogic.mk_Trueprop   : term -> term\<close>,  the embedder of bool to prop fundamental for HOL 
-\<^enum>  \<^ML>\<open>HOLogic.dest_Trueprop : term -> term\<close> 
-\<^enum>  \<^ML>\<open>HOLogic.Trueprop_conv : conv -> conv\<close>
-\<^enum>  \<^ML>\<open>HOLogic.mk_setT       : typ -> typ\<close>,  the ML level type constructor set 
-\<^enum>  \<^ML>\<open>HOLogic.dest_setT     : typ -> typ\<close>,  the ML level type destructor for set 
-\<^enum>  \<^ML>\<open>HOLogic.Collect_const : typ -> term\<close>
-\<^enum>  \<^ML>\<open>HOLogic.mk_Collect    : string * typ * term -> term\<close>
-\<^enum>  \<^ML>\<open>HOLogic.mk_mem        : term * term -> term\<close>
-\<^enum>  \<^ML>\<open>HOLogic.dest_mem      : term -> term * term\<close>
-\<^enum>  \<^ML>\<open>HOLogic.mk_set        : typ -> term list -> term\<close>
-\<^enum>  \<^ML>\<open>HOLogic.conj_intr     : Proof.context -> thm -> thm -> thm\<close>, some HOL-level derived-inferences 
-\<^enum>  \<^ML>\<open>HOLogic.conj_elim     : Proof.context -> thm -> thm * thm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.conj_elims    : Proof.context -> thm -> thm list\<close>
-\<^enum>  \<^ML>\<open>HOLogic.conj          : term\<close> , some ML level logical constructors 
-\<^enum>  \<^ML>\<open>HOLogic.disj          : term\<close>
-\<^enum>  \<^ML>\<open>HOLogic.imp           : term\<close>
-\<^enum>  \<^ML>\<open>HOLogic.Not           : term\<close>
-\<^enum>  \<^ML>\<open>HOLogic.mk_not        : term -> term\<close>
-\<^enum>  \<^ML>\<open>HOLogic.mk_conj       : term * term -> term\<close>
-\<^enum>  \<^ML>\<open>HOLogic.dest_conj     : term -> term list\<close>
-\<^enum>  \<^ML>\<open>HOLogic.conjuncts     : term -> term list\<close>
+\<^enum>  \<^ML>\<open>HOLogic.boolT         : typ\<close> \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_Trueprop   : term -> term\<close>,  the embedder of bool to prop fundamental for HOL  \<^vs>\<open>-0,2cm\<close> 
+\<^enum>  \<^ML>\<open>HOLogic.dest_Trueprop : term -> term\<close>  \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.Trueprop_conv : conv -> conv\<close> \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_setT       : typ -> typ\<close>,  the ML level type constructor set  \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.dest_setT     : typ -> typ\<close>,  the ML level type destructor for set  \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.Collect_const : typ -> term\<close>  \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_Collect    : string * typ * term -> term\<close>  \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_mem        : term * term -> term\<close>  \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.dest_mem      : term -> term * term\<close>  \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_set        : typ -> term list -> term\<close> \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conj_intr     : Proof.context -> thm -> thm -> thm\<close>, some HOL-level derived-inferences  \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conj_elim     : Proof.context -> thm -> thm * thm\<close>  \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conj_elims    : Proof.context -> thm -> thm list\<close>  \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conj          : term\<close> , some ML level logical constructors  \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.disj          : term\<close>   \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.imp           : term\<close>   \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.Not           : term\<close>   \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_not        : term -> term\<close>  \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_conj       : term * term -> term\<close> \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.dest_conj     : term -> term list\<close>   \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conjuncts     : term -> term list\<close>   \<^vs>\<open>-0,2cm\<close>
 \<^enum>   ... 
 \<close>
 
