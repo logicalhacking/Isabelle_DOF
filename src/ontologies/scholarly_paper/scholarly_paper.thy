@@ -423,6 +423,8 @@ section\<open>Miscelleous\<close>
 subsection\<open>Layout Trimming Commands\<close>
 setup\<open>    DOF_lib.define_macro    \<^binding>\<open>hs\<close>        "\\hspace{" "}" (K(K())) \<close> 
 setup\<open>    DOF_lib.define_macro    \<^binding>\<open>vs\<close>        "\\vspace{" "}" (K(K())) \<close> 
+setup\<open>    DOF_lib.define_shortcut \<^binding>\<open>clearpage\<close> "\\clearpage{}" \<close> 
+
 
 subsection\<open>Common Abbreviations\<close>
 setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>     "\\eg"  
@@ -430,7 +432,8 @@ setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>     "\\eg"
        #> DOF_lib.define_shortcut \<^binding>\<open>ie\<close>     "\\ie"
        #> DOF_lib.define_shortcut \<^binding>\<open>etc\<close>     "\\etc"\<close> 
           (* Latin: „id est“  meaning „that is to say“. *) 
-      (* this is an alternative style for macro definitions equivalent to setup ... setup  ...*)
+      
+       (* this is an alternative style for macro definitions equivalent to setup ... setup  ...*)
 
 
 end
