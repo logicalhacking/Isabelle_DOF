@@ -505,7 +505,7 @@ text*[T2::technical]\<open>
 \<^enum>  \<^ML>\<open>HOLogic.mk_conj       : term * term -> term\<close> \<^vs>\<open>-0,2cm\<close>
 \<^enum>  \<^ML>\<open>HOLogic.dest_conj     : term -> term list\<close>   \<^vs>\<open>-0,2cm\<close>
 \<^enum>  \<^ML>\<open>HOLogic.conjuncts     : term -> term list\<close>   \<^vs>\<open>-0,2cm\<close>
-\<^enum>   ... 
+\<^enum>  ... 
 \<close>
 
 text*[T3::technical]\<open>In this style, extensions can be defined such as:\<close>

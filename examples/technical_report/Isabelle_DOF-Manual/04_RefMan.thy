@@ -30,7 +30,7 @@ text\<open>
 section*[infrastructure::text_section]\<open>Overview and Technical Infrastructure\<close>
 text\<open>
   \<^isadof> is embedded in the underlying generic document model of Isabelle as described in
-  @{docitem "dof"}. Recall that the document language can be extended dynamically, \ie, new
+  \<^introduction>\<open>dof\<close>. Recall that the document language can be extended dynamically, \<^ie>, new
   \<open>user-defined\<close> can be introduced at run-time.  This is similar to the definition of new functions 
   in an interpreter. \<^isadof> as a system plugin is is a number of new command definitions in 
   Isabelle's document model.
@@ -42,18 +42,18 @@ text\<open>
   \<^item> the \<^emph>\<open>ontology definition language\<close> (called ODL) which allow for the definitions
     of document-classes and necessary auxiliary datatypes,
   \<^item> an infrastructure for ontology-specific \<^emph>\<open>layout definitions\<close>, exploiting this meta-information, and 
-  \<^item> an infrastructure for generic \<^emph>\<open>layout definitions\<close> for documents following, \eg, the format 
+  \<^item> an infrastructure for generic \<^emph>\<open>layout definitions\<close> for documents following, \<^eg>, the format 
     guidelines of publishers or standardization bodies. 
 \<close>
 
 text\<open> 
-  The list of fully supported (\ie, supporting both interactive ontological modeling and 
+  The list of fully supported (\<^ie>, supporting both interactive ontological modeling and 
   document generation) ontologies and the list of supported document templates can be 
-  obtained by calling \inlinebash|isabelle mkroot_DOF -h| (see @{docitem "first_project"}).
+  obtained by calling \inlinebash|isabelle mkroot_DOF -h| (see \<^technical>\<open>first_project\<close>).
   Note that the postfix \inlinebash|-UNSUPPORTED| denotes experimental ontologies or templates 
   for which further manual setup steps might be required or that are not fully tested. Also note 
-  that the \LaTeX-class files required by the templates need to be already installed on your 
-  system. This is mostly a problem for publisher specific templates (\eg, Springer's 
+  that the \<^LaTeX>-class files required by the templates need to be already installed on your 
+  system. This is mostly a problem for publisher specific templates (\<^eg>, Springer's 
   \path{llncs.cls}), which cannot be re-distributed due to copyright restrictions.
 \<close>
 
@@ -66,13 +66,13 @@ text\<open>
   inherently required.
 
   We expect authors of ontologies to have experience in the use of \<^isadof>, basic modeling (and, 
-  potentially, some basic SML programming) experience, basic \LaTeX{} knowledge, and, last but not 
+  potentially, some basic SML programming) experience, basic \<^LaTeX> knowledge, and, last but not 
   least, domain knowledge of the ontology to be modeled. Users with experience in UML-like 
   meta-modeling will feel familiar with most concepts; however, we expect  no need for insight in 
   the Isabelle proof language, for example, or other more advanced concepts.
 
-  Technically, ontologies\index{ontology!directory structure} are stored in a directory 
-  \inlinebash|src/ontologies| and consist of a Isabelle theory file and a \LaTeX-style file:
+  Technically, ontologies\<^index>\<open>ontology!directory structure\<close> are stored in a directory 
+  \inlinebash|src/ontologies| and consist of a Isabelle theory file and a \<^LaTeX> -style file:
 \begin{center}
 \begin{minipage}{.9\textwidth}
 \dirtree{%
@@ -112,11 +112,11 @@ text\<open>
 
 subsection\<open>Document Templates\<close>
 text\<open>
-  Document-templates\index{document template} define the overall layout (page size, margins, fonts, 
+  Document-templates\<^index>\<open>document template\<close> define the overall layout (page size, margins, fonts, 
   etc.) of the generated documents and are the the main technical means for implementing layout 
-  requirements that are, \eg, required by publishers or standardization bodies. Document-templates 
+  requirements that are, \<^eg>, required by publishers or standardization bodies. Document-templates 
   are stored in a directory 
-  \path{src/document-templates}:\index{document template!directory structure}
+  \path{src/document-templates}:\<^index>\<open>document template!directory structure\<close>
 \begin{center}
 \begin{minipage}{.9\textwidth}
 \dirtree{%
@@ -134,7 +134,7 @@ text\<open>
 
 text\<open>
   Developing a new document template ``\inlinebash|bar|'' requires the following steps:
-  \<^item> develop a new \LaTeX-template \inlinebash|src/document-templates/root-bar.tex|
+  \<^item> develop a new \<^LaTeX>-template \inlinebash|src/document-templates/root-bar.tex|
   \<^item> activation of the new document template  by executing the install script. You can skip the lengthy 
     checks for the AFP entries and the installation of the Isabelle patch by using the 
     \inlinebash|--skip-patch-and-afp| option:
@@ -147,7 +147,7 @@ text\<open>
 
 text\<open>
   As the document generation of \<^isadof> is based 
-  on \LaTeX, the \<^isadof> document templates can (and should) make use of any \LaTeX-classes provided
+  on \<^LaTeX>, the \<^isadof> document templates can (and should) make use of any \<^LaTeX>-classes provided
   by publishers or standardization bodies.
 \<close>
 
@@ -178,7 +178,7 @@ text\<open>
 
 text\<open>
   The \<^isadof> ontology specification language consists basically on a notation for document classes, 
-  where the attributes were typed with HOL-types and can be instantiated by terms HOL-terms, \ie, 
+  where the attributes were typed with HOL-types and can be instantiated by terms HOL-terms, \<^ie>, 
   the actual parsers and type-checkers of the Isabelle system were reused. This has the particular 
   advantage that \<^isadof> commands can be arbitrarily mixed with Isabelle/HOL commands providing the 
   machinery for type declarations and term specifications such
@@ -201,14 +201,14 @@ text\<open>
   Document classes\bindex{document class}\index{class!document@see document class} support 
   \<^boxed_theory_text>\<open>where\<close>-clauses\index{where clause} containing a regular expression over class 
   names. Classes with a \<^boxed_theory_text>\<open>where\<close> were called 
-  \<^emph>\<open>monitor classes\<close>.\bindex{monitor class}\index{class!monitor@see monitor class} While document 
+  \<^emph>\<open>monitor classes\<close>.\<^bindex>\<open>monitor class\<close>\<^index>\<open>class!monitor@see monitor class\<close> While document 
   classes and their inheritance relation structure meta-data of text-elements in an object-oriented 
   manner, monitor classes enforce structural organization of documents via the language specified 
   by the regular expression enforcing a sequence of text-elements.
 
   A major design decision of ODL is to denote attribute values by HOL-terms and HOL-types. 
-  Consequently, ODL can refer to any predefined type defined in the HOL library, \eg, 
-  \<^boxed_theory_text>\<open>string\<close> or \<^boxed_theory_text>\<open>int\<close> as well as parameterized types, \eg, \<^boxed_theory_text>\<open>_ option\<close>, 
+  Consequently, ODL can refer to any predefined type defined in the HOL library, \<^eg>, 
+  \<^boxed_theory_text>\<open>string\<close> or \<^boxed_theory_text>\<open>int\<close> as well as parameterized types, \<^eg>, \<^boxed_theory_text>\<open>_ option\<close>, 
   \<^boxed_theory_text>\<open>_ list\<close>, \<^boxed_theory_text>\<open>_ set\<close>, or products \<^boxed_theory_text>\<open>_ \<times> _\<close>. As a consequence of the 
   document model, ODL definitions may be arbitrarily intertwined with standard HOL type definitions. 
   Finally, document class definitions result in themselves in a HOL-types in order to allow \<^emph>\<open>links\<close> 
@@ -223,16 +223,16 @@ text\<open>
   developer of ontologies (for more details, see~@{cite "wenzel:isabelle-isar:2020"}.  Our 
   presentation is a simplification of the original sources following the needs of ontology developers 
   in \<^isadof>:
-  \<^item> \<open>name\<close>:\index{name@\<open>name\<close>}
+  \<^item> \<open>name\<close>:\<^index>\<open>name@\<open>name\<close>\<close>
      with the syntactic category of \<open>name\<close>'s we refer to alpha-numerical identifiers 
      (called \<open>short_id\<close>'s in @{cite "wenzel:isabelle-isar:2020"}) and identifiers
      in \<^boxed_theory_text>\<open> ... \<close> which might contain certain ``quasi-letters'' such 
      as \<^boxed_theory_text>\<open>_\<close>, \<^boxed_theory_text>\<open>-\<close>, \<^boxed_theory_text>\<open>.\<close> (see~@{cite "wenzel:isabelle-isar:2020"} for 
      details).
-  \<^item> \<open>tyargs\<close>:\index{tyargs@\<open>tyargs\<close>} 
+  \<^item> \<open>tyargs\<close>:\<^index>\<open>tyargs@\<open>tyargs\<close>\<close> 
      \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
      \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (see~@{cite "wenzel:isabelle-isar:2020"})
-  \<^item> \<open>dt_name\<close>:\index{dt\_npurdahame@\<open>dt_name\<close>}
+  \<^item> \<open>dt_name\<close>:\<^index>\<open>dt\_npurdahame@\<open>dt_name\<close>\<close>
      \<^rail>\<open>  (tyargs?) name (mixfix?)\<close>   
      The syntactic entity \<open>name\<close> denotes an identifier, \<open>mixfix\<close> denotes the usual 
      parenthesized mixfix notation (see @{cite "wenzel:isabelle-isar:2020"}).
@@ -240,17 +240,17 @@ text\<open>
   \<^item> \<open>type_spec\<close>:\index{type_spec@\<open>type_spec\<close>}
      \<^rail>\<open>  (tyargs?) name\<close>
      The \<open>name\<close>'s referred here are type names such as \<^verbatim>\<open>int\<close>, \<^verbatim>\<open>string\<close>, \<^verbatim>\<open>list\<close>, \<^verbatim>\<open>set\<close>, etc. 
-  \<^item> \<open>type\<close>:\index{type@\<open>type\<close>}
+  \<^item> \<open>type\<close>:\<^index>\<open>type@\<open>type\<close>\<close>
      \<^rail>\<open>  (( '(' ( type * ',')  ')' )? name) | typefree \<close>     
-  \<^item> \<open>dt_ctor\<close>:\index{dt\_ctor@\<open>dt_ctor\<close>}
+  \<^item> \<open>dt_ctor\<close>:\<^index>\<open>dt\_ctor@\<open>dt_ctor\<close>\<close>
      \<^rail>\<open> name (type*) (mixfix?)\<close>
-  \<^item> \<open>datatype_specification\<close>:\index{datatype\_specification@\<open>datatype_specification\<close>}
+  \<^item> \<open>datatype_specification\<close>:\<^index>\<open>datatype\_specification@\<open>datatype_specification\<close>\<close>
      \<^rail>\<open> @@{command "datatype"} dt_name '=' (dt_ctor * '|' )\<close>
-  \<^item> \<open>type_synonym_specification\<close>:\index{type\_synonym\_specification@\<open>type_synonym_specification\<close>}
+  \<^item> \<open>type_synonym_specification\<close>:\<^index>\<open>type\_synonym\_specification@\<open>type_synonym_specification\<close>\<close>
      \<^rail>\<open> @@{command "type_synonym"} type_spec '=' type\<close>
-  \<^item> \<open>constant_definition\<close> :\index{constant\_definition@\<open>constant_definition\<close>}
+  \<^item> \<open>constant_definition\<close> :\<^index>\<open>constant\_definition@\<open>constant_definition\<close>\<close>
      \<^rail>\<open> @@{command "definition"} name '::' type 'where' '"' name '=' \<newline> expr '"'\<close>
-  \<^item> \<open>expr\<close>:\index{expr@\<open>expr\<close>}
+  \<^item> \<open>expr\<close>:\<^index>\<open>expr@\<open>expr\<close>\<close>
      the syntactic category \<open>expr\<close> here denotes the very rich ``inner-syntax'' language of 
      mathematical  notations for $\lambda$-terms in Isabelle/HOL. Example expressions are:
      \<^boxed_theory_text>\<open>1+2\<close> (arithmetics), \<^boxed_theory_text>\<open>[1,2,3]\<close> (lists), \<^boxed_theory_text>\<open>ab c\<close> (strings), 
@@ -259,19 +259,19 @@ text\<open>
 \<close>
 
 text\<open>
-  Advanced ontologies can, \eg,  use recursive function definitions with 
+  Advanced ontologies can, \<^eg>,  use recursive function definitions with 
   pattern-matching~@{cite "kraus:defining:2020"}, extensible record 
   pecifications~@{cite "wenzel:isabelle-isar:2020"}, and abstract type declarations.
 \<close>
 
-text\<open>Note that \<^isadof> works internally with fully qualified names in order to avoid 
-confusions occurring otherwise, for example, in disjoint class hierarchies. This also extends to 
-names for \<^boxed_theory_text>\<open>doc_class\<close>es, which must be representable as type-names as well since they
-can be used in attribute types. Since theory names are lexically very liberal (\<^boxed_theory_text>\<open>0.thy\<close>
-is a legal theory name), this can lead to subtle problems when constructing a class: \<^boxed_theory_text>\<open>foo\<close> 
-can be a legal name for a type definition, the corresponding type-name \<^boxed_theory_text>\<open>0.foo\<close> is not.
-For this reason, additional checks at the definition of a \<^boxed_theory_text>\<open>doc_class\<close> reject problematic
-lexical overlaps.\<close>
+text\<open>Note that \<^isadof> works internally with fully qualified names in order to avoid confusions 
+occurring otherwise, for example, in disjoint class hierarchies. This also extends to names for
+ \<^boxed_theory_text>\<open>doc_class\<close>es, which must be representable as type-names as well since they
+can be used in attribute types. Since theory names are lexically very liberal 
+(\<^boxed_theory_text>\<open>0.thy\<close> is a legal theory name), this can lead to subtle problems when 
+constructing a class: \<^boxed_theory_text>\<open>foo\<close> can be a legal name for a type definition, the 
+corresponding type-name \<^boxed_theory_text>\<open>0.foo\<close> is not. For this reason, additional checks at the 
+definition of a \<^boxed_theory_text>\<open>doc_class\<close> reject problematic lexical overlaps.\<close>
 
 
 subsection*["odl-manual1"::technical]\<open>Defining Document Classes\<close>
@@ -302,11 +302,11 @@ A document class\bindex{document class} can be defined using the @{command "doc_
 \<close> 
 
 text\<open>
-  \<^isadof> provides a default document representation (\ie, content and layout of the generated 
+  \<^isadof> provides a default document representation (\<^ie>, content and layout of the generated 
   PDF) that only prints the main text, omitting all attributes. \<^isadof> provides the 
   \inlineltx|\newisadof[]{}|\index{newisadof@\inlineltx{\newisadof}}\index{document class!PDF}
   command for defining a dedicated layout for a document class in \LaTeX. Such a document 
-  class-specific \LaTeX-definition can not only provide a specific layout (\eg, a specific 
+  class-specific \LaTeX-definition can not only provide a specific layout (\<^eg>, a specific 
   highlighting, printing of certain attributes), it can also generate entries in in the table of 
   contents or an index. Overall, the \inlineltx|\newisadof[]{}| command follows the structure
   of the \<^boxed_theory_text>\<open>doc_class\<close>-command:
@@ -338,7 +338,7 @@ text\<open>
 \<close>
 text\<open>
   While arbitrary \LaTeX-commands can be used within these commands,
-  special care is required for arguments containing special characters (\eg, the 
+  special care is required for arguments containing special characters (\<^eg>, the 
   underscore ``\_'') that do have a special meaning in \LaTeX.  
   Moreover, as usual, special care has to be taken for commands that write into aux-files
   that are included in a following \LaTeX-run. For such complex examples, we refer the interested 
@@ -396,11 +396,11 @@ doc_class text_element =
    variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
 \<close>}
 
-  Here, \<^boxed_theory_text>\<open>level\<close> defines the section-level (\eg, using a \LaTeX-inspired hierarchy:
+  Here, \<^boxed_theory_text>\<open>level\<close> defines the section-level (\<^eg>, using a \LaTeX-inspired hierarchy:
   from \<^boxed_theory_text>\<open>Some -1\<close> (corresponding to \inlineltx|\part|) to 
   \<^boxed_theory_text>\<open>Some 0\<close> (corresponding to \inlineltx|\chapter|, respectively, \<^boxed_theory_text>\<open>chapter*\<close>) 
   to \<^boxed_theory_text>\<open>Some 3\<close> (corresponding to \inlineltx|\subsubsection|, respectively, 
-  \<^boxed_theory_text>\<open>subsubsection*\<close>). Using an invariant, a derived ontology could, \eg, require that
+  \<^boxed_theory_text>\<open>subsubsection*\<close>). Using an invariant, a derived ontology could, \<^eg>, require that
   any sequence of technical-elements must be introduced by a text-element with a higher level
   (this would require that technical text section are introduce by a section element).
 
@@ -435,7 +435,7 @@ doc_class EC = AC  +
   register the definition of ECs in a dedicated table of contents (\inlineltx{tos}) 
   and use an earlier defined environment \inlineltx|\begin{EC}...\end{EC}| for their graphical 
   representation. Note that the \inlineltx|\newisadof{}[]{}|-command requires the 
-  full-qualified names, \eg,  \<^boxed_theory_text>\<open>text.CENELEC_50128.EC\<close> for the document class and 
+  full-qualified names, \<^eg>,  \<^boxed_theory_text>\<open>text.CENELEC_50128.EC\<close> for the document class and 
   \<^boxed_theory_text>\<open>CENELEC_50128.requirement.long_name\<close> for the  attribute \<^boxed_theory_text>\<open>long_name\<close>, 
   inherited from the document class \<^boxed_theory_text>\<open>requirement\<close>. The representation of ECs
   can now be defined as follows:
@@ -503,7 +503,7 @@ text\<open>
   While the default user interface for class definitions via the  
   \<^boxed_theory_text>\<open>text*\<open> ... \<close>\<close>-command allow to access all features of the document 
   class, \<^isadof> provides short-hands for certain, widely-used, concepts such as 
-  \<^boxed_theory_text>\<open>title*\<open> ... \<close>\<close> or \<^boxed_theory_text>\<open>section*\<open> ... \<close>\<close>, \eg:
+  \<^boxed_theory_text>\<open>title*\<open> ... \<close>\<close> or \<^boxed_theory_text>\<open>section*\<open> ... \<close>\<close>, \<^eg>:
 
 @{boxed_theory_text [display]\<open>
  title*[title::title]\<open>Isabelle/DOF\<close>
@@ -518,7 +518,7 @@ text\<open>
   In general, all standard text-elements from the Isabelle document model such
   as @{command "chapter"}, @{command "section"}, @{command "text"}, have in the \<^isadof>
   implementation their counterparts in the family of text-elements that are ontology-aware,
-  \ie, they dispose on a meta-argument list that allows to define that a test-element
+  \<^ie>, they dispose on a meta-argument list that allows to define that a test-element
   that has an identity as a text-object labelled as \<open>obj_id\<close>, belongs to a document class 
   \<open>class_id\<close> that has been defined earlier, and  has its class-attributes set with particular 
   values (which are denotable in Isabelle/HOL mathematical term syntax).
@@ -626,7 +626,7 @@ subsubsection\<open>Meta-types as Types\<close>
 
 text\<open>
   To express the dependencies between text elements to the formal
-  entities, \eg, \inlinesml+term+ ($\lambda$-term), \inlinesml+typ+, or
+  entities, \<^eg>, \inlinesml+term+ ($\lambda$-term), \inlinesml+typ+, or
   \inlinesml+thm+, we represent the types of the implementation language
   \<^emph>\<open>inside\<close> the HOL type system.  We do, however, not reflect the data of
   these types. They are just declared abstract types, 
@@ -711,7 +711,7 @@ text\<open>
   property list, if its \<^boxed_theory_text>\<open>kind\<close> is \<^boxed_theory_text>\<open>proof\<close>, or that the \<^boxed_theory_text>\<open>establish\<close>
   relation between \<^boxed_theory_text>\<open>claim\<close> and \<^boxed_theory_text>\<open>result\<close> is surjective.
 
-  In a high-level syntax, this type of constraints could be expressed, \eg, by:
+  In a high-level syntax, this type of constraints could be expressed, \<^eg>, by:
 
 @{boxed_theory_text [display]\<open>
 (* 1 *) \<forall> x \<in> result. x@kind = pr$$oof \<leftrightarrow> x@kind \<noteq> []
@@ -757,7 +757,7 @@ subsection\<open>The Core Template\<close>
 text\<open>
   Document-templates\bindex{document template} define the overall layout (page size, margins, fonts, 
   etc.) of the generated documents and are the the main technical means for implementing layout 
-  requirements that are, \eg, required by publishers or standardization bodies. 
+  requirements that are, \<^eg>, required by publishers or standardization bodies. 
   If a new layout is already supported by a \LaTeX-class, then developing basic support for it 
   is straight forwards: after reading the authors guidelines of the new template, 
   Developing basic support for a new document template is straight forwards In most cases, it is 
@@ -813,7 +813,7 @@ text\<open>
 
 subsubsection\<open>Getting Started\<close>
 text\<open>
-  In general, we recommend to create a test project (\eg, using \inlinebash|isabelle mkroot_DOF|)
+  In general, we recommend to create a test project (\<^eg>, using \inlinebash|isabelle mkroot_DOF|)
   to develop new document templates or ontology representations. The default setup of the \<^isadof>
   build system generated a \path{output/document} directory with a self-contained \LaTeX-setup. In 
   this directory, you can directly use \LaTeX{} on the main file, called \path{root.tex}:
@@ -847,14 +847,14 @@ text\<open>
   declaration in a \<^isadof> theory. This violation the declaration-before-use-principle
   requires that information is written into an auxiliary file during the first run of \LaTeX{}
   so that the information is available at further runs of \LaTeX{}. While, on the one hand, 
-  this is a standard process (\eg, used for updating references), implementing it correctly
+  this is a standard process (\<^eg>, used for updating references), implementing it correctly
   requires a solid understanding of \LaTeX's expansion mechanism. In this context, the recently 
   introduced \inlineltx|\expanded{}|-primitive 
   (see \url{https://www.texdev.net/2018/12/06/a-new-primitive-expanded}) is particularly useful. 
-  Examples of its use can be found, \eg, in the ontology-styles 
+  Examples of its use can be found, \<^eg>, in the ontology-styles 
   \path{ontologies/scholarly_paper/DOF-scholarly_paper.sty} or 
   \path{ontologies/CENELEC_50128/DOF-CENELEC_50128.sty}.  For details about the expansion mechanism 
-  in general, we refer the reader to the \LaTeX{} literature (\eg,~@{cite "knuth:texbook:1986"
+  in general, we refer the reader to the \LaTeX{} literature (\<^eg>,~@{cite "knuth:texbook:1986"
   and "mittelbach.ea:latex:1999" and "eijkhout:latex-cs:2012"}).  
 \<close>
 
@@ -898,7 +898,7 @@ can now be used in the definition of the representation of the concept
 \<^boxed_theory_text>\<open>text.scholarly_paper.author\<close>, which writes the collected information in the 
 job's aux-file. The intermediate step of writing this information into the job's aux-file is necessary,
 as the author and affiliation information is required right at the begin of the document 
-(\ie, when \LaTeX's \inlineltx|\maketitle| is invoked) while  \<^isadof> allows to define authors at 
+(\<^ie>, when \LaTeX's \inlineltx|\maketitle| is invoked) while  \<^isadof> allows to define authors at 
 any place within a document:
 
 \begin{ltx}
@@ -945,7 +945,7 @@ subsubsection\<open>Restricting the Use of Ontologies to Specific Templates\<clo
 text\<open>
   As ontology representations might rely on features only provided by certain templates 
   (\LaTeX-classes), authors of ontology representations might restrict their use to 
-  specific classes. This can, \eg, be done using the \inlineltx|\@ifclassloaded{}| command:
+  specific classes. This can, \<^eg>, be done using the \inlineltx|\@ifclassloaded{}| command:
 
 \begin{ltx}
 \@ifclassloaded{llncs}{}%
