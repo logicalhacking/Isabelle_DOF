@@ -398,10 +398,8 @@ section\<open>Tables\<close>
 section\<open>Tests\<close>
    
 ML\<open>@{term "side_by_side_figure"};
-@{typ "doc_class rexp"}; 
-DOF_core.SPY;
-\<close>
-
+   @{typ "doc_class rexp"}; 
+   DOF_core.SPY;\<close>
 
 
 section\<open>DEPRECATED : An attempt to model Standard Isabelle Formal Content\<close>
