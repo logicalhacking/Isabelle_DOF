@@ -27,7 +27,6 @@ text\<open> Offering
   
 text\<open> In this section, we develop on the basis of a management of references Isar-markups
 that provide direct support in the PIDE framework. \<close> 
-
   
 theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   imports  Main  
