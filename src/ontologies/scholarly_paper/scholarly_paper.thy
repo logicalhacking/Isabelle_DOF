@@ -15,7 +15,8 @@ section\<open>An example ontology for a scholarly paper\<close>
 
 theory scholarly_paper
   imports "../../DOF/Isa_COL"
-  keywords "Definition*" "Lemma*" "Theorem*"  :: document_body
+  keywords "author*" "abstract*"
+           "Definition*" "Lemma*" "Theorem*"  :: document_body
 
 
 begin
@@ -42,6 +43,27 @@ doc_class author =
 doc_class abstract =
    keywordlist        :: "string list"   <= "[]" 
    principal_theorems :: "thm list"
+
+
+ML\<open>
+local open ODL_Command_Parser in
+val _ =  Outer_Syntax.command ("abstract*", @{here}) "Textual Definition"
+           (attributes -- Parse.opt_target -- Parse.document_source --| semi
+            >> (Toplevel.theory o (Onto_Macros.enriched_formal_statement_command0
+                                           (SOME "abstract") 
+                                           [] 
+                                           {markdown = true} )));
+
+
+val _ =  Outer_Syntax.command ("author*", @{here}) "Textual Definition"
+           (attributes -- Parse.opt_target -- Parse.document_source --| semi
+            >> (Toplevel.theory o (Onto_Macros.enriched_formal_statement_command0
+                                           (SOME "author") 
+                                           [] 
+                                           {markdown = true} )));
+
+end
+\<close>
 
 text\<open>Scholarly Paper is oriented towards the classical domains in science:
 \<^enum> mathematics

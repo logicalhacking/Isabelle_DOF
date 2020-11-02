@@ -82,7 +82,9 @@ fun enriched_document_command level =
                 | SOME(SOME x) => (("level",@{here}),"Some("^ Int.toString x ^"::int)")::doc_attrs
    in  gen_enriched_document_command {inline=true} I transform end; 
 
-val enriched_document_command_macro = enriched_document_command (* TODO ... *)
+val enriched_document_command_macro = 
+    let fun transform_cid X = (writeln (@{make_string} X); X)
+    in  gen_enriched_document_command {inline=true} transform_cid I end;
 
 
 fun enriched_formal_statement_command ncid (S: (string * string) list) =
@@ -93,6 +95,13 @@ fun enriched_formal_statement_command ncid (S: (string * string) list) =
        fun transform_attr doc_attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ 
                                  (("formal_results",@{here}),"([]::thm list)")::doc_attrs
    in  gen_enriched_document_command {inline=true} transform_cid transform_attr end;
+
+fun enriched_formal_statement_command0 ncid (S: (string * string) list) =
+   let val transform_cid = case ncid of  NONE => I
+                                       | SOME(ncid) => 
+                                            (fn X => case X of NONE => (SOME(ncid,@{here}))
+                                                             | _ => X)  
+   in  gen_enriched_document_command {inline=true} transform_cid I end;
 
 
 fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
