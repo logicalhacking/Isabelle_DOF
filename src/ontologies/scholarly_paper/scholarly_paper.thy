@@ -29,7 +29,7 @@ doc_class title =
    short_title :: "string option"  <=  "None"
     
 doc_class subtitle =
-   abbrev ::      "string option"       <=  "None"
+   abbrev ::      "string option"  <=  "None"
    
 (* adding a contribution list and checking that it is cited as well in tech as in conclusion. ? *)
 

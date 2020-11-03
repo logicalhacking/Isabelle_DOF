@@ -1398,9 +1398,13 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Command_Parse
     (* for the moment naive, i.e. without textual normalization of 
        attribute names and adapted term printing *)
     let val l   = "label = "^ (enclose "{" "}" lab)
+        val _   = writeln("meta_args_2_string lab:"^ lab ^":"^ (@{make_string } cid_opt) )
         val cid_long = case cid_opt of
-                                NONE => DOF_core.default_cid
+                                NONE => (case DOF_core.get_object_global lab thy of
+                                           NONE => DOF_core.default_cid
+                                         | SOME X => #cid X)
                               | SOME(cid,_) => DOF_core.parse_cid_global thy cid        
+        val _   = writeln("meta_args_2_string cid_long:"^ cid_long )
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
 
         fun ltx_of_term _ _ (Const ("List.list.Cons", @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $ t2) 
@@ -1455,18 +1459,12 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Command_Parse
     in
       (enclose "[" "]" (String.concat [ label_and_type, ", args={", (commas str_args), "}"])) 
 end
-(* the following 2 lines set parser and converter for LaTeX generation of meta-attributes. 
-   Currently of *all* commands, no distinction between text* and text command. 
-   This code depends on a MODIFIED Isabelle2017 version resulting from applying the files
-   under src/patches. 
- *)
-(* REMARK PORT 2018 : transmission of meta-args to LaTeX crude and untested. Can be found in
-   present_token. *)
-
 
 end
 \<close>
-ML\<open> (* Setting in thy_output.ML a parser for the syntactic handling of the meta-informations of 
+
+
+ML\<open> (* Setting in thy_output.ML a parser for the syntactic handling of the meta-informations of
        text elements - so text*[m<meta-info>]\<open> ... dfgdfg .... \<close> *)
                  
 val _ = Thy_Output.set_meta_args_parser

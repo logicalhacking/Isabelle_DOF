@@ -97,11 +97,11 @@ fun enriched_formal_statement_command ncid (S: (string * string) list) =
    in  gen_enriched_document_command {inline=true} transform_cid transform_attr end;
 
 fun enriched_formal_statement_command0 ncid (S: (string * string) list) =
-   let val transform_cid = case ncid of  NONE => I
-                                       | SOME(ncid) => 
-                                            (fn X => case X of NONE => (SOME(ncid,@{here}))
-                                                             | _ => X)  
-   in  gen_enriched_document_command {inline=true} transform_cid I end;
+   let fun transform_cid NONE X = X
+          |transform_cid (SOME ncid) NONE =  (SOME(ncid,@{here}))
+          |transform_cid (SOME _) (SOME cid) = (SOME cid)  
+       fun transform_attr attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ attrs
+   in  gen_enriched_document_command {inline=true} (transform_cid ncid) transform_attr end;
 
 
 fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),

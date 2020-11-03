@@ -16,12 +16,24 @@ setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>csp\<close>       "CSP
 
 title*[tit::title]\<open>Philosophers may Dine - Definitively!\<close>
 
-text*[safouan::author, email="''safouan.taha@lri.fr''", affiliation="\<open>LRI, CentraleSupelec\<close>"]
-     \<open>Safouan Taha\<close>
+(* new crashing variant 1:
+author*[safouan, email="''safouan.taha@lri.fr''",affiliation="\<open>LRI, CentraleSupelec\<close>"]
+        \<open>Safouan Taha\<close>
+
+*)
+
+(* new crashing variant 2:
+author*[safouan::author, email="''safouan.taha@lri.fr''",affiliation="\<open>LRI, CentraleSupelec\<close>"]
+        \<open>Safouan Taha\<close>
+
+*)
+text*[safouan::author, email="''safouan.taha@lri.fr''",affiliation="\<open>LRI, CentraleSupelec\<close>"]
+        \<open>Safouan Taha\<close>
+
 text*[bu::author, email= "''wolff@lri.fr''",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]
-     \<open>Burkhart Wolff\<close>
-text*[lina::author,email="''lina.ye@lri.fr''", affiliation="\<open>LRI, Inria, LSV, CentraleSupelec\<close>"]
-     \<open>Lina Ye\<close>
+        \<open>Burkhart Wolff\<close>
+text*[lina::author,email="''lina.ye@lri.fr''",affiliation="\<open>LRI, Inria, LSV, CentraleSupelec\<close>"]
+        \<open>Lina Ye\<close>
     
 text*[abs::abstract, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Algebra\<close>,
                                    \<open>Concurrency\<close>,\<open>Computational Models\<close>]"]
