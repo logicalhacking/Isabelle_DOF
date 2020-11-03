@@ -16,26 +16,23 @@ setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>csp\<close>       "CSP
 
 title*[tit::title]\<open>Philosophers may Dine - Definitively!\<close>
 
-(* new crashing variant 1:
 author*[safouan, email="''safouan.taha@lri.fr''",affiliation="\<open>LRI, CentraleSupelec\<close>"]
         \<open>Safouan Taha\<close>
 
-*)
-
-(* new crashing variant 2:
-author*[safouan::author, email="''safouan.taha@lri.fr''",affiliation="\<open>LRI, CentraleSupelec\<close>"]
+(*
+author*[safouann::author, email="''safouan.taha@lri.fr''",affiliation="\<open>LRI, CentraleSupelec\<close>"]
         \<open>Safouan Taha\<close>
 
-*)
-text*[safouan::author, email="''safouan.taha@lri.fr''",affiliation="\<open>LRI, CentraleSupelec\<close>"]
+text*[safouannn::author, email="''safouan.taha@lri.fr''",affiliation="\<open>LRI, CentraleSupelec\<close>"]
         \<open>Safouan Taha\<close>
+*)
 
 text*[bu::author, email= "''wolff@lri.fr''",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]
         \<open>Burkhart Wolff\<close>
 text*[lina::author,email="''lina.ye@lri.fr''",affiliation="\<open>LRI, Inria, LSV, CentraleSupelec\<close>"]
         \<open>Lina Ye\<close>
     
-text*[abs::abstract, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Algebra\<close>,
+abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Algebra\<close>,
                                    \<open>Concurrency\<close>,\<open>Computational Models\<close>]"]
 \<open>  The theory of Communicating Sequential Processes going back to Hoare and Roscoe is  
    still today one of the reference theories for concurrent specification and computing.
