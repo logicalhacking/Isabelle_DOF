@@ -21,8 +21,15 @@ declare[[strict_monitor_checking=false]]
 
 setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>isadof\<close>    "\\isadof"
        #> DOF_lib.define_shortcut \<^binding>\<open>LaTeX\<close>     "\\LaTeX{}"
+       #> DOF_lib.define_shortcut \<^binding>\<open>Protege\<close>   "Prot{\\'e}g{\\'e}"
        #> DOF_lib.define_shortcut \<^binding>\<open>dots\<close>      "\\ldots"
-       #> DOF_lib.define_shortcut \<^binding>\<open>isabelle\<close>  "Isabelle/HOL"\<close> 
+       #> DOF_lib.define_shortcut \<^binding>\<open>isabelle\<close>  "Isabelle/HOL"
+
+\<close>
+
+(* slanted text in contrast to italics *)
+setup\<open>    DOF_lib.define_macro \<^binding>\<open>slanted_text\<close> "\\textsl{" "}" (K(K()))\<close> 
+
 
 (*>*)
 
@@ -61,6 +68,9 @@ abstract*[abs::abstract, keywordlist="[''Ontology'',''Ontological Modeling'',''I
     ontologies inside \<^isadof>, how to use the resulting meta-information 
    for enforcing a certain document structure, and discuss ontology-specific 
    IDE support. 
+
+   %% If you consider citing this paper, please refer to 
+   %% @{cite "brucker.ea:isabelle-ontologies:2018"}.
 \<close>
 
 section*[intro::introduction]\<open> Introduction \<close>  
@@ -121,21 +131,21 @@ scenarios from the point of view of the ontology modeling. In @{text_section (un
 we discuss the user-interaction generated from the ontological definitions.  Finally, we draw 
 conclusions and discuss related work in @{text_section (unchecked) \<open>conclusion\<close>}. \<close>  
 
-section*[bgrnd::text_section,main_author="Some(@{docitem ''adb''}::author)"]
+section*[bgrnd::text_section,main_author="Some(@{docitem ''bu''}::author)"]
         \<open> Background: The Isabelle System \<close>
 text*[background::introduction]\<open>
 While Isabelle is widely perceived as an interactive theorem prover
 for HOL (Higher-order Logic)~@{cite "nipkow.ea:isabelle:2002"}, we
 would like to emphasize the view that Isabelle is far more than that:
 it is the \<^emph>\<open>Eclipse of Formal Methods Tools\<close>.  This refers to the
-``\textsl{generic system framework of Isabelle/Isar underlying recent
+``\<^slanted_text>\<open>generic system framework of Isabelle/Isar underlying recent
   versions of Isabelle.  Among other things, Isar provides an
   infrastructure for Isabelle plug-ins, comprising extensible state
   components and extensible syntax that can be bound to ML
   programs. Thus, the Isabelle/Isar architecture may be understood as
   an extension and refinement of the traditional `LCF approach', with
   explicit infrastructure for building derivative
-  \<^emph>\<open>systems\<close>.}''~@{cite "wenzel.ea:building:2007"} 
+  \<^emph>\<open>systems\<close>.\<close>''~@{cite "wenzel.ea:building:2007"} 
 
 The current system framework offers moreover the following features:
 
@@ -152,10 +162,10 @@ figure*[architecture::figure,relative_width="100",src="''figures/isabelle-archit
      asynchronous communication between the Isabelle system and 
      the IDE (right-hand side). \<close>
 
-text*[blug::introduction]\<open> The Isabelle system architecture shown in @{docitem \<open>architecture\<close>}
+text*[blug::introduction]\<open> The Isabelle system architecture shown in @{figure \<open>architecture\<close>}
  comes with many layers, with Standard ML (SML) at the bottom layer as implementation 
 language. The architecture actually foresees a \<^emph>\<open>Nano-Kernel\<close> (our terminology) which 
-resides in the SML structure \texttt{Context}. This structure provides a kind of container called 
+resides in the SML structure \<^ML_structure>\<open>Context\<close>. This structure provides a kind of container called 
 \<^emph>\<open>context\<close> providing an identity, an ancestor-list as well as typed, user-defined state 
 for components (plugins) such as \<^isadof>. On top of the latter, the LCF-Kernel, tactics, 
 automated proof procedures as well as specific support for higher specification constructs
@@ -715,7 +725,7 @@ on documents mixing formal and informal content---a type of documents
 that is very common in technical certification processes. We see
 mainly one area of related works: IDEs and text editors that support
 editing and checking of documents based on an ontology.  There is a
-large group of ontology editors (\<^eg>, Prot{\'e}g{\'e}~@{cite "protege"},
+large group of ontology editors (\<^eg>, \<^Protege>~@{cite "protege"},
 Fluent Editor~@{cite "cognitum"}, NeOn~@{cite "neon"}, or
 OWLGrEd~@{cite "owlgred"}). With them, we share the support for defining
 ontologies as well as auto-completion when editing documents based on
@@ -725,7 +735,7 @@ OWLGrEd~@{cite "owlgred"}) also support graphical notations. This could
 be added to \<^isadof> in the future. A unique feature of \<^isadof> is the
 deep integration of formal and informal text parts. The only other
 work in this area we are aware of is rOntorium~@{cite "rontorium"}, a plugin
-for Prot{\'e}g{\'e} that integrates R~@{cite "adler:r:2010"} into an
+for \<^Protege> that integrates R~@{cite "adler:r:2010"} into an
 ontology environment. Here, the main motivation behind this
 integration is to allow for statistically analyze ontological
 documents. Thus, this is complementary to our work.

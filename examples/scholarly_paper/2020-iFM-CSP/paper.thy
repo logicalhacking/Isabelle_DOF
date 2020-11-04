@@ -45,6 +45,8 @@ abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Alg
 
    We demonstrate a number of resulting verification-techniques for classical, generalized examples:
    The CopyBuffer and Dijkstra's Dining Philosopher Problem of an arbitrary size.
+
+   If you consider citing this paper, please refer to @{cite "HOL-CSP-iFM2020"}.
 \<close>
 text\<open>\<^vs>\<open>-1.3cm\<close>\<close>
 section*[introheader::introduction,main_author="Some(@{docitem ''bu''}::author)"]\<open> Introduction \<close> 
