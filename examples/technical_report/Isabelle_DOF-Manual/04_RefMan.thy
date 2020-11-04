@@ -382,9 +382,10 @@ FORMAL_STATEMENT_ALIKE =
 \<close>}
 
 These shadow-classes correspond to semantic macros 
- \<^ML>\<open>Onto_Macros.enriched_document_command\<close>,
+ \<^ML>\<open>Onto_Macros.enriched_document_cmd_exp\<close>,
  \<^ML>\<open>Onto_Macros.assertion_cmd'\<close>, and
  \<^ML>\<open>Onto_Macros.enriched_formal_statement_command\<close>.\<close>
+
 
 text\<open>  \<^isadof> provides a Common Ontology Library (COL)\<^index>\<open>Common Ontology Library@see COL\<close>
   \<^bindex>\<open>COL\<close> that introduces ontology concepts that are either sample instances for shadow 

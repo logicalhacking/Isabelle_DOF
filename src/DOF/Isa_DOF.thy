@@ -1255,7 +1255,7 @@ fun gen_enriched_document_command {inline=is_inline} cid_transform attr_transfor
   end;
 *)
 
-fun gen_enriched_document_command {inline=is_inline} cid_transform attr_transform 
+fun gen_enriched_document_cmd {inline=is_inline} cid_transform attr_transform 
                                   markdown  
                                   (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
                                      xstring_opt:(xstring * Position.T) option),
@@ -1368,15 +1368,14 @@ val _ =
 val _ =
   Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (gen_enriched_document_command {inline=true} 
-                                                           I I {markdown = true} )));
+      >> (Toplevel.theory o (gen_enriched_document_cmd {inline=true} I I {markdown = true} )));
 
 (* This is just a stub at present *)
 val _ =
   Outer_Syntax.command ("text-macro*", @{here}) "formal comment macro"
     (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (gen_enriched_document_command {inline=false} (* declare as macro *)
-                                                           I I {markdown = true} )));
+      >> (Toplevel.theory o (gen_enriched_document_cmd {inline=false} (* declare as macro *)
+                                                       I I {markdown = true} )));
 
 val _ =
   Outer_Syntax.command @{command_keyword "declare_reference*"} 

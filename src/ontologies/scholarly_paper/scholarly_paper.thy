@@ -49,7 +49,7 @@ ML\<open>
 local open ODL_Command_Parser in
 val _ =  Outer_Syntax.command ("abstract*", @{here}) "Textual Definition"
            (attributes -- Parse.opt_target -- Parse.document_source --| semi
-            >> (Toplevel.theory o (Onto_Macros.enriched_formal_statement_command0
+            >> (Toplevel.theory o (Onto_Macros.enriched_document_cmd_exp
                                            (SOME "abstract") 
                                            [] 
                                            {markdown = true} )));
@@ -57,7 +57,7 @@ val _ =  Outer_Syntax.command ("abstract*", @{here}) "Textual Definition"
 
 val _ =  Outer_Syntax.command ("author*", @{here}) "Textual Definition"
            (attributes -- Parse.opt_target -- Parse.document_source --| semi
-            >> (Toplevel.theory o (Onto_Macros.enriched_formal_statement_command0
+            >> (Toplevel.theory o (Onto_Macros.enriched_document_cmd_exp
                                            (SOME "author") 
                                            [] 
                                            {markdown = true} )));
@@ -456,8 +456,8 @@ subsection\<open>Common Abbreviations\<close>
 setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>     "\\eg"  
           (* Latin: „exempli gratia“  meaning  „for example“. *)
        #> DOF_lib.define_shortcut \<^binding>\<open>ie\<close>     "\\ie"
-       #> DOF_lib.define_shortcut \<^binding>\<open>etc\<close>     "\\etc"\<close> 
           (* Latin: „id est“  meaning „that is to say“. *) 
+       #> DOF_lib.define_shortcut \<^binding>\<open>etc\<close>     "\\etc"\<close> 
       
        (* this is an alternative style for macro definitions equivalent to setup ... setup  ...*)
 

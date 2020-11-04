@@ -75,34 +75,50 @@ local open ODL_Command_Parser in
    accepted. *)
 
  
-fun enriched_document_command level =
+fun enriched_text_element_cmd level =
    let fun transform doc_attrs = case level of 
                   NONE => doc_attrs 
                 | SOME(NONE)   => (("level",@{here}),"None")::doc_attrs
                 | SOME(SOME x) => (("level",@{here}),"Some("^ Int.toString x ^"::int)")::doc_attrs
-   in  gen_enriched_document_command {inline=true} I transform end; 
+   in  gen_enriched_document_cmd {inline=true} I transform end; 
 
+(*
 val enriched_document_command_macro = 
     let fun transform_cid X = (writeln (@{make_string} X); X)
     in  gen_enriched_document_command {inline=true} transform_cid I end;
+*)
 
+
+local 
+fun transform_cid thy NONE X = X
+   |transform_cid thy (SOME ncid) NONE =  (SOME(ncid,@{here}))
+   |transform_cid thy (SOME cid) (SOME (sub_cid,pos)) =
+                             let val cid_long  = DOF_core.read_cid_global thy cid
+                                 val sub_cid_long =  DOF_core.read_cid_global thy sub_cid
+                             in  if DOF_core.is_subclass_global thy sub_cid_long cid_long 
+                                 then (SOME (sub_cid,pos))
+                                 else (SOME (sub_cid,pos)) 
+                                      (* BUG : check does not yet work for 
+                                               type synonyms. 
+                                        error("class must be sub-class of "^cid) *)
+                             end  
+in
 
 fun enriched_formal_statement_command ncid (S: (string * string) list) =
-   let val transform_cid = case ncid of  NONE => I
-                                       | SOME(ncid) => 
-                                            (fn X => case X of NONE => (SOME(ncid,@{here}))
-                                                             | _ => X)  
-       fun transform_attr doc_attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ 
-                                 (("formal_results",@{here}),"([]::thm list)")::doc_attrs
-   in  gen_enriched_document_command {inline=true} transform_cid transform_attr end;
+   let fun transform_attr doc_attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ 
+                                      (("formal_results",@{here}),"([]::thm list)")::doc_attrs
+   in  fn md => fn margs => fn thy => 
+          gen_enriched_document_cmd {inline=true} 
+                                    (transform_cid thy ncid) transform_attr md margs thy 
+   end;
 
-fun enriched_formal_statement_command0 ncid (S: (string * string) list) =
-   let fun transform_cid NONE X = X
-          |transform_cid (SOME ncid) NONE =  (SOME(ncid,@{here}))
-          |transform_cid (SOME _) (SOME cid) = (SOME cid)  
-       fun transform_attr attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ attrs
-   in  gen_enriched_document_command {inline=true} (transform_cid ncid) transform_attr end;
-
+fun enriched_document_cmd_exp ncid (S: (string * string) list) =
+   (* expands ncid into supertype-check. *)
+   let fun transform_attr attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ attrs
+   in  fn md => fn margs => fn thy =>  
+         gen_enriched_document_cmd {inline=true} (transform_cid thy ncid) transform_attr md margs thy
+   end;
+end (* local *)
 
 fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
                 prop) =
@@ -132,43 +148,43 @@ val _ =
 val _ =
   Outer_Syntax.command ("title*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} ))) ;
+      >> (Toplevel.theory o (enriched_text_element_cmd NONE {markdown = false} ))) ;
 
 val _ =
   Outer_Syntax.command ("subtitle*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command NONE {markdown = false} )));
+      >> (Toplevel.theory o (enriched_text_element_cmd NONE {markdown = false} )));
 
 val _ =
   Outer_Syntax.command ("chapter*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 0)) {markdown = false} )));
+      >> (Toplevel.theory o (enriched_text_element_cmd (SOME(SOME 0)) {markdown = false} )));
 
 val _ =
   Outer_Syntax.command ("section*", @{here}) "section heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 1)) {markdown = false} )));
+      >> (Toplevel.theory o (enriched_text_element_cmd (SOME(SOME 1)) {markdown = false} )));
 
 
 val _ =
   Outer_Syntax.command ("subsection*", @{here}) "subsection heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 2)) {markdown = false} )));
+      >> (Toplevel.theory o (enriched_text_element_cmd (SOME(SOME 2)) {markdown = false} )));
 
 val _ =
   Outer_Syntax.command ("subsubsection*", @{here}) "subsubsection heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 3)) {markdown = false} )));
+      >> (Toplevel.theory o (enriched_text_element_cmd (SOME(SOME 3)) {markdown = false} )));
 
 val _ =
   Outer_Syntax.command ("paragraph*", @{here}) "paragraph heading"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 4)) {markdown = false} )));
+      >> (Toplevel.theory o (enriched_text_element_cmd (SOME(SOME 4)) {markdown = false} )));
 
 val _ =
   Outer_Syntax.command ("subparagraph*", @{here}) "subparagraph heading"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 5)) {markdown = false} )));
+      >> (Toplevel.theory o (enriched_text_element_cmd (SOME(SOME 5)) {markdown = false} )));
 
 end 
 end
@@ -223,12 +239,12 @@ ML\<open> local open ODL_Command_Parser in
 val _ =
   Outer_Syntax.command ("figure*", @{here}) "figure"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (Onto_Macros.enriched_document_command NONE {markdown = false} )));
+      >> (Toplevel.theory o (Onto_Macros.enriched_text_element_cmd NONE {markdown = false} )));
 
 val _ =
   Outer_Syntax.command ("side_by_side_figure*", @{here}) "multiple figures"
     (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (Onto_Macros.enriched_document_command NONE {markdown = false} )));
+      >> (Toplevel.theory o (Onto_Macros.enriched_text_element_cmd NONE {markdown = false} )));
 
 
 
