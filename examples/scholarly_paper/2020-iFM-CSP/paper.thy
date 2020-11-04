@@ -16,12 +16,9 @@ setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>csp\<close>       "CSP
 
 title*[tit::title]\<open>Philosophers may Dine - Definitively!\<close>
 
-author*[safouan, email="''safouan.taha@lri.fr''",affiliation="\<open>LRI, CentraleSupelec\<close>"]
-        \<open>Safouan Taha\<close>
-author*[bu, email= "''wolff@lri.fr''",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]
-        \<open>Burkhart Wolff\<close>
-author*[lina,email="''lina.ye@lri.fr''",affiliation="\<open>LRI, Inria, LSV, CentraleSupelec\<close>"]
-        \<open>Lina Ye\<close>
+author*[safouan,email="\<open>safouan.taha@lri.fr\<close>",affiliation="\<open>LRI, CentraleSupelec\<close>"]\<open>Safouan Taha\<close>
+author*[bu,email= "\<open>wolff@lri.fr\<close>",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]\<open>Burkhart Wolff\<close>
+author*[lina,email="\<open>lina.ye@lri.fr\<close>",affiliation="\<open>LRI, Inria, LSV, CentraleSupelec\<close>"]\<open>Lina Ye\<close>
     
 abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Algebra\<close>,
                                    \<open>Concurrency\<close>,\<open>Computational Models\<close>]"]
