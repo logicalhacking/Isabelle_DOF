@@ -21,6 +21,7 @@ declare[[strict_monitor_checking=false]]
 
 setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>isadof\<close>    "\\isadof"
        #> DOF_lib.define_shortcut \<^binding>\<open>LaTeX\<close>     "\\LaTeX{}"
+       #> DOF_lib.define_shortcut \<^binding>\<open>dots\<close>      "\\ldots"
        #> DOF_lib.define_shortcut \<^binding>\<open>isabelle\<close>  "Isabelle/HOL"\<close> 
 
 (*>*)
@@ -161,8 +162,8 @@ automated proof procedures as well as specific support for higher specification 
 were built. \<close>
     
 text\<open> We would like to detail the documentation generation of the architecture,
-which is based on literate specification commands such as \inlineisar+section+ \ldots, 
-\inlineisar+subsection+ \ldots, \inlineisar+text+ \ldots, etc.
+which is based on literate specification commands such as \inlineisar+section+ \<^dots>, 
+\inlineisar+subsection+ \<^dots>, \inlineisar+text+ \<^dots>, etc.
 Thus, a user can add a simple text:
 \begin{isar}
   text\<Open>This is a description.\<Close>
@@ -311,7 +312,7 @@ The translation of its content to, \<^eg>, Springer's \<^LaTeX> setup for the Le
 Science Series, as required by many scientific conferences, is mostly straight-forward. \<close>
 
 figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogfood-Intro''"]
-       \<open> Ouroboros I: This paper from inside \ldots \<close>  
+       \<open> Ouroboros I: This paper from inside \<^dots> \<close>  
 
 text\<open> @{figure \<open>fig1\<close>} shows the corresponding view in the Isabelle/PIDE of thqqe present paper.
 Note that the text uses \<^isadof>'s own text-commands containing the meta-information provided by
@@ -400,7 +401,7 @@ and semantic convenience. Choosing the mathematical reals, \<^eg>, would have th
 attribute evaluation could be substantially more complicated.\<close>
 
 figure*[fig_figures::figure,spawn_columns=False,relative_width="85",src="''figures/Dogfood-figures''"]
-       \<open> Ouroboros II: figures \ldots \<close>
+       \<open> Ouroboros II: figures \<^dots> \<close>
 
 text\<open> The document class \inlineisar+figure+ --- supported by the \<^isadof> text command 
 \inlineisar+figure*+ --- makes it possible to express the pictures and diagrams in this paper 
@@ -529,7 +530,7 @@ derivation---as part of an algebra exercise, for example---which is submitted to
 electronically. \<close>
 figure*[fig_qcm::figure,spawn_columns=False,
         relative_width="90",src="''figures/InteractiveMathSheet''"]
-        \<open> A Generated QCM Fragment \ldots \<close>  
+        \<open> A Generated QCM Fragment \<^dots> \<close>  
 
 subsection*[cenelec_onto::example]\<open> The Certification Scenario following CENELEC \<close>
 text\<open> Documents to be provided in formal certifications (such as CENELEC
@@ -653,7 +654,7 @@ device. This condition can not be established inside the formal theory but has t
 checked by system integration tests.\<close>
   
 figure*[figfig5::figure, relative_width="80", src="''figures/srac-definition''"]
-        \<open> Defining a SRAC reference \ldots \<close>
+        \<open> Defining a SRAC reference \<^dots> \<close>
 figure*[figfig7::figure, relative_width="80", src="''figures/srac-as-es-application''"]
         \<open> Using a SRAC as EC document reference. \<close>
        
