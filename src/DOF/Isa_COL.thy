@@ -95,12 +95,12 @@ fun transform_cid thy NONE X = X
    |transform_cid thy (SOME cid) (SOME (sub_cid,pos)) =
                              let val cid_long  = DOF_core.read_cid_global thy cid
                                  val sub_cid_long =  DOF_core.read_cid_global thy sub_cid
-                             in  if DOF_core.is_subclass_global thy sub_cid_long cid_long 
+                             in  if DOF_core.is_subclass_global thy  sub_cid_long cid_long
                                  then (SOME (sub_cid,pos))
                                  else (SOME (sub_cid,pos)) 
-                                      (* BUG : check does not yet work for 
-                                               type synonyms. 
-                                        error("class must be sub-class of "^cid) *)
+                                      (*  BUG : check reveals problem of Definition* misuse.  
+                                        error("class "^sub_cid_long^
+                                              " must be sub-class of "^cid_long) *)
                              end  
 in
 
