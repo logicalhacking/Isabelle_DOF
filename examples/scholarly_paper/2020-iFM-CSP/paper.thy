@@ -353,7 +353,7 @@ Roscoe and Brooks @{cite "Roscoe1992AnAO"} finally proposed another ordering, ca
 that completeness could at least be assured for read-operations. This more complex ordering 
 is based on the concept \<^emph>\<open>refusals after\<close> a trace \<open>s\<close> and defined by \<open>\<R> P s \<equiv> {X | (s, X) \<in> \<F> P}\<close>.\<close>
 
-text*[process_ordering::"definition", short_name="''process ordering''"]\<open>
+Definition*[process_ordering, short_name="''process ordering''"]\<open>
 We define \<open>P \<sqsubseteq> Q \<equiv> \<psi>\<^sub>\<D> \<and> \<psi>\<^sub>\<R> \<and> \<psi>\<^sub>\<M> \<close>,  where \<^vs>\<open>-0.2cm\<close>
 \<^enum> \<^vs>\<open>-0.2cm\<close> \<open>\<psi>\<^sub>\<D> = \<D> P \<supseteq> \<D> Q \<close>
 \<^enum> \<open>\<psi>\<^sub>\<R> = s \<notin> \<D> P \<Rightarrow> \<R> P s = \<R> Q s\<close>  
@@ -528,21 +528,21 @@ To handle termination better, we added two new processes \<open>CHAOS\<^sub>S\<^
 %thus must be without it. 
 \<close>
 (*
-text*[X2::"definition"]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<^vs>\<open>-0.7cm\<close>\<close>
-text*[X3::"definition"]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>          \<^vs>\<open>-0.7cm\<close>\<close>
-text*[X4::"definition"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<^vs>\<open>-0.7cm\<close>\<close>
+Definition*[X22]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<^vs>\<open>-0.7cm\<close>\<close>
+Definition*[X32]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>          \<^vs>\<open>-0.7cm\<close>\<close>
+Definition*[X42]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<^vs>\<open>-0.7cm\<close>\<close>
 
-text\<open> The \<open>RUN\<close>-process defined @{definition X2} represents the process that accepts all 
+text\<open> The \<open>RUN\<close>-process defined @{definition X22} represents the process that accepts all 
 events, but never stops nor deadlocks. The \<open>CHAOS\<close>-process comes in two variants shown in 
-@{definition X3} and @{definition X4}: the process that non-deterministically stops or 
+@{definition X32} and @{definition X42}: the process that non-deterministically stops or 
 accepts any offered event, whereas \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> can additionally terminate.\<close>
 *)
 
-text*[X2::"definition"]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<^vs>\<open>-0.7cm\<close>\<close>
-text*[X3::"definition"]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>          \<^vs>\<open>-0.7cm\<close>\<close>
-text*[X4::"definition"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<^vs>\<open>-0.7cm\<close>\<close>
-text*[X5::"definition"]\<open>\<open>DF A \<equiv> \<mu> X. (\<sqinter> x \<in> A \<rightarrow> X)\<close>                      \<^vs>\<open>-0.7cm\<close>\<close>
-text*[X6::"definition"]\<open>\<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. ((\<sqinter> x \<in> A \<rightarrow> X) \<sqinter> SKIP)\<close>          \<^vs>\<open>-0.7cm\<close> \<close> 
+Definition*[X2]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<^vs>\<open>-0.7cm\<close>\<close>
+Definition*[X3]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>          \<^vs>\<open>-0.7cm\<close>\<close>
+Definition*[X4]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<^vs>\<open>-0.7cm\<close>\<close>
+Definition*[X5]\<open>\<open>DF A \<equiv> \<mu> X. (\<sqinter> x \<in> A \<rightarrow> X)\<close>                      \<^vs>\<open>-0.7cm\<close>\<close>
+Definition*[X6]\<open>\<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. ((\<sqinter> x \<in> A \<rightarrow> X) \<sqinter> SKIP)\<close>          \<^vs>\<open>-0.7cm\<close> \<close> 
 
 text\<open> \<^vs>\<open>-0.3cm\<close> \<^noindent>
 In the following, we denote \<open> \<R>\<P> = {DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P, DF, RUN, CHAOS, CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P}\<close>. 
@@ -605,18 +605,19 @@ In the literature, deadlock and lifelock are phenomena that are often
 handled separately. One contribution of our work is establish their precise relationship inside
 the Failure/Divergence Semantics of \<^csp>.\<close>
 
-text*[X10::"definition"] \<open> \<open>deadlock\<^sub>-free P \<equiv>  DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close> \<^vs>\<open>-0.3cm\<close> \<close>
+(* bizarre: Definition* does not work for this single case *)
+text*[X10::"definition"]\<open> \<open>deadlock\<^sub>-free P \<equiv>  DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close> \<^vs>\<open>-0.3cm\<close> \<close>
 
 text\<open>\<^noindent> A process \<open>P\<close> is deadlock-free if and only if after any trace \<open>s\<close> without \<open>\<surd>\<close>, the union of \<open>\<surd>\<close> 
 and all events of \<open>P\<close> can never be a refusal set associated to \<open>s\<close>, which means that \<open>P\<close> cannot 
 be deadlocked after any non-terminating trace.   
 \<^vs>\<open>-0.2cm\<close>\<close>
 
-text*[T1::"theorem", short_name="\<open>DF definition captures deadlock-freeness\<close>"]
+Theorem*[T1, short_name="\<open>DF definition captures deadlock-freeness\<close>"]
 \<open> \hfill \break \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<surd>}\<union>events_of P) \<notin> \<F> P)\<close> \<^vs>\<open>-0.4cm\<close>\<close>   
 
 
-text*[X11::"definition"]\<open>  \<open>livelock\<^sub>-free P \<equiv> \<D> P = {} \<close>   \<^vs>\<open>-0.2cm\<close>\<close>
+Definition*[X11]\<open>  \<open>livelock\<^sub>-free P \<equiv> \<D> P = {} \<close>   \<^vs>\<open>-0.2cm\<close>\<close>
 
 text\<open> Recall that all five reference processes are livelock-free. 
 We also have the following lemmas about the 
@@ -630,12 +631,12 @@ text\<open>\<^vs>\<open>-0.3cm\<close>
 Finally, we proved the following theorem that confirms the relationship between the two vital
 properties:\<^vs>\<open>-0.3cm\<close>
 \<close>
-text*[T2::"theorem", short_name="''DF implies LF''"]
+Theorem*[T2, short_name="''DF implies LF''"]
   \<open>  \hspace{0.5cm} \<open>deadlock_free P \<longrightarrow> livelock_free P\<close>   \<^vs>\<open>-0.3cm\<close>\<close>
 
 text\<open>
 This is totally natural, at a first glance, but surprising as the proof of deadlock-freeness only requires 
-failure refinement \<open>\<sqsubseteq>\<^sub>\<F>\<close> (see @{definition X10}) where divergence traces are mixed within the failures set.
+failure refinement \<open>\<sqsubseteq>\<^sub>\<F>\<close> (see @{definition \<open>X10\<close>}) where divergence traces are mixed within the failures set.
 Note that the existing tools in the literature normally detect these two phenomena  
 separately, such as FDR for which checking livelock-freeness is very costly. 
 In our framework, deadlock-freeness of a given system 
@@ -684,7 +685,7 @@ processes and we call the resulting process \<open>SYSTEM\<close>: \<^vs>\<open>
 
 @{theory_text [display,indent=5] \<open>
 definition SEND \<equiv> (\<mu> X. left?x \<rightarrow> (mid!x \<rightarrow> (ack \<rightarrow> X)))
-definition REC \<equiv> (\<mu> X. mid?x \<rightarrow> (right!x \<rightarrow> (ack \<rightarrow> X)))
+definition REC  \<equiv> (\<mu> X. mid?x \<rightarrow> (right!x \<rightarrow> (ack \<rightarrow> X)))
 definition SYN  \<equiv> (range mid) \<union> {ack}
 definition "SYSTEM \<equiv> (SEND \<lbrakk>SYN\<rbrakk> REC) \\ SYN"\<close>}
 
@@ -788,7 +789,7 @@ Roughly similar to labelled transition systems, we provide for deterministic \<^
 form that is based on an explicit state. The general schema of normalized processes is defined as 
 follows:
 \<^vs>\<open>0.1cm\<close>
-@{cartouche [display,indent=20] \<open>P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<tau>\<^sub>,\<upsilon>\<rbrakk> \<equiv> \<mu> X. (\<lambda>\<sigma>. \<box>e\<in>(\<tau> \<sigma>) \<rightarrow> X (\<upsilon> \<sigma> e))\<close>}
+@{cartouche [display,indent=20] \<open>P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<tau>\<^sub>,\<upsilon>\<rbrakk> \<equiv> \<mu> X. (\<lambda>\<sigma>. \<box>e\<in>(\<tau> \<sigma>) \<rightarrow> X(\<upsilon> \<sigma> e))\<close>}
 \<^vs>\<open>-0.1cm\<close> where \<open>\<tau>\<close> is a transition function which returns the set of events that can be triggered from 
 the current  state \<open>\<sigma>\<close> given as parameter.
 The update function \<open>\<upsilon>\<close> takes two parameters \<open>\<sigma>\<close> and an event \<open>e\<close> and returns the new state.
@@ -893,7 +894,7 @@ denotational semantics.
 %\<open>FORK i = picks \<rightarrow> putsdown \<rightarrow> FORK i\<close>. After that we apply the same method 
 %to get the philosopher process under a normal form.
 
-Thanks to @{math_content \<open>T3\<close>}, we obtain normalized processes 
+Thanks to @{theorem \<open>T3\<close>}, we obtain normalized processes 
 for \<open>FORKs\<close>, \<open>PHILs\<close> and \<open>DINING\<close>:
 @{theory_text [display,indent=5] 
 \<open>definition "trans\<^sub>F \<equiv> \<lambda>fs. (\<Inter>\<^sub>i\<^sub><\<^sub>N. trans\<^sub>f i (fs!i))"

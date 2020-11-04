@@ -341,6 +341,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Besser: Einfach durchreichen wg Vererbung !
+\NewEnviron{isamarkupDefinition*}[1][]{\isaDof[env={text.scholarly_paper.definition},#1]{\BODY}}
 \newisadof{text.scholarly_paper.definition}%
 [label=,type=%
  , scholarly_paper.math_content.short_name =%
@@ -399,6 +400,7 @@
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Besser: Einfach durchreichen wg Vererbung !
+\NewEnviron{isamarkupLemma*}[1][]{\isaDof[env={text.scholarly_paper.lemma},#1]{\BODY}}
 \newisadof{text.scholarly_paper.lemma}%
 [label=,type=%
  , scholarly_paper.math_content.short_name =%
@@ -426,6 +428,7 @@
  } 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Besser: Einfach durchreichen wg Vererbung !
+\NewEnviron{isamarkupTheorem*}[1][]{\isaDof[env={text.scholarly_paper.theorem},#1]{\BODY}}
 \newisadof{text.scholarly_paper.theorem}%
 [label=,type=%
  , scholarly_paper.math_content.short_name =%

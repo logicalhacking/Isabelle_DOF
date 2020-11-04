@@ -1397,13 +1397,13 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Command_Parse
     (* for the moment naive, i.e. without textual normalization of 
        attribute names and adapted term printing *)
     let val l   = "label = "^ (enclose "{" "}" lab)
-        val _   = writeln("meta_args_2_string lab:"^ lab ^":"^ (@{make_string } cid_opt) )
+      (*  val _   = writeln("meta_args_2_string lab:"^ lab ^":"^ (@{make_string } cid_opt) ) *)
         val cid_long = case cid_opt of
                                 NONE => (case DOF_core.get_object_global lab thy of
                                            NONE => DOF_core.default_cid
                                          | SOME X => #cid X)
                               | SOME(cid,_) => DOF_core.parse_cid_global thy cid        
-        val _   = writeln("meta_args_2_string cid_long:"^ cid_long )
+        (* val _   = writeln("meta_args_2_string cid_long:"^ cid_long ) *)
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
 
         fun ltx_of_term _ _ (Const ("List.list.Cons", @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $ t2) 
