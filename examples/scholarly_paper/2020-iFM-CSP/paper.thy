@@ -18,27 +18,18 @@ title*[tit::title]\<open>Philosophers may Dine - Definitively!\<close>
 
 author*[safouan, email="''safouan.taha@lri.fr''",affiliation="\<open>LRI, CentraleSupelec\<close>"]
         \<open>Safouan Taha\<close>
-
-(*
-author*[safouann::author, email="''safouan.taha@lri.fr''",affiliation="\<open>LRI, CentraleSupelec\<close>"]
-        \<open>Safouan Taha\<close>
-
-text*[safouannn::author, email="''safouan.taha@lri.fr''",affiliation="\<open>LRI, CentraleSupelec\<close>"]
-        \<open>Safouan Taha\<close>
-*)
-
-text*[bu::author, email= "''wolff@lri.fr''",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]
+author*[bu, email= "''wolff@lri.fr''",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]
         \<open>Burkhart Wolff\<close>
-text*[lina::author,email="''lina.ye@lri.fr''",affiliation="\<open>LRI, Inria, LSV, CentraleSupelec\<close>"]
+author*[lina,email="''lina.ye@lri.fr''",affiliation="\<open>LRI, Inria, LSV, CentraleSupelec\<close>"]
         \<open>Lina Ye\<close>
     
 abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Algebra\<close>,
                                    \<open>Concurrency\<close>,\<open>Computational Models\<close>]"]
-\<open>  The theory of Communicating Sequential Processes going back to Hoare and Roscoe is  
-   still today one of the reference theories for concurrent specification and computing.
-   In 1997, a first formalization in \<^isabelle> of the denotational semantics of the 
-   Failure/Divergence Model of \<^csp> was undertaken; in particular, this model can cope with infinite 
-   alphabets, in contrast to model-checking approaches limited to finite ones. 
+\<open>  The theory of Communicating Sequential Processes going back to Hoare and Roscoe is still today 
+   one of the reference theories for concurrent specification and computing. In 1997, a first 
+   formalization in \<^isabelle> of the denotational semantics of the  Failure/Divergence Model of
+   \<^csp> was undertaken; in particular, this model can cope with infinite alphabets, in contrast 
+   to model-checking approaches limited to finite ones. 
    In this paper, we extend this theory to a significant degree by taking advantage of more powerful 
    automation of modern Isabelle version, which came even closer to recent developments in the 
    semantic foundation of \<^csp>. 
