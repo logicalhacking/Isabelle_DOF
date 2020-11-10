@@ -44,6 +44,7 @@ text\<open> Excerpt of the BE EN 50128:2011, page 22. \<close>
 
 section\<open>Terms and Definitions\<close>
 
+typ "sfc"
 Definition*[assessment::sfc,short_name="''assessment''"]
 \<open>process of analysis to determine whether software, which may include 
 process, documentation, system, subsystem hardware and/or software components, meets the specified 
@@ -68,6 +69,7 @@ criteria:
   configuration management system or is a part of a collection of components 
    (e. g. subsystems) which have an independent version
 \<close>
+typ "sfc"
 
 Definition*[CMGR::sfc, short_name="''configuration manager''"]
 \<open>entity that is responsible for implementing and carrying out the processes

@@ -257,7 +257,7 @@ val _ =
   Outer_Syntax.command ("Definition*", @{here}) "Textual Definition"
     (attributes -- Parse.opt_target -- Parse.document_source --| semi
       >> (Toplevel.theory o (Onto_Macros.enriched_formal_statement_command
-                                           (SOME "definition") 
+                                           (SOME "math_content") (* should be (SOME "definition") *) 
                                            [("mcc","defn")] 
                                            {markdown = true} )));
 

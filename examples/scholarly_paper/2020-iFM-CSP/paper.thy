@@ -996,8 +996,7 @@ restrictions on the structure of components. None of our paradigmatic examples c
 be automatically proven with any of the discussed SMT techniques without restrictions.
 \<close>
 
-section*["conclusion"::conclusion,main_author="Some(@{docitem ''bu''}::author)"]
-\<open>Conclusion\<close>
+section*["conclusion"::conclusion,main_author="Some(@{docitem ''bu''}::author)"]\<open>Conclusion\<close>
 text\<open>We presented a formalisation of the most comprehensive semantic model for \<^csp>, a 'classical' 
 language for the specification and analysis of concurrent systems studied in a rich body of 
 literature. For this purpose, we ported @{cite "tej.ea:corrected:1997"} to a modern version

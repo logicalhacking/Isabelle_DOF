@@ -14,7 +14,7 @@
 chapter\<open>Term Antiquotations\<close>
 
 text\<open>Terms are represented by "Inner Syntax" parsed by an Earley parser in Isabelle.
-For historical reasons, term antiquotations are called therefore somewhat misleadingly
+For historical reasons, \<^emph>\<open>term antiquotations\<close> are called therefore somewhat misleadingly
 "Inner Syntax Antiquotations". \<close>
 
 theory 

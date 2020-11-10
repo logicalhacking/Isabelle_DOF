@@ -487,11 +487,13 @@ formal model. For example, assume a definition: \<close>
 
 definition last :: "'a list \<Rightarrow> 'a" where "last S = hd(rev S)"
 
+(* Old stuff using abstract classes.
 (*<*)
 text*[claim::assertions]\<open>For non-empty lists, our definition yields indeed the last element of a list.\<close>
 assert*[claim::assertions] "last[4::int] = 4"
 assert*[claim::assertions] "last[1,2,3,4::int] = 4"
 (*>*)
+*)
 text\<open>We want to check the consequences of this definition and can add the following statements:
 @{boxed_theory_text [display]\<open>
 text*[claim::assertions]\<open>For non-empty lists, our definition yields indeed 

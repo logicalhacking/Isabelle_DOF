@@ -97,10 +97,10 @@ fun transform_cid thy NONE X = X
                                  val sub_cid_long =  DOF_core.read_cid_global thy sub_cid
                              in  if DOF_core.is_subclass_global thy  sub_cid_long cid_long
                                  then (SOME (sub_cid,pos))
-                                 else (SOME (sub_cid,pos)) 
-                                      (*  BUG : check reveals problem of Definition* misuse.  
+                                 else (* (SOME (sub_cid,pos)) *)
+                                      (*  BUG : check reveals problem of Definition* misuse. *)  
                                         error("class "^sub_cid_long^
-                                              " must be sub-class of "^cid_long) *)
+                                              " must be sub-class of "^cid_long) 
                              end  
 in
 
@@ -425,30 +425,6 @@ section\<open>Tests\<close>
 ML\<open>@{term "side_by_side_figure"};
    @{typ "doc_class rexp"}; 
    DOF_core.SPY;\<close>
-
-
-section\<open>DEPRECATED : An attempt to model Standard Isabelle Formal Content\<close>
-
-doc_class assertions =
-    properties :: "term list"
-  
-doc_class "thms" =
-    properties :: "thm list"
-
-doc_class formal_item = 
-    item :: "(assertions + thms)"
-
-doc_class definitions =
-    requires    :: "formal_item list"
-    establishes :: "thms list"
-
-doc_class formal_content =
-    style :: "string option"
-    accepts "\<lbrace>formal_item\<rbrace>\<^sup>+"
-
-doc_class concept = 
-    tag        :: "string"   <= "''''"
-    properties :: "thm list" <= "[]"
 
 
 end
