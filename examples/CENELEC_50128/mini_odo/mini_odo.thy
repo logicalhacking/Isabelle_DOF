@@ -443,13 +443,13 @@ integrated source, we will, in the following, point out three scenarios.\<close>
 
 subsection\<open>Internal Verification of Claims in the Requirements Specification.\<close>
 text\<open>In our case, the SR-team early on detected a property necessary
-for error-detection of the device (c.f. @{docitem verific}):
+for error-detection of the device (c.f. @{technical verific}):
 \enlargethispage{2\baselineskip}\begin{isar}
 text*[encoder_props::requirement]<open> The requirement specification team ...
     C1 & C2 & C3  = 0   (bitwise logical AND operation)
     C1 | C2 | C3  = 1   (bitwise logical OR operation) <close>
 \end{isar}
-After the Isabelle proofs shown in @{docitem verific}, we can either register the theorems
+After the Isabelle proofs shown in @{technical verific}, we can either register the theorems
 directly in an evidence statement: 
 
 \begin{isar}
@@ -562,12 +562,18 @@ to a test-environment or test-engine. \<close>
 
 text\<open>Finally some examples of references to doc-items, i.e. text-elements with declared 
      meta-information and status. \<close> 
-text \<open> As established by @{docitem (unchecked) \<open>t10\<close>}, 
-                         @{docitem (define) \<open>t10\<close>} \<close>
-text \<open> the               @{docitem \<open>t10\<close>}                      
-       as well as the    @{docitem \<open>ass122\<close>}\<close>  
+text \<open> As established by @{test_result (unchecked) \<open>t10\<close>}, 
+                         @{test_result (define) \<open>t10\<close>} \<close>
+text \<open> the               @{test_result \<open>t10\<close>}                      
+       as well as the    @{SRAC \<open>ass122\<close>}\<close>  
 text \<open> represent a justification of the safety related applicability 
        condition @{SRAC \<open>ass122\<close>} aka exported constraint @{EC \<open>ass122\<close>}.\<close> 
+
+(* due to notational conventions for antiquotations, one may even write: *)
+(* CRASHES WITH LaTeX backend error. *)
+text \<open> represent a justification of the safety related applicability 
+       condition \<^SRAC>\<open>ass122\<close> aka exported constraint \<^EC>\<open>ass122\<close>.\<close> 
+
 
 (*<*)   
 end
