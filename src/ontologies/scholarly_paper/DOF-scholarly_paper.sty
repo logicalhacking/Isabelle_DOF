@@ -340,8 +340,7 @@
  }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Besser: Einfach durchreichen wg Vererbung !
-\NewEnviron{isamarkupDefinition*}[1][]{\isaDof[env={text.scholarly_paper.definition},#1]{\BODY}}
+\NewEnviron{isamarkupDefinition*}[1][]{\isaDof[env={text},#1]{\BODY}}
 \newisadof{text.scholarly_paper.definition}%
 [label=,type=%
  , scholarly_paper.math_content.short_name =%
