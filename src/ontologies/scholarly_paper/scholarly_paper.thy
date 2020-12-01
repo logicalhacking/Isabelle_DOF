@@ -244,38 +244,79 @@ doc_class "math_example"     = math_content +
    mcc           :: "math_content_class" <= "expl" 
    invariant d5  :: "\<lambda> \<sigma>::math_example. mcc \<sigma> = expl"
 
-subsection\<open>Ontological Macros\<close>
+
+subsection\<open>Ontological Macros \<^verbatim>\<open>Definition*\<close> , \<^verbatim>\<open>Lemma**\<close>, \<^verbatim>\<open>Theorem*\<close> ... \<close>
+
+text\<open>These ontological macros allow notations are defined for the class 
+  \<^typ>\<open>math_content\<close> in order to allow for a variety of free-form formats;
+  in order to provide specific sub-classes, default options can be set
+  in order to support more succinct notations and avoid constructs
+  such as :
+
+  \<^theory_text>\<open>Definition*[l::"definition"]\<open>...\<close>\<close>.
+
+  Instead, the more convenient global declaration 
+  \<^theory_text>\<open>declare[[Definition_default_class="definition"]]\<close>
+  supports subsequent abbreviations:
+
+    \<^theory_text>\<open>Definition*[l]\<open>...\<close>\<close>.
+\<close>
+
+ML\<open>
+val (Definition_default_class, Definition_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Definition_default_class\<close> (K "");
+val (Lemma_default_class, Lemma_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Lemma_default_class\<close> (K "");
+val (Theorem_default_class, Theorem_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Theorem_default_class\<close> (K "");
+
+
+\<close>
+setup\<open>Definition_default_class_setup\<close>
+setup\<open>Lemma_default_class_setup\<close>
+setup\<open>Theorem_default_class_setup\<close>
+
 ML\<open> local open ODL_Command_Parser in
-(* *********************************************************************** *)
-(* Ontological Macro Command Support                                       *)
-(* *********************************************************************** *)
 
-(* {markdown = true} sets the parsing process such that in the text-core markdown elements are
-   accepted. *)
+(* {markdown = true} sets the parsing process such that in the text-core 
+   markdown elements are accepted. *)
 
-val _ =
-  Outer_Syntax.command ("Definition*", @{here}) "Textual Definition"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (Onto_Macros.enriched_formal_statement_command
-                                           (SOME "math_content") (* should be (SOME "definition") *) 
-                                           [("mcc","defn")] 
-                                           {markdown = true} )));
+       
+val _ = let fun use_Definition_default thy = 
+                let val ddc = Config.get_global thy Definition_default_class
+                in  (SOME(((ddc = "") ? (K "math_content")) ddc)) end
+        in  Outer_Syntax.command ("Definition*", @{here}) "Textual Definition"
+               (attributes -- Parse.opt_target -- Parse.document_source --| semi
+                >> (Toplevel.theory o (fn args => fn thy => 
+                                            Onto_Macros.enriched_formal_statement_command 
+                                               (use_Definition_default thy) 
+                                               [("mcc","defn")] 
+                                               {markdown = true} args thy)))
+        end;
 
-val _ =
-  Outer_Syntax.command ("Lemma*", @{here}) "Textual Lemma Outline"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (Onto_Macros.enriched_formal_statement_command 
-                                           (SOME "lemma") 
-                                           [("mcc","lem")] 
-                                           {markdown = true} )));
+val _ = let fun use_Lemma_default thy = 
+                let val ddc = Config.get_global thy Definition_default_class
+                in  (SOME(((ddc = "") ? (K "math_content")) ddc)) end
+        in   Outer_Syntax.command ("Lemma*", @{here}) "Textual Lemma Outline"
+                (attributes -- Parse.opt_target -- Parse.document_source --| semi
+                >> (Toplevel.theory o (fn args => fn thy => 
+                                            Onto_Macros.enriched_formal_statement_command 
+                                               (use_Lemma_default thy) 
+                                               [("mcc","lem")] 
+                                               {markdown = true} args thy)))
+        end;
 
-val _ =
-  Outer_Syntax.command ("Theorem*", @{here}) "Textual Theorem Outline"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (Onto_Macros.enriched_formal_statement_command 
-                                           (SOME "theorem") 
-                                           [("mcc","thm")] 
-                                           {markdown = true} )));
+val _ = let fun use_Theorem_default thy = 
+                let val ddc = Config.get_global thy Definition_default_class
+                in  (SOME(((ddc = "") ? (K "math_content")) ddc)) end
+        in  Outer_Syntax.command ("Theorem*", @{here}) "Textual Theorem Outline"
+               (attributes -- Parse.opt_target -- Parse.document_source --| semi
+               >> (Toplevel.theory o (fn args => fn thy => 
+                                           Onto_Macros.enriched_formal_statement_command 
+                                               (use_Theorem_default thy) 
+                                               [("mcc","thm")] 
+                                               {markdown = true} args thy)))
+        end;
 
 end 
 \<close>
@@ -441,10 +482,6 @@ fun check_group a = map (check_group_elem (check_level_hd (hd a))) (tl a) ;
 \<close>
 
 section\<open>Miscelleous\<close>
-
-ML\<open>
-Parse.int
-\<close>
 
 subsection\<open>Layout Trimming Commands\<close>
 setup\<open>    DOF_lib.define_macro    \<^binding>\<open>hs\<close>        "\\hspace{" "}" (K(K())) \<close> 

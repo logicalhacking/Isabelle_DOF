@@ -8,6 +8,9 @@ begin
 open_monitor*[this::article]
 
 declare[[strict_monitor_checking = false]]
+declare[[ Definition_default_class="definition"]]
+declare[[ Lemma_default_class="lemma"]]
+declare[[ Theorem_default_class="theorem"]]
 
 setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>csp\<close>       "CSP"
        #> DOF_lib.define_shortcut \<^binding>\<open>isabelle\<close>  "Isabelle/HOL"\<close> 
@@ -528,15 +531,17 @@ To handle termination better, we added two new processes \<open>CHAOS\<^sub>S\<^
 %thus must be without it. 
 \<close>
 
-text*[X22::"definition"]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<close>
-text*[X32::"definition"]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>         \<close>
-Definition*[X42::"definition"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<close>
+(*<*) (* a test ...*)
+text*[X22 ::math_content   ]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                                             \<^vs>\<open>-0.7cm\<close> \<close>
+text*[X32::"definition", mcc=defn]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))                   \<^vs>\<open>-0.7cm\<close>\<close>\<close>
+Definition*[X42]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>  \<^vs>\<open>-0.7cm\<close>\<close>
+Definition*[X52::"definition"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>  \<^vs>\<open>-0.7cm\<close>\<close>
 
-text\<open> The \<open>RUN\<close>-process defined @{definition X22} represents the process that accepts all 
+text\<open> The \<open>RUN\<close>-process defined @{math_content X22} represents the process that accepts all 
 events, but never stops nor deadlocks. The \<open>CHAOS\<close>-process comes in two variants shown in 
-@{definition X32} and @{definition X42}: the process that non-deterministically stops or 
-accepts any offered event, whereas \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> can additionally terminate.\<close>
-
+@{definition X32} and @{definition X42} @{definition X52}: the process that non-deterministically 
+stops or accepts any offered event, whereas \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> can additionally terminate.\<close>
+(*>*)
 
 Definition*[X2]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<^vs>\<open>-0.7cm\<close>\<close>
 Definition*[X3]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>          \<^vs>\<open>-0.7cm\<close>\<close>
@@ -605,8 +610,7 @@ In the literature, deadlock and lifelock are phenomena that are often
 handled separately. One contribution of our work is establish their precise relationship inside
 the Failure/Divergence Semantics of \<^csp>.\<close>
 
-(* bizarre: Definition* does not work for this single case *)
-text*[X10::"definition"]\<open> \<open>deadlock\<^sub>-free P \<equiv>  DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close> \<^vs>\<open>-0.3cm\<close> \<close>
+Definition*[X10]\<open> \<open>deadlock\<^sub>-free P \<equiv>  DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close> \<^vs>\<open>-0.3cm\<close> \<close>
 
 text\<open>\<^noindent> A process \<open>P\<close> is deadlock-free if and only if after any trace \<open>s\<close> without \<open>\<surd>\<close>, the union of \<open>\<surd>\<close> 
 and all events of \<open>P\<close> can never be a refusal set associated to \<open>s\<close>, which means that \<open>P\<close> cannot 
@@ -635,9 +639,9 @@ Theorem*[T2, short_name="''DF implies LF''"]
   \<open>  \hspace{0.5cm} \<open>deadlock_free P \<longrightarrow> livelock_free P\<close>   \<^vs>\<open>-0.3cm\<close>\<close>
 
 text\<open>
-This is totally natural, at a first glance, but surprising as the proof of deadlock-freeness only requires 
-failure refinement \<open>\<sqsubseteq>\<^sub>\<F>\<close> (see @{definition \<open>X10\<close>}) where divergence traces are mixed within the failures set.
-Note that the existing tools in the literature normally detect these two phenomena  
+This is totally natural, at a first glance, but surprising as the proof of deadlock-freeness only 
+requires failure refinement \<open>\<sqsubseteq>\<^sub>\<F>\<close> (see @{definition \<open>X10\<close>}) where divergence traces are mixed within 
+the failures set. Note that the existing tools in the literature normally detect these two phenomena  
 separately, such as FDR for which checking livelock-freeness is very costly. 
 In our framework, deadlock-freeness of a given system 
 implies its livelock-freeness. However, if a system is not deadlock-free, 

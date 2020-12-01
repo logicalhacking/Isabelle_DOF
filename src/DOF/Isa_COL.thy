@@ -98,7 +98,7 @@ fun transform_cid thy NONE X = X
                              in  if DOF_core.is_subclass_global thy  sub_cid_long cid_long
                                  then (SOME (sub_cid,pos))
                                  else (* (SOME (sub_cid,pos)) *)
-                                      (*  BUG : check reveals problem of Definition* misuse. *)  
+                                      (*  BUG : check reveals problem of Definition* misuse.  *)
                                         error("class "^sub_cid_long^
                                               " must be sub-class of "^cid_long) 
                              end  
