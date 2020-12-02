@@ -702,7 +702,7 @@ proof - fix a :: nat
 
 subsection*[t233::technical]\<open> Theories and the Signature API\<close>  
 text\<open>
-\<^enum> \<^ML>\<open>Sign.tsig_of : theory -> Type.tsig\<close> extraxts the type-signature of a theory
+\<^enum> \<^ML>\<open>Sign.tsig_of : theory -> Type.tsig\<close> extracts the type-signature of a theory
 \<^enum> \<^ML>\<open>Sign.syn_of  : theory -> Syntax.syntax\<close> extracts the constant-symbol signature 
 \<^enum> \<^ML>\<open>Sign.of_sort : theory -> typ * sort -> bool\<close> decides that a type belongs to a sort.
 \<close>

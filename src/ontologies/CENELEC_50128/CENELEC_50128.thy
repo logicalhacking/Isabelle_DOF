@@ -28,8 +28,20 @@ theory CENELEC_50128
   imports  "../technical_report/technical_report"
 begin
 
+(* this is a hack and should go into an own ontology, providing thingsd like:
+  - Assumption*
+  - Hypothesis*
+  - Definition*.  (Une redefinition de ce qui se passe dans tech-report, cible a semi-formal 
+                         “Definitions of terminology” \<dots> )
+  - Objective"
+  - Claim* 
+  - Requirement*
+  
+*) 
+   
+
 text\<open>We re-use the class @\<open>typ math_content\<close>, which provides also a framework for
-semi-formal terminology, which we re-use by this definition.\<close>
+semi-formal "math-alike" terminology, which we re-use by this definition.\<close>
 
 doc_class semi_formal_content = math_content +
       status        :: status <= "semiformal" 
@@ -39,27 +51,29 @@ type_synonym sfc = semi_formal_content
 
 (*>>*)
 
+declare[[ Definition_default_class="semi_formal_content"]]
+
+
 text\<open> Excerpt of the BE EN 50128:2011, page 22. \<close>
 
 
 section\<open>Terms and Definitions\<close>
 
-typ "sfc"
-Definition*[assessment::sfc,short_name="''assessment''"]
+Definition*[assessment,short_name="''assessment''"]
 \<open>process of analysis to determine whether software, which may include 
 process, documentation, system, subsystem hardware and/or software components, meets the specified 
 requirements and to form  a judgement as to whether the software is fit for its intended purpose. 
 Safety assessment is focused on but not limited to the safety properties of a system.\<close>
 
-Definition*[assessor::sfc, short_name="''assessor''"]
+Definition*[assessor, short_name="''assessor''"]
 \<open>entity that carries out an assessment\<close>
 
-Definition*[COTS::sfc, short_name="''commercial off-the-shelf software''"]
+Definition*[COTS, short_name="''commercial off-the-shelf software''"]
 \<open>software defined by market-driven need, commercially available and whose fitness for purpose 
 has been demonstrated by a broad spectrum of commercial users\<close>
 
 
-Definition*[component::sfc]
+Definition*[component]
 \<open>a constituent part of software which has well-defined interfaces and behaviour 
 with respect to the software architecture and design and fulfils the following 
 criteria:
@@ -71,53 +85,53 @@ criteria:
 \<close>
 typ "sfc"
 
-Definition*[CMGR::sfc, short_name="''configuration manager''"]
+Definition*[CMGR, short_name="''configuration manager''"]
 \<open>entity that is responsible for implementing and carrying out the processes
 for the configuration management of documents, software and related tools including 
 \<^emph>\<open>change management\<close>\<close>
 
-Definition*[customer::sfc]
+Definition*[customer]
 \<open>entity which purchases a railway control and protection system including the software\<close>
 
-Definition*[designer::sfc]
+Definition*[designer]
 \<open>entity that analyses and transforms specified requirements into acceptable design solutions 
 which have the required safety integrity level\<close>
 
-Definition*[entity::sfc]
+Definition*[entity]
 \<open>person, group or organisation who fulfils a role as defined in this European Standard\<close>
 
-declare_reference*[fault::sfc]
-Definition*[error::sfc]
+declare_reference*[fault]
+Definition*[error]
 \<open>defect, mistake or inaccuracy which could result in failure or in a deviation 
 from the intended performance or behaviour (cf. @{semi_formal_content (unchecked) \<open>fault\<close>}))\<close>
 
-Definition*[fault::sfc]
+Definition*[fault]
 \<open>defect, mistake or inaccuracy which could result in failure or in a deviation 
 from the intended performance or behaviour (cf @{semi_formal_content \<open>error\<close>})\<close>
 
-Definition*[failure::sfc]
+Definition*[failure]
 \<open>unacceptable difference between required and observed performance\<close>
 
-Definition*[FT::sfc, short_name="''fault tolerance''"]
+Definition*[FT, short_name="''fault tolerance''"]
 \<open>built-in capability of a system to provide continued correct provision of service as specified, 
 in the presence of a limited number of hardware or software faults\<close>
 
-Definition*[firmware::sfc]
+Definition*[firmware]
 \<open>software stored in read-only memory or in semi-permanent storage such as flash memory, in a 
 way that is functionally independent of applicative software\<close>
 
-Definition*[GS::sfc,short_name="''generic software''"]
+Definition*[GS,short_name="''generic software''"]
 \<open>software which can be used for a variety of installations purely by the provision of 
 application-specific data and/or algorithms\<close>
 
-Definition*[implementer::sfc]
+Definition*[implementer]
 \<open>entity that transforms specified designs into their physical realisation\<close> 
 
-Definition*[integration::sfc]
+Definition*[integration]
 \<open>process of assembling software and/or hardware items, according to the architectural and 
 design specification, and testing the integrated unit\<close>
 
-Definition*[integrator::sfc]
+Definition*[integrator]
 \<open>entity that carries out software integration\<close>
 
 Definition*[PES :: sfc, short_name="''pre-existing software''"]
@@ -127,52 +141,52 @@ off-the shelf) and open source software\<close>
 Definition*[OSS :: sfc, short_name="''open source software''"]
 \<open>source code available to the general public with relaxed or non-existent copyright restrictions\<close>
 
-Definition*[PLC::sfc, short_name="''programmable logic controller''"]
+Definition*[PLC, short_name="''programmable logic controller''"]
 \<open>solid-state control system which has a user programmable memory for storage of instructions to 
 implement specific functions\<close>
 
-Definition*[PM::sfc, short_name="''project management''"]
+Definition*[PM, short_name="''project management''"]
 \<open>administrative and/or technical conduct of a project, including safety aspects\<close>
 
-Definition*[PGMGR::sfc, short_name="''project manager''"]
+Definition*[PGMGR, short_name="''project manager''"]
 \<open>entity that carries out project management\<close>
 
-Definition*[reliability::sfc]
+Definition*[reliability]
 \<open>ability of an item to perform a required function under given conditions for a given period of time\<close>
 
-Definition*[robustness::sfc]
+Definition*[robustness]
 \<open>ability of an item to detect and handle abnormal situations\<close>
 
-Definition*[RMGR::sfc, short_name="''requirements manager''"]
+Definition*[RMGR, short_name="''requirements manager''"]
 \<open>entity that carries out requirements management\<close>
 
-Definition*[RMGMT::sfc, short_name="''requirements management''"]
+Definition*[RMGMT, short_name="''requirements management''"]
 \<open>the process of eliciting, documenting, analysing, prioritising and agreeing on requirements and 
 then controlling change and communicating to relevant stakeholders. It is a continuous process 
 throughout a project\<close>
 
-Definition*[risk::sfc]
+Definition*[risk]
 \<open>combination of the rate of occurrence of accidents and incidents resulting in harm (caused by 
 a hazard) and the degree of severity of that harm\<close>
 
-Definition*[safety::sfc]
+Definition*[safety]
 \<open>freedom from unacceptable levels of risk of harm to people\<close>
 
-Definition*[SA::sfc, short_name="''safety authority''"]
+Definition*[SA, short_name="''safety authority''"]
 \<open>body responsible for certifying that safety related software or services comply with relevant 
 statutory safety requirements\<close>
 
-Definition*[SF::sfc, short_name="''safety function''"]
+Definition*[SF, short_name="''safety function''"]
 \<open>a function that implements a part or whole of a safety requirement\<close>
 
-Definition*[SFRS::sfc, short_name= "''safety-related software''"]
+Definition*[SFRS, short_name= "''safety-related software''"]
 \<open>software which performs safety functions\<close>
 
-Definition*[software::sfc]
+Definition*[software]
 \<open>intellectual creation comprising the programs, procedures, rules, data and any associated 
 documentation pertaining to the operation of a system\<close>
 
-Definition*[SB::sfc, short_name="''software baseline''"]
+Definition*[SB, short_name="''software baseline''"]
 \<open>complete and consistent set of source code, executable files, configuration files, 
 installation scripts and documentation that are needed for a software release. Information about 
 compilers, operating systems, preexisting software and dependent tools is stored as part of the 
@@ -183,7 +197,7 @@ released and assessed
 
 
 
-Definition*[SWLC::sfc, short_name="''software life-cycle''"]
+Definition*[SWLC, short_name="''software life-cycle''"]
 \<open>those activities occurring during a period of time that starts when
 software is conceived and ends when the software is no longer available for use. The software life 
 cycle typically includes a requirements phase, design phase,test phase, integration phase, 
@@ -191,35 +205,35 @@ deployment phase and a maintenance phase 3.1.35 software maintainability
 capability of the software to be modified; to correct faults, improve to a different environment
 \<close>
 
-Definition*[SM::sfc, short_name="''software maintenance''"]
+Definition*[SM, short_name="''software maintenance''"]
 \<open> action, or set of actions, carried out on software after deployment functionality
 performance or other attributes, or adapt it with the aim of enhancing or correcting its\<close>
 
-Definition*[SOSIL::sfc, short_name="''software safety integrity level''"]
+Definition*[SOSIL, short_name="''software safety integrity level''"]
 \<open>classification number which determines the techniques and measures that have to be applied to 
 software NOTE Safety-related software has been classified into five safety integrity levels, where 
 0 is the lowest and 4 the highest.\<close>
 
-Definition*[supplier::sfc]
+Definition*[supplier]
 \<open>entity that designs and builds a railway control and protection system including the software 
 or parts thereof\<close>
 
-Definition*[SYSIL::sfc, short_name="''system safety integrity level''"]
+Definition*[SYSIL, short_name="''system safety integrity level''"]
 \<open>classification number which indicates the required degree of confidence that an integrated 
 system comprising hardware and software will meet its specified safety requirements\<close>
 
-Definition*[tester::sfc]\<open>an entity that carries out testing\<close>
+Definition*[tester]\<open>an entity that carries out testing\<close>
 
-Definition*[testing::sfc]
+Definition*[testing]
 \<open>process of executing software under controlled conditions as to ascertain its behaviour and 
 performance compared to the corresponding requirements specification\<close>
 
-Definition*[TCT1::sfc, short_name="''tool class T1''"]
+Definition*[TCT1, short_name="''tool class T1''"]
 \<open>generates no outputs which can directly or indirectly contribute to the executable code 
 (including data) of the software NOTE 11 examples include: a text editor or a requirement or 
 design support tool with no automatic code generation capabilities; configuration control tools.\<close>
 
-Definition*[TCT2::sfc,short_name="''tool class T2''"]
+Definition*[TCT2,short_name="''tool class T2''"]
 \<open>supports the test or verification of the design or executable code, where errors in the tool 
 can fail to reveal defects but cannot directly create errors in the executable software
 NOTE T2 examples include: a test harness generator; a test coverage measurement tool; a static 
@@ -227,35 +241,35 @@ analysis tool. reproduce defined versions and be the input for future releases a
 at upgrade in the maintenance phase
 \<close>
 
-Definition*[TCT3::sfc, short_name="''tool class T3''"]
+Definition*[TCT3, short_name="''tool class T3''"]
 \<open>generates outputs which can directly or indirectly contribute to the executable code 
 (including data) of the safety related system NOTE T3 examples include: a source code compiler, 
 a data/algorithms compiler, a tool to change set-points during system operation; an optimising 
 compiler where the relationship between the source code program and the generated object code is 
 not obvious; a compiler that incorporates an executable run-time package into the executable code.
 \<close>
-Definition*[traceability::sfc, short_name="''traceability''"]
+Definition*[traceability, short_name="''traceability''"]
 \<open>degree to which relationship can be established between two or more products of a development 
 process, especially those having a predecessor/successor or master/subordinate relationship to one 
 another\<close>
 
-Definition*[validation::sfc, short_name="''validation''"]
+Definition*[validation, short_name="''validation''"]
 \<open>process of analysis followed by a judgment based on evidence to
 documentation, software or application) fits the user needs,in particular with respect to safety 
 and quality and determine whether an item (e.g. process, with emphasis on the suitability of its 
 operation in accordance to its purpose in its intended environment\<close>
 
-Definition*[validator::sfc, short_name="''validator''"]
+Definition*[validator, short_name="''validator''"]
 \<open>entity that is responsible for the validation\<close>
 
-Definition*[verification::sfc, short_name="''verification''"]
+Definition*[verification, short_name="''verification''"]
 \<open>process of examination followed by a judgment based on evidence that output items (process,
 documentation, software or application) of a specific development phase fulfils the requirements of 
 that phase with respect to completeness, correctness and consistency.
 NOTE Verification is mostly based on document reviews (design, implementation, test documents etc.).
 \<close>
 
-Definition*[verifier::sfc, short_name="''verifier''"]
+Definition*[verifier, short_name="''verifier''"]
 \<open>entity that is responsible for one or more verification activities\<close>
 
 

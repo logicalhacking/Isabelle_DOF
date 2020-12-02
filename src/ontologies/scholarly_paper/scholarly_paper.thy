@@ -189,8 +189,21 @@ doc_class math_content = tc +
    invariant s2  :: "\<lambda> \<sigma>::math_content. status \<sigma> = semiformal"
 type_synonym math_tc = math_content
 
+text\<open>The class \<^typ>\<open>math_content\<close> is perhaps more adequaltely described as "math-alike content".
+Sub-classes can englobe instances such as:
+\<^item> terminological definitions such as:
+  \<open>Definition*[assessor::sfc, short_name="''assessor''"]\<open>entity that carries out an assessment\<close>\<close>
+\<^item> free-form mathematical definitions such as:
+  \<open>Definition*[process_ordering, short_name="''process ordering''"]\<open>
+   We define \<open>P \<sqsubseteq> Q \<equiv> \<psi>\<^sub>\<D> \<and> \<psi>\<^sub>\<R> \<and> \<psi>\<^sub>\<M> \<close>,  where \<^vs>\<open>-0.2cm\<close>
+   1) \<^vs>\<open>-0.2cm\<close> \<open>\<psi>\<^sub>\<D> = \<D> P \<supseteq> \<D> Q \<close>
+   2) ...
+   \<close>\<close>
+\<^item> semi-formal descriptions, which are free-form mathematical definitions on which finally
+  an attribute with a formal Isabelle definition is attached. 
 
-find_theorems name:"s1" name:"scholarly"
+\<close>
+
 
 (* type qualification is a work around *)
 

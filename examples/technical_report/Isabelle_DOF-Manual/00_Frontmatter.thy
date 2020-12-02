@@ -16,6 +16,8 @@ theory "00_Frontmatter"
   imports "Isabelle_DOF.technical_report"
 begin
 
+text\<open> \<open> \<tau>\<close>\<close>
+
 section\<open>Document Local Setup.\<close>
 text\<open>Some internal setup, introducing document specific abbreviations and macros.\<close>
 
