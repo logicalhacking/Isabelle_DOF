@@ -477,12 +477,17 @@ subsection\<open>Common Abbreviations\<close>
 
 define_shortcut* eg  \<rightleftharpoons> \<open>\eg\<close>  (* Latin: „exempli gratia“  meaning  „for example“. *)
                  ie  \<rightleftharpoons> \<open>\ie\<close>  (* Latin: „id est“  meaning „that is to say“. *)
-                 etc \<rightleftharpoons> \<open>\etc\<close> (* Latin : et cetera *)
+                 etc \<rightleftharpoons> \<open>\etc\<close> (* Latin : „et cetera“ meaning „et cetera“ *)
 
 subsection\<open>Layout Trimming Commands\<close>
 
+define_macro* hs \<rightleftharpoons> \<open>\hspace{\<close> \<open>}\<close>
+define_macro* vs \<rightleftharpoons> \<open>\vspace{\<close> \<open>}\<close>
+
+(*
 setup\<open>    DOF_lib.define_macro    \<^binding>\<open>hs\<close>        "\\hspace{" "}" (K(K())) \<close>
 setup\<open>    DOF_lib.define_macro    \<^binding>\<open>vs\<close>        "\\vspace{" "}" (K(K())) \<close> 
+*)
 
 define_shortcut* clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
 

@@ -29,7 +29,7 @@ theory Isa_COL
   and      "figure*" "side_by_side_figure*"   :: document_body 
   and      "assert*" :: thy_decl
           
-  and      "define_shortcut*" :: thy_decl
+  and      "define_shortcut*" "define_macro*":: thy_decl
 
 begin
   
@@ -293,9 +293,9 @@ fun define_macro name s1 s2 reportNtest =
 
 local (* hide away really strange local construction *)
 fun enclose_body2 front body1 middle body2 post =
-  (if front = "" then [] else [Latex.string front]) @ body1 @
+  (if front  = "" then [] else [Latex.string front]) @ body1 @
   (if middle = "" then [] else [Latex.string middle]) @ body2 @
-  (if post = "" then [] else [Latex.string post]);
+  (if post   = "" then [] else [Latex.string post]);
 in
 fun define_macro2 name front middle post reportNtest1 reportNtest2 =
       Thy_Output.antiquotation_raw_embedded name (Scan.lift (   Args.cartouche_input 
@@ -416,19 +416,33 @@ end
 
 ML\<open>
 local 
-val parse_define_shortcut = Parse.binding -- 
-                            ((\<^keyword>\<open>\<rightleftharpoons>\<close> || \<^keyword>\<open>==\<close>) |-- (Parse.alt_string || Parse.cartouche))
+val parse_literal = Parse.alt_string || Parse.cartouche
+val parse_define_shortcut = Parse.binding -- ((\<^keyword>\<open>\<rightleftharpoons>\<close> || \<^keyword>\<open>==\<close>) |-- parse_literal)
 val define_shortcuts = fold(uncurry DOF_lib.define_shortcut)
 in
-val _ =
-  Outer_Syntax.command \<^command_keyword>\<open>define_shortcut*\<close> "define LaTeX shortcut"
-    (Scan.repeat1 parse_define_shortcut >> (Toplevel.theory o define_shortcuts));
+val _ =  Outer_Syntax.command \<^command_keyword>\<open>define_shortcut*\<close> "define LaTeX shortcut"
+            (Scan.repeat1 parse_define_shortcut >> (Toplevel.theory o define_shortcuts));
 end
 \<close>
 
+ML\<open>
+val parse_literal = Parse.alt_string || Parse.cartouche
+val parse_define_shortcut = (Parse.binding 
+                             -- ((\<^keyword>\<open>\<rightleftharpoons>\<close> || \<^keyword>\<open>==\<close>) |-- parse_literal))
+                             -- parse_literal
+                             -- (Scan.option (\<^keyword>\<open>(\<close> |-- Parse.ML_source --|\<^keyword>\<open>)\<close>))
+
+fun define_macro (X,NONE) = (uncurry(uncurry(uncurry DOF_lib.define_macro)))(X,K(K()));
+
+
+val _ =  Outer_Syntax.command \<^command_keyword>\<open>define_macro*\<close> "define LaTeX shortcut"
+            (Scan.repeat1 parse_define_shortcut >> (Toplevel.theory o (fold define_macro)));
+
+\<close>
+
+
 section\<open>Tables\<close>
 (* TODO ! ! ! *)
-
 (* dito the future monitor: table - block *)
 
 

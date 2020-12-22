@@ -22,7 +22,7 @@ chapter*[isadof_developers::text_section]\<open>Extending \<^isadof>\<close>
 text\<open>
   In this chapter, we describe the basic implementation aspects of \<^isadof>, which is based on 
   the following design-decisions:
-  \<^item> the entire \<^isadof> is a ``pure add-on,'' \ie, we deliberately resign on the possibility to 
+  \<^item> the entire \<^isadof> is a ``pure add-on,'' \<^ie>, we deliberately resign on the possibility to 
     modify Isabelle itself.
   \<^item> we made a small exception to this rule: the \<^isadof> package modifies in its installation 
     about 10 lines in the \LaTeX-generator (\path{src/patches/thy_output.ML}).

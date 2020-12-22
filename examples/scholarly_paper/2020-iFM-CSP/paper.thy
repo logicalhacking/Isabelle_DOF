@@ -1,18 +1,18 @@
 (*<*)
 theory "paper"
-  imports          
-  "Isabelle_DOF.scholarly_paper"
+  imports "Isabelle_DOF.scholarly_paper"
 begin
 
 
 open_monitor*[this::article]
 
-declare[[strict_monitor_checking = false]]
-declare[[ Definition_default_class="definition"]]
-declare[[ Lemma_default_class="lemma"]]
-declare[[ Theorem_default_class="theorem"]]
+declare[[ strict_monitor_checking  = false]]
+declare[[ Definition_default_class = "definition"]]
+declare[[ Lemma_default_class      = "lemma"]]
+declare[[ Theorem_default_class    = "theorem"]]
 
 define_shortcut* csp      \<rightleftharpoons> \<open>CSP\<close>
+                 holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>
                  isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
 
 (*>*)
@@ -24,7 +24,7 @@ author*[bu,email= "\<open>wolff@lri.fr\<close>",affiliation = "\<open>LRI, Unive
 author*[lina,email="\<open>lina.ye@lri.fr\<close>",affiliation="\<open>LRI, Inria, LSV, CentraleSupelec\<close>"]\<open>Lina Ye\<close>
                
 abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Algebra\<close>,
-                                   \<open>Concurrency\<close>,\<open>Computational Models\<close>]"]
+                             \<open>Concurrency\<close>,\<open>Computational Models\<close>]"]
 \<open>  The theory of Communicating Sequential Processes going back to Hoare and Roscoe is still today 
    one of the reference theories for concurrent specification and computing. In 1997, a first 
    formalization in \<^isabelle> of the denotational semantics of the  Failure/Divergence Model of
@@ -63,8 +63,8 @@ systems, such as the T9000 transansputer @{cite "Barret95"}.
 The theory of \<^csp> was first described in 1978 in a book by Tony Hoare @{cite "Hoare:1985:CSP:3921"}, 
 but has since evolved substantially @{cite "BrookesHR84" and "brookes-roscoe85" and "roscoe:csp:1998"}.
 \<^csp> describes the most common communication and synchronization mechanisms
-with one single language primitive: synchronous communication written \<open>_\<lbrakk>_\<rbrakk>_\<close>. \<^csp> semantics is described 
-by a fully abstract model of behaviour designed to be \<^emph>\<open>compositional\<close>: the denotational
+with one single language primitive: synchronous communication written \<open>_\<lbrakk>_\<rbrakk>_\<close>. \<^csp> semantics is 
+described by a fully abstract model of behaviour designed to be \<^emph>\<open>compositional\<close>: the denotational
 semantics of a process \<open>P\<close> encompasses all possible behaviours of this process in the context of all 
 possible environments \<open>P \<lbrakk>S\<rbrakk> Env\<close> (where \<open>S\<close> is the set of \<open>atomic events\<close> both \<open>P\<close> and \<open>Env\<close> must
 synchronize). This design objective has the consequence that two kinds of choice have to 
@@ -248,7 +248,7 @@ Second, in the traditional literature, the semantic domain is implicitly describ
 over the three semantic functions \<open>\<T>\<close>, \<open>\<F>\<close> and \<open>\<D>\<close>.
 Informally, these are:
 
-   \<^item> the initial trace of a process must be empty; 
+   \<^item> the initial trace of a process must be empty;
    \<^item> any allowed trace must be \<open>front\<^sub>-tickFree\<close>; 
    \<^item> traces of a process are  \<^emph>\<open>prefix-closed\<close>; 
    \<^item> a process can refuse all subsets of a refusal set; 
@@ -272,10 +272,10 @@ Informally, these are:
 (\<forall> s t. s \<in> \<D> P \<and> tickFree s \<and> front_tickFree t \<longrightarrow> s@t \<in> \<D> P)  \<and>
 (\<forall> s X. s \<in> \<D> P \<longrightarrow> (s,X) \<in> \<F> P) \<and>
 (\<forall> s. s@[\<surd>] \<in> \<D> P \<longrightarrow> s \<in> \<D> P)\<close>}
-
 \<^vs>\<open>-0.1cm\<close>
+
 Our objective is to encapsulate this wishlist into a type constructed as a conservative
-theory extension in our theory HOL-\<^csp>.
+theory extension in our theory \<^holcsp>.
 Therefore third, we define a pre-type for processes \<open>\<Sigma> process\<^sub>0\<close> by \<open> \<P>(\<Sigma>\<^sup>\<surd>\<^sup>* \<times> \<P>(\<Sigma>\<^sup>\<surd>)) \<times> \<P>(\<Sigma>\<^sup>\<surd>)\<close>.
 Forth, we turn our wishlist of "axioms" above into the definition of a predicate \<open>is_process P\<close> 
 of type \<open>\<Sigma> process\<^sub>0 \<Rightarrow> bool\<close> deciding if its conditions are fulfilled. Since \<open>P\<close> is a pre-process,
@@ -302,7 +302,7 @@ maintains \<open>is_process\<close>, \<^ie> this predicate remains invariant on 
 For example, we define \<open>_\<sqinter>_\<close> on the pre-process type as follows:
 
 \<^vs>\<open>0.1cm\<close>
-  \<^item> \<^theory_text>\<open>definition "P \<sqinter> Q \<equiv> Abs_process(\<F> P \<union> \<F> Q , \<D> P \<union> \<D> Q)"\<close>
+  \<^item> \<^theory_text>\<open>definition "P \<sqinter> Q \<equiv> Abs_processxx(\<F> P \<union> \<F> Q , \<D> P \<union> \<D> Q)"\<close>
 
 \<^vs>\<open>-0.2cm\<close>
 \<^noindent> where \<open>\<F> = fst \<circ> Rep_process\<close> and \<open>\<D> = snd \<circ> Rep_process\<close> and where \<open>Rep_process\<close> and
@@ -532,9 +532,9 @@ To handle termination better, we added two new processes \<open>CHAOS\<^sub>S\<^
 \<close>
 
 (*<*) (* a test ...*)
-text*[X22 ::math_content   ]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                                             \<^vs>\<open>-0.7cm\<close> \<close>
-text*[X32::"definition", mcc=defn]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))                   \<^vs>\<open>-0.7cm\<close>\<close>\<close>
-Definition*[X42]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>  \<^vs>\<open>-0.7cm\<close>\<close>
+text*[X22 ::math_content   ]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                           \<^vs>\<open>-0.7cm\<close>\<close>
+text*[X32::"definition", mcc=defn]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>        \<^vs>\<open>-0.7cm\<close>\<close>
+Definition*[X42]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>                \<^vs>\<open>-0.7cm\<close>\<close>
 Definition*[X52::"definition"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>  \<^vs>\<open>-0.7cm\<close>\<close>
 
 text\<open> The \<open>RUN\<close>-process defined @{math_content X22} represents the process that accepts all 
@@ -546,21 +546,19 @@ stops or accepts any offered event, whereas \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I
 Definition*[X2]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<^vs>\<open>-0.7cm\<close>\<close>
 Definition*[X3]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>          \<^vs>\<open>-0.7cm\<close>\<close>
 Definition*[X4]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<^vs>\<open>-0.7cm\<close>\<close>
-Definition*[X5]\<open>\<open>DF A \<equiv> \<mu> X. (\<sqinter> x \<in> A \<rightarrow> X)\<close>                      \<^vs>\<open>-0.7cm\<close>\<close>
-Definition*[X6]\<open>\<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. ((\<sqinter> x \<in> A \<rightarrow> X) \<sqinter> SKIP)\<close>          \<^vs>\<open>-0.7cm\<close> \<close> 
+Definition*[X5]\<open>\<open>DF A \<equiv> \<mu> X. (\<sqinter> x \<in> A \<rightarrow> X)\<close>                       \<^vs>\<open>-0.7cm\<close>\<close>
+Definition*[X6]\<open>\<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. ((\<sqinter> x \<in> A \<rightarrow> X) \<sqinter> SKIP)\<close>           \<^vs>\<open>-0.7cm\<close> \<close> 
 
-text\<open> \<^vs>\<open>-0.3cm\<close> \<^noindent>
-In the following, we denote \<open> \<R>\<P> = {DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P, DF, RUN, CHAOS, CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P}\<close>. 
+text\<open> \<^vs>\<open>-0.3cm\<close> \<^noindent> In the following, we denote \<open> \<R>\<P> = {DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P, DF, RUN, CHAOS, CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P}\<close>. 
 All five  reference processes are divergence-free.
 %which was done by using a particular lemma \<open>\<D> (\<mu> x. f x) = \<Inter>\<^sub>i\<^sub>\<in>\<^sub>\<nat> \<D> (f\<^sup>i \<bottom>)\<close>.  
-
-\<^vs>\<open>-0.2cm\<close>
-   @{cartouche [display,indent=8] \<open> D (\<PP> UNIV) = {} where \<PP> \<in> \<R>\<P> and UNIV is the set of all events\<close>}
-
-\<^vs>\<open>-0.1cm\<close>
+@{cartouche 
+  [display,indent=8] \<open> D (\<PP> UNIV) = {} where \<PP> \<in> \<R>\<P> and UNIV is the set of all events\<close>
+}
 Regarding the failure refinement ordering, the set of failures \<open>\<F> P\<close> for any process \<open>P\<close> is
 a subset of  \<open>\<F> (CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV)\<close>.% and the following lemma was proved: 
-% This proof is performed by induction, based on the failure projection of \<open>STOP\<close> and that of internal choice.
+% This proof is performed by induction, based on the failure projection of \<open>STOP\<close> and that of 
+% internal choice.
 
 \<^vs>\<open>-0.2cm\<close>
    @{cartouche [display, indent=25] \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close>}

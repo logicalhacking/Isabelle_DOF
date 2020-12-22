@@ -26,8 +26,7 @@ define_shortcut* isadof   \<rightleftharpoons> \<open>\isadof\<close>
                  Protege  \<rightleftharpoons> \<open>Prot{\'e}g{\'e}\<close>
 
 (* slanted text in contrast to italics *)
-setup\<open>    DOF_lib.define_macro \<^binding>\<open>slanted_text\<close> "\\textsl{" "}" (K(K()))\<close> 
-
+define_macro* slanted_text \<rightleftharpoons> \<open>\textsl{\<close> \<open>}\<close>
 
 (*>*)
 

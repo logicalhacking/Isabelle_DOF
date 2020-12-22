@@ -17,13 +17,11 @@ theory "00_Frontmatter"
 begin
 
 
-section\<open>Document Local Setup.\<close>
-text\<open>Some internal setup, introducing document specific abbreviations and macros.\<close>
+section\<open>Local Document Setup.\<close>
+text\<open>... introducing document specific abbreviations and macros.\<close>
 
-
-
-define_shortcut* dof    \<rightleftharpoons> \<open>\dof\<close>
-                 isadof \<rightleftharpoons> \<open>\isadof\<close>
+define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
+                 isadof  \<rightleftharpoons> \<open>\isadof\<close>
 
 define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
                  BibTeX  \<rightleftharpoons> \<open>\BibTeX{}\<close> 
@@ -32,11 +30,11 @@ define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
                  pdf     \<rightleftharpoons> \<open>PDF\<close>
                  pdftex  \<rightleftharpoons> \<open>\pdftex{}\<close>
 
-text\<open>Note that these setups assume that the associated \<^LaTeX> macros are defined, \<^eg>, 
-     in the document prelude. \<close>
+text\<open>Note that these setups assume that the associated \<^LaTeX> macros 
+     are defined, \<^eg>, in the document prelude. \<close>
 
-setup\<open>    DOF_lib.define_macro \<^binding>\<open>index\<close>   "\\index{" "}" (K(K())) (*no checking, no reporting*)
-       #> DOF_lib.define_macro \<^binding>\<open>bindex\<close>  "\\bindex{" "}"(K(K()))\<close> 
+define_macro* index \<rightleftharpoons> \<open>\index{\<close> \<open>}\<close>
+define_macro* bindex \<rightleftharpoons> \<open>\bindex{\<close> \<open>}\<close>
 
 
 ML\<open>
