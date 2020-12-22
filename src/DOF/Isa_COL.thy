@@ -429,15 +429,21 @@ ML\<open>
 val parse_literal = Parse.alt_string || Parse.cartouche
 val parse_define_shortcut = (Parse.binding 
                              -- ((\<^keyword>\<open>\<rightleftharpoons>\<close> || \<^keyword>\<open>==\<close>) |-- parse_literal))
+                             --|Parse.underscore
                              -- parse_literal
                              -- (Scan.option (\<^keyword>\<open>(\<close> |-- Parse.ML_source --|\<^keyword>\<open>)\<close>))
 
-fun define_macro (X,NONE) = (uncurry(uncurry(uncurry DOF_lib.define_macro)))(X,K(K()));
-
+fun define_macro (X,NONE) = (uncurry(uncurry(uncurry DOF_lib.define_macro)))(X,K(K()))
+   |define_macro (X,SOME(src:Input.source)) = 
+       let val _ = ()
+       in 
+       (uncurry(uncurry(uncurry DOF_lib.define_macro)))(X,K(K()))
+       end;
 
 val _ =  Outer_Syntax.command \<^command_keyword>\<open>define_macro*\<close> "define LaTeX shortcut"
             (Scan.repeat1 parse_define_shortcut >> (Toplevel.theory o (fold define_macro)));
 
+Parse.underscore;
 \<close>
 
 

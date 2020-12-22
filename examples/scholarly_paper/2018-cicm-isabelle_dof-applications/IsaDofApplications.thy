@@ -26,7 +26,7 @@ define_shortcut* isadof   \<rightleftharpoons> \<open>\isadof\<close>
                  Protege  \<rightleftharpoons> \<open>Prot{\'e}g{\'e}\<close>
 
 (* slanted text in contrast to italics *)
-define_macro* slanted_text \<rightleftharpoons> \<open>\textsl{\<close> \<open>}\<close>
+define_macro* slanted_text \<rightleftharpoons> \<open>\textsl{\<close> _ \<open>}\<close>
 
 (*>*)
 

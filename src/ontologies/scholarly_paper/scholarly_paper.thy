@@ -481,13 +481,14 @@ define_shortcut* eg  \<rightleftharpoons> \<open>\eg\<close>  (* Latin: „exemp
 
 subsection\<open>Layout Trimming Commands\<close>
 
-define_macro* hs \<rightleftharpoons> \<open>\hspace{\<close> \<open>}\<close>
-define_macro* vs \<rightleftharpoons> \<open>\vspace{\<close> \<open>}\<close>
+define_macro* hs \<rightleftharpoons> \<open>\hspace{\<close> _ \<open>}\<close>
+define_macro* vs \<rightleftharpoons> \<open>\vspace{\<close> _ \<open>}\<close>
 
-(*
-setup\<open>    DOF_lib.define_macro    \<^binding>\<open>hs\<close>        "\\hspace{" "}" (K(K())) \<close>
-setup\<open>    DOF_lib.define_macro    \<^binding>\<open>vs\<close>        "\\vspace{" "}" (K(K())) \<close> 
-*)
+(* setup\<open>    DOF_lib.define_macro    \<^binding>\<open>hs\<close>        "\\hspace{" "}" (K(K())) \<close> *)
+ML\<open> Parse.real \<close>
+
+setup\<open>    DOF_lib.define_macro    \<^binding>\<open>vs2\<close>        "\\vspace{" "}" (fn ctxt => fn src => ()) \<close> 
+
 
 define_shortcut* clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
 
