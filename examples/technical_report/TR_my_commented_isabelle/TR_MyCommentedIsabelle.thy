@@ -14,9 +14,10 @@
 (*<*)
 theory TR_MyCommentedIsabelle
   imports "Isabelle_DOF.technical_report" 
+
 begin
 
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>isabelle\<close>  "Isabelle/HOL"\<close> 
+define_shortcut* isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
 
 open_monitor*[this::report] 
 (*>*)
@@ -2310,6 +2311,7 @@ paragraph\<open>Many thanks to Frederic Tuong, who contributed some example such
 for Unicode Character Denotations as well as many local hints for improvements.\<close>
 
 section*[bib::bibliography]\<open>Bibliography\<close>
+
 
 close_monitor*[this] 
 check_doc_global

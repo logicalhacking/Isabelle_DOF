@@ -470,46 +470,23 @@ setup\<open> let val cidS = ["scholarly_paper.introduction","scholarly_paper.tec
        in  DOF_core.update_class_invariant "scholarly_paper.article" body end\<close>
 
 
-(* some test code *)
-ML\<open>
-(*
-
-val trace  = AttributeAccess.compute_trace_ML (Context.Proof @{context}) "this" @{here} @{here}
-val groups = partition (  @{context}) cidS trace
-val _::_::_::_:: _ ::_ ::_ ::a::_ = groups;
-check;
-
-fun get_level_raw oid = AttributeAccess.compute_attr_access (Context.Proof @{context}) "level" oid @{here} @{here};
-fun get_level oid = dest_option (snd o HOLogic.dest_number) (get_level_raw (oid));
-fun check_level_hd a = case (get_level (snd a)) of
-                 NONE => error("Invariant violation: leading section" ^ snd a ^ 
-                               " must have lowest level")
-               | SOME X => X
-fun check_group_elem level_hd a = case (get_level (snd a)) of
-                            NONE => true
-                          | SOME y => if y > level_hd then true
-                                      else error("Invariant violation: subsequent section " ^ snd a ^ 
-                                                 " must have higher level.");
-fun check_group a = map (check_group_elem (check_level_hd (hd a))) (tl a) ;
-*)
-\<close>
 
 section\<open>Miscelleous\<close>
 
-subsection\<open>Layout Trimming Commands\<close>
-setup\<open>    DOF_lib.define_macro    \<^binding>\<open>hs\<close>        "\\hspace{" "}" (K(K())) \<close> 
-setup\<open>    DOF_lib.define_macro    \<^binding>\<open>vs\<close>        "\\vspace{" "}" (K(K())) \<close> 
-setup\<open>    DOF_lib.define_shortcut \<^binding>\<open>clearpage\<close> "\\clearpage{}" \<close> 
-
-
 subsection\<open>Common Abbreviations\<close>
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>     "\\eg"  
-          (* Latin: „exempli gratia“  meaning  „for example“. *)
-       #> DOF_lib.define_shortcut \<^binding>\<open>ie\<close>     "\\ie"
-          (* Latin: „id est“  meaning „that is to say“. *) 
-       #> DOF_lib.define_shortcut \<^binding>\<open>etc\<close>     "\\etc"\<close> 
-      
-       (* this is an alternative style for macro definitions equivalent to setup ... setup  ...*)
+
+define_shortcut* eg  \<rightleftharpoons> \<open>\eg\<close>  (* Latin: „exempli gratia“  meaning  „for example“. *)
+                 ie  \<rightleftharpoons> \<open>\ie\<close>  (* Latin: „id est“  meaning „that is to say“. *)
+                 etc \<rightleftharpoons> \<open>\etc\<close> (* Latin : et cetera *)
+
+subsection\<open>Layout Trimming Commands\<close>
+
+setup\<open>    DOF_lib.define_macro    \<^binding>\<open>hs\<close>        "\\hspace{" "}" (K(K())) \<close>
+setup\<open>    DOF_lib.define_macro    \<^binding>\<open>vs\<close>        "\\vspace{" "}" (K(K())) \<close> 
+
+define_shortcut* clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
+
+
 
 
 end

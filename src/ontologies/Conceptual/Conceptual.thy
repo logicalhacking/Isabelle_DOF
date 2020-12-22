@@ -62,7 +62,7 @@ doc_class F  =
 
 
 doc_class G = C +
-   g :: "thm"  <= "@{thm ''HOL.refl''}"
+   g :: "thm"  <= "@{thm \<open>HOL.refl\<close>}"
 
 doc_class M = 
    trace :: "(A + C + D + F) list"
@@ -79,8 +79,8 @@ ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory gl
 section*[test::A]\<open>Test and Validation\<close>
 text\<open>Defining some document elements to be referenced in later on in another theory: \<close>
 text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> 
-text*[ sdfg] \<open> Lorem ipsum @{thm refl}\<close>  
-text*[ xxxy ] \<open> Lorem ipsum @{docitem \<open>sdfg\<close>} rate @{thm refl}\<close>  
+text*[ sdfg :: F] \<open> Lorem ipsum @{thm refl}\<close>  
+text*[ xxxy ] \<open> Lorem ipsum @{F \<open>sdfg\<close>} rate @{thm refl}\<close>  
 
 
 end     

@@ -16,20 +16,21 @@ theory "00_Frontmatter"
   imports "Isabelle_DOF.technical_report"
 begin
 
-text\<open> \<open> \<tau>\<close>\<close>
 
 section\<open>Document Local Setup.\<close>
 text\<open>Some internal setup, introducing document specific abbreviations and macros.\<close>
 
-setup \<open>DOF_lib.define_shortcut    \<^binding>\<open>dof\<close>    "\\dof"\<close>
-setup \<open>DOF_lib.define_shortcut    \<^binding>\<open>isadof\<close> "\\isadof"\<close>
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>TeXLive\<close>"\\TeXLive"
-       #> DOF_lib.define_shortcut \<^binding>\<open>BibTeX\<close> "\\BibTeX{}"
-       #> DOF_lib.define_shortcut \<^binding>\<open>LaTeX\<close>  "\\LaTeX{}"
-       #> DOF_lib.define_shortcut \<^binding>\<open>TeX\<close>    "\\TeX{}"
-       #> DOF_lib.define_shortcut \<^binding>\<open>pdf\<close>    "PDF"
-       #> DOF_lib.define_shortcut \<^binding>\<open>pdftex\<close> "\\pdftex{}"
-\<close>
+
+
+define_shortcut* dof    \<rightleftharpoons> \<open>\dof\<close>
+                 isadof \<rightleftharpoons> \<open>\isadof\<close>
+
+define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
+                 BibTeX  \<rightleftharpoons> \<open>\BibTeX{}\<close> 
+                 LaTeX   \<rightleftharpoons> \<open>\LaTeX{}\<close>
+                 TeX     \<rightleftharpoons> \<open>\TeX{}\<close>
+                 pdf     \<rightleftharpoons> \<open>PDF\<close>
+                 pdftex  \<rightleftharpoons> \<open>\pdftex{}\<close>
 
 text\<open>Note that these setups assume that the associated \<^LaTeX> macros are defined, \<^eg>, 
      in the document prelude. \<close>

@@ -29,6 +29,7 @@ theory Isa_COL
   and      "figure*" "side_by_side_figure*"   :: document_body 
   and      "assert*" :: thy_decl
           
+  and      "define_shortcut*" :: thy_decl
 
 begin
   
@@ -413,6 +414,17 @@ fun enclose_env verbatim ctxt block_env body =
 end
 \<close>
 
+ML\<open>
+local 
+val parse_define_shortcut = Parse.binding -- 
+                            ((\<^keyword>\<open>\<rightleftharpoons>\<close> || \<^keyword>\<open>==\<close>) |-- (Parse.alt_string || Parse.cartouche))
+val define_shortcuts = fold(uncurry DOF_lib.define_shortcut)
+in
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>define_shortcut*\<close> "define LaTeX shortcut"
+    (Scan.repeat1 parse_define_shortcut >> (Toplevel.theory o define_shortcuts));
+end
+\<close>
 
 section\<open>Tables\<close>
 (* TODO ! ! ! *)
@@ -425,6 +437,5 @@ section\<open>Tests\<close>
 ML\<open>@{term "side_by_side_figure"};
    @{typ "doc_class rexp"}; 
    DOF_core.SPY;\<close>
-
 
 end

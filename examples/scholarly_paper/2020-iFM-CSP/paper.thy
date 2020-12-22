@@ -12,17 +12,17 @@ declare[[ Definition_default_class="definition"]]
 declare[[ Lemma_default_class="lemma"]]
 declare[[ Theorem_default_class="theorem"]]
 
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>csp\<close>       "CSP"
-       #> DOF_lib.define_shortcut \<^binding>\<open>isabelle\<close>  "Isabelle/HOL"\<close> 
+define_shortcut* csp      \<rightleftharpoons> \<open>CSP\<close>
+                 isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
 
 (*>*)
 
 title*[tit::title]\<open>Philosophers may Dine - Definitively!\<close>
-
+                                  
 author*[safouan,email="\<open>safouan.taha@lri.fr\<close>",affiliation="\<open>LRI, CentraleSupelec\<close>"]\<open>Safouan Taha\<close>
 author*[bu,email= "\<open>wolff@lri.fr\<close>",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]\<open>Burkhart Wolff\<close>
 author*[lina,email="\<open>lina.ye@lri.fr\<close>",affiliation="\<open>LRI, Inria, LSV, CentraleSupelec\<close>"]\<open>Lina Ye\<close>
-    
+               
 abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Algebra\<close>,
                                    \<open>Concurrency\<close>,\<open>Computational Models\<close>]"]
 \<open>  The theory of Communicating Sequential Processes going back to Hoare and Roscoe is still today 
