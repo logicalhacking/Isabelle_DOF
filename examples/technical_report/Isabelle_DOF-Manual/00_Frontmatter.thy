@@ -33,7 +33,7 @@ define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
 text\<open>Note that these setups assume that the associated \<^LaTeX> macros 
      are defined, \<^eg>, in the document prelude. \<close>
 
-define_macro* index \<rightleftharpoons> \<open>\index{\<close> _ \<open>}\<close>
+define_macro* index  \<rightleftharpoons> \<open>\index{\<close> _ \<open>}\<close>
 define_macro* bindex \<rightleftharpoons> \<open>\bindex{\<close> _ \<open>}\<close>
 
 

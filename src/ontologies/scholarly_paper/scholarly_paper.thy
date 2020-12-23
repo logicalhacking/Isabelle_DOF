@@ -479,16 +479,46 @@ define_shortcut* eg  \<rightleftharpoons> \<open>\eg\<close>  (* Latin: „exemp
                  ie  \<rightleftharpoons> \<open>\ie\<close>  (* Latin: „id est“  meaning „that is to say“. *)
                  etc \<rightleftharpoons> \<open>\etc\<close> (* Latin : „et cetera“ meaning „et cetera“ *)
 
-subsection\<open>Layout Trimming Commands\<close>
+subsection\<open>Layout Trimming Commands (with syntactic checks)\<close>
 
-define_macro* hs \<rightleftharpoons> \<open>\hspace{\<close> _ \<open>}\<close>
-define_macro* vs \<rightleftharpoons> \<open>\vspace{\<close> _ \<open>}\<close>
+ML\<open> 
+local
 
-(* setup\<open>    DOF_lib.define_macro    \<^binding>\<open>hs\<close>        "\\hspace{" "}" (K(K())) \<close> *)
-ML\<open> Parse.real \<close>
+val scan_cm = Scan.ahead (Basic_Symbol_Pos.$$$ "c" |-- Basic_Symbol_Pos.$$$ "m" ) ;
+val scan_pt = Scan.ahead (Basic_Symbol_Pos.$$$ "p" |-- Basic_Symbol_Pos.$$$ "t" ) ;
 
-setup\<open>    DOF_lib.define_macro    \<^binding>\<open>vs2\<close>        "\\vspace{" "}" (fn ctxt => fn src => ()) \<close> 
+val scan_blank = Scan.repeat (Basic_Symbol_Pos.$$$ " "
+                              || Basic_Symbol_Pos.$$$ "\t" 
+                              || Basic_Symbol_Pos.$$$ "\n");
 
+val scan_latex_measure = (scan_blank
+                          |-- Scan.option (Basic_Symbol_Pos.$$$ "-")
+                          |-- Symbol_Pos.scan_nat 
+                          |-- (Scan.option ((Basic_Symbol_Pos.$$$ ".") |-- Symbol_Pos.scan_nat))
+                          |-- scan_blank
+                          |-- (scan_cm || scan_pt)
+                          |-- scan_blank
+                         );
+in           
+
+fun check_latex_measure _ src  = 
+         let val _ = ((Scan.catch scan_latex_measure (Symbol_Pos.explode(Input.source_content src)))
+                     handle Fail _ => error ("syntax error in LaTeX measure") )
+         in () end
+end
+
+\<close>
+
+ML\<open> (* test *) check_latex_measure @{context} (Input.string "-3.14 cm") \<close>
+
+define_macro* hs \<rightleftharpoons> \<open>\hspace{\<close> _ \<open>}\<close> (check_latex_measure) 
+define_macro* vs \<rightleftharpoons> \<open>\vspace{\<close> _ \<open>}\<close> (check_latex_measure) 
+
+
+
+setup\<open>    DOF_lib.define_macro    \<^binding>\<open>vs2\<close>        "\\vspace{" "}" (check_latex_measure) \<close> 
+
+text\<open> \<^vs2>\<open>-3.14cm\<close>\<close>
 
 define_shortcut* clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
 
