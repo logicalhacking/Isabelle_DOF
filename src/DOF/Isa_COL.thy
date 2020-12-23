@@ -435,7 +435,8 @@ val parse_define_shortcut =  Parse.binding
 
 fun define_macro (X,NONE) = (uncurry(uncurry(uncurry DOF_lib.define_macro)))(X,K(K()))
    |define_macro (X,SOME(src:Input.source)) = 
-       let val check_code = K(K())
+       let val check_code = K(K()) (* hack *)
+           val _ = warning "Checker code support Not Yet Implemented - use ML"
        in  (uncurry(uncurry(uncurry DOF_lib.define_macro)))(X,check_code)
        end;
 
@@ -443,6 +444,16 @@ val _ =  Outer_Syntax.command \<^command_keyword>\<open>define_macro*\<close> "d
             (Scan.repeat1 parse_define_shortcut >> (Toplevel.theory o (fold define_macro)));
 
 \<close>
+
+ML\<open>ML_Context.expression\<close>
+(*
+fun setup source =
+  ML_Context.expression (Input.pos_of source)
+    (ML_Lex.read "Theory.setup (" @ ML_Lex.read_source source @ ML_Lex.read ")")
+  |> Context.theory_map;
+setup\<open>\<close>
+
+*)
 
 
 section\<open>Tables\<close>

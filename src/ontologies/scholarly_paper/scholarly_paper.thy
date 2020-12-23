@@ -469,7 +469,7 @@ setup\<open> let val cidS = ["scholarly_paper.introduction","scholarly_paper.tec
                                        true)
        in  DOF_core.update_class_invariant "scholarly_paper.article" body end\<close>
 
-
+ML\<open> \<close>
 
 section\<open>Miscelleous\<close>
 
@@ -486,8 +486,7 @@ local
 
 val scan_cm = Scan.ahead (Basic_Symbol_Pos.$$$ "c" |-- Basic_Symbol_Pos.$$$ "m" ) ;
 val scan_pt = Scan.ahead (Basic_Symbol_Pos.$$$ "p" |-- Basic_Symbol_Pos.$$$ "t" ) ;
-
-val scan_blank = Scan.repeat (Basic_Symbol_Pos.$$$ " "
+val scan_blank = Scan.repeat (   Basic_Symbol_Pos.$$$ " "
                               || Basic_Symbol_Pos.$$$ "\t" 
                               || Basic_Symbol_Pos.$$$ "\n");
 
@@ -505,24 +504,23 @@ fun check_latex_measure _ src  =
          let val _ = ((Scan.catch scan_latex_measure (Symbol_Pos.explode(Input.source_content src)))
                      handle Fail _ => error ("syntax error in LaTeX measure") )
          in () end
-end
-
-\<close>
-
-ML\<open> (* test *) check_latex_measure @{context} (Input.string "-3.14 cm") \<close>
-
-define_macro* hs \<rightleftharpoons> \<open>\hspace{\<close> _ \<open>}\<close> (check_latex_measure) 
-define_macro* vs \<rightleftharpoons> \<open>\vspace{\<close> _ \<open>}\<close> (check_latex_measure) 
+end\<close>
 
 
 
-setup\<open>    DOF_lib.define_macro    \<^binding>\<open>vs2\<close>        "\\vspace{" "}" (check_latex_measure) \<close> 
+setup\<open> DOF_lib.define_macro \<^binding>\<open>vs\<close>  "\\vspace{" "}" (check_latex_measure) \<close> 
+setup\<open> DOF_lib.define_macro \<^binding>\<open>hs\<close>  "\\hspace{" "}" (check_latex_measure) \<close> 
 
-text\<open> \<^vs2>\<open>-3.14cm\<close>\<close>
+(*<*)
+
+text\<open>Tests: \<^vs>\<open>-0.14cm\<close>\<close>
+ML\<open> check_latex_measure @{context} (Input.string "-3.14 cm") \<close>
+define_macro* vs2 \<rightleftharpoons> \<open>\vspace{\<close> _ \<open>}\<close> (check_latex_measure) (* checkers NYI on Isar-level *)
+define_macro* hs2 \<rightleftharpoons> \<open>\hspace{\<close> _ \<open>}\<close> (* works fine without checker.*)
+
+(*>*)
 
 define_shortcut* clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
-
-
 
 
 end
