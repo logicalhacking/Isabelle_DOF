@@ -2307,8 +2307,8 @@ text\<open> This interactive Isabelle Programming Cook-Book represents my curren
 \<close>
 (*<*)
 
-paragraph\<open>Many thanks to Frederic Tuong, who contributed some example such as the string cartouche
-for Unicode Character Denotations as well as many local hints for improvements.\<close>
+paragraph\<open>Many thanks to Frederic Tuong, who contributed some example such as the string 
+cartouche for Unicode Character Denotations as well as many local hints for improvements.\<close>
 
 section*[bib::bibliography]\<open>Bibliography\<close>
 
