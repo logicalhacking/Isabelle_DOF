@@ -37,26 +37,25 @@ text\<open>
   Isabelle's document model.
 
   \<^isadof> consists consists basically of five components:
-  \<^item> the \<^emph>\<open>DOF-core\<close>, which provides an own \<^emph>\<open>family of commands\<close> such as 
-    \<^boxed_theory_text>\<open>text*\<close>, \<^boxed_theory_text>\<open>declare_reference*\<close>, 
-    \<^boxed_theory_text>\<open>update_instance*\<close>, \<^boxed_theory_text>\<open>open_monitor*\<close>, etc.
-    They allow to  annotate text-elements with meta-information defined in an
-    underlying  ontology,
-  \<^item> the \<^emph>\<open>DOF-core\<close> also provides the \<^emph>\<open>ontology definition language\<close> (called ODL) 
+  \<^item> the \<^emph>\<open>DOF-core\<close> providing the \<^emph>\<open>ontology definition language\<close> (called ODL) 
     which allow for the definitions of document-classes and necessary auxiliary datatypes,
+  \<^item> the \<^emph>\<open>DOF-core\<close> also provides an own \<^emph>\<open>family of commands\<close> such as 
+    \<^boxed_theory_text>\<open>text*\<close>, \<^boxed_theory_text>\<open>declare_reference*\<close>, \<^etc>.;
+    They allow for the  annotation of text-elements with meta-information defined in ODL,
   \<^item> the \<^isadof> library of ontologies providing ontological concepts as well
     as supporting infrastructure, 
   \<^item> an infrastructure for ontology-specific \<^emph>\<open>layout definitions\<close>, exploiting this meta-information, 
     and 
   \<^item> an infrastructure for generic \<^emph>\<open>layout definitions\<close> for documents following, \<^eg>, the format 
     guidelines of publishers or standardization bodies. 
-
+\<close>
+text\<open>
   Similarly to Isabelle, which is based on a core logic \<^theory>\<open>Pure\<close> and then extended by libraries
   to major systems like \<^verbatim>\<open>HOL\<close> or \<^verbatim>\<open>FOL\<close>, \<^isadof> has a generic core infrastructure \<^dof> and then
   presents itself to users via major library extensions,  which add domain-specific 
   system-extensions. Consequently, ontologies in \<^isadof> are not just a sequence of descriptions in 
-  \<^isadof>'s Ontology Definition Language (ODL). Rather, they are integrated documents themselves that
-  provide textual decriptions, abbreviations, macro-support and even ML-code. 
+  \<^isadof>'s Ontology Definition Language (ODL). Rather, they are themselves presented as integrated 
+  sources that provide textual decriptions, abbreviations, macro-support and even ML-code. 
   Conceptually, the library of \<^isadof> is currently organized as follows
   \<^footnote>\<open>Note that the \<^emph>\<open>technical\<close> organisation is slightly different and shown in 
   @{technical (unchecked) \<open>infrastructure\<close>}.\<close>: 
@@ -74,134 +73,23 @@ text\<open>
 \end{minipage}
 \end{center}
 
-These libraries not only provide ontological concepts, but also syntactic sugar in Isabelle's
-command language Isar that is of major importance for users (and may be felt as \<^isadof> key 
-features by many authors). In reality, 
-they are derived concepts from more generic ones; for example, the commands
-\<^boxed_theory_text>\<open>title*\<close>, \<^boxed_theory_text>\<open>section*\<close>,  \<^boxed_theory_text>\<open>subsection*\<close>, \<^etc>,
-are in reality a kind of macros for \<^boxed_theory_text>\<open>text*[<label>::title]...\<close>,
- \<^boxed_theory_text>\<open>text*[<label>::section]...\<close>, respectively.
-These example commands are defined in the COL.
+ These libraries not only provide ontological concepts, but also syntactic sugar in Isabelle's
+ command language Isar that is of major importance for users (and may be felt as \<^isadof> key 
+ features by many authors). In reality, 
+ they are derived concepts from more generic ones; for example, the commands
+ \<^boxed_theory_text>\<open>title*\<close>, \<^boxed_theory_text>\<open>section*\<close>,  \<^boxed_theory_text>\<open>subsection*\<close>, \<^etc>,
+ are in reality a kind of macros for \<^boxed_theory_text>\<open>text*[<label>::title]...\<close>,
+  \<^boxed_theory_text>\<open>text*[<label>::section]...\<close>, respectively.
+ These example commands are defined in the COL.
 
-
-
-\<close>
-
-
-section*[infrastructure::technical]\<open>Technical Infrastructure\<close>
-
-
-text\<open> 
-  The list of fully supported (\<^ie>, supporting both interactive ontological modeling and 
-  document generation) ontologies and the list of supported document templates can be 
-  obtained by calling \inlinebash|isabelle mkroot_DOF -h| (see \<^technical>\<open>first_project\<close>).
-  Note that the postfix \inlinebash|-UNSUPPORTED| denotes experimental ontologies or templates 
-  for which further manual setup steps might be required or that are not fully tested. Also note 
-  that the \<^LaTeX>-class files required by the templates need to be already installed on your 
-  system. This is mostly a problem for publisher specific templates (\<^eg>, Springer's 
-  \<^path>\<open>llncs.cls\<close>), which cannot be re-distributed due to copyright restrictions.
-\<close>
-
-subsection\<open>Ontologies\<close>
-text\<open>
-  The document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not use Isabelle definitions or proofs for checking the 
-  formal content---this manual is actually an example of a document not containing any proof.
-  Consequently, the document editing and checking facility provided by \<^isadof> addresses the needs 
-  of common users for an advanced text-editing environment, neither modeling nor proof knowledge is 
-  inherently required.
-
-  We expect authors of ontologies to have experience in the use of \<^isadof>, basic modeling (and, 
-  potentially, some basic SML programming) experience, basic \<^LaTeX> knowledge, and, last but not 
-  least, domain knowledge of the ontology to be modeled. Users with experience in UML-like 
-  meta-modeling will feel familiar with most concepts; however, we expect  no need for insight in 
-  the Isabelle proof language, for example, or other more advanced concepts.
-
-  Technically, ontologies\<^index>\<open>ontology!directory structure\<close> are stored in a directory 
-  \inlinebash|src/ontologies| and consist of a Isabelle theory file and a \<^LaTeX> -style file:
-%
-\begin{center}
-\begin{minipage}{.9\textwidth}
-\dirtree{%
-.1 .
-.2 src.
-.3 ontologies\DTcomment{Ontologies}.
-.4 ontologies.thy\DTcomment{Ontology Registration}.
-.4 scholarly\_paper\DTcomment{scholarly\_paper}.
-.5 scholarly\_paper.thy.
-.5 DOF-scholarly\_paper.sty.
-.4 technical\_report\DTcomment{technical\_paper}.
-.5 technical\_report.thy.
-.5 DOF-technical\_report.sty.
-.4 CENELEC\_50128\DTcomment{CENELEC\_50128}.
-.5 CENELEC\_50128.thy.
-.5 DOF-CENELEC\_50128.sty.
-.4 \ldots.
-}
-\end{minipage}
-\end{center}
-\<close>
-text\<open>
-  Developing a new ontology ``\inlinebash|foo|'' requires, from a technical perspective, the 
-  following steps:
-  \<^item> create a new sub-directory \inlinebash|foo| in the directory \inlinebash|src/ontologies|
-  \<^item> definition of the ontological concepts, using \<^isadof>'s Ontology Definition Language (ODL), in 
-    a new theory file \<^path>\<open>src/ontologies/foo/foo.thy\<close>.  
-  \<^item> definition of the document representation for the ontological concepts in a \LaTeX-style 
-    file \<^path>\<open>src/ontologies/foo/DOF-foo.sty\<close>
-  \<^item> registration (as import) of the new ontology in the file. 
-    \<^path>\<open>src/ontologies/ontologies.thy\<close>. 
-  \<^item> activation of the new document setup by executing the install script. You can skip the lengthy 
-    checks for the AFP entries and the installation of the Isabelle patch by using the 
-    \inlinebash|--skip-patch-and-afp| option:
-  
- \begin{bash}
-ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp
- \end{bash}
-\<close>
-
-subsection\<open>Document Templates\<close>
-text\<open>
-  Document-templates\<^index>\<open>document template\<close> define the overall layout (page size, margins, fonts, 
-  etc.) of the generated documents and are the the main technical means for implementing layout 
-  requirements that are, \<^eg>, required by publishers or standardization bodies. Document-templates 
-  are stored in a directory 
-  \<^path>\<open>src/document-templates\<close>:\<^index>\<open>document template!directory structure\<close>
-\begin{center}
-\begin{minipage}{.9\textwidth}
-\dirtree{%
-.1 .
-.2 src.
-.3 document-templates\DTcomment{Document templates}.
-.4 root-lncs.tex.
-.4 root-scrartcl.tex.
-.4 root-scrreprt-modern.tex.
-.4 root-scrreprt.tex.
-}
-\end{minipage}
-\end{center}
-\<close>
-
-text\<open>
-  Developing a new document template ``\inlinebash|bar|'' requires the following steps:
-  \<^item> develop a new \<^LaTeX>-template \inlinebash|src/document-templates/root-bar.tex|
-  \<^item> activation of the new document template  by executing the install script. You can skip the lengthy 
-    checks for the AFP entries and the installation of the Isabelle patch by using the 
-    \inlinebash|--skip-patch-and-afp| option:
-  
-  \begin{bash}
-ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp
-  \end{bash}
-\<close>
-
-
-text\<open>
-  As the document generation of \<^isadof> is based 
-  on \<^LaTeX>, the \<^isadof> document templates can (and should) make use of any \<^LaTeX>-classes provided
-  by publishers or standardization bodies.
+ As mentioned earlier, our ontology framework is currently particularly geared towards 
+ \<^emph>\<open>document\<close> structuring/editing and presentation (future applications might be advanced
+ "knowledge-based" search procedures as well as tool interaction). For this reason, ontologies
+ are coupled with \<^emph>\<open>layout definitions\<close> allowing an automatic mapping of an integrated
+ source into \<^LaTeX> and finally \<^pdf>. 
 \<close>
 
 section\<open>The Ontology Definition Language (ODL)\<close>
-
 text\<open>
   ODL shares some similarities with meta-modeling languages such as UML class 
   models: It builds upon concepts like class, inheritance, class-instances, attributes, references 
@@ -344,7 +232,6 @@ A document class\<^bindex>\<open>document class\<close> can be defined using the
      \<^rail>\<open> 'inv' (name '::')? '"' term '"' \<close>
 \<^item> \<open>accepts_clause\<close>:\<^index>\<open>accepts\_clause@\<open>accepts_clause\<close>\<close>
      \<^rail>\<open> 'accepts' '"' regexpr '"'\<close>
-\<^clearpage>
 \<^item> \<open>rejects_clause\<close>:\<^index>\<open>rejects\_clause@\<open>rejects_clause\<close>\<close>
      \<^rail>\<open> 'rejects' (class_id * ',') \<close>
 \<^item> \<open>default_clause\<close>:\<^index>\<open>default\_clause@\<open>default_clause\<close>\<close> 
@@ -403,6 +290,49 @@ text\<open>
   file \<^file>\<open>../../../src/ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close> show examples of protecting 
   special characters in definitions that need to make use of a entries in an aux-file. 
 \<close>
+
+section\<open>Fundamental Commands of the \<^isadof> Core\<close>
+text\<open>Besides the core-commands to define an ontology as presented in the previous section, 
+the \<^isadof> core provides a number of mechanisms to \<^emph>\<open>use\<close> the resulting data to annotate
+text-elements and, in some cases, terms. 
+\<close>
+
+text\<open>In the following, we formally introduce the syntax of the core commands as 
+supported on the Isabelle/Isar level. Note that some more functionality of the Core 
+is currently only available in the SML API's of the kernel. 
+
+\<^item> \<open>meta_args\<close> : 
+   \<^rail>\<open>(obj_id ('::' class_id) ((attribute '=' term)) * ',')\<close>
+\<^item> \<open>rich_meta_args\<close> :
+   \<^rail>\<open> (obj_id ('::' class_id) ((attribute (('=' | '+=') term)) * ','))\<close>
+\<^item> \<open>annotated_text_element\<close> :
+\<^rail>\<open>
+    (  @@{command "text*"}'[' meta_args ']' '\<open>' text '\<close>' |
+       (  @@{command "open_monitor*"}  
+        | @@{command "close_monitor*"} 
+        | @@{command "declare_reference*"} 
+       ) '[' meta_args ']' 
+     ) 
+     | change_status_command
+     | inspection_command
+     | macro_command
+  \<close>
+\<^item> \<^isadof> \<open>change_status_command\<close> :
+  \<^rail>\<open>  (@@{command "update_instance*"} '[' rich_meta_args ']')
+       |  (@@{command "declare_reference*"} (obj_id ('::' class_id)))\<close>
+\<^item> \<^isadof> \<open>inspection_command\<close> :
+  \<^rail>\<open>    @@{command "print_doc_classes"}
+        |  @@{command "print_doc_items"} 
+        |  @@{command "check_doc_global"}\<close>
+\<^item> \<^isadof> \<open>macro_command\<close> :
+  \<^rail>\<open>    @@{command "define_shortcut*"} name ('\<rightleftharpoons>' | '==') '\<open>' string '\<close>' 
+        |  @@{command "define_macro*"}  name ('\<rightleftharpoons>' | '==') 
+           \<newline> '\<open>' string '\<close>' '_' '\<open>' string '\<close>' \<close>
+\<close>
+
+
+section\<open>The Standard Ontology Libraries\<close>
+
 
 subsection\<open>Common Ontology Library (COL)\<close>
 
@@ -669,13 +599,6 @@ schemata:
 
 subsection*["inspections-commands"::technical]\<open>Status and Inspection Commands\<close>
 text\<open>
-\<^item> \<^isadof> \<open>change_status_command\<close> :
-  \<^rail>\<open>  (@@{command "update_instance*"} '[' rich_meta_args ']')
-       |  (@@{command "declare_reference*"} (obj_id ('::' class_id)))\<close>
-\<^item> \<^isadof> \<open>inspection_command\<close> :
-   \<^rail>\<open>  @@{command "print_doc_classes"}
-        |  @@{command "print_doc_items"} 
-        |  @@{command "check_doc_global"}\<close>
 \<close>
 
 
@@ -808,6 +731,120 @@ fun check_result_inv oid {is_monitor:bool} ctxt =
   \<^boxed_theory_text>\<open>result\<close>. We cannot replace \<^boxed_theory_text>\<open>compute_attr_access\<close> by the 
   corresponding antiquotation \<^boxed_theory_text>\<open>@{docitem_value kind::oid}\<close>, since
   \<^boxed_theory_text>\<open>oid\<close> is bound to a  variable here and can therefore not be statically expanded.
+\<close>
+
+
+
+section*[infrastructure::technical]\<open>Technical Infrastructure\<close>
+
+
+text\<open> 
+  The list of fully supported (\<^ie>, supporting both interactive ontological modeling and 
+  document generation) ontologies and the list of supported document templates can be 
+  obtained by calling \inlinebash|isabelle mkroot_DOF -h| (see \<^technical>\<open>first_project\<close>).
+  Note that the postfix \inlinebash|-UNSUPPORTED| denotes experimental ontologies or templates 
+  for which further manual setup steps might be required or that are not fully tested. Also note 
+  that the \<^LaTeX>-class files required by the templates need to be already installed on your 
+  system. This is mostly a problem for publisher specific templates (\<^eg>, Springer's 
+  \<^path>\<open>llncs.cls\<close>), which cannot be re-distributed due to copyright restrictions.
+\<close>
+
+subsection\<open>Ontologies\<close>
+text\<open>
+  The document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not use Isabelle definitions or proofs for checking the 
+  formal content---this manual is actually an example of a document not containing any proof.
+  Consequently, the document editing and checking facility provided by \<^isadof> addresses the needs 
+  of common users for an advanced text-editing environment, neither modeling nor proof knowledge is 
+  inherently required.
+
+  We expect authors of ontologies to have experience in the use of \<^isadof>, basic modeling (and, 
+  potentially, some basic SML programming) experience, basic \<^LaTeX> knowledge, and, last but not 
+  least, domain knowledge of the ontology to be modeled. Users with experience in UML-like 
+  meta-modeling will feel familiar with most concepts; however, we expect  no need for insight in 
+  the Isabelle proof language, for example, or other more advanced concepts.
+
+  Technically, ontologies\<^index>\<open>ontology!directory structure\<close> are stored in a directory 
+  \inlinebash|src/ontologies| and consist of a Isabelle theory file and a \<^LaTeX> -style file:
+%
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\dirtree{%
+.1 .
+.2 src.
+.3 ontologies\DTcomment{Ontologies}.
+.4 ontologies.thy\DTcomment{Ontology Registration}.
+.4 scholarly\_paper\DTcomment{scholarly\_paper}.
+.5 scholarly\_paper.thy.
+.5 DOF-scholarly\_paper.sty.
+.4 technical\_report\DTcomment{technical\_paper}.
+.5 technical\_report.thy.
+.5 DOF-technical\_report.sty.
+.4 CENELEC\_50128\DTcomment{CENELEC\_50128}.
+.5 CENELEC\_50128.thy.
+.5 DOF-CENELEC\_50128.sty.
+.4 \ldots.
+}
+\end{minipage}
+\end{center}
+\<close>
+text\<open>
+  Developing a new ontology ``\inlinebash|foo|'' requires, from a technical perspective, the 
+  following steps:
+  \<^item> create a new sub-directory \inlinebash|foo| in the directory \inlinebash|src/ontologies|
+  \<^item> definition of the ontological concepts, using \<^isadof>'s Ontology Definition Language (ODL), in 
+    a new theory file \<^path>\<open>src/ontologies/foo/foo.thy\<close>.  
+  \<^item> definition of the document representation for the ontological concepts in a \LaTeX-style 
+    file \<^path>\<open>src/ontologies/foo/DOF-foo.sty\<close>
+  \<^item> registration (as import) of the new ontology in the file. 
+    \<^path>\<open>src/ontologies/ontologies.thy\<close>. 
+  \<^item> activation of the new document setup by executing the install script. You can skip the lengthy 
+    checks for the AFP entries and the installation of the Isabelle patch by using the 
+    \inlinebash|--skip-patch-and-afp| option:
+  
+ \begin{bash}
+ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp
+ \end{bash}
+\<close>
+
+subsection\<open>Document Templates\<close>
+text\<open>
+  Document-templates\<^index>\<open>document template\<close> define the overall layout (page size, margins, fonts, 
+  etc.) of the generated documents and are the the main technical means for implementing layout 
+  requirements that are, \<^eg>, required by publishers or standardization bodies. Document-templates 
+  are stored in a directory 
+  \<^path>\<open>src/document-templates\<close>:\<^index>\<open>document template!directory structure\<close>
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\dirtree{%
+.1 .
+.2 src.
+.3 document-templates\DTcomment{Document templates}.
+.4 root-lncs.tex.
+.4 root-scrartcl.tex.
+.4 root-scrreprt-modern.tex.
+.4 root-scrreprt.tex.
+}
+\end{minipage}
+\end{center}
+\<close>
+
+text\<open>
+  Developing a new document template ``\inlinebash|bar|'' requires the following steps:
+  \<^item> develop a new \<^LaTeX>-template \inlinebash|src/document-templates/root-bar.tex|
+  \<^item> activation of the new document template  by executing the install script. You can skip the lengthy 
+    checks for the AFP entries and the installation of the Isabelle patch by using the 
+    \inlinebash|--skip-patch-and-afp| option:
+  
+  \begin{bash}
+ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp
+  \end{bash}
+\<close>
+
+
+text\<open>
+  As the document generation of \<^isadof> is based 
+  on \<^LaTeX>, the \<^isadof> document templates can (and should) make use of any \<^LaTeX>-classes provided
+  by publishers or standardization bodies.
 \<close>
 
 
@@ -1033,8 +1070,6 @@ text\<open>
   is used in plain\<^TeX>-mode. This is known to cause issues with some modern \<^LaTeX>-classes
   such as LPICS. Such a conflict might require the help of an Isabelle wizard.
 \<close>
-
-
 
 
 
