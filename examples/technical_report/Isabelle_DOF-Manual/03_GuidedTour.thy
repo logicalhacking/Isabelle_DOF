@@ -445,6 +445,7 @@ doc_class "theorem"     = math_content +
    mcc           :: "math_content_class" <= "thm"   ... 
 \<close>}\<close>
 
+
 text\<open>The class \<^verbatim>\<open>technical\<close> regroups a number of text-elements that contain typical 
 "technical content" in mathematical or engineering papers: code, definitions, theorems, 
 lemmas, examples. From this class, the more stricter class of @{typ \<open>math_content\<close>} is derived,

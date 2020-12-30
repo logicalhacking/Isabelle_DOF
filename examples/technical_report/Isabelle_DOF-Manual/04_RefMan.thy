@@ -18,34 +18,78 @@ theory
     "03_GuidedTour" 
     "Isabelle_DOF.Isa_COL"
 begin
+
+declare_reference*[infrastructure::technical]
+
 (*>*)
 
-chapter*[isadof_ontologies::technical]\<open>Developing Ontologies\<close>
+chapter*[isadof_ontologies::technical]\<open>Ontologies and their Development\<close>
 
 text\<open>
-  In this chapter, we explain the concepts for modeling new ontologies, developing a document 
+  In this chapter, we explain the concepts of \<^isadof> in a more systematic way, and give
+  guidelines for modeling new ontologies, the concepts developing a document
   representation for them, as well as developing new document templates. 
-\<close>
 
-section*[infrastructure::technical]\<open>Overview and Technical Infrastructure\<close>
-text\<open>
   \<^isadof> is embedded in the underlying generic document model of Isabelle as described in
   \<^introduction>\<open>dof\<close>. Recall that the document language can be extended dynamically, \<^ie>, new
   \<open>user-defined\<close> can be introduced at run-time.  This is similar to the definition of new functions 
   in an interpreter. \<^isadof> as a system plugin is is a number of new command definitions in 
   Isabelle's document model.
 
-  \<^isadof> consists consists basically of four components:
-  \<^item> an own \<^emph>\<open>family of text-elements\<close> such as \<^boxed_theory_text>\<open>title*\<close>, \<^boxed_theory_text>\<open>chapter*\<close>  
-    \<^boxed_theory_text>\<open>text*\<close>, etc., which can be annotated with meta-information defined in the 
-    underlying  ontology definition and allow to build a \<^emph>\<open>core\<close> document,
-  \<^item> the \<^emph>\<open>ontology definition language\<close> (called ODL) which allow for the definitions
-    of document-classes and necessary auxiliary datatypes,
+  \<^isadof> consists consists basically of five components:
+  \<^item> the \<^emph>\<open>DOF-core\<close>, which provides an own \<^emph>\<open>family of commands\<close> such as 
+    \<^boxed_theory_text>\<open>text*\<close>, \<^boxed_theory_text>\<open>declare_reference*\<close>, 
+    \<^boxed_theory_text>\<open>update_instance*\<close>, \<^boxed_theory_text>\<open>open_monitor*\<close>, etc.
+    They allow to  annotate text-elements with meta-information defined in an
+    underlying  ontology,
+  \<^item> the \<^emph>\<open>DOF-core\<close> also provides the \<^emph>\<open>ontology definition language\<close> (called ODL) 
+    which allow for the definitions of document-classes and necessary auxiliary datatypes,
+  \<^item> the \<^isadof> library of ontologies providing ontological concepts as well
+    as supporting infrastructure, 
   \<^item> an infrastructure for ontology-specific \<^emph>\<open>layout definitions\<close>, exploiting this meta-information, 
     and 
   \<^item> an infrastructure for generic \<^emph>\<open>layout definitions\<close> for documents following, \<^eg>, the format 
     guidelines of publishers or standardization bodies. 
+
+  Similarly to Isabelle, which is based on a core logic \<^theory>\<open>Pure\<close> and then extended by libraries
+  to major systems like \<^verbatim>\<open>HOL\<close> or \<^verbatim>\<open>FOL\<close>, \<^isadof> has a generic core infrastructure \<^dof> and then
+  presents itself to users via major library extensions,  which add domain-specific 
+  system-extensions. Consequently, ontologies in \<^isadof> are not just a sequence of descriptions in 
+  \<^isadof>'s Ontology Definition Language (ODL). Rather, they are integrated documents themselves that
+  provide textual decriptions, abbreviations, macro-support and even ML-code. 
+  Conceptually, the library of \<^isadof> is currently organized as follows
+  \<^footnote>\<open>Note that the \<^emph>\<open>technical\<close> organisation is slightly different and shown in 
+  @{technical (unchecked) \<open>infrastructure\<close>}.\<close>: 
+%
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\dirtree{%
+.1 COL\DTcomment{The Common Ontology Library}.
+.2 scholarly\_paper\DTcomment{Scientific Papers}.
+.3 technical\_report\DTcomment{Extended Papers}.
+.4 CENELEC\_50128\DTcomment{Papers according to CENELEC\_50128}.
+.4 CC\_v3\_1\_R5\DTcomment{Papers according to Common Criteria}. 
+.4 \ldots.
+}
+\end{minipage}
+\end{center}
+
+These libraries not only provide ontological concepts, but also syntactic sugar in Isabelle's
+command language Isar that is of major importance for users (and may be felt as \<^isadof> key 
+features by many authors). In reality, 
+they are derived concepts from more generic ones; for example, the commands
+\<^boxed_theory_text>\<open>title*\<close>, \<^boxed_theory_text>\<open>section*\<close>,  \<^boxed_theory_text>\<open>subsection*\<close>, \<^etc>,
+are in reality a kind of macros for \<^boxed_theory_text>\<open>text*[<label>::title]...\<close>,
+ \<^boxed_theory_text>\<open>text*[<label>::section]...\<close>, respectively.
+These example commands are defined in the COL.
+
+
+
 \<close>
+
+
+section*[infrastructure::technical]\<open>Technical Infrastructure\<close>
+
 
 text\<open> 
   The list of fully supported (\<^ie>, supporting both interactive ontological modeling and 
@@ -74,6 +118,7 @@ text\<open>
 
   Technically, ontologies\<^index>\<open>ontology!directory structure\<close> are stored in a directory 
   \inlinebash|src/ontologies| and consist of a Isabelle theory file and a \<^LaTeX> -style file:
+%
 \begin{center}
 \begin{minipage}{.9\textwidth}
 \dirtree{%
@@ -81,12 +126,15 @@ text\<open>
 .2 src.
 .3 ontologies\DTcomment{Ontologies}.
 .4 ontologies.thy\DTcomment{Ontology Registration}.
-.4 CENELEC\_50128\DTcomment{CENELEC\_50128}.
-.5 CENELEC\_50128.thy.
-.5 DOF-CENELEC\_50128.sty.
 .4 scholarly\_paper\DTcomment{scholarly\_paper}.
 .5 scholarly\_paper.thy.
 .5 DOF-scholarly\_paper.sty.
+.4 technical\_report\DTcomment{technical\_paper}.
+.5 technical\_report.thy.
+.5 DOF-technical\_report.sty.
+.4 CENELEC\_50128\DTcomment{CENELEC\_50128}.
+.5 CENELEC\_50128.thy.
+.5 DOF-CENELEC\_50128.sty.
 .4 \ldots.
 }
 \end{minipage}
