@@ -1593,7 +1593,6 @@ val _ = Theory.setup
 end (* struct *)
 \<close>
 
-text\<open> @{thm [] refl}\<close>
 
 ML\<open> 
 structure AttributeAccess = 

@@ -27,13 +27,13 @@ chapter*[isadof_ontologies::technical]\<open>Ontologies and their Development\<c
 
 text\<open>
   In this chapter, we explain the concepts of \<^isadof> in a more systematic way, and give
-  guidelines for modeling new ontologies, the concepts developing a document
-  representation for them, as well as developing new document templates. 
+  guidelines for modeling new ontologies, present underlying concepts for a mapping to a
+  representation, and give hints for the development of new document templates. 
 
   \<^isadof> is embedded in the underlying generic document model of Isabelle as described in
   \<^introduction>\<open>dof\<close>. Recall that the document language can be extended dynamically, \<^ie>, new
   \<open>user-defined\<close> can be introduced at run-time.  This is similar to the definition of new functions 
-  in an interpreter. \<^isadof> as a system plugin is is a number of new command definitions in 
+  in an interpreter. \<^isadof> as a system plugin provides a number of new command definitions in 
   Isabelle's document model.
 
   \<^isadof> consists consists basically of five components:
@@ -79,7 +79,7 @@ text\<open>
  they are derived concepts from more generic ones; for example, the commands
  \<^boxed_theory_text>\<open>title*\<close>, \<^boxed_theory_text>\<open>section*\<close>,  \<^boxed_theory_text>\<open>subsection*\<close>, \<^etc>,
  are in reality a kind of macros for \<^boxed_theory_text>\<open>text*[<label>::title]...\<close>,
-  \<^boxed_theory_text>\<open>text*[<label>::section]...\<close>, respectively.
+ \<^boxed_theory_text>\<open>text*[<label>::section]...\<close>, respectively.
  These example commands are defined in the COL.
 
  As mentioned earlier, our ontology framework is currently particularly geared towards 
@@ -298,13 +298,13 @@ text-elements and, in some cases, terms.
 \<close>
 
 text\<open>In the following, we formally introduce the syntax of the core commands as 
-supported on the Isabelle/Isar level. Note that some more functionality of the Core 
+supported on the Isabelle/Isar level. Note that some more advanced functionality of the Core 
 is currently only available in the SML API's of the kernel. 
 
 \<^item> \<open>meta_args\<close> : 
-   \<^rail>\<open>(obj_id ('::' class_id) ((attribute '=' term)) * ',')\<close>
-\<^item> \<open>rich_meta_args\<close> :
-   \<^rail>\<open> (obj_id ('::' class_id) ((attribute (('=' | '+=') term)) * ','))\<close>
+   \<^rail>\<open>obj_id ('::' class_id) ((',' attribute '=' term) *) \<close>
+\<^item> \<open>upd_meta_args\<close> :
+   \<^rail>\<open> (obj_id ('::' class_id) ((',' attribute ('=' | '+=') term) * ))\<close>
 \<^item> \<open>annotated_text_element\<close> :
 \<^rail>\<open>
     (  @@{command "text*"}'[' meta_args ']' '\<open>' text '\<close>' |
@@ -318,7 +318,7 @@ is currently only available in the SML API's of the kernel.
      | macro_command
   \<close>
 \<^item> \<^isadof> \<open>change_status_command\<close> :
-  \<^rail>\<open>  (@@{command "update_instance*"} '[' rich_meta_args ']')
+  \<^rail>\<open>  (@@{command "update_instance*"} '[' upd_meta_args ']')
        |  (@@{command "declare_reference*"} (obj_id ('::' class_id)))\<close>
 \<^item> \<^isadof> \<open>inspection_command\<close> :
   \<^rail>\<open>    @@{command "print_doc_classes"}
@@ -331,10 +331,131 @@ is currently only available in the SML API's of the kernel.
 \<close>
 
 
-section\<open>The Standard Ontology Libraries\<close>
 
+section\<open>The Standard Ontology Libraries\<close>
+text\<open> We will describe the backbone of the Standard Library with the
+already mentioned hierarchy \<^verbatim>\<open>COL\<close> (the common ontology library),
+ \<^verbatim>\<open>scholarly_paper\<close> (for MINT-oriented scientific papers), 
+ \<^verbatim>\<open>technical_report\<close> (for MINT-oriented technical reports), 
+ \<^verbatim>\<open>technical_report\<close> (for MINT-oriented technical reports), and
+the example for a domain-specific ontology 
+\<^verbatim>\<open>CENELEC_50128\<close>.\<close>
 
 subsection\<open>Common Ontology Library (COL)\<close>
+(*<*)
+ML\<open>writeln (DOF_core.print_doc_class_tree @{context} (fn (n,l) => String.isPrefix "Isa_COL" l) I)\<close>
+(*>*)
+text\<open> 
+ \<^isadof> provides a Common Ontology Library (COL)\<^index>\<open>Common Ontology Library@see COL\<close>
+ \<^bindex>\<open>COL\<close> \<^footnote>\<open>contained in \<^theory>\<open>Isabelle_DOF.Isa_COL\<close>\<close>
+ that introduces several ontology root concepts such as common text-elements and 
+ figures. The overall class-tree it provides looks as follows:
+%
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\dirtree{%
+.0 .
+.1 Isa\_COL.text\_element.
+.2 Isa\_COL.chapter.
+.2 Isa\_COL.section.
+.2 Isa\_COL.subsection.
+.2 Isa\_COL.subsubsection.
+.1 Isa\_COL.figure.
+.2 Isa\_COL.side\_by\_side\_figure.
+.1 Isa\_COL.figure\_group.
+.1 \ldots.
+}
+\end{minipage}
+\end{center}\<close>
+
+text\<open>
+In particular it defines the super-class \<^boxed_theory_text>\<open>text_element\<close>: the root of all 
+text-elements,
+
+@{boxed_theory_text [display]\<open>
+doc_class text_element = 
+   level         :: "int  option"    <=  "None" 
+   referentiable :: bool <= "False"
+   variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
+\<close>}
+
+As mentioned in @{technical \<open>sss\<close>} (without explaining the origin of \<^typ>\<open>text_element\<close>)
+, \<^boxed_theory_text>\<open>level\<close> defines the section-level (\<^eg>, using a \<^LaTeX>-inspired hierarchy:
+from \<^boxed_theory_text>\<open>Some -1\<close> (corresponding to \inlineltx|\part|) to 
+\<^boxed_theory_text>\<open>Some 0\<close> (corresponding to \inlineltx|\chapter|, respectively, \<^boxed_theory_text>\<open>chapter*\<close>) 
+to \<^boxed_theory_text>\<open>Some 3\<close> (corresponding to \inlineltx|\subsubsection|, respectively, 
+\<^boxed_theory_text>\<open>subsubsection*\<close>). Using an invariant, a derived ontology could, \<^eg>, require that
+any sequence of technical-elements must be introduced by a text-element with a higher level
+(this would require that technical text section are introduce by a section element).
+
+The attribute \<^term>\<open>referentiable\<close> captures the information if a text-element can be target
+for a reference, which is the case for sections or subsections, for example, but not arbitrary
+elements such as, \<^ie>, paragraphs (this mirrors restrictions of the target \<^LaTeX> representation).
+The attribute  \<^term>\<open>variants\<close> refers to an Isabelle-configuration attribute that permits
+to steer the different versions a \<^LaTeX>-presentation of the integrated source.
+
+
+For further information of the root classes such as \<^typ>\<open>figure\<close>'s, please consult the ontology 
+ \<^theory>\<open>Isabelle_DOF.Isa_COL\<close> directly.
+
+COL finally provides macros that extend the command-language of the DOF-core by the following
+abbreviations:
+
+\<^item> \<open>derived_text_element\<close> :
+\<^rail>\<open>
+    (  ( @@{command "chapter*"} 
+       | @@{command "section*"}   | @@{command "subsection*"} | @@{command "subsubsection*"} 
+       | @@{command "paragraph*"} | @@{command "subparagraph*"} 
+       | @@{command "figure*"}    | @@{command "side_by_side_figure*"} 
+       ) 
+       \<newline>
+       '[' meta_args ']' '\<open>' text '\<close>'
+     ) 
+  \<close>
+\<close>
+text\<open> Note that the command syntax follows the implicit convention to add a "*" to 
+the command in order to distinguish them from the standard Isabelle text-commands
+which are not "ontology-aware" but function similar otherwise.\<close>
+
+subsection*["text-elements"::technical]\<open>The Ontology \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close>\<close>
+(*<*)
+ML\<open>writeln (DOF_core.print_doc_class_tree @{context} (fn (n,l) => String.isPrefix "scholarly_paper" l) I)\<close>
+(*>*)
+text\<open>
+  While the default user interface for class definitions via the  
+  \<^boxed_theory_text>\<open>text*\<open> ... \<close>\<close>-command allow to access all features of the document 
+  class, \<^isadof> provides short-hands for certain, widely-used, concepts such as 
+  \<^boxed_theory_text>\<open>title*\<open> ... \<close>\<close> or \<^boxed_theory_text>\<open>section*\<open> ... \<close>\<close>, \<^eg>:
+
+@{boxed_theory_text [display]\<open>
+ title*[title::title]\<open>Isabelle/DOF\<close>
+ subtitle*[subtitle::subtitle]\<open>User and Implementation Manual\<close>
+ author*[adb::author, email="\<open>a.brucker@exeter.ac.uk\<close>",
+         orcid="\<open>0000-0002-6355-1200\<close>", http_site="\<open>https://brucker.ch/\<close>",
+         affiliation="\<open>University of Exeter, Exeter, UK\<close>"] \<open>Achim D. Brucker\<close>
+ author*[bu::author, email = "\<open>wolff@lri.fr\<close>",
+         affiliation = "\<open>Université Paris-Saclay, LRI, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
+\<close>}
+
+In general, all standard text-elements from the Isabelle document model such
+as \<^theory_text>\<open>chapter\<close>, \<^theory_text>\<open>section\<close>, \<^theory_text>\<open>text\<close>, have in the \<^isadof>
+implementation their counterparts in the family of text-elements that are ontology-aware,
+\<^ie>, they dispose on a meta-argument list that allows to define that a test-element
+that has an identity as a text-object labelled as \<open>obj_id\<close>, belongs to a document class 
+\<open>class_id\<close> that has been defined earlier, and  has its class-attributes set with particular 
+values (which are denotable in Isabelle/HOL mathematical term syntax).
+\<^item> \<open>annotated_text_element\<close> :
+\<^rail>\<open>
+    (  ( @@{command "title*"}
+       | @@{command "subtitle*"}
+       | @@{command "author*"}
+       | @@{command "abstract*"})
+       \<newline>
+       '[' meta_args ']' '\<open>' text '\<close>'
+     ) 
+  \<close>
+\<close>
+
 
 text\<open>\<^isadof> uses the concept of implicit abstract classes (or: \<^emph>\<open>shadow classes\<close>).
 These refer to the set of possible \<^boxed_theory_text>\<open>doc_class\<close> declarations that posses a number
@@ -365,32 +486,7 @@ These shadow-classes correspond to semantic macros
  \<^ML>\<open>Onto_Macros.enriched_formal_statement_command\<close>.\<close>
 
 
-text\<open>  \<^isadof> provides a Common Ontology Library (COL)\<^index>\<open>Common Ontology Library@see COL\<close>
-  \<^bindex>\<open>COL\<close> that introduces ontology concepts that are either sample instances for shadow 
-  classes as we use them in our own document generation processes or, in some cases, are 
-  so generic that they we expect them to be useful for all types of documents (figures, for example). 
-\<close>
-
-
 text\<open>
-In particular it defines the super-class \<^boxed_theory_text>\<open>text_element\<close>: the root of all 
-text-elements,
-
-@{boxed_theory_text [display]\<open>
-doc_class text_element = 
-   level         :: "int  option"    <=  "None" 
-   referentiable :: bool <= "False"
-   variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
-\<close>}
-
-Here, \<^boxed_theory_text>\<open>level\<close> defines the section-level (\<^eg>, using a \<^LaTeX>-inspired hierarchy:
-from \<^boxed_theory_text>\<open>Some -1\<close> (corresponding to \inlineltx|\part|) to 
-\<^boxed_theory_text>\<open>Some 0\<close> (corresponding to \inlineltx|\chapter|, respectively, \<^boxed_theory_text>\<open>chapter*\<close>) 
-to \<^boxed_theory_text>\<open>Some 3\<close> (corresponding to \inlineltx|\subsubsection|, respectively, 
-\<^boxed_theory_text>\<open>subsubsection*\<close>). Using an invariant, a derived ontology could, \<^eg>, require that
-any sequence of technical-elements must be introduced by a text-element with a higher level
-(this would require that technical text section are introduce by a section element).
-
 Similarly, we provide "minimal" instances of the \<^boxed_theory_text>\<open>ASSERTION_ALIKES\<close>
 and \<^boxed_theory_text>\<open>FORMAL_STATEMENT_ALIKE\<close> shadow classes:
 @{boxed_theory_text [display]\<open>
@@ -487,56 +583,7 @@ in case it evaluates to true the property is added to the property list of the \
 text-element. Commands like \<^boxed_theory_text>\<open>Definitions*\<close> or \<^boxed_theory_text>\<open>Theorem*\<close> work analogously.\<close>
 
 
-subsection*["text-elements"::technical]\<open>Annotatable Top-level Text-Elements\<close>
-text\<open>
-  While the default user interface for class definitions via the  
-  \<^boxed_theory_text>\<open>text*\<open> ... \<close>\<close>-command allow to access all features of the document 
-  class, \<^isadof> provides short-hands for certain, widely-used, concepts such as 
-  \<^boxed_theory_text>\<open>title*\<open> ... \<close>\<close> or \<^boxed_theory_text>\<open>section*\<open> ... \<close>\<close>, \<^eg>:
-
-@{boxed_theory_text [display]\<open>
- title*[title::title]\<open>Isabelle/DOF\<close>
- subtitle*[subtitle::subtitle]\<open>User and Implementation Manual\<close>
- text*[adb:: author, email="\<open>a.brucker@exeter.ac.uk\<close>",
-       orcid="\<open>0000-0002-6355-1200\<close>", http_site="\<open>https://brucker.ch/\<close>",
-       affiliation="\<open>University of Exeter, Exeter, UK\<close>"] \<open>Achim D. Brucker\<close>
- text*[bu::author, email = "\<open>wolff@lri.fr\<close>",
-       affiliation = "\<open>Université Paris-Saclay, LRI, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
-\<close>}
-
-In general, all standard text-elements from the Isabelle document model such
-as \<^theory_text>\<open>chapter\<close>, \<^theory_text>\<open>section\<close>, \<^theory_text>\<open>text\<close>, have in the \<^isadof>
-implementation their counterparts in the family of text-elements that are ontology-aware,
-\<^ie>, they dispose on a meta-argument list that allows to define that a test-element
-that has an identity as a text-object labelled as \<open>obj_id\<close>, belongs to a document class 
-\<open>class_id\<close> that has been defined earlier, and  has its class-attributes set with particular 
-values (which are denotable in Isabelle/HOL mathematical term syntax).
-\<^item> \<open>meta_args\<close> : 
-   \<^rail>\<open>(obj_id ('::' class_id) ((attribute '=' term)) * ',')\<close>
-\<^item> \<open>rich_meta_args\<close> :
-   \<^rail>\<open> (obj_id ('::' class_id) ((attribute (('=' | '+=') term)) * ','))\<close>
-\<^clearpage>
-\<^item> \<open>annotated_text_element\<close> :
-\<^rail>\<open>
-    (  ( @@{command "title*"}
-       | @@{command "subtitle*"}
-       | @@{command "chapter*"} 
-       | @@{command "section*"} | @@{command "subsection*"} 
-       | @@{command "subsubsection*"} | @@{command "paragraph*"} | @@{command "subparagraph*"} 
-       | @@{command "text*"} | @@{command "figure*"} | @@{command "side_by_side_figure*"}
-       | @@{command "open_monitor*"} | @@{command "close_monitor*"} 
-       | @@{command "Definition*"} | @@{command "Lemma*"} 
-       ) 
-       \<newline>
-       '[' meta_args ']' '\<open>' text '\<close>'
-     ) 
-     | change_status_command
-     | inspection_command
-  \<close>
-\<close>
-
-
-subsubsection\<open>Experts: Defining New Top-Level Commands\<close>
+subsubsection\<open>For Isabelle Hackers: Defining New Top-Level Commands\<close>
 
 text\<open>
   Defining such new top-level commands requires some Isabelle knowledge as well as 
@@ -736,7 +783,6 @@ fun check_result_inv oid {is_monitor:bool} ctxt =
 
 
 section*[infrastructure::technical]\<open>Technical Infrastructure\<close>
-
 
 text\<open> 
   The list of fully supported (\<^ie>, supporting both interactive ontological modeling and 
