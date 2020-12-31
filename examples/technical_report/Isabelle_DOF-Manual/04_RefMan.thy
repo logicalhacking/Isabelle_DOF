@@ -83,10 +83,14 @@ text\<open>
  These example commands are defined in the COL.
 
  As mentioned earlier, our ontology framework is currently particularly geared towards 
- \<^emph>\<open>document\<close> structuring/editing and presentation (future applications might be advanced
+ \<^emph>\<open>document\<close> editing, structuring and presentation (future applications might be advanced
  "knowledge-based" search procedures as well as tool interaction). For this reason, ontologies
  are coupled with \<^emph>\<open>layout definitions\<close> allowing an automatic mapping of an integrated
- source into \<^LaTeX> and finally \<^pdf>. 
+ source into \<^LaTeX> and finally \<^pdf>. The mapping of an ontology to a specific representation
+ in \<^LaTeX> is steered via associated  \<^LaTeX> stylefiles which were included during Isabelle's
+ document generation process. This one-to-many mapping implies a certain technical 
+ organisation and some resulting restrictions described in @{technical (unchecked) \<open>infrastructure\<close>}
+ in more detail.
 \<close>
 
 section\<open>The Ontology Definition Language (ODL)\<close>
@@ -297,6 +301,7 @@ the \<^isadof> core provides a number of mechanisms to \<^emph>\<open>use\<close
 text-elements and, in some cases, terms. 
 \<close>
 
+subsection\<open>Syntax\<close>
 text\<open>In the following, we formally introduce the syntax of the core commands as 
 supported on the Isabelle/Isar level. Note that some more advanced functionality of the Core 
 is currently only available in the SML API's of the kernel. 
@@ -329,7 +334,11 @@ is currently only available in the SML API's of the kernel.
         |  @@{command "define_macro*"}  name ('\<rightleftharpoons>' | '==') 
            \<newline> '\<open>' string '\<close>' '_' '\<open>' string '\<close>' \<close>
 \<close>
+subsection\<open>Ontologic Text-Elements and their Management\<close>
 
+subsection\<open>Status and Query Commands\<close>
+
+subsection\<open>Macros\<close>
 
 
 section\<open>The Standard Ontology Libraries\<close>
@@ -498,6 +507,10 @@ doc_class "thms" =
 \<close>}
 \<close>
 
+subsection\<open>The Ontology \<^theory>\<open>Isabelle_DOF.technical_report\<close>\<close>
+
+subsection\<open>An Exampe for a Domain-Specific Ontology: \<^theory>\<open>Isabelle_DOF.CENELEC_50128\<close>\<close>
+
 subsubsection\<open>Example: Text Elemens with Levels\<close>
 text\<open>
 The category ``exported constraint (EC)'' is, in the file 
@@ -644,14 +657,10 @@ schemata:
 \end{ltx}
 \<close>
 
-subsection*["inspections-commands"::technical]\<open>Status and Inspection Commands\<close>
-text\<open>
-\<close>
 
 
-
-subsection*["sec:advanced"::technical]\<open>Advanced ODL Concepts\<close>
-subsubsection\<open>Meta-types as Types\<close>
+section*["sec:advanced"::technical]\<open>Advanced ODL Concepts\<close>
+subsection\<open>Meta-types as Types\<close>
 
 text\<open>
   To express the dependencies between text elements to the formal
@@ -681,7 +690,7 @@ text\<open>
 \<close>
 
 
-subsubsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
+subsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
 text\<open>
   We call a document class with an accept-clause a \<^emph>\<open>monitor\<close>.\<^bindex>\<open>monitor\<close>  Syntactically, an 
   accept-clause\<^index>\<open>accept-clause\<close> contains a regular expression over class identifiers. 
@@ -733,7 +742,7 @@ text\<open>
   sections.\<close>
 
 
-subsubsection*["sec:class_inv"::technical]\<open>ODL Class Invariants\<close>
+subsection*["sec:class_inv"::technical]\<open>ODL Class Invariants\<close>
 text\<open>
   Ontological classes as described so far are too liberal in many situations. For example, one 
   would like to express that any instance of a \<^boxed_theory_text>\<open>result\<close> class finally has a 
@@ -795,7 +804,7 @@ text\<open>
   \<^path>\<open>llncs.cls\<close>), which cannot be re-distributed due to copyright restrictions.
 \<close>
 
-subsection\<open>Ontologies\<close>
+subsection\<open>Developing Ontologies and their Represenation Mappings\<close>
 text\<open>
   The document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not use Isabelle definitions or proofs for checking the 
   formal content---this manual is actually an example of a document not containing any proof.
