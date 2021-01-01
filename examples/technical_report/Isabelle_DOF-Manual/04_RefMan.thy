@@ -526,12 +526,11 @@ text\<open>The \<^verbatim>\<open>scholarly_paper\<close> ontology extends \<^ve
 .3 scholarly\_paper.annex{...}.
 .3 scholarly\_paper.example{...}.
 .3 scholarly\_paper.technical{Freeform Class for Technical Content}.
-.4 ... 
 .4 scholarly\_paper.math\_content{...}.
-.5 scholarly\_paper.definition{Freeform Definition}.
-.5 scholarly\_paper.lemma{Freeform Lemma}.
-.5 scholarly\_paper.theorem{...}.
-.5 scholarly\_paper.corollary{...}.
+.5 scholarly\_paper.definition{Freeform}.
+.5 scholarly\_paper.lemma{Freeform}.
+.5 scholarly\_paper.theorem{Freeform}.
+.5 scholarly\_paper.corollary{Freeform}.
 .5 scholarly\_paper.math\_example{...}.
 .5 scholarly\_paper.math\_semiformal{...}.
 .4 scholarly\_paper.tech\_example{...}.
@@ -541,6 +540,7 @@ text\<open>The \<^verbatim>\<open>scholarly_paper\<close> ontology extends \<^ve
 .5 scholarly\_paper.data{...}.
 .5 scholarly\_paper.evaluation{...}.
 .5 scholarly\_paper.experiment{...}.
+.4 ... 
 .1 ... 
 .1 scholarly\_paper.article{The Paper Monitor}.
 .1 \ldots.
@@ -549,11 +549,20 @@ text\<open>The \<^verbatim>\<open>scholarly_paper\<close> ontology extends \<^ve
 \end{center}
 \<close>
 
-text\<open>They were alltogether also supported 
+text\<open>Some of these concepts were supported as command-abbreviations leading to the extension
+of the \<^isadof> language:
 
+\<^item> \<open>derived_text_elements \<close> :
+\<^rail>\<open>
+    (  ( @@{command "author*"} 
+       | @@{command "abstract*"} 
+       | @@{command "Definition*"}  | @@{command "Lemma*"} | @@{command "Theorem*"} 
+       ) 
+       \<newline>
+       '[' meta_args ']' '\<open>' text '\<close>'
+     ) 
+  \<close>
 \<close>
-
-
 
 subsubsection*["text-elements-expls"::technical]\<open>Examples\<close>
 
