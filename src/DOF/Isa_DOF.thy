@@ -679,12 +679,12 @@ fun print_doc_class_tree ctxt P T =
         fun is_class_son X (n, dc:docclass_struct) = (X = #inherits_from dc)
         fun tree lev ([]:(string * docclass_struct)list) = ""
            |tree lev ((n,R)::S) = (if P(lev,n) 
-                                  then "."^Int.toString lev^" "^(T n)^"\n"
+                                  then "."^Int.toString lev^" "^(T n)^"{...}.\n"
                                        ^ (tree(lev + 1)(filter(is_class_son(SOME([],n)))class_tab))
                                   else "."^Int.toString lev^" ... \n") 
                                   ^ (tree lev S)
         val roots = filter(is_class_son NONE) class_tab
-    in  tree 0 roots end
+    in  ".0 .\n" ^ tree 1 roots end
 
 
 

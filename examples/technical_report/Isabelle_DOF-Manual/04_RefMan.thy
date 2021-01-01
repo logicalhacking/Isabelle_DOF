@@ -412,7 +412,7 @@ text\<open>
       setup\<open> DOF_lib.define_macro \<^binding>\<open>vs\<close>  "\\vspace{" "}" (check_latex_measure) \<close> 
     \<close>}
   where \<^ML>\<open>check_latex_measure\<close> is a hand-programmed function that checks 
-  of the input syntax.
+  the input for syntactical and static semantic constraints.
 \<close>
 
 
@@ -502,13 +502,67 @@ which are not "ontology-aware" but function similar otherwise.\<close>
 
 subsection*["text-elements"::technical]\<open>The Ontology \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close>\<close>
 (*<*)
-ML\<open>writeln (DOF_core.print_doc_class_tree @{context} (fn (n,l) => String.isPrefix "scholarly_paper" l) I)\<close>
+ML\<open>val toLaTeX = String.translate (fn c => if c = #"_" then "\\_" else String.implode[c])\<close>     
+ML\<open>writeln (DOF_core.print_doc_class_tree 
+                 @{context} (fn (n,l) =>        String.isPrefix "scholarly_paper" l 
+                                         orelse String.isPrefix "Isa_COL" l) 
+                 toLaTeX)\<close>
 (*>*)
+text\<open>The \<^verbatim>\<open>scholarly_paper\<close> ontology extends \<^verbatim>\<open>COL\<close> by the following concepts:
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\dirtree{%
+.0 .
+.1 scholarly\_paper.title.
+.1 scholarly\_paper.subtitle.
+.1 scholarly\_paper.author{An Author Entity Declaration}.
+.1 scholarly\_paper.abstract.
+.1 Isa\_COL.text\_element.
+.2 scholarly\_paper.text\_section{A Subclass for Major Paper Text-Elements}.    
+.3 scholarly\_paper.introduction{...}.
+.3 scholarly\_paper.conclusion{...}.
+.4 scholarly\_paper.related\_work{...}.
+.3 scholarly\_paper.bibliography{...}.
+.3 scholarly\_paper.annex{...}.
+.3 scholarly\_paper.example{...}.
+.3 scholarly\_paper.technical{Freeform Class for Technical Content}.
+.4 ... 
+.4 scholarly\_paper.math\_content{...}.
+.5 scholarly\_paper.definition{Freeform Definition}.
+.5 scholarly\_paper.lemma{Freeform Lemma}.
+.5 scholarly\_paper.theorem{...}.
+.5 scholarly\_paper.corollary{...}.
+.5 scholarly\_paper.math\_example{...}.
+.5 scholarly\_paper.math\_semiformal{...}.
+.4 scholarly\_paper.tech\_example{...}.
+.4 scholarly\_paper.math\_motivation{...}.
+.4 scholarly\_paper.math\_explanation{...}.
+.4 scholarly\_paper.engineering\_content{...}.
+.5 scholarly\_paper.data{...}.
+.5 scholarly\_paper.evaluation{...}.
+.5 scholarly\_paper.experiment{...}.
+.1 ... 
+.1 scholarly\_paper.article{The Paper Monitor}.
+.1 \ldots.
+}
+\end{minipage}
+\end{center}
+\<close>
+
+text\<open>They were alltogether also supported 
+
+\<close>
+
+
+
+subsubsection*["text-elements-expls"::technical]\<open>Examples\<close>
+
 text\<open>
   While the default user interface for class definitions via the  
   \<^boxed_theory_text>\<open>text*\<open> ... \<close>\<close>-command allow to access all features of the document 
   class, \<^isadof> provides short-hands for certain, widely-used, concepts such as 
   \<^boxed_theory_text>\<open>title*\<open> ... \<close>\<close> or \<^boxed_theory_text>\<open>section*\<open> ... \<close>\<close>, \<^eg>:
+
 
 @{boxed_theory_text [display]\<open>
  title*[title::title]\<open>Isabelle/DOF\<close>
