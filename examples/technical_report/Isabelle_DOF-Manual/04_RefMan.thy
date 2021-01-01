@@ -88,9 +88,9 @@ text\<open>
  are coupled with \<^emph>\<open>layout definitions\<close> allowing an automatic mapping of an integrated
  source into \<^LaTeX> and finally \<^pdf>. The mapping of an ontology to a specific representation
  in \<^LaTeX> is steered via associated  \<^LaTeX> stylefiles which were included during Isabelle's
- document generation process. This one-to-many mapping implies a certain technical 
- organisation and some resulting restrictions described in @{technical (unchecked) \<open>infrastructure\<close>}
- in more detail.
+ document generation process. This mapping is potentially a one-to-many mapping;
+ this implies a certain technical  organisation and some resulting restrictions 
+ described in @{technical (unchecked) \<open>infrastructure\<close>} in more detail.
 \<close>
 
 section\<open>The Ontology Definition Language (ODL)\<close>
@@ -203,7 +203,7 @@ text\<open>
 text\<open>
   Advanced ontologies can, \<^eg>,  use recursive function definitions with 
   pattern-matching~@{cite "kraus:defining:2020"}, extensible record 
-  pecifications~@{cite "wenzel:isabelle-isar:2020"}, and abstract type declarations.
+  specifications~@{cite "wenzel:isabelle-isar:2020"}, and abstract type declarations.
 \<close>
 
 text\<open>Note that \<^isadof> works internally with fully qualified names in order to avoid confusions 
@@ -330,22 +330,96 @@ is currently only available in the SML API's of the kernel.
         |  @@{command "print_doc_items"} 
         |  @@{command "check_doc_global"}\<close>
 \<^item> \<^isadof> \<open>macro_command\<close> :
-  \<^rail>\<open>    @@{command "define_shortcut*"} name ('\<rightleftharpoons>' | '==') '\<open>' string '\<close>' 
+  \<^rail>\<open>   @@{command "define_shortcut*"} name ('\<rightleftharpoons>' | '==') '\<open>' string '\<close>' 
         |  @@{command "define_macro*"}  name ('\<rightleftharpoons>' | '==') 
            \<newline> '\<open>' string '\<close>' '_' '\<open>' string '\<close>' \<close>
 \<close>
+text\<open>Recall that with the exception of \<^theory_text>\<open>text* \<dots> \<close>, all \<^isadof> commands were mapped to visible
+layout (such as \<^LaTeX>); these commands have to be wrapped into 
+ \<^verbatim>\<open>(*<*) ... (*>*)\<close> brackets if this is undesired. \<close>
+
 subsection\<open>Ontologic Text-Elements and their Management\<close>
+text\<open> \<^theory_text>\<open>text*[oid::cid, ...] \<open>\<open>\<close> \<dots> text \<dots> \<open>\<close>\<close> \<close> is the core-command of \<^isadof>: it permits to create 
+ an object of meta-data belonging to the class \<^theory_text>\<open>cid\<close>. This is viewed as the \<^emph>\<open>definition\<close> of
+an instance of a document class. This instance object is attached to the text-element
+and makes it thus "trackable" for  \<^isadof>, \<^ie>, it can be referenced via the  \<^theory_text>\<open>oid\<close>, its attributes
+can be set by defaults in the class-definitions, or set at creation time, or modified at any
+point after creation via  \<^theory_text>\<open>update_instance*[oid, ...]\<close>. The \<^theory_text>\<open>class_id\<close> is syntactically optional;
+if ommitted, an object belongs to an anonymous superclass of all classes. 
+The \<^theory_text>\<open>class_id\<close> is used to generate a \<^emph>\<open>class-type\<close> in HOL; note that this may impose lexical 
+restrictions as well as to name-conflicts in the surrounding logical context. 
+In many cases, it is possible to use the class-type to denote the \<^theory_text>\<open>class_id\<close>; this also
+holds for type-synonyms on class-types.
+
+References to text-elements can occur textually before creation; in these cases, they must be 
+declared via \<^theory_text>\<open>declare_reference*[...]\<close> in order to compromise to Isabelle's fundamental 
+"declaration-before-use" linear-visibility evaluation principle. The forward-declared class-type
+must be identical with the defined class-type.
+
+For a declared class \<^theory_text>\<open>cid\<close>, there exists a text antiquotation of the form \<^theory_text>\<open> @{cid \<open>oid\<close>} \<close>. 
+The precise presentation is decided in the \<^emph>\<open>layout definitions\<close>, for example by suitable
+\<^LaTeX>-template code. Declared but not yet defined instances must be referenced with a particular
+pragma in order to enforce a relaxed checking \<^theory_text>\<open> @{cid (unchecked) \<open>oid\<close>} \<close>.
+
+% there should also exist a *term* antiquotation ...
+\<close>
+
+(*<*)
+declare_reference*["sec:advanced"::technical]
+(*>*)
 
 subsection\<open>Status and Query Commands\<close>
+text\<open>\<^isadof> provides a number of inspection commands.
+\<^item> \<^theory_text>\<open>print_doc_classes\<close> allows to view the status of the internal
+  class-table resulting from ODL definitions,
+\<^item> \<^ML>\<open>DOF_core.print_doc_class_tree\<close> allows for presenting (fragments) of
+  class-inheritance trees (currently only available at ML level),
+\<^item> \<^theory_text>\<open>print_doc_items\<close> allows  to view the status of the internal
+  object-table of text-elements that were tracked, and 
+\<^item> \<^theory_text>\<open>check_doc_global\<close> checks if all declared object references have been
+  defined, and all monitors are in a final state and final invariant checks 
+  on all objects are satisfied (cf. @{technical (unchecked) \<open>sec:advanced\<close>})
+\<close>
 
 subsection\<open>Macros\<close>
+text\<open>There is a mechanism to define document-local short-cuts and macros which
+were PIDE-supported but lead to an expansion in the integrated source; this feature
+can be used to define 
+\<^item> \<^theory_text>\<open>shortcuts\<close>, \<^ie>, short names that were expanded to, for example,
+  \<^LaTeX>-code,
+\<^item> \<^theory_text>\<open>macro\<close>'s (= parameterized short-cuts), which allow for 
+  passing an argument to the expansion mechanism.
+\<close>
+text\<open>Note that the argument can be checked by an own SML-function with respect to syntactic
+as well as semantic regards; however, the latter feature is currently only accessible at
+the SML level and not directly in the Isar language. We would like to stress, that this 
+feature is basically an abstract interface to existing Isabelle functionality in the document 
+generation.
+\<close>
+subsubsection\<open>Examples\<close>
+text\<open>
+\<^item> common short-cut hiding \<^LaTeX> code in the integrated source:
+    @{theory_text [display] \<open>
+     define_shortcut* eg  \<rightleftharpoons> \<open>\eg\<close>  (* Latin: „exempli gratia“  meaning  „for example“. *)
+                      clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
+    \<close>}
+\<^item> non-checking macro:
+    @{theory_text [display] \<open>
+      define_macro* index  \<rightleftharpoons> \<open>\index{\<close> _ \<open>}\<close>
+    \<close>}
+\<^item> checking macro:
+    @{theory_text [display] \<open>
+      setup\<open> DOF_lib.define_macro \<^binding>\<open>vs\<close>  "\\vspace{" "}" (check_latex_measure) \<close> 
+    \<close>}
+  where \<^ML>\<open>check_latex_measure\<close> is a hand-programmed function that checks 
+  of the input syntax.
+\<close>
 
 
 section\<open>The Standard Ontology Libraries\<close>
 text\<open> We will describe the backbone of the Standard Library with the
 already mentioned hierarchy \<^verbatim>\<open>COL\<close> (the common ontology library),
  \<^verbatim>\<open>scholarly_paper\<close> (for MINT-oriented scientific papers), 
- \<^verbatim>\<open>technical_report\<close> (for MINT-oriented technical reports), 
  \<^verbatim>\<open>technical_report\<close> (for MINT-oriented technical reports), and
 the example for a domain-specific ontology 
 \<^verbatim>\<open>CENELEC_50128\<close>.\<close>
@@ -509,7 +583,7 @@ doc_class "thms" =
 
 subsection\<open>The Ontology \<^theory>\<open>Isabelle_DOF.technical_report\<close>\<close>
 
-subsection\<open>An Exampe for a Domain-Specific Ontology: \<^theory>\<open>Isabelle_DOF.CENELEC_50128\<close>\<close>
+subsection\<open>A Domain-Specific Ontology: \<^theory>\<open>Isabelle_DOF.CENELEC_50128\<close>\<close>
 
 subsubsection\<open>Example: Text Elemens with Levels\<close>
 text\<open>
