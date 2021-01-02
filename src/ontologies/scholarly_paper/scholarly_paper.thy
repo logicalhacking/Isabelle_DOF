@@ -521,7 +521,8 @@ define_macro* hs2 \<rightleftharpoons> \<open>\hspace{\<close> _ \<open>}\<close
 (*>*)
 
 define_shortcut* clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
-
+                 hf \<rightleftharpoons> \<open>\hfill\<close> 
+                 br \<rightleftharpoons> \<open>\break\<close> 
 
 end
 

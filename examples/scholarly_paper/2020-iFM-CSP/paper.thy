@@ -616,7 +616,7 @@ be deadlocked after any non-terminating trace.
 \<^vs>\<open>-0.2cm\<close>\<close>
 
 Theorem*[T1, short_name="\<open>DF definition captures deadlock-freeness\<close>"]
-\<open> \hfill \break \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<surd>}\<union>events_of P) \<notin> \<F> P)\<close> \<^vs>\<open>-0.4cm\<close>\<close>   
+\<open> \<^hf> \<^br> \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<surd>}\<union>events_of P) \<notin> \<F> P)\<close> \<^vs>\<open>-0.4cm\<close>\<close>   
 
 
 Definition*[X11]\<open>  \<open>livelock\<^sub>-free P \<equiv> \<D> P = {} \<close>   \<^vs>\<open>-0.2cm\<close>\<close>
@@ -634,7 +634,7 @@ Finally, we proved the following theorem that confirms the relationship between 
 properties:\<^vs>\<open>-0.3cm\<close>
 \<close>
 Theorem*[T2, short_name="''DF implies LF''"]
-  \<open>  \hspace{0.5cm} \<open>deadlock_free P \<longrightarrow> livelock_free P\<close>   \<^vs>\<open>-0.3cm\<close>\<close>
+  \<open>  \<^hs>\<open>0.5cm\<close> \<open>deadlock_free P \<longrightarrow> livelock_free P\<close>   \<^vs>\<open>-0.3cm\<close>\<close>
 
 text\<open>
 This is totally natural, at a first glance, but surprising as the proof of deadlock-freeness only 
