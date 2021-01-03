@@ -16,7 +16,7 @@ theory
   "04_RefMan"
   imports 
     "03_GuidedTour" 
-    "Isabelle_DOF.Isa_COL"
+    "Isabelle_DOF.technical_report"
 begin
 
 declare_reference*[infrastructure::technical]
@@ -539,6 +539,8 @@ It extends \<^verbatim>\<open>COL\<close> by the following concepts:
 .5 scholarly\_paper.corollary\DTcomment{Freeform}.
 .5 scholarly\_paper.math\_example\DTcomment{Freeform}.
 .5 scholarly\_paper.math\_semiformal\DTcomment{Freeform}.
+.5 scholarly\_paper.math\_formal\DTcomment{Formal(=Checked) Content}.
+.6 scholarly\_paper.assertion\DTcomment{Assertions}.
 .4 scholarly\_paper.tech\_example\DTcomment{...}.
 .4 scholarly\_paper.math\_motivation\DTcomment{...}.
 .4 scholarly\_paper.math\_explanation\DTcomment{...}.
@@ -553,6 +555,8 @@ It extends \<^verbatim>\<open>COL\<close> by the following concepts:
 }
 \end{minipage}
 \end{center}
+
+TODO: There are some slight problems in  the hierarchy ...
 
 \<close>
 
@@ -599,6 +603,7 @@ of the \<^isadof> language:
        \<newline>
        '[' meta_args ']' '\<open>' text '\<close>'
      ) 
+     | @@{command "assert*"} '[' meta_args ']' '\<open>' term '\<close>'
   \<close>
 \<close>
 
@@ -612,6 +617,11 @@ freeform terminological definition as used in certification standards. Moreover,
 of @{typ \<open>math_content\<close>} might be introduced in a derived ontology with an own specific layout
 definition. 
 \<close>
+
+text\<open>While this library is intended to give a lot of space to freeform text elements in
+order to counterbalance Isabelle's standard view, it should not be forgot that the real strength
+of Isabelle is its ability to handle both - and to establish links between both worlds. 
+Therefore the formal assertion command has been integrated to capture some form of formal content.\<close>
 
 
 subsubsection*["text-elements-expls"::example]\<open>Examples\<close>
@@ -634,6 +644,21 @@ text\<open>
 
 \<close>
 
+text\<open>Assertions allow for logical statements to be checked in the global context).
+This is particularly useful to explore formal definitions wrt. to their border cases. \<close>
+
+assert*[ass1::assertion, short_name = "\<open>This is an assertion\<close>"] \<open>last [3] < (4::int)\<close>
+
+text\<open>We want to check the consequences of this definition and can add the following statements:
+@{boxed_theory_text [display]\<open>
+text*[claim::assertion]\<open>For non-empty lists, our definition yields indeed 
+                               the last element of a list.\<close>
+assert*[claim1::assertion] "last[4::int] = 4"
+assert*[claim2::assertion] "last[1,2,3,4::int] = 4"
+\<close>}
+\<close>
+
+
 text\<open>
 As mentioned before, the command macros of  \<^theory_text>\<open>Definition*\<close>,  \<^theory_text>\<open>Lemma*\<close> and  \<^theory_text>\<open>Theorem*\<close> 
 set the default class to the super-class of  @{typ \<open>definition\<close>}.
@@ -653,33 +678,17 @@ which allows the above example be shortened to:
 \<close>}
 \<close>
 
-
-subsection\<open>ASSERTIONS : NEED TO BE INTEGRATED. TODO.\<close>
-
-text\<open>
-Similarly, we provide "minimal" instances of the \<^boxed_theory_text>\<open>ASSERTION_ALIKES\<close>
-and \<^boxed_theory_text>\<open>FORMAL_STATEMENT_ALIKE\<close> shadow classes:
-@{boxed_theory_text [display]\<open>
-doc_class assertions = 
-    properties :: "term list"
-  
-doc_class "thms" =
-    properties :: "thm list"
-\<close>}
-
-\<close>
-
-
 subsection\<open>The Ontology \<^theory>\<open>Isabelle_DOF.technical_report\<close>\<close>
 (*<*)
 ML\<open>val toLaTeX = String.translate (fn c => if c = #"_" then "\\_" else String.implode[c])\<close>     
 ML\<open>writeln (DOF_core.print_doc_class_tree 
-                 @{context} (fn (n,l) =>        String.isPrefix "technical_report" l 
-                                         orelse String.isPrefix "Isa_COL" l) 
+                 @{context} (fn (n,l) =>  true (*     String.isPrefix "technical_report" l 
+                                         orelse String.isPrefix "Isa_COL" l *)) 
                  toLaTeX)\<close>
 (*>*)
 text\<open> The \<^verbatim>\<open>technical_report\<close> ontology extends  \<^verbatim>\<open>scholarly_paper\<close> by concepts needed
-for larger reports in the domain of mathematics and engineering. 
+for larger reports in the domain of mathematics and engineering. The concepts are fairly 
+high-level arranged at root-class level,
 
 %
 \begin{center}
@@ -688,6 +697,12 @@ for larger reports in the domain of mathematics and engineering.
 .0 .
 .1 technical\_report.front\_matter\DTcomment{...}.
 .1 technical\_report.table\_of\_contents\DTcomment{...}.
+.1 Isa\_COL.text\_element\DTcomment{...}.
+.2 scholarly\_paper.text\_section\DTcomment{...}.
+.4 technical\_report.code\DTcomment{...}.
+.5 technical\_report.SML\DTcomment{...}.
+.5 technical\_report.ISAR\DTcomment{...}.
+.5 technical\_report.LATEX\DTcomment{...}.
 .1 technical\_report.index\DTcomment{...}.
 .1 ... 
 .1 technical\_report.report\DTcomment{...}.
@@ -698,10 +713,67 @@ for larger reports in the domain of mathematics and engineering.
 
 
 subsection\<open>A Domain-Specific Ontology: \<^theory>\<open>Isabelle_DOF.CENELEC_50128\<close>\<close>
+(*<*)
+ML\<open>val toLaTeX = String.translate (fn c => if c = #"_" then "\\_" else String.implode[c])\<close>     
+ML\<open>writeln (DOF_core.print_doc_class_tree 
+                 @{context} (fn (n,l) =>  true (*     String.isPrefix "technical_report" l 
+                                         orelse String.isPrefix "Isa_COL" l *)) 
+                 toLaTeX)\<close>
+(*>*)
+text\<open> The \<^verbatim>\<open>CENELEC_50128\<close> is qn exqmple of q domqin-specific ontology. It 
+is based on  \<^verbatim>\<open>technical_report\<close> since we assume that this kind of format will be most
+appropriate for this type of long-and-tedious documents,
 
+%
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\dirtree{%
+.0 .
+.1 CENELEC\_50128.judgement\DTcomment{...}.
+.1 CENELEC\_50128.test\_item\DTcomment{...}.
+.2 CENELEC\_50128.test\_case\DTcomment{...}.
+.2 CENELEC\_50128.test\_tool\DTcomment{...}.
+.2 CENELEC\_50128.test\_result\DTcomment{...}.
+.2 CENELEC\_50128.test\_adm\_role\DTcomment{...}.
+.2 CENELEC\_50128.test\_environment\DTcomment{...}.
+.2 CENELEC\_50128.test\_requirement\DTcomment{...}.
+.2 CENELEC\_50128.test\_specification\DTcomment{...}.
+.1 CENELEC\_50128.objectives\DTcomment{...}.
+.1 CENELEC\_50128.design\_item\DTcomment{...}.
+.2 CENELEC\_50128.interface\DTcomment{...}.
+.1 CENELEC\_50128.sub\_requirement\DTcomment{...}.
+.1 CENELEC\_50128.test\_documentation\DTcomment{...}.
+.1 Isa\_COL.text\_element\DTcomment{...}.
+.2 CENELEC\_50128.requirement\DTcomment{...}.
+.3 CENELEC\_50128.AC\DTcomment{...}.
+.4 CENELEC\_50128.EC\DTcomment{...}.
+.5 CENELEC\_50128.SRAC\DTcomment{...}.
+.3 CENELEC\_50128.TC\DTcomment{...}.
+.3 CENELEC\_50128.FnI\DTcomment{...}.
+.3 CENELEC\_50128.SIR\DTcomment{...}.
+.3 CENELEC\_50128.CoAS\DTcomment{...}.
+.3 CENELEC\_50128.HtbC\DTcomment{...}.
+.3 CENELEC\_50128.SILA\DTcomment{...}.
+.3 CENELEC\_50128.assumption\DTcomment{...}.
+.3 CENELEC\_50128.hypothesis\DTcomment{...}.
+.4 CENELEC\_50128.security\_hyp\DTcomment{...}.
+.3 CENELEC\_50128.safety\_requirement\DTcomment{...}.
+.2 CENELEC\_50128.cenelec\_text\DTcomment{...}.
+.3 CENELEC\_50128.SWAS\DTcomment{...}.
+.3 [...].
+.2 scholarly\_paper.text\_section\DTcomment{...}.
+.3 scholarly\_paper.technical\DTcomment{...}.
+.4 scholarly\_paper.math\_content\DTcomment{...}.
+.5 CENELEC\_50128.semi\_formal\_content\DTcomment{...}.
+.1 ...
+}
+\end{minipage}
+\end{center}
+\<close>
 
+(* TODO : Rearrange ontology hierarchies. *)
 
-subsubsection\<open>Example: Text Elemens with Levels\<close>
+subsubsection\<open>Examples\<close>
 text\<open>
 The category ``exported constraint (EC)'' is, in the file 
 \<^file>\<open>../../../src/ontologies/CENELEC_50128/CENELEC_50128.thy\<close> defined as follows:
@@ -757,33 +829,6 @@ can now be defined as follows:
 \end{ltx}
 \<close>
 
-subsubsection\<open>Example: Assertions\<close>
-text\<open>Assertions are a common feature to validate properties of models, presented as a collection
-of Isabelle/HOL definitions. They are particularly relevant for highlighting corner cases of a 
-formal model. For example, assume a definition: \<close>
-
-definition last :: "'a list \<Rightarrow> 'a" where "last S = hd(rev S)"
-
-(* Old stuff using abstract classes.
-(*<*)
-text*[claim::assertions]\<open>For non-empty lists, our definition yields indeed the last element of a list.\<close>
-assert*[claim::assertions] "last[4::int] = 4"
-assert*[claim::assertions] "last[1,2,3,4::int] = 4"
-(*>*)
-*)
-text\<open>We want to check the consequences of this definition and can add the following statements:
-@{boxed_theory_text [display]\<open>
-text*[claim::assertions]\<open>For non-empty lists, our definition yields indeed 
-                               the last element of a list.\<close>
-assert*[claim1::assertions] "last[4::int] = 4"
-assert*[claim2::assertions] "last[1,2,3,4::int] = 4"
-\<close>}
-\<close>
-
-text\<open>As an \<^boxed_theory_text>\<open>ASSERTION_ALIKES\<close>, the \<^boxed_theory_text>\<open>assertions\<close> class possesses a 
-\<^boxed_theory_text>\<open>properties\<close> attribute. The \<^boxed_theory_text>\<open>assert*\<close> command evaluates its argument;
-in case it evaluates to true the property is added to the property list of the \<^boxed_theory_text>\<open>claim\<close> - 
-text-element. Commands like \<^boxed_theory_text>\<open>Definitions*\<close> or \<^boxed_theory_text>\<open>Theorem*\<close> work analogously.\<close>
 
 
 subsubsection\<open>For Isabelle Hackers: Defining New Top-Level Commands\<close>

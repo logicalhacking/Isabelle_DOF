@@ -11,12 +11,13 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-section\<open>An example ontology for a scholarly paper\<close>
+section\<open>An example ontology for scientific, MINT-oriented papers.\<close>
 
 theory scholarly_paper
   imports "../../DOF/Isa_COL"
   keywords "author*" "abstract*"
            "Definition*" "Lemma*" "Theorem*"  :: document_body
+  and      "assert*"                          :: thy_decl
 
 
 begin
@@ -123,7 +124,7 @@ A formal statement can, but must not have a reference to true formal Isabelle/Is
 
 subsection\<open>Technical Content and its Formats\<close>
 
-datatype status = semiformal | description
+datatype status = formal | semiformal | description
 
 text\<open>The class \<^verbatim>\<open>technical\<close> regroups a number of text-elements that contain typical 
 "technical content" in mathematical or engineering papers: definitions, theorems, lemmas, examples.  \<close>
@@ -154,7 +155,7 @@ doc_class example  = text_section +
    short_name      :: string <= "''''"
 
 
-subsection\<open>Mathematical Content\<close>
+subsection\<open>Freeform Mathematical Content\<close>
 
 text\<open>We follow in our enumeration referentiable mathematical content class the AMS style and its
 provided \<^emph>\<open>theorem environments\<close> (see \<^verbatim>\<open>texdoc amslatex\<close>). We add, however, the concepts 
@@ -258,7 +259,7 @@ doc_class "math_example"     = math_content +
    invariant d5  :: "\<lambda> \<sigma>::math_example. mcc \<sigma> = expl"
 
 
-subsection\<open>Ontological Macros \<^verbatim>\<open>Definition*\<close> , \<^verbatim>\<open>Lemma**\<close>, \<^verbatim>\<open>Theorem*\<close> ... \<close>
+subsubsection\<open>Ontological Macros \<^verbatim>\<open>Definition*\<close> , \<^verbatim>\<open>Lemma**\<close>, \<^verbatim>\<open>Theorem*\<close> ... \<close>
 
 text\<open>These ontological macros allow notations are defined for the class 
   \<^typ>\<open>math_content\<close> in order to allow for a variety of free-form formats;
@@ -334,6 +335,62 @@ val _ = let fun use_Theorem_default thy =
 end 
 \<close>
 
+
+subsection\<open>Formal Mathematical Content\<close>
+text\<open>While this library is intended to give a lot of space to freeform text elements in
+order to counterbalance Isabelle's standard view, it should not be forgot that the real strength
+of Isabelle is its ability to handle both - and to establish links between both worlds. Therefore:\<close>
+
+doc_class math_formal  = math_content +
+   referentiable :: bool <= False
+   status        :: status <= "formal"
+   properties    :: "term list"
+type_synonym math_fc = math_formal
+
+doc_class  assertion = math_formal +
+   referentiable :: bool <= True (* No support in Backend yet. *)
+   status        :: status <= "formal"
+   properties    :: "term list"
+
+
+ML\<open>
+(* TODO : Rework this code and make it closer to Definition*. There is still 
+   a rest of "abstract classes in it: any class possessing a properties attribute
+   is admissible to this command, not just  ... *)
+local open ODL_Command_Parser in
+
+fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
+                prop) =
+    let fun conv_2_holstring thy =  (bstring_to_holstring (Proof_Context.init_global thy))
+        fun conv_attrs thy = (("properties",pos),"[@{termrepr ''"^conv_2_holstring thy prop ^" ''}]")
+                             ::doc_attrs  
+        fun conv_attrs' thy = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) (conv_attrs thy)
+        fun mks thy = case DOF_core.get_object_global_opt oid thy of
+                   SOME NONE => (error("update of declared but not created doc_item:" ^ oid))
+                 | SOME _ => (update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
+                 | NONE   => (create_and_check_docitem 
+                                 {is_monitor = false} {is_inline = false} 
+                                 oid pos cid_pos (conv_attrs thy) thy)
+        val check = (assert_cmd name_opt modes prop) o Proof_Context.init_global
+    in 
+        (* Toplevel.keep (check o Toplevel.context_of) *)
+        Toplevel.theory (fn thy => (check thy; mks thy))
+    end
+
+val attributes = attributes (* re-export *)
+
+end
+val _ =
+  Outer_Syntax.command @{command_keyword "assert*"} 
+                       "evaluate and print term"
+                       (attributes -- opt_evaluator -- opt_modes  -- Parse.term  >> assertion_cmd'); 
+
+\<close>
+
+subsubsection*[ex_ass::example]\<open>Example\<close>
+text\<open>Assertions allow for logical statements to be checked in the global context). \<close>
+assert*[ass1::assertion, short_name = "\<open>This is an assertion\<close>"] \<open>(3::int) < 4\<close>
+
 subsection\<open>Example Statements\<close>
 
 text\<open> \<^verbatim>\<open>examples\<close> are currently considered \<^verbatim>\<open>technical\<close>. Is a main category to be refined
@@ -347,7 +404,8 @@ doc_class tech_example       = technical +
 
 
 subsection\<open>Content in Engineering/Tech Papers \<close>
-
+text\<open>This section is currently experimental and not supported by the documentation 
+     generation backend.\<close>
 
 doc_class engineering_content = tc +
    short_name :: string <= "''''"

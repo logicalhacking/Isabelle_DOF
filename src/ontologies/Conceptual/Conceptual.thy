@@ -49,7 +49,7 @@ doc_class E = D +
 
 
 
-doc_class F  = 
+doc_class F  =     
    properties  :: "term list"
    r           :: "thm list"
    u           :: "file"
