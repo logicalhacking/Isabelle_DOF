@@ -45,7 +45,7 @@ abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Alg
 
    If you consider citing this paper, please refer to @{cite "HOL-CSP-iFM2020"}.
 \<close>
-text\<open>\<^vs>\<open>-1.3cm\<close>\<close>
+text\<open>\<close>
 section*[introheader::introduction,main_author="Some(@{docitem ''bu''}::author)"]\<open> Introduction \<close> 
 text*[introtext::introduction]\<open>
 Communicating Sequential Processes (\<^csp>) is a language 
@@ -69,7 +69,7 @@ be distinguished:
   \<^enum> the \<^emph>\<open>external choice\<close>, written \<open>_\<box>_\<close>, which forces a process "to follow" whatever
     the environment offers, and
   \<^enum> the \<^emph>\<open>internal choice\<close>, written \<open>_\<sqinter>_\<close>, which imposes on the environment of a process 
-    "to follow" the non-deterministic choices made.\<^vs>\<open>-0.3cm\<close>
+    "to follow" the non-deterministic choices made.
 
 \<close>
 text\<open>
@@ -103,7 +103,7 @@ and "DBLP:journals/afp/Noce16"}.
 This paper is based on @{cite "tej.ea:corrected:1997"}, which has been the most comprehensive 
 attempt to formalize denotational \<^csp> semantics covering a part of Bill Roscoe's Book 
 @{cite "roscoe:csp:1998"}. Our contributions are as follows:
-  \<^item> \<^vs>\<open>-0.3cm\<close> we ported @{cite "tej.ea:corrected:1997"} from Isabelle93-7 and ancient 
+  \<^item>  we ported @{cite "tej.ea:corrected:1997"} from Isabelle93-7 and ancient 
     ML-written proof scripts to a modern Isabelle/HOL version and structured Isar proofs,
     and extended it substantially,
   \<^item> we introduced new refinement notions allowing a deeper understanding of the \<^csp>
@@ -117,7 +117,7 @@ attempt to formalize denotational \<^csp> semantics covering a part of Bill Rosc
     all other proofs are available at 
     \<^url>\<open>https://gitlri.lri.fr/burkhart.wolff/hol-csp2.0\<close>. In this paper, all Isabelle proofs are 
     omitted.\<close>}. 
-\<^vs>\<open>-0.9cm\<close>\<close>
+\<close>
 (*
 % Moreover, decomposition rules of the form:
 % \begin{center}
@@ -134,11 +134,11 @@ attempt to formalize denotational \<^csp> semantics covering a part of Bill Rosc
 section*["pre"::tc,main_author="Some(@{docitem \<open>bu\<close>}::author)"]
 \<open>Preliminaries\<close>
 
-text\<open>\<^vs>\<open>-0.5cm\<close>\<close>
+text\<open>\<close>
 
 subsection*[cspsemantics::tc, main_author="Some(@{docitem ''bu''})"]\<open>Denotational \<^csp> Semantics\<close>
 
-text\<open>\<^vs>\<open>-0.2cm\<close> The denotational semantics (following @{cite "roscoe:csp:1998"}) comes in three layers: 
+text\<open> The denotational semantics (following @{cite "roscoe:csp:1998"}) comes in three layers: 
 the \<^emph>\<open>trace model\<close>, the \<^emph>\<open>(stable) failures model\<close> and the \<^emph>\<open>failure/divergence model\<close>.
 
 In the trace semantics model, a process \<open>P\<close> is denoted by a set of communication traces,
@@ -152,8 +152,8 @@ Note that the trace sets, representing all \<^emph>\<open>partial\<close> histor
 text*[ex1::math_example, status=semiformal] \<open>
 Let two processes be defined as follows:
 
-  \<^enum> \<^vs>\<open>-0.3cm\<close> \<open>P\<^sub>d\<^sub>e\<^sub>t = (a \<rightarrow> Stop) \<box> (b \<rightarrow> Stop)\<close>
-  \<^enum> \<open>P\<^sub>n\<^sub>d\<^sub>e\<^sub>t = (a \<rightarrow> Stop) \<sqinter> (b \<rightarrow> Stop)\<close> \<^vs>\<open>-0.3cm\<close>
+  \<^enum>  \<open>P\<^sub>d\<^sub>e\<^sub>t = (a \<rightarrow> Stop) \<box> (b \<rightarrow> Stop)\<close>
+  \<^enum> \<open>P\<^sub>n\<^sub>d\<^sub>e\<^sub>t = (a \<rightarrow> Stop) \<sqinter> (b \<rightarrow> Stop)\<close> 
 \<close> 
 
 text\<open>\<^noindent> These two processes \<open>P\<^sub>d\<^sub>e\<^sub>t\<close> and \<open>P\<^sub>n\<^sub>d\<^sub>e\<^sub>t\<close> cannot be distinguished by using 
@@ -173,12 +173,12 @@ choice, can be distinguished in the failures semantics.
 However, it turns out that the failures model suffers from another deficiency with respect to 
 the phenomenon called infinite internal chatter or \<^emph>\<open>divergence\<close>.\<close>
 
-text*[ex2::example, status=semiformal] \<open>\<^vs>\<open>-0.3cm\<close>
+text*[ex2::example, status=semiformal] \<open>
 The following process \<open>P\<^sub>i\<^sub>n\<^sub>f\<close> is an infinite process that performs \<open>a\<close> infinitely 
 many times. However, using the \<^csp> hiding operator \<open>_\_\<close>, this activity is concealed: 
 
-  \<^enum> \<^vs>\<open>-0.3cm\<close> \<open>P\<^sub>i\<^sub>n\<^sub>f = (\<mu> X. a \<rightarrow> X) \ {a}\<close>
-\<^vs>\<open>-0.5cm\<close>
+  \<^enum>  \<open>P\<^sub>i\<^sub>n\<^sub>f = (\<mu> X. a \<rightarrow> X) \ {a}\<close>
+
 \<close>
 
 text\<open>\<^noindent> where \<open>P\<^sub>i\<^sub>n\<^sub>f\<close> will be equivalent to \<open>\<bottom>\<close> in the process cpo ordering. 
@@ -194,11 +194,11 @@ in our example, the empty trace \<open>[]\<close> belongs to \<open>\<D> P\<^sub
 The failure/divergence model has become the standard semantics for an enormous range of \<^csp> 
 research and the implementations of @{cite "fdr4" and "SunLDP09"}. Note, that the work
 of @{cite "IsobeRoggenbach2010"} is restricted to a variant of the failures model only.
-\<^vs>\<open>-0.6cm\<close> 
+ 
 \<close>
 
 subsection*["isabelleHol"::tc, main_author="Some(@{docitem ''bu''})"]\<open>Isabelle/HOL\<close>
-text\<open>\<^vs>\<open>-0.2cm\<close> Nowadays, Isabelle/HOL is one of the major interactive theory development environments
+text\<open> Nowadays, Isabelle/HOL is one of the major interactive theory development environments
 @{cite "nipkow.ea:isabelle:2002"}. HOL stands for Higher-Order Logic, a logic based on simply-typed
 \<open>\<lambda>\<close>-calculus extended by parametric polymorphism and Haskell-like type-classes.
 Besides interactive and integrated automated proof procedures,
@@ -210,7 +210,7 @@ For the work presented here, one relevant construction is :
 
    \<^item> \<^theory_text>\<open>typedef  (\<alpha>\<^sub>1,...,\<alpha>\<^sub>n)t = E\<close>
 
-\<^vs>\<open>-0.2cm\<close> 
+ 
 It creates a fresh type that is isomorphic to a set \<open>E\<close> involving \<open>\<alpha>\<^sub>1,...,\<alpha>\<^sub>n\<close> types.
 Isabelle/HOL performs a number of syntactic checks for these constructions that guarantee the logical
 consistency of the defined constants or types relative to the axiomatic basis of HOL. The system
@@ -220,17 +220,17 @@ distribution comes with rich libraries comprising Sets, Numbers, Lists, etc. whi
 For this work, a particular library called \<^theory_text>\<open>HOLCF\<close> is intensively used. It provides classical 
 domain theory for a particular type-class \<open>\<alpha>::pcpo\<close>, \<^ie> the class of types  \<open>\<alpha>\<close> for which 
 
-   \<^enum> \<^vs>\<open>-0.2cm\<close> a least element \<open>\<bottom>\<close> is defined, and
+   \<^enum>  a least element \<open>\<bottom>\<close> is defined, and
    \<^enum> a complete partial order \<open>_\<sqsubseteq>_\<close> is defined.
 
-\<^vs>\<open>-0.2cm\<close> For these types, \<^theory_text>\<open>HOLCF\<close> provides a fixed-point operator \<open>\<mu>X. f X\<close> as well as the 
+ For these types, \<^theory_text>\<open>HOLCF\<close> provides a fixed-point operator \<open>\<mu>X. f X\<close> as well as the 
 fixed-point induction and other (automated) proof infrastructure. Isabelle's type-inference can 
-automatically infer, for example, that if \<open>\<alpha>::pcpo\<close>, then \<open>(\<beta> \<Rightarrow> \<alpha>)::pcpo\<close>. \<^vs>\<open>-0.5cm\<close>\<close>
+automatically infer, for example, that if \<open>\<alpha>::pcpo\<close>, then \<open>(\<beta> \<Rightarrow> \<alpha>)::pcpo\<close>. \<close>
   
 section*["csphol"::tc,main_author="Some(@{docitem ''bu''}::author)", level="Some 2"]
 \<open>Formalising Denotational \<^csp> Semantics in HOL \<close>
 
-text\<open>\<^vs>\<open>-0.4cm\<close>\<close>
+text\<open>\<close>
 
 subsection*["processinv"::tc, main_author="Some(@{docitem ''bu''})"]
 \<open>Process Invariant and Process Type\<close>
@@ -256,10 +256,10 @@ Informally, these are:
    \<^item> a trace ending with \<open>\<surd>\<close> belonging to divergence set implies that its 
      maximum prefix without \<open>\<surd>\<close> is also a divergent trace.
 
-\<^vs>\<open>-0.2cm\<close>
+
 \<^noindent> More formally, a process \<open>P\<close> of the type \<open>\<Sigma> process\<close> should have the following properties:
 
-\<^vs>\<open>-0.2cm\<close>
+
 @{cartouche [display] \<open>([],{}) \<in> \<F> P \<and>
 (\<forall> s X.  (s,X) \<in> \<F> P \<longrightarrow> front_tickFree s) \<and>
 (\<forall> s t . (s@t,{}) \<in> \<F> P \<longrightarrow> (s,{}) \<in> \<F> P) \<and>
@@ -270,25 +270,25 @@ Informally, these are:
 (\<forall> s X. s \<in> \<D> P \<longrightarrow> (s,X) \<in> \<F> P) \<and>
 (\<forall> s. s@[\<surd>] \<in> \<D> P \<longrightarrow> s \<in> \<D> P)\<close>}
 
-\<^vs>\<open>-0.1cm\<close>
+
 Our objective is to encapsulate this wishlist into a type constructed as a conservative
 theory extension in our theory HOL-\<^csp>.
 Therefore third, we define a pre-type for processes \<open>\<Sigma> process\<^sub>0\<close> by \<open> \<P>(\<Sigma>\<^sup>\<surd>\<^sup>* \<times> \<P>(\<Sigma>\<^sup>\<surd>)) \<times> \<P>(\<Sigma>\<^sup>\<surd>)\<close>.
 Forth, we turn our wishlist of "axioms" above into the definition of a predicate \<open>is_process P\<close> 
 of type \<open>\<Sigma> process\<^sub>0 \<Rightarrow> bool\<close> deciding if its conditions are fulfilled. Since \<open>P\<close> is a pre-process,
 we replace \<open>\<F>\<close> by \<open>fst\<close> and  \<open>\<D>\<close> by \<open>snd\<close> (the HOL projections into a pair).
-And last not least fifth, we use the following type definition:\<^vs>\<open>-0.2cm\<close>
+And last not least fifth, we use the following type definition:
   \<^item> \<^theory_text>\<open>typedef '\<alpha> process = "{P :: '\<alpha> process\<^sub>0 . is_process P}"\<close>
 
-\<^vs>\<open>-0.2cm\<close>
+
 \<^noindent> Isabelle requires a proof for the existence of a witness for this set,
 but this can be constructed in a straight-forward manner. Suitable definitions for 
 \<open>\<T>\<close>, \<open>\<F>\<close> and \<open>\<D>\<close> lifting \<open>fst\<close> and \<open>snd\<close> on the new \<open>'\<alpha> process\<close>-type allows to derive
-the above properties for any \<open>P::'\<alpha> process\<close>. \<^vs>\<open>-0.6cm\<close>\<close>
+the above properties for any \<open>P::'\<alpha> process\<close>. \<close>
 
 subsection*["operator"::tc, main_author="Some(@{docitem ''lina''})"]
 \<open>\<^csp> Operators over the Process Type\<close>
-text\<open>\<^vs>\<open>-0.2cm\<close> Now, the operators of \<^csp> \<open>Skip\<close>, \<open>Stop\<close>, \<open>_\<sqinter>_\<close>,  \<open>_\<box>_\<close>, \<open>_\<rightarrow>_\<close>,\<open>_\<lbrakk>_\<rbrakk>_\<close> etc. 
+text\<open> Now, the operators of \<^csp> \<open>Skip\<close>, \<open>Stop\<close>, \<open>_\<sqinter>_\<close>,  \<open>_\<box>_\<close>, \<open>_\<rightarrow>_\<close>,\<open>_\<lbrakk>_\<rbrakk>_\<close> etc. 
 for internal choice, external choice, prefix and parallel composition, can 
 be defined indirectly on the process-type. For example, for the simple case of the internal choice,
 we construct it such that \<open>_\<sqinter>_\<close> has type \<open>'\<alpha> process \<Rightarrow> '\<alpha> process \<Rightarrow> '\<alpha> process\<close> and 
@@ -298,10 +298,10 @@ This boils down to a proof that an equivalent definition on the pre-process type
 maintains \<open>is_process\<close>, \<^ie> this predicate remains invariant on the elements of the semantic domain. 
 For example, we define \<open>_\<sqinter>_\<close> on the pre-process type as follows:
 
-\<^vs>\<open>0.1cm\<close>
+
   \<^item> \<^theory_text>\<open>definition "P \<sqinter> Q \<equiv> Abs_process(\<F> P \<union> \<F> Q , \<D> P \<union> \<D> Q)"\<close>
 
-\<^vs>\<open>-0.2cm\<close>
+
 \<^noindent> where \<open>\<F> = fst \<circ> Rep_process\<close> and \<open>\<D> = snd \<circ> Rep_process\<close> and where \<open>Rep_process\<close> and
 \<open>Abs_process\<close> are the representation and abstraction morphisms resulting from the
 type definition linking \<open>'\<alpha> process\<close> isomorphically to \<open>'\<alpha> process\<^sub>0\<close>. Proving the above properties
@@ -309,13 +309,13 @@ for  \<open>\<F> (P \<sqinter> Q)\<close> and \<open>\<D> (P \<sqinter> Q)\<clos
 satisfies the 9 "axioms", which is fairly simple in this case.
 
 The definitional presentation of the \<^csp> process operators according to @{cite "roscoe:csp:1998"} 
-follows always this scheme. This part of the theory comprises around 2000 loc. \<^vs>\<open>-0.7cm\<close>
+follows always this scheme. This part of the theory comprises around 2000 loc. 
 \<close>
 
 subsection*["orderings"::tc, main_author="Some(@{docitem ''bu''})"]
 \<open>Refinement Orderings\<close>
 
-text\<open>\<^vs>\<open>-0.2cm\<close> \<^csp> is centered around the idea of process refinement; many critical properties, 
+text\<open> \<^csp> is centered around the idea of process refinement; many critical properties, 
 even ones typically considered as "liveness-properties", can be expressed in terms of these, and
 a conversion of processes in terms of (finite) labelled transition systems leads to effective
 model-checking techniques based on graph-exploration. Essentially,  a process \<open>P\<close> \<^emph>\<open>refines\<close> 
@@ -329,7 +329,7 @@ failure/divergence model.
    \<^enum> \<open>P \<sqsubseteq>\<^sub>\<T>\<^sub>\<D> Q \<equiv> \<T> P \<supseteq> \<T> Q \<and> \<D> P \<supseteq> \<D> Q\<close>
    \<^enum> \<open>P \<sqsubseteq>\<^sub>\<FF> Q \<equiv>  \<FF> P \<supseteq> \<FF> Q, \<FF>\<in>{\<T>,\<F>,\<D>}\<close> 
 
-\<^vs>\<open>-0.3cm\<close> Notice that in the \<^csp> literature, only \<open>\<sqsubseteq>\<^sub>\<F>\<^sub>\<D>\<close> is well studied for failure/divergence model. 
+ Notice that in the \<^csp> literature, only \<open>\<sqsubseteq>\<^sub>\<F>\<^sub>\<D>\<close> is well studied for failure/divergence model. 
 Our formal analysis of different granularities on the refinement orderings   
 allows deeper understanding of the same semantics model. For example, \<open>\<sqsubseteq>\<^sub>\<T>\<^sub>\<D>\<close> turns
 out to have in some cases better monotonicity properties and therefore allow for stronger proof
@@ -338,12 +338,12 @@ is different from the classical
 failure refinement in the literature that is studied for the stable failure model  
 @{cite "roscoe:csp:1998"}, where failures are only defined for stable 
 states, from which no internal progress is possible. 
-\<^vs>\<open>-0.7cm\<close>\<close>
+\<close>
 
 
 subsection*["fixpoint"::tc, main_author="Some(@{docitem ''lina''})"]
 \<open>Process Ordering and HOLCF\<close>
-text\<open>\<^vs>\<open>-0.2cm\<close> For any denotational semantics, the fixed point theory giving semantics to systems
+text\<open> For any denotational semantics, the fixed point theory giving semantics to systems
 of recursive equations is considered as keystone. Its prerequisite is a complete partial ordering
 \<open>_\<sqsubseteq>_\<close>. The natural candidate \<open>_\<sqsubseteq>\<^sub>\<F>\<^sub>\<D>_\<close> is unfortunately not complete for infinite \<open>\<Sigma>\<close> for the
 generalized deterministic choice, and thus for the building block of the read-operations.
@@ -354,10 +354,10 @@ that completeness could at least be assured for read-operations. This more compl
 is based on the concept \<^emph>\<open>refusals after\<close> a trace \<open>s\<close> and defined by \<open>\<R> P s \<equiv> {X | (s, X) \<in> \<F> P}\<close>.\<close>
 
 Definition*[process_ordering, short_name="''process ordering''"]\<open>
-We define \<open>P \<sqsubseteq> Q \<equiv> \<psi>\<^sub>\<D> \<and> \<psi>\<^sub>\<R> \<and> \<psi>\<^sub>\<M> \<close>,  where \<^vs>\<open>-0.2cm\<close>
-\<^enum> \<^vs>\<open>-0.2cm\<close> \<open>\<psi>\<^sub>\<D> = \<D> P \<supseteq> \<D> Q \<close>
+We define \<open>P \<sqsubseteq> Q \<equiv> \<psi>\<^sub>\<D> \<and> \<psi>\<^sub>\<R> \<and> \<psi>\<^sub>\<M> \<close>,  where 
+\<^enum>  \<open>\<psi>\<^sub>\<D> = \<D> P \<supseteq> \<D> Q \<close>
 \<^enum> \<open>\<psi>\<^sub>\<R> = s \<notin> \<D> P \<Rightarrow> \<R> P s = \<R> Q s\<close>  
-\<^enum> \<open>\<psi>\<^sub>\<M> = Mins(\<D> P) \<subseteq> \<T> Q \<close> \<^vs>\<open>-0.25cm\<close> 
+\<^enum> \<open>\<psi>\<^sub>\<M> = Mins(\<D> P) \<subseteq> \<T> Q \<close> 
 \<close>
 
 text\<open>\<^noindent> Note that the third condition \<open>\<psi>\<^sub>\<M>\<close> implies that the set of minimal divergent traces 
@@ -386,53 +386,53 @@ denoted by \<open>\<bottom>\<close>. For \<open>pcpo\<close> ordering, two cruci
 (\<open>\<mu>X. f(X)\<close>) are defined in the usual way. A function from one  \<open>cpo\<close> to another one is said 
 to be continuous if it distributes over the \<open>lub\<close> of all directed sets (or chains).
 One key result of the fixed-point theory is the proof of the fixed-point theorem:
-\<^vs>\<open>-0.1cm\<close>
+
 @{cartouche [display, indent=25] \<open>cont f \<Longrightarrow>  \<mu>X. f(X) = f(\<mu>X. f(X))\<close>}
-\<^vs>\<open>-0.1cm\<close>
-For most \<^csp> operators \<open>\<otimes>\<close> we derived rules of the form: \<^vs>\<open>-0.2cm\<close>
+
+For most \<^csp> operators \<open>\<otimes>\<close> we derived rules of the form: 
    @{cartouche [display, indent=20] \<open>cont P \<Longrightarrow> cont Q \<Longrightarrow> cont(\<lambda>x. (P x) \<otimes> (Q x))\<close>}
-\<^vs>\<open>-0.1cm\<close>
+
 These rules allow to automatically infer for any process term if it is continuous or not.  
 The port of HOL-CSP 2 on HOLCF implied that the derivation of the entire continuity rules 
 had to be completely re-done (3000 loc).
 
-\<^vs>\<open>0.1cm\<close> 
+ 
 \<^noindent> HOL-CSP provides an important proof principle, the fixed-point induction:
-\<^vs>\<open>-0.1cm\<close>
+
 @{cartouche [display, indent=5] \<open>cont f \<Longrightarrow> adm P \<Longrightarrow> P \<bottom> \<Longrightarrow> (\<And>X. P X \<Longrightarrow> P(f X)) \<Longrightarrow> P(\<mu>X. f X)\<close>}
-\<^vs>\<open>-0.1cm\<close>
+
 Fixed-point induction requires a small side-calculus for establishing the admissibility
 of a predicate; basically, predicates are admissible if they are valid for any least upper bound 
 of a chain \<open>x\<^sub>1 \<sqsubseteq> x\<^sub>2 \<sqsubseteq> x\<^sub>3 ... \<close> provided that \<open>\<forall>i. P(x\<^sub>i)\<close>. It turns out that \<open>_\<sqsubseteq>_\<close> and \<open>_\<sqsubseteq>\<^sub>F\<^sub>D_\<close> as
 well as all other refinement orderings that we introduce in this paper are  admissible.
 Fixed-point inductions are the main proof weapon in verifications, 
 together with monotonicities and the \<^csp> laws. Denotational arguments can be hidden as they are not 
-needed in practical verifications. \<^vs>\<open>-0.5cm\<close>\<close>
+needed in practical verifications. \<close>
 
 subsection*["law"::tc, main_author="Some(@{docitem ''lina''})"]
 \<open>\<^csp> Rules: Improved Proofs and New Results\<close>
 
 
-text\<open>\<^vs>\<open>-0.1cm\<close> The \<^csp> operators enjoy a number of algebraic properties: commutativity, 
+text\<open> The \<^csp> operators enjoy a number of algebraic properties: commutativity, 
 associativities, and idempotence in some cases. Moreover, there is a rich body of distribution
 laws between these operators. Our new version HOL-CSP 2 not only shortens and restructures the 
 proofs of @{cite "tej.ea:corrected:1997"}; the code reduces  
 to 8000 loc from 25000 loc. Some illustrative examples of new established rules are:
-\<^vs>\<open>0.2cm\<close>
+
   \<^item> \<open>\<box>x\<in>A\<union>B\<rightarrow>P(x) = (\<box>x\<in>A\<rightarrow>P x) \<box> (\<box>x\<in>B\<rightarrow>P x)\<close>
   \<^item> \<open>A\<union>B\<subseteq>C \<Longrightarrow> (\<box>x\<in>A\<rightarrow>P x \<lbrakk>C\<rbrakk> \<box>x\<in>B\<rightarrow>Q x) = \<box>x\<in>A\<inter>B\<rightarrow>(P x \<lbrakk>C\<rbrakk> Q x)\<close>
   \<^item> @{cartouche [display]\<open>A\<subseteq>C \<Longrightarrow> B\<inter>C={} \<Longrightarrow> 
                (\<box>x\<in>A\<rightarrow>P x \<lbrakk>C\<rbrakk> \<box>x\<in>B\<rightarrow>Q x) = \<box>x\<in>B\<rightarrow>(\<box>x\<in>A\<rightarrow>P x \<lbrakk>C\<rbrakk> Q x)\<close>}
   \<^item> \<open>finite A \<Longrightarrow> A\<inter>C = {} \<Longrightarrow> ((P \<lbrakk>C\<rbrakk> Q) \ A) = ((P \ A) \<lbrakk>C\<rbrakk> (Q \ A)) ...\<close>
 
-\<^vs>\<open>-0.2cm\<close> The continuity proof of the hiding operator is notorious. The proof is known
+ The continuity proof of the hiding operator is notorious. The proof is known
 to involve the classical König's lemma stating that every infinite tree with finite branching 
 has an infinite path. We adapt this lemma to our context as follows:
-\<^vs>\<open>-0.1cm\<close>
+
  @{cartouche [display, indent=5] 
  \<open>infinite tr \<Longrightarrow> \<forall>i. finite{t. \<exists>t'\<in>tr. t = take i t'} 
              \<Longrightarrow> \<exists> f. strict_mono f \<and> range f \<subseteq> {t. \<exists>t'\<in>tr. t \<le> t'}\<close>}
-\<^vs>\<open>-0.1cm\<close>
+
 in order to come up with the continuity rule: \<open>finite S \<Longrightarrow> cont P \<Longrightarrow> cont(\<lambda>X. P X \ S)\<close>.
 The original proof had been drastically shortened by a factor 10 and important immediate steps
 generalized: monotonicity, for example, could be generalized to the infinite case. 
@@ -447,27 +447,27 @@ lemma to build a divergent trace of  \<open>P \ (A \<union> B)\<close> which req
 operator may fail when \<open>A\<close> is infinite; however, they fail to give the precise 
 conditions for this case.\<close>}. Again, we want to argue that the intricate number of
 cases to be considered as well as their complexity makes pen and paper proofs 
-practically infeasible.\<^vs>\<open>-0.2cm\<close>
+practically infeasible.
 \<close>
 
 section*["newResults"::tc,main_author="Some(@{docitem ''safouan''}::author)",
                                  main_author="Some(@{docitem ''lina''}::author)", level= "Some 3"]
 \<open>Theoretical Results on Refinement\<close>
-text\<open>\<^vs>\<open>-0.3cm\<close>\<close>
+text\<open>\<close>
 subsection*["adm"::tc,main_author="Some(@{docitem ''safouan''}::author)", 
                                   main_author="Some(@{docitem ''lina''}::author)"]
 \<open>Decomposition Rules\<close>
-text\<open>\<^vs>\<open>-0.1cm\<close>
+text\<open>
 In our framework, we implemented the pcpo process refinement together with the five refinement 
 orderings introduced in @{technical "orderings"}. To enable fixed-point induction, we first have 
 the admissibility of the refinements.
 @{cartouche [display, indent=7] \<open>cont u \<Longrightarrow> mono v \<Longrightarrow> adm(\<lambda>x. u x \<sqsubseteq>\<^sub>\<FF> v x) where \<FF>\<in>{\<T>,\<F>,\<D>,\<T>\<D>,\<F>\<D>}\<close>}
-\<^vs>\<open>-0.1cm\<close>
+
 
 Next we analyzed the monotonicity of these refinement orderings, whose results are then used as 
 decomposition rules in our framework. 
 Some \<^csp> operators, such as multi-prefix and non-deterministic choice, are monotonic 
-under all refinement orderings, while others are not. \<^vs>\<open>-0.2cm\<close>   
+under all refinement orderings, while others are not.    
   
 \<^item> External choice is not monotonic only under \<open>\<sqsubseteq>\<^sub>\<F>\<close>, with the following monotonicities proved:
   @{cartouche [display,indent=5]
@@ -491,7 +491,7 @@ under all refinement orderings, while others are not. \<^vs>\<open>-0.2cm\<close
 %sequence operator. 
 %Hence, this operator is not monotonic with \<open>\<sqsubseteq>\<^sub>\<F>\<close>, \<open>\<sqsubseteq>\<^sub>\<D>\<close> and \<open>\<sqsubseteq>\<^sub>\<T>\<close>, but monotonic when their 
 %combinations are considered. 
-\<^vs>\<open>-0.7cm\<close>
+
 \<close>
 
 (* Besides the monotonicity results on the above \<^csp> operators, 
@@ -517,7 +517,7 @@ when the divergence set is empty, which is true for both processes.
 subsection*["processes"::tc,main_author="Some(@{docitem ''safouan''}::author)", 
                             main_author="Some(@{docitem ''lina''}::author)"]
 \<open>Reference Processes and their Properties\<close>
-text\<open>\<^vs>\<open>-0.1cm\<close>
+text\<open>
 We now present reference processes that exhibit basic behaviors, introduced in  
 fundamental \<^csp> works @{cite "Roscoe:UCS:2010"}. The process \<open>RUN A\<close> always 
 accepts events from \<open>A\<close> offered by the environment. The process \<open>CHAOS A\<close> can always choose to 
@@ -538,35 +538,35 @@ events, but never stops nor deadlocks. The \<open>CHAOS\<close>-process comes in
 accepts any offered event, whereas \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> can additionally terminate.\<close>
 
 
-Definition*[X2]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<^vs>\<open>-0.7cm\<close>\<close>
-Definition*[X3]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>          \<^vs>\<open>-0.7cm\<close>\<close>
-Definition*[X4]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<^vs>\<open>-0.7cm\<close>\<close>
-Definition*[X5]\<open>\<open>DF A \<equiv> \<mu> X. (\<sqinter> x \<in> A \<rightarrow> X)\<close>                      \<^vs>\<open>-0.7cm\<close>\<close>
-Definition*[X6]\<open>\<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. ((\<sqinter> x \<in> A \<rightarrow> X) \<sqinter> SKIP)\<close>          \<^vs>\<open>-0.7cm\<close> \<close> 
+Definition*[X2]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<close>
+Definition*[X3]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>          \<close>
+Definition*[X4]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<close>
+Definition*[X5]\<open>\<open>DF A \<equiv> \<mu> X. (\<sqinter> x \<in> A \<rightarrow> X)\<close>                      \<close>
+Definition*[X6]\<open>\<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. ((\<sqinter> x \<in> A \<rightarrow> X) \<sqinter> SKIP)\<close>           \<close> 
 
-text\<open> \<^vs>\<open>-0.3cm\<close> \<^noindent>
+text\<open>  \<^noindent>
 In the following, we denote \<open> \<R>\<P> = {DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P, DF, RUN, CHAOS, CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P}\<close>. 
 All five  reference processes are divergence-free.
 %which was done by using a particular lemma \<open>\<D> (\<mu> x. f x) = \<Inter>\<^sub>i\<^sub>\<in>\<^sub>\<nat> \<D> (f\<^sup>i \<bottom>)\<close>.  
 
-\<^vs>\<open>-0.2cm\<close>
+
    @{cartouche [display,indent=8] \<open> D (\<PP> UNIV) = {} where \<PP> \<in> \<R>\<P> and UNIV is the set of all events\<close>}
 
-\<^vs>\<open>-0.1cm\<close>
+
 Regarding the failure refinement ordering, the set of failures \<open>\<F> P\<close> for any process \<open>P\<close> is
 a subset of  \<open>\<F> (CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV)\<close>.% and the following lemma was proved: 
 % This proof is performed by induction, based on the failure projection of \<open>STOP\<close> and that of internal choice.
 
-\<^vs>\<open>-0.2cm\<close>
+
    @{cartouche [display, indent=25] \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close>}
-\<^vs>\<open>-0.2cm\<close>
+
 
 \<^noindent> Furthermore, the following 5 relationships were demonstrated from monotonicity results and 
 a denotational proof.  
 %among which 1 and 2 are immediate corollaries, 
 %4 and 5 are directly obtained from our monotonicity results while 3 requires a denotational proof.
 and thanks to transitivity, we can derive other relationships.
-\<^vs>\<open>-0.2cm\<close>
+
 
   \<^enum> \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<sqsubseteq>\<^sub>\<F> CHAOS A\<close>
   \<^enum> \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<sqsubseteq>\<^sub>\<F> DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A\<close>  
@@ -574,20 +574,20 @@ and thanks to transitivity, we can derive other relationships.
   \<^enum> \<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<sqsubseteq>\<^sub>\<F> DF A\<close>  
   \<^enum> \<open>DF A \<sqsubseteq>\<^sub>\<F> RUN A\<close>  
 
-\<^vs>\<open>-0.1cm\<close>
+
 Last, regarding trace refinement, for any process P, 
 its set of traces \<open>\<T> P\<close> is a subset of  \<open>\<T> (CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV)\<close> and of  \<open>\<T> (DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV)\<close> as well.
 %As we already proved that \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> covers all failures, 
 %we can immediately infer that it also covers all traces. 
 %The \<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> case requires a longer denotational proof.
-\<^vs>\<open>-0.2cm\<close>
+
 
   \<^enum> \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<T> P\<close>
   \<^enum> \<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<T> P\<close>
 
 \<close>
 
-text\<open> \<^vs>\<open>-0.3cm\<close>
+text\<open> 
 Recall that a concurrent system is considered as being deadlocked if no component can make any 
 progress,  caused for example by the competition for resources. In opposition to deadlock, 
 processes can enter infinite loops inside a sub-component without never ever interact with their 
@@ -606,33 +606,33 @@ handled separately. One contribution of our work is establish their precise rela
 the Failure/Divergence Semantics of \<^csp>.\<close>
 
 (* bizarre: Definition* does not work for this single case *)
-text*[X10::"definition"]\<open> \<open>deadlock\<^sub>-free P \<equiv>  DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close> \<^vs>\<open>-0.3cm\<close> \<close>
+text*[X10::"definition"]\<open> \<open>deadlock\<^sub>-free P \<equiv>  DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close>  \<close>
 
 text\<open>\<^noindent> A process \<open>P\<close> is deadlock-free if and only if after any trace \<open>s\<close> without \<open>\<surd>\<close>, the union of \<open>\<surd>\<close> 
 and all events of \<open>P\<close> can never be a refusal set associated to \<open>s\<close>, which means that \<open>P\<close> cannot 
 be deadlocked after any non-terminating trace.   
-\<^vs>\<open>-0.2cm\<close>\<close>
+\<close>
 
 Theorem*[T1, short_name="\<open>DF definition captures deadlock-freeness\<close>"]
-\<open> \hfill \break \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<surd>}\<union>events_of P) \<notin> \<F> P)\<close> \<^vs>\<open>-0.4cm\<close>\<close>   
+\<open> \hfill \break \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<surd>}\<union>events_of P) \<notin> \<F> P)\<close> \<close>   
 
 
-Definition*[X11]\<open>  \<open>livelock\<^sub>-free P \<equiv> \<D> P = {} \<close>   \<^vs>\<open>-0.2cm\<close>\<close>
+Definition*[X11]\<open>  \<open>livelock\<^sub>-free P \<equiv> \<D> P = {} \<close>   \<close>
 
 text\<open> Recall that all five reference processes are livelock-free. 
 We also have the following lemmas about the 
-livelock-freeness of processes: \<^vs>\<open>-0.2cm\<close>
+livelock-freeness of processes: 
   \<^enum> \<open>livelock\<^sub>-free P \<longleftrightarrow> \<PP> UNIV \<sqsubseteq>\<^sub>\<D> P where \<PP> \<in> \<R>\<P>\<close> 
   \<^enum> @{cartouche [display]\<open>livelock\<^sub>-free P \<longleftrightarrow> DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<T>\<^sub>\<D> P 
                     \<longleftrightarrow> CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<T>\<^sub>\<D> P\<close>}
   \<^enum> \<open>livelock\<^sub>-free P \<longleftrightarrow> CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F>\<^sub>\<D> P\<close> 
 \<close>
-text\<open>\<^vs>\<open>-0.3cm\<close>
+text\<open>
 Finally, we proved the following theorem that confirms the relationship between the two vital
-properties:\<^vs>\<open>-0.3cm\<close>
+properties:
 \<close>
 Theorem*[T2, short_name="''DF implies LF''"]
-  \<open>  \hspace{0.5cm} \<open>deadlock_free P \<longrightarrow> livelock_free P\<close>   \<^vs>\<open>-0.3cm\<close>\<close>
+  \<open>  \hspace{0.5cm} \<open>deadlock_free P \<longrightarrow> livelock_free P\<close>   \<close>
 
 text\<open>
 This is totally natural, at a first glance, but surprising as the proof of deadlock-freeness only requires 
@@ -642,14 +642,14 @@ separately, such as FDR for which checking livelock-freeness is very costly.
 In our framework, deadlock-freeness of a given system 
 implies its livelock-freeness. However, if a system is not deadlock-free, 
 then it may still be livelock-free. % This makes sense since livelocks are worse than deadlocks.   
-\<^vs>\<open>-0.4cm\<close>
+
 \<close>
 
 section*["advanced"::tc,main_author="Some(@{docitem ''safouan''}::author)",level="Some 3"]
 \<open>Advanced Verification Techniques\<close>
 
 text\<open>
-\<^vs>\<open>-0.2cm\<close> Based on the refinement framework discussed in @{docitem "newResults"}, we will now
+ Based on the refinement framework discussed in @{docitem "newResults"}, we will now
 turn to some more advanced proof principles, tactics and verification techniques. 
 We will demonstrate them on two paradigmatic examples well-known in the \<^csp> literature: 
 The CopyBuffer and Dijkstra's Dining Philosophers. In both cases, we will exploit 
@@ -668,20 +668,20 @@ that is characteristic for a specification of a  prototypical process and its
  implementation. It is used extensively in the \<^csp> literature to illustrate the interplay 
 of communication, component concealment and fixed-point operators.
 The process \<open>COPY\<close> is a specification of a one size buffer, that receives elements from the channel 
-\<open>left\<close> of arbitrary type \<open>\<alpha>\<close> and outputs them on the channel \<open>right\<close>: \<^vs>\<open>-0.2cm\<close>
+\<open>left\<close> of arbitrary type \<open>\<alpha>\<close> and outputs them on the channel \<open>right\<close>: 
 
 @{theory_text [display,indent=5] \<open>
 datatype  \<alpha> events = left \<alpha> | right \<alpha> | mid \<alpha> | ack
 definition COPY \<equiv> (\<mu> X. left?x \<rightarrow> (right!x \<rightarrow> X))\<close>}
 
-\<^vs>\<open>-0.2cm\<close> \<^noindent> From our HOL-CSP 2 theory that establishes the continuity of all \<^csp> operators, we deduce that 
-such a fixed-point process \<open>COPY\<close> exists and follows the unrolling rule below: \<^vs>\<open>-0.2cm\<close>
+ \<^noindent> From our HOL-CSP 2 theory that establishes the continuity of all \<^csp> operators, we deduce that 
+such a fixed-point process \<open>COPY\<close> exists and follows the unrolling rule below: 
 
 @{theory_text [display,indent=5] \<open>lemma COPY = (left?x \<rightarrow> (right!x \<rightarrow> COPY))\<close>}
 
-\<^vs>\<open>-0.3cm\<close> \<^noindent> We set \<open>SEND\<close> and \<open>REC\<close> in parallel but in a row sharing a middle channel 
+ \<^noindent> We set \<open>SEND\<close> and \<open>REC\<close> in parallel but in a row sharing a middle channel 
 \<open>mid\<close> and synchronizing with an \<open>ack\<close> event. Then, we hide all exchanged events between these two 
-processes and we call the resulting process \<open>SYSTEM\<close>: \<^vs>\<open>-0.6cm\<close>
+processes and we call the resulting process \<open>SYSTEM\<close>: 
 
 @{theory_text [display,indent=5] \<open>
 definition SEND \<equiv> (\<mu> X. left?x \<rightarrow> (mid!x \<rightarrow> (ack \<rightarrow> X)))
@@ -689,17 +689,17 @@ definition REC  \<equiv> (\<mu> X. mid?x \<rightarrow> (right!x \<rightarrow> (a
 definition SYN  \<equiv> (range mid) \<union> {ack}
 definition "SYSTEM \<equiv> (SEND \<lbrakk>SYN\<rbrakk> REC) \\ SYN"\<close>}
 
-\<^vs>\<open>-0.2cm\<close> \<^noindent> We want to verify that \<open>SYSTEM\<close> implements \<open>COPY\<close>. As shown below, we apply fixed-point induction 
+ \<^noindent> We want to verify that \<open>SYSTEM\<close> implements \<open>COPY\<close>. As shown below, we apply fixed-point induction 
 to prove that \<open>SYSTEM\<close> refines \<open>COPY\<close> using the \<open>pcpo\<close> process ordering \<open>\<sqsubseteq>\<close> that implies all other 
-refinement orderings. We state: \<^vs>\<open>-0.2cm\<close>
+refinement orderings. We state: 
 
-@{theory_text [display,indent=5] \<open>lemma: COPY \<sqsubseteq> SYSTEM\<close>} \<^vs>\<open>-0.3cm\<close>
+@{theory_text [display,indent=5] \<open>lemma: COPY \<sqsubseteq> SYSTEM\<close>} 
 
-\<^noindent> and apply fixed-point induction over \<open>COPY\<close>; this leaves us to the three subgoals: \<^vs>\<open>-0.7cm\<close>
+\<^noindent> and apply fixed-point induction over \<open>COPY\<close>; this leaves us to the three subgoals: 
   \<^enum> \<open>adm (\<lambda>a. a \<sqsubseteq> (SEND \<lbrakk>SYN\<rbrakk> REC) \ SYN)\<close>
   \<^enum> \<open>\<bottom> \<sqsubseteq> (SEND \<lbrakk>SYN\<rbrakk> REC) \ SYN\<close>
   \<^enum> @{cartouche [display]\<open>P \<sqsubseteq> (SEND \<lbrakk>SYN\<rbrakk> REC) \ SYN \<Longrightarrow> 
-                              left?x \<rightarrow> right!x \<rightarrow> P \<sqsubseteq> (SEND \<lbrakk>SYN\<rbrakk> REC) \ SYN\<close>} \<^vs>\<open>-0.3cm\<close>
+                              left?x \<rightarrow> right!x \<rightarrow> P \<sqsubseteq> (SEND \<lbrakk>SYN\<rbrakk> REC) \ SYN\<close>} 
 
 \<^noindent> The first two sub-proofs are automatic simplification proofs; the third requires unfolding
 \<open>SEND\<close> and \<open>REC\<close> one step and applying the algebraic laws. No denotational
@@ -713,7 +713,7 @@ first established result to check which relations \<open>SYSTEM\<close> has wrt.
 from transitivity that \<open>SYSTEM\<close> is. Using refinement relations, we killed four birds with one stone 
 as we proved the deadlock-freeness and  the livelock-freeness for both \<open>COPY\<close> and \<open>SYSTEM\<close> processes. 
 These properties hold for arbitrary alphabets and for infinite ones in particular.
-\<^vs>\<open>-0.5cm\<close> 
+ 
 @{theory_text [display, indent=5] \<open>
 lemma DF UNIV \<sqsubseteq> COPY
 
@@ -721,7 +721,7 @@ corollary deadlock_free COPY
       and livelock_free COPY
       and deadlock_free SYSTEM
       and livelock_free SYSTEM\<close>}
-\<^vs>\<open>-0.8cm\<close>
+
 \<close>
 
 
@@ -729,7 +729,7 @@ subsection*["inductions"::tc,main_author="Some(@{docitem ''safouan''}::author)"]
 \<open>New Fixed-Point Inductions\<close>
 
 text\<open>
-\<^vs>\<open>-0.2cm\<close> The copy buffer refinement proof \<open>DF UNIV \<sqsubseteq> COPY\<close> is a typical one step induction proof 
+ The copy buffer refinement proof \<open>DF UNIV \<sqsubseteq> COPY\<close> is a typical one step induction proof 
 with two goals:
 \<open>base: \<bottom> \<sqsubseteq> Q\<close> and \<open>1-ind: X \<sqsubseteq> Q \<Longrightarrow> (_ \<rightarrow> X) \<sqsubseteq> Q\<close>. Now, if unfolding the fixed-point process \<open>Q\<close> 
 reveals two steps, the second goal becomes 
@@ -747,40 +747,40 @@ skipped here):
       \<Longrightarrow> P (\<mu>X. f X)\<close>}
   \<^item> \<open>... \<Longrightarrow> \<forall>i<k. P (f\<^sup>i \<bottom>) \<Longrightarrow> (\<forall>X. P X \<longrightarrow> P (f\<^sup>k X)) \<Longrightarrow> P (\<mu>X. f X)\<close>
 
-\<^vs>\<open>-0.2cm\<close>
+
 \<^noindent> In the latter variant, the induction hypothesis is weakened to skip \<open>k\<close> steps. When possible,
 it reduces the goal size.
 
 Another problem occasionally occurring in refinement proofs happens when the right side term 
 involves more than one  fixed-point  process (\<^eg> \<open>P \<lbrakk>{A}\<rbrakk> Q \<sqsubseteq> S\<close>). In this situation,
-we need parallel fixed-point inductions. The HOLCF library offers only a basic one:\<^vs>\<open>-0.2cm\<close>
+we need parallel fixed-point inductions. The HOLCF library offers only a basic one:
   \<^item> @{cartouche [display]\<open>... \<Longrightarrow> P \<bottom> \<bottom> \<Longrightarrow> (\<forall>X Y. P X Y \<Longrightarrow> P (f X) (g Y)) 
         \<Longrightarrow> P (\<mu>X. f X) (\<mu>X. g X)\<close>}
 
-\<^vs>\<open>-0.2cm\<close>
+
 \<^noindent> This form does not help in cases like in \<open>P \<lbrakk>\<emptyset>\<rbrakk> Q \<sqsubseteq> S\<close> with the interleaving operator on the 
-right-hand side. The simplifying law is:\<^vs>\<open>-0.5cm\<close>
+right-hand side. The simplifying law is:
 @{cartouche [display, indent=3]\<open>
 (\<box>x\<in>A\<rightarrow>P x \<lbrakk>\<emptyset>\<rbrakk> \<box>x\<in>B\<rightarrow>Q x) =   (\<box>x\<in>A \<rightarrow> (            P x \<lbrakk>\<emptyset>\<rbrakk> \<box>x\<in>B \<rightarrow> Q x) 
-                                         \<box> (\<box>x\<in>B \<rightarrow> (\<box>x\<in>A \<rightarrow> P x \<lbrakk>\<emptyset>\<rbrakk>          Q x))\<close>}\<^vs>\<open>-0.2cm\<close>
+                                         \<box> (\<box>x\<in>B \<rightarrow> (\<box>x\<in>A \<rightarrow> P x \<lbrakk>\<emptyset>\<rbrakk>          Q x))\<close>}
 Here, \<open>(f X \<lbrakk>\<emptyset>\<rbrakk> g Y)\<close> does not reduce to the \<open>(X \<lbrakk>\<emptyset>\<rbrakk> Y)\<close> term but to two terms \<open>(f X \<lbrakk>\<emptyset>\<rbrakk> Y)\<close> and 
 \<open>(X \<lbrakk>\<emptyset>\<rbrakk> g Y)\<close>.
 To handle these cases, we developed an advanced parallel induction scheme and we proved its 
-correctness:\<^vs>\<open>-0.2cm\<close>
+correctness:
   \<^item> @{cartouche [display] \<open>... \<Longrightarrow> (\<forall>Y. P \<bottom> Y) \<Longrightarrow> (\<forall>X. P X \<bottom>)
      \<Longrightarrow> \<forall>X Y. (P X Y \<and> P (f X) Y \<and> P X (g Y)) \<longrightarrow> P (f X) (g Y) 
       \<Longrightarrow> P (\<mu>X. f X) (\<mu>X. g X)\<close>}
 
-\<^vs>\<open>-0.1cm\<close>
+
 \<^noindent> which allows for a "independent unroling" of the fixed-points in these proofs.
 The astute reader may notice here that if the induction step is weakened (having more hypothesises), 
 the base steps require enforcement.  
-\<^vs>\<open>-0.5cm\<close>\<close>
+\<close>
 
 subsection*["norm"::tc,main_author="Some(@{docitem ''safouan''}::author)"]
 \<open>Normalization\<close>
 text\<open>
-\<^vs>\<open>-0.2cm\<close> Our framework can reason not only over infinite alphabets, but also over processes parameterized
+ Our framework can reason not only over infinite alphabets, but also over processes parameterized
 over states with an arbitrarily rich structure. This  paves the way for the following technique, 
 that trades potentially complex process structure against equivalent simple processes with 
 potentially rich state.
@@ -788,65 +788,65 @@ potentially rich state.
 Roughly similar to labelled transition systems, we provide for deterministic \<^csp> processes a normal 
 form that is based on an explicit state. The general schema of normalized processes is defined as 
 follows:
-\<^vs>\<open>0.1cm\<close>
+
 @{cartouche [display,indent=20] \<open>P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<tau>\<^sub>,\<upsilon>\<rbrakk> \<equiv> \<mu> X. (\<lambda>\<sigma>. \<box>e\<in>(\<tau> \<sigma>) \<rightarrow> X(\<upsilon> \<sigma> e))\<close>}
-\<^vs>\<open>-0.1cm\<close> where \<open>\<tau>\<close> is a transition function which returns the set of events that can be triggered from 
+ where \<open>\<tau>\<close> is a transition function which returns the set of events that can be triggered from 
 the current  state \<open>\<sigma>\<close> given as parameter.
 The update function \<open>\<upsilon>\<close> takes two parameters \<open>\<sigma>\<close> and an event \<open>e\<close> and returns the new state.
 This normal form is closed under deterministic and  communication operators. 
 
 The advantage of this format is that we can mimick the well-known product automata construction
 for an arbitrary number of synchronized processes under normal form.
-We only show the case of the synchronous product of two processes: \<^vs>\<open>-0.8cm\<close>\<close>
+We only show the case of the synchronous product of two processes: \<close>
 text*[T3::"theorem", short_name="\<open>Product Construction\<close>"]\<open>
-Parallel composition translates to normal form:\<^vs>\<open>-0.1cm\<close>
+Parallel composition translates to normal form:
 @{cartouche [display,indent=5]\<open>(P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<tau>\<^sub>1,\<upsilon>\<^sub>1\<rbrakk> \<sigma>\<^sub>1) || (P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<tau>\<^sub>2,\<upsilon>\<^sub>2\<rbrakk> \<sigma>\<^sub>2) = 
-    P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<lambda>(\<sigma>\<^sub>1,\<sigma>\<^sub>2). \<tau>\<^sub>1 \<sigma>\<^sub>1 \<inter> \<tau>\<^sub>2 \<sigma>\<^sub>2 , \<lambda>(\<sigma>\<^sub>1,\<sigma>\<^sub>2).\<lambda>e.(\<upsilon>\<^sub>1 \<sigma>\<^sub>1 e, \<upsilon>\<^sub>2 \<sigma>\<^sub>2 e)\<rbrakk> (\<sigma>\<^sub>1,\<sigma>\<^sub>2)\<close>}\<^vs>\<open>-0.2cm\<close>
+    P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<lambda>(\<sigma>\<^sub>1,\<sigma>\<^sub>2). \<tau>\<^sub>1 \<sigma>\<^sub>1 \<inter> \<tau>\<^sub>2 \<sigma>\<^sub>2 , \<lambda>(\<sigma>\<^sub>1,\<sigma>\<^sub>2).\<lambda>e.(\<upsilon>\<^sub>1 \<sigma>\<^sub>1 e, \<upsilon>\<^sub>2 \<sigma>\<^sub>2 e)\<rbrakk> (\<sigma>\<^sub>1,\<sigma>\<^sub>2)\<close>}
 \<close>
 
-text\<open>\<^vs>\<open>-0.3cm\<close> The generalization of this rule for a list of \<open>(\<tau>,\<upsilon>)\<close>-pairs is straight-forward, 
+text\<open> The generalization of this rule for a list of \<open>(\<tau>,\<upsilon>)\<close>-pairs is straight-forward, 
 albeit the formal  proof is not. The application of the generalized  form is a corner-stone of the 
 proof of the general dining philosophers problem illustrated in the subsequent section.
 
 Another advantage of normalized processes is the possibility to argue over the reachability of 
 states via the closure \<open>\<RR>\<close>, which is defined inductively over: 
-\<^vs>\<open>-0.3cm\<close>
+
   \<^item> \<open>\<sigma> \<in> \<RR> \<tau> \<upsilon> \<sigma>\<close>
   \<^item> \<open>\<sigma> \<in> \<RR> \<tau> \<upsilon> \<sigma>\<^sub>0 \<Longrightarrow> e \<in> \<tau> \<sigma> \<Longrightarrow> \<upsilon> \<sigma> e \<in> \<RR> \<tau> \<upsilon> \<sigma>\<^sub>0\<close>
-\<^vs>\<open>-0.2cm\<close>
+
 
 Thus, normalization leads to a new characterization of deadlock-freeness inspired 
-from automata theory. We formally proved the following theorem:\<^vs>\<open>-0.3cm\<close>\<close>
+from automata theory. We formally proved the following theorem:\<close>
 
 text*[T4::"theorem", short_name="\<open>DF vs. Reacheability\<close>"]
 \<open> If each reachable state \<open>s \<in> (\<RR> \<tau> \<upsilon>)\<close> has outgoing transitions,
-the \<^csp> process is deadlock-free: \<^vs>\<open>-0.1cm\<close>
+the \<^csp> process is deadlock-free: 
 @{cartouche [display,indent=10] \<open>\<forall>\<sigma> \<in> (\<RR> \<tau> \<upsilon> \<sigma>\<^sub>0). \<tau> \<sigma> \<noteq> {} \<Longrightarrow> deadlock_free (P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<tau>,\<upsilon>\<rbrakk> \<sigma>\<^sub>0)\<close>}
 \<close>
 
-text\<open> \<^vs>\<open>-0.3cm\<close> This theorem allows for establishing properties such as deadlock-freeness by 
+text\<open>  This theorem allows for establishing properties such as deadlock-freeness by 
 completely abstracting from \<^csp> theory; these are arguments that only involve inductive reasoning 
 over the transition function. 
 
 Summing up, our method consists of four stages:
-\<^enum> \<^vs>\<open>-0.3cm\<close> we construct normalized versions of component processes and prove them
+\<^enum>  we construct normalized versions of component processes and prove them
   equivalent to their counterparts,
 \<^enum> we state an invariant over the states/variables,
 \<^enum> we prove by induction over \<open>\<RR>\<close> that it holds on all reachable states, and finally
 \<^enum> we prove that this invariant guarantees the existence of outgoing transitions.
-\<^vs>\<open>-1.1cm\<close>
+
 \<close>
 
 subsection*["dining_philosophers"::tc,main_author="Some(@{docitem ''safouan''}::author)",level="Some 3"]
 \<open>Generalized Dining Philosophers\<close>
 
-text\<open> \<^vs>\<open>-0.1cm\<close> The dining philosophers problem is another paradigmatic example in the \<^csp> literature
+text\<open>  The dining philosophers problem is another paradigmatic example in the \<^csp> literature
 often used to illustrate synchronization problems between an arbitrary number of concurrent systems. 
 It is an example for a process scheme for which general properties are desirable in order
 to inherit them for specific instances.
 The general dining philosopher problem for an arbitrary \<open>N\<close> is presented in HOL-CSP 2 as follows
 %@{footnote \<open>The dining philosopher problem is also distributed with FDR4, where \<open>N = 6\<close>.\<close>}:
-\<^vs>\<open>0.1cm\<close>
+
 @{theory_text [display,indent=5] 
 \<open>datatype dining_event  = picks (phil::nat) (fork::nat) 
                              | putsdown (phil::nat) (fork::nat)
@@ -860,7 +860,7 @@ definition FORK i  \<equiv> (\<mu> X.   (picks i i \<rightarrow> (putsdown i i \
 definition "PHILs   \<equiv> LPHIL0 ||| (|||\<^sub>i\<^sub>\<in>\<^sub>1\<^sub>.\<^sub>.\<^sub>N RPHIL i)" 
 definition "FORKs   \<equiv> |||\<^sub>i\<^sub>\<in>\<^sub>0\<^sub>.\<^sub>.\<^sub>N FORK i"
 definition DINING  \<equiv> FORKs \<lbrakk>picks, putsdown\<rbrakk> PHILs\<close>}
-\<^vs>\<open>-0.2cm\<close>
+
 % this should be theory_text, but is rejected for lexical reasons
 Note that both philosophers and forks are pairwise independent 
 but both synchronize on \<open>picks\<close> and \<open>putsdown\<close> events. The philosopher of index 0 is left-handed 
@@ -869,7 +869,7 @@ is deadlock-free for an arbitrary number N.
 
 First, we put the fork process under normal form. It has three states:
 (1) on the table, (2) picked by the right philosopher or (3) picked by the left one:
-\<^vs>\<open>-0.2cm\<close>
+
 @{theory_text [display,indent=5]
 \<open>definition trans\<^sub>f i \<sigma> \<equiv> if       \<sigma> = 0   then {picks i i, picks (i+1)%N i}
                              else if \<sigma> = 1   then {putsdown i i} 
@@ -927,7 +927,7 @@ To sum up, we proved once and for all that the dining philosophers problem is de
 for an arbitrary number \<open>N \<ge> 2\<close>. Common model-checkers like PAT and FDR fail to answer 
 for a dozen of philosophers (on a usual machine) due to the exponential combinatorial explosion.
 Furthermore, our proof is fairly stable against modifications like adding non synchronized events like
-thinking or sitting down in contrast to model-checking techniques. \<^vs>\<open>-0.3cm\<close>\<close>
+thinking or sitting down in contrast to model-checking techniques. \<close>
 
 section*["relatedwork"::tc,main_author="Some(@{docitem ''lina''}::author)",level="Some 3"]
 \<open>Related work\<close>
