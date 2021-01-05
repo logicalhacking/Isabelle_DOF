@@ -1,6 +1,6 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019-20   The University of Exeter 
+ *               2019-2020 The University of Exeter 
  *               2018-2020 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
