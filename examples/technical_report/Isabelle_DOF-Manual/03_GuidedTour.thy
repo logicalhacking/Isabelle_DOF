@@ -105,27 +105,6 @@ text\<open>
 %@ {boxed_bash [display]\<open>
 %ë\prompt{}ë sudo aptitude install texlive-latex-extra texlive-fonts-extra
 %\<close>}
-
-  Please check that this really installs a version of \<^pdftex> that supports the 
-  \<^boxed_latex>\<open>\expanded\<close>. To check your \<^pdftex>-binary, execute: 
-
-\begin{bash}
-ë\prompt{}ë pdftex \\expanded{Success}\\end
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian).
-Output written on texput.pdf (1 page, 8650 bytes).
-Transcript written on texput.log.
-\end{bash}
-%@ {boxed_bash [display]\<open>
-%ë\prompt{}ë pdftex \\expanded{Success}\\end
-%This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian).
-%Output written on texput.pdf (1 page, 8650 bytes).
-%Transcript written on texput.log.
-%\<close>}
-
-  If this generates successfully a file \inlinebash|texput.pdf|, your \<^pdftex>-binary supports
-  the \<^boxed_latex>\<open>\expanded\<close>-primitive. If your Linux distribution does not (yet) ship \<^TeXLive> 
-  2019 or your are running Windows or OS X, please follow the installation instructions from 
-  \<^url>\<open>https://www.tug.org/texlive/acquire-netinstall.html\<close>. 
 \<close>
 
 subsubsection*[isadof::technical]\<open>Installing \<^isadof>\<close>
