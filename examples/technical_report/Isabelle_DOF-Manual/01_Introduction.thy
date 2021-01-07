@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019-2020 The University of Exeter 
- *               2018-2020 The University of Paris-Saclay
+ *               2019-2021 The University of Exeter 
+ *               2018-2021 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -88,24 +88,16 @@ text\<open>
   \<^item> a light-blue background for input written in Isabelle's Isar language, \<^eg>:
     @{boxed_theory_text [display]
     \<open>lemma refl: "x = x" 
-      by simp\<close>}
+  by simp\<close>}
   \<^item> a green background for examples of generated document fragments (\<^ie>, PDF output):
     @{boxed_pdf [display] \<open>The axiom refl\<close>}
   \<^item> a red background for For (S)ML-code:
     @{boxed_sml [display] \<open>fun id x = x\<close>}
   \<^item> a yellow background for \LaTeX-code:
     @{boxed_latex [display] \<open>\newcommand{\refl}{$x = x$}\<close>}
-    \begin{ltx}
-    \newcommand{\refl}{$x = x$}
-    \end{ltx}
   \<^item> a grey background for shell scripts and interactive shell sessions:
-    @{boxed_bash [display] 
-    \<open>ë\prompt{}ë ls
-     CHANGELOG.md  CITATION  examples  install  LICENSE  README.md  ROOTS  src\<close>}
-    \begin{bash}
-    ë\prompt{}ë ls
-    CHANGELOG.md  CITATION  examples  install  LICENSE  README.md  ROOTS  src
-    \end{bash}
+    @{boxed_bash [display]\<open>ë\prompt{}ë ls
+CHANGELOG.md  CITATION  examples  install  LICENSE  README.md  ROOTS  src\<close>}
 \<close>
 
 subsubsection\<open>How to Cite \<^isadof>\<close>
