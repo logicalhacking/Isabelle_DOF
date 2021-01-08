@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019-2020 The University of Exeter 
- *               2018-2020 The University of Paris-Saclay
+ *               2019-2021 The University of Exeter 
+ *               2018-2021 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -85,26 +85,20 @@ text\<open>
     imports              (* Declaration of 'theory' dependencies     *)
       Main               (* Imports a library called 'Main'          *)
     keywords             (* Registration of keywords defined locally *)
-      requirement        (* A command for describing requirements    *)
-\<close>}
+      requirement        (* A command for describing requirements    *)\<close>}
   where \<^boxed_theory_text>\<open>Example\<close> is the abstract name of the text-file, \<^boxed_theory_text>\<open>Main\<close> refers to an 
   imported theory (recall that the import relation must be acyclic) and \<^boxed_theory_text>\<open>keywords\<close> are 
   used to separate commands from each other.
 \<close>
-(* experiment starts here *)
-(* somewhere we destroyed the standard antiquotation thm ...
-text\<open> \<^emph>\<open>blabla\<close> @{thm \<open>refl\<close>}\<close>
 
-text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, we obtain in \<Gamma> 
-         for @{term "fac 5"} the result @{value "fac 5"}.\<close>
-*)
 text\<open> A text-element \<^index>\<open>text-element\<close> may look like this:
 
- \<^theory_text>\<open>text\<open> According to the *\<open>reflexivity\<close> axiom @{thm refl}, we obtain in \<Gamma>
-         for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>
+  @{boxed_theory_text [display]\<open>
+text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, 
+   we obtain in \<Gamma> for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
 so it is a command \<^theory_text>\<open>text\<close> followed by an argument (here in  \<open>\<open> ... \<close>\<close> paranthesis) which 
 contains characters and and a special notation for semantic macros \<^bindex>\<open>semantic macros\<close> 
-(here in the notation\<^theory_text>\<open>@{term "fac 5"}).\<close>
+(here in the notation \<^theory_text>\<open>@{term "fac 5"}).\<close>
 \<close>
 
 text\<open>
@@ -121,35 +115,17 @@ text\<open>
   This document model can be instantiated with outer-syntax commands for common 
   text elements, \<^eg>, \<^theory_text>\<open>section\<open>...\<close>\<close> or \<^theory_text>\<open>text\<open>...\<close>\<close>.  
   Thus, users can add informal text to a sub-document using a text command:
-
   @{boxed_theory_text [display] \<open>text\<open>This is a description.\<close>\<close> }
-
-  @{boxed_theory_text [display]\<open>
-    text\<open>This is a description.\<close>
-  \<close>}
   This will type-set the corresponding text in, for example, a PDF document.  However, this 
   translation is not necessarily one-to-one: text elements can be enriched by formal, \<^ie>, 
-  machine-checked content via *\<open>semantic macros\<close>, called antiquotations\<^bindex>\<open>antiquotation\<close>:
-  
+  machine-checked content via \<^emph>\<open>semantic macros\<close>, called antiquotations\<^bindex>\<open>antiquotation\<close>:
   @{boxed_theory_text [display]
-  \<open>text\<open> According to the *\<open>reflexivity\<close> axiom @{thm refl}, we obtain in \<Gamma> 
+  \<open>text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, we obtain in \<Gamma> 
          for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>
   }
-
-@{boxed_theory_text [display]\<open>
-text\<open>According to the *\<open>reflexivity\<close> axiom <@>{thm refl}, we obtain in \<Gamma> 
-      for @{term "fac 5"} the result @{value "fac 5"}.\<close>
-\<close>}
-
-
 which is represented in the final document (\<^eg>, a PDF) by:
-\begin{out}
-According to the \emph{reflexivity} axiom $\mathrm{x = x}$, we obtain in $\Gamma$ 
-for $\operatorname{fac} \text{\textrm{5}}$ the result $\text{\textrm{120}}$.
-\end{out}
-
 @{boxed_pdf [display]
-\<open>According to the \emph{reflexivity} axiom $\mathrm{x = x}$, we obtain in $\Gamma$ 
+\<open>According to the $\emph{reflexivity}$ axiom $\mathrm{x = x}$, we obtain in $\Gamma$ 
 for $\operatorname{fac} \text{\textrm{5}}$ the result $\text{\textrm{120}}$.\<close>
  }
 
