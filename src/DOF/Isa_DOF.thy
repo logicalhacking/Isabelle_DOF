@@ -33,19 +33,18 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            RegExpInterface    (* Interface to functional regular automata for monitoring *)
            Assert 
            
-  keywords "+=" ":=" "accepts" "rejects" "invariant"
+  keywords "+=" ":=" "accepts"  "rejects" "invariant"
            
-  and      "open_monitor*" "close_monitor*" "declare_reference*" 
-           "update_instance*" "doc_class" ::thy_decl
+  and      "open_monitor*"      "close_monitor*" 
+           "declare_reference*" "update_instance*"
+           "doc_class"                                    
+           "define_shortcut*"   "define_macro*"          :: thy_decl
 
-  and      "text*"      "text-macro*"     :: document_body 
+  and      "text*"              "text-macro*"            :: document_body 
 
-  and      "print_doc_classes" "print_doc_items" 
+  and      "print_doc_classes"        "print_doc_items" 
            "print_doc_class_template" "check_doc_global" :: diag
 
-  (* experimental *)  
-  and      "corrollary*" "proposition*" "lemma*" "theorem*" :: thy_decl
-           (* -- intended replacement of Isar std commands.*) 
       
 
            
@@ -674,6 +673,21 @@ fun print_doc_classes b ctxt =
         writeln "=====================================\n\n\n" 
     end;
 
+fun print_doc_class_tree ctxt P T = 
+    let val {docobj_tab={tab = x, ...},docclass_tab, ...} = get_data ctxt;
+        val class_tab:(string * docclass_struct)list = (Symtab.dest docclass_tab)
+        fun is_class_son X (n, dc:docclass_struct) = (X = #inherits_from dc)
+        fun tree lev ([]:(string * docclass_struct)list) = ""
+           |tree lev ((n,R)::S) = (if P(lev,n) 
+                                  then "."^Int.toString lev^" "^(T n)^"{...}.\n"
+                                       ^ (tree(lev + 1)(filter(is_class_son(SOME([],n)))class_tab))
+                                  else "."^Int.toString lev^" ... \n") 
+                                  ^ (tree lev S)
+        val roots = filter(is_class_son NONE) class_tab
+    in  ".0 .\n" ^ tree 1 roots end
+
+
+
 fun check_doc_global (strict_checking : bool) ctxt = 
     let val {docobj_tab={tab = x, ...}, monitor_tab, ...} = get_data ctxt;
         val S = map_filter (fn (s,NONE) => SOME s | _ => NONE) (Symtab.dest x)
@@ -909,8 +923,8 @@ fun ML_isa_check_docitem thy (term, req_ty, pos) =
                                        | _ => error("can not infer type for: "^ name)
                          in if cid <> DOF_core.default_cid 
                                andalso not(DOF_core.is_subclass ctxt cid req_class)
-                            then error("reference ontologically inconsistent: "^ 
-                                       Position.here pos_decl)
+                            then error("reference ontologically inconsistent: "
+                                       ^cid^" vs. "^req_class^ Position.here pos_decl)
                             else ()
                          end
            else err ("faulty reference to docitem: "^name) pos
@@ -1473,44 +1487,6 @@ val _ = Thy_Output.set_meta_args_parser
 
 
 
-ML \<open>
-local (* dull and dangerous copy from Pure.thy given that these functions are not
-         globally exported. *)
-
-val long_keyword =
-  Parse_Spec.includes >> K "" ||
-  Parse_Spec.long_statement_keyword;
-
-val long_statement =
-  Scan.optional (Parse_Spec.opt_thm_name ":" --| Scan.ahead long_keyword) Binding.empty_atts --
-  Scan.optional Parse_Spec.includes [] -- Parse_Spec.long_statement
-    >> (fn ((binding, includes), (elems, concl)) => (true, binding, includes, elems, concl));
-
-val short_statement =
-  Parse_Spec.statement -- Parse_Spec.if_statement -- Parse.for_fixes
-    >> (fn ((shows, assumes), fixes) =>
-      (false, Binding.empty_atts, [], [Element.Fixes fixes, Element.Assumes assumes],
-        Element.Shows shows));
-
-fun theorem spec schematic descr  =
-  Outer_Syntax.local_theory_to_proof' spec ("state " ^ descr)
-    ((ODL_Command_Parser.attributes -- (long_statement || short_statement)) 
-    >> (fn (_ (* skip *) ,(long, binding, includes, elems, concl)) =>
-           ((if schematic then Specification.schematic_theorem_cmd 
-                          else Specification.theorem_cmd )
-             long Thm.theoremK NONE (K I) binding includes elems concl)));
-
-in
-
-(* Half - fake. activates original Isar commands, but skips meta-arguments for the moment. *)
-(* tendance deprecated - see new scholarly paper setup. *)
-val _ = theorem @{command_keyword "theorem*"}        false "theorem";
-val _ = theorem @{command_keyword "lemma*"}          false "lemma";
-val _ = theorem @{command_keyword "corrollary*"}     false "corollary";
-val _ = theorem @{command_keyword "proposition*"}    false "proposition";
-
-end\<close>  
-
  
 section\<open> Syntax for Ontological Antiquotations (the '' View'' Part II) \<close>
 
@@ -1533,9 +1509,9 @@ fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) {inline=inline_re
              val markup = docref_markup false name id pos_decl;
              val _ = Context_Position.report ctxt pos markup;
                      (* this sends a report for a ref application to the PIDE interface ... *) 
-             val _ = if cid <> DOF_core.default_cid 
-                        andalso not(DOF_core.is_subclass ctxt cid cid_decl)
-                     then error("reference ontologically inconsistent:" ^ Position.here pos_decl)
+             val _ = if not(DOF_core.is_subclass ctxt cid cid_decl)
+                     then error("reference ontologically inconsistent: "^cid
+                                ^" must be subclass of "^cid_decl^ Position.here pos_decl)
                      else ()
          in () end
     else if   DOF_core.is_declared_oid_global name thy 
@@ -1617,7 +1593,6 @@ val _ = Theory.setup
 end (* struct *)
 \<close>
 
-text\<open> @{thm [] refl}\<close>
 
 ML\<open> 
 structure AttributeAccess = 
@@ -1848,7 +1823,201 @@ val _ =
 end (* struct *)
 \<close>  
 
-text\<open>dfgd\<close>
+
+
+section\<open>Shortcuts, Macros, Environments\<close>
+text\<open>The features described in this section are actually \<^emph>\<open>not\<close> real ISADOF features, rather a 
+slightly more abstract layer over somewhat buried standard features of the Isabelle document 
+generator ... (Thanks to Makarius) Conceptually, they are \<^emph>\<open>sub-text-elements\<close>. \<close>
+
+text\<open>This module provides mechanisms to define front-end checked:
+\<^enum> \<^emph>\<open>shortcuts\<close>, i.e. machine-checked abbreviations without arguments 
+  that were mapped to user-defined LaTeX code (Example: \<^verbatim>\<open>\ie\<close>)
+\<^enum> \<^emph>\<open>macros\<close>  with one argument that were mapped to user-defined code. Example: \<^verbatim>\<open>\myurl{bla}\<close>.
+  The argument can be potentially checked and reports can be sent to PIDE;
+  if no such checking is desired, this can be expressed by setting the
+  \<^theory_text>\<open>reportNtest\<close>-parameter to \<^theory_text>\<open>K(K())\<close>.
+\<^enum> \<^emph>\<open>macros\<close> with two arguments, potentially independently checked. See above. 
+  Example: \<^verbatim>\<open>\myurl[ding]{dong}\<close>,
+\<^enum> \<^emph>\<open>boxes\<close> which are more complex sub-text-elements in the line of the \<^verbatim>\<open>verbatim\<close> or 
+  \<^verbatim>\<open>theory_text\<close> environments.
+
+Note that we deliberately refrained from a code-template definition mechanism for simplicity,
+so the patterns were just described by strings.  No additional ado with quoting/unquoting 
+mechanisms ... 
+\<close>
+
+ML\<open>
+structure DOF_lib =
+struct
+fun define_shortcut name latexshcut = 
+       Thy_Output.antiquotation_raw name (Scan.succeed ())
+          (fn _ => fn () => Latex.string latexshcut) 
+
+(* This is a generalization of the Isabelle2020 function "control_antiquotation" from 
+   document_antiquotations.ML. (Thanks Makarius!) *)
+fun define_macro name s1 s2 reportNtest =
+      Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.cartouche_input)
+         (fn ctxt => 
+             fn src => let val () = reportNtest ctxt src 
+                       in  src |>   Latex.enclose_block s1 s2 
+                                  o Thy_Output.output_document ctxt {markdown = false}
+                       end);
+
+local (* hide away really strange local construction *)
+fun enclose_body2 front body1 middle body2 post =
+  (if front  = "" then [] else [Latex.string front]) @ body1 @
+  (if middle = "" then [] else [Latex.string middle]) @ body2 @
+  (if post   = "" then [] else [Latex.string post]);
+in
+fun define_macro2 name front middle post reportNtest1 reportNtest2 =
+      Thy_Output.antiquotation_raw_embedded name (Scan.lift (   Args.cartouche_input 
+                                                             -- Args.cartouche_input))
+         (fn ctxt => 
+             fn (src1,src2) => let val () = reportNtest1 ctxt src1 
+                                   val () = reportNtest2 ctxt src2 
+                                   val T1 = Thy_Output.output_document ctxt {markdown = false} src1
+                                   val T2 = Thy_Output.output_document ctxt {markdown = false} src2
+                               in  Latex.block(enclose_body2 front T1 middle T2 post)
+                               end);
+end
+
+fun report_text ctxt text =
+    let val pos = Input.pos_of text in
+       Context_Position.reports ctxt
+         [(pos, Markup.language_text (Input.is_delimited text)),
+          (pos, Markup.raw_text)]
+    end;
+
+fun report_theory_text ctxt text =
+    let val keywords = Thy_Header.get_keywords' ctxt;
+        val _ = report_text ctxt text;
+        val _ =
+          Input.source_explode text
+          |> Token.tokenize keywords {strict = true}
+          |> maps (Token.reports keywords)
+          |> Context_Position.reports_text ctxt;
+    in () end
+
+fun prepare_text ctxt =
+  Input.source_content #> #1 #> Document_Antiquotation.prepare_lines ctxt;
+(* This also produces indent-expansion and changes space to "\_" and the introduction of "\newline",
+   I believe. Otherwise its in Thy_Output.output_source, the compiler from string to LaTeX.text. *)
+
+fun string_2_text_antiquotation ctxt text = 
+        prepare_text ctxt text
+        |> Thy_Output.output_source ctxt
+        |> Thy_Output.isabelle ctxt
+
+fun string_2_theory_text_antiquotation ctxt text =
+      let
+        val keywords = Thy_Header.get_keywords' ctxt;
+      in
+        prepare_text ctxt text
+        |> Token.explode0 keywords
+        |> maps (Thy_Output.output_token ctxt)
+        |> Thy_Output.isabelle ctxt
+      end
+
+fun gen_text_antiquotation name reportNcheck compile =
+  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
+    (fn ctxt => fn text:Input.source =>
+      let
+        val _ = reportNcheck ctxt text;
+      in
+        compile ctxt text    
+      end);
+
+fun std_text_antiquotation name (* redefined in these more abstract terms *) =
+    gen_text_antiquotation name report_text string_2_text_antiquotation
+
+(* should be the same as (2020):
+fun text_antiquotation name =
+  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
+    (fn ctxt => fn text =>
+      let
+        val _ = report_text ctxt text;
+      in
+        prepare_text ctxt text
+        |> Thy_Output.output_source ctxt
+        |> Thy_Output.isabelle ctxt
+      end);
+*)
+
+fun std_theory_text_antiquotation name (* redefined in these more abstract terms *) =
+    gen_text_antiquotation name report_theory_text string_2_theory_text_antiquotation
+
+(* should be the same as (2020):
+fun theory_text_antiquotation name =
+  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
+    (fn ctxt => fn text =>
+      let
+        val keywords = Thy_Header.get_keywords' ctxt;
+
+        val _ = report_text ctxt text;
+        val _ =
+          Input.source_explode text
+          |> Token.tokenize keywords {strict = true}
+          |> maps (Token.reports keywords)
+          |> Context_Position.reports_text ctxt;
+      in
+        prepare_text ctxt text
+        |> Token.explode0 keywords
+        |> maps (Thy_Output.output_token ctxt)
+        |> Thy_Output.isabelle ctxt
+        |> enclose_env ctxt "isarbox"
+      end);
+*)
+
+
+fun environment_delim name =
+ ("%\n\\begin{" ^ Latex.output_name name ^ "}\n",
+  "\n\\end{" ^ Latex.output_name name ^ "}");
+
+fun environment_block name = environment_delim name |-> Latex.enclose_body #> Latex.block;
+
+
+fun enclose_env verbatim ctxt block_env body =
+  if Config.get ctxt Document_Antiquotation.thy_output_display
+  then if verbatim 
+       then environment_block block_env [body]
+       else Latex.environment_block block_env [body]
+  else Latex.block ([Latex.string ("\\inline"^block_env ^"{")] @ [body] @ [ Latex.string ("}")]);
+
+end
+\<close>
+
+ML\<open>
+local 
+val parse_literal = Parse.alt_string || Parse.cartouche
+val parse_define_shortcut = Parse.binding -- ((\<^keyword>\<open>\<rightleftharpoons>\<close> || \<^keyword>\<open>==\<close>) |-- parse_literal)
+val define_shortcuts = fold(uncurry DOF_lib.define_shortcut)
+in
+val _ =  Outer_Syntax.command \<^command_keyword>\<open>define_shortcut*\<close> "define LaTeX shortcut"
+            (Scan.repeat1 parse_define_shortcut >> (Toplevel.theory o define_shortcuts));
+end
+\<close>
+
+ML\<open>
+val parse_literal = Parse.alt_string || Parse.cartouche
+val parse_define_shortcut =  Parse.binding 
+                             -- ((\<^keyword>\<open>\<rightleftharpoons>\<close> || \<^keyword>\<open>==\<close>) |-- parse_literal)
+                             --|Parse.underscore
+                             -- parse_literal
+                             -- (Scan.option (\<^keyword>\<open>(\<close> |-- Parse.ML_source --|\<^keyword>\<open>)\<close>))
+
+fun define_macro (X,NONE) = (uncurry(uncurry(uncurry DOF_lib.define_macro)))(X,K(K()))
+   |define_macro (X,SOME(src:Input.source)) = 
+       let val check_code = K(K()) (* hack *)
+           val _ = warning "Checker code support Not Yet Implemented - use ML"
+       in  (uncurry(uncurry(uncurry DOF_lib.define_macro)))(X,check_code)
+       end;
+
+val _ =  Outer_Syntax.command \<^command_keyword>\<open>define_macro*\<close> "define LaTeX shortcut"
+            (Scan.repeat1 parse_define_shortcut >> (Toplevel.theory o (fold define_macro)));
+
+\<close>
+
 (*
 ML\<open>
    Pretty.text;

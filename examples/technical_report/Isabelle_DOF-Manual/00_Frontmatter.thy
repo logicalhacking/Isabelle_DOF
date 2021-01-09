@@ -16,24 +16,25 @@ theory "00_Frontmatter"
   imports "Isabelle_DOF.technical_report"
 begin
 
-section\<open>Document Local Setup.\<close>
-text\<open>Some internal setup, introducing document specific abbreviations and macros.\<close>
 
-setup \<open>DOF_lib.define_shortcut    \<^binding>\<open>dof\<close>    "\\dof"\<close>
-setup \<open>DOF_lib.define_shortcut    \<^binding>\<open>isadof\<close> "\\isadof"\<close>
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>TeXLive\<close>"\\TeXLive"
-       #> DOF_lib.define_shortcut \<^binding>\<open>BibTeX\<close> "\\BibTeX{}"
-       #> DOF_lib.define_shortcut \<^binding>\<open>LaTeX\<close>  "\\LaTeX{}"
-       #> DOF_lib.define_shortcut \<^binding>\<open>TeX\<close>    "\\TeX{}"
-       #> DOF_lib.define_shortcut \<^binding>\<open>pdf\<close>    "PDF"
-       #> DOF_lib.define_shortcut \<^binding>\<open>pdftex\<close> "\\pdftex{}"
-\<close>
+section\<open>Local Document Setup.\<close>
+text\<open>... introducing document specific abbreviations and macros.\<close>
 
-text\<open>Note that these setups assume that the associated \<^LaTeX> macros are defined, \<^eg>, 
-     in the document prelude. \<close>
+define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
+                 isadof  \<rightleftharpoons> \<open>\isadof\<close>
 
-setup\<open>    DOF_lib.define_macro \<^binding>\<open>index\<close>   "\\index{" "}" (K(K())) (*no checking, no reporting*)
-       #> DOF_lib.define_macro \<^binding>\<open>bindex\<close>  "\\bindex{" "}"(K(K()))\<close> 
+define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
+                 BibTeX  \<rightleftharpoons> \<open>\BibTeX{}\<close> 
+                 LaTeX   \<rightleftharpoons> \<open>\LaTeX{}\<close>
+                 TeX     \<rightleftharpoons> \<open>\TeX{}\<close>
+                 pdf     \<rightleftharpoons> \<open>PDF\<close>
+                 pdftex  \<rightleftharpoons> \<open>\pdftex{}\<close>
+
+text\<open>Note that these setups assume that the associated \<^LaTeX> macros 
+     are defined, \<^eg>, in the document prelude. \<close>
+
+define_macro* index  \<rightleftharpoons> \<open>\index{\<close> _ \<open>}\<close>
+define_macro* bindex \<rightleftharpoons> \<open>\bindex{\<close> _ \<open>}\<close>
 
 
 ML\<open>

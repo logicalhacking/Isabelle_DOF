@@ -16,6 +16,7 @@ theory
     "03_GuidedTour" 
   imports 
     "02_Background"
+    "Isabelle_DOF.technical_report"
     "Isabelle_DOF.CENELEC_50128"
 begin
 (*>*)
@@ -423,6 +424,7 @@ doc_class "definition"  = math_content +
 doc_class "theorem"     = math_content +
    mcc           :: "math_content_class" <= "thm"   ... 
 \<close>}\<close>
+
 
 text\<open>The class \<^verbatim>\<open>technical\<close> regroups a number of text-elements that contain typical 
 "technical content" in mathematical or engineering papers: code, definitions, theorems, 

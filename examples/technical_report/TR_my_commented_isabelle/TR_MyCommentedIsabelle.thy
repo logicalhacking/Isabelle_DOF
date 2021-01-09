@@ -14,9 +14,10 @@
 (*<*)
 theory TR_MyCommentedIsabelle
   imports "Isabelle_DOF.technical_report" 
+
 begin
 
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>isabelle\<close>  "Isabelle/HOL"\<close> 
+define_shortcut* isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
 
 open_monitor*[this::report] 
 (*>*)
@@ -181,7 +182,7 @@ ML\<open>
   \<close>
 (*>*)
 
-text\<open>\<^vs>\<open>-1,0cm\<close>... which we will describe in more detail later. \<close> 
+text\<open>\<^vs>\<open>-1.0cm\<close>... which we will describe in more detail later. \<close> 
 
 text\<open>In a way, anti-quotations implement a kind of 
   literate specification style in text, models, code, proofs, etc., which become alltogether
@@ -483,28 +484,28 @@ text\<open>Note, furthermore, that there is a programming API for the HOL-instan
   operators of the HOL logic specific constructors and destructors:\<close>
 
 text*[T2::technical]\<open>
-\<^enum>  \<^ML>\<open>HOLogic.boolT         : typ\<close> \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.mk_Trueprop   : term -> term\<close>,  the embedder of bool to prop fundamental for HOL  \<^vs>\<open>-0,2cm\<close> 
-\<^enum>  \<^ML>\<open>HOLogic.dest_Trueprop : term -> term\<close>  \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.Trueprop_conv : conv -> conv\<close> \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.mk_setT       : typ -> typ\<close>,  the ML level type constructor set  \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.dest_setT     : typ -> typ\<close>,  the ML level type destructor for set  \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.Collect_const : typ -> term\<close>  \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.mk_Collect    : string * typ * term -> term\<close>  \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.mk_mem        : term * term -> term\<close>  \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.dest_mem      : term -> term * term\<close>  \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.mk_set        : typ -> term list -> term\<close> \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.conj_intr     : Proof.context -> thm -> thm -> thm\<close>, some HOL-level derived-inferences  \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.conj_elim     : Proof.context -> thm -> thm * thm\<close>  \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.conj_elims    : Proof.context -> thm -> thm list\<close>  \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.conj          : term\<close> , some ML level logical constructors  \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.disj          : term\<close>   \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.imp           : term\<close>   \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.Not           : term\<close>   \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.mk_not        : term -> term\<close>  \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.mk_conj       : term * term -> term\<close> \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.dest_conj     : term -> term list\<close>   \<^vs>\<open>-0,2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.conjuncts     : term -> term list\<close>   \<^vs>\<open>-0,2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.boolT         : typ\<close> \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_Trueprop   : term -> term\<close>,  the embedder of bool to prop fundamental for HOL  \<^vs>\<open>-0.2cm\<close> 
+\<^enum>  \<^ML>\<open>HOLogic.dest_Trueprop : term -> term\<close>  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.Trueprop_conv : conv -> conv\<close> \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_setT       : typ -> typ\<close>,  the ML level type constructor set  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.dest_setT     : typ -> typ\<close>,  the ML level type destructor for set  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.Collect_const : typ -> term\<close>  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_Collect    : string * typ * term -> term\<close>  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_mem        : term * term -> term\<close>  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.dest_mem      : term -> term * term\<close>  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_set        : typ -> term list -> term\<close> \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conj_intr     : Proof.context -> thm -> thm -> thm\<close>, some HOL-level derived-inferences  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conj_elim     : Proof.context -> thm -> thm * thm\<close>  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conj_elims    : Proof.context -> thm -> thm list\<close>  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conj          : term\<close> , some ML level logical constructors  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.disj          : term\<close>   \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.imp           : term\<close>   \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.Not           : term\<close>   \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_not        : term -> term\<close>  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.mk_conj       : term * term -> term\<close> \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.dest_conj     : term -> term list\<close>   \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conjuncts     : term -> term list\<close>   \<^vs>\<open>-0.2cm\<close>
 \<^enum>  ... 
 \<close>
 
@@ -702,7 +703,7 @@ proof - fix a :: nat
 
 subsection*[t233::technical]\<open> Theories and the Signature API\<close>  
 text\<open>
-\<^enum> \<^ML>\<open>Sign.tsig_of : theory -> Type.tsig\<close> extraxts the type-signature of a theory
+\<^enum> \<^ML>\<open>Sign.tsig_of : theory -> Type.tsig\<close> extracts the type-signature of a theory
 \<^enum> \<^ML>\<open>Sign.syn_of  : theory -> Syntax.syntax\<close> extracts the constant-symbol signature 
 \<^enum> \<^ML>\<open>Sign.of_sort : theory -> typ * sort -> bool\<close> decides that a type belongs to a sort.
 \<close>
@@ -2306,8 +2307,8 @@ text\<open> This interactive Isabelle Programming Cook-Book represents my curren
 \<close>
 (*<*)
 
-paragraph\<open>Many thanks to Frederic Tuong, who contributed some example such as the string cartouche
-for Unicode Character Denotations as well as many local hints for improvements.\<close>
+paragraph\<open>Many thanks to Frederic Tuong, who contributed some example such as the string 
+cartouche for Unicode Character Denotations as well as many local hints for improvements.\<close>
 
 section*[bib::bibliography]\<open>Bibliography\<close>
 

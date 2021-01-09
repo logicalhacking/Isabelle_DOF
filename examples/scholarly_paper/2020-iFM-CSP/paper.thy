@@ -1,27 +1,30 @@
 (*<*)
 theory "paper"
-  imports          
-  "Isabelle_DOF.scholarly_paper"
+  imports "Isabelle_DOF.scholarly_paper"
 begin
 
 
 open_monitor*[this::article]
 
-declare[[strict_monitor_checking = false]]
+declare[[ strict_monitor_checking  = false]]
+declare[[ Definition_default_class = "definition"]]
+declare[[ Lemma_default_class      = "lemma"]]
+declare[[ Theorem_default_class    = "theorem"]]
 
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>csp\<close>       "CSP"
-       #> DOF_lib.define_shortcut \<^binding>\<open>isabelle\<close>  "Isabelle/HOL"\<close> 
+define_shortcut* csp      \<rightleftharpoons> \<open>CSP\<close>
+                 holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>
+                 isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
 
 (*>*)
 
 title*[tit::title]\<open>Philosophers may Dine - Definitively!\<close>
-
+                                  
 author*[safouan,email="\<open>safouan.taha@lri.fr\<close>",affiliation="\<open>LRI, CentraleSupelec\<close>"]\<open>Safouan Taha\<close>
 author*[bu,email= "\<open>wolff@lri.fr\<close>",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]\<open>Burkhart Wolff\<close>
 author*[lina,email="\<open>lina.ye@lri.fr\<close>",affiliation="\<open>LRI, Inria, LSV, CentraleSupelec\<close>"]\<open>Lina Ye\<close>
-    
+               
 abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Algebra\<close>,
-                                   \<open>Concurrency\<close>,\<open>Computational Models\<close>]"]
+                             \<open>Concurrency\<close>,\<open>Computational Models\<close>]"]
 \<open>  The theory of Communicating Sequential Processes going back to Hoare and Roscoe is still today 
    one of the reference theories for concurrent specification and computing. In 1997, a first 
    formalization in \<^isabelle> of the denotational semantics of the  Failure/Divergence Model of
@@ -60,8 +63,8 @@ systems, such as the T9000 transansputer @{cite "Barret95"}.
 The theory of \<^csp> was first described in 1978 in a book by Tony Hoare @{cite "Hoare:1985:CSP:3921"}, 
 but has since evolved substantially @{cite "BrookesHR84" and "brookes-roscoe85" and "roscoe:csp:1998"}.
 \<^csp> describes the most common communication and synchronization mechanisms
-with one single language primitive: synchronous communication written \<open>_\<lbrakk>_\<rbrakk>_\<close>. \<^csp> semantics is described 
-by a fully abstract model of behaviour designed to be \<^emph>\<open>compositional\<close>: the denotational
+with one single language primitive: synchronous communication written \<open>_\<lbrakk>_\<rbrakk>_\<close>. \<^csp> semantics is 
+described by a fully abstract model of behaviour designed to be \<^emph>\<open>compositional\<close>: the denotational
 semantics of a process \<open>P\<close> encompasses all possible behaviours of this process in the context of all 
 possible environments \<open>P \<lbrakk>S\<rbrakk> Env\<close> (where \<open>S\<close> is the set of \<open>atomic events\<close> both \<open>P\<close> and \<open>Env\<close> must
 synchronize). This design objective has the consequence that two kinds of choice have to 
@@ -156,7 +159,7 @@ Let two processes be defined as follows:
   \<^enum> \<open>P\<^sub>n\<^sub>d\<^sub>e\<^sub>t = (a \<rightarrow> Stop) \<sqinter> (b \<rightarrow> Stop)\<close> 
 \<close> 
 
-text\<open>\<^noindent> These two processes \<open>P\<^sub>d\<^sub>e\<^sub>t\<close> and \<open>P\<^sub>n\<^sub>d\<^sub>e\<^sub>t\<close> cannot be distinguished by using 
+text\<open>These two processes \<open>P\<^sub>d\<^sub>e\<^sub>t\<close> and \<open>P\<^sub>n\<^sub>d\<^sub>e\<^sub>t\<close> cannot be distinguished by using 
 the trace semantics: \<open>\<T>(P\<^sub>d\<^sub>e\<^sub>t) = \<T>(P\<^sub>n\<^sub>d\<^sub>e\<^sub>t) = {[],[a],[b]}\<close>. To resolve this problem, Brookes @{cite "BrookesHR84"} 
 proposed the failures model, where communication traces were augmented with the 
 constraint information for further communication that is represented negatively as a refusal set. 
@@ -181,7 +184,7 @@ many times. However, using the \<^csp> hiding operator \<open>_\_\<close>, this 
 
 \<close>
 
-text\<open>\<^noindent> where \<open>P\<^sub>i\<^sub>n\<^sub>f\<close> will be equivalent to \<open>\<bottom>\<close> in the process cpo ordering. 
+text\<open>where \<open>P\<^sub>i\<^sub>n\<^sub>f\<close> will be equivalent to \<open>\<bottom>\<close> in the process cpo ordering. 
 To distinguish divergences from the deadlock process, Brookes and Roscoe 
 proposed failure/divergence model to incorporate divergence traces  @{cite "brookes-roscoe85"}. 
 A divergence trace is the one leading to a possible divergent behavior. 
@@ -245,7 +248,7 @@ Second, in the traditional literature, the semantic domain is implicitly describ
 over the three semantic functions \<open>\<T>\<close>, \<open>\<F>\<close> and \<open>\<D>\<close>.
 Informally, these are:
 
-   \<^item> the initial trace of a process must be empty; 
+   \<^item> the initial trace of a process must be empty;
    \<^item> any allowed trace must be \<open>front\<^sub>-tickFree\<close>; 
    \<^item> traces of a process are  \<^emph>\<open>prefix-closed\<close>; 
    \<^item> a process can refuse all subsets of a refusal set; 
@@ -256,8 +259,7 @@ Informally, these are:
    \<^item> a trace ending with \<open>\<surd>\<close> belonging to divergence set implies that its 
      maximum prefix without \<open>\<surd>\<close> is also a divergent trace.
 
-
-\<^noindent> More formally, a process \<open>P\<close> of the type \<open>\<Sigma> process\<close> should have the following properties:
+More formally, a process \<open>P\<close> of the type \<open>\<Sigma> process\<close> should have the following properties:
 
 
 @{cartouche [display] \<open>([],{}) \<in> \<F> P \<and>
@@ -270,9 +272,8 @@ Informally, these are:
 (\<forall> s X. s \<in> \<D> P \<longrightarrow> (s,X) \<in> \<F> P) \<and>
 (\<forall> s. s@[\<surd>] \<in> \<D> P \<longrightarrow> s \<in> \<D> P)\<close>}
 
-
 Our objective is to encapsulate this wishlist into a type constructed as a conservative
-theory extension in our theory HOL-\<^csp>.
+theory extension in our theory \<^holcsp>.
 Therefore third, we define a pre-type for processes \<open>\<Sigma> process\<^sub>0\<close> by \<open> \<P>(\<Sigma>\<^sup>\<surd>\<^sup>* \<times> \<P>(\<Sigma>\<^sup>\<surd>)) \<times> \<P>(\<Sigma>\<^sup>\<surd>)\<close>.
 Forth, we turn our wishlist of "axioms" above into the definition of a predicate \<open>is_process P\<close> 
 of type \<open>\<Sigma> process\<^sub>0 \<Rightarrow> bool\<close> deciding if its conditions are fulfilled. Since \<open>P\<close> is a pre-process,
@@ -281,7 +282,7 @@ And last not least fifth, we use the following type definition:
   \<^item> \<^theory_text>\<open>typedef '\<alpha> process = "{P :: '\<alpha> process\<^sub>0 . is_process P}"\<close>
 
 
-\<^noindent> Isabelle requires a proof for the existence of a witness for this set,
+Isabelle requires a proof for the existence of a witness for this set,
 but this can be constructed in a straight-forward manner. Suitable definitions for 
 \<open>\<T>\<close>, \<open>\<F>\<close> and \<open>\<D>\<close> lifting \<open>fst\<close> and \<open>snd\<close> on the new \<open>'\<alpha> process\<close>-type allows to derive
 the above properties for any \<open>P::'\<alpha> process\<close>. \<close>
@@ -298,11 +299,9 @@ This boils down to a proof that an equivalent definition on the pre-process type
 maintains \<open>is_process\<close>, \<^ie> this predicate remains invariant on the elements of the semantic domain. 
 For example, we define \<open>_\<sqinter>_\<close> on the pre-process type as follows:
 
-
   \<^item> \<^theory_text>\<open>definition "P \<sqinter> Q \<equiv> Abs_process(\<F> P \<union> \<F> Q , \<D> P \<union> \<D> Q)"\<close>
 
-
-\<^noindent> where \<open>\<F> = fst \<circ> Rep_process\<close> and \<open>\<D> = snd \<circ> Rep_process\<close> and where \<open>Rep_process\<close> and
+where \<open>\<F> = fst \<circ> Rep_process\<close> and \<open>\<D> = snd \<circ> Rep_process\<close> and where \<open>Rep_process\<close> and
 \<open>Abs_process\<close> are the representation and abstraction morphisms resulting from the
 type definition linking \<open>'\<alpha> process\<close> isomorphically to \<open>'\<alpha> process\<^sub>0\<close>. Proving the above properties
 for  \<open>\<F> (P \<sqinter> Q)\<close> and \<open>\<D> (P \<sqinter> Q)\<close> requires a proof that \<open>(\<F> P \<union> \<F> Q , \<D> P \<union> \<D> Q)\<close>
@@ -360,7 +359,7 @@ We define \<open>P \<sqsubseteq> Q \<equiv> \<psi>\<^sub>\<D> \<and> \<psi>\<^su
 \<^enum> \<open>\<psi>\<^sub>\<M> = Mins(\<D> P) \<subseteq> \<T> Q \<close> 
 \<close>
 
-text\<open>\<^noindent> Note that the third condition \<open>\<psi>\<^sub>\<M>\<close> implies that the set of minimal divergent traces 
+text\<open>The third condition \<open>\<psi>\<^sub>\<M>\<close> implies that the set of minimal divergent traces 
 (ones with no proper prefix that is also a divergence) in  \<open>P\<close>,  denoted by \<open>Mins(\<D> P)\<close>, 
 should be a subset of the trace set of \<open>Q\<close>. 
 %One may note that each element in \<open>Mins(\<D> P)\<close> do actually not contain the \<open>\<surd>\<close>, 
@@ -397,7 +396,7 @@ The port of HOL-CSP 2 on HOLCF implied that the derivation of the entire continu
 had to be completely re-done (3000 loc).
 
  
-\<^noindent> HOL-CSP provides an important proof principle, the fixed-point induction:
+HOL-CSP provides an important proof principle, the fixed-point induction:
 
 @{cartouche [display, indent=5] \<open>cont f \<Longrightarrow> adm P \<Longrightarrow> P \<bottom> \<Longrightarrow> (\<And>X. P X \<Longrightarrow> P(f X)) \<Longrightarrow> P(\<mu>X. f X)\<close>}
 
@@ -528,34 +527,34 @@ To handle termination better, we added two new processes \<open>CHAOS\<^sub>S\<^
 %thus must be without it. 
 \<close>
 
-text*[X22::"definition"]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<close>
-text*[X32::"definition"]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>         \<close>
-Definition*[X42::"definition"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<close>
+(*<*) (* a test ...*)
+text*[X22 ::math_content   ]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                           \<close>
+text*[X32::"definition", mcc=defn]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>        \<close>
+Definition*[X42]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>  \<close>
+Definition*[X52::"definition"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close> \<close>
 
-text\<open> The \<open>RUN\<close>-process defined @{definition X22} represents the process that accepts all 
+text\<open> The \<open>RUN\<close>-process defined @{math_content X22} represents the process that accepts all 
 events, but never stops nor deadlocks. The \<open>CHAOS\<close>-process comes in two variants shown in 
-@{definition X32} and @{definition X42}: the process that non-deterministically stops or 
-accepts any offered event, whereas \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> can additionally terminate.\<close>
+@{definition X32} and @{definition X42} @{definition X52}: the process that non-deterministically 
+stops or accepts any offered event, whereas \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> can additionally terminate.\<close>
+(*>*)
 
-
-Definition*[X2]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<close>
-Definition*[X3]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>          \<close>
+Definition*[X2]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                    \<close>
+Definition*[X3]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>         \<close>
 Definition*[X4]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<close>
-Definition*[X5]\<open>\<open>DF A \<equiv> \<mu> X. (\<sqinter> x \<in> A \<rightarrow> X)\<close>                      \<close>
-Definition*[X6]\<open>\<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. ((\<sqinter> x \<in> A \<rightarrow> X) \<sqinter> SKIP)\<close>           \<close> 
+Definition*[X5]\<open>\<open>DF A \<equiv> \<mu> X. (\<sqinter> x \<in> A \<rightarrow> X)\<close>                       \<close>
+Definition*[X6]\<open>\<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. ((\<sqinter> x \<in> A \<rightarrow> X) \<sqinter> SKIP)\<close>          \<close> 
 
-text\<open>  \<^noindent>
-In the following, we denote \<open> \<R>\<P> = {DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P, DF, RUN, CHAOS, CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P}\<close>. 
+text\<open>In the following, we denote \<open> \<R>\<P> = {DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P, DF, RUN, CHAOS, CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P}\<close>. 
 All five  reference processes are divergence-free.
 %which was done by using a particular lemma \<open>\<D> (\<mu> x. f x) = \<Inter>\<^sub>i\<^sub>\<in>\<^sub>\<nat> \<D> (f\<^sup>i \<bottom>)\<close>.  
-
-
-   @{cartouche [display,indent=8] \<open> D (\<PP> UNIV) = {} where \<PP> \<in> \<R>\<P> and UNIV is the set of all events\<close>}
-
-
+@{cartouche 
+  [display,indent=8] \<open> D (\<PP> UNIV) = {} where \<PP> \<in> \<R>\<P> and UNIV is the set of all events\<close>
+}
 Regarding the failure refinement ordering, the set of failures \<open>\<F> P\<close> for any process \<open>P\<close> is
 a subset of  \<open>\<F> (CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV)\<close>.% and the following lemma was proved: 
-% This proof is performed by induction, based on the failure projection of \<open>STOP\<close> and that of internal choice.
+% This proof is performed by induction, based on the failure projection of \<open>STOP\<close> and that of 
+% internal choice.
 
 
    @{cartouche [display, indent=25] \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close>}
@@ -615,8 +614,6 @@ be deadlocked after any non-terminating trace.
 
 Theorem*[T1, short_name="\<open>DF definition captures deadlock-freeness\<close>"]
 \<open> \hfill \break \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<surd>}\<union>events_of P) \<notin> \<F> P)\<close> \<close>   
-
-
 Definition*[X11]\<open>  \<open>livelock\<^sub>-free P \<equiv> \<D> P = {} \<close>   \<close>
 
 text\<open> Recall that all five reference processes are livelock-free. 
@@ -632,12 +629,12 @@ Finally, we proved the following theorem that confirms the relationship between 
 properties:
 \<close>
 Theorem*[T2, short_name="''DF implies LF''"]
-  \<open>  \hspace{0.5cm} \<open>deadlock_free P \<longrightarrow> livelock_free P\<close>   \<close>
+  \<open>  \<open>deadlock_free P \<longrightarrow> livelock_free P\<close>   \<close>
 
 text\<open>
-This is totally natural, at a first glance, but surprising as the proof of deadlock-freeness only requires 
-failure refinement \<open>\<sqsubseteq>\<^sub>\<F>\<close> (see @{definition \<open>X10\<close>}) where divergence traces are mixed within the failures set.
-Note that the existing tools in the literature normally detect these two phenomena  
+This is totally natural, at a first glance, but surprising as the proof of deadlock-freeness only 
+requires failure refinement \<open>\<sqsubseteq>\<^sub>\<F>\<close> (see @{definition \<open>X10\<close>}) where divergence traces are mixed within 
+the failures set. Note that the existing tools in the literature normally detect these two phenomena  
 separately, such as FDR for which checking livelock-freeness is very costly. 
 In our framework, deadlock-freeness of a given system 
 implies its livelock-freeness. However, if a system is not deadlock-free, 
@@ -695,13 +692,13 @@ refinement orderings. We state:
 
 @{theory_text [display,indent=5] \<open>lemma: COPY \<sqsubseteq> SYSTEM\<close>} 
 
-\<^noindent> and apply fixed-point induction over \<open>COPY\<close>; this leaves us to the three subgoals: 
+and apply fixed-point induction over \<open>COPY\<close>; this leaves us to the three subgoals: 
   \<^enum> \<open>adm (\<lambda>a. a \<sqsubseteq> (SEND \<lbrakk>SYN\<rbrakk> REC) \ SYN)\<close>
   \<^enum> \<open>\<bottom> \<sqsubseteq> (SEND \<lbrakk>SYN\<rbrakk> REC) \ SYN\<close>
   \<^enum> @{cartouche [display]\<open>P \<sqsubseteq> (SEND \<lbrakk>SYN\<rbrakk> REC) \ SYN \<Longrightarrow> 
                               left?x \<rightarrow> right!x \<rightarrow> P \<sqsubseteq> (SEND \<lbrakk>SYN\<rbrakk> REC) \ SYN\<close>} 
 
-\<^noindent> The first two sub-proofs are automatic simplification proofs; the third requires unfolding
+The first two sub-proofs are automatic simplification proofs; the third requires unfolding
 \<open>SEND\<close> and \<open>REC\<close> one step and applying the algebraic laws. No denotational
 semantics reasoning is necessary here; it is just an induct-simplify proof consisting
 of 2 lines proof-script involving the derived algebraic laws of \<^csp>.

@@ -18,7 +18,7 @@ For historical reasons, \<^emph>\<open>term antiquotations\<close> are called th
 "Inner Syntax Antiquotations". \<close>
 
 theory 
-  InnerSyntaxAntiquotations
+  TermAntiquotations
 imports 
   "Isabelle_DOF.Conceptual"
 begin
@@ -50,7 +50,7 @@ text\<open>Some sample lemma:\<close>
 lemma murks : "Example=Example" by simp
 
 text\<open>Example for a meta-attribute of ODL-type @{typ "file"} with an appropriate ISA for the
-     file @{file "InnerSyntaxAntiquotations.thy"}\<close>
+     file @{file "TermAntiquotations.thy"}\<close>
 (* not working: 
 text*[xcv::F, u="@{file ''InnerSyntaxAntiquotations.thy''}"]\<open>Lorem ipsum ...\<close>
 *)
@@ -65,7 +65,7 @@ text*[xcv2::C, g="@{thm ''HOL.refl''}"]\<open>Lorem ipsum ...\<close>
 text\<open>Major sample: test-item of doc-class \<open>F\<close> with a relational link between class instances, 
      and links to formal Isabelle items like \<open>typ\<close>, \<open>term\<close> and \<open>thm\<close>. \<close>
 text*[xcv4::F, r="[@{thm ''HOL.refl''}, 
-                   @{thm \<open>InnerSyntaxAntiquotations.murks\<close>}]", (* long names required *)
+                   @{thm \<open>TermAntiquotations.murks\<close>}]", (* long names required *)
                b="{(@{docitem ''xcv1''},@{docitem \<open>xcv2\<close>})}",  (* notations \<open>...\<close> vs. ''...'' *)
                s="[@{typ \<open>int list\<close>}]",                        
                properties = "[@{term \<open>H \<longrightarrow> H\<close>}]"              (* notation \<open>...\<close> required for UTF8*)

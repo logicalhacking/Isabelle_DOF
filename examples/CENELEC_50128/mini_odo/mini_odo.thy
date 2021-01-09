@@ -534,14 +534,14 @@ text\<open>
 
 text\<open>Examples for declaration of typed doc-items "assumption" and "hypothesis",
      concepts defined in the underlying ontology @{theory "Isabelle_DOF.CENELEC_50128"}. \<close>
-text*[ass1::assumption, long_name="Some ''assumption one''"] \<open> The subsystem Y is safe. \<close>
+text*[ass2::assumption, long_name="Some ''assumption one''"] \<open> The subsystem Y is safe. \<close>
 text*[hyp1::hypothesis] \<open> P not equal NP \<close>
   
 text\<open>A real example fragment from a larger project, declaring a text-element as a
      "safety-related application condition", a concept defined in the 
      @{theory "Isabelle_DOF.CENELEC_50128"} ontology:\<close>  
 
-text*[hyp2::hypothesis]\<open>Under the assumption @{assumption \<open>ass1\<close>} we establish the following: ... \<close>
+text*[hyp2::hypothesis]\<open>Under the assumption @{assumption \<open>ass2\<close>} we establish the following: ... \<close>
 
 text*[ass122::SRAC, long_name="Some ''ass122''"] \<open> The overall sampling frequence of the odometer
 subsystem is therefore 14 khz, which includes sampling, computing and

@@ -23,12 +23,11 @@ text\<open> Building a fundamental infrastructure for common document elements s
 
 theory Isa_COL   
   imports  Isa_DOF  
-  keywords "title*"     "subtitle*"     "chapter*" 
-           "section*"   "subsection*"   "subsubsection*" 
-           "paragraph*" "subparagraph*"       :: document_body 
-  and      "figure*" "side_by_side_figure*"   :: document_body 
-  and      "assert*" :: thy_decl
-          
+  keywords "title*"        "subtitle*"      
+           "chapter*"      "section*"   
+           "subsection*"   "subsubsection*" 
+           "paragraph*"    "subparagraph*"         
+           "figure*"       "side_by_side_figure*" :: document_body 
 
 begin
   
@@ -98,7 +97,7 @@ fun transform_cid thy NONE X = X
                              in  if DOF_core.is_subclass_global thy  sub_cid_long cid_long
                                  then (SOME (sub_cid,pos))
                                  else (* (SOME (sub_cid,pos)) *)
-                                      (*  BUG : check reveals problem of Definition* misuse. *)  
+                                      (*  BUG : check reveals problem of Definition* misuse.  *)
                                         error("class "^sub_cid_long^
                                               " must be sub-class of "^cid_long) 
                              end  
@@ -119,30 +118,6 @@ fun enriched_document_cmd_exp ncid (S: (string * string) list) =
          gen_enriched_document_cmd {inline=true} (transform_cid thy ncid) transform_attr md margs thy
    end;
 end (* local *)
-
-fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
-                prop) =
-    let fun conv_2_holstring thy =  (bstring_to_holstring (Proof_Context.init_global thy))
-        fun conv_attrs thy = (("properties",pos),"[@{termrepr ''"^conv_2_holstring thy prop ^" ''}]")
-                             ::doc_attrs  
-        fun conv_attrs' thy = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) (conv_attrs thy)
-        fun mks thy = case DOF_core.get_object_global_opt oid thy of
-                   SOME NONE => (error("update of declared but not created doc_item:" ^ oid))
-                 | SOME _ => (update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
-                 | NONE   => (create_and_check_docitem 
-                                 {is_monitor = false} {is_inline = false} 
-                                 oid pos cid_pos (conv_attrs thy) thy)
-        val check = (assert_cmd name_opt modes prop) o Proof_Context.init_global
-    in 
-        (* Toplevel.keep (check o Toplevel.context_of) *)
-        Toplevel.theory (fn thy => (check thy; mks thy))
-    end
-
-
-val _ =
-  Outer_Syntax.command @{command_keyword "assert*"} 
-                       "evaluate and print term"
-                       (attributes -- opt_evaluator -- opt_modes  -- Parse.term  >> assertion_cmd'); 
 
 
 val _ =
@@ -251,172 +226,20 @@ val _ =
 end 
 \<close>
 
-section\<open>Shortcuts, Macros, Environments\<close>
-text\<open>The features described in this section are actually \<^emph>\<open>not\<close> real ISADOF features, rather a 
-slightly more abstract layer over somewhat buried standard features of the Isabelle document 
-generator ... (Thanks to Makarius) Conceptually, they are \<^emph>\<open>sub-text-elements\<close>. \<close>
+(*<*)
+(*
+ML\<open>ML_Context.expression\<close>
+fun setup source =
+  ML_Context.expression (Input.pos_of source)
+    (ML_Lex.read "Theory.setup (" @ ML_Lex.read_source source @ ML_Lex.read ")")
+  |> Context.theory_map;
+setup\<open>\<close>
 
-text\<open>This module provides mechanisms to define front-end checked:
-\<^enum> \<^emph>\<open>shortcuts\<close>, i.e. machine-checked abbreviations without arguments 
-  that were mapped to user-defined LaTeX code (Example: \<^verbatim>\<open>\ie\<close>)
-\<^enum> \<^emph>\<open>macros\<close>  with one argument that were mapped to user-defined code. Example: \<^verbatim>\<open>\myurl{bla}\<close>.
-  The argument can be potentially checked and reports can be sent to PIDE;
-  if no such checking is desired, this can be expressed by setting the
-  \<^theory_text>\<open>reportNtest\<close>-parameter to \<^theory_text>\<open>K(K())\<close>.
-\<^enum> \<^emph>\<open>macros\<close> with two arguments, potentially independently checked. See above. 
-  Example: \<^verbatim>\<open>\myurl[ding]{dong}\<close>,
-\<^enum> \<^emph>\<open>boxes\<close> which are more complex sub-text-elements in the line of the \<^verbatim>\<open>verbatim\<close> or 
-  \<^verbatim>\<open>theory_text\<close> environments.
-
-Note that we deliberately refrained from a code-template definition mechanism for simplicity,
-so the patterns were just described by strings.  No additional ado with quoting/unquoting 
-mechanisms ... 
-\<close>
-
-ML\<open>
-structure DOF_lib =
-struct
-fun define_shortcut name latexshcut = 
-       Thy_Output.antiquotation_raw name (Scan.succeed ())
-          (fn _ => fn () => Latex.string latexshcut) 
-
-(* This is a generalization of the Isabelle2020 function "control_antiquotation" from 
-   document_antiquotations.ML. (Thanks Makarius!) *)
-fun define_macro name s1 s2 reportNtest =
-      Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.cartouche_input)
-         (fn ctxt => 
-             fn src => let val () = reportNtest ctxt src 
-                       in  src |>   Latex.enclose_block s1 s2 
-                                  o Thy_Output.output_document ctxt {markdown = false}
-                       end);
-
-local (* hide away really strange local construction *)
-fun enclose_body2 front body1 middle body2 post =
-  (if front = "" then [] else [Latex.string front]) @ body1 @
-  (if middle = "" then [] else [Latex.string middle]) @ body2 @
-  (if post = "" then [] else [Latex.string post]);
-in
-fun define_macro2 name front middle post reportNtest1 reportNtest2 =
-      Thy_Output.antiquotation_raw_embedded name (Scan.lift (   Args.cartouche_input 
-                                                             -- Args.cartouche_input))
-         (fn ctxt => 
-             fn (src1,src2) => let val () = reportNtest1 ctxt src1 
-                                   val () = reportNtest2 ctxt src2 
-                                   val T1 = Thy_Output.output_document ctxt {markdown = false} src1
-                                   val T2 = Thy_Output.output_document ctxt {markdown = false} src2
-                               in  Latex.block(enclose_body2 front T1 middle T2 post)
-                               end);
-end
-
-fun report_text ctxt text =
-    let val pos = Input.pos_of text in
-       Context_Position.reports ctxt
-         [(pos, Markup.language_text (Input.is_delimited text)),
-          (pos, Markup.raw_text)]
-    end;
-
-fun report_theory_text ctxt text =
-    let val keywords = Thy_Header.get_keywords' ctxt;
-        val _ = report_text ctxt text;
-        val _ =
-          Input.source_explode text
-          |> Token.tokenize keywords {strict = true}
-          |> maps (Token.reports keywords)
-          |> Context_Position.reports_text ctxt;
-    in () end
-
-fun prepare_text ctxt =
-  Input.source_content #> #1 #> Document_Antiquotation.prepare_lines ctxt;
-(* This also produces indent-expansion and changes space to "\_" and the introduction of "\newline",
-   I believe. Otherwise its in Thy_Output.output_source, the compiler from string to LaTeX.text. *)
-
-fun string_2_text_antiquotation ctxt text = 
-        prepare_text ctxt text
-        |> Thy_Output.output_source ctxt
-        |> Thy_Output.isabelle ctxt
-
-fun string_2_theory_text_antiquotation ctxt text =
-      let
-        val keywords = Thy_Header.get_keywords' ctxt;
-      in
-        prepare_text ctxt text
-        |> Token.explode0 keywords
-        |> maps (Thy_Output.output_token ctxt)
-        |> Thy_Output.isabelle ctxt
-      end
-
-fun gen_text_antiquotation name reportNcheck compile =
-  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
-    (fn ctxt => fn text:Input.source =>
-      let
-        val _ = reportNcheck ctxt text;
-      in
-        compile ctxt text    
-      end);
-
-fun std_text_antiquotation name (* redefined in these more abstract terms *) =
-    gen_text_antiquotation name report_text string_2_text_antiquotation
-
-(* should be the same as (2020):
-fun text_antiquotation name =
-  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
-    (fn ctxt => fn text =>
-      let
-        val _ = report_text ctxt text;
-      in
-        prepare_text ctxt text
-        |> Thy_Output.output_source ctxt
-        |> Thy_Output.isabelle ctxt
-      end);
 *)
-
-fun std_theory_text_antiquotation name (* redefined in these more abstract terms *) =
-    gen_text_antiquotation name report_theory_text string_2_theory_text_antiquotation
-
-(* should be the same as (2020):
-fun theory_text_antiquotation name =
-  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
-    (fn ctxt => fn text =>
-      let
-        val keywords = Thy_Header.get_keywords' ctxt;
-
-        val _ = report_text ctxt text;
-        val _ =
-          Input.source_explode text
-          |> Token.tokenize keywords {strict = true}
-          |> maps (Token.reports keywords)
-          |> Context_Position.reports_text ctxt;
-      in
-        prepare_text ctxt text
-        |> Token.explode0 keywords
-        |> maps (Thy_Output.output_token ctxt)
-        |> Thy_Output.isabelle ctxt
-        |> enclose_env ctxt "isarbox"
-      end);
-*)
-
-
-fun environment_delim name =
- ("%\n\\begin{" ^ Latex.output_name name ^ "}\n",
-  "\n\\end{" ^ Latex.output_name name ^ "}");
-
-fun environment_block name = environment_delim name |-> Latex.enclose_body #> Latex.block;
-
-
-fun enclose_env verbatim ctxt block_env body =
-  if Config.get ctxt Document_Antiquotation.thy_output_display
-  then if verbatim 
-       then environment_block block_env [body]
-       else Latex.environment_block block_env [body]
-  else Latex.block ([Latex.string ("\\inline"^block_env ^"{")] @ [body] @ [ Latex.string ("}")]);
-
-end
-\<close>
-
+(*>*)
 
 section\<open>Tables\<close>
 (* TODO ! ! ! *)
-
 (* dito the future monitor: table - block *)
 
 
@@ -425,6 +248,5 @@ section\<open>Tests\<close>
 ML\<open>@{term "side_by_side_figure"};
    @{typ "doc_class rexp"}; 
    DOF_core.SPY;\<close>
-
 
 end

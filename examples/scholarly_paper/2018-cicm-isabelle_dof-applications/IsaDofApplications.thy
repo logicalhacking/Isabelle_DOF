@@ -19,17 +19,14 @@ begin
 open_monitor*[this::article] 
 declare[[strict_monitor_checking=false]]
 
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>isadof\<close>    "\\isadof"
-       #> DOF_lib.define_shortcut \<^binding>\<open>LaTeX\<close>     "\\LaTeX{}"
-       #> DOF_lib.define_shortcut \<^binding>\<open>Protege\<close>   "Prot{\\'e}g{\\'e}"
-       #> DOF_lib.define_shortcut \<^binding>\<open>dots\<close>      "\\ldots"
-       #> DOF_lib.define_shortcut \<^binding>\<open>isabelle\<close>  "Isabelle/HOL"
-
-\<close>
+define_shortcut* isadof   \<rightleftharpoons> \<open>\isadof\<close>
+                 LaTeX    \<rightleftharpoons> \<open>\LaTeX{}\<close>
+                 dots     \<rightleftharpoons> \<open>\ldots\<close>
+                 isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
+                 Protege  \<rightleftharpoons> \<open>Prot{\'e}g{\'e}\<close>
 
 (* slanted text in contrast to italics *)
-setup\<open>    DOF_lib.define_macro \<^binding>\<open>slanted_text\<close> "\\textsl{" "}" (K(K()))\<close> 
-
+define_macro* slanted_text \<rightleftharpoons> \<open>\textsl{\<close> _ \<open>}\<close>
 
 (*>*)
 

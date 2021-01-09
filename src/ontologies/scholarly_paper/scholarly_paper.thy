@@ -11,12 +11,13 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-section\<open>An example ontology for a scholarly paper\<close>
+section\<open>An example ontology for scientific, MINT-oriented papers.\<close>
 
 theory scholarly_paper
   imports "../../DOF/Isa_COL"
   keywords "author*" "abstract*"
            "Definition*" "Lemma*" "Theorem*"  :: document_body
+  and      "assert*"                          :: thy_decl
 
 
 begin
@@ -123,7 +124,7 @@ A formal statement can, but must not have a reference to true formal Isabelle/Is
 
 subsection\<open>Technical Content and its Formats\<close>
 
-datatype status = semiformal | description
+datatype status = formal | semiformal | description
 
 text\<open>The class \<^verbatim>\<open>technical\<close> regroups a number of text-elements that contain typical 
 "technical content" in mathematical or engineering papers: definitions, theorems, lemmas, examples.  \<close>
@@ -154,7 +155,7 @@ doc_class example  = text_section +
    short_name      :: string <= "''''"
 
 
-subsection\<open>Mathematical Content\<close>
+subsection\<open>Freeform Mathematical Content\<close>
 
 text\<open>We follow in our enumeration referentiable mathematical content class the AMS style and its
 provided \<^emph>\<open>theorem environments\<close> (see \<^verbatim>\<open>texdoc amslatex\<close>). We add, however, the concepts 
@@ -189,8 +190,21 @@ doc_class math_content = tc +
    invariant s2  :: "\<lambda> \<sigma>::math_content. status \<sigma> = semiformal"
 type_synonym math_tc = math_content
 
+text\<open>The class \<^typ>\<open>math_content\<close> is perhaps more adequaltely described as "math-alike content".
+Sub-classes can englobe instances such as:
+\<^item> terminological definitions such as:
+  \<open>Definition*[assessor::sfc, short_name="''assessor''"]\<open>entity that carries out an assessment\<close>\<close>
+\<^item> free-form mathematical definitions such as:
+  \<open>Definition*[process_ordering, short_name="''process ordering''"]\<open>
+   We define \<open>P \<sqsubseteq> Q \<equiv> \<psi>\<^sub>\<D> \<and> \<psi>\<^sub>\<R> \<and> \<psi>\<^sub>\<M> \<close>,  where \<^vs>\<open>-0.2cm\<close>
+   1) \<^vs>\<open>-0.2cm\<close> \<open>\<psi>\<^sub>\<D> = \<D> P \<supseteq> \<D> Q \<close>
+   2) ...
+   \<close>\<close>
+\<^item> semi-formal descriptions, which are free-form mathematical definitions on which finally
+  an attribute with a formal Isabelle definition is attached. 
 
-find_theorems name:"s1" name:"scholarly"
+\<close>
+
 
 (* type qualification is a work around *)
 
@@ -244,41 +258,138 @@ doc_class "math_example"     = math_content +
    mcc           :: "math_content_class" <= "expl" 
    invariant d5  :: "\<lambda> \<sigma>::math_example. mcc \<sigma> = expl"
 
-subsection\<open>Ontological Macros\<close>
+
+subsubsection\<open>Ontological Macros \<^verbatim>\<open>Definition*\<close> , \<^verbatim>\<open>Lemma**\<close>, \<^verbatim>\<open>Theorem*\<close> ... \<close>
+
+text\<open>These ontological macros allow notations are defined for the class 
+  \<^typ>\<open>math_content\<close> in order to allow for a variety of free-form formats;
+  in order to provide specific sub-classes, default options can be set
+  in order to support more succinct notations and avoid constructs
+  such as :
+
+  \<^theory_text>\<open>Definition*[l::"definition"]\<open>...\<close>\<close>.
+
+  Instead, the more convenient global declaration 
+  \<^theory_text>\<open>declare[[Definition_default_class="definition"]]\<close>
+  supports subsequent abbreviations:
+
+    \<^theory_text>\<open>Definition*[l]\<open>...\<close>\<close>.
+\<close>
+
+ML\<open>
+val (Definition_default_class, Definition_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Definition_default_class\<close> (K "");
+val (Lemma_default_class, Lemma_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Lemma_default_class\<close> (K "");
+val (Theorem_default_class, Theorem_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Theorem_default_class\<close> (K "");
+
+
+\<close>
+setup\<open>Definition_default_class_setup\<close>
+setup\<open>Lemma_default_class_setup\<close>
+setup\<open>Theorem_default_class_setup\<close>
+
 ML\<open> local open ODL_Command_Parser in
-(* *********************************************************************** *)
-(* Ontological Macro Command Support                                       *)
-(* *********************************************************************** *)
 
-(* {markdown = true} sets the parsing process such that in the text-core markdown elements are
-   accepted. *)
+(* {markdown = true} sets the parsing process such that in the text-core 
+   markdown elements are accepted. *)
 
-val _ =
-  Outer_Syntax.command ("Definition*", @{here}) "Textual Definition"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (Onto_Macros.enriched_formal_statement_command
-                                           (SOME "math_content") (* should be (SOME "definition") *) 
-                                           [("mcc","defn")] 
-                                           {markdown = true} )));
+       
+val _ = let fun use_Definition_default thy = 
+                let val ddc = Config.get_global thy Definition_default_class
+                in  (SOME(((ddc = "") ? (K "math_content")) ddc)) end
+        in  Outer_Syntax.command ("Definition*", @{here}) "Textual Definition"
+               (attributes -- Parse.opt_target -- Parse.document_source --| semi
+                >> (Toplevel.theory o (fn args => fn thy => 
+                                            Onto_Macros.enriched_formal_statement_command 
+                                               (use_Definition_default thy) 
+                                               [("mcc","defn")] 
+                                               {markdown = true} args thy)))
+        end;
 
-val _ =
-  Outer_Syntax.command ("Lemma*", @{here}) "Textual Lemma Outline"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (Onto_Macros.enriched_formal_statement_command 
-                                           (SOME "lemma") 
-                                           [("mcc","lem")] 
-                                           {markdown = true} )));
+val _ = let fun use_Lemma_default thy = 
+                let val ddc = Config.get_global thy Definition_default_class
+                in  (SOME(((ddc = "") ? (K "math_content")) ddc)) end
+        in   Outer_Syntax.command ("Lemma*", @{here}) "Textual Lemma Outline"
+                (attributes -- Parse.opt_target -- Parse.document_source --| semi
+                >> (Toplevel.theory o (fn args => fn thy => 
+                                            Onto_Macros.enriched_formal_statement_command 
+                                               (use_Lemma_default thy) 
+                                               [("mcc","lem")] 
+                                               {markdown = true} args thy)))
+        end;
 
-val _ =
-  Outer_Syntax.command ("Theorem*", @{here}) "Textual Theorem Outline"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (Onto_Macros.enriched_formal_statement_command 
-                                           (SOME "theorem") 
-                                           [("mcc","thm")] 
-                                           {markdown = true} )));
+val _ = let fun use_Theorem_default thy = 
+                let val ddc = Config.get_global thy Definition_default_class
+                in  (SOME(((ddc = "") ? (K "math_content")) ddc)) end
+        in  Outer_Syntax.command ("Theorem*", @{here}) "Textual Theorem Outline"
+               (attributes -- Parse.opt_target -- Parse.document_source --| semi
+               >> (Toplevel.theory o (fn args => fn thy => 
+                                           Onto_Macros.enriched_formal_statement_command 
+                                               (use_Theorem_default thy) 
+                                               [("mcc","thm")] 
+                                               {markdown = true} args thy)))
+        end;
 
 end 
 \<close>
+
+
+subsection\<open>Formal Mathematical Content\<close>
+text\<open>While this library is intended to give a lot of space to freeform text elements in
+order to counterbalance Isabelle's standard view, it should not be forgot that the real strength
+of Isabelle is its ability to handle both - and to establish links between both worlds. Therefore:\<close>
+
+doc_class math_formal  = math_content +
+   referentiable :: bool <= False
+   status        :: status <= "formal"
+   properties    :: "term list"
+type_synonym math_fc = math_formal
+
+doc_class  assertion = math_formal +
+   referentiable :: bool <= True (* No support in Backend yet. *)
+   status        :: status <= "formal"
+   properties    :: "term list"
+
+
+ML\<open>
+(* TODO : Rework this code and make it closer to Definition*. There is still 
+   a rest of "abstract classes in it: any class possessing a properties attribute
+   is admissible to this command, not just  ... *)
+local open ODL_Command_Parser in
+
+fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
+                prop) =
+    let fun conv_2_holstring thy =  (bstring_to_holstring (Proof_Context.init_global thy))
+        fun conv_attrs thy = (("properties",pos),"[@{termrepr ''"^conv_2_holstring thy prop ^" ''}]")
+                             ::doc_attrs  
+        fun conv_attrs' thy = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) (conv_attrs thy)
+        fun mks thy = case DOF_core.get_object_global_opt oid thy of
+                   SOME NONE => (error("update of declared but not created doc_item:" ^ oid))
+                 | SOME _ => (update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
+                 | NONE   => (create_and_check_docitem 
+                                 {is_monitor = false} {is_inline = false} 
+                                 oid pos cid_pos (conv_attrs thy) thy)
+        val check = (assert_cmd name_opt modes prop) o Proof_Context.init_global
+    in 
+        (* Toplevel.keep (check o Toplevel.context_of) *)
+        Toplevel.theory (fn thy => (check thy; mks thy))
+    end
+
+val attributes = attributes (* re-export *)
+
+end
+val _ =
+  Outer_Syntax.command @{command_keyword "assert*"} 
+                       "evaluate and print term"
+                       (attributes -- opt_evaluator -- opt_modes  -- Parse.term  >> assertion_cmd'); 
+
+\<close>
+
+subsubsection*[ex_ass::example]\<open>Example\<close>
+text\<open>Assertions allow for logical statements to be checked in the global context). \<close>
+assert*[ass1::assertion, short_name = "\<open>This is an assertion\<close>"] \<open>(3::int) < 4\<close>
 
 subsection\<open>Example Statements\<close>
 
@@ -293,7 +404,8 @@ doc_class tech_example       = technical +
 
 
 subsection\<open>Content in Engineering/Tech Papers \<close>
-
+text\<open>This section is currently experimental and not supported by the documentation 
+     generation backend.\<close>
 
 doc_class engineering_content = tc +
    short_name :: string <= "''''"
@@ -415,52 +527,60 @@ setup\<open> let val cidS = ["scholarly_paper.introduction","scholarly_paper.tec
                                        true)
        in  DOF_core.update_class_invariant "scholarly_paper.article" body end\<close>
 
-
-(* some test code *)
-ML\<open>
-(*
-
-val trace  = AttributeAccess.compute_trace_ML (Context.Proof @{context}) "this" @{here} @{here}
-val groups = partition (  @{context}) cidS trace
-val _::_::_::_:: _ ::_ ::_ ::a::_ = groups;
-check;
-
-fun get_level_raw oid = AttributeAccess.compute_attr_access (Context.Proof @{context}) "level" oid @{here} @{here};
-fun get_level oid = dest_option (snd o HOLogic.dest_number) (get_level_raw (oid));
-fun check_level_hd a = case (get_level (snd a)) of
-                 NONE => error("Invariant violation: leading section" ^ snd a ^ 
-                               " must have lowest level")
-               | SOME X => X
-fun check_group_elem level_hd a = case (get_level (snd a)) of
-                            NONE => true
-                          | SOME y => if y > level_hd then true
-                                      else error("Invariant violation: subsequent section " ^ snd a ^ 
-                                                 " must have higher level.");
-fun check_group a = map (check_group_elem (check_level_hd (hd a))) (tl a) ;
-*)
-\<close>
+ML\<open> \<close>
 
 section\<open>Miscelleous\<close>
 
-ML\<open>
-Parse.int
-\<close>
-
-subsection\<open>Layout Trimming Commands\<close>
-setup\<open>    DOF_lib.define_macro    \<^binding>\<open>hs\<close>        "\\hspace{" "}" (K(K())) \<close> 
-setup\<open>    DOF_lib.define_macro    \<^binding>\<open>vs\<close>        "\\vspace{" "}" (K(K())) \<close> 
-setup\<open>    DOF_lib.define_shortcut \<^binding>\<open>clearpage\<close> "\\clearpage{}" \<close> 
-
-
 subsection\<open>Common Abbreviations\<close>
-setup \<open>   DOF_lib.define_shortcut \<^binding>\<open>eg\<close>     "\\eg"  
-          (* Latin: „exempli gratia“  meaning  „for example“. *)
-       #> DOF_lib.define_shortcut \<^binding>\<open>ie\<close>     "\\ie"
-          (* Latin: „id est“  meaning „that is to say“. *) 
-       #> DOF_lib.define_shortcut \<^binding>\<open>etc\<close>     "\\etc"\<close> 
-      
-       (* this is an alternative style for macro definitions equivalent to setup ... setup  ...*)
 
+define_shortcut* eg  \<rightleftharpoons> \<open>\eg\<close>  (* Latin: „exempli gratia“  meaning  „for example“. *)
+                 ie  \<rightleftharpoons> \<open>\ie\<close>  (* Latin: „id est“  meaning „that is to say“. *)
+                 etc \<rightleftharpoons> \<open>\etc\<close> (* Latin : „et cetera“ meaning „et cetera“ *)
+
+subsection\<open>Layout Trimming Commands (with syntactic checks)\<close>
+
+ML\<open> 
+local
+
+val scan_cm = Scan.ahead (Basic_Symbol_Pos.$$$ "c" |-- Basic_Symbol_Pos.$$$ "m" ) ;
+val scan_pt = Scan.ahead (Basic_Symbol_Pos.$$$ "p" |-- Basic_Symbol_Pos.$$$ "t" ) ;
+val scan_blank = Scan.repeat (   Basic_Symbol_Pos.$$$ " "
+                              || Basic_Symbol_Pos.$$$ "\t" 
+                              || Basic_Symbol_Pos.$$$ "\n");
+
+val scan_latex_measure = (scan_blank
+                          |-- Scan.option (Basic_Symbol_Pos.$$$ "-")
+                          |-- Symbol_Pos.scan_nat 
+                          |-- (Scan.option ((Basic_Symbol_Pos.$$$ ".") |-- Symbol_Pos.scan_nat))
+                          |-- scan_blank
+                          |-- (scan_cm || scan_pt)
+                          |-- scan_blank
+                         );
+in           
+
+fun check_latex_measure _ src  = 
+         let val _ = ((Scan.catch scan_latex_measure (Symbol_Pos.explode(Input.source_content src)))
+                     handle Fail _ => error ("syntax error in LaTeX measure") )
+         in () end
+end\<close>
+
+
+
+setup\<open> DOF_lib.define_macro \<^binding>\<open>vs\<close>  "\\vspace{" "}" (check_latex_measure) \<close> 
+setup\<open> DOF_lib.define_macro \<^binding>\<open>hs\<close>  "\\hspace{" "}" (check_latex_measure) \<close> 
+
+(*<*)
+
+text\<open>Tests: \<^vs>\<open>-0.14cm\<close>\<close>
+ML\<open> check_latex_measure @{context} (Input.string "-3.14 cm") \<close>
+define_macro* vs2 \<rightleftharpoons> \<open>\vspace{\<close> _ \<open>}\<close> (check_latex_measure) (* checkers NYI on Isar-level *)
+define_macro* hs2 \<rightleftharpoons> \<open>\hspace{\<close> _ \<open>}\<close> (* works fine without checker.*)
+
+(*>*)
+
+define_shortcut* clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
+                 hf \<rightleftharpoons> \<open>\hfill\<close> 
+                 br \<rightleftharpoons> \<open>\break\<close> 
 
 end
 
