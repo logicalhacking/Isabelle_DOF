@@ -24,7 +24,7 @@ Isabelle/DOF has two major pre-requisites:
   Please download the Isabelle 2020 distribution for your operating
   system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2020/).
 * **LaTeX:** Isabelle/DOF requires a modern pdfTeX-engine supporting the \expanded{}-primitive. This
-  is, for example, included in the [TeXLive 2019](https://www.tug.org/texlive/) (or later)
+  is, for example, included in the [TeXLive 2020](https://www.tug.org/texlive/) (or later)
   distribution. Please follow the [TeXLive installation instructions](https://www.tug.org/texlive/acquire-netinstall.html)
   for installing TeXLive.
 

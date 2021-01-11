@@ -98,7 +98,7 @@ check_pdftex() {
         echo "    The version of pdf(La)TeX you are using is outdated (and does"
         echo "    not support the \\expanded primitive). It is not supported by the"
         echo "    current version of Isabelle/DOF. Please install a supported TeX"
-        echo "    distribution (e.g., TeXLive 2019 or later)."
+        echo "    distribution (e.g., TeXLive 2020 or later)."
         echo 
         read -p "    Still continue (y/N)? " -n 1 -r
         echo 
