@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019-2020 The University of Exeter 
- *               2018-2020 The University of Paris-Saclay
+ *               2019-2021 The University of Exeter 
+ *               2018-2021 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -18,7 +18,7 @@ begin
 
 
 section\<open>Local Document Setup.\<close>
-text\<open>... introducing document specific abbreviations and macros.\<close>
+text\<open>Introducing document specific abbreviations and macros:\<close>
 
 define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
                  isadof  \<rightleftharpoons> \<open>\isadof\<close>
@@ -93,9 +93,6 @@ setup\<open>(* std_text_antiquotation        \<^binding>\<open>my_text\<close> #
       boxed_latex_antiquotation        \<^binding>\<open>boxed_latex\<close>#>
       boxed_bash_antiquotation         \<^binding>\<open>boxed_bash\<close> 
      \<close>
-
-
-
 
 open_monitor*[this::report] 
 
