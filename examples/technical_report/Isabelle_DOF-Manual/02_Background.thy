@@ -56,9 +56,9 @@ support for higher specification constructs were built.\<close>
 section*[dof::introduction]\<open>The Document Model Required by \<^dof>\<close>
 text\<open>
   In this section, we explain the assumed document model underlying our Document Ontology Framework 
-  (\<^dof>) in general. In particular we discuss the concepts \<^emph>\<open>integrated document\<close>
-  \<^bindex>\<open>integrated document\<close>, \<^emph>\<open>sub-document\<close>, \<^bindex>\<open>sub-document\<close>,  
-  \<^emph>\<open>text-element\<close> \<^bindex>\<open>text-element\<close> and \<^emph>\<open>semantic macros\<close>  \<^bindex>\<open>semantic macros\<close> occurring 
+  (\<^dof>) in general. In particular we discuss the concepts 
+   \<^emph>\<open>integrated document\<close>\<^bindex>\<open>integrated document\<close>, \<^emph>\<open>sub-document\<close>\<^bindex>\<open>sub-document\<close>,  
+  \<^emph>\<open>text-element\<close>\<^bindex>\<open>text-element\<close>, and \<^emph>\<open>semantic macros\<close>\<^bindex>\<open>semantic macros\<close> occurring 
   inside text-elements. Furthermore, we assume two different levels of parsers 
   (for \<^emph>\<open>outer\<close> and \<^emph>\<open>inner syntax\<close>) where the inner-syntax is basically a typed \<open>\<lambda>\<close>-calculus 
   and some Higher-order Logic (HOL)\<^bindex>\<open>HOL\<close>.
