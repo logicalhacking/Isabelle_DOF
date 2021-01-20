@@ -81,14 +81,14 @@ text\<open>
   any context. The context-definition contains an \<^boxed_theory_text>\<open>import\<close> and a 
   \<^boxed_theory_text>\<open>keyword\<close> section, for example:
 @{boxed_theory_text [display]\<open>
-  theory Example         (* Name of the 'theory'                     *)
+  theory Example         \<comment>\<open>Name of the 'theory'\<close>                    
     imports              (* Declaration of 'theory' dependencies     *)
       Main               (* Imports a library called 'Main'          *)
     keywords             (* Registration of keywords defined locally *)
       requirement        (* A command for describing requirements    *)\<close>}
-  where \<^boxed_theory_text>\<open>Example\<close> is the abstract name of the text-file, \<^boxed_theory_text>\<open>Main\<close> refers to an 
-  imported theory (recall that the import relation must be acyclic) and \<^boxed_theory_text>\<open>keywords\<close> are 
-  used to separate commands from each other.
+  where \<^boxed_theory_text>\<open>Example\<close> is the abstract name of the text-file, \<^boxed_theory_text>\<open>Main\<close> 
+  refers to an imported theory (recall that the import relation must be acyclic) and 
+  \<^boxed_theory_text>\<open>keywords\<close> are used to separate commands from each other.
 \<close>
 
 text\<open> A text-element \<^index>\<open>text-element\<close> may look like this:
