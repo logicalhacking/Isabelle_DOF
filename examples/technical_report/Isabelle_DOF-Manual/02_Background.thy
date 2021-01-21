@@ -81,11 +81,11 @@ text\<open>
   any context. The context-definition contains an \<^boxed_theory_text>\<open>import\<close> and a 
   \<^boxed_theory_text>\<open>keyword\<close> section, for example:
 @{boxed_theory_text [display]\<open>
-  theory Example         \<comment>\<open>Name of the 'theory'\<close>                    
-    imports              (* Declaration of 'theory' dependencies     *)
-      Main               (* Imports a library called 'Main'          *)
-    keywords             (* Registration of keywords defined locally *)
-      requirement        (* A command for describing requirements    *)\<close>}
+  theory Example         \<comment>\<open>Name of the 'theory'\<close>
+    imports              \<comment>\<open>Declaration of 'theory' dependencies\<close>
+      Main               \<comment>\<open>Imports a library called 'Main'\<close>
+    keywords             \<comment>\<open>Registration of keywords defined locally\<close>
+      requirement        \<comment>\<open>A command for describing requirements\<close> \<close>}
   where \<^boxed_theory_text>\<open>Example\<close> is the abstract name of the text-file, \<^boxed_theory_text>\<open>Main\<close> 
   refers to an imported theory (recall that the import relation must be acyclic) and 
   \<^boxed_theory_text>\<open>keywords\<close> are used to separate commands from each other.
@@ -98,17 +98,15 @@ text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl
    we obtain in \<Gamma> for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
 so it is a command \<^theory_text>\<open>text\<close> followed by an argument (here in  \<open>\<open> ... \<close>\<close> paranthesis) which 
 contains characters and and a special notation for semantic macros \<^bindex>\<open>semantic macros\<close> 
-(here in the notation \<^theory_text>\<open>@{term "fac 5"}).\<close>
+(here \<^theory_text>\<open>@{term "fac 5"}).\<close>
 \<close>
 
 text\<open>
-
   We distinguish fundamentally two different syntactic levels:
   \<^item> the \<^emph>\<open>outer-syntax\<close>\<^bindex>\<open>syntax!outer\<close>\<^index>\<open>outer syntax|see {syntax, outer}\<close> (\<^ie>, the 
     syntax for commands) is processed by a lexer-library and parser combinators built on top, and
   \<^item> the \<^emph>\<open>inner-syntax\<close>\<^bindex>\<open>syntax!inner\<close>\<^index>\<open>inner syntax|see {syntax, inner}\<close> (\<^ie>, the 
     syntax for \<open>\<lambda>\<close>-terms in HOL) with its own parametric polymorphism type  checking.
-
 
   On the semantic level, we assume a validation process for an integrated document, where the 
   semantics of a command is a transformation \<open>\<theta> \<rightarrow> \<theta>\<close> for some system state \<open>\<theta>\<close>.
@@ -142,7 +140,7 @@ for $\operatorname{fac} \text{\textrm{5}}$ the result $\text{\textrm{120}}$.\<cl
 figure*["fig:dependency"::figure,relative_width="70",src="''figures/document-hierarchy''"]
        \<open>A Theory-Graph in the Document Model. \<close>
 
-section*[bgrnd21::introduction]\<open>Implementability of the Required Document Model.\<close>
+section*[bgrnd21::introduction]\<open>Implementability of the Required Document Model\<close>
 text\<open> 
   Batch-mode checkers for \<^dof> can be implemented in all systems of the LCF-style prover family, 
   \<^ie>, systems with a type-checked \<open>term\<close>, and abstract \<open>thm\<close>-type for theorems 
