@@ -153,7 +153,6 @@ text\<open>
   versions offer cascade-syntaxes (different syntaxes and even parser-technologies which can be 
   nested along the \<open>\<open>...\<close>\<close> barriers, while \<^dof> actually only requires a two-level syntax model.
 \<close>
-(* end experiment *)
 
 figure*["fig:dof-ide"::figure,relative_width="95",src="''figures/cicm2018-combined''"]\<open> 
      The \<^isadof> IDE (left) and the corresponding PDF (right), showing the first page
@@ -179,7 +178,6 @@ text\<open>
   Isabelle to interactively process large (hundreds of theory files) documents.  Isabelle can group 
   sub-documents into sessions, \<^ie>, sub-graphs of the document-structure that can be ``pre-compiled'' 
   and loaded instantaneously, \<^ie>, without re-processing, which is an important means to scale up. \<close>
-
 
 (*<*) 
 end
