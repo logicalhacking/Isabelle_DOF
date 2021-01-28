@@ -559,6 +559,9 @@ text\<open>
      where "(title       ~~ \<lbrakk>subtitle\<rbrakk>   ~~ \<lbrace>author\<rbrace>$^+$+  ~~  abstract    ~~
                introduction ~~  \<lbrace>technical || example\<rbrace>$^+$  ~~  conclusion ~~  
                bibliography)"
+    % TODO:
+    % Update to the new implementation.
+    % where is deprecated and the new implementation uses accepts and rejects.
   \<close>}
 
   In a integrated document source, the body of the content can be paranthesized into:
@@ -663,6 +666,10 @@ doc_class requirement = long_name :: "string option"
 
 doc_class requirement_analysis = no :: "nat"
    where "requirement_item +"
+
+% TODO:
+% Update to the new implementation.
+% where is deprecated and the new implementation uses accepts and rejects.
 
 doc_class hypothesis = requirement +
       hyp_type :: hyp_type <= physical  (* default *)

@@ -114,6 +114,9 @@ text\<open>
   \<^emph>\<open>is-a\<close> relation between classes;
   \<^item> classes may refer to other classes via a regular expression in a
     \<^emph>\<open>where\<close> clause;
+  % TODO:
+  % Update to the new implementation.
+  % where is deprecated and the new implementation uses accepts and rejects.
   \<^item> attributes may have default values in order to facilitate notation.
 \<close>
 
@@ -146,6 +149,9 @@ text\<open>
   classes and their inheritance relation structure meta-data of text-elements in an object-oriented 
   manner, monitor classes enforce structural organization of documents via the language specified 
   by the regular expression enforcing a sequence of text-elements.
+  % TODO:
+  % Update to the new implementation.
+  % where is deprecated and the new implementation uses accepts and rejects.
 
   A major design decision of ODL is to denote attribute values by HOL-terms and HOL-types. 
   Consequently, ODL can refer to any predefined type defined in the HOL library, \<^eg>, 
