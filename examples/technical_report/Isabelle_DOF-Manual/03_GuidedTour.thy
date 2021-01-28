@@ -464,7 +464,11 @@ by \<^isadof> in Isabelle/jEdit. Note further, that if referenced correctly wrt.
 hierarchy makes \<^verbatim>\<open>X4\<close> \<^emph>\<open>navigable\<close> in Isabelle/jedit; a click will cause the IDE to present the 
 defining occurrence of this text-element in the integrated source.
 
-Note, further, how \<^isadof>-commands like \<^theory_text>\<open>text*\<close> interact with standard Isabelle document 
+% TODO:
+% The definition \<^theory_text>\<open>@{definition X4}\<close> is not present in the screenshot,
+% it might be better to use  \<^theory_text>\<open>@{definition X22}\<close>.
+
+Note, further, how \<^isadof>-commands like \<^theory_text>\<open>text*\<close> interact with standard Isabelle document
 antiquotations described in the Isabelle Isar Reference Manual in Chapter 4.2 in great detail. 
 We refrain ourselves here to briefly describe three freeform antiquotations used her in this text:
 
@@ -738,6 +742,12 @@ of a document get ``formal content'' and become more robust under change.\<close
 
 figure*[figfig5::figure, relative_width="95", src="''figures/srac-definition''"]
         \<open> Defining a "SRAC" in the integrated source \ldots \<close>
+text\<open>
+TODO:
+The screenshot (figures/srac-definition) of the figure figfig5 should be updated
+to have a SRAC type in uppercase.
+\<close>
+
 figure*[figfig7::figure, relative_width="95", src="''figures/srac-as-es-application''"]
         \<open> Using a "SRAC" as "EC" document element. \<close>
 text\<open> The subsequent sample in @{figure \<open>figfig5\<close>} shows the definition of an
