@@ -602,6 +602,9 @@ text\<open>
   corresponding class definition (\autoref{fig:Dogfood-IV-jumpInDocCLass}); hovering over an 
   attribute-definition (which is qualified in order to disambiguate; 
   \autoref{fig:Dogfood-V-attribute}).
+  % TODO for Burkhart Wolff.
+  % The last phrase should be completed to make it clearer:
+  % In this part "hovering over an...in order to disambiguate", something is missing.
 \<close>
 (* Bu : This autoref stuff could be avoided if we would finally have monitors over figures... *)
 

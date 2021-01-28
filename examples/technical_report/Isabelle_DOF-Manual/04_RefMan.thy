@@ -177,6 +177,9 @@ text\<open>
      in \<^boxed_theory_text>\<open> ... \<close> which might contain certain ``quasi-letters'' such 
      as \<^boxed_theory_text>\<open>_\<close>, \<^boxed_theory_text>\<open>-\<close>, \<^boxed_theory_text>\<open>.\<close> (see~@{cite "wenzel:isabelle-isar:2020"} for 
      details).
+    % TODO for Burkhart Wolff.
+    % This phrase should be reviewed to clarify identifiers.
+    % Peculiarly, "and identifiers in \<^boxed_theory_text>\<open> ... \<close>".
   \<^item> \<open>tyargs\<close>:\<^index>\<open>tyargs@\<open>tyargs\<close>\<close> 
      \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
      \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (see~@{cite "wenzel:isabelle-isar:2020"})
@@ -282,6 +285,8 @@ text\<open>
   representations definition needs to be wrapped in a 
   \inlineltx|\begin{isarmarkup}...\end{isamarkup}|-environment, to ensure the correct context 
   within Isabelle's \<^LaTeX>-setup. 
+  % TODO:
+  % For the "(written in \<^boxed_theory_text>\<open>\<open> ... \<close>\<close>" part, to give some examples should be clearer.
 
   Moreover, \<^isadof> also provides the following two variants of \inlineltx|\newisadof{}[]{}|:
   \<^item>  \inlineltx|\renewisadof{}[]{}|\<^index>\<open>renewisadof@\inlineltx{\renewisadof}\<close> for re-defining 
