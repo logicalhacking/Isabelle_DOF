@@ -91,7 +91,7 @@ text\<open>
   by simp\<close>}
   \<^item> a green background for examples of generated document fragments (\<^ie>, PDF output):
     @{boxed_pdf [display] \<open>The axiom refl\<close>}
-  \<^item> a red background for For (S)ML-code:
+  \<^item> a red background for (S)ML-code:
     @{boxed_sml [display] \<open>fun id x = x\<close>}
   \<^item> a yellow background for \LaTeX-code:
     @{boxed_latex [display] \<open>\newcommand{\refl}{$x = x$}\<close>}
