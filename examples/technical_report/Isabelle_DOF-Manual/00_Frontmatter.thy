@@ -137,7 +137,8 @@ abstract*[abs, keywordlist="[\<open>Ontology\<close>, \<open>Ontological Modelin
     the link between formal and informal content in documents in a machine
     checked way. These links can connect both text elements as well as formal
     modelling elements such as terms, definitions, code  and logical formulas,
-    alltogether *\<open>integrated\<close> in a state-of-the-art interactive theorem prover.
+    alltogether \<^emph>\<open>integrated\<close> in a state-of-the-art interactive theorem prover.
+
 \<close>
 
 (*<*) 

@@ -114,12 +114,15 @@ text\<open>
   \<^emph>\<open>is-a\<close> relation between classes;
   \<^item> classes may refer to other classes via a regular expression in a
     \<^emph>\<open>where\<close> clause;
+  % TODO:
+  % Update to the new implementation.
+  % where is deprecated and the new implementation uses accepts and rejects.
   \<^item> attributes may have default values in order to facilitate notation.
 \<close>
 
 text\<open>
   The \<^isadof> ontology specification language consists basically on a notation for document classes, 
-  where the attributes were typed with HOL-types and can be instantiated by terms HOL-terms, \<^ie>, 
+  where the attributes were typed with HOL-types and can be instantiated by HOL-terms, \<^ie>, 
   the actual parsers and type-checkers of the Isabelle system were reused. This has the particular 
   advantage that \<^isadof> commands can be arbitrarily mixed with Isabelle/HOL commands providing the 
   machinery for type declarations and term specifications such
@@ -146,6 +149,9 @@ text\<open>
   classes and their inheritance relation structure meta-data of text-elements in an object-oriented 
   manner, monitor classes enforce structural organization of documents via the language specified 
   by the regular expression enforcing a sequence of text-elements.
+  % TODO:
+  % Update to the new implementation.
+  % where is deprecated and the new implementation uses accepts and rejects.
 
   A major design decision of ODL is to denote attribute values by HOL-terms and HOL-types. 
   Consequently, ODL can refer to any predefined type defined in the HOL library, \<^eg>, 
@@ -153,7 +159,7 @@ text\<open>
   \<^boxed_theory_text>\<open>_ option\<close>, \<^boxed_theory_text>\<open>_ list\<close>, \<^boxed_theory_text>\<open>_ set\<close>, or products
   \<^boxed_theory_text>\<open>_ \<times> _\<close>. As a consequence of the 
   document model, ODL definitions may be arbitrarily intertwined with standard HOL type definitions. 
-  Finally, document class definitions result in themselves in a HOL-types in order to allow \<^emph>\<open>links\<close> 
+  Finally, document class definitions result in themselves in a HOL-type in order to allow \<^emph>\<open>links\<close> 
   to and between ontological concepts.
 \<close>
 
@@ -167,10 +173,13 @@ text\<open>
   in \<^isadof>:
   \<^item> \<open>name\<close>:\<^index>\<open>name@\<open>name\<close>\<close>
      with the syntactic category of \<open>name\<close>'s we refer to alpha-numerical identifiers 
-     (called \<open>short_id\<close>'s in @{cite "wenzel:isabelle-isar:2020"}) and identifiers
+     (called \<open>short_ident\<close>'s in @{cite "wenzel:isabelle-isar:2020"}) and identifiers
      in \<^boxed_theory_text>\<open> ... \<close> which might contain certain ``quasi-letters'' such 
      as \<^boxed_theory_text>\<open>_\<close>, \<^boxed_theory_text>\<open>-\<close>, \<^boxed_theory_text>\<open>.\<close> (see~@{cite "wenzel:isabelle-isar:2020"} for 
      details).
+    % TODO for Burkhart Wolff.
+    % This phrase should be reviewed to clarify identifiers.
+    % Peculiarly, "and identifiers in \<^boxed_theory_text>\<open> ... \<close>".
   \<^item> \<open>tyargs\<close>:\<^index>\<open>tyargs@\<open>tyargs\<close>\<close> 
      \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
      \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (see~@{cite "wenzel:isabelle-isar:2020"})
@@ -230,7 +239,7 @@ A document class\<^bindex>\<open>document class\<close> can be defined using the
 \<^item> \<open>attribute_decl\<close>:\<^index>\<open>attribute\_decl@\<open>attribute_decl\<close>\<close>
      \<^rail>\<open> name '::' '"' type '"' default_clause? \<close>
 \<^item> \<open>invariant_decl\<close>:\<^index>\<open>invariant\_decl@\<open>invariant_decl\<close>\<close>
-     An invariants can be specified as predicate over document classes represented as 
+     Invariants can be specified as predicates over document classes represented as 
      records in HOL. Note that sufficient type information must be provided in order to
      disambiguate the argument of the \<open>\<lambda>\<close>-expression. 
      \<^rail>\<open> 'inv' (name '::')? '"' term '"' \<close>
@@ -254,7 +263,7 @@ text\<open>
   \inlineltx|\newisadof[]{}|\<^index>\<open>newisadof@\inlineltx{\newisadof}\<close>\<^index>\<open>document class!PDF\<close>
   command for defining a dedicated layout for a document class in \<^LaTeX>. Such a document 
   class-specific \<^LaTeX>-definition can not only provide a specific layout (\<^eg>, a specific 
-  highlighting, printing of certain attributes), it can also generate entries in in the table of 
+  highlighting, printing of certain attributes), it can also generate entries in the table of 
   contents or an index. Overall, the \inlineltx|\newisadof[]{}| command follows the structure
   of the \<^boxed_theory_text>\<open>doc_class\<close>-command:
 
@@ -276,6 +285,8 @@ text\<open>
   representations definition needs to be wrapped in a 
   \inlineltx|\begin{isarmarkup}...\end{isamarkup}|-environment, to ensure the correct context 
   within Isabelle's \<^LaTeX>-setup. 
+  % TODO:
+  % For the "(written in \<^boxed_theory_text>\<open>\<open> ... \<close>\<close>" part, to give some examples should be clearer.
 
   Moreover, \<^isadof> also provides the following two variants of \inlineltx|\newisadof{}[]{}|:
   \<^item>  \inlineltx|\renewisadof{}[]{}|\<^index>\<open>renewisadof@\inlineltx{\renewisadof}\<close> for re-defining 
@@ -339,7 +350,7 @@ layout (such as \<^LaTeX>); these commands have to be wrapped into
  \<^verbatim>\<open>(*<*) ... (*>*)\<close> brackets if this is undesired. \<close>
 
 subsection\<open>Ontologic Text-Elements and their Management\<close>
-text\<open> \<^theory_text>\<open>text*[oid::cid, ...] \<open>\<open>\<close> \<dots> text \<dots> \<open>\<close>\<close> \<close> is the core-command of \<^isadof>: it permits to create 
+text\<open> \<^theory_text>\<open>text*[oid::cid, ...] \<open> \<dots> text \<dots> \<close> \<close> is the core-command of \<^isadof>: it permits to create 
  an object of meta-data belonging to the class \<^theory_text>\<open>cid\<close>. This is viewed as the \<^emph>\<open>definition\<close> of
 an instance of a document class. This instance object is attached to the text-element
 and makes it thus "trackable" for  \<^isadof>, \<^ie>, it can be referenced via the  \<^theory_text>\<open>oid\<close>, its attributes
@@ -1039,7 +1050,7 @@ text\<open>
   \<^path>\<open>llncs.cls\<close>), which cannot be re-distributed due to copyright restrictions.
 \<close>
 
-subsection\<open>Developing Ontologies and their Represenation Mappings\<close>
+subsection\<open>Developing Ontologies and their Representation Mappings\<close>
 text\<open>
   The document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not use Isabelle definitions or proofs for checking the 
   formal content---this manual is actually an example of a document not containing any proof.
@@ -1194,7 +1205,7 @@ text\<open>
 
 subsection\<open>Tips, Tricks, and Known Limitations\<close>
 text\<open>
-  In this sectin, we sill discuss several tips and tricks for developing 
+  In this section, we will discuss several tips and tricks for developing 
   new or adapting existing document templates or \<^LaTeX>-represenations of ontologies.
 \<close>
 

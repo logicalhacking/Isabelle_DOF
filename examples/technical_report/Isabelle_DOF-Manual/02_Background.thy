@@ -151,7 +151,7 @@ text\<open>
   "wenzel:system:2014" and "barras.ea:pervasive:2013" and "faithfull.ea:coqoon:2018"} which 
   in many features over-accomplishes the required  features of \<^dof>. For example, current Isabelle 
   versions offer cascade-syntaxes (different syntaxes and even parser-technologies which can be 
-  nested along the \<open>\<open>...\<close>\<close> barriers, while \<^dof> actually only requires a two-level syntax model.
+  nested along the \<open>\<open>...\<close>\<close> barriers), while \<^dof> actually only requires a two-level syntax model.
 \<close>
 
 figure*["fig:dof-ide"::figure,relative_width="95",src="''figures/cicm2018-combined''"]\<open> 

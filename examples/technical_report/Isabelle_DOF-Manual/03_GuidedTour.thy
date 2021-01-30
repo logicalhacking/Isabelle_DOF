@@ -267,7 +267,7 @@ users are:
   files required by the document generation (\<^eg>, images, bibliography database using \<^BibTeX>, local
   \<^LaTeX>-styles) need to be registered in this file. For details of Isabelle's build system, please 
   consult the Isabelle System Manual~@{cite "wenzel:system-manual:2020"}.
-\<^item> The file \<^boxed_bash>\<open>praemble.tex\<close>\<^index>\<open>praemble.tex\<close>, which allows users to add additional 
+\<^item> The file \<^boxed_bash>\<open>preamble.tex\<close>\<^index>\<open>preamble.tex\<close>, which allows users to add additional 
   \<^LaTeX>-packages or to add/modify \<^LaTeX>-commands. 
 \<close>
 
@@ -284,7 +284,7 @@ text\<open>
   \<^enum> The iFM 2020 paper~@{cite "taha.ea:philosophers:2020"} is a typical mathematical text,
     heavy in definitions with complex  mathematical notation and a lot of non-trivial cross-referencing
     between statements, definitions and proofs which is ontologically tracked. However, wrt.
-    to the possible linking between the underlying formal theory and this mathematical presentation,
+    the possible linking between the underlying formal theory and this mathematical presentation,
     it follows a pragmatic path without any ``deep'' linking to types, terms and theorems, 
     deliberately not exploiting \<^isadof> 's full potential with this regard.
   \<^enum> In the CICM 2018 paper~@{cite "brucker.ea:isabelle-ontologies:2018"}, we deliberately
@@ -346,7 +346,7 @@ context of this document; this is a decisive feature of \<^isadof> that conventi
 languages lack.\<close>
 
 text\<open>We continue by the introduction of a main class: the text-element \<open>text_section\<close> (in contrast
-to \<open>figure\<close> or \<open>table\<close> or similar. Note that
+to \<open>figure\<close> or \<open>table\<close> or similar). Note that
 the \<open>main_author\<close> is typed with the class \<open>author\<close>, a HOL type that is automatically derived from
 the document class definition \<open>author\<close> shown above. It is used to express which author currently
 ``owns'' this \<open>text_section\<close>, an information that can give rise to presentational or even
@@ -460,11 +460,15 @@ later is shown in \<^figure>\<open>fig01\<close> in its presentation as the inte
 
 Note that the use in the ontology-generated antiquotation \<^theory_text>\<open>@{definition X4}\<close>
 is type-checked; referencing \<^verbatim>\<open>X4\<close> as \<^theory_text>\<open>theorem\<close> would be a type-error and be reported directly
-by \<^isadof> in Isabelle/jEdit. Note further, that if referenced correctly wrt. to the sub-typing 
+by \<^isadof> in Isabelle/jEdit. Note further, that if referenced correctly wrt. the sub-typing 
 hierarchy makes \<^verbatim>\<open>X4\<close> \<^emph>\<open>navigable\<close> in Isabelle/jedit; a click will cause the IDE to present the 
 defining occurrence of this text-element in the integrated source.
 
-Note, further, how \<^isadof>-commands like \<^theory_text>\<open>text*\<close> interact with standard Isabelle document 
+% TODO:
+% The definition \<^theory_text>\<open>@{definition X4}\<close> is not present in the screenshot,
+% it might be better to use  \<^theory_text>\<open>@{definition X22}\<close>.
+
+Note, further, how \<^isadof>-commands like \<^theory_text>\<open>text*\<close> interact with standard Isabelle document
 antiquotations described in the Isabelle Isar Reference Manual in Chapter 4.2 in great detail. 
 We refrain ourselves here to briefly describe three freeform antiquotations used her in this text:
 
@@ -528,7 +532,7 @@ doc_class related_work = conclusion +
 \<close>}
 *)
 text\<open> In the following, we present some other text-elements provided by the Common Ontology Library
-in @{theory "Isabelle_DOF.Isa_COL"}. it provides a document class for figures:
+in @{theory "Isabelle_DOF.Isa_COL"}. It provides a document class for figures:
 
 @{boxed_theory_text [display]\<open>
 datatype placement = h | t | b | ht | hb   
@@ -559,6 +563,9 @@ text\<open>
      where "(title       ~~ \<lbrakk>subtitle\<rbrakk>   ~~ \<lbrace>author\<rbrace>$^+$+  ~~  abstract    ~~
                introduction ~~  \<lbrace>technical || example\<rbrace>$^+$  ~~  conclusion ~~  
                bibliography)"
+    % TODO:
+    % Update to the new implementation.
+    % where is deprecated and the new implementation uses accepts and rejects.
   \<close>}
 
   In a integrated document source, the body of the content can be paranthesized into:
@@ -595,6 +602,9 @@ text\<open>
   corresponding class definition (\autoref{fig:Dogfood-IV-jumpInDocCLass}); hovering over an 
   attribute-definition (which is qualified in order to disambiguate; 
   \autoref{fig:Dogfood-V-attribute}).
+  % TODO for Burkhart Wolff.
+  % The last phrase should be completed to make it clearer:
+  % In this part "hovering over an...in order to disambiguate", something is missing.
 \<close>
 (* Bu : This autoref stuff could be avoided if we would finally have monitors over figures... *)
 
@@ -651,7 +661,7 @@ text\<open>
   which is usually a collaborative effort. 
 
   As in many other cases, formal certification documents come with an own terminology and pragmatics
-  of what has to be demonstrated and where, and how the trace-ability of requirements through 
+  of what has to be demonstrated and where, and how the traceability of requirements through 
   design-models over code to system environment assumptions has to be assured.  
 
   In the sequel, we present a simplified version of an ontological model used in a 
@@ -664,6 +674,10 @@ doc_class requirement = long_name :: "string option"
 doc_class requirement_analysis = no :: "nat"
    where "requirement_item +"
 
+% TODO:
+% Update to the new implementation.
+% where is deprecated and the new implementation uses accepts and rejects.
+
 doc_class hypothesis = requirement +
       hyp_type :: hyp_type <= physical  (* default *)
   
@@ -675,7 +689,7 @@ doc_class assumption = requirement +
 
 Such ontologies can be enriched by larger explanations and examples, which may help
 the team of engineers substantially when developing the central document for a certification, 
-like an explication what is precisely the difference between an \<^emph>\<open>hypothesis\<close> and an 
+like an explication of what is precisely the difference between an \<^emph>\<open>hypothesis\<close> and an 
 \<^emph>\<open>assumption\<close> in the context of the evaluation standard. Since the PIDE makes for each 
 document class its definition available by a simple mouse-click, this kind on meta-knowledge 
 can be made far more accessible during the document evolution.
@@ -683,23 +697,23 @@ can be made far more accessible during the document evolution.
 For example, the term of category \<^emph>\<open>assumption\<close> is used for domain-specific assumptions. 
 It has formal, semi-formal and informal sub-categories. They have to be 
 tracked and discharged by appropriate validation procedures within a 
-certification process, by it by test or proof. It is different from a hypothesis, which is
+certification process, be it by test or proof. It is different from a hypothesis, which is
 globally assumed and accepted.
 
 In the sequel, the category \<^emph>\<open>exported constraint\<close> (or \<^emph>\<open>ec\<close> for short)
 is used for formal assumptions, that arise during the analysis,
 design or implementation and have to be tracked till the final
 evaluation target, and discharged by appropriate validation procedures 
-within the certification process, by it by test or proof.  A particular class of interest 
-is the category \<^emph>\<open>safety related application condition\<close> (or \<^emph>\<open>srac\<close> 
+within the certification process, be it by test or proof.  A particular class of interest 
+is the category \<^emph>\<open>safety related application condition\<close> (or \<^emph>\<open>SRAC\<close> 
 for short) which is used for \<^emph>\<open>ec\<close>'s that establish safety properties
-of the evaluation target. Their track-ability throughout the certification
+of the evaluation target. Their traceability throughout the certification
 is therefore particularly critical. This is naturally modeled as follows:
 @{boxed_theory_text [display]\<open>  
 doc_class ec = assumption  +
      assumption_kind :: ass_kind <= (*default *) formal
                         
-doc_class srac = ec  +
+doc_class SRAC = ec  +
      assumption_kind :: ass_kind <= (*default *) formal
 \<close>}
 
@@ -725,12 +739,18 @@ subsection*[ontopide::technical]\<open>Editing Support for CENELEC 50128\<close>
 figure*[figfig3::figure,relative_width="95",src="''figures/antiquotations-PIDE''"]
 \<open> Standard antiquotations referring to theory elements.\<close>
 text\<open> The corresponding view in @{docitem  \<open>figfig3\<close>} shows core part of a document 
-conformimg to the CENELEC 50128 ontology. The first sample shows standard Isabelle antiquotations 
+conforming to the CENELEC 50128 ontology. The first sample shows standard Isabelle antiquotations 
 @{cite "wenzel:isabelle-isar:2020"} into formal entities of a theory. This way, the informal parts 
 of a document get ``formal content'' and become more robust under change.\<close>
 
 figure*[figfig5::figure, relative_width="95", src="''figures/srac-definition''"]
         \<open> Defining a "SRAC" in the integrated source \ldots \<close>
+text\<open>
+TODO:
+The screenshot (figures/srac-definition) of the figure figfig5 should be updated
+to have a SRAC type in uppercase.
+\<close>
+
 figure*[figfig7::figure, relative_width="95", src="''figures/srac-as-es-application''"]
         \<open> Using a "SRAC" as "EC" document element. \<close>
 text\<open> The subsequent sample in @{figure \<open>figfig5\<close>} shows the definition of an
@@ -882,14 +902,14 @@ underlying logical context, which turns the arguments into \<^emph>\<open>formal
 source, in contrast to the free-form antiquotations which basically influence the presentation.
 
 We still mention a few of these document antiquotations here:
-\<^item> \<^theory_text>\<open>@{thm \<open>refl\<close>}\<close> ou \<^theory_text>\<open>@{thm [display] \<open>refl\<close>}\<close> check that \<^theory_text>\<open>refl\<close> is indeed a reference
+\<^item> \<^theory_text>\<open>@{thm \<open>refl\<close>}\<close> or \<^theory_text>\<open>@{thm [display] \<open>refl\<close>}\<close> check that \<^theory_text>\<open>refl\<close> is indeed a reference
   to a theorem; the additional "style" argument changes the presentation by printing the 
   formula into the output instead of the reference itself,
 \<^item> \<^theory_text>\<open>@{lemma \<open>prop\<close> } by \<open>method\<close>\<close> allows to derive \<open>prop\<close> on the fly, thus garantee 
   that it is a corrollary of the current context,
 \<^item> \<^theory_text>\<open>@{term \<open>term\<close> }\<close> parses and type-checks \<open>term\<close>,
 \<^item> \<^theory_text>\<open>@{value \<open>term\<close> }\<close> performs the evaluation of \<open>term\<close>,
-\<^item> \<^theory_text>\<open>@{ML \<open>ml-term\<close> }\<close> pa,rses and type-checks \<open>ml-term\<close>,
+\<^item> \<^theory_text>\<open>@{ML \<open>ml-term\<close> }\<close> parses and type-checks \<open>ml-term\<close>,
 \<^item> \<^theory_text>\<open>@{ML_file \<open>ml-file\<close> }\<close> parses the path for \<open>ml-file\<close> and
   verifies its existance in the (Isabelle-virtual) file-system,
 \<^item> ...
@@ -900,9 +920,9 @@ Isabelle. This may be over-precise and a burden to readers not familiar with Isa
 motivate authors to choose the aforementioned freeform-style.
 \<close>
 
-subsection\<open>A \<^verbatim>\<open>technical_report\<close> in tight-checking-style: \<open>MyCommentedIsabelle\<close> - Programming Manual \<close>
+subsection\<open>A \<^verbatim>\<open>technical_report\<close> in tight-checking-style: \<open>TR_MyCommentedIsabelle\<close> - Programming Manual \<close>
 
-text\<open>An example of tight checking is a small programming programming manual developed by the
+text\<open>An example of tight checking is a small programming manual developed by the
 second author in order to document programming trick discoveries while implementing in Isabelle.
 While not necessarily a meeting standards of a scientific text, it appears to us that this information
 is often missing in the Isabelle community. 
@@ -934,9 +954,9 @@ figure*[strict_SS::figure, relative_width="95", src="''figures/MyCommentedIsabel
 \<open>A table with a number of SML functions, together with their type.\<close>
 
 text\<open>
-\<open>MyCommentedIsabelle\<close> is written according to the @{theory "Isabelle_DOF.technical_report"}
-ontology. \<^figure>\<open>strict_SS\<close> shows a snippet from this integrated source gives an idea why 
-it tight-checking allows for keeping track of underlying Isabelle changes:
+\<open>TR_MyCommentedIsabelle\<close> is written according to the @{theory "Isabelle_DOF.technical_report"}
+ontology. \<^figure>\<open>strict_SS\<close> shows a snippet from this integrated source and gives an idea why 
+its tight-checking allows for keeping track of underlying Isabelle changes:
 Any reference to an SML operation in some library module is type-checked, and the displayed
 SML-type really corresponds to the type of the operations in the underlying SML environment.
 In the pdf output, these text-fragments were displayed verbatim.
@@ -976,7 +996,7 @@ document generation (\<^eg>, HTML) which, naturally, are only available to docum
 too complex native \<^LaTeX>-commands. 
 
 Similarly, (unchecked) forward references should, if possible, be avoided, as they also might
-create dangeling references during the document generation that break the document generation.  
+create dangling references during the document generation that break the document generation.  
 
 Finally, we recommend to use the @{command "check_doc_global"} command at the end of your 
 document to check the global reference structure. 
