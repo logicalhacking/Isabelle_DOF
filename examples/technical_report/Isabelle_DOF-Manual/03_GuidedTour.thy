@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019      The University of Exeter 
- *               2018-2019 The University of Paris-Saclay
+ *               2019-2021 The University of Exeter 
+ *               2018-2021 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -35,12 +35,10 @@ available on \href{https://cloud.docker.com/u/logicalhacking/}{Docker Hub}. Thus
 \href{https://www.docker.com}{Docker} installed and 
 your installation of Docker supports X11 application, you can start \<^isadof> as follows:
 
-@{boxed_bash [display] 
-\<open>ë\prompt{}ë docker run -ti --rm -e DISPLAY=$DISPLAY \
+@{boxed_bash [display] \<open>ë\prompt{}ë docker run -ti --rm -e DISPLAY=$DISPLAY \
    -v /tmp/.X11-unix:/tmp/.X11-unix \ 
    logicalhacking/isabelle_dof-ë\doflatestversionë_ë\MakeLowercase{\isabellelatestversion}ë \
-   isabelle jedit
-\<close>}
+   isabelle jedit\<close>}
 \<close>
 
 subsection*[installation::technical]\<open>Installation\<close>
@@ -57,41 +55,24 @@ text\<open>
     of \<^isadof> (using semantic versioning) and the second part is the supported version of Isabelle. 
     Thus, the same version of \<^isadof> might be available for different versions of Isabelle. 
   \<^item> \<^bold>\<open>\<^TeXLive> 2020\<close>\<^bindex>\<open>TexLive@\<^TeXLive>\<close> (or any other modern  \<^LaTeX>-distribution where
-    \<^pdftex> supports the \<^boxed_latex>\<open>\expanded\<close>  primitive).
-    \<^footnote>\<open>see \<^url>\<open>https://www.texdev.net/2018/12/06/a-new-primitive-expanded\<close>\<close>
+    \<^pdftex> supports the \<^boxed_latex>\<open>\expanded\<close>  
+    primitive).\<^footnote>\<open>see \<^url>\<open>https://www.texdev.net/2018/12/06/a-new-primitive-expanded\<close>\<close>
 \<close>
 
 paragraph\<open>Installing Isabelle\<close>
 text\<open>
-%\enlargethispage{\baselineskip}
-  Please download and install the Isabelle \isabelleversion distribution for your operating system 
-  from the \href{\isabelleurl}{Isabelle website} (\url{\isabelleurl}). After the successful 
-  installation of Isabelle, you should be able to call the \<^boxed_bash>\<open>isabelle\<close> tool on the 
-  command line:
-
-\begin{bash}
-ë\prompt{}ë isabelle version
-ë\isabellefullversionë
-\end{bash}
-% bu : do not know why this does not work here ...
-%@ {boxed_bash [display]\<open>
-%ë\prompt{}ë isabelle version
-%ë\isabellefullversionë
-%\<close>}
+  Please download and install the Isabelle (version: \isabelleversion) distribution for your 
+  operating system  from the \href{\isabelleurl}{Isabelle website} (\url{\isabelleurl}). After the 
+  successful installation of Isabelle, you should be able to call the \<^boxed_bash>\<open>isabelle\<close> 
+  tool on the command line:
+@{boxed_bash [display]\<open>ë\prompt{}ë isabelle version
+ë\isabellefullversionë\<close>}
 
 Depending on your operating system and depending if you put Isabelle's  \<^boxed_bash>\<open>bin\<close> directory
 in your  \<^boxed_bash>\<open>PATH\<close>, you will need to invoke  \<^boxed_bash>\<open>isabelle\<close> using its
 full qualified path, \<^eg>:
-
-\begin{bash}
-ë\prompt{}ë /usr/local/Isabelleë\isabelleversion/ëbin/isabelle version
-ë\isabellefullversionë
-\end{bash}
-
-%@ {boxed_bash [display]\<open>
-%ë\prompt{}ë /usr/local/Isabelleë\isabelleversion/ëbin/isabelle version
-%ë\isabellefullversionë
-%\<close>}
+@{boxed_bash [display]\<open>ë\prompt{}ë /usr/local/Isabelleë\isabelleversionë/bin/isabelle version
+ë\isabellefullversionë\<close>}
 \<close>
 
 paragraph\<open>Installing \<^TeXLive>\<close>
@@ -99,13 +80,7 @@ text\<open>
   Modern Linux distribution will allow you to install \<^TeXLive> using their respective package 
   managers. On a modern Debian system or a Debian derivative (\<^eg>, Ubuntu), the following command 
   should install all required \<^LaTeX> packages:
-
-\begin{bash}
-ë\prompt{}ë sudo aptitude install texlive-latex-extra texlive-fonts-extra
-\end{bash}
-%@ {boxed_bash [display]\<open>
-%ë\prompt{}ë sudo aptitude install texlive-latex-extra texlive-fonts-extra
-%\<close>}
+@{boxed_bash [display]\<open>ë\prompt{}ë sudo aptitude install texlive-latex-extra texlive-fonts-extra\<close>}
 \<close>
 
 subsubsection*[isadof::technical]\<open>Installing \<^isadof>\<close>
@@ -114,10 +89,7 @@ text\<open>
   (\href{\isadofarchiveurl}{\isadofarchiven}) from the \<^isadof> web site. The main steps for 
   installing are extracting the \<^isadof> distribution and calling its \inlinebash|install| script. 
   We start by extracting the \<^isadof> archive:
-
-\begin{bash}
-ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë
-\end{bash}
+@{boxed_bash [display]\<open>ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë\<close>}
 This will create a directory \texttt{\isadofdirn} containing \<^isadof> distribution.
 Next, we need to invoke the \<^boxed_bash>\<open>install\<close> script. If necessary, the installations 
 automatically downloads additional dependencies from the AFP (\<^url>\<open>https://www.isa-afp.org\<close>), 
@@ -132,8 +104,7 @@ If the \<^boxed_bash>\<open>isabelle\<close> tool is not in your  \<^boxed_bash>
 path of the \<^boxed_bash>\<open>isabelle\<close> tool ( \<^boxed_bash>\<open>install --help\<close> gives 
 you an overview of all available configuration options):
 
-\begin{bash}
-ë\prompt{}ë cd ë\isadofdirnë
+@{boxed_bash [display]\<open>ë\prompt{}ë cd ë\isadofdirnë
 ë\prompt{\isadofdirn}ë ./install --isabelle /usr/local/Isabelleë\isabelleversion/bin/isabelleë
 
 Isabelle/DOF Installer
@@ -170,17 +141,14 @@ Isabelle/DOF Installer
        /home/achim/.isabelle/Isabelleë\isabelleversion/etc/settingsë
 * Installation successful. Enjoy Isabelle/DOF, you can build the session
   Isabelle/DOF and all example documents by executing:
-  /usr/local/Isabelleë\isabelleversion/bin/isabelleë build -D .
-\end{bash}
+  /usr/local/Isabelleë\isabelleversion/bin/isabelleë build -D . \<close>}
 
 After the successful installation, you can now explore the examples (in the sub-directory 
 \inlinebash|examples| or create your own project. On the first start, the session 
 \inlinebash|Isabelle_DOF| will be built automatically. If you want to pre-build this 
 session and all example documents, execute:
 
-\begin{bash}
-ë\prompt{\isadofdirn}ë isabelle build -D . 
-\end{bash}
+@{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë isabelle build -D . \<close>} 
 \<close>
 
 subsection*[first_project::technical]\<open>Creating an \<^isadof> Project\<close>
@@ -188,8 +156,7 @@ text\<open>
   \<^isadof> provides its own variant of Isabelle's 
   \inlinebash|mkroot| tool, called \inlinebash|mkroot_DOF|:\index{mkroot\_DOF}
 
-\begin{bash} 
-ë\prompt{}ë isabelle mkroot_DOF -h 
+@{boxed_bash [display]\<open>ë\prompt{}ë isabelle mkroot_DOF -h 
 
 Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
 
@@ -209,8 +176,7 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
        * scrreprt-modern
        * scrreprt
 
-  Prepare session root DIR (default: current directory).
-\end{bash} 
+  Prepare session root DIR (default: current directory). \<close>}
 
   Creating a new document setup requires two decisions:
   \<^item> which ontologies (\<^eg>, scholarly\_paper) are required and 
@@ -225,24 +191,20 @@ text\<open>
   the KOMA-Script bundle~@{cite "kohm:koma-script:2019"}, you can create your first project 
   \inlinebash|myproject| as follows:
 
-\begin{bash}
-ë\prompt{}ë isabelle mkroot_DOF myproject
+@{boxed_bash [display]\<open>ë\prompt{}ë isabelle mkroot_DOF myproject
 
 Preparing session "myproject" iëën "myproject"
   creating "myproject/ROOT"
   creating "myproject/document/root.tex"
 
 Now use the following coëëmmand line to build the session:
-  isabelle build -D myproject
-\end{bash}
+  isabelle build -D myproject \<close>}
 
   This creates a directory \inlinebash|myproject| containing the \<^isadof>-setup for your 
   new document. To check the document formally, including the generation of the document in PDF,
   you only need to execute
 
-\begin{bash}
-ë\prompt{}ë  isabelle build -d . myproject
-\end{bash}
+@{boxed_bash [display]\<open>ë\prompt{}ë  isabelle build -d . myproject \<close>}
 
 This will create the directory \inlinebash|myproject|: 
 \begin{center}
@@ -302,17 +264,13 @@ text\<open>
     \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy}.
   \<^item> starting Isabelle/jedit from the command line by,\<^eg>, calling:
 
-    \begin{bash}
-ë\prompt{\isadofdirn}ë 
-  isabelle jedit -d . examples/scholarly_paper/2020-iFM-CSP/paper.thy
-\end{bash}
+@{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë 
+  isabelle jedit -d . examples/scholarly_paper/2020-iFM-CSP/paper.thy \<close>}
 \<close> 
 (* We should discuss if we shouldn't put the iFM paper more in the foreground *) 
 
 text\<open>    You can build the PDF-document at the command line by calling:
-
-@{boxed_bash [display]
-\<open>ë\prompt{}ë isabelle build -d . 2020-iFM-csp \<close>}
+@{boxed_bash [display] \<open>ë\prompt{}ë isabelle build -d . 2020-iFM-csp \<close>}
 \<close>
 
 subsection*[sss::technical]\<open>A Bluffers Guide to the \<^verbatim>\<open>scholarly_paper\<close> Ontology\<close>
@@ -631,16 +589,12 @@ text\<open>
     \nolinkurl{examples/CENELEC_50128/mini_odo/mini_odo.thy}.
   \<^item> starting Isabelle/jedit from the command line by calling:
 
-    \begin{bash}
-ë\prompt{\isadofdirn}ë 
-  isabelle jedit examples/CENELEC_50128/mini_odo/mini_odo.thy
-\end{bash}
+@{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë 
+  isabelle jedit examples/CENELEC_50128/mini_odo/mini_odo.thy \<close>}
 \<close>
 text\<open>\<^noindent> Finally, you
   \<^item>   can build the PDF-document by calling:
-  \begin{bash}
-ë\prompt{}ë isabelle build mini_odo
-\end{bash}
+@{boxed_bash [display]\<open>ë\prompt{}ë isabelle build mini_odo \<close>}
 \<close>
  
 subsection\<open>Modeling CENELEC 50128\<close>
@@ -776,18 +730,12 @@ text\<open>
     Isabelle-Icon provided by the Isabelle installation) and loading the file 
     \nolinkurl{examples/math_exam/MathExam/MathExam.thy}.
   \<^item> starting Isabelle/jedit from the command line by calling:
-
-    \begin{bash}
-ë\prompt{\isadofdirn}ë 
-  isabelle jedit examples/math_exam/MathExam/MathExam.thy
-\end{bash}
+@{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë 
+  isabelle jedit examples/math_exam/MathExam/MathExam.thy \<close>}
 \<close> 
 text\<open>  
   You can build the PDF-document by calling:
-
-  \begin{bash}
-ë\prompt{}ë isabelle build MathExam
-\end{bash}
+@{boxed_bash [display]\<open>ë\prompt{}ë isabelle build MathExam\<close>}
 \<close>
  
 subsection\<open>Modeling Exams\<close>
