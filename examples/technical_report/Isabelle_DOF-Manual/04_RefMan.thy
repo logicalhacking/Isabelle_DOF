@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019-2020 University of Exeter 
- *               2018-2020 University of Paris-Saclay
+ *               2019-2021 University of Exeter 
+ *               2018-2021 University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -1101,10 +1101,7 @@ text\<open>
   \<^item> activation of the new document setup by executing the install script. You can skip the lengthy 
     checks for the AFP entries and the installation of the Isabelle patch by using the 
     \inlinebash|--skip-patch-and-afp| option:
-  
- \begin{bash}
-ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp
- \end{bash}
+    @{boxed_bash [display] \<open>ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp\<close>}
 \<close>
 
 subsection\<open>Document Templates\<close>
@@ -1135,17 +1132,13 @@ text\<open>
   \<^item> activation of the new document template  by executing the install script. You can skip the lengthy 
     checks for the AFP entries and the installation of the Isabelle patch by using the 
     \inlinebash|--skip-patch-and-afp| option:
-  
-  \begin{bash}
-ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp
-  \end{bash}
+    @{boxed_bash [display] \<open>ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp\<close>}
 \<close>
 
 
 text\<open>
-  As the document generation of \<^isadof> is based 
-  on \<^LaTeX>, the \<^isadof> document templates can (and should) make use of any \<^LaTeX>-classes provided
-  by publishers or standardization bodies.
+  As the document generation of \<^isadof> is based on \<^LaTeX>, the \<^isadof> document templates can (and 
+  should) make use of any \<^LaTeX>-classes provided by publishers or standardization bodies.
 \<close>
 
 
@@ -1211,19 +1204,16 @@ text\<open>
 
 subsubsection\<open>Getting Started\<close>
 text\<open>
-  In general, we recommend to create a test project (\<^eg>, using \inlinebash|isabelle mkroot_DOF|)
+  In general, we recommend to create a test project (\<^eg>, using \<^boxed_bash>\<open>isabelle mkroot_DOF\<close>)
   to develop new document templates or ontology representations. The default setup of the \<^isadof>
   build system generated a \<^path>\<open>output/document\<close> directory with a self-contained \<^LaTeX>-setup. In 
   this directory, you can directly use \<^LaTeX> on the main file, called \<^path>\<open>root.tex\<close>:
-
-\begin{bash}
-ë\prompt{MyProject/output/document}ë pdflatex root.tex
-\end{bash}
+  @{boxed_bash [display] \<open>ë\prompt{MyProject/output/document}ë pdflatex root.tex\<close>}
 
   This allows you to develop and check your \<^LaTeX>-setup without the overhead of running 
-  \inlinebash|isabelle build| after each change of your template (or ontology-style). Note that 
+   \<^boxed_bash>\<open>isabelle build\<close> after each change of your template (or ontology-style). Note that 
   the content of the \<^path>\<open>output\<close> directory is overwritten by executing 
-  \inlinebash|isabelle build|.
+   \<^boxed_bash>\<open>isabelle build\<close>.
 \<close>
 
 subsubsection\<open>Truncated Warning and Error Messages\<close>
@@ -1233,10 +1223,7 @@ text\<open>
   cut off. Thus, it can be very helpful to configure \<^LaTeX> in such a way that it prints 
   long error or warning messages. This can easily be done on the command line for individual 
   \<^LaTeX> invocations: 
-
-\begin{bash}
-ë\prompt{MyProject/output/document}ë max_print_line=200 error_line=200 half_error_line=100  pdflatex root.tex
-\end{bash}
+  @{boxed_bash [display] \<open>ë\prompt{MyProject/output/document}ë max_print_line=200 error_line=200 half_error_line=100  pdflatex root.tex\<close>}
 \<close>
 
 subsubsection\<open>Deferred Declaration of Information\<close>
