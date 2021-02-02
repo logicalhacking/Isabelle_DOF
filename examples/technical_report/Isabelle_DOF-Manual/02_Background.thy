@@ -47,7 +47,7 @@ The current system framework offers moreover the following features:
 
 The Isabelle system architecture shown in @{docitem \<open>architecture\<close>} comes with many layers, 
 with Standard ML (SML) at the bottom layer as implementation  language. The architecture actually 
-foresees a \<^emph>\<open>Nano-Kernel\<close> (our terminology) which resides in the SML structure \inlinesml{Context}. 
+foresees a \<^emph>\<open>Nano-Kernel\<close> (our terminology) which resides in the SML structure\<^boxed_sml>\<open>Context\<close>. 
 This structure provides a kind of container called \<^emph>\<open>context\<close> providing an identity, an 
 ancestor-list as well as typed, user-defined state for components (plugins) such as \<^isadof>. 
 On top of the latter, the LCF-Kernel, tactics,  automated proof procedures as well as specific 
