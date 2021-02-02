@@ -87,7 +87,7 @@ subsubsection*[isadof::technical]\<open>Installing \<^isadof>\<close>
 text\<open>
   In the following, we assume that you already downloaded the \<^isadof> distribution 
   (\href{\isadofarchiveurl}{\isadofarchiven}) from the \<^isadof> web site. The main steps for 
-  installing are extracting the \<^isadof> distribution and calling its \inlinebash|install| script. 
+  installing are extracting the \<^isadof> distribution and calling its \<^boxed_bash>\<open>install\<close> script. 
   We start by extracting the \<^isadof> archive:
 @{boxed_bash [display]\<open>ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë\<close>}
 This will create a directory \texttt{\isadofdirn} containing \<^isadof> distribution.
@@ -144,8 +144,8 @@ Isabelle/DOF Installer
   /usr/local/Isabelleë\isabelleversion/bin/isabelleë build -D . \<close>}
 
 After the successful installation, you can now explore the examples (in the sub-directory 
-\inlinebash|examples| or create your own project. On the first start, the session 
-\inlinebash|Isabelle_DOF| will be built automatically. If you want to pre-build this 
+\<^boxed_bash>\<open>examples\<close> or create your own project. On the first start, the session 
+\<^boxed_bash>\<open>Isabelle_DOF\<close> will be built automatically. If you want to pre-build this 
 session and all example documents, execute:
 
 @{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë isabelle build -D . \<close>} 
@@ -154,7 +154,7 @@ session and all example documents, execute:
 subsection*[first_project::technical]\<open>Creating an \<^isadof> Project\<close>
 text\<open>
   \<^isadof> provides its own variant of Isabelle's 
-  \inlinebash|mkroot| tool, called \inlinebash|mkroot_DOF|:\index{mkroot\_DOF}
+  \<^boxed_bash>\<open>mkroot\<close> tool, called \<^boxed_bash>\<open>mkroot_DOF\<close>:\index{mkroot\_DOF}
 
 @{boxed_bash [display]\<open>ë\prompt{}ë isabelle mkroot_DOF -h 
 
@@ -182,14 +182,14 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
   \<^item> which ontologies (\<^eg>, scholarly\_paper) are required and 
   \<^item> which document template (layout)\index{document template} should be used 
     (\<^eg>, scrartcl\index{scrartcl}). Some templates (\<^eg>, lncs) require that the users manually 
-    obtains and adds the necessary \<^LaTeX> class file (\<^eg>, \inlinebash|llncs.cls|. 
+    obtains and adds the necessary \<^LaTeX> class file (\<^eg>, \<^boxed_bash>\<open>llncs.cls\<close>. 
     This is due to licensing restrictions).
 \<close>
 text\<open>
   If you are happy with the defaults, \ie, using the ontology for writing academic papers 
   (scholarly\_paper) using a report layout based on the article class (\inlineltx|scrartcl|) of 
   the KOMA-Script bundle~@{cite "kohm:koma-script:2019"}, you can create your first project 
-  \inlinebash|myproject| as follows:
+  \<^boxed_bash>\<open>myproject\<close> as follows:
 
 @{boxed_bash [display]\<open>ë\prompt{}ë isabelle mkroot_DOF myproject
 
@@ -200,13 +200,13 @@ Preparing session "myproject" iëën "myproject"
 Now use the following coëëmmand line to build the session:
   isabelle build -D myproject \<close>}
 
-  This creates a directory \inlinebash|myproject| containing the \<^isadof>-setup for your 
+  This creates a directory \<^boxed_bash>\<open>myproject\<close> containing the \<^isadof>-setup for your 
   new document. To check the document formally, including the generation of the document in PDF,
   you only need to execute
 
 @{boxed_bash [display]\<open>ë\prompt{}ë  isabelle build -d . myproject \<close>}
 
-This will create the directory \inlinebash|myproject|: 
+This will create the directory \<^boxed_bash>\<open>myproject\<close>: 
 \begin{center}
 \begin{minipage}{.9\textwidth}
 \dirtree{%
@@ -220,9 +220,9 @@ This will create the directory \inlinebash|myproject|:
 }
 \end{minipage}
 \end{center}
-The \<^isadof> configuration (\inlinebash|isadof.cfg|) specifies the required
+The \<^isadof> configuration (\<^boxed_bash>\<open>isadof.cfg\<close>) specifies the required
 ontologies and the document template using a YAML syntax.\<^footnote>\<open>Isabelle power users will recognize that 
-\<^isadof>'s document setup does not make use of a file \inlinebash|root.tex|: this file is 
+\<^isadof>'s document setup does not make use of a file \<^boxed_bash>\<open>root.tex\<close>: this file is 
 replaced by built-in document templates.\<close> The main two configuration files for 
 users are:
 \<^item> The file \<^boxed_bash>\<open>ROOT\<close>\<^index>\<open>ROOT\<close>, which defines the Isabelle session. New theory files as well as new 
@@ -453,42 +453,6 @@ figure*[fig02::figure,spawn_columns=False,relative_width="95",src="''figures/def
 text\<open>The corresponding output of this snippet in the integrated source is shown in\<^figure>\<open>fig02\<close>. \<close>
 
 subsection*[scholar_pide::example]\<open>More Freeform Elements, and Resulting Navigation\<close>
-(*
-figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogfood-Intro''"]
-       \<open> Ouroboros I: This paper from inside \ldots \<close>  
-
-text\<open> 
-  @{docitem \<open>fig1\<close>} shows the corresponding view in the Isabelle/jedit of the start of an academic 
-  paper. The text uses \<^isadof>'s own text-commands containing the meta-information provided by the 
-  underlying ontology. We proceed by a definition of \<^boxed_theory_text>\<open>introduction\<close>'s, which we define 
-  as the extension of \<^boxed_theory_text>\<open>text_section\<close> which is intended to capture common infrastructure:
-
-@{boxed_theory_text [display]\<open>
-doc_class introduction = text_section +
-   comment :: string
-\<close>}
-
-  As a consequence of the definition as extension, the \<^boxed_theory_text>\<open>introduction\<close> class
-  inherits the attributes \<^boxed_theory_text>\<open>main_author\<close> and \<^boxed_theory_text>\<open>todo_list\<close> 
-  together with the corresponding default values.
-
-  We proceed more or less conventionally by the subsequent sections:
-
-@{boxed_theory_text [display]\<open>
-doc_class technical = text_section +
-   definition_list :: "string list" <=  "[]"
-
-doc_class example   = text_section +
-   comment :: string
-
-doc_class conclusion = text_section +
-   main_author :: "author option"  <=  None
-   
-doc_class related_work = conclusion +
-   main_author :: "author option"  <=  None
-
-\<close>}
-*)
 text\<open> In the following, we present some other text-elements provided by the Common Ontology Library
 in @{theory "Isabelle_DOF.Isa_COL"}. It provides a document class for figures:
 
@@ -559,12 +523,8 @@ text\<open>
   meta-information. Clicking on a document class identifier permits to hyperlink into the 
   corresponding class definition (\autoref{fig:Dogfood-IV-jumpInDocCLass}); hovering over an 
   attribute-definition (which is qualified in order to disambiguate; 
-  \autoref{fig:Dogfood-V-attribute}).
-  % TODO for Burkhart Wolff.
-  % The last phrase should be completed to make it clearer:
-  % In this part "hovering over an...in order to disambiguate", something is missing.
+  \autoref{fig:Dogfood-V-attribute}) shows its type.
 \<close>
-(* Bu : This autoref stuff could be avoided if we would finally have monitors over figures... *)
 
 figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-V-attribute''"]
        \<open> Exploring an attribute (hyperlinked to the class). \<close> 
@@ -716,124 +676,6 @@ safety-related condition; however, this happens in a context where general \<^em
 are listed. \<^isadof>'s checks establish that this is legal in the given ontology. 
 \<close>    
 
-(*
-section*[math_exam::example]\<open>Writing Exams (math\_exam)\<close> 
-subsection\<open>The Math Exam Example\<close>
-text\<open> 
-  The ontology ``math\_exam''\index{ontology!math\_exam} is an experimental ontology modeling 
-  the process of writing exams at higher education institution in the United Kingdom, where exams 
-  undergo both an internal and external review process. The \<^isadof> distribution contains a tiny 
-  example  using the ontology ``math\_exam'' in the directory 
-  \nolinkurl{examples/math_exam/MathExam/}. You can inspect/edit the example 
-  in Isabelle's IDE, by either 
-  \<^item> starting Isabelle/jedit using your graphical user interface (\<^eg>, by clicking on the 
-    Isabelle-Icon provided by the Isabelle installation) and loading the file 
-    \nolinkurl{examples/math_exam/MathExam/MathExam.thy}.
-  \<^item> starting Isabelle/jedit from the command line by calling:
-@{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë 
-  isabelle jedit examples/math_exam/MathExam/MathExam.thy \<close>}
-\<close> 
-text\<open>  
-  You can build the PDF-document by calling:
-@{boxed_bash [display]\<open>ë\prompt{}ë isabelle build MathExam\<close>}
-\<close>
- 
-subsection\<open>Modeling Exams\<close>
-text\<open>
-  The math-exam scenario is an application with mixed formal and semi-formal content. It addresses 
-  applications where the author of the exam is not present  during the exam and the preparation 
-  requires a very rigorous process.
-
-  We assume that the content has four different types of addressees, which have a different
-  \<^emph>\<open>view\<close> on the integrated document: 
-  \<^item> the \<^emph>\<open>setter\<close>, \ie, the author of the exam,
-  \<^item> the \<^emph>\<open>checker\<close>, \ie, an internal person that checks 
-   the exam for feasibility and non-ambiguity, 
-  \<^item> the \<^emph>\<open>external\<close>, \ie, an external person that checks 
-    the exam for feasibility and non-ambiguity, and 
-  \<^item> the \<^emph>\<open>student\<close>, \ie, the addressee of the exam. 
-\<close>
-text\<open> 
-  The latter quality assurance mechanism is used in many universities,
-  where for organizational reasons the execution of an exam takes place in facilities
-  where the author of the exam is not expected to be physically present.
-  Furthermore, we assume a simple grade system (thus, some calculation is required). We 
-  can model this as follows: 
-
-@{boxed_theory_text [display]\<open>
-doc_class Author = ...
-datatype Subject =  algebra | geometry | statistical
-datatype Grade =  A1 | A2 | A3
-doc_class Header =  examTitle   :: string
-                    examSubject :: Subject
-                    date        :: string
-                    timeAllowed :: int --  minutes
-datatype ContentClass =  setter
-                      | checker 
-                      | external_examiner   
-                      | student   
-doc_class Exam_item =  concerns :: "ContentClass set"  
-doc_class Exam_item =  concerns :: "ContentClass set"  
-
-type_synonym SubQuestion = string
-\<close>}
-
-  The heart of this ontology is an alternation of questions and answers, where the answers can 
-  consist of simple yes-no answers or lists of formulas. Since we do not assume familiarity of 
-  the students with Isabelle (\<^boxed_theory_text>\<open>term\<close> would assume that this is a parse-able and 
-  type-checkable entity), we basically model a derivation as a sequence of strings:
-
-@{boxed_theory_text [display]\<open>
-doc_class Answer_Formal_Step =  Exam_item +
-  justification :: string
-  "term"        :: "string" 
-  
-doc_class Answer_YesNo =  Exam_item +
-  step_label :: string
-  yes_no     :: bool  -- \<open>for checkboxes\<close>
-
-datatype Question_Type =   
-  formal | informal | mixed 
-  
-doc_class Task = Exam_item +
-  level    :: Level
-  type     :: Question_Type
-  subitems :: "(SubQuestion * 
-                   (Answer_Formal_Step list + Answer_YesNo) list) list"
-  concerns :: "ContentClass set" <= "UNIV" 
-  mark     :: int
-doc_class Exercise = Exam_item +
-  type     :: Question_Type
-  content  :: "(Task) list"
-  concerns :: "ContentClass set" <= "UNIV" 
-  mark     :: int
-\<close>}
-
-In many institutions, having a rigorous process of validation for exam subjects makes sense: is 
-the initial question correct? Is a proof in the sense of the question possible? We model the 
-possibility that the @{term examiner} validates a question by a sample proof validated by Isabelle:
-
-@{boxed_theory_text [display]\<open>
-doc_class Validation = 
-   tests  :: "term list"  <="[]"
-   proofs :: "thm list"   <="[]"
-  
-doc_class Solution = Exam_item +
-  content  :: "Exercise list"
-  valids   :: "Validation list"
-  concerns :: "ContentClass set" <= "{setter,checker,external_examiner}"
-  
-doc_class MathExam=
-  content :: "(Header + Author + Exercise) list"
-  global_grade :: Grade 
-  where "\<lbrace>Author\<rbrace>$^+$  ~~  Header ~~  \<lbrace>Exercise ~~ Solution\<rbrace>$^+$ "
-\<close>}
-
-In our scenario this sample proofs are completely \<^emph>\<open>intern\<close>, \ie, not exposed to the 
-students but just additional material for the internal review process of the exam.
-\<close>
-
-*)
 
 section*[tech_onto::example]\<open>Writing Technical Reports in \<^boxed_theory_text>\<open>technical_report\<close>\<close>  
 text\<open>While it is perfectly possible to write documents in the
@@ -881,22 +723,6 @@ should be accurate with the most recent version of Isabelle in which this docume
 So its value is that readers can just reuse some of these snippets and adapt them to their 
 purposes.
 \<close>
-
-(*
-@{boxed_theory_text [display] \<open>
-text\<open>Finally, a number of commonly used "squigglish" combinators is listed:
-
-\<^item> @{ML "op !  : 'a Unsynchronized.ref->'a"},  access operation on a program variable 
-\<^item> @{ML "op := : ('a Unsynchronized.ref * 'a)->unit"},  update operation on a program variable 
-\<^item> @{ML "op #> : ('a->'b) * ('b->'c)->'a->'c"}, a reversed function composition 
-\<^item> @{ML "op o  : (('b->'c) * ('a->'b))->'a->'c"}, function composition
-\<^item> @{ML "op || : ('a->'b) * ('a->'b) -> 'a -> 'b"}, parse alternative
-\<^item> @{ML "op -- : ('a->'b*'c) * ('c->'d*'e)->'a->('b*'d)*'e"}, parse pair 
-\<^item> @{ML "op ?  : bool * ('a->'a)->'a->'a"}, if then else 
-\<^item> @{ML "I     : 'a -> 'a"}, the I combinator
-\<^item> @{ML "K     : 'a -> 'b -> 'a"}, the K combinator \<close>
-\<close>}
-*)
 
 figure*[strict_SS::figure, relative_width="95", src="''figures/MyCommentedIsabelle.png''"] 
 \<open>A table with a number of SML functions, together with their type.\<close>
