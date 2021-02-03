@@ -187,7 +187,7 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
 \<close>
 text\<open>
   If you are happy with the defaults, \ie, using the ontology for writing academic papers 
-  (scholarly\_paper) using a report layout based on the article class (\inlineltx|scrartcl|) of 
+  (scholarly\_paper) using a report layout based on the article class (\<^boxed_latex>\<open>scrartcl\<close>) of 
   the KOMA-Script bundle~@{cite "kohm:koma-script:2019"}, you can create your first project 
   \<^boxed_bash>\<open>myproject\<close> as follows:
 
