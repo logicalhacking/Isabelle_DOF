@@ -45,24 +45,18 @@ subsection*[installation::technical]\<open>Installation\<close>
 text\<open>
   In this section, we will show how to install \<^isadof> and its pre-requisites: Isabelle and 
   \<^LaTeX>. We assume a basic familiarity with a Linux/Unix-like command line (i.e., a shell). 
+
+  \<^isadof> requires Isabelle\<^bindex>\<open>Isabelle\<close> (\isabellefullversion) with a recent \<^LaTeX>-distribution
+  (e.g., TexLive 2020 or later).    
+  \<^isadof> uses a two-part version system (e.g., 1.0.0/2020),  where the first part is the version
+  of \<^isadof> (using semantic versioning) and the second part is the supported version of Isabelle. 
+  Thus, the same version of \<^isadof> might be available for different versions of Isabelle. 
 \<close>
 
-subsubsection*[prerequisites::technical]\<open>Pre-requisites\<close>
+paragraph\<open>Installing Isabelle.\<close>
 text\<open>
-  \<^isadof> has to major pre-requisites: 
-  \<^item> \<^bold>\<open>Isabelle\<close>\<^bindex>\<open>Isabelle\<close> (\isabellefullversion). 
-    \<^isadof> uses a two-part version system (e.g., 1.0.0/2020),  where the first part is the version
-    of \<^isadof> (using semantic versioning) and the second part is the supported version of Isabelle. 
-    Thus, the same version of \<^isadof> might be available for different versions of Isabelle. 
-  \<^item> \<^bold>\<open>\<^TeXLive> 2020\<close>\<^bindex>\<open>TexLive@\<^TeXLive>\<close> (or any other modern  \<^LaTeX>-distribution where
-    \<^pdftex> supports the \<^boxed_latex>\<open>\expanded\<close>  
-    primitive).\<^footnote>\<open>see \<^url>\<open>https://www.texdev.net/2018/12/06/a-new-primitive-expanded\<close>\<close>
-\<close>
-
-paragraph\<open>Installing Isabelle\<close>
-text\<open>
-  Please download and install the Isabelle (version: \isabelleversion) distribution for your 
-  operating system  from the \href{\isabelleurl}{Isabelle website} (\url{\isabelleurl}). After the 
+  Please download and install Isabelle (version: \isabelleversion) from the 
+  \href{\isabelleurl}{Isabelle website} (\url{\isabelleurl}). After the 
   successful installation of Isabelle, you should be able to call the \<^boxed_bash>\<open>isabelle\<close> 
   tool on the command line:
 @{boxed_bash [display]\<open>ë\prompt{}ë isabelle version
@@ -75,7 +69,7 @@ full qualified path, \<^eg>:
 ë\isabellefullversionë\<close>}
 \<close>
 
-paragraph\<open>Installing \<^TeXLive>\<close>
+paragraph\<open>Installing \<^TeXLive>.\<close>
 text\<open>
   Modern Linux distribution will allow you to install \<^TeXLive> using their respective package 
   managers. On a modern Debian system or a Debian derivative (\<^eg>, Ubuntu), the following command 
@@ -118,9 +112,11 @@ Isabelle/DOF Installer
            Trying to patch system ....
        Applied patch successfully, Isabelle/HOL will be rebuilt during
        the next start of Isabelle.
-* Checking availability of AFP entries:
-  Warning: could not find AFP entry Regular-Sets.
-  Warning: could not find AFP entry Functional-Automata.
+* Checking availability of AFP entries:\<close>}
+
+@{boxed_bash [display]
+\<open>ëë     Warning: could not find AFP entry Regular-Sets.
+      Warning: could not find AFP entry Functional-Automata.
            Trying to install AFP (this might take a few *minutes*) ....
            Registering Regular-Sets iëën 
                  /home/achim/.isabelle/Isabelleë\isabelleversion/ROOTSë
@@ -143,54 +139,17 @@ Isabelle/DOF Installer
   Isabelle/DOF and all example documents by executing:
   /usr/local/Isabelleë\isabelleversion/bin/isabelleë build -D . \<close>}
 
-After the successful installation, you can now explore the examples (in the sub-directory 
+After the successful installation, you can explore the examples (in the sub-directory 
 \<^boxed_bash>\<open>examples\<close> or create your own project. On the first start, the session 
 \<^boxed_bash>\<open>Isabelle_DOF\<close> will be built automatically. If you want to pre-build this 
 session and all example documents, execute:
-
 @{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë isabelle build -D . \<close>} 
 \<close>
 
 subsection*[first_project::technical]\<open>Creating an \<^isadof> Project\<close>
 text\<open>
   \<^isadof> provides its own variant of Isabelle's 
-  \<^boxed_bash>\<open>mkroot\<close> tool, called \<^boxed_bash>\<open>mkroot_DOF\<close>:\index{mkroot\_DOF}
-
-@{boxed_bash [display]\<open>ë\prompt{}ë isabelle mkroot_DOF -h 
-
-Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
-
-  Options are:
-    -h           print this hëëelp text and exëëit
-    -n NAME      alternative session name (default: DIR base name)
-    -o ONTOLOGY  (default: scholarly_paper)
-       Available ontologies:
-       * CENELEC_50128
-       * math_exam
-       * scholarly_paper
-       * technical_report
-    -t TEMPLATE   (default: scrartcl)
-       Available document templates:
-       * lncs
-       * scrartcl
-       * scrreprt-modern
-       * scrreprt
-
-  Prepare session root DIR (default: current directory). \<close>}
-
-  Creating a new document setup requires two decisions:
-  \<^item> which ontologies (\<^eg>, scholarly\_paper) are required and 
-  \<^item> which document template (layout)\index{document template} should be used 
-    (\<^eg>, scrartcl\index{scrartcl}). Some templates (\<^eg>, lncs) require that the users manually 
-    obtains and adds the necessary \<^LaTeX> class file (\<^eg>, \<^boxed_bash>\<open>llncs.cls\<close>. 
-    This is due to licensing restrictions).
-\<close>
-text\<open>
-  If you are happy with the defaults, \ie, using the ontology for writing academic papers 
-  (scholarly\_paper) using a report layout based on the article class (\<^boxed_latex>\<open>scrartcl\<close>) of 
-  the KOMA-Script bundle~@{cite "kohm:koma-script:2019"}, you can create your first project 
-  \<^boxed_bash>\<open>myproject\<close> as follows:
-
+  \<^boxed_bash>\<open>mkroot\<close> tool, called \<^boxed_bash>\<open>mkroot_DOF\<close>\index{mkroot\_DOF}:
 @{boxed_bash [display]\<open>ë\prompt{}ë isabelle mkroot_DOF myproject
 
 Preparing session "myproject" iëën "myproject"
@@ -199,14 +158,15 @@ Preparing session "myproject" iëën "myproject"
 
 Now use the following coëëmmand line to build the session:
   isabelle build -D myproject \<close>}
-
-  This creates a directory \<^boxed_bash>\<open>myproject\<close> containing the \<^isadof>-setup for your 
-  new document. To check the document formally, including the generation of the document in PDF,
-  you only need to execute
+  The created project uses the default configuration (the ontology for writing academic papers 
+  (scholarly\_paper) using a report layout based on the article class (\<^boxed_latex>\<open>scrartcl\<close>) of 
+  the KOMA-Script bundle~@{cite "kohm:koma-script:2019"}. The directory \<^boxed_bash>\<open>myproject\<close> 
+  contains the \<^isadof>-setup for your  new document. To check the document formally, including the 
+  generation of the document in PDF, you only need to execute
 
 @{boxed_bash [display]\<open>ë\prompt{}ë  isabelle build -d . myproject \<close>}
 
-This will create the directory \<^boxed_bash>\<open>myproject\<close>: 
+The dictory  \<^boxed_bash>\<open>myproject\<close> contains the following files and directories: 
 \begin{center}
 \begin{minipage}{.9\textwidth}
 \dirtree{%
@@ -231,6 +191,43 @@ users are:
   consult the Isabelle System Manual~@{cite "wenzel:system-manual:2020"}.
 \<^item> The file \<^boxed_bash>\<open>preamble.tex\<close>\<^index>\<open>preamble.tex\<close>, which allows users to add additional 
   \<^LaTeX>-packages or to add/modify \<^LaTeX>-commands. 
+\<close>
+
+text\<open>
+  Creating a new document setup requires two decisions:
+  \<^item> which ontologies (\<^eg>, scholarly\_paper) are required and 
+  \<^item> which document template (layout)\index{document template} should be used 
+    (\<^eg>, scrartcl\index{scrartcl}). Some templates (\<^eg>, lncs) require that the users manually 
+    obtains and adds the necessary \<^LaTeX> class file (\<^eg>, \<^boxed_bash>\<open>llncs.cls\<close>. 
+    This is due to licensing restrictions).\<close>
+text\<open> 
+  This can be configured by using the command-line options of of  \<^boxed_bash>\<open>mkroot_DOF\<close>. In 
+  Particular, \<^boxed_bash>\<open>-o\<close> allows selecting the ontology and \<^boxed_bash>\<open>-t\<close> allows to selecting 
+  the document template. The built-in help (using  \<^boxed_bash>\<open>-h\<close>) shows all available options 
+  as well as a complete list of the available document templates and ontologies: 
+
+  @{boxed_bash [display]\<open>ë\prompt{}ë isabelle mkroot_DOF -h
+
+Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
+
+  Options are:
+    -h           print this hëëelp text and exëëit
+    -n NAME      alternative session name (default: DIR base name)
+    -o ONTOLOGY  (default: scholarly_paper)
+       Available ontologies:
+       * CENELEC_50128
+       * math_exam
+       * scholarly_paper
+       * technical_report
+    -t TEMPLATE   (default: scrartcl)
+       Available document templates:
+       * lncs
+       * scrartcl
+       * scrreprt-modern
+       * scrreprt
+
+  Prepare session root DIR (default: current directory). \<close>}
+
 \<close>
 
 section*[scholar_onto::example]\<open>Writing Academic Publications in \<^boxed_theory_text>\<open>scholarly_paper\<close>\<close>  
@@ -267,7 +264,7 @@ text\<open>
 @{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë 
   isabelle jedit -d . examples/scholarly_paper/2020-iFM-CSP/paper.thy \<close>}
 \<close> 
-(* We should discuss if we shouldn't put the iFM paper more in the foreground *) 
+
 
 text\<open>    You can build the PDF-document at the command line by calling:
 @{boxed_bash [display] \<open>ë\prompt{}ë isabelle build -d . 2020-iFM-csp \<close>}
