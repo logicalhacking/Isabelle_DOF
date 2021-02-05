@@ -231,7 +231,7 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
 \<close>
 
 section*[scholar_onto::example]\<open>Writing Academic Publications in \<^boxed_theory_text>\<open>scholarly_paper\<close>\<close>  
-subsection\<open>Papers in freeform-style\<close>
+subsection\<open>Writing Academic Papers\<close>
 text\<open> 
   The ontology \<^boxed_theory_text>\<open>scholarly_paper\<close>
   \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
@@ -440,14 +440,11 @@ text\<open>
 \<^isadof> text-elements such as \<^theory_text>\<open>text*\<close> allow to have such standard term-antiquotations inside their
 text, permitting to give the whole text entity a formal, referentiable status with typed meta-
 information attached to it that may be used for presentation issues, search, or other technical
-purposes. 
+purposes. The corresponding output of this snippet in the integrated source is shown in \<^figure>\<open>fig02\<close>. 
 \<close>
 
 figure*[fig02::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP-pdf.png''"]
        \<open> ... and the corresponding pdf-oputput.\<close>  
-
-
-text\<open>The corresponding output of this snippet in the integrated source is shown in\<^figure>\<open>fig02\<close>. \<close>
 
 subsection*[scholar_pide::example]\<open>More Freeform Elements, and Resulting Navigation\<close>
 text\<open> In the following, we present some other text-elements provided by the Common Ontology Library
