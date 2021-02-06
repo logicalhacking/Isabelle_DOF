@@ -391,22 +391,6 @@ standard inductive \<^theory_text>\<open>datatype\<close> definition mechanism i
 for attibute declarations. Vice-versa, document class definitions imply a corresponding HOL type 
 definition. \<close>
 
-(* For Achim zum spielen...
-text\<open>For example, this allows the following presentation in the source:
-@{boxed_theory_text [display] \<open>
-text*[X2::"definition"]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<^vs>\<open>-0.7cm\<close>\<close>
-text*[X3::"definition"]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>          \<^vs>\<open>-0.7cm\<close>\<close>
-text*[X4::"definition"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<^vs>\<open>-0.7cm\<close>\<close>
-
-text\<open> The \<open>RUN\<close>-process defined @{definition X2} represents the process that accepts all 
-events, but never stops nor deadlocks. The \<open>CHAOS\<close>-process comes in two variants shown in 
-@{definition X3} and @{definition X4}: the process that non-deterministically stops or 
-accepts any offered event, wheras \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> can additionaly terminate.\<close>
-\<close>}
-\<close>
-*)
-
-(* alternative *)
 figure*[fig01::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP.png''"]
        \<open> A screenshot of the integrated source with definitions ...\<close>  
 text\<open>An example for a sequence of (Isabelle-formula-) texts, their ontological declarations as 
@@ -436,6 +420,9 @@ We refrain ourselves here to briefly describe three freeform antiquotations used
 \<^item>  the freeform antiquotations for verbatim, emphasized, bold, or footnote text elements.
 \<close>
 
+figure*[fig02::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP-pdf.png''"]
+       \<open> ... and the corresponding pdf-oputput.\<close>  
+
 text\<open>
 \<^isadof> text-elements such as \<^theory_text>\<open>text*\<close> allow to have such standard term-antiquotations inside their
 text, permitting to give the whole text entity a formal, referentiable status with typed meta-
@@ -443,8 +430,6 @@ information attached to it that may be used for presentation issues, search, or 
 purposes. The corresponding output of this snippet in the integrated source is shown in \<^figure>\<open>fig02\<close>. 
 \<close>
 
-figure*[fig02::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP-pdf.png''"]
-       \<open> ... and the corresponding pdf-oputput.\<close>  
 
 subsection*[scholar_pide::example]\<open>More Freeform Elements, and Resulting Navigation\<close>
 text\<open> In the following, we present some other text-elements provided by the Common Ontology Library
@@ -479,11 +464,12 @@ text\<open>
      where "(title       ~~ \<lbrakk>subtitle\<rbrakk>   ~~ \<lbrace>author\<rbrace>$^+$+  ~~  abstract    ~~
                introduction ~~  \<lbrace>technical || example\<rbrace>$^+$  ~~  conclusion ~~  
                bibliography)"
-    % TODO:
-    % Update to the new implementation.
-    % where is deprecated and the new implementation uses accepts and rejects.
-  \<close>}
+  \<close>}\<close>
 
+  (*  % TODO:
+      % Update to the new implementation.
+      % where is deprecated and the new implementation uses accepts and rejects. *)
+text\<open>
   In a integrated document source, the body of the content can be paranthesized into:
 
   @{boxed_theory_text [display]\<open>
@@ -564,9 +550,7 @@ text\<open>
   processes. Making the link-structure machine-checkable, be it between requirements, assumptions, 
   their implementation and their discharge by evidence (be it tests, proofs, or authoritative 
   arguments), has the potential in our view to decrease the cost of software developments 
-  targeting certifications. Note that continuously checking the links between the formal and the 
-  semi-formal parts of such documents is particularly valuable during the development,
-  which is usually a collaborative effort. 
+  targeting certifications. 
 
   As in many other cases, formal certification documents come with an own terminology and pragmatics
   of what has to be demonstrated and where, and how the traceability of requirements through 
@@ -581,11 +565,11 @@ doc_class requirement = long_name :: "string option"
 
 doc_class requirement_analysis = no :: "nat"
    where "requirement_item +"
-
+(*
 % TODO:
 % Update to the new implementation.
-% where is deprecated and the new implementation uses accepts and rejects.
-
+% where is deprecated and the new implementation uses accepts and rejects. 
+*)
 doc_class hypothesis = requirement +
       hyp_type :: hyp_type <= physical  (* default *)
   
@@ -695,17 +679,15 @@ We still mention a few of these document antiquotations here:
 \<^item> \<^theory_text>\<open>@{value \<open>term\<close> }\<close> performs the evaluation of \<open>term\<close>,
 \<^item> \<^theory_text>\<open>@{ML \<open>ml-term\<close> }\<close> parses and type-checks \<open>ml-term\<close>,
 \<^item> \<^theory_text>\<open>@{ML_file \<open>ml-file\<close> }\<close> parses the path for \<open>ml-file\<close> and
-  verifies its existance in the (Isabelle-virtual) file-system,
-\<^item> ...
-
-Note that there are options to display sub-parts of formulas etc., but it is a consequence
+  verifies its existance in the (Isabelle-virtual) file-system.
+\<close>
+text\<open>There are options to display sub-parts of formulas etc., but it is a consequence
 of tight-checking that the information must be given complete and exactly in the syntax of
 Isabelle. This may be over-precise and a burden to readers not familiar with Isabelle, which may
 motivate authors to choose the aforementioned freeform-style.
 \<close>
 
-subsection\<open>A \<^verbatim>\<open>technical_report\<close> in tight-checking-style: \<open>TR_MyCommentedIsabelle\<close> - Programming Manual \<close>
-
+subsection\<open>A Technical Report with Tight Checking\<close>
 text\<open>An example of tight checking is a small programming manual developed by the
 second author in order to document programming trick discoveries while implementing in Isabelle.
 While not necessarily a meeting standards of a scientific text, it appears to us that this information
@@ -734,12 +716,12 @@ In the pdf output, these text-fragments were displayed verbatim.
 
 section\<open>Style Guide\<close>
 text\<open>
-  The document generation process of \<^isadof> is based on Isabelle's document generation framework, 
+  The document generation of \<^isadof> is based on Isabelle's document generation framework, 
   using \<^LaTeX>{} as the underlying back-end. As Isabelle's document generation framework, it is 
   possible to embed (nearly) arbitrary \<^LaTeX>-commands in text-commands, \<^eg>:
 
 @{boxed_theory_text [display]\<open>
-text\<open> This is \emph{emphasized} a$$nd this is a 
+text\<open> This is \emph{emphasized} and this is a 
        citation~\cite{brucker.ea:isabelle-ontologies:2018}\<close>
 \<close>}
 
@@ -747,8 +729,8 @@ text\<open> This is \emph{emphasized} a$$nd this is a
   Isabelle) provided alternatives:
 
 @{boxed_theory_text [display]\<open>
-text\<open> This is *\<open>emphasized\<close> a$$nd this is a 
-        citation <@>{cite "brucker.ea:isabelle-ontologies:2018"}.\<close>
+text\<open> This is *\<open>emphasized\<close> and this is a 
+        citation @{cite "brucker.ea:isabelle-ontologies:2018"}.\<close>
 \<close>}
 
 Clearly, this is not always possible and, in fact, often \<^isadof> documents will contain 
