@@ -114,9 +114,9 @@ text\<open>
   \<^emph>\<open>is-a\<close> relation between classes;
   \<^item> classes may refer to other classes via a regular expression in a
     \<^emph>\<open>where\<close> clause;
-  % TODO:
-  % Update to the new implementation.
-  % where is deprecated and the new implementation uses accepts and rejects.
+(* % TODO:
+   % Update to the new implementation.
+   % where is deprecated and the new implementation uses accepts and rejects. *)
   \<^item> attributes may have default values in order to facilitate notation.
 \<close>
 
@@ -149,9 +149,9 @@ text\<open>
   classes and their inheritance relation structure meta-data of text-elements in an object-oriented 
   manner, monitor classes enforce structural organization of documents via the language specified 
   by the regular expression enforcing a sequence of text-elements.
-  % TODO:
-  % Update to the new implementation.
-  % where is deprecated and the new implementation uses accepts and rejects.
+  (* % TODO:
+     % Update to the new implementation.
+     % where is deprecated and the new implementation uses accepts and rejects. *)
 
   A major design decision of ODL is to denote attribute values by HOL-terms and HOL-types. 
   Consequently, ODL can refer to any predefined type defined in the HOL library, \<^eg>, 
@@ -177,9 +177,9 @@ text\<open>
      in \<^boxed_theory_text>\<open> ... \<close> which might contain certain ``quasi-letters'' such 
      as \<^boxed_theory_text>\<open>_\<close>, \<^boxed_theory_text>\<open>-\<close>, \<^boxed_theory_text>\<open>.\<close> (see~@{cite "wenzel:isabelle-isar:2020"} for 
      details).
-    % TODO for Burkhart Wolff.
-    % This phrase should be reviewed to clarify identifiers.
-    % Peculiarly, "and identifiers in \<^boxed_theory_text>\<open> ... \<close>".
+    (* % TODO
+       % This phrase should be reviewed to clarify identifiers.
+       % Peculiarly, "and identifiers in \<^boxed_theory_text>\<open> ... \<close>". *)
   \<^item> \<open>tyargs\<close>:\<^index>\<open>tyargs@\<open>tyargs\<close>\<close> 
      \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
      \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (see~@{cite "wenzel:isabelle-isar:2020"})
@@ -260,7 +260,7 @@ A document class\<^bindex>\<open>document class\<close> can be defined using the
 text\<open>
   \<^isadof> provides a default document representation (\<^ie>, content and layout of the generated 
   PDF) that only prints the main text, omitting all attributes. \<^isadof> provides the 
-  \inlineltx|\newisadof[]{}|\<^index>\<open>newisadof@\inlineltx{\newisadof}\<close>\<^index>\<open>document class!PDF\<close>
+  \inlineltx|\newisadof[]{}|\<^index>\<open>newisadof@\<^boxed_latex>\<open>\newisadof\<close>\<close>\<^index>\<open>document class!PDF\<close>
   command for defining a dedicated layout for a document class in \<^LaTeX>. Such a document 
   class-specific \<^LaTeX>-definition can not only provide a specific layout (\<^eg>, a specific 
   highlighting, printing of certain attributes), it can also generate entries in the table of 
@@ -278,20 +278,20 @@ text\<open>
 
   The \<open>class_id\<close> is the full-qualified name of the document class and the list of \<open>attribute_decl\<close>
   needs to declare all attributes of the document class. Within the \<^LaTeX>-definition of the document
-  class representation, the identifier \inlineltx|#1| refers to the content of the main text of the 
+  class representation, the identifier \<^boxed_latex>\<open>#1\<close> refers to the content of the main text of the 
   document class (written in \<^boxed_theory_text>\<open>\<open> ... \<close>\<close>) and the attributes can be referenced
   by their name using the \inlineltx|\commandkey{...}|-command (see the documentation of the 
   \<^LaTeX>-package ``keycommand''~@{cite "chervet:keycommand:2010"} for details). Usually, the 
   representations definition needs to be wrapped in a 
   \inlineltx|\begin{isarmarkup}...\end{isamarkup}|-environment, to ensure the correct context 
   within Isabelle's \<^LaTeX>-setup. 
-  % TODO:
-  % For the "(written in \<^boxed_theory_text>\<open>\<open> ... \<close>\<close>" part, to give some examples should be clearer.
-
+(*  % TODO:
+    % For the "(written in \<^boxed_theory_text>\<open>\<open> ... \<close>\<close>" part, to give some examples should be clearer.
+*)
   Moreover, \<^isadof> also provides the following two variants of \inlineltx|\newisadof{}[]{}|:
-  \<^item>  \inlineltx|\renewisadof{}[]{}|\<^index>\<open>renewisadof@\inlineltx{\renewisadof}\<close> for re-defining 
+  \<^item>  \inlineltx|\renewisadof{}[]{}|\<^index>\<open>renewisadof@\<^boxed_latex>\<open>\renewisadof\<close>\<close> for re-defining 
      (over-writing) an already defined command, and  
-  \<^item>  \inlineltx|\provideisadof{}[]{}|\<^index>\<open>provideisadof@\inlineltx{\provideisadof}\<close> for providing 
+  \<^item>  \inlineltx|\provideisadof{}[]{}|\<^index>\<open>provideisadof@\<^boxed_latex>\<open>\provideisadof\<close>\<close> for providing 
      a definition if it is not yet defined. 
 \<close>
 text\<open>
@@ -372,7 +372,7 @@ The precise presentation is decided in the \<^emph>\<open>layout definitions\<cl
 \<^LaTeX>-template code. Declared but not yet defined instances must be referenced with a particular
 pragma in order to enforce a relaxed checking \<^theory_text>\<open> @{cid (unchecked) \<open>oid\<close>} \<close>.
 
-% there should also exist a *term* antiquotation ...
+(* % there should also exist a *term* antiquotation ... *)
 \<close>
 
 (*<*)
@@ -475,9 +475,9 @@ doc_class text_element =
 
 As mentioned in @{technical \<open>sss\<close>} (without explaining the origin of \<^typ>\<open>text_element\<close>)
 , \<^boxed_theory_text>\<open>level\<close> defines the section-level (\<^eg>, using a \<^LaTeX>-inspired hierarchy:
-from \<^boxed_theory_text>\<open>Some -1\<close> (corresponding to \inlineltx|\part|) to 
-\<^boxed_theory_text>\<open>Some 0\<close> (corresponding to \inlineltx|\chapter|, respectively, \<^boxed_theory_text>\<open>chapter*\<close>) 
-to \<^boxed_theory_text>\<open>Some 3\<close> (corresponding to \inlineltx|\subsubsection|, respectively, 
+from \<^boxed_theory_text>\<open>Some -1\<close> (corresponding to \<^boxed_latex>\<open>\part\<close>) to 
+\<^boxed_theory_text>\<open>Some 0\<close> (corresponding to \<^boxed_latex>\<open>\chapter\<close>, respectively, \<^boxed_theory_text>\<open>chapter*\<close>) 
+to \<^boxed_theory_text>\<open>Some 3\<close> (corresponding to \<^boxed_latex>\<open>\subsubsection\<close>, respectively, 
 \<^boxed_theory_text>\<open>subsubsection*\<close>). Using an invariant, a derived ontology could, \<^eg>, require that
 any sequence of technical-elements must be introduced by a text-element with a higher level
 (this would require that technical text section are introduce by a section element).
@@ -566,9 +566,9 @@ It extends \<^verbatim>\<open>COL\<close> by the following concepts:
 }
 \end{minipage}
 \end{center}
-
+(*
 TODO: There are some slight problems in  the hierarchy ...
-
+*)
 \<close>
 
 text\<open>A pivotal abstract class in the hierarchy is:
@@ -801,7 +801,7 @@ doc_class EC = AC  +
 
 We now define the document representations, in the file 
 \<^file>\<open>../../../src/ontologies/CENELEC_50128/DOF-CENELEC_50128.sty\<close>. Let us assume that we want to 
-register the definition of EC's in a dedicated table of contents (\inlineltx{tos}) 
+register the definition of EC's in a dedicated table of contents (\<^boxed_latex>\<open>tos\<close>) 
 and use an earlier defined environment \inlineltx|\begin{EC}...\end{EC}| for their graphical 
 representation. Note that the \inlineltx|\newisadof{}[]{}|-command requires the 
 full-qualified names, \<^eg>, \<^boxed_theory_text>\<open>text.CENELEC_50128.EC\<close> for the document class and 
@@ -892,7 +892,7 @@ schemata:
 \end{ltx}
 
   After the definition of the dispatcher, one can, optionally, define a custom representation 
-  using the \inlineltx|newisadof|-command, as introduced in the previous section: 
+  using the \<^boxed_latex>\<open>newisadof\<close>-command, as introduced in the previous section: 
 
 \begin{ltx}
 \newisadof{section}[label=,type=][1]{%
@@ -1258,7 +1258,7 @@ text\<open>
   \<^file>\<open>../../../src/ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close> contains an example that, firstly, 
   shows how to write the author and affiliation information into the auxiliary file for re-use 
   in the next \<^LaTeX>-run and, secondly, shows how to collect the author and affiliation 
-  information into an \inlineltx|\author| and a \inlineltx|\institution| statement, each of 
+  information into an \<^boxed_latex>\<open>\author\<close> and a \<^boxed_latex>\<open>\institution\<close> statement, each of 
   which containing the information for all authors. The collection of the author information 
   is provided by the following \<^LaTeX>-code:
 
@@ -1278,12 +1278,12 @@ text\<open>
 }
 \end{ltx}
 
-The new command \inlineltx|\addauthor| and a similarly defined command \inlineltx|\addaffiliation|
+The new command \<^boxed_latex>\<open>\addauthor\<close> and a similarly defined command \<^boxed_latex>\<open>\addaffiliation\<close>
 can now be used in the definition of the representation of the concept 
 \<^boxed_theory_text>\<open>text.scholarly_paper.author\<close>, which writes the collected information in the 
 job's aux-file. The intermediate step of writing this information into the job's aux-file is necessary,
 as the author and affiliation information is required right at the begin of the document 
-(\<^ie>, when \<^LaTeX>'s \inlineltx|\maketitle| is invoked) while  \<^isadof> allows to define authors at 
+(\<^ie>, when \<^LaTeX>'s \<^boxed_latex>\<open>\maketitle\<close> is invoked) while  \<^isadof> allows to define authors at 
 any place within a document:
 
 \begin{ltx}
@@ -1311,8 +1311,8 @@ any place within a document:
 }
 \end{ltx}
 
-Finally, the collected information is used in the  \inlineltx|\author| command using the 
-\inlineltx|AtBeginDocument|-hook:
+Finally, the collected information is used in the  \<^boxed_latex>\<open>\author\<close> command using the 
+\<^boxed_latex>\<open>AtBeginDocument\<close>-hook:
 
 \begin{ltx}
 \newcommand{\DOFauthor}{\author{\dof@author}}
@@ -1348,7 +1348,7 @@ text\<open>
   inherited ontologies to overwrite these restrictions and, therefore, to provide also support
   for additional document templates. For example, the ontology \<^boxed_theory_text>\<open>technical_report\<close>
   extends the \<^boxed_theory_text>\<open>scholarly_paper\<close> ontology and its \<^LaTeX> supports provides support
-  for the \inlineltx|scrrept|-class which is not supported by the \<^LaTeX> support for 
+  for the \<^boxed_latex>\<open>scrrept\<close>-class which is not supported by the \<^LaTeX> support for 
   \<^boxed_theory_text>\<open>scholarly_paper\<close>.
 \<close>
 
@@ -1358,8 +1358,6 @@ text\<open>
   is used in plain\<^TeX>-mode. This is known to cause issues with some modern \<^LaTeX>-classes
   such as LPICS. Such a conflict might require the help of an Isabelle wizard.
 \<close>
-
-
 
 
 (*<*)
