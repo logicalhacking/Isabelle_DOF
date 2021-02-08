@@ -1042,8 +1042,8 @@ section*[infrastructure::technical]\<open>Technical Infrastructure\<close>
 text\<open> 
   The list of fully supported (\<^ie>, supporting both interactive ontological modeling and 
   document generation) ontologies and the list of supported document templates can be 
-  obtained by calling \inlinebash|isabelle mkroot_DOF -h| (see \<^technical>\<open>first_project\<close>).
-  Note that the postfix \inlinebash|-UNSUPPORTED| denotes experimental ontologies or templates 
+  obtained by calling \<^boxed_bash>\<open>isabelle mkroot_DOF -h\<close> (see \<^technical>\<open>first_project\<close>).
+  Note that the postfix \<^boxed_bash>\<open>-UNSUPPORTED\<close> denotes experimental ontologies or templates 
   for which further manual setup steps might be required or that are not fully tested. Also note 
   that the \<^LaTeX>-class files required by the templates need to be already installed on your 
   system. This is mostly a problem for publisher specific templates (\<^eg>, Springer's 
@@ -1065,7 +1065,7 @@ text\<open>
   the Isabelle proof language, for example, or other more advanced concepts.
 
   Technically, ontologies\<^index>\<open>ontology!directory structure\<close> are stored in a directory 
-  \inlinebash|src/ontologies| and consist of a Isabelle theory file and a \<^LaTeX> -style file:
+  \<^boxed_bash>\<open>src/ontologies\<close> and consist of a Isabelle theory file and a \<^LaTeX> -style file:
 %
 \begin{center}
 \begin{minipage}{.9\textwidth}
@@ -1089,9 +1089,9 @@ text\<open>
 \end{center}
 \<close>
 text\<open>
-  Developing a new ontology ``\inlinebash|foo|'' requires, from a technical perspective, the 
+  Developing a new ontology ``\<^boxed_bash>\<open>foo\<close>'' requires, from a technical perspective, the 
   following steps:
-  \<^item> create a new sub-directory \inlinebash|foo| in the directory \inlinebash|src/ontologies|
+  \<^item> create a new sub-directory \<^boxed_bash>\<open>foo\<close> in the directory \<^boxed_bash>\<open>src/ontologies\<close>
   \<^item> definition of the ontological concepts, using \<^isadof>'s Ontology Definition Language (ODL), in 
     a new theory file \<^path>\<open>src/ontologies/foo/foo.thy\<close>.  
   \<^item> definition of the document representation for the ontological concepts in a \LaTeX-style 
@@ -1100,7 +1100,7 @@ text\<open>
     \<^path>\<open>src/ontologies/ontologies.thy\<close>. 
   \<^item> activation of the new document setup by executing the install script. You can skip the lengthy 
     checks for the AFP entries and the installation of the Isabelle patch by using the 
-    \inlinebash|--skip-patch-and-afp| option:
+    \<^boxed_bash>\<open>--skip-patch-and-afp\<close> option:
     @{boxed_bash [display] \<open>ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp\<close>}
 \<close>
 
@@ -1127,11 +1127,11 @@ text\<open>
 \<close>
 
 text\<open>
-  Developing a new document template ``\inlinebash|bar|'' requires the following steps:
-  \<^item> develop a new \<^LaTeX>-template \inlinebash|src/document-templates/root-bar.tex|
+  Developing a new document template ``\<^boxed_bash>\<open>bar\<close>'' requires the following steps:
+  \<^item> develop a new \<^LaTeX>-template \<^boxed_bash>\<open>src/document-templates/root-bar.tex\<close>
   \<^item> activation of the new document template  by executing the install script. You can skip the lengthy 
     checks for the AFP entries and the installation of the Isabelle patch by using the 
-    \inlinebash|--skip-patch-and-afp| option:
+    \<^boxed_bash>\<open>--skip-patch-and-afp\<close> option:
     @{boxed_bash [display] \<open>ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp\<close>}
 \<close>
 
