@@ -1159,7 +1159,7 @@ text\<open>
   Moreover, you might want to add/modify the template specific configuration 
   (\autoref{lst:config-start}-\ref{lst:config-end}). The new template should be stored in 
   \<^path>\<open>src/document-templates\<close> and its file name should start with the prefix \<^path>\<open>root-\<close>. After
-  adding a new template, call the \inlinebash{install} script (see \<^technical>\<open>infrastructure\<close>  
+  adding a new template, call the \<^boxed_bash>\<open>install\<close> script (see \<^technical>\<open>infrastructure\<close>  
   The common structure of an \<^isadof> document template looks as follows: 
 
 \begin{ltx}[escapechar=ë, numbers=left,numberstyle=\tiny,xleftmargin=5mm]
