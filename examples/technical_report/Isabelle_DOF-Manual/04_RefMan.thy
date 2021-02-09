@@ -51,13 +51,13 @@ text\<open>
 \<close>
 text\<open>
   Similarly to Isabelle, which is based on a core logic \<^theory>\<open>Pure\<close> and then extended by libraries
-  to major systems like \<^verbatim>\<open>HOL\<close> or \<^verbatim>\<open>FOL\<close>, \<^isadof> has a generic core infrastructure \<^dof> and then
+  to major systems like \<^verbatim>\<open>HOL\<close>, \<^isadof> has a generic core infrastructure \<^dof> and then
   presents itself to users via major library extensions,  which add domain-specific 
-  system-extensions. Consequently, ontologies in \<^isadof> are not just a sequence of descriptions in 
+  system-extensions. Ontologies in \<^isadof> are not just a sequence of descriptions in 
   \<^isadof>'s Ontology Definition Language (ODL). Rather, they are themselves presented as integrated 
   sources that provide textual decriptions, abbreviations, macro-support and even ML-code. 
-  Conceptually, the library of \<^isadof> is currently organized as follows
-  \<^footnote>\<open>Note that the \<^emph>\<open>technical\<close> organisation is slightly different and shown in 
+  Conceptually, the library of \<^isadof> is currently organized as follows\<^footnote>\<open>Note that the \<^emph>\<open>technical\<close> 
+  organisation is slightly different and shown in 
   @{technical (unchecked) \<open>infrastructure\<close>}.\<close>: 
 %
 \begin{center}
@@ -114,9 +114,9 @@ text\<open>
   \<^emph>\<open>is-a\<close> relation between classes;
   \<^item> classes may refer to other classes via a regular expression in a
     \<^emph>\<open>where\<close> clause;
-(* % TODO:
+   % TODO:
    % Update to the new implementation.
-   % where is deprecated and the new implementation uses accepts and rejects. *)
+   % where is deprecated and the new implementation uses accepts and rejects. 
   \<^item> attributes may have default values in order to facilitate notation.
 \<close>
 
@@ -149,9 +149,9 @@ text\<open>
   classes and their inheritance relation structure meta-data of text-elements in an object-oriented 
   manner, monitor classes enforce structural organization of documents via the language specified 
   by the regular expression enforcing a sequence of text-elements.
-  (* % TODO:
+     % TODO:
      % Update to the new implementation.
-     % where is deprecated and the new implementation uses accepts and rejects. *)
+     % where is deprecated and the new implementation uses accepts and rejects. 
 
   A major design decision of ODL is to denote attribute values by HOL-terms and HOL-types. 
   Consequently, ODL can refer to any predefined type defined in the HOL library, \<^eg>, 
@@ -177,9 +177,9 @@ text\<open>
      in \<^boxed_theory_text>\<open> ... \<close> which might contain certain ``quasi-letters'' such 
      as \<^boxed_theory_text>\<open>_\<close>, \<^boxed_theory_text>\<open>-\<close>, \<^boxed_theory_text>\<open>.\<close> (see~@{cite "wenzel:isabelle-isar:2020"} for 
      details).
-    (* % TODO
+       % TODO
        % This phrase should be reviewed to clarify identifiers.
-       % Peculiarly, "and identifiers in \<^boxed_theory_text>\<open> ... \<close>". *)
+       % Peculiarly, "and identifiers in \<^boxed_theory_text>\<open> ... \<close>". 
   \<^item> \<open>tyargs\<close>:\<^index>\<open>tyargs@\<open>tyargs\<close>\<close> 
      \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
      \<open>typefree\<close> denotes fixed type variable(\<open>'a\<close>, \<open>'b\<close>, ...) (see~@{cite "wenzel:isabelle-isar:2020"})
@@ -300,7 +300,7 @@ text\<open>
   underscore ``\_'') that do have a special meaning in \<^LaTeX>.  
   Moreover, as usual, special care has to be taken for commands that write into aux-files
   that are included in a following \<^LaTeX>-run. For such complex examples, we refer the interested 
-  reader, in general, to  the style files provided in the \<^isadof> distribution. In particular 
+  reader to  the style files provided in the \<^isadof> distribution. In particular 
   the definitions of the concepts \<^boxed_theory_text>\<open>title*\<close> and \<^boxed_theory_text>\<open>author*\<close> in the 
   file \<^file>\<open>../../../src/ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close> show examples of protecting 
   special characters in definitions that need to make use of a entries in an aux-file. 
@@ -371,8 +371,6 @@ For a declared class \<^theory_text>\<open>cid\<close>, there exists a text anti
 The precise presentation is decided in the \<^emph>\<open>layout definitions\<close>, for example by suitable
 \<^LaTeX>-template code. Declared but not yet defined instances must be referenced with a particular
 pragma in order to enforce a relaxed checking \<^theory_text>\<open> @{cid (unchecked) \<open>oid\<close>} \<close>.
-
-(* % there should also exist a *term* antiquotation ... *)
 \<close>
 
 (*<*)
