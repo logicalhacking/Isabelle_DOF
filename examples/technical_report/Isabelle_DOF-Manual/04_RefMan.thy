@@ -440,8 +440,7 @@ ML\<open>writeln (DOF_core.print_doc_class_tree @{context} (fn (n,l) => String.i
 text\<open> 
  \<^isadof> provides a Common Ontology Library (COL)\<^index>\<open>Common Ontology Library@see COL\<close>
  \<^bindex>\<open>COL\<close> \<^footnote>\<open>contained in \<^theory>\<open>Isabelle_DOF.Isa_COL\<close>\<close>
- that introduces several ontology root concepts such as common text-elements and 
- figures. The overall class-tree it provides looks as follows:
+ that introduces several ontology concepts; its  overall class-tree it provides looks as follows:
 %
 \begin{center}
 \begin{minipage}{.9\textwidth}
