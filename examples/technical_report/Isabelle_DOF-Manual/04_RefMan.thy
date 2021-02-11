@@ -61,7 +61,7 @@ text\<open>
   @{technical (unchecked) \<open>infrastructure\<close>}.\<close>: 
 %
 \begin{center}
-\begin{minipage}{.9\textwidth}
+\begin{minipage}{.9\textwidth}\small
 \dirtree{%
 .1 COL\DTcomment{The Common Ontology Library}.
 .2 scholarly\_paper\DTcomment{Scientific Papers}.
@@ -386,12 +386,12 @@ text\<open>\<^isadof> provides a number of inspection commands.
 \<^item> \<^theory_text>\<open>print_doc_items\<close> allows  to view the status of the internal
   object-table of text-elements that were tracked, and 
 \<^item> \<^theory_text>\<open>check_doc_global\<close> checks if all declared object references have been
-  defined, and all monitors are in a final state and final invariant checks 
-  on all objects are satisfied (cf. @{technical (unchecked) \<open>sec:advanced\<close>})
+  defined, all monitors are in a final state, and checks the final invariant  
+  on all objects (cf. @{technical (unchecked) \<open>sec:advanced\<close>})
 \<close>
 
 subsection\<open>Macros\<close>
-text\<open>There is a mechanism to define document-local short-cuts and macros which
+text\<open>There is a mechanism to define document-local macros which
 were PIDE-supported but lead to an expansion in the integrated source; this feature
 can be used to define 
 \<^item> \<^theory_text>\<open>shortcuts\<close>, \<^ie>, short names that were expanded to, for example,
@@ -399,7 +399,7 @@ can be used to define
 \<^item> \<^theory_text>\<open>macro\<close>'s (= parameterized short-cuts), which allow for 
   passing an argument to the expansion mechanism.
 \<close>
-text\<open>Note that the argument can be checked by an own SML-function with respect to syntactic
+text\<open>The argument can be checked by an own SML-function with respect to syntactic
 as well as semantic regards; however, the latter feature is currently only accessible at
 the SML level and not directly in the Isar language. We would like to stress, that this 
 feature is basically an abstract interface to existing Isabelle functionality in the document 
@@ -443,7 +443,7 @@ text\<open>
  that introduces several ontology concepts; its  overall class-tree it provides looks as follows:
 %
 \begin{center}
-\begin{minipage}{.9\textwidth}
+\begin{minipage}{.9\textwidth}\small
 \dirtree{%
 .0 .
 .1 Isa\_COL.text\_element.
@@ -461,8 +461,7 @@ text\<open>
 
 text\<open>
 In particular it defines the super-class \<^boxed_theory_text>\<open>text_element\<close>: the root of all 
-text-elements,
-
+text-elements:
 @{boxed_theory_text [display]\<open>
 doc_class text_element = 
    level         :: "int  option"    <=  "None" 
@@ -477,7 +476,7 @@ from \<^boxed_theory_text>\<open>Some -1\<close> (corresponding to \<^boxed_late
 to \<^boxed_theory_text>\<open>Some 3\<close> (corresponding to \<^boxed_latex>\<open>\subsubsection\<close>, respectively, 
 \<^boxed_theory_text>\<open>subsubsection*\<close>). Using an invariant, a derived ontology could, \<^eg>, require that
 any sequence of technical-elements must be introduced by a text-element with a higher level
-(this would require that technical text section are introduce by a section element).
+(this requires that technical text section are introduce by a section element).
 
 The attribute \<^term>\<open>referentiable\<close> captures the information if a text-element can be target
 for a reference, which is the case for sections or subsections, for example, but not arbitrary
@@ -485,11 +484,9 @@ elements such as, \<^ie>, paragraphs (this mirrors restrictions of the target \<
 The attribute  \<^term>\<open>variants\<close> refers to an Isabelle-configuration attribute that permits
 to steer the different versions a \<^LaTeX>-presentation of the integrated source.
 
-
 For further information of the root classes such as \<^typ>\<open>figure\<close>'s, please consult the ontology 
- \<^theory>\<open>Isabelle_DOF.Isa_COL\<close> directly.
-
-COL finally provides macros that extend the command-language of the DOF-core by the following
+ \<^theory>\<open>Isabelle_DOF.Isa_COL\<close> directly. COL finally provides macros that extend the command-language 
+of the DOF-core by the following
 abbreviations:
 
 \<^item> \<open>derived_text_element\<close> :
@@ -524,7 +521,7 @@ text\<open> The \<^verbatim>\<open>scholarly_paper\<close> ontology is oriented 
 
 It extends \<^verbatim>\<open>COL\<close> by the following concepts:
 \begin{center}
-\begin{minipage}{.9\textwidth}
+\begin{minipage}{.9\textwidth}\small
 \dirtree{%
 .0 .
 .1 scholarly\_paper.title.
@@ -563,10 +560,10 @@ It extends \<^verbatim>\<open>COL\<close> by the following concepts:
 }
 \end{minipage}
 \end{center}
+\<close>
 (*
 TODO: There are some slight problems in  the hierarchy ...
 *)
-\<close>
 
 text\<open>A pivotal abstract class in the hierarchy is:
 @{boxed_theory_text [display]
@@ -700,7 +697,7 @@ high-level arranged at root-class level,
 
 %
 \begin{center}
-\begin{minipage}{.9\textwidth}
+\begin{minipage}{.9\textwidth}\small
 \dirtree{%
 .0 .
 .1 technical\_report.front\_matter\DTcomment{...}.
@@ -734,7 +731,7 @@ appropriate for this type of long-and-tedious documents,
 
 %
 \begin{center}
-\begin{minipage}{.9\textwidth}
+\begin{minipage}{.9\textwidth}\small
 \dirtree{%
 .0 .
 .1 CENELEC\_50128.judgement\DTcomment{...}.
@@ -1065,7 +1062,7 @@ text\<open>
   \<^boxed_bash>\<open>src/ontologies\<close> and consist of a Isabelle theory file and a \<^LaTeX> -style file:
 %
 \begin{center}
-\begin{minipage}{.9\textwidth}
+\begin{minipage}{.9\textwidth}\small
 \dirtree{%
 .1 .
 .2 src.
@@ -1109,7 +1106,7 @@ text\<open>
   are stored in a directory 
   \<^path>\<open>src/document-templates\<close>:\<^index>\<open>document template!directory structure\<close>
 \begin{center}
-\begin{minipage}{.9\textwidth}
+\begin{minipage}{.9\textwidth}\small
 \dirtree{%
 .1 .
 .2 src.
@@ -1196,7 +1193,7 @@ text\<open>
 subsection\<open>Tips, Tricks, and Known Limitations\<close>
 text\<open>
   In this section, we will discuss several tips and tricks for developing 
-  new or adapting existing document templates or \<^LaTeX>-represenations of ontologies.
+  new or adapting existing document templates or \<^LaTeX>-representations of ontologies.
 \<close>
 
 subsubsection\<open>Getting Started\<close>
@@ -1218,7 +1215,7 @@ text\<open>
   By default, \<^LaTeX> cuts of many warning or error messages after 79 characters. Due to the 
   use of full-qualified names in \<^isadof>, this can often result in important information being 
   cut off. Thus, it can be very helpful to configure \<^LaTeX> in such a way that it prints 
-  long error or warning messages. This can easily be done on the command line for individual 
+  long error or warning messages. This can easily be done for individual 
   \<^LaTeX> invocations: 
   @{boxed_bash [display] \<open>ë\prompt{MyProject/output/document}ë max_print_line=200 error_line=200 half_error_line=100  pdflatex root.tex\<close>}
 \<close>
@@ -1280,8 +1277,7 @@ can now be used in the definition of the representation of the concept
 \<^boxed_theory_text>\<open>text.scholarly_paper.author\<close>, which writes the collected information in the 
 job's aux-file. The intermediate step of writing this information into the job's aux-file is necessary,
 as the author and affiliation information is required right at the begin of the document 
-(\<^ie>, when \<^LaTeX>'s \<^boxed_latex>\<open>\maketitle\<close> is invoked) while  \<^isadof> allows to define authors at 
-any place within a document:
+while  \<^isadof> allows to define authors at  any place within a document:
 
 \begin{ltx}
 \provideisadof{text.scholarly_paper.author}%
