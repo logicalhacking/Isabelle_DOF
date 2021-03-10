@@ -1202,7 +1202,7 @@ text\<open>
   to develop new document templates or ontology representations. The default setup of the \<^isadof>
   build system generated a \<^path>\<open>output/document\<close> directory with a self-contained \<^LaTeX>-setup. In 
   this directory, you can directly use \<^LaTeX> on the main file, called \<^path>\<open>root.tex\<close>:
-  @{boxed_bash [display] \<open>ë\prompt{MyProject/output/document}ë pdflatex root.tex\<close>}
+  @{boxed_bash [display] \<open>ë\prompt{MyProject/output/document}ë lualatex root.tex\<close>}
 
   This allows you to develop and check your \<^LaTeX>-setup without the overhead of running 
    \<^boxed_bash>\<open>isabelle build\<close> after each change of your template (or ontology-style). Note that 
@@ -1217,7 +1217,7 @@ text\<open>
   cut off. Thus, it can be very helpful to configure \<^LaTeX> in such a way that it prints 
   long error or warning messages. This can easily be done for individual 
   \<^LaTeX> invocations: 
-  @{boxed_bash [display] \<open>ë\prompt{MyProject/output/document}ë max_print_line=200 error_line=200 half_error_line=100  pdflatex root.tex\<close>}
+  @{boxed_bash [display] \<open>ë\prompt{MyProject/output/document}ë max_print_line=200 error_line=200 half_error_line=100  lualatex root.tex\<close>}
 \<close>
 
 subsubsection\<open>Deferred Declaration of Information\<close>

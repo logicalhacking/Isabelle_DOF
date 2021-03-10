@@ -28,7 +28,6 @@ define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
                  LaTeX   \<rightleftharpoons> \<open>\LaTeX{}\<close>
                  TeX     \<rightleftharpoons> \<open>\TeX{}\<close>
                  pdf     \<rightleftharpoons> \<open>PDF\<close>
-                 pdftex  \<rightleftharpoons> \<open>\pdftex{}\<close>
 
 text\<open>Note that these setups assume that the associated \<^LaTeX> macros 
      are defined, \<^eg>, in the document prelude. \<close>
