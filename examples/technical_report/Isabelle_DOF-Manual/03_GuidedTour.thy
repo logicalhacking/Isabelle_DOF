@@ -105,8 +105,6 @@ Isabelle/DOF Installer
 ======================
 * Checking Isabelle version:
   Success: found supported Isabelle version ë(\isabellefullversion)ë
-* Checking (La)TeX installation:
-  Success: pdftex supports \expanded{} primitive.
 * Check availability of Isabelle/DOF patch:
   Warning: Isabelle/DOF patch is not available or outdated.
            Trying to patch system ....
