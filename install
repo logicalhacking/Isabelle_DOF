@@ -84,34 +84,6 @@ check_isabelle_version() {
     fi
 }
 
-check_pdftex() {
-    echo "* Checking (La)TeX installation:"
-    OLDDIR=`pwd`
-    DIR=`mktemp -d`
-    cd $DIR; 
-    pdftex -interaction=nonstopmode \\expanded{Success}\\end > /dev/null
-    if [ $? -eq 0 ]; then
-        echo "  Success: pdftex supports \\expanded{} primitive."
-    else 
-        cd $OLDDIR
-        echo "  WARNING:"
-        echo "    The version of pdf(La)TeX you are using is outdated (and does"
-        echo "    not support the \\expanded primitive). It is not supported by the"
-        echo "    current version of Isabelle/DOF. Please install a supported TeX"
-        echo "    distribution (e.g., TeXLive 2020 or later)."
-        echo 
-        read -p "    Still continue (y/N)? " -n 1 -r
-        echo 
-        if [[ $REPLY =~ ^[Yy]$ ]];
-        then 
-            echo "    Continuing installation on your OWN risk."
-        else
-            exit_error
-        fi
-    fi
-    cd $OLDDIR
-}
-
 check_afp_entries() {
     echo "* Checking availability of AFP entries:"
     missing=""
@@ -286,7 +258,6 @@ echo ""
 echo "Isabelle/DOF Installer"
 echo "======================"
 check_isabelle_version
-check_pdftex
 if [ "$SKIP" = "true" ]; then
   echo "* Warning: skipping installation of Isabelle patch and AFP entries."
 else
