@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019-2020 The University of Exeter 
- *               2018-2020 The University of Paris-Saclay
+ *               2019-2021 The University of Exeter 
+ *               2018-2021 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -18,7 +18,7 @@ begin
 
 
 section\<open>Local Document Setup.\<close>
-text\<open>... introducing document specific abbreviations and macros.\<close>
+text\<open>Introducing document specific abbreviations and macros:\<close>
 
 define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
                  isadof  \<rightleftharpoons> \<open>\isadof\<close>
@@ -28,7 +28,6 @@ define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
                  LaTeX   \<rightleftharpoons> \<open>\LaTeX{}\<close>
                  TeX     \<rightleftharpoons> \<open>\TeX{}\<close>
                  pdf     \<rightleftharpoons> \<open>PDF\<close>
-                 pdftex  \<rightleftharpoons> \<open>\pdftex{}\<close>
 
 text\<open>Note that these setups assume that the associated \<^LaTeX> macros 
      are defined, \<^eg>, in the document prelude. \<close>
@@ -94,9 +93,6 @@ setup\<open>(* std_text_antiquotation        \<^binding>\<open>my_text\<close> #
       boxed_bash_antiquotation         \<^binding>\<open>boxed_bash\<close> 
      \<close>
 
-
-
-
 open_monitor*[this::report] 
 
 (*>*)
@@ -140,7 +136,8 @@ abstract*[abs, keywordlist="[\<open>Ontology\<close>, \<open>Ontological Modelin
     the link between formal and informal content in documents in a machine
     checked way. These links can connect both text elements as well as formal
     modelling elements such as terms, definitions, code  and logical formulas,
-    alltogether *\<open>integrated\<close> in a state-of-the-art interactive theorem prover.
+    alltogether \<^emph>\<open>integrated\<close> in a state-of-the-art interactive theorem prover.
+
 \<close>
 
 (*<*) 

@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019      The University of Exeter 
- *               2018-2019 The University of Paris-Saclay
+ *               2019-2021 The University of Exeter 
+ *               2018-2021 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -1196,7 +1196,7 @@ text\<open>
   Registers  \<^ML_type>\<open>Toplevel.transition -> Toplevel.transition\<close> parsers to the 
   Isar interpreter.\<close>
 
-text\<open>The file \<^file>\<open>~~/src/HOL/ex/Commands.thy\<close> shows some example Isar command definitions, with the 
+text\<open>The file \<^file>\<open>~~/src/HOL/Examples/Commands.thy\<close> shows some example Isar command definitions, with the 
      all-important theory header declarations for outer syntax keywords.\<close>
 
 subsubsection*[ex1137::example]\<open>Examples: \<^theory_text>\<open>text\<close>\<close>

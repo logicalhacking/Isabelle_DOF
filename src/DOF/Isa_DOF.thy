@@ -854,11 +854,13 @@ fun err msg pos = error (msg ^ Position.here pos);
 
 fun check_path check_file ctxt dir (name, pos) =
   let
-    val _ = Context_Position.report ctxt pos Markup.language_path;
+    val _ = Context_Position.report ctxt pos (Markup.language_path true); (* TODO: pos should be 
+                                                                                   "lifted" to 
+                                                                                   type source *)
 
     val path = Path.append dir (Path.explode name) handle ERROR msg => err msg pos;
     val _ = Path.expand path handle ERROR msg => err msg pos;
-    val _ = Context_Position.report ctxt pos (Markup.path (Path.smart_implode path));
+    val _ = Context_Position.report ctxt pos (Markup.path (Path.implode_symbolic path));
     val _ =
       (case check_file of
         NONE => path

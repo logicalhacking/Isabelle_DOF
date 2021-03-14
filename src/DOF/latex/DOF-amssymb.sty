@@ -1,5 +1,5 @@
-%% Copyright (C) 2020 The University of Paris-Saclay
-%%               2020 The University of Exeter
+%% Copyright (C) 2021 University of Exeter
+%%               2021 University of Paris-Saclay
 %%
 %% License:
 %%   This program can be redistributed and/or modified under the terms
@@ -11,16 +11,16 @@
 %%
 %%   SPDX-License-Identifier: LPPL-1.3c+ OR BSD-2-Clause
 
+
 \NeedsTeXFormat{LaTeX2e}\relax
-\ProvidesPackage{DOF-scholarly_paper-thm}
+\ProvidesPackage{DOF-amssymb}
   [<isadofltxversion>%
-  Document-Type Support Framework for Isabelle (LNCS).]
+  Document-Type Support Framework for Isabelle (amssymb wrapper for lualatex/pdflatex).]
 
-\RequirePackage{amsthm}
-
-\newtheorem{example}{Example}
-\newtheorem{definition}{Definition}
-\newtheorem{theorem}{Theorem} 
-
-
-
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage{amssymb}
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \usepackage{latexsym}
+\fi

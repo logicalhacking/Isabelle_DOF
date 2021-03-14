@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019      The University of Exeter 
- *               2018-2019 The University of Paris-Saclay
+ *               2019-2021 The University of Exeter 
+ *               2018-2021 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -35,89 +35,55 @@ available on \href{https://cloud.docker.com/u/logicalhacking/}{Docker Hub}. Thus
 \href{https://www.docker.com}{Docker} installed and 
 your installation of Docker supports X11 application, you can start \<^isadof> as follows:
 
-@{boxed_bash [display] 
-\<open>ë\prompt{}ë docker run -ti --rm -e DISPLAY=$DISPLAY \
+@{boxed_bash [display] \<open>ë\prompt{}ë docker run -ti --rm -e DISPLAY=$DISPLAY \
    -v /tmp/.X11-unix:/tmp/.X11-unix \ 
    logicalhacking/isabelle_dof-ë\doflatestversionë_ë\MakeLowercase{\isabellelatestversion}ë \
-   isabelle jedit
-\<close>}
+   isabelle jedit\<close>}
 \<close>
 
 subsection*[installation::technical]\<open>Installation\<close>
 text\<open>
   In this section, we will show how to install \<^isadof> and its pre-requisites: Isabelle and 
   \<^LaTeX>. We assume a basic familiarity with a Linux/Unix-like command line (i.e., a shell). 
+
+  \<^isadof> requires Isabelle\<^bindex>\<open>Isabelle\<close> (\isabellefullversion) with a recent \<^LaTeX>-distribution
+  (e.g., TexLive 2020 or later).    
+  \<^isadof> uses a two-part version system (e.g., 1.0.0/2020),  where the first part is the version
+  of \<^isadof> (using semantic versioning) and the second part is the supported version of Isabelle. 
+  Thus, the same version of \<^isadof> might be available for different versions of Isabelle. 
 \<close>
 
-subsubsection*[prerequisites::technical]\<open>Pre-requisites\<close>
+paragraph\<open>Installing Isabelle.\<close>
 text\<open>
-  \<^isadof> has to major pre-requisites: 
-  \<^item> \<^bold>\<open>Isabelle\<close>\<^bindex>\<open>Isabelle\<close> (\isabellefullversion). 
-    \<^isadof> uses a two-part version system (e.g., 1.0.0/2020),  where the first part is the version
-    of \<^isadof> (using semantic versioning) and the second part is the supported version of Isabelle. 
-    Thus, the same version of \<^isadof> might be available for different versions of Isabelle. 
-  \<^item> \<^bold>\<open>\<^TeXLive> 2020\<close>\<^bindex>\<open>TexLive@\<^TeXLive>\<close> (or any other modern  \<^LaTeX>-distribution where
-    \<^pdftex> supports the \<^boxed_latex>\<open>\expanded\<close>  primitive).
-    \<^footnote>\<open>see \<^url>\<open>https://www.texdev.net/2018/12/06/a-new-primitive-expanded\<close>\<close>
-\<close>
-
-paragraph\<open>Installing Isabelle\<close>
-text\<open>
-%\enlargethispage{\baselineskip}
-  Please download and install the Isabelle \isabelleversion distribution for your operating system 
-  from the \href{\isabelleurl}{Isabelle website} (\url{\isabelleurl}). After the successful 
-  installation of Isabelle, you should be able to call the \<^boxed_bash>\<open>isabelle\<close> tool on the 
-  command line:
-
-\begin{bash}
-ë\prompt{}ë isabelle version
-ë\isabellefullversionë
-\end{bash}
-% bu : do not know why this does not work here ...
-%@ {boxed_bash [display]\<open>
-%ë\prompt{}ë isabelle version
-%ë\isabellefullversionë
-%\<close>}
+  Please download and install Isabelle (version: \isabelleversion) from the 
+  \href{\isabelleurl}{Isabelle website} (\url{\isabelleurl}). After the 
+  successful installation of Isabelle, you should be able to call the \<^boxed_bash>\<open>isabelle\<close> 
+  tool on the command line:
+@{boxed_bash [display]\<open>ë\prompt{}ë isabelle version
+ë\isabellefullversionë\<close>}
 
 Depending on your operating system and depending if you put Isabelle's  \<^boxed_bash>\<open>bin\<close> directory
 in your  \<^boxed_bash>\<open>PATH\<close>, you will need to invoke  \<^boxed_bash>\<open>isabelle\<close> using its
 full qualified path, \<^eg>:
-
-\begin{bash}
-ë\prompt{}ë /usr/local/Isabelleë\isabelleversion/ëbin/isabelle version
-ë\isabellefullversionë
-\end{bash}
-
-%@ {boxed_bash [display]\<open>
-%ë\prompt{}ë /usr/local/Isabelleë\isabelleversion/ëbin/isabelle version
-%ë\isabellefullversionë
-%\<close>}
+@{boxed_bash [display]\<open>ë\prompt{}ë /usr/local/Isabelleë\isabelleversionë/bin/isabelle version
+ë\isabellefullversionë\<close>}
 \<close>
 
-paragraph\<open>Installing \<^TeXLive>\<close>
+paragraph\<open>Installing \<^TeXLive>.\<close>
 text\<open>
   Modern Linux distribution will allow you to install \<^TeXLive> using their respective package 
   managers. On a modern Debian system or a Debian derivative (\<^eg>, Ubuntu), the following command 
   should install all required \<^LaTeX> packages:
-
-\begin{bash}
-ë\prompt{}ë sudo aptitude install texlive-latex-extra texlive-fonts-extra
-\end{bash}
-%@ {boxed_bash [display]\<open>
-%ë\prompt{}ë sudo aptitude install texlive-latex-extra texlive-fonts-extra
-%\<close>}
+@{boxed_bash [display]\<open>ë\prompt{}ë sudo aptitude install texlive-latex-extra texlive-fonts-extra\<close>}
 \<close>
 
 subsubsection*[isadof::technical]\<open>Installing \<^isadof>\<close>
 text\<open>
   In the following, we assume that you already downloaded the \<^isadof> distribution 
   (\href{\isadofarchiveurl}{\isadofarchiven}) from the \<^isadof> web site. The main steps for 
-  installing are extracting the \<^isadof> distribution and calling its \inlinebash|install| script. 
+  installing are extracting the \<^isadof> distribution and calling its \<^boxed_bash>\<open>install\<close> script. 
   We start by extracting the \<^isadof> archive:
-
-\begin{bash}
-ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë
-\end{bash}
+@{boxed_bash [display]\<open>ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë\<close>}
 This will create a directory \texttt{\isadofdirn} containing \<^isadof> distribution.
 Next, we need to invoke the \<^boxed_bash>\<open>install\<close> script. If necessary, the installations 
 automatically downloads additional dependencies from the AFP (\<^url>\<open>https://www.isa-afp.org\<close>), 
@@ -132,24 +98,23 @@ If the \<^boxed_bash>\<open>isabelle\<close> tool is not in your  \<^boxed_bash>
 path of the \<^boxed_bash>\<open>isabelle\<close> tool ( \<^boxed_bash>\<open>install --help\<close> gives 
 you an overview of all available configuration options):
 
-\begin{bash}
-ë\prompt{}ë cd ë\isadofdirnë
+@{boxed_bash [display]\<open>ë\prompt{}ë cd ë\isadofdirnë
 ë\prompt{\isadofdirn}ë ./install --isabelle /usr/local/Isabelleë\isabelleversion/bin/isabelleë
 
 Isabelle/DOF Installer
 ======================
 * Checking Isabelle version:
   Success: found supported Isabelle version ë(\isabellefullversion)ë
-* Checking (La)TeX installation:
-  Success: pdftex supports \expanded{} primitive.
 * Check availability of Isabelle/DOF patch:
   Warning: Isabelle/DOF patch is not available or outdated.
            Trying to patch system ....
        Applied patch successfully, Isabelle/HOL will be rebuilt during
        the next start of Isabelle.
-* Checking availability of AFP entries:
-  Warning: could not find AFP entry Regular-Sets.
-  Warning: could not find AFP entry Functional-Automata.
+* Checking availability of AFP entries:\<close>}
+
+@{boxed_bash [display]
+\<open>ëë     Warning: could not find AFP entry Regular-Sets.
+      Warning: could not find AFP entry Functional-Automata.
            Trying to install AFP (this might take a few *minutes*) ....
            Registering Regular-Sets iëën 
                  /home/achim/.isabelle/Isabelleë\isabelleversion/ROOTSë
@@ -170,26 +135,76 @@ Isabelle/DOF Installer
        /home/achim/.isabelle/Isabelleë\isabelleversion/etc/settingsë
 * Installation successful. Enjoy Isabelle/DOF, you can build the session
   Isabelle/DOF and all example documents by executing:
-  /usr/local/Isabelleë\isabelleversion/bin/isabelleë build -D .
-\end{bash}
+  /usr/local/Isabelleë\isabelleversion/bin/isabelleë build -D . \<close>}
 
-After the successful installation, you can now explore the examples (in the sub-directory 
-\inlinebash|examples| or create your own project. On the first start, the session 
-\inlinebash|Isabelle_DOF| will be built automatically. If you want to pre-build this 
+After the successful installation, you can explore the examples (in the sub-directory 
+\<^boxed_bash>\<open>examples\<close> or create your own project. On the first start, the session 
+\<^boxed_bash>\<open>Isabelle_DOF\<close> will be built automatically. If you want to pre-build this 
 session and all example documents, execute:
-
-\begin{bash}
-ë\prompt{\isadofdirn}ë isabelle build -D . 
-\end{bash}
+@{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë isabelle build -D . \<close>} 
 \<close>
 
 subsection*[first_project::technical]\<open>Creating an \<^isadof> Project\<close>
 text\<open>
   \<^isadof> provides its own variant of Isabelle's 
-  \inlinebash|mkroot| tool, called \inlinebash|mkroot_DOF|:\index{mkroot\_DOF}
+  \<^boxed_bash>\<open>mkroot\<close> tool, called \<^boxed_bash>\<open>mkroot_DOF\<close>\index{mkroot\_DOF}:
+@{boxed_bash [display]\<open>ë\prompt{}ë isabelle mkroot_DOF myproject
 
-\begin{bash} 
-ë\prompt{}ë isabelle mkroot_DOF -h 
+Preparing session "myproject" iëën "myproject"
+  creating "myproject/ROOT"
+  creating "myproject/document/root.tex"
+
+Now use the following coëëmmand line to build the session:
+  isabelle build -D myproject \<close>}
+  The created project uses the default configuration (the ontology for writing academic papers 
+  (scholarly\_paper) using a report layout based on the article class (\<^boxed_latex>\<open>scrartcl\<close>) of 
+  the KOMA-Script bundle~@{cite "kohm:koma-script:2019"}. The directory \<^boxed_bash>\<open>myproject\<close> 
+  contains the \<^isadof>-setup for your  new document. To check the document formally, including the 
+  generation of the document in PDF, you only need to execute
+
+@{boxed_bash [display]\<open>ë\prompt{}ë  isabelle build -d . myproject \<close>}
+
+The dictory  \<^boxed_bash>\<open>myproject\<close> contains the following files and directories: 
+\begin{center}
+\begin{minipage}{.9\textwidth}
+\dirtree{%
+.1 .
+.2 myproject.
+.3 document.
+.4 build\DTcomment{Build Script}.
+.4 isadof.cfg\DTcomment{\<^isadof> configuraiton}.
+.4 preamble.tex\DTcomment{Manual \<^LaTeX>-configuration}.
+.3 ROOT\DTcomment{Isabelle build-configuration}.
+}
+\end{minipage}
+\end{center}
+The \<^isadof> configuration (\<^boxed_bash>\<open>isadof.cfg\<close>) specifies the required
+ontologies and the document template using a YAML syntax.\<^footnote>\<open>Isabelle power users will recognize that 
+\<^isadof>'s document setup does not make use of a file \<^boxed_bash>\<open>root.tex\<close>: this file is 
+replaced by built-in document templates.\<close> The main two configuration files for 
+users are:
+\<^item> The file \<^boxed_bash>\<open>ROOT\<close>\<^index>\<open>ROOT\<close>, which defines the Isabelle session. New theory files as well as new 
+  files required by the document generation (\<^eg>, images, bibliography database using \<^BibTeX>, local
+  \<^LaTeX>-styles) need to be registered in this file. For details of Isabelle's build system, please 
+  consult the Isabelle System Manual~@{cite "wenzel:system-manual:2020"}.
+\<^item> The file \<^boxed_bash>\<open>preamble.tex\<close>\<^index>\<open>preamble.tex\<close>, which allows users to add additional 
+  \<^LaTeX>-packages or to add/modify \<^LaTeX>-commands. 
+\<close>
+
+text\<open>
+  Creating a new document setup requires two decisions:
+  \<^item> which ontologies (\<^eg>, scholarly\_paper) are required and 
+  \<^item> which document template (layout)\index{document template} should be used 
+    (\<^eg>, scrartcl\index{scrartcl}). Some templates (\<^eg>, lncs) require that the users manually 
+    obtains and adds the necessary \<^LaTeX> class file (\<^eg>, \<^boxed_bash>\<open>llncs.cls\<close>. 
+    This is due to licensing restrictions).\<close>
+text\<open> 
+  This can be configured by using the command-line options of of  \<^boxed_bash>\<open>mkroot_DOF\<close>. In 
+  Particular, \<^boxed_bash>\<open>-o\<close> allows selecting the ontology and \<^boxed_bash>\<open>-t\<close> allows to selecting 
+  the document template. The built-in help (using  \<^boxed_bash>\<open>-h\<close>) shows all available options 
+  as well as a complete list of the available document templates and ontologies: 
+
+  @{boxed_bash [display]\<open>ë\prompt{}ë isabelle mkroot_DOF -h
 
 Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
 
@@ -209,70 +224,12 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
        * scrreprt-modern
        * scrreprt
 
-  Prepare session root DIR (default: current directory).
-\end{bash} 
+  Prepare session root DIR (default: current directory). \<close>}
 
-  Creating a new document setup requires two decisions:
-  \<^item> which ontologies (\<^eg>, scholarly\_paper) are required and 
-  \<^item> which document template (layout)\index{document template} should be used 
-    (\<^eg>, scrartcl\index{scrartcl}). Some templates (\<^eg>, lncs) require that the users manually 
-    obtains and adds the necessary \<^LaTeX> class file (\<^eg>, \inlinebash|llncs.cls|. 
-    This is due to licensing restrictions).
-\<close>
-text\<open>
-  If you are happy with the defaults, \ie, using the ontology for writing academic papers 
-  (scholarly\_paper) using a report layout based on the article class (\inlineltx|scrartcl|) of 
-  the KOMA-Script bundle~@{cite "kohm:koma-script:2019"}, you can create your first project 
-  \inlinebash|myproject| as follows:
-
-\begin{bash}
-ë\prompt{}ë isabelle mkroot_DOF myproject
-
-Preparing session "myproject" iëën "myproject"
-  creating "myproject/ROOT"
-  creating "myproject/document/root.tex"
-
-Now use the following coëëmmand line to build the session:
-  isabelle build -D myproject
-\end{bash}
-
-  This creates a directory \inlinebash|myproject| containing the \<^isadof>-setup for your 
-  new document. To check the document formally, including the generation of the document in PDF,
-  you only need to execute
-
-\begin{bash}
-ë\prompt{}ë  isabelle build -d . myproject
-\end{bash}
-
-This will create the directory \inlinebash|myproject|: 
-\begin{center}
-\begin{minipage}{.9\textwidth}
-\dirtree{%
-.1 .
-.2 myproject.
-.3 document.
-.4 build\DTcomment{Build Script}.
-.4 isadof.cfg\DTcomment{\<^isadof> configuraiton}.
-.4 preamble.tex\DTcomment{Manual \<^LaTeX>-configuration}.
-.3 ROOT\DTcomment{Isabelle build-configuration}.
-}
-\end{minipage}
-\end{center}
-The \<^isadof> configuration (\inlinebash|isadof.cfg|) specifies the required
-ontologies and the document template using a YAML syntax.\<^footnote>\<open>Isabelle power users will recognize that 
-\<^isadof>'s document setup does not make use of a file \inlinebash|root.tex|: this file is 
-replaced by built-in document templates.\<close> The main two configuration files for 
-users are:
-\<^item> The file \<^boxed_bash>\<open>ROOT\<close>\<^index>\<open>ROOT\<close>, which defines the Isabelle session. New theory files as well as new 
-  files required by the document generation (\<^eg>, images, bibliography database using \<^BibTeX>, local
-  \<^LaTeX>-styles) need to be registered in this file. For details of Isabelle's build system, please 
-  consult the Isabelle System Manual~@{cite "wenzel:system-manual:2020"}.
-\<^item> The file \<^boxed_bash>\<open>praemble.tex\<close>\<^index>\<open>praemble.tex\<close>, which allows users to add additional 
-  \<^LaTeX>-packages or to add/modify \<^LaTeX>-commands. 
 \<close>
 
 section*[scholar_onto::example]\<open>Writing Academic Publications in \<^boxed_theory_text>\<open>scholarly_paper\<close>\<close>  
-subsection\<open>Papers in freeform-style\<close>
+subsection\<open>Writing Academic Papers\<close>
 text\<open> 
   The ontology \<^boxed_theory_text>\<open>scholarly_paper\<close>
   \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
@@ -284,7 +241,7 @@ text\<open>
   \<^enum> The iFM 2020 paper~@{cite "taha.ea:philosophers:2020"} is a typical mathematical text,
     heavy in definitions with complex  mathematical notation and a lot of non-trivial cross-referencing
     between statements, definitions and proofs which is ontologically tracked. However, wrt.
-    to the possible linking between the underlying formal theory and this mathematical presentation,
+    the possible linking between the underlying formal theory and this mathematical presentation,
     it follows a pragmatic path without any ``deep'' linking to types, terms and theorems, 
     deliberately not exploiting \<^isadof> 's full potential with this regard.
   \<^enum> In the CICM 2018 paper~@{cite "brucker.ea:isabelle-ontologies:2018"}, we deliberately
@@ -302,17 +259,13 @@ text\<open>
     \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy}.
   \<^item> starting Isabelle/jedit from the command line by,\<^eg>, calling:
 
-    \begin{bash}
-ë\prompt{\isadofdirn}ë 
-  isabelle jedit -d . examples/scholarly_paper/2020-iFM-CSP/paper.thy
-\end{bash}
+@{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë 
+  isabelle jedit -d . examples/scholarly_paper/2020-iFM-CSP/paper.thy \<close>}
 \<close> 
-(* We should discuss if we shouldn't put the iFM paper more in the foreground *) 
+
 
 text\<open>    You can build the PDF-document at the command line by calling:
-
-@{boxed_bash [display]
-\<open>ë\prompt{}ë isabelle build -d . 2020-iFM-csp \<close>}
+@{boxed_bash [display] \<open>ë\prompt{}ë isabelle build -d . 2020-iFM-csp \<close>}
 \<close>
 
 subsection*[sss::technical]\<open>A Bluffers Guide to the \<^verbatim>\<open>scholarly_paper\<close> Ontology\<close>
@@ -346,7 +299,7 @@ context of this document; this is a decisive feature of \<^isadof> that conventi
 languages lack.\<close>
 
 text\<open>We continue by the introduction of a main class: the text-element \<open>text_section\<close> (in contrast
-to \<open>figure\<close> or \<open>table\<close> or similar. Note that
+to \<open>figure\<close> or \<open>table\<close> or similar). Note that
 the \<open>main_author\<close> is typed with the class \<open>author\<close>, a HOL type that is automatically derived from
 the document class definition \<open>author\<close> shown above. It is used to express which author currently
 ``owns'' this \<open>text_section\<close>, an information that can give rise to presentational or even
@@ -436,22 +389,6 @@ standard inductive \<^theory_text>\<open>datatype\<close> definition mechanism i
 for attibute declarations. Vice-versa, document class definitions imply a corresponding HOL type 
 definition. \<close>
 
-(* For Achim zum spielen...
-text\<open>For example, this allows the following presentation in the source:
-@{boxed_theory_text [display] \<open>
-text*[X2::"definition"]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                       \<^vs>\<open>-0.7cm\<close>\<close>
-text*[X3::"definition"]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>          \<^vs>\<open>-0.7cm\<close>\<close>
-text*[X4::"definition"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<^vs>\<open>-0.7cm\<close>\<close>
-
-text\<open> The \<open>RUN\<close>-process defined @{definition X2} represents the process that accepts all 
-events, but never stops nor deadlocks. The \<open>CHAOS\<close>-process comes in two variants shown in 
-@{definition X3} and @{definition X4}: the process that non-deterministically stops or 
-accepts any offered event, wheras \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> can additionaly terminate.\<close>
-\<close>}
-\<close>
-*)
-
-(* alternative *)
 figure*[fig01::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP.png''"]
        \<open> A screenshot of the integrated source with definitions ...\<close>  
 text\<open>An example for a sequence of (Isabelle-formula-) texts, their ontological declarations as 
@@ -460,11 +397,15 @@ later is shown in \<^figure>\<open>fig01\<close> in its presentation as the inte
 
 Note that the use in the ontology-generated antiquotation \<^theory_text>\<open>@{definition X4}\<close>
 is type-checked; referencing \<^verbatim>\<open>X4\<close> as \<^theory_text>\<open>theorem\<close> would be a type-error and be reported directly
-by \<^isadof> in Isabelle/jEdit. Note further, that if referenced correctly wrt. to the sub-typing 
+by \<^isadof> in Isabelle/jEdit. Note further, that if referenced correctly wrt. the sub-typing 
 hierarchy makes \<^verbatim>\<open>X4\<close> \<^emph>\<open>navigable\<close> in Isabelle/jedit; a click will cause the IDE to present the 
 defining occurrence of this text-element in the integrated source.
 
-Note, further, how \<^isadof>-commands like \<^theory_text>\<open>text*\<close> interact with standard Isabelle document 
+% TODO:
+% The definition \<^theory_text>\<open>@{definition X4}\<close> is not present in the screenshot,
+% it might be better to use  \<^theory_text>\<open>@{definition X22}\<close>.
+
+Note, further, how \<^isadof>-commands like \<^theory_text>\<open>text*\<close> interact with standard Isabelle document
 antiquotations described in the Isabelle Isar Reference Manual in Chapter 4.2 in great detail. 
 We refrain ourselves here to briefly describe three freeform antiquotations used her in this text:
 
@@ -477,58 +418,20 @@ We refrain ourselves here to briefly describe three freeform antiquotations used
 \<^item>  the freeform antiquotations for verbatim, emphasized, bold, or footnote text elements.
 \<close>
 
+figure*[fig02::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP-pdf.png''"]
+       \<open> ... and the corresponding pdf-oputput.\<close>  
+
 text\<open>
 \<^isadof> text-elements such as \<^theory_text>\<open>text*\<close> allow to have such standard term-antiquotations inside their
 text, permitting to give the whole text entity a formal, referentiable status with typed meta-
 information attached to it that may be used for presentation issues, search, or other technical
-purposes. 
+purposes. The corresponding output of this snippet in the integrated source is shown in \<^figure>\<open>fig02\<close>. 
 \<close>
 
-figure*[fig02::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP-pdf.png''"]
-       \<open> ... and the corresponding pdf-oputput.\<close>  
-
-
-text\<open>The corresponding output of this snippet in the integrated source is shown in\<^figure>\<open>fig02\<close>. \<close>
 
 subsection*[scholar_pide::example]\<open>More Freeform Elements, and Resulting Navigation\<close>
-(*
-figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogfood-Intro''"]
-       \<open> Ouroboros I: This paper from inside \ldots \<close>  
-
-text\<open> 
-  @{docitem \<open>fig1\<close>} shows the corresponding view in the Isabelle/jedit of the start of an academic 
-  paper. The text uses \<^isadof>'s own text-commands containing the meta-information provided by the 
-  underlying ontology. We proceed by a definition of \<^boxed_theory_text>\<open>introduction\<close>'s, which we define 
-  as the extension of \<^boxed_theory_text>\<open>text_section\<close> which is intended to capture common infrastructure:
-
-@{boxed_theory_text [display]\<open>
-doc_class introduction = text_section +
-   comment :: string
-\<close>}
-
-  As a consequence of the definition as extension, the \<^boxed_theory_text>\<open>introduction\<close> class
-  inherits the attributes \<^boxed_theory_text>\<open>main_author\<close> and \<^boxed_theory_text>\<open>todo_list\<close> 
-  together with the corresponding default values.
-
-  We proceed more or less conventionally by the subsequent sections:
-
-@{boxed_theory_text [display]\<open>
-doc_class technical = text_section +
-   definition_list :: "string list" <=  "[]"
-
-doc_class example   = text_section +
-   comment :: string
-
-doc_class conclusion = text_section +
-   main_author :: "author option"  <=  None
-   
-doc_class related_work = conclusion +
-   main_author :: "author option"  <=  None
-
-\<close>}
-*)
 text\<open> In the following, we present some other text-elements provided by the Common Ontology Library
-in @{theory "Isabelle_DOF.Isa_COL"}. it provides a document class for figures:
+in @{theory "Isabelle_DOF.Isa_COL"}. It provides a document class for figures:
 
 @{boxed_theory_text [display]\<open>
 datatype placement = h | t | b | ht | hb   
@@ -559,8 +462,12 @@ text\<open>
      where "(title       ~~ \<lbrakk>subtitle\<rbrakk>   ~~ \<lbrace>author\<rbrace>$^+$+  ~~  abstract    ~~
                introduction ~~  \<lbrace>technical || example\<rbrace>$^+$  ~~  conclusion ~~  
                bibliography)"
-  \<close>}
+  \<close>}\<close>
 
+  (*  % TODO:
+      % Update to the new implementation.
+      % where is deprecated and the new implementation uses accepts and rejects. *)
+text\<open>
   In a integrated document source, the body of the content can be paranthesized into:
 
   @{boxed_theory_text [display]\<open>
@@ -594,9 +501,8 @@ text\<open>
   meta-information. Clicking on a document class identifier permits to hyperlink into the 
   corresponding class definition (\autoref{fig:Dogfood-IV-jumpInDocCLass}); hovering over an 
   attribute-definition (which is qualified in order to disambiguate; 
-  \autoref{fig:Dogfood-V-attribute}).
+  \autoref{fig:Dogfood-V-attribute}) shows its type.
 \<close>
-(* Bu : This autoref stuff could be avoided if we would finally have monitors over figures... *)
 
 figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-V-attribute''"]
        \<open> Exploring an attribute (hyperlinked to the class). \<close> 
@@ -621,16 +527,12 @@ text\<open>
     \nolinkurl{examples/CENELEC_50128/mini_odo/mini_odo.thy}.
   \<^item> starting Isabelle/jedit from the command line by calling:
 
-    \begin{bash}
-ë\prompt{\isadofdirn}ë 
-  isabelle jedit examples/CENELEC_50128/mini_odo/mini_odo.thy
-\end{bash}
+@{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë 
+  isabelle jedit examples/CENELEC_50128/mini_odo/mini_odo.thy \<close>}
 \<close>
 text\<open>\<^noindent> Finally, you
   \<^item>   can build the PDF-document by calling:
-  \begin{bash}
-ë\prompt{}ë isabelle build mini_odo
-\end{bash}
+@{boxed_bash [display]\<open>ë\prompt{}ë isabelle build mini_odo \<close>}
 \<close>
  
 subsection\<open>Modeling CENELEC 50128\<close>
@@ -646,12 +548,10 @@ text\<open>
   processes. Making the link-structure machine-checkable, be it between requirements, assumptions, 
   their implementation and their discharge by evidence (be it tests, proofs, or authoritative 
   arguments), has the potential in our view to decrease the cost of software developments 
-  targeting certifications. Note that continuously checking the links between the formal and the 
-  semi-formal parts of such documents is particularly valuable during the development,
-  which is usually a collaborative effort. 
+  targeting certifications. 
 
   As in many other cases, formal certification documents come with an own terminology and pragmatics
-  of what has to be demonstrated and where, and how the trace-ability of requirements through 
+  of what has to be demonstrated and where, and how the traceability of requirements through 
   design-models over code to system environment assumptions has to be assured.  
 
   In the sequel, we present a simplified version of an ontological model used in a 
@@ -663,7 +563,11 @@ doc_class requirement = long_name :: "string option"
 
 doc_class requirement_analysis = no :: "nat"
    where "requirement_item +"
-
+(*
+% TODO:
+% Update to the new implementation.
+% where is deprecated and the new implementation uses accepts and rejects. 
+*)
 doc_class hypothesis = requirement +
       hyp_type :: hyp_type <= physical  (* default *)
   
@@ -675,7 +579,7 @@ doc_class assumption = requirement +
 
 Such ontologies can be enriched by larger explanations and examples, which may help
 the team of engineers substantially when developing the central document for a certification, 
-like an explication what is precisely the difference between an \<^emph>\<open>hypothesis\<close> and an 
+like an explication of what is precisely the difference between an \<^emph>\<open>hypothesis\<close> and an 
 \<^emph>\<open>assumption\<close> in the context of the evaluation standard. Since the PIDE makes for each 
 document class its definition available by a simple mouse-click, this kind on meta-knowledge 
 can be made far more accessible during the document evolution.
@@ -683,23 +587,23 @@ can be made far more accessible during the document evolution.
 For example, the term of category \<^emph>\<open>assumption\<close> is used for domain-specific assumptions. 
 It has formal, semi-formal and informal sub-categories. They have to be 
 tracked and discharged by appropriate validation procedures within a 
-certification process, by it by test or proof. It is different from a hypothesis, which is
+certification process, be it by test or proof. It is different from a hypothesis, which is
 globally assumed and accepted.
 
 In the sequel, the category \<^emph>\<open>exported constraint\<close> (or \<^emph>\<open>ec\<close> for short)
 is used for formal assumptions, that arise during the analysis,
 design or implementation and have to be tracked till the final
 evaluation target, and discharged by appropriate validation procedures 
-within the certification process, by it by test or proof.  A particular class of interest 
-is the category \<^emph>\<open>safety related application condition\<close> (or \<^emph>\<open>srac\<close> 
+within the certification process, be it by test or proof.  A particular class of interest 
+is the category \<^emph>\<open>safety related application condition\<close> (or \<^emph>\<open>SRAC\<close> 
 for short) which is used for \<^emph>\<open>ec\<close>'s that establish safety properties
-of the evaluation target. Their track-ability throughout the certification
+of the evaluation target. Their traceability throughout the certification
 is therefore particularly critical. This is naturally modeled as follows:
 @{boxed_theory_text [display]\<open>  
 doc_class ec = assumption  +
      assumption_kind :: ass_kind <= (*default *) formal
                         
-doc_class srac = ec  +
+doc_class SRAC = ec  +
      assumption_kind :: ass_kind <= (*default *) formal
 \<close>}
 
@@ -725,12 +629,18 @@ subsection*[ontopide::technical]\<open>Editing Support for CENELEC 50128\<close>
 figure*[figfig3::figure,relative_width="95",src="''figures/antiquotations-PIDE''"]
 \<open> Standard antiquotations referring to theory elements.\<close>
 text\<open> The corresponding view in @{docitem  \<open>figfig3\<close>} shows core part of a document 
-conformimg to the CENELEC 50128 ontology. The first sample shows standard Isabelle antiquotations 
+conforming to the CENELEC 50128 ontology. The first sample shows standard Isabelle antiquotations 
 @{cite "wenzel:isabelle-isar:2020"} into formal entities of a theory. This way, the informal parts 
 of a document get ``formal content'' and become more robust under change.\<close>
 
 figure*[figfig5::figure, relative_width="95", src="''figures/srac-definition''"]
         \<open> Defining a "SRAC" in the integrated source \ldots \<close>
+text\<open>
+TODO:
+The screenshot (figures/srac-definition) of the figure figfig5 should be updated
+to have a SRAC type in uppercase.
+\<close>
+
 figure*[figfig7::figure, relative_width="95", src="''figures/srac-as-es-application''"]
         \<open> Using a "SRAC" as "EC" document element. \<close>
 text\<open> The subsequent sample in @{figure \<open>figfig5\<close>} shows the definition of an
@@ -742,130 +652,6 @@ safety-related condition; however, this happens in a context where general \<^em
 are listed. \<^isadof>'s checks establish that this is legal in the given ontology. 
 \<close>    
 
-(*
-section*[math_exam::example]\<open>Writing Exams (math\_exam)\<close> 
-subsection\<open>The Math Exam Example\<close>
-text\<open> 
-  The ontology ``math\_exam''\index{ontology!math\_exam} is an experimental ontology modeling 
-  the process of writing exams at higher education institution in the United Kingdom, where exams 
-  undergo both an internal and external review process. The \<^isadof> distribution contains a tiny 
-  example  using the ontology ``math\_exam'' in the directory 
-  \nolinkurl{examples/math_exam/MathExam/}. You can inspect/edit the example 
-  in Isabelle's IDE, by either 
-  \<^item> starting Isabelle/jedit using your graphical user interface (\<^eg>, by clicking on the 
-    Isabelle-Icon provided by the Isabelle installation) and loading the file 
-    \nolinkurl{examples/math_exam/MathExam/MathExam.thy}.
-  \<^item> starting Isabelle/jedit from the command line by calling:
-
-    \begin{bash}
-ë\prompt{\isadofdirn}ë 
-  isabelle jedit examples/math_exam/MathExam/MathExam.thy
-\end{bash}
-\<close> 
-text\<open>  
-  You can build the PDF-document by calling:
-
-  \begin{bash}
-ë\prompt{}ë isabelle build MathExam
-\end{bash}
-\<close>
- 
-subsection\<open>Modeling Exams\<close>
-text\<open>
-  The math-exam scenario is an application with mixed formal and semi-formal content. It addresses 
-  applications where the author of the exam is not present  during the exam and the preparation 
-  requires a very rigorous process.
-
-  We assume that the content has four different types of addressees, which have a different
-  \<^emph>\<open>view\<close> on the integrated document: 
-  \<^item> the \<^emph>\<open>setter\<close>, \ie, the author of the exam,
-  \<^item> the \<^emph>\<open>checker\<close>, \ie, an internal person that checks 
-   the exam for feasibility and non-ambiguity, 
-  \<^item> the \<^emph>\<open>external\<close>, \ie, an external person that checks 
-    the exam for feasibility and non-ambiguity, and 
-  \<^item> the \<^emph>\<open>student\<close>, \ie, the addressee of the exam. 
-\<close>
-text\<open> 
-  The latter quality assurance mechanism is used in many universities,
-  where for organizational reasons the execution of an exam takes place in facilities
-  where the author of the exam is not expected to be physically present.
-  Furthermore, we assume a simple grade system (thus, some calculation is required). We 
-  can model this as follows: 
-
-@{boxed_theory_text [display]\<open>
-doc_class Author = ...
-datatype Subject =  algebra | geometry | statistical
-datatype Grade =  A1 | A2 | A3
-doc_class Header =  examTitle   :: string
-                    examSubject :: Subject
-                    date        :: string
-                    timeAllowed :: int --  minutes
-datatype ContentClass =  setter
-                      | checker 
-                      | external_examiner   
-                      | student   
-doc_class Exam_item =  concerns :: "ContentClass set"  
-doc_class Exam_item =  concerns :: "ContentClass set"  
-
-type_synonym SubQuestion = string
-\<close>}
-
-  The heart of this ontology is an alternation of questions and answers, where the answers can 
-  consist of simple yes-no answers or lists of formulas. Since we do not assume familiarity of 
-  the students with Isabelle (\<^boxed_theory_text>\<open>term\<close> would assume that this is a parse-able and 
-  type-checkable entity), we basically model a derivation as a sequence of strings:
-
-@{boxed_theory_text [display]\<open>
-doc_class Answer_Formal_Step =  Exam_item +
-  justification :: string
-  "term"        :: "string" 
-  
-doc_class Answer_YesNo =  Exam_item +
-  step_label :: string
-  yes_no     :: bool  -- \<open>for checkboxes\<close>
-
-datatype Question_Type =   
-  formal | informal | mixed 
-  
-doc_class Task = Exam_item +
-  level    :: Level
-  type     :: Question_Type
-  subitems :: "(SubQuestion * 
-                   (Answer_Formal_Step list + Answer_YesNo) list) list"
-  concerns :: "ContentClass set" <= "UNIV" 
-  mark     :: int
-doc_class Exercise = Exam_item +
-  type     :: Question_Type
-  content  :: "(Task) list"
-  concerns :: "ContentClass set" <= "UNIV" 
-  mark     :: int
-\<close>}
-
-In many institutions, having a rigorous process of validation for exam subjects makes sense: is 
-the initial question correct? Is a proof in the sense of the question possible? We model the 
-possibility that the @{term examiner} validates a question by a sample proof validated by Isabelle:
-
-@{boxed_theory_text [display]\<open>
-doc_class Validation = 
-   tests  :: "term list"  <="[]"
-   proofs :: "thm list"   <="[]"
-  
-doc_class Solution = Exam_item +
-  content  :: "Exercise list"
-  valids   :: "Validation list"
-  concerns :: "ContentClass set" <= "{setter,checker,external_examiner}"
-  
-doc_class MathExam=
-  content :: "(Header + Author + Exercise) list"
-  global_grade :: Grade 
-  where "\<lbrace>Author\<rbrace>$^+$  ~~  Header ~~  \<lbrace>Exercise ~~ Solution\<rbrace>$^+$ "
-\<close>}
-
-In our scenario this sample proofs are completely \<^emph>\<open>intern\<close>, \ie, not exposed to the 
-students but just additional material for the internal review process of the exam.
-\<close>
-
-*)
 
 section*[tech_onto::example]\<open>Writing Technical Reports in \<^boxed_theory_text>\<open>technical_report\<close>\<close>  
 text\<open>While it is perfectly possible to write documents in the
@@ -882,27 +668,25 @@ underlying logical context, which turns the arguments into \<^emph>\<open>formal
 source, in contrast to the free-form antiquotations which basically influence the presentation.
 
 We still mention a few of these document antiquotations here:
-\<^item> \<^theory_text>\<open>@{thm \<open>refl\<close>}\<close> ou \<^theory_text>\<open>@{thm [display] \<open>refl\<close>}\<close> check that \<^theory_text>\<open>refl\<close> is indeed a reference
+\<^item> \<^theory_text>\<open>@{thm \<open>refl\<close>}\<close> or \<^theory_text>\<open>@{thm [display] \<open>refl\<close>}\<close> check that \<^theory_text>\<open>refl\<close> is indeed a reference
   to a theorem; the additional "style" argument changes the presentation by printing the 
   formula into the output instead of the reference itself,
 \<^item> \<^theory_text>\<open>@{lemma \<open>prop\<close> } by \<open>method\<close>\<close> allows to derive \<open>prop\<close> on the fly, thus garantee 
   that it is a corrollary of the current context,
 \<^item> \<^theory_text>\<open>@{term \<open>term\<close> }\<close> parses and type-checks \<open>term\<close>,
 \<^item> \<^theory_text>\<open>@{value \<open>term\<close> }\<close> performs the evaluation of \<open>term\<close>,
-\<^item> \<^theory_text>\<open>@{ML \<open>ml-term\<close> }\<close> pa,rses and type-checks \<open>ml-term\<close>,
+\<^item> \<^theory_text>\<open>@{ML \<open>ml-term\<close> }\<close> parses and type-checks \<open>ml-term\<close>,
 \<^item> \<^theory_text>\<open>@{ML_file \<open>ml-file\<close> }\<close> parses the path for \<open>ml-file\<close> and
-  verifies its existance in the (Isabelle-virtual) file-system,
-\<^item> ...
-
-Note that there are options to display sub-parts of formulas etc., but it is a consequence
+  verifies its existance in the (Isabelle-virtual) file-system.
+\<close>
+text\<open>There are options to display sub-parts of formulas etc., but it is a consequence
 of tight-checking that the information must be given complete and exactly in the syntax of
 Isabelle. This may be over-precise and a burden to readers not familiar with Isabelle, which may
 motivate authors to choose the aforementioned freeform-style.
 \<close>
 
-subsection\<open>A \<^verbatim>\<open>technical_report\<close> in tight-checking-style: \<open>MyCommentedIsabelle\<close> - Programming Manual \<close>
-
-text\<open>An example of tight checking is a small programming programming manual developed by the
+subsection\<open>A Technical Report with Tight Checking\<close>
+text\<open>An example of tight checking is a small programming manual developed by the
 second author in order to document programming trick discoveries while implementing in Isabelle.
 While not necessarily a meeting standards of a scientific text, it appears to us that this information
 is often missing in the Isabelle community. 
@@ -914,29 +698,13 @@ So its value is that readers can just reuse some of these snippets and adapt the
 purposes.
 \<close>
 
-(*
-@{boxed_theory_text [display] \<open>
-text\<open>Finally, a number of commonly used "squigglish" combinators is listed:
-
-\<^item> @{ML "op !  : 'a Unsynchronized.ref->'a"},  access operation on a program variable 
-\<^item> @{ML "op := : ('a Unsynchronized.ref * 'a)->unit"},  update operation on a program variable 
-\<^item> @{ML "op #> : ('a->'b) * ('b->'c)->'a->'c"}, a reversed function composition 
-\<^item> @{ML "op o  : (('b->'c) * ('a->'b))->'a->'c"}, function composition
-\<^item> @{ML "op || : ('a->'b) * ('a->'b) -> 'a -> 'b"}, parse alternative
-\<^item> @{ML "op -- : ('a->'b*'c) * ('c->'d*'e)->'a->('b*'d)*'e"}, parse pair 
-\<^item> @{ML "op ?  : bool * ('a->'a)->'a->'a"}, if then else 
-\<^item> @{ML "I     : 'a -> 'a"}, the I combinator
-\<^item> @{ML "K     : 'a -> 'b -> 'a"}, the K combinator \<close>
-\<close>}
-*)
-
 figure*[strict_SS::figure, relative_width="95", src="''figures/MyCommentedIsabelle.png''"] 
 \<open>A table with a number of SML functions, together with their type.\<close>
 
 text\<open>
-\<open>MyCommentedIsabelle\<close> is written according to the @{theory "Isabelle_DOF.technical_report"}
-ontology. \<^figure>\<open>strict_SS\<close> shows a snippet from this integrated source gives an idea why 
-it tight-checking allows for keeping track of underlying Isabelle changes:
+\<open>TR_MyCommentedIsabelle\<close> is written according to the @{theory "Isabelle_DOF.technical_report"}
+ontology. \<^figure>\<open>strict_SS\<close> shows a snippet from this integrated source and gives an idea why 
+its tight-checking allows for keeping track of underlying Isabelle changes:
 Any reference to an SML operation in some library module is type-checked, and the displayed
 SML-type really corresponds to the type of the operations in the underlying SML environment.
 In the pdf output, these text-fragments were displayed verbatim.
@@ -946,12 +714,12 @@ In the pdf output, these text-fragments were displayed verbatim.
 
 section\<open>Style Guide\<close>
 text\<open>
-  The document generation process of \<^isadof> is based on Isabelle's document generation framework, 
+  The document generation of \<^isadof> is based on Isabelle's document generation framework, 
   using \<^LaTeX>{} as the underlying back-end. As Isabelle's document generation framework, it is 
   possible to embed (nearly) arbitrary \<^LaTeX>-commands in text-commands, \<^eg>:
 
 @{boxed_theory_text [display]\<open>
-text\<open> This is \emph{emphasized} a$$nd this is a 
+text\<open> This is \emph{emphasized} and this is a 
        citation~\cite{brucker.ea:isabelle-ontologies:2018}\<close>
 \<close>}
 
@@ -959,8 +727,8 @@ text\<open> This is \emph{emphasized} a$$nd this is a
   Isabelle) provided alternatives:
 
 @{boxed_theory_text [display]\<open>
-text\<open> This is *\<open>emphasized\<close> a$$nd this is a 
-        citation <@>{cite "brucker.ea:isabelle-ontologies:2018"}.\<close>
+text\<open> This is *\<open>emphasized\<close> and this is a 
+        citation @{cite "brucker.ea:isabelle-ontologies:2018"}.\<close>
 \<close>}
 
 Clearly, this is not always possible and, in fact, often \<^isadof> documents will contain 
@@ -976,7 +744,7 @@ document generation (\<^eg>, HTML) which, naturally, are only available to docum
 too complex native \<^LaTeX>-commands. 
 
 Similarly, (unchecked) forward references should, if possible, be avoided, as they also might
-create dangeling references during the document generation that break the document generation.  
+create dangling references during the document generation that break the document generation.  
 
 Finally, we recommend to use the @{command "check_doc_global"} command at the end of your 
 document to check the global reference structure. 
