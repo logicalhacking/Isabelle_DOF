@@ -60,8 +60,14 @@ text\<open> \<^vs>\<open>-0.5cm\<close>
   spectrum of applications. A particular strength of the Isabelle framework is the combination 
   of text editing, formal verification, and code generation. This is a programming-tutorial of 
   Isabelle and Isabelle/HOL, a complementary text to the unfortunately somewhat outdated 
-  "The Isabelle Cookbook" in \<^url>\<open>https://nms.kcl.ac.uk/christian.urban/Cookbook/\<close>. The reader 
-  is encouraged not only to consider the generated .pdf, but also consult the loadable version 
+  "The Isabelle Cookbook" in \<^url>\<open>https://nms.kcl.ac.uk/christian.urban/Cookbook/\<close>. 
+  The present text is also complementary to the current version of 
+  \<^url>\<open>https://isabelle.in.tum.de/dist/Isabelle2021/doc/isar-ref.pdf\<close>
+  "The Isabelle/Isar Implementation" by Makarius Wenzel in that it focusses on subjects
+  not covered there, or presents alternative explanations for which I believe, based on my 
+  experiences with students and Phds, that they are helpful.
+  For the present programming manual, the reader is encouraged not only to consider the generated 
+  .pdf, but also consult the loadable version 
   in Isabelle/jedit in order to make experiments on the running code. This text is written 
   itself in Isabelle/Isar using a specific document ontology for technical reports. It is 
   intended to be a "living document", i.e. it is not only used for generating a static, 
