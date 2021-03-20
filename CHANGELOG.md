@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
+## 1.1.0 - 2021-03-20
+
+### Added
+
+- New antiquotations, consistency checks
+
+### Changed
+
+- Updated manual
+- Restructured setup for ontologies (Isabelle theories and LaTeX styles)
+
 ## 1.0.0 - 2018-08-18
 
 ### Added
