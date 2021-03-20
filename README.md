@@ -2,8 +2,8 @@
 
 Isabelle/DOF is a novel Document Ontology Framework on top of Isabelle.
 Isabelle/DOF allows for both conventional typesetting as well as formal
-development. The manual for [Isabelle/DOF 1.1.0/Isabelle2020 is available 
-online.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2020.pdf)
+development. The manual for [Isabelle/DOF 1.1.0/Isabelle2021 is available 
+online.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2021.pdf)
 
 ## Running Isabelle/DOF using Docker
 
@@ -13,7 +13,7 @@ Docker supports X11 application, you can start Isabelle/DOF as follows:
 
 ```console
 foo@bar:~$ docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix \ 
-           logicalhacking/isabelle_dof-1.1.0_isabelle2020 isabelle jedit
+           logicalhacking/isabelle_dof-1.1.0_isabelle2021 isabelle jedit
 ```
 
 ## Pre-requisites
@@ -24,7 +24,7 @@ Isabelle/DOF has two major pre-requisites:
   Please download the Isabelle 2021 distribution for your operating
   system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2021/).
 * **LaTeX:** Isabelle/DOF requires a modern TeX-engine supporting the \expanded{}-primitive. This
-  is, for example, included in the [TeX Live 2020](https://www.tug.org/texlive/) (or later)
+  is, for example, included in the [TeX Live 2021](https://www.tug.org/texlive/) (or later)
   distribution. 
   
 ## Installation
@@ -137,6 +137,10 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
 For releases, signed archives including a PDF version of the Isabelle/DOF manual are
 are available:
 
+* Isabelle/DOF 1.1.0/Isabelle2021
+  * [Isabelle_DOF-1.1.0_Isabelle2021.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2021.pdf)
+  * [Isabelle_DOF-1.1.0_Isabelle2021.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2021.tar.xz)
+  * [Isabelle_DOF-1.1.0_Isabelle2021.tar.xz.asc](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2021.tar.xz.asc)
 * Isabelle/DOF 1.1.0/Isabelle2020
   * [Isabelle_DOF-1.1.0_Isabelle2020.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2020.pdf)
   * [Isabelle_DOF-1.1.0_Isabelle2020.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2020.tar.xz)
