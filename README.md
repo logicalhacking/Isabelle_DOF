@@ -155,6 +155,7 @@ Main contacts:
 * Idir Ait-Sadoune
 * Paolo Crisafulli
 * Chantal Keller
+* Nicolas Méric 
 
 ## License
 
