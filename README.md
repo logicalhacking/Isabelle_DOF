@@ -185,14 +185,13 @@ SPDX-License-Identifier: BSD-2-Clause
   Computer Science (11724), Springer-Verlag, 2019.
   [doi:10.1007/978-3-030-30446-1_15](https://doi.org/10.1007/978-3-030-30446-1_15).
 
-* Achim D. Brucker, Burkhart Wolff. [Using Ontologies in Formal Developments Targeting Certification]
-  (https://www.brucker.ch/bibliography/download/2019/brucker.ea-ontologies-certification-2019.pdf). In 
+* Achim D. Brucker, Burkhart Wolff. [Using Ontologies in Formal Developments Targeting Certification](https://www.brucker.ch/bibliography/download/2019/brucker.ea-ontologies-certification-2019.pdf). In 
   Integrated Formal Methods (IFM). Lecture Notes in Computer Science (11918). Springer-Verlag 2019.
   [doi:10.1007/978-3-030-34968-4_4](http://dx.doi.org/10.1007/978-3-030-34968-4_4)  
 
-* Sergio Bezzecchi, Paolo Crisafulli, Charlotte Pichot, and Burkhart Wolff. Making Agile Development 
-  Processes fit for V-style Certification Procedures. In ERTS 2018. 
-  <https://hal.archives-ouvertes.fr/hal-01702815>
+* Sergio Bezzecchi, Paolo Crisafulli, Charlotte Pichot, and Burkhart Wolff. [Making Agile Development 
+  Processes fit for V-style Certification Procedures.](https://hal.archives-ouvertes.fr/hal-01702815/document)
+   In ERTS 2018. <https://hal.archives-ouvertes.fr/hal-01702815>
 
 ## Master Repository
 
