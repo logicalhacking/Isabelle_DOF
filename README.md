@@ -23,9 +23,9 @@ Isabelle/DOF has two major pre-requisites:
 * **Isabelle:** Isabelle/DOF requires [Isabelle 2021](http://isabelle.in.tum.de/website-Isabelle2021/).
   Please download the Isabelle 2021 distribution for your operating
   system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2021/).
-* **LaTeX:** Isabelle/DOF requires a modern TeX-engine supporting the \expanded{}-primitive. This
-  is, for example, included in the [TeX Live 2020](https://www.tug.org/texlive/) (or later)
-  distribution. 
+* **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least 
+  [TeX Live 2020](https://www.tug.org/texlive/) with all available updates applied (in particular 
+  ``tcolorbox.sty`` 4.42 or later is required). 
   
 ## Installation
 
@@ -189,6 +189,10 @@ SPDX-License-Identifier: BSD-2-Clause
   (https://www.brucker.ch/bibliography/download/2019/brucker.ea-ontologies-certification-2019.pdf). In 
   Integrated Formal Methods (IFM). Lecture Notes in Computer Science (11918). Springer-Verlag 2019.
   [doi:10.1007/978-3-030-34968-4_4](http://dx.doi.org/10.1007/978-3-030-34968-4_4)  
+
+* Sergio Bezzecchi, Paolo Crisafulli, Charlotte Pichot, and Burkhart Wolff. Making Agile Development 
+  Processes fit for V-style Certification Procedures. In ERTS 2018. 
+  <https://hal.archives-ouvertes.fr/hal-01702815>
 
 ## Master Repository
 
