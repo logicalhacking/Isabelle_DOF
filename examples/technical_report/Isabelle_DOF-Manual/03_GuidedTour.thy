@@ -47,8 +47,8 @@ text\<open>
   \<^LaTeX>. We assume a basic familiarity with a Linux/Unix-like command line (i.e., a shell). 
 
   \<^isadof> requires Isabelle\<^bindex>\<open>Isabelle\<close> (\isabellefullversion) with a recent \<^LaTeX>-distribution
-  (e.g., Tex Live 2020 or later).    
-  \<^isadof> uses a two-part version system (e.g., 1.0.0/2020),  where the first part is the version
+  (e.g., Tex Live 2021 or later).    
+  \<^isadof> uses a two-part version system (e.g., 1.1.0/Isabelle2021),  where the first part is the version
   of \<^isadof> (using semantic versioning) and the second part is the supported version of Isabelle. 
   Thus, the same version of \<^isadof> might be available for different versions of Isabelle. 
 \<close>
