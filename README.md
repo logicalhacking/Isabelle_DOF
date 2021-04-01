@@ -24,8 +24,7 @@ Isabelle/DOF has two major pre-requisites:
   Please download the Isabelle 2021 distribution for your operating
   system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2021/).
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least 
-  [TeX Live 2020](https://www.tug.org/texlive/) with all available updates applied (in particular 
-  ``tcolorbox.sty`` 4.42 or later is required). 
+  [TeX Live 2021](https://www.tug.org/texlive/) with all available updates applied.
   
 ## Installation
 
