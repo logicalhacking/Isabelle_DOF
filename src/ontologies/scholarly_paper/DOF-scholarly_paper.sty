@@ -14,7 +14,7 @@
 
 \NeedsTeXFormat{LaTeX2e}\relax
 \ProvidesPackage{DOF-scholarly_paper}
-  [<isadofltxversion>%
+  [2021/03/22 Unreleased/Isabelle2021%
   Document-Type Support Framework for Isabelle (LNCS).]
 
 \RequirePackage{DOF-COL}
@@ -54,9 +54,15 @@
           \newcommand{\orcidID}[1]{}%
         }%
         {%
-          \PackageError{DOF-scholarly_paper}
-                       {Scholarly Paper only supports LNCS or scrartcl as document class.}
-                       {}\stop%
+          \@ifclassloaded{svjour3}%
+          {%
+              \newcommand{\inst}[1]{}%
+          }%
+          {%
+            \PackageError{DOF-scholarly_paper}
+                         {Scholarly Paper only supports LNCS or scrartcl as document class.}
+                         {}\stop%
+          }%
         }%
       }%
     }
