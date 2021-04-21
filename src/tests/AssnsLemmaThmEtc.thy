@@ -69,8 +69,8 @@ different class. "F" and "assertion" have only in common that they posses the at
 \<^verbatim>\<open>property\<close>: \<close>
 
 text\<open>Creation just like that: \<close>
-assert*[aaa::assertion] "3 < (4::int)"
-assert*[aaa::assertion] "0 < (4::int)"
+assert*[ababa::assertion] "3 < (4::int)"
+assert*[ababa::assertion] "0 < (4::int)"
 
 
 end
