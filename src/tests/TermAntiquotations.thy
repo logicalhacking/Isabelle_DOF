@@ -79,8 +79,10 @@ a @{typ "C"}-type is required, but a  @{typ "G"}-type is offered which is legal 
 \verb+Isa_DOF+ because of the sub-class relation between those classes: \<close>
 update_instance*[xcv4::F, b+="{(@{docitem ''xcv3''},@{docitem ''xcv5''})}"]
 
-text\<open>And here is the result on term level:\<close>
+text\<open>And here is the results of some ML-term antiquotations:\<close>
 ML\<open> @{docitem_attribute b::xcv4} \<close>
+ML\<open> @{docitem xcv4}              \<close>
+ML\<open> @{trace_attribute aaa}       \<close>
 
 end
 

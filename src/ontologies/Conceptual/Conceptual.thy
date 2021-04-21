@@ -76,11 +76,12 @@ ML\<open> Session.get_keywords(); (* this looks to be really session global. *)
 ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>
 *)
 
+open_monitor*[aaa::M]
 section*[test::A]\<open>Test and Validation\<close>
 text\<open>Defining some document elements to be referenced in later on in another theory: \<close>
 text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> 
 text*[ sdfg :: F] \<open> Lorem ipsum @{thm refl}\<close>  
 text*[ xxxy ] \<open> Lorem ipsum @{F \<open>sdfg\<close>} rate @{thm refl}\<close>  
-
+close_monitor*[aaa]
 
 end     

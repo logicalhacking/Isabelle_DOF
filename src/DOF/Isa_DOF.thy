@@ -1647,8 +1647,8 @@ fun compute_trace_ML ctxt oid pos pos' =
         fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
     in  map conv (HOLogic.dest_list term) end
 
-val parse_oid = Scan.lift(Parse.position Args.name) 
-val parse_cid = Scan.lift(Parse.position Args.name) 
+val parse_oid  = Scan.lift(Parse.position Args.name) 
+val parse_cid  = Scan.lift(Parse.position Args.name) 
 val parse_oid' = Term_Style.parse -- parse_oid
 val parse_cid' = Term_Style.parse -- parse_cid
 
@@ -1663,6 +1663,18 @@ val parse_attribute_access' = Term_Style.parse -- parse_attribute_access
 
 fun attr_2_ML ctxt ((attr:string,pos),(oid:string,pos')) = (ML_Syntax.atomic o ML_Syntax.print_term) 
                                                            (compute_attr_access ctxt attr oid pos pos') 
+
+
+val TERM_STORE = let val dummy_term = Bound 0
+                 in  Unsynchronized.ref (dummy_term) end
+
+fun get_instance_value_2_ML ctxt (oid:string,pos) =
+    let val term = case DOF_core.get_value_global oid (Context.theory_of ctxt) of
+                    SOME(t) => t
+                  | NONE    => error "not an object id"
+        val _ = (TERM_STORE := term)  (* export to the ML Context *)
+    in  "! AttributeAccess.TERM_STORE" end
+
 
 fun trace_attr_2_ML ctxt (oid:string,pos) =
     let val print_string_pair = ML_Syntax.print_pair  ML_Syntax.print_string ML_Syntax.print_string
@@ -1686,7 +1698,9 @@ fun pretty_cid_style ctxt (style, (cid,pos)) =
 
 in
 val _ = Theory.setup 
-           (ML_Antiquotation.inline  \<^binding>\<open>docitem_attribute\<close> 
+           (ML_Antiquotation.inline  \<^binding>\<open>docitem\<close> 
+               (fn (ctxt,toks) => (parse_oid >> get_instance_value_2_ML ctxt) (ctxt, toks))  #>
+            ML_Antiquotation.inline  \<^binding>\<open>docitem_attribute\<close> 
                (fn (ctxt,toks) => (parse_attribute_access >>  attr_2_ML ctxt) (ctxt, toks))  #>
             ML_Antiquotation.inline  \<^binding>\<open>trace_attribute\<close>  
                (fn (ctxt,toks) => (parse_oid >> trace_attr_2_ML ctxt) (ctxt, toks)) #>
