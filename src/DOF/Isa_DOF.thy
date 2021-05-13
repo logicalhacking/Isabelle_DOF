@@ -40,7 +40,8 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            "doc_class"                                    
            "define_shortcut*"   "define_macro*"          :: thy_decl
 
-  and      "text*"              "text-macro*"            :: document_body 
+  and      "text*"              "text-macro*"            :: document_body
+  and      "term*"  :: diag
 
   and      "print_doc_classes"        "print_doc_items" 
            "print_doc_class_template" "check_doc_global" :: diag
@@ -184,7 +185,7 @@ struct
                     in {tab=Symtab.merge X (otab,otab'),maxano=Int.max(m,m')}
                     end) 
 
-   type ISA_transformer_tab = (theory -> term * typ * Position.T -> term option) Symtab.table
+   type ISA_transformer_tab = (theory -> term * typ * Position.T -> string -> term option) Symtab.table
    val  initial_ISA_tab:ISA_transformer_tab = Symtab.empty
 
    type docclass_inv_tab = (string -> {is_monitor:bool} -> Context.generic -> bool) Symtab.table
@@ -223,7 +224,13 @@ structure Data = Generic_Data
                  docclass_inv_tab = n2})  = 
                {docobj_tab=merge_docobj_tab   (d1,d2), 
                 docclass_tab = merge_docclass_tab (c1,c2),
-                ISA_transformer_tab = Symtab.merge (fn (_ , _) => false)(e1,e2),
+                (*
+                  The following merge is ultra-critical: the transformer tabs were
+                  just extended by letting *the first* entry with the same long-name win.
+                  Since the range is a (call-back) function, a comparison on its content
+                  is impossible and some choice has to be made... Alternative: Symtab.join ?
+                *)
+                ISA_transformer_tab = Symtab.merge (fn (_ , _) => true)(e1,e2),
                 monitor_tab =  override(m1,m2), 
                      (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
                 docclass_inv_tab = override(n1,n2)
@@ -579,7 +586,26 @@ fun update_value_global oid upd thy  =
              | NONE => error("undefined doc object: "^oid)  
 
 
-val ISA_prefix = "Isa_DOF.ISA_"  (* ISA's must be declared in Isa_DOF.thy  !!! *)
+val ISA_prefix = "ISA_"  (* ISA's must be declared in Isa_DOF.thy  !!! *)
+
+val doc_class_prefix = ISA_prefix ^ "doc_class_"
+
+fun is_ISA s = String.isPrefix ISA_prefix (Long_Name.base_name s)
+
+fun get_class_name_without_prefix s = String.extract (s, String.size(doc_class_prefix), NONE)
+
+fun get_doc_class_name_without_ISA_prefix s = String.extract (s, String.size(ISA_prefix), NONE)
+
+fun is_class_ISA thy s = let val bname = Long_Name.base_name s
+                             val qual = Long_Name.qualifier s
+                         in
+                           if String.isPrefix doc_class_prefix bname then
+                             let
+                               val class_name =
+                                        Long_Name.qualify qual (get_class_name_without_prefix bname)
+                             in
+                               is_defined_cid_global (class_name) thy end
+                           else false end
 
 fun get_isa_global isa thy  =  
             case Symtab.lookup (#ISA_transformer_tab(get_data_global thy)) (ISA_prefix^isa) of 
@@ -591,22 +617,26 @@ fun get_isa_local isa ctxt  = case Symtab.lookup (#ISA_transformer_tab(get_data 
                                        NONE => error("undefined inner syntax antiquotation: "^isa)
                                       |SOME(bbb) => bbb
 
-fun update_isa_local (isa, trans) ctxt  = 
-    map_data (upd_ISA_transformers(Symtab.update(ISA_prefix^isa,trans))) ctxt
+fun update_isa map_data_fun (isa, trans) ctxt =
+  let
+    val bname = Long_Name.base_name isa;
+    val qual = Long_Name.qualifier isa;
+    val long_name = Long_Name.qualify qual (ISA_prefix ^ bname);
+  in map_data_fun (upd_ISA_transformers(Symtab.update(long_name, trans))) ctxt end
 
-fun update_isa_global (isa, trans) thy  = 
-    map_data_global (upd_ISA_transformers(Symtab.update(ISA_prefix^isa,trans))) thy
+ fun update_isa_local (isa, trans) ctxt  = update_isa  map_data (isa, trans) ctxt
 
+fun update_isa_global (isa, trans) thy  = update_isa  map_data_global (isa, trans) thy
 
-fun transduce_term_global (term,pos) thy = 
+fun transduce_term_global (term,pos) thy =
     (* pre: term should be fully typed in order to allow type-related term-transformations *)
     let val tab = #ISA_transformer_tab(get_data_global thy)
-        fun T(Const(s,ty) $ t) = if String.isPrefix ISA_prefix s
+        fun T(Const(s,ty) $ t) = if is_ISA s
                                  then case Symtab.lookup tab s of
                                         NONE => error("undefined inner syntax antiquotation: "^s)
-                                      | SOME(trans) => (case trans thy (t,ty,pos) of 
+                                      | SOME(trans) => (case trans thy (t,ty,pos) s of
                                                          NONE => Const(s,ty) $ t
-                                                         (* checking isa, may raise error though. *)        
+                                                         (* checking isa, may raise error though. *)
                                                        | SOME t => Const(s,ty) $ t)
                                                          (* transforming isa *)
                                  else (Const(s,ty) $ (T t))
@@ -873,7 +903,7 @@ fun ML_isa_antiq check_file thy (name, _, pos) =
   in "Path.explode " ^ ML_Syntax.print_string (Path.implode path) end;
 
 
-fun ML_isa_check_generic check thy (term, pos) =
+fun ML_isa_check_generic check thy (term, pos) _ =
   let val name = (HOLogic.dest_string term
                   handle TERM(_,[t]) => error ("wrong term format: must be string constant: " 
                                                ^ Syntax.string_of_term_global thy t ))
@@ -881,39 +911,56 @@ fun ML_isa_check_generic check thy (term, pos) =
   in  SOME term end;  
 
 
-fun ML_isa_check_typ thy (term, _, pos) =
+fun ML_isa_check_typ thy (term, _, pos) s =
   let fun check thy (name, _) = let val ctxt = (Proof_Context.init_global thy)
                                 in (Syntax.check_typ ctxt o Syntax.parse_typ ctxt) name end
-  in  ML_isa_check_generic check thy (term, pos) end 
+  in  ML_isa_check_generic check thy (term, pos) s end
 
 
-fun ML_isa_check_term thy (term, _, pos) =
+fun ML_isa_check_term thy (term, _, pos) s =
   let fun check thy (name, _) = let val ctxt = (Proof_Context.init_global thy)
                                 in (Syntax.check_term ctxt o Syntax.parse_term ctxt) name end 
-  in  ML_isa_check_generic check thy (term, pos) end 
+  in  ML_isa_check_generic check thy (term, pos) s end
 
 
-fun ML_isa_check_thm thy (term, _, pos) =
+fun ML_isa_check_thm thy (term, _, pos) s =
   (* this works for long-names only *)
   let fun check thy (name, _) = case Proof_Context.lookup_fact (Proof_Context.init_global thy) name of
                                   NONE => err ("No Theorem:" ^name) pos
                                 | SOME X => X
-  in   ML_isa_check_generic check thy (term, pos) end 
+  in   ML_isa_check_generic check thy (term, pos) s end
 
 
-fun ML_isa_check_file thy (term, _, pos) =
+fun ML_isa_check_file thy (term, _, pos) s  =
   let fun check thy (name, pos) = check_path (SOME File.check_file) 
                                              (Proof_Context.init_global thy) 
                                              (Path.current) 
                                              (name, pos);
-  in  ML_isa_check_generic check thy (term, pos) end;
+  in  ML_isa_check_generic check thy (term, pos) s end;
 
+fun check_instance thy (term, _, pos) s =
+  let
+    val bname = Long_Name.base_name s;
+    val qual = Long_Name.qualifier s;
+    val class_name =
+        Long_Name.qualify qual (String.extract(bname , String.size(DOF_core.doc_class_prefix), NONE));
+    fun check thy (name, _)  =
+      let
+        val object_cid = case DOF_core.get_object_global name thy of
+                          NONE =>  err ("No class instance:" ^ name) pos
+                          | SOME(object) => #cid object
+        fun check' (class_name, object_cid) =
+          if class_name = object_cid then
+            DOF_core.get_value_global name thy
+          else err (name ^ " is not an instance of " ^ class_name) pos
+      in check' (class_name, object_cid) end;
+  in ML_isa_check_generic check thy (term, pos) s end
 
 fun ML_isa_id thy (term,pos) = SOME term
 
 
-fun ML_isa_check_docitem thy (term, req_ty, pos) =
-  let fun check thy (name, _) = 
+fun ML_isa_check_docitem thy (term, req_ty, pos) s =
+  let fun check thy (name, _) s =
            if DOF_core.is_declared_oid_global name thy 
            then case DOF_core.get_object_global name thy of
                     NONE => warning("oid declared, but not yet defined --- "^
@@ -930,7 +977,35 @@ fun ML_isa_check_docitem thy (term, req_ty, pos) =
                             else ()
                          end
            else err ("faulty reference to docitem: "^name) pos
-  in  ML_isa_check_generic check thy (term, pos) end 
+  in  ML_isa_check_generic check thy (term, pos) s end
+
+(*
+  The function declare_ISA_class_accessor_and_check_instance uses a prefix
+  because the class name is already bound to "doc_class Regular_Exp.rexp" constant
+  by add_doc_class_cmd function
+*)
+fun declare_ISA_class_accessor_and_check_instance doc_class_name =
+  let
+    val bind = Binding.prefix_name DOF_core.doc_class_prefix doc_class_name
+    val typestring = "string => " ^ (Binding.name_of doc_class_name)
+    (* Unfortunately due to different lexical conventions for constant symbols and mixfix symbols
+       we can not use "_" for classes names in term antiquotation.
+       We chose to convert "_" to "-".*)
+    val conv_class_name = String.translate (fn #"_" => "-"
+                                            | x => String.implode [x] )
+                                                (Binding.name_of doc_class_name)
+    val mixfix_string = "@{" ^ conv_class_name ^ " _}"
+  in
+    Sign.add_consts_cmd [(bind, typestring, Mixfix.mixfix(mixfix_string))]
+    #> (fn thy => let
+                    val long_name = DOF_core.read_cid_global thy (Binding.name_of doc_class_name)
+                    (*val bname = Long_Name.base_name long_name*)
+                    val qual = Long_Name.qualifier long_name
+                    val class_name = Long_Name.qualify qual
+                            (DOF_core.get_doc_class_name_without_ISA_prefix (Binding.name_of bind))
+                  in
+                    DOF_core.update_isa_global(class_name, check_instance) thy end)
+  end
 
 (* utilities *)
 
@@ -946,12 +1021,12 @@ end; (* struct *)
 
 subsection\<open> Isar - Setup\<close>
 
-setup\<open>DOF_core.update_isa_global("typ"      ,ISA_core.ML_isa_check_typ) \<close>     
-setup\<open>DOF_core.update_isa_global("term"     ,ISA_core.ML_isa_check_term) \<close>     
-setup\<open>DOF_core.update_isa_global("term_repr",fn _ => fn (t,_,_) => SOME t) \<close>     
-setup\<open>DOF_core.update_isa_global("thm"      ,ISA_core.ML_isa_check_thm) \<close>     
-setup\<open>DOF_core.update_isa_global("file"     ,ISA_core.ML_isa_check_file) \<close>     
-setup\<open>DOF_core.update_isa_global("docitem"  ,ISA_core.ML_isa_check_docitem)\<close>     
+setup\<open>DOF_core.update_isa_global("Isa_DOF.typ"      ,ISA_core.ML_isa_check_typ) \<close>
+setup\<open>DOF_core.update_isa_global("Isa_DOF.term"     ,ISA_core.ML_isa_check_term) \<close>
+setup\<open>DOF_core.update_isa_global("Isa_DOF.term_repr",fn _ => fn (t,_,_)  => fn _ => SOME t) \<close>
+setup\<open>DOF_core.update_isa_global("Isa_DOF.thm"      ,ISA_core.ML_isa_check_thm) \<close>
+setup\<open>DOF_core.update_isa_global("Isa_DOF.file"     ,ISA_core.ML_isa_check_file) \<close>
+setup\<open>DOF_core.update_isa_global("Isa_DOF.docitem"  ,ISA_core.ML_isa_check_docitem)\<close>
 
 section\<open> Syntax for Annotated Documentation Commands (the '' View'' Part I) \<close>
 
@@ -1386,6 +1461,39 @@ val _ =
     (attributes -- Parse.opt_target -- Parse.document_source 
       >> (Toplevel.theory o (gen_enriched_document_cmd {inline=true} I I {markdown = true} )));
 
+(*
+  term* command uses the same code as term command
+  and adds the possibility to check Term Annotation Antiquotations (TA)
+  with the help of DOF_core.transduce_term_global function
+*)
+fun string_of_term ctxt s trans =
+let
+  val t = Syntax.read_term ctxt s;
+  val T = Term.type_of t;
+  val ctxt' = Proof_Context.augment t ctxt;
+  val _ = DOF_core.transduce_term_global (t , Toplevel.pos_of trans)
+                                          (Proof_Context.theory_of ctxt');
+in
+  Pretty.string_of
+    (Pretty.block [Pretty.quote (Syntax.pretty_term ctxt' t), Pretty.fbrk,
+      Pretty.str "::", Pretty.brk 1, Pretty.quote (Syntax.pretty_typ ctxt' T)])
+end;
+
+fun print_item string_of (modes, arg) = Toplevel.keep (fn state =>
+Print_Mode.with_modes modes (fn () => writeln (string_of state arg)) ());
+
+(*
+  We want to have the current position to pass it to transduce_term_global in
+  string_of_term, so we pass the Toplevel.transition
+*)
+fun print_term (string_list, string) trans = print_item
+                  (fn state => fn string => string_of_term (Toplevel.context_of state) string trans)
+                                               (string_list, string) trans;
+
+val _ =
+Outer_Syntax.command \<^command_keyword>\<open>term*\<close> "read and print term"
+  (opt_modes -- Parse.term >> print_term);
+
 (* This is just a stub at present *)
 val _ =
   Outer_Syntax.command ("text-macro*", @{here}) "formal comment macro"
@@ -1816,6 +1924,12 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
            |> (fn thy => OntoLinkParser.docitem_antiquotation binding (cid thy) thy)
               (* defines the ontology-checked text antiquotation to this document class *)
            |> (fn thy => fold(define_inv (cid thy)) (invariants) thy)
+          (*
+            The function declare_ISA_class_accessor_and_check_instance uses a prefix
+            because the class name is already bound to "doc_class Regular_Exp.rexp" constant
+            by add_doc_class_cmd function
+          *)
+          |> ISA_core.declare_ISA_class_accessor_and_check_instance binding
     end;
            
 val parse_invariants = Parse.and_list (Args.name_position --| Parse.$$$ "::" -- Parse.term)

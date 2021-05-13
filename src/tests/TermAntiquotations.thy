@@ -84,5 +84,24 @@ ML\<open> @{docitem_attribute b::xcv4} \<close>
 ML\<open> @{docitem xcv4}              \<close>
 ML\<open> @{trace_attribute aaa}       \<close>
 
+text\<open>Now we might need to reference a class instance in a term command and we would like
+Isabelle to check that this instance is indeed an instance of this class.
+Here, we want to reference the instance @{docitem \<open>xcv4\<close>} previously defined.
+We can use the term* command which extends the classic term command
+and does the appropriate checking.\<close>
+term*\<open>@{F \<open>xcv4\<close>}\<close>
+
+text\<open>We can also reference an attribute of the instance.
+Here we reference the attribute r of the class F which has the type @{typ \<open>thm list\<close>}.\<close>
+term*\<open>r @{F \<open>xcv4\<close>}\<close>
+
+text\<open>We declare a new text element. Note that the class name contains an underscore "_".\<close>
+text*[te::text_element]\<open>Lorem ipsum...\<close>
+
+text\<open>Unfortunately due to different lexical conventions for constant symbols and mixfix symbols
+     this term antiquotation has to be denoted like this: @{term\<open>@{text-element \<open>ee\<close>}\<close>}.
+     We need to substitute an hyphen "-" for the underscore "_".\<close>
+term*\<open>@{text-element \<open>te\<close>}\<close>
+
 end
 
