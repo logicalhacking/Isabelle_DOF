@@ -241,10 +241,47 @@ setup\<open>\<close>
 section\<open>Tables\<close>
 (* TODO ! ! ! *)
 (* dito the future monitor: table - block *)
+(* some studies *)
 
+
+ML\<open>
+local
+
+fun mk_line st1 st2 [a] =  [a @ [Latex.string st2]]
+   |mk_line st1 st2 (a::S) = [a @ [Latex.string st1]] @ mk_line st1 st2 S;
+
+fun table_antiquotation name =
+  Thy_Output.antiquotation_raw_embedded name 
+    (Scan.repeat1(Scan.repeat1(Scan.lift Args.cartouche_input)))
+    (fn ctxt => 
+      (fn content:Input.source list list =>
+          let fun check _ = ()  (* ToDo *)
+              val _  = check content
+          in  content 
+              |> (map(map (Thy_Output.output_document ctxt {markdown = false})
+                  #> mk_line "&" "\\\\"
+                  #> List.concat )
+                  #> List.concat)
+              |> Latex.enclose_block "\\table[allerhandquatsch]{" "}"
+          end
+      )
+    );
+
+in
+
+val _ =
+  Theory.setup (table_antiquotation \<^binding>\<open>table_inline\<close> );
+
+end
+\<close>
 
 section\<open>Tests\<close>
-   
+(*<*)
+text\<open> @{table_inline [display]
+          \<open>\<open>\<open>dfg\<close>\<open>dfg\<close>\<open>dfg\<close>\<close>
+           \<open>\<open>1\<close>  \<open>2\<close>  \<open>3\<close>\<close>
+          \<close>}\<close>
+(*>*)
 ML\<open>@{term "side_by_side_figure"};
    @{typ "doc_class rexp"}; 
    DOF_core.SPY;\<close>

@@ -319,7 +319,7 @@ section\<open>Objectives, Conformance and Software Integrity Levels\<close>
 
 datatype sil = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
 
-type_synonym saftety_integraytion_level = sil
+type_synonym safety_integration_level = sil
 
 
 doc_class objectives =
