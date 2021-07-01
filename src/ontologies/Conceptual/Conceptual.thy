@@ -57,15 +57,41 @@ doc_class F  =
    b           :: "(A \<times> C) set"  <= "{}"       (* This is a relation link, roughly corresponding
                                                  to an association class. It can be used to track
                                                  claims to result - relations, for example.*) 
-   invariant b :: "\<lambda>\<sigma>::F. r \<sigma> \<noteq> [] \<and> card(b \<sigma>) \<ge> 3"
-        and  c :: "\<lambda>\<sigma>::F. properties \<sigma> \<noteq> []"
+   b'          :: "(A \<times> C) list"  <= "[]"
+   invariant br :: "\<lambda>\<sigma>::F. r \<sigma> \<noteq> [] \<and> card(b \<sigma>) \<ge> 3"
+        and  br':: "\<lambda>\<sigma>::F. r \<sigma> \<noteq> [] \<and> length(b' \<sigma>) \<ge> 3"
+        and  cr :: "\<lambda>\<sigma>::F. properties \<sigma> \<noteq> []"
+
+text\<open>The effect of the invariant declaration is to provide intern definitions for validation 
+functions of this invariant. They can be referenced as follows:\<close>
+thm br_inv_def
+thm br'_inv_def
+thm cr_inv_def
+
+text\<open>Now, we can use these definitions in order to generate code for these validation functions.
+Note, however, that not everything that we can write in an invariant (basically: HOL) is executable,
+or even compilable by the code generator setup:\<close>
+
+ML\<open> val cr_inv_code = @{code "cr_inv"} \<close> \<comment>\<open>works albeit thm is abstract ...\<close>
+text\<open>while in :\<close>
+(*
+ML\<open> val br_inv_code = @{code "br_inv"} \<close> \<comment>\<open>does not work ...\<close>
+*)
+text\<open>... the compilation fails due to the fact that nothing prevents the user 
+     to define an infinite relation between \<^typ>\<open>A\<close> and  \<^typ>\<open>C\<close>. However, the alternative
+variant: \<close>
+
+ML\<open> val br'_inv_code = @{code "br'_inv"} \<close> \<comment>\<open>does work ...\<close>
+
+text\<open>... is compilable ...\<close>
+
 
 
 doc_class G = C +
    g :: "thm"  <= "@{thm \<open>HOL.refl\<close>}"
 
 doc_class M = 
-   trace :: "(A + C + D + F) list"
+   ok :: "unit"
    accepts "A ~~ \<lbrace>C || D\<rbrace>\<^sup>* ~~ \<lbrakk>F\<rbrakk>"
 
 
