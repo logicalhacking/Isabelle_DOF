@@ -22,7 +22,7 @@ define_shortcut* isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
 open_monitor*[this::report] 
 (*>*)
 
-title*[tit::title]\<open>My Personal, Ecclectic Isabelle Programming Manual\<close> 
+title*[tit::title]\<open>My Personal, Eclectic Isabelle Programming Manual\<close> 
 subtitle*[stit::subtitle]\<open>Version : Isabelle 2020\<close>
 text*[bu::author,     
       email       = "''wolff@lri.fr''",
@@ -46,7 +46,7 @@ text*[abs::abstract,
   This text is written itself in Isabelle/Isar using a specific document ontology
   for technical reports. It is intended to be a "living document", i.e. it is not only
   used for generating a static, conventional .pdf, but also for direct interactive 
-  exploration in Isabelle/jedit. This way, types, intermediate results of computations and
+  exploration in Isabelle/jEdit. This way, types, intermediate results of computations and
   checks can be repeated by the reader who is invited to interact with this document.
   Moreover, the textual parts have been enriched with a maximum of formal content
   which makes this text re-checkable at each load and easier maintainable.
@@ -71,7 +71,7 @@ text\<open> \<^vs>\<open>-0.5cm\<close>
   in Isabelle/jedit in order to make experiments on the running code. This text is written 
   itself in Isabelle/Isar using a specific document ontology for technical reports. It is 
   intended to be a "living document", i.e. it is not only used for generating a static, 
-  conventional .pdf, but also for direct interactive exploration in Isabelle/jedit. This way, 
+  conventional .pdf, but also for direct interactive exploration in Isabelle/jEdit. This way, 
   types, intermediate results of computations and checks can be repeated by the reader who is 
   invited to interact with this document. Moreover, the textual parts have been enriched with a 
   maximum of formal content which makes this text re-checkable at each load and easier 
@@ -81,7 +81,7 @@ figure*[architecture::figure,relative_width="70",src="''figures/isabelle-archite
      The system architecture of Isabelle (left-hand side) and the  asynchronous communication 
      between the Isabelle system and the IDE (right-hand side). \<close>
 
-text\<open>This programming roughly follows the Isabelle system architecture shown in 
+text\<open>This programming tutorial roughly follows the Isabelle system architecture shown in 
   \<^figure>\<open>architecture\<close>, and, to be more precise, more or less in the bottom-up order.
 
   We start from the basic underlying SML platform over the Kernels to the tactical layer 
@@ -92,8 +92,8 @@ chapter*[t1::technical]\<open> SML and Fundamental SML libraries  \<close>
 
 section*[t11::technical] "ML, Text and Antiquotations"
 
-text\<open>Isabelle is written in SML, the "Standard Meta-Language", which is is an impure functional 
-  programming language allowing, in principle, mutable variables and side-effects. 
+text\<open>Isabelle is written in SML, the "Standard Meta-Language", which is an impure functional 
+  programming language allowing, in principle, mutable variables and side effects. 
   The following Isabelle/Isar commands allow for accessing the underlying SML interpreter
   of Isabelle directly. In the example, a mutable variable X is declared, initialized to 0 and 
   updated; and finally re-evaluated leading to output: \<close>
@@ -142,14 +142,14 @@ text\<open>\<^emph>\<open>This is a text.\<close>\<close>
 
 text\<open>... is represented in the integrated source (the \<^verbatim>\<open>.thy\<close> file) by:\<close>
 
-text\<open> *\<open>\<open>\<close>This is a text.\<open>\<close>\<close>\<close>
+text\<open> \<open>*\<open>This is a text.\<close>\<close>\<close>
 
-text\<open>and displayed in the Isabelle/jedit front-end at the sceen by:\<close>
+text\<open>and displayed in the Isabelle/jEdit front-end at the sceen by:\<close>
 
 figure*[fig2::figure, relative_width="60", placement="pl_h", src="''figures/text-element''"]
-        \<open>A text-element as presented in Isabelle/jedit.\<close>
+        \<open>A text-element as presented in Isabelle/jEdit.\<close>
 
-text\<open>The text-commands, ML- commands (and in principle any other command) can be seen as 
+text\<open>The text-commands, ML-commands (and in principle any other command) can be seen as 
   \<^emph>\<open>quotations\<close> over the underlying SML environment (similar to OCaml or Haskell).
   Linking these different sorts of quotations with each other and the underlying SML-environment
   is supported via \<^emph>\<open>antiquotations\<close>'s. Generally speaking, antiquotations are a kind of semantic
@@ -192,7 +192,7 @@ text\<open>\<^vs>\<open>-1.0cm\<close>... which we will describe in more detail 
 
 text\<open>In a way, anti-quotations implement a kind of 
   literate specification style in text, models, code, proofs, etc., which become alltogether
-  elements of one global \<^emph>\<open>integrated document\<close> in which mutual dependencies can be machine=checked
+  elements of one global \<^emph>\<open>integrated document\<close> in which mutual dependencies can be machine-checked
   (i.e. \<open>formal\<close> in this sense).
   Attempting to maximize the \<open>formal content\<close> is a way to ensure "Agile Development" (AD) of an 
   integrated document development, in the sense that it allows to give immediate feedback
@@ -210,17 +210,21 @@ text\<open>It is instructive to study the fundamental bootstrapping sequence of 
   it is written in the Isar format and gives an idea of the global module dependencies: 
   \<^file>\<open>~~/src/Pure/ROOT.ML\<close>. Loading this file 
   (for example by hovering over this hyperlink in the antiquotation holding control or
-  command key in Isabelle/jedit and activating it) allows the Isabelle IDE 
+  command key in Isabelle/jEdit and activating it) allows the Isabelle IDE 
   to support hyperlinking \<^emph>\<open>inside\<close> the Isabelle source.\<close>
 
 text\<open>The bootstrapping sequence is also reflected in the following diagram @{figure "architecture"}.\<close>
 
 
-section*[t12::technical] "Elements of the SML library";  
+section*[t12::technical] "Elements of the SML library"  
 text\<open>Elements of the \<^file>\<open>~~/src/Pure/General/basics.ML\<close>  SML library
   are basic exceptions. Note that exceptions should be catched individually, uncatched exceptions 
   except those generated by the specific "error" function are discouraged in Isabelle
-  source programming since they might produce races in the internal Isabelle evaluation. 
+  source programming since they might produce races in the internal Isabelle evaluation.
+  % TODO:
+  % The following exceptions are defined in $ML_SOURCES/basis/General.sml
+  % and in $ISABELLE_HOME/src/Pure/general/scan.ml
+  % ans not in \<^file>\<open>~~/src/Pure/General/basics.ML\<close>
   
 \<^item> \<^ML>\<open>Bind      : exn\<close> \<^vs>\<open>-0.3cm\<close>
 \<^item> \<^ML>\<open>Chr       : exn\<close>  \<^vs>\<open>-0.3cm\<close>
@@ -251,7 +255,11 @@ text*[squiggols::technical]
 \<^item> @{ML "op --| : ('a->'b*'c) * ('c->'d*'e)->'a->'b*'e"}, parse pair, forget left \<^vs>\<open>-0.3cm\<close>
 \<^item> @{ML "op ?  : bool * ('a->'a)->'a->'a"}, if then else  \<^vs>\<open>-0.3cm\<close>
 \<^item> @{ML "ignore   : 'a->unit"}, force execution, but ignore result \<^vs>\<open>-0.3cm\<close>
-\<^item> @{ML "op before: ('a*unit) -> 'a"} \<^vs>\<open>-0.8cm\<close> \<close>
+\<^item> @{ML "op before: ('a*unit) -> 'a"} \<^vs>\<open>-0.8cm\<close>
+% TODO:
+% Again the definitions of these operators span multiple files
+% and not just \<^file>\<open>~~/src/Pure/General/basics.ML\<close>.
+\<close>
 
 text\<open>\<^noindent> Some basic examples for the programming style using these combinators can be found in the
 "The Isabelle Cookbook" section 2.3.\<close>
@@ -300,7 +308,9 @@ text\<open> What I call the 'Nano-Kernel' in Isabelle can also be seen as an acy
   "Generic theory contexts with unique identity, arbitrarily typed data,
   monotonic development graph and history support.  Generic proof
   contexts with arbitrarily typed data."
-  
+  % NOTE:
+  % Add the reference.
+
   In my words: a context is essentially a container with
   \<^item> an id
   \<^item> a list of parents (so: the graph structure)
@@ -339,8 +349,6 @@ text\<open>
 \<^item> \<^ML>\<open>Context.map_theory: (theory -> theory) -> Context.generic -> Context.generic\<close>
 \<close>
 
-text\<open>\<^ML>\<open>3+4\<close>\<close>
-
 text\<open>The structure \<^ML_structure>\<open>Proof_Context\<close> provides a key data-structures concerning contexts:
 
 \<^item> \<^ML>\<open> Proof_Context.init_global: theory -> Proof.context\<close>
@@ -359,7 +367,7 @@ text\<open>A central mechanism for constructing user-defined data is by the \<^M
   \<^verbatim>\<open>empty\<close>, and operations  \<^verbatim>\<open>merge\<close> and \<^verbatim>\<open>extend\<close>, can construct a lense with operations
   \<^verbatim>\<open>get\<close> and \<^verbatim>\<open>put\<close> that attach this data into the generic system context. Rather than using
   unsynchronized SML mutable variables, this is the mechanism to introduce component local
-  data in Isabelle, which allows to manage this data for the necessary backtrack- and synchronization
+  data in Isabelle, which allows to manage this data for the necessary backtrack and synchronization
   features in the pervasively parallel evaluation framework that Isabelle as a system represents.\<close>
 
 ML \<open>
@@ -476,17 +484,21 @@ ML\<open> val Const ("HOL.implies", @{typ "bool \<Rightarrow> bool \<Rightarrow>
 
  val "HOL.bool" = @{type_name "bool"};
 
- (* three ways to write type bool:@ *)
+ (* three ways to write type bool: *)
  val Type("fun",[s,Type("fun",[@{typ "bool"},Type(@{type_name "bool"},[])])]) = @{typ "bool \<Rightarrow> bool \<Rightarrow> bool"};
  
 \<close>
+text\<open>
+% NOTE:
+% The quotes disappear in the pdf document output.
 
+\<close>
 text\<open>Note that the SML interpreter is configured that he will actually print a type
      \<^verbatim>\<open>Type("HOL.bool",[])\<close> just as \<^verbatim>\<open>"bool": typ\<close>, so a compact notation looking
      pretty much like a string. This can be confusing at times.\<close>
 
 text\<open>Note, furthermore, that there is a programming API for the HOL-instance of Isabelle:
-  it is contained in @{file  "$ISABELLE_HOME/src/HOL/Tools/hologic.ML"}. It offers for many
+  it is contained in @{file  "$ISABELLE_HOME/src/HOL/Tools/hologic.ML"}. It offers many
   operators of the HOL logic specific constructors and destructors:\<close>
 
 text*[T2::technical]\<open>
@@ -963,9 +975,9 @@ text\<open>At this point, we leave the Pure-Kernel and start to describe the fir
 
 text\<open> \<^ML_type>\<open>tactic\<close>'s are in principle \<^emph>\<open>relations\<close> on theorems  \<^ML_type>\<open>thm\<close>; the relation is
   lazy and encoded as function of type \<^ML_type>\<open>thm -> thm Seq.seq\<close>.
-  This gives a
-  natural way to represent the fact that HO-Unification (and therefore the mechanism of rule-instan-
-  tiation) are non-deterministic in principle. Heuristics may choose particular preferences between 
+  This gives a natural way to represent the fact that HO-Unification
+  (and therefore the mechanism of rule-instantiation) are non-deterministic in principle.
+  Heuristics may choose particular preferences between 
   the theorems in the range of this relation, but the Isabelle Design accepts this fundamental 
   fact reflected at this point in the prover architecture. 
   This potentially infinite relation is implemented by a function of theorems to lazy lists 
@@ -994,9 +1006,9 @@ text\<open>The next layer in the architecture describes  \<^ML_type>\<open>tacti
   theorems  in a backward reasoning style (bottom up development of proof-trees). An initial 
   goal-state for some property \<^prop>\<open>A\<close> --- the \<^emph>\<open>goal\<close> --- is constructed via the kernel 
   \<^ML>\<open>Thm.trivial\<close>-operation into  \<^prop>\<open>A \<Longrightarrow> A\<close>, and tactics either refine the premises --- the 
-  \<^emph>\<open>subgoals\<close> the of this meta-implication --- producing  more and more of them or eliminate them 
+  \<^emph>\<open>subgoals\<close> of this meta-implication --- producing  more and more of them or eliminate them 
   in subsequent goal-states. Subgoals of the form \<^prop>\<open>B\<^sub>1 \<Longrightarrow> B\<^sub>2 \<Longrightarrow> A \<Longrightarrow> B\<^sub>3 \<Longrightarrow> B\<^sub>4 \<Longrightarrow> A\<close> can be 
-  eliminated via the  \<^ML>\<open>Tactic.assume_tac\<close>-tactic, and a subgoal  \<^prop>\<open>C\<^sub>m\<close> can be refined via the 
+  eliminated via the \<^ML>\<open>Tactic.assume_tac\<close>-tactic, and a subgoal  \<^prop>\<open>C\<^sub>m\<close> can be refined via the 
   theorem \<^prop>\<open>E\<^sub>1 \<Longrightarrow> E\<^sub>2 \<Longrightarrow> E\<^sub>3 \<Longrightarrow> C\<^sub>m\<close> the \<^ML>\<open>Tactic.resolve_tac\<close> - tactic to new subgoals
   \<^prop>\<open>E\<^sub>1\<close>, \<^prop>\<open>E\<^sub>2\<close>, \<^prop>\<open>E\<^sub>3\<close>. In case that a theorem used for resolution has no premise \<^prop>\<open>E\<^sub>i\<close>, 
   the subgoal  \<^prop>\<open>C\<^sub>m\<close> is also eliminated ("closed").
@@ -1037,7 +1049,7 @@ text\<open>Note that "applying a rule" is a fairly complex operation in the Exte
   \<^prop>\<open>D\<^sub>2\<close> and \<^prop>\<open>A\<close> have been replaced by schematic variables (see phase one),
   they must be replaced by parameterized schematic variables, i. e. a kind of skolem function.
   For example, \<open>?x + ?y = ?y + ?x\<close> would be lifted to 
-  \<open>!!  x y z. ?x x y z + ?y x y z = ?y x y z + ?x x y z\<close>. This way, the lifted theorem
+  \<open>\<And>  x y z. ?x x y z + ?y x y z = ?y x y z + ?x x y z\<close>. This way, the lifted theorem
   can be instantiated by the parameters  \<open>x y z\<close> representing "fresh free variables"
   used for this sub-proof. This mechanism implements their logically correct bookkeeping via
   kernel primitives.
@@ -1122,13 +1134,13 @@ thm "thm111"
 section\<open>Toplevel --- aka. ''The Isar Engine''\<close>
 
 text\<open>  The main structure of the Isar-engine is \<^ML_structure>\<open>Toplevel\<close>.
-   The Isar Toplevel (aka "the Isar engine" or the "Isar Interpreter") is an transaction
+   The Isar Toplevel (aka "the Isar engine" or the "Isar Interpreter") is a transaction
    machine sitting over the Isabelle Kernel steering some asynchronous evaluation during the
    evaluation of Isabelle/Isar input, usually stemming from processing Isabelle \<^verbatim>\<open>.thy\<close>-files. \<close>
 
 subsection*[tplstate::technical] \<open>Toplevel Transaction Management in the Isar-Engine\<close>
 text\<open>
-   The  structure \<^ML_structure>\<open>Toplevel\<close>  provides and internal \<^ML_type>\<open>state\<close> with the 
+   The  structure \<^ML_structure>\<open>Toplevel\<close>  provides an internal \<^ML_type>\<open>state\<close> with the 
    necessary infrastructure ---  i.e. the operations to pack and unpack theories and
    queries  on it:
 
@@ -1186,7 +1198,7 @@ text\<open>
  with a few query operations on the state of the toplevel:
  \<^item>  \<^ML>\<open>Outer_Syntax.command : Outer_Syntax.command_keyword -> string -> 
                               (Toplevel.transition -> Toplevel.transition) parser -> unit\<close>,
- \<^item>  \<^ML>\<open>Document.state : unit -> Document.state\<close>, giving the state as a "collection of named
+ \<^item>  \<^ML>\<open>Document.state : unit -> Document.state\<close>, giving the state as a "collection" of named
      nodes, each consisting of an editable list of commands, associated with asynchronous 
      execution process,
  \<^item>  \<^ML>\<open>Session.get_keywords : unit -> Keyword.keywords\<close>, this looks to be session global,
@@ -1214,7 +1226,7 @@ text\<open> The integration of the  \<^theory_text>\<open>text\<close>-command i
  \<close>}
 
  where \<^ML>\<open>Pure_Syn.document_command\<close> is the defining operation for the 
- "diagnostic" (=side-effect-free) toplevel operation \<^ML>\<open>Pure_Syn.document_command\<close> looks as follows:
+ "diagnostic" (=side-effect-free) toplevel operation. \<^ML>\<open>Pure_Syn.document_command\<close> looks as follows:
 
  @{ML [display]\<open> let fun output_document state markdown txt = 
                            Thy_Output.output_document (Toplevel.presentation_context state) markdown txt
@@ -1272,7 +1284,7 @@ text\<open>The toplevel also provides an infrastructure for managing configurati
 \<close>
 
 
-subsubsection*[ex::example]\<open>Example registration of an config attribute \<close>
+subsubsection*[ex::example]\<open>Example registration of a config attribute \<close>
 text\<open>The attribute XS232 is initialized by false:\<close>
 ML\<open> 
 val (XS232, XS232_setup)
@@ -1436,31 +1448,31 @@ text\<open>A \<^verbatim>\<open>.thy\<close> file consists of a \<^emph>\<open>h
   predefined commands allow for the dynamic creation of new commands similarly 
   to the definition of new functions in an interpreter shell (or: toplevel, see above.).
   A command starts with a pre-declared keyword and specific syntax of this command;
-  the declaration of a keyword is only allowed in the same \<^verbatim>\<open>.thy\<close>-file where the
+  the declaration of a keyword is only allowed in the same \<^verbatim>\<open>.thy\<close>-file where
   the corresponding new command is defined. The semantics of the command is expressed
   in ML and consists of a @{ML_type "Toplevel.transition -> Toplevel.transition"}
   function. Thus, the Isar-toplevel supports the generic document model 
   and allows for user-programmed extensions.\<close>
 
-text\<open>In the traditional literature, Isabelle \<^verbatim>\<open>.thy\<close>-files were 
-  were said to be processed by processed by two types of parsers:
+text\<open>In the traditional literature, Isabelle \<^verbatim>\<open>.thy\<close>-files 
+  were said to be processed by two types of parsers:
 \<^enum> the "outer-syntax" (i.e. the syntax for commands) is processed 
   by a lexer-library and parser combinators built on top, and
-\<^enum> the "inner-syntax" (i.e. the syntax for @{term \<open>\<Lambda>\<close>} - terms) 
+\<^enum> the "inner-syntax" (i.e. the syntax for @{term \<open>\<Lambda>\<close>}-terms) 
   with an evolved, eight-layer parsing and pretty-printing process
-  based on an Early-algorithm.
+  based on an Earley-algorithm.
 \<close>
 
 text\<open>This picture is less and less true for a number of reasons:
-\<^enum> With the advent of \<open>(\<open>)... (\<close>)\<close>, a mechanism for
-  \<^emph>\<open>cascade-syntax\<close> came to the Isabelle platform that introduce a flexible means
+\<^enum> With the advent of \<open>\<open> ... \<close>\<close>, a mechanism for
+  \<^emph>\<open>cascade-syntax\<close> came to the Isabelle platform that introduces a flexible means
   to change parsing contexts \<^emph>\<open>and\<close> parsing technologies. 
 \<^enum> Inside the term-parser levels, the concept of \<^emph>\<open>cartouche\<close> can be used 
   to escape the parser and its underlying parsing technology.
 \<^enum> Outside, in the traditional toplevel-parsers, the 
-  \<open>(\<open>)... (\<close>)\<close> is becoming more and more enforced
+  \<open>\<open> ... \<close>\<close> is becoming more and more enforced
   (some years ago, syntax like \<open>term{* ... *}\<close> was replaced by 
-   syntax \<open>term(\<open>)... (\<close>)\<close>. This makes technical support of cascade syntax
+   syntax \<open>term\<open> ... \<close>\<close>. This makes technical support of cascade syntax
    more and more easy.
 \<^enum> The Lexer infra-structure is already rather generic; nothing prevents to
   add beside the lexer - configurations for ML-Parsers, Toplevel Command Syntax 
@@ -1474,8 +1486,8 @@ section\<open>Basics: string, bstring and xstring\<close>
 text\<open>\<^ML_type>\<open>string\<close> is the basic library type from the SML library
   in structure \<^ML_structure>\<open>String\<close>. Many Isabelle operations produce
   or require formats thereof introduced as type synonyms 
-  \<^ML_type>\<open>bstring\<close> (defined in structure  \<^ML_structure>\<open>Binding\<close>
-  and \<^ML_type>\<open>xstring\<close> (defined in structure \<^ML_structure>\<open>Name_Space\<close>.
+  \<^ML_type>\<open>bstring\<close> (defined in structure  \<^ML_structure>\<open>Binding\<close>)
+  and \<^ML_type>\<open>xstring\<close> (defined in structure \<^ML_structure>\<open>Name_Space\<close>).
   Unfortunately, the abstraction is not tight and combinations with 
   elementary routines might produce quite crappy results.\<close>
 
@@ -1486,7 +1498,7 @@ text\<open>... produces the system output \<^verbatim>\<open>val it = "here": bs
 ML\<open>String.explode b\<close> (* is harmless, but  *)
 ML\<open>String.explode(Binding.name_of
           (Binding.conglomerate[Binding.qualified_name "X.x", @{binding "here"}]  ))\<close>
-text\<open>... whioch leads to the output \<^verbatim>\<open>val it = [#"x", #"_", #"h", #"e", #"r", #"e"]: char list\<close>\<close>
+text\<open>... which leads to the output \<^verbatim>\<open>val it = [#"x", #"_", #"h", #"e", #"r", #"e"]: char list\<close>\<close>
 
 text\<open> However, there is an own XML parser for this format. See Section Markup. \<close>
 
@@ -1519,11 +1531,11 @@ text\<open>The structures @{ML_structure Markup} and @{ML_structure Properties} 
   annotation data which is part of the protocol sent from Isabelle to the front-end.
   They are qualified as "quasi-abstract", which means they are intended to be an abstraction of 
   the serialized, textual presentation of the protocol. Markups are structurally a pair of a key
-  and properties; @{ML_structure Markup} provides a number of of such \<^emph>\<open>key\<close>s for annotation classes
+  and properties; @{ML_structure Markup} provides a number of such \<^emph>\<open>key\<close>s for annotation classes
   such as "constant", "fixed", "cartouche", some of them quite obscure. Here is a code sample
   from \<^theory_text>\<open>Isabelle_DOF\<close>. A markup must be tagged with an id; this is done by the @{ML serial}-function
-  discussed earlier. Markup Operations, were used for hyperlinking applications to binding
-  occurrences, info for hovering, infors for type ... \<close>  
+  discussed earlier. Markup operations were used for hyperlinking applications to binding
+  occurrences, info for hovering, infos for type ... \<close>  
 ML\<open>
 (* Position.report is also a type consisting of a pair of a position and markup. *)
 (* It would solve all my problems if I find a way to infer the defining Position.report
@@ -1546,7 +1558,7 @@ fun theory_markup (def:bool) (name:string) (id:serial) (pos:Position.T) =
       (Markup.entity Markup.theoryN name);
 Markup.theoryN : string;
 
-serial();   (* A global, lock-guarded seriel counter used to produce unique identifiers,
+serial();   (* A global, lock-guarded serial counter used to produce unique identifiers,
                be it on the level of thy-internal states or as reference in markup in
                PIDE *)
 \<close>
@@ -1583,7 +1595,7 @@ text\<open>The @\<open>ML report_defining_occurrence\<close>-function above take
 
 subsection\<open>A Slightly more Complex Example\<close>
 text\<open>Note that this example is only animated in the integrated source of this document;
-     it is essential that is executed inside Isabelle/jedit. \<close>
+     it is essential that is executed inside Isabelle/jEdit. \<close>
 ML \<open>
 
 fun markup_tvar def_name ps (name, id) =
@@ -1752,7 +1764,7 @@ text\<open>Parsing Combinators go back to monadic programming as advocated by Wa
       'a * (Context.generic * Token.T list)\<close>
 
   Since the semantics of an Isabelle command is a \<^ML_type>\<open>Toplevel.transition -> Toplevel.transition \<close>
-  or theory  \<^ML_type>\<open>theory -> theory\<close>  function, i.e. a global system transition.
+  or theory  \<^ML_type>\<open>theory -> theory\<close>  function, i.e. a global system transition,
   "parsers" of that type can be constructed and be bound as call-back functions
   to a table in the Toplevel-structure of Isar.
   
@@ -1772,7 +1784,7 @@ text\<open>Parsing Combinators go back to monadic programming as advocated by Wa
 \<^item> \<^ML>\<open>op |-- : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> 'd * 'e\<close> 
   concatenate and forget first parse result
 \<^item> \<^ML>\<open>op --| : ('a -> 'b * 'c) * ('c -> 'd * 'e) -> 'a -> 'b * 'e\<close> 
-  concatenation and forget second parse result
+  concatenate and forget second parse result
 \<^item> \<^ML>\<open>op ^^ : ('a -> string * 'b) * ('b -> string * 'c) -> 'a -> string * 'c\<close> 
 \<^item> \<^ML>\<open>op ::: : ('a -> 'b * 'c) * ('c -> 'b list * 'd) -> 'a -> 'b list * 'd\<close> 
 \<^item> \<^ML>\<open>op @@@ : ('a -> 'b list * 'c) * ('c -> 'b list * 'd) -> 'a -> 'b list * 'd\<close> 
@@ -1791,7 +1803,7 @@ fun parser2contextparser pars (ctxt, toks) = let val (a, toks') = pars toks
                                              in  (a,(ctxt, toks')) end;
 val _ = parser2contextparser : 'a parser -> 'a context_parser;
 
-(* bah, is the same as Scan.lift *)
+(* bah, it's the same as Scan.lift *)
 val _ = Scan.lift Args.cartouche_input : Input.source context_parser;\<close>
 
 subsection\<open>Advanced Parser Library\<close>
@@ -1804,10 +1816,10 @@ text\<open>There are two parts. A general multi-purpose parsing combinator libra
 \<^item> \<^ML>\<open>Parse.nat: int parser\<close>  
 \<^item> \<^ML>\<open>Parse.int: int parser\<close>
 \<^item> \<^ML>\<open>Parse.enum_positions: string -> 'a parser -> ('a list * Position.T list) parser\<close>
-\<^item> \<^ML>\<open>Parse.enum: string -> 'a parser -> 'a list parser\<close>
+\<^item> \<^ML>\<open>Parse.enum : string -> 'a parser -> 'a list parser\<close>
 \<^item> \<^ML>\<open>Parse.input: 'a parser -> Input.source parser\<close>
 
-\<^item> \<^ML>\<open>Parse.enum : string -> 'a parser -> 'a list parser\<close>
+\<^item> \<^ML>\<open>Parse.enum': string -> 'a context_parser -> 'a list context_parser\<close>
 \<^item> \<^ML>\<open>Parse.!!! : (Token.T list -> 'a) -> Token.T list -> 'a\<close>
 \<^item> \<^ML>\<open>Parse.position: 'a parser -> ('a * Position.T) parser\<close>
 
@@ -1816,7 +1828,7 @@ text\<open>There are two parts. A general multi-purpose parsing combinator libra
 
 text\<open>The second part is much more high-level, and can be found under \<^ML_structure>\<open>Args\<close>.
   In parts, these combinators are again based on more low-level combinators, in parts they serve as 
-  an an interface to the underlying Earley-parser for mathematical notation used in types and terms.
+  an interface to the underlying Earley-parser for mathematical notation used in types and terms.
   This is perhaps meant with the fairly cryptic comment:
   "Quasi-inner syntax based on outer tokens: concrete argument syntax of
   attributes, methods etc." at the beginning of this structure.\<close>
@@ -1919,7 +1931,7 @@ subsubsection\<open> Example \<close>
 text\<open>Since this is so common in interface programming, there are a number of antiquotations\<close>
 ML\<open>
 val H = @{binding here}; (* There are "bindings" consisting of a text-span and a position, 
-                            where \<dieresis>positions\<dieresis> are absolute references to a file *)                                  
+                            where "positions" are absolute references to a file *)                                  
 
 Binding.pos_of H;  (* clicking on "H" activates the hyperlink to the defining occ of "H" above *)
 (*  {offset=23, end_offset=27, id=-17214}: Position.T *)
@@ -1941,7 +1953,7 @@ subsubsection \<open>Example :Input streams. \<close>
 
 ML\<open> Input.source_explode (Input.string " f @{thm refl}");
   
-   (* If stemming from the input window, this can be s th like: 
+   (* If stemming from the input window, this can be something like: 
       
         [(" ", {offset=14, id=-2769}), ("f", {offset=15, id=-2769}), (" ", {offset=16, id=-2769}),
         ("@", {offset=17, id=-2769}), ("{", {offset=18, id=-2769}), ("t", {offset=19, id=-2769}),
@@ -1955,17 +1967,17 @@ ML\<open> Input.source_explode (Input.string " f @{thm refl}");
 
 section\<open>Term Parsing\<close>  
 
-text\<open>The heart of the parsers for mathematical notation, based on an Earley parser that can cope
+text\<open>The heart of the parsers for mathematical notation, based on an Earley-parser that can cope
   with incremental changes of the grammar as required for sophisticated mathematical output, is hidden
   behind the API described in this section.\<close>
   
-text\<open> Note that the naming underlies the following convention : 
-   there are:
+text\<open> Note that the naming underlies the following convention. 
+   There are:
    \<^enum> "parser"s 
    \<^enum>  type-"checker"s, which usually also englobe the markup generation for PIDE
    \<^enum> "reader"s which do both together with pretty-printing
    
-   This is encapsulated the data structure @{ML_structure Syntax} --- 
+   This is encapsulated in the data structure @{ML_structure Syntax} --- 
    the table with const symbols,  print and ast translations, ... The latter is accessible, e.g. 
    from a Proof context via @{ML Proof_Context.syn_of}.
 \<close>
@@ -2096,7 +2108,7 @@ text\<open>The heart of the LaTeX generator is to be found in the structure \<^M
 This is an own parsing and writing process, with the risc that a parsed file in the IDE parsing
 process can not be parsed for the LaTeX Generator. The reason is twofold:
 
-\<^enum> The LaTeX Generator makes a rough attempt to mimic the LayOut if the thy-file; thus, its
+\<^enum> The LaTeX Generator makes a rough attempt to mimic the LayOut in the thy-file; thus, its
   spacing is relevant.
 \<^enum> there is a special bracket \<open>(*<*)\<close> ... \<open>(*>*)\<close> that allows to specify input that is checked by
   Isabelle, but excluded from the LaTeX generator (this is handled in an own sub-parser
