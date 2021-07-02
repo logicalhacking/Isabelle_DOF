@@ -58,7 +58,7 @@ subsection*[d::A, x = "4"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 (* test : update should not fail, invariant still valid *)
 update_instance*[d::A, x += "1"]
 
-(* test : with the next step it should fail :
+(* test : with the next step it should fail : 
 update_instance*[d::A, x += "1"]
 *)
 
@@ -101,19 +101,20 @@ open_monitor*[struct::M]
 
 subsection*[a::A, x = "3"]       \<open> Lorem ipsum dolor sit amet, ... \<close>
 
-text*[c1::C, x = "''beta''"]  \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
+text*[c1::C, x = "''beta''"]     \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
 
-text*[d1::E, a1 = "X3"]       \<open> ... phasellus amet id massa nunc, pede suscipit repellendus, ... \<close>
+text*[d1::E, a1 = "X3"]          \<open> ... phasellus amet id massa nunc, pede suscipit repellendus, ... \<close>
     
-text*[c2:: C, x = "''delta''"] \<open> ... in ut tortor eleifend augue pretium consectetuer...  \<close>
+text*[c2:: C, x = "''delta''"]   \<open> ... in ut tortor eleifend augue pretium consectetuer...  \<close>
 
 subsection*[f::E]                \<open> Lectus accumsan velit ultrices, ... }\<close>
 
 (*
-section*[f2::E]               \<open> Lectus accumsan velit ultrices, ... }\<close>
+section*[f2::E]                  \<open> Lectus accumsan velit ultrices, ... }\<close>
 *)
 
-ML\<open>val term = AttributeAccess.compute_attr_access (Context.Proof @{context}) "trace" "struct" @{here} @{here} ;
+ML\<open>val term = AttributeAccess.compute_attr_access 
+                  (Context.Proof @{context}) "trace" "struct" @{here} @{here} ;
    fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
    val string_pair_list = map conv (HOLogic.dest_list term)
   \<close>
