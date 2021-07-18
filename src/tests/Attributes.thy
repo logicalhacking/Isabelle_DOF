@@ -68,6 +68,8 @@ text*[omega::E, x = "''def''"]\<open> Lorem ipsum ... @{thm refl} \<close>
 text\<open> As mentioned in @{docitem \<open>dfgdfg\<close>} \<close>
 
 text\<open>Here is a simulation what happens on the level of the (HOL)-term representation:\<close>
+typ \<open>'a A_scheme\<close>
+typ \<open>A\<close>
 term "A.x (undefined\<lparr>A.x := 3\<rparr>)"
 term "B.x ((undefined::C)\<lparr>B.y := [''sdf'']\<rparr>)"
 term "C.z ((undefined::C)\<lparr>B.y := [''sdf''], z:= Some undefined\<rparr>)"
