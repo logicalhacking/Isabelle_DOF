@@ -226,7 +226,7 @@ install_and_register(){
 }
 
 
-ISABELLE=`which isabelle`
+ISABELLE=`command -v isabelle`
 SKIP="false"
 while [ $# -gt 0 ]
 do
