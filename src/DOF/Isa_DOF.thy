@@ -38,6 +38,7 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   and      "open_monitor*"      "close_monitor*" 
            "declare_reference*" "update_instance*"
            "doc_class"                                    
+           "onto_class"         (* a wish from Idir *)                           
            "define_shortcut*"   "define_macro*"          :: thy_decl
 
   and      "text*"              "text-macro*"            :: document_body
@@ -124,9 +125,11 @@ fun map_snd f (x,y) = (x,f y)
 \<close>
 
 section\<open> A HomeGrown Document Type Management (the ''Model'') \<close>
-  
+
+
 ML\<open> 
 structure DOF_core = 
+ 
 struct
 
    type docclass_struct = {params         : (string * sort) list,          (*currently not used *)
@@ -1932,11 +1935,14 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
           |> ISA_core.declare_ISA_class_accessor_and_check_instance binding
     end;
            
+
+(* repackaging argument list *)
+fun add_doc_class_cmd' (((overloaded, hdr), (parent, attrs)),((rejects,accept_rex),invars)) =
+    (add_doc_class_cmd {overloaded = overloaded} hdr parent attrs rejects accept_rex invars)
+
 val parse_invariants = Parse.and_list (Args.name_position --| Parse.$$$ "::" -- Parse.term)
 
-val _ =
-  Outer_Syntax.command \<^command_keyword>\<open>doc_class\<close> "define document class"
-    ((Parse_Spec.overloaded 
+val parse_doc_class = (Parse_Spec.overloaded 
       -- (Parse.type_args_constrained  -- Parse.binding) 
       -- (\<^keyword>\<open>=\<close>  
          |-- Scan.option (Parse.typ --| \<^keyword>\<open>+\<close>) 
@@ -1945,10 +1951,22 @@ val _ =
       -- (   Scan.optional (\<^keyword>\<open>rejects\<close>    |-- Parse.enum1 "," Parse.term) []
           -- Scan.repeat   (\<^keyword>\<open>accepts\<close>    |-- Parse.term)
           -- Scan.repeats ((\<^keyword>\<open>invariant\<close>) |-- parse_invariants))
-     ) 
-    >> (fn (((overloaded, hdr), (parent, attrs)),((rejects,accept_rex),invars)) =>
-           Toplevel.theory (add_doc_class_cmd {overloaded = overloaded} hdr parent  
-                                              attrs rejects accept_rex invars)));
+     )
+
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>doc_class\<close> 
+                       "define document class"
+                        (parse_doc_class >> (Toplevel.theory o add_doc_class_cmd'));
+
+
+(*just an alternative syntax*)
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>onto_class\<close> 
+                       "define ontological class"
+                        (parse_doc_class >> (Toplevel.theory o add_doc_class_cmd'));
+
+
 
 end (* struct *)
 \<close>  

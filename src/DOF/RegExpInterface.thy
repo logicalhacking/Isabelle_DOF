@@ -152,6 +152,7 @@ text\<open>Here comes the hic : The reflection of the HOL-Automata module into a
 with an abstract interface hiding some generation artefacts like the internal states 
 of the deterministic automata ...\<close>
 
+
 ML\<open> 
 
 structure RegExpInterface : sig
