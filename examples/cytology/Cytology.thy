@@ -12,6 +12,10 @@ type_synonym desc = "string"
 
 onto_class organelles   =   description :: desc
 
+find_theorems (60) name:"organelles"
+
+term "Cytology.organelles.make"
+
 onto_class ribosomes    = organelles +    description :: desc
    
 onto_class mytochondria = organelles +    description :: desc
@@ -26,18 +30,26 @@ onto_class nucleus = organelles +
        components  :: "protein list" <= "[nucleolus]" 
 
 (* Not so nice construction to mimick inheritance on types useds in attribute positions. *)
-datatype organelles' = mk\<^sub>r\<^sub>i\<^sub>b\<^sub>o\<^sub>s\<^sub>o\<^sub>m\<^sub>e\<^sub>s     (get_ribosomes:ribosomes)
-                     | mk\<^sub>m\<^sub>y\<^sub>t\<^sub>o\<^sub>c\<^sub>h\<^sub>o\<^sub>n\<^sub>d\<^sub>r\<^sub>i\<^sub>a   (get_mytochondria:mytochondria)
-                     | mk\<^sub>g\<^sub>o\<^sub>l\<^sub>g\<^sub>i\<^sub>_\<^sub>a\<^sub>p\<^sub>p\<^sub>a\<^sub>r\<^sub>a\<^sub>t\<^sub>u\<^sub>s (get_golgi_apparatus: golgi_apparatus)
-                     | mk\<^sub>l\<^sub>y\<^sub>s\<^sub>o\<^sub>s\<^sub>o\<^sub>m\<^sub>e      (get_lysosome : lysosome)
-                     | mk\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s       (get_nucleus : nucleus)
+datatype organelles' = upcast\<^sub>r\<^sub>i\<^sub>b\<^sub>o\<^sub>s\<^sub>o\<^sub>m\<^sub>e\<^sub>s     (get_ribosomes:ribosomes)
+                     | upcast\<^sub>m\<^sub>y\<^sub>t\<^sub>o\<^sub>c\<^sub>h\<^sub>o\<^sub>n\<^sub>d\<^sub>r\<^sub>i\<^sub>a   (get_mytochondria:mytochondria)
+                     | upcast\<^sub>g\<^sub>o\<^sub>l\<^sub>g\<^sub>i\<^sub>_\<^sub>a\<^sub>p\<^sub>p\<^sub>a\<^sub>r\<^sub>a\<^sub>t\<^sub>u\<^sub>s (get_golgi_apparatus: golgi_apparatus)
+                     | upcast\<^sub>l\<^sub>y\<^sub>s\<^sub>o\<^sub>s\<^sub>o\<^sub>m\<^sub>e      (get_lysosome : lysosome)
+                     | upcast\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s       (get_nucleus : nucleus)
 
-fun is\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s where "is\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s (mk\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s X) = True" | "is\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s ( _) = False"
+fun is\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s where "is\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s (upcast\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s X) = True" | "is\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s ( _) = False"
+(* ... *)
+fun downcast\<^sub>r\<^sub>i\<^sub>b\<^sub>o\<^sub>s\<^sub>o\<^sub>m\<^sub>e\<^sub>s 
+  where "downcast\<^sub>r\<^sub>i\<^sub>b\<^sub>o\<^sub>s\<^sub>o\<^sub>m\<^sub>e\<^sub>s (upcast\<^sub>r\<^sub>i\<^sub>b\<^sub>o\<^sub>s\<^sub>o\<^sub>m\<^sub>e\<^sub>s X) = X" | "downcast\<^sub>r\<^sub>i\<^sub>b\<^sub>o\<^sub>s\<^sub>o\<^sub>m\<^sub>e\<^sub>s _ = undefined"
+fun downcast\<^sub>m\<^sub>y\<^sub>t\<^sub>o\<^sub>c\<^sub>h\<^sub>o\<^sub>n\<^sub>d\<^sub>r\<^sub>i\<^sub>a 
+  where "downcast\<^sub>m\<^sub>y\<^sub>t\<^sub>o\<^sub>c\<^sub>h\<^sub>o\<^sub>n\<^sub>d\<^sub>r\<^sub>i\<^sub>a (upcast\<^sub>m\<^sub>y\<^sub>t\<^sub>o\<^sub>c\<^sub>h\<^sub>o\<^sub>n\<^sub>d\<^sub>r\<^sub>i\<^sub>a X) = X" | "downcast\<^sub>m\<^sub>y\<^sub>t\<^sub>o\<^sub>c\<^sub>h\<^sub>o\<^sub>n\<^sub>d\<^sub>r\<^sub>i\<^sub>a _ = undefined"
+fun downcast\<^sub>g\<^sub>o\<^sub>l\<^sub>g\<^sub>i\<^sub>_\<^sub>a\<^sub>p\<^sub>p\<^sub>a\<^sub>r\<^sub>a\<^sub>t\<^sub>u\<^sub>s 
+  where "downcast\<^sub>g\<^sub>o\<^sub>l\<^sub>g\<^sub>i\<^sub>_\<^sub>a\<^sub>p\<^sub>p\<^sub>a\<^sub>r\<^sub>a\<^sub>t\<^sub>u\<^sub>s (upcast\<^sub>g\<^sub>o\<^sub>l\<^sub>g\<^sub>i\<^sub>_\<^sub>a\<^sub>p\<^sub>p\<^sub>a\<^sub>r\<^sub>a\<^sub>t\<^sub>u\<^sub>s X) = X" | "downcast\<^sub>g\<^sub>o\<^sub>l\<^sub>g\<^sub>i\<^sub>_\<^sub>a\<^sub>p\<^sub>p\<^sub>a\<^sub>r\<^sub>a\<^sub>t\<^sub>u\<^sub>s _ = undefined"
+fun downcast\<^sub>l\<^sub>y\<^sub>s\<^sub>o\<^sub>s\<^sub>o\<^sub>m\<^sub>e 
+  where "downcast\<^sub>l\<^sub>y\<^sub>s\<^sub>o\<^sub>s\<^sub>o\<^sub>m\<^sub>e (upcast\<^sub>l\<^sub>y\<^sub>s\<^sub>o\<^sub>s\<^sub>o\<^sub>m\<^sub>e X) = X" | "downcast\<^sub>l\<^sub>y\<^sub>s\<^sub>o\<^sub>s\<^sub>o\<^sub>m\<^sub>e _ = undefined"
+fun downcast\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s 
+  where "downcast\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s (upcast\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s X) = X" | "downcast\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s _ = undefined"
 
 
-definition is\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s 
-  where "is\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s org \<equiv>  \<exists> tg d ta da . org  =  nucleus.make tg d ta da"
-find_theorems (300) name:"Cytology" name:"nucleus"
 
 
 onto_class cell = 
@@ -67,7 +79,14 @@ value "is\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s (mk\<^sub>n\<^
 term \<open>eucaryotic_cells.organelles\<close>
 
 value \<open>(eucaryotic_cells.organelles(eucaryotic_cells.make X Y Z Z Z [] 3 []))\<close>
+
 value \<open>has_nucleus_inv(eucaryotic_cells.make X Y Z Z Z [] 3 [])\<close>
+
+value \<open>has_nucleus_inv(eucaryotic_cells.make X Y Z Z Z [] 3 
+                         [upcast\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s (nucleus.make a b c d [])])\<close>
+
+
+
 
 
 end
