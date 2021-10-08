@@ -6,7 +6,7 @@ text\<open>A small example ontology for demonstration purposes.
      The presentation follows closely: \<^url>\<open>https://www.youtube.com/watch?v=URUJD5NEXC8\<close>.\<close>
 
 
-datatype protein = filaments | motor_proteins | rna |dna |nucleolus
+datatype protein = filaments | motor_proteins | rna | dna |nucleolus
 
 type_synonym desc = "string"
 

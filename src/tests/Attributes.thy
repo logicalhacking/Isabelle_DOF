@@ -30,6 +30,30 @@ val {docobj_tab={tab = docitem_tab, ...},docclass_tab, ISA_transformer_tab, moni
 Symtab.dest docitem_tab;
 Symtab.dest docclass_tab;
 \<close>
+ML\<open>
+#value(the(the(Symtab.lookup docitem_tab "aaa")))
+
+\<close>
+
+find_theorems (60) name:"Conceptual.M." 
+
+value [simp]"trace(M.make undefined [] ())"
+value "ok(M.make undefined_AAA [] ())"
+value "trace(M.make undefined_AAA [] ())"
+value "tag_attribute(M.make undefined_AAA [] ())"
+
+
+value "ok(M.make 0 [] ())"
+(*
+value "ok(M.make 0 [] undefined)"
+*)
+
+value [simp] \<open> M.ok 
+                   (Conceptual.M.trace_update (\<lambda>x. [])
+                    (Conceptual.M.tag_attribute_update (\<lambda>x. 0)
+                     (Conceptual.M.ok_update (\<lambda>x. ())
+                   (undefined::M)) 
+                   ))\<close>
 
 
 ML\<open>
