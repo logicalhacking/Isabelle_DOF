@@ -45,6 +45,7 @@ value "tag_attribute(M.make undefined_AAA [] ())"
 
 value "ok(M.make 0 [] ())"
 (*
+value "ok(M.make undefined [] ())"
 value "ok(M.make 0 [] undefined)"
 *)
 
@@ -54,6 +55,14 @@ value [simp] \<open> M.ok
                      (Conceptual.M.ok_update (\<lambda>x. ())
                    (undefined::M)) 
                    ))\<close>
+
+value  \<open> M.ok 
+                   (Conceptual.M.trace_update (\<lambda>x. [])
+                    (Conceptual.M.tag_attribute_update (\<lambda>x. 0)
+                     (Conceptual.M.ok_update (\<lambda>x. ())
+                   (M.make XX1 XX2 XX3::M)) 
+                   ))\<close>
+
 
 
 ML\<open>

@@ -167,6 +167,7 @@ ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory gl
 
 open_monitor*[aaa::M]
 section*[test::A]\<open>Test and Validation\<close>
+term\<open>Conceptual.M.make\<close>
 text\<open>Defining some document elements to be referenced in later on in another theory: \<close>
 text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> 
 text*[ sdfg :: F] \<open> Lorem ipsum @{thm refl}\<close>  
