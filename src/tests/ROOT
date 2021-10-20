@@ -6,3 +6,4 @@ session "Isabelle_DOF-tests" = "Isabelle_DOF" +
     "Concept_Example"
     "TermAntiquotations"
     "Attributes"
+    "Evaluation"
