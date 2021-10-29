@@ -535,36 +535,26 @@ fun is_defined_cid_local cid ctxt  = let val t = #docclass_tab(get_data ctxt)
                                      in  cid=default_cid orelse 
                                          Symtab.defined t (parse_cid ctxt cid) 
                                      end
-fun lookup_docobj cid ctxt =
-let val t = #docclass_tab(get_data ctxt)
-    val cid_long = read_cid ctxt cid (* to assure that the given cid is really a long_cid *)
-in (Symtab.lookup t cid_long, cid_long) end
-
-fun get_all_attributes_local tag_attribute cid ctxt =
- if cid = default_cid then []
- else case lookup_docobj cid ctxt of
-        (NONE, _) => error("undefined class id for attributes: "^cid)
-        | (SOME ({inherits_from=NONE,
-                  attribute_decl = X, ...}), cid_long) => [(cid_long, tag_attribute, X)]
-        | (SOME ({inherits_from=SOME(_,father),
-                  attribute_decl = X, ...}), cid_long) =>
-                    get_all_attributes_local tag_attribute father ctxt
-                      @ [(cid_long, tag_attribute, X)]
-
-fun get_all_attributes tag_attribute cid thy =
-                          get_all_attributes_local tag_attribute cid (Proof_Context.init_global thy)
 
 fun get_attributes_local cid ctxt =
   if cid = default_cid then []
-  else case lookup_docobj cid ctxt of
-        (NONE, _) => error("undefined class id for attributes: "^cid)
-        | (SOME ({inherits_from=NONE,
-                  attribute_decl = X, ...}), cid_long) => [(cid_long,X)]
-        | (SOME ({inherits_from=SOME(_,father),
-                 attribute_decl = X, ...}), cid_long) =>
+  else let val t = #docclass_tab(get_data ctxt)
+           val cid_long = read_cid ctxt cid (* to assure that the given cid is really a long_cid *)
+       in  case Symtab.lookup t cid_long of
+             NONE => error("undefined class id for attributes: "^cid)
+             | (SOME ({inherits_from=NONE,
+                       attribute_decl = X, ...})) => [(cid_long,X)]
+             | (SOME ({inherits_from=SOME(_,father),
+                       attribute_decl = X, ...})) =>
                                                    get_attributes_local father ctxt @ [(cid_long,X)]
+       end
 
 fun get_attributes cid thy = get_attributes_local cid (Proof_Context.init_global thy)
+
+fun get_all_attributes_local cid ctxt =
+ (tag_attr, get_attributes_local cid ctxt)
+
+fun get_all_attributes cid thy = get_all_attributes_local cid (Proof_Context.init_global thy)
 
 type attributes_info = { def_occurrence : string,
                          def_pos        : Position.T,
@@ -1180,19 +1170,12 @@ fun create_default_object thy class_name =
 let
   val purified_class_name = String.translate (fn #"." => "_" | x => String.implode [x]) class_name
   val make_const = Syntax.read_term_global thy (class_name ^ ".make");
-  val typ_list = case make_const of Const (_, ty) => binder_types ty
-                                    | _ => error ("Malformed class identifier")
   fun attr_to_free (binding, typ, _) = Free (purified_class_name ^ "_"
                                              ^ (Binding.name_of binding)
                                              ^ "_Attribute_Not_Initialized", typ)
-  fun all_attr_to_free (_, tag_attr, attr_list) =
-                                  (attr_to_free tag_attr, map (attr_to_free) attr_list)
-  val tag_attr_attr_bname_typ_list_free_list = map (all_attr_to_free)
-                                    (DOF_core.get_all_attributes DOF_core.tag_attr class_name  thy)
-  val all_attr_free_list =
-                flat (map (fn (tag_attr_free, attr_free_list) => tag_attr_free::attr_free_list)
-                                                            tag_attr_attr_bname_typ_list_free_list)
-in list_comb (make_const, all_attr_free_list) end;
+  fun all_attr_free_list (tag_attr, class_list) =
+                           (attr_to_free tag_attr)::(map (attr_to_free) (flat (map snd class_list)))
+in list_comb (make_const, all_attr_free_list (DOF_core.get_all_attributes class_name thy)) end;
 
 fun base_default_term cid_long thy = create_default_object thy cid_long;
 
@@ -2077,7 +2060,11 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
       val _ = map_filter (check_n_filter thy) fields
 
 
-    in thy |> Record.add_record overloaded (params', binding) parent' (DOF_core.tag_attr::fields)
+    in thy |> (fn thy => case parent' of
+                          NONE => Record.add_record
+                              overloaded (params', binding) parent' (DOF_core.tag_attr::fields) thy
+                          | SOME _ => Record.add_record
+                                                 overloaded (params', binding) parent' (fields) thy)
            |> (Sign.add_consts_cmd [(binding,  "doc_class Regular_Exp.rexp", Mixfix.NoSyn)])
            |> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms' regexps 
                                                                   reject_Atoms invariants
