@@ -194,7 +194,7 @@ struct
                     end) 
    type ISA_transformers = {check     :
                               (theory -> term * typ * Position.T -> string -> term option),
-                            elaborate : (theory -> term -> term)
+                            elaborate : (theory -> string -> typ -> term -> term)
                            }
 
    type ISA_transformer_tab = ISA_transformers Symtab.table
@@ -656,7 +656,7 @@ fun transduce_term_global {mk_elaboration=mk_elaboration} (term,pos) thy =
                                                          (* checking isa, may raise error though. *)
                                                          | SOME t =>
                                                               if mk_elaboration 
-                                                              then elaborate thy t
+                                                              then elaborate thy s ty t
                                                               else Const(s,ty) $ t)
                                                          (* transforming isa *)
                                  else (Const(s,ty) $ (T t))
@@ -789,22 +789,17 @@ versions might extend this feature substantially.\<close>
 subsection\<open> Syntax \<close> 
 
 typedecl "doc_class"
-typedecl "typ"
-typedecl "term"
-typedecl "thm"
-typedecl "file"
-typedecl "thy"
  
 \<comment> \<open>and others in the future : file, http, thy, ...\<close> 
 
-consts ISA_typ          :: "string \<Rightarrow> typ"               ("@{typ _}")
-consts ISA_term         :: "string \<Rightarrow> term"              ("@{term _}")
+datatype "typ" = ISA_typ string  ("@{typ _}")
+datatype "term" = ISA_term string  ("@{term _}")
 consts ISA_term_repr    :: "string \<Rightarrow> term"              ("@{termrepr _}")
-consts ISA_thm          :: "string \<Rightarrow> thm"               ("@{thm _}")
-consts ISA_file         :: "string \<Rightarrow> file"              ("@{file _}")
-consts ISA_thy          :: "string \<Rightarrow> thy"               ("@{thy _}")
+datatype "thm" = ISA_thm string  ("@{thm _}")
+datatype "file" = ISA_file string  ("@{file _}")
+datatype "thy" = ISA_thy string  ("@{thy _}")
 consts ISA_docitem      :: "string \<Rightarrow> 'a"                ("@{docitem _}")
-consts ISA_docitem_attr :: "string \<Rightarrow> string \<Rightarrow> 'a"      ("@{docitemattr (_) :: (_)}")
+datatype "docitem_attr" = ISA_docitem_attr string  string ("@{docitemattr (_) :: (_)}")
 
 \<comment> \<open>Dynamic setup of inner syntax cartouche\<close>
 
@@ -975,11 +970,6 @@ fun check_instance thy (term, _, pos) s =
       in check' (class_name, object_cid) end;
   in ML_isa_check_generic check thy (term, pos) s end
 
-fun elaborate_instance thy term = let val instance_name = HOLogic.dest_string term
-                                       in case DOF_core.get_value_global instance_name thy of
-                                              NONE => error ("No class instance: " ^ instance_name)
-                                            | SOME(value) => value
-end
 
 fun ML_isa_id thy (term,pos) = SOME term
 
@@ -1003,6 +993,14 @@ fun ML_isa_check_docitem thy (term, req_ty, pos) s =
                          end
            else err ("faulty reference to docitem: "^name) pos
   in  ML_isa_check_generic check thy (term, pos) s end
+
+fun ML_isa_elaborate_generic (thy:theory) isa_name ty term = Const (isa_name, ty) $ term
+
+fun elaborate_instance thy _ _ term = let val instance_name = HOLogic.dest_string term
+                                      in case DOF_core.get_value_global instance_name thy of
+                                           NONE => error ("No class instance: " ^ instance_name)
+                                           | SOME(value) => value
+end
 
 (*
   The function declare_ISA_class_accessor_and_check_instance uses a prefix
@@ -1046,12 +1044,18 @@ end; (* struct *)
 
 subsection\<open> Isar - Setup\<close>
 
-setup\<open>DOF_core.update_isa_global("Isa_DOF.typ"      ,{check=ISA_core.ML_isa_check_typ, elaborate=(fn _ => fn term => term)}) \<close>
-setup\<open>DOF_core.update_isa_global("Isa_DOF.term"     ,{check=ISA_core.ML_isa_check_term, elaborate=(fn _ => fn term => term)}) \<close>
-setup\<open>DOF_core.update_isa_global("Isa_DOF.term_repr",{check=(fn _ => fn (t,_,_)  => fn _ => SOME t), elaborate=(fn _ => fn term => term)}) \<close>
-setup\<open>DOF_core.update_isa_global("Isa_DOF.thm"      ,{check=ISA_core.ML_isa_check_thm, elaborate=(fn _ => fn term => term)}) \<close>
-setup\<open>DOF_core.update_isa_global("Isa_DOF.file"     ,{check=ISA_core.ML_isa_check_file, elaborate=(fn _ => fn term => term)}) \<close>
-setup\<open>DOF_core.update_isa_global("Isa_DOF.docitem"  ,{check=ISA_core.ML_isa_check_docitem, elaborate=(fn _ => fn term => term)})\<close>
+setup\<open>DOF_core.update_isa_global("Isa_DOF.typ.typ",
+                  {check=ISA_core.ML_isa_check_typ, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
+setup\<open>DOF_core.update_isa_global("Isa_DOF.term.term",
+                  {check=ISA_core.ML_isa_check_term, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
+setup\<open>DOF_core.update_isa_global("Isa_DOF.term_repr",
+    {check=(fn _ => fn (t,_,_)  => fn _ => SOME t), elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
+setup\<open>DOF_core.update_isa_global("Isa_DOF.thm.thm",
+                  {check=ISA_core.ML_isa_check_thm, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
+setup\<open>DOF_core.update_isa_global("Isa_DOF.file.file",
+                  {check=ISA_core.ML_isa_check_file, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
+setup\<open>DOF_core.update_isa_global("Isa_DOF.docitem",
+              {check=ISA_core.ML_isa_check_docitem, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
 
 section\<open> Syntax for Annotated Documentation Commands (the '' View'' Part I) \<close>
 
