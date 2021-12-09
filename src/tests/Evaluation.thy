@@ -25,15 +25,18 @@ Some built-ins remain as unspecified constants:
   The assert_cmd function in Assert should use the value* command
   functions, which make the elaboration of the term
   referenced by the TA before passing it to the evaluator
+
+We also have the possibility to make some requests on classes instances, i.e. on docitems
+by specifying the doc_class.
+The TA denotes the HOL list of the values of the instances.
+The value of an instance is the record of every attributes of the instance.
+This way, we can use the usual functions on lists to make our request.
+
 The emphasis of this presentation is to present the evaluation possibilities and limitations
 of the current implementation.
 \<close>
 
-text\<open>
-
-case : attribute not initialized
-
-\<close>
+section\<open>Term Annotation evaluation\<close>
 
 text\<open>We can validate a term with TA:\<close>
 term*\<open>@{thm \<open>HOL.refl\<close>}\<close>
@@ -52,7 +55,7 @@ an instance of the class @{doc_class A}:
 \<close>
 term*\<open>@{A \<open>xcv1\<close>}\<close>
 
-text\<open>The instance class @{docitem \<open>xcv1\<close>} is not an instance of the class B:
+text\<open>The instance class @{docitem \<open>xcv1\<close>} is not an instance of the class @{doc_class B}:
 \<close>
 (* Error:
 term*\<open>@{B \<open>xcv1\<close>}\<close>*)
@@ -102,6 +105,41 @@ value*\<open>@{thm ''HOL.refl''} = @{thm (''HOL.refl'')}\<close>
 ML\<open>
 @{thm "refl"}
 \<close>
+
+section\<open>Request on instances\<close>
+
+text\<open>We define a new class Z:\<close>
+doc_class Z =
+  z::"int"
+
+text\<open>And some instances:\<close>
+text*[test1Z::Z, z=1]\<open>lorem ipsum...\<close>
+text*[test2Z::Z, z=4]\<open>lorem ipsum...\<close>
+text*[test3Z::Z, z=3]\<open>lorem ipsum...\<close>
+
+text\<open>We want to get all the instances of the @{doc_class Z}:\<close>
+value*\<open>@{Z-instances}\<close>
+
+text\<open>Now we want to get the instances of the @{doc_class Z} whose attribute z > 2:\<close>
+value*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z-instances}\<close>
+
+text\<open>We can check that we have the list of instances we wanted:\<close>
+value*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z-instances} = [@{Z \<open>test3Z\<close>}, @{Z \<open>test2Z\<close>}]
+       \<or> filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z-instances} = [@{Z \<open>test2Z\<close>}, @{Z \<open>test3Z\<close>}]\<close>
+
+text\<open>Now, we want to get all the instances of the @{doc_class A}\<close>
+value*\<open>@{A-instances}\<close>
+
+text\<open>Warning: If you make a request on attributes that are undefined in some instances,
+you will get a result which includes these unresolved cases.
+In the following example, we request the instances of the @{doc_class A}.
+But we have defined an instance @{docitem \<open>test\<close>} in theory @{theory Isabelle_DOF.Conceptual}
+whose our theory inherits from, and this docitem instance does not initialize its attribute \<^emph>\<open>x\<close>.
+So in the request result we get an unresolved case because the evaluator can not get
+the value of the \<^emph>\<open>x\<close> attribute of the instance @{docitem \<open>test\<close>}:\<close>
+value*\<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A-instances}\<close>
+
+section\<open>Limitations\<close>
 
 text\<open>There are still some limitations.
 The terms passed as arguments to the TA are not simplified and their evaluation fails:
