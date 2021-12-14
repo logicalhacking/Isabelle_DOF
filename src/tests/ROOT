@@ -2,8 +2,10 @@ session "Isabelle_DOF-tests" = "Isabelle_DOF" +
   options [document = false]
   theories
     "AssnsLemmaThmEtc" 
-    "Concept_ExampleInvariant"
+    "Concept_Example_Low_Level_Invariant"
     "Concept_Example"
     "TermAntiquotations"
     "Attributes"
     "Evaluation"
+    "High_Level_Syntax_Invariants"
+    "Ontology_Matching_Example"

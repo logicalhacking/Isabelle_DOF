@@ -137,7 +137,7 @@ doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
    status          :: status <= "description"
    formal_results  :: "thm list"
-   invariant L1    :: "\<lambda>\<sigma>::technical. the (level \<sigma>) > 0"
+   invariant L1    :: "the (level \<sigma>) > 0"
 
 type_synonym tc = technical (* technical content *)
 
@@ -186,8 +186,8 @@ doc_class math_content = tc +
    short_name    :: string <= "''''"
    status        :: status <= "semiformal"
    mcc           :: "math_content_class" <= "thm" 
-   invariant s1  :: "\<lambda> \<sigma>::math_content. \<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
-   invariant s2  :: "\<lambda> \<sigma>::math_content. technical.status \<sigma> = semiformal"
+   invariant s1  :: "\<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
+   invariant s2  :: "technical.status \<sigma> = semiformal"
 type_synonym math_tc = math_content
 
 text\<open>The class \<^typ>\<open>math_content\<close> is perhaps more adequaltely described as "math-alike content".
@@ -236,27 +236,28 @@ text\<open>The key class definitions are motivated by the AMS style.\<close>
 doc_class "definition"  = math_content +
    referentiable :: bool <= True
    mcc           :: "math_content_class" <= "defn" 
-   invariant d1  :: "\<lambda> \<sigma>::definition. mcc \<sigma> = defn" (* can not be changed anymore. *)
+   invariant d1  :: "mcc \<sigma> = defn" (* can not be changed anymore. *)
+
 
 doc_class "theorem"     = math_content +
    referentiable :: bool <= True
    mcc           :: "math_content_class" <= "thm" 
-   invariant d2  :: "\<lambda> \<sigma>::theorem. mcc \<sigma> = thm"
+    invariant d2  :: "mcc \<sigma> = thm"
 
 doc_class "lemma"     = math_content +
    referentiable :: bool <= "True"
    mcc           :: "math_content_class" <= "lem" 
-   invariant d3  :: "\<lambda> \<sigma>::lemma. mcc \<sigma> = lem"
+   invariant d3  :: "mcc \<sigma> = lem"
 
 doc_class "corollary"     = math_content +
    referentiable :: bool <= "True"
    mcc           :: "math_content_class" <= "cor" 
-   invariant d4  :: "\<lambda> \<sigma>::corollary. mcc \<sigma> = thm"
+    invariant d4  :: "mcc \<sigma> = thm"
 
 doc_class "math_example"     = math_content +
    referentiable :: bool <= "True"
    mcc           :: "math_content_class" <= "expl" 
-   invariant d5  :: "\<lambda> \<sigma>::math_example. mcc \<sigma> = expl"
+   invariant d5  :: "mcc \<sigma> = expl"
 
 
 subsubsection\<open>Ontological Macros \<^verbatim>\<open>Definition*\<close> , \<^verbatim>\<open>Lemma**\<close>, \<^verbatim>\<open>Theorem*\<close> ... \<close>
