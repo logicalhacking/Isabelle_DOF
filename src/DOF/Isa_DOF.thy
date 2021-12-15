@@ -946,41 +946,41 @@ fun ML_isa_antiq check_file thy (name, _, pos) =
   in "Path.explode " ^ ML_Syntax.print_string (Path.implode path) end;
 
 
-fun ML_isa_check_generic check thy (term, pos) _ =
+fun ML_isa_check_generic check thy (term, pos) =
   let val name = (HOLogic.dest_string term
                   handle TERM(_,[t]) => error ("wrong term format: must be string constant: " 
                                                ^ Syntax.string_of_term_global thy t ))
       val _ = check thy (name,pos)
   in  SOME term end;  
 
-fun check_identity _ (term, _, _) _  = SOME term
+fun check_identity _ (term, _, _) _ = SOME term
 
-fun ML_isa_check_typ thy (term, _, pos) s =
+fun ML_isa_check_typ thy (term, _, pos) _ =
   let fun check thy (name, _) = let val ctxt = (Proof_Context.init_global thy)
                                 in (Syntax.check_typ ctxt o Syntax.parse_typ ctxt) name end
-  in  ML_isa_check_generic check thy (term, pos) s end
+  in  ML_isa_check_generic check thy (term, pos) end
 
 
-fun ML_isa_check_term thy (term, _, pos) s =
+fun ML_isa_check_term thy (term, _, pos) _ =
   let fun check thy (name, _) = let val ctxt = (Proof_Context.init_global thy)
                                 in (Syntax.check_term ctxt o Syntax.parse_term ctxt) name end 
-  in  ML_isa_check_generic check thy (term, pos) s end
+  in  ML_isa_check_generic check thy (term, pos) end
 
 
-fun ML_isa_check_thm thy (term, _, pos) s =
+fun ML_isa_check_thm thy (term, _, pos) _ =
   (* this works for long-names only *)
   let fun check thy (name, _) = case Proof_Context.lookup_fact (Proof_Context.init_global thy) name of
                                   NONE => err ("No Theorem:" ^name) pos
                                 | SOME X => X
-  in   ML_isa_check_generic check thy (term, pos) s end
+  in   ML_isa_check_generic check thy (term, pos) end
 
 
-fun ML_isa_check_file thy (term, _, pos) s  =
+fun ML_isa_check_file thy (term, _, pos) _ =
   let fun check thy (name, pos) = check_path (SOME File.check_file) 
                                              (Proof_Context.init_global thy) 
                                              (Path.current) 
                                              (name, pos);
-  in  ML_isa_check_generic check thy (term, pos) s end;
+  in  ML_isa_check_generic check thy (term, pos) end;
 
 fun check_instance thy (term, _, pos) s =
   let
@@ -998,13 +998,13 @@ fun check_instance thy (term, _, pos) s =
             DOF_core.get_value_global name thy
           else err (name ^ " is not an instance of " ^ class_name) pos
       in check' (class_name, object_cid) end;
-  in ML_isa_check_generic check thy (term, pos) s end
+  in ML_isa_check_generic check thy (term, pos) end
 
 
 fun ML_isa_id thy (term,pos) = SOME term
 
 
-fun ML_isa_check_docitem thy (term, req_ty, pos) s =
+fun ML_isa_check_docitem thy (term, req_ty, pos) _ =
   let fun check thy (name, _) s =
            if DOF_core.is_declared_oid_global name thy 
            then case DOF_core.get_object_global name thy of
@@ -1022,7 +1022,7 @@ fun ML_isa_check_docitem thy (term, req_ty, pos) s =
                             else ()
                          end
            else err ("faulty reference to docitem: "^name) pos
-  in  ML_isa_check_generic check thy (term, pos) s end
+  in  ML_isa_check_generic check thy (term, pos) end
 
 fun ML_isa_elaborate_generic (_:theory) isa_name ty term_option =
   case term_option of
@@ -1292,8 +1292,6 @@ fun create_default_object thy class_name =
       else (map (attr_to_free) filtered_attr_list)
     val class_list''' = flat (map (add_tag_to_attrs_free DOF_core.tag_attr thy) class_list'')
   in list_comb (make_const, (attr_to_free DOF_core.tag_attr)::class_list''') end
-
-fun base_default_term cid_long thy = create_default_object thy cid_long;
 
 fun check_classref {is_monitor=is_monitor} (SOME(cid,pos')) thy = 
           let 
