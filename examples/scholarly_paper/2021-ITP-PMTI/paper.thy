@@ -41,7 +41,8 @@ abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<
    and specific ontology instances in concrete cases. This concept  is also called
    \<^emph>\<open>ontology alignment\<close> in  the literature rised a substantial interest recently.
 
-   If you consider citing this paper, please refer to @{cite "HOL-CSP-iFM2020"}.
+   If you consider citing this paper, please refer to @{cite "10.1007/978-3-030-30446-1_15"} and
+   @{cite "10.1007/978-3-319-96812-4_3"}
 \<close>
 text\<open>\<close>
 section*[introheader::introduction,main_author="Some(@{docitem ''bu''}::author)"]\<open> Introduction \<close> 
