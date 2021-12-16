@@ -11,38 +11,44 @@ declare[[ Definition_default_class = "definition"]]
 declare[[ Lemma_default_class      = "lemma"]]
 declare[[ Theorem_default_class    = "theorem"]]
 
-define_shortcut* csp      \<rightleftharpoons> \<open>CSP\<close>
-                 holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>
+define_shortcut* hol      \<rightleftharpoons> \<open>HOL\<close>
                  isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
+                 dof      \<rightleftharpoons> \<open>Isabelle/DOF\<close>
+                 csp      \<rightleftharpoons> \<open>CSP\<close>      \<comment>\<open>obsolete\<close>
+                 holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>  \<comment>\<open>obsolete\<close> 
 
 (*>*)
 
-title*[tit::title]\<open>A Framework for Proving Ontology-Relations and Testing Instances\<close>
+title*[tit::title]\<open>A Framework for Proving Ontology-Relations and Testing Ontology Instances\<close>
                                   
 author*[idir,email="\<open>idir.aitsadoune@lri.fr\<close>",affiliation="\<open>LMF, CentraleSupelec\<close>"]\<open>Idir Ait-Sadoune\<close>
 author*[nic,email="\<open>nicolas.meric@lri.fr\<close>",affiliation="\<open>LRI, Université Paris-Saclay\<close>"]\<open>Nicolas Méric\<close>
 author*[bu,email= "\<open>wolff@lri.fr\<close>",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]\<open>Burkhart Wolff\<close>
                
 abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>Isabelle/HOL\<close>,\<open>Ontology Alignment\<close>,\<open>OWL\<close>,\<open>UML/OCL\<close>]"]
-\<open>   \<^isabelle> . 
+\<open>  \<^dof> is a novel ontology framework on top of Isabelle. 
+   \<^dof>  allows for the formal development of ontologies as well as continuous checking that
+   a formal document under development conforms to an underlying ontology. 
+   Such a document may contain text and code elements as well as formal Isabelle definitions and proofs.
+   Thus, \<^dof> is designed to annotate and interact with these elements with typed meta-data 
+   for, \<^eg>, formal text development in Isabelle.  
 
-   More importantly, we use this formal development to analyse a family of refinement notions,
-   comprising classic and new ones. This analysis enabled us to derive a number of properties
-   that allow to deepen the understanding of these notions, in particular with respect to 
-   specification decomposition principles in the infinite case. Better definitions allow to
-   clarify a number of obscure points in the classical literature, for example concerning the
-   relationship between deadlock- and livelock-freeness. 
-   As a result, we have a modern environment for formal proofs of concurrent systems that allow
-   to combine general infinite processes with locally finite ones in a logically safe way. 
-
-   We demonstrate a number of resulting verification-techniques for classical, generalized examples:
-   The CopyBuffer and Dijkstra's Dining Philosopher Problem of an arbitrary size.
+   While prior versions of \<^dof> provided already a mechanism to check ontological \<^emph>\<open>rules\<close>  
+   (in OWL terminology) or \<^emph>\<open>invariants\<close> (in UML/OCL terminology) via hand-written SML test-code,
+   we provide in this paper a novel mechanism to specify \<^emph>\<open>class invariants\<close> in \<^hol> via a reflection
+   mechanism. This allows for both efficient run-time checking of abstract properties of formal 
+   content AS WELL AS formal proofs that establish relations between different ontologies in general
+   and specific ontology instances in concrete cases. This concept  is also called
+   \<^emph>\<open>ontology alignment\<close> in  the literature rised a substantial interest recently.
 
    If you consider citing this paper, please refer to @{cite "HOL-CSP-iFM2020"}.
 \<close>
 text\<open>\<close>
 section*[introheader::introduction,main_author="Some(@{docitem ''bu''}::author)"]\<open> Introduction \<close> 
 text*[introtext::introduction]\<open>
+THE FOLLOWING IS STILL RUBBISH AND JUST SHOWS HOW TO WRITE A PAPER IN ISABELLE-DOF.
+
+
 Communicating Sequential Processes (\<^csp>) is a language 
 to specify and verify patterns of interaction of concurrent systems.
 Together with CCS and LOTOS, it belongs to the family of \<^emph>\<open>process algebras\<close>. 
