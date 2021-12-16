@@ -26,7 +26,8 @@ author*[nic,email="\<open>nicolas.meric@lri.fr\<close>",affiliation="\<open>LRI,
 author*[bu,email= "\<open>wolff@lri.fr\<close>",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]\<open>Burkhart Wolff\<close>
                
 abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>Isabelle/HOL\<close>,\<open>Ontology Alignment\<close>,\<open>OWL\<close>,\<open>UML/OCL\<close>]"]
-\<open>  \<^dof> is a novel ontology framework on top of Isabelle. 
+\<open>  \<^dof> is a novel ontology framework on top of Isabelle 
+   @{cite "10.1007/978-3-030-30446-1_15" and "10.1007/978-3-319-96812-4_3"}. 
    \<^dof>  allows for the formal development of ontologies as well as continuous checking that
    a formal document under development conforms to an underlying ontology. 
    Such a document may contain text and code elements as well as formal Isabelle definitions and proofs.
@@ -34,15 +35,12 @@ abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<
    for, \<^eg>, formal text development in Isabelle.  
 
    While prior versions of \<^dof> provided already a mechanism to check ontological \<^emph>\<open>rules\<close>  
-   (in OWL terminology) or \<^emph>\<open>invariants\<close> (in UML/OCL terminology) via hand-written SML test-code,
-   we provide in this paper a novel mechanism to specify \<^emph>\<open>class invariants\<close> in \<^hol> via a reflection
+   (in OWL terminology) or \<^emph>\<open>class invariants\<close> (in UML/OCL terminology) via hand-written SML test-code,
+   we provide in this paper a novel mechanism to specify \<^emph>\<open>invariants\<close> in \<^hol> via a reflection
    mechanism. This allows for both efficient run-time checking of abstract properties of formal 
-   content AS WELL AS formal proofs that establish relations between different ontologies in general
+   content \<^bold>\<open>as well as\<close> formal proofs that establish relations between different ontologies in general
    and specific ontology instances in concrete cases. This concept  is also called
-   \<^emph>\<open>ontology alignment\<close> in  the literature rised a substantial interest recently.
-
-   If you consider citing this paper, please refer to @{cite "10.1007/978-3-030-30446-1_15"} and
-   @{cite "10.1007/978-3-319-96812-4_3"}
+   \<^emph>\<open>ontology alignment\<close> in  the literature raised a substantial interest recently.
 \<close>
 text\<open>\<close>
 section*[introheader::introduction,main_author="Some(@{docitem ''bu''}::author)"]\<open> Introduction \<close> 
