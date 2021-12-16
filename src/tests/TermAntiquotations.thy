@@ -95,6 +95,8 @@ text\<open>We can also reference an attribute of the instance.
 Here we reference the attribute r of the class F which has the type @{typ \<open>thm list\<close>}.\<close>
 term*\<open>r @{F \<open>xcv4\<close>}\<close>
 
+term \<open>@{A \<open>xcv2\<close>}\<close>
+
 text\<open>We declare a new text element. Note that the class name contains an underscore "_".\<close>
 text*[te::text_element]\<open>Lorem ipsum...\<close>
 

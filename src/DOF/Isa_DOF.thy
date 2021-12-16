@@ -1483,7 +1483,7 @@ in
 end;
 
 fun print_item string_of (modes, arg) = Toplevel.keep (fn state =>
-Print_Mode.with_modes modes (fn () => writeln (string_of state arg)) ());
+Print_Mode.with_modes modes (fn () => writeln (string_of state arg)) ()); 
 
 (*
   We want to have the current position to pass it to transduce_term_global in

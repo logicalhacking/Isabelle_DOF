@@ -56,24 +56,26 @@ value [simp] \<open> M.ok
                    (undefined::M)) 
                    ))\<close>
 
+value [simp] \<open> M.ok 
+                   (Conceptual.M.trace_update (\<lambda>x. [])
+                    (Conceptual.M.tag_attribute_update (\<lambda>x. 0)
+                     (Conceptual.M.ok_update (\<lambda>x. ())
+                   (undefined::M)) 
+                   ))\<close>
+value  \<open> M.ok 
+                   (Conceptual.M.trace_update (\<lambda>x. [])
+                    (Conceptual.M.tag_attribute_update (\<lambda>x. 0)
+                     (Conceptual.M.ok_update (\<lambda>x. ())
+                   (AAAA::M)) 
+                   ))\<close>
+
+
 value  \<open> M.ok 
                    (Conceptual.M.trace_update (\<lambda>x. [])
                     (Conceptual.M.tag_attribute_update (\<lambda>x. 0)
                      (Conceptual.M.ok_update (\<lambda>x. ())
                    (M.make XX1 XX2 XX3::M)) 
                    ))\<close>
-
-
-
-ML\<open>
-fun fac x = if x = 0 then 1 else x * (fac(x -1));
-fac 3;
-\<close>
-
-ML\<open>
-open Thm;
-\<close>
-
 
 
 text\<open>A text item containing standard theorem antiquotations and complex meta-information.\<close>

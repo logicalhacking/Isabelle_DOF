@@ -87,6 +87,4 @@ value \<open>has_nucleus_inv(eucaryotic_cells.make X Y Z Z Z [] 3
 
 
 
-
-
 end

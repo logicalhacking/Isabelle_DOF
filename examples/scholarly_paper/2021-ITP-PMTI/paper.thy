@@ -17,22 +17,14 @@ define_shortcut* csp      \<rightleftharpoons> \<open>CSP\<close>
 
 (*>*)
 
-title*[tit::title]\<open>Philosophers may Dine - Definitively!\<close>
+title*[tit::title]\<open>A Framework for Proving Ontology-Relations and Testing Instances\<close>
                                   
-author*[safouan,email="\<open>safouan.taha@lri.fr\<close>",affiliation="\<open>LRI, CentraleSupelec\<close>"]\<open>Safouan Taha\<close>
+author*[idir,email="\<open>idir.aitsadoune@lri.fr\<close>",affiliation="\<open>LMF, CentraleSupelec\<close>"]\<open>Idir Ait-Sadoune\<close>
+author*[nic,email="\<open>nicolas.meric@lri.fr\<close>",affiliation="\<open>LRI, Université Paris-Saclay\<close>"]\<open>Nicolas Méric\<close>
 author*[bu,email= "\<open>wolff@lri.fr\<close>",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]\<open>Burkhart Wolff\<close>
-author*[lina,email="\<open>lina.ye@lri.fr\<close>",affiliation="\<open>LRI, Inria, LSV, CentraleSupelec\<close>"]\<open>Lina Ye\<close>
                
-abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Algebra\<close>,
-                             \<open>Concurrency\<close>,\<open>Computational Models\<close>]"]
-\<open>  The theory of Communicating Sequential Processes going back to Hoare and Roscoe is still today 
-   one of the reference theories for concurrent specification and computing. In 1997, a first 
-   formalization in \<^isabelle> of the denotational semantics of the  Failure/Divergence Model of
-   \<^csp> was undertaken; in particular, this model can cope with infinite alphabets, in contrast 
-   to model-checking approaches limited to finite ones. 
-   In this paper, we extend this theory to a significant degree by taking advantage of more powerful 
-   automation of modern Isabelle version, which came even closer to recent developments in the 
-   semantic foundation of \<^csp>. 
+abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>Isabelle/HOL\<close>,\<open>Ontology Alignment\<close>,\<open>OWL\<close>,\<open>UML/OCL\<close>]"]
+\<open>   \<^isabelle> . 
 
    More importantly, we use this formal development to analyse a family of refinement notions,
    comprising classic and new ones. This analysis enabled us to derive a number of properties
@@ -1024,10 +1016,6 @@ over finite sub-systems with globally infinite systems in a logically safe way.
 subsection*[bib::bibliography]\<open>References\<close>
 
 close_monitor*[this]
-(*
-term\<open>\<longrightarrow>\<close>
-term\<open> demon \<sigma>\<^sub>g\<^sub>l\<^sub>o\<^sub>b\<^sub>a\<^sub>l := \<Sqinter> \<Delta>t \<in> \<real>\<^sub>>\<^sub>0.     ||| i\<in>A. ACTOR i \<sigma>\<^sub>g\<^sub>l\<^sub>o\<^sub>b\<^sub>a\<^sub>l 
-                                   \<lbrakk>S\<rbrakk> sync!\<sigma>\<^sub>g\<^sub>l\<^sub>o\<^sub>b\<^sub>a\<^sub>l\<^sub>' \<longrightarrow> demon \<sigma>\<^sub>g\<^sub>l\<^sub>o\<^sub>b\<^sub>a\<^sub>l\<^sub>'   \<close>
-*)
+
 end
 (*>*) 
