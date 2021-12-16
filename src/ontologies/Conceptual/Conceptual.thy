@@ -46,7 +46,7 @@ Consequently, \<^theory_text>\<open>doc_class\<close>'es inherit the entire theo
     \<^enum> @{thm [display] A.simps(6)}
     \<^enum> ...
 \<close>
-(* the generated theory of the \<^theory_text>\<open>doc_class\<close> A can be inspectwed, of course, by *)
+(* the generated theory of the \<^theory_text>\<open>doc_class\<close> A can be inspected, of course, by *)
 find_theorems (60) name:Conceptual name:A
 
 

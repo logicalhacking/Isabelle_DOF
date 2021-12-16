@@ -187,7 +187,7 @@ doc_class math_content = tc +
    status        :: status <= "semiformal"
    mcc           :: "math_content_class" <= "thm" 
    invariant s1  :: "\<lambda> \<sigma>::math_content. \<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
-   invariant s2  :: "\<lambda> \<sigma>::math_content. status \<sigma> = semiformal"
+   invariant s2  :: "\<lambda> \<sigma>::math_content. technical.status \<sigma> = semiformal"
 type_synonym math_tc = math_content
 
 text\<open>The class \<^typ>\<open>math_content\<close> is perhaps more adequaltely described as "math-alike content".

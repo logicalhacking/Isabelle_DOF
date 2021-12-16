@@ -62,6 +62,15 @@ text\<open>Example for a meta-attribute of ODL-type @{typ "typ"} with an appropr
      theorem @{thm "refl"}}\<close>
 text*[xcv2::C, g="@{thm ''HOL.refl''}"]\<open>Lorem ipsum ...\<close>
 
+text\<open>A warning about the usage of the \<open>docitem\<close> TA:
+The \<open>docitem\<close> TA offers a way to check the reference of class instances
+without checking the instances type.
+So one will be able to reference \<open>docitem\<close>s (class instances) and have them checked,
+without the burden of the type checking required otherwise.
+But it may give rise to unwanted behaviors, due to its polymorphic type.
+It must not be used for certification.
+\<close>
+
 text\<open>Major sample: test-item of doc-class \<open>F\<close> with a relational link between class instances, 
      and links to formal Isabelle items like \<open>typ\<close>, \<open>term\<close> and \<open>thm\<close>. \<close>
 text*[xcv4::F, r="[@{thm ''HOL.refl''}, 
