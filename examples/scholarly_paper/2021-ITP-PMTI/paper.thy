@@ -14,6 +14,8 @@ declare[[ Theorem_default_class    = "theorem"]]
 define_shortcut* hol      \<rightleftharpoons> \<open>HOL\<close>
                  isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
                  dof      \<rightleftharpoons> \<open>Isabelle/DOF\<close>
+                 latex    \<rightleftharpoons> \<open>LaTeX\<close>
+                 html     \<rightleftharpoons> \<open>HTML\<close>
                  csp      \<rightleftharpoons> \<open>CSP\<close>      \<comment>\<open>obsolete\<close>
                  holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>  \<comment>\<open>obsolete\<close> 
 
@@ -42,10 +44,76 @@ abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<
    and specific ontology instances in concrete cases. This concept  is also called
    \<^emph>\<open>ontology alignment\<close> in  the literature raised a substantial interest recently.
 \<close>
-text\<open>\<close>
-section*[introheader::introduction,main_author="Some(@{docitem ''bu''}::author)"]\<open> Introduction \<close> 
+
+section*[introheader::introduction,main_author="Some(@{docitem ''bu''}::author)"]\<open> Introduction \<close>
 text*[introtext::introduction]\<open>
-THE FOLLOWING IS STILL RUBBISH AND JUST SHOWS HOW TO WRITE A PAPER IN ISABELLE-DOF.
+The linking of \<^emph>\<open>formal\<close> and \<^emph>\<open>informal\<close> information is perhaps the
+most pervasive challenge in the digitization of knowledge and its
+propagation. This challenge incites numerous research efforts
+summarized under the labels ``semantic web'', ``data mining'', or any
+form of advanced ``semantic'' text processing. Turning informal into 
+(more) formal content is the key for advanced techniques of research, 
+combination, and the maintenance of consistency in the midst of data evolution. 
+
+Admittedly, Isabelle is not the first system that comes into one's mind when
+writing a document, be it a scientific paper, a book, or a larger technical 
+documentation. However, it has a typesetting system inside which is in the 
+tradition of document generation systems such as mkd, Document! X, Doxygen, 
+Javadoc, etc., which embed elements of formal content such as code-snippets 
+or generated system output into informal text. In Isabelle, these "embedders"
+or meta-text elements are a form of machine-checked macro called \<^emph>\<open>antiquotations\<close>.
+
+For example, the text element as appearing in the Isabelle frontend:
+@{theory_text [display] 
+  \<open>  According to the reflexivity axiom @{thm refl}, we obtain in \<Gamma>
+     for @{term "fac 5"} the result @{value "fac 5"}.\<close>}
+is represented in the generated  LaTeX or HTML output by:
+@{theory_text [display] 
+  \<open>According to the reflexivity axiom \<open>x = x\<close>, we obtain in \<Gamma> for \<open>fac 5\<close> the result \<open>120\<close>.\<close>
+}
+where the meta-texts \<open>@{thm refl}\<close> ("give the presentation of theorem 'refl'), 
+\<open>@{term "fac 5"}\<close> ("parse and type-check 'fac 5' in the previous logical context)
+and \<open>@{value "fac 5"}\<close> ("compile and execute 'fac 5' according to its
+definitions in the previous logical context) are built-in antiquotations
+in \<^hol>.
+
+
+
+
+ A key role in
+structuring this linking play \<^emph>\<open>document ontologies\<close> (also called
+\<^emph>\<open>vocabulary\<close> in the semantic web community~@{cite "w3c:ontologies:2015"}), 
+\<^ie>, a machine-readable form of the structure of data as well as 
+the  discourse.
+
+Such ontologies can be used for the scientific discourse within scholarly
+articles, mathematical libraries, and in the engineering discourse  
+of standardized software certification 
+documents~@{cite "boulanger:cenelec-50128:2015" and "cc:cc-part3:2006"}. 
+Further applications are the domain-specific discourse in juridical texts or medical reports.  
+In general, an ontology is a formal explicit description of \<^emph>\<open>concepts\<close> 
+in a domain of discourse (called \<^emph>\<open>classes\<close>), properties of each concept 
+describing \<^emph>\<open>attributes\<close> of the concept, as well as \<^emph>\<open>links\<close> between 
+them. A particular link between concepts is the \<^emph>\<open>is-a\<close> relation declaring 
+the instances of a subclass to be instances of the super-class.
+
+The main objective of this paper is to present \<^dof>, a novel
+framework to \<^emph>\<open>model\<close> typed ontologies and to \<^emph>\<open>enforce\<close> them during
+document evolution. Based on Isabelle infrastructures, ontologies may refer to
+types, terms, proven theorems, code, or established assertions.
+Based on a novel adaption of the Isabelle IDE, a document is checked to be 
+\<^emph>\<open>conform\<close> to a particular ontology---\<^dof>  is designed to give fast user-feedback 
+\<^emph>\<open>during the capture of content\<close>. This is particularly valuable in case of document 
+changes, where the \<^emph>\<open>coherence\<close> between the formal and the informal parts of the
+content can be mechanically checked.
+
+To avoid any misunderstanding:  \<^dof>  is \<^emph>\<open>not a theory in HOL\<close>   
+on ontologies and operations to track and trace links in texts,
+it is an \<^emph>\<open>environment to write structured text\<close> which \<^emph>\<open>may contain\<close>  
+\<^isabelle> definitions and proofs like mathematical articles, tech-reports and
+scientific papers---as the present one, which is written in  \<^dof>  
+itself. \<^dof>  is a plugin into the Isabelle/Isar
+framework in the style of~@{cite "wenzel.ea:building:2007"}.
 
 
 Communicating Sequential Processes (\<^csp>) is a language 
@@ -62,8 +130,7 @@ but has since evolved substantially @{cite "BrookesHR84" and "brookes-roscoe85" 
 \<^csp> describes the most common communication and synchronization mechanisms
 with one single language primitive: synchronous communication written \<open>_\<lbrakk>_\<rbrakk>_\<close>. \<^csp> semantics is 
 described by a fully abstract model of behaviour designed to be \<^emph>\<open>compositional\<close>: the denotational
-semantics of a process \<open>P\<close> encompasses all possible behaviours of this process in the context of all 
-possible environments \<open>P \<lbrakk>S\<rbrakk> Env\<close> (where \<open>S\<close> is the set of \<open>atomic events\<close> both \<open>P\<close> and \<open>Env\<close> must
+semantics of a possible environments \<open>P \<lbrakk>S\<rbrakk> Env\<close> (where \<open>S\<close> is the set of \<open>atomic events\<close> both \<open>P\<close> and \<open>Env\<close> must
 synchronize). This design objective has the consequence that two kinds of choice have to 
 be distinguished: 
   \<^enum> the \<^emph>\<open>external choice\<close>, written \<open>_\<box>_\<close>, which forces a process "to follow" whatever
