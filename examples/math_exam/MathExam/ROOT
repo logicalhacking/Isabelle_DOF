@@ -1,5 +1,5 @@
 session "MathExam" = "Isabelle_DOF" +
-  options [document = pdf, document_output = "output"]
+  options [document = pdf, document_output = "output", document_build = "build"]
   theories
     MathExam
   document_files

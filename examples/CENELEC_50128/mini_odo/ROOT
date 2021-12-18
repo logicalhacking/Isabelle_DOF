@@ -1,5 +1,5 @@
 session "mini_odo" = "Isabelle_DOF" +
-  options [document = pdf, document_output = "output"]
+  options [document = pdf, document_output = "output", document_build = "build"]
   theories
     "mini_odo"
   document_files

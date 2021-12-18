@@ -69,9 +69,7 @@ val instances_of_suffixN = "_instances"
 (* derived from: theory_markup *) 
 fun docref_markup_gen refN def name id pos =
   if id = 0 then Markup.empty
-  else
-    Markup.properties (Position.entity_properties_of def id pos)
-                      (Markup.entity refN name);   (* or better store the thy-name as property ? ? ? *)
+  else Position.make_entity_markup {def = def} id refN (name, pos);   (* or better store the thy-name as property ? ? ? *)
 
 val docref_markup = docref_markup_gen docrefN
 
@@ -1194,8 +1192,6 @@ fun document_command markdown (loc, txt) =
  *)
 
 
-
-
 ML\<open>
 structure ODL_Command_Parser = 
 struct
@@ -1205,7 +1201,6 @@ type meta_args_t = (((string * Position.T) *
                      (string * Position.T) option)
                     * ((string * Position.T) * string) list)
 
-val semi = Scan.option (Parse.$$$ ";");
 val is_improper = not o (Token.is_proper orf Token.is_begin_ignore orf Token.is_end_ignore);
 val improper = Scan.many is_improper; (* parses white-space and comments *)
 
@@ -1317,7 +1312,8 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
     let val cid_ty = cid_2_cidType cid_long thy 
         val generalize_term =  Term.map_types (generalize_typ 0)
         fun toString t = Syntax.string_of_term (Proof_Context.init_global thy) t  
-        fun instantiate_term S t = Term_Subst.map_types_same (Term_Subst.instantiateT S) (t)
+        fun instantiate_term S t =
+          Term_Subst.map_types_same (Term_Subst.instantiateT (TVars.make S)) (t)
         fun read_assn (lhs, pos:Position.T, opr, rhs) term =
             let val info_opt = DOF_core.get_attribute_info cid_long (Long_Name.base_name lhs) thy
                 val (ln,lnt,lnu,lnut) = case info_opt of 
@@ -1484,74 +1480,6 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
             end
 
 
-(* old version :
-fun gen_enriched_document_command {inline=is_inline} cid_transform attr_transform 
-                                  markdown  
-                                  (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
-                                     xstring_opt:(xstring * Position.T) option),
-                                    toks:Input.source) 
-                                  : theory -> theory =
-  let  val toplvl = Toplevel.theory_toplevel
-       fun check thy = let val ctxt = Toplevel.presentation_context (toplvl thy);
-                           val pos = Input.pos_of toks;
-                           val _   = Context_Position.reports ctxt
-                                           [(pos, Markup.language_document(Input.is_delimited toks)),
-                                            (pos, Markup.plain_text)];
-                       in thy end
-       
-  in   
-       (* ... level-attribute information management *)
-       (   create_and_check_docitem {is_monitor=false}
-                                    {is_inline=is_inline} 
-                                    oid pos (cid_transform cid_pos) 
-                                    (attr_transform doc_attrs) 
-       (* checking and markup generation *)
-        #> check ) 
-       (* Thanks Frederic Tuong for the hints concerning toplevel ! ! ! *)
-  end;
-*)
-
-fun gen_enriched_document_cmd {inline=is_inline} cid_transform attr_transform 
-                                  markdown  
-                                  (((((oid,pos),cid_pos), doc_attrs) : meta_args_t,
-                                     xstring_opt:(xstring * Position.T) option),
-                                    toks:Input.source) 
-                                  : theory -> theory =
-  let  val toplvl = Toplevel.theory_toplevel
-
-       (* as side-effect, generates markup *)
-       fun check_n_tex_text thy = let val ctxt = Toplevel.presentation_context (toplvl thy);
-                                      val pos = Input.pos_of toks;
-                                      val _ =   Context_Position.reports ctxt
-                                                [(pos, Markup.language_document (Input.is_delimited toks)),
-                                                 (pos, Markup.plain_text)];
-
-                                      val text = Thy_Output.output_document 
-                                                                 (Proof_Context.init_global thy) 
-                                                                 markdown toks
-
-                                  (*    val file = {path = Path.make [oid ^ "_snippet.tex"],
-                                                  pos = @{here}, 
-                                                  content = Latex.output_text text}
- 
-                                        val _ = Generated_Files.write_file (Path.make ["latex_test"]) 
-                                                                         file
-                                      val _ = writeln (Latex.output_text text) *)
-                                  in  thy end
-       
-       (* ... generating the level-attribute syntax *)
-  in   
-       (* ... level-attribute information management *)
-       (   create_and_check_docitem 
-                              {is_monitor = false} {is_inline = is_inline} 
-                              oid pos (cid_transform cid_pos) (attr_transform doc_attrs)
-       (* checking and markup generation *)
-        #>  check_n_tex_text ) 
-       (* Thanks Frederic Tuong for the hints concerning toplevel ! ! ! *)
-  end;
-
-
-
 (* General criticism : attributes like "level" were treated here in the kernel instead of dragging
    them out into the COL -- bu *)
 
@@ -1601,8 +1529,115 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
             |> delete_monitor_entry
     end 
 
-(* Core Command Definitions *)
 
+fun meta_args_2_latex thy ((((lab, _), cid_opt), attr_list) : meta_args_t) =
+    (* for the moment naive, i.e. without textual normalization of 
+       attribute names and adapted term printing *)
+    let val l   = "label = "^ (enclose "{" "}" lab)
+      (*  val _   = writeln("meta_args_2_string lab:"^ lab ^":"^ (@{make_string } cid_opt) ) *)
+        val cid_long = case cid_opt of
+                                NONE => (case DOF_core.get_object_global lab thy of
+                                           NONE => DOF_core.default_cid
+                                         | SOME X => #cid X)
+                              | SOME(cid,_) => DOF_core.parse_cid_global thy cid        
+        (* val _   = writeln("meta_args_2_string cid_long:"^ cid_long ) *)
+        val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
+
+        fun ltx_of_term _ _ (Const ("List.list.Cons", @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $ t2) 
+                  = HOLogic.dest_string (Const ("List.list.Cons", @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $  t2)
+          | ltx_of_term _ _ (Const ("List.list.Nil", _)) = ""
+          | ltx_of_term _ _ (@{term "numeral :: _ \<Rightarrow> _"} $ t) = Int.toString(HOLogic.dest_numeral t)
+          | ltx_of_term ctx encl ((Const ("List.list.Cons", _) $ t1) $ t2) = 
+                                               let val inner = (case t2 of 
+                                                                  Const ("List.list.Nil", _) =>  (ltx_of_term ctx true t1) 
+                                                                | _ => ((ltx_of_term ctx false t1)^", " ^(ltx_of_term ctx false t2))
+                                                             )
+                                               in if encl then enclose "{" "}" inner else inner end
+          | ltx_of_term _ _ (Const ("Option.option.None", _)) = ""
+          | ltx_of_term ctxt _ (Const ("Option.option.Some", _)$t) = ltx_of_term ctxt true t
+          | ltx_of_term ctxt _ t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
+
+
+        fun ltx_of_term_dbg ctx encl term  = let 
+              val t_str = ML_Syntax.print_term term  
+                          handle (TERM _) => "Exception TERM in ltx_of_term_dbg (print_term)"
+              val ltx = ltx_of_term ctx encl term
+              val _ = writeln("<STRING>"^(Sledgehammer_Util.hackish_string_of_term ctx term)^"</STRING>")
+              val _ = writeln("<LTX>"^ltx^"</LTX>")
+              val _ = writeln("<TERM>"^t_str^"</TERM>")
+            in ltx end 
+
+
+        fun markup2string s = String.concat (List.filter (fn c => c <> Symbol.DEL) 
+                                            (Symbol.explode (YXML.content_of s)))
+        fun ltx_of_markup ctxt s = let
+  	                            val term = (Syntax.check_term ctxt o Syntax.parse_term ctxt) s
+                                val str_of_term = ltx_of_term  ctxt true term 
+                                    handle _ => "Exception in ltx_of_term"
+                              in
+                                str_of_term
+                              end 
+        fun toLong n =  #long_name(the(DOF_core.get_attribute_info cid_long (markup2string n) thy))
+
+        val ctxt = Proof_Context.init_global thy
+        val actual_args =  map (fn ((lhs,_),rhs) => (toLong lhs, ltx_of_markup ctxt rhs))
+                               attr_list  
+	      val default_args = map (fn (b,_,t) => (toLong (Long_Name.base_name ( Sign.full_name thy b)), 
+                                                       ltx_of_term ctxt true t))
+                               (DOF_core.get_attribute_defaults cid_long thy)
+
+        val default_args_filtered = filter (fn (a,_) => not (exists (fn b => b = a) 
+                                    (map (fn (c,_) => c) actual_args))) default_args
+        val str_args = map (fn (lhs,rhs) => lhs^" = "^(enclose "{" "}" rhs)) 
+                      (actual_args@default_args_filtered)
+        val label_and_type = String.concat [ l, ",", cid_txt]
+        val str_args = label_and_type::str_args
+    in
+      Latex.string (enclose "[" "]" (String.concat [ label_and_type, ", args={", (commas str_args), "}"]))
+    end
+
+(* level-attribute information management *)
+fun gen_enriched_document_cmd {inline} cid_transform attr_transform
+    ((((oid,pos),cid_pos), doc_attrs) : meta_args_t) : theory -> theory =
+  create_and_check_docitem {is_monitor = false} {is_inline = inline}
+    oid pos (cid_transform cid_pos) (attr_transform doc_attrs);
+
+
+(* markup reports and document output *)
+
+(* {markdown = true} sets the parsing process such that in the text-core
+   markdown elements are accepted. *)
+
+fun document_output {markdown: bool, markup: Latex.text -> Latex.text} meta_args text ctxt =
+  let
+    val thy = Proof_Context.theory_of ctxt;
+    val _ = Context_Position.reports ctxt (Document_Output.document_reports text);
+    val output_meta = meta_args_2_latex thy meta_args;
+    val output_text = Document_Output.output_document ctxt {markdown = markdown} text;
+  in markup (output_meta @ output_text) end;
+
+fun document_output_reports name {markdown, body} meta_args text ctxt =
+  let
+    val pos = Input.pos_of text;
+    val _ =
+      Context_Position.reports ctxt
+        [(pos, Markup.language_document (Input.is_delimited text)),
+         (pos, Markup.plain_text)];
+    fun markup xml =
+      let val m = if body then Markup.latex_body else Markup.latex_heading
+      in [XML.Elem (m (Latex.output_name name), xml)] end;
+  in document_output {markdown = markdown, markup = markup} meta_args text ctxt end;
+
+fun document_command (name, pos) descr mark cmd =
+  Outer_Syntax.command (name, pos) descr
+    (attributes -- Parse.document_source >>
+      (fn (meta_args, text) =>
+        Toplevel.present_theory (cmd meta_args)
+        (Toplevel.presentation_context #> document_output_reports name mark meta_args text)));
+
+
+
+(* Core Command Definitions *)
 
 val _ =
   Outer_Syntax.command @{command_keyword "open_monitor*"} 
@@ -1620,11 +1655,9 @@ val _ =
                        "update meta-attributes of an instance of a document class"
                         (attributes_upd >> (Toplevel.theory o update_instance_command)); 
 
-
 val _ =
-  Outer_Syntax.command ("text*", @{here}) "formal comment (primary style)"
-    (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (gen_enriched_document_cmd {inline=true} I I {markdown = true} )));
+  document_command ("text*", @{here}) "formal comment (primary style)"
+    {markdown = true, body = true} (gen_enriched_document_cmd {inline=true} I I);
 
 (*
   term* command uses the same code as term command
@@ -1661,10 +1694,9 @@ Outer_Syntax.command \<^command_keyword>\<open>term*\<close> "read and print ter
 
 (* This is just a stub at present *)
 val _ =
-  Outer_Syntax.command ("text-macro*", @{here}) "formal comment macro"
-    (attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (gen_enriched_document_cmd {inline=false} (* declare as macro *)
-                                                       I I {markdown = true} )));
+  document_command ("text-macro*", @{here}) "formal comment macro"
+    {markdown = true, body = true}
+    (gen_enriched_document_cmd {inline=false} (* declare as macro *) I I);
 
 val _ =
   Outer_Syntax.command @{command_keyword "declare_reference*"} 
@@ -1767,10 +1799,10 @@ val _ =
     (opt_evaluator -- opt_modes -- Parse.term >> pass_trans_to_value_cmd);
 
 val _ = Theory.setup
-  (Thy_Output.antiquotation_pretty_source_embedded \<^binding>\<open>value*\<close>
+  (Document_Output.antiquotation_pretty_source_embedded \<^binding>\<open>value*\<close>
     (Scan.lift opt_evaluator -- Term_Style.parse -- Args.term)
     (fn ctxt => fn ((name, style), t) =>
-      Thy_Output.pretty_term ctxt (style (value_select name ctxt t)))
+      Document_Output.pretty_term ctxt (style (value_select name ctxt t)))
   #> add_evaluator (\<^binding>\<open>simp\<close>, Code_Simp.dynamic_value) #> snd
   #> add_evaluator (\<^binding>\<open>nbe\<close>, Nbe.dynamic_value) #> snd
   #> add_evaluator (\<^binding>\<open>code\<close>, Code_Evaluation.dynamic_value_strict) #> snd);
@@ -1778,98 +1810,14 @@ val _ = Theory.setup
 end;
 \<close>
 
-ML\<open>
-structure ODL_LTX_Converter = 
-struct
 
-fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Command_Parser.meta_args_t) = 
-    (* for the moment naive, i.e. without textual normalization of 
-       attribute names and adapted term printing *)
-    let val l   = "label = "^ (enclose "{" "}" lab)
-      (*  val _   = writeln("meta_args_2_string lab:"^ lab ^":"^ (@{make_string } cid_opt) ) *)
-        val cid_long = case cid_opt of
-                                NONE => (case DOF_core.get_object_global lab thy of
-                                           NONE => DOF_core.default_cid
-                                         | SOME X => #cid X)
-                              | SOME(cid,_) => DOF_core.parse_cid_global thy cid        
-        (* val _   = writeln("meta_args_2_string cid_long:"^ cid_long ) *)
-        val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
-
-        fun ltx_of_term _ _ (Const ("List.list.Cons", @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $ t2) 
-                  = HOLogic.dest_string (Const ("List.list.Cons", @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $  t2)
-          | ltx_of_term _ _ (Const ("List.list.Nil", _)) = ""
-          | ltx_of_term _ _ (@{term "numeral :: _ \<Rightarrow> _"} $ t) = Int.toString(HOLogic.dest_numeral t)
-          | ltx_of_term ctx encl ((Const ("List.list.Cons", _) $ t1) $ t2) = 
-                                               let val inner = (case t2 of 
-                                                                  Const ("List.list.Nil", _) =>  (ltx_of_term ctx true t1) 
-                                                                | _ => ((ltx_of_term ctx false t1)^", " ^(ltx_of_term ctx false t2))
-                                                             )
-                                               in if encl then enclose "{" "}" inner else inner end
-          | ltx_of_term _ _ (Const ("Option.option.None", _)) = ""
-          | ltx_of_term ctxt _ (Const ("Option.option.Some", _)$t) = ltx_of_term ctxt true t
-          | ltx_of_term ctxt _ t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
-
-
-        fun ltx_of_term_dbg ctx encl term  = let 
-              val t_str = ML_Syntax.print_term term  
-                          handle (TERM _) => "Exception TERM in ltx_of_term_dbg (print_term)"
-              val ltx = ltx_of_term ctx encl term
-              val _ = writeln("<STRING>"^(Sledgehammer_Util.hackish_string_of_term ctx term)^"</STRING>")
-              val _ = writeln("<LTX>"^ltx^"</LTX>")
-              val _ = writeln("<TERM>"^t_str^"</TERM>")
-            in ltx end 
-
-
-        fun markup2string s = String.concat (List.filter (fn c => c <> Symbol.DEL) 
-                                            (Symbol.explode (YXML.content_of s)))
-        fun ltx_of_markup ctxt s = let
-  	                            val term = (Syntax.check_term ctxt o Syntax.parse_term ctxt) s
-                                val str_of_term = ltx_of_term  ctxt true term 
-                                    handle _ => "Exception in ltx_of_term"
-                              in
-                                str_of_term
-                              end 
-        fun toLong n =  #long_name(the(DOF_core.get_attribute_info cid_long (markup2string n) thy))
-
-        val ctxt = Proof_Context.init_global thy
-        val actual_args =  map (fn ((lhs,_),rhs) => (toLong lhs, ltx_of_markup ctxt rhs))
-                               attr_list  
-	      val default_args = map (fn (b,_,t) => (toLong (Long_Name.base_name ( Sign.full_name thy b)), 
-                                                       ltx_of_term ctxt true t))
-                               (DOF_core.get_attribute_defaults cid_long thy)
-
-        val default_args_filtered = filter (fn (a,_) => not (exists (fn b => b = a) 
-                                    (map (fn (c,_) => c) actual_args))) default_args
-        val str_args = map (fn (lhs,rhs) => lhs^" = "^(enclose "{" "}" rhs)) 
-                      (actual_args@default_args_filtered)
-        val label_and_type = String.concat [ l, ",", cid_txt]
-        val str_args = label_and_type::str_args
-    in
-      (enclose "[" "]" (String.concat [ label_and_type, ", args={", (commas str_args), "}"])) 
-end
-
-end
-\<close>
-
-
-ML\<open> (* Setting in thy_output.ML a parser for the syntactic handling of the meta-informations of
-       text elements - so text*[m<meta-info>]\<open> ... dfgdfg .... \<close> *)
-                 
-val _ = Thy_Output.set_meta_args_parser
-            (fn thy => (Scan.optional (Document_Source.improper 
-                                       |--   ODL_Command_Parser.attributes 
-                                       >>    ODL_LTX_Converter.meta_args_2_string thy) "")); \<close>
-
-
-
- 
 section\<open> Syntax for Ontological Antiquotations (the '' View'' Part II) \<close>
 
 ML\<open>
 structure OntoLinkParser = 
 struct
 
-val basic_entity = Thy_Output.antiquotation_pretty_source
+val basic_entity = Document_Output.antiquotation_pretty_source
     : binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
 
 fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) {inline=inline_req} pos name  =
@@ -1921,20 +1869,19 @@ fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked, define}, src
         val inline = Config.get ctxt Document_Antiquotation.thy_output_display
         val _ = check_and_mark ctxt cid_decl {strict_checking = not unchecked} 
                                              {inline = inline} pos str
-        val enc = Latex.enclose_block
     in  
         (case (define,inline) of
-            (true,false) => enc("\\csname isaDof.label\\endcsname[type={"^cid_decl^"}]   {")"}" 
-           |(false,false)=> enc("\\csname isaDof.ref\\endcsname[type={"^cid_decl^"}]     {")"}"
-           |(true,true)  => enc("\\csname isaDof.macroDef\\endcsname[type={"^cid_decl^"}]{")"}" 
-           |(false,true) => enc("\\csname isaDof.macroExp\\endcsname[type={"^cid_decl^"}]{")"}"
+            (true,false) => XML.enclose("\\csname isaDof.label\\endcsname[type={"^cid_decl^"}]   {")"}" 
+           |(false,false)=> XML.enclose("\\csname isaDof.ref\\endcsname[type={"^cid_decl^"}]     {")"}"
+           |(true,true)  => XML.enclose("\\csname isaDof.macroDef\\endcsname[type={"^cid_decl^"}]{")"}" 
+           |(false,true) => XML.enclose("\\csname isaDof.macroExp\\endcsname[type={"^cid_decl^"}]{")"}"
         )
-        [Latex.text (Input.source_content src)] 
+        (Latex.text (Input.source_content src))
     end      
 
 
 fun docitem_antiquotation bind cid = 
-    Thy_Output.antiquotation_raw bind  docitem_antiquotation_parser 
+    Document_Output.antiquotation_raw bind  docitem_antiquotation_parser 
                                        (pretty_docitem_antiquotation_generic cid);
 
 
@@ -1973,7 +1920,7 @@ ML\<open>
 structure AttributeAccess = 
 struct
 
-val basic_entity = Thy_Output.antiquotation_pretty_source 
+val basic_entity = Document_Output.antiquotation_pretty_source 
     : binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
 
 fun symbex_attr_access0 ctxt proj_term term =
@@ -2061,13 +2008,13 @@ fun compute_cid_repr ctxt cid pos =
 local
 
 fun pretty_attr_access_style ctxt (style, ((oid,pos),(attr,pos'))) = 
-           Thy_Output.pretty_term ctxt (style (compute_attr_access (Context.Proof ctxt) 
+           Document_Output.pretty_term ctxt (style (compute_attr_access (Context.Proof ctxt) 
                                                                     attr oid pos pos'));
 fun pretty_trace_style ctxt (style, (oid,pos)) = 
-          Thy_Output.pretty_term ctxt (style (compute_attr_access  (Context.Proof ctxt) 
+          Document_Output.pretty_term ctxt (style (compute_attr_access  (Context.Proof ctxt) 
                                                                    "trace" oid pos pos));
 fun pretty_cid_style ctxt (style, (cid,pos)) = 
-          Thy_Output.pretty_term ctxt (style (compute_cid_repr ctxt cid pos));
+          Document_Output.pretty_term ctxt (style (compute_cid_repr ctxt cid pos));
 
 in
 val _ = Theory.setup 
@@ -2087,7 +2034,7 @@ end
 
 text\<open> Note that the functions \<^verbatim>\<open>basic_entities\<close> and \<^verbatim>\<open>basic_entity\<close> in 
       @{ML_structure AttributeAccess} are copied from 
-      @{file "$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"} \<close>
+      @{file "$ISABELLE_HOME/src/Pure/Thy/document_output.ML"} \<close>
 
 
 section\<open> Syntax for Ontologies (the '' View'' Part III) \<close> 
@@ -2128,7 +2075,15 @@ fun read_fields raw_fields ctxt =
 val trace_attr = ((Binding.make("trace",@{here}), "(doc_class rexp \<times> string) list",Mixfix.NoSyn),
                   SOME "[]"): ((binding * string * mixfix) * string option)
 
-fun def_cmd (decl, spec, prems, params) = #2 oo Specification.definition' decl params prems spec
+fun def_cmd (decl, spec, prems, params) lthy =
+  let
+    val ((lhs as Free (x, T), _), lthy') = Specification.definition decl params prems spec lthy;
+    val lhs' = Morphism.term (Local_Theory.target_morphism lthy') lhs;
+    val _ =
+      Proof_Display.print_consts true (Position.thread_data ()) lthy'
+        (Frees.defined (Frees.build (Frees.add_frees lhs'))) [(x, T)]
+  in lthy' end
+
 fun meta_eq_const T = Const (\<^const_name>\<open>Pure.eq\<close>, T --> T --> propT);
 fun mk_meta_eq (t, u) = meta_eq_const (fastype_of t) $ t $ u;
 
@@ -2136,7 +2091,7 @@ fun define_cond binding f_sty   cond_suffix read_cond (ctxt:local_theory) =
        let val bdg = Binding.suffix_name cond_suffix binding
            val eq =  mk_meta_eq(Free(Binding.name_of bdg, f_sty),read_cond ctxt)
            val args = (SOME(bdg,NONE,NoSyn), (Binding.empty_atts,eq),[],[])
-       in def_cmd args true ctxt end
+       in def_cmd args ctxt end
 
 fun define_inv cid_long ((lbl, pos), inv) thy = 
     let val bdg = (* Binding.suffix_name cid_long *) (Binding.make (lbl,pos))
@@ -2275,34 +2230,34 @@ ML\<open>
 structure DOF_lib =
 struct
 fun define_shortcut name latexshcut = 
-       Thy_Output.antiquotation_raw name (Scan.succeed ())
+       Document_Output.antiquotation_raw name (Scan.succeed ())
           (fn _ => fn () => Latex.string latexshcut) 
 
 (* This is a generalization of the Isabelle2020 function "control_antiquotation" from 
    document_antiquotations.ML. (Thanks Makarius!) *)
 fun define_macro name s1 s2 reportNtest =
-      Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.cartouche_input)
+      Document_Output.antiquotation_raw_embedded name (Scan.lift Args.cartouche_input)
          (fn ctxt => 
              fn src => let val () = reportNtest ctxt src 
-                       in  src |>   Latex.enclose_block s1 s2 
-                                  o Thy_Output.output_document ctxt {markdown = false}
+                       in  src |>   XML.enclose s1 s2 
+                                  o Document_Output.output_document ctxt {markdown = false}
                        end);
 
 local (* hide away really strange local construction *)
 fun enclose_body2 front body1 middle body2 post =
-  (if front  = "" then [] else [Latex.string front]) @ body1 @
-  (if middle = "" then [] else [Latex.string middle]) @ body2 @
-  (if post   = "" then [] else [Latex.string post]);
+  (if front  = "" then [] else Latex.string front) @ body1 @
+  (if middle = "" then [] else Latex.string middle) @ body2 @
+  (if post   = "" then [] else Latex.string post);
 in
 fun define_macro2 name front middle post reportNtest1 reportNtest2 =
-      Thy_Output.antiquotation_raw_embedded name (Scan.lift (   Args.cartouche_input 
+      Document_Output.antiquotation_raw_embedded name (Scan.lift (   Args.cartouche_input 
                                                              -- Args.cartouche_input))
          (fn ctxt => 
              fn (src1,src2) => let val () = reportNtest1 ctxt src1 
                                    val () = reportNtest2 ctxt src2 
-                                   val T1 = Thy_Output.output_document ctxt {markdown = false} src1
-                                   val T2 = Thy_Output.output_document ctxt {markdown = false} src2
-                               in  Latex.block(enclose_body2 front T1 middle T2 post)
+                                   val T1 = Document_Output.output_document ctxt {markdown = false} src1
+                                   val T2 = Document_Output.output_document ctxt {markdown = false} src2
+                               in  enclose_body2 front T1 middle T2 post
                                end);
 end
 
@@ -2330,8 +2285,8 @@ fun prepare_text ctxt =
 
 fun string_2_text_antiquotation ctxt text = 
         prepare_text ctxt text
-        |> Thy_Output.output_source ctxt
-        |> Thy_Output.isabelle ctxt
+        |> Document_Output.output_source ctxt
+        |> Document_Output.isabelle ctxt
 
 fun string_2_theory_text_antiquotation ctxt text =
       let
@@ -2339,12 +2294,12 @@ fun string_2_theory_text_antiquotation ctxt text =
       in
         prepare_text ctxt text
         |> Token.explode0 keywords
-        |> maps (Thy_Output.output_token ctxt)
-        |> Thy_Output.isabelle ctxt
+        |> maps (Document_Output.output_token ctxt)
+        |> Document_Output.isabelle ctxt
       end
 
 fun gen_text_antiquotation name reportNcheck compile =
-  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
+  Document_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
     (fn ctxt => fn text:Input.source =>
       let
         val _ = reportNcheck ctxt text;
@@ -2398,15 +2353,15 @@ fun environment_delim name =
  ("%\n\\begin{" ^ Latex.output_name name ^ "}\n",
   "\n\\end{" ^ Latex.output_name name ^ "}");
 
-fun environment_block name = environment_delim name |-> Latex.enclose_body #> Latex.block;
+fun environment_block name = environment_delim name |-> XML.enclose;
 
 
 fun enclose_env verbatim ctxt block_env body =
   if Config.get ctxt Document_Antiquotation.thy_output_display
   then if verbatim 
-       then environment_block block_env [body]
-       else Latex.environment_block block_env [body]
-  else Latex.block ([Latex.string ("\\inline"^block_env ^"{")] @ [body] @ [ Latex.string ("}")]);
+       then environment_block block_env body
+       else Latex.environment block_env body
+  else XML.enclose ("\\inline"^block_env ^"{") "}" body;
 
 end
 \<close>

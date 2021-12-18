@@ -1,0 +1,36 @@
+# HG changeset patch
+# User wenzelm
+# Date 1639864289 -3600
+#      Sat Dec 18 22:51:29 2021 +0100
+# Node ID fcd643ddbfb2bcc60b301d8630d563ea265f7719
+# Parent  70be57333ea1b0e1866be2e944f2e0f70c437ae4
+Toplevel.present_theory for Isabelle/DOF;
+
+diff -r 70be57333ea1 -r fcd643ddbfb2 src/Pure/Isar/toplevel.ML
+--- a/src/Pure/Isar/toplevel.ML	Sun Dec 12 10:42:51 2021 +0100
++++ b/src/Pure/Isar/toplevel.ML	Sat Dec 18 22:51:29 2021 +0100
+@@ -55,6 +55,7 @@
+   val ignored: Position.T -> transition
+   val malformed: Position.T -> string -> transition
+   val generic_theory: (generic_theory -> generic_theory) -> transition -> transition
++  val present_theory: (theory -> theory) -> (state -> Latex.text) -> transition -> transition
+   val theory': (bool -> theory -> theory) -> transition -> transition
+   val theory: (theory -> theory) -> transition -> transition
+   val begin_main_target: bool -> (theory -> local_theory) -> transition -> transition
+@@ -452,6 +453,16 @@
+   (fn Theory gthy => node_presentation (Theory (f gthy))
+     | _ => raise UNDEF));
+ 
++fun present_theory f g = present_transaction (fn _ =>
++  (fn Theory (Context.Theory thy) =>
++      let val thy' = thy
++        |> Sign.new_group
++        |> f
++        |> Sign.reset_group;
++      in node_presentation (Theory (Context.Theory thy')) end
++    | _ => raise UNDEF))
++  (presentation g);
++
+ fun theory' f = transaction (fn int =>
+   (fn Theory (Context.Theory thy) =>
+       let val thy' = thy

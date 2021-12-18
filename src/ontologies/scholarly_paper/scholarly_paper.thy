@@ -47,23 +47,15 @@ doc_class abstract =
 
 
 ML\<open>
-local open ODL_Command_Parser in
-val _ =  Outer_Syntax.command ("abstract*", @{here}) "Textual Definition"
-           (attributes -- Parse.opt_target -- Parse.document_source --| semi
-            >> (Toplevel.theory o (Onto_Macros.enriched_document_cmd_exp
-                                           (SOME "abstract") 
-                                           [] 
-                                           {markdown = true} )));
+val _ =
+  ODL_Command_Parser.document_command ("abstract*", @{here}) "Textual Definition"
+    {markdown = true, body = true}
+    (Onto_Macros.enriched_document_cmd_exp (SOME "abstract") []);
 
-
-val _ =  Outer_Syntax.command ("author*", @{here}) "Textual Definition"
-           (attributes -- Parse.opt_target -- Parse.document_source --| semi
-            >> (Toplevel.theory o (Onto_Macros.enriched_document_cmd_exp
-                                           (SOME "author") 
-                                           [] 
-                                           {markdown = true} )));
-
-end
+val _ =
+  ODL_Command_Parser.document_command ("author*", @{here}) "Textual Definition"
+    {markdown = true, body = true}
+    (Onto_Macros.enriched_document_cmd_exp (SOME "author") []);
 \<close>
 
 text\<open>Scholarly Paper is oriented towards the classical domains in science:
@@ -292,45 +284,41 @@ setup\<open>Theorem_default_class_setup\<close>
 
 ML\<open> local open ODL_Command_Parser in
 
-(* {markdown = true} sets the parsing process such that in the text-core 
-   markdown elements are accepted. *)
+val _ = 
+  ODL_Command_Parser.document_command ("Definition*", @{here}) "Textual Definition"
+    {markdown = true, body = true}
+    (fn meta_args => fn thy =>
+      let
+        val ddc = Config.get_global thy Definition_default_class
+        val use_Definition_default = SOME(((ddc = "") ? (K "math_content")) ddc)
+      in
+        Onto_Macros.enriched_formal_statement_command 
+         use_Definition_default [("mcc","defn")] meta_args thy
+      end);
 
-       
-val _ = let fun use_Definition_default thy = 
-                let val ddc = Config.get_global thy Definition_default_class
-                in  (SOME(((ddc = "") ? (K "math_content")) ddc)) end
-        in  Outer_Syntax.command ("Definition*", @{here}) "Textual Definition"
-               (attributes -- Parse.opt_target -- Parse.document_source --| semi
-                >> (Toplevel.theory o (fn args => fn thy => 
-                                            Onto_Macros.enriched_formal_statement_command 
-                                               (use_Definition_default thy) 
-                                               [("mcc","defn")] 
-                                               {markdown = true} args thy)))
-        end;
+val _ =
+  ODL_Command_Parser.document_command ("Lemma*", @{here}) "Textual Lemma Outline"
+    {markdown = true, body = true}
+    (fn meta_args => fn thy =>
+      let
+        val ddc = Config.get_global thy Definition_default_class
+        val use_Lemma_default = SOME(((ddc = "") ? (K "math_content")) ddc)
+      in
+        Onto_Macros.enriched_formal_statement_command
+          use_Lemma_default [("mcc","lem")] meta_args thy
+      end);
 
-val _ = let fun use_Lemma_default thy = 
-                let val ddc = Config.get_global thy Definition_default_class
-                in  (SOME(((ddc = "") ? (K "math_content")) ddc)) end
-        in   Outer_Syntax.command ("Lemma*", @{here}) "Textual Lemma Outline"
-                (attributes -- Parse.opt_target -- Parse.document_source --| semi
-                >> (Toplevel.theory o (fn args => fn thy => 
-                                            Onto_Macros.enriched_formal_statement_command 
-                                               (use_Lemma_default thy) 
-                                               [("mcc","lem")] 
-                                               {markdown = true} args thy)))
-        end;
-
-val _ = let fun use_Theorem_default thy = 
-                let val ddc = Config.get_global thy Definition_default_class
-                in  (SOME(((ddc = "") ? (K "math_content")) ddc)) end
-        in  Outer_Syntax.command ("Theorem*", @{here}) "Textual Theorem Outline"
-               (attributes -- Parse.opt_target -- Parse.document_source --| semi
-               >> (Toplevel.theory o (fn args => fn thy => 
-                                           Onto_Macros.enriched_formal_statement_command 
-                                               (use_Theorem_default thy) 
-                                               [("mcc","thm")] 
-                                               {markdown = true} args thy)))
-        end;
+val _ =
+  ODL_Command_Parser.document_command ("Theorem*", @{here}) "Textual Theorem Outline"
+    {markdown = true, body = true}
+    (fn meta_args => fn thy =>
+      let
+        val ddc = Config.get_global thy Definition_default_class
+        val use_Theorem_default = SOME(((ddc = "") ? (K "math_content")) ddc)
+      in
+        Onto_Macros.enriched_formal_statement_command 
+          use_Theorem_default [("mcc","thm")] meta_args thy
+      end);
 
 end 
 \<close>

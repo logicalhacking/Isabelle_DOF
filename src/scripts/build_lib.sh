@@ -125,12 +125,11 @@ rm -f *.aux
 
 sed -i -e 's/<@>/@/g' *.tex 
 
-$ISABELLE_TOOL latex -o sty "root.tex" && \
-$ISABELLE_TOOL latex -o "$OUTFORMAT" "root.tex" && \
-{ [ ! -f "$ROOT_NAME.bib" ] || $ISABELLE_TOOL latex -o bbl "root.tex"; } && \
-{ [ ! -f "$ROOT_NAME.idx" ] || $ISABELLE_TOOL latex -o idx "root.tex"; } && \
-$ISABELLE_TOOL latex -o "$OUTFORMAT" "root.tex" && \
-$ISABELLE_TOOL latex -o "$OUTFORMAT" "root.tex"
+$ISABELLE_PDFLATEX root && \
+{ [ ! -f "$ROOT_NAME.bib" ] || $ISABELLE_BIBTEX root; } && \
+{ [ ! -f "$ROOT_NAME.idx" ] || $ISABELLE_MAKEINDEX root; } && \
+$ISABELLE_PDFLATEX root && \
+$ISABELLE_PDFLATEX root
 
 MISSING_CITATIONS=`grep 'Warning.*Citation' root.log | awk '{print $5}' | sort  -u`
 if [ "$MISSING_CITATIONS" != "" ]; then
