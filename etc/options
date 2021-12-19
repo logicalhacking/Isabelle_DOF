@@ -1,0 +1,12 @@
+(* :mode=isabelle-options: *)
+
+section "Isabelle/DOF"
+
+public option dof_url : string = "https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF"
+  -- "Isabelle/DOF source repository"
+
+option dof_artifact_dir : string = "releases/Isabelle_DOF/Isabelle_DOF"
+  -- "Isabelle/DOF release artifacts"
+
+option dof_artifact_host : string = "artifacts.logicalhacking.com"
+
