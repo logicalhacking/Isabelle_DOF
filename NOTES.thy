@@ -129,7 +129,48 @@ ML \<open>
 \<close>
 
 
-section \<open>Isabelle/Scala\<close>
+section \<open>Isabelle/Scala services\<close>
+
+subsection \<open>Isabelle/DOF/Scala module\<close>
+
+text \<open>
+  \<^item> \<^file>\<open>$ISABELLE_DOF_HOME/etc/build.props\<close> is the main specification for
+  the Isabelle/DOF/Scala module. It is built on the spot as required, e.g.
+  for \<^verbatim>\<open>isabelle scala\<close> or \<^verbatim>\<open>isabelle jedit\<close>; an alternative is to invoke
+  \<^verbatim>\<open>isabelle scala_build\<close> manually. See also \<^doc>\<open>system\<close>, chapter 5,
+  especially section 5.2.
+
+  \<^item> \<^verbatim>\<open>isabelle scala_project\<close> helps to develop Isabelle/Scala tools with
+  proper IDE support, notably IntelliJ IDEA: the generated project uses
+  Maven. See also \<^doc>\<open>system\<close>, section 5.2.3.
+
+  \<^item> Command-line tools should be always implemented in Scala; old-fashioned
+  shell scripts are no longer required (and more difficult to implement
+  properly). Only a few low-level tools are outside the Scala environment,
+  e.g. \<^verbatim>\<open>isabelle getenv\<close>. Add-on components should always use a name
+  prefix for their tools, e.g. \<^verbatim>\<open>isabelle dof_mkroot\<close> as defined in
+  \<^file>\<open>$ISABELLE_DOF_HOME/src/scala/dof_mkroot.scala\<close>.
+\<close>
+
+
+subsection \<open>Document preparation\<close>
+
+text \<open>
+  \<^item> \<^scala_type>\<open>isabelle.Document_Build.Engine\<close> is the main entry-point
+  for user-defined document preparation; existing templates and examples
+  are defined in the same module \<^file>\<open>~~/src/Pure/Thy/document_build.scala\<close>.
+  There are two stages:
+
+    \<^enum> \<^verbatim>\<open>prepare_directory\<close>: populate the document output directory (e.g.
+    copy static document files, collect generated document sources from the
+    session build database).
+
+    \<^enum> \<^verbatim>\<open>build_document\<close>: produce the final PDF within the document output
+    directory (e.g. via standard LaTeX tools).
+
+  See also \<^system_option>\<open>document_build\<close> as explained in \<^doc>\<open>system\<close>,
+  section 3.3.
+\<close>
 
 
 section \<open>Miscellaneous NEWS and Notes\<close>
