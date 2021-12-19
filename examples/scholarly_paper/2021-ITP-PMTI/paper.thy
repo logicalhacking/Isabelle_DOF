@@ -45,7 +45,8 @@ abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<
    \<^emph>\<open>ontology alignment\<close> in  the literature raised a substantial interest recently.
 \<close>
 
-section*[introheader::introduction,main_author="Some(@{docitem ''bu''}::author)"]\<open> Introduction \<close>
+section*[introheader::introduction,main_author="Some(@{author ''bu''})"]
+       \<open> Introduction \<close>
 text*[introtext::introduction]\<open>
 The linking of \<^emph>\<open>formal\<close> and \<^emph>\<open>informal\<close> information is perhaps the
 most pervasive challenge in the digitization of knowledge and its
@@ -59,9 +60,9 @@ Admittedly, Isabelle is not the first system that comes into one's mind when
 writing a document, be it a scientific paper, a book, or a larger technical 
 documentation. However, it has a typesetting system inside which is in the 
 tradition of document generation systems such as mkd, Document! X, Doxygen, 
-Javadoc, etc., and which embed elements of formal content such as code-snippets 
-or generated system output into informal text. In Isabelle, these "embedders"
-or meta-text elements are a form of machine-checked macro called \<^emph>\<open>antiquotations\<close>.
+Javadoc, etc., and which embed elements of formal content such as formula pretty-prints 
+into informal text. In Isabelle, these "links" or embedded meta-text elements 
+are a form of machine-checked macro called \<^emph>\<open>antiquotations\<close>.
 
 For example, the text element as appearing in the Isabelle frontend:
 @{theory_text [display,indent=10, margin=70] 
@@ -80,10 +81,12 @@ and \<open>@{value "fac 5"}\<close> ("compile and execute 'fac 5' according to i
 definitions") are built-in antiquotations in \<^hol>.
 
 %too long !
-Hence, developers are rewarded for an evolution strategy consisting in
-source integration in Isabelle and replacing \<^emph>\<open>text\<close> by appropriate \<^emph>\<open>meta-text\<close>: 
-the resulting semantic checks increase the robustness of the document 
-consistency under (usually collaborative) changes.
+This leads to an evolution strategy we call "integrate the document, strengthen the
+links" (IDSL): integrate all sources into the Isabelle document model, and 
+replace \<^emph>\<open>text\<close> by appropriate \<^emph>\<open>meta-text\<close> wherever you can.
+Developers are rewarded for applying IDSL by specific IDE-support, 
+by additional semantic checks and thus by a more robust document consistency 
+which is easier to maintain under collaborative changes.
 %For example, if someone changes the theorem name, an error would result when processing
 %the text. On the other hand, \<open>@{value "fac 5"}\<close> would not guard against a change of definition 
 %of \<open>fac\<close>. If this is desirable, an antiquotation like \<open>@{assert "fac 5 = 120"}\<close> would be more appropriate.
@@ -93,13 +96,48 @@ in the code-elements of Isabelle's SML implementation, or were specifically supp
 C-program contexts in Isabelle/C @{cite "Tuong-IsabelleC:2019"}. 
 
 However, programming antiquotations on the intern Isabelle API's is nothing for the 
-faint-hearted. Recently \<^dof> @{cite "10.1007/978-3-030-30446-1_15" and "10.1007/978-3-319-96812-4_3"} 
+faint-hearted. Recently, \<^dof> @{cite "10.1007/978-3-030-30446-1_15" and "10.1007/978-3-319-96812-4_3"} 
 has been designed as an Isabelle component that \<^emph>\<open>generates\<close> antiquotation languages
-from a more abstract level, namely an \<^emph>\<open>ontology description\<close> that provides typed meta-data
+from a more abstract description, namely an \<^emph>\<open>ontology\<close> that provides typed meta-data
 and typed reference mechanisms inside text- and ML-contexts. 
 
+In this paper, we extend prior versions of \<^dof> by 
+\<^enum> a new form of contexts, namely \<^emph>\<open>term contexts\<close>. Thus, annotations generated
+  from  \<^dof> may also occur in \<open>\<lambda>\<close>-terms used to denote meta-data, and
+\<^enum> formal, machine-checked invariants on meta-data, which correspond to the concept of 
+  "rules" in ontology languages such as OWL, and which can be specified in 
+  common HOL \<open>\<lambda>\<close>-term syntax.
+\<close>
+text\<open>
+Beyond the gain of expressivity in \<^dof> ontologies, these features pave the way 
+for advanced queries of elements inside an integrated document, and for formal proofs
+over the relations/translations of ontologies and ontology-instances --- The latter 
+question raised scientific interest under the label  "ontology alignment" for which
+we therefore present a (partial) solution. To sum up, we completed \<^dof> to a
+a fairly rich, ITP-oriented ontology language, which is a concrete proposal for the 
+Isabelle community for a deeper structuring of the Archive of Formal Proofs (AFP; 
+\<^url>\<open>https://www.isa-afp.org\<close>).
+\<close>
 
+section\<open>Background\<close>
 
+subsection\<open>Isabelle/DOF Design and Implementation\<close>
+
+subsection\<open>Code-Generation in Isabelle\<close>
+
+section\<open>Invariants in DOF\<close>
+
+section\<open>Proving Morphisms on Ontologies\<close>
+
+section\<open>Example and Queries\<close>
+
+section\<open>Conclusion\<close>
+
+section\<open>Annex\<close>
+
+subsection\<open>Remotely relevant stuff\<close>
+
+text\<open>
 
  A key role in
 structuring this linking play \<^emph>\<open>document ontologies\<close> (also called
@@ -135,7 +173,11 @@ it is an \<^emph>\<open>environment to write structured text\<close> which \<^em
 scientific papers---as the present one, which is written in  \<^dof>  
 itself. \<^dof>  is a plugin into the Isabelle/Isar
 framework in the style of~@{cite "wenzel.ea:building:2007"}.
+\<close>
 
+subsection\<open>Alien stuff\<close>
+
+text\<open>
 
 Communicating Sequential Processes (\<^csp>) is a language 
 to specify and verify patterns of interaction of concurrent systems.
