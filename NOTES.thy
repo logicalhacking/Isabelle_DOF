@@ -78,7 +78,55 @@ text \<open>
 \<close>
 
 
-section \<open>Isabelle/ML\<close>
+section \<open>Document preparation in Isabelle/ML\<close>
+
+subsection \<open>Theory presentation hook\<close>
+
+text \<open>
+  \<^ML>\<open>Thy_Info.add_presentation\<close> installs a hook to be invoked at the
+  end of successful loading of theories; the provided context
+  \<^ML_type>\<open>Thy_Info.presentation_context\<close> provides access to
+  \<^ML_type>\<open>Options.T\<close> and \<^ML_type>\<open>Document_Output.segment\<close> with
+  command-spans and semantic states.
+
+  An example is regular Latex output in
+  \<^file>\<open>$ISABELLE_HOME/src/Pure/Thy/thy_info.ML\<close> where \<^ML>\<open>Export.export\<close>
+  is used to produce export artifacts in the session build database, for
+  retrieval via Isabelle/Scala.
+\<close>
+
+
+subsection \<open>Document commands\<close>
+
+text \<open>
+  Isar toplevel commands now support a uniform concept for
+  \<^ML_type>\<open>Toplevel.presentation\<close>, but the exported interfaces are
+  limited to commands that do not change the semantic state: see
+  \<^ML>\<open>Toplevel.present\<close> and \<^ML>\<open>Toplevel.present_local_theory\<close>.
+
+  There is an adhoc change to support \<^verbatim>\<open>Toplevel.present_theory\<close> in
+  \<^file>\<open>$ISABELLE_DOF_HOME/src/patches/present_theory\<close>.
+
+  An alternative, without patching Isabelle2021-1 in production, is to use
+  the presentation hook together with a function like this:
+\<close>
+
+ML \<open>
+  fun present_segment pr (segment: Document_Output.segment) =
+    (case #span segment of
+      Command_Span.Span (Command_Span.Command_Span (name, _), toks) =>
+        let
+          val {span, command = tr, prev_state = st, state = st'} = segment;
+          val tr' =
+            Toplevel.empty
+            |> Toplevel.name (Toplevel.name_of tr)
+            |> Toplevel.position (Toplevel.pos_of tr)
+            |> Toplevel.present (pr name toks);
+          val st'' = Toplevel.command_exception false tr' st'
+            handle Runtime.EXCURSION_FAIL (exn, _) => Exn.reraise exn;
+        in {span = span, command = tr, prev_state = st, state = st''} end
+    | _ => segment);
+\<close>
 
 
 section \<open>Isabelle/Scala\<close>
