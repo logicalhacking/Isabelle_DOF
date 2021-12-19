@@ -1,5 +1,5 @@
 session "Isabelle_DOF" = "Functional-Automata" + 
-  options [document = pdf, document_output = "output", document_build = "build"]
+  options [document = pdf, document_output = "output", document_build = dof]
   sessions
     "Regular-Sets"
   directories 

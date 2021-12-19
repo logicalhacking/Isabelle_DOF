@@ -1,5 +1,5 @@
 session "Isabelle_DOF-Manual" = "Isabelle_DOF" + 
-  options  [document = pdf, document_output = "output", document_build = "build",
+  options  [document = pdf, document_output = "output", document_build = dof,
     quick_and_dirty = true]
   theories
     "Isabelle_DOF-Manual"
