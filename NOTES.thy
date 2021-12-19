@@ -80,7 +80,69 @@ text \<open>
 
 section \<open>Isabelle/ML\<close>
 
+
 section \<open>Isabelle/Scala\<close>
+
+
+section \<open>Miscellaneous NEWS and Notes\<close>
+
+text \<open>
+  \<^item> Document preparation: there are many new options etc. that might help
+    to fine-tune DOF output, e.g. \<^system_option>\<open>document_comment_latex\<close>.
+
+  \<^item> ML: Theory_Data / Generic_Data: "val extend = I" has been removed;
+    obsolete since Isabelle2021.
+
+  \<^item> ML: \<^ML>\<open>Thm.instantiate\<close> and related operations now use explicit
+    abstract types for the instantiate, see \<^file>\<open>~~/src/Pure/term_items.ML\<close>
+
+  \<^item> ML: new antiquotation "instantiate" allows to instantiate formal
+    entities (types, terms, theorems) with values given ML. For example:
+
+    \<^ML>\<open>fn (A, B) =>
+        \<^instantiate>\<open>'a = A and 'b = B in typ \<open>('a \<times> 'b) list\<close>\<close>\<close>
+
+    \<^ML>\<open>fn A =>
+        \<^instantiate>\<open>'a = A in
+          lemma (schematic) \<open>x = y \<Longrightarrow> y = x\<close> for x y :: 'a by simp\<close>\<close>
+
+  \<^item> ML: new antiquotations for type constructors and term constants. For
+  example:
+
+    \<^ML>\<open>\<^Type>\<open>nat\<close>\<close>
+    \<^ML>\<open>fn (A, B) => \<^Type>\<open>fun A B\<close>\<close>
+    \<^ML>\<open>\<^Type_fn>\<open>fun A B => \<open>(A, B)\<close>\<close>\<close>
+
+    \<^ML>\<open>fn (A, B) => \<^Const>\<open>conj for A B\<close>\<close>
+    \<^ML>\<open>\<^Const_fn>\<open>conj for A B => \<open>(A, B)\<close>\<close>\<close>
+
+    \<^ML>\<open>fn t =>
+      case t of
+        \<^Const_>\<open>plus T for x y\<close> => ("+", T, x, y)
+      | \<^Const_>\<open>minus T for x y\<close> => ("-", T, x, y)
+      | \<^Const_>\<open>times T for x y\<close> => ("*", T, x, y)\<close>
+
+    Note: do not use unchecked things like
+    \<^ML>\<open>Const ("List.list.Nil", Type ("Nat.nat", []))\<close>
+
+  \<^item> ML: antiquotations "try" and "can" operate directly on the given ML
+    expression, in contrast to functions "try" and "can" that modify
+    application of a function.
+
+    Note: instead of semantically ill-defined "handle _ => ...", use
+    something like this:
+
+    \<^ML>\<open>
+      fn (x, y) =>
+        (case \<^try>\<open>x div y\<close> of
+          SOME z => z
+        | NONE => 0)
+    \<close>
+
+    \<^ML>\<open>
+      fn (x, y) => \<^try>\<open>x div y\<close> |> the_default 0
+    \<close>
+\<close>
 
 end
 
