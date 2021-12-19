@@ -53,29 +53,50 @@ propagation. This challenge incites numerous research efforts
 summarized under the labels ``semantic web'', ``data mining'', or any
 form of advanced ``semantic'' text processing. Turning informal into 
 (more) formal content is the key for advanced techniques of research, 
-combination, and the maintenance of consistency in the midst of data evolution. 
+combination, and the maintenance of consistency in evolving data. 
 
 Admittedly, Isabelle is not the first system that comes into one's mind when
 writing a document, be it a scientific paper, a book, or a larger technical 
 documentation. However, it has a typesetting system inside which is in the 
 tradition of document generation systems such as mkd, Document! X, Doxygen, 
-Javadoc, etc., which embed elements of formal content such as code-snippets 
+Javadoc, etc., and which embed elements of formal content such as code-snippets 
 or generated system output into informal text. In Isabelle, these "embedders"
 or meta-text elements are a form of machine-checked macro called \<^emph>\<open>antiquotations\<close>.
 
 For example, the text element as appearing in the Isabelle frontend:
-@{theory_text [display] 
-  \<open>  According to the reflexivity axiom @{thm refl}, we obtain in \<Gamma>
-     for @{term "fac 5"} the result @{value "fac 5"}.\<close>}
-is represented in the generated  LaTeX or HTML output by:
-@{theory_text [display] 
+@{theory_text [display,indent=10, margin=70] 
+\<open>
+     text\<open> According to the reflexivity axiom @{thm refl}, we obtain in \<Gamma>
+            for @{term "fac 5"} the result @{value "fac 5"}.\<close>
+
+\<close>}
+is represented in the generated \<^latex>\<open>\<close> or HTML output by:
+@{theory_text [display,indent=10, margin=70] 
   \<open>According to the reflexivity axiom \<open>x = x\<close>, we obtain in \<Gamma> for \<open>fac 5\<close> the result \<open>120\<close>.\<close>
 }
 where the meta-texts \<open>@{thm refl}\<close> ("give the presentation of theorem 'refl'), 
 \<open>@{term "fac 5"}\<close> ("parse and type-check 'fac 5' in the previous logical context)
 and \<open>@{value "fac 5"}\<close> ("compile and execute 'fac 5' according to its
-definitions in the previous logical context) are built-in antiquotations
-in \<^hol>.
+definitions") are built-in antiquotations in \<^hol>.
+
+%too long !
+Hence, developers are rewarded for an evolution strategy consisting in
+source integration in Isabelle and replacing \<^emph>\<open>text\<close> by appropriate \<^emph>\<open>meta-text\<close>: 
+the resulting semantic checks increase the robustness of the document 
+consistency under (usually collaborative) changes.
+%For example, if someone changes the theorem name, an error would result when processing
+%the text. On the other hand, \<open>@{value "fac 5"}\<close> would not guard against a change of definition 
+%of \<open>fac\<close>. If this is desirable, an antiquotation like \<open>@{assert "fac 5 = 120"}\<close> would be more appropriate.
+%too long !
+Antiquotations do not only occur in text-elements in Isabelle; they are also heavily used 
+in the code-elements of Isabelle's SML implementation, or were specifically supported in 
+C-program contexts in Isabelle/C @{cite "Tuong-IsabelleC:2019"}. 
+
+However, programming antiquotations on the intern Isabelle API's is nothing for the 
+faint-hearted. Recently \<^dof> @{cite "10.1007/978-3-030-30446-1_15" and "10.1007/978-3-319-96812-4_3"} 
+has been designed as an Isabelle component that \<^emph>\<open>generates\<close> antiquotation languages
+from a more abstract level, namely an \<^emph>\<open>ontology description\<close> that provides typed meta-data
+and typed reference mechanisms inside text- and ML-contexts. 
 
 
 
