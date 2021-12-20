@@ -80,6 +80,17 @@ text \<open>
 
 section \<open>Document preparation in Isabelle/ML\<close>
 
+subsection \<open>Session presentation hook\<close>
+
+text \<open>
+  \<^ML>\<open>Build.add_hook\<close> allows to install a global session presentation
+  hook. It is used e.g. in Isabelle/Mirabelle to analyze all loaded
+  theories via Sledgehammer and other tools. Isabelle/DOF could use it to
+  "wrap-up" the whole session, to check if all document constraints hold
+  (cf. "monitors").
+\<close>
+
+
 subsection \<open>Theory presentation hook\<close>
 
 text \<open>
@@ -126,6 +137,15 @@ ML \<open>
             handle Runtime.EXCURSION_FAIL (exn, _) => Exn.reraise exn;
         in {span = span, command = tr, prev_state = st, state = st''} end
     | _ => segment);
+\<close>
+
+
+subsection \<open>Document content\<close>
+
+text \<open>
+  XML is now used uniformly (sometimes as inlined YXML). The meaning of
+  markup elements and properties is defined in
+  \<^scala_type>\<open>isabelle.Latex.Output\<close> (or user-defined subclasses).
 \<close>
 
 
