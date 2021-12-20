@@ -19,7 +19,21 @@ object DOF_Document_Build
       dir: Path,
       doc: Document_Build.Document_Variant): Document_Build.Directory =
     {
-      context.prepare_directory(dir, doc, new Latex_Output(context.options))
+      val latex_output = new Latex_Output(context.options)
+      val directory = context.prepare_directory(dir, doc, latex_output)
+
+      // produced by alternative presentation hook (workaround for missing Toplevel.present_theory)
+      for (name <- context.document_theories) {
+        val path = Path.basic(Document_Build.tex_name(name))
+        val xml =
+          YXML.parse_body(context.get_export(name.theory, Export.DOCUMENT_LATEX + "_dof").text)
+        if (xml.nonEmpty) {
+          File.Content(path, xml).output(latex_output(_, file_pos = path.implode_symbolic))
+            .write(directory.doc_dir)
+        }
+      }
+
+      directory
     }
   }
 

@@ -115,28 +115,9 @@ text \<open>
   limited to commands that do not change the semantic state: see
   \<^ML>\<open>Toplevel.present\<close> and \<^ML>\<open>Toplevel.present_local_theory\<close>.
 
-  There is an adhoc change to support \<^verbatim>\<open>Toplevel.present_theory\<close> in
-  \<^file>\<open>$ISABELLE_DOF_HOME/src/patches/present_theory\<close>.
-
-  An alternative, without patching Isabelle2021-1 in production, is to use
-  the presentation hook together with a function like this:
-\<close>
-
-ML \<open>
-  fun present_segment pr (segment: Document_Output.segment) =
-    (case #span segment of
-      Command_Span.Span (Command_Span.Command_Span (name, _), toks) =>
-        let
-          val {span, command = tr, prev_state = st, state = st'} = segment;
-          val tr' =
-            Toplevel.empty
-            |> Toplevel.name (Toplevel.name_of tr)
-            |> Toplevel.position (Toplevel.pos_of tr)
-            |> Toplevel.present (pr name toks);
-          val st'' = Toplevel.command_exception false tr' st'
-            handle Runtime.EXCURSION_FAIL (exn, _) => Exn.reraise exn;
-        in {span = span, command = tr, prev_state = st, state = st''} end
-    | _ => segment);
+  Since \<^verbatim>\<open>Toplevel.present_theory\<close> is missing in Isabelle2021-1, we use a
+  workaround with an alternative presentation hook: it exports
+  \<^verbatim>\<open>document/latex_dof\<close> files instead of regular \<^verbatim>\<open>document/latex_dof\<close>.
 \<close>
 
 
