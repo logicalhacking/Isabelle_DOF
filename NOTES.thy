@@ -253,6 +253,22 @@ text \<open>
     \<close>
 \<close>
 
+text \<open>Adhoc examples:\<close>
+
+ML \<open>
+  fun mk_plus x y = \<^Const>\<open>plus \<^Type>\<open>nat\<close> for x y\<close>;
+
+  fn \<^Const_>\<open>plus \<^Type>\<open>nat\<close> for \<^Const_>\<open>Groups.zero \<^Type>\<open>nat\<close>\<close> y\<close> => y;
+\<close>
+
+ML \<open>
+  fn (A, B) =>
+    \<^instantiate>\<open>A and B in term \<open>A \<and> B \<longrightarrow> B \<and> A\<close>\<close>;
+
+  fn (A, B) =>
+    \<^instantiate>\<open>A and B in lemma \<open>A \<and> B \<longrightarrow> B \<and> A\<close> by simp\<close>;
+\<close>
+
 end
 
 (* :maxLineLen=75: *)
