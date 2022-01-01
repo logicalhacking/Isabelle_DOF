@@ -14,7 +14,7 @@ declare[[ Theorem_default_class    = "theorem"]]
 define_shortcut* hol      \<rightleftharpoons> \<open>HOL\<close>
                  isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
                  dof      \<rightleftharpoons> \<open>Isabelle/DOF\<close>
-                 latex    \<rightleftharpoons> \<open>LaTeX\<close>
+                 LaTeX    \<rightleftharpoons> \<open>LaTeX\<close>
                  html     \<rightleftharpoons> \<open>HTML\<close>
                  csp      \<rightleftharpoons> \<open>CSP\<close>      \<comment>\<open>obsolete\<close>
                  holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>  \<comment>\<open>obsolete\<close> 
@@ -25,7 +25,7 @@ title*[tit::title]\<open>A Framework for Proving Ontology-Relations and Testing 
                                   
 author*[idir,email="\<open>idir.aitsadoune@lri.fr\<close>",affiliation="\<open>LMF, CentraleSupelec\<close>"]\<open>Idir Ait-Sadoune\<close>
 author*[nic,email="\<open>nicolas.meric@lri.fr\<close>",affiliation="\<open>LRI, Université Paris-Saclay\<close>"]\<open>Nicolas Méric\<close>
-author*[bu,email= "\<open>wolff@lri.fr\<close>",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]\<open>Burkhart Wolff\<close>
+author*[bu,email="\<open>wolff@lri.fr\<close>",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]\<open>Burkhart Wolff\<close>
                
 abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>Isabelle/HOL\<close>,\<open>Ontology Alignment\<close>,\<open>OWL\<close>,\<open>UML/OCL\<close>]"]
 \<open>  \<^dof> is a novel ontology framework on top of Isabelle 
@@ -51,7 +51,7 @@ text*[introtext::introduction]\<open>
 The linking of \<^emph>\<open>formal\<close> and \<^emph>\<open>informal\<close> information is perhaps the
 most pervasive challenge in the digitization of knowledge and its
 propagation. This challenge incites numerous research efforts
-summarized under the labels ``semantic web'', ``data mining'', or any
+summarized under the labels ``semantic web'', ``integrated document management'', or any
 form of advanced ``semantic'' text processing. Turning informal into 
 (more) formal content is the key for advanced techniques of research, 
 combination, and the maintenance of consistency in evolving data. 
@@ -71,7 +71,7 @@ For example, the text element as appearing in the Isabelle frontend:
             for @{term "fac 5"} the result @{value "fac 5"}.\<close>
 
 \<close>}
-is represented in the generated \<^latex>\<open>\<close> or HTML output by:
+is represented in the generated \<^LaTeX> or HTML output by:
 @{theory_text [display,indent=10, margin=70] 
   \<open>According to the reflexivity axiom \<open>x = x\<close>, we obtain in \<Gamma> for \<open>fac 5\<close> the result \<open>120\<close>.\<close>
 }
@@ -119,11 +119,144 @@ Isabelle community for a deeper structuring of the Archive of Formal Proofs (AFP
 \<^url>\<open>https://www.isa-afp.org\<close>).
 \<close>
 
-section\<open>Background\<close>
 
+(*<*)
+declare_reference*[casestudy::text_section]
+(*>*)
+
+section\<open>Background\<close>
 subsection\<open>Isabelle/DOF Design and Implementation\<close>
 
+section*[bgrnd::text_section,main_author="Some(@{docitem ''adb''}::author)"] \<open> Background\<close>
+text\<open>
+  In this section, we provide a guided tour through the underlying technologies of this paper: 
+  \begin{inparaenum} 
+   \item Isabelle and Isabelle/HOL, 
+   \item \<^dof> and its Ontology Definition Language (ODL).
+  \end{inparaenum}
+\<close>
+subsection*[bgrnd_isabelle::text_section]\<open>Isabelle and HOL\<close>
+text\<open>
+  While still widely perceived as an interactive theorem proving environment, Isabelle 
+  @{cite "nipkow.ea:isabelle:2002"} has become a generic system framework providing 
+  an infrastructure for plug-ins. This comprises extensible 
+  state components, extensible syntax, code-generation, and advanced documentation support. 
+  The plugin Isabelle/HOL offers a modeling language similar to functional programming languages
+  extended by a logic and automated proof and animation techniques.
+\<close>
+
+subsection*[bgrnd_isadof::text_section]\<open>The \<^dof> Framework\<close>
+text\<open>
+  \<^dof> ~@{cite "brucker.ea:isabelle-ontologies:2018" and 
+              "brucker.ea:isabelledof:2019" and 
+              "brucker.ea:isabelledof-sw"} 
+  is a document ontology framework that extends Isabelle/HOL. We understand
+  by a \<^emph>\<open>document ontology\<close> structured meta-data attached to an integrated document allowing
+  classifying text-elements, connect them to typed meta-data, and establishing typed links between text-
+  and formal elements (such as definitions, proofs, code, test-results, etc). 
+
+  \<^dof> offers basically two things: a language called ODL to \<^emph>\<open>specify\<close> a formal ontology,
+  and ways to \<^emph>\<open>annotate\<close> an integrated document written in Isabelle/HOL with the specified
+  meta-data. Additionally, \<^dof> generates from an ontology a family of semantic macros---called
+  \<^emph>\<open>antiquotations\<close> that may appear in text or code---allowing establishing
+  machine-checked links between classified entities. Not unlike the UML/OCL meta-model, ODL offers class
+  invariants as well as means to express 
+  structural constraints in documents.  
+  Unlike UML, however, \<^dof> allows for integrated documents with informal and formal elements
+  including the necessary management of logical contexts. 
+
+  The perhaps most attractive aspect of \<^dof> is its deep integration into the IDE of Isabelle 
+  (PIDE), which allows hypertext-like navigation as well as fast user-feedback
+  during development and evolution of the integrated document. This includes rich editing support, 
+  including on-the-fly semantics checks, hinting, or auto-completion. 
+  \<^dof> supports \<^LaTeX> - based document generation as well as ontology-aware ``views'' on 
+  the integrated document, \ie, specific versions of generated PDF addressing, 
+  for example, different stake-holders. 
+\<close>
+
+(*<*)
+figure*[isadof_screenshot::figure, relative_width="100", src="''figures/cicm2018-combined''"]\<open>
+  The \<^dof> IDE (left) and the corresponding PDF(right).
+\<close>
+text*[description_scrrenshot::text_section]\<open>
+  @{docitem \<open>isadof_screenshot\<close>} shows \<^dof> in action: the left-hand side shows the IDE of 
+  \<^dof> in the context of a user session maintaining our case study 
+  (see @{docitem (unchecked) "casestudy"}) 
+  where a user is editing a semi-formal requirement. The right-hand side show the 
+  generated PDF document that can be used within a certification process. 
+\<close>
+(*>*)
+
+subsection*[bgrnd_ODL::text_section]\<open>A Guided Tour through ODL\<close>
+text\<open>
+  \<^dof> provides a strongly typed Ontology Definition Language (ODL) that provides the usual 
+  concepts of ontologies such as
+  \<^item> \<^emph>\<open>document class\<close> (using the \<^theory_text>\<open>doc_class\<close> keyword) that describes a concept,
+  \<^item> \<^emph>\<open>attributes\<close> specific to document classes (attributes might be initialized with default 
+    values),
+  \<^item> a special link, the reference to a super-class, establishes an \<^emph>\<open>is-a\<close> relation between classes;
+  \<^item> classes may refer to other classes via a regular expression in an optional \<^emph>\<open>where\<close> clause 
+    (a class with a where clause is called \<^emph>\<open>monitor\<close>);
+
+
+  \fixIsarList The types of attributes are HOL-types. Thus, ODL can refer to any predefined type 
+  from the HOL library, \<^eg>, \<^type>\<open>string\<close>, \<^type>\<open>int\<close> as well as parameterized types, \<^eg>, 
+  \<^type>\<open>option\<close>,  \<^type>\<open>list\<close>. As a consequence of the Isabelle document model, ODL definitions 
+  may be arbitrarily mixed with standard HOL type definitions. Document class definitions are 
+  HOL-types, allowing for formal \<^emph>\<open>links\<close> to and between ontological concepts. For example, the 
+  basic concept of requirements from CENELEC 50128~@{cite "bsi:50128:2014"} is captured in ODL as 
+  follows:
+  \begin{isar}
+    doc_class requirement = text_element +   (* derived from text_element    *)
+    ~         long_name   ::"string option"  (* an optional string attribute *) 
+    ~         is_concerned::"role set"       (* roles working with this req. *)
+  \end{isar}
+  This ODL class definition maybe part of one or more Isabelle theory--files capturing the entire
+  ontology definition. Isabelle's session management allows for pre-compiling them before being 
+  imported in the actual target documentation required to be compliant to this ontology. 
+
+\vspace{-0.7cm}\<close>
+
+side_by_side_figure*["text-elements"::side_by_side_figure,anchor="''fig-Req-Def-ex''",
+                      caption="''A Text-Element as Requirement.''",relative_width="48",
+                      src="''figures/Req-Def-ex''",anchor2="''fig-Req-Appl-ex''",
+                      caption2="''Referencing a Requirement.''",relative_width2="48",
+                      src2="''figures/Req-Appl-ex''"]\<open>Referencing a Requirement. \<close>
+
+text\<open>\autoref{text-elements} shows an ontological annotation of a requirement and the referencing
+  via an antiquotation \<^theory_text>\<open>requirement \<open>req1\<close>\<close> generated by \<^dof> from the above 
+  class definition. Undefined or ill-typed references were rejected, the high-lighting displays 
+  the hyperlinking which is activated on a click. Revising the actual definition of \<open>requirement\<close>, 
+  it suffices to click on its keyword: the IDE will display the class-definition and its surrounding 
+  documentation in the ontology.\<close>
+
+text\<open>\<^dof>'s generated antiquotations are part of a general mechanism of  
+  Isabelle's standard antiquotations heavily used in various papers and technical reports.
+  For example, in the following informal text, the antiquotation \<^verbatim>\<open>thm refl\<close> refers  
+  to the reflexivity axiom from HOL: 
+  \begin{isar}
+  text<Open>According to the reflexivity axiom <@>{thm refl}, we obtain in \<Gamma>
+         for <@>{term <Open>fac 5<Close>} the result <@>{value <Open>fac 5<Close>}.<Close>\end{isar}
+  In the PDF output, this is represented as follows:
+  \begin{out}
+  According to the reflexivity axiom $x = x$, we obtain in \<open>\<Gamma>\<close> for $\operatorname{fac} 5$ the result $120$.
+  \end{out}
+  The antiquotation \inlineisar|<@>{value <Open>fac 5<Close>}| refers to a function that is defined in the 
+  preceding logical context (and parsed as inner syntax) to compute the value of $5!$, \ie, $120$. 
+  Summing up, antiquotations can refer to formal content, can be type-checked before being displayed 
+  and can be used for calculations before actually being typeset. All these features can be
+  used for the calculation of attribute values (as in @{docitem \<open>text-elements\<close>}, observe the value 
+  \<open>UNIV\<close> used to set the attribute \<open>is_concerned\<close> is a HOL-constant denoting the universal set).
+
+  Finally, for each ontological concept, a custom representation, using \<^LaTeX>-notation, for the 
+  generated PDF document can be defined. The latter includes, \<^eg>, the possibility to automatically 
+  generated glossaries or lists of concepts. 
+\<close>
+
+
 subsection\<open>Code-Generation in Isabelle\<close>
+
+text\<open>Explain eval and nbe, and refer to references.\<close>
 
 section\<open>Invariants in DOF\<close>
 
@@ -132,6 +265,38 @@ section\<open>Proving Morphisms on Ontologies\<close>
 section\<open>Example and Queries\<close>
 
 section\<open>Conclusion\<close>
+subsection\<open>Related Works\<close>
+subsubsection\<open>The notion of \<^emph>\<open>Integrated Source\<close>\<close>
+text\<open>Links to the term: Integrated Document 
+\<^item> \<^url>\<open>https://www.openkm.com/blog/integrated-document-management.html\<close>
+  "Maintaining integration is one of the great forgotten topics. 
+   Applications evolve, APIs change and it is quite common for new methods to 
+   be created while deleting old ones. A paradigmatic example of this type of 
+   problem can be found with the old Google Docs API..."
+  "Having a centralized repository, with the necessary levels of security, but at the 
+   same time facilitating instant access to the essential electronic documents and 
+   information for the smooth running of the business, is a challenge that every company 
+   must face. Being able to efficiently distribute information and electronic documents 
+   among multiple users so that they can access and work simultaneously on the same files... "
+\<^item> \<^url>\<open>https://en.wikipedia.org/wiki/Document_management_system\<close>
+\<^item> \<^url>\<open>https://www.gartner.com/en/information-technology/glossary/idm-integrated-document-management\<close>
+\<^item> \<^url>\<open>https://developers.google.com/docs/api/concepts/structure\<close>
+  \<^url>\<open>https://developers.google.com/docs/api\<close>
+\<close>
+
+subsubsection\<open>Links to the term: Integrated Source, Continuous Integration\<close>
+text\<open>
+\<^item> \<^url>\<open>https://www.una.edu/writingcenter/docs/Writing-Resources/Source%20Integration.pdf\<close>
+\<^item> \<^url>\<open>https://www.exoscale.com/syslog/what-is-continuous-integration/\<close>
+ 
+\<close>
+(*
+Data integration driven ontology design, case study smart city
+Authors:  German Nemirovski,  Andreas Nolle,  Álvaro Sicilia,Ilaria Ballarini,Vincenzo Corado
+WIMS '13: Proceedings of the 3rd International Conference on Web Intelligence, 
+     Mining and SemanticsJune 2013 Article No.: 43Pages 1–10
+https://doi.org/10.1145/2479787.2479830
+*)
 
 section\<open>Annex\<close>
 
@@ -171,7 +336,7 @@ on ontologies and operations to track and trace links in texts,
 it is an \<^emph>\<open>environment to write structured text\<close> which \<^emph>\<open>may contain\<close>  
 \<^isabelle> definitions and proofs like mathematical articles, tech-reports and
 scientific papers---as the present one, which is written in  \<^dof>  
-itself. \<^dof>  is a plugin into the Isabelle/Isar
+itself. \<^dof> is a plugin into the Isabelle/Isar
 framework in the style of~@{cite "wenzel.ea:building:2007"}.
 \<close>
 
