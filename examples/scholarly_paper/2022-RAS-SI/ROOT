@@ -1,0 +1,9 @@
+session "2022-RAS-SI" = "Isabelle_DOF" +
+  options [document = pdf, document_output = "output"]
+  theories
+    "paper"
+  document_files
+    "isadof.cfg"
+    "root.bib"
+    "preamble.tex"
+    "build"

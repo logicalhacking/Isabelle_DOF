@@ -1,0 +1,254 @@
+Return-Path: <ana.cavalcanti@york.ac.uk>
+X-Original-To: wolff@lri.fr
+Delivered-To: wolff@lri.fr
+Received: from lri.lri.fr (lri.lri.fr [129.175.15.1])
+	by smtp.lri.fr (Postfix) with SMTP id E56B9C0013
+	for <wolff@lri.fr>; Thu,  9 Dec 2021 16:28:27 +0100 (CET)
+Received: from smtp-out-1.di.u-psud.fr (smtp-out-1.di.u-psud.fr [129.175.213.1])
+	by lri.lri.fr (Postfix) with SMTP id E23971E0088
+	for <wolff@lri.fr>; Thu,  9 Dec 2021 16:28:27 +0100 (CET)
+Received: from pmx1.di.u-psud.fr (pmx1.di.u-psud.fr [129.175.212.152])
+	by smtp-out-1.di.u-psud.fr (UPS-MTA-OUT) with ESMTP id 4J8ybv6SSbz1FT16
+	for <wolff@lri.fr>; Thu,  9 Dec 2021 16:28:27 +0100 (CET)
+Received: from smtp-in-1.di.u-psud.fr (localhost [127.0.0.1])
+	by localhost (UPS-PMX) with SMTP id 4J8ybv6LHvz1YpM
+	for <wolff@lri.fr>; Thu,  9 Dec 2021 16:28:27 +0100 (CET)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-in-1.di.u-psud.fr (UPS-MTA) with ESMTPS id 4J8ybt6llGz9MS
+	for <wolff@lri.fr>; Thu,  9 Dec 2021 16:28:26 +0100 (CET)
+Received: by mail-lj1-f180.google.com with SMTP id k2so9540460lji.4
+        for <wolff@lri.fr>; Thu, 09 Dec 2021 07:28:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=york.ac.uk; s=20160523.google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=5alMNJ4CIl4q0Bb6qZ6OR79LA8AnEx/adw4WDj6ss1U=;
+        b=TGuL0+NJH58AoaOHJvOH3aeyiSqI8mou0KnHIUunme1ETHo1oMwYFiyj36NoC2U3n0
+         L2+q9dWEJshmzZ2ZCJOOmfppucaUUA215R8sEq0xATpsgJEOhUq4NX8KuPKIMtqGOklL
+         IbkAbK1DrP8PgXAsAXyqtaKZ70mbCXcr6TRlX8cwh0lepGngyE/kuYoH5m/fd07jBQbM
+         mefZe/DrZZOStxhNZTo5cYhHDImfS062HC98xzBTOixBmKpnt0l8WO2+L/mSf+Uy2Bp/
+         g7RoU92O+BK4MJfKwtftMIr5rRkeRcXChrRWwB0PWZlRVohluKLZv6QUuZHboHXn+gWz
+         t7OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=5alMNJ4CIl4q0Bb6qZ6OR79LA8AnEx/adw4WDj6ss1U=;
+        b=yoW6NXelUhszxXXSx0YtOSgvcctAOeseunC7hr+czwfxwoLkDm+s9kJaDU/c9cifpe
+         tsbvIY6yfSHYcM0A6GJEdEAMEUw5sKbiqaN/6U7IPVxEULKrrv5iNsa3VAC1oEs6347h
+         WEmytRr7gz3BRWzoTNYwXbkXZ90XxISHm/6XnbY1FD9qTPnN7nRYjmTZ/Ch4rDqDuKIQ
+         dNFJv7keEThS1O09YjzfLgM1TlZBZvfVAynznfpMmXNhr0Xl/AeY8sOQVTX93pi3nIg/
+         ru7rWLGSfk3z0iw8684JaiOYI83uHrviJJRqk+fRo4HlVRCnb04laquUYYfWFDM6Zdv3
+         V3/Q==
+X-Gm-Message-State: AOAM5309lZ2NvarfXzyeK/j8N2FoIPtDoDUuzKK0ygJWywoqasjTP6zw
+	4ZHq87kwgOFFIG778cp4QBPGuE167AChndO6rdhf4FP8BIk6SQ==
+X-Google-Smtp-Source: ABdhPJxYBuPj0WaPU2+dsw1lpXe5nJjza6ObQrH+iZPa8E8q+OPoEExEjPrcS5aAQGueNcBan5IB1MdWQsBtWmuj70Y=
+X-Received: by 2002:a2e:874b:: with SMTP id q11mr6956672ljj.194.1639063705718;
+ Thu, 09 Dec 2021 07:28:25 -0800 (PST)
+MIME-Version: 1.0
+From: Ana Cavalcanti <ana.cavalcanti@york.ac.uk>
+Date: Thu, 9 Dec 2021 15:28:14 +0000
+Message-ID: <CAH_UeZRqSo7jyQCe43VJHdoQ88iFbs6Ca0S2ujQiHumXUF6F4A@mail.gmail.com>
+Subject: RAS special issue
+To: Burkhart Wolff <wolff@lri.fr>
+Cc: Alvaro Miyazawa <Alvaro.Miyazawa@york.ac.uk>
+Content-Type: multipart/alternative; boundary="000000000000f1a7e205d2b841fd"
+Authentication-Results: smtp-in-1.di.u-psud.fr;
+	dkim=pass header.d=york.ac.uk header.s=20160523.google header.b=TGuL0+NJ;
+	spf=pass (smtp-in-1.di.u-psud.fr: domain of ana.cavalcanti@york.ac.uk designates 209.85.208.180 as permitted sender) smtp.mailfrom=ana.cavalcanti@york.ac.uk;
+	dmarc=pass (policy=reject) header.from=york.ac.uk
+X-Rspamd-Queue-Id: 4J8ybt6llGz9MS
+X-Spamd-Result: default: False [-9.80 / 60.00];
+	BAYES_HAM(-9.00)[99.99%];
+	DMARC_POLICY_ALLOW(-0.50)[york.ac.uk,reject];
+	R_DKIM_ALLOW(-0.20)[york.ac.uk:s=20160523.google];
+	R_SPF_ALLOW(-0.20)[+ip4:209.85.128.0/17];
+	MIME_UNKNOWN(0.10)[multipart/alternative,text/plain,text/html];
+	MIME_TRACE(0.00)[0:~,1:~,2:~];
+	RCVD_TLS_LAST(0.00)[];
+	RWL_MAILSPIKE_POSSIBLE(0.00)[209.85.208.180:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[york.ac.uk:+];
+	FROM_HAS_DN(0.00)[];
+	RCVD_IN_DNSWL_NONE(0.00)[209.85.208.180:from];
+	PREVIOUSLY_DELIVERED(0.00)[wolff@lri.fr];
+	TO_DN_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	ASN(0.00)[asn:15169, ipnet:209.85.128.0/17, country:US]
+X-Rspamd-Server: smtp-in-1.di.u-psud.fr
+X-Sophos-SenderHistory: ip=209.85.208.180,fs=112995,da=99782160,mc=45,sc=3,hc=42,sp=6,fso=96970117,re=54,sd=13,hd=13
+X-Spam: Probability=8%
+X-Spam-Hits: The following antispam rules were triggered by this message:
+	Rule                       Score Description
+	AUTH_RES_PASS              0.000 SPF, DKIM and DMARC pass in Authentication-Results
+	BODYTEXTH_SIZE_10000_LESS  0.000 Body size of the text/html part is less than 10k
+	BODYTEXTH_SIZE_3000_MORE   0.000 Body size of the text/html part is more than 3K
+	DKIM_ALIGNS                0.000 The d= in the DKIM header aligns with the domain in the
+					 From header
+	DKIM_SIGNATURE             0.000 DKIM_Signature
+	DQ_S_H                     0.000 X-Sophos-SenderHistory header exists
+	FROM_EDU_TLD               0.000 From domain contains a .edu TLD
+	HREF_LABEL_TEXT_ONLY       0.000 All URIs in the body have text as label
+	HTML_BAD_EXTRAS            0.000 HTML part is surrounded with extra tags
+	KNOWN_MTA_TFX              0.000 According to Traffix, this is a known MTA
+					 (SXL_IP_TFX_WM)
+	SXL_IP_TFX_WM              0.000 Received via a known whitelisted mail server (SXL
+					 lookup): 180.208.85.209.fur
+	TEXT_DIRECTION             0.000 Text direction might be specified in the message
+	TEXT_DIR_LTR_ONLY          0.000 Text direction is left-to-right only
+	URI_ENDS_IN_HTML           0.000 uri pattern ending in html
+	URI_WITH_PATH_ONLY         0.000 The message does not contain a pathless URI
+	WEBMAIL_SOURCE             0.000 message appears to come from a webmail service
+
+--000000000000f1a7e205d2b841fd
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi Bu,
+
+Hope all is well with you.  Long time, no talk.
+
+As part of my work with the Royal Academy of Engineering, I have been
+promoting Software Engineering for Robotics as an important and relevant
+research topic.  Recently, colleagues in RoboStar  and I have successfully
+proposed a special issue of Elsevier's Robotics and Autonomous Systems
+journal: https://www.journals.elsevier.com/robotics-and-autonomous-systems.
+This is a journal that has published next to no papers in Software
+Engineering, so I see this as an excellent opportunity for us to expand the
+visibility of our work.
+
+I'm writing to ask you for your help with this.  We do not think that the
+RoboStar team at York should submit papers due to the obvious conflict of
+interest.  So, I need the community's support. The prospect is publishing
+up to 15 papers (or more).  So, what do we ask?
+
+1. Consider submitting a paper:  the deadline is 30 April, 2022;
+2. Spread the word in your group, department, and wider network.
+
+The Call for Papers can be found at
+https://robostar.cs.york.ac.uk/CfP-ROBOT-2022.html.  It is also reproduced
+below for convenience.
+
+If you have any questions, do not hesitate to contact me.
+
+Many thanks in advance,
+
+Ana
+
+--------------------------------------------------------------------
+# Special Issue: Software Engineering for Robotics # Robotics and
+Autonomous Systems Journal, Elsevier
+
+We invite submissions of papers on Software Engineering for Robotics for
+publication in a special issue of Robotics and Autonomous Systems (
+https://www.journals.elsevier.com/robotics-and-autonomous-systems).
+
+## Scope
+
+This special issue is devoted to original research papers on techniques,
+applications, industrial case studies, and experience reports connected to
+the design and deployment of software for robotic systems. Focus is given
+on all aspects of modelling, simulation, and implementation for the
+validation and verification of robotic systems.
+
+## Topics of Interest
+
+In particular, the topics of interest include but are not limited to
+ * Domain-specific languages for robotics
+ * Verification of robotic applications: simulation, testing, and deploymen=
+t
+ * Requirements analysis and validation of robotic applications
+ * Hybrid modelling and analysis of robotics applications
+ * Probabilistic models and analysis for robotic applications
+ * Approaches to safety and security of robotic applications
+ * Software development processes and methods for robotics
+ * Robotic system maintenance, adaptation, and evolution
+
+## Submission Format and Guideline
+
+Papers should be submitted via the online submission system Editorial
+Manager=C2=AE (https://www.editorialmanager.com/robot/default1.aspx) for th=
+e
+journal. There is a Guide for Authors (
+https://www.elsevier.com/journals/robotics-and-autonomous-systems/0921-8890=
+/guide-for-authors),
+where you=E2=80=99ll find LaTeX templates.  Use of LaTeX is recommended.
+
+All papers will be peer-reviewed by three independent reviewers. Requests
+for additional information should be addressed to the guest editors.
+
+## Important dates
+
+* Submission deadline: 30.04.2022
+* Acceptance deadline: 30.11.2022
+
+## Guest editors
+
+* Ana Cavalcanti, University of York
+* Alvaro Miyazawa, University of York
+* Jon Timmis, University of Sunderland
+
+--000000000000f1a7e205d2b841fd
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div class=3D"gmail_default" style=3D"font-size:small">Hi =
+Bu,</div><div class=3D"gmail_default" style=3D"font-size:small"><br></div><=
+div class=3D"gmail_default" style=3D"font-size:small">Hope all is well with=
+ you.=C2=A0 Long time, no talk.<br><br>As part of my work with the Royal Ac=
+ademy of Engineering, I have been promoting Software Engineering for Roboti=
+cs as an important and relevant research topic.=C2=A0 Recently, colleagues =
+in RoboStar =C2=A0and I have successfully proposed a special issue of Elsev=
+ier&#39;s Robotics and Autonomous Systems journal: <a href=3D"https://www.j=
+ournals.elsevier.com/robotics-and-autonomous-systems">https://www.journals.=
+elsevier.com/robotics-and-autonomous-systems</a>. This is a journal that ha=
+s published next to no papers in Software Engineering, so I see this as an =
+excellent opportunity for us to expand the visibility of our work.<br><br>I=
+&#39;m writing to ask you for your help with this.=C2=A0 We do not think th=
+at the RoboStar team at York should submit papers due to the obvious confli=
+ct of interest.=C2=A0 So, I need the community&#39;s support. The prospect =
+is publishing up to 15 papers (or more).=C2=A0 So, what do we ask?<br><br>1=
+. Consider submitting a paper: =C2=A0the deadline is 30 April, 2022;<br>2. =
+Spread the word in your group, department, and wider network.<br><br>The Ca=
+ll for Papers can be found at <a href=3D"https://robostar.cs.york.ac.uk/CfP=
+-ROBOT-2022.html">https://robostar.cs.york.ac.uk/CfP-ROBOT-2022.html</a>.=
+=C2=A0 It is also reproduced below for convenience.<br><br>If you have any =
+questions, do not hesitate to contact me.<br><br>Many thanks in advance,<br=
+><br>Ana<br><br>-----------------------------------------------------------=
+---------<br># Special Issue: Software Engineering for Robotics # Robotics =
+and<br>Autonomous Systems Journal, Elsevier<br><br>We invite submissions of=
+ papers on Software Engineering for Robotics for publication in a special i=
+ssue of Robotics and Autonomous Systems (<a href=3D"https://www.journals.el=
+sevier.com/robotics-and-autonomous-systems">https://www.journals.elsevier.c=
+om/robotics-and-autonomous-systems</a>).<br><br>## Scope<br><br>This specia=
+l issue is devoted to original research papers on techniques, applications,=
+ industrial case studies, and experience reports connected to the design an=
+d deployment of software for robotic systems. Focus is given on all aspects=
+ of modelling, simulation, and implementation for the validation and verifi=
+cation of robotic systems.<br><br>## Topics of Interest<br><br>In particula=
+r, the topics of interest include but are not limited to<br>=C2=A0* Domain-=
+specific languages for robotics<br>=C2=A0* Verification of robotic applicat=
+ions: simulation, testing, and deployment<br>=C2=A0* Requirements analysis =
+and validation of robotic applications<br>=C2=A0* Hybrid modelling and anal=
+ysis of robotics applications<br>=C2=A0* Probabilistic models and analysis =
+for robotic applications<br>=C2=A0* Approaches to safety and security of ro=
+botic applications<br>=C2=A0* Software development processes and methods fo=
+r robotics<br>=C2=A0* Robotic system maintenance, adaptation, and evolution=
+<br><br>## Submission Format and Guideline<br><br>Papers should be submitte=
+d via the online submission system Editorial Manager=C2=AE (<a href=3D"http=
+s://www.editorialmanager.com/robot/default1.aspx">https://www.editorialmana=
+ger.com/robot/default1.aspx</a>) for the journal. There is a Guide for Auth=
+ors (<a href=3D"https://www.elsevier.com/journals/robotics-and-autonomous-s=
+ystems/0921-8890/guide-for-authors">https://www.elsevier.com/journals/robot=
+ics-and-autonomous-systems/0921-8890/guide-for-authors</a>), where you=E2=
+=80=99ll find LaTeX templates.=C2=A0 Use of LaTeX is recommended.<br><br>Al=
+l papers will be peer-reviewed by three independent reviewers. Requests for=
+ additional information should be addressed to the guest editors.<br><br>##=
+ Important dates<br><br>* Submission deadline: 30.04.2022<br>* Acceptance d=
+eadline: 30.11.2022<br><br>## Guest editors<br><br>* Ana Cavalcanti, Univer=
+sity of York<br>* Alvaro Miyazawa, University of York<br>* Jon Timmis, Univ=
+ersity of Sunderland<br></div></div>
+
+--000000000000f1a7e205d2b841fd--
