@@ -13,6 +13,7 @@ declare[[ Theorem_default_class    = "theorem"]]
 
 define_shortcut* csp      \<rightleftharpoons> \<open>CSP\<close>
                  holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>
+                 hol      \<rightleftharpoons> \<open>HOL\<close>
                  isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
 
 (*>*)
@@ -56,7 +57,7 @@ text*[introtext::introduction]\<open>
 A widely accepted definition of Cyber-physical Systems (CPS) such as robots or autonomous cars
 would comprise the following feature-list: they are systems involving
 \<^item> concurrent interaction of digitally controlled actors and an environments ,
-\<^item> dense time (\<real>\<ge>0) ,
+\<^item> dense time (\<open>\<real>\<ge>0\<close>) ,
 \<^item> continuous environment with multi-dimensional observables   
   underlying the laws of (Newtonian) physics ,
 \<^item> the discretising view of continuous observables in 
@@ -74,9 +75,9 @@ Our understanding of 'analysis' of CPS involves:
 In this paper, we present a \<^emph>\<open>framework\<close> for modeling and formally analysing CPS's and
 a concrete \<^emph>\<open>instance\<close> in form of a case study from the autonomous car domain.
 The latter is concerned with the formal verification of a particular collision-avoiding driving 
-strategy developed by @{cite "RSS Paper"}. Roughly speaking, our framework is based on a 
-conservative embedding called HOL-CSP2.0 @{cite "AFP entry"} into \<^isabelle> @{cite "XXX"} 
-which serves both as modeling and analysis environment. 
+strategy developed by @{cite "wolff:hal03429597"}. Roughly speaking, our framework is based on a 
+conservative embedding called HOL-CSP2.0 @{cite "HOL-CSP-AFP"} into \<^isabelle> 
+@{cite "nipkow.ea:isabelle:2002"} which serves both as modeling and analysis environment. 
 
 Describing our foundational stack in more detail, we'd like to mention:
 \<^item> Communicating Sequential Processes (\<^csp>), which is a language
@@ -97,17 +98,20 @@ Describing our foundational stack in more detail, we'd like to mention:
   \<^emph>\<open>conservative extensions\<close>, comprise a notable amount of number theory, real analysis, and
   program semantics theories. 
 
+\<close>
+text\<open>
 The expressive power of \<^holcsp> stems from the fact that its \<^emph>\<open>channels\<close> may comprise arbitrary 
 \<^hol>-types, and thus infinite data for which powerful interactive and automated proof techniques
 are available. In particular, CPS and  \<^holcsp> fit particularly well together since:
 % better a presentation as table ?
-\<^item> concurrent interaction of actors and environments:
-  this is what \<^csp> is built for;
-\<^item> dense time (\<open>\<real>\<ge>0\<close>): the libraries provide real numbers as well as rich theories to reason
-  about them;
-\<^item> continuous physical environment with multi-dimensional observables 
-  underlying the laws of (Newtonian) physics : the Isabelle/HOL-Analysis library provides
-  definitions and proof techniques to reason over differential equations;
+
+\<^item> concurrent interaction of actors and environments: this is what \<^csp> is built for;
+\<^item> dense time (\<open>\<real> \<ge> 0\<close>): 
+  the libraries provide real numbers as well as rich 
+  theories to reason about them;
+\<^item> continuous physical environment with multi-dimensional observables  underlying the laws of 
+  (Newtonian) physics : the Isabelle/HOL-Analysis library provides definitions and proof 
+   techniques to reason over differential equations;
 \<^item> discretized/sampled view of continuous variables:
   \<^hol> libraries provide theories for vector-spaces for positions, forces, accellerations, etc, 
   as well as (low-level, machine-oriented) bitvector calculations
@@ -115,20 +119,22 @@ are available. In particular, CPS and  \<^holcsp> fit particularly well together
   can be adapted, as we will see.
 \<close>
 
-text\<open>This paper proceeds as follows:
-after an introduction into \<^holcsp> we present the general framework of
-interacting autonomous cars, which may be modeled in a object-oriented manner as
-in the domain-specific ontology language Mozart @{cite "XXX"}. This involves the conception
-of an orchestrator (the 'maxwell-daemon') that represents the assumption that all actors
-posses "perfect" captors and 'know' at some points in time the absolute physical state
-of all other actors, and that react on this knowledge by a particular non-deterministic
-\<^emph>\<open>driving strategy\<close>.
+text\<open>This paper proceeds as follows: after an introduction into \<^holcsp> we present the general 
+framework of interacting autonomous cars, which may be modeled in a object-oriented manner as
+in the domain-specific ontology languages such as
+MOSAR \<^footnote>\<open>\<^url>\<open>https://www.mosar.io\<close>\<close> or 
+Foretellix's M-SDL \<^footnote>\<open>\<^url>\<open>https://www.foretellix.com/open-language/\<close>\<close>.
+
+This involves the conception of an orchestrator (the 'maxwell-daemon') that represents the 
+assumption that all actors posses "perfect" captors and 'know' at some points in time the absolute 
+physical state of all other actors, and that react on this knowledge by a particular 
+non-deterministic \<^emph>\<open>driving strategy\<close>.
   
 Subsequently, inside this framework, we present a concrete topology and scenario with
 two or more cars on a lane, that follow the RSS driving strategy. The latter has been
 proposed by S. Shaliv-Shwartz, S. Shammah, A. Shashua:   
 "On a Formal Model of Safe and Scalable Self-driving Cars"
-@{cite \<open>XXX\<close>} and which comes up with a concrete formal definition 
+\cite{arXiv170806374} and which comes up with a concrete formal definition 
 compatible  with the law ("Duty of Care"). Moreover, the authors provide  
 a paper-and-pencil proof trying to establish a global safety property over a class of scenarios,
  which basically excludes the existence of collisions.
