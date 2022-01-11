@@ -1,10 +1,16 @@
-%% This is a placeholder for user-specific configuration and packages.
+%% This is a placeholder for user-specific configuration and packages. 
 
 \usepackage{stmaryrd}
+\IfFileExists{beramono.sty}{\usepackage[scaled=0.88]{beramono}}{}%
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}%
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{paralist}
+\usepackage{listings}
+\usepackage{lstisadof}
+\usepackage{xspace}
 
-\newcommand{\acs}[1]{}
+\newcommand{\fixIsarList}{\vspace{-\topsep}\vspace{-\baselineskip}\mbox{}\\[0pt]\noindent}
 
 \title{<TITLE>}
 \author{<AUTHOR>}
-
-

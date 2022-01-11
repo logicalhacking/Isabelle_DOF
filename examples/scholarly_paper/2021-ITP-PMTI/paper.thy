@@ -29,7 +29,7 @@ author*[bu,email="\<open>wolff@lri.fr\<close>",affiliation = "\<open>LRI, Univer
                
 abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>Isabelle/HOL\<close>,\<open>Ontology Alignment\<close>,\<open>OWL\<close>,\<open>UML/OCL\<close>]"]
 \<open>  \<^dof> is a novel ontology framework on top of Isabelle 
-   @{cite "10.1007/978-3-030-30446-1_15" and "10.1007/978-3-319-96812-4_3"}. 
+   @{cite "brucker.ea:isabelledof:2019" and "brucker.ea:isabelle-ontologies:2018"}. 
    \<^dof>  allows for the formal development of ontologies as well as continuous checking that
    a formal document under development conforms to an underlying ontology. 
    Such a document may contain text and code elements as well as formal Isabelle definitions and proofs.
@@ -43,6 +43,7 @@ abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<
    content \<^bold>\<open>as well as\<close> formal proofs that establish relations between different ontologies in general
    and specific ontology instances in concrete cases. This concept  is also called
    \<^emph>\<open>ontology alignment\<close> in  the literature raised a substantial interest recently.
+   % Verify papers ontology alignment
 \<close>
 
 section*[introheader::introduction,main_author="Some(@{author ''bu''})"]
@@ -96,7 +97,7 @@ in the code-elements of Isabelle's SML implementation, or were specifically supp
 C-program contexts in Isabelle/C @{cite "Tuong-IsabelleC:2019"}. 
 
 However, programming antiquotations on the intern Isabelle API's is nothing for the 
-faint-hearted. Recently, \<^dof> @{cite "10.1007/978-3-030-30446-1_15" and "10.1007/978-3-319-96812-4_3"} 
+faint-hearted. Recently, \<^dof> @{cite "brucker.ea:isabelledof:2019" and "brucker.ea:isabelle-ontologies:2018"} 
 has been designed as an Isabelle component that \<^emph>\<open>generates\<close> antiquotation languages
 from a more abstract description, namely an \<^emph>\<open>ontology\<close> that provides typed meta-data
 and typed reference mechanisms inside text- and ML-contexts. 
@@ -148,8 +149,7 @@ text\<open>
 subsection*[bgrnd_isadof::text_section]\<open>The \<^dof> Framework\<close>
 text\<open>
   \<^dof> ~@{cite "brucker.ea:isabelle-ontologies:2018" and 
-              "brucker.ea:isabelledof:2019" and 
-              "brucker.ea:isabelledof-sw"} 
+              "brucker.ea:isabelledof:2019"} 
   is a document ontology framework that extends Isabelle/HOL. We understand
   by a \<^emph>\<open>document ontology\<close> structured meta-data attached to an integrated document allowing
   classifying text-elements, connect them to typed meta-data, and establishing typed links between text-
@@ -215,7 +215,7 @@ text\<open>
   ontology definition. Isabelle's session management allows for pre-compiling them before being 
   imported in the actual target documentation required to be compliant to this ontology. 
 
-\vspace{-0.7cm}\<close>
+%\vspace{-0.7cm}\<close>
 
 side_by_side_figure*["text-elements"::side_by_side_figure,anchor="''fig-Req-Def-ex''",
                       caption="''A Text-Element as Requirement.''",relative_width="48",

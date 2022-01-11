@@ -13,6 +13,132 @@
 ﻿@STRING{j-tosem= "" }
 ﻿@STRING{pub-acm:adr= "" }
 
+@TechReport{	  bsi:50128:2014,
+  type		= {Standard},
+  key		= {BS EN 50128:2011},
+  month		= apr,
+  year		= 2014,
+  series	= {British Standards Publication},
+  title		= {BS EN 50128:2011: Railway applications -- Communication,
+		  signalling and processing systems -- Software for railway
+		  control and protecting systems},
+  institution	= {Britisch Standards Institute (BSI)},
+  keywords	= {CENELEC},
+  abstract	= {This European Standard is part of a group of related
+		  standards. The others are EN 50126-1:1999 "Railway
+		  applications -- The specification and demonstration of
+		  Reliability, Availability, Maintainability and Safety
+		  (RAMS) -- Part 1: Basic requirements and generic process --
+		  and EN 50129:2003 "Railway applications -- Communication,
+		  signalling and processing systems -- Safety related
+		  electronic systems for signalling". EN 50126-1 addresses
+		  system issues on the widest scale, while EN 50129 addresses
+		  the approval process for individual systems which can exist
+		  within the overall railway control and protection system.
+		  This European Standard concentrates on the methods which
+		  need to be used in order to provide software which meets
+		  the demands for safety integrity which are placed upon it
+		  by these wider considerations. This European Standard
+		  provides a set of requirements with which the development,
+		  deployment and maintenance of any safety-related software
+		  intended for railway control and protection applications
+		  shall comply. It defines requirements concerning
+		  organisational structure, the relationship between
+		  organisations and division of responsibility involved in
+		  the development, deployment and maintenanceactivities.}
+}
+
+@InCollection{	  brucker.ea:isabelledof:2019,
+  abstract	= {DOF is a novel framework for defining ontologies and
+		  enforcing them during document development and evolution. A
+		  major goal of DOF is the integrated development of formal
+		  certification documents (e. g., for Common Criteria or
+		  CENELEC 50128) that require consistency across both formal
+		  and informal arguments.
+
+		  To support a consistent development of formal and informal
+		  parts of a document, we provide Isabelle/DOF, an
+		  implementation of DOF on top of the formal methods
+		  framework Isabelle/HOL. A particular emphasis is put on a
+		  deep integration into Isabelle{\^a}s IDE, which allows for
+		  smooth ontology development as well as immediate
+		  ontological feedback during the editing of a document.
+
+		  In this paper, we give an in-depth presentation of the
+		  design concepts of DOF's Ontology Definition Language
+		  (ODL) and key aspects of the technology of its
+		  implementation. Isabelle/DOF is the first ontology language
+		  supporting machine-checked links between the formal and
+		  informal parts in an LCF-style interactive theorem proving
+		  environment. Sufficiently annotated, large documents can
+		  easily be developed collabo- ratively, while ensuring their
+		  consistency, and the impact of changes (in the formal and
+		  the semi-formal content) is tracked automatically.},
+  keywords	= {Ontology, Formal Document Development, CERtification, DOF,
+		  Isabelle/DOF},
+  location	= {Oslo},
+  author	= {Achim D. Brucker and Burkhart Wolff},
+  booktitle	= {Software Engineering and Formal Methods (SEFM)},
+  language	= {USenglish},
+  url		= {https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelledof-2019},
+  publisher	= {Springer-Verlag},
+  address	= {Heidelberg},
+  series	= {Lecture Notes in Computer Science},
+  number	= {11724},
+  isbn		= {3-540-25109-X},
+  doi		= {10.1007/978-3-030-30446-1_15},
+  editor	= {Peter C. {\"O}lveczky and Gwen Sala{\"u}n},
+  pdf		= {https://www.brucker.ch/bibliography/download/2019/brucker.ea-isabelledof-2019.pdf},
+  title		= {{Isabelle/DOF}: Design and Implementation},
+  classification= {conference},
+  areas		= {formal methods, software},
+  categories	= {isadof},
+  year		= {2019},
+  public	= {yes}
+}
+
+@InCollection{	  brucker.ea:isabelle-ontologies:2018,
+  abstract	= {While Isabelle is mostly known as part of Isabelle/HOL (an
+		  interactive theorem prover), it actually provides a
+		  framework for developing a wide spectrum of applications. A
+		  particular strength of the Isabelle framework is the
+		  combination of text editing, formal verification, and code
+		  generation.
+
+		  Up to now, Isabelle's document preparation system lacks a
+		  mechanism for ensuring the structure of different document
+		  types (as, e.g., required in certification processes) in
+		  general and, in particular, mechanism for linking informal
+		  and formal parts of a document.
+
+		  In this paper, we present Isabelle/DOF, a novel Document
+		  Ontology Framework on top of Isabelle. Isabelle/DOF allows
+		  for conventional typesetting \emph{as well} as formal
+		  development. We show how to model document ontologies
+		  inside Isabelle/DOF, how to use the resulting
+		  meta-information for enforcing a certain document
+		  structure, and discuss ontology-specific IDE support.},
+  keywords	= {Isabelle/Isar, HOL, Ontologies},
+  location	= {Hagenberg, Austria},
+  author	= {Achim D. Brucker and Idir Ait-Sadoune and Paolo Crisafulli
+		  and Burkhart Wolff},
+  booktitle	= {Conference on Intelligent Computer Mathematics (CICM)},
+  language	= {USenglish},
+  publisher	= {Springer-Verlag},
+  address	= {Heidelberg},
+  series	= {Lecture Notes in Computer Science},
+  number	= {11006},
+  url		= {https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelle-ontologies-2018},
+  title		= {Using the {Isabelle} Ontology Framework: Linking the
+		  Formal with the Informal},
+  classification= {conference},
+  areas		= {formal methods, software},
+  categories	= {isadof},
+  public	= {yes},
+  year		= {2018},
+  doi		= {10.1007/978-3-319-96812-4_3},
+  pdf		= {https://www.brucker.ch/bibliography/download/2018/brucker.ea-isabelle-ontologies-2018.pdf}
+}
 
 % $Id: fmde.bib 6539 2010-01-29 10:33:20Z brucker $
 
@@ -4424,34 +4550,34 @@ isbn="978-3-540-48509-4"
 		  maiden name is Diana Senn.}
 }
 
-@InCollection{	  wenzel.ea:building:2007,
-  abstract	= {We present the generic system framework of
-		  Isabelle/Isarunderlying recent versions of Isabelle. Among
-		  other things, Isar provides an infrastructure for Isabelle
-		  plug-ins, comprising extensible state components and
-		  extensible syntax that can be bound to tactical ML
-		  programs. Thus the Isabelle/Isar architecture may be
-		  understood as an extension and refinement of the
-		  traditional LCF approach, with explicit infrastructure for
-		  building derivative systems. To demonstrate the technical
-		  potential of the framework, we apply it to a concrete
-		  formalmethods tool: the HOL-Z 3.0 environment, which is
-		  geared towards the analysis of Z specifications and formal
-		  proof of forward-refinements.},
-  author	= {Makarius Wenzel and Burkhart Wolff},
-  booktitle	= {\acs{tphols} 2007},
-  editor	= {Klaus Schneider and Jens Brandt},
-  language	= {USenglish},
+@InCollection{    wenzel.ea:building:2007,
+  abstract      = {We present the generic system framework of
+                  Isabelle/Isarunderlying recent versions of Isabelle. Among
+                  other things, Isar provides an infrastructure for Isabelle
+                  plug-ins, comprising extensible state components and
+                  extensible syntax that can be bound to tactical ML
+                  programs. Thus the Isabelle/Isar architecture may be
+                  understood as an extension and refinement of the
+                  traditional LCF approach, with explicit infrastructure for
+                  building derivative systems. To demonstrate the technical
+                  potential of the framework, we apply it to a concrete
+                  formalmethods tool: the HOL-Z 3.0 environment, which is
+                  geared towards the analysis of Z specifications and formal
+                  proof of forward-refinements.},
+  author        = {Makarius Wenzel and Burkhart Wolff},
+  booktitle     = {TPHOLs 2007},
+  editor        = {Klaus Schneider and Jens Brandt},
+  language      = {USenglish},
   acknowledgement={none},
-  pages		= {352--367},
-  publisher	= pub-springer,
-  address	= pub-springer:adr,
-  number	= 4732,
-  series	= s-lncs,
-  title		= {Building Formal Method Tools in the {Isabelle}/{Isar}
-		  Framework},
-  doi		= {10.1007/978-3-540-74591-4_26},
-  year		= 2007
+  pages         = {352--367},
+  publisher     = pub-springer,
+  address       = pub-springer:adr,
+  number        = 4732,
+  series        = s-lncs,
+  title         = {Building Formal Method Tools in the {Isabelle}/{Isar}
+                  Framework},
+  doi           = {10.1007/978-3-540-74591-4_26},
+  year          = 2007
 }
 
 @Article{	  igarashi.ea:featherweight:2001,

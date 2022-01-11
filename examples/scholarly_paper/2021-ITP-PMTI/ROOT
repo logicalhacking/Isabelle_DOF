@@ -15,3 +15,4 @@ session "2021-ITP-PMTI" = "Isabelle_DOF" +
     "figures/three-phase-odo.pdf"
     "figures/df-numerics-encshaft.png"
     "figures/wheel-df.png"
+    "lstisadof.sty"
