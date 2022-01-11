@@ -148,9 +148,9 @@ test-data for system integration tests from the formal proofs.
 
 section\<open>Background\<close>
 
-text\<open>
+subsection\<open>CSP Operators and their Extensions in HOL-CSP\<close>
 
-The theory of \<^csp> was first described in 1978 in a book by Tony Hoare @{cite "Hoare:1985:CSP:3921"}, 
+text\<open>The theory of \<^csp> was first described in 1978 in a book by Tony Hoare @{cite "Hoare:1985:CSP:3921"}, 
 but has since evolved substantially @{cite "BrookesHR84" and "brookes-roscoe85" and "roscoe:csp:1998"}.
 \<^csp> describes the most common communication and synchronization mechanisms
 with one single language primitive: synchronous communication written \<open>_\<lbrakk>_\<rbrakk>_\<close>. \<^csp> semantics is 
@@ -164,6 +164,26 @@ be distinguished:
   \<^enum> the \<^emph>\<open>internal choice\<close>, written \<open>_\<sqinter>_\<close>, which imposes on the environment of a process 
     "to follow" the non-deterministic choices made.
 \<close>
+
+text\<open>At a glance, the overall concepts and notions we are using here are listed as follows:
+
+\<^item> Basic Process Constants: \<open>\<bottom>, Skip, Stop\<close> 
+\<^item> Standard Operators  for choice and prefix:  \<open>P\<sqinter>P', P\<box>P', a \<longrightarrow> P\<close>
+  (for infinite sets of events \<open>a \<in> \<Sigma>\<close>)
+\<^item> Synchronization operators: \<open>P\<lbrakk>S\<rbrakk>P’, P|||P', P||P'\<close>
+  (for infinite sets of events \<open>S \<subseteq> \<Sigma> et a \<in> \<Sigma>\<close>)
+\<^item> Recursion: \<open> \<mu>X. P X  \<close>
+\<^item> Generalised Operators (“Architectural Operators”):  
+  \<open> \<Sqinter> x\<in>A \<longrightarrow> P x, \<box> x\<in>A \<longrightarrow> P x,  \<Sqinter> x\<in>B. P x, \<box> x\<in>B. P x\<close>   
+  \<open> \<lbrakk>S\<rbrakk>x\<in>B. P x , |||x\<in>B. P x, ||x\<in>B. P x, SEQ x\<in>B. P x\<close>    
+  (for infinite index sets A, finite sets B)
+\<^item> A typed view on processes with Hindley-Milner Polymorphism;
+  (operators and process-schemata are typed over \<open>'\<Sigma> process\<close>) 
+\<^item> Denotationally defined notions for traces \<open>\<T>\<close>, failures \<open>\<F>\<close>, and divergences \<open>\<D>\<close>
+\<^item> Proof Theory for refinement notions on processes: \<open>\<sqsubseteq>\<^sub>\<T>, \<sqsubseteq>\<^sub>\<F>, \<sqsubseteq>\<^sub>\<F>\<^sub>\<D>\<close>
+\<close>
+
+\<comment>\<open>too long the rest\<close>
 
 text\<open>
 Generalizations of these two operators \<open>\<box>x\<in>A. P(x)\<close> and \<open>\<Sqinter>x\<in>A. P(x)\<close> allow for modeling the concepts 
@@ -225,9 +245,9 @@ attempt to formalize denotational \<^csp> semantics covering a part of Bill Rosc
 % PAT~@{cite "SunLDP09"} based on proof certifications.*)
 
 section*["pre"::tc,main_author="Some(@{docitem \<open>bu\<close>}::author)"]
-\<open>Preliminaries\<close>
+  \<open>Appendix\<close>
 
-text\<open>\<close>
+text\<open>Just Examples in Copy-Paste and best-practices in Isabelle/DOF\<close>
 
 subsection*[cspsemantics::tc, main_author="Some(@{docitem ''bu''})"]\<open>Denotational \<^csp> Semantics\<close>
 
