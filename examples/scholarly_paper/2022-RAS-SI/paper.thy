@@ -178,13 +178,14 @@ text\<open>At a glance, the overall concepts and notions we are using here are l
   \<open> \<lbrakk>S\<rbrakk>x\<in>B. P x , |||x\<in>B. P x, ||x\<in>B. P x, SEQ x\<in>B. P x\<close>    
   (for infinite index sets A, finite sets B)
 \<^item> A typed view on processes with Hindley-Milner Polymorphism;
-  (operators and process-schemata are typed over \<open>'\<Sigma> process\<close>) 
+  (operators and are typed over \<open>'\<Sigma> process\<close>; 
+   process-schemata are just higher-order functions over processes.) 
 \<^item> Denotationally defined notions for traces \<open>\<T>\<close>, failures \<open>\<F>\<close>, and divergences \<open>\<D>\<close>
 \<^item> Proof Theory for refinement notions on processes: \<open>\<sqsubseteq>\<^sub>\<T>, \<sqsubseteq>\<^sub>\<F>, \<sqsubseteq>\<^sub>\<F>\<^sub>\<D>\<close>
 \<close>
 
 \<comment>\<open>too long the rest\<close>
-
+(*
 text\<open>
 Generalizations of these two operators \<open>\<box>x\<in>A. P(x)\<close> and \<open>\<Sqinter>x\<in>A. P(x)\<close> allow for modeling the concepts 
 of \<^emph>\<open>input\<close> and \<^emph>\<open>output\<close>: Based on the prefix operator \<open>a\<rightarrow>P\<close> (event \<open>a\<close> happens, then the process 
@@ -209,7 +210,11 @@ with dynamic thread creation, and processes with unbounded thread-local variable
 However, this adds substantial complexity to the process theory: when it comes to study the 
 interplay of different denotational models, refinement-orderings, and side-conditions for 
 continuity, paper-and-pencil proofs easily reach their limits of precision. 
+*)
 
+subsection\<open>Isabelle and HOL-CSP\<close>
+\<comment> \<open>too long and partially off-topic\<close>
+text\<open>
 Several attempts have been undertaken to develop a formal theory in an interactive proof system, 
 mostly in Isabelle/HOL @{cite "Camilleri91" and "tej.ea:corrected:1997" and  "IsobeRoggenbach2010"
 and "DBLP:journals/afp/Noce16"}.
@@ -231,6 +236,38 @@ attempt to formalize denotational \<^csp> semantics covering a part of Bill Rosc
     \<^url>\<open>https://gitlri.lri.fr/burkhart.wolff/hol-csp2.0\<close>. In this paper, all Isabelle proofs are 
     omitted.\<close>}. 
 \<close>
+
+subsection\<open>RSS\<close>
+text\<open>
+Two Cars, “current” set of  assumptions Safety Property:
+\<^item> reaction time ( \<open>>> \<Delta>t\<close>): \<open>\<rho>\<close>
+\<^item> minimal distance to be respected : \<open>d\<^sub>m\<^sub>i\<^sub>n\<close>
+\<^item> speeds for “rear” and “front” cars: \<open>v\<^sub>r\<close>,\<open>v\<^sub>f\<close> 
+\<close>
+
+
+figure*[AcVecSpaceVsSpeedVs::figure,relative_width="100",src="''figures/AcVecSpaceVsSpeedVs.png''"]
+       \<open>Acceleration Vector Space vs. Speed Vectors \<close>
+figure*[MaxwellVsCutIn::figure,relative_width="100",src="''figures/MaxwellVsCutIn.png''"]
+        \<open>Maxwell's Daemon vs. Cut-In Scenarios\<close>
+figure*[RSS_Safe_Longitudinal_Distance::figure,relative_width="100",src="''figures/RSS_Safe_Longitudinal_Distance.png''"]
+        \<open>Safe Longitudinal Distance in RSS\<close>
+figure*[RSS_formula::figure,relative_width="100",src="''figures/RSS_formula.png''"]
+        \<open>The Formula of RSS\<close>
+figure*[Samplings::figure,relative_width="100",src="''figures/Samplings.png''"]
+        \<open>Samplings of Continuous Observables\<close>
+figure*[actor_def::figure,relative_width="100",src="''figures/actor_def.png''"]
+       \<open>Definition of Actors\<close>
+figure*[demon_def::figure,relative_width="100",src="''figures/demon_def.png''"]
+       \<open>Definition of a Maxwell-Demon\<close>
+figure*[scenarios_def::figure,relative_width="100",src="''figures/scenarios_def.png''"]
+       \<open>Definition of Scenarios\<close>
+figure*[actor_driving_strategy_inclusion::figure,relative_width="100",src="''figures/actor_driving_strategy_inclusion.png''"]
+       \<open>Trace Inclusion of Actors Parameterized by Driving Strategies\<close>
+figure*[actor_driving_strategy_ref::figure,relative_width="100",src="''figures/actor_driving_strategy_ref.png''"]
+       \<open>Refining Actors Parameterized by Driving Strategies\<close>
+
+
 (*
 % Moreover, decomposition rules of the form:
 % \begin{center}
@@ -244,8 +281,10 @@ attempt to formalize denotational \<^csp> semantics covering a part of Bill Rosc
 % way for future tool combinations for model-checkers such as FDR4~@{cite "fdr4"} or 
 % PAT~@{cite "SunLDP09"} based on proof certifications.*)
 
-section*["pre"::tc,main_author="Some(@{docitem \<open>bu\<close>}::author)"]
-  \<open>Appendix\<close>
+subsection\<open>\<close>
+
+
+section*["pre"::tc,main_author="Some(@{docitem \<open>bu\<close>}::author)"] \<open>Appendix\<close>
 
 text\<open>Just Examples in Copy-Paste and best-practices in Isabelle/DOF\<close>
 
