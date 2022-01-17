@@ -900,6 +900,41 @@ schemata:
 
 
 section*["sec:advanced"::technical]\<open>Advanced ODL Concepts\<close>
+
+text\<open>For example, assume the following local ontology: 
+
+@{boxed_theory_text [display] \<open>
+doc_class title =
+    short_title :: "string option" <= "None"
+doc_class author = email :: "string" <= "''''"
+datatype classification = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
+doc_class abstract =
+    keywordlist :: "string list" <= [] safety_level :: "classification" <= "SIL3"
+doc_class text_section =
+    authored_by :: "author set" <= "{}" level :: "int option" <= "None"
+type_synonym notion = string
+doc_class introduction = text_section +
+    authored_by :: "author set"  <= "UNIV" 
+    uses :: "notion set" 
+doc_class claim = introduction +
+    based_on :: "notion list" 
+doc_class technical = text_section +
+    formal_results :: "thm list" 
+doc_class "definition" = technical +
+    is_formal :: "bool"
+    property  :: "term list" <= "[]" 
+datatype kind = expert_opinion | argument | proof
+doc_class result = technical +
+    evidence :: kind
+    property :: "thm list" <= "[]"
+doc_class example = technical +
+    referring_to :: "(notion + definition) set" <= "{}"
+doc_class "conclusion" = text_section +
+    establish :: "(claim \<times> result) set"
+\<close>
+}
+\<close>
+
 subsection\<open>Meta-types as Types\<close>
 
 text\<open>
@@ -983,6 +1018,8 @@ text\<open>
 
 
 subsection*["sec:class_inv"::technical]\<open>ODL Class Invariants\<close>
+
+
 text\<open>
   Ontological classes as described so far are too liberal in many situations. For example, one 
   would like to express that any instance of a \<^boxed_theory_text>\<open>result\<close> class finally has a 
@@ -993,7 +1030,7 @@ text\<open>
   In a high-level syntax, this type of constraints could be expressed, \<^eg>, by:
 
 @{boxed_theory_text [display]\<open>
-(* 1 *) \<forall> x \<in> result. x@kind = pr$$oof \<leftrightarrow> x@kind \<noteq> []
+(* 1 *) \<forall> x \<in> result. x@evidence = proo$$f \<leftrightarrow> x@property \<noteq> []
 (* 2 *) \<forall> x \<in> conclusion. \<forall> y \<in> Domain(x@establish)
                   \<rightarrow> \<exists> y \<in> Range(x@establish). (y,z) \<in> x@establish
 (* 3 *) \<forall> x \<in> introduction. finite(x@authored_by)
