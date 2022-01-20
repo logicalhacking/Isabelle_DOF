@@ -33,8 +33,8 @@ abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<
    \<^dof>  allows for the formal development of ontologies as well as continuous checking that
    a formal document under development conforms to an underlying ontology. 
    Such a document may contain text and code elements as well as formal Isabelle definitions and proofs.
-   Thus, \<^dof> is designed to annotate and interact with these elements with typed meta-data 
-   for, \<^eg>, formal text development in Isabelle.  
+   Thus, \<^dof> is designed to annotate and interact with typed meta-data 
+   within formal developments in Isabelle.  
 
    While prior versions of \<^dof> provided already a mechanism to check ontological \<^emph>\<open>rules\<close>  
    (in OWL terminology) or \<^emph>\<open>class invariants\<close> (in UML/OCL terminology) via hand-written SML test-code,
@@ -125,10 +125,8 @@ Isabelle community for a deeper structuring of the Archive of Formal Proofs (AFP
 declare_reference*[casestudy::text_section]
 (*>*)
 
-section\<open>Background\<close>
-subsection\<open>Isabelle/DOF Design and Implementation\<close>
-
 section*[bgrnd::text_section,main_author="Some(@{docitem ''adb''}::author)"] \<open> Background\<close>
+subsection\<open>Isabelle/DOF Design and Implementation\<close>
 text\<open>
   In this section, we provide a guided tour through the underlying technologies of this paper: 
   \begin{inparaenum} 
@@ -289,6 +287,8 @@ text\<open>
 \<^item> \<^url>\<open>https://www.una.edu/writingcenter/docs/Writing-Resources/Source%20Integration.pdf\<close>
 \<^item> \<^url>\<open>https://www.exoscale.com/syslog/what-is-continuous-integration/\<close>
  
+
+
 \<close>
 (*
 Data integration driven ontology design, case study smart city
@@ -297,6 +297,35 @@ WIMS '13: Proceedings of the 3rd International Conference on Web Intelligence,
      Mining and SemanticsJune 2013 Article No.: 43Pages 1–10
 https://doi.org/10.1145/2479787.2479830
 *)
+
+
+section\<open> Related work \<close>
+
+text\<open>
+\<^item> Geschwalle: Tom Gruber's "Ontology for Engineering Mathematics"
+  \<^url>\<open>https://tomgruber.org/writing/an-ontology-for-engineering-mathematics\<close>
+\<^item> OntoMathPro contains indeed something like a "taxonomy of the fields of mathematics" pp 110
+  \<^url>\<open>https://kpfu.ru/staff_files/F_438204284/OntoMathPro_ontology_KESW2014.pdf\<close>
+  According to In total, OntoMathPRO contains 3,449 classes ...
+
+\<^item> Translated from the Russian Federal Standard for Higher Education on mathematics
+  for master students, Section 5.2:
+   \<^url>\<open>http://www.edu.ru/db-mon/mo/Data/d_10/prm40-1.pdf\<close>
+\<^item> Elements of OntoMathPro :
+  (* figures/OntoMathPro-Taxonomy.png 
+     figures/OntoMathPro-Taxonomy-2.png *)
+\<^item> Other Onto:  DBpedia @{cite "10.1007/978-3-540-76298-0_52"}
+  SPARQL endpoint: \<^url>\<open>http://dbpedia.org/sparql\<close>  
+\<^item> Other Onto:  ScienceWISE
+  \<^url>\<open>http://data.sciencewise.info/openrdf-sesame/repositories/SW\<close> 
+  \<^url>\<open>https://github.com/CLLKazan/OntoMathPro\<close> 
+
+\<^item> Search Engines: Wikipedia Formula Search, \<^url>\<open>http://shinh.org/wfs\<close>
+
+
+
+\<close>
+
 
 section\<open>Annex\<close>
 
