@@ -118,9 +118,9 @@ doc_class F  =
                                                  to an association class. It can be used to track
                                                  claims to result - relations, for example.*) 
    b'          :: "(A \<times> C) list"  <= "[]"
-   invariant br :: "\<lambda>\<sigma>::F. r \<sigma> \<noteq> [] \<and> card(b \<sigma>) \<ge> 3"
-        and  br':: "\<lambda>\<sigma>::F. r \<sigma> \<noteq> [] \<and> length(b' \<sigma>) \<ge> 3"
-        and  cr :: "\<lambda>\<sigma>::F. properties \<sigma> \<noteq> []"
+   invariant br :: "r \<sigma> \<noteq> [] \<and> card(b \<sigma>) \<ge> 3"
+        and  br':: "r \<sigma> \<noteq> [] \<and> length(b' \<sigma>) \<ge> 3"
+        and  cr :: "properties \<sigma> \<noteq> []"
 
 text\<open>The effect of the invariant declaration is to provide intern definitions for validation 
 functions of this invariant. They can be referenced as follows:\<close>

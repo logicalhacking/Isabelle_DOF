@@ -180,27 +180,7 @@ text\<open>
 
 section\<open>Programming Class Invariants\<close>
 text\<open>
-  For the moment, there is no high-level syntax for the definition of class invariants. A 
-  formulation, in SML, of the first class-invariant in @{docitem "sec:class_inv"} is straight-forward:
-
-@{boxed_sml [display]
-\<open>fun check_result_inv oid {is_monitor:bool} ctxt =
-  let val kind = compute_attr_access ctxt "kind" oid <@>{here} <@>{here} 
-      val prop = compute_attr_access ctxt "property" oid <@>{here} <@>{here} 
-      val tS = HOLogic.dest_list prop
-  in  case kind_term of
-       <@>{term "proof"} => if not(null tS) then true
-                          else error("class result invariant violation") 
-      | _ => false
-  end
- val _ = Theory.setup (DOF_core.update_class_invariant 
-                                "tiny_cert.result" check_result_inv)\<close>}
-
-  The \<^boxed_sml>\<open>setup\<close>-command (last line) registers the \<^boxed_theory_text>\<open>check_result_inv\<close> function 
-  into the \<^isadof> kernel, which activates any creation or modification of an instance of
-  \<^boxed_theory_text>\<open>result\<close>.  We cannot replace \<^boxed_theory_text>\<open>compute_attr_access\<close> by the corresponding 
-  antiquotation \<^boxed_theory_text>\<open>@{docitem_value kind::oid}\<close>, since \<^boxed_theory_text>\<open>oid\<close> is
-  bound to a variable here and can therefore not be statically expanded.
+  See \<^technical>\<open>sec:low_level_inv\<close>.
 \<close>
 
 section\<open>Implementing Monitors\<close>
