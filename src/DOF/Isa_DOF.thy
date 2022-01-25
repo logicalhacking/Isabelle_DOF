@@ -63,8 +63,14 @@ val docclassN = "doc_class";
 
 (** name components **)
 
-val makeN = "make";
+val defN = "def"
+val def_suffixN = "_" ^ defN
+val defsN = defN ^ "s"
 val instances_of_suffixN = "_instances"
+val invariant_suffixN = "_inv"
+val invariantN = "\<sigma>"
+val makeN = "make"
+val schemeN = "_scheme"
 
 (* derived from: theory_markup *) 
 fun docref_markup_gen refN def name id pos =
@@ -534,13 +540,13 @@ fun get_object_local oid ctxt  = case get_object_local_opt oid ctxt of
                                       |SOME(bbb) => bbb
 
 fun get_doc_class_global cid thy = 
-    if cid = default_cid then error("default class acces") (* TODO *)
+    if cid = default_cid then error("default class access") (* TODO *)
     else let val t = #docclass_tab(get_data_global thy)
          in  (Symtab.lookup t cid) end
     
 
 fun get_doc_class_local cid ctxt = 
-    if cid = default_cid then error("default class acces") (* TODO *)
+    if cid = default_cid then error("default class access") (* TODO *)
     else let val t = #docclass_tab(get_data ctxt)
          in  (Symtab.lookup t cid) end
 
@@ -799,11 +805,20 @@ val _ =
 val (strict_monitor_checking, strict_monitor_checking_setup) 
      = Attrib.config_bool \<^binding>\<open>strict_monitor_checking\<close> (K false);
 
+val (invariants_checking, invariants_checking_setup) 
+     = Attrib.config_bool \<^binding>\<open>invariants_checking\<close> (K false);
+
+val (invariants_checking_with_tactics, invariants_checking_with_tactics_setup) 
+     = Attrib.config_bool \<^binding>\<open>invariants_checking_with_tactics\<close> (K false);
+
+
 end (* struct *)
 
 \<close>
 
-setup\<open>DOF_core.strict_monitor_checking_setup\<close>
+setup\<open>DOF_core.strict_monitor_checking_setup
+      #> DOF_core.invariants_checking_setup
+      #> DOF_core.invariants_checking_with_tactics_setup\<close>
 
 section\<open> Syntax for Term Annotation Antiquotations (TA)\<close>
 
@@ -1121,7 +1136,6 @@ fun declare_class_instances_annotation thy doc_class_name =
                     val qual = Long_Name.qualifier long_name
                     val transformer_name = Long_Name.qualify qual
                                 (DOF_core.get_doc_class_name_without_ISA_prefix (Binding.name_of bind'))
-                    val _ = writeln ("transformer_name: " ^ transformer_name)
                   in
                     DOF_core.update_isa_global (transformer_name,
                     {check=check_identity, elaborate= elaborate_instances_list}) thy end)
@@ -1258,7 +1272,6 @@ fun cid_2_cidType cid_long thy =
              fun fathers cid_long = case Symtab.lookup t cid_long of
                        NONE => let val ctxt = Proof_Context.init_global thy
                                    val tty = Syntax.parse_typ (Proof_Context.init_global thy) cid_long
-                                   val _ = writeln ("XXX"^(Syntax.string_of_typ ctxt tty))
                                in  error("undefined doc class id :"^cid_long)
                                end 
                      | SOME ({inherits_from=NONE, ...}) => [cid_long]
@@ -1413,9 +1426,59 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
                  DOF_core.map_data_global(update_automatons)
       end
 
+fun check_invariants thy oid =
+  let
+    val value = the (DOF_core.get_value_global oid thy)
+    val cid = #cid (the (DOF_core.get_object_global oid thy))
+    fun get_all_invariants cid thy =
+      let val invs = #invs (the (DOF_core.get_doc_class_global cid thy))
+      in case DOF_core.get_doc_class_global cid thy of
+             NONE => error("undefined class id for invariants: " ^ cid)
+           | SOME ({inherits_from=NONE, ...}) => invs
+           | SOME ({inherits_from=SOME(_,father), ...}) => (invs) @ (get_all_invariants father thy)
+      end
+    val invariants = get_all_invariants cid thy
+    val inv_and_apply_list = 
+      let fun mk_inv_and_apply inv value thy =
+            let val ((s, pos), _ (*term*)) = inv
+                val inv_def = Syntax.read_term_global thy (s ^ invariant_suffixN)
+                val inv_def_typ = Term.type_of value
+            in case inv_def of
+                   Const (s, Type (st, [_ (*ty*), ty'])) =>
+                                        ((s, pos), Const (s, Type (st,[inv_def_typ, ty'])) $ value)
+                 | _ => ((s, pos), inv_def $ value)
+            end    
+      in map (fn inv => mk_inv_and_apply inv value thy) invariants
+      end
+    fun check_invariants' ((inv_name, pos), term) =
+      let val ctxt = Proof_Context.init_global thy
+          val evaluated_term = Value_Command.value ctxt term
+                handle ERROR e =>
+                  if (String.isSubstring "Wellsortedness error" e)
+                      andalso (Config.get_global thy DOF_core.invariants_checking_with_tactics)
+                   then (warning("Invariants checking uses proof tactics");
+                         let val prop_term = HOLogic.mk_Trueprop term
+                             val thms = Proof_Context.get_thms ctxt (inv_name ^ def_suffixN)
+                             (* Get the make definition (def(1) of the record) *)
+                             val thms' =
+                                  (Proof_Context.get_thms ctxt (Long_Name.append cid defsN)) @ thms
+                             val _ = Goal.prove ctxt [] [] prop_term
+                                                  (K ((unfold_tac ctxt thms') THEN (auto_tac ctxt)))
+                                     |> Thm.close_derivation \<^here>
+                         (* If Goal.prove does not fail, then the evaluation is considered True,
+                            else an error is triggered by Goal.prove *)
+                         in @{term True} end)
+                   else (error e)
+      in (if evaluated_term = \<^term>\<open>True\<close>
+          then ((inv_name, pos), term)
+          else ISA_core.err ("Invariant " ^ inv_name ^ " violated") pos)
+      end
+    val _ = map check_invariants' inv_and_apply_list 
+  in thy end
 
 fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos doc_attrs thy = 
-  let val id = serial ();
+  let
+    val id = serial ();
     val _ = Position.report pos (docref_markup true oid id pos);
     (* creates a markup label for this position and reports it to the PIDE framework;
      this label is used as jump-target for point-and-click feature. *)
@@ -1442,7 +1505,8 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos do
                             val (value_term', _(*ty*), _) = calc_update_term thy cid_long assns' defaults
                           in value_term' end
     val check_inv =   (DOF_core.get_class_invariant cid_long thy oid is_monitor) 
-                            o Context.Theory 
+                            o Context.Theory
+
   in thy |> DOF_core.define_object_global (oid, {pos      = pos, 
                                                  thy_name = Context.theory_name thy,
                                                  value    = value_term,
@@ -1452,6 +1516,9 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos do
                                                  vcid     = vcid})
          |> register_oid_cid_in_open_monitors oid pos cid_long
          |> (fn thy => (check_inv thy; thy))
+         |> (fn thy => if Config.get_global thy DOF_core.invariants_checking = true
+                       then check_invariants thy oid
+                       else thy)
   end
 
 
@@ -2134,15 +2201,39 @@ fun mk_meta_eq (t, u) = meta_eq_const (fastype_of t) $ t $ u;
 
 fun define_cond binding f_sty   cond_suffix read_cond (ctxt:local_theory) = 
        let val bdg = Binding.suffix_name cond_suffix binding
-           val eq =  mk_meta_eq(Free(Binding.name_of bdg, f_sty),read_cond ctxt)
+           val eq =  mk_meta_eq(Free(Binding.name_of bdg, f_sty),read_cond)
            val args = (SOME(bdg,NONE,NoSyn), (Binding.empty_atts,eq),[],[])
        in def_cmd args true ctxt end
 
 fun define_inv cid_long ((lbl, pos), inv) thy = 
-    let val bdg = (* Binding.suffix_name cid_long *) (Binding.make (lbl,pos))
-        fun inv_term ctxt = Syntax.read_term ctxt inv
-        val inv_ty = (Syntax.read_typ_global thy cid_long) --> HOLogic.boolT
-    in  thy |> Named_Target.theory_map (define_cond bdg inv_ty "_inv" inv_term) end
+    let val bdg = Binding.make (lbl,pos)
+        val inv_term = Syntax.read_term (Proof_Context.init_global thy) inv
+        fun update_attribute_type thy class_scheme_ty
+            (Const (s, Type (st,[ty, ty'])) $ t) =
+              let
+                val cid = Long_Name.qualifier s
+              in case DOF_core.get_doc_class_global cid thy of
+                     NONE => Const (s, Type(st,[ty, ty']))
+                             $ (update_attribute_type thy class_scheme_ty t)
+                   | SOME _ => Const(s, Type(st,[class_scheme_ty, ty']))
+                               $ (update_attribute_type thy class_scheme_ty t)
+              end
+          | update_attribute_type thy class_scheme_ty (t $ t') =
+              (update_attribute_type thy class_scheme_ty t)
+              $ (update_attribute_type thy class_scheme_ty t')
+          | update_attribute_type thy class_scheme_ty (Abs(s, ty, t)) =
+              Abs(s, ty, update_attribute_type thy class_scheme_ty t)
+          | update_attribute_type _ class_scheme_ty (Free(s, ty)) = if s = invariantN 
+                                                                     then Free (s, class_scheme_ty)
+                                                                     else Free (s, ty)
+          | update_attribute_type _ _ t = t
+        val inv_ty = Syntax.read_typ (Proof_Context.init_global thy) ("'a " ^ cid_long ^ schemeN)
+        (* Update the type of each attribute update function to match the type of the
+           current class. *)
+        val inv_term' = update_attribute_type thy inv_ty inv_term
+        val eq_inv_ty = inv_ty --> HOLogic.boolT
+        val abs_term = Term.lambda (Free (invariantN, inv_ty)) inv_term'
+    in  thy |> Named_Target.theory_map (define_cond bdg eq_inv_ty invariant_suffixN abs_term) end
 
 fun add_doc_class_cmd overloaded (raw_params, binding)
                       raw_parent raw_fieldsNdefaults reject_Atoms regexps invariants thy =
