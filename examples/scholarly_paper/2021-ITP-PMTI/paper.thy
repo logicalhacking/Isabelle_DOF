@@ -383,7 +383,7 @@ text\<open>
 
 \<^item> Search Engines: Wikipedia Formula Search, \<^url>\<open>http://shinh.org/wfs\<close>
 
-
+\<^item> And then: The stuff from Univ Erlangen (Kohlhase et al).
 
 \<close>
 
