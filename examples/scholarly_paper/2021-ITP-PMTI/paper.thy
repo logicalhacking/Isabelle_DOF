@@ -263,66 +263,13 @@ section\<open>Invariants in DOF\<close>
 section\<open>Proving Morphisms on Ontologies\<close>
 
 section\<open>Example and Queries\<close>
-section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] \<open>Case study\<close>
 
-text\<open>User Ontology\<close>
+section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] \<open>Applications\<close>
 
-onto_class Item =
-  name :: string
+subsection\<open>Engineering Example : An Extract from PLib\<close>
 
-onto_class Product = Item +
-  serial_number :: integer
-  provider :: string
-  mass :: integer
+subsection\<open>Mathematics Example : An Extract from OntoMathPro\<close>
 
-onto_class Software = Item +
-  version :: integer
-
-onto_class Electronic_Component = Product +
-  dimensions :: "integer set"
-  
-datatype Hardware_Type = 
-  Motherboard | 
-  Expansion_Card | 
-  Storage_Device | 
-  Fixed_Media | 
-  Removable_Media |
-  Input_Device |
-  Output_Device
-
-onto_class Computer_Hardware = Product +
-  type :: Hardware_Type
-  composed_of :: "Product set" 
-
-text\<open>Reference Ontology\<close>
-
-onto_class Resource =
-  name :: string
-
-onto_class Electronic = Resource +
-  provider :: string
-  manufacturer :: string
-
-onto_class Component = Electronic +
-  mass :: integer
-  dimensions :: "integer set" 
-
-onto_class Simulation_Model = Electronic +
-  type :: string
-
-onto_class Informatic = Resource +
-  att :: string 
-  
-onto_class Hardware = Informatic +
-  type :: Hardware_Type
-  mass :: integer
-  composed_of :: "Component set" 
-  
-onto_class Software = Informatic +
-  version :: integer
-
-  
-  
 
 
 section\<open>Conclusion\<close>
