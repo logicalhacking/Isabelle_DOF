@@ -21,7 +21,7 @@ define_shortcut* hol      \<rightleftharpoons> \<open>HOL\<close>
 
 (*>*)
 
-title*[tit::title]\<open>A Framework for Proving Ontology-Relations and Testing Ontology Instances\<close>
+title*[tit::title]\<open>A Framework for Proving Ontology-Relations and Runtime Testing Ontology Instances\<close>
                                   
 author*[idir,email="\<open>idir.aitsadoune@lri.fr\<close>",affiliation="\<open>LMF, CentraleSupelec\<close>"]\<open>Idir Ait-Sadoune\<close>
 author*[nic,email="\<open>nicolas.meric@lri.fr\<close>",affiliation="\<open>LRI, Université Paris-Saclay\<close>"]\<open>Nicolas Méric\<close>
@@ -40,10 +40,12 @@ abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<
    (in OWL terminology) or \<^emph>\<open>class invariants\<close> (in UML/OCL terminology) via hand-written SML test-code,
    we provide in this paper a novel mechanism to specify \<^emph>\<open>invariants\<close> in \<^hol> via a reflection
    mechanism. This allows for both efficient run-time checking of abstract properties of formal 
-   content \<^bold>\<open>as well as\<close> formal proofs that establish relations between different ontologies in general
-   and specific ontology instances in concrete cases. This concept  is also called
-   \<^emph>\<open>ontology alignment\<close> in  the literature raised a substantial interest recently.
-   % Verify papers ontology alignment
+   content \<^bold>\<open>as well as\<close> formal proofs that establish mappings between different ontologies in 
+   general and specific ontology instances in concrete cases. 
+   With this feature widely called \<^emph>\<open>ontology mapping\<close> in the literature, our framework paves the 
+   way for a deeper integration of ontological information in
+   the articles of the Archive of Formal Proofs.
+  
 \<close>
 
 section*[introheader::introduction,main_author="Some(@{author ''bu''})"]
@@ -261,7 +263,7 @@ section\<open>Invariants in DOF\<close>
 section\<open>Proving Morphisms on Ontologies\<close>
 
 section\<open>Example and Queries\<close>
-section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] \<open> Case study\<close>
+section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] \<open>Case study\<close>
 
 text\<open>User Ontology\<close>
 
@@ -361,6 +363,8 @@ https://doi.org/10.1145/2479787.2479830
 
 
 section\<open> Related work \<close>
+
+ML\<open>open Goal\<close>
 
 text\<open>
 \<^item> Geschwalle: Tom Gruber's "Ontology for Engineering Mathematics"
