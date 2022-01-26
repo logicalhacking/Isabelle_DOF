@@ -234,15 +234,16 @@ A document class\<^bindex>\<open>document class\<close> can be defined using the
      We call document classes with an \<open>accepts_clause\<close> 
      \<^emph>\<open>monitor classes\<close> or \<^emph>\<open>monitors\<close> for short.
      \<^rail>\<open> @@{command "doc_class"} class_id '=' (class_id '+')? (attribute_decl+) \<newline>
-           (invariant_decl*) 
+           (invariant_decl?) 
            (accepts_clause rejects_clause?)?\<close>
 \<^item> \<open>attribute_decl\<close>:\<^index>\<open>attribute\_decl@\<open>attribute_decl\<close>\<close>
      \<^rail>\<open> name '::' '"' type '"' default_clause? \<close>
 \<^item> \<open>invariant_decl\<close>:\<^index>\<open>invariant\_decl@\<open>invariant_decl\<close>\<close>
      Invariants can be specified as predicates over document classes represented as 
      records in HOL. Note that sufficient type information must be provided in order to
-     disambiguate the argument of the \<open>\<lambda>\<close>-expression. 
-     \<^rail>\<open> 'inv' (name '::')? '"' term '"' \<close>
+     disambiguate the argument of the expression
+     and the \<^boxed_text>\<open>\<sigma>\<close> symbol is reserved to reference the instance of the class itself. 
+     \<^rail>\<open> 'invariant' name '::' '"' term '"' + 'and' \<close>
 \<^item> \<open>accepts_clause\<close>:\<^index>\<open>accepts\_clause@\<open>accepts_clause\<close>\<close>
      \<^rail>\<open> 'accepts' '"' regexpr '"'\<close>
 \<^item> \<open>rejects_clause\<close>:\<^index>\<open>rejects\_clause@\<open>rejects_clause\<close>\<close>
@@ -900,39 +901,43 @@ schemata:
 
 
 section*["sec:advanced"::technical]\<open>Advanced ODL Concepts\<close>
+text\<open>This section will be based on the following example.\<close>
 
-text\<open>For example, assume the following local ontology: 
+subsection*["sec:example"::technical]\<open>Example\<close>
+text\<open>Assume the following local ontology: 
 
-@{boxed_theory_text [display] \<open>
+@{boxed_theory_text [display]\<open>
 doc_class title =
-    short_title :: "string option" <= "None"
-doc_class author = email :: "string" <= "''''"
+  short_title :: "string option" <= "None"
+doc_class author =
+  email :: "string" <= "''''"
 datatype classification = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
 doc_class abstract =
-    keywordlist :: "string list" <= [] safety_level :: "classification" <= "SIL3"
+  keywordlist :: "string list" <= "[]"
+  safety_level :: "classification" <= "SIL3"
 doc_class text_section =
-    authored_by :: "author set" <= "{}" level :: "int option" <= "None"
+  authored_by :: "author set" <= "{}"
+  level :: "int option" <= "None"
 type_synonym notion = string
 doc_class introduction = text_section +
-    authored_by :: "author set"  <= "UNIV" 
-    uses :: "notion set" 
+  authored_by :: "author set"  <= "UNIV" 
+  uses :: "notion set"
 doc_class claim = introduction +
-    based_on :: "notion list" 
+  based_on :: "notion list" 
 doc_class technical = text_section +
-    formal_results :: "thm list" 
+  formal_results :: "thm list" 
 doc_class "definition" = technical +
-    is_formal :: "bool"
-    property  :: "term list" <= "[]" 
-datatype kind = expert_opinion | argument | proof
+  is_formal :: "bool"
+  property  :: "term list" <= "[]" 
+datatype kind = expert_opinion | argument | "proof"
 doc_class result = technical +
-    evidence :: kind
-    property :: "thm list" <= "[]"
+  evidence :: kind
+  property :: "thm list" <= "[]"
 doc_class example = technical +
-    referring_to :: "(notion + definition) set" <= "{}"
+  referring_to :: "(notion + definition) set" <= "{}"
 doc_class "conclusion" = text_section +
-    establish :: "(claim \<times> result) set"
-\<close>
-}
+  establish :: "(claim \<times> result) set"
+\<close>}
 \<close>
 
 subsection\<open>Meta-types as Types\<close>
@@ -950,20 +955,101 @@ text\<open>
   conventional type-checking that this string represents actually a
   defined entity in the context of the system state
   \<^boxed_theory_text>\<open>\<theta>\<close>.  For example, the \<^boxed_theory_text>\<open>establish\<close>
-  attribute in the previous section is the power of the ODL: here, we model
+  attribute in our example is the power of the ODL: here, we model
   a relation between \<^emph>\<open>claims\<close> and \<^emph>\<open>results\<close> which may be a
   formal, machine-check theorem of type \<^ML_type>\<open>thm\<close> denoted by, for
   example: \<^boxed_theory_text>\<open>property = "[@{thm "system_is_safe"}]"\<close> in a
   system context \<^boxed_theory_text>\<open>\<theta>\<close> where this theorem is
   established. Similarly, attribute values like 
-  \<^boxed_theory_text>\<open>property = "@{term \<open>A \<leftrightarrow> B\<close>}"\<close>
-  require that the HOL-string \<^boxed_theory_text>\<open>A \<leftrightarrow> B\<close> is 
+  \<^boxed_theory_text>\<open>property = "@{term \<open>A \<longleftrightarrow> B\<close>}"\<close>
+  require that the HOL-string \<^boxed_theory_text>\<open>A \<longleftrightarrow> B\<close> is 
   again type-checked and represents indeed a formula in \<open>\<theta>\<close>. Another instance of 
   this process, which we call \<open>second-level type-checking\<close>, are term-constants
   generated from the ontology such as 
   \<^boxed_theory_text>\<open>@{definition <string>}\<close>. 
 \<close>
 
+(*<*)
+declare_reference*["sec:monitors"::technical]
+declare_reference*["sec:low_level_inv"::technical]
+(*>*)
+
+subsection*["sec:class_inv"::technical]\<open>ODL Class Invariants\<close>
+
+
+text\<open>
+  Ontological classes as described so far are too liberal in many situations.
+  There is a first high-level syntax implementation for class invariants.
+  These invariants can be checked when an instance of the class is defined.
+  To enable the checking of the invariants, the \<^boxed_theory_text>\<open>invariants_checking\<close>
+  theory attribute must be set:
+  @{boxed_theory_text [display]\<open>
+  declare[[invariants_checking = true]]\<close>}
+
+  For example, let's define the following two classes:
+  @{boxed_theory_text [display]\<open>
+  doc_class class_inv1 =
+    int1 :: "int"
+    invariant inv1 :: "int1 \<sigma> \<ge> 3"
+
+  doc_class class_inv2 = class_inv1 +
+    int2 :: "int"
+    invariant inv2 :: "int2 \<sigma> < 2"
+  \<close>}
+
+  The \<^boxed_theory_text>\<open>\<sigma>\<close> symbol is reserved and references the future instance class.
+  By relying on the implementation of the Records
+  in Isabelle/HOL~@{cite "wenzel:isabelle-isar:2020"},
+  one can reference an attribute of an instance using its selector function.
+  For example, \<^boxed_theory_text>\<open>int1 \<sigma>\<close> denotes the value
+  of the \<^boxed_theory_text>\<open>int1\<close> attribute
+  of the future instance of the class \<^boxed_theory_text>\<open>class_inv1\<close>.
+
+  Now let's define two instances, one of each class:
+
+  @{boxed_theory_text [display]\<open>
+  text*[testinv1::class_inv1, int1=4]\<open>lorem ipsum...\<close>
+  text*[testinv2::class_inv2, int1=3, int2=1]\<open>lorem ipsum...\<close>
+  \<close>}
+
+  The value of each attribute defined for the instances is checked against their classes invariants.
+  As the class \<^boxed_theory_text>\<open>class_inv2\<close> is a subsclass
+  of the class \<^boxed_theory_text>\<open>class_inv1\<close>, it inherits \<^boxed_theory_text>\<open>class_inv1\<close> invariants.
+  Hence the \<^boxed_theory_text>\<open>inv1\<close> invariant is checked
+  when the instance \<^boxed_theory_text>\<open>testinv2\<close> is defined.
+
+  Now let's add some invariants to our example in \<^technical>\<open>sec:example\<close>.
+  For example, one
+  would like to express that any instance of a \<^boxed_theory_text>\<open>result\<close> class finally has
+  a non-empty  property list, if its \<^boxed_theory_text>\<open>kind\<close> is \<^boxed_theory_text>\<open>proof\<close>, or that 
+  the \<^boxed_theory_text>\<open>establish\<close> relation between \<^boxed_theory_text>\<open>claim\<close> and
+  \<^boxed_theory_text>\<open>result\<close> is total.
+  In a high-level syntax, this type of constraints could be expressed, \<^eg>, by:
+  @{boxed_theory_text [display]\<open>
+  doc_class introduction = text_section +
+    authored_by :: "author set"  <= "UNIV" 
+    uses :: "notion set"
+    invariant author_finite :: "finite (authored_by \<sigma>)"
+  doc_class result = technical +
+    evidence :: kind
+    property :: "thm list" <= "[]"
+    invariant has_property :: "evidence \<sigma> = proof \<longleftrightarrow> property \<sigma> \<noteq> []"
+  doc_class example = technical +
+    referring_to :: "(notion + definition) set" <= "{}"
+  doc_class conclusion = text_section +
+    establish :: "(claim \<times> result) set"
+    invariant total_rel :: "\<forall> x. x \<in> Domain (establish \<sigma>)
+                                             \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"
+  \<close>}
+  All specified constraints are already checked in the IDE of \<^dof> while editing.
+  The invariant \<^boxed_theory_text>\<open>author_finite\<close> enforces that the user sets the 
+  \<^boxed_theory_text>\<open>authored_by\<close> set.
+  There are still some limitations with this high-level syntax.
+  For now, the high-level syntax does not support  monitors (see \<^technical>\<open>sec:monitors\<close>).
+  For example, one would like to delay a final error message till the
+  closing of a monitor.
+  For this use-case you can use low-level class invariants (see \<^technical>\<open>sec:low_level_inv\<close>).
+\<close>
 
 subsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
 text\<open>
@@ -1014,49 +1100,33 @@ text\<open>
   smaller than the others. Thus, an introduction is forced to have a
   header delimiting the borders of its representation. Class invariants
   on monitors allow for specifying structural properties on document
-  sections.\<close>
+  sections.
+  For now, the high-level syntax of invariants is not supported for monitors and you must use the
+  the low-level class invariants (see \<^technical>\<open>sec:low_level_inv\<close>.\<close>
 
 
-subsection*["sec:class_inv"::technical]\<open>ODL Class Invariants\<close>
-
+subsection*["sec:low_level_inv"::technical]\<open>ODL Low-level Class Invariants\<close>
 
 text\<open>
-  Ontological classes as described so far are too liberal in many situations. For example, one 
-  would like to express that any instance of a \<^boxed_theory_text>\<open>result\<close> class finally has a 
-  non-empty  property list, if its \<^boxed_theory_text>\<open>kind\<close> is \<^boxed_theory_text>\<open>proof\<close>, or that 
-  the \<^boxed_theory_text>\<open>establish\<close> relation between \<^boxed_theory_text>\<open>claim\<close> and
-  \<^boxed_theory_text>\<open>result\<close> is surjective.
-
-  In a high-level syntax, this type of constraints could be expressed, \<^eg>, by:
-
-@{boxed_theory_text [display]\<open>
-(* 1 *) \<forall> x \<in> result. x@evidence = proo$$f \<leftrightarrow> x@property \<noteq> []
-(* 2 *) \<forall> x \<in> conclusion. \<forall> y \<in> Domain(x@establish)
-                  \<rightarrow> \<exists> y \<in> Range(x@establish). (y,z) \<in> x@establish
-(* 3 *) \<forall> x \<in> introduction. finite(x@authored_by)
-\<close>}
-
-  where \<^boxed_theory_text>\<open>result\<close>, \<^boxed_theory_text>\<open>conclusion\<close>, and \<^boxed_theory_text>\<open>introduction\<close> are the set of
-  all possible instances of these document classes.  All specified constraints are already checked
-  in the IDE of \<^dof> while editing; it is however possible to delay a final error message till the 
-  closing of a monitor (see next section). The third constraint enforces that the user sets the 
-  \<^boxed_theory_text>\<open>authored_by\<close> set, otherwise an error will be reported.
-
-  For the moment, there is no high-level syntax for the definition of class invariants. A 
-  formulation, in SML, of the first class-invariant in \<^technical>\<open>sec:class_inv\<close> is straight-forward:
+  If one want to go over the limitations of the actual high-level syntax of the invariant,
+  one can define a function using SML.
+  A formulation, in SML, of the class-invariant \<^boxed_theory_text>\<open>has_property\<close>
+  in \<^technical>\<open>sec:class_inv\<close>, defined in the supposedly \<open>Low_Level_Syntax_Invariants\<close> theory
+  (note the long name of the class),
+  is straight-forward:
 
 \begin{sml}
 fun check_result_inv oid {is_monitor:bool} ctxt =
-  let val kind = compute_attr_access ctxt "kind" oid <@>{here} <@>{here}
-      val prop = compute_attr_access ctxt "property" oid <@>{here} <@>{here}
+  let val kind = AttributeAccess.compute_attr_access ctxt "evidence" oid <@>{here} <@>{here}
+      val prop = AttributeAccess.compute_attr_access ctxt "property" oid <@>{here} <@>{here}
       val tS = HOLogic.dest_list prop
-  in  case kind_term of
+  in  case kind of
        <@>{term "proof"} => if not(null tS) then true
                           else error("class result invariant violation")
       | _ => false
   end
  val _ = Theory.setup (DOF_core.update_class_invariant
-                                "tiny_cert.result" check_result_inv)
+                                "Low_Level_Syntax_Invariants.result" check_result_inv)
 \end{sml}
 
   The \<^ML>\<open>Theory.setup\<close>-command (last line) registers the \<^boxed_theory_text>\<open>check_result_inv\<close> function 

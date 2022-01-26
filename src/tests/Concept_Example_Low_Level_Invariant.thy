@@ -14,7 +14,7 @@
 chapter\<open>Setting and modifying attributes of doc-items\<close>
 
 theory 
-  Concept_ExampleInvariant
+  Concept_Example_Low_Level_Invariant
 imports 
   "Isabelle_DOF.Conceptual" (* we use the generic "Conceptual" ontology *)
 begin
