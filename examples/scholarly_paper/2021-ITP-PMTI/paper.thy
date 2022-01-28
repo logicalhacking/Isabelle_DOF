@@ -258,18 +258,124 @@ subsection\<open>Code-Generation in Isabelle\<close>
 
 text\<open>Explain eval and nbe, and refer to references.\<close>
 
+
+
+
 section\<open>Invariants in DOF\<close>
+
+text\<open>
+  A novel mechanism to specify invariants is implemented
+  and can now be specified in common HOL syntax.
+%  These invariants can be checked when an instance of the class is defined.
+%  To enable the checking of the invariants, the \<^emph>\<open>invariants\_checking\<close>
+%  theory attribute must be set:
+%  \begin{isar}
+%  declare[[invariants_checking = true]]
+%  \end{isar}
+  If we take back the ontology example of~@{cite "brucker.ea:isabelledof:2019"}, we can now
+  specify the constraints, like that any instance of a \<^emph>\<open>result\<close> class finally has
+  a non-empty  property list, if its \<^emph>\<open>kind\<close> is \<^emph>\<open>proof\<close>, or that 
+  the \<^emph>\<open>establish\<close> relation between \<^emph>\<open>claim\<close> and
+  \<^emph>\<open>result\<close> is total, using the keyword \<^emph>\<open>invariant\<close> in the class definition:
+  \begin{isar}
+doc_class title =
+  short_title :: "string option" <= "None"
+doc_class author =
+  email :: "string" <= "''''"
+
+datatype classification = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
+
+doc_class abstract =
+  keywordlist :: "string list" <= "[]"
+  safety_level :: "classification" <= "SIL3"
+doc_class text_section =
+  authored_by :: "author set" <= "{}"
+  level :: "int option" <= "None"
+
+type_synonym notion = string
+
+  doc_class introduction = text_section +
+    authored_by :: "author set"  <= "UNIV" 
+    uses :: "notion set"
+    invariant author_finite :: "finite (authored_by \<sigma>)"
+doc_class claim = introduction +
+  based_on :: "notion list" 
+doc_class technical = text_section +
+  formal_results :: "thm list" 
+doc_class "definition" = technical +
+  is_formal :: "bool"
+  property  :: "term list" <= "[]" 
+
+datatype kind = expert_opinion | argument | "proof"
+
+  doc_class result = technical +
+    evidence :: kind
+    property :: "thm list" <= "[]"
+    invariant has_property :: "evidence \<sigma> = proof \<longleftrightarrow> property \<sigma> \<noteq> []"
+  doc_class example = technical +
+    referring_to :: "(notion + definition) set" <= "{}"
+  doc_class conclusion = text_section +
+    establish :: "(claim \<times> result) set"
+    invariant total_rel :: "\<forall> x. x \<in> Domain (establish \<sigma>)
+                                             \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"
+\end{isar}
+
+  In our example, the invariant \<^emph>\<open>author\_finite\<close> enforces that the user sets the 
+  \<^emph>\<open>authored\_by\<close> set.
+  The \<^emph>\<open>$\sigma$\<close> symbol is reserved and references the future instance class.
+  By relying on the implementation of the Records
+  in Isabelle/HOL~@{cite "wenzel:isabelle-isar:2020"},
+  one can reference an attribute of an instance using its selector function.
+  For example,  \<^emph>\<open>establish $\sigma$\<close> denotes the value
+  of the \<^emph>\<open>establish\<close> attribute
+  of the future instance of the class \<^emph>\<open>conclusion\<close>.
+  
+  if we define some instances like: (ADD EXAMPLE !!!)
+  The value of each attribute defined for the instances is checked at run-time
+  against their class invariants.
+  SPEAK ABOUT INVARIANTS INHERITAGE ???
+  As the class  \<^emph>\<open>class\_inv2\<close> is a subsclass
+  of the class \<^emph>\<open>class\_inv1\<close>, it inherits \<^emph>\<open>class\_inv1\<close> invariants.
+  Hence the \<^emph>\<open>inv1\<close> invariant is checked
+  when the instance \<^emph>\<open>testinv2\<close> is defined.
+\<close>
+
 
 section\<open>Proving Morphisms on Ontologies\<close>
 
 section\<open>Example and Queries\<close>
+
+text\<open>
+A new mechanism to make query on instances is available and uses the HOL implementation of Lists.
+So complex queries can be defined using functions over the instances list.
+With the class:
+\begin{isar}
+doc_class Z =
+  z::"int"
+\end{isar}
+and some instances:
+\begin{isar}
+text*[test1Z::Z, z=1]\<open>lorem ipsum...\<close>
+text*[test2Z::Z, z=4]\<open>lorem ipsum...\<close>
+text*[test3Z::Z, z=3]\<open>lorem ipsum...\<close>
+\end{isar}
+we can get all the instances of the class Z:
+\begin{isar}
+value*\<open>@{Z-instances}\<close>
+\end{isar}
+or the instances of the class Z whose attribute z > 2:
+\begin{isar}
+value*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z-instances}\<close>
+\end{isar}
+
+EXPLAIN VALUE* ???
+\<close>
 
 section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] \<open>Applications\<close>
 
 subsection\<open>Engineering Example : An Extract from PLib\<close>
 
 subsection\<open>Mathematics Example : An Extract from OntoMathPro\<close>
-
 
 
 section\<open>Conclusion\<close>
@@ -310,8 +416,6 @@ https://doi.org/10.1145/2479787.2479830
 
 
 section\<open> Related work \<close>
-
-ML\<open>open Goal\<close>
 
 text\<open>
 \<^item> Geschwalle: Tom Gruber's "Ontology for Engineering Mathematics"
