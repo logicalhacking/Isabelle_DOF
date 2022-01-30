@@ -197,7 +197,8 @@ ITP community allowing a deeper structuring of mathematical libraries such as th
 declare_reference*[casestudy::text_section]
 (*>*)
 
-section*[bgrnd::text_section,main_author="Some(@{docitem ''adb''}::author)"] \<open> Background\<close>
+section*[bgrnd::background,main_author="Some(@{docitem ''bu''}::author)"] \<open> Background\<close>
+(*
 subsection\<open>Isabelle/DOF Design and Implementation\<close>
 text\<open>
   In this section, we provide a guided tour through the underlying technologies of this paper: 
@@ -215,32 +216,25 @@ text\<open>
   The plugin Isabelle/HOL offers a modeling language similar to functional programming languages
   extended by a logic and automated proof and animation techniques.
 \<close>
-
-subsection*[bgrnd_isadof::text_section]\<open>The \<^dof> Framework\<close>
+*)
+subsection*[bgrnd_isadof::background]\<open>The \<^dof> Framework\<close>
 text\<open>
   \<^dof> ~@{cite "brucker.ea:isabelle-ontologies:2018" and 
               "brucker.ea:isabelledof:2019"} 
-  is a document ontology framework that extends Isabelle/HOL. We understand
-  by a \<^emph>\<open>document ontology\<close> structured meta-data attached to an integrated document allowing
-  classifying text-elements, connect them to typed meta-data, and establishing typed links between text-
-  and formal elements (such as definitions, proofs, code, test-results, etc). 
-
+  is a document ontology framework that extends Isabelle/HOL.
   \<^dof> offers basically two things: a language called ODL to \<^emph>\<open>specify\<close> a formal ontology,
   and ways to \<^emph>\<open>annotate\<close> an integrated document written in Isabelle/HOL with the specified
-  meta-data. Additionally, \<^dof> generates from an ontology a family of semantic macros---called
-  \<^emph>\<open>antiquotations\<close> that may appear in text or code---allowing establishing
-  machine-checked links between classified entities. Not unlike the UML/OCL meta-model, ODL offers class
-  invariants as well as means to express 
-  structural constraints in documents.  
-  Unlike UML, however, \<^dof> allows for integrated documents with informal and formal elements
-  including the necessary management of logical contexts. 
+  meta-data. Additionally, \<^dof> generates from an ontology a family of 
+  \<^emph>\<open>antiquotations\<close> allowing to establish  machine-checked links between classified entities. 
+%  Unlike UML, however, \<^dof> allows for integrated documents with informal and formal elements
+%  including the necessary management of logical contexts. 
 
   The perhaps most attractive aspect of \<^dof> is its deep integration into the IDE of Isabelle 
-  (PIDE), which allows hypertext-like navigation as well as fast user-feedback
-  during development and evolution of the integrated document. This includes rich editing support, 
+  (PIDE), which allows a hypertext-like navigation as well as fast user-feedback
+  during development and evolution of the integrated source. This includes rich editing support, 
   including on-the-fly semantics checks, hinting, or auto-completion. 
   \<^dof> supports \<^LaTeX> - based document generation as well as ontology-aware ``views'' on 
-  the integrated document, \ie, specific versions of generated PDF addressing, 
+  the integrated document, \<^ie>, specific versions of generated PDF addressing, 
   for example, different stake-holders. 
 \<close>
 
@@ -248,7 +242,7 @@ text\<open>
 figure*[isadof_screenshot::figure, relative_width="100", src="''figures/cicm2018-combined''"]\<open>
   The \<^dof> IDE (left) and the corresponding PDF(right).
 \<close>
-text*[description_scrrenshot::text_section]\<open>
+text*[description_scrrenshot::background]\<open>
   @{docitem \<open>isadof_screenshot\<close>} shows \<^dof> in action: the left-hand side shows the IDE of 
   \<^dof> in the context of a user session maintaining our case study 
   (see @{docitem (unchecked) "casestudy"}) 
@@ -257,7 +251,7 @@ text*[description_scrrenshot::text_section]\<open>
 \<close>
 (*>*)
 
-subsection*[bgrnd_ODL::text_section]\<open>A Guided Tour through ODL\<close>
+subsection*[bgrnd_ODL::background]\<open>A Guided Tour through ODL\<close>
 text\<open>
   \<^dof> provides a strongly typed Ontology Definition Language (ODL) that provides the usual 
   concepts of ontologies such as
@@ -300,6 +294,8 @@ text\<open>\autoref{text-elements} shows an ontological annotation of a requirem
   it suffices to click on its keyword: the IDE will display the class-definition and its surrounding 
   documentation in the ontology.\<close>
 
+(*
+
 text\<open>\<^dof>'s generated antiquotations are part of a general mechanism of  
   Isabelle's standard antiquotations heavily used in various papers and technical reports.
   For example, in the following informal text, the antiquotation \<^verbatim>\<open>thm refl\<close> refers  
@@ -323,15 +319,18 @@ text\<open>\<^dof>'s generated antiquotations are part of a general mechanism of
   generated glossaries or lists of concepts. 
 \<close>
 
+*)
+
+subsection\<open>Meta-Objects as Extensible Records\<close>
+
+text\<open>Explain record notation.\<close>
 
 subsection\<open>Code-Generation in Isabelle\<close>
 
 text\<open>Explain eval and nbe, and refer to references.\<close>
 
-
-
-
-section\<open>Invariants in DOF\<close>
+section*[invariants::technical,main_author="Some(@{docitem ''nic''}::author)"] 
+\<open>Term-Context support and Invariants in DOF\<close>
 
 text\<open>
   A novel mechanism to specify invariants is implemented
@@ -410,10 +409,9 @@ datatype kind = expert_opinion | argument | "proof"
   when the instance \<^emph>\<open>testinv2\<close> is defined.
 \<close>
 
+subsection\<open>Example and Queries\<close>
 
-section\<open>Proving Morphisms on Ontologies\<close>
-
-section\<open>Example and Queries\<close>
+section*["morphisms"::technical,main_author="Some(@{docitem ''idir''}::author)"] \<open>Proving Morphisms on Ontologies\<close>
 
 text\<open>
 A new mechanism to make query on instances is available and uses the HOL implementation of Lists.
@@ -448,8 +446,34 @@ subsection\<open>Engineering Example : An Extract from PLib\<close>
 subsection\<open>Mathematics Example : An Extract from OntoMathPro\<close>
 
 
-section\<open>Conclusion\<close>
-subsection\<open>Related Works\<close>
+section*[concl::conclusion]\<open>Conclusion\<close>
+subsection*[rw::related_work]\<open>Related Works\<close>
+
+text\<open>
+\<^item> Geschwalle: Tom Gruber's "Ontology for Engineering Mathematics"
+  \<^url>\<open>https://tomgruber.org/writing/an-ontology-for-engineering-mathematics\<close>
+\<^item> OntoMathPro contains indeed something like a "taxonomy of the fields of mathematics" pp 110
+  \<^url>\<open>https://kpfu.ru/staff_files/F_438204284/OntoMathPro_ontology_KESW2014.pdf\<close>
+  According to In total, OntoMathPRO contains 3,449 classes ...
+
+\<^item> Translated from the Russian Federal Standard for Higher Education on mathematics
+  for master students, Section 5.2:
+   \<^url>\<open>http://www.edu.ru/db-mon/mo/Data/d_10/prm40-1.pdf\<close>
+\<^item> Elements of OntoMathPro :
+  (* figures/OntoMathPro-Taxonomy.png 
+     figures/OntoMathPro-Taxonomy-2.png *)
+\<^item> Other Onto:  DBpedia @{cite "10.1007/978-3-540-76298-0_52"}
+  SPARQL endpoint: \<^url>\<open>http://dbpedia.org/sparql\<close>  
+\<^item> Other Onto:  ScienceWISE
+  \<^url>\<open>http://data.sciencewise.info/openrdf-sesame/repositories/SW\<close> 
+  \<^url>\<open>https://github.com/CLLKazan/OntoMathPro\<close> 
+
+\<^item> Search Engines: Wikipedia Formula Search, \<^url>\<open>http://shinh.org/wfs\<close>
+
+\<^item> And then: The stuff from Univ Erlangen (Kohlhase et al).
+
+\<close>
+
 subsubsection\<open>The notion of \<^emph>\<open>Integrated Source\<close>\<close>
 text\<open>Links to the term: Integrated Document 
 \<^item> \<^url>\<open>https://www.openkm.com/blog/integrated-document-management.html\<close>
@@ -485,34 +509,8 @@ https://doi.org/10.1145/2479787.2479830
 *)
 
 
-section\<open> Related work \<close>
 
-text\<open>
-\<^item> Geschwalle: Tom Gruber's "Ontology for Engineering Mathematics"
-  \<^url>\<open>https://tomgruber.org/writing/an-ontology-for-engineering-mathematics\<close>
-\<^item> OntoMathPro contains indeed something like a "taxonomy of the fields of mathematics" pp 110
-  \<^url>\<open>https://kpfu.ru/staff_files/F_438204284/OntoMathPro_ontology_KESW2014.pdf\<close>
-  According to In total, OntoMathPRO contains 3,449 classes ...
-
-\<^item> Translated from the Russian Federal Standard for Higher Education on mathematics
-  for master students, Section 5.2:
-   \<^url>\<open>http://www.edu.ru/db-mon/mo/Data/d_10/prm40-1.pdf\<close>
-\<^item> Elements of OntoMathPro :
-  (* figures/OntoMathPro-Taxonomy.png 
-     figures/OntoMathPro-Taxonomy-2.png *)
-\<^item> Other Onto:  DBpedia @{cite "10.1007/978-3-540-76298-0_52"}
-  SPARQL endpoint: \<^url>\<open>http://dbpedia.org/sparql\<close>  
-\<^item> Other Onto:  ScienceWISE
-  \<^url>\<open>http://data.sciencewise.info/openrdf-sesame/repositories/SW\<close> 
-  \<^url>\<open>https://github.com/CLLKazan/OntoMathPro\<close> 
-
-\<^item> Search Engines: Wikipedia Formula Search, \<^url>\<open>http://shinh.org/wfs\<close>
-
-\<^item> And then: The stuff from Univ Erlangen (Kohlhase et al).
-
-\<close>
-
-
+text\<open>\pagebreak\<close>
 section\<open>Annex\<close>
 
 subsection\<open>Remotely relevant stuff\<close>
