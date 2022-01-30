@@ -165,7 +165,7 @@ and typed reference mechanisms inside text- and ML-contexts.
 
 *)
 
-text\<open>In this paper, we extend prior versions of \<^dof> by 
+text\<open>As novel contribution, this work extends prior versions of \<^dof> by 
 \<^enum> support of antiquotions in a new class of contexts, namely \<^emph>\<open>term contexts\<close> 
   (rather than SML code or semi-formal text). Thus, annotations generated
   from  \<^dof> may also occur in \<open>\<lambda>\<close>-terms used to denote meta-data. 
@@ -174,13 +174,13 @@ text\<open>In this paper, we extend prior versions of \<^dof> by
   common HOL \<open>\<lambda>\<close>-term syntax.
 \<close>
 text\<open> For example, the \<^dof> evaluation command taking a HOL-expression:
-@{theory_text [display,indent=10, margin=70] 
-\<open> value*[ass::Assertion, relev=2::int] \<open>mapfilter (\<lambda> \<sigma>. relev \<sigma> > 2) @{instance_of \<open>Assertion\<close>}\<close>\<close>
+@{theory_text [display,indent=6, margin=70] 
+\<open> value*[ass::Assertion, relvce=2::int] \<open>mapfilter (\<lambda> \<sigma>. relvce \<sigma> > 2) @{instance_of \<open>Assertion\<close>}\<close>\<close>
 }
 where \<^dof> command \<open>value*\<close> type-checks, expands in an own validation phase
 the \<open>instance_of\<close>-term antiquotation, and evaluates the resulting HOL expression
 above. Assuming an ontology providing the class \<open>Assertion\<close> having at least the
-integer attribute \<open>relev\<close>, the command finally creates an instance of \<open>Assertion\<close> and 
+integer attribute \<open>relvce\<close>, the command finally creates an instance of \<open>Assertion\<close> and 
 binds this to the label \<open>ass\<close> for further use.
 
 Beyond the gain of expressivity in \<^dof> ontologies, term-antiquotations pave the way 
