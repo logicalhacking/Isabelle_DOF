@@ -234,7 +234,7 @@ A document class\<^bindex>\<open>document class\<close> can be defined using the
      We call document classes with an \<open>accepts_clause\<close> 
      \<^emph>\<open>monitor classes\<close> or \<^emph>\<open>monitors\<close> for short.
      \<^rail>\<open> @@{command "doc_class"} class_id '=' (class_id '+')? (attribute_decl+) \<newline>
-           (invariant_decl?) 
+           (invariant_decl *) 
            (accepts_clause rejects_clause?)?\<close>
 \<^item> \<open>attribute_decl\<close>:\<^index>\<open>attribute\_decl@\<open>attribute_decl\<close>\<close>
      \<^rail>\<open> name '::' '"' type '"' default_clause? \<close>
@@ -243,7 +243,7 @@ A document class\<^bindex>\<open>document class\<close> can be defined using the
      records in HOL. Note that sufficient type information must be provided in order to
      disambiguate the argument of the expression
      and the \<^boxed_text>\<open>\<sigma>\<close> symbol is reserved to reference the instance of the class itself. 
-     \<^rail>\<open> 'invariant' name '::' '"' term '"' + 'and' \<close>
+     \<^rail>\<open> 'invariant' (name '::' '"' term '"' + 'and') \<close>
 \<^item> \<open>accepts_clause\<close>:\<^index>\<open>accepts\_clause@\<open>accepts_clause\<close>\<close>
      \<^rail>\<open> 'accepts' '"' regexpr '"'\<close>
 \<^item> \<open>rejects_clause\<close>:\<^index>\<open>rejects\_clause@\<open>rejects_clause\<close>\<close>
