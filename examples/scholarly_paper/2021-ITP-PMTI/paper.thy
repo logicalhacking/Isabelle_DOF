@@ -270,11 +270,12 @@ text\<open>
   HOL-types, allowing for formal \<^emph>\<open>links\<close> to and between ontological concepts. For example, the 
   basic concept of requirements from CENELEC 50128~@{cite "bsi:50128:2014"} is captured in ODL as 
   follows:
-  \begin{isar}
+  @{theory_text [display,indent=10, margin=70]
+\<open>
     doc_class requirement = text_element +   (* derived from text_element    *)
     ~         long_name   ::"string option"  (* an optional string attribute *) 
     ~         is_concerned::"role set"       (* roles working with this req. *)
-  \end{isar}
+\<close>}
   This ODL class definition maybe part of one or more Isabelle theory--files capturing the entire
   ontology definition. Isabelle's session management allows for pre-compiling them before being 
   imported in the actual target documentation required to be compliant to this ontology. 
@@ -300,9 +301,10 @@ text\<open>\<^dof>'s generated antiquotations are part of a general mechanism of
   Isabelle's standard antiquotations heavily used in various papers and technical reports.
   For example, in the following informal text, the antiquotation \<^verbatim>\<open>thm refl\<close> refers  
   to the reflexivity axiom from HOL: 
-  \begin{isar}
+@{theory_text [display,indent=10, margin=70]
+\<open>
   text<Open>According to the reflexivity axiom <@>{thm refl}, we obtain in \<Gamma>
-         for <@>{term <Open>fac 5<Close>} the result <@>{value <Open>fac 5<Close>}.<Close>\end{isar}
+         for <@>{term <Open>fac 5<Close>} the result <@>{value <Open>fac 5<Close>}.<Close>\<close>}
   In the PDF output, this is represented as follows:
   \begin{out}
   According to the reflexivity axiom $x = x$, we obtain in \<open>\<Gamma>\<close> for $\operatorname{fac} 5$ the result $120$.
@@ -336,17 +338,18 @@ text\<open>
   A novel mechanism to specify invariants is implemented
   and can now be specified in common HOL syntax.
 %  These invariants can be checked when an instance of the class is defined.
-%  To enable the checking of the invariants, the \<^emph>\<open>invariants\_checking\<close>
+%  To enable the checking of the invariants, the \<^theory_text>\<open>invariants_checking\<close>
 %  theory attribute must be set:
-%  \begin{isar}
-%  declare[[invariants_checking = true]]
-%  \end{isar}
+%  @{theory_text [display,indent=10, margin=70] 
+  \<open>
+  declare[[invariants_checking = true]]
+  \<close>}
   If we take back the ontology example of~@{cite "brucker.ea:isabelledof:2019"}, we can now
   specify the constraints, like that any instance of a \<^emph>\<open>result\<close> class finally has
-  a non-empty  property list, if its \<^emph>\<open>kind\<close> is \<^emph>\<open>proof\<close>, or that 
-  the \<^emph>\<open>establish\<close> relation between \<^emph>\<open>claim\<close> and
-  \<^emph>\<open>result\<close> is total, using the keyword \<^emph>\<open>invariant\<close> in the class definition:
-  \begin{isar}
+  a non-empty  property list, if its \<^theory_text>\<open>kind\<close> is \<^theory_text>\<open>proof\<close>, or that 
+  the \<^theory_text>\<open>establish\<close> relation between \<^theory_text>\<open>claim\<close> and
+  \<^theory_text>\<open>result\<close> is total, using the keyword \<^theory_text>\<open>invariant\<close> in the class definition:
+@{theory_text [display,indent=10, margin=70] \<open>
 doc_class title =
   short_title :: "string option" <= "None"
 doc_class author =
@@ -387,26 +390,35 @@ datatype kind = expert_opinion | argument | "proof"
     establish :: "(claim \<times> result) set"
     invariant total_rel :: "\<forall> x. x \<in> Domain (establish \<sigma>)
                                              \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"
-\end{isar}
+\<close>}
 
-  In our example, the invariant \<^emph>\<open>author\_finite\<close> enforces that the user sets the 
-  \<^emph>\<open>authored\_by\<close> set.
-  The \<^emph>\<open>$\sigma$\<close> symbol is reserved and references the future instance class.
+  In our example, the invariant \<^theory_text>\<open>author_finite \<close> enforces that the user sets the 
+  \<^theory_text>\<open>authored_by\<close> set.
+  The \<^theory_text>\<open>\<sigma>\<close> symbol is reserved and references the future instance class.
   By relying on the implementation of the Records
   in Isabelle/HOL~@{cite "wenzel:isabelle-isar:2020"},
   one can reference an attribute of an instance using its selector function.
-  For example,  \<^emph>\<open>establish $\sigma$\<close> denotes the value
-  of the \<^emph>\<open>establish\<close> attribute
-  of the future instance of the class \<^emph>\<open>conclusion\<close>.
+  For example, \<^theory_text>\<open>establish \<sigma>\<close> denotes the value
+  of the \<^theory_text>\<open>establish\<close> attribute
+  of the future instance of the class \<^theory_text>\<open>conclusion\<close>.
   
   if we define some instances like: (ADD EXAMPLE !!!)
+
+@{theory_text [display,indent=10, margin=70] \<open>
+text*[church::author, email="\<open>church@lambda.org\<close>"]\<open>\<close>
+text*[introduction1::introduction, authored_by = "{@{author \<open>church\<close>}}"]\<open>\<close>
+(*text*[introduction2::introduction]\<open>\<close>*)
+text*[resultProof::result, evidence = "proof", property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
+text*[resultArgument::result, evidence = "argument"]\<open>\<close>
+
+\<close>}
   The value of each attribute defined for the instances is checked at run-time
   against their class invariants.
   SPEAK ABOUT INVARIANTS INHERITAGE ???
-  As the class  \<^emph>\<open>class\_inv2\<close> is a subsclass
-  of the class \<^emph>\<open>class\_inv1\<close>, it inherits \<^emph>\<open>class\_inv1\<close> invariants.
-  Hence the \<^emph>\<open>inv1\<close> invariant is checked
-  when the instance \<^emph>\<open>testinv2\<close> is defined.
+  As the class  \<^theory_text>\<open>class_inv2\<close> is a subsclass
+  of the class \<^theory_text>\<open>class_inv1\<close>, it inherits \<^theory_text>\<open>class_inv1\<close> invariants.
+  Hence the \<^theory_text>\<open>inv1\<close> invariant is checked
+  when the instance \<^theory_text>\<open>testinv2\<close> is defined.
 \<close>
 
 subsection\<open>Example and Queries\<close>
@@ -417,24 +429,24 @@ text\<open>
 A new mechanism to make query on instances is available and uses the HOL implementation of Lists.
 So complex queries can be defined using functions over the instances list.
 With the class:
-\begin{isar}
+@{theory_text [display,indent=10, margin=70] \<open>
 doc_class Z =
   z::"int"
-\end{isar}
+\<close>}
 and some instances:
-\begin{isar}
+@{theory_text [display,indent=10, margin=70] \<open>
 text*[test1Z::Z, z=1]\<open>lorem ipsum...\<close>
 text*[test2Z::Z, z=4]\<open>lorem ipsum...\<close>
 text*[test3Z::Z, z=3]\<open>lorem ipsum...\<close>
-\end{isar}
+\<close>}
 we can get all the instances of the class Z:
-\begin{isar}
+@{theory_text [display,indent=10, margin=70] \<open>
 value*\<open>@{Z-instances}\<close>
-\end{isar}
-or the instances of the class Z whose attribute z > 2:
-\begin{isar}
+\<close>}
+or the instances of the class Z whose attribute \<^theory_text>\<open>z > 2\<close>:
+@{theory_text [display,indent=10, margin=70] \<open>
 value*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z-instances}\<close>
-\end{isar}
+\<close>}
 
 EXPLAIN VALUE* ???
 \<close>
