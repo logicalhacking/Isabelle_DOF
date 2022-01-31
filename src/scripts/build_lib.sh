@@ -119,6 +119,7 @@ fi
 cp $ROOT root.tex
 cp $ISABELLE_HOME_USER/DOF/latex/*.sty .
 cp $ISABELLE_HOME_USER/DOF/document-template/*.sty .
+cp $ISABELLE_HOME_USER/DOF/document-template/*.cls .
 
 # delete outdated aux files from previous runs
 rm -f *.aux 

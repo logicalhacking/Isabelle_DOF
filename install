@@ -181,6 +181,7 @@ install_and_register(){
     cp $GEN_DIR/scripts/* "$DIR"
     cp $GEN_DIR/document-templates/* "$DIR"
     cp $GEN_DIR/DOF/*/*.sty "$DIR"
+    cp $GEN_DIR/DOF/*/*.cls "$DIR"
     
     ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/:.*$//'`
     sed -i -e "s|%%% CONFIG %%%| \
