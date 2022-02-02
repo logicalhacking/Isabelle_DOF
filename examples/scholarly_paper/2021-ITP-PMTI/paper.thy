@@ -403,11 +403,11 @@ types. The notation for terms and types is as follows:
 \<close>
 
 text\<open> ... where the so-called more-field \<open>\<dots>\<close> is used to 'fill-in' record-extensions.
-Schematic record types allow for simulating object-oriented features such as 
+Schematic record types @{cite "naraschewski1998object"} allow for simulating object-oriented features such as 
 (single-)inheritance while maintaining a compositional style of verification
-@{cite "naraschewski1998object"}: it is possible to prove a property \<^term>\<open>P (x::'a T\<close>
+: it is possible to prove a property \<^term>\<open>P (a::'a T_scheme)\<close>
 which will remain true for all extensions (which are just instances of the
-\<^typ>\<open>'a T\<close>-type). 
+\<^typ>\<open>'a T_scheme\<close>-type). 
 \<close>
 
 text\<open>In \<^dof>, \<^verbatim>\<open>onto_class\<close>es and the logically equivalent  \<^verbatim>\<open>doc_class\<close>es were
@@ -417,9 +417,33 @@ types and can therefore be inherited in a subclass. \<^dof> handles the parametr
 polymorphism implicitly. 
 \<close>
 
-subsection\<open>Code-Generation in Isabelle\<close>
+subsection\<open>Advanced Evaluation in Isabelle\<close>
+text\<open>Besides the powerful, but relatively slow rewriting-based proof method 
+\<^theory_text>\<open>simp\<close>, there are basically two other techniques for the evaluation of terms:
+\<^item> evaluation via reflection into SML (\<^theory_text>\<open>eval\<close>), and
+\<^item> normalization by evaluation @{cite "AehligHN12"} (\<^theory_text>\<open>nbe\<close>).
 
-text\<open>Explain eval and nbe, and refer to references.\<close>
+The former is based on a nearly one-to-one compilation of datatype specification 
+constructs and recursive  function definitions into SML datatypes and functions.
+The generated code is directly compiled by the underlying SML compiler of the 
+Isabelle platform. This way, pattern-matching becomes natively compiled rather
+than interpreted as in the matching process of \<^theory_text>\<open>simp\<close>. @{cite "AehligHN12"} 
+describes scenarios where \<^theory_text>\<open>eval\<close> is five orders of magnitude faster than \<^theory_text>\<open>simp\<close>.
+However, it is restricted to ground terms. 
+
+The latter is based on a compilation of datatype specifications into a uniform
+data-universe enriched by closures and explicit variables. Recursive function 
+definitions in HOL were compiled to SML functions where the argument terms
+were represented in the data-universe. Pattern-matching is still compiled to
+native functions executed if closures are completed.  \<^theory_text>\<open>nbe\<close> is not restricted
+to ground terms, but lies in its efficiency between  \<^theory_text>\<open>simp\<close> and  \<^theory_text>\<open>eval\<close>.
+
+\<^dof> uses a combination of these three techniques in order to check invariants
+for ontological classes on the fly during editing, paving the way for both
+a uniform specification language of ontological data --- namely HOL --- as
+well as the possibility to \<^emph>\<open>prove\<close> properties over and relations between
+classes.\<close>
+
 
 section*[invariants::technical,main_author="Some(@{docitem ''nic''}::author)"] 
 \<open>Term-Context support and Invariants in DOF\<close>
