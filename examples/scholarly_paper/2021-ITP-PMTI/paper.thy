@@ -378,10 +378,44 @@ text\<open>\<^dof>'s generated antiquotations are part of a general mechanism of
 \<close>
 
 *)
+(*<*)
+type_synonym A = int 
+type_synonym B = int
+record T =
+  x :: A
+  y :: B
+(*>*)
+
+term "\<lparr>x = a,y = b\<rparr>"
 
 subsection\<open>Meta-Objects as Extensible Records\<close>
+(* too fat ? what do we need of this ? *)
+text\<open>
+Isabelle/HOL supports both fixed and schematic records at the level of terms and 
+types. The notation for terms and types is as follows:
 
-text\<open>Explain record notation.\<close>
+\<^item> fixed record terms     \<^term>\<open>\<lparr>x = a,y = b\<rparr>\<close>; fixed record types \<open>\<lparr>x::A, y::B\<rparr>\<close>.
+\<^item> schematic record terms \<^term>\<open>\<lparr>x = a,y = b, \<dots> = m::'a\<rparr>\<close>; 
+  schematic record types: \<open>\<lparr>x::A, y::B, \<dots> = 'a\<rparr>\<close> which were usually abbreviated
+  to \<^typ>\<open>'a T_scheme\<close>.
+\<^item> selectors are written \<^term>\<open>x(R::'a T_scheme)\<close>, \<^term>\<open>y(R::'a T_scheme)\<close>. 
+\<^item> updates were denoted \<^term>\<open>r\<lparr>x := a\<rparr>\<lparr>y := b\<rparr>\<close> or just \<^term>\<open>r\<lparr>x:=a, y:=b\<rparr>\<close>. 
+\<close>
+
+text\<open> ... where the so-called more-field \<open>\<dots>\<close> is used to 'fill-in' record-extensions.
+Schematic record types allow for simulating object-oriented features such as 
+(single-)inheritance while maintaining a compositional style of verification
+@{cite "naraschewski1998object"}: it is possible to prove a property \<^term>\<open>P (x::'a T\<close>
+which will remain true for all extensions (which are just instances of the
+\<^typ>\<open>'a T\<close>-type). 
+\<close>
+
+text\<open>In \<^dof>, \<^verbatim>\<open>onto_class\<close>es and the logically equivalent  \<^verbatim>\<open>doc_class\<close>es were
+represented by schematic record types and instances thereof by schematic terms. 
+Invariants of an \<^verbatim>\<open>onto_class\<close> are thu predicates over schematic record
+types and can therefore be inherited in a subclass. \<^dof> handles the parametric  
+polymorphism implicitly. 
+\<close>
 
 subsection\<open>Code-Generation in Isabelle\<close>
 
