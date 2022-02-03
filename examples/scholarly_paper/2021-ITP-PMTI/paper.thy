@@ -422,8 +422,9 @@ subsection\<open>Advanced Evaluation in Isabelle\<close>
 text\<open>Besides the powerful, but relatively slow rewriting-based proof method 
 \<^theory_text>\<open>simp\<close>, there are basically two other techniques for the evaluation of terms:
 \<^item> evaluation via reflection into SML (\<^theory_text>\<open>eval\<close>), and
-\<^item> normalization by evaluation @{cite "AehligHN12"} (\<^theory_text>\<open>nbe\<close>).
+\<^item> normalization by evaluation @{cite "AehligHN12"} (\<^theory_text>\<open>nbe\<close>).\<close>
 
+text\<open>
 The former is based on a nearly one-to-one compilation of datatype specification 
 constructs and recursive  function definitions into SML datatypes and functions.
 The generated code is directly compiled by the underlying SML compiler of the 
