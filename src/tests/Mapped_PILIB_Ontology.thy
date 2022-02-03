@@ -3,7 +3,14 @@ theory Mapped_PILIB_Ontology
 
 begin
 
-text\<open>User Ontology\<close>
+text\<open>
+The following example is extract from this reference : 
+CONTEXT-EXPLICATION IN CONCEPTUAL ONTOLOGIES: PLIB ONTOLOGIES AND THEIR USE FOR INDUSTRIAL DATA
+Special issue of JAMS - Journal of Advanced Manufacturing Systems
+By GUY PIERRA
+\<close>
+
+text\<open>Local Ontology\<close>
 
 onto_class Item =
   item_name :: string
@@ -59,6 +66,23 @@ onto_class Hardware = Informatic +
 onto_class R_Software = Informatic +
   version :: int
 
+
+text\<open>
+
+Isa_DOF framework does not assume that all documents reference the same ontology. 
+Each document may build its local ontology without any external reference. 
+It may also build it based upon one or several reference ontologies (i.e., standard ones). 
+
+The relationship between the local ontology and the reference one is formalised using a morphism function. 
+More precisely, a class of a local ontology may be described as a consequence of a transformation applied
+to one or several other class(es) defined in other ontologies. This means that each instance of the former can be 
+computed from one or more instances of the latter. 
+
+Thanks to the morphism relationship, the obtained class may either import properties (definitions are preserved) 
+or map properties (the properties are different but are semantically equivalent) that are defined in the referenced class(es). 
+It may also define additional properties.
+\<close>
+
 definition Item_to_Resource_morphism
   where "Item_to_Resource_morphism (\<sigma>::'a Item_scheme) =
         \<lparr> tag_attribute = 0::int
@@ -73,5 +97,6 @@ definition U_Software_to_R_Software_morphism
           , att = ''''
           , version = U_Software.version \<sigma>
         \<rparr>" 
+
 
 end

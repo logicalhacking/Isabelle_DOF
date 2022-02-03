@@ -18,6 +18,8 @@ session "2021-ITP-PMTI" = "Isabelle_DOF" +
     "figures/invariant-checking-violated-example.png"
     "figures/inherited-invariant-checking-violated-example.png"
     "figures/term-context-checking-example.png"
+    "figures/term-context-failed-checking-example.png"
     "figures/term-context-evaluation-example.png"
+    "figures/term-context-failed-evaluation-example.png"
     "figures/term-context-equality-evaluation-example.png"
     "lstisadof.sty"
