@@ -405,7 +405,7 @@ types. The notation for terms and types is as follows:
 text\<open> ... where the so-called more-field \<open>\<dots>\<close> is used to 'fill-in' record-extensions.
 Schematic record types allow for simulating object-oriented features such as 
 (single-)inheritance while maintaining a compositional style of verification
-@{cite "naraschewski1998object"}: it is possible to prove a property \<^term>\<open>P (a::T)\<close>
+@{cite "naraschewski1998object"}: it is possible to prove a property \<^term>\<open>P (z::'a T_scheme)\<close>
 which will remain true for all extensions (which are just instances of the
 \<^typ>\<open>T\<close>-type). 
 \<close>
