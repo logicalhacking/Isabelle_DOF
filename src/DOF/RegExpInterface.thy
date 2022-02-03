@@ -68,13 +68,13 @@ This universe of denotations is in our concrete case:\<close>
 
 text\<open>Now the denotational semantics for regular expression can be defined on a post-card:\<close>
 
-fun       L :: "'a rexp => 'a lang"
-  where   L_Emp :   "L Zero        = {}"
-         |L_One:    "L One         = {[]}"
-         |L_Atom:   "L (\<lfloor>a\<rfloor>)       = {[a]}"
-         |L_Un:     "L (el || er)  = (L el) \<union> (L er)"
-         |L_Conc:   "L (el ~~ er)  = {xs@ys | xs ys. xs \<in> L el \<and> ys \<in> L er}"
-         |L_Star:   "L (Star e)    = Regular_Set.star(L e)"
+fun       Lang :: "'a rexp => 'a lang"
+  where   L_Emp :   "Lang Zero        = {}"
+         |L_One:    "Lang One         = {[]}"
+         |L_Atom:   "Lang (\<lfloor>a\<rfloor>)       = {[a]}"
+         |L_Un:     "Lang (el || er)  = (Lang el) \<union> (Lang er)"
+         |L_Conc:   "Lang (el ~~ er)  = {xs@ys | xs ys. xs \<in> Lang el \<and> ys \<in> Lang er}"
+         |L_Star:   "Lang (Star e)    = Regular_Set.star(Lang e)"
 
 
 text\<open>A more useful definition is the sub-language - definition\<close>

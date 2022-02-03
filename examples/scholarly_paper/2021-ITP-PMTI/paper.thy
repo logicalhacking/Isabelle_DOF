@@ -3,7 +3,6 @@ theory "paper"
   imports "Isabelle_DOF.scholarly_paper"
 begin
 
-
 open_monitor*[this::article]
 
 declare[[ strict_monitor_checking  = false]]
@@ -19,6 +18,63 @@ define_shortcut* hol      \<rightleftharpoons> \<open>HOL\<close>
                  csp      \<rightleftharpoons> \<open>CSP\<close>      \<comment>\<open>obsolete\<close>
                  holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>  \<comment>\<open>obsolete\<close> 
 
+ML\<open>
+
+fun boxed_text_antiquotation name (* redefined in these more abstract terms *) =
+    DOF_lib.gen_text_antiquotation name DOF_lib.report_text 
+                           (fn ctxt => DOF_lib.string_2_text_antiquotation ctxt
+                                       #> DOF_lib.enclose_env false ctxt "isarbox")
+
+val neant = K(Latex.text("",\<^here>))
+
+fun boxed_theory_text_antiquotation name (* redefined in these more abstract terms *) =
+    DOF_lib.gen_text_antiquotation name DOF_lib.report_theory_text 
+                           (fn ctxt => DOF_lib.string_2_theory_text_antiquotation ctxt 
+                                        #> DOF_lib.enclose_env false ctxt "isarbox"
+                                        (* #> neant *)) (*debugging *)
+
+fun boxed_sml_text_antiquotation name  =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env true ctxt "sml") 
+                           (* the simplest conversion possible *)
+
+fun boxed_pdf_antiquotation name =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env true ctxt "out") 
+                           (* the simplest conversion possible *)
+
+fun boxed_latex_antiquotation name =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env true ctxt "ltx") 
+                           (* the simplest conversion possible *)
+
+fun boxed_bash_antiquotation name =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env true ctxt "bash") 
+                           (* the simplest conversion possible *)
+\<close>
+
+setup\<open>(* std_text_antiquotation        \<^binding>\<open>my_text\<close> #> *)
+      boxed_text_antiquotation         \<^binding>\<open>boxed_text\<close> #>
+      (* std_text_antiquotation        \<^binding>\<open>my_cartouche\<close> #> *)
+      boxed_text_antiquotation         \<^binding>\<open>boxed_cartouche\<close> #>
+      (* std_theory_text_antiquotation \<^binding>\<open>my_theory_text\<close>#> *)
+      boxed_theory_text_antiquotation  \<^binding>\<open>boxed_theory_text\<close> #>
+
+      boxed_sml_text_antiquotation     \<^binding>\<open>boxed_sml\<close> #>
+      boxed_pdf_antiquotation          \<^binding>\<open>boxed_pdf\<close> #>
+      boxed_latex_antiquotation        \<^binding>\<open>boxed_latex\<close>#>
+      boxed_bash_antiquotation         \<^binding>\<open>boxed_bash\<close> 
+     \<close>
+
 (*>*)
 
 title*[tit::title]\<open>A Framework for Proving Ontology-Relations and Runtime Testing Ontology Instances\<close>
@@ -26,7 +82,7 @@ title*[tit::title]\<open>A Framework for Proving Ontology-Relations and Runtime 
 author*[idir,email="\<open>idir.aitsadoune@lri.fr\<close>",affiliation="\<open>LMF, CentraleSupelec\<close>"]\<open>Idir Ait-Sadoune\<close>
 author*[nic,email="\<open>nicolas.meric@lri.fr\<close>",affiliation="\<open>LRI, Université Paris-Saclay\<close>"]\<open>Nicolas Méric\<close>
 author*[bu,email="\<open>wolff@lri.fr\<close>",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]\<open>Burkhart Wolff\<close>
-               
+             
 abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>Isabelle/HOL\<close>,\<open>Ontology Alignment\<close>,\<open>OWL\<close>,\<open>UML/OCL\<close>]"]
 \<open>  \<^dof> is a novel ontology framework on top of Isabelle 
    @{cite "brucker.ea:isabelledof:2019" and "brucker.ea:isabelle-ontologies:2018"}. 
@@ -36,14 +92,18 @@ abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<
    Thus, \<^dof> is designed to annotate and interact with typed meta-data 
    within formal developments in Isabelle.  
 
-   While prior versions of \<^dof> provided already a mechanism to check ontological \<^emph>\<open>rules\<close>  
-   (in OWL terminology) or \<^emph>\<open>class invariants\<close> (in UML/OCL terminology) via hand-written SML test-code,
-   we provide in this paper a novel mechanism to specify \<^emph>\<open>invariants\<close> in \<^hol> via a reflection
-   mechanism. This allows for both efficient run-time checking of abstract properties of formal 
+%   While prior versions of \<^dof> provided already a mechanism to check ontological \<^emph>\<open>rules\<close>  
+%   (in OWL terminology) or \<^emph>\<open>class invariants\<close> (in UML/OCL terminology) via hand-written SML test-code,
+%   we provide in this paper a novel mechanism to specify \<^emph>\<open>invariants\<close> in \<^hol> via a reflection
+%   mechanism. 
+   In this paper we extend  \<^dof> with \<^emph>\<open>invariants\<close> via a reflection mechanism,
+   which serve as equivalent to the concept of ontological \<^emph>\<open>rules\<close> (in OWL terminology) or
+   \<^emph>\<open>class invariants\<close> (in UML/OCL terminology).
+   This allows for both efficient run-time checking of abstract properties of formal
    content \<^bold>\<open>as well as\<close> formal proofs that establish mappings between different ontologies in 
    general and specific ontology instances in concrete cases. 
    With this feature widely called \<^emph>\<open>ontology mapping\<close> in the literature, our framework paves the 
-   way for a deeper integration of ontological information in
+   way for a deeper integration of ontological information in, for example,
    the articles of the Archive of Formal Proofs.
   
 \<close>
@@ -51,37 +111,92 @@ abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<
 section*[introheader::introduction,main_author="Some(@{author ''bu''})"]
        \<open> Introduction \<close>
 text*[introtext::introduction]\<open>
-The linking of \<^emph>\<open>formal\<close> and \<^emph>\<open>informal\<close> information is perhaps the
-most pervasive challenge in the digitization of knowledge and its
-propagation. This challenge incites numerous research efforts
-summarized under the labels ``semantic web'', ``integrated document management'', or any
-form of advanced ``semantic'' text processing. Turning informal into 
-(more) formal content is the key for advanced techniques of research, 
-combination, and the maintenance of consistency in evolving data. 
+The linking of \<^emph>\<open>formal\<close> and \<^emph>\<open>informal\<close> information is perhaps the most pervasive challenge 
+in the digitization of knowledge and its propagation. Unsurprisingly, this problem reappears 
+in the libraries with formalized mathematics and engineering such as the Isabelle Archive of 
+Formal Proofs @{cite "AFP-ref22"}, which passed the impressive numbers of 650 articles, 
+written by 420 authors at the beginning of 2022. Still, while the problem of logical consistency 
+even under system-changes and pervasive theory evolution is technically solved via continuous 
+proof-checking, the problem of knowledge retrieval and of linking semi-formal explanations to 
+definitions and proofs remains largely open.
 
-Admittedly, Isabelle is not the first system that comes into one's mind when
-writing a document, be it a scientific paper, a book, or a larger technical 
-documentation. However, it has a typesetting system inside which is in the 
-tradition of document generation systems such as mkd, Document! X, Doxygen, 
-Javadoc, etc., and which embed elements of formal content such as formula pretty-prints 
-into informal text. In Isabelle, these "links" or embedded meta-text elements 
-are a form of machine-checked macro called \<^emph>\<open>antiquotations\<close>.
+The \<^emph>\<open>knowledge\<close> problem of the increasingly massive \<^emph>\<open>digital information\<close> available
+incites numerous research efforts summarized under the labels ``semantic web'', 
+``integrated document management'', or any form of advanced ``semantic'' text processing. 
+These technologies are increasingly important  in jurisprudence, medical research and 
+life-sciences in order to tame their respective publication tsunamies. The central role 
+in these technologies is played by \<^emph>\<open>document ontologies\<close>, \<^ie>, a machine-readable form 
+of meta-data attached to document-elements as well as their document discourse. In order 
+to make these techniques applicable to the area of \<^emph>\<open>formal theory development\<close>, 
+the following is needed: \<^vs>\<open>0.2cm\<close>
 
-For example, the text element as appearing in the Isabelle frontend:
+\<^item> a general mechanism to define and develop \<^emph>\<open>domain-specific\<close> ontologies,
+\<^item> ... that should be adapted to entities occurring in formal theories,
+  \<^ie>, provide built-in support for types, terms, theorems, proofs, etc.,
+\<^item> ways to annotate meta-data generated by ontologies to the document elements,
+  as ``deep'' as possible, together with strong validation checks,
+\<^item> a smooth integration into the theory document development process, and
+\<^item> ways to relate ontologies and ontology-conform documents along different
+  ontologies by \<^emph>\<open>ontological mappings\<close> and \<^emph>\<open>data translations\<close>
+  @{footnote \<open>We follow throughout this text the terminology established in 
+              @{cite "books/daglib/0032976"}, pp. 39 ff.\<close>}.
+\<close>
+
+text\<open>  \<^vs>\<open>-0.2cm\<close>
+Recently, \<^dof> @{cite "brucker.ea:isabelledof:2019" and "brucker.ea:isabelle-ontologies:2018"}
+\<^footnote>\<open>The official releases are available at \<^url>\<open>https://zenodo.org/record/3370483#.YfWg6S-B1qt\<close>, the
+  developer version at \<^url>\<open>https://github.com/logicalhacking/Isabelle_DOF\<close>.\<close> 
+has been designed as an Isabelle component that attempts to answer these needs. 
+ \<^dof> generates from  ontology definitions directly integrated into Isabelle theories
+typed meta-data, that may be annotated to a number of document elements and that were 
+validated ``on-the-fly'' during the general continuous type and proof-checking process 
+in an IDE (Isabelle/PIDE). Thus, we extend the document-centric view on code, definitions, 
+proofs, text-elements, etc., prevailing in the Isabelle system framework.
+
+In more detail, \<^dof> introduces a number of ``ontology aware'' text-elements with analogous 
+syntax to standard ones. The difference is a bracket with meta-data of the form: \<^vs>\<open>-0.3cm\<close>
+@{theory_text [display,indent=10, margin=70] 
+\<open>
+     text*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some semi-formal text \<close>
+     ML*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some SML code \<close>
+     ...
+\<close>}
+\<^vs>\<open>-0.3cm\<close> In these  \<^dof> elements, a meta-data object is created and associated to it. This 
+meta-data can be referenced via its label and used in further computations in text or code.
+%; the details will be explained in the subsequent section. 
+
+Admittedly, Isabelle is not the first system that comes into one's mind when writing a scientific 
+paper, a book, or a larger technical documentation. However, it has a typesetting system inside 
+which is in the tradition of document generation systems such as mkd, Document! X, Doxygen, 
+Javadoc, etc., and which embed formal content such as formula pretty-prints into semi-formal text 
+or code. The analogous mechanism the Isabelle system provides is a machine-checked macro 
+called \<^emph>\<open>antiquotation\<close> that depends on the logical context of the document element.
+
+With standard Isabelle antiquotations, for example, the following text element
+of the integrated source will appear  in Isabelle/PIDE as follows:  \<^vs>\<open>-0.3cm\<close>
 @{theory_text [display,indent=10, margin=70] 
 \<open>
      text\<open> According to the reflexivity axiom @{thm refl}, we obtain in \<Gamma>
             for @{term "fac 5"} the result @{value "fac 5"}.\<close>
 
 \<close>}
-is represented in the generated \<^LaTeX> or HTML output by:
+\<^vs>\<open>-0.5cm\<close> In the corresponding generated \<^LaTeX> or HTML output, this looks like this:
+\<^vs>\<open>-0.1cm\<close>
 @{theory_text [display,indent=10, margin=70] 
   \<open>According to the reflexivity axiom \<open>x = x\<close>, we obtain in \<Gamma> for \<open>fac 5\<close> the result \<open>120\<close>.\<close>
 }
-where the meta-texts \<open>@{thm refl}\<close> ("give the presentation of theorem 'refl'), 
-\<open>@{term "fac 5"}\<close> ("parse and type-check 'fac 5' in the previous logical context)
+\<^vs>\<open>-0.1cm\<close>where the meta-texts \<open>@{thm refl}\<close> ("give the presentation of theorem 'refl'"), 
+\<open>@{term "fac 5"}\<close> ("parse and type-check 'fac 5' in the previous logical context")
 and \<open>@{value "fac 5"}\<close> ("compile and execute 'fac 5' according to its
-definitions") are built-in antiquotations in \<^hol>.
+definitions") are built-in antiquotations in \<^hol>. 
+
+One distinguishing feature of \<^dof> is that specific antiquotations \<^emph>\<open>were generated from
+an ontology\<close> rather than being hard-coded into the Isabelle system infrastructure.
+\<close>
+
+(*
+text
+\<open>
 
 %too long !
 This leads to an evolution strategy we call "integrate the document, strengthen the
@@ -104,22 +219,33 @@ has been designed as an Isabelle component that \<^emph>\<open>generates\<close>
 from a more abstract description, namely an \<^emph>\<open>ontology\<close> that provides typed meta-data
 and typed reference mechanisms inside text- and ML-contexts. 
 
-In this paper, we extend prior versions of \<^dof> by 
-\<^enum> a new form of contexts, namely \<^emph>\<open>term contexts\<close>. Thus, annotations generated
-  from  \<^dof> may also occur in \<open>\<lambda>\<close>-terms used to denote meta-data, and
+*)
+
+text\<open>As novel contribution, this work extends prior versions of \<^dof> by 
+\<^enum> support of antiquotions in a new class of contexts, namely \<^emph>\<open>term contexts\<close> 
+  (rather than SML code or semi-formal text). Thus, annotations generated
+  from  \<^dof> may also occur in \<open>\<lambda>\<close>-terms used to denote meta-data. 
 \<^enum> formal, machine-checked invariants on meta-data, which correspond to the concept of 
-  "rules" in ontology languages such as OWL, and which can be specified in 
+  "rules" in OWL or "constraints" in UML, and which can be specified in 
   common HOL \<open>\<lambda>\<close>-term syntax.
 \<close>
-text\<open>
-Beyond the gain of expressivity in \<^dof> ontologies, these features pave the way 
-for advanced queries of elements inside an integrated document, and for formal proofs
-over the relations/translations of ontologies and ontology-instances --- The latter 
-question raised scientific interest under the label  "ontology alignment" for which
-we therefore present a (partial) solution. To sum up, we completed \<^dof> to a
+text\<open> For example, the \<^dof> evaluation command taking a HOL-expression:
+@{theory_text [display,indent=6, margin=70] 
+\<open> value*[ass::Assertion, relvce=2::int] \<open>mapfilter (\<lambda> \<sigma>. relvce \<sigma> > 2) @{instance_of \<open>Assertion\<close>}\<close>\<close>
+}
+where \<^dof> command \<open>value*\<close> type-checks, expands in an own validation phase
+the \<open>instance_of\<close>-term antiquotation, and evaluates the resulting HOL expression
+above. Assuming an ontology providing the class \<open>Assertion\<close> having at least the
+integer attribute \<open>relvce\<close>, the command finally creates an instance of \<open>Assertion\<close> and 
+binds this to the label \<open>ass\<close> for further use.
+
+Beyond the gain of expressivity in \<^dof> ontologies, term-antiquotations pave the way 
+for advanced queries of elements inside an integrated source, and invariants 
+allow for formal proofs over the relations/translations of ontologies and ontology-instances.
+The latter question raised scientific interest under the label  "ontology alignment" for 
+which we therefore present a formal solution. To sum up, we completed \<^dof> to a
 a fairly rich, ITP-oriented ontology language, which is a concrete proposal for the 
-Isabelle community for a deeper structuring of the Archive of Formal Proofs (AFP; 
-\<^url>\<open>https://www.isa-afp.org\<close>).
+ITP community allowing a deeper structuring of mathematical libraries such as the AFP.
 \<close>
 
 
@@ -127,7 +253,8 @@ Isabelle community for a deeper structuring of the Archive of Formal Proofs (AFP
 declare_reference*[casestudy::text_section]
 (*>*)
 
-section*[bgrnd::text_section,main_author="Some(@{docitem ''adb''}::author)"] \<open> Background\<close>
+section*[bgrnd::background,main_author="Some(@{docitem ''bu''}::author)"] \<open> Background\<close>
+(*
 subsection\<open>Isabelle/DOF Design and Implementation\<close>
 text\<open>
   In this section, we provide a guided tour through the underlying technologies of this paper: 
@@ -145,32 +272,25 @@ text\<open>
   The plugin Isabelle/HOL offers a modeling language similar to functional programming languages
   extended by a logic and automated proof and animation techniques.
 \<close>
-
-subsection*[bgrnd_isadof::text_section]\<open>The \<^dof> Framework\<close>
+*)
+subsection*[bgrnd_isadof::background]\<open>The \<^dof> Framework\<close>
 text\<open>
   \<^dof> ~@{cite "brucker.ea:isabelle-ontologies:2018" and 
               "brucker.ea:isabelledof:2019"} 
-  is a document ontology framework that extends Isabelle/HOL. We understand
-  by a \<^emph>\<open>document ontology\<close> structured meta-data attached to an integrated document allowing
-  classifying text-elements, connect them to typed meta-data, and establishing typed links between text-
-  and formal elements (such as definitions, proofs, code, test-results, etc). 
-
+  is a document ontology framework that extends Isabelle/HOL.
   \<^dof> offers basically two things: a language called ODL to \<^emph>\<open>specify\<close> a formal ontology,
   and ways to \<^emph>\<open>annotate\<close> an integrated document written in Isabelle/HOL with the specified
-  meta-data. Additionally, \<^dof> generates from an ontology a family of semantic macros---called
-  \<^emph>\<open>antiquotations\<close> that may appear in text or code---allowing establishing
-  machine-checked links between classified entities. Not unlike the UML/OCL meta-model, ODL offers class
-  invariants as well as means to express 
-  structural constraints in documents.  
-  Unlike UML, however, \<^dof> allows for integrated documents with informal and formal elements
-  including the necessary management of logical contexts. 
+  meta-data. Additionally, \<^dof> generates from an ontology a family of 
+  \<^emph>\<open>antiquotations\<close> allowing to establish  machine-checked links between classified entities. 
+%  Unlike UML, however, \<^dof> allows for integrated documents with informal and formal elements
+%  including the necessary management of logical contexts. 
 
   The perhaps most attractive aspect of \<^dof> is its deep integration into the IDE of Isabelle 
-  (PIDE), which allows hypertext-like navigation as well as fast user-feedback
-  during development and evolution of the integrated document. This includes rich editing support, 
+  (PIDE), which allows a hypertext-like navigation as well as fast user-feedback
+  during development and evolution of the integrated source. This includes rich editing support, 
   including on-the-fly semantics checks, hinting, or auto-completion. 
   \<^dof> supports \<^LaTeX> - based document generation as well as ontology-aware ``views'' on 
-  the integrated document, \ie, specific versions of generated PDF addressing, 
+  the integrated document, \<^ie>, specific versions of generated PDF addressing, 
   for example, different stake-holders. 
 \<close>
 
@@ -178,7 +298,7 @@ text\<open>
 figure*[isadof_screenshot::figure, relative_width="100", src="''figures/cicm2018-combined''"]\<open>
   The \<^dof> IDE (left) and the corresponding PDF(right).
 \<close>
-text*[description_scrrenshot::text_section]\<open>
+text*[description_scrrenshot::background]\<open>
   @{docitem \<open>isadof_screenshot\<close>} shows \<^dof> in action: the left-hand side shows the IDE of 
   \<^dof> in the context of a user session maintaining our case study 
   (see @{docitem (unchecked) "casestudy"}) 
@@ -187,7 +307,7 @@ text*[description_scrrenshot::text_section]\<open>
 \<close>
 (*>*)
 
-subsection*[bgrnd_ODL::text_section]\<open>A Guided Tour through ODL\<close>
+subsection*[bgrnd_ODL::background]\<open>A Guided Tour through ODL\<close>
 text\<open>
   \<^dof> provides a strongly typed Ontology Definition Language (ODL) that provides the usual 
   concepts of ontologies such as
@@ -206,11 +326,12 @@ text\<open>
   HOL-types, allowing for formal \<^emph>\<open>links\<close> to and between ontological concepts. For example, the 
   basic concept of requirements from CENELEC 50128~@{cite "bsi:50128:2014"} is captured in ODL as 
   follows:
-  \begin{isar}
+  @{theory_text [display,indent=10, margin=70]
+\<open>
     doc_class requirement = text_element +   (* derived from text_element    *)
     ~         long_name   ::"string option"  (* an optional string attribute *) 
     ~         is_concerned::"role set"       (* roles working with this req. *)
-  \end{isar}
+\<close>}
   This ODL class definition maybe part of one or more Isabelle theory--files capturing the entire
   ontology definition. Isabelle's session management allows for pre-compiling them before being 
   imported in the actual target documentation required to be compliant to this ontology. 
@@ -230,13 +351,16 @@ text\<open>\autoref{text-elements} shows an ontological annotation of a requirem
   it suffices to click on its keyword: the IDE will display the class-definition and its surrounding 
   documentation in the ontology.\<close>
 
+(*
+
 text\<open>\<^dof>'s generated antiquotations are part of a general mechanism of  
   Isabelle's standard antiquotations heavily used in various papers and technical reports.
   For example, in the following informal text, the antiquotation \<^verbatim>\<open>thm refl\<close> refers  
   to the reflexivity axiom from HOL: 
-  \begin{isar}
+@{theory_text [display,indent=10, margin=70]
+\<open>
   text<Open>According to the reflexivity axiom <@>{thm refl}, we obtain in \<Gamma>
-         for <@>{term <Open>fac 5<Close>} the result <@>{value <Open>fac 5<Close>}.<Close>\end{isar}
+         for <@>{term <Open>fac 5<Close>} the result <@>{value <Open>fac 5<Close>}.<Close>\<close>}
   In the PDF output, this is represented as follows:
   \begin{out}
   According to the reflexivity axiom $x = x$, we obtain in \<open>\<Gamma>\<close> for $\operatorname{fac} 5$ the result $120$.
@@ -253,16 +377,296 @@ text\<open>\<^dof>'s generated antiquotations are part of a general mechanism of
   generated glossaries or lists of concepts. 
 \<close>
 
+*)
+(*<*)
+type_synonym A = int 
+type_synonym B = int
+record T =
+  x :: A
+  y :: B
+(*>*)
+
+term "\<lparr>x = a,y = b\<rparr>"
+
+subsection\<open>Meta-Objects as Extensible Records\<close>
+(* too fat ? what do we need of this ? *)
+text\<open>
+Isabelle/HOL supports both fixed and schematic records at the level of terms and 
+types. The notation for terms and types is as follows:
+
+\<^item> fixed record terms     \<^term>\<open>\<lparr>x = a,y = b\<rparr>\<close>; fixed record types \<open>\<lparr>x::A, y::B\<rparr>\<close>.
+\<^item> schematic record terms \<^term>\<open>\<lparr>x = a,y = b, \<dots> = m::'a\<rparr>\<close>; 
+  schematic record types: \<open>\<lparr>x::A, y::B, \<dots> = 'a\<rparr>\<close> which were usually abbreviated
+  to \<^typ>\<open>'a T_scheme\<close>.
+\<^item> selectors are written \<^term>\<open>x(R::'a T_scheme)\<close>, \<^term>\<open>y(R::'a T_scheme)\<close>. 
+\<^item> updates were denoted \<^term>\<open>r\<lparr>x := a\<rparr>\<lparr>y := b\<rparr>\<close> or just \<^term>\<open>r\<lparr>x:=a, y:=b\<rparr>\<close>. 
+\<close>
+
+text\<open> ... where the so-called more-field \<open>\<dots>\<close> is used to 'fill-in' record-extensions.
+Schematic record types allow for simulating object-oriented features such as 
+(single-)inheritance while maintaining a compositional style of verification
+@{cite "naraschewski1998object"}: it is possible to prove a property \<^term>\<open>P (z::'a T_scheme)\<close>
+which will remain true for all extensions (which are just instances of the
+\<^typ>\<open>T\<close>-type). 
+\<close>
+
+text\<open>In \<^dof>, \<^verbatim>\<open>onto_class\<close>es and the logically equivalent  \<^verbatim>\<open>doc_class\<close>es were
+represented by schematic record types and instances thereof by schematic terms. 
+Invariants of an \<^verbatim>\<open>onto_class\<close> are thu predicates over schematic record
+types and can therefore be inherited in a subclass. \<^dof> handles the parametric  
+polymorphism implicitly. 
+\<close>
 
 subsection\<open>Code-Generation in Isabelle\<close>
 
 text\<open>Explain eval and nbe, and refer to references.\<close>
 
-section\<open>Invariants in DOF\<close>
+section*[invariants::technical,main_author="Some(@{docitem ''nic''}::author)"] 
+\<open>Term-Context support and Invariants in DOF\<close>
 
-section\<open>Proving Morphisms on Ontologies\<close>
+text\<open>
+  
 
-section\<open>Example and Queries\<close>
+  A novel mechanism to specify invariants is implemented
+  and can now be specified in common HOL syntax.
+  One can now specify the constraints using the keyword \<^theory_text>\<open>invariant\<close> in the class definition.
+  If we take back the ontology example for mathematical papers
+  of~@{cite "brucker.ea:isabelledof:2019"} (ADD LISTING REFERENCE!!!),
+  it was proposed to specify some constraints like that any instance of a \<^emph>\<open>result\<close> class
+  finally has a non-empty property list, if its \<^theory_text>\<open>kind\<close> is \<^theory_text>\<open>"proof"\<close>
+  (see the \<^theory_text>\<open>invariant has_property\<close>), or that 
+  the \<^theory_text>\<open>establish\<close> relation between \<^theory_text>\<open>claim\<close> and \<^theory_text>\<open>result\<close> must be defined when an instance
+  of the class \<^theory_text>\<open>conclusion\<close> is defined (see the \<^theory_text>\<open>invariant establish_defined\<close>). 
+@{boxed_theory_text [display,indent=10, margin=70] \<open>
+doc_class author =
+  email :: "string" <= "''''"
+doc_class text_section =
+  authored_by :: "author set" <= "{}"
+  level :: "int option" <= "None"
+doc_class introduction = text_section +
+  authored_by :: "author set"  <= "UNIV" 
+  uses :: "string set"
+  invariant author_finite :: "finite (authored_by \<sigma>)"
+  and force_level :: "the (level \<sigma>) > 1"
+doc_class claim = introduction +
+  based_on :: "string list"
+doc_class technical = text_section +
+  formal_results :: "thm list" 
+
+datatype kind = expert_opinion | argument | "proof"
+
+doc_class result = technical +
+  evidence :: kind
+  property :: "thm list" <= "[]"
+  invariant has_property :: "evidence \<sigma> = proof \<longleftrightarrow> property \<sigma> \<noteq> []"
+doc_class conclusion = text_section +
+  establish :: "(claim \<times> result) set"
+  invariant establisg_defined :: "\<forall> x. x \<in> Domain (establish \<sigma>)
+                                           \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"
+\<close>}
+
+
+  In our example, the invariant \<^theory_text>\<open>author_finite \<close> of the class \<^theory_text>\<open>introduction\<close> enforces
+  that the user sets the \<^theory_text>\<open>authored_by\<close> set.
+  The \<^theory_text>\<open>\<sigma>\<close> symbol is reserved and references the future class instance.
+  By relying on the implementation of the Records
+  in Isabelle/HOL~@{cite "wenzel:isabelle-isar:2020"},
+  one can reference an attribute of an instance using its selector function.
+  For example, \<^theory_text>\<open>establish \<sigma>\<close> denotes the value
+  of the \<^theory_text>\<open>establish\<close> attribute
+  of the future instance of the class \<^theory_text>\<open>conclusion\<close>.
+  Now we can define some instances:
+
+@{boxed_theory_text [display] \<open>
+text*[church::author, email="\<open>church@lambda.org\<close>"]\<open>\<close>
+
+text*[resultProof::result, evidence = "proof", property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
+
+text*[introduction1::introduction, authored_by = "{@{author \<open>church\<close>}}", level = "Some 0"]\<open>\<close>
+
+text*[claimNotion::claim, authored_by = "{@{author \<open>church\<close>}}", based_on= "[\<open>Notion1\<close>, \<open>Notion2\<close>]", level = "Some 0"]\<open>\<close>
+\<close>}
+\<close>
+
+(*<*)
+declare_reference*["invariant-checking-figure"::figure]
+(*>*)
+
+text\<open>
+  In the intance \<^theory_text>\<open>introduction1\<close>, \<^theory_text>\<open>@{author \<open>church\<close>}\<close> denotes
+  the instance \<^theory_text>\<open>church\<close> of the class \<^theory_text>\<open>author\<close>.
+  The value of each attribute defined for the instances is checked at run-time
+  against their class invariants.
+  The \<^theory_text>\<open>resultProof\<close> instance respects the \<^theory_text>\<open>invariant has_property\<close>,
+  because we specify its attribute \<^theory_text>\<open>evidence\<close> to the \<^theory_text>\<open>kind\<close> \<^theory_text>\<open>"proof"\<close>,
+  we also specify its attribute \<^theory_text>\<open>property\<close> with a suited value
+  as a list of \<^theory_text>\<open>"thm"\<close>.
+  In \<^figure>\<open>invariant-checking-figure\<close>,
+  we try to specify a new instance \<^theory_text>\<open>introduction1\<close> of the class \<^theory_text>\<open>introduction\<close>.
+  But an invariant checking error is triggered because we do not respect the
+  constraint specified in the \<^theory_text>\<open>force_level\<close> invariant,
+  when we specify the \<^theory_text>\<open>level\<close> attribute of \<^theory_text>\<open>introduction\<close> to \<^theory_text>\<open>Some 0\<close>.
+  The \<^theory_text>\<open>force_level\<close> invariant forces the value of the argument
+  of the attribute \<^theory_text>\<open>level\<close> option type to be greater than 1.
+\<close>
+
+figure*[
+  "invariant-checking-figure"::figure
+  , relative_width="99"
+  , src="''figures/invariant-checking-violated-example''"
+]\<open>The invariant \<^theory_text>\<open>force_level\<close> of the class \<^theory_text>\<open>introduction\<close> is violated by
+  the instance \<^theory_text>\<open>introduction1\<close>.\<close>
+
+(*<*)
+declare_reference*["inherited-invariant-checking-figure"::figure]
+(*>*)
+
+text\<open>
+  Classes inherit the invariants from their superclasses.
+  As the class  \<^theory_text>\<open>claim\<close> is a subsclass
+  of the class \<^theory_text>\<open>introduction\<close>, it inherits the \<^theory_text>\<open>introduction\<close> invariants.
+  Hence the \<^theory_text>\<open>force_level\<close> invariant is checked
+  when the instance \<^theory_text>\<open>claimNotion\<close> is defined,
+  like in \<^figure>\<open>inherited-invariant-checking-figure\<close>.
+\<close>
+
+figure*[
+  "inherited-invariant-checking-figure"::figure
+  , relative_width="99"
+  , src="''figures/inherited-invariant-checking-violated-example''"
+]\<open>The invariant \<^theory_text>\<open>force_level\<close> of the class claim is inherited
+  from the class \<^theory_text>\<open>introduction\<close> and is violated by the instance \<^theory_text>\<open>claimNotion\<close>.
+\<close>
+
+(*
+text\<open>For example, with the following two classes:
+\<^theory_text>\<open>
+doc_class class_inv1 =
+  int1 :: "int"
+  invariant inv1 :: "int1 \<sigma> \<ge> 3"
+
+doc_class class_inv2 = class_inv1 +
+  int2 :: "int"
+  invariant inv2 :: "int2 \<sigma> < 2"
+\<close>
+
+  as the class  \<^theory_text>\<open>class_inv2\<close> is a subsclass
+  of the class \<^theory_text>\<open>class_inv1\<close>, it inherits \<^theory_text>\<open>class_inv1\<close> invariants.
+  Hence the \<^theory_text>\<open>inv1\<close> invariant is checked
+  when the instance \<^theory_text>\<open>testinv2\<close> is defined, like we can see in .
+
+  Now let's define two instances, one of each class:\<close>
+
+
+
+text\<open>
+\<^theory_text>\<open>
+text*[testinv1::class_inv1, int1=4]\<open>lorem ipsum...\<close>
+text*[testinv2::class_inv2, int1=3, int2=1]\<open>lorem ipsum...\<close>
+\<close>
+\<close>
+*)
+
+text\<open>
+  The value of each attribute defined for the instances is checked against their classes invariants.
+  As the class \<^theory_text>\<open>class_inv2\<close> is a subsclass of the class \<^theory_text>\<open>class_inv1\<close>,
+  it inherits \<^theory_text>\<open>class_inv1\<close> invariants.
+  Hence the \<^theory_text>\<open>int1\<close> invariant is checked when the instance \<^theory_text>\<open>testinv2\<close> is defined.\<close>
+
+text\<open>
+  Isabelle/HOl provides commands which type-check and print terms (the command \<^theory_text>\<open>term\<close>)
+  and evaluates and print a term (the command \<^theory_text>\<open>value\<close>).
+  We provide the equivalent commands, respectively \<^theory_text>\<open>term*\<close> and \<^theory_text>\<open>value*\<close>.
+  These commands add up type-checking and expanding of isabelle/DOF antiquotations
+  in a own validation phase.
+  For example one can now reference a class instance in a \<^theory_text>\<open>term*\<close> command:
+@{theory_text [display,indent=10, margin=70] \<open>  
+term*\<open>@{author \<open>church\<close>}\<close>
+\<close>}
+
+The term \<^theory_text>\<open>@{author \<open>church\<close>}\<close> is type-checked, \<^ie>, the command \<^theory_text>\<open>term*\<close> checks that
+\<^theory_text>\<open>church\<close> references a term of type \<^theory_text>\<open>author\<close>.
+
+  and the and we would like
+Isabelle to check that this instance is indeed an instance of this class.
+Here, we want to reference the instance \<^theory_text>\<open>@{docitem \<open>xcv4\<close>}\<close> previously defined.
+We can use the term* command which extends the classic term command
+and does the appropriate checking.
+@{theory_text [display,indent=10, margin=70] \<open>
+term*\<open>@{F \<open>xcv4\<close>}\<close>
+\<close>}
+We can also reference an attribute of the instance.
+Here we reference the attribute r of the class F which has the type @{typ \<open>thm list\<close>}.
+
+@{theory_text [display,indent=10, margin=70] \<open>
+term*\<open>r @{F \<open>xcv4\<close>}\<close>
+
+term \<open>@{A \<open>xcv2\<close>}\<close>
+\<close>}
+\<close>
+
+figure*[
+  "term-context-checking-example-figure"::figure
+  , relative_width="99"
+  , src="''figures/term-context-checking-example''"
+]\<open>The invariant \<^theory_text>\<open>force_level\<close> of the class claim is inherited
+  from the class \<^theory_text>\<open>introduction\<close> and is violated by the instance \<^theory_text>\<open>claimNotion\<close>.
+\<close>
+
+figure*[
+  "term-context-evaluation-figure"::figure
+  , relative_width="99"
+  , src="''figures/term-context-evaluation-example''"
+]\<open>The invariant \<^theory_text>\<open>force_level\<close> of the class claim is inherited
+  from the class \<^theory_text>\<open>introduction\<close> and is violated by the instance \<^theory_text>\<open>claimNotion\<close>.
+\<close>
+
+figure*[
+  "term-context-equality-evaluation-figure"::figure
+  , relative_width="99"
+  , src="''figures/term-context-equality-evaluation-example''"
+]\<open>The invariant \<^theory_text>\<open>force_level\<close> of the class claim is inherited
+  from the class \<^theory_text>\<open>introduction\<close> and is violated by the instance \<^theory_text>\<open>claimNotion\<close>.
+\<close>
+
+
+text\<open>We declare a new text element. Note that the class name contains an underscore "\_".\<close>
+text*[te::text_element]\<open>Lorem ipsum...\<close>
+
+text\<open>Unfortunately due to different lexical conventions for constant symbols and mixfix symbols
+     this term antiquotation has to be denoted like this: @{term\<open>@{text-element \<open>ee\<close>}\<close>}.
+     We need to substitute an hyphen "-" for the underscore "\_".\<close>
+term*\<open>@{text-element \<open>te\<close>}\<close>
+subsection\<open>Example and Queries\<close>
+
+section*["morphisms"::technical,main_author="Some(@{docitem ''idir''}::author)"] \<open>Proving Morphisms on Ontologies\<close>
+
+text\<open>
+A new mechanism to make query on instances is available and uses the HOL implementation of lists.
+So complex queries can be defined using functions over the instances list.
+With the class:
+@{theory_text [display,indent=10, margin=70] \<open>
+doc_class Z =
+  z::"int"
+\<close>}
+and some instances:
+@{theory_text [display,indent=10, margin=70] \<open>
+text*[test1Z::Z, z=1]\<open>lorem ipsum...\<close>
+text*[test2Z::Z, z=4]\<open>lorem ipsum...\<close>
+text*[test3Z::Z, z=3]\<open>lorem ipsum...\<close>
+\<close>}
+we can get all the instances of the class Z:
+@{theory_text [display,indent=10, margin=70] \<open>
+value*\<open>@{Z-instances}\<close>
+\<close>}
+\<^theory_text>\<open>@{Z-instances}\<close> denotes list of the values of the instances of the class \<^theory_text>\<open>Z\<close>.
+To get the instances of the class Z whose attribute \<^theory_text>\<open>z > 2\<close>:
+@{theory_text [display,indent=10, margin=70] \<open>
+value*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z-instances}\<close>
+\<close>}
+
+EXPLAIN VALUE* ???
+\<close>
 
 section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] \<open>Applications\<close>
 
@@ -271,9 +675,34 @@ subsection\<open>Engineering Example : An Extract from PLib\<close>
 subsection\<open>Mathematics Example : An Extract from OntoMathPro\<close>
 
 
+section*[concl::conclusion]\<open>Conclusion\<close>
+subsection*[rw::related_work]\<open>Related Works\<close>
 
-section\<open>Conclusion\<close>
-subsection\<open>Related Works\<close>
+text\<open>
+\<^item> Geschwalle: Tom Gruber's "Ontology for Engineering Mathematics"
+  \<^url>\<open>https://tomgruber.org/writing/an-ontology-for-engineering-mathematics\<close>
+\<^item> OntoMathPro contains indeed something like a "taxonomy of the fields of mathematics" pp 110
+  \<^url>\<open>https://kpfu.ru/staff_files/F_438204284/OntoMathPro_ontology_KESW2014.pdf\<close>
+  According to In total, OntoMathPRO contains 3,449 classes ...
+
+\<^item> Translated from the Russian Federal Standard for Higher Education on mathematics
+  for master students, Section 5.2:
+   \<^url>\<open>http://www.edu.ru/db-mon/mo/Data/d_10/prm40-1.pdf\<close>
+\<^item> Elements of OntoMathPro :
+  (* figures/OntoMathPro-Taxonomy.png 
+     figures/OntoMathPro-Taxonomy-2.png *)
+\<^item> Other Onto:  DBpedia @{cite "10.1007/978-3-540-76298-0_52"}
+  SPARQL endpoint: \<^url>\<open>http://dbpedia.org/sparql\<close>  
+\<^item> Other Onto:  ScienceWISE
+  \<^url>\<open>http://data.sciencewise.info/openrdf-sesame/repositories/SW\<close> 
+  \<^url>\<open>https://github.com/CLLKazan/OntoMathPro\<close> 
+
+\<^item> Search Engines: Wikipedia Formula Search, \<^url>\<open>http://shinh.org/wfs\<close>
+
+\<^item> And then: The stuff from Univ Erlangen (Kohlhase et al).
+
+\<close>
+
 subsubsection\<open>The notion of \<^emph>\<open>Integrated Source\<close>\<close>
 text\<open>Links to the term: Integrated Document 
 \<^item> \<^url>\<open>https://www.openkm.com/blog/integrated-document-management.html\<close>
@@ -309,36 +738,8 @@ https://doi.org/10.1145/2479787.2479830
 *)
 
 
-section\<open> Related work \<close>
 
-ML\<open>open Goal\<close>
-
-text\<open>
-\<^item> Geschwalle: Tom Gruber's "Ontology for Engineering Mathematics"
-  \<^url>\<open>https://tomgruber.org/writing/an-ontology-for-engineering-mathematics\<close>
-\<^item> OntoMathPro contains indeed something like a "taxonomy of the fields of mathematics" pp 110
-  \<^url>\<open>https://kpfu.ru/staff_files/F_438204284/OntoMathPro_ontology_KESW2014.pdf\<close>
-  According to In total, OntoMathPRO contains 3,449 classes ...
-
-\<^item> Translated from the Russian Federal Standard for Higher Education on mathematics
-  for master students, Section 5.2:
-   \<^url>\<open>http://www.edu.ru/db-mon/mo/Data/d_10/prm40-1.pdf\<close>
-\<^item> Elements of OntoMathPro :
-  (* figures/OntoMathPro-Taxonomy.png 
-     figures/OntoMathPro-Taxonomy-2.png *)
-\<^item> Other Onto:  DBpedia @{cite "10.1007/978-3-540-76298-0_52"}
-  SPARQL endpoint: \<^url>\<open>http://dbpedia.org/sparql\<close>  
-\<^item> Other Onto:  ScienceWISE
-  \<^url>\<open>http://data.sciencewise.info/openrdf-sesame/repositories/SW\<close> 
-  \<^url>\<open>https://github.com/CLLKazan/OntoMathPro\<close> 
-
-\<^item> Search Engines: Wikipedia Formula Search, \<^url>\<open>http://shinh.org/wfs\<close>
-
-\<^item> And then: The stuff from Univ Erlangen (Kohlhase et al).
-
-\<close>
-
-
+text\<open>\pagebreak\<close>
 section\<open>Annex\<close>
 
 subsection\<open>Remotely relevant stuff\<close>

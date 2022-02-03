@@ -175,8 +175,8 @@ text\<open>At a glance, the overall concepts and notions we are using here are l
 \<^item> Recursion: \<open> \<mu>X. P X  \<close>
 \<^item> Generalised Operators (“Architectural Operators”):  
   \<open> \<Sqinter> x\<in>A \<longrightarrow> P x, \<box> x\<in>A \<longrightarrow> P x,  \<Sqinter> x\<in>B. P x, \<box> x\<in>B. P x\<close>   
-  \<open> \<lbrakk>S\<rbrakk>x\<in>B. P x , |||x\<in>B. P x, ||x\<in>B. P x, SEQ x\<in>B. P x\<close>    
-  (for infinite index sets A, finite sets B)
+  \<open> \<lbrakk>S\<rbrakk>x\<in>B. P x , |||x\<in>B. P x, ||x\<in>B. P x, SEQ x\<in>L. P x\<close>    
+  (for infinite index sets A, finite sets B, and lists \<open>L\<close>)
 \<^item> A typed view on processes with Hindley-Milner Polymorphism;
   (operators and are typed over \<open>'\<Sigma> process\<close>; 
    process-schemata are just higher-order functions over processes.) 
@@ -245,15 +245,28 @@ Two Cars, “current” set of  assumptions Safety Property:
 \<^item> speeds for “rear” and “front” cars: \<open>v\<^sub>r\<close>,\<open>v\<^sub>f\<close> 
 \<close>
 
-
-figure*[AcVecSpaceVsSpeedVs::figure,relative_width="100",src="''figures/AcVecSpaceVsSpeedVs.png''"]
-       \<open>Acceleration Vector Space vs. Speed Vectors \<close>
-figure*[MaxwellVsCutIn::figure,relative_width="100",src="''figures/MaxwellVsCutIn.png''"]
-        \<open>Maxwell's Daemon vs. Cut-In Scenarios\<close>
 figure*[RSS_Safe_Longitudinal_Distance::figure,relative_width="100",src="''figures/RSS_Safe_Longitudinal_Distance.png''"]
         \<open>Safe Longitudinal Distance in RSS\<close>
 figure*[RSS_formula::figure,relative_width="100",src="''figures/RSS_formula.png''"]
         \<open>The Formula of RSS\<close>
+
+section*[intro_fwk::technical]\<open>The Autonomous Car Framework in HOL-CSP\<close>
+
+subsection*[intro_fwk_concepts::technical]\<open>Basics Concepts\<close>
+text\<open>The basis of this work is inspired by ontologies for 
+Autonomous Car Scenarios given, for example, in MOSAR (\<^url>\<open>https://www.mosar.io\<close>) that 
+describes a collection of \<^emph>\<open>actors\<close> (\<^eg> cars, trucks, bicycles), \<^emph>\<open>equipments\<close>  
+(\<^eg> signals, vehicle lights, etc.), \<^emph>\<open>infrastructures\<close> (\<^eg> expressways, 
+intersections, etc.) and their dynamic interactions throughout driving scenarios.
+ 
+Actors have a physical state (position, speed, mass, extension, ...) which can have the form of
+a vector. Moreover, they can have \<^emph>\<open>capabilities\<close> such as a set of acceleration-vectors expressing
+their ability to move forwards, sidewards, etc. as well as their capability to brake.  
+\<close>
+figure*[AcVecSpaceVsSpeedVs::figure,relative_width="100",src="''figures/AcVecSpaceVsSpeedVs.png''"]
+       \<open>Acceleration Vector Space vs. Speed Vectors \<close>
+figure*[MaxwellVsCutIn::figure,relative_width="100",src="''figures/MaxwellVsCutIn.png''"]
+        \<open>Maxwell's Daemon vs. Cut-In Scenarios\<close>
 figure*[Samplings::figure,relative_width="100",src="''figures/Samplings.png''"]
         \<open>Samplings of Continuous Observables\<close>
 figure*[actor_def::figure,relative_width="100",src="''figures/actor_def.png''"]

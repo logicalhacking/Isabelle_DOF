@@ -122,6 +122,11 @@ As Security of the system we define etc...
 A formal statement can, but must not have a reference to true formal Isabelle/Isar definition. 
 \<close>
 
+doc_class background = text_section +
+   comment :: string
+   claims  :: "thm list"
+
+
 subsection\<open>Technical Content and its Formats\<close>
 
 datatype status = formal | semiformal | description
@@ -466,6 +471,7 @@ doc_class article =
             \<lbrace>author\<rbrace>\<^sup>+         ~~ 
             abstract          ~~
             \<lbrace>introduction\<rbrace>\<^sup>+   ~~ 
+            \<lbrace>background\<rbrace>\<^sup>*     ~~ 
             \<lbrace>technical || example \<rbrace>\<^sup>+      ~~
             \<lbrace>conclusion\<rbrace>\<^sup>+     ~~  
             bibliography      ~~

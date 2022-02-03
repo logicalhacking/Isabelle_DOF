@@ -11,6 +11,13 @@
 %%   The 2-clause BSD-style license.
 %%
 %%   SPDX-License-Identifier: LPPL-1.3c+ OR BSD-2-Clause
+\usepackage{listings}
+\usepackage{listingsutf8}
+\usepackage{tikz}
+\usepackage[many]{tcolorbox}
+\tcbuselibrary{listings}
+\tcbuselibrary{skins}
+\usepackage{xstring}
 
 \definecolor{OliveGreen}    {cmyk}{0.64,0,0.95,0.40}
 \definecolor{BrickRed}      {cmyk}{0,0.89,0.94,0.28}
@@ -73,6 +80,31 @@
     \def\endlstdelim{\texttt{\textbf{\color{black!60}#2}}\egroup}%
     \ttfamily\textbf{\color{black!60}#1}\bgroup\rmfamily\color{#3}\aftergroup\endlstdelim%
 }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% <isar>
+\providecolor{isar}{named}{blue}
+\renewcommand{\isacommand}[1]{\textcolor{OliveGreen!60}{\ttfamily\bfseries #1}}
+\newcommand{\inlineisarbox}[1]{#1}
+\NewTColorBox[]{isarbox}{}{
+     ,boxrule=0pt
+     ,boxsep=0pt
+     ,colback=white!90!isar
+     ,enhanced jigsaw
+     ,borderline west={2pt}{0pt}{isar!60!black}
+     ,sharp corners
+     ,before skip balanced=0.5\baselineskip plus 2pt
+     % ,before skip=10pt
+     % ,after skip=10pt
+     ,enlarge top by=0mm
+     ,enhanced
+     ,overlay={\node[draw,fill=isar!60!black,xshift=0pt,anchor=north
+       east,font=\bfseries\footnotesize\color{white}]
+                at (frame.north east) {Isar};}
+}
+%% </isar>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \newcommand{\subscr}[1]{\ensuremath{_{\mbox{#1}}}}
 \newcommand{\supscr}[1]{\ensuremath{^{\mbox{#1}}}}
 \lstdefinestyle{ISAR}{%
