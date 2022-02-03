@@ -384,9 +384,9 @@ type_synonym B = int
 record T =
   x :: A
   y :: B
-(*>*)
 
 term "\<lparr>x = a,y = b\<rparr>"
+(*>*)
 
 subsection\<open>Meta-Objects as Extensible Records\<close>
 (* too fat ? what do we need of this ? *)
@@ -448,7 +448,7 @@ classes.\<close>
 
 
 section*[invariants::technical,main_author="Some(@{docitem ''nic''}::author)"] 
-\<open>Term-Context support and Invariants in DOF\<close>
+\<open>Term-Context Support and Invariants in DOF\<close>
 
 text\<open>
   
