@@ -448,145 +448,63 @@ classes.\<close>
 
 
 section*[invariants::technical,main_author="Some(@{docitem ''nic''}::author)"] 
-\<open>Term-Context Support and Invariants in DOF\<close>
+\<open>Term-Context Support, Invariants and Queries in DOF\<close>
 
-text\<open>
-  
-
-  A novel mechanism to specify invariants is implemented
-  and can now be specified in common HOL syntax.
-  One can now specify the constraints using the keyword \<^theory_text>\<open>invariant\<close> in the class definition.
-  If we take back the ontology example for mathematical papers
-  of~@{cite "brucker.ea:isabelledof:2019"} (see ADD LISTING REFERENCE!!!),
-  it was proposed to specify some constraints like that any instance of a \<^emph>\<open>result\<close> class
-  finally has a non-empty property list, if its \<^theory_text>\<open>kind\<close> is \<^theory_text>\<open>"proof"\<close>
-  (see the \<^theory_text>\<open>invariant has_property\<close>), or that 
-  the \<^theory_text>\<open>establish\<close> relation between \<^theory_text>\<open>claim\<close> and \<^theory_text>\<open>result\<close> must be defined when an instance
-  of the class \<^theory_text>\<open>conclusion\<close> is defined (see the \<^theory_text>\<open>invariant establish_defined\<close>).
-\begin{figure}
-@{boxed_theory_text [display] \<open>
-doc_class author =
+(*<*)
+doc_class myauthor =
   email :: "string" <= "''''"
-doc_class text_section =
-  authored_by :: "author set" <= "{}"
+doc_class mytext_section =
+  authored_by :: "myauthor set" <= "{}"
   level :: "int option" <= "None"
-doc_class introduction = text_section +
-  authored_by :: "author set"  <= "UNIV" 
+doc_class myintroduction = mytext_section +
+  authored_by :: "myauthor set"  <= "UNIV" 
   uses :: "string set"
   invariant author_finite :: "finite (authored_by \<sigma>)"
   and force_level :: "the (level \<sigma>) > 1"
-doc_class claim = introduction +
+doc_class myclaim = myintroduction +
   based_on :: "string list"
-doc_class technical = text_section +
+doc_class mytechnical = text_section +
   formal_results :: "thm list" 
 
 datatype kind = expert_opinion | argument | "proof"
 
-doc_class result = technical +
+doc_class myresult = mytechnical +
   evidence :: kind
   property :: "thm list" <= "[]"
   invariant has_property :: "evidence \<sigma> = proof \<longleftrightarrow> property \<sigma> \<noteq> []"
-doc_class conclusion = text_section +
-  establish :: "(claim \<times> result) set"
-  invariant establisg_defined :: "\<forall> x. x \<in> Domain (establish \<sigma>)
-                                           \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"
-\<close>}
-\caption{Excerpt of an ontology example for mathematical papers.}
-\label{fig-ontology-example}
-\end{figure}
+doc_class myconclusion = text_section +
+  establish :: "(myclaim \<times> myresult) set"
+  invariant establish_defined :: "\<forall> x. x \<in> Domain (establish \<sigma>)
+                      \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"
 
-  In our example, the invariant \<^theory_text>\<open>author_finite \<close> of the class \<^theory_text>\<open>introduction\<close> enforces
-  that the user sets the \<^theory_text>\<open>authored_by\<close> set.
-  The \<^theory_text>\<open>\<sigma>\<close> symbol is reserved and references the future class instance.
-  By relying on the implementation of the Records
-  in Isabelle/HOL~@{cite "wenzel:isabelle-isar:2020"},
-  one can reference an attribute of an instance using its selector function.
-  For example, \<^theory_text>\<open>establish \<sigma>\<close> denotes the value
-  of the \<^theory_text>\<open>establish\<close> attribute
-  of the future instance of the class \<^theory_text>\<open>conclusion\<close>.
-  Now we can define some instances:
+declare[[invariants_checking = true]]
+declare[[invariants_checking_with_tactics = true]]
 
-\begin{figure}
-@{boxed_theory_text [display] \<open>
-text*[church::author, email="\<open>church@lambda.org\<close>"]\<open>\<close>
+text*[church::myauthor, email="\<open>church@lambda.org\<close>"]\<open>\<close>
 
-text*[resultProof::result, evidence = "proof", property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
+text*[resultProof::myresult, evidence = "proof", property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
 
-text*[resultProof2::result, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"]\<open>\<close>
+text*[resultProof2::myresult, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"]\<open>\<close>
 
-text*[introduction1::introduction, authored_by = "{@{author \<open>church\<close>}}", level = "Some 0"]\<open>\<close>
+(*text*[introduction1::myintroduction, authored_by = "{@{myauthor \<open>church\<close>}}", level = "Some 0"]\<open>\<close>*)
 
-text*[claimNotion::claim, authored_by = "{@{author \<open>church\<close>}}", based_on= "[\<open>Notion1\<close>, \<open>Notion2\<close>]", level = "Some 0"]\<open>\<close>
-\<close>}
-\caption{Some instances of the classes of the ontology in the \autoref{fig-ontology-example}.}
-\label{fig-instances-example}
-\end{figure}
-\<close>
+(*text*[claimNotion::myclaim, authored_by = "{@{myauthor \<open>church\<close>}}", based_on= "[\<open>Notion1\<close>, \<open>Notion2\<close>]", level = "Some 0"]\<open>\<close>*)
 
-(*<*)
-declare_reference*["invariant-checking-figure"::figure]
+text*[introduction2::myintroduction, authored_by = "{@{myauthor \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
+
+declare[[invariants_checking = false]]
+declare[[invariants_checking_with_tactics = false]]
 (*>*)
 
 text\<open>
-  In the intance \<^theory_text>\<open>introduction1\<close>, \<^theory_text>\<open>@{author \<open>church\<close>}\<close> denotes
-  the instance \<^theory_text>\<open>church\<close> of the class \<^theory_text>\<open>author\<close>.
-  The value of each attribute defined for the instances is checked at run-time
-  against their class invariants.
-  The \<^theory_text>\<open>resultProof\<close> instance respects the \<^theory_text>\<open>invariant has_property\<close>,
-  because we specify its attribute \<^theory_text>\<open>evidence\<close> to the \<^theory_text>\<open>kind\<close> \<^theory_text>\<open>"proof"\<close>,
-  we also specify its attribute \<^theory_text>\<open>property\<close> with a suited value
-  as a list of \<^theory_text>\<open>"thm"\<close>.
-  In \<^figure>\<open>invariant-checking-figure\<close>,
-  we try to specify a new instance \<^theory_text>\<open>introduction1\<close> of the class \<^theory_text>\<open>introduction\<close>.
-  But an invariant checking error is triggered because we do not respect the
-  constraint specified in the \<^theory_text>\<open>force_level\<close> invariant,
-  when we specify the \<^theory_text>\<open>level\<close> attribute of \<^theory_text>\<open>introduction\<close> to \<^theory_text>\<open>Some 0\<close>.
-  The \<^theory_text>\<open>force_level\<close> invariant forces the value of the argument
-  of the attribute \<^theory_text>\<open>level\<close> to be greater than 1.
-\<close>
-
-figure*[
-  "invariant-checking-figure"::figure
-  , relative_width="99"
-  , src="''figures/invariant-checking-violated-example''"
-]\<open>The invariant \<^theory_text>\<open>force_level\<close> of the class \<^theory_text>\<open>introduction\<close> is violated by
-  the instance \<^theory_text>\<open>introduction1\<close>.\<close>
-
-(*<*)
-declare_reference*["inherited-invariant-checking-figure"::figure]
-(*>*)
-
-text\<open>
-  Classes inherit the invariants from their superclass.
-  As the class  \<^theory_text>\<open>claim\<close> is a subsclass
-  of the class \<^theory_text>\<open>introduction\<close>, it inherits the \<^theory_text>\<open>introduction\<close> invariants.
-  Hence the \<^theory_text>\<open>force_level\<close> invariant is checked
-  when the instance \<^theory_text>\<open>claimNotion\<close> is defined,
-  like in \<^figure>\<open>inherited-invariant-checking-figure\<close>.
-\<close>
-
-figure*[
-  "inherited-invariant-checking-figure"::figure
-  , relative_width="99"
-  , src="''figures/inherited-invariant-checking-violated-example''"
-]\<open>The invariant \<^theory_text>\<open>force_level\<close> of the class claim is inherited
-  from the class \<^theory_text>\<open>introduction\<close> and is violated by the instance \<^theory_text>\<open>claimNotion\<close>.
-\<close>
-
-text\<open>
-  The value of each attribute defined for the instances is checked against their classes invariants.
-  As the class \<^theory_text>\<open>class_inv2\<close> is a subsclass of the class \<^theory_text>\<open>class_inv1\<close>,
-  it inherits \<^theory_text>\<open>class_inv1\<close> invariants.
-  Hence the \<^theory_text>\<open>int1\<close> invariant is checked when the instance \<^theory_text>\<open>testinv2\<close> is defined.\<close>
-
-text\<open>
-  To offer a smooth integration into the theory development process,
+  To offer a smooth integration into the \<^emph>\<open>formal\<close> theory development process,
   Isabelle/HOL should be able to dynamically interpret the source document.
   But the specific antiquotations introduced by Isabelle/DOF are not directly recognized
   by Isabelle/HOL, and the process of term checking and evaluation must be enriched.
-  Previous works added a validation step fo the SML and semi-formal text contexts.
-  But to support Isabelle/DOF antiquotations in the term contexts, the validation step must
-  be enriched and a new step, which we call \<^emph>\<open>elaboration\<close> must be added to allow
+  Previous works~@{cite "brucker.ea:isabelle-ontologies:2018" and "brucker.ea:isabelledof:2019"}
+  added a validation step for the SML and semi-formal text contexts.
+  To support Isabelle/DOF antiquotations in the term contexts, the validation step should
+  be improved and a new step, which we call \<^emph>\<open>elaboration\<close> must be added to allow
   these antiquotations in \<open>\<lambda>\<close>-terms.
   The resulting process encompasses the following steps:
     \<^item> Parse the term which represents the object;
@@ -594,18 +512,12 @@ text\<open>
     \<^item> Certify the term;
     \<^item> Pass on the information to PIDE;
     \<^item> Validate the term: the Isabelle/DOF antiquotations terms are parsed and type-checked;
-    Validate the term: a step to understand the reference
-      which refers to the object.
-
-      This step is mandatory because the ontology framework adds
-      up objects not directly recognized by Isabelle/HOL;
-
     \<^item> Elaborate: the Isabelle/DOF antiquotations terms are expanded.
-      The antiquotations are replaced by the objects in HOL they reference
+      The antiquotations are replaced by the object in HOL they reference
       i.e. a \(\lambda\)-calculus term;
     \<^item> Code generation:
       \<^item> Evaluation of HOL expressions with ontological annotations,
-      \<^item> Implementation of the ontological invariants processed simultaneously
+      \<^item> Generation of ontological invariants processed simultaneously
         with the generation of the document (a theory in HOL).
 
   Isabelle/HOL provides commands to type-check and print terms (the command \<^theory_text>\<open>term\<close>)
@@ -620,15 +532,65 @@ declare_reference*["type-checking-example"::side_by_side_figure]
 (*>*)
 
 text\<open>
-  For example one can now reference a class instance in a \<^theory_text>\<open>term*\<close> command:
-@{theory_text [display,indent=10, margin=70] \<open>  
-term*\<open>@{author \<open>church\<close>}\<close>
-\<close>}
+  If we take back the ontology example for mathematical papers
+  of~@{cite "brucker.ea:isabelledof:2019"} shown in \autoref{fig-ontology-example}
+\begin{figure}
+@{boxed_theory_text [display] \<open>
+doc_class myauthor =
+  email :: "string" <= "''''"
+doc_class mytext_section =
+  authored_by :: "myauthor set" <= "{}"
+  level :: "int option" <= "None"
+doc_class myintroduction = mytext_section +
+  authored_by :: "myauthor set"  <= "UNIV" 
+  uses :: "string set"
+  invariant author_finite :: "finite (authored_by \<sigma>)"
+  and force_level :: "the (level \<sigma>) > 1"
+doc_class myclaim = myintroduction +
+  based_on :: "string list"
+doc_class mytechnical = text_section +
+  formal_results :: "thm list" 
 
-The term \<^theory_text>\<open>@{author \<open>church\<close>}\<close> is type-checked, \<^ie>, the command \<^theory_text>\<open>term*\<close> checks that
-\<^theory_text>\<open>church\<close> references a term of type \<^theory_text>\<open>author\<close>
-(see \<^side_by_side_figure>\<open>type-checking-example\<close>).
+datatype kind = expert_opinion | argument | "proof"
+
+doc_class myresult = mytechnical +
+  evidence :: kind
+  property :: "thm list" <= "[]"
+  invariant has_property :: "evidence \<sigma> = proof \<longleftrightarrow> property \<sigma> \<noteq> []"
+doc_class myconclusion = text_section +
+  establish :: "(myclaim \<times> myresult) set"
+  invariant establish_defined :: "\<forall> x. x \<in> Domain (establish \<sigma>)
+                      \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"
+\<close>}
+\caption{Excerpt of an ontology example for mathematical papers.}
+\label{fig-ontology-example}
+\end{figure}
+  we add up some class instances with the \<^theory_text>\<open>text*\<close> command, as in \autoref{fig-instances-example}.
+\begin{figure}
+@{boxed_theory_text [display] \<open>
+text*[church::myauthor, email="\<open>church@lambda.org\<close>"]\<open>\<close>
+
+text*[resultProof::myresult, evidence = "proof", property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
+
+text*[resultProof2::myresult, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"]\<open>\<close>
+
+text*[introduction1::myintroduction, authored_by = "{@{myauthor \<open>church\<close>}}", level = "Some 0"]\<open>\<close>
+text*[introduction2::myintroduction, authored_by = "{@{myauthor \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
+
+text*[claimNotion::myclaim, authored_by = "{@{myauthor \<open>church\<close>}}", based_on= "[\<open>Notion1\<close>, \<open>Notion2\<close>]", level = "Some 0"]\<open>\<close>
+\<close>}
+\caption{Some instances of the classes of the ontology in the \autoref{fig-ontology-example}.}
+\label{fig-instances-example}
+\end{figure}
+  In the instance \<^theory_text>\<open>introduction1\<close>, \<^theory_text>\<open>@{author \<open>church\<close>}\<close> denotes
+  the instance \<^theory_text>\<open>church\<close> of the class \<^theory_text>\<open>author\<close>.
+  One can now reference a class instance in a \<^theory_text>\<open>term*\<close> command.
+  In the command  \<^theory_text>\<open>term*\<open>@{myauthor \<open>church\<close>}\<close>\<close>
+  the term \<^term>\<open>@{myauthor \<open>church\<close>}\<close> is type-checked, \<^ie>, the command \<^theory_text>\<open>term*\<close> checks that
+  \<^theory_text>\<open>church\<close> references a term of type \<^typ>\<open>myauthor\<close>
+  (see \<^side_by_side_figure>\<open>type-checking-example\<close>).
 \<close>
+
 
 side_by_side_figure*[
   "type-checking-example"::side_by_side_figure
@@ -647,25 +609,21 @@ declare_reference*["evaluation-example"::side_by_side_figure]
 (*>*)
 
 text\<open>
- This \<^theory_text>\<open>value*\<close> command:
-@{theory_text [display,indent=10, margin=70] \<open>
-value*\<open>email @{author \<open>church\<close>}\<close>
-\<close>}
-
-type-checks the antiquotation \<^theory_text>\<open>@{author \<open>church\<close>}\<close>,
-and then returns the value of the \<^theory_text>\<open>email\<close> attribute for the \<^theory_text>\<open>church\<close> instance,
-\<^ie> the HOL string \<^term>\<open>''church@lambda.org''\<close>
-(see \<^side_by_side_figure>\<open>evaluation-example\<close>).
+  The \<^theory_text>\<open>value*\<close> command \<^theory_text>\<open>value*\<open>email @{author \<open>church\<close>}\<close>\<close>
+  type-checks the antiquotation \<^term>\<open>@{author \<open>church\<close>}\<close>,
+  and then returns the value of the \<^theory_text>\<open>email\<close> attribute for the \<^theory_text>\<open>church\<close> instance,
+  \<^ie> the HOL string \<^term>\<open>''church@lambda.org''\<close>
+  (see \<^side_by_side_figure>\<open>evaluation-example\<close>).
 \<close>
 
 side_by_side_figure*[
   "evaluation-example"::side_by_side_figure
   , anchor="''fig-term-evaluation-ex''"
-  , caption="''A Text-Element as Requirement.''"
+  , caption="''The evaluation succeeds and return the value.''"
   , relative_width="48"
   , src="''figures/term-context-evaluation-example''"
   , anchor2="''fig-term-failed-evaluation-ex''"
-  , caption2="''Referencing a Requirement.''"
+  , caption2="''The evaluation fails, due to the undefined instance.''"
   , relative_width2="48"
   , src2="''figures/term-context-failed-evaluation-example''"
 ]\<open>Evaluation of antiquotations in term context.\<close>
@@ -693,9 +651,9 @@ declare_reference*["term-context-equality-evaluation"::figure]
 (*>*)
 
 text\<open>
-We can even compare classes. \<^figure>\<open>term-context-equality-evaluation\<close>
-shows that the two classes \<^theory_text>\<open>resultProof\<close> and \<^theory_text>\<open>resultProof2\<close> are not equivalent
-because their attribute \<^theory_text>\<open>property\<close> differ.
+  We can even compare classes. \<^figure>\<open>term-context-equality-evaluation\<close>
+  shows that the two class instances \<^theory_text>\<open>resultProof\<close> and \<^theory_text>\<open>resultProof2\<close> are not equivalent
+  because their attribute \<^theory_text>\<open>property\<close> differ.
 \<close>
 
 figure*[
@@ -705,33 +663,105 @@ figure*[
 ]\<open>Evaluation of the equivalence of two class instances.
 \<close>
 
-subsection\<open>Example and Queries\<close>
+text\<open>
+  A novel mechanism to specify constraints as invariants is implemented
+  and can now be specified in common HOL syntax, using the keyword \<^theory_text>\<open>invariant\<close>
+  in the class definition (recall \autoref{fig-ontology-example}).
+  Following the constraints proposed in @{cite "brucker.ea:isabelle-ontologies:2018"}, 
+  one can specify that any instance of a class \<^theory_text>\<open>myresult\<close>
+  finally has a non-empty property list, if its \<^typ>\<open>kind\<close> is \<^theory_text>\<open>"proof"\<close>
+  (see the \<^theory_text>\<open>invariant has_property\<close>), or that 
+  the \<^theory_text>\<open>establish\<close> relation between \<^typ>\<open>myclaim\<close> and \<^typ>\<open>myresult\<close> must be defined when an instance
+  of the class \<^theory_text>\<open>myconclusion\<close> is defined (see the \<^theory_text>\<open>invariant establish_defined\<close>).
+
+  In our example, the \<^theory_text>\<open>invariant author_finite\<close> of the class \<^theory_text>\<open>myintroduction\<close> enforces
+  that the user sets the \<^theory_text>\<open>authored_by\<close> set.
+  The \<^theory_text>\<open>\<sigma>\<close> symbol is reserved and references the future class instance.
+  By relying on the implementation of the Records
+  in Isabelle/HOL~@{cite "wenzel:isabelle-isar:2020"},
+  one can reference an attribute of an instance using its selector function.
+  For example, \<^theory_text>\<open>establish \<sigma>\<close> denotes the value
+  of the \<^theory_text>\<open>establish\<close> attribute
+  of the future instance of the class \<^theory_text>\<open>myconclusion\<close>.
+\<close>
+
+(*<*)
+declare_reference*["invariant-checking-figure"::figure]
+(*>*)
 
 text\<open>
-A new mechanism to make query on instances is available and uses the HOL implementation of lists.
-So complex queries can be defined using functions over the instances list.
-With the class:
-@{theory_text [display,indent=10, margin=70] \<open>
-doc_class Z =
-  z::"int"
-\<close>}
-and some instances:
-@{theory_text [display,indent=10, margin=70] \<open>
-text*[test1Z::Z, z=1]\<open>lorem ipsum...\<close>
-text*[test2Z::Z, z=4]\<open>lorem ipsum...\<close>
-text*[test3Z::Z, z=3]\<open>lorem ipsum...\<close>
-\<close>}
-we can get all the instances of the class Z:
-@{theory_text [display,indent=10, margin=70] \<open>
-value*\<open>@{Z-instances}\<close>
-\<close>}
-\<^theory_text>\<open>@{Z-instances}\<close> denotes list of the values of the instances of the class \<^theory_text>\<open>Z\<close>.
-To get the instances of the class Z whose attribute \<^theory_text>\<open>z > 2\<close>:
-@{theory_text [display,indent=10, margin=70] \<open>
-value*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z-instances}\<close>
-\<close>}
+  The value of each attribute defined for the instances is checked at run-time
+  against their class invariants.
+  The \<^theory_text>\<open>resultProof\<close> instance respects the \<^theory_text>\<open>invariant has_property\<close>,
+  because we specify its attribute \<^theory_text>\<open>evidence\<close> to the \<^theory_text>\<open>kind\<close> \<^theory_text>\<open>"proof"\<close>,
+  we also specify its attribute \<^theory_text>\<open>property\<close> with a suited value
+  as a list of \<^theory_text>\<open>"thm"\<close>.
+  In \<^figure>\<open>invariant-checking-figure\<close>,
+  we try to specify a new instance \<^theory_text>\<open>introduction1\<close> of the class \<^theory_text>\<open>myintroduction\<close>.
+  But an invariant checking error is triggered because we do not respect the
+  constraint specified in the \<^theory_text>\<open>invariant force_level\<close>,
+  when we specify the \<^theory_text>\<open>level\<close> attribute of \<^theory_text>\<open>introduction1\<close> to \<^theory_text>\<open>Some 0\<close>.
+  The \<^theory_text>\<open>invariant force_level\<close> forces the value of the argument
+  of the attribute \<^theory_text>\<open>level\<close> to be greater than 1.
+\<close>
 
-EXPLAIN VALUE* ???
+figure*[
+  "invariant-checking-figure"::figure
+  , relative_width="99"
+  , src="''figures/invariant-checking-violated-example''"
+]\<open>The invariant \<^theory_text>\<open>force_level\<close> of the class \<^theory_text>\<open>introduction\<close> is violated by
+  the instance \<^theory_text>\<open>introduction1\<close>.\<close>
+
+(*<*)
+declare_reference*["inherited-invariant-checking-figure"::figure]
+(*>*)
+
+text\<open>
+  Classes inherit the invariants from their superclass.
+  As the class  \<^theory_text>\<open>myclaim\<close> is a subsclass
+  of the class \<^theory_text>\<open>myintroduction\<close>, it inherits the \<^theory_text>\<open>myintroduction\<close> invariants.
+  Hence the \<^theory_text>\<open>invariant force_level\<close> is checked
+  when the instance \<^theory_text>\<open>claimNotion\<close> is defined,
+  like in \<^figure>\<open>inherited-invariant-checking-figure\<close>.
+\<close>
+
+figure*[
+  "inherited-invariant-checking-figure"::figure
+  , relative_width="99"
+  , src="''figures/inherited-invariant-checking-violated-example''"
+]\<open>The invariant \<^theory_text>\<open>force_level\<close> of the class claim is inherited
+  from the class \<^theory_text>\<open>introduction\<close> and is violated by the instance \<^theory_text>\<open>claimNotion\<close>.
+\<close>
+
+(*<*)
+value*\<open>map (myresult.property) @{myresult-instances}\<close>
+value*\<open>map (mytext_section.authored_by) @{myintroduction-instances}\<close>
+
+value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = proof) @{myresult-instances}\<close>
+value*\<open>filter (\<lambda>\<sigma>. the (mytext_section.level \<sigma>) > 1) @{myintroduction-instances}\<close>
+value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = argument) @{myresult-instances}\<close>
+(*>*)
+
+text\<open>
+  A new mechanism to make query on instances is available and uses the HOL implementation of lists.
+  Complex queries can then be defined using functions over the instances list.
+  To get the list of the properties of the instances of the class \<^theory_text>\<open>myresult\<close>,
+  and the list of the authors of the instances of the class \<^theory_text>\<open>myintroduction\<close>,
+  one can use the command \<^theory_text>\<open>value*\<close>:
+  @{theory_text [display,indent=10, margin=70] \<open>
+  value*\<open>map (myresult.property) @{myresult-instances}\<close>
+  value*\<open>map (mytext_section.authored_by) @{myintroduction-instances}\<close>
+  \<close>}
+  To get the list of the instances of the class \<^theory_text>\<open>myresult\<close> whose \<^theory_text>\<open>evidence\<close> is a \<^theory_text>\<open>"proof"\<close>,
+  on can use the command:
+  @{theory_text [display,indent=10, margin=70] \<open>
+  value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = proof) @{myresult-instances}\<close>
+  \<close>}
+  To get the list of the instances of the class \<^theory_text>\<open>myintroduction\<close> whose \<^theory_text>\<open>level\<close> > 1,
+  on can use the command:
+  @{theory_text [display,indent=10, margin=70] \<open>
+  value*\<open>filter (\<lambda>\<sigma>. the (mytext_section.level \<sigma>) > 1) @{myintroduction-instances}\<close>
+  \<close>}
 \<close>
 
 section*["morphisms"::technical,main_author="Some(@{docitem ''idir''}::author)"] \<open>Proving Morphisms on Ontologies\<close>
@@ -806,7 +836,7 @@ https://doi.org/10.1145/2479787.2479830
 *)
 
 
-
+(*
 text\<open>\pagebreak\<close>
 section\<open>Annex\<close>
 
@@ -1821,7 +1851,7 @@ generated labelled transition systems may be used to steer inductions or to cons
 the normalized processes \<open>P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<tau>\<^sub>,\<upsilon>\<rbrakk>\<close> automatically, thus combining efficient finite reasoning 
 over finite sub-systems with globally infinite systems in a logically safe way. 
 \<close>
-
+*)
 (*<*)
 subsection*[bib::bibliography]\<open>References\<close>
 
