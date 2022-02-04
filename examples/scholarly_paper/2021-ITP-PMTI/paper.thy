@@ -709,7 +709,7 @@ figure*[
   "invariant-checking-figure"::figure
   , relative_width="99"
   , src="''figures/invariant-checking-violated-example''"
-]\<open>The invariant \<^theory_text>\<open>force_level\<close> of the class \<^theory_text>\<open>introduction\<close> is violated by
+]\<open>The \<^theory_text>\<open>invariant force_level\<close> of the class \<^theory_text>\<open>myintroduction\<close> is violated by
   the instance \<^theory_text>\<open>introduction1\<close>.\<close>
 
 (*<*)
@@ -729,8 +729,8 @@ figure*[
   "inherited-invariant-checking-figure"::figure
   , relative_width="99"
   , src="''figures/inherited-invariant-checking-violated-example''"
-]\<open>The invariant \<^theory_text>\<open>force_level\<close> of the class claim is inherited
-  from the class \<^theory_text>\<open>introduction\<close> and is violated by the instance \<^theory_text>\<open>claimNotion\<close>.
+]\<open>The \<^theory_text>\<open>invariant force_level\<close> of the class \<^theory_text>\<open>myclaim\<close> is inherited
+  from the class \<^theory_text>\<open>myintroduction\<close> and is violated by the instance \<^theory_text>\<open>claimNotion\<close>.
 \<close>
 
 (*<*)
