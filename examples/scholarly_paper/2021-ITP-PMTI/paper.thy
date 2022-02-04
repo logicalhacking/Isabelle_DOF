@@ -651,7 +651,7 @@ declare_reference*["term-context-equality-evaluation"::figure]
 (*>*)
 
 text\<open>
-  We can even compare classes. \<^figure>\<open>term-context-equality-evaluation\<close>
+  We can even compare class instances. \<^figure>\<open>term-context-equality-evaluation\<close>
   shows that the two class instances \<^theory_text>\<open>resultProof\<close> and \<^theory_text>\<open>resultProof2\<close> are not equivalent
   because their attribute \<^theory_text>\<open>property\<close> differ.
 \<close>
