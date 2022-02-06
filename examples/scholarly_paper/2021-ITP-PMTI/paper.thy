@@ -231,10 +231,10 @@ text\<open>As novel contribution, this work extends prior versions of \<^dof> by
 \<close>
 text\<open> For example, the \<^dof> evaluation command taking a HOL-expression:
 @{theory_text [display,indent=6, margin=70] 
-\<open> value*[ass::Assertion, relvce=2::int] \<open>mapfilter (\<lambda> \<sigma>. relvce \<sigma> > 2) @{instance_of \<open>Assertion\<close>}\<close>\<close>
+\<open> value*[ass::Assertion, relvce=2::int] \<open>filter (\<lambda> \<sigma>. relvce \<sigma> > 2) @{Assertion-instances}\<close>\<close>
 }
 where \<^dof> command \<open>value*\<close> type-checks, expands in an own validation phase
-the \<open>instance_of\<close>-term antiquotation, and evaluates the resulting HOL expression
+the \<open>Assertion-instances\<close>-term antiquotation, and evaluates the resulting HOL expression
 above. Assuming an ontology providing the class \<open>Assertion\<close> having at least the
 integer attribute \<open>relvce\<close>, the command finally creates an instance of \<open>Assertion\<close> and 
 binds this to the label \<open>ass\<close> for further use.
@@ -451,6 +451,8 @@ section*[invariants::technical,main_author="Some(@{docitem ''nic''}::author)"]
 \<open>Term-Context Support, Invariants and Queries in DOF\<close>
 
 (*<*)
+(* Ontology example for mathematical papers *)
+
 doc_class myauthor =
   email :: "string" <= "''''"
 doc_class mytext_section =
@@ -498,12 +500,12 @@ declare[[invariants_checking_with_tactics = false]]
 
 text\<open>
   To offer a smooth integration into the \<^emph>\<open>formal\<close> theory development process,
-  Isabelle/HOL should be able to dynamically interpret the source document.
-  But the specific antiquotations introduced by Isabelle/DOF are not directly recognized
-  by Isabelle/HOL, and the process of term checking and evaluation must be enriched.
+  \<^isabelle> should be able to dynamically interpret the source document.
+  But the specific antiquotations introduced by \<^dof> are not directly recognized
+  by \<^isabelle>, and the process of term checking and evaluation must be enriched.
   Previous works~@{cite "brucker.ea:isabelle-ontologies:2018" and "brucker.ea:isabelledof:2019"}
   added a validation step for the SML and semi-formal text contexts.
-  To support Isabelle/DOF antiquotations in the term contexts, the validation step should
+  To support \<^dof> antiquotations in the term contexts, the validation step should
   be improved and a new step, which we call \<^emph>\<open>elaboration\<close> must be added to allow
   these antiquotations in \<open>\<lambda>\<close>-terms.
   The resulting process encompasses the following steps:
@@ -511,16 +513,16 @@ text\<open>
     \<^item> Infer the type of the term;
     \<^item> Certify the term;
     \<^item> Pass on the information to PIDE;
-    \<^item> Validate the term: the Isabelle/DOF antiquotations terms are parsed and type-checked;
-    \<^item> Elaborate: the Isabelle/DOF antiquotations terms are expanded.
-      The antiquotations are replaced by the object in HOL they reference
-      i.e. a \(\lambda\)-calculus term;
+    \<^item> Validate the term: the \<^dof> antiquotations terms are parsed and type-checked;
+    \<^item> Elaborate: the \<^dof> antiquotations terms are expanded.
+      The antiquotations are replaced by the object in \<^hol> they reference
+      i.e. a \<open>\<lambda>\<close>-calculus term;
     \<^item> Code generation:
-      \<^item> Evaluation of HOL expressions with ontological annotations,
+      \<^item> Evaluation of \<^hol> expressions with ontological annotations,
       \<^item> Generation of ontological invariants processed simultaneously
-        with the generation of the document (a theory in HOL).
+        with the generation of the document (a theory in \<^hol>).
 
-  Isabelle/HOL provides commands to type-check and print terms (the command \<^theory_text>\<open>term\<close>)
+  \<^isabelle> provides commands to type-check and print terms (the command \<^theory_text>\<open>term\<close>)
   and evaluate and print a term (the command \<^theory_text>\<open>value\<close>).
   We provide the equivalent commands, respectively \<^theory_text>\<open>term*\<close> and \<^theory_text>\<open>value*\<close>, which support
   the validation and elaboration phase.
@@ -565,7 +567,7 @@ doc_class myconclusion = text_section +
 \caption{Excerpt of an ontology example for mathematical papers.}
 \label{fig-ontology-example}
 \end{figure}
-  we add up some class instances with the \<^theory_text>\<open>text*\<close> command, as in \autoref{fig-instances-example}.
+  we define some class instances with the \<^theory_text>\<open>text*\<close> command, as in \autoref{fig-instances-example}.
 \begin{figure}
 @{boxed_theory_text [display] \<open>
 text*[church::myauthor, email="\<open>church@lambda.org\<close>"]\<open>\<close>
@@ -582,8 +584,8 @@ text*[claimNotion::myclaim, authored_by = "{@{myauthor \<open>church\<close>}}",
 \caption{Some instances of the classes of the ontology in the \autoref{fig-ontology-example}.}
 \label{fig-instances-example}
 \end{figure}
-  In the instance \<^theory_text>\<open>introduction1\<close>, \<^theory_text>\<open>@{author \<open>church\<close>}\<close> denotes
-  the instance \<^theory_text>\<open>church\<close> of the class \<^theory_text>\<open>author\<close>.
+  In the instance \<^theory_text>\<open>introduction1\<close>, \<^term>\<open>@{myauthor \<open>church\<close>}\<close> denotes
+  the instance \<^theory_text>\<open>church\<close> of the class \<^term>\<open>myauthor\<close>.
   One can now reference a class instance in a \<^theory_text>\<open>term*\<close> command.
   In the command  \<^theory_text>\<open>term*\<open>@{myauthor \<open>church\<close>}\<close>\<close>
   the term \<^term>\<open>@{myauthor \<open>church\<close>}\<close> is type-checked, \<^ie>, the command \<^theory_text>\<open>term*\<close> checks that
@@ -610,9 +612,9 @@ declare_reference*["evaluation-example"::side_by_side_figure]
 
 text\<open>
   The \<^theory_text>\<open>value*\<close> command \<^theory_text>\<open>value*\<open>email @{author \<open>church\<close>}\<close>\<close>
-  type-checks the antiquotation \<^term>\<open>@{author \<open>church\<close>}\<close>,
-  and then returns the value of the \<^theory_text>\<open>email\<close> attribute for the \<^theory_text>\<open>church\<close> instance,
-  \<^ie> the HOL string \<^term>\<open>''church@lambda.org''\<close>
+  type-checks the antiquotation \<^term>\<open>@{myauthor \<open>church\<close>}\<close>,
+  and then returns the value of the \<^term>\<open>email\<close> attribute for the \<^theory_text>\<open>church\<close> instance,
+  \<^ie> the \<^hol> string \<^term>\<open>''church@lambda.org''\<close>
   (see \<^side_by_side_figure>\<open>evaluation-example\<close>).
 \<close>
 
@@ -653,7 +655,7 @@ declare_reference*["term-context-equality-evaluation"::figure]
 text\<open>
   We can even compare class instances. \<^figure>\<open>term-context-equality-evaluation\<close>
   shows that the two class instances \<^theory_text>\<open>resultProof\<close> and \<^theory_text>\<open>resultProof2\<close> are not equivalent
-  because their attribute \<^theory_text>\<open>property\<close> differ.
+  because their attribute \<^term>\<open>property\<close> differ.
 \<close>
 
 figure*[
@@ -665,24 +667,25 @@ figure*[
 
 text\<open>
   A novel mechanism to specify constraints as invariants is implemented
-  and can now be specified in common HOL syntax, using the keyword \<^theory_text>\<open>invariant\<close>
+  and can now be specified in common \<^hol> syntax, using the keyword \<^theory_text>\<open>invariant\<close>
   in the class definition (recall \autoref{fig-ontology-example}).
   Following the constraints proposed in @{cite "brucker.ea:isabelle-ontologies:2018"}, 
-  one can specify that any instance of a class \<^theory_text>\<open>myresult\<close>
+  one can specify that any instance of a class \<^term>\<open>myresult\<close>
   finally has a non-empty property list, if its \<^typ>\<open>kind\<close> is \<^theory_text>\<open>"proof"\<close>
   (see the \<^theory_text>\<open>invariant has_property\<close>), or that 
-  the \<^theory_text>\<open>establish\<close> relation between \<^typ>\<open>myclaim\<close> and \<^typ>\<open>myresult\<close> must be defined when an instance
-  of the class \<^theory_text>\<open>myconclusion\<close> is defined (see the \<^theory_text>\<open>invariant establish_defined\<close>).
+  the \<^term>\<open>establish\<close> relation between \<^typ>\<open>myclaim\<close> and \<^typ>\<open>myresult\<close>
+  must be defined when an instance
+  of the class \<^term>\<open>myconclusion\<close> is defined (see the \<^theory_text>\<open>invariant establish_defined\<close>).
 
-  In our example, the \<^theory_text>\<open>invariant author_finite\<close> of the class \<^theory_text>\<open>myintroduction\<close> enforces
-  that the user sets the \<^theory_text>\<open>authored_by\<close> set.
-  The \<^theory_text>\<open>\<sigma>\<close> symbol is reserved and references the future class instance.
+  In our example, the \<^theory_text>\<open>invariant author_finite\<close> of the class \<^term>\<open>myintroduction\<close> enforces
+  that the user sets the \<^term>\<open>authored_by\<close> set.
+  The \<open>\<sigma>\<close> symbol is reserved and references the future class instance.
   By relying on the implementation of the Records
-  in Isabelle/HOL~@{cite "wenzel:isabelle-isar:2020"},
+  in \<^isabelle>~@{cite "wenzel:isabelle-isar:2020"},
   one can reference an attribute of an instance using its selector function.
-  For example, \<^theory_text>\<open>establish \<sigma>\<close> denotes the value
-  of the \<^theory_text>\<open>establish\<close> attribute
-  of the future instance of the class \<^theory_text>\<open>myconclusion\<close>.
+  For example, \<^term>\<open>establish \<sigma>\<close> denotes the value
+  of the \<^term>\<open>establish\<close> attribute
+  of the future instance of the class \<^term>\<open>myconclusion\<close>.
 \<close>
 
 (*<*)
@@ -693,16 +696,16 @@ text\<open>
   The value of each attribute defined for the instances is checked at run-time
   against their class invariants.
   The \<^theory_text>\<open>resultProof\<close> instance respects the \<^theory_text>\<open>invariant has_property\<close>,
-  because we specify its attribute \<^theory_text>\<open>evidence\<close> to the \<^theory_text>\<open>kind\<close> \<^theory_text>\<open>"proof"\<close>,
-  we also specify its attribute \<^theory_text>\<open>property\<close> with a suited value
-  as a list of \<^theory_text>\<open>"thm"\<close>.
+  because we specify its attribute \<^term>\<open>evidence\<close> to the \<^typ>\<open>kind\<close> \<^theory_text>\<open>"proof"\<close>,
+  we also specify its attribute \<^term>\<open>property\<close> with a suited value
+  as a list of \<^typ>\<open>thm\<close>.
   In \<^figure>\<open>invariant-checking-figure\<close>,
-  we try to specify a new instance \<^theory_text>\<open>introduction1\<close> of the class \<^theory_text>\<open>myintroduction\<close>.
+  we try to specify a new instance \<^theory_text>\<open>introduction1\<close> of the class \<^term>\<open>myintroduction\<close>.
   But an invariant checking error is triggered because we do not respect the
   constraint specified in the \<^theory_text>\<open>invariant force_level\<close>,
-  when we specify the \<^theory_text>\<open>level\<close> attribute of \<^theory_text>\<open>introduction1\<close> to \<^theory_text>\<open>Some 0\<close>.
+  when we specify the \<^term>\<open>level\<close> attribute of \<^theory_text>\<open>introduction1\<close> to \<^term>\<open>Some 0\<close>.
   The \<^theory_text>\<open>invariant force_level\<close> forces the value of the argument
-  of the attribute \<^theory_text>\<open>level\<close> to be greater than 1.
+  of the attribute \<^term>\<open>level\<close> to be greater than 1.
 \<close>
 
 figure*[
@@ -718,8 +721,8 @@ declare_reference*["inherited-invariant-checking-figure"::figure]
 
 text\<open>
   Classes inherit the invariants from their superclass.
-  As the class  \<^theory_text>\<open>myclaim\<close> is a subsclass
-  of the class \<^theory_text>\<open>myintroduction\<close>, it inherits the \<^theory_text>\<open>myintroduction\<close> invariants.
+  As the class  \<^term>\<open>myclaim\<close> is a subsclass
+  of the class \<^term>\<open>myintroduction\<close>, it inherits the \<^term>\<open>myintroduction\<close> invariants.
   Hence the \<^theory_text>\<open>invariant force_level\<close> is checked
   when the instance \<^theory_text>\<open>claimNotion\<close> is defined,
   like in \<^figure>\<open>inherited-invariant-checking-figure\<close>.
@@ -743,21 +746,22 @@ value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = argument) @
 (*>*)
 
 text\<open>
-  A new mechanism to make query on instances is available and uses the HOL implementation of lists.
+  A new mechanism to make query on instances is available and uses
+  the \<^hol> implementation of lists.
   Complex queries can then be defined using functions over the instances list.
-  To get the list of the properties of the instances of the class \<^theory_text>\<open>myresult\<close>,
-  and the list of the authors of the instances of the class \<^theory_text>\<open>myintroduction\<close>,
+  To get the list of the properties of the instances of the class \<^term>\<open>myresult\<close>,
+  and the list of the authors of the instances of the class \<^term>\<open>myintroduction\<close>,
   one can use the command \<^theory_text>\<open>value*\<close>:
   @{theory_text [display,indent=10, margin=70] \<open>
   value*\<open>map (myresult.property) @{myresult-instances}\<close>
   value*\<open>map (mytext_section.authored_by) @{myintroduction-instances}\<close>
   \<close>}
-  To get the list of the instances of the class \<^theory_text>\<open>myresult\<close> whose \<^theory_text>\<open>evidence\<close> is a \<^theory_text>\<open>"proof"\<close>,
-  on can use the command:
+  To get the list of the instances of the class \<^term>\<open>myresult\<close>
+  whose \<^term>\<open>evidence\<close> is a \<^theory_text>\<open>"proof"\<close>, on can use the command:
   @{theory_text [display,indent=10, margin=70] \<open>
   value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = proof) @{myresult-instances}\<close>
   \<close>}
-  To get the list of the instances of the class \<^theory_text>\<open>myintroduction\<close> whose \<^theory_text>\<open>level\<close> > 1,
+  To get the list of the instances of the class \<^term>\<open>myintroduction\<close> whose \<^term>\<open>level\<close> > 1,
   on can use the command:
   @{theory_text [display,indent=10, margin=70] \<open>
   value*\<open>filter (\<lambda>\<sigma>. the (mytext_section.level \<sigma>) > 1) @{myintroduction-instances}\<close>
@@ -770,8 +774,176 @@ section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author
 
 subsection\<open>Engineering Example : An Extract from PLib\<close>
 
-subsection\<open>Mathematics Example : An Extract from OntoMathPro\<close>
+subsection\<open>Mathematics Example : An Extract from OntoMath\textsuperscript{PRO}\<close>
 
+(*<*)
+(* OntoMathPro_Ontology example *)
+
+datatype dc = creator string | title string
+
+datatype owl =
+    backwardCompatibleWith string
+  | deprecated string
+  | incompatibleWith string
+  | priorVersion string
+  | versionInfo string
+  
+datatype rdfs =
+    comment string
+  | isDefinedBy string
+  | label string
+  | seeAlso string
+
+datatype annotation = DC dc | OWL owl |  RDFS rdfs
+
+onto_class Top =
+  Annotations :: "annotation list"
+
+onto_class Field_of_mathematics =
+  Annotations :: "annotation list"
+  invariant restrict_annotation_F ::"set (Annotations \<sigma>) \<subseteq>
+                                              range (RDFS o label) \<union> range (RDFS o comment)"
+
+onto_class Mathematical_knowledge_object =
+  Annotations :: "annotation list"
+  invariant restrict_annotation_M ::"set (Annotations \<sigma>) \<subseteq>
+                                              range (RDFS o label) \<union> range (RDFS o comment)"
+
+onto_class assoc_F_M =
+  contains:: "(Field_of_mathematics \<times> Mathematical_knowledge_object) set"
+  invariant contains_defined :: "\<forall> x. x \<in> Domain (contains \<sigma>)
+                                              \<longrightarrow> (\<exists> y \<in> Range (contains \<sigma>). (x, y) \<in> contains \<sigma>)"
+
+onto_class assoc_M_F =
+  belongs_to :: "(Mathematical_knowledge_object \<times> Field_of_mathematics) set"
+  invariant belong_to_defined :: "\<forall> x. x \<in> Domain (belongs_to \<sigma>)
+                                           \<longrightarrow> (\<exists> y \<in> Range (belongs_to \<sigma>). (x, y) \<in> belongs_to \<sigma>)"
+
+onto_class assoc_M_M =
+  is_defined_by :: "(Mathematical_knowledge_object \<times> Mathematical_knowledge_object) set"
+  invariant is_defined_by_defined :: "\<forall> x. x \<in> Domain (is_defined_by \<sigma>)
+                                    \<longrightarrow> (\<exists> y \<in> Range (is_defined_by \<sigma>). (x, y) \<in> is_defined_by \<sigma>)"
+(*typedef 'a A'_scheme =
+  "{x :: 'a A_scheme. "
+*)
+
+onto_class assoc_M_M' =
+  "defines" :: "(Mathematical_knowledge_object \<times> Mathematical_knowledge_object) set"
+  invariant defines_defined :: "\<forall> x. x \<in> Domain (defines \<sigma>)
+                                    \<longrightarrow> (\<exists> y \<in> Range (defines \<sigma>). (x, y) \<in> defines \<sigma>)"
+
+onto_class assoc_M_M_see_also =
+  see_also :: "(Mathematical_knowledge_object rel) set" 
+  invariant see_also_trans :: "\<forall> r \<in> (see_also \<sigma>). trans r"
+  invariant see_also_sym :: "\<forall> r \<in> (see_also \<sigma>). sym r"
+
+onto_class Problem = Mathematical_knowledge_object +
+  Annotations :: "annotation list"
+  
+onto_class Method = Mathematical_knowledge_object +
+  Annotations :: "annotation list"
+
+onto_class assoc_Problem_Method =
+  is_solved_by :: "(Problem \<times> Method) set"
+  invariant is_solved_by_defined :: "\<forall> x. x \<in> Domain (is_solved_by \<sigma>)
+                                    \<longrightarrow> (\<exists> y \<in> Range (is_solved_by \<sigma>). (x, y) \<in> is_solved_by \<sigma>)"
+
+onto_class assoc_Method_Problem =
+  solves :: "(Method \<times> Problem) set"
+  invariant solves_defined :: "\<forall> x. x \<in> Domain (solves \<sigma>)
+                                    \<longrightarrow> (\<exists> y \<in> Range (solves \<sigma>). (x, y) \<in> solves \<sigma>)"
+
+(*>*)
+
+text\<open>
+  The \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> ontology @{cite "DBLP:journals/corr/NevzorovaZKL14"}
+  is an OWL ontology of mathematical knowledge concepts.
+  It posits the ISA semantics @{cite "1654194"} for hierarchies of mathematical knowledge objects,
+  and defines these objects as two hierarchies of classes:
+  a taxonomy of the fields of mathematics and a taxonomy of mathematical knowledge objects.
+  It defines two main type of relations for these two taxonomies:
+  directed relations between elements of the two hierarchies
+  like \<^term>\<open>belongs_to\<close>, \<^term>\<open>contains\<close>, \<^term>\<open>defines\<close>, \<^term>\<open>is_defined_by\<close>, \<^term>\<open>solves\<close>,
+  \<^term>\<open>is_solved_by\<close>, and a symmetric transitive associative relation \<^term>\<open>see_also\<close>
+  between two mathematical knowledge objects.
+  It also represents links with external resources such as DBpedia
+  with annotations properties @{cite "Parsia:12:OWO"}.
+  \<^dof> covers a wide range of the OWL concepts used by the \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> ontology.
+  We can represent the annotations properties as datatypes and
+  then attach them as an attributes list to a class.
+  For example the declaration:
+@{theory_text [display,indent=10, margin=70] \<open>
+datatype dc = creator string | title string
+datatype owl =   backwardCompatibleWith string
+               | deprecated string
+               | incompatibleWith string
+               | priorVersion string
+               | versionInfo string
+datatype rdfs =   comment string
+                | isDefinedBy string
+                | label string
+                | seeAlso string
+datatype annotation = DC dc | OWL owl |  RDFS rdfs
+
+onto_class Field_of_mathematics =
+  Annotations :: "annotation list"
+  invariant restrict_annotation_F ::"set (Annotations \<sigma>) \<subseteq>
+                                     range (RDFS o label) \<union> range (RDFS o comment)"
+
+\<close>}
+  defines the class \<^term>\<open>Field_of_mathematics\<close> with an attribute \<^term>\<open>Annotations\<close>
+  which is a list of \<^typ>\<open>annotation\<close>s.
+  We can even constraint the type of allowed \<^typ>\<open>annotation\<close>s with an invariant.
+  Here the \<^theory_text>\<open>invariant restrict_annotation_F\<close> forces the \<^typ>\<open>annotation\<close>s to be
+  a \<^term>\<open>label\<close> or a \<^term>\<open>comment\<close>.
+  Subsumption relation is straightforward.
+  The ontology \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> defines
+  a \<^term>\<open>Problem\<close> and a \<^term>\<open>Method\<close>
+  as subclasses of the class \<^term>\<open>Mathematical_knowledge_object\<close>.
+  It gives in \<^dof>:
+@{theory_text [display,indent=10, margin=70] \<open>
+onto_class Problem = Mathematical_knowledge_object +
+  Annotations :: "annotation list"
+  
+onto_class Method = Mathematical_knowledge_object +
+  Annotations :: "annotation list"
+\<close>}
+  We can express the relations between the two taxonomies
+  with association \<^theory_text>\<open>onto_class\<close>es which specify
+  the relation as an attribute and enforces the relation with an \<^theory_text>\<open>invariant\<close>.
+  The two directed relations \<^term>\<open>is_solved_by\<close> and \<^term>\<open>solves\<close>
+  between \<^term>\<open>Problem\<close> and a \<^term>\<open>Method\<close> can be represented in \<^dof> like this:
+@{theory_text [display,indent=10, margin=70] \<open>
+
+onto_class assoc_M_M_see_also =
+  see_also :: "(Mathematical_knowledge_object rel) set" 
+  invariant see_also_trans :: "\<forall> r \<in> (see_also \<sigma>). trans r"
+  invariant see_also_sym :: "\<forall> r \<in> (see_also \<sigma>). sym r"
+
+onto_class Method = Mathematical_knowledge_object +
+  Annotations :: "annotation list"
+
+onto_class assoc_Problem_Method =
+  is_solved_by :: "(Problem \<times> Method) set"
+  invariant is_solved_by_defined :: "\<forall> x. x \<in> Domain (is_solved_by \<sigma>)
+                                    \<longrightarrow> (\<exists> y \<in> Range (is_solved_by \<sigma>). (x, y) \<in> is_solved_by \<sigma>)"
+
+onto_class assoc_Method_Problem =
+  solves :: "(Method \<times> Problem) set"
+  invariant solves_defined :: "\<forall> x. x \<in> Domain (solves \<sigma>)
+                                    \<longrightarrow> (\<exists> y \<in> Range (solves \<sigma>). (x, y) \<in> solves \<sigma>)"
+\<close>}
+  where the attributes \<^term>\<open>is_solved_by\<close> and \<^term>\<open>solves\<close> define the relations
+  of the classes and the invariants \<^theory_text>\<open>is_solved_by_defined\<close> and \<^theory_text>\<open>solves_defined\<close> enforce
+  the existence of the relations when one define instances of the classes.
+
+  \<^dof> as a framework allows to define an ontology and specify constraints
+  on its concepts, and dynamically checks at run-time  the concepts and instances.
+  It offers an environment to define and test ontologies in an integrated document,
+  where all the knowledge and the proof-checking can be specified,
+  and thus can be a solution to go over
+  the trade-off between plain vocabularies and highly formalized models.
+\<close>
 
 section*[concl::conclusion]\<open>Conclusion\<close>
 subsection*[rw::related_work]\<open>Related Works\<close>
