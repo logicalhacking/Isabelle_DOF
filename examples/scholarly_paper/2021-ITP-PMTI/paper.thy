@@ -775,6 +775,109 @@ text\<open>
 
 section*["morphisms"::technical,main_author="Some(@{docitem ''idir''}::author)"] \<open>Proving Morphisms on Ontologies\<close>
 
+text\<open>
+\<^dof> framework does not assume that all documents reference the same ontology. 
+Each document may build its local ontology without any external reference. 
+It may also build it based upon one or several reference ontologies (i.e., standard ones). 
+
+The relationship between the local ontology and the reference one is formalised using a morphism function. 
+More precisely, a class of a local ontology may be described as a consequence of a transformation applied
+to one or several other class(es) defined in other ontologies. This means that each instance of the former can be 
+computed from one or more instances of the latter. 
+
+
+Thanks to the morphism relationship, the obtained class may either import properties (definitions are preserved) 
+or map properties (the properties are different but are semantically equivalent) that are defined in the referenced class(es). 
+It may also define additional properties.
+\<close>
+
+(*<*)
+(* Reference Ontology *)
+definition sum 
+  where "sum S = (fold (+) S 0)"
+
+datatype Hardware_Type = 
+  Motherboard | 
+  Expansion_Card | 
+  Storage_Device | 
+  Fixed_Media | 
+  Removable_Media |
+  Input_Device |
+  Output_Device
+
+onto_class Resource =
+  name :: string
+
+onto_class Electronic = Resource +
+  provider :: string
+  manufacturer :: string
+
+onto_class Component = Electronic +
+  mass :: int
+  dimensions :: "int list" 
+
+onto_class Simulation_Model = Electronic +
+  type :: string
+
+onto_class Informatic = Resource +
+  description :: string
+
+onto_class Hardware = Informatic +
+  type :: Hardware_Type
+  mass :: int
+  composed_of :: "Component list" 
+  invariant c1 :: "mass \<sigma> = sum(map Component.mass (composed_of \<sigma>))"
+
+onto_class R_Software = Informatic +
+  version :: int
+
+(*>*)
+
+
+text\<open>
+To illustrate this process, we use the reference ontology (considered as a standard) described 
+in the listing X, defining the Resource, Electronic, Component, Informatic, Hardware and Software 
+concepts (or classes). Each class contains a set of attributes or properties and some local 
+invariants. 
+
+In our example, we focus on the Hardware class containing a mass attribute and composed of a list 
+of components with a mass attribute formalising the mass value of each component. The Hardware 
+class also contains a local invariant ''c1'' to define a constraint linking the global mass of 
+a Hardware object with the masses of its own components.  
+\<close>
+
+(*<*)
+(* Local Ontology *)
+onto_class Item =
+  name :: string
+
+onto_class Product = Item +
+  serial_number :: int
+  provider :: string
+  mass :: int
+
+onto_class Computer_Software = Item +
+  version :: int
+
+onto_class Electronic_Component = Product +
+  dimensions :: "int set"
+
+onto_class Computer_Hardware = Product +
+  type :: Hardware_Type
+  composed_of :: "Product list" 
+  invariant c2 :: "Product.mass \<sigma> = sum(map Product.mass (composed_of \<sigma>))"
+
+(*>*)
+
+text\<open>
+For the needs of our document, we have defined a simple ontology to classify Software and Hardware 
+objects. This ontology is described in listing X and defines the Item, Product, Computer_Software 
+and Computer_Hardware concepts. As for the reference ontology, we focus on the Computer_Hardware 
+class defined as a list of products characterised by their mass value. This class contains a local 
+invariant ''c2'' to guarantee that its own mass value equals the sum of all the masses of the products 
+composing the object.
+\<close>
+
 section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] \<open>Applications\<close>
 
 subsection\<open>Engineering Example : An Extract from PLib\<close>
