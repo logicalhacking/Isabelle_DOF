@@ -40,13 +40,8 @@ The relationship between the local ontology and the reference one is formalised 
 More precisely, a class of a local ontology may be described as a consequence of a transformation applied
 to one or several other class(es) defined in other ontologies. This means that each instance of the former can be 
 computed from one or more instances of the latter. 
-
-To illustrate this process, we use the following reference ontology defining the Resource, Electronic, Component,
-Informatic, Hardware and Software concepts (or classes). Each class contains a set of attributes or properties and some invariants. 
-
-In our example, we focus on the Hardware class containing a mass attribute and composed of a list of components with a mass attribute formalising 
-the mass of each component.
 \<close>
+
 (* Reference Ontology *)
 onto_class Resource =
   name :: string
@@ -69,15 +64,21 @@ onto_class Hardware = Informatic +
   type :: Hardware_Type
   mass :: int
   composed_of :: "Component list" 
-  invariant c2 :: "mass \<sigma> = sum(map Component.mass (composed_of \<sigma>))"
+  invariant c1 :: "mass \<sigma> = sum(map Component.mass (composed_of \<sigma>))"
 
 onto_class R_Software = Informatic +
   version :: int
 
+text\<open>
+To illustrate this process, we use the reference ontology (considered as a standard) described in the listing X, defining the Resource, Electronic, Component,
+Informatic, Hardware and Software concepts (or classes). Each class contains a set of attributes or properties and some local invariants. 
 
+In our example, we focus on the Hardware class containing a mass attribute and composed of a list of components with a mass attribute formalising 
+the mass value of each component. The Hardware class also contains a local invariant ''c1'' to define a constraint linking the global mass of a Hardware 
+object with the masses of its own components.  
+\<close>
 
-text\<open>Local Ontology\<close>
-
+(* Local Ontology *)
 onto_class Item =
   name :: string
 
@@ -95,9 +96,14 @@ onto_class Electronic_Component = Product +
 onto_class Computer_Hardware = Product +
   type :: Hardware_Type
   composed_of :: "Product list" 
-  invariant c1 :: "Product.mass \<sigma> = sum(map Product.mass (composed_of \<sigma>))"
+  invariant c2 :: "Product.mass \<sigma> = sum(map Product.mass (composed_of \<sigma>))"
 
-
+text\<open>
+For the needs of our document, we have defined a simple ontology to classify Software and Hardware objects.
+This ontology is described in listing X and defines the Item, Product, Computer_Software and Computer_Hardware concepts.
+As for the reference ontology, we focus on the Computer_Hardware class defined as a list of products characterised by their mass value. 
+This class contains a local invariant to guarantee that its own mass value equals the sum of all the masses of the products composing the object.
+\<close>
 
 definition Item_to_Resource_morphism
   where "Item_to_Resource_morphism (\<sigma>::'a Item_scheme) =
@@ -130,6 +136,12 @@ definition Computer_Hardware_to_Hardware_morphism
 
 
 text\<open>
+To check the coherence of our local ontology, we define some  transformation rules as a mapping applied to one or several 
+other class(es) described in the reference ontology.
+\<close>
+
+
+text\<open>
 Thanks to the morphism relationship, the obtained class may either import properties (definitions are preserved) 
 or map properties (the properties are different but are semantically equivalent) that are defined in the referenced class(es). 
 It may also define additional properties.
@@ -139,15 +151,14 @@ As shown by our example, the structure of a (user) ontology may be quite differe
 
 text\<open>Now we check that the invariant is preserved through the morphism:\<close>
 
-lemma inv_c1_preserved :
-  "c1_inv \<sigma> \<Longrightarrow> c2_inv (Computer_Hardware_to_Hardware_morphism \<sigma>)"
-  unfolding c2_inv_def c1_inv_def Computer_Hardware_to_Hardware_morphism_def  
+lemma inv_c2_preserved :
+  "c2_inv \<sigma> \<Longrightarrow> c1_inv (Computer_Hardware_to_Hardware_morphism \<sigma>)"
+  unfolding c1_inv_def c2_inv_def Computer_Hardware_to_Hardware_morphism_def  
   by auto
 
-
 lemma Computer_Hardware_to_Hardware_morphism_total :
-  "Computer_Hardware_to_Hardware_morphism ` ({X::Computer_Hardware. c1_inv X}) \<subseteq> ({X::Hardware. c2_inv X})"
-  using inv_c1_preserved 
+  "Computer_Hardware_to_Hardware_morphism ` ({X::Computer_Hardware. c2_inv X}) \<subseteq> ({X::Hardware. c1_inv X})"
+  using inv_c2_preserved 
   by auto
 
 declare[[invariants_checking]]
