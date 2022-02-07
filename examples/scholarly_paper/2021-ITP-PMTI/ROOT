@@ -9,6 +9,7 @@ session "2021-ITP-PMTI" = "Isabelle_DOF" +
     "build"
     "cc-by.pdf"
     "lipics-logo-bw.pdf"
+    "orcid.pdf"
     "figures/Req-Appl-ex.png"
     "figures/formal-development.png"
     "figures/Req-Def-ex.png"
