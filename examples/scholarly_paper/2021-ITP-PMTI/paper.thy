@@ -509,7 +509,7 @@ text\<open>
   be improved and a new step, which we call \<^emph>\<open>elaboration\<close> must be added to allow
   these antiquotations in \<open>\<lambda>\<close>-terms.
   The resulting process encompasses the following steps:
-    \<^item> Parse the term which represents the object;
+    \<^item> Parse the term which represents the object in \<^hol>;
     \<^item> Infer the type of the term;
     \<^item> Certify the term;
     \<^item> Validate the term: the \<^dof> antiquotations terms are parsed and type-checked;
@@ -723,7 +723,7 @@ declare_reference*["inherited-invariant-checking-figure"::figure]
 
 text\<open>
   Classes inherit the invariants from their super-class.
-  As the class  \<^typ>\<open>myclaim\<close> is a sub-class
+  As the class  \<^typ>\<open>myclaim\<close> is a subclass
   of the class \<^typ>\<open>myintroduction\<close>, it inherits the \<^typ>\<open>myintroduction\<close> invariants.
   Hence the \<^theory_text>\<open>invariant force_level\<close> is checked
   when the instance \<^theory_text>\<open>claimNotion\<close> is defined,
@@ -901,7 +901,7 @@ onto_class Field_of_mathematics =
   Subsumption relation is straightforward.
   The ontology OntoMath\textsuperscript{PRO} defines
   a \<^typ>\<open>Problem\<close> and a \<^typ>\<open>Method\<close>
-  as sub-classes of the class \<^typ>\<open>Mathematical_knowledge_object\<close>.
+  as subclasses of the class \<^typ>\<open>Mathematical_knowledge_object\<close>.
   It gives in \<^dof>:
 @{theory_text [display,indent=10, margin=70] \<open>
 onto_class Problem = Mathematical_knowledge_object +
@@ -916,15 +916,6 @@ onto_class Method = Mathematical_knowledge_object +
   The two directed relations \<^const>\<open>is_solved_by\<close> and \<^const>\<open>solves\<close>
   between \<^typ>\<open>Problem\<close> and a \<^typ>\<open>Method\<close> can be represented in \<^dof> like this:
 @{theory_text [display,indent=10, margin=70] \<open>
-
-onto_class assoc_M_M_see_also =
-  see_also :: "(Mathematical_knowledge_object rel) set" 
-  invariant see_also_trans :: "\<forall> r \<in> (see_also \<sigma>). trans r"
-  invariant see_also_sym :: "\<forall> r \<in> (see_also \<sigma>). sym r"
-
-onto_class Method = Mathematical_knowledge_object +
-  Annotations :: "annotation list"
-
 onto_class assoc_Problem_Method =
   is_solved_by :: "(Problem \<times> Method) set"
   invariant is_solved_by_defined :: "\<forall> x. x \<in> Domain (is_solved_by \<sigma>)
