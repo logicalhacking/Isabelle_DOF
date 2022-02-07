@@ -939,11 +939,33 @@ onto_class assoc_Method_Problem =
 \<close>
 
 section*[concl::conclusion]\<open>Conclusion\<close>
+text\<open>We presented \<^dof>, an ontology framework 
+deeply integrating continuous-check/continuous-build functionality into
+the formal development process in \<^hol>. The novel feature of term-contexts in \<^dof>,
+which permits term-antiquotations elaborated in the parsing process, paves the
+way for the abstract specification of meta-data constraints as well the possibility
+of advanced search in the meta-data of document elements. Thus it profits and
+extends  Isabelle's document-centric view on formal development.
+
+Many ontological languages such OWL as well as the meta-modeling technology 
+available for UML/OCL provide concepts for semantic rules and constraints, but
+leave the checking of these usually to external tools (if implementing them at all), 
+thus limiting their practical usefulness drastically. Our approach treats them as 
+first-class citizens, and makes them to an object of formal study in, for example, 
+ontological mappings. Such a technology exists, to our knowledge, for the first time.
+
+Our experiments with adaptions of existing ontologies from engineering and mathematics
+show that \<^dof>'s ODL has sufficient expressive power to cover all aspects
+of languages such as OWL (with perhaps the exception of multiple inheritance on classes).
+However, these ontologies have been developed specifically \<^emph>\<open>in\<close> OWL and targeting
+its support, the Protege editor. We argue that \<^dof> might ask for a re-engineering
+of these ontologies: less deep hierarchies, rather deeper structure in meta-data
+and stronger invariants.
+\<close>
+
 subsection*[rw::related_work]\<open>Related Works\<close>
 
 text\<open>
-\<^item> Geschwalle: Tom Gruber's "Ontology for Engineering Mathematics"
-  \<^url>\<open>https://tomgruber.org/writing/an-ontology-for-engineering-mathematics\<close>
 \<^item> OntoMathPro contains indeed something like a "taxonomy of the fields of mathematics" pp 110
   \<^url>\<open>https://kpfu.ru/staff_files/F_438204284/OntoMathPro_ontology_KESW2014.pdf\<close>
   According to In total, OntoMathPRO contains 3,449 classes ...
@@ -960,12 +982,34 @@ text\<open>
   \<^url>\<open>http://data.sciencewise.info/openrdf-sesame/repositories/SW\<close> 
   \<^url>\<open>https://github.com/CLLKazan/OntoMathPro\<close> 
 
-\<^item> Search Engines: Wikipedia Formula Search, \<^url>\<open>http://shinh.org/wfs\<close>
+\<^item> The search engine \<^url>\<open>http://shinh.org/wfs\<close> uses a quite brute-force, 
+  but practical approach. It is getting its raw-data from Wikipedia and PlanetMath 
+  and similar sites. Its is based on a clever text-based search in 
+  a large number of formulas, agnostic of their logical context, and of formal proof.
 
-\<^item> And then: The stuff from Univ Erlangen (Kohlhase et al).
+\<^item> The OAF project @{cite "KohlhaseR21"} comes closest to our ideal of wide-spread
+  use of ontologies for search functionalities in mathematical libraries.
+  The project developed a common ontological format, called  OMDoc/MMT, and 
+  developed six export functions from major ITP systems such as HOL Light,
+  Mizar, PVS, IMPS, Coq, and Isabelle into it. The more difficult task to 
+  develop import functions (providing possibly imported proofs in a native
+  proof format) has not been addressed; rather, the emphasis was put on building
+  an a server infrastructure based on conventional, rather heavy-weight 
+  database- and OWL technology.
+  Our approach targets so far only one ITP system and its libraries, and emphasizes 
+  type-safeness, expressive power and "depth" of meta-data, which is adapted
+  to the specific needs of ITP systems and theory developments.
+
+% ITEM The "Ontology for Engineering Mathematics" 
+%  \<^url>\<open>https://tomgruber.org/writing/an-ontology-for-engineering-mathematics\<close> is
+%  is  unfortunately only a half-baked approach to model physical quantities
+%  and SI-measurements. Instead of using ontologies for this purpose, there
+%  exist approaches based on strong type systems 
+  
 
 \<close>
 
+(*
 subsubsection\<open>The notion of \<^emph>\<open>Integrated Source\<close>\<close>
 text\<open>Links to the term: Integrated Document 
 \<^item> \<^url>\<open>https://www.openkm.com/blog/integrated-document-management.html\<close>
@@ -992,6 +1036,7 @@ text\<open>
 
 
 \<close>
+*)
 (*
 Data integration driven ontology design, case study smart city
 Authors:  German Nemirovski,  Andreas Nolle,  Álvaro Sicilia,Ilaria Ballarini,Vincenzo Corado
