@@ -83,7 +83,7 @@ author*[idir,email="\<open>idir.aitsadoune@lri.fr\<close>",affiliation="\<open>L
 author*[nic,email="\<open>nicolas.meric@lri.fr\<close>",affiliation="\<open>LRI, Université Paris-Saclay\<close>"]\<open>Nicolas Méric\<close>
 author*[bu,email="\<open>wolff@lri.fr\<close>",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]\<open>Burkhart Wolff\<close>
              
-abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>Isabelle/HOL\<close>,\<open>Ontology Alignment\<close>,\<open>OWL\<close>,\<open>UML/OCL\<close>]"]
+abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>\<^isabelle>\<close>,\<open>Ontology Mapping\<close>]"]
 \<open>  \<^dof> is a novel ontology framework on top of Isabelle 
    @{cite "brucker.ea:isabelledof:2019" and "brucker.ea:isabelle-ontologies:2018"}. 
    \<^dof>  allows for the formal development of ontologies as well as continuous checking that
@@ -161,7 +161,7 @@ syntax to standard ones. The difference is a bracket with meta-data of the form:
      ML*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some SML code \<close>
      ...
 \<close>}
-\<^vs>\<open>-0.3cm\<close> In these  \<^dof> elements, a meta-data object is created and associated to it. This 
+\<^vs>\<open>-0.3cm\<close> In these \<^dof> elements, a meta-data object is created and associated to it. This 
 meta-data can be referenced via its label and used in further computations in text or code.
 %; the details will be explained in the subsequent section. 
 
@@ -185,10 +185,10 @@ of the integrated source will appear  in Isabelle/PIDE as follows:  \<^vs>\<open
 @{theory_text [display,indent=10, margin=70] 
   \<open>According to the reflexivity axiom \<open>x = x\<close>, we obtain in \<Gamma> for \<open>fac 5\<close> the result \<open>120\<close>.\<close>
 }
-\<^vs>\<open>-0.1cm\<close>where the meta-texts \<open>@{thm refl}\<close> ("give the presentation of theorem 'refl'"), 
-\<open>@{term "fac 5"}\<close> ("parse and type-check 'fac 5' in the previous logical context")
-and \<open>@{value "fac 5"}\<close> ("compile and execute 'fac 5' according to its
-definitions") are built-in antiquotations in \<^hol>. 
+\<^vs>\<open>-0.1cm\<close>where the meta-texts \<open>@{thm refl}\<close> (``give the presentation of theorem `refl'\,\!''), 
+\<open>@{term "fac 5"}\<close> (``parse and type-check `fac 5' in the previous logical context'')
+and \<open>@{value "fac 5"}\<close> (``compile and execute `fac 5' according to its
+definitions'') are built-in antiquotations in \<^hol>. 
 
 One distinguishing feature of \<^dof> is that specific antiquotations \<^emph>\<open>were generated from
 an ontology\<close> rather than being hard-coded into the Isabelle system infrastructure.
@@ -226,15 +226,15 @@ text\<open>As novel contribution, this work extends prior versions of \<^dof> by
   (rather than SML code or semi-formal text). Thus, annotations generated
   from  \<^dof> may also occur in \<open>\<lambda>\<close>-terms used to denote meta-data. 
 \<^enum> formal, machine-checked invariants on meta-data, which correspond to the concept of 
-  "rules" in OWL or "constraints" in UML, and which can be specified in 
-  common HOL \<open>\<lambda>\<close>-term syntax.
+  ``rules'' in OWL or ``constraints'' in UML, and which can be specified in 
+  common \<^hol> \<open>\<lambda>\<close>-term syntax.
 \<close>
-text\<open> For example, the \<^dof> evaluation command taking a HOL-expression:
+text\<open> For example, the \<^dof> evaluation command taking a \<^hol>-expression:
 @{theory_text [display,indent=6, margin=70] 
 \<open> value*[ass::Assertion, relvce=2::int] \<open>filter (\<lambda> \<sigma>. relvce \<sigma> > 2) @{Assertion-instances}\<close>\<close>
 }
 where \<^dof> command \<open>value*\<close> type-checks, expands in an own validation phase
-the \<open>Assertion-instances\<close>-term antiquotation, and evaluates the resulting HOL expression
+the \<open>Assertion-instances\<close>-term antiquotation, and evaluates the resulting \<^hol> expression
 above. Assuming an ontology providing the class \<open>Assertion\<close> having at least the
 integer attribute \<open>relvce\<close>, the command finally creates an instance of \<open>Assertion\<close> and 
 binds this to the label \<open>ass\<close> for further use.
@@ -242,10 +242,11 @@ binds this to the label \<open>ass\<close> for further use.
 Beyond the gain of expressivity in \<^dof> ontologies, term-antiquotations pave the way 
 for advanced queries of elements inside an integrated source, and invariants 
 allow for formal proofs over the relations/translations of ontologies and ontology-instances.
-The latter question raised scientific interest under the label  "ontology alignment" for 
-which we therefore present a formal solution. To sum up, we completed \<^dof> to a
+The latter question raised scientific interest under the label ``ontology mapping'' for 
+which we therefore present a formal solution. To sum up, we completed \<^dof> to
 a fairly rich, ITP-oriented ontology language, which is a concrete proposal for the 
-ITP community allowing a deeper structuring of mathematical libraries such as the AFP.
+ITP community allowing a deeper structuring of mathematical libraries
+such as the Archive of Formal Proofs (AFP).
 \<close>
 
 
@@ -275,18 +276,19 @@ text\<open>
 *)
 subsection*[bgrnd_isadof::background]\<open>The \<^dof> Framework\<close>
 text\<open>
-  \<^dof> ~@{cite "brucker.ea:isabelle-ontologies:2018" and 
+  \<^dof>~@{cite "brucker.ea:isabelle-ontologies:2018" and 
               "brucker.ea:isabelledof:2019"} 
-  is a document ontology framework that extends Isabelle/HOL.
-  \<^dof> offers basically two things: a language called ODL to \<^emph>\<open>specify\<close> a formal ontology,
-  and ways to \<^emph>\<open>annotate\<close> an integrated document written in Isabelle/HOL with the specified
+  is a document ontology framework that extends \<^isabelle>.
+  \<^dof> offers basically two things: a language called Ontology Definition Language (ODL)
+  to \<^emph>\<open>specify\<close> a formal ontology,
+  and ways to \<^emph>\<open>annotate\<close> an integrated document written in \<^isabelle> with the specified
   meta-data. Additionally, \<^dof> generates from an ontology a family of 
   \<^emph>\<open>antiquotations\<close> allowing to establish  machine-checked links between classified entities. 
 %  Unlike UML, however, \<^dof> allows for integrated documents with informal and formal elements
 %  including the necessary management of logical contexts. 
 
   The perhaps most attractive aspect of \<^dof> is its deep integration into the IDE of Isabelle 
-  (PIDE), which allows a hypertext-like navigation as well as fast user-feedback
+  (Isabelle/PIDE), which allows a hypertext-like navigation as well as fast user-feedback
   during development and evolution of the integrated source. This includes rich editing support, 
   including on-the-fly semantics checks, hinting, or auto-completion. 
   \<^dof> supports \<^LaTeX> - based document generation as well as ontology-aware ``views'' on 
@@ -309,28 +311,29 @@ text*[description_scrrenshot::background]\<open>
 
 subsection*[bgrnd_ODL::background]\<open>A Guided Tour through ODL\<close>
 text\<open>
-  \<^dof> provides a strongly typed Ontology Definition Language (ODL) that provides the usual 
+  \<^dof> provides a strongly typed OLD that provides the usual 
   concepts of ontologies such as
   \<^item> \<^emph>\<open>document class\<close> (using the \<^theory_text>\<open>doc_class\<close> keyword) that describes a concept,
   \<^item> \<^emph>\<open>attributes\<close> specific to document classes (attributes might be initialized with default 
-    values),
-  \<^item> a special link, the reference to a super-class, establishes an \<^emph>\<open>is-a\<close> relation between classes;
-  \<^item> classes may refer to other classes via a regular expression in an optional \<^emph>\<open>where\<close> clause 
-    (a class with a where clause is called \<^emph>\<open>monitor\<close>);
+    values), and
+  \<^item> a special link, the reference to a super-class,
+    establishes an \<^emph>\<open>is-a\<close> relation between classes.
+%  classes may refer to other classes via a regular expression in an optional \<^emph>\<open>where\<close> clause 
+%    (a class with a where clause is called \<^emph>\<open>monitor\<close>).
 
 
-  \fixIsarList The types of attributes are HOL-types. Thus, ODL can refer to any predefined type 
-  from the HOL library, \<^eg>, \<^type>\<open>string\<close>, \<^type>\<open>int\<close> as well as parameterized types, \<^eg>, 
+  \fixIsarList The types of attributes are \<^hol>-types. Thus, ODL can refer to any predefined type 
+  from the \<^hol> library, \<^eg>, \<^type>\<open>string\<close>, \<^type>\<open>int\<close> as well as parameterized types, \<^eg>, 
   \<^type>\<open>option\<close>,  \<^type>\<open>list\<close>. As a consequence of the Isabelle document model, ODL definitions 
-  may be arbitrarily mixed with standard HOL type definitions. Document class definitions are 
-  HOL-types, allowing for formal \<^emph>\<open>links\<close> to and between ontological concepts. For example, the 
+  may be arbitrarily mixed with standard \<^hol> type definitions. Document class definitions are 
+  \<^hol>-types, allowing for formal \<^emph>\<open>links\<close> to and between ontological concepts. For example, the 
   basic concept of requirements from CENELEC 50128~@{cite "bsi:50128:2014"} is captured in ODL as 
   follows:
   @{theory_text [display,indent=10, margin=70]
 \<open>
     doc_class requirement = text_element +   (* derived from text_element    *)
-    ~         long_name   ::"string option"  (* an optional string attribute *) 
-    ~         is_concerned::"role set"       (* roles working with this req. *)
+              long_name   ::"string option"  (* an optional string attribute *) 
+              is_concerned::"role set"       (* roles working with this req. *)
 \<close>}
   This ODL class definition maybe part of one or more Isabelle theory--files capturing the entire
   ontology definition. Isabelle's session management allows for pre-compiling them before being 
@@ -391,15 +394,15 @@ term "\<lparr>x = a,y = b\<rparr>"
 subsection\<open>Meta-Objects as Extensible Records\<close>
 (* too fat ? what do we need of this ? *)
 text\<open>
-Isabelle/HOL supports both fixed and schematic records at the level of terms and 
+\<^isabelle> supports both fixed and schematic records at the level of terms and 
 types. The notation for terms and types is as follows:
 
-\<^item> fixed record terms     \<^term>\<open>\<lparr>x = a,y = b\<rparr>\<close>; fixed record types \<open>\<lparr>x::A, y::B\<rparr>\<close>.
-\<^item> schematic record terms \<^term>\<open>\<lparr>x = a,y = b, \<dots> = m::'a\<rparr>\<close>; 
+\<^item> fixed record terms     \<^term>\<open>\<lparr>x = a,y = b\<rparr>\<close>; fixed record types \<open>\<lparr>x::A, y::B\<rparr>\<close>,
+\<^item> schematic record terms \<^term>\<open>\<lparr>x = a,y = b, \<dots> = m::'a\<rparr>\<close>;
   schematic record types: \<open>\<lparr>x::A, y::B, \<dots> = 'a\<rparr>\<close> which were usually abbreviated
-  to \<^typ>\<open>'a T_scheme\<close>.
-\<^item> selectors are written \<^term>\<open>x(R::'a T_scheme)\<close>, \<^term>\<open>y(R::'a T_scheme)\<close>. 
-\<^item> updates were denoted \<^term>\<open>r\<lparr>x := a\<rparr>\<lparr>y := b\<rparr>\<close> or just \<^term>\<open>r\<lparr>x:=a, y:=b\<rparr>\<close>. 
+  to \<^typ>\<open>'a T_scheme\<close>,
+\<^item> selectors are written \<^term>\<open>x(R::'a T_scheme)\<close>, \<^term>\<open>y(R::'a T_scheme)\<close>, and
+\<^item> updates were denoted \<^theory_text>\<open>r\<lparr>x := a\<rparr>\<lparr>y := b\<rparr>\<close> or just \<^term>\<open>r\<lparr>x:=a, y:=b\<rparr>\<close>.
 \<close>
 
 text\<open> ... where the so-called more-field \<open>\<dots>\<close> is used to 'fill-in' record-extensions.
@@ -413,7 +416,7 @@ which will remain true for all extensions (which are just instances of the
 
 text\<open>In \<^dof>, \<^verbatim>\<open>onto_class\<close>es and the logically equivalent  \<^verbatim>\<open>doc_class\<close>es were
 represented by schematic record types and instances thereof by schematic terms. 
-Invariants of an \<^verbatim>\<open>onto_class\<close> are thu predicates over schematic record
+Invariants of an \<^verbatim>\<open>onto_class\<close> are thus predicates over schematic record
 types and can therefore be inherited in a subclass. \<^dof> handles the parametric  
 polymorphism implicitly. 
 \<close>
@@ -435,14 +438,14 @@ However, it is restricted to ground terms.
 
 The latter is based on a compilation of datatype specifications into a uniform
 data-universe enriched by closures and explicit variables. Recursive function 
-definitions in HOL were compiled to SML functions where the argument terms
+definitions in \<^hol> were compiled to SML functions where the argument terms
 were represented in the data-universe. Pattern-matching is still compiled to
 native functions executed if closures are completed.  \<^theory_text>\<open>nbe\<close> is not restricted
 to ground terms, but lies in its efficiency between  \<^theory_text>\<open>simp\<close> and  \<^theory_text>\<open>eval\<close>.
 
 \<^dof> uses a combination of these three techniques in order to check invariants
 for ontological classes on the fly during editing, paving the way for both
-a uniform specification language of ontological data --- namely HOL --- as
+a uniform specification language of ontological data --- namely \<^hol> --- as
 well as the possibility to \<^emph>\<open>prove\<close> properties over and relations between
 classes.\<close>
 
@@ -509,14 +512,14 @@ text\<open>
   be improved and a new step, which we call \<^emph>\<open>elaboration\<close> must be added to allow
   these antiquotations in \<open>\<lambda>\<close>-terms.
   The resulting process encompasses the following steps:
-    \<^item> Parse the term which represents the object in \<^hol>;
-    \<^item> Infer the type of the term;
-    \<^item> Certify the term;
-    \<^item> Validate the term: the \<^dof> antiquotations terms are parsed and type-checked;
+    \<^item> Parse the term which represents the object in \<^hol>,
+    \<^item> Infer the type of the term,
+    \<^item> Certify the term,
+    \<^item> Validate the term: the \<^dof> antiquotations terms are parsed and type-checked,
     \<^item> Elaborate: the \<^dof> antiquotations terms are expanded.
       The antiquotations are replaced by the object in \<^hol> they reference
-      i.e. a \<open>\<lambda>\<close>-calculus term;
-    \<^item> Pass on the information to PIDE;
+      i.e. a \<open>\<lambda>\<close>-calculus term,
+    \<^item> Pass on the information to Isabelle/PIDE, and
     \<^item> Code generation:
 \<^vs>\<open>-0.3cm\<close>
       \<^item> Evaluation of \<^hol> expressions with ontological annotations,
@@ -772,6 +775,109 @@ text\<open>
 
 section*["morphisms"::technical,main_author="Some(@{docitem ''idir''}::author)"] \<open>Proving Morphisms on Ontologies\<close>
 
+text\<open>
+\<^dof> framework does not assume that all documents reference the same ontology. 
+Each document may build its local ontology without any external reference. 
+It may also build it based upon one or several reference ontologies (i.e., standard ones). 
+
+The relationship between the local ontology and the reference one is formalised using a morphism function. 
+More precisely, a class of a local ontology may be described as a consequence of a transformation applied
+to one or several other class(es) defined in other ontologies. This means that each instance of the former can be 
+computed from one or more instances of the latter. 
+
+
+Thanks to the morphism relationship, the obtained class may either import properties (definitions are preserved) 
+or map properties (the properties are different but are semantically equivalent) that are defined in the referenced class(es). 
+It may also define additional properties.
+\<close>
+
+(*<*)
+(* Reference Ontology *)
+definition sum 
+  where "sum S = (fold (+) S 0)"
+
+datatype Hardware_Type = 
+  Motherboard | 
+  Expansion_Card | 
+  Storage_Device | 
+  Fixed_Media | 
+  Removable_Media |
+  Input_Device |
+  Output_Device
+
+onto_class Resource =
+  name :: string
+
+onto_class Electronic = Resource +
+  provider :: string
+  manufacturer :: string
+
+onto_class Component = Electronic +
+  mass :: int
+  dimensions :: "int list" 
+
+onto_class Simulation_Model = Electronic +
+  type :: string
+
+onto_class Informatic = Resource +
+  description :: string
+
+onto_class Hardware = Informatic +
+  type :: Hardware_Type
+  mass :: int
+  composed_of :: "Component list" 
+  invariant c1 :: "mass \<sigma> = sum(map Component.mass (composed_of \<sigma>))"
+
+onto_class R_Software = Informatic +
+  version :: int
+
+(*>*)
+
+
+text\<open>
+To illustrate this process, we use the reference ontology (considered as a standard) described 
+in the listing X, defining the Resource, Electronic, Component, Informatic, Hardware and Software 
+concepts (or classes). Each class contains a set of attributes or properties and some local 
+invariants. 
+
+In our example, we focus on the Hardware class containing a mass attribute and composed of a list 
+of components with a mass attribute formalising the mass value of each component. The Hardware 
+class also contains a local invariant ''c1'' to define a constraint linking the global mass of 
+a Hardware object with the masses of its own components.  
+\<close>
+
+(*<*)
+(* Local Ontology *)
+onto_class Item =
+  name :: string
+
+onto_class Product = Item +
+  serial_number :: int
+  provider :: string
+  mass :: int
+
+onto_class Computer_Software = Item +
+  version :: int
+
+onto_class Electronic_Component = Product +
+  dimensions :: "int set"
+
+onto_class Computer_Hardware = Product +
+  type :: Hardware_Type
+  composed_of :: "Product list" 
+  invariant c2 :: "Product.mass \<sigma> = sum(map Product.mass (composed_of \<sigma>))"
+
+(*>*)
+
+text\<open>
+For the needs of our document, we have defined a simple ontology to classify Software and Hardware 
+objects. This ontology is described in listing X and defines the Item, Product, Computer_Software 
+and Computer_Hardware concepts. As for the reference ontology, we focus on the Computer_Hardware 
+class defined as a list of products characterised by their mass value. This class contains a local 
+invariant ''c2'' to guarantee that its own mass value equals the sum of all the masses of the products 
+composing the object.
+\<close>
+
 section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] \<open>Applications\<close>
 
 subsection\<open>Engineering Example : An Extract from PLib\<close>
@@ -860,7 +966,7 @@ onto_class assoc_Method_Problem =
 text\<open>
   The ontology \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> @{cite "DBLP:journals/corr/NevzorovaZKL14"}
   is an OWL ontology of mathematical knowledge concepts.
-  It posits the IS-A semantics @{cite "1654194"} for hierarchies of mathematical knowledge elements,
+  It posits the IS-A semantics for hierarchies of mathematical knowledge elements,
   and defines these elements as two hierarchies of classes:
   a taxonomy of the fields of mathematics and a taxonomy of mathematical knowledge objects.
   It defines two main type of relations for these two taxonomies:
@@ -930,8 +1036,9 @@ onto_class assoc_Method_Problem =
   of the classes and the invariants \<^theory_text>\<open>is_solved_by_defined\<close> and \<^theory_text>\<open>solves_defined\<close> enforce
   the existence of the relations when one define instances of the classes.
 
-  \<^dof> as a framework allows to define an ontology and specify constraints
-  on its concepts, and dynamically checks at run-time  the concepts and instances.
+  \<^dof> allows to define ontologies and specify constraints
+  on their concepts.
+  Additionally it dynamically checks at run-time the concepts when defining instances.
   It offers an environment to define and test ontologies in an integrated document,
   where all the knowledge and the proof-checking can be specified,
   and thus can be a solution to go over
@@ -966,10 +1073,9 @@ and stronger invariants.
 subsection*[rw::related_work]\<open>Related Works\<close>
 
 text\<open>
-\<^item> OntoMathPro contains indeed something like a "taxonomy of the fields of mathematics" pp 110
+\<^item> OntoMathPro contains indeed something like a ``taxonomy of the fields of mathematics'' pp 110
   \<^url>\<open>https://kpfu.ru/staff_files/F_438204284/OntoMathPro_ontology_KESW2014.pdf\<close>
   According to In total, OntoMathPRO contains 3,449 classes ...
-
 \<^item> Translated from the Russian Federal Standard for Higher Education on mathematics
   for master students, Section 5.2:
    \<^url>\<open>http://www.edu.ru/db-mon/mo/Data/d_10/prm40-1.pdf\<close>
@@ -1013,15 +1119,15 @@ text\<open>
 subsubsection\<open>The notion of \<^emph>\<open>Integrated Source\<close>\<close>
 text\<open>Links to the term: Integrated Document 
 \<^item> \<^url>\<open>https://www.openkm.com/blog/integrated-document-management.html\<close>
-  "Maintaining integration is one of the great forgotten topics. 
+  ``Maintaining integration is one of the great forgotten topics. 
    Applications evolve, APIs change and it is quite common for new methods to 
    be created while deleting old ones. A paradigmatic example of this type of 
-   problem can be found with the old Google Docs API..."
-  "Having a centralized repository, with the necessary levels of security, but at the 
+   problem can be found with the old Google Docs API...''
+  ``Having a centralized repository, with the necessary levels of security, but at the 
    same time facilitating instant access to the essential electronic documents and 
    information for the smooth running of the business, is a challenge that every company 
    must face. Being able to efficiently distribute information and electronic documents 
-   among multiple users so that they can access and work simultaneously on the same files... "
+   among multiple users so that they can access and work simultaneously on the same files... ''
 \<^item> \<^url>\<open>https://en.wikipedia.org/wiki/Document_management_system\<close>
 \<^item> \<^url>\<open>https://www.gartner.com/en/information-technology/glossary/idm-integrated-document-management\<close>
 \<^item> \<^url>\<open>https://developers.google.com/docs/api/concepts/structure\<close>
