@@ -512,12 +512,13 @@ text\<open>
     \<^item> Parse the term which represents the object;
     \<^item> Infer the type of the term;
     \<^item> Certify the term;
-    \<^item> Pass on the information to PIDE;
     \<^item> Validate the term: the \<^dof> antiquotations terms are parsed and type-checked;
     \<^item> Elaborate: the \<^dof> antiquotations terms are expanded.
       The antiquotations are replaced by the object in \<^hol> they reference
       i.e. a \<open>\<lambda>\<close>-calculus term;
+    \<^item> Pass on the information to PIDE;
     \<^item> Code generation:
+\<^vs>\<open>-0.3cm\<close>
       \<^item> Evaluation of \<^hol> expressions with ontological annotations,
       \<^item> Generation of ontological invariants processed simultaneously
         with the generation of the document (a theory in \<^hol>).
@@ -567,7 +568,8 @@ doc_class myconclusion = text_section +
 \caption{Excerpt of an ontology example for mathematical papers.}
 \label{fig-ontology-example}
 \end{figure}
-  we define some class instances with the \<^theory_text>\<open>text*\<close> command, as in \autoref{fig-instances-example}.
+  we can define some class instances for this ontology with the \<^theory_text>\<open>text*\<close> command,
+  as in \autoref{fig-instances-example}.
 \begin{figure}
 @{boxed_theory_text [display] \<open>
 text*[church::myauthor, email="\<open>church@lambda.org\<close>"]\<open>\<close>
@@ -585,7 +587,7 @@ text*[claimNotion::myclaim, authored_by = "{@{myauthor \<open>church\<close>}}",
 \label{fig-instances-example}
 \end{figure}
   In the instance \<^theory_text>\<open>introduction1\<close>, \<^term>\<open>@{myauthor \<open>church\<close>}\<close> denotes
-  the instance \<^theory_text>\<open>church\<close> of the class \<^term>\<open>myauthor\<close>.
+  the instance \<^theory_text>\<open>church\<close> of the class \<^typ>\<open>myauthor\<close>.
   One can now reference a class instance in a \<^theory_text>\<open>term*\<close> command.
   In the command  \<^theory_text>\<open>term*\<open>@{myauthor \<open>church\<close>}\<close>\<close>
   the term \<^term>\<open>@{myauthor \<open>church\<close>}\<close> is type-checked, \<^ie>, the command \<^theory_text>\<open>term*\<close> checks that
@@ -611,9 +613,9 @@ declare_reference*["evaluation-example"::side_by_side_figure]
 (*>*)
 
 text\<open>
-  The \<^theory_text>\<open>value*\<close> command \<^theory_text>\<open>value*\<open>email @{author \<open>church\<close>}\<close>\<close>
+  The command \<^theory_text>\<open>value*\<open>email @{author \<open>church\<close>}\<close>\<close>
   type-checks the antiquotation \<^term>\<open>@{myauthor \<open>church\<close>}\<close>,
-  and then returns the value of the \<^term>\<open>email\<close> attribute for the \<^theory_text>\<open>church\<close> instance,
+  and then returns the value of the attribute \<^const>\<open>email\<close> for the \<^theory_text>\<open>church\<close> instance,
   \<^ie> the \<^hol> string \<^term>\<open>''church@lambda.org''\<close>
   (see \<^side_by_side_figure>\<open>evaluation-example\<close>).
 \<close>
@@ -621,7 +623,7 @@ text\<open>
 side_by_side_figure*[
   "evaluation-example"::side_by_side_figure
   , anchor="''fig-term-evaluation-ex''"
-  , caption="''The evaluation succeeds and return the value.''"
+  , caption="''The evaluation succeeds and returns the value.''"
   , relative_width="48"
   , src="''figures/term-context-evaluation-example''"
   , anchor2="''fig-term-failed-evaluation-ex''"
@@ -670,22 +672,22 @@ text\<open>
   and can now be specified in common \<^hol> syntax, using the keyword \<^theory_text>\<open>invariant\<close>
   in the class definition (recall \autoref{fig-ontology-example}).
   Following the constraints proposed in @{cite "brucker.ea:isabelle-ontologies:2018"}, 
-  one can specify that any instance of a class \<^term>\<open>myresult\<close>
-  finally has a non-empty property list, if its \<^typ>\<open>kind\<close> is \<^theory_text>\<open>"proof"\<close>
+  one can specify that any instance of a class \<^typ>\<open>myresult\<close>
+  finally has a non-empty property list, if its \<^typ>\<open>kind\<close> is \<^const>\<open>proof\<close>
   (see the \<^theory_text>\<open>invariant has_property\<close>), or that 
-  the \<^term>\<open>establish\<close> relation between \<^typ>\<open>myclaim\<close> and \<^typ>\<open>myresult\<close>
+  the relation between \<^typ>\<open>myclaim\<close> and \<^typ>\<open>myresult\<close> expressed in the attribute \<^const>\<open>establish\<close>
   must be defined when an instance
-  of the class \<^term>\<open>myconclusion\<close> is defined (see the \<^theory_text>\<open>invariant establish_defined\<close>).
+  of the class \<^typ>\<open>myconclusion\<close> is defined (see the \<^theory_text>\<open>invariant establish_defined\<close>).
 
-  In our example, the \<^theory_text>\<open>invariant author_finite\<close> of the class \<^term>\<open>myintroduction\<close> enforces
-  that the user sets the \<^term>\<open>authored_by\<close> set.
+  In our example, the \<^theory_text>\<open>invariant author_finite\<close> of the class \<^typ>\<open>myintroduction\<close> enforces
+  that the user sets the \<^const>\<open>authored_by\<close> set.
   The \<open>\<sigma>\<close> symbol is reserved and references the future class instance.
   By relying on the implementation of the Records
   in \<^isabelle>~@{cite "wenzel:isabelle-isar:2020"},
   one can reference an attribute of an instance using its selector function.
   For example, \<^term>\<open>establish \<sigma>\<close> denotes the value
-  of the \<^term>\<open>establish\<close> attribute
-  of the future instance of the class \<^term>\<open>myconclusion\<close>.
+  of the attribute \<^const>\<open>establish\<close>
+  of the future instance of the class \<^typ>\<open>myconclusion\<close>.
 \<close>
 
 (*<*)
@@ -695,24 +697,24 @@ declare_reference*["invariant-checking-figure"::figure]
 text\<open>
   The value of each attribute defined for the instances is checked at run-time
   against their class invariants.
-  The \<^theory_text>\<open>resultProof\<close> instance respects the \<^theory_text>\<open>invariant has_property\<close>,
-  because we specify its attribute \<^term>\<open>evidence\<close> to the \<^typ>\<open>kind\<close> \<^theory_text>\<open>"proof"\<close>,
-  we also specify its attribute \<^term>\<open>property\<close> with a suited value
-  as a list of \<^typ>\<open>thm\<close>.
+  The instance \<^theory_text>\<open>resultProof\<close> respects the \<^theory_text>\<open>invariant has_property\<close>,
+  because we specify its attribute \<^const>\<open>evidence\<close> to the \<^typ>\<open>kind\<close> \<^const>\<open>proof\<close>,
+  we also specify its attribute \<^const>\<open>property\<close> with a suited value
+  as a \<^type>\<open>list\<close> of \<^type>\<open>thm\<close>.
   In \<^figure>\<open>invariant-checking-figure\<close>,
-  we try to specify a new instance \<^theory_text>\<open>introduction1\<close> of the class \<^term>\<open>myintroduction\<close>.
+  we try to specify a new instance \<^theory_text>\<open>introduction1\<close> of the class \<^typ>\<open>myintroduction\<close>.
   But an invariant checking error is triggered because we do not respect the
   constraint specified in the \<^theory_text>\<open>invariant force_level\<close>,
-  when we specify the \<^term>\<open>level\<close> attribute of \<^theory_text>\<open>introduction1\<close> to \<^term>\<open>Some 0\<close>.
+  when we specify the attribute \<^const>\<open>level\<close> of \<^theory_text>\<open>introduction1\<close> to \<^term>\<open>Some (0::int)\<close>.
   The \<^theory_text>\<open>invariant force_level\<close> forces the value of the argument
-  of the attribute \<^term>\<open>level\<close> to be greater than 1.
+  of the attribute \<^const>\<open>level\<close> to be greater than 1.
 \<close>
 
 figure*[
   "invariant-checking-figure"::figure
   , relative_width="99"
   , src="''figures/invariant-checking-violated-example''"
-]\<open>The \<^theory_text>\<open>invariant force_level\<close> of the class \<^theory_text>\<open>myintroduction\<close> is violated by
+]\<open>The \<^theory_text>\<open>invariant force_level\<close> of the class \<^typ>\<open>myintroduction\<close> is violated by
   the instance \<^theory_text>\<open>introduction1\<close>.\<close>
 
 (*<*)
@@ -720,9 +722,9 @@ declare_reference*["inherited-invariant-checking-figure"::figure]
 (*>*)
 
 text\<open>
-  Classes inherit the invariants from their superclass.
-  As the class  \<^term>\<open>myclaim\<close> is a subsclass
-  of the class \<^term>\<open>myintroduction\<close>, it inherits the \<^term>\<open>myintroduction\<close> invariants.
+  Classes inherit the invariants from their super-class.
+  As the class  \<^typ>\<open>myclaim\<close> is a sub-class
+  of the class \<^typ>\<open>myintroduction\<close>, it inherits the \<^typ>\<open>myintroduction\<close> invariants.
   Hence the \<^theory_text>\<open>invariant force_level\<close> is checked
   when the instance \<^theory_text>\<open>claimNotion\<close> is defined,
   like in \<^figure>\<open>inherited-invariant-checking-figure\<close>.
@@ -732,8 +734,8 @@ figure*[
   "inherited-invariant-checking-figure"::figure
   , relative_width="99"
   , src="''figures/inherited-invariant-checking-violated-example''"
-]\<open>The \<^theory_text>\<open>invariant force_level\<close> of the class \<^theory_text>\<open>myclaim\<close> is inherited
-  from the class \<^theory_text>\<open>myintroduction\<close> and is violated by the instance \<^theory_text>\<open>claimNotion\<close>.
+]\<open>The \<^theory_text>\<open>invariant force_level\<close> of the class \<^typ>\<open>myclaim\<close> is inherited
+  from the class \<^typ>\<open>myintroduction\<close> and is violated by the instance \<^theory_text>\<open>claimNotion\<close>.
 \<close>
 
 (*<*)
@@ -747,21 +749,21 @@ value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = argument) @
 
 text\<open>
   A new mechanism to make query on instances is available and uses
-  the \<^hol> implementation of lists.
+  the \<^hol> implementation of \<^type>\<open>list\<close>s.
   Complex queries can then be defined using functions over the instances list.
-  To get the list of the properties of the instances of the class \<^term>\<open>myresult\<close>,
-  and the list of the authors of the instances of the class \<^term>\<open>myintroduction\<close>,
-  one can use the command \<^theory_text>\<open>value*\<close>:
+  To get the list of the properties of the instances of the class \<^typ>\<open>myresult\<close>,
+  and the list of the authors of the instances of the class \<^typ>\<open>myintroduction\<close>,
+  one can use the commands:
   @{theory_text [display,indent=10, margin=70] \<open>
   value*\<open>map (myresult.property) @{myresult-instances}\<close>
   value*\<open>map (mytext_section.authored_by) @{myintroduction-instances}\<close>
   \<close>}
-  To get the list of the instances of the class \<^term>\<open>myresult\<close>
-  whose \<^term>\<open>evidence\<close> is a \<^theory_text>\<open>"proof"\<close>, on can use the command:
+  To get the list of the instances of the class \<^typ>\<open>myresult\<close>
+  whose \<^const>\<open>evidence\<close> is a \<^const>\<open>proof\<close>, on can use the command:
   @{theory_text [display,indent=10, margin=70] \<open>
   value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = proof) @{myresult-instances}\<close>
   \<close>}
-  To get the list of the instances of the class \<^term>\<open>myintroduction\<close> whose \<^term>\<open>level\<close> > 1,
+  To get the list of the instances of the class \<^typ>\<open>myintroduction\<close> whose \<^const>\<open>level\<close> > 1,
   on can use the command:
   @{theory_text [display,indent=10, margin=70] \<open>
   value*\<open>filter (\<lambda>\<sigma>. the (mytext_section.level \<sigma>) > 1) @{myintroduction-instances}\<close>
@@ -856,19 +858,19 @@ onto_class assoc_Method_Problem =
 (*>*)
 
 text\<open>
-  The \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> ontology @{cite "DBLP:journals/corr/NevzorovaZKL14"}
+  The ontology \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> @{cite "DBLP:journals/corr/NevzorovaZKL14"}
   is an OWL ontology of mathematical knowledge concepts.
-  It posits the ISA semantics @{cite "1654194"} for hierarchies of mathematical knowledge objects,
-  and defines these objects as two hierarchies of classes:
+  It posits the IS-A semantics @{cite "1654194"} for hierarchies of mathematical knowledge elements,
+  and defines these elements as two hierarchies of classes:
   a taxonomy of the fields of mathematics and a taxonomy of mathematical knowledge objects.
   It defines two main type of relations for these two taxonomies:
   directed relations between elements of the two hierarchies
-  like \<^term>\<open>belongs_to\<close>, \<^term>\<open>contains\<close>, \<^term>\<open>defines\<close>, \<^term>\<open>is_defined_by\<close>, \<^term>\<open>solves\<close>,
-  \<^term>\<open>is_solved_by\<close>, and a symmetric transitive associative relation \<^term>\<open>see_also\<close>
+  like \<^const>\<open>belongs_to\<close>, \<^const>\<open>contains\<close>, \<^const>\<open>defines\<close>, \<^const>\<open>is_defined_by\<close>, \<^const>\<open>solves\<close>,
+  \<^const>\<open>is_solved_by\<close>, and a symmetric transitive associative relation \<^const>\<open>see_also\<close>
   between two mathematical knowledge objects.
   It also represents links with external resources such as DBpedia
   with annotations properties @{cite "Parsia:12:OWO"}.
-  \<^dof> covers a wide range of the OWL concepts used by the \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> ontology.
+  \<^dof> covers a wide range of the OWL concepts used by the ontology OntoMath\textsuperscript{PRO}.
   We can represent the annotations properties as datatypes and
   then attach them as an attributes list to a class.
   For example the declaration:
@@ -891,15 +893,15 @@ onto_class Field_of_mathematics =
                                      range (RDFS o label) \<union> range (RDFS o comment)"
 
 \<close>}
-  defines the class \<^term>\<open>Field_of_mathematics\<close> with an attribute \<^term>\<open>Annotations\<close>
-  which is a list of \<^typ>\<open>annotation\<close>s.
+  defines the class \<^typ>\<open>Field_of_mathematics\<close> with an attribute \<^const>\<open>Annotations\<close>
+  which is a \<^type>\<open>list\<close> of \<^typ>\<open>annotation\<close>s.
   We can even constraint the type of allowed \<^typ>\<open>annotation\<close>s with an invariant.
   Here the \<^theory_text>\<open>invariant restrict_annotation_F\<close> forces the \<^typ>\<open>annotation\<close>s to be
-  a \<^term>\<open>label\<close> or a \<^term>\<open>comment\<close>.
+  a \<^const>\<open>label\<close> or a \<^const>\<open>comment\<close>.
   Subsumption relation is straightforward.
-  The ontology \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> defines
-  a \<^term>\<open>Problem\<close> and a \<^term>\<open>Method\<close>
-  as subclasses of the class \<^term>\<open>Mathematical_knowledge_object\<close>.
+  The ontology OntoMath\textsuperscript{PRO} defines
+  a \<^typ>\<open>Problem\<close> and a \<^typ>\<open>Method\<close>
+  as sub-classes of the class \<^typ>\<open>Mathematical_knowledge_object\<close>.
   It gives in \<^dof>:
 @{theory_text [display,indent=10, margin=70] \<open>
 onto_class Problem = Mathematical_knowledge_object +
@@ -911,8 +913,8 @@ onto_class Method = Mathematical_knowledge_object +
   We can express the relations between the two taxonomies
   with association \<^theory_text>\<open>onto_class\<close>es which specify
   the relation as an attribute and enforces the relation with an \<^theory_text>\<open>invariant\<close>.
-  The two directed relations \<^term>\<open>is_solved_by\<close> and \<^term>\<open>solves\<close>
-  between \<^term>\<open>Problem\<close> and a \<^term>\<open>Method\<close> can be represented in \<^dof> like this:
+  The two directed relations \<^const>\<open>is_solved_by\<close> and \<^const>\<open>solves\<close>
+  between \<^typ>\<open>Problem\<close> and a \<^typ>\<open>Method\<close> can be represented in \<^dof> like this:
 @{theory_text [display,indent=10, margin=70] \<open>
 
 onto_class assoc_M_M_see_also =
@@ -933,7 +935,7 @@ onto_class assoc_Method_Problem =
   invariant solves_defined :: "\<forall> x. x \<in> Domain (solves \<sigma>)
                                     \<longrightarrow> (\<exists> y \<in> Range (solves \<sigma>). (x, y) \<in> solves \<sigma>)"
 \<close>}
-  where the attributes \<^term>\<open>is_solved_by\<close> and \<^term>\<open>solves\<close> define the relations
+  where the attributes \<^const>\<open>is_solved_by\<close> and \<^const>\<open>solves\<close> define the relations
   of the classes and the invariants \<^theory_text>\<open>is_solved_by_defined\<close> and \<^theory_text>\<open>solves_defined\<close> enforce
   the existence of the relations when one define instances of the classes.
 
