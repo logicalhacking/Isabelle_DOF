@@ -48,8 +48,8 @@ abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Alg
 
    If you consider citing this paper, please refer to @{cite "HOL-CSP-iFM2020"}.
 \<close>
-text\<open>\<close>
-section*[introheader::introduction,main_author="Some(@{docitem ''bu''}::author)"]\<open> Introduction \<close> 
+
+section*[introheader::introduction,main_author="Some(@{docitem ''bu''}::author)"]\<open> Introduction \<close>
 text*[introtext::introduction]\<open>
 Communicating Sequential Processes (\<^csp>) is a language 
 to specify and verify patterns of interaction of concurrent systems.

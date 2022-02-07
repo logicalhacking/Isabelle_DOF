@@ -105,34 +105,31 @@ As for the reference ontology, we focus on the Computer_Hardware class defined a
 This class contains a local invariant to guarantee that its own mass value equals the sum of all the masses of the products composing the object.
 \<close>
 
-definition Item_to_Resource_morphism
-  where "Item_to_Resource_morphism (\<sigma>::'a Item_scheme) =
-        \<lparr> 
-          Resource.tag_attribute = 0::int , 
-          Resource.name = name \<sigma>
-        \<rparr>" 
+definition Item_to_Resource_morphism :: "'a Item_scheme \<Rightarrow> Resource" 
+           ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
+  where    "\<sigma> \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m =  \<lparr>  Resource.tag_attribute = 0::int , 
+                                 Resource.name = name \<sigma> \<rparr>" 
+  
+definition Product_to_Component_morphism :: "'a Product_scheme \<Rightarrow> Component"
+           ("_ \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t" [1000]999)
+  where "  \<sigma> \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t = \<lparr> Resource.tag_attribute = 1::int ,
+                                 Resource.name = name \<sigma> ,
+                                 Electronic.provider  = Product.provider \<sigma> ,
+                                 Electronic.manufacturer  = '''' ,
+                                 Component.mass = Product.mass \<sigma> ,
+                                 Component.dimensions = [] \<rparr>" 
 
-definition Product_to_Component_morphism
-  where "Product_to_Component_morphism (\<sigma>::'a Product_scheme) =
-        \<lparr> 
-          Resource.tag_attribute = 1::int ,
-          Resource.name = name \<sigma> ,
-          Electronic.provider  = Product.provider \<sigma> ,
-          Electronic.manufacturer  = '''' ,
-          Component.mass = Product.mass \<sigma> ,
-          Component.dimensions = []
-        \<rparr>" 
-
-definition Computer_Hardware_to_Hardware_morphism
-  where "Computer_Hardware_to_Hardware_morphism (\<sigma>::'a Computer_Hardware_scheme) =
-        \<lparr>  
-          Resource.tag_attribute = 2::int ,
-          Resource.name = name \<sigma> ,
-          Informatic.description = ''no description'', 
-          Hardware.type = Computer_Hardware.type \<sigma> ,
-          Hardware.mass = mass \<sigma> ,
-          Hardware.composed_of = map Product_to_Component_morphism (Computer_Hardware.composed_of \<sigma>)
-        \<rparr>" 
+definition Computer_Hardware_to_Hardware_morphism :: "'a Computer_Hardware_scheme \<Rightarrow> Hardware"
+           ("_ \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e" [1000]999)
+           where "\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e =
+                  \<lparr>  Resource.tag_attribute = 2::int ,
+                     Resource.name = name \<sigma> ,
+                     Informatic.description = ''no description'', 
+                     Hardware.type = Computer_Hardware.type \<sigma> ,
+                     Hardware.mass = mass \<sigma> ,
+                     Hardware.composed_of = map Product_to_Component_morphism 
+                                                (Computer_Hardware.composed_of \<sigma>)
+                   \<rparr>" 
 
 
 text\<open>
@@ -151,10 +148,17 @@ As shown by our example, the structure of a (user) ontology may be quite differe
 
 text\<open>Now we check that the invariant is preserved through the morphism:\<close>
 
+find_theorems Hardware.composed_of
+
+find_theorems Hardware.mass
+
+find_theorems map "(o)"
+
 lemma inv_c2_preserved :
-  "c2_inv \<sigma> \<Longrightarrow> c1_inv (Computer_Hardware_to_Hardware_morphism \<sigma>)"
-  unfolding c1_inv_def c2_inv_def Computer_Hardware_to_Hardware_morphism_def  
-  by auto
+  "c2_inv \<sigma> \<Longrightarrow> c1_inv (\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e)"
+  unfolding c1_inv_def c2_inv_def 
+            Computer_Hardware_to_Hardware_morphism_def Product_to_Component_morphism_def  
+  by (auto simp: comp_def)
 
 lemma Computer_Hardware_to_Hardware_morphism_total :
   "Computer_Hardware_to_Hardware_morphism ` ({X::Computer_Hardware. c2_inv X}) \<subseteq> ({X::Hardware. c1_inv X})"
