@@ -13,12 +13,8 @@ define_shortcut* hol      \<rightleftharpoons> \<open>HOL\<close>
                  csp      \<rightleftharpoons> \<open>CSP\<close>      \<comment>\<open>obsolete\<close>
                  holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>  \<comment>\<open>obsolete\<close> 
 
-text\<open>
-The following example is extract from this reference : 
-CONTEXT-EXPLICATION IN CONCEPTUAL ONTOLOGIES: PLIB ONTOLOGIES AND THEIR USE FOR INDUSTRIAL DATA
-Special issue of JAMS - Journal of Advanced Manufacturing Systems
-By GUY PIERRA
-\<close>
+
+
 
 term\<open>fold (+) S 0\<close>  
 
@@ -35,9 +31,23 @@ datatype Hardware_Type =
   Input_Device |
   Output_Device
 
+text\<open>
+\<^dof> framework does not assume that all documents reference the same ontology. 
+Each document may build its local ontology without any external reference. 
+It may also build it based upon one or several reference ontologies (i.e., standard ones). 
 
-text\<open>Reference Ontology\<close>
+The relationship between the local ontology and the reference one is formalised using a morphism function. 
+More precisely, a class of a local ontology may be described as a consequence of a transformation applied
+to one or several other class(es) defined in other ontologies. This means that each instance of the former can be 
+computed from one or more instances of the latter. 
 
+To illustrate this process, we use the following reference ontology defining the Resource, Electronic, Component,
+Informatic, Hardware and Software concepts (or classes). Each class contains a set of attributes or properties and some invariants. 
+
+In our example, we focus on the Hardware class containing a mass attribute and composed of a list of components with a mass attribute formalising 
+the mass of each component.
+\<close>
+(* Reference Ontology *)
 onto_class Resource =
   name :: string
 
@@ -65,12 +75,6 @@ onto_class R_Software = Informatic +
   version :: int
 
 
-text\<open>
-\<^dof> framework does not assume that all documents reference the same ontology. 
-Each document may build its local ontology without any external reference. 
-It may also build it based upon one or several reference ontologies (i.e., standard ones). 
-\<close>
-
 
 text\<open>Local Ontology\<close>
 
@@ -94,12 +98,6 @@ onto_class Computer_Hardware = Product +
   invariant c1 :: "Product.mass \<sigma> = sum(map Product.mass (composed_of \<sigma>))"
 
 
-text\<open>
-The relationship between the local ontology and the reference one is formalised using a morphism function. 
-More precisely, a class of a local ontology may be described as a consequence of a transformation applied
-to one or several other class(es) defined in other ontologies. This means that each instance of the former can be 
-computed from one or more instances of the latter. 
-\<close>
 
 definition Item_to_Resource_morphism
   where "Item_to_Resource_morphism (\<sigma>::'a Item_scheme) =
@@ -135,6 +133,8 @@ text\<open>
 Thanks to the morphism relationship, the obtained class may either import properties (definitions are preserved) 
 or map properties (the properties are different but are semantically equivalent) that are defined in the referenced class(es). 
 It may also define additional properties.
+
+As shown by our example, the structure of a (user) ontology may be quite different from the one of a standard ontology she references. 
 \<close>
 
 text\<open>Now we check that the invariant is preserved through the morphism:\<close>
