@@ -1039,7 +1039,7 @@ definition Computer_Hardware_to_Hardware_morphism :: "'a Computer_Hardware_schem
 
 
 To check the coherence of our local ontology, we define a relationship between the local ontology 
-and the reference ontology using morphism functions (or mapping rules as in ATL framwork~@{cite "atl"}
+and the reference ontology using morphism functions (or mapping rules as in ATL framework~@{cite "atl"}
 or EXPRESS-X language~@{cite "BGPP95"}). These rules are applied to define the relationship 
 between one class of the local ontology to one or several other class(es) described in the reference 
 ontology. 
