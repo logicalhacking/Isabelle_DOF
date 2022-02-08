@@ -1087,9 +1087,8 @@ information and knowledge, and to make it amenable to
   The project developed a common ontological format, called  OMDoc/MMT, and 
   developed six \<^emph>\<open>export\<close> functions from major ITP systems into it. The more difficult task to 
   develop \<^emph>\<open>import\<close> functions has not been addressed, not to mention the construction
-  of imported proofs in a native proof format. Rather, the emphasis was put on building
-  a server infrastructure based on conventional, rather heavy-weight 
-  database- and OWL technology.
+  of imported proofs in a native tactic proof format. Rather, the emphasis was put on building
+  a server infrastructure based on conventional, rather heavy-weight database- and OWL technology.
   Our approach targets so far only one ITP system and its libraries, and emphasizes 
   type-safeness, expressive power and "depth" of meta-data, which is adapted
   to the specific needs of ITP systems and theory developments.
@@ -1123,6 +1122,7 @@ subsection*[fw::related_work]\<open>Future Work\<close>
 text\<open> We plan to complement \<^dof> with incremental LaTeX generation and a previewing facility
 that will further increase the usability of our framework for the ontology-conform editing
 of formal content, be it in the engineering or the mathematics domain.
+\<^footnote>\<open>This paper has been edited in \<^dof>, of course.\<close>
 
 Another line of future application is to increase the "depth" of build-in term antiquotations such
 \<open>@{typ \<open>'\<tau>\<close>}\<close>, \<open>@{term \<open>a + b\<close>}\<close> and \<open>@{thm \<open>HOL.refl\<close>}\<close>, which are currently implemented just as
