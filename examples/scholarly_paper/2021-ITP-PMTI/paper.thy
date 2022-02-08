@@ -785,14 +785,14 @@ More precisely, a class of a local ontology may be described as a consequence of
 to one or several other class(es) defined in other ontologies. This means that each instance of the former can be 
 computed from one or more instances of the latter. 
 
-
 Thanks to the morphism relationship, the obtained class may either import properties (definitions are preserved) 
 or map properties (the properties are different but are semantically equivalent) that are defined in the referenced class(es). 
 It may also define additional properties.
 \<close>
 
-(*<*)
-(* Reference Ontology *)
+text\<open>
+\begin{figure}
+@{boxed_theory_text [display] \<open>
 definition sum 
   where "sum S = (fold (+) S 0)"
 
@@ -830,24 +830,25 @@ onto_class Hardware = Informatic +
 
 onto_class R_Software = Informatic +
   version :: int
+\<close>}
+\caption{An extract of a reference ontology.}
+\label{fig-Reference-Ontology-example}
+\end{figure}
 
-(*>*)
-
-
-text\<open>
 To illustrate this process, we use the reference ontology (considered as a standard) described 
-in the listing X, defining the Resource, Electronic, Component, Informatic, Hardware and Software 
-concepts (or classes). Each class contains a set of attributes or properties and some local 
-invariants. 
+in the listing  \autoref{fig-Reference-Ontology-example}, defining the \<open>Resource\<close>, \<open>Electronic\<close>, 
+\<open>Component\<close>, \<open>Informatic\<close>, \<open>Hardware\<close> and \<open>Software\<close> concepts (or classes). 
+Each class contains a set of attributes or properties and some local invariants. 
 
-In our example, we focus on the Hardware class containing a mass attribute and composed of a list 
-of components with a mass attribute formalising the mass value of each component. The Hardware 
-class also contains a local invariant ''c1'' to define a constraint linking the global mass of 
-a Hardware object with the masses of its own components.  
+In our example, we focus on the \<open>Hardware\<close> class containing a \<open>mass\<close> attribute and composed of a list 
+of components with a \<open>mass\<close> attribute formalising the mass value of each component. The \<open>Hardware\<close> 
+class also contains a local invariant \<open>c1\<close> to define a constraint linking the global mass of 
+a \<open>Hardware\<close> object with the masses of its own components.  
 \<close>
 
-(*<*)
-(* Local Ontology *)
+text\<open>
+\begin{figure}
+@{boxed_theory_text [display] \<open>
 onto_class Item =
   name :: string
 
@@ -866,19 +867,25 @@ onto_class Computer_Hardware = Product +
   type :: Hardware_Type
   composed_of :: "Product list" 
   invariant c2 :: "Product.mass \<sigma> = sum(map Product.mass (composed_of \<sigma>))"
+\<close>}
+\caption{An extract of a local (user)  ontology.}
+\label{fig-Local-Ontology-example}
+\end{figure}
 
-(*>*)
 
-text\<open>
 For the needs of our document, we have defined a simple ontology to classify Software and Hardware 
-objects. This ontology is described in listing X and defines the \<open>Item\<close>, \<open>Product\<close>, \<open>Computer_Software\<close> 
+objects. This ontology is described in the figure  \autoref{fig-Local-Ontology-example} and 
+defines the \<open>Item\<close>, \<open>Product\<close>, \<open>Computer_Software\<close> 
 and \<open>Computer_Hardware\<close> concepts. As for the reference ontology, we focus on the \<open>Computer_Hardware\<close> 
 class defined as a list of products characterised by their mass value. This class contains a local 
-invariant ''c2'' to guarantee that its own mass value equals the sum of all the masses of the products 
+invariant \<open>c2\<close> to guarantee that its own mass value equals the sum of all the masses of the products 
 composing the object.
 \<close>
 
-(*<*)
+
+text\<open>
+\begin{figure}
+@{boxed_theory_text [display] \<open>
 definition Item_to_Resource_morphism :: "'a Item_scheme \<Rightarrow> Resource" 
            ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
   where    "\<sigma> \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m =  \<lparr>  Resource.tag_attribute = 0::int , 
@@ -904,23 +911,29 @@ definition Computer_Hardware_to_Hardware_morphism :: "'a Computer_Hardware_schem
                      Hardware.composed_of = map Product_to_Component_morphism 
                                                 (Computer_Hardware.composed_of \<sigma>)
                    \<rparr>" 
+\<close>}
+\caption{An extract of a mapping definitions.}
+\label{fig-mapping-example}
+\end{figure}
 
-(*>*)
 
-text\<open>
 To check the coherence of our local ontology, we define a relationship between the local ontology 
 and the reference ontology using morphism functions (or mapping rules). These rules are applied to 
 define the relationship between one class of the local ontology to one or several other class(es) 
 described in the reference ontology. 
 
 For example,\<open>Product_to_Component_morphism\<close> and \<open>Computer_Hardware_to_Hardware_morphism\<close> definitions,
-detailed in the figure Z, specify how \<open>Product\<close> or \<open>Computer_Hardware\<close> objects are mapped to \<open>Component\<close> 
+detailed in the figure  \autoref{fig-mapping-example}, specify how \<open>Product\<close> or \<open>Computer_Hardware\<close> objects are mapped to \<open>Component\<close> 
 or \<open>Hardware\<close> objects defined in the reference ontology. This mapping shows that the structure 
 of a (user) ontology may be quite different from the one of a standard ontology she references. 
 \<close>
 
-(*<*)
 
+(* Bu, can you take care of commenting on these last lemmas? *)
+
+text\<open>
+\begin{figure}
+@{boxed_theory_text [display] \<open>
 lemma inv_c2_preserved :
   "c2_inv \<sigma> \<Longrightarrow> c1_inv (\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e)"
   unfolding c1_inv_def c2_inv_def 
@@ -931,10 +944,12 @@ lemma Computer_Hardware_to_Hardware_morphism_total :
   "Computer_Hardware_to_Hardware_morphism ` ({X::Computer_Hardware. c2_inv X}) \<subseteq> ({X::Hardware. c1_inv X})"
   using inv_c2_preserved 
   by auto
+\<close>}
+\caption{xxxx.}
+\label{fig-xxx}
+\end{figure}
+\<close>
 
-(*>*)
-
-(* Bu, can you take care of commenting on these last lemmas? *)
 
 section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] \<open>Applications\<close>
 
