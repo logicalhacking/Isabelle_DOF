@@ -900,18 +900,23 @@ lemma Computer_Hardware_to_Hardware_morphism_total :
 (*>*)
 
 text\<open>
-\<^dof> framework does not assume that all documents reference the same ontology. 
-Each document may build its local ontology without any external reference. 
-It may also build it based upon one or several reference ontologies (i.e., standard ones). 
+The \<^dof> framework does not assume that all documents refer to the same ontology. 
+Each document may even build its local ontology without any external reference. 
+It may also be based on several reference ontologies (\<^eg>, from the  \<^dof> library). 
 
-The relationship between the local ontology and the reference one is formalised using a morphism function. 
-More precisely, a class of a local ontology may be described as a consequence of a transformation applied
-to one or several other class(es) defined in other ontologies. This means that each instance of the former can be 
-computed from one or more instances of the latter. 
+Since ontological instances posses \<^emph>\<open>representations inside the logic\<close>,
+the relationship between a local ontology and a reference ontology can be formalised
+using a morphism function also inside the logic. 
+More precisely, the instances of local ontology classes may be described as the image of a 
+transformation applied to one or several other instances of class(es) belonging to another 
+ontology. 
 
-Thanks to the morphism relationship, the obtained class may either import properties (definitions are preserved) 
-or map properties (the properties are different but are semantically equivalent) that are defined in the referenced class(es). 
-It may also define additional properties.
+Thanks to the morphism relationship, the obtained class may either import meta-data 
+(definitions are preserved)  or map meta-data (the properties are different but 
+are semantically equivalent) that are defined in the referenced class(es). 
+It may also provide additional properties. This means that morphisms may be injective, 
+surjective, bijective, and thus describe abstract relations between ontologies.
+This raises the question of invariant preservation.
 \<close>
 
 text\<open>
@@ -999,8 +1004,7 @@ onto_class Computer_Hardware = Product +
 \label{fig-Local-Ontology-example}
 \end{figure}
 
-
-For the needs of our document, we have defined a simple ontology to classify Software and Hardware 
+For the sake of the argument, we have defined a simple ontology to classify Software and Hardware 
 objects. This ontology is described in \autoref{fig-Local-Ontology-example} and 
 defines the \<^typ>\<open>Item\<close>, \<^typ>\<open>Product\<close>, \<^typ>\<open>Computer_Software\<close> 
 and \<^typ>\<open>Computer_Hardware\<close> concepts.
@@ -1055,16 +1059,14 @@ For example, \<^const>\<open>Product_to_Component_morphism\<close> and \<^const>
 definitions, detailed in \autoref{fig-mapping-example},
 specify how \<^typ>\<open>Product\<close> or \<^typ>\<open>Computer_Hardware\<close> objects are mapped to \<^typ>\<open>Component\<close> 
 or \<^typ>\<open>Hardware\<close> objects defined in the reference ontology.
-This mapping shows that the structure of a (user) ontology may be quite different
+This mapping shows that the structure of a (user) ontology may be arbitrarily different
 from the one of a standard ontology it references. 
 \<close>
 
 text\<open>
 The advantage of using the \<^dof> framework compared to approaches like ATL or EXPRESS-X is 
-the possibility of formally validating the mapping rules and also of proving the preservation 
+the possibility of formally verifying the \<^emph>\<open>mapping rules\<close>. \<^ie>  proving the preservation 
 of invariants, as we will demonstrate in the following example.\<close>
-
-(* Bu, can you take care of commenting on these last lemmas? *)
 
 text\<open>
 \begin{figure}
@@ -1072,27 +1074,27 @@ text\<open>
 lemma inv_c2_preserved :
   "c2_inv \<sigma> \<Longrightarrow> c1_inv (\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e)"
   unfolding c1_inv_def c2_inv_def 
-            Computer_Hardware_to_Hardware_morphism_def Product_to_Component_morphism_def  
-  by (auto simp: comp_def)
+            Computer_Hardware_to_Hardware_morphism_def 
+            Product_to_Component_morphism_def  
+  using comp_def by (auto)
 
 lemma Computer_Hardware_to_Hardware_morphism_total :
-  "Computer_Hardware_to_Hardware_morphism ` ({X::Computer_Hardware. c2_inv X}) \<subseteq> ({X::Hardware. c1_inv X})"
-  using inv_c2_preserved 
-  by auto
+  "Computer_Hardware_to_Hardware_morphism ` ({X::Computer_Hardware. c2_inv X}) 
+   \<subseteq> ({X::Hardware. c1_inv X})"
+  using inv_c2_preserved by auto
 \<close>}
-\caption{xxxx.}
+\caption{Proofs establishing the Invariant Preservation.}
 \label{fig-xxx}
 \end{figure}
 \<close>
+text\<open>The example proof in \autoref{fig-xxx} for a simple, but typical example of reformatting
+meta-data into another format along an ontological mapping are nearly trivial: after unfolding
+the invariant and the morphism definitions, the preservation proof is automatic.  
+\<close>
 
 
-section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] \<open>Applications\<close>
-
-(* subsection\<open>Engineering Example : An Extract from PLib\<close> 
-Already done in the previous section
-*)
-
-subsection\<open>Mathematics Example : An Extract from OntoMath\textsuperscript{PRO}\<close>
+section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] 
+\<open>Mathematics Example : An Extract from OntoMath\textsuperscript{PRO}\<close>
 
 (*<*)
 (* OntoMathPro_Ontology example *)
@@ -1176,7 +1178,7 @@ onto_class assoc_Method_Problem =
 text\<open>
   The \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> ontology~@{cite "Nevzorova2014OntoMathPO"}
   is an OWL ontology of mathematical knowledge concepts.
-  It posits the IS-A semantics for hierarchies of mathematical knowledge elements,
+  It possesses the IS-A semantics for hierarchies of mathematical knowledge elements,
   and defines these elements as two hierarchies of classes:
   a taxonomy of the fields of mathematics and a taxonomy of mathematical knowledge objects.
   It defines two main type of relations for these two taxonomies:
@@ -1252,8 +1254,8 @@ onto_class assoc_Method_Problem =
   Additionally it dynamically checks at run-time the concepts when defining instances.
   It offers an environment to define and test ontologies in an integrated document,
   where all the knowledge and the proof-checking can be specified,
-  and thus can be a solution to go over
-  the trade-off between plain vocabularies and highly formalized models.
+  and thus can help to find the right trade-off between plain vocabularies and 
+  highly formalized models.
 \<close>
 
 section*[concl::conclusion]\<open>Conclusion\<close>
