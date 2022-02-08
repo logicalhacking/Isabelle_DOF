@@ -1342,7 +1342,7 @@ as \<^theory_text>\<open>@{typ \<open>'\<tau>\<close>}\<close>, \<^term>\<open>@
 validations in the current logical context. In the future, they could  optionally be expanded to 
 the types, terms and theorems (with proof objects attached) in a meta-model of the Isabelle Kernel 
 such as the one presented in @{cite "10.1007/978-3-030-79876-5_6"} (also available in the AFP). 
-This will allow for the HOL-specification of query-functions in, \<^eg>, proof-objects, and 
+This will allow for specifications of query-functions in, \<^eg>, proof-objects, and 
 pave the way to annotate them with typed meta-data. Such a technology could be relevant
 for the interoperability of proofs across different ITP platforms.
 \<close>
