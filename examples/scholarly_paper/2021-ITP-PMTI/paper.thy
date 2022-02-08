@@ -1208,7 +1208,7 @@ text\<open> We plan to complement \<^dof> with incremental LaTeX generation and 
 that will further increase the usability of our framework for the ontology-conform editing
 of formal content, be it in the engineering or the mathematics domain.
 
-Another line of future application is to increase the ``depth'' of build-in term antiquotations such
+Another line of future application is to increase the ``depth'' of built-in term antiquotations such
 as \<^theory_text>\<open>@{typ \<open>'\<tau>\<close>}\<close>, \<^term>\<open>@{term \<open>a + b\<close>}\<close> and \<^term>\<open>@{thm \<open>HOL.refl\<close>}\<close>, which are currently implemented just as
 validations in the current logical context. In the future, they could  optionally be expanded to 
 the types, terms and theorems (with proof objects attached) in a meta-model of the Isabelle Kernel 
