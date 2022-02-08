@@ -1074,8 +1074,8 @@ in meta-data and stronger invariants.
 subsection*[rw::related_work]\<open>Related Work\<close>
 
 text\<open>There are a number of approaches to use ontologies for structuring the link between
-information and knowledge in the field of engineering, and to make it amenable to 
-search and/or consistency checking of documents:
+information and knowledge, and to make it amenable to 
+ "semantic" search in or consistency checking of documents:
 
 \<^item> The search engine \<^url>\<open>http://shinh.org/wfs\<close> uses a quite brute-force, 
   but practical approach. It is getting its raw-data from Wikipedia and PlanetMath 
@@ -1094,7 +1094,7 @@ search and/or consistency checking of documents:
   type-safeness, expressive power and "depth" of meta-data, which is adapted
   to the specific needs of ITP systems and theory developments.
 
-\<^item> There are meanwhile a number of proposals of ontologies adapted to the mathematical domain: 
+\<^item> There are meanwhile a number of proposals of ontologies targeting mathematics: 
   \<^item>  \<open>OntoMath\<^sup>P\<^sup>R\<^sup>O\<close> @{cite "Nevzorova2014OntoMathPO"} proposes a 
      ``taxonomy of the fields of mathematics'' (pp 110). In total, 
      \<open>OntoMath\<^sup>P\<^sup>R\<^sup>O\<close> contains the daunting number of 3,449 classes, which is in part due to 
@@ -1126,16 +1126,15 @@ of formal content, be it in the engineering or the mathematics domain.
 
 Another line of future application is to increase the "depth" of build-in term antiquotations such
 \<open>@{typ \<open>'\<tau>\<close>}\<close>, \<open>@{term \<open>a + b\<close>}\<close> and \<open>@{thm \<open>HOL.refl\<close>}\<close>, which are currently implemented just as
-validations in the current logical context. In the future, they could be optionally expanded to 
+validations in the current logical context. In the future, they could  optionally be expanded to 
 the types, terms and theorems (with proof objects attached) in a meta-model of the Isabelle Kernel 
 such as the one presented in @{cite "10.1007/978-3-030-79876-5_6"} (also available in the AFP). 
-This will allow for the HOL-specification of query-functions in, for example, proof-objects, and 
-pave the way to annotate proof-objects with typed meta-data. Such a technology could be relevant
+This will allow for the HOL-specification of query-functions in, \<^eg>, proof-objects, and 
+pave the way to annotate them with typed meta-data. Such a technology could be relevant
 for the interoperability of proofs across different ITP platforms.
 \<close>
 
-subsection*[bib::bibliography]\<open>References\<close>
-
+(*<*)
 close_monitor*[this]
 
 end
