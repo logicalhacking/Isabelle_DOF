@@ -923,7 +923,8 @@ define the relationship between one class of the local ontology to one or severa
 described in the reference ontology. 
 
 For example,\<open>Product_to_Component_morphism\<close> and \<open>Computer_Hardware_to_Hardware_morphism\<close> definitions,
-detailed in the figure  \autoref{fig-mapping-example}, specify how \<open>Product\<close> or \<open>Computer_Hardware\<close> objects are mapped to \<open>Component\<close> 
+detailed in the figure  \autoref{fig-mapping-example}, specify how \<open>Product\<close> or \<open>Computer_Hardware\<close> 
+objects are mapped to \<open>Component\<close> 
 or \<open>Hardware\<close> objects defined in the reference ontology. This mapping shows that the structure 
 of a (user) ontology may be quite different from the one of a standard ontology she references. 
 \<close>
