@@ -124,7 +124,7 @@ definition Product_to_Component_morphism :: "'a Product_scheme \<Rightarrow> Com
   where "  \<sigma> \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t = \<lparr> Resource.tag_attribute = 1::int ,
                                  Resource.name = name \<sigma> ,
                                  Electronic.provider  = Product.provider \<sigma> ,
-                                 Electronic.manufacturer  = '''' ,
+                                 Electronic.manufacturer  = ''no manufacturer'' ,
                                  Component.mass = Product.mass \<sigma> ,
                                  Component.dimensions = [] \<rparr>" 
 
@@ -147,13 +147,10 @@ and the reference ontology using morphism functions (or mapping rules). These ru
 define the relationship between one class of the local ontology to one or several other class(es) 
 described in the reference ontology. 
 
-For example,
-\<close>
-
-
-text\<open>
-As shown by our example, the structure of a (user) ontology may be quite different from the one 
-of a standard ontology she references. 
+For example,\<open>Product_to_Component_morphism\<close> and \<open>Computer_Hardware_to_Hardware_morphism\<close> definitions,
+detailed in the figure Z, specify how \<open>Product\<close> or \<open>Computer_Hardware\<close> objects are mapped to \<open>Component\<close> 
+or \<open>Hardware\<close> objects defined in the reference ontology. This mapping shows that the structure 
+of a (user) ontology may be quite different from the one of a standard ontology she references. 
 \<close>
 
 

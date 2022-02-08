@@ -912,6 +912,11 @@ To check the coherence of our local ontology, we define a relationship between t
 and the reference ontology using morphism functions (or mapping rules). These rules are applied to 
 define the relationship between one class of the local ontology to one or several other class(es) 
 described in the reference ontology. 
+
+For example,\<open>Product_to_Component_morphism\<close> and \<open>Computer_Hardware_to_Hardware_morphism\<close> definitions,
+detailed in the figure Z, specify how \<open>Product\<close> or \<open>Computer_Hardware\<close> objects are mapped to \<open>Component\<close> 
+or \<open>Hardware\<close> objects defined in the reference ontology. This mapping shows that the structure 
+of a (user) ontology may be quite different from the one of a standard ontology she references. 
 \<close>
 
 section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] \<open>Applications\<close>
