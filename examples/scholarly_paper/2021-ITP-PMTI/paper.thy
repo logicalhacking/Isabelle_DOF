@@ -405,7 +405,7 @@ types. The notation for terms and types is as follows:
 \<^item> updates were denoted \<^theory_text>\<open>r\<lparr>x := a\<rparr>\<lparr>y := b\<rparr>\<close> or just \<^term>\<open>r\<lparr>x:=a, y:=b\<rparr>\<close>.
 \<close>
 
-text\<open> ... where the so-called more-field \<open>\<dots>\<close> is used to 'fill-in' record-extensions.
+text\<open> ... where the so-called more-field \<open>\<dots>\<close> is used to ``fill-in'' record-extensions.
 Schematic record types @{cite "naraschewski1998object"} allow for simulating object-oriented features such as 
 (single-)inheritance while maintaining a compositional style of verification: 
 it is possible to prove a property \<^term>\<open>P (a::'a T_scheme)\<close>
@@ -589,12 +589,14 @@ text*[claimNotion::myclaim, authored_by = "{@{myauthor \<open>church\<close>}}",
 \caption{Some instances of the classes of the ontology in the \autoref{fig-ontology-example}.}
 \label{fig-instances-example}
 \end{figure}
-  In the instance \<^theory_text>\<open>introduction1\<close>, \<^term>\<open>@{myauthor \<open>church\<close>}\<close> denotes
-  the instance \<^theory_text>\<open>church\<close> of the class \<^typ>\<open>myauthor\<close>.
+  In the instance \<^theory_text>\<open>introduction1\<close>, the term antiquotation  \<^theory_text>\<open>@{myauthor \<open>church\<close>}\<close>,
+  or its equivalent notation \<^term>\<open>@{myauthor \<open>church\<close>}\<close>, denotes
+  the instance \<^theory_text>\<open>church\<close> of the class \<^typ>\<open>myauthor\<close>,
+  where \<^theory_text>\<open>church\<close> is an \<^hol>-string.
   One can now reference a class instance in a \<^theory_text>\<open>term*\<close> command.
   In the command  \<^theory_text>\<open>term*\<open>@{myauthor \<open>church\<close>}\<close>\<close>
   the term \<^term>\<open>@{myauthor \<open>church\<close>}\<close> is type-checked, \<^ie>, the command \<^theory_text>\<open>term*\<close> checks that
-  \<^theory_text>\<open>church\<close> references a term of type \<^typ>\<open>myauthor\<close>
+  \<^theory_text>\<open>church\<close> references a term of type \<^typ>\<open>myauthor\<close> against the global context.
   (see \<^side_by_side_figure>\<open>type-checking-example\<close>).
 \<close>
 
@@ -661,6 +663,11 @@ text\<open>
   We can even compare class instances. \<^figure>\<open>term-context-equality-evaluation\<close>
   shows that the two class instances \<^theory_text>\<open>resultProof\<close> and \<^theory_text>\<open>resultProof2\<close> are not equivalent
   because their attribute \<^term>\<open>property\<close> differ.
+  When \<^theory_text>\<open>value*\<close> evaluates the term,
+  the term antiquotations \<^term>\<open>@{thm \<open>HOL.refl\<close>}\<close> and \<^term>\<open>@{thm \<open>HOL.sym\<close>}\<close> are checked
+  against the global context to validate that the \<^hol>-strings \<^term>\<open>\<open>HOL.refl\<close>\<close> and \<^term>\<open>\<open>HOL.sym\<close>\<close>
+  reference existing theorems.
+
 \<close>
 
 figure*[
@@ -1039,7 +1046,7 @@ onto_class assoc_Method_Problem =
 (*>*)
 
 text\<open>
-  The ontology \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> @{cite "DBLP:journals/corr/NevzorovaZKL14"}
+  The ontology \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> @{cite "Nevzorova2014OntoMathPO"}
   is an OWL ontology of mathematical knowledge concepts.
   It posits the IS-A semantics for hierarchies of mathematical knowledge elements,
   and defines these elements as two hierarchies of classes:
@@ -1150,7 +1157,7 @@ subsection*[rw::related_work]\<open>Related Work\<close>
 
 text\<open>There are a number of approaches to use ontologies for structuring the link between
 information and knowledge, and to make it amenable to 
- "semantic" search in or consistency checking of documents:
+ ``semantic'' search in or consistency checking of documents:
 
 \<^item> The search engine \<^url>\<open>http://shinh.org/wfs\<close> uses a quite brute-force, 
   but practical approach. It is getting its raw-data from Wikipedia and PlanetMath 
@@ -1166,13 +1173,13 @@ information and knowledge, and to make it amenable to
   a server infrastructure based on conventional, rather heavy-weight 
   database- and OWL technology.
   Our approach targets so far only one ITP system and its libraries, and emphasizes 
-  type-safeness, expressive power and "depth" of meta-data, which is adapted
+  type-safeness, expressive power and ``depth'' of meta-data, which is adapted
   to the specific needs of ITP systems and theory developments.
 
 \<^item> There are meanwhile a number of proposals of ontologies targeting mathematics: 
-  \<^item>  \<open>OntoMath\<^sup>P\<^sup>R\<^sup>O\<close> @{cite "Nevzorova2014OntoMathPO"} proposes a 
+  \<^item>  OntoMath\textsuperscript{PRO} @{cite "Nevzorova2014OntoMathPO"} proposes a 
      ``taxonomy of the fields of mathematics'' (pp 110). In total, 
-     \<open>OntoMath\<^sup>P\<^sup>R\<^sup>O\<close> contains the daunting number of 3,449 classes, which is in part due to 
+     OntoMath\textsuperscript{PRO} contains the daunting number of 3,449 classes, which is in part due to 
      the need to compensate the lack of general datatype definition methods for meta-data.
      It is inspired from a translation of the Russian Federal Standard for Higher Education 
      on mathematics for master students \<^url>\<open>http://www.edu.ru/db-mon/mo/Data/d_10/prm40-1.pdf\<close>,
@@ -1183,7 +1190,7 @@ information and knowledge, and to make it amenable to
     and the more general ScienceWISE (see \<^url>\<open>http://sciencewise.info/ontology/\<close> linked to the 
     ArXiv.org project) that allows users to introduce their own category concepts. 
     Both suffer from the lack of deeper meta-data modeling, and the latter is still at the beginning 
-    (ScienceWISE marks the Mathematics part as "under construction").
+    (ScienceWISE marks the Mathematics part as ``under construction'').
 
 %   \<^url>\<open>https://github.com/CLLKazan/OntoMathPro\<close> 
 %
@@ -1200,7 +1207,7 @@ that will further increase the usability of our framework for the ontology-confo
 of formal content, be it in the engineering or the mathematics domain.
 
 Another line of future application is to increase the "depth" of build-in term antiquotations such
-\<open>@{typ \<open>'\<tau>\<close>}\<close>, \<open>@{term \<open>a + b\<close>}\<close> and \<open>@{thm \<open>HOL.refl\<close>}\<close>, which are currently implemented just as
+\<^theory_text>\<open>@{typ \<open>'\<tau>\<close>}\<close>, \<^term>\<open>@{term \<open>a + b\<close>}\<close> and \<^term>\<open>@{thm \<open>HOL.refl\<close>}\<close>, which are currently implemented just as
 validations in the current logical context. In the future, they could  optionally be expanded to 
 the types, terms and theorems (with proof objects attached) in a meta-model of the Isabelle Kernel 
 such as the one presented in @{cite "10.1007/978-3-030-79876-5_6"} (also available in the AFP). 
