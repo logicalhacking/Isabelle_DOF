@@ -520,25 +520,27 @@ text\<open>
   be improved and a new step, which we call \<^emph>\<open>elaboration\<close> must be added to allow
   these antiquotations in \<open>\<lambda>\<close>-terms.
   The resulting process encompasses the following steps:
-    \<^item> Parse the term which represents the object in \<^hol>,
-    \<^item> Infer the type of the term,
-    \<^item> Certify the term,
-    \<^item> Validate the term: the \<^dof> antiquotations terms are parsed and type-checked,
-    \<^item> Elaborate: the \<^dof> antiquotations terms are expanded.
-      The antiquotations are replaced by the object in \<^hol> they reference
-      i.e. a \<open>\<lambda>\<close>-calculus term,
-    \<^item> Pass on the information to Isabelle/PIDE, and
+    \<^item> Parsing of the term which represents the object in \<^hol>,
+    \<^item> Typeinference/Typechecking of the term,
+    \<^item> Ontological validation of the term: the meta-data of term antiquotations is 
+      parsed and checked in the logical context,
+    \<^item> Elaboration of term antiquotations: depending of the antiquotation specific
+      elaboration function, they antiquotations containing references were replaced,
+      for example, by the object they refer to in the logical context,
+    \<^item> Generation of markup information for the Isabelle/PIDE, and
     \<^item> Code generation:
 \<^vs>\<open>-0.3cm\<close>
       \<^item> Evaluation of \<^hol> expressions with ontological annotations,
       \<^item> Generation of ontological invariants processed simultaneously
         with the generation of the document (a theory in \<^hol>).
 
-  \<^isabelle> provides commands to type-check and print terms (the command \<^theory_text>\<open>term\<close>)
-  and evaluate and print a term (the command \<^theory_text>\<open>value\<close>).
-  We provide the equivalent commands, respectively \<^theory_text>\<open>term*\<close> and \<^theory_text>\<open>value*\<close>, which support
-  the validation and elaboration phase.
-  This allow a smooth integration into the \<^emph>\<open>formal\<close> theory development process.
+  \<^isabelle> provides inspection commands to type-check (the command \<^theory_text>\<open>term\<close>)
+  and to evaluate a term (the command \<^theory_text>\<open>value\<close>).
+  We provide the equivalent commands, respectively \<^theory_text>\<open>term*\<close> and \<^theory_text>\<open>value*\<close>, which 
+  additionally support a validation and elaboration phase.
+
+  Note that term antiquotations are admitted in all \<^dof> commands, not just
+  \<^theory_text>\<open>term*\<close> and \<^theory_text>\<open>value*\<close>. 
 \<close>
 
 (*<*)
@@ -576,7 +578,7 @@ doc_class myconclusion = text_section +
   invariant establish_defined :: "\<forall> x. x \<in> Domain (establish \<sigma>)
                       \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"
 \<close>}
-\caption{Excerpt of an ontology example for mathematical papers.}
+\caption{Excerpt of an example ontology for mathematical papers.}
 \label{fig-ontology-example}
 \end{figure}
   we can define some class instances for this ontology with the \<^theory_text>\<open>text*\<close> command,
@@ -643,7 +645,7 @@ side_by_side_figure*[
   , caption2="''The evaluation fails, due to the undefined instance.''"
   , relative_width2="48"
   , src2="''figures/term-context-failed-evaluation-example''"
-]\<open>Evaluation of antiquotations in term context.\<close>
+]\<open>Evaluation of antiquotations in a term context.\<close>
 
 (*
 figure*[
@@ -668,7 +670,8 @@ declare_reference*["term-context-equality-evaluation"::figure]
 (*>*)
 
 text\<open>
-  We can even compare class instances. \<^figure>\<open>term-context-equality-evaluation\<close>
+  Since term antiquotations are logically uninterpreted constants,
+  it is possible to compare class instances logically. \<^figure>\<open>term-context-equality-evaluation\<close>
   shows that the two class instances \<^theory_text>\<open>resultProof\<close> and \<^theory_text>\<open>resultProof2\<close> are not equivalent
   because their attribute \<^term>\<open>property\<close> differ.
   When \<^theory_text>\<open>value*\<close> evaluates the term,
@@ -686,9 +689,10 @@ figure*[
 \<close>
 
 text\<open>
-  A novel mechanism to specify constraints as invariants is implemented
-  and can now be specified in common \<^hol> syntax, using the keyword \<^theory_text>\<open>invariant\<close>
-  in the class definition (recall \autoref{fig-ontology-example}).
+  The mechanism of term annotations is also used for the new concept of 
+  invariant constraints which can be specified in common \<^hol> syntax.
+  They were introduced by the keyword \<^theory_text>\<open>invariant\<close>
+  in a class definition (recall \autoref{fig-ontology-example}).
   Following the constraints proposed in @{cite "brucker.ea:isabelle-ontologies:2018"}, 
   one can specify that any instance of a class \<^typ>\<open>myresult\<close>
   finally has a non-empty property list, if its \<^typ>\<open>kind\<close> is \<^const>\<open>proof\<close>
@@ -697,8 +701,8 @@ text\<open>
   must be defined when an instance
   of the class \<^typ>\<open>myconclusion\<close> is defined (see the \<^theory_text>\<open>invariant establish_defined\<close>).
 
-  In our example, the \<^theory_text>\<open>invariant author_finite\<close> of the class \<^typ>\<open>myintroduction\<close> enforces
-  that the user sets the \<^const>\<open>authored_by\<close> set.
+  In \autoref{fig-ontology-example}, the \<^theory_text>\<open>invariant author_finite\<close> of the class \<^typ>\<open>myintroduction\<close> 
+  enforces that the user defines the \<^const>\<open>authored_by\<close> set with some valid meta-data of type \<open>myauthor\<close>.
   The \<open>\<sigma>\<close> symbol is reserved and references the future class instance.
   By relying on the implementation of the Records
   in \<^isabelle>~@{cite "wenzel:isabelle-isar:2020"},
@@ -720,9 +724,9 @@ text\<open>
   we also specify its attribute \<^const>\<open>property\<close> with a suited value
   as a \<^type>\<open>list\<close> of \<^type>\<open>thm\<close>.
   In \<^figure>\<open>invariant-checking-figure\<close>,
-  we try to specify a new instance \<^theory_text>\<open>introduction1\<close> of the class \<^typ>\<open>myintroduction\<close>.
-  But an invariant checking error is triggered because we do not respect the
-  constraint specified in the \<^theory_text>\<open>invariant force_level\<close>,
+  we attempt to specify a new instance \<^theory_text>\<open>introduction1\<close> of the class \<^typ>\<open>myintroduction\<close>.
+  However, the invariant checking triggers an error because the
+  constraint specified in the \<^theory_text>\<open>invariant force_level\<close> is not respected,
   when we specify the attribute \<^const>\<open>level\<close> of \<^theory_text>\<open>introduction1\<close> to \<^term>\<open>Some (0::int)\<close>.
   The \<^theory_text>\<open>invariant force_level\<close> forces the value of the argument
   of the attribute \<^const>\<open>level\<close> to be greater than 1.
@@ -766,23 +770,26 @@ value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = argument) @
 (*>*)
 
 text\<open>
-  A new mechanism to make query on instances is available and uses
-  the \<^hol> implementation of \<^type>\<open>list\<close>s.
-  Complex queries can then be defined using functions over the instances list.
-  To get the list of the properties of the instances of the class \<^typ>\<open>myresult\<close>,
-  and the list of the authors of the instances of the class \<^typ>\<open>myintroduction\<close>,
-  one can use the commands:
+  Any class definition generates term antiquotations checking a class instance or
+  to the set of instances in a particular logical context; these references were
+  elaborated to objects they refer to.
+  This paves the way for new mechanism query the "current" instances presented as a
+  list of \<^hol> \<^type>\<open>list\<close>.
+  Arbitrarily Complex queries can therefore be defined inside the logical language.
+  Thus, to get the list of the properties of the instances of the class \<^typ>\<open>myresult\<close>,
+  it suffices to get list of the authors of the instances of the  \<^typ>\<open>myintroduction\<close> class,
+  and to treat this meta-data as usual:
   @{theory_text [display,indent=10, margin=70] \<open>
   value*\<open>map (myresult.property) @{myresult-instances}\<close>
   value*\<open>map (mytext_section.authored_by) @{myintroduction-instances}\<close>
   \<close>}
-  To get the list of the instances of the class \<^typ>\<open>myresult\<close>
+  In order to get the list of the instances of the class \<^typ>\<open>myresult\<close>
   whose \<^const>\<open>evidence\<close> is a \<^const>\<open>proof\<close>, on can use the command:
   @{theory_text [display,indent=10, margin=70] \<open>
   value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = proof) @{myresult-instances}\<close>
   \<close>}
-  To get the list of the instances of the class \<^typ>\<open>myintroduction\<close> whose \<^const>\<open>level\<close> > 1,
-  on can use the command:
+  Analogously, the list of the instances of the class \<^typ>\<open>myintroduction\<close> whose \<^const>\<open>level\<close> > 1,
+  can be filtered by:
   @{theory_text [display,indent=10, margin=70] \<open>
   value*\<open>filter (\<lambda>\<sigma>. the (mytext_section.level \<sigma>) > 1) @{myintroduction-instances}\<close>
   \<close>}
