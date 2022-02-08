@@ -919,9 +919,28 @@ or \<open>Hardware\<close> objects defined in the reference ontology. This mappi
 of a (user) ontology may be quite different from the one of a standard ontology she references. 
 \<close>
 
+(*<*)
+
+lemma inv_c2_preserved :
+  "c2_inv \<sigma> \<Longrightarrow> c1_inv (\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e)"
+  unfolding c1_inv_def c2_inv_def 
+            Computer_Hardware_to_Hardware_morphism_def Product_to_Component_morphism_def  
+  by (auto simp: comp_def)
+
+lemma Computer_Hardware_to_Hardware_morphism_total :
+  "Computer_Hardware_to_Hardware_morphism ` ({X::Computer_Hardware. c2_inv X}) \<subseteq> ({X::Hardware. c1_inv X})"
+  using inv_c2_preserved 
+  by auto
+
+(*>*)
+
+(* Bu, can you take care of commenting on these last lemmas? *)
+
 section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] \<open>Applications\<close>
 
-subsection\<open>Engineering Example : An Extract from PLib\<close>
+(* subsection\<open>Engineering Example : An Extract from PLib\<close> 
+Already done in the previous section
+*)
 
 subsection\<open>Mathematics Example : An Extract from OntoMath\textsuperscript{PRO}\<close>
 
