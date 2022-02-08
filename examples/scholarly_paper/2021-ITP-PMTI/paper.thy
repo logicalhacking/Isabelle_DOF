@@ -1039,9 +1039,10 @@ definition Computer_Hardware_to_Hardware_morphism :: "'a Computer_Hardware_schem
 
 
 To check the coherence of our local ontology, we define a relationship between the local ontology 
-and the reference ontology using morphism functions (or mapping rules). These rules are applied to 
-define the relationship between one class of the local ontology to one or several other class(es) 
-described in the reference ontology. 
+and the reference ontology using morphism functions (or mapping rules as in ATL framwork~@{cite "atl"}
+or EXPRESS-X language~@{cite "BGPP95"}). These rules are applied to define the relationship 
+between one class of the local ontology to one or several other class(es) described in the reference 
+ontology. 
 
 For example, \<^const>\<open>Product_to_Component_morphism\<close> and \<^const>\<open>Computer_Hardware_to_Hardware_morphism\<close>
 definitions, detailed in \autoref{fig-mapping-example},
@@ -1051,6 +1052,10 @@ This mapping shows that the structure of a (user) ontology may be quite differen
 from the one of a standard ontology it references. 
 \<close>
 
+text\<open>
+The advantage of using the \<^dof> framework compared to approaches like ATL or EXPRESS-X is 
+the possibility of formally validating the mapping rules and also of proving the preservation 
+of invariants, as we will demonstrate in the following example.\<close>
 
 (* Bu, can you take care of commenting on these last lemmas? *)
 
