@@ -1338,13 +1338,13 @@ of formal content, be it in the engineering or the mathematics domain.
 \<^footnote>\<open>This paper has been edited in \<^dof>, of course.\<close>
 
 Another line of future application is to increase the ``depth'' of built-in term antiquotations such
-as \<^theory_text>\<open>@{typ \<open>'\<tau>\<close>}\<close>, \<^term>\<open>@{term \<open>a + b\<close>}\<close> and \<^term>\<open>@{thm \<open>HOL.refl\<close>}\<close>, which are currently implemented just as
-validations in the current logical context. In the future, they could  optionally be expanded to 
-the types, terms and theorems (with proof objects attached) in a meta-model of the Isabelle Kernel 
+as \<^theory_text>\<open>@{typ \<open>'\<tau>\<close>}\<close>, \<^term>\<open>@{term \<open>a + b\<close>}\<close> and \<^term>\<open>@{thm \<open>HOL.refl\<close>}\<close>, which are currently implemented 
+just as validations in the current logical context. In the future, they could  optionally be expanded 
+to the types, terms and theorems (with proof objects attached) in a meta-model of the Isabelle Kernel 
 such as the one presented in @{cite "10.1007/978-3-030-79876-5_6"} (also available in the AFP). 
-This will allow for specifications of query-functions in, \<^eg>, proof-objects, and 
-pave the way to annotate them with typed meta-data. Such a technology could be relevant
-for the interoperability of proofs across different ITP platforms.
+This will allow for definitions of query-functions in, \<^eg>, proof-objects, and pave the way 
+to annotate them with typed meta-data. Such a technology could be relevant for the interoperability 
+of proofs across different ITP platforms.
 \<close>
 
 (*<*)
