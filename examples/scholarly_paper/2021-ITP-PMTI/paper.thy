@@ -878,6 +878,42 @@ invariant ''c2'' to guarantee that its own mass value equals the sum of all the 
 composing the object.
 \<close>
 
+(*<*)
+definition Item_to_Resource_morphism :: "'a Item_scheme \<Rightarrow> Resource" 
+           ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
+  where    "\<sigma> \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m =  \<lparr>  Resource.tag_attribute = 0::int , 
+                                 Resource.name = name \<sigma> \<rparr>" 
+  
+definition Product_to_Component_morphism :: "'a Product_scheme \<Rightarrow> Component"
+           ("_ \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t" [1000]999)
+  where "  \<sigma> \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t = \<lparr> Resource.tag_attribute = 1::int ,
+                                 Resource.name = name \<sigma> ,
+                                 Electronic.provider  = Product.provider \<sigma> ,
+                                 Electronic.manufacturer  = '''' ,
+                                 Component.mass = Product.mass \<sigma> ,
+                                 Component.dimensions = [] \<rparr>" 
+
+definition Computer_Hardware_to_Hardware_morphism :: "'a Computer_Hardware_scheme \<Rightarrow> Hardware"
+           ("_ \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e" [1000]999)
+           where "\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e =
+                  \<lparr>  Resource.tag_attribute = 2::int ,
+                     Resource.name = name \<sigma> ,
+                     Informatic.description = ''no description'', 
+                     Hardware.type = Computer_Hardware.type \<sigma> ,
+                     Hardware.mass = mass \<sigma> ,
+                     Hardware.composed_of = map Product_to_Component_morphism 
+                                                (Computer_Hardware.composed_of \<sigma>)
+                   \<rparr>" 
+
+(*>*)
+
+text\<open>
+To check the coherence of our local ontology, we define a relationship between the local ontology 
+and the reference ontology using morphism functions (or mapping rules). These rules are applied to 
+define the relationship between one class of the local ontology to one or several other class(es) 
+described in the reference ontology. 
+\<close>
+
 section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] \<open>Applications\<close>
 
 subsection\<open>Engineering Example : An Extract from PLib\<close>
