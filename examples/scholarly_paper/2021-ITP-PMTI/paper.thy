@@ -88,7 +88,7 @@ author*[nic,
         orcid       ="''0000-0002-0756-7072''",
         affiliation ="\<open>LMF, Université Paris-Saclay, Paris, France\<close>"]\<open>Nicolas Méric\<close>
 author*[bu,
-        email       ="\<open>wolff@lri.fr\<close>",
+        email       ="\<open>wolff@universite-paris-saclay.fr\<close>",
         affiliation = "\<open>LMF, Université Paris-Saclay, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
              
 abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>\<^isabelle>\<close>,\<open>Ontology Mapping\<close>]"]
