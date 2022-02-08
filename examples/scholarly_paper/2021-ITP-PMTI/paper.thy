@@ -954,7 +954,7 @@ onto_class R_Software = Informatic +
 
 To illustrate this process, we use the reference ontology (considered as a standard) described 
 in the listing  \autoref{fig-Reference-Ontology-example}, defining the \<^typ>\<open>Resource\<close>,
-\<^typ>\<open>Electronic\<close>, \<^typ>\<open>Component\<close>,\<^typ>\<open>Informatic\<close>, \<^typ>\<open>Hardware\<close> and \<^typ>\<open>R_Software\<close>
+\<^typ>\<open>Electronic\<close>, \<^typ>\<open>Component\<close>, \<^typ>\<open>Informatic\<close>, \<^typ>\<open>Hardware\<close> and \<^typ>\<open>R_Software\<close>
 concepts (or classes). 
 Each class contains a set of attributes or properties and some local invariants. 
 
