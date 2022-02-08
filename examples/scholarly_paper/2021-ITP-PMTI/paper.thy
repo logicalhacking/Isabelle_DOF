@@ -79,9 +79,17 @@ setup\<open>(* std_text_antiquotation        \<^binding>\<open>my_text\<close> #
 
 title*[tit::title]\<open>A Framework for Proving Ontology-Relations and Runtime Testing Ontology Instances\<close>
                                   
-author*[idir,email="\<open>idir.aitsadoune@lri.fr\<close>",affiliation="\<open>LMF, CentraleSupelec\<close>"]\<open>Idir Ait-Sadoune\<close>
-author*[nic,email="\<open>nicolas.meric@lri.fr\<close>",affiliation="\<open>LRI, Université Paris-Saclay\<close>"]\<open>Nicolas Méric\<close>
-author*[bu,email="\<open>wolff@lri.fr\<close>",affiliation = "\<open>LRI, Université Paris-Saclay\<close>"]\<open>Burkhart Wolff\<close>
+author*[idir,
+        email       ="\<open>idir.aitsadoune@centralesupelec.fr\<close>",
+        orcid       ="''0000-0002-6484-8276''",
+        affiliation ="\<open>LMF, CentraleSupélec, Université Paris-Saclay, Paris, France\<close>"]\<open>Idir Ait-Sadoune\<close>
+author*[nic,
+        email       ="\<open>nicolas.meric@universite-paris-saclay.fr\<close>",
+        orcid       ="''0000-0002-0756-7072''",
+        affiliation ="\<open>LMF, Université Paris-Saclay, Paris, France\<close>"]\<open>Nicolas Méric\<close>
+author*[bu,
+        email       ="\<open>wolff@universite-paris-saclay.fr\<close>",
+        affiliation = "\<open>LMF, Université Paris-Saclay, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
              
 abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>\<^isabelle>\<close>,\<open>Ontology Mapping\<close>]"]
 \<open>  \<^dof> is a novel ontology framework on top of Isabelle 
@@ -405,7 +413,7 @@ types. The notation for terms and types is as follows:
 \<^item> updates were denoted \<^theory_text>\<open>r\<lparr>x := a\<rparr>\<lparr>y := b\<rparr>\<close> or just \<^term>\<open>r\<lparr>x:=a, y:=b\<rparr>\<close>.
 \<close>
 
-text\<open> ... where the so-called more-field \<open>\<dots>\<close> is used to 'fill-in' record-extensions.
+text\<open> ... where the so-called more-field \<open>\<dots>\<close> is used to ``fill-in'' record-extensions.
 Schematic record types @{cite "naraschewski1998object"} allow for simulating object-oriented features such as 
 (single-)inheritance while maintaining a compositional style of verification: 
 it is possible to prove a property \<^term>\<open>P (a::'a T_scheme)\<close>
@@ -586,15 +594,17 @@ text*[introduction2::myintroduction, authored_by = "{@{myauthor \<open>church\<c
 
 text*[claimNotion::myclaim, authored_by = "{@{myauthor \<open>church\<close>}}", based_on= "[\<open>Notion1\<close>, \<open>Notion2\<close>]", level = "Some 0"]\<open>\<close>
 \<close>}
-\caption{Some instances of the classes of the ontology in the \autoref{fig-ontology-example}.}
+\caption{Some instances of the classes of the ontology of \autoref{fig-ontology-example}.}
 \label{fig-instances-example}
 \end{figure}
-  In the instance \<^theory_text>\<open>introduction1\<close>, \<^term>\<open>@{myauthor \<open>church\<close>}\<close> denotes
-  the instance \<^theory_text>\<open>church\<close> of the class \<^typ>\<open>myauthor\<close>.
+  In the instance \<^theory_text>\<open>introduction1\<close>, the term antiquotation  \<^theory_text>\<open>@{myauthor \<open>church\<close>}\<close>,
+  or its equivalent notation \<^term>\<open>@{myauthor \<open>church\<close>}\<close>, denotes
+  the instance \<^theory_text>\<open>church\<close> of the class \<^typ>\<open>myauthor\<close>,
+  where \<^theory_text>\<open>church\<close> is an \<^hol>-string.
   One can now reference a class instance in a \<^theory_text>\<open>term*\<close> command.
   In the command  \<^theory_text>\<open>term*\<open>@{myauthor \<open>church\<close>}\<close>\<close>
   the term \<^term>\<open>@{myauthor \<open>church\<close>}\<close> is type-checked, \<^ie>, the command \<^theory_text>\<open>term*\<close> checks that
-  \<^theory_text>\<open>church\<close> references a term of type \<^typ>\<open>myauthor\<close>
+  \<^theory_text>\<open>church\<close> references a term of type \<^typ>\<open>myauthor\<close> against the global context.
   (see \<^side_by_side_figure>\<open>type-checking-example\<close>).
 \<close>
 
@@ -661,6 +671,11 @@ text\<open>
   We can even compare class instances. \<^figure>\<open>term-context-equality-evaluation\<close>
   shows that the two class instances \<^theory_text>\<open>resultProof\<close> and \<^theory_text>\<open>resultProof2\<close> are not equivalent
   because their attribute \<^term>\<open>property\<close> differ.
+  When \<^theory_text>\<open>value*\<close> evaluates the term,
+  the term antiquotations \<^term>\<open>@{thm \<open>HOL.refl\<close>}\<close> and \<^term>\<open>@{thm \<open>HOL.sym\<close>}\<close> are checked
+  against the global context to validate that the \<^hol>-strings \<^term>\<open>\<open>HOL.refl\<close>\<close> and \<^term>\<open>\<open>HOL.sym\<close>\<close>
+  reference existing theorems.
+
 \<close>
 
 figure*[
@@ -775,6 +790,108 @@ text\<open>
 
 section*["morphisms"::technical,main_author="Some(@{docitem ''idir''}::author)"] \<open>Proving Morphisms on Ontologies\<close>
 
+(*<*)
+(* Mapped_PILIB_Ontology example *)
+term\<open>fold (+) S 0\<close>  
+
+definition sum 
+  where "sum S = (fold (+) S 0)"
+
+datatype Hardware_Type = 
+  Motherboard | 
+  Expansion_Card | 
+  Storage_Device | 
+  Fixed_Media | 
+  Removable_Media |
+  Input_Device |
+  Output_Device
+
+(* Reference Ontology *)
+onto_class Resource =
+  name :: string
+
+onto_class Electronic = Resource +
+  provider :: string
+  manufacturer :: string
+
+onto_class Component = Electronic +
+  mass :: int
+  dimensions :: "int list" 
+
+onto_class Simulation_Model = Electronic +
+  type :: string
+
+onto_class Informatic = Resource +
+  description :: string
+
+onto_class Hardware = Informatic +
+  type :: Hardware_Type
+  mass :: int
+  composed_of :: "Component list" 
+  invariant c1 :: "mass \<sigma> = sum(map Component.mass (composed_of \<sigma>))"
+
+onto_class R_Software = Informatic +
+  version :: int
+
+(* Local Ontology *)
+onto_class Item =
+  name :: string
+
+onto_class Product = Item +
+  serial_number :: int
+  provider :: string
+  mass :: int
+
+onto_class Computer_Software = Item +
+  version :: int
+
+onto_class Electronic_Component = Product +
+  dimensions :: "int set"
+
+onto_class Computer_Hardware = Product +
+  type :: Hardware_Type
+  composed_of :: "Product list" 
+  invariant c2 :: "Product.mass \<sigma> = sum(map Product.mass (composed_of \<sigma>))"
+
+definition Item_to_Resource_morphism :: "'a Item_scheme \<Rightarrow> Resource" 
+           ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
+  where    "\<sigma> \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m =  \<lparr>  Resource.tag_attribute = 0::int , 
+                                 Resource.name = name \<sigma> \<rparr>" 
+  
+definition Product_to_Component_morphism :: "'a Product_scheme \<Rightarrow> Component"
+           ("_ \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t" [1000]999)
+  where "  \<sigma> \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t = \<lparr> Resource.tag_attribute = 1::int ,
+                                 Resource.name = name \<sigma> ,
+                                 Electronic.provider  = Product.provider \<sigma> ,
+                                 Electronic.manufacturer  = ''no manufacturer'' ,
+                                 Component.mass = Product.mass \<sigma> ,
+                                 Component.dimensions = [] \<rparr>" 
+
+definition Computer_Hardware_to_Hardware_morphism :: "'a Computer_Hardware_scheme \<Rightarrow> Hardware"
+           ("_ \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e" [1000]999)
+           where "\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e =
+                  \<lparr>  Resource.tag_attribute = 2::int ,
+                     Resource.name = name \<sigma> ,
+                     Informatic.description = ''no description'', 
+                     Hardware.type = Computer_Hardware.type \<sigma> ,
+                     Hardware.mass = mass \<sigma> ,
+                     Hardware.composed_of = map Product_to_Component_morphism 
+                                                (Computer_Hardware.composed_of \<sigma>)
+                   \<rparr>" 
+
+lemma inv_c2_preserved :
+  "c2_inv \<sigma> \<Longrightarrow> c1_inv (\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e)"
+  unfolding c1_inv_def c2_inv_def 
+            Computer_Hardware_to_Hardware_morphism_def Product_to_Component_morphism_def  
+  by (auto simp: comp_def)
+
+lemma Computer_Hardware_to_Hardware_morphism_total :
+  "Computer_Hardware_to_Hardware_morphism ` ({X::Computer_Hardware. c2_inv X}) \<subseteq> ({X::Hardware. c1_inv X})"
+  using inv_c2_preserved 
+  by auto
+
+(*>*)
+
 text\<open>
 \<^dof> framework does not assume that all documents reference the same ontology. 
 Each document may build its local ontology without any external reference. 
@@ -785,14 +902,14 @@ More precisely, a class of a local ontology may be described as a consequence of
 to one or several other class(es) defined in other ontologies. This means that each instance of the former can be 
 computed from one or more instances of the latter. 
 
-
 Thanks to the morphism relationship, the obtained class may either import properties (definitions are preserved) 
 or map properties (the properties are different but are semantically equivalent) that are defined in the referenced class(es). 
 It may also define additional properties.
 \<close>
 
-(*<*)
-(* Reference Ontology *)
+text\<open>
+\begin{figure}
+@{boxed_theory_text [display] \<open>
 definition sum 
   where "sum S = (fold (+) S 0)"
 
@@ -830,24 +947,28 @@ onto_class Hardware = Informatic +
 
 onto_class R_Software = Informatic +
   version :: int
+\<close>}
+\caption{An extract of a reference ontology.}
+\label{fig-Reference-Ontology-example}
+\end{figure}
 
-(*>*)
-
-
-text\<open>
 To illustrate this process, we use the reference ontology (considered as a standard) described 
-in the listing X, defining the Resource, Electronic, Component, Informatic, Hardware and Software 
-concepts (or classes). Each class contains a set of attributes or properties and some local 
-invariants. 
+in the listing  \autoref{fig-Reference-Ontology-example}, defining the \<^typ>\<open>Resource\<close>,
+\<^typ>\<open>Electronic\<close>, \<^typ>\<open>Component\<close>, \<^typ>\<open>Informatic\<close>, \<^typ>\<open>Hardware\<close> and \<^typ>\<open>R_Software\<close>
+concepts (or classes). 
+Each class contains a set of attributes or properties and some local invariants. 
 
-In our example, we focus on the Hardware class containing a mass attribute and composed of a list 
-of components with a mass attribute formalising the mass value of each component. The Hardware 
-class also contains a local invariant ''c1'' to define a constraint linking the global mass of 
-a Hardware object with the masses of its own components.  
+In our example, we focus on the \<^typ>\<open>Hardware\<close> class containing a \<^const>\<open>mass\<close> attribute
+and composed of a list of components with a \<^const>\<open>mass\<close> attribute formalising
+the mass value of each component.
+The \<^typ>\<open>Hardware\<close> class also contains a local \<^theory_text>\<open>invariant c1\<close>
+to define a constraint linking the global mass of a \<^typ>\<open>Hardware\<close> object
+with the masses of its own components.  
 \<close>
 
-(*<*)
-(* Local Ontology *)
+text\<open>
+\begin{figure}
+@{boxed_theory_text [display] \<open>
 onto_class Item =
   name :: string
 
@@ -866,21 +987,103 @@ onto_class Computer_Hardware = Product +
   type :: Hardware_Type
   composed_of :: "Product list" 
   invariant c2 :: "Product.mass \<sigma> = sum(map Product.mass (composed_of \<sigma>))"
+\<close>}
+\caption{An extract of a local (user)  ontology.}
+\label{fig-Local-Ontology-example}
+\end{figure}
 
-(*>*)
+
+For the needs of our document, we have defined a simple ontology to classify Software and Hardware 
+objects. This ontology is described in \autoref{fig-Local-Ontology-example} and 
+defines the \<^typ>\<open>Item\<close>, \<^typ>\<open>Product\<close>, \<^typ>\<open>Computer_Software\<close> 
+and \<^typ>\<open>Computer_Hardware\<close> concepts.
+As for the reference ontology, we focus on the \<^typ>\<open>Computer_Hardware\<close> 
+class defined as a list of products characterised by their mass value.
+This class contains a local \<^theory_text>\<open>invariant c2\<close> to guarantee that its own mass value
+equals the sum of all the masses of the products composing the object.
+\<close>
+
 
 text\<open>
-For the needs of our document, we have defined a simple ontology to classify Software and Hardware 
-objects. This ontology is described in listing X and defines the \<open>Item\<close>, \<open>Product\<close>, \<open>Computer_Software\<close> 
-and \<open>Computer_Hardware\<close> concepts. As for the reference ontology, we focus on the \<open>Computer_Hardware\<close> 
-class defined as a list of products characterised by their mass value. This class contains a local 
-invariant ''c2'' to guarantee that its own mass value equals the sum of all the masses of the products 
-composing the object.
+\begin{figure}
+@{boxed_theory_text [display] \<open>
+definition Item_to_Resource_morphism :: "'a Item_scheme \<Rightarrow> Resource" 
+           ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
+  where    "\<sigma> \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m =  \<lparr>  Resource.tag_attribute = 0::int , 
+                                 Resource.name = name \<sigma> \<rparr>" 
+  
+definition Product_to_Component_morphism :: "'a Product_scheme \<Rightarrow> Component"
+           ("_ \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t" [1000]999)
+  where "  \<sigma> \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t = \<lparr> Resource.tag_attribute = 1::int ,
+                                 Resource.name = name \<sigma> ,
+                                 Electronic.provider  = Product.provider \<sigma> ,
+                                 Electronic.manufacturer  = '''' ,
+                                 Component.mass = Product.mass \<sigma> ,
+                                 Component.dimensions = [] \<rparr>" 
+
+definition Computer_Hardware_to_Hardware_morphism :: "'a Computer_Hardware_scheme \<Rightarrow> Hardware"
+           ("_ \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e" [1000]999)
+           where "\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e =
+                  \<lparr>  Resource.tag_attribute = 2::int ,
+                     Resource.name = name \<sigma> ,
+                     Informatic.description = ''no description'', 
+                     Hardware.type = Computer_Hardware.type \<sigma> ,
+                     Hardware.mass = mass \<sigma> ,
+                     Hardware.composed_of = map Product_to_Component_morphism 
+                                                (Computer_Hardware.composed_of \<sigma>)
+                   \<rparr>" 
+\<close>}
+\caption{An extract of a mapping definitions.}
+\label{fig-mapping-example}
+\end{figure}
+
+
+To check the coherence of our local ontology, we define a relationship between the local ontology 
+and the reference ontology using morphism functions (or mapping rules as in ATL framework~@{cite "atl"}
+or EXPRESS-X language~@{cite "BGPP95"}). These rules are applied to define the relationship 
+between one class of the local ontology to one or several other class(es) described in the reference 
+ontology. 
+
+For example, \<^const>\<open>Product_to_Component_morphism\<close> and \<^const>\<open>Computer_Hardware_to_Hardware_morphism\<close>
+definitions, detailed in \autoref{fig-mapping-example},
+specify how \<^typ>\<open>Product\<close> or \<^typ>\<open>Computer_Hardware\<close> objects are mapped to \<^typ>\<open>Component\<close> 
+or \<^typ>\<open>Hardware\<close> objects defined in the reference ontology.
+This mapping shows that the structure of a (user) ontology may be quite different
+from the one of a standard ontology it references. 
 \<close>
+
+text\<open>
+The advantage of using the \<^dof> framework compared to approaches like ATL or EXPRESS-X is 
+the possibility of formally validating the mapping rules and also of proving the preservation 
+of invariants, as we will demonstrate in the following example.\<close>
+
+(* Bu, can you take care of commenting on these last lemmas? *)
+
+text\<open>
+\begin{figure}
+@{boxed_theory_text [display] \<open>
+lemma inv_c2_preserved :
+  "c2_inv \<sigma> \<Longrightarrow> c1_inv (\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e)"
+  unfolding c1_inv_def c2_inv_def 
+            Computer_Hardware_to_Hardware_morphism_def Product_to_Component_morphism_def  
+  by (auto simp: comp_def)
+
+lemma Computer_Hardware_to_Hardware_morphism_total :
+  "Computer_Hardware_to_Hardware_morphism ` ({X::Computer_Hardware. c2_inv X}) \<subseteq> ({X::Hardware. c1_inv X})"
+  using inv_c2_preserved 
+  by auto
+\<close>}
+\caption{xxxx.}
+\label{fig-xxx}
+\end{figure}
+\<close>
+
 
 section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] \<open>Applications\<close>
 
-subsection\<open>Engineering Example : An Extract from PLib\<close>
+(* subsection\<open>Engineering Example : An Extract from PLib\<close> 
+Already done in the previous section
+*)
 
 subsection\<open>Mathematics Example : An Extract from OntoMath\textsuperscript{PRO}\<close>
 
@@ -964,7 +1167,7 @@ onto_class assoc_Method_Problem =
 (*>*)
 
 text\<open>
-  The ontology \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> @{cite "DBLP:journals/corr/NevzorovaZKL14"}
+  The \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> ontology~@{cite "Nevzorova2014OntoMathPO"}
   is an OWL ontology of mathematical knowledge concepts.
   It posits the IS-A semantics for hierarchies of mathematical knowledge elements,
   and defines these elements as two hierarchies of classes:
@@ -974,9 +1177,10 @@ text\<open>
   like \<^const>\<open>belongs_to\<close>, \<^const>\<open>contains\<close>, \<^const>\<open>defines\<close>, \<^const>\<open>is_defined_by\<close>, \<^const>\<open>solves\<close>,
   \<^const>\<open>is_solved_by\<close>, and a symmetric transitive associative relation \<^const>\<open>see_also\<close>
   between two mathematical knowledge objects.
-  It also represents links with external resources such as DBpedia
-  with annotations properties @{cite "Parsia:12:OWO"}.
-  \<^dof> covers a wide range of the OWL concepts used by the ontology OntoMath\textsuperscript{PRO}.
+  It also represents links with external resources
+  such as DBpedia~@{cite "10.1007/978-3-540-76298-0_52"}
+  with annotations properties~@{cite "Parsia:12:OWO"}.
+  \<^dof> covers a wide range of the OWL concepts used by the OntoMath\textsuperscript{PRO} ontology.
   We can represent the annotations properties as datatypes and
   then attach them as an attributes list to a class.
   For example the declaration:
@@ -1005,7 +1209,7 @@ onto_class Field_of_mathematics =
   Here the \<^theory_text>\<open>invariant restrict_annotation_F\<close> forces the \<^typ>\<open>annotation\<close>s to be
   a \<^const>\<open>label\<close> or a \<^const>\<open>comment\<close>.
   Subsumption relation is straightforward.
-  The ontology OntoMath\textsuperscript{PRO} defines
+  The OntoMath\textsuperscript{PRO} ontology defines
   a \<^typ>\<open>Problem\<close> and a \<^typ>\<open>Method\<close>
   as subclasses of the class \<^typ>\<open>Mathematical_knowledge_object\<close>.
   It gives in \<^dof>:
@@ -1075,7 +1279,7 @@ subsection*[rw::related_work]\<open>Related Work\<close>
 
 text\<open>There are a number of approaches to use ontologies for structuring the link between
 information and knowledge, and to make it amenable to 
- "semantic" search in or consistency checking of documents:
+ ``semantic'' search in or consistency checking of documents:
 
 \<^item> The search engine \<^url>\<open>http://shinh.org/wfs\<close> uses a quite brute-force, 
   but practical approach. It is getting its raw-data from Wikipedia and PlanetMath 
@@ -1088,15 +1292,15 @@ information and knowledge, and to make it amenable to
   developed six \<^emph>\<open>export\<close> functions from major ITP systems into it. The more difficult task to 
   develop \<^emph>\<open>import\<close> functions has not been addressed, not to mention the construction
   of imported proofs in a native tactic proof format. Rather, the emphasis was put on building
-  a server infrastructure based on conventional, rather heavy-weight database- and OWL technology.
+  a server infrastructure based on conventional, rather heavy-weight database and OWL technology.
   Our approach targets so far only one ITP system and its libraries, and emphasizes 
-  type-safeness, expressive power and "depth" of meta-data, which is adapted
+  type-safeness, expressive power and ``depth'' of meta-data, which is adapted
   to the specific needs of ITP systems and theory developments.
 
 \<^item> There are meanwhile a number of proposals of ontologies targeting mathematics: 
-  \<^item>  \<open>OntoMath\<^sup>P\<^sup>R\<^sup>O\<close> @{cite "Nevzorova2014OntoMathPO"} proposes a 
+  \<^item>  OntoMath\textsuperscript{PRO} @{cite "Nevzorova2014OntoMathPO"} proposes a 
      ``taxonomy of the fields of mathematics'' (pp 110). In total, 
-     \<open>OntoMath\<^sup>P\<^sup>R\<^sup>O\<close> contains the daunting number of 3,449 classes, which is in part due to 
+     OntoMath\textsuperscript{PRO} contains the daunting number of 3,449 classes, which is in part due to 
      the need to compensate the lack of general datatype definition methods for meta-data.
      It is inspired from a translation of the Russian Federal Standard for Higher Education 
      on mathematics for master students \<^url>\<open>http://www.edu.ru/db-mon/mo/Data/d_10/prm40-1.pdf\<close>,
@@ -1107,7 +1311,7 @@ information and knowledge, and to make it amenable to
     and the more general ScienceWISE (see \<^url>\<open>http://sciencewise.info/ontology/\<close> linked to the 
     ArXiv.org project) that allows users to introduce their own category concepts. 
     Both suffer from the lack of deeper meta-data modeling, and the latter is still at the beginning 
-    (ScienceWISE marks the Mathematics part as "under construction").
+    (ScienceWISE marks the Mathematics part as ``under construction'').
 
 %   \<^url>\<open>https://github.com/CLLKazan/OntoMathPro\<close> 
 %
@@ -1124,8 +1328,8 @@ that will further increase the usability of our framework for the ontology-confo
 of formal content, be it in the engineering or the mathematics domain.
 \<^footnote>\<open>This paper has been edited in \<^dof>, of course.\<close>
 
-Another line of future application is to increase the "depth" of build-in term antiquotations such
-\<open>@{typ \<open>'\<tau>\<close>}\<close>, \<open>@{term \<open>a + b\<close>}\<close> and \<open>@{thm \<open>HOL.refl\<close>}\<close>, which are currently implemented just as
+Another line of future application is to increase the ``depth'' of built-in term antiquotations such
+as \<^theory_text>\<open>@{typ \<open>'\<tau>\<close>}\<close>, \<^term>\<open>@{term \<open>a + b\<close>}\<close> and \<^term>\<open>@{thm \<open>HOL.refl\<close>}\<close>, which are currently implemented just as
 validations in the current logical context. In the future, they could  optionally be expanded to 
 the types, terms and theorems (with proof objects attached) in a meta-model of the Isabelle Kernel 
 such as the one presented in @{cite "10.1007/978-3-030-79876-5_6"} (also available in the AFP). 
