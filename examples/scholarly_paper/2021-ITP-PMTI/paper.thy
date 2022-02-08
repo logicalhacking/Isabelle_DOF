@@ -1171,7 +1171,7 @@ information and knowledge, and to make it amenable to
   develop \<^emph>\<open>import\<close> functions has not been addressed, not to mention the construction
   of imported proofs in a native proof format. Rather, the emphasis was put on building
   a server infrastructure based on conventional, rather heavy-weight 
-  database- and OWL technology.
+  database and OWL technology.
   Our approach targets so far only one ITP system and its libraries, and emphasizes 
   type-safeness, expressive power and ``depth'' of meta-data, which is adapted
   to the specific needs of ITP systems and theory developments.
@@ -1207,7 +1207,7 @@ that will further increase the usability of our framework for the ontology-confo
 of formal content, be it in the engineering or the mathematics domain.
 
 Another line of future application is to increase the "depth" of build-in term antiquotations such
-\<^theory_text>\<open>@{typ \<open>'\<tau>\<close>}\<close>, \<^term>\<open>@{term \<open>a + b\<close>}\<close> and \<^term>\<open>@{thm \<open>HOL.refl\<close>}\<close>, which are currently implemented just as
+as \<^theory_text>\<open>@{typ \<open>'\<tau>\<close>}\<close>, \<^term>\<open>@{term \<open>a + b\<close>}\<close> and \<^term>\<open>@{thm \<open>HOL.refl\<close>}\<close>, which are currently implemented just as
 validations in the current logical context. In the future, they could  optionally be expanded to 
 the types, terms and theorems (with proof objects attached) in a meta-model of the Isabelle Kernel 
 such as the one presented in @{cite "10.1007/978-3-030-79876-5_6"} (also available in the AFP). 
