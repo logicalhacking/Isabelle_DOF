@@ -586,7 +586,7 @@ text*[introduction2::myintroduction, authored_by = "{@{myauthor \<open>church\<c
 
 text*[claimNotion::myclaim, authored_by = "{@{myauthor \<open>church\<close>}}", based_on= "[\<open>Notion1\<close>, \<open>Notion2\<close>]", level = "Some 0"]\<open>\<close>
 \<close>}
-\caption{Some instances of the classes of the ontology in the \autoref{fig-ontology-example}.}
+\caption{Some instances of the classes of the ontology of \autoref{fig-ontology-example}.}
 \label{fig-instances-example}
 \end{figure}
   In the instance \<^theory_text>\<open>introduction1\<close>, the term antiquotation  \<^theory_text>\<open>@{myauthor \<open>church\<close>}\<close>,
@@ -1047,7 +1047,7 @@ onto_class assoc_Method_Problem =
 (*>*)
 
 text\<open>
-  The ontology \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> @{cite "Nevzorova2014OntoMathPO"}
+  The \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> ontology~@{cite "Nevzorova2014OntoMathPO"}
   is an OWL ontology of mathematical knowledge concepts.
   It posits the IS-A semantics for hierarchies of mathematical knowledge elements,
   and defines these elements as two hierarchies of classes:
@@ -1057,9 +1057,10 @@ text\<open>
   like \<^const>\<open>belongs_to\<close>, \<^const>\<open>contains\<close>, \<^const>\<open>defines\<close>, \<^const>\<open>is_defined_by\<close>, \<^const>\<open>solves\<close>,
   \<^const>\<open>is_solved_by\<close>, and a symmetric transitive associative relation \<^const>\<open>see_also\<close>
   between two mathematical knowledge objects.
-  It also represents links with external resources such as DBpedia
-  with annotations properties @{cite "Parsia:12:OWO"}.
-  \<^dof> covers a wide range of the OWL concepts used by the ontology OntoMath\textsuperscript{PRO}.
+  It also represents links with external resources
+  such as DBpedia~@{cite "10.1007/978-3-540-76298-0_52"}
+  with annotations properties~@{cite "Parsia:12:OWO"}.
+  \<^dof> covers a wide range of the OWL concepts used by the OntoMath\textsuperscript{PRO} ontology.
   We can represent the annotations properties as datatypes and
   then attach them as an attributes list to a class.
   For example the declaration:
@@ -1088,7 +1089,7 @@ onto_class Field_of_mathematics =
   Here the \<^theory_text>\<open>invariant restrict_annotation_F\<close> forces the \<^typ>\<open>annotation\<close>s to be
   a \<^const>\<open>label\<close> or a \<^const>\<open>comment\<close>.
   Subsumption relation is straightforward.
-  The ontology OntoMath\textsuperscript{PRO} defines
+  The OntoMath\textsuperscript{PRO} ontology defines
   a \<^typ>\<open>Problem\<close> and a \<^typ>\<open>Method\<close>
   as subclasses of the class \<^typ>\<open>Mathematical_knowledge_object\<close>.
   It gives in \<^dof>:
