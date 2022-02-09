@@ -162,14 +162,14 @@ in an IDE (Isabelle/PIDE). Thus, we extend the document-centric view on code, de
 proofs, text-elements, etc., prevailing in the Isabelle system framework.
 
 In more detail, \<^dof> introduces a number of ``ontology aware'' text-elements with analogous 
-syntax to standard ones. The difference is a bracket with meta-data of the form: \<^vs>\<open>-0.3cm\<close>
-@{theory_text [display,indent=10, margin=70] 
+syntax to standard ones. The difference is a bracket with meta-data of the form:
+@{theory_text [display,indent=5, margin=70] 
 \<open>
-     text*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some semi-formal text \<close>
-     ML*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some SML code \<close>
-     ...
+text*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some semi-formal text \<close>
+ML*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some SML code \<close>
+...
 \<close>}
-\<^vs>\<open>-0.3cm\<close> In these \<^dof> elements, a meta-data object is created and associated to it. This 
+In these \<^dof> elements, a meta-data object is created and associated to it. This 
 meta-data can be referenced via its label and used in further computations in text or code.
 %; the details will be explained in the subsequent section. 
 
@@ -181,19 +181,18 @@ or code. The analogous mechanism the Isabelle system provides is a machine-check
 called \<^emph>\<open>antiquotation\<close> that depends on the logical context of the document element.
 
 With standard Isabelle antiquotations, for example, the following text element
-of the integrated source will appear  in Isabelle/PIDE as follows:  \<^vs>\<open>-0.3cm\<close>
-@{theory_text [display,indent=10, margin=70] 
+of the integrated source will appear  in Isabelle/PIDE as follows:
+@{theory_text [display,indent=5, margin=70] 
 \<open>
-     text\<open> According to the reflexivity axiom @{thm refl}, we obtain in \<Gamma>
-            for @{term "fac 5"} the result @{value "fac 5"}.\<close>
-
+text\<open> According to the reflexivity axiom @{thm refl}, we obtain in \<Gamma>
+      for @{term "fac 5"} the result @{value "fac 5"}.\<close>
 \<close>}
-\<^vs>\<open>-0.5cm\<close> In the corresponding generated \<^LaTeX> or HTML output, this looks like this:
-\<^vs>\<open>-0.1cm\<close>
-@{theory_text [display,indent=10, margin=70] 
-  \<open>According to the reflexivity axiom \<open>x = x\<close>, we obtain in \<Gamma> for \<open>fac 5\<close> the result \<open>120\<close>.\<close>
-}
-\<^vs>\<open>-0.1cm\<close>where the meta-texts \<open>@{thm refl}\<close> (``give the presentation of theorem `refl'\,\!''), 
+In the corresponding generated \<^LaTeX> or HTML output, this looks like this:
+@{theory_text [display,indent=5, margin=70] \<open>
+According to the reflexivity axiom \<open>x = x\<close>,
+we obtain in \<Gamma> for \<open>fac 5\<close> the result \<open>120\<close>.
+\<close>}
+where the meta-texts \<open>@{thm refl}\<close> (``give the presentation of theorem `refl'\,\!''), 
 \<open>@{term "fac 5"}\<close> (``parse and type-check `fac 5' in the previous logical context'')
 and \<open>@{value "fac 5"}\<close> (``compile and execute `fac 5' according to its
 definitions'') are built-in antiquotations in \<^hol>. 
@@ -234,13 +233,14 @@ text\<open>As novel contribution, this work extends prior versions of \<^dof> by
   (rather than SML code or semi-formal text). Thus, annotations generated
   from  \<^dof> may also occur in \<open>\<lambda>\<close>-terms used to denote meta-data. 
 \<^enum> formal, machine-checked invariants on meta-data, which correspond to the concept of 
-  ``rules'' in OWL or ``constraints'' in UML, and which can be specified in 
+  ``rules'' in OWL~ @{cite "owl2012"} or ``constraints'' in UML, and which can be specified in 
   common \<^hol> \<open>\<lambda>\<close>-term syntax.
 \<close>
 text\<open> For example, the \<^dof> evaluation command taking a \<^hol>-expression:
-@{theory_text [display,indent=6, margin=70] 
-\<open> value*[ass::Assertion, relvce=2::int] \<open>filter (\<lambda> \<sigma>. relvce \<sigma> > 2) @{Assertion-instances}\<close>\<close>
-}
+@{theory_text [display,indent=5, margin=70] \<open>
+value*[ass::Assertion, relvce=2::int]
+      \<open>filter (\<lambda> \<sigma>. relvce \<sigma> > 2) @{Assertion-instances}\<close>
+\<close>}
 where \<^dof> command \<open>value*\<close> type-checks, expands in an own validation phase
 the \<open>Assertion-instances\<close>-term antiquotation, and evaluates the resulting \<^hol> expression
 above. Assuming an ontology providing the class \<open>Assertion\<close> having at least the
@@ -337,11 +337,11 @@ text\<open>
   \<^hol>-types, allowing for formal \<^emph>\<open>links\<close> to and between ontological concepts. For example, the 
   basic concept of requirements from CENELEC 50128~@{cite "bsi:50128:2014"} is captured in ODL as 
   follows:
-  @{theory_text [display,indent=10, margin=70]
+  @{theory_text [display,indent=5, margin=70]
 \<open>
-    doc_class requirement = text_element +   (* derived from text_element    *)
-              long_name   ::"string option"  (* an optional string attribute *) 
-              is_concerned::"role set"       (* roles working with this req. *)
+doc_class requirement = text_element +   (* derived from text_element    *)
+          long_name   ::"string option"  (* an optional string attribute *) 
+          is_concerned::"role set"       (* roles working with this req. *)
 \<close>}
   This ODL class definition maybe part of one or more Isabelle theory--files capturing the entire
   ontology definition. Isabelle's session management allows for pre-compiling them before being 
@@ -529,7 +529,6 @@ text\<open>
       for example, by the object they refer to in the logical context,
     \<^item> Generation of markup information for the Isabelle/PIDE, and
     \<^item> Code generation:
-\<^vs>\<open>-0.3cm\<close>
       \<^item> Evaluation of \<^hol> expressions with ontological annotations,
       \<^item> Generation of ontological invariants processed simultaneously
         with the generation of the document (a theory in \<^hol>).
@@ -548,7 +547,7 @@ declare_reference*["type-checking-example"::side_by_side_figure]
 (*>*)
 
 text\<open>
-  If we take back the ontology example for mathematical papers
+  If we take back the example ontology for mathematical papers
   of~@{cite "brucker.ea:isabelledof:2019"} shown in \autoref{fig-ontology-example}
 \begin{figure}
 @{boxed_theory_text [display] \<open>
@@ -779,19 +778,20 @@ text\<open>
   Thus, to get the list of the properties of the instances of the class \<^typ>\<open>myresult\<close>,
   it suffices to get list of the authors of the instances of the  \<^typ>\<open>myintroduction\<close> class,
   and to treat this meta-data as usual:
-  @{theory_text [display,indent=10, margin=70] \<open>
-  value*\<open>map (myresult.property) @{myresult-instances}\<close>
-  value*\<open>map (mytext_section.authored_by) @{myintroduction-instances}\<close>
+  @{theory_text [display,indent=5, margin=70] \<open>
+value*\<open>map (myresult.property) @{myresult-instances}\<close>
+value*\<open>map (mytext_section.authored_by) @{myintroduction-instances}\<close>
   \<close>}
   In order to get the list of the instances of the class \<^typ>\<open>myresult\<close>
   whose \<^const>\<open>evidence\<close> is a \<^const>\<open>proof\<close>, on can use the command:
-  @{theory_text [display,indent=10, margin=70] \<open>
-  value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = proof) @{myresult-instances}\<close>
+  @{theory_text [display,indent=5, margin=70] \<open>
+value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = proof) @{myresult-instances}\<close>
   \<close>}
   Analogously, the list of the instances of the class \<^typ>\<open>myintroduction\<close> whose \<^const>\<open>level\<close> > 1,
   can be filtered by:
-  @{theory_text [display,indent=10, margin=70] \<open>
-  value*\<open>filter (\<lambda>\<sigma>. the (mytext_section.level \<sigma>) > 1) @{myintroduction-instances}\<close>
+  @{theory_text [display,indent=5, margin=70] \<open>
+value*\<open>filter (\<lambda>\<sigma>. the (mytext_section.level \<sigma>) > 1)
+       @{myintroduction-instances}\<close>
   \<close>}
 \<close>
 
@@ -1018,6 +1018,7 @@ equals the sum of all the masses of the products composing the object.
 text\<open>
 \begin{figure}
 @{boxed_theory_text [display] \<open>
+
 definition Item_to_Resource_morphism :: "'a Item_scheme \<Rightarrow> Resource" 
            ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
   where    "\<sigma> \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m =  \<lparr>  Resource.tag_attribute = 0::int , 
@@ -1032,17 +1033,18 @@ definition Product_to_Component_morphism :: "'a Product_scheme \<Rightarrow> Com
                                  Component.mass = Product.mass \<sigma> ,
                                  Component.dimensions = [] \<rparr>" 
 
-definition Computer_Hardware_to_Hardware_morphism :: "'a Computer_Hardware_scheme \<Rightarrow> Hardware"
-           ("_ \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e" [1000]999)
+definition Computer_Hardware_to_Hardware_morphism ::
+             "'a Computer_Hardware_scheme \<Rightarrow> Hardware"
+             ("_ \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e" [1000]999)
            where "\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e =
                   \<lparr>  Resource.tag_attribute = 2::int ,
                      Resource.name = name \<sigma> ,
                      Informatic.description = ''no description'', 
                      Hardware.type = Computer_Hardware.type \<sigma> ,
                      Hardware.mass = mass \<sigma> ,
-                     Hardware.composed_of = map Product_to_Component_morphism 
-                                                (Computer_Hardware.composed_of \<sigma>)
-                   \<rparr>" 
+                     Hardware.composed_of =
+                                      map Product_to_Component_morphism 
+                                          (Computer_Hardware.composed_of \<sigma>) \<rparr>" 
 \<close>}
 \caption{An extract of a mapping definitions.}
 \label{fig-mapping-example}
@@ -1079,8 +1081,8 @@ lemma inv_c2_preserved :
   using comp_def by (auto)
 
 lemma Computer_Hardware_to_Hardware_morphism_total :
-  "Computer_Hardware_to_Hardware_morphism ` ({X::Computer_Hardware. c2_inv X}) 
-   \<subseteq> ({X::Hardware. c1_inv X})"
+ "Computer_Hardware_to_Hardware_morphism ` ({X::Computer_Hardware. c2_inv X}) 
+    \<subseteq> ({X::Hardware. c1_inv X})"
   using inv_c2_preserved by auto
 \<close>}
 \caption{Proofs establishing the Invariant Preservation.}
@@ -1120,7 +1122,7 @@ onto_class Top =
   Annotations :: "annotation list"
 
 onto_class Field_of_mathematics =
-  Annotations :: "annotation list"
+  Annotations :: "annotation list" <= "[RDFS (label ''Field of mathematics'')]"
   invariant restrict_annotation_F ::"set (Annotations \<sigma>) \<subseteq>
                                               range (RDFS o label) \<union> range (RDFS o comment)"
 
@@ -1193,7 +1195,7 @@ text\<open>
   We can represent the annotations properties as datatypes and
   then attach them as an attributes list to a class.
   For example the declaration:
-@{theory_text [display,indent=10, margin=70] \<open>
+@{theory_text [display,indent=5, margin=70] \<open>
 datatype dc = creator string | title string
 datatype owl =   backwardCompatibleWith string
                | deprecated string
@@ -1207,12 +1209,12 @@ datatype rdfs =   comment string
 datatype annotation = DC dc | OWL owl |  RDFS rdfs
 
 onto_class Field_of_mathematics =
-  Annotations :: "annotation list"
+  Annotations :: "annotation list" <= "[RDFS (label ''Field of mathematics'')]"
   invariant restrict_annotation_F ::"set (Annotations \<sigma>) \<subseteq>
-                                     range (RDFS o label) \<union> range (RDFS o comment)"
-
+                                       range (RDFS o label)
+                                       \<union> range (RDFS o comment)"
 \<close>}
-  defines the class \<^typ>\<open>Field_of_mathematics\<close> with an attribute \<^const>\<open>Annotations\<close>
+  defines the class \<^typ>\<open>Field_of_mathematics\<close> with an attribute \<^theory_text>\<open>Annotations\<close>
   which is a \<^type>\<open>list\<close> of \<^typ>\<open>annotation\<close>s.
   We can even constraint the type of allowed \<^typ>\<open>annotation\<close>s with an invariant.
   Here the \<^theory_text>\<open>invariant restrict_annotation_F\<close> forces the \<^typ>\<open>annotation\<close>s to be
@@ -1222,7 +1224,7 @@ onto_class Field_of_mathematics =
   a \<^typ>\<open>Problem\<close> and a \<^typ>\<open>Method\<close>
   as subclasses of the class \<^typ>\<open>Mathematical_knowledge_object\<close>.
   It gives in \<^dof>:
-@{theory_text [display,indent=10, margin=70] \<open>
+@{theory_text [display,indent=5, margin=70] \<open>
 onto_class Problem = Mathematical_knowledge_object +
   Annotations :: "annotation list"
   
@@ -1234,16 +1236,16 @@ onto_class Method = Mathematical_knowledge_object +
   the relation as an attribute and enforces the relation with an \<^theory_text>\<open>invariant\<close>.
   The two directed relations \<^const>\<open>is_solved_by\<close> and \<^const>\<open>solves\<close>
   between \<^typ>\<open>Problem\<close> and a \<^typ>\<open>Method\<close> can be represented in \<^dof> like this:
-@{theory_text [display,indent=10, margin=70] \<open>
+@{theory_text [display,indent=5, margin=70] \<open>
 onto_class assoc_Problem_Method =
   is_solved_by :: "(Problem \<times> Method) set"
   invariant is_solved_by_defined :: "\<forall> x. x \<in> Domain (is_solved_by \<sigma>)
-                                    \<longrightarrow> (\<exists> y \<in> Range (is_solved_by \<sigma>). (x, y) \<in> is_solved_by \<sigma>)"
+              \<longrightarrow> (\<exists> y \<in> Range (is_solved_by \<sigma>). (x, y) \<in> is_solved_by \<sigma>)"
 
 onto_class assoc_Method_Problem =
   solves :: "(Method \<times> Problem) set"
   invariant solves_defined :: "\<forall> x. x \<in> Domain (solves \<sigma>)
-                                    \<longrightarrow> (\<exists> y \<in> Range (solves \<sigma>). (x, y) \<in> solves \<sigma>)"
+              \<longrightarrow> (\<exists> y \<in> Range (solves \<sigma>). (x, y) \<in> solves \<sigma>)"
 \<close>}
   where the attributes \<^const>\<open>is_solved_by\<close> and \<^const>\<open>solves\<close> define the relations
   of the classes and the invariants \<^theory_text>\<open>is_solved_by_defined\<close> and \<^theory_text>\<open>solves_defined\<close> enforce
@@ -1267,7 +1269,7 @@ way for the abstract specification of meta-data constraints as well the possibil
 of advanced search in the meta-data of document elements. Thus it profits and
 extends  Isabelle's document-centric view on formal development.
 
-Many ontological languages such OWL @{cite "owl2012"} as well as the meta-modeling technology 
+Many ontological languages such as OWL as well as the meta-modeling technology 
 available for UML/OCL provide concepts for semantic rules and constraints, but
 leave the validation checking usually to external tools (if implementing them at all).
 This limits their practical usefulness drastically. Our approach treats invariants as 
@@ -1338,7 +1340,7 @@ of formal content, be it in the engineering or the mathematics domain.
 \<^footnote>\<open>This paper has been edited in \<^dof>, of course.\<close>
 
 Another line of future application is to increase the ``depth'' of built-in term antiquotations such
-as \<^theory_text>\<open>@{typ \<open>'\<tau>\<close>}\<close>, \<^term>\<open>@{term \<open>a + b\<close>}\<close> and \<^term>\<open>@{thm \<open>HOL.refl\<close>}\<close>, which are currently implemented 
+as \<^theory_text>\<open>@{typ \<open>'\<tau>\<close>}\<close>, \<^theory_text>\<open>@{term \<open>a + b\<close>}\<close> and \<^theory_text>\<open>@{thm \<open>HOL.refl\<close>}\<close>, which are currently implemented 
 just as validations in the current logical context. In the future, they could  optionally be expanded 
 to the types, terms and theorems (with proof objects attached) in a meta-model of the Isabelle Kernel 
 such as the one presented in @{cite "10.1007/978-3-030-79876-5_6"} (also available in the AFP). 
