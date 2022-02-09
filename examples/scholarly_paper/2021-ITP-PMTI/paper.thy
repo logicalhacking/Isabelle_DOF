@@ -772,18 +772,18 @@ text\<open>
   Any class definition generates term antiquotations checking a class instance or
   to the set of instances in a particular logical context; these references were
   elaborated to objects they refer to.
-  This paves the way for new mechanism query the "current" instances presented as a
+  This paves the way for a new mechanism to query the ``current'' instances presented as a
   list of \<^hol> \<^type>\<open>list\<close>.
   Arbitrarily Complex queries can therefore be defined inside the logical language.
   Thus, to get the list of the properties of the instances of the class \<^typ>\<open>myresult\<close>,
-  it suffices to get list of the authors of the instances of the  \<^typ>\<open>myintroduction\<close> class,
+  it suffices to get the list of the authors of the instances of the  \<^typ>\<open>myintroduction\<close> class,
   and to treat this meta-data as usual:
   @{theory_text [display,indent=5, margin=70] \<open>
 value*\<open>map (myresult.property) @{myresult-instances}\<close>
 value*\<open>map (mytext_section.authored_by) @{myintroduction-instances}\<close>
   \<close>}
   In order to get the list of the instances of the class \<^typ>\<open>myresult\<close>
-  whose \<^const>\<open>evidence\<close> is a \<^const>\<open>proof\<close>, on can use the command:
+  whose \<^const>\<open>evidence\<close> is a \<^const>\<open>proof\<close>, one can use the command:
   @{theory_text [display,indent=5, margin=70] \<open>
 value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = proof) @{myresult-instances}\<close>
   \<close>}
@@ -904,7 +904,7 @@ The \<^dof> framework does not assume that all documents refer to the same ontol
 Each document may even build its local ontology without any external reference. 
 It may also be based on several reference ontologies (\<^eg>, from the  \<^dof> library). 
 
-Since ontological instances posses \<^emph>\<open>representations inside the logic\<close>,
+Since ontological instances possess \<^emph>\<open>representations inside the logic\<close>,
 the relationship between a local ontology and a reference ontology can be formalised
 using a morphism function also inside the logic. 
 More precisely, the instances of local ontology classes may be described as the image of a 
