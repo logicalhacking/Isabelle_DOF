@@ -233,7 +233,7 @@ text\<open>As novel contribution, this work extends prior versions of \<^dof> by
   (rather than SML code or semi-formal text). Thus, annotations generated
   from  \<^dof> may also occur in \<open>\<lambda>\<close>-terms used to denote meta-data. 
 \<^enum> formal, machine-checked invariants on meta-data, which correspond to the concept of 
-  ``rules'' in OWL~ @{cite "owl2012"} or ``constraints'' in UML, and which can be specified in 
+  ``rules'' in OWL~ @{cite "OWL2014"} or ``constraints'' in UML, and which can be specified in 
   common \<^hol> \<open>\<lambda>\<close>-term syntax.
 \<close>
 text\<open> For example, the \<^dof> evaluation command taking a \<^hol>-expression:
@@ -1280,7 +1280,7 @@ Our experiments with adaptions of existing ontologies from engineering and mathe
 show that \<^dof>'s ODL has sufficient expressive power to cover all aspects
 of languages such as OWL (with perhaps the exception of multiple inheritance on classes).
 However, these ontologies have been developed specifically \<^emph>\<open>in\<close> OWL and target
-its specific support, the Protege editor @{cite "protege"}. We argue that \<^dof> might ask 
+its specific support, the Protégé editor @{cite "protege"}. We argue that \<^dof> might ask 
 for a re-engineering of these ontologies: less deep hierarchies, rather deeper structure 
 in meta-data and stronger invariants.
 \<close>
@@ -1314,13 +1314,13 @@ information and knowledge, and to make it amenable to
      OntoMath\textsuperscript{PRO} contains the daunting number of 3,449 classes, which is in part due to 
      the need to compensate the lack of general datatype definition methods for meta-data.
      It is inspired from a translation of the Russian Federal Standard for Higher Education 
-     on mathematics for master students \<^url>\<open>http://www.edu.ru/db-mon/mo/Data/d_10/prm40-1.pdf\<close>,
+     on mathematics for master students,
      which makes it nevertheless an interesting starting point for a future development
      of a mathematics ontology in the \<^dof> framework.
   \<^item> Other ontologies worth mentioning are DBpedia @{cite "10.1007/978-3-540-76298-0_52"}, 
     which provides with the \<^emph>\<open>SPARQL endpoint\<close>  \<^url>\<open>http://dbpedia.org/sparql\<close> a search engine, 
-    and the more general ScienceWISE (see \<^url>\<open>http://sciencewise.info/ontology/\<close> linked to the 
-    ArXiv.org project) that allows users to introduce their own category concepts. 
+    and the more general ScienceWISE \<^footnote>\<open>\<^url>\<open>http://sciencewise.info/ontology/\<close>.\<close>
+    that allows users to introduce their own category concepts. 
     Both suffer from the lack of deeper meta-data modeling, and the latter is still at the beginning 
     (ScienceWISE marks the Mathematics part as ``under construction'').
 
@@ -1336,8 +1336,8 @@ information and knowledge, and to make it amenable to
 subsection*[fw::related_work]\<open>Future Work\<close>
 text\<open> We plan to complement \<^dof> with incremental LaTeX generation and a previewing facility
 that will further increase the usability of our framework for the ontology-conform editing
-of formal content, be it in the engineering or the mathematics domain.
-\<^footnote>\<open>This paper has been edited in \<^dof>, of course.\<close>
+of formal content, be it in the engineering or the mathematics domain
+(this paper has been edited in \<^dof>, of course).
 
 Another line of future application is to increase the ``depth'' of built-in term antiquotations such
 as \<^theory_text>\<open>@{typ \<open>'\<tau>\<close>}\<close>, \<^theory_text>\<open>@{term \<open>a + b\<close>}\<close> and \<^theory_text>\<open>@{thm \<open>HOL.refl\<close>}\<close>, which are currently implemented 
