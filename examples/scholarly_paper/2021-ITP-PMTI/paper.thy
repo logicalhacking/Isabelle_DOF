@@ -299,7 +299,7 @@ text\<open>
   (Isabelle/PIDE), which allows a hypertext-like navigation as well as fast user-feedback
   during development and evolution of the integrated source. This includes rich editing support, 
   including on-the-fly semantics checks, hinting, or auto-completion. 
-  \<^dof> supports \<^LaTeX> - based document generation as well as ontology-aware ``views'' on 
+  \<^dof> supports \<^LaTeX>-based document generation as well as ontology-aware ``views'' on 
   the integrated document, \<^ie>, specific versions of generated PDF addressing, 
   for example, different stake-holders. 
 \<close>
