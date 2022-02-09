@@ -319,7 +319,7 @@ text*[description_scrrenshot::background]\<open>
 
 subsection*[bgrnd_ODL::background]\<open>A Guided Tour through ODL\<close>
 text\<open>
-  \<^dof> provides a strongly typed OLD that provides the usual 
+  \<^dof> provides a strongly typed ODL that provides the usual 
   concepts of ontologies such as
   \<^item> \<^emph>\<open>document class\<close> (using the \<^theory_text>\<open>doc_class\<close> keyword) that describes a concept,
   \<^item> \<^emph>\<open>attributes\<close> specific to document classes (attributes might be initialized with default 
