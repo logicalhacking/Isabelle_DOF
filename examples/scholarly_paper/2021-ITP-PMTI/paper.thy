@@ -1180,7 +1180,7 @@ onto_class assoc_Method_Problem =
 text\<open>
   The \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> ontology~@{cite "Nevzorova2014OntoMathPO"}
   is an OWL ontology of mathematical knowledge concepts.
-  It possesses the IS-A semantics for hierarchies of mathematical knowledge elements,
+  It possesses the \<^emph>\<open>is-a\<close> semantics for hierarchies of mathematical knowledge elements,
   and defines these elements as two hierarchies of classes:
   a taxonomy of the fields of mathematics and a taxonomy of mathematical knowledge objects.
   It defines two main type of relations for these two taxonomies:
