@@ -1057,7 +1057,7 @@ or EXPRESS-X language~@{cite "BGPP95"}). These rules are applied to define the r
 between one class of the local ontology to one or several other class(es) described in the reference 
 ontology. 
 
-For example, \<^const>\<open>Product_to_Component_morphism\<close> and \<^const>\<open>Computer_Hardware_to_Hardware_morphism\<close>
+\<^const>\<open>Product_to_Component_morphism\<close> and \<^const>\<open>Computer_Hardware_to_Hardware_morphism\<close>
 definitions, detailed in \autoref{fig-mapping-example},
 specify how \<^typ>\<open>Product\<close> or \<^typ>\<open>Computer_Hardware\<close> objects are mapped to \<^typ>\<open>Component\<close> 
 or \<^typ>\<open>Hardware\<close> objects defined in the reference ontology.
@@ -1262,7 +1262,7 @@ onto_class assoc_Method_Problem =
 
 section*[concl::conclusion]\<open>Conclusion\<close>
 text\<open>We presented \<^dof>, an ontology framework 
-deeply integrating continuous-check/continuous-build functionality into
+deeply integrating continuous-check\slash continuous-build functionality into
 the formal development process in \<^hol>. The novel feature of term-contexts in \<^dof>,
 which permits term-antiquotations elaborated in the parsing process, paves the
 way for the abstract specification of meta-data constraints as well the possibility
