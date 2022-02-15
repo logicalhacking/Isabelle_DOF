@@ -1880,18 +1880,20 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Command_Parse
         (* val _   = writeln("meta_args_2_string cid_long:"^ cid_long ) *)
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
 
-        fun ltx_of_term _ _ (Const ("List.list.Cons", @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $ t2) 
-                  = HOLogic.dest_string (Const ("List.list.Cons", @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $  t2)
-          | ltx_of_term _ _ (Const ("List.list.Nil", _)) = ""
+        fun ltx_of_term _ _ (Const (@{const_name \<open>Cons\<close>}, 
+                                    @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $ t2) 
+                  = HOLogic.dest_string (Const (@{const_name \<open>Cons\<close>}, 
+                                                @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $  t2)
+          | ltx_of_term _ _ (Const (@{const_name \<open>Nil\<close>}, _)) = ""
           | ltx_of_term _ _ (@{term "numeral :: _ \<Rightarrow> _"} $ t) = Int.toString(HOLogic.dest_numeral t)
-          | ltx_of_term ctx encl ((Const ("List.list.Cons", _) $ t1) $ t2) = 
-                                               let val inner = (case t2 of 
-                                                                  Const ("List.list.Nil", _) =>  (ltx_of_term ctx true t1) 
-                                                                | _ => ((ltx_of_term ctx false t1)^", " ^(ltx_of_term ctx false t2))
-                                                             )
-                                               in if encl then enclose "{" "}" inner else inner end
-          | ltx_of_term _ _ (Const ("Option.option.None", _)) = ""
-          | ltx_of_term ctxt _ (Const ("Option.option.Some", _)$t) = ltx_of_term ctxt true t
+          | ltx_of_term ctx encl ((Const (@{const_name \<open>Cons\<close>}, _) $ t1) $ t2) = 
+                let val inner = (case t2 of 
+                                   Const (@{const_name \<open>Nil\<close>}, _) =>  (ltx_of_term ctx true t1) 
+                                 | _ => ((ltx_of_term ctx false t1)^", " ^(ltx_of_term ctx false t2))
+                              )
+                in if encl then enclose "{" "}" inner else inner end
+          | ltx_of_term _ _ (Const (@{const_name \<open>None\<close>}, _)) = ""
+          | ltx_of_term ctxt _ (Const (@{const_name \<open>Some\<close>}, _)$t) = ltx_of_term ctxt true t
           | ltx_of_term ctxt _ t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
 
 
