@@ -1709,38 +1709,6 @@ val _ =
     (attributes -- Parse.opt_target -- Parse.document_source 
       >> (Toplevel.theory o (gen_enriched_document_cmd {inline=true} I I {markdown = true} )));
 
-(*
-  term* command uses the same code as term command
-  and adds the possibility to check Term Annotation Antiquotations (TA)
-  with the help of DOF_core.transduce_term_global function
-*)
-fun string_of_term ctxt s trans =
-let
-  val t = Syntax.read_term ctxt s;
-  val T = Term.type_of t;
-  val ctxt' = Proof_Context.augment t ctxt;
-  val _ = DOF_core.transduce_term_global {mk_elaboration=false} (t , Toplevel.pos_of trans)
-                                          (Proof_Context.theory_of ctxt');
-in
-  Pretty.string_of
-    (Pretty.block [Pretty.quote (Syntax.pretty_term ctxt' t), Pretty.fbrk,
-      Pretty.str "::", Pretty.brk 1, Pretty.quote (Syntax.pretty_typ ctxt' T)])
-end;
-
-fun print_item string_of (modes, arg) = Toplevel.keep (fn state =>
-Print_Mode.with_modes modes (fn () => writeln (string_of state arg)) ()); 
-
-(*
-  We want to have the current position to pass it to transduce_term_global in
-  string_of_term, so we pass the Toplevel.transition
-*)
-fun print_term (string_list, string) trans = print_item
-                  (fn state => fn string => string_of_term (Toplevel.context_of state) string trans)
-                                               (string_list, string) trans;
-
-val _ =
-Outer_Syntax.command \<^command_keyword>\<open>term*\<close> "read and print term"
-  (opt_modes -- Parse.term >> print_term);
 
 (* This is just a stub at present *)
 val _ =
@@ -1858,23 +1826,60 @@ fun meta_args_exec NONE thy = thy
 fun pass_trans_to_value_cmd ((name, modes), t) trans =
                                 Toplevel.keep (fn state => value_cmd name modes t state trans) trans
 
+(*
+  term* command uses the same code as term command
+  and adds the possibility to check Term Annotation Antiquotations (TA)
+  with the help of DOF_core.transduce_term_global function
+*)
+fun string_of_term ctxt s trans =
+let
+  val t = Syntax.read_term ctxt s;
+  val T = Term.type_of t;
+  val ctxt' = Proof_Context.augment t ctxt;
+  val _ = DOF_core.transduce_term_global {mk_elaboration=false} (t , Toplevel.pos_of trans)
+                                          (Proof_Context.theory_of ctxt');
+in
+  Pretty.string_of
+    (Pretty.block [Pretty.quote (Syntax.pretty_term ctxt' t), Pretty.fbrk,
+      Pretty.str "::", Pretty.brk 1, Pretty.quote (Syntax.pretty_typ ctxt' T)])
+end;
+
+fun print_item string_of (modes, arg) = Toplevel.keep (fn state =>
+Print_Mode.with_modes modes (fn () => writeln (string_of state arg)) ()); 
+
+(*
+  We want to have the current position to pass it to transduce_term_global in
+  string_of_term, so we pass the Toplevel.transition
+*)
+fun print_term (string_list, string) trans = print_item
+                  (fn state => fn string => string_of_term (Toplevel.context_of state) string trans)
+                                               (string_list, string) trans;
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>term*\<close> "read and print term"
+    (opt_attributes -- (opt_modes -- Parse.term) 
+     >> (fn (meta_args_opt, eval_args ) => 
+                  Toplevel.theory (meta_args_exec meta_args_opt)
+                  #>
+                  print_term eval_args));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>value*\<close> "evaluate and print term"
     (opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
      >> (fn (meta_args_opt, eval_args ) => 
-            Toplevel.theory (meta_args_exec meta_args_opt)
-            #>
-            pass_trans_to_value_cmd eval_args));
+                  Toplevel.theory (meta_args_exec meta_args_opt)
+                  #>
+                  pass_trans_to_value_cmd eval_args));
 
 val _ = Theory.setup
   (Thy_Output.antiquotation_pretty_source_embedded \<^binding>\<open>value*\<close>
     (Scan.lift opt_evaluator -- Term_Style.parse -- Args.term)
-    (fn ctxt => fn ((name, style), t) =>
-      Thy_Output.pretty_term ctxt (style (value_select name ctxt t)))
-  #> add_evaluator (\<^binding>\<open>simp\<close>, Code_Simp.dynamic_value) #> snd
-  #> add_evaluator (\<^binding>\<open>nbe\<close>, Nbe.dynamic_value) #> snd
-  #> add_evaluator (\<^binding>\<open>code\<close>, Code_Evaluation.dynamic_value_strict) #> snd);
+       (fn ctxt => fn ((name, style), t) =>
+                Thy_Output.pretty_term ctxt (style (value_select name ctxt t)))
+             #> add_evaluator (\<^binding>\<open>simp\<close>, Code_Simp.dynamic_value) #> snd
+             #> add_evaluator (\<^binding>\<open>nbe\<close>, Nbe.dynamic_value) #> snd
+             #> add_evaluator (\<^binding>\<open>code\<close>, Code_Evaluation.dynamic_value_strict) 
+             #> snd);
 
 end;
 \<close>
