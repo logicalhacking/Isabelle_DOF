@@ -8,6 +8,16 @@ imports
   "Isabelle_DOF-tests.TermAntiquotations"
 begin
 
+section\<open>\<^theory_text>\<open>ML*\<close>-Annotated SML-commands\<close>
+
+ML*[the_function::C,x=\<open>\<open>dfg\<close>\<close>]\<open>fun fac x = if x = 0 then 1 else x * fac(x-1)\<close>
+ML*\<open>3+4\<close> (* meta-args are optional *)
+
+text\<open>... and here we reference @{B [display] "the_function"}.\<close>
+
+section\<open>\<^theory_text>\<open>value*\<close>-Annotated evaluation-commands\<close>
+
+
 text\<open>The value* command uses the same code as the value command
 and adds the possibility to evaluate Term Annotation Antiquotations (TA).
 For that an elaboration of the term referenced by a TA must be done before
@@ -154,5 +164,6 @@ to update the instance @{docitem \<open>xcv4\<close>}:
 \<close>
 (* Error:
 update_instance*[xcv4::F, b+="{(@{A ''xcv3''},@{G ''xcv5''})}"]*)
+
 
 end

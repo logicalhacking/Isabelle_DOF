@@ -37,8 +37,8 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            
   and      "open_monitor*"      "close_monitor*" 
            "declare_reference*" "update_instance*"
-           "doc_class"                                    
-           "onto_class"         (* a wish from Idir *)                           
+           "doc_class"          "onto_class" (* a syntactic alternative *)   
+           "ML*"
            "define_shortcut*"   "define_macro*"          :: thy_decl
 
   and      "text*"              "text-macro*"            :: document_body
@@ -1217,108 +1217,7 @@ fun document_command markdown (loc, txt) =
  *)
 
 
-ML \<comment> \<open>\<^file>\<open>~~/src/HOL/Tools/value_command.ML\<close>\<close>
-(*
-  The value* command uses the same code as the value command
-  and adds the possibility to evaluate Term Annotation Antiquotations (TA)
-  with the help of the DOF_core.transduce_term_global function.
-*)
-(*  Title:      HOL/Tools/value_command.ML
-    Author:     Florian Haftmann, TU Muenchen
 
-Generic value command for arbitrary evaluators, with default using nbe or SML.
-*)
-\<open>
-signature VALUE_COMMAND =
-sig
-  val value: Proof.context -> term -> term
-  val value_select: string -> Proof.context -> term -> term
-  val value_cmd: xstring -> string list -> string -> Toplevel.state -> Toplevel.transition -> unit
-  val add_evaluator: binding * (Proof.context -> term -> term) 
-    -> theory -> string * theory
-end;
-
-
-structure Value_Command : VALUE_COMMAND =
-struct
-
-structure Evaluators = Theory_Data
-(
-  type T = (Proof.context -> term -> term) Name_Space.table;
-  val empty = Name_Space.empty_table "evaluator";
-  val extend = I;
-  val merge = Name_Space.merge_tables;
-)
-
-fun add_evaluator (b, evaluator) thy =
-  let
-    val (name, tab') = Name_Space.define (Context.Theory thy) true
-      (b, evaluator) (Evaluators.get thy);
-    val thy' = Evaluators.put tab' thy;
-  in (name, thy') end;
-
-fun intern_evaluator ctxt raw_name =
-  if raw_name = "" then ""
-  else Name_Space.intern (Name_Space.space_of_table
-    (Evaluators.get (Proof_Context.theory_of ctxt))) raw_name;
-
-fun default_value ctxt t =
-  if null (Term.add_frees t [])
-  then Code_Evaluation.dynamic_value_strict ctxt t
-  else Nbe.dynamic_value ctxt t;
-
-fun value_select name ctxt =
-  if name = ""
-  then default_value ctxt
-  else Name_Space.get (Evaluators.get (Proof_Context.theory_of ctxt)) name ctxt;
-
-fun value ctxt term = value_select "" ctxt
-                      (DOF_core.transduce_term_global {mk_elaboration=true} (term , \<^here>)
-                                          (Proof_Context.theory_of ctxt))
-
-fun value_cmd raw_name modes raw_t state trans =
-  let
-    val ctxt = Toplevel.context_of state;
-    val name = intern_evaluator ctxt raw_name;
-    val t = Syntax.read_term ctxt raw_t;
-    val term' = DOF_core.transduce_term_global {mk_elaboration=true} (t , Toplevel.pos_of trans)
-                                          (Proof_Context.theory_of ctxt);
-    val t' = value_select name ctxt term';
-    val ty' = Term.type_of t';
-    val ctxt' = Proof_Context.augment t' ctxt;
-    val p = Print_Mode.with_modes modes (fn () =>
-      Pretty.block [Pretty.quote (Syntax.pretty_term ctxt' t'), Pretty.fbrk,
-        Pretty.str "::", Pretty.brk 1, Pretty.quote (Syntax.pretty_typ ctxt' ty')]) ();
-  in Pretty.writeln p end;
-
-val opt_modes =
-  Scan.optional (\<^keyword>\<open>(\<close> |-- Parse.!!! (Scan.repeat1 Parse.name --| \<^keyword>\<open>)\<close>)) [];
-
-val opt_evaluator =
-  Scan.optional (\<^keyword>\<open>[\<close> |-- Parse.name --| \<^keyword>\<open>]\<close>) "";
-
-(*
-  We want to have the current position to pass it to transduce_term_global in
-  value_cmd, so we pass the Toplevel.transition
-*)
-fun pass_trans_to_value_cmd ((name, modes), t) trans =
-                                Toplevel.keep (fn state => value_cmd name modes t state trans) trans
-
-val _ =
-  Outer_Syntax.command \<^command_keyword>\<open>value*\<close> "evaluate and print term"
-    (opt_evaluator -- opt_modes -- Parse.term >> pass_trans_to_value_cmd);
-
-val _ = Theory.setup
-  (Thy_Output.antiquotation_pretty_source_embedded \<^binding>\<open>value*\<close>
-    (Scan.lift opt_evaluator -- Term_Style.parse -- Args.term)
-    (fn ctxt => fn ((name, style), t) =>
-      Thy_Output.pretty_term ctxt (style (value_select name ctxt t)))
-  #> add_evaluator (\<^binding>\<open>simp\<close>, Code_Simp.dynamic_value) #> snd
-  #> add_evaluator (\<^binding>\<open>nbe\<close>, Nbe.dynamic_value) #> snd
-  #> add_evaluator (\<^binding>\<open>code\<close>, Code_Evaluation.dynamic_value_strict) #> snd);
-
-end;
-\<close>
 
 ML\<open>
 structure ODL_Command_Parser = 
@@ -1595,7 +1494,7 @@ fun check_invariants thy oid =
 
 fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos doc_attrs thy = 
   let
-    val id = serial ();
+    val id = serial ();                                 
     val _ = Position.report pos (docref_markup true oid id pos);
     (* creates a markup label for this position and reports it to the PIDE framework;
      this label is used as jump-target for point-and-click feature. *)
@@ -1861,6 +1760,141 @@ end
 
 \<close>
 
+
+ML \<comment> \<open>c.f. \<^file>\<open>~~/src/HOL/Tools/value_command.ML\<close>\<close>
+(*
+  The value* command uses the same code as the value command
+  and adds the evaluation Term Annotation Antiquotations (TA)
+  with the help of the DOF_core.transduce_term_global function.
+*)
+(*  Based on:
+    Title:      HOL/Tools/value_command.ML
+    Author:     Florian Haftmann, TU Muenchen
+
+Generic value command for arbitrary evaluators, with default using nbe or SML.
+*)
+\<open>
+signature VALUE_COMMAND =
+sig
+  val value: Proof.context -> term -> term
+  val value_select: string -> Proof.context -> term -> term
+  val value_cmd: xstring -> string list -> string -> Toplevel.state -> Toplevel.transition -> unit
+  val add_evaluator: binding * (Proof.context -> term -> term) 
+    -> theory -> string * theory
+end;
+
+
+structure Value_Command : VALUE_COMMAND =
+struct
+
+structure Evaluators = Theory_Data
+(
+  type T = (Proof.context -> term -> term) Name_Space.table;
+  val empty = Name_Space.empty_table "evaluator";
+  val extend = I;
+  val merge = Name_Space.merge_tables;
+)
+
+fun add_evaluator (b, evaluator) thy =
+  let
+    val (name, tab') = Name_Space.define (Context.Theory thy) true
+      (b, evaluator) (Evaluators.get thy);
+    val thy' = Evaluators.put tab' thy;
+  in (name, thy') end;
+
+fun intern_evaluator ctxt raw_name =
+  if raw_name = "" then ""
+  else Name_Space.intern (Name_Space.space_of_table
+    (Evaluators.get (Proof_Context.theory_of ctxt))) raw_name;
+
+fun default_value ctxt t =
+  if null (Term.add_frees t [])
+  then Code_Evaluation.dynamic_value_strict ctxt t
+  else Nbe.dynamic_value ctxt t;
+
+fun value_select name ctxt =
+  if name = ""
+  then default_value ctxt
+  else Name_Space.get (Evaluators.get (Proof_Context.theory_of ctxt)) name ctxt;
+
+fun value ctxt term = value_select "" ctxt
+                      (DOF_core.transduce_term_global {mk_elaboration=true} (term , \<^here>)
+                                          (Proof_Context.theory_of ctxt))
+
+fun value_cmd raw_name modes raw_t state trans =
+  let
+    val ctxt = Toplevel.context_of state;
+    val name = intern_evaluator ctxt raw_name;
+    val t = Syntax.read_term ctxt raw_t;
+    val term' = DOF_core.transduce_term_global {mk_elaboration=true} (t , Toplevel.pos_of trans)
+                                          (Proof_Context.theory_of ctxt);
+    val t' = value_select name ctxt term';
+    val ty' = Term.type_of t';
+    val ctxt' = Proof_Context.augment t' ctxt;
+    val p = Print_Mode.with_modes modes (fn () =>
+      Pretty.block [Pretty.quote (Syntax.pretty_term ctxt' t'), Pretty.fbrk,
+        Pretty.str "::", Pretty.brk 1, Pretty.quote (Syntax.pretty_typ ctxt' ty')]) ();
+  in Pretty.writeln p end;
+
+val opt_modes =
+  Scan.optional (\<^keyword>\<open>(\<close> |-- Parse.!!! (Scan.repeat1 Parse.name --| \<^keyword>\<open>)\<close>)) [];
+
+val opt_evaluator =
+  Scan.optional (\<^keyword>\<open>[\<close> |-- Parse.name --| \<^keyword>\<open>]\<close>) "";
+
+(*
+  We want to have the current position to pass it to transduce_term_global in
+  value_cmd, so we pass the Toplevel.transition
+*)
+fun pass_trans_to_value_cmd ((name, modes), t) trans =
+                                Toplevel.keep (fn state => value_cmd name modes t state trans) trans
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>value*\<close> "evaluate and print term"
+    (opt_evaluator -- opt_modes -- Parse.term >> pass_trans_to_value_cmd);
+
+val _ = Theory.setup
+  (Thy_Output.antiquotation_pretty_source_embedded \<^binding>\<open>value*\<close>
+    (Scan.lift opt_evaluator -- Term_Style.parse -- Args.term)
+    (fn ctxt => fn ((name, style), t) =>
+      Thy_Output.pretty_term ctxt (style (value_select name ctxt t)))
+  #> add_evaluator (\<^binding>\<open>simp\<close>, Code_Simp.dynamic_value) #> snd
+  #> add_evaluator (\<^binding>\<open>nbe\<close>, Nbe.dynamic_value) #> snd
+  #> add_evaluator (\<^binding>\<open>code\<close>, Code_Evaluation.dynamic_value_strict) #> snd);
+
+end;
+\<close>
+
+
+
+ML \<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/outer_syntax.ML\<close>\<close>
+(*
+  The ML* generates an "ontology-aware" version of the SML code-execution command.
+*)
+\<open>
+structure ML_star_Command =
+struct
+
+fun meta_args_exec NONE thy = thy
+   |meta_args_exec (SOME ((((oid,pos),cid_pos), doc_attrs) : ODL_Command_Parser.meta_args_t)) thy = 
+         thy |> (ODL_Command_Parser.create_and_check_docitem 
+                                    {is_monitor = false} {is_inline = false} 
+                                    oid pos (I cid_pos) (I doc_attrs))
+
+
+val _ =
+  Outer_Syntax.command ("ML*", \<^here>) "ODL annotated ML text within theory or local theory"
+    (((Scan.option ODL_Command_Parser.attributes) -- Parse.ML_source) 
+     >> (fn (meta_args_opt, source) =>
+            Toplevel.theory (meta_args_exec meta_args_opt)
+            #>
+            Toplevel.generic_theory
+              (ML_Context.exec (fn () =>
+                  ML_Context.eval_source (ML_Compiler.verbose true ML_Compiler.flags) source) #>
+                Local_Theory.propagate_ml_env)));
+
+end
+\<close>
 
 
 ML\<open>
@@ -2552,6 +2586,9 @@ val _ =  Outer_Syntax.command \<^command_keyword>\<open>define_macro*\<close> "d
             (Scan.repeat1 parse_define_shortcut >> (Toplevel.theory o (fold define_macro)));
 
 \<close>
+
+
+
 
 (*
 ML\<open>

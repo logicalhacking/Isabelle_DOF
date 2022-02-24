@@ -100,7 +100,8 @@ text\<open>
   to instances, and class-invariants. Some concepts like  advanced type-checking, referencing to 
   formal entities of Isabelle, and monitors are due to its specific application in the 
   Isabelle context. Conceptually, ontologies specified in ODL consist of:
-  \<^item> \<^emph>\<open>document classes\<close> (\<^boxed_theory_text>\<open>doc_class\<close>) that describe concepts;
+  \<^item> \<^emph>\<open>document classes\<close> (\<^boxed_theory_text>\<open>doc_class\<close>) \<^index>\<open>doc\_class\<close> that describe concepts;
+    the keyword (\<^boxed_theory_text>\<open>onto_class\<close>) \<^index>\<open>onto\_class\<close> is accpted equally; 
   \<^item> an optional document base class expressing single inheritance
   class extensions;
   \<^item> \<^emph>\<open>attributes\<close> specific to document classes, where
@@ -233,7 +234,7 @@ A document class\<^bindex>\<open>document class\<close> can be defined using the
 \<^item> \<open>doc_class_specification\<close>:\<^index>\<open>doc\_class\_specification@\<open>doc_class_specification\<close>\<close>
      We call document classes with an \<open>accepts_clause\<close> 
      \<^emph>\<open>monitor classes\<close> or \<^emph>\<open>monitors\<close> for short.
-     \<^rail>\<open> @@{command "doc_class"} class_id '=' (class_id '+')? (attribute_decl+) \<newline>
+     \<^rail>\<open> (@@{command "doc_class"}| @@{command "onto_class"}) class_id '=' (class_id '+')? (attribute_decl+) \<newline>
            (invariant_decl *) 
            (accepts_clause rejects_clause?)?\<close>
 \<^item> \<open>attribute_decl\<close>:\<^index>\<open>attribute\_decl@\<open>attribute_decl\<close>\<close>
@@ -319,12 +320,17 @@ supported on the Isabelle/Isar level. Note that some more advanced functionality
 is currently only available in the SML API's of the kernel. 
 
 \<^item> \<open>meta_args\<close> : 
-   \<^rail>\<open>obj_id ('::' class_id) ((',' attribute '=' term) *) \<close>
+   \<^rail>\<open>obj_id ('::' class_id) ((',' attribute '=' HOL_term) *) \<close>
 \<^item> \<open>upd_meta_args\<close> :
-   \<^rail>\<open> (obj_id ('::' class_id) ((',' attribute ('=' | '+=') term) * ))\<close>
+   \<^rail>\<open> (obj_id ('::' class_id) ((',' attribute ('=' | '+=') HOL_term) * ))\<close>
 \<^item> \<open>annotated_text_element\<close> :
-\<^rail>\<open>
-    (  @@{command "text*"}'[' meta_args ']' '\<open>' text '\<close>' |
+\<^rail>\<open> 
+    (  (  @@{command "text*"} '[' meta_args ']' '\<open>' formal_text '\<close>'
+        | @@{command "ML*"}   '[' meta_args ']' '\<open>' SML_code '\<close>'
+        | @@{command "term*"} '[' meta_args ']' '\<open>' HOL_term  '\<close>'
+        | @@{command "value*"}'[' meta_args ']' '\<open>' HOL_term  '\<close>'
+       )
+      |
        (  @@{command "open_monitor*"}  
         | @@{command "close_monitor*"} 
         | @@{command "declare_reference*"} 
@@ -350,10 +356,14 @@ text\<open>Recall that with the exception of \<^theory_text>\<open>text* \<dots>
 layout (such as \<^LaTeX>); these commands have to be wrapped into 
  \<^verbatim>\<open>(*<*) ... (*>*)\<close> brackets if this is undesired. \<close>
 
-subsection\<open>Ontologic Text-Elements and their Management\<close>
-text\<open> \<^theory_text>\<open>text*[oid::cid, ...] \<open> \<dots> text \<dots> \<close> \<close> is the core-command of \<^isadof>: it permits to create 
+subsection\<open>Ontologic Text-Contexts and their Management\<close>
+text\<open> With respect to the family of text elements,
+ \<^theory_text>\<open>text*[oid::cid, ...] \<open> \<dots> text \<dots> \<close> \<close> is the core-command of \<^isadof>: it permits to create
  an object of meta-data belonging to the class \<^theory_text>\<open>cid\<close>. This is viewed as the \<^emph>\<open>definition\<close> of
-an instance of a document class. This instance object is attached to the text-element
+an instance of a document class. The class invariants were checked for all attribute values
+at creation time if not specified otherwise. Unspecified attributed values were represented
+by fresh free variables.
+This instance object is attached to the text-element
 and makes it thus "trackable" for  \<^isadof>, \<^ie>, it can be referenced via the  \<^theory_text>\<open>oid\<close>, its attributes
 can be set by defaults in the class-definitions, or set at creation time, or modified at any
 point after creation via  \<^theory_text>\<open>update_instance*[oid, ...]\<close>. The \<^theory_text>\<open>class_id\<close> is syntactically optional;
@@ -372,6 +382,35 @@ For a declared class \<^theory_text>\<open>cid\<close>, there exists a text anti
 The precise presentation is decided in the \<^emph>\<open>layout definitions\<close>, for example by suitable
 \<^LaTeX>-template code. Declared but not yet defined instances must be referenced with a particular
 pragma in order to enforce a relaxed checking \<^theory_text>\<open> @{cid (unchecked) \<open>oid\<close>} \<close>.
+\<close>
+
+subsection\<open>Ontologic Code-Contexts and their Management\<close>
+
+text\<open>The \<^theory_text>\<open>ML*[oid::cid, ...] \<open> \<dots> SML-code \<dots> \<close>\<close>-document elements proceed similarly : 
+a referentiable meta-object of class \<^theory_text>\<open>cid\<close> is created, initialized with the optional 
+ attributes and bound to \<^theory_text>\<open>oid\<close>. The SML-code is type-checked and executed 
+in the context of the SML toplevel of the Isabelle system as in the corresponding 
+\<^theory_text>\<open>ML\<open> \<dots> SML-code \<dots> \<close>\<close>-command.
+\<close>
+
+subsection\<open>Ontologic Term-Contexts and their Management\<close>
+text\<open>The major commands providing term-contexts are 
+\<^theory_text>\<open>term*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close> and
+\<^theory_text>\<open>value*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>\<^footnote>\<open>Note that the meta-argument list is optional.\<close>.
+Wrt. to creation, track-ability and checking they are analogous to the ontological text and 
+code-commands. However the argument terms may contain term-antiquotations stemming from an
+ontology definition. Both term-contexts ware type-checked and \<^emph>\<open>validated\<close> against
+the global context (so: in the term \<open>@{A \<open>oid\<close>}\<close>, \<open>oid\<close> is indeed a string which refers 
+to a meta-object belonging to the document class \<open>A\<close>, for example).
+The term-context in the \<open>value*\<close>-command is additionally expanded (\<^eg> replaced) by a term
+denoting the meta-object. This expansion happens \<^emph>\<open>before\<close> evaluation of the term, thus permitting
+executable HOL-functions to interact with meta-objects.
+
+Note unspecified attribute values were represented by free fresh variables which constrains \<^dof>
+to choose either to the normalisation-by-evaluation strategy \<^theory_text>\<open>nbe\<close> or to a proof attempt via
+the \<^theory_text>\<open>auto\<close>. A failure of these strategies will be reported and regarded as non-validation
+of this meta-object. The latter leads to a failure of the entire command.
+
 \<close>
 
 (*<*)

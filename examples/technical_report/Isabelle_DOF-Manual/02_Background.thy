@@ -70,13 +70,20 @@ declare_reference*["fig:dependency"::text_section]
 
 
 text\<open>
-  We assume a hierarchical document model\<^index>\<open>document model\<close>, \<^ie>, an \<^emph>\<open>integrated\<close> document 
-  consist of a hierarchy \<^emph>\<open>sub-documents\<close>  (files) that can depend acyclically on each other. 
+  The Isabelle Framework is based on a \<^emph>\<open>document-centric view\<close>  bindex>\<open>document-centric view\<close> of 
+  a document, treating the input in its integrality as set of (user-programmable) \<^emph>\<open>document element\<close> 
+  that may mutually depend and link to each other; A \<^emph>\<open>document\<close> in our sense is what is configured in a set of 
+  \<^verbatim>\<open>ROOT\<close>- and \<^verbatim>\<open>ROOTS\<close>-files.
+
+  Isabelle assumes a hierarchical document model\<^index>\<open>document model\<close>, \<^ie>, an \<^emph>\<open>integrated\<close> document 
+  consist of a hierarchy \<^emph>\<open>sub-documents\<close>  (files); dependencies are restricted to be
+  acyclic at this level. 
   Sub-documents can have different document types in order to capture documentations consisting of 
   documentation, models, proofs, code of various forms and other technical artifacts.  We call the 
   main sub-document type, for historical reasons, \<^emph>\<open>theory\<close>-files.  A theory file\<^bindex>\<open>theory!file\<close>
   consists of a \<^emph>\<open>header\<close>\<^bindex>\<open>header\<close>, a \<^emph>\<open>context definition\<close>\<^index>\<open>context\<close>, and a body 
-  consisting of a sequence of \<^emph>\<open>command\<close>s (see @{figure (unchecked) "fig:dependency"}). Even 
+  consisting of a sequence of document elements called
+  \<^emph>\<open>command\<close>s (see @{figure (unchecked) "fig:dependency"}). Even
   the header consists of a sequence of commands used for introductory text elements not depending on 
   any context. The context-definition contains an \<^boxed_theory_text>\<open>import\<close> and a 
   \<^boxed_theory_text>\<open>keyword\<close> section, for example:
@@ -96,30 +103,43 @@ text\<open> A text-element \<^index>\<open>text-element\<close> may look like th
   @{boxed_theory_text [display]\<open>
 text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, 
    we obtain in \<Gamma> for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
-so it is a command \<^theory_text>\<open>text\<close> followed by an argument (here in  \<open>\<open> ... \<close>\<close> paranthesis) which 
+... so it is a command \<^theory_text>\<open>text\<close> followed by an argument (here in  \<open>\<open> ... \<close>\<close> paranthesis) which 
 contains characters and and a special notation for semantic macros \<^bindex>\<open>semantic macros\<close> 
 (here \<^theory_text>\<open>@{term "fac 5"}).\<close>
 \<close>
 
-text\<open>
-  We distinguish fundamentally two different syntactic levels:
-  \<^item> the \<^emph>\<open>outer-syntax\<close>\<^bindex>\<open>syntax!outer\<close>\<^index>\<open>outer syntax|see {syntax, outer}\<close> (\<^ie>, the 
-    syntax for commands) is processed by a lexer-library and parser combinators built on top, and
-  \<^item> the \<^emph>\<open>inner-syntax\<close>\<^bindex>\<open>syntax!inner\<close>\<^index>\<open>inner syntax|see {syntax, inner}\<close> (\<^ie>, the 
-    syntax for \<open>\<lambda>\<close>-terms in HOL) with its own parametric polymorphism type  checking.
+text\<open>While we concentrate in this manual on \<^theory_text>\<open>text\<close>-document elements --- this is the main
+use of \<^dof> in its current stage --- it is important to note that there are actually three
+families of ``ontology aware'' document elements with analogous 
+syntax to standard ones. The difference is a bracket with meta-data of the form:
+@{theory_text [display,indent=5, margin=70] 
+\<open>
+text*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some semi-formal text \<close>
+ML*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some SML code \<close>
+value*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some annotated \<lambda>-term \<close>
+\<close>}
 
+Depending on the family, we will speak about \<^emph>\<open>(formal) text-contexts\<close>,\<^index>\<open>formal text-contexts\<close> 
+\<^emph>\<open>(ML) code-contexts\<close>\<^index>\<open>code-contexts\<close> and \<^emph>\<open>term-contexts\<close>\<^index>\<open>term-contexts\<close> if we refer 
+to sub-elements inside the \<open>\<open>...\<close>\<close> cartouches of these command families. Note that the Isabelle
+framework allows for nesting cartouches that permits to support to switch into a different
+context. In general, this has also the effect that the evaluation of antiquotations changes.
+\<^footnote>\<open>In the literature, this concept has been referred to \<open>Cascade-Syntax\<close> and was used in the 
+Centaur-system and is existing in some limited form in some Emacs-implementations these days. \<close>  
+\<close>
+text\<open>
   On the semantic level, we assume a validation process for an integrated document, where the 
   semantics of a command is a transformation \<open>\<theta> \<rightarrow> \<theta>\<close> for some system state \<open>\<theta>\<close>.
-  This document model can be instantiated with outer-syntax commands for common 
-  text elements, \<^eg>, \<^theory_text>\<open>section\<open>...\<close>\<close> or \<^theory_text>\<open>text\<open>...\<close>\<close>.  
-  Thus, users can add informal text to a sub-document using a text command:
+  This document model can be instantiated depending on  the text-code-, or term-contexts.
+  For common text elements, \<^eg>, \<^theory_text>\<open>section\<open>...\<close>\<close> or \<^theory_text>\<open>text\<open>...\<close>\<close>, 
+  users can add informal text to a sub-document using a text command:
   @{boxed_theory_text [display] \<open>text\<open>This is a description.\<close>\<close> }
   This will type-set the corresponding text in, for example, a PDF document.  However, this 
   translation is not necessarily one-to-one: text elements can be enriched by formal, \<^ie>, 
   machine-checked content via \<^emph>\<open>semantic macros\<close>, called antiquotations\<^bindex>\<open>antiquotation\<close>:
   @{boxed_theory_text [display]
-  \<open>text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, we obtain in \<Gamma> 
-         for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>
+  \<open>text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm "refl"}, we obtain in \<Gamma> 
+         for @{term \<open>fac 5\<close>} the result @{value \<open>fac 5\<close>}.\<close>\<close>
   }
 which is represented in the final document (\<^eg>, a PDF) by:
 @{boxed_pdf [display]
@@ -137,10 +157,12 @@ for $\operatorname{fac} \text{\textrm{5}}$ the result $\text{\textrm{120}}$.\<cl
   typeset. They represent the device for linking the formal with the informal. 
 \<close>
 
+
+
 figure*["fig:dependency"::figure,relative_width="70",src="''figures/document-hierarchy''"]
        \<open>A Theory-Graph in the Document Model. \<close>
 
-section*[bgrnd21::introduction]\<open>Implementability of the Required Document Model\<close>
+section*[bgrnd21::introduction]\<open>Implementability of the Document Model in other ITP's\<close>
 text\<open> 
   Batch-mode checkers for \<^dof> can be implemented in all systems of the LCF-style prover family, 
   \<^ie>, systems with a type-checked \<open>term\<close>, and abstract \<open>thm\<close>-type for theorems 
