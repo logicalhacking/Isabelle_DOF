@@ -1846,12 +1846,26 @@ val opt_evaluator =
   We want to have the current position to pass it to transduce_term_global in
   value_cmd, so we pass the Toplevel.transition
 *)
+
+val opt_attributes = Scan.option ODL_Command_Parser.attributes
+
+fun meta_args_exec NONE thy = thy
+   |meta_args_exec (SOME ((((oid,pos),cid_pos), doc_attrs) : ODL_Command_Parser.meta_args_t)) thy = 
+         thy |> (ODL_Command_Parser.create_and_check_docitem 
+                                    {is_monitor = false} {is_inline = false} 
+                                    oid pos (I cid_pos) (I doc_attrs))
+
 fun pass_trans_to_value_cmd ((name, modes), t) trans =
                                 Toplevel.keep (fn state => value_cmd name modes t state trans) trans
 
+
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>value*\<close> "evaluate and print term"
-    (opt_evaluator -- opt_modes -- Parse.term >> pass_trans_to_value_cmd);
+    (opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
+     >> (fn (meta_args_opt, eval_args ) => 
+            Toplevel.theory (meta_args_exec meta_args_opt)
+            #>
+            pass_trans_to_value_cmd eval_args));
 
 val _ = Theory.setup
   (Thy_Output.antiquotation_pretty_source_embedded \<^binding>\<open>value*\<close>
@@ -1881,10 +1895,11 @@ fun meta_args_exec NONE thy = thy
                                     {is_monitor = false} {is_inline = false} 
                                     oid pos (I cid_pos) (I doc_attrs))
 
+val attributes_opt = Scan.option ODL_Command_Parser.attributes
 
 val _ =
   Outer_Syntax.command ("ML*", \<^here>) "ODL annotated ML text within theory or local theory"
-    (((Scan.option ODL_Command_Parser.attributes) -- Parse.ML_source) 
+    ((attributes_opt -- Parse.ML_source) 
      >> (fn (meta_args_opt, source) =>
             Toplevel.theory (meta_args_exec meta_args_opt)
             #>

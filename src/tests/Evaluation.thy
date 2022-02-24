@@ -57,6 +57,8 @@ Here the evualuation of the TA will return the HOL.String which references the t
 \<close>
 value*\<open>@{thm \<open>HOL.refl\<close>}\<close>
 
+value*[a::A]\<open>@{thm \<open>HOL.refl\<close>}\<close> (* using the opption *)
+
 text\<open>An instance class is an object which allows us to define the concepts we want in an ontology.
 It is a concept which will be used to implement an ontology. It has roughly the same meaning as
 an individual in an OWL ontology.
