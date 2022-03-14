@@ -1885,18 +1885,17 @@ end;
 \<close>
 
 
-
-ML \<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/outer_syntax.ML\<close>\<close>
+\<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/outer_syntax.ML\<close>\<close>
 (*
   The ML* generates an "ontology-aware" version of the SML code-execution command.
 *)
-\<open>
+ML\<open>
 structure ML_star_Command =
 struct
 
-fun meta_args_exec NONE thy = thy
-   |meta_args_exec (SOME ((((oid,pos),cid_pos), doc_attrs) : ODL_Command_Parser.meta_args_t)) thy = 
-         thy |> (ODL_Command_Parser.create_and_check_docitem 
+fun meta_args_exec NONE  = I:generic_theory -> generic_theory
+   |meta_args_exec (SOME ((((oid,pos),cid_pos), doc_attrs) : ODL_Command_Parser.meta_args_t))  = 
+          Context.map_theory (ODL_Command_Parser.create_and_check_docitem 
                                     {is_monitor = false} {is_inline = false} 
                                     oid pos (I cid_pos) (I doc_attrs))
 
@@ -1906,12 +1905,13 @@ val _ =
   Outer_Syntax.command ("ML*", \<^here>) "ODL annotated ML text within theory or local theory"
     ((attributes_opt -- Parse.ML_source) 
      >> (fn (meta_args_opt, source) =>
-            Toplevel.theory (meta_args_exec meta_args_opt)
-            #>
+            (*Toplevel.theory (meta_args_exec meta_args_opt)
+            #>*)
             Toplevel.generic_theory
-              (ML_Context.exec (fn () =>
-                  ML_Context.eval_source (ML_Compiler.verbose true ML_Compiler.flags) source) #>
-                Local_Theory.propagate_ml_env)));
+              (ML_Context.exec (fn () =>  
+                     (ML_Context.eval_source (ML_Compiler.verbose true ML_Compiler.flags) source)) 
+                  #> (meta_args_exec meta_args_opt) 
+                  #>Local_Theory.propagate_ml_env)));
 
 end
 \<close>
