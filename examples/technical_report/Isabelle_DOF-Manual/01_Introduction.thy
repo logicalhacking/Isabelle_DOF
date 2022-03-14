@@ -119,10 +119,17 @@ text\<open>
       G.~Sala{\"u}n, editors, \<^emph>\<open>Software Engineering and Formal Methods (SEFM)\<close>, number 11724 in
       Lecture Notes in Computer Science. Springer-Verlag, Heidelberg, 2019.
       \href{https://doi.org/10.1007/978-3-030-30446-1_15}{10.1007/978-3-030-30446-1\_15}.
-
     \end{quote}
     A \<^BibTeX>-entry is available at: 
     \<^url>\<open>https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelledof-2019\<close>.
+  \<^item> for an application of \<^isadof> in the context of certifications:
+    \begin{quote}\small
+     A.~D. Brucker and B.~Wolff.
+     Using Ontologies in Formal Developments Targeting Certification. 
+     In W. Ahrendt and S. Tarifa, editors. \<^emph>\<open>Integrated Formal Methods (IFM)\<close>, number 11918.
+     Lecture Notes in Computer Science. Springer-Verlag, Heidelberg, 2019.
+     \href{https://doi.org/10.1007/978-3-030-34968-4\_4}.
+    \end{quote}
 \<close>
 subsubsection\<open>Availability\<close>
 text\<open>
