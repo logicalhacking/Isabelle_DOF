@@ -1039,7 +1039,7 @@ fun ML_isa_check_docitem thy (term, req_ty, pos) _ =
            else err ("faulty reference to docitem: "^name) pos
   in  ML_isa_check_generic check thy (term, pos) end
 
-fun ML_isa_elaborate_generic (_:theory) isa_name ty term_option pos =
+fun ML_isa_elaborate_generic (_:theory) isa_name ty term_option _ =
   case term_option of
       NONE => error("Wrong term option. You must use a defined term")
     | SOME term => Const (isa_name, ty) $ term
@@ -1048,17 +1048,10 @@ fun elaborate_instance thy _ _ term_option pos =
   case term_option of
       NONE => error ("Malformed term annotation")
     | SOME term => let val instance_name = HOLogic.dest_string term
-                       (*val _ = writeln("In elaborate_instance term: " ^ @{make_string} term)
-                       val _ = writeln("In elaborate_instance term: " ^ Syntax.string_of_term_global thy  term)
-                       val _ = writeln("In elaborate_instance instance_name: " ^ instance_name)*)
                    in case DOF_core.get_value_global instance_name thy of
                           NONE => error ("No class instance: " ^ instance_name)
                         | SOME(value) =>
-                          let
-                       (*val _ = writeln("In elaborate_instance value: " ^ @{make_string} value)
-                       val _ = writeln("In elaborate_instance value: " ^ Syntax.string_of_term_global thy value)*)
-                       (*in value end*)
-                       in DOF_core.transduce_term_global {mk_elaboration=true} (value, pos) thy end
+                            DOF_core.transduce_term_global {mk_elaboration=true} (value, pos) thy
                    end
 (*DOF_core.transduce_term_global {mk_elaboration=true} (value, pos) thy*)
 
@@ -1091,7 +1084,7 @@ fun declare_ISA_class_accessor_and_check_instance doc_class_name =
                   end)
   end
 
-fun elaborate_instances_list thy isa_name _ _ pos =
+fun elaborate_instances_list thy isa_name _ _ _ =
   let
     val base_name = Long_Name.base_name isa_name
     fun get_isa_name_without_intances_suffix s =
@@ -1827,6 +1820,8 @@ val opt_attributes = Scan.option ODL_Command_Parser.attributes
 fun pass_trans_to_value_cmd meta_args_opt ((name, modes), t) trans =
   Toplevel.keep (fn state => value_cmd meta_args_opt name modes t state trans) trans
 
+\<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/isar_cmd.ML\<close>\<close>
+
 (*
   term* command uses the same code as term command
   and adds the possibility to check Term Annotation Antiquotations (TA)
@@ -1867,10 +1862,7 @@ val _ =
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>value*\<close> "evaluate and print term"
     (opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
-     >> (fn (meta_args_opt, eval_args ) =>   
-                  Toplevel.theory (meta_args_exec meta_args_opt)
-                  #>
-                  pass_trans_to_value_cmd meta_args_opt eval_args));
+     >> (fn (meta_args_opt, eval_args ) => pass_trans_to_value_cmd meta_args_opt eval_args));
 
 val _ = Theory.setup
   (Thy_Output.antiquotation_pretty_source_embedded \<^binding>\<open>value*\<close>
