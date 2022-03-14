@@ -66,6 +66,7 @@ doc_class introduction = text_section +
   authored_by :: "author set"  <= "UNIV" 
   uses :: "notion set"
   invariant author_finite :: "finite (authored_by \<sigma>)"
+  and force_level :: "the (level \<sigma>) > 1"
 
 doc_class claim = introduction +
   based_on :: "notion list"
@@ -83,32 +84,54 @@ doc_class result = technical +
   evidence :: kind
   property :: "thm list" <= "[]"
   invariant has_property :: "evidence \<sigma> = proof \<longleftrightarrow> property \<sigma> \<noteq> []"
+
 doc_class example = technical +
   referring_to :: "(notion + definition) set" <= "{}"
 
 doc_class conclusion = text_section +
   establish :: "(claim \<times> result) set"
-  invariant total_rel :: "\<forall> x. x \<in> Domain (establish \<sigma>)
-                                            \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"
+  invariant establish_defined :: "\<forall> x. x \<in> Domain (establish \<sigma>)
+                                           \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"
 
 text\<open>Next we define some instances (docitems): \<close>
+
+declare[[invariants_checking_with_tactics = true]]
+
 text*[church::author, email="\<open>church@lambda.org\<close>"]\<open>\<close>
+(*text*[introduction1::introduction, authored_by = "{@{author \<open>church\<close>}}", level = "Some 0"]\<open>\<close>*)
 
 text*[resultProof::result, evidence = "proof", property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
 text*[resultArgument::result, evidence = "argument"]\<open>\<close>
 
-text\<open>The invariants \<open>author_finite\<close> and \<open>total_rel\<close> can not be checked directly
+text\<open>The invariants \<^theory_text>\<open>author_finite\<close> and \<^theory_text>\<open>establish_defined\<close> can not be checked directly
   and need a little help.
   We can set the \<open>invariants_checking_with_tactics\<close> theory attribute to help the checking.
   It will enable a basic tactic, using unfold and auto:\<close>
 
 declare[[invariants_checking_with_tactics = true]]
 
-text*[introductionTest::introduction, authored_by = "{@{author \<open>church\<close>}}"]\<open>\<close>
+text*[curry::author, email="\<open>curry@lambda.org\<close>"]\<open>\<close>
+text*[introduction2::introduction, authored_by = "{@{author \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
+text*[introduction3::introduction, authored_by = "{@{author \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
+text*[introduction4::introduction, authored_by = "{@{author \<open>curry\<close>}}", level = "Some 4"]\<open>\<close>
 
-text*[claimNotion::claim, authored_by = "{@{author \<open>church\<close>}}", based_on= "[\<open>Notion1\<close>, \<open>Notion2\<close>]"]\<open>\<close>
+text*[resultProof2::result, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"]\<open>\<close>
 
-text*[conclusionProof::conclusion,
-      establish = "{(@{claim \<open>claimNotion\<close>}, @{result \<open>resultProof\<close>})}"]\<open>\<close>
+text\<open>Then we can evaluate expressions with instances:\<close>
+
+term*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
+value*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
+value*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction4\<close>}\<close>
+
+value*\<open>@{introduction \<open>introduction2\<close>}\<close>
+
+value*\<open>{@{author \<open>curry\<close>}} = {@{author \<open>church\<close>}}\<close>
+
+term*\<open>property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
+value*\<open>property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
+
+value*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
+
+declare[[invariants_checking_with_tactics = false]]
 
 end
