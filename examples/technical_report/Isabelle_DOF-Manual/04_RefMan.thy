@@ -940,7 +940,6 @@ schemata:
 
 
 section*["sec:advanced"::technical]\<open>Advanced ODL Concepts\<close>
-text\<open>This section will be based on the following example.\<close>
 
 subsection*["sec:example"::technical]\<open>Example\<close>
 text\<open>Assume the following local ontology: 
@@ -1156,16 +1155,19 @@ text\<open>
 
 \begin{sml}
 fun check_result_inv oid {is_monitor:bool} ctxt =
-  let val kind = AttributeAccess.compute_attr_access ctxt "evidence" oid <@>{here} <@>{here}
-      val prop = AttributeAccess.compute_attr_access ctxt "property" oid <@>{here} <@>{here}
-      val tS = HOLogic.dest_list prop
+  let
+    val kind =
+      AttributeAccess.compute_attr_access ctxt "evidence" oid <@>{here} <@>{here}
+    val prop =
+      AttributeAccess.compute_attr_access ctxt "property" oid <@>{here} <@>{here}
+    val tS = HOLogic.dest_list prop
   in  case kind of
        <@>{term "proof"} => if not(null tS) then true
                           else error("class result invariant violation")
       | _ => false
   end
  val _ = Theory.setup (DOF_core.update_class_invariant
-                                "Low_Level_Syntax_Invariants.result" check_result_inv)
+                         "Low_Level_Syntax_Invariants.result" check_result_inv)
 \end{sml}
 
   The \<^ML>\<open>Theory.setup\<close>-command (last line) registers the \<^boxed_theory_text>\<open>check_result_inv\<close> function 
@@ -1175,7 +1177,34 @@ fun check_result_inv oid {is_monitor:bool} ctxt =
   \<^boxed_theory_text>\<open>oid\<close> is bound to a  variable here and can therefore not be statically expanded.
 \<close>
 
+subsection*["sec:queries_on_instances"::technical]\<open>Queries On Instances\<close>
 
+text\<open>
+  Any class definition generates term antiquotations checking a class instance or
+  the set of instances in a particular logical context; these references were
+  elaborated to objects they refer to.
+  This paves the way for a new mechanism to query the ``current'' instances presented as a
+  list of HOL \<^type>\<open>list\<close>.
+  Arbitrarily complex queries can therefore be defined inside the logical language.
+  Thus, to get the list of the properties of the instances of the class \<open>result\<close>,
+  or to get the list of the authors of the instances of the \<open>introduction\<close> class,
+  it suffices to treat this meta-data as usual:
+  @{theory_text [display,indent=5, margin=70] \<open>
+value*\<open>map (result.property) @{result-instances}\<close>
+value*\<open>map (text_section.authored_by) @{introduction-instances}\<close>
+  \<close>}
+  In order to get the list of the instances of the class \<open>myresult\<close>
+  whose \<open>evidence\<close> is a \<open>proof\<close>, one can use the command:
+  @{theory_text [display,indent=5, margin=70] \<open>
+value*\<open>filter (\<lambda>\<sigma>. result.evidence \<sigma> = proof) @{result-instances}\<close>
+  \<close>}
+  Analogously, the list of the instances of the class \<open>introduction\<close> whose \<open>level\<close> > 1,
+  can be filtered by:
+  @{theory_text [display,indent=5, margin=70] \<open>
+value*\<open>filter (\<lambda>\<sigma>. the (text_section.level \<sigma>) > 1)
+       @{introduction-instances}\<close>
+  \<close>}
+\<close>
 
 section*[infrastructure::technical]\<open>Technical Infrastructure\<close>
 
