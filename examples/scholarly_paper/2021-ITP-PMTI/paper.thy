@@ -770,14 +770,14 @@ value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = argument) @
 
 text\<open>
   Any class definition generates term antiquotations checking a class instance or
-  to the set of instances in a particular logical context; these references were
+  the set of instances in a particular logical context; these references were
   elaborated to objects they refer to.
   This paves the way for a new mechanism to query the ``current'' instances presented as a
   list of \<^hol> \<^type>\<open>list\<close>.
-  Arbitrarily Complex queries can therefore be defined inside the logical language.
+  Arbitrarily complex queries can therefore be defined inside the logical language.
   Thus, to get the list of the properties of the instances of the class \<^typ>\<open>myresult\<close>,
-  it suffices to get the list of the authors of the instances of the  \<^typ>\<open>myintroduction\<close> class,
-  and to treat this meta-data as usual:
+  or to get the list of the authors of the instances of the  \<^typ>\<open>myintroduction\<close> class,
+  it suffices to treat this meta-data as usual:
   @{theory_text [display,indent=5, margin=70] \<open>
 value*\<open>map (myresult.property) @{myresult-instances}\<close>
 value*\<open>map (mytext_section.authored_by) @{myintroduction-instances}\<close>
