@@ -11,10 +11,11 @@ begin
 section\<open>\<^theory_text>\<open>ML*\<close>-Annotated SML-commands\<close>
 ML*[the_function::C,x=\<open>\<open>dfg\<close>\<close>]\<open>fun fac x = if x = 0 then 1 else x * fac(x-1);
                                val t = @{const_name "List.Nil"}\<close>
-ML\<open>t\<close> \<comment> \<open>this is a test that ML* is actually evaluated and the resulting toplevel state is preserved.\<close>
-ML*\<open>3+4\<close> (* meta-args are optional *)
+ML\<open>fac 5; t\<close> \<comment> \<open>this is a test that ML* is actually evaluated and the 
+                 resulting toplevel state is preserved.\<close>
+ML*\<open>3+4\<close>     \<comment> \<open>meta-args are optional\<close> 
 
-text\<open>... and here we reference @{B [display] "the_function"}.\<close>
+text\<open>... and here we reference @{B [display] \<open>the_function\<close>}.\<close>
 
 section\<open>\<^theory_text>\<open>value*\<close>-Annotated evaluation-commands\<close>
 
