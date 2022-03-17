@@ -26,7 +26,7 @@ figure*[architecture::figure,relative_width="95",src="''figures/isabelle-archite
      the IDE (right-hand side). \<close>
 
 text*[bg::introduction]\<open>
-While Isabelle @{cite "nipkow.ea:isabelle:2002"} is widely perceived as an interactive theorem 
+While Isabelle is widely perceived as an interactive theorem 
 prover for HOL (Higher-order Logic)~@{cite "nipkow.ea:isabelle:2002"}, we would like to emphasize
 the view that Isabelle is far more than that: it is the \<^emph>\<open>Eclipse of Formal Methods Tools\<close>.  This 
 refers to the ``\<^emph>\<open>generic system framework of Isabelle/Isar underlying recent versions of Isabelle.  
@@ -37,7 +37,7 @@ with explicit infrastructure for building derivative systems.\<close>''~@{cite "
 
 The current system framework offers moreover the following features:
 \<^item> a build management grouping components into to pre-compiled sessions,
-\<^item> a prover IDE (PIDE) framework~@{cite "wenzel:asynchronous:2014"} with various front-ends 
+\<^item> a prover IDE (PIDE) framework~@{cite "wenzel:asynchronous:2014"} with various front-ends, 
 \<^item> documentation-generation,
 \<^item> code generators for various target languages,
 \<^item> an extensible front-end language Isabelle/Isar, and,
@@ -70,13 +70,13 @@ declare_reference*["fig:dependency"::text_section]
 
 
 text\<open>
-  The Isabelle Framework is based on a \<^emph>\<open>document-centric view\<close>  bindex>\<open>document-centric view\<close> of 
+  The Isabelle Framework is based on a \<^emph>\<open>document-centric view\<close>\<^bindex>\<open>document-centric view\<close> of 
   a document, treating the input in its integrality as set of (user-programmable) \<^emph>\<open>document element\<close> 
   that may mutually depend and link to each other; A \<^emph>\<open>document\<close> in our sense is what is configured in a set of 
   \<^verbatim>\<open>ROOT\<close>- and \<^verbatim>\<open>ROOTS\<close>-files.
 
   Isabelle assumes a hierarchical document model\<^index>\<open>document model\<close>, \<^ie>, an \<^emph>\<open>integrated\<close> document 
-  consist of a hierarchy \<^emph>\<open>sub-documents\<close>  (files); dependencies are restricted to be
+  consist of a hierarchy of \<^emph>\<open>sub-documents\<close>  (files); dependencies are restricted to be
   acyclic at this level. 
   Sub-documents can have different document types in order to capture documentations consisting of 
   documentation, models, proofs, code of various forms and other technical artifacts.  We call the 
@@ -104,7 +104,7 @@ text\<open> A text-element \<^index>\<open>text-element\<close> may look like th
 text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, 
    we obtain in \<Gamma> for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
 ... so it is a command \<^theory_text>\<open>text\<close> followed by an argument (here in  \<open>\<open> ... \<close>\<close> paranthesis) which 
-contains characters and and a special notation for semantic macros \<^bindex>\<open>semantic macros\<close> 
+contains characters and a special notation for semantic macros \<^bindex>\<open>semantic macros\<close> 
 (here \<^theory_text>\<open>@{term "fac 5"}).\<close>
 \<close>
 
@@ -122,7 +122,7 @@ value*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open
 Depending on the family, we will speak about \<^emph>\<open>(formal) text-contexts\<close>,\<^index>\<open>formal text-contexts\<close> 
 \<^emph>\<open>(ML) code-contexts\<close>\<^index>\<open>code-contexts\<close> and \<^emph>\<open>term-contexts\<close>\<^index>\<open>term-contexts\<close> if we refer 
 to sub-elements inside the \<open>\<open>...\<close>\<close> cartouches of these command families. Note that the Isabelle
-framework allows for nesting cartouches that permits to support to switch into a different
+framework allows for nesting cartouches that permits to support switching into a different
 context. In general, this has also the effect that the evaluation of antiquotations changes.
 \<^footnote>\<open>In the literature, this concept has been referred to \<open>Cascade-Syntax\<close> and was used in the 
 Centaur-system and is existing in some limited form in some Emacs-implementations these days. \<close>  
@@ -188,7 +188,7 @@ text\<open>
 
   Isabelle provides, beyond the features required for \<^dof>, a lot of additional benefits. 
   Besides UTF8-support for characters used in text-elements, Isabelle offers built-in already a 
-  mechanism user-programmable antiquotations \<^index>\<open>antiquotations\<close> which we use to implement
+  mechanism for user-programmable antiquotations \<^index>\<open>antiquotations\<close> which we use to implement
   semantic macros  \<^index>\<open>semantic macros\<close> in \<^isadof> (We will actually use these two terms
   as synonym in the context of \<^isadof>). Moreover, \<^isadof> allows for the asynchronous 
   evaluation and checking of the document content~@{cite "wenzel:asynchronous:2014" and 
