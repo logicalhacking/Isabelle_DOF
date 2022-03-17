@@ -195,8 +195,8 @@ text\<open>
   Creating a new document setup requires two decisions:
   \<^item> which ontologies (\<^eg>, scholarly\_paper) are required and 
   \<^item> which document template (layout)\index{document template} should be used 
-    (\<^eg>, scrartcl\index{scrartcl}). Some templates (\<^eg>, lncs) require that the users manually 
-    obtains and adds the necessary \<^LaTeX> class file (\<^eg>, \<^boxed_bash>\<open>llncs.cls\<close>. 
+    (\<^eg>, scrartcl\index{scrartcl}). Some templates require that the users manually 
+    obtains and adds the necessary \<^LaTeX> class file. 
     This is due to licensing restrictions).\<close>
 text\<open> 
   This can be configured by using the command-line options of of  \<^boxed_bash>\<open>mkroot_DOF\<close>. In 
