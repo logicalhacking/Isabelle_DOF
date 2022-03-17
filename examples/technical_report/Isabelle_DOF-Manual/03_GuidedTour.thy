@@ -297,7 +297,7 @@ text\<open>Note \<^const>\<open>short_title\<close> and \<^const>\<open>abbrev\<
 the built-in \<^isadof> type \<^typ>\<open>thm list\<close> contains references to formally proven theorems that must
 exist in the logical context of this document; this is a decisive feature of \<^isadof> that
 conventional ontological languages lack.\<close>
-find_consts name:"level"
+
 text\<open>We continue by the introduction of a main class: the text-element \<^typ>\<open>text_section\<close>
 (in contrast to \<^typ>\<open>figure\<close> or \<open>table\<close> or similar). Note that
 the \<^const>\<open>main_author\<close> is typed with the class \<^typ>\<open>author\<close>, a HOL type that is automatically
