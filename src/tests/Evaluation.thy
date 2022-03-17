@@ -8,6 +8,18 @@ imports
   "Isabelle_DOF-tests.TermAntiquotations"
 begin
 
+section\<open>\<^theory_text>\<open>ML*\<close>-Annotated SML-commands\<close>
+ML*[the_function::C,x=\<open>\<open>dfg\<close>\<close>]\<open>fun fac x = if x = 0 then 1 else x * fac(x-1);
+                               val t = @{const_name "List.Nil"}\<close>
+ML\<open>fac 5; t\<close> \<comment> \<open>this is a test that ML* is actually evaluated and the 
+                 resulting toplevel state is preserved.\<close>
+ML*\<open>3+4\<close>     \<comment> \<open>meta-args are optional\<close> 
+
+text\<open>... and here we reference @{B [display] \<open>the_function\<close>}.\<close>
+
+section\<open>\<^theory_text>\<open>value*\<close>-Annotated evaluation-commands\<close>
+
+
 text\<open>The value* command uses the same code as the value command
 and adds the possibility to evaluate Term Annotation Antiquotations (TA).
 For that an elaboration of the term referenced by a TA must be done before
@@ -46,6 +58,8 @@ the current implementation return the term which references the object reference
 Here the evualuation of the TA will return the HOL.String which references the theorem:
 \<close>
 value*\<open>@{thm \<open>HOL.refl\<close>}\<close>
+
+value*[a::A]\<open>@{thm \<open>HOL.refl\<close>}\<close> (* using the option *)
 
 text\<open>An instance class is an object which allows us to define the concepts we want in an ontology.
 It is a concept which will be used to implement an ontology. It has roughly the same meaning as
@@ -154,5 +168,6 @@ to update the instance @{docitem \<open>xcv4\<close>}:
 \<close>
 (* Error:
 update_instance*[xcv4::F, b+="{(@{A ''xcv3''},@{G ''xcv5''})}"]*)
+
 
 end

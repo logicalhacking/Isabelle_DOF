@@ -1039,7 +1039,7 @@ fun ML_isa_check_docitem thy (term, req_ty, pos) _ =
            else err ("faulty reference to docitem: "^name) pos
   in  ML_isa_check_generic check thy (term, pos) end
 
-fun ML_isa_elaborate_generic (_:theory) isa_name ty term_option pos =
+fun ML_isa_elaborate_generic (_:theory) isa_name ty term_option _ =
   case term_option of
       NONE => error("Wrong term option. You must use a defined term")
     | SOME term => Const (isa_name, ty) $ term
@@ -1048,17 +1048,10 @@ fun elaborate_instance thy _ _ term_option pos =
   case term_option of
       NONE => error ("Malformed term annotation")
     | SOME term => let val instance_name = HOLogic.dest_string term
-                       (*val _ = writeln("In elaborate_instance term: " ^ @{make_string} term)
-                       val _ = writeln("In elaborate_instance term: " ^ Syntax.string_of_term_global thy  term)
-                       val _ = writeln("In elaborate_instance instance_name: " ^ instance_name)*)
                    in case DOF_core.get_value_global instance_name thy of
                           NONE => error ("No class instance: " ^ instance_name)
                         | SOME(value) =>
-                          let
-                       (*val _ = writeln("In elaborate_instance value: " ^ @{make_string} value)
-                       val _ = writeln("In elaborate_instance value: " ^ Syntax.string_of_term_global thy value)*)
-                       (*in value end*)
-                       in DOF_core.transduce_term_global {mk_elaboration=true} (value, pos) thy end
+                            DOF_core.transduce_term_global {mk_elaboration=true} (value, pos) thy
                    end
 (*DOF_core.transduce_term_global {mk_elaboration=true} (value, pos) thy*)
 
@@ -1091,7 +1084,7 @@ fun declare_ISA_class_accessor_and_check_instance doc_class_name =
                   end)
   end
 
-fun elaborate_instances_list thy isa_name _ _ pos =
+fun elaborate_instances_list thy isa_name _ _ _ =
   let
     val base_name = Long_Name.base_name isa_name
     fun get_isa_name_without_intances_suffix s =
@@ -1746,7 +1739,8 @@ signature VALUE_COMMAND =
 sig
   val value: Proof.context -> term -> term
   val value_select: string -> Proof.context -> term -> term
-  val value_cmd: xstring -> string list -> string -> Toplevel.state -> Toplevel.transition -> unit
+  val value_cmd: (ODL_Command_Parser.meta_args_t option) -> xstring -> string list -> string
+                 -> Toplevel.state -> Toplevel.transition -> unit
   val add_evaluator: binding * (Proof.context -> term -> term) 
     -> theory -> string * theory
 end;
@@ -1788,9 +1782,15 @@ fun value_select name ctxt =
 fun value ctxt term = value_select "" ctxt
                       (DOF_core.transduce_term_global {mk_elaboration=true} (term , \<^here>)
                                           (Proof_Context.theory_of ctxt))
+fun meta_args_exec NONE thy = thy
+   |meta_args_exec (SOME ((((oid,pos),cid_pos), doc_attrs) : ODL_Command_Parser.meta_args_t)) thy = 
+         thy |> (ODL_Command_Parser.create_and_check_docitem 
+                                    {is_monitor = false} {is_inline = false} 
+                                    oid pos (I cid_pos) (I doc_attrs))
 
-fun value_cmd raw_name modes raw_t state trans =
+fun value_cmd meta_args_opt raw_name modes raw_t state trans =
   let
+    val _ = meta_args_exec meta_args_opt
     val ctxt = Toplevel.context_of state;
     val name = intern_evaluator ctxt raw_name;
     val t = Syntax.read_term ctxt raw_t;
@@ -1817,22 +1817,19 @@ val opt_evaluator =
 
 val opt_attributes = Scan.option ODL_Command_Parser.attributes
 
-fun meta_args_exec NONE thy = thy
-   |meta_args_exec (SOME ((((oid,pos),cid_pos), doc_attrs) : ODL_Command_Parser.meta_args_t)) thy = 
-         thy |> (ODL_Command_Parser.create_and_check_docitem 
-                                    {is_monitor = false} {is_inline = false} 
-                                    oid pos (I cid_pos) (I doc_attrs))
+fun pass_trans_to_value_cmd meta_args_opt ((name, modes), t) trans =
+  Toplevel.keep (fn state => value_cmd meta_args_opt name modes t state trans) trans
 
-fun pass_trans_to_value_cmd ((name, modes), t) trans =
-                                Toplevel.keep (fn state => value_cmd name modes t state trans) trans
+\<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/isar_cmd.ML\<close>\<close>
 
 (*
   term* command uses the same code as term command
   and adds the possibility to check Term Annotation Antiquotations (TA)
   with the help of DOF_core.transduce_term_global function
 *)
-fun string_of_term ctxt s trans =
+fun string_of_term meta_args_opt ctxt s trans =
 let
+  val _ = meta_args_exec meta_args_opt
   val t = Syntax.read_term ctxt s;
   val T = Term.type_of t;
   val ctxt' = Proof_Context.augment t ctxt;
@@ -1851,25 +1848,21 @@ Print_Mode.with_modes modes (fn () => writeln (string_of state arg)) ());
   We want to have the current position to pass it to transduce_term_global in
   string_of_term, so we pass the Toplevel.transition
 *)
-fun print_term (string_list, string) trans = print_item
-                  (fn state => fn string => string_of_term (Toplevel.context_of state) string trans)
-                                               (string_list, string) trans;
+fun print_term meta_args_opt (string_list, string) trans = print_item
+                  (fn state =>
+                      fn string =>
+                         string_of_term meta_args_opt (Toplevel.context_of state) string trans)
+                  (string_list, string) trans;
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>term*\<close> "read and print term"
     (opt_attributes -- (opt_modes -- Parse.term) 
-     >> (fn (meta_args_opt, eval_args ) => 
-                  Toplevel.theory (meta_args_exec meta_args_opt)
-                  #>
-                  print_term eval_args));
+     >> (fn (meta_args_opt, eval_args ) => print_term meta_args_opt eval_args));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>value*\<close> "evaluate and print term"
     (opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
-     >> (fn (meta_args_opt, eval_args ) => 
-                  Toplevel.theory (meta_args_exec meta_args_opt)
-                  #>
-                  pass_trans_to_value_cmd eval_args));
+     >> (fn (meta_args_opt, eval_args ) => pass_trans_to_value_cmd meta_args_opt eval_args));
 
 val _ = Theory.setup
   (Thy_Output.antiquotation_pretty_source_embedded \<^binding>\<open>value*\<close>
@@ -1885,18 +1878,17 @@ end;
 \<close>
 
 
-
-ML \<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/outer_syntax.ML\<close>\<close>
+\<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/outer_syntax.ML\<close>\<close>
 (*
   The ML* generates an "ontology-aware" version of the SML code-execution command.
 *)
-\<open>
+ML\<open>
 structure ML_star_Command =
 struct
 
-fun meta_args_exec NONE thy = thy
-   |meta_args_exec (SOME ((((oid,pos),cid_pos), doc_attrs) : ODL_Command_Parser.meta_args_t)) thy = 
-         thy |> (ODL_Command_Parser.create_and_check_docitem 
+fun meta_args_exec NONE  = I:generic_theory -> generic_theory
+   |meta_args_exec (SOME ((((oid,pos),cid_pos), doc_attrs) : ODL_Command_Parser.meta_args_t))  = 
+          Context.map_theory (ODL_Command_Parser.create_and_check_docitem 
                                     {is_monitor = false} {is_inline = false} 
                                     oid pos (I cid_pos) (I doc_attrs))
 
@@ -1906,12 +1898,13 @@ val _ =
   Outer_Syntax.command ("ML*", \<^here>) "ODL annotated ML text within theory or local theory"
     ((attributes_opt -- Parse.ML_source) 
      >> (fn (meta_args_opt, source) =>
-            Toplevel.theory (meta_args_exec meta_args_opt)
-            #>
+            (*Toplevel.theory (meta_args_exec meta_args_opt)
+            #>*)
             Toplevel.generic_theory
-              (ML_Context.exec (fn () =>
-                  ML_Context.eval_source (ML_Compiler.verbose true ML_Compiler.flags) source) #>
-                Local_Theory.propagate_ml_env)));
+              (ML_Context.exec (fn () =>  
+                     (ML_Context.eval_source (ML_Compiler.verbose true ML_Compiler.flags) source)) 
+                  #> (meta_args_exec meta_args_opt) 
+                  #>Local_Theory.propagate_ml_env)));
 
 end
 \<close>
