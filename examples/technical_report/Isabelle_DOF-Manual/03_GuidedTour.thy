@@ -514,6 +514,41 @@ text-elements. Hovering allows for inspection, clicking for jumping to the defin
 link does not exist or  has a non-compatible type, the text is not validated,\<^ie>, Isabelle/jEdit
 will respond with an error.\<close>
 
+subsection*[naming::example]\<open>Name-Spaces, Long- and Short-Names\<close>
+text\<open>\<^dof> is built upon the name space and lexical conventions of Isabelle. Long-names were 
+composed from a name of the session, the name of the theory, and a sequence of local names referring
+to, \<^eg>, nested specification constructs that were used to identify types, constant symbols, 
+definitions, \<^etc>. The general format of a long-name is 
+
+ \<^boxed_theory_text>\<open> session_name.theory_name.local_name. ... .local_naame\<close>
+
+By lexical conventions, and theory-names must be unique inside a session
+(and session names must be unique too), such that long-names are unique by construction.
+There are actually different name categories that form a proper name space, \<^eg>, the name space for
+constant symbols and type symbols are distinguished.
+
+Isabelle identifies names already with the shortest suffix that is unique in the global 
+context and in the appropriate name category. This also holds for pretty-printing, which can
+at times be confusing since names stemming from the same specification construct may
+be printed with different prefixes according to their uniqueness.
+\<close>
+
+subsection*[cartouches::example]\<open>Caveat: Lexical Conventions of Cartouches, Strings, Names, ... \<close>
+text\<open>WARNING: The embedding of strings, terms, names \<^etc> as parts of commands, anti-quotations,
+is unfortunately not always so consistent as one might expect. This can be a nuisance for 
+users, but is again a consequence that we build on existing technology that has been developed
+over decades. 
+
+At times, that causes idiosyncrasy like in: 
+\<^item> text-antiquotations  
+  \<^theory_text>\<open> \<open>\<^thm>"normally_behaved_distance_function_def"\<close>\<close> and \<^theory_text>\<open>\<open>@{thm "srac\<^sub>1_def"}\<close>\<close> (while
+   \<^theory_text>\<open> @{thm \<open>srac\<^sub>1_def\<close>}\<close> fails ...) 
+\<^item> commands \<^theory_text>\<open>thm fundamental_theorem_of_calculus\<close> and \<^theory_text>\<open>thm "fundamental_theorem_of_calculus"\<close>
+  or \<^theory_text>\<open>lemma "H"\<close> and \<^theory_text>\<open>lemma \<open>H\<close>\<close> and  \<^theory_text>\<open>lemma H\<close> 
+\<^item> string expressions \<open>''abc'' @ ''cd''\<close> and equivalent \<open>\<open>abc\<close> @ \<open>cd\<close>\<close>;
+  but \<open>\<open>A \<longrightarrow> B\<close>\<close> and not \<open>''A \<longrightarrow> B''\<close> \<close>
+text\<open>We advise users to experiment with different notation variants.\<close>
+
 section*[cenelec_onto::example]\<open>Writing Certification Documents (CENELEC\_50128)\<close>
 subsection\<open>The CENELEC 50128 Example\<close>
 text\<open> 
