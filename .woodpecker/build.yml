@@ -1,0 +1,7 @@
+pipeline:
+  generate_nn:
+    image: docker.io/logicalhacking/isabelle2021
+    commands:
+      - ./install
+      - isabelle build -D .
+      

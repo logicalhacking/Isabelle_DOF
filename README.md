@@ -192,7 +192,7 @@ SPDX-License-Identifier: BSD-2-Clause
   Processes fit for V-style Certification Procedures.](https://hal.archives-ouvertes.fr/hal-01702815/document)
    In ERTS 2018. <https://hal.archives-ouvertes.fr/hal-01702815>
 
-## Main Repository
+## Upstream Repository
 
-The main git repository, i.e., the single source of truth, for this project is hosted
+The upstream git repository, i.e., the single source of truth, for this project is hosted
 at <https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF>.

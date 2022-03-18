@@ -24,13 +24,13 @@ begin
 chapter*[isadof_tour::text_section]\<open>\<^isadof>: A Guided Tour\<close>
 
 text\<open>
-  In this chapter, we will give a introduction into using \<^isadof> for users that want to create and 
+  In this chapter, we will give an introduction into using \<^isadof> for users that want to create and 
   maintain documents following an existing document ontology.
 \<close>
 
 section*[getting_started::technical]\<open>Getting Started\<close>
 text\<open>
-As an alternative to installing \<^isadof>{} locally, the latest official release  \<^isadof> is also 
+As an alternative to installing \<^isadof>{} locally, the latest official release of \<^isadof> is also 
 available on \href{https://cloud.docker.com/u/logicalhacking/}{Docker Hub}. Thus, if you have 
 \href{https://www.docker.com}{Docker} installed and 
 your installation of Docker supports X11 application, you can start \<^isadof> as follows:
@@ -85,7 +85,7 @@ text\<open>
   We start by extracting the \<^isadof> archive:
 @{boxed_bash [display]\<open>ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë\<close>}
 This will create a directory \texttt{\isadofdirn} containing \<^isadof> distribution.
-Next, we need to invoke the \<^boxed_bash>\<open>install\<close> script. If necessary, the installations 
+Next, we need to invoke the \<^boxed_bash>\<open>install\<close> script. If necessary, the installation 
 automatically downloads additional dependencies from the AFP (\<^url>\<open>https://www.isa-afp.org\<close>), 
 namely the AFP  entries ``Functional Automata''~@{cite "nipkow.ea:functional-Automata-afp:2004"} 
 and ``Regular Sets and Expressions''~@{cite "kraus.ea:regular-sets-afp:2010"}. This might take a 
@@ -138,7 +138,7 @@ Isabelle/DOF Installer
   /usr/local/Isabelleë\isabelleversion/bin/isabelleë build -D . \<close>}
 
 After the successful installation, you can explore the examples (in the sub-directory 
-\<^boxed_bash>\<open>examples\<close> or create your own project. On the first start, the session 
+\<^boxed_bash>\<open>examples\<close>) or create your own project. On the first start, the session 
 \<^boxed_bash>\<open>Isabelle_DOF\<close> will be built automatically. If you want to pre-build this 
 session and all example documents, execute:
 @{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë isabelle build -D . \<close>} 
@@ -158,13 +158,13 @@ Now use the following coëëmmand line to build the session:
   isabelle build -D myproject \<close>}
   The created project uses the default configuration (the ontology for writing academic papers 
   (scholarly\_paper) using a report layout based on the article class (\<^boxed_latex>\<open>scrartcl\<close>) of 
-  the KOMA-Script bundle~@{cite "kohm:koma-script:2019"}. The directory \<^boxed_bash>\<open>myproject\<close> 
+  the KOMA-Script bundle~@{cite "kohm:koma-script:2019"}). The directory \<^boxed_bash>\<open>myproject\<close> 
   contains the \<^isadof>-setup for your  new document. To check the document formally, including the 
   generation of the document in PDF, you only need to execute
 
-@{boxed_bash [display]\<open>ë\prompt{}ë  isabelle build -d . myproject \<close>}
+@{boxed_bash [display]\<open>ë\prompt{myproject}ë  isabelle build -d . myproject \<close>}
 
-The dictory  \<^boxed_bash>\<open>myproject\<close> contains the following files and directories: 
+The directory  \<^boxed_bash>\<open>myproject\<close> contains the following files and directories: 
 \begin{center}
 \begin{minipage}{.9\textwidth}
 \dirtree{%
@@ -172,7 +172,7 @@ The dictory  \<^boxed_bash>\<open>myproject\<close> contains the following files
 .2 myproject.
 .3 document.
 .4 build\DTcomment{Build Script}.
-.4 isadof.cfg\DTcomment{\<^isadof> configuraiton}.
+.4 isadof.cfg\DTcomment{\<^isadof> configuration}.
 .4 preamble.tex\DTcomment{Manual \<^LaTeX>-configuration}.
 .3 ROOT\DTcomment{Isabelle build-configuration}.
 }
@@ -193,14 +193,14 @@ users are:
 
 text\<open>
   Creating a new document setup requires two decisions:
-  \<^item> which ontologies (\<^eg>, scholarly\_paper) are required and 
+  \<^item> which ontologies (\<^eg>, scholarly\_paper) are required, and 
   \<^item> which document template (layout)\index{document template} should be used 
-    (\<^eg>, scrartcl\index{scrartcl}). Some templates (\<^eg>, lncs) require that the users manually 
-    obtains and adds the necessary \<^LaTeX> class file (\<^eg>, \<^boxed_bash>\<open>llncs.cls\<close>. 
+    (\<^eg>, scrartcl\index{scrartcl}). Some templates require that the users manually 
+    obtains and adds the necessary \<^LaTeX> class file. 
     This is due to licensing restrictions).\<close>
 text\<open> 
-  This can be configured by using the command-line options of of  \<^boxed_bash>\<open>mkroot_DOF\<close>. In 
-  Particular, \<^boxed_bash>\<open>-o\<close> allows selecting the ontology and \<^boxed_bash>\<open>-t\<close> allows to selecting 
+  This can be configured by using the command-line options of \<^boxed_bash>\<open>mkroot_DOF\<close>. In 
+  Particular, \<^boxed_bash>\<open>-o\<close> allows selecting the ontology and \<^boxed_bash>\<open>-t\<close> allows selecting 
   the document template. The built-in help (using  \<^boxed_bash>\<open>-h\<close>) shows all available options 
   as well as a complete list of the available document templates and ontologies: 
 
@@ -233,31 +233,31 @@ subsection\<open>Writing Academic Papers\<close>
 text\<open> 
   The ontology \<^boxed_theory_text>\<open>scholarly_paper\<close>
   \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
-  academic/scientific papers, with a slight bias to texts in the domain of mathematics and engineering. 
-  We explain first the principles of its underlying ontology, and then we present two ''real'' 
+  academic/scientific papers, with a slight bias towards texts in the domain of mathematics and engineering. 
+  We explain first the principles of its underlying ontology, and then we present two ``real'' 
   examples from our own publication practice.
 \<close>
 text\<open>
   \<^enum> The iFM 2020 paper~@{cite "taha.ea:philosophers:2020"} is a typical mathematical text,
     heavy in definitions with complex  mathematical notation and a lot of non-trivial cross-referencing
-    between statements, definitions and proofs which is ontologically tracked. However, wrt.
+    between statements, definitions and proofs which are ontologically tracked. However, wrt.
     the possible linking between the underlying formal theory and this mathematical presentation,
     it follows a pragmatic path without any ``deep'' linking to types, terms and theorems, 
     deliberately not exploiting \<^isadof> 's full potential with this regard.
   \<^enum> In the CICM 2018 paper~@{cite "brucker.ea:isabelle-ontologies:2018"}, we deliberately
-    refrain from integrating references to formal content in order  demonstrate that \<^isadof> is not 
+    refrain from integrating references to formal content in order to demonstrate that \<^isadof> is not 
     a  framework from Isabelle users to Isabelle users only, but people just avoiding as much as
     possible \<^LaTeX> notation.
 
   The \<^isadof> distribution contains both examples using the ontology \<^verbatim>\<open>scholarly_paper\<close> in 
   the directory \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/} or
-  \nolinkurl{examples/scholarly_paper/2020-ifm-csp-applications/}.
+  \nolinkurl{examples/scholarly_paper/2020-iFM-CSP}.
 
   You can inspect/edit the example in Isabelle's IDE, by either 
-  \<^item> starting Isabelle/jedit using your graphical user interface (\<^eg>, by clicking on the 
+  \<^item> starting Isabelle/jEdit using your graphical user interface (\<^eg>, by clicking on the 
     Isabelle-Icon provided by the Isabelle installation) and loading the file 
-    \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy}.
-  \<^item> starting Isabelle/jedit from the command line by,\<^eg>, calling:
+    \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy},
+  \<^item> starting Isabelle/jEdit from the command line by, \<^eg>, calling:
 
 @{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë 
   isabelle jedit -d . examples/scholarly_paper/2020-iFM-CSP/paper.thy \<close>}
@@ -270,7 +270,7 @@ text\<open>    You can build the PDF-document at the command line by calling:
 
 subsection*[sss::technical]\<open>A Bluffers Guide to the \<^verbatim>\<open>scholarly_paper\<close> Ontology\<close>
 text\<open> In this section we give a minimal overview of the ontology formalized in
-      @{theory \<open>Isabelle_DOF.scholarly_paper\<close>}.\<close>
+      \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close>.\<close>
 
 text\<open>  We start by modeling the usual text-elements of an academic paper: the title and author 
   information, abstract, and text section: 
@@ -292,18 +292,18 @@ doc_class abstract =
    principal_theorems :: "thm list"\<close>}
 \<close>
 
-text\<open>Note \<open>short_title\<close> and \<open>abbrev\<close> are optional and have the default \<open>None\<close> (no value).
-Note further, that abstracts may have a \<open>principal_theorems\<close> list, where the built-in \<^isadof> type
-\<open>thm list\<close> which contain references to formally proven theorems that must exist in the logical
-context of this document; this is a decisive feature of \<^isadof> that conventional ontological
-languages lack.\<close>
+text\<open>Note \<^const>\<open>short_title\<close> and \<^const>\<open>abbrev\<close> are optional and have the default\<^const>\<open>None\<close>
+(no value). Note further, that \<^typ>\<open>abstract\<close>s may have a \<^const>\<open>principal_theorems\<close> list, where
+the built-in \<^isadof> type \<^typ>\<open>thm list\<close> contains references to formally proven theorems that must
+exist in the logical context of this document; this is a decisive feature of \<^isadof> that
+conventional ontological languages lack.\<close>
 
-text\<open>We continue by the introduction of a main class: the text-element \<open>text_section\<close> (in contrast
-to \<open>figure\<close> or \<open>table\<close> or similar). Note that
-the \<open>main_author\<close> is typed with the class \<open>author\<close>, a HOL type that is automatically derived from
-the document class definition \<open>author\<close> shown above. It is used to express which author currently
-``owns'' this \<open>text_section\<close>, an information that can give rise to presentational or even
-access-control features in a suitably adapted front-end.
+text\<open>We continue by the introduction of a main class: the text-element \<^typ>\<open>text_section\<close>
+(in contrast to \<^typ>\<open>figure\<close> or \<open>table\<close> or similar). Note that
+the \<^const>\<open>main_author\<close> is typed with the class \<^typ>\<open>author\<close>, a HOL type that is automatically
+derived from the document class definition \<^typ>\<open>author\<close> shown above. It is used to express which
+author currently ``owns'' this \<^typ>\<open>text_section\<close>, an information that can give rise to
+presentational or even access-control features in a suitably adapted front-end.
  
 @{boxed_theory_text [display] \<open>
 doc_class text_section = text_element +
@@ -312,16 +312,16 @@ doc_class text_section = text_element +
    level       :: "int  option"    <=  "None"
 \<close>}
 
-The \<open>level\<close>-attibute \<^index>\<open>level\<close> enables doc-notation support for headers, chapters, sections, and 
-subsections; we follow here the \<^LaTeX> terminology on levels to which \<^isadof> is currently targeting at.
-The values are interpreted accordingly to the \<^LaTeX> standard. The correspondance between the levels
+The \<^const>\<open>Isa_COL.text_element.level\<close>-attibute \<^index>\<open>level\<close> enables doc-notation support for
+headers, chapters, sections, and subsections; we follow here the \<^LaTeX> terminology on levels to which \<^isadof> is currently targeting at.
+The values are interpreted accordingly to the \<^LaTeX> standard. The correspondence between the levels
 and the structural entities is summarized as follows:
 
-   \<^item> part          \<^index>\<open>part\<close>          \<^bigskip>\<^bigskip>  \<open>Some -1\<close> \vspace{-1cm} 
-   \<^item> chapter       \<^index>\<open>chapter\<close>       \<^bigskip>\<^bigskip>  \<open>Some 0\<close> \vspace{-1cm}
-   \<^item> section       \<^index>\<open>section\<close>       \<^bigskip>\<^bigskip>  \<open>Some 1\<close> \vspace{-1cm}
-   \<^item> subsection    \<^index>\<open>subsection\<close>    \<^bigskip>\<^bigskip>  \<open>Some 2\<close>  \vspace{-1cm}
-   \<^item> subsubsection \<^index>\<open>subsubsection\<close> \<^bigskip>\<^bigskip>  \<open>Some 3\<close>  \vspace{-0.1cm}
+   \<^item> part          \<^index>\<open>part\<close>          \<open>Some -1\<close> \vspace{-0.3cm}
+   \<^item> chapter       \<^index>\<open>chapter\<close>       \<open>Some 0\<close>  \vspace{-0.3cm}
+   \<^item> section       \<^index>\<open>section\<close>       \<open>Some 1\<close>  \vspace{-0.3cm}
+   \<^item> subsection    \<^index>\<open>subsection\<close>    \<open>Some 2\<close>  \vspace{-0.3cm}
+   \<^item> subsubsection \<^index>\<open>subsubsection\<close> \<open>Some 3\<close>  \vspace{-0.1cm}
 
 Additional means assure that the following invariant is maintained in a document 
 conforming to \<^verbatim>\<open>scholarly_paper\<close>:
@@ -329,11 +329,11 @@ conforming to \<^verbatim>\<open>scholarly_paper\<close>:
 \center {\<open>level > 0\<close>}
 \<close>
 
-text\<open> The rest of the ontology introduces concepts for \<open>introductions\<close>, \<open>conclusion\<close>, \<open>related_work\<close>,
-\<open>bibliography\<close> etc. More details can be found in \<^verbatim>\<open>scholarly_paper\<close> contained ion the
-theory @{theory \<open>Isabelle_DOF.scholarly_paper\<close>}. \<close>
+text\<open> The rest of the ontology introduces concepts for \<^typ>\<open>introduction\<close>, \<^typ>\<open>conclusion\<close>,
+\<^typ>\<open>related_work\<close>, \<^typ>\<open>bibliography\<close> etc. More details can be found in \<^verbatim>\<open>scholarly_paper\<close>
+contained ion the theory \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close>. \<close>
 
-subsection\<open>Writing Academic Publications I : A Freeform Mathematics Text \<close>
+subsection\<open>Writing Academic Publications: A Freeform Mathematics Text \<close>
 text*[csp_paper_synthesis::technical, main_author = "Some bu"]\<open>We present a typical mathematical
 paper focussing on its form, not refering in any sense to its content which is out of scope here.
 As mentioned before, we chose the paper~@{cite "taha.ea:philosophers:2020"} for this purpose,
@@ -345,9 +345,9 @@ figure*[fig0::figure,spawn_columns=False,relative_width="90",src="''figures/head
        \<open> A mathematics paper as integrated document source ... \<close>  
 
 figure*[fig0B::figure,spawn_columns=False,relative_width="90",src="''figures/header_CSP_pdf.png''"]
-       \<open> \ldots and as corresponding \<^pdf>-output. \<close>  
+       \<open> ... and as corresponding \<^pdf>-output. \<close>  
 
-text\<open>The integrated source of this paper-except is shown in \<^figure>\<open>fig0\<close>, while the
+text\<open>The integrated source of this paper-excerpt is shown in \<^figure>\<open>fig0\<close>, while the
 document build process converts this to the corresponding \<^pdf>-output shown in \<^figure>\<open>fig0B\<close>.\<close>
 
 
@@ -358,16 +358,16 @@ The other text-elements provide the authors and the abstract as specified by the
 to the \<^theory_text>\<open>doc_class\<close>es of \<^verbatim>\<open>scholarly_paper\<close>; we say that these text elements are \<^emph>\<open>instances\<close> 
 \<^bindex>\<open>instance\<close> of the \<^theory_text>\<open>doc_class\<close>es \<^bindex>\<open>doc\_class\<close> of the underlying ontology. \<close>
 
-text\<open>\vspace{1,5cm} The paper proceeds by providing instances for introduction, technical sections, 
+text\<open>The paper proceeds by providing instances for introduction, technical sections, 
 examples, \<^etc>. We would like to concentrate on one --- mathematical paper oriented --- detail in the 
 ontology \<^verbatim>\<open>scholarly_paper\<close>: 
 
 @{boxed_theory_text [display]
-\<open>doc_class technical = text_section +  . . .
+\<open>doc_class technical = text_section +  ...
 
 type_synonym tc = technical (* technical content *)
 
-datatype math_content_class = "defn"   | "axm"  | "thm"  | "lem" | "cor" | "prop" | ...
+datatype math_content_class = "defn" | "axm" | "thm"  | "lem" | "cor" | "prop" | ...
                            
 doc_class math_content = tc +   ...
 
@@ -380,25 +380,25 @@ doc_class "theorem"     = math_content +
 
 
 text\<open>The class \<^verbatim>\<open>technical\<close> regroups a number of text-elements that contain typical 
-"technical content" in mathematical or engineering papers: code, definitions, theorems, 
+``technical content" in mathematical or engineering papers: code, definitions, theorems, 
 lemmas, examples. From this class, the more stricter class of @{typ \<open>math_content\<close>} is derived,
 which is grouped into @{typ "definition"}s and @{typ "theorem"}s (the details of these
 class definitions are omitted here). Note, however, that class identifiers can be abbreviated by 
 standard \<^theory_text>\<open>type_synonym\<close>s for convenience and enumeration types can be defined by the 
 standard inductive \<^theory_text>\<open>datatype\<close> definition mechanism in Isabelle, since any HOL type is admitted
-for attibute declarations. Vice-versa, document class definitions imply a corresponding HOL type 
+for attribute declarations. Vice-versa, document class definitions imply a corresponding HOL type 
 definition. \<close>
 
 figure*[fig01::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP.png''"]
        \<open> A screenshot of the integrated source with definitions ...\<close>  
-text\<open>An example for a sequence of (Isabelle-formula-) texts, their ontological declarations as 
-\<open>"definition"\<close>s in terms of the \<^verbatim>\<open>scholarly_paper\<close>-ontology and their type-conform referencing 
+text\<open>An example for a sequence of (Isabelle-formula-)texts, their ontological declarations as 
+\<^typ>\<open>definition\<close>s in terms of the \<^verbatim>\<open>scholarly_paper\<close>-ontology and their type-conform referencing 
 later is shown in \<^figure>\<open>fig01\<close> in its presentation as the integrated source.
 
 Note that the use in the ontology-generated antiquotation \<^theory_text>\<open>@{definition X4}\<close>
 is type-checked; referencing \<^verbatim>\<open>X4\<close> as \<^theory_text>\<open>theorem\<close> would be a type-error and be reported directly
 by \<^isadof> in Isabelle/jEdit. Note further, that if referenced correctly wrt. the sub-typing 
-hierarchy makes \<^verbatim>\<open>X4\<close> \<^emph>\<open>navigable\<close> in Isabelle/jedit; a click will cause the IDE to present the 
+hierarchy makes \<^verbatim>\<open>X4\<close> \<^emph>\<open>navigable\<close> in Isabelle/jEdit; a click will cause the IDE to present the 
 defining occurrence of this text-element in the integrated source.
 
 % TODO:
@@ -407,14 +407,13 @@ defining occurrence of this text-element in the integrated source.
 
 Note, further, how \<^isadof>-commands like \<^theory_text>\<open>text*\<close> interact with standard Isabelle document
 antiquotations described in the Isabelle Isar Reference Manual in Chapter 4.2 in great detail. 
-We refrain ourselves here to briefly describe three freeform antiquotations used her in this text:
+We refrain ourselves here to briefly describe three freeform antiquotations used in this text:
 
 \<^item>  the freeform term antiquotation, also called \<^emph>\<open>cartouche\<close>, written by
-   \<open>@{cartouche [style-parms] \<open>. . .\<close>\<close> or just by \<open>\<open>...\<close>\<close> if the list of style parameters
+   \<open>@{cartouche [style-parms] \<open>...\<close>}\<close> or just by \<open>\<open>...\<close>\<close> if the list of style parameters
    is empty,
-\<^item>  the freeform antiquotation for theory fragments written \<open>@{theory_text [style-parms] \<open>...\<close>\<close>
-   or just \<^verbatim>\<open>\<^theory_text> \<open>...\<close>\<close>  if the list of style parameters
-   is empty,  
+\<^item>  the freeform antiquotation for theory fragments written \<open>@{theory_text [style-parms] \<open>...\<close>}\<close>
+   or just \<^verbatim>\<open>\<^theory_text>\<close>\<open>\<open>...\<close>\<close> if the list of style parameters is empty,  
 \<^item>  the freeform antiquotations for verbatim, emphasized, bold, or footnote text elements.
 \<close>
 
@@ -423,9 +422,10 @@ figure*[fig02::figure,spawn_columns=False,relative_width="95",src="''figures/def
 
 text\<open>
 \<^isadof> text-elements such as \<^theory_text>\<open>text*\<close> allow to have such standard term-antiquotations inside their
-text, permitting to give the whole text entity a formal, referentiable status with typed meta-
-information attached to it that may be used for presentation issues, search, or other technical
-purposes. The corresponding output of this snippet in the integrated source is shown in \<^figure>\<open>fig02\<close>. 
+text, permitting to give the whole text entity a formal, referentiable status with typed
+meta-information attached to it that may be used for presentation issues, search,
+or other technical purposes.
+The corresponding output of this snippet in the integrated source is shown in \<^figure>\<open>fig02\<close>. 
 \<close>
 
 
@@ -443,10 +443,10 @@ doc_class figure   = text_section +
 \<close>}
 \<close>
 figure*[fig_figures::figure,spawn_columns=False,relative_width="85",src="''figures/Dogfood-figures''"]
-       \<open> Declaring figures in the integrated source \ldots \<close>
+       \<open> Declaring figures in the integrated source.\<close>
 
 text\<open> 
-  The document class \<^boxed_theory_text>\<open>figure\<close> (supported by the \<^isadof> command abbreviation
+  The document class \<^typ>\<open>figure\<close> (supported by the \<^isadof> command abbreviation
   \<^boxed_theory_text>\<open>figure*\<close>) makes it possible to express the pictures and diagrams 
   as shown in \<^figure>\<open>fig_figures\<close>, which presents its own representation in the 
   integrated source as screenshot.\<close>
@@ -459,14 +459,11 @@ text\<open>
   doc_class article = 
      style_id :: string                <= "''LNCS''"
      version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
-     where "(title       ~~ \<lbrakk>subtitle\<rbrakk>   ~~ \<lbrace>author\<rbrace>$^+$+  ~~  abstract    ~~
-               introduction ~~  \<lbrace>technical || example\<rbrace>$^+$  ~~  conclusion ~~  
-               bibliography)"
+     accepts "(title ~~ \<lbrakk>subtitle\<rbrakk> ~~ \<lbrace>author\<rbrace>\<^sup>+ ~~ abstract ~~ \<lbrace>introduction\<rbrace>\<^sup>+
+                   ~~ \<lbrace>background\<rbrace>\<^sup>* ~~ \<lbrace>technical || example \<rbrace>\<^sup>+ ~~ \<lbrace>conclusion\<rbrace>\<^sup>+
+                   ~~ bibliography ~~ \<lbrace>annex\<rbrace>\<^sup>* )"
   \<close>}\<close>
 
-  (*  % TODO:
-      % Update to the new implementation.
-      % where is deprecated and the new implementation uses accepts and rejects. *)
 text\<open>
   In a integrated document source, the body of the content can be paranthesized into:
 
@@ -478,7 +475,7 @@ text\<open>
 
 which signals to \<^isadof> begin and end of the part of the integrated source 
 in which the text-elements instances are expected to appear in the textual ordering 
-defined by \<^theory_text>\<open>article\<close>.
+defined by \<^typ>\<open>article\<close>.
 \<close>
 
 
@@ -493,10 +490,10 @@ side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-
                       caption="''Hyperlink to class-definition.''",relative_width="48",
                       src="''figures/Dogfood-IV-jumpInDocCLass''",anchor2="''fig:Dogfood-V-attribute''",
                       caption2="''Exploring an attribute.''",relative_width2="47",
-                      src2="''figures/Dogfood-III-bgnd-text_section''"]\<open>Navigation via generated hyperlinks.\<close>
+                      src2="''figures/Dogfood-V-attribute''"]\<open>Navigation via generated hyperlinks.\<close>
 text\<open> 
   From these class definitions, \<^isadof> also automatically generated editing 
-  support for Isabelle/jedit. In \autoref{fig-Dogfood-II-bgnd1} and 
+  support for Isabelle/jEdit. In \autoref{fig-Dogfood-II-bgnd1} and 
   \autoref{fig-bgnd-text_section} we show how hovering over links permits to explore its 
   meta-information. Clicking on a document class identifier permits to hyperlink into the 
   corresponding class definition (\autoref{fig:Dogfood-IV-jumpInDocCLass}); hovering over an 
@@ -509,7 +506,7 @@ figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-
 
 text\<open> 
 An ontological reference application in @{figure "figDogfoodVIlinkappl"}: the 
-ontology-dependant antiquotation \<^boxed_theory_text>\<open>@ {example ...}\<close> refers to the corresponding 
+ontology-dependant antiquotation \<^boxed_theory_text>\<open>@{example ...}\<close> refers to the corresponding 
 text-elements. Hovering allows for inspection, clicking for jumping to the definition.  If the 
 link does not exist or  has a non-compatible type, the text is not validated,\<^ie>, Isabelle/jEdit
 will respond with an error.\<close>
@@ -557,10 +554,10 @@ text\<open>
   The \<^isadof> distribution contains a small example  using the ontology ``CENELEC\_50128'' in 
   the directory \nolinkurl{examples/CENELEC_50128/mini_odo/}. You can inspect/edit the 
   integrated source example by either 
-  \<^item> starting Isabelle/jedit using your graphical user interface (\<^eg>, by clicking on the 
+  \<^item> starting Isabelle/jEdit using your graphical user interface (\<^eg>, by clicking on the 
     Isabelle-Icon provided by the Isabelle installation) and loading the file 
     \nolinkurl{examples/CENELEC_50128/mini_odo/mini_odo.thy}.
-  \<^item> starting Isabelle/jedit from the command line by calling:
+  \<^item> starting Isabelle/jEdit from the command line by calling:
 
 @{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë 
   isabelle jedit examples/CENELEC_50128/mini_odo/mini_odo.thy \<close>}
@@ -773,7 +770,7 @@ of ontologies and document templates (see @{docitem (unchecked) \<open>isadof_on
 
 Restricting the use of \<^LaTeX> has two advantages: first, \<^LaTeX> commands can circumvent the 
 consistency checks of \<^isadof> and, hence, only if no \<^LaTeX> commands are used, \<^isadof> can 
-ensure that a document that does not generate any error messages in Isabelle/jedit also generated
+ensure that a document that does not generate any error messages in Isabelle/jEdit also generated
 a PDF document. Second, future version of \<^isadof> might support different targets for the 
 document generation (\<^eg>, HTML) which, naturally, are only available to documents not using 
 too complex native \<^LaTeX>-commands. 
