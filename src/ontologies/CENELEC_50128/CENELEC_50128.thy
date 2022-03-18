@@ -373,10 +373,6 @@ doc_class FnI = requirement +
    is_concerned :: "role set" <= "UNIV"    
    type_synonym functions_and_interfaces = FnI
 
-doc_class AC = requirement +
-   is_concerned :: "role set" <= "UNIV" 
-
-type_synonym application_conditions = AC
 
 text\<open>The category \<^emph>\<open>assumption\<close> is used for domain-specific assumptions. It has formal, semi-formal 
       and informal sub-categories. They have to be  tracked and discharged by appropriate 
@@ -386,6 +382,12 @@ datatype ass_kind = informal | semiformal | formal
   
 doc_class assumption = requirement +
      assumption_kind :: ass_kind <= informal 
+
+doc_class AC = assumption +
+   is_concerned :: "role set" <= "UNIV" 
+
+type_synonym application_conditions = AC
+
 
 text\<open> The category \<^emph>\<open>exported constraint\<close> (or \<^emph>\<open>EC\<close>  for short) is used for formal application 
 conditions; They represent in particular \<^emph>\<open>derived constraints\<close>, i.e. constraints that arrive
