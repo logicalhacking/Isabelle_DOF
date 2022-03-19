@@ -2,6 +2,26 @@ pipeline:
   build:
     image: docker.io/logicalhacking/isabelle2021
     commands:
+      - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO_NAME/$CI_BRANCH/$CI_BUILD_NUMBER/
+      - mkdir -p $ARTIFACT_DIR
+      - export `isabelle getenv ISABELLE_HOME_USER`
       - ./install
-      - isabelle build -D .
+      - isabelle build -D . -o browser_info
+      - cp -r $ISABELLE_HOME_USER/browser_info $ARTIFACT_DIR
+      - cp output/document.pdf $ARTIFACT_DIR
+      - cd $ARTIFACT_DIR
+      - cd ..
+      - ln -s * latest
+  deploy:
+    image: docker.io/drillster/drone-rsync
+    settings:
+      hosts: [ "ci.logicalhacking.com"]
+      port: 22
+      source: .artifacts/$CI_REPO_NAME/*
+      target: $CI_REPO_NAME
+      include: [ "**.*"]
+      key:
+        from_secret: artifacts_ssh
+      user: artifacts
+
       
