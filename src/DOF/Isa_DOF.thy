@@ -2094,17 +2094,6 @@ end
 end
 \<close>
 
-
-ML\<open> (* Setting in thy_output.ML a parser for the syntactic handling of the meta-informations of
-       text elements - so text*[m<meta-info>]\<open> ... dfgdfg .... \<close> *)
-                 
-val _ = Thy_Output.set_meta_args_parser
-            (fn thy => (Scan.optional (Document_Source.improper 
-                                       |--   ODL_Command_Parser.attributes 
-                                       >>    ODL_LTX_Converter.meta_args_2_string thy) "")); \<close>
-
-
-
  
 section\<open> Syntax for Ontological Antiquotations (the '' View'' Part II) \<close>
 
