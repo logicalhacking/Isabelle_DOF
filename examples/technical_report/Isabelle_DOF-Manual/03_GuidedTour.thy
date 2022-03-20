@@ -74,7 +74,7 @@ text\<open>
   Modern Linux distribution will allow you to install \<^TeXLive> using their respective package 
   managers. On a modern Debian system or a Debian derivative (\<^eg>, Ubuntu), the following command 
   should install all required \<^LaTeX> packages:
-@{boxed_bash [display]\<open>ë\prompt{}ë sudo aptitude install texlive-latex-extra texlive-fonts-extra\<close>}
+@{boxed_bash [display]\<open>ë\prompt{}ë sudo aptitude install texlive-full\<close>}
 \<close>
 
 subsubsection*[isadof::technical]\<open>Installing \<^isadof>\<close>
@@ -536,10 +536,13 @@ is unfortunately not always so consistent as one might expect. This can be a nui
 users, but is again a consequence that we build on existing technology that has been developed
 over decades. 
 
-At times, that causes idiosyncrasy like in: 
+At times, that causes idiosyncrasy like in: \<close>
+(* TODO: Check the first antiquotation example creating ill-defined LaTeX. 
 \<^item> text-antiquotations  
-  \<^theory_text>\<open> \<open>\<^thm>"normally_behaved_distance_function_def"\<close>\<close> and \<^theory_text>\<open>\<open>@{thm "srac\<^sub>1_def"}\<close>\<close> (while
+   \<^theory_text>\<open> \<open>\<^thm>"normally_behaved_distance_function_def"\<close> \<close>  and \<^theory_text>\<open>\<open>@{thm "srac\<^sub>1_def"}\<close>\<close> (while
    \<^theory_text>\<open> @{thm \<open>srac\<^sub>1_def\<close>}\<close> fails ...) 
+*)
+text\<open>
 \<^item> commands \<^theory_text>\<open>thm fundamental_theorem_of_calculus\<close> and \<^theory_text>\<open>thm "fundamental_theorem_of_calculus"\<close>
   or \<^theory_text>\<open>lemma "H"\<close> and \<^theory_text>\<open>lemma \<open>H\<close>\<close> and  \<^theory_text>\<open>lemma H\<close> 
 \<^item> string expressions \<open>''abc'' @ ''cd''\<close> and equivalent \<open>\<open>abc\<close> @ \<open>cd\<close>\<close>;
