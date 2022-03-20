@@ -1,0 +1,12 @@
+title = Isabelle/DOF
+module = $ISABELLE_HOME_USER/DOF/isabelle_dof.jar
+no_build = false
+requirements = \
+  env:ISABELLE_SCALA_JAR
+sources = \
+  src/scala/dof_document_build.scala \
+  src/scala/dof_mkroot.scala \
+  src/scala/dof_tools.scala
+services = \
+  isabelle_dof.DOF_Tools \
+  isabelle_dof.DOF_Document_Build$Engine
