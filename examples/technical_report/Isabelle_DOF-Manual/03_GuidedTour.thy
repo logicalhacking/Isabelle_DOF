@@ -552,7 +552,11 @@ text\<open>At times, this causes idiosyncrasies like the ones cited in the follo
   not equivalent \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen''A \isasymlongrightarrow\ B''\isasymclose\<close> (fails). 
 \<close>
 
-text\<open>We advise users to experiment with different notation variants.\<close>
+text\<open>We advise users to experiment with different notation variants.
+Note, further, that the Isabelle \<^latex>\<open>@\{cite ...\}\<close>-text-anti-quotation makes its checking
+on the level of generated \<^verbatim>\<open>.aux\<close>-files, which are not necessarily up-to-date. Ignoring the PIDE
+error-message and compiling a with a consistent bibtex usually makes disappear this behaviour. 
+\<close>
 
 section*[cenelec_onto::example]\<open>Writing Certification Documents (CENELEC\_50128)\<close>
 subsection\<open>The CENELEC 50128 Example\<close>
