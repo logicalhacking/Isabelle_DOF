@@ -544,7 +544,7 @@ text\<open>At times, this causes idiosyncrasies like the ones cited in the follo
   (while  \<^theory_text>\<open>text\<close>\<^latex>\<open>\isasymopen @\{\textbf{thm} \isasymopen srac$_1$\_def \isasymclose\}\isasymclose\<close> fails)
 \<^item> commands \<^theory_text>\<open>thm fundamental_theorem_of_calculus\<close> and
   \<^theory_text>\<open>thm\<close>\<^latex>\<open>"fundamental\_theorem\_of\_calculus"\<close>
-  or \<^theory_text>\<open>lemma\<close> latex>\<open>"H"\<close> and \<^theory_text>\<open>lemma \<open>H\<close>\<close> and  \<^theory_text>\<open>lemma H\<close> 
+  or \<^theory_text>\<open>lemma\<close> \<^latex>\<open>"H"\<close> and \<^theory_text>\<open>lemma \<open>H\<close>\<close> and  \<^theory_text>\<open>lemma H\<close> 
 \<^item> string expressions  \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen ''abc'' @ ''cd''\isasymclose \<close> and equivalent
   \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen \isasymopen abc\isasymclose\ @ \isasymopen cd\isasymclose\isasymclose\<close>;
   but 
