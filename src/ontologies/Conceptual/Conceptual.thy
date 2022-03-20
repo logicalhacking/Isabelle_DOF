@@ -136,7 +136,7 @@ text\<open>Now, we can use these definitions in order to generate code for these
 Note, however, that not everything that we can write in an invariant (basically: HOL) is executable,
 or even compilable by the code generator setup:\<close>
 
-ML\<open> val cr_inv_code = @{code "cr_inv"} \<close> \<comment>\<open>works albeit thm is abstract ...\<close>
+ML\<open> val cr_inv_code = @{code "cr_inv"} \<close> \<comment> \<open>works albeit thm is abstract ...\<close>
 text\<open>while in :\<close>
 (* ML\<open> val br_inv_code = @{code "br_inv"} \<close> \<comment>\<open>this does not work ...\<close> *)
 
@@ -144,7 +144,7 @@ text\<open>... the compilation fails due to the fact that nothing prevents the u
      to define an infinite relation between \<^typ>\<open>A\<close> and  \<^typ>\<open>C\<close>. However, the alternative
 variant: \<close>
 
-ML\<open> val br'_inv_code = @{code "br'_inv"} \<close> \<comment>\<open>does work ...\<close>
+ML\<open> val br'_inv_code = @{code "br'_inv"} \<close> \<comment> \<open>does work ...\<close>
 
 text\<open>... is compilable ...\<close>
 
