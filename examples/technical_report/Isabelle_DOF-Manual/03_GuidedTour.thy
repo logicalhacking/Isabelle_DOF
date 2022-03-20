@@ -74,7 +74,7 @@ text\<open>
   Modern Linux distribution will allow you to install \<^TeXLive> using their respective package 
   managers. On a modern Debian system or a Debian derivative (\<^eg>, Ubuntu), the following command 
   should install all required \<^LaTeX> packages:
-@{boxed_bash [display]\<open>ë\prompt{}ë sudo aptitude install texlive-latex-extra texlive-fonts-extra\<close>}
+@{boxed_bash [display]\<open>ë\prompt{}ë sudo aptitude install texlive-full\<close>}
 \<close>
 
 subsubsection*[isadof::technical]\<open>Installing \<^isadof>\<close>
