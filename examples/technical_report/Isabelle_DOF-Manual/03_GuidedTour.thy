@@ -531,19 +531,27 @@ be printed with different prefixes according to their uniqueness.
 \<close>
 
 subsection*[cartouches::example]\<open>Caveat: Lexical Conventions of Cartouches, Strings, Names, ... \<close>
-text\<open>WARNING: The embedding of strings, terms, names \<^etc> as parts of commands, anti-quotations,
-is unfortunately not always so consistent as one might expect. This can be a nuisance for 
+text\<open>WARNING: The embedding of strings, terms, names \<^etc>, as parts of commands, anti-quotations,
+terms,  \<^etc>, is unfortunately not always so consistent as one might expect, when it comes
+to variants that should be lexically equivalent in principle. This can be a nuisance for
 users, but is again a consequence that we build on existing technology that has been developed
 over decades. 
-
-At times, that causes idiosyncrasy like in: 
+\<close>
+text\<open>At times, this causes idiosyncrasies like the ones cited in the following incomplete list: 
 \<^item> text-antiquotations  
-  \<^theory_text>\<open> \<open>\<^thm>"normally_behaved_distance_function_def"\<close>\<close> and \<^theory_text>\<open>\<open>@{thm "srac\<^sub>1_def"}\<close>\<close> (while
-   \<^theory_text>\<open> @{thm \<open>srac\<^sub>1_def\<close>}\<close> fails ...) 
-\<^item> commands \<^theory_text>\<open>thm fundamental_theorem_of_calculus\<close> and \<^theory_text>\<open>thm "fundamental_theorem_of_calculus"\<close>
-  or \<^theory_text>\<open>lemma "H"\<close> and \<^theory_text>\<open>lemma \<open>H\<close>\<close> and  \<^theory_text>\<open>lemma H\<close> 
-\<^item> string expressions \<open>''abc'' @ ''cd''\<close> and equivalent \<open>\<open>abc\<close> @ \<open>cd\<close>\<close>;
-  but \<open>\<open>A \<longrightarrow> B\<close>\<close> and not \<open>''A \<longrightarrow> B''\<close> \<close>
+  \<^theory_text>\<open>text\<close>\<^latex>\<open>\isasymopen\textbf{thm}"normally\_behaved\_def"\isasymclose\break\<close>  
+  versus \<^theory_text>\<open>text\<close>\<^latex>\<open>\isasymopen @\{\textbf{thm} "srac$_1$\_def"\}\isasymclose\break\<close>  
+  (while  \<^theory_text>\<open>text\<close>\<^latex>\<open>\isasymopen @\{\textbf{thm} \isasymopen srac$_1$\_def \isasymclose\}\isasymclose\<close> fails)
+\<^item> commands \<^theory_text>\<open>thm fundamental_theorem_of_calculus\<close> and
+  \<^theory_text>\<open>thm\<close>\<^latex>\<open>"fundamental\_theorem\_of\_calculus"\<close>
+  or \<^theory_text>\<open>lemma\<close> latex>\<open>"H"\<close> and \<^theory_text>\<open>lemma \<open>H\<close>\<close> and  \<^theory_text>\<open>lemma H\<close> 
+\<^item> string expressions  \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen ''abc'' @ ''cd''\isasymclose \<close> and equivalent
+  \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen \isasymopen abc\isasymclose\ @ \isasymopen cd\isasymclose\isasymclose\<close>;
+  but 
+  \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen\isasymopen A \isasymlongrightarrow\ B\isasymclose\isasymclose\ \<close>   
+  not equivalent \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen''A \isasymlongrightarrow\ B''\isasymclose\<close> (fails). 
+\<close>
+
 text\<open>We advise users to experiment with different notation variants.\<close>
 
 section*[cenelec_onto::example]\<open>Writing Certification Documents (CENELEC\_50128)\<close>
