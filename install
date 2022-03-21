@@ -189,8 +189,7 @@ install_and_register(){
     sed -i -e "s|<isadofurl>|$DOF_URL|" $ISABELLE_HOME_USER/DOF/*/*
     LTX_VERSION="$DATE $DOF_VERSION/$ISABELLE_SHORT_VERSION"
     sed -i -e "s|<isadofltxversion>|$LTX_VERSION|" $ISABELLE_HOME_USER/DOF/*/*
-    touch $ISABELLE_HOME_USER/ROOTS
-    grep -q $PWD'$' $ISABELLE_HOME_USER/ROOTS || echo "$PWD" >> $ISABELLE_HOME_USER/ROOTS 
+    $ISABELLE components -u $PWD    
 }
 
 
