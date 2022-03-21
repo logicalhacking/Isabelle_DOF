@@ -684,7 +684,7 @@ figure*[figfig5::figure, relative_width="95", src="''figures/srac-definition''"]
         \<open> Defining a \<^typ>\<open>SRAC\<close> in the integrated source ... \<close>
 
 figure*[figfig7::figure, relative_width="95", src="''figures/srac-as-es-application''"]
-        \<open> Using a "SRAC" as "EC" document element. \<close>
+        \<open> Using a \<^typ>\<open>SRAC\<close> as \<^typ>\<open>EC\<close> document element. \<close>
 text\<open> The subsequent sample in @{figure \<open>figfig5\<close>} shows the definition of a
 \<^emph>\<open>safety-related application condition\<close>, a side-condition of a theorem which 
 has the consequence that a certain calculation must be executed sufficiently fast on an embedded 
