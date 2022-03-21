@@ -160,7 +160,7 @@ Now use the following coëëmmand line to build the session:
   (scholarly\_paper) using a report layout based on the article class (\<^boxed_latex>\<open>scrartcl\<close>) of 
   the KOMA-Script bundle~@{cite "kohm:koma-script:2019"}). The directory \<^boxed_bash>\<open>myproject\<close> 
   contains the \<^isadof>-setup for your  new document. To check the document formally, including the 
-  generation of the document in PDF, you only need to execute
+  generation of the document in \<^pdf>, you only need to execute
 
 @{boxed_bash [display]\<open>ë\prompt{myproject}ë  isabelle build -d . myproject \<close>}
 
@@ -228,10 +228,57 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
 
 \<close>
 
+section*[writing_doc::technical]\<open>Writing Documents: General Remarks\<close>
+
+subsection*[naming::example]\<open>Name-Spaces, Long- and Short-Names\<close>
+text\<open>\<^isadof> is built upon the name space and lexical conventions of Isabelle. Long-names were 
+composed from a name of the session, the name of the theory, and a sequence of local names referring
+to, \<^eg>, nested specification constructs that were used to identify types, constant symbols, 
+definitions, \<^etc>. The general format of a long-name is 
+
+ \<^boxed_theory_text>\<open> session_name.theory_name.local_name. ... .local_name\<close>
+
+By lexical conventions, theory-names must be unique inside a session
+(and session names must be unique too), such that long-names are unique by construction.
+There are actually different name categories that form a proper name space, \<^eg>, the name space for
+constant symbols and type symbols are distinguished.
+
+Isabelle identifies names already with the shortest suffix that is unique in the global 
+context and in the appropriate name category. This also holds for pretty-printing, which can
+at times be confusing since names stemming from the same specification construct may
+be printed with different prefixes according to their uniqueness.
+\<close>
+
+subsection*[cartouches::example]\<open>Caveat: Lexical Conventions of Cartouches, Strings, Names, ... \<close>
+text\<open>WARNING: The embedding of strings, terms, names \<^etc>, as parts of commands, anti-quotations,
+terms,  \<^etc>, is unfortunately not always so consistent as one might expect, when it comes
+to variants that should be lexically equivalent in principle. This can be a nuisance for
+users, but is again a consequence that we build on existing technology that has been developed
+over decades. 
+\<close>
+
+text\<open>At times, this causes idiosyncrasies like the ones cited in the following incomplete list: 
+\<^item> text-antiquotations
+  \<^theory_text>\<open>text\<close>\<^latex>\<open>\isasymopen\textbf{thm} "normally\_behaved\_def"\isasymclose\ \<close>  
+  versus \<^theory_text>\<open>text\<close>\<^latex>\<open>\isasymopen @\{\textbf{thm} "srac$_1$\_def"\}\isasymclose\ \<close>  
+  (while
+  \<^theory_text>\<open>text\<close>\<^latex>\<open>\isasymopen @\{\textbf{thm} \isasymopen srac$_1$\_def \isasymclose\}\isasymclose\ \<close>
+  fails)
+\<^item> commands \<^theory_text>\<open>thm fundamental_theorem_of_calculus\<close> and
+  \<^theory_text>\<open>thm\<close>\<^latex>\<open> "fundamental\_theorem\_of\_calculus"\<close>
+  or \<^theory_text>\<open>lemma\<close> \<^latex>\<open>"H"\<close> and \<^theory_text>\<open>lemma \<open>H\<close>\<close> and  \<^theory_text>\<open>lemma H\<close> 
+\<^item> string expressions  \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen ''abc'' @ ''cd''\isasymclose\ \<close> and equivalent
+  \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen \isasymopen abc\isasymclose\ @ \isasymopen cd\isasymclose\isasymclose\<close>;
+  but 
+  \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen\isasymopen A \isasymlongrightarrow\ B\isasymclose\isasymclose\ \<close>   
+  not equivalent to \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen''A \isasymlongrightarrow\ B''\isasymclose\ \<close>
+  which fails. 
+\<close>
+
 section*[scholar_onto::example]\<open>Writing Academic Publications in \<^boxed_theory_text>\<open>scholarly_paper\<close>\<close>  
 subsection\<open>Writing Academic Papers\<close>
 text\<open> 
-  The ontology \<^boxed_theory_text>\<open>scholarly_paper\<close>
+  The ontology \<^verbatim>\<open>scholarly_paper\<close>
   \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
   academic/scientific papers, with a slight bias towards texts in the domain of mathematics and engineering. 
   We explain first the principles of its underlying ontology, and then we present two ``real'' 
@@ -264,7 +311,7 @@ text\<open>
 \<close> 
 
 
-text\<open>    You can build the PDF-document at the command line by calling:
+text\<open>    You can build the \<^pdf>-document at the command line by calling:
 @{boxed_bash [display] \<open>ë\prompt{}ë isabelle build -d . 2020-iFM-csp \<close>}
 \<close>
 
@@ -331,7 +378,7 @@ conforming to \<^verbatim>\<open>scholarly_paper\<close>:
 
 text\<open> The rest of the ontology introduces concepts for \<^typ>\<open>introduction\<close>, \<^typ>\<open>conclusion\<close>,
 \<^typ>\<open>related_work\<close>, \<^typ>\<open>bibliography\<close> etc. More details can be found in \<^verbatim>\<open>scholarly_paper\<close>
-contained ion the theory \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close>. \<close>
+contained in the theory \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close>. \<close>
 
 subsection\<open>Writing Academic Publications: A Freeform Mathematics Text \<close>
 text*[csp_paper_synthesis::technical, main_author = "Some bu"]\<open>We present a typical mathematical
@@ -379,7 +426,7 @@ doc_class "theorem"     = math_content +
 \<close>}\<close>
 
 
-text\<open>The class \<^verbatim>\<open>technical\<close> regroups a number of text-elements that contain typical 
+text\<open>The class \<^typ>\<open>technical\<close> regroups a number of text-elements that contain typical 
 ``technical content" in mathematical or engineering papers: code, definitions, theorems, 
 lemmas, examples. From this class, the more stricter class of @{typ \<open>math_content\<close>} is derived,
 which is grouped into @{typ "definition"}s and @{typ "theorem"}s (the details of these
@@ -418,7 +465,7 @@ We refrain ourselves here to briefly describe three freeform antiquotations used
 \<close>
 
 figure*[fig02::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP-pdf.png''"]
-       \<open> ... and the corresponding pdf-oputput.\<close>  
+       \<open> ... and the corresponding \<^pdf>-output.\<close>  
 
 text\<open>
 \<^isadof> text-elements such as \<^theory_text>\<open>text*\<close> allow to have such standard term-antiquotations inside their
@@ -488,8 +535,10 @@ side_by_side_figure*[exploring::side_by_side_figure,anchor="''fig-Dogfood-II-bgn
 
 side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-jumpInDocCLass''",
                       caption="''Hyperlink to class-definition.''",relative_width="48",
-                      src="''figures/Dogfood-IV-jumpInDocCLass''",anchor2="''fig:Dogfood-V-attribute''",
-                      caption2="''Exploring an attribute.''",relative_width2="47",
+                      src="''figures/Dogfood-IV-jumpInDocCLass''",
+                      anchor2="''fig:Dogfood-V-attribute''",
+                      caption2="''Exploring an attribute (hyperlinked to the class).''",
+                      relative_width2="47",
                       src2="''figures/Dogfood-V-attribute''"]\<open>Navigation via generated hyperlinks.\<close>
 text\<open> 
   From these class definitions, \<^isadof> also automatically generated editing 
@@ -501,56 +550,16 @@ text\<open>
   \autoref{fig:Dogfood-V-attribute}) shows its type.
 \<close>
 
-figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-V-attribute''"]
-       \<open> Exploring an attribute (hyperlinked to the class). \<close> 
+figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-VI-linkappl.png''"]
+       \<open>Exploring an ontological reference.\<close> 
 
 text\<open> 
 An ontological reference application in @{figure "figDogfoodVIlinkappl"}: the 
-ontology-dependant antiquotation \<^boxed_theory_text>\<open>@{example ...}\<close> refers to the corresponding 
-text-elements. Hovering allows for inspection, clicking for jumping to the definition.  If the 
-link does not exist or  has a non-compatible type, the text is not validated,\<^ie>, Isabelle/jEdit
-will respond with an error.\<close>
-
-subsection*[naming::example]\<open>Name-Spaces, Long- and Short-Names\<close>
-text\<open>\<^dof> is built upon the name space and lexical conventions of Isabelle. Long-names were 
-composed from a name of the session, the name of the theory, and a sequence of local names referring
-to, \<^eg>, nested specification constructs that were used to identify types, constant symbols, 
-definitions, \<^etc>. The general format of a long-name is 
-
- \<^boxed_theory_text>\<open> session_name.theory_name.local_name. ... .local_naame\<close>
-
-By lexical conventions, and theory-names must be unique inside a session
-(and session names must be unique too), such that long-names are unique by construction.
-There are actually different name categories that form a proper name space, \<^eg>, the name space for
-constant symbols and type symbols are distinguished.
-
-Isabelle identifies names already with the shortest suffix that is unique in the global 
-context and in the appropriate name category. This also holds for pretty-printing, which can
-at times be confusing since names stemming from the same specification construct may
-be printed with different prefixes according to their uniqueness.
-\<close>
-
-subsection*[cartouches::example]\<open>Caveat: Lexical Conventions of Cartouches, Strings, Names, ... \<close>
-text\<open>WARNING: The embedding of strings, terms, names \<^etc>, as parts of commands, anti-quotations,
-terms,  \<^etc>, is unfortunately not always so consistent as one might expect, when it comes
-to variants that should be lexically equivalent in principle. This can be a nuisance for
-users, but is again a consequence that we build on existing technology that has been developed
-over decades. 
-\<close>
-text\<open>At times, this causes idiosyncrasies like the ones cited in the following incomplete list: 
-\<^item> text-antiquotations  
-  \<^theory_text>\<open>text\<close>\<^latex>\<open>\isasymopen\textbf{thm}"normally\_behaved\_def"\isasymclose\break\<close>  
-  versus \<^theory_text>\<open>text\<close>\<^latex>\<open>\isasymopen @\{\textbf{thm} "srac$_1$\_def"\}\isasymclose\break\<close>  
-  (while  \<^theory_text>\<open>text\<close>\<^latex>\<open>\isasymopen @\{\textbf{thm} \isasymopen srac$_1$\_def \isasymclose\}\isasymclose\<close> fails)
-\<^item> commands \<^theory_text>\<open>thm fundamental_theorem_of_calculus\<close> and
-  \<^theory_text>\<open>thm\<close>\<^latex>\<open>"fundamental\_theorem\_of\_calculus"\<close>
-  or \<^theory_text>\<open>lemma\<close> \<^latex>\<open>"H"\<close> and \<^theory_text>\<open>lemma \<open>H\<close>\<close> and  \<^theory_text>\<open>lemma H\<close> 
-\<^item> string expressions  \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen ''abc'' @ ''cd''\isasymclose \<close> and equivalent
-  \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen \isasymopen abc\isasymclose\ @ \isasymopen cd\isasymclose\isasymclose\<close>;
-  but 
-  \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen\isasymopen A \isasymlongrightarrow\ B\isasymclose\isasymclose\ \<close>   
-  not equivalent \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen''A \isasymlongrightarrow\ B''\isasymclose\<close> (fails). 
-\<close>
+ontology-dependant antiquotation \<^boxed_theory_text>\<open>@{example \<open>ex1\<close>}\<close> refers to the corresponding 
+text-element \<^boxed_theory_text>\<open>ex1\<close>.
+Hovering allows for inspection, clicking for jumping to the definition.
+If the  link does not exist or  has a non-compatible type, the text is not validated, \<^ie>,
+Isabelle/jEdit will respond with an error.\<close>
 
 text\<open>We advise users to experiment with different notation variants.
 Note, further, that the Isabelle \<^latex>\<open>@\{cite ...\}\<close>-text-anti-quotation makes its checking
@@ -558,10 +567,10 @@ on the level of generated \<^verbatim>\<open>.aux\<close>-files, which are not n
 error-message and compiling a with a consistent bibtex usually makes disappear this behaviour. 
 \<close>
 
-section*[cenelec_onto::example]\<open>Writing Certification Documents (CENELEC\_50128)\<close>
+section*[cenelec_onto::example]\<open>Writing Certification Documents \<^boxed_theory_text>\<open>CENELEC_50128\<close>\<close>
 subsection\<open>The CENELEC 50128 Example\<close>
 text\<open> 
-  The ontology ``CENELEC\_50128''\index{ontology!CENELEC\_50128} is a small ontology modeling 
+  The ontology \<^verbatim>\<open>CENELEC_50128\<close>\index{ontology!CENELEC\_50128} is a small ontology modeling 
   documents for a certification following CENELEC 50128~@{cite "boulanger:cenelec-50128:2015"}.
   The \<^isadof> distribution contains a small example  using the ontology ``CENELEC\_50128'' in 
   the directory \nolinkurl{examples/CENELEC_50128/mini_odo/}. You can inspect/edit the 
@@ -575,11 +584,12 @@ text\<open>
   isabelle jedit examples/CENELEC_50128/mini_odo/mini_odo.thy \<close>}
 \<close>
 text\<open>\<^noindent> Finally, you
-  \<^item>   can build the PDF-document by calling:
-@{boxed_bash [display]\<open>ë\prompt{}ë isabelle build mini_odo \<close>}
+  \<^item>   can build the \<^pdf>-document by calling:
+@{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë isabelle build mini_odo \<close>}
 \<close>
  
 subsection\<open>Modeling CENELEC 50128\<close>
+
 text\<open>
   Documents to be provided in formal certifications (such as CENELEC 
   50128~@{cite "boulanger:cenelec-50128:2015"} or Common Criteria~@{cite "cc:cc-part3:2006"}) can 
@@ -605,13 +615,6 @@ text\<open>
 @{boxed_theory_text [display]\<open>
 doc_class requirement = long_name :: "string option"
 
-doc_class requirement_analysis = no :: "nat"
-   where "requirement_item +"
-(*
-% TODO:
-% Update to the new implementation.
-% where is deprecated and the new implementation uses accepts and rejects. 
-*)
 doc_class hypothesis = requirement +
       hyp_type :: hyp_type <= physical  (* default *)
   
@@ -623,31 +626,31 @@ doc_class assumption = requirement +
 
 Such ontologies can be enriched by larger explanations and examples, which may help
 the team of engineers substantially when developing the central document for a certification, 
-like an explication of what is precisely the difference between an \<^emph>\<open>hypothesis\<close> and an 
-\<^emph>\<open>assumption\<close> in the context of the evaluation standard. Since the PIDE makes for each 
+like an explication of what is precisely the difference between an \<^typ>\<open>hypothesis\<close> and an 
+\<^typ>\<open>assumption\<close> in the context of the evaluation standard. Since the PIDE makes for each 
 document class its definition available by a simple mouse-click, this kind on meta-knowledge 
 can be made far more accessible during the document evolution.
 
-For example, the term of category \<^emph>\<open>assumption\<close> is used for domain-specific assumptions. 
-It has formal, semi-formal and informal sub-categories. They have to be 
+For example, the term of category \<^typ>\<open>assumption\<close> is used for domain-specific assumptions. 
+It has \<^const>\<open>formal\<close>, \<^const>\<open>semiformal\<close> and \<^const>\<open>informal\<close> sub-categories. They have to be 
 tracked and discharged by appropriate validation procedures within a 
-certification process, be it by test or proof. It is different from a hypothesis, which is
+certification process, be it by test or proof. It is different from a \<^typ>\<open>hypothesis\<close>, which is
 globally assumed and accepted.
 
-In the sequel, the category \<^emph>\<open>exported constraint\<close> (or \<^emph>\<open>ec\<close> for short)
+In the sequel, the category \<^typ>\<open>exported_constraint\<close> (or \<^typ>\<open>EC\<close> for short)
 is used for formal assumptions, that arise during the analysis,
 design or implementation and have to be tracked till the final
 evaluation target, and discharged by appropriate validation procedures 
 within the certification process, be it by test or proof.  A particular class of interest 
-is the category \<^emph>\<open>safety related application condition\<close> (or \<^emph>\<open>SRAC\<close> 
-for short) which is used for \<^emph>\<open>ec\<close>'s that establish safety properties
+is the category \<^typ>\<open>safety_related_application_condition\<close> (or \<^typ>\<open>SRAC\<close> 
+for short) which is used for \<^typ>\<open>EC\<close>'s that establish safety properties
 of the evaluation target. Their traceability throughout the certification
 is therefore particularly critical. This is naturally modeled as follows:
 @{boxed_theory_text [display]\<open>  
-doc_class ec = assumption  +
+doc_class EC = assumption  +
      assumption_kind :: ass_kind <= (*default *) formal
                         
-doc_class SRAC = ec  +
+doc_class SRAC = EC  +
      assumption_kind :: ass_kind <= (*default *) formal
 \<close>}
 
@@ -661,45 +664,40 @@ text*[ass123::SRAC]\<open>
 \<close>
 \<close>}
 
-This will be shown in the PDF as follows:
+This will be shown in the \<^pdf> as follows:
 \<close>
 text*[ass123::SRAC] \<open> The overall sampling frequence of the odometer
 subsystem is therefore 14 khz, which includes sampling, computing and
 result communication times \ldots \<close>
 
-text\<open>Note that this pdf-output is the result of a specific setup for "SRAC"s.\<close>
+text\<open>Note that this \<^pdf>-output is the result of a specific setup for \<^typ>\<open>SRAC\<close>s.\<close>
 
 subsection*[ontopide::technical]\<open>Editing Support for CENELEC 50128\<close>  
 figure*[figfig3::figure,relative_width="95",src="''figures/antiquotations-PIDE''"]
 \<open> Standard antiquotations referring to theory elements.\<close>
 text\<open> The corresponding view in @{docitem  \<open>figfig3\<close>} shows core part of a document 
-conforming to the CENELEC 50128 ontology. The first sample shows standard Isabelle antiquotations 
+conforming to the \<^verbatim>\<open>CENELEC_50128\<close> ontology. The first sample shows standard Isabelle antiquotations 
 @{cite "wenzel:isabelle-isar:2020"} into formal entities of a theory. This way, the informal parts 
 of a document get ``formal content'' and become more robust under change.\<close>
 
 figure*[figfig5::figure, relative_width="95", src="''figures/srac-definition''"]
-        \<open> Defining a "SRAC" in the integrated source \ldots \<close>
-text\<open>
-TODO:
-The screenshot (figures/srac-definition) of the figure figfig5 should be updated
-to have a SRAC type in uppercase.
-\<close>
+        \<open> Defining a \<^typ>\<open>SRAC\<close> in the integrated source ... \<close>
 
 figure*[figfig7::figure, relative_width="95", src="''figures/srac-as-es-application''"]
-        \<open> Using a "SRAC" as "EC" document element. \<close>
-text\<open> The subsequent sample in @{figure \<open>figfig5\<close>} shows the definition of an
+        \<open> Using a \<^typ>\<open>SRAC\<close> as \<^typ>\<open>EC\<close> document element. \<close>
+text\<open> The subsequent sample in @{figure \<open>figfig5\<close>} shows the definition of a
 \<^emph>\<open>safety-related application condition\<close>, a side-condition of a theorem which 
 has the consequence that a certain calculation must be executed sufficiently fast on an embedded 
 device. This condition can not be established inside the formal theory but has to be 
 checked by system integration tests. Now we reference in @{figure  \<open>figfig7\<close>} this 
 safety-related condition; however, this happens in a context where general \<^emph>\<open>exported constraints\<close> 
-are listed. \<^isadof>'s checks establish that this is legal in the given ontology. 
+are listed. \<^isadof>'s checks and establishes that this is legal in the given ontology. 
 \<close>    
 
 
 section*[tech_onto::example]\<open>Writing Technical Reports in \<^boxed_theory_text>\<open>technical_report\<close>\<close>  
 text\<open>While it is perfectly possible to write documents in the
-\<^boxed_theory_text>\<open>technical_report\<close> ontology in freeform-style (the present manual is mostly an
+\<^verbatim>\<open>technical_report\<close> ontology in freeform-style (the present manual is mostly an
 example for this category), we will briefly explain here the tight-checking-style in which
 most Isabelle reference manuals themselves are written. 
 
@@ -707,13 +705,13 @@ The idea has already been put forward by Isabelle itself; besides the general in
 which this work is also based, current Isabelle versions provide around 20 built-in 
 document and code antiquotations described in the Reference Manual pp.75 ff. in great detail.
 
-Most of them provide strict-checking, \<^ie> the argument strings where parsed and machine-checked in the
+Most of them provide strict-checking, \<^ie> the argument strings were parsed and machine-checked in the
 underlying logical context, which turns the arguments into \<^emph>\<open>formal content\<close> in the integrated
 source, in contrast to the free-form antiquotations which basically influence the presentation.
 
 We still mention a few of these document antiquotations here:
 \<^item> \<^theory_text>\<open>@{thm \<open>refl\<close>}\<close> or \<^theory_text>\<open>@{thm [display] \<open>refl\<close>}\<close> check that \<^theory_text>\<open>refl\<close> is indeed a reference
-  to a theorem; the additional "style" argument changes the presentation by printing the 
+  to a theorem; the additional ``style" argument changes the presentation by printing the 
   formula into the output instead of the reference itself,
 \<^item> \<^theory_text>\<open>@{lemma \<open>prop\<close> } by \<open>method\<close>\<close> allows to derive \<open>prop\<close> on the fly, thus garantee 
   that it is a corrollary of the current context,
@@ -746,12 +744,13 @@ figure*[strict_SS::figure, relative_width="95", src="''figures/MyCommentedIsabel
 \<open>A table with a number of SML functions, together with their type.\<close>
 
 text\<open>
-\<open>TR_MyCommentedIsabelle\<close> is written according to the @{theory "Isabelle_DOF.technical_report"}
-ontology. \<^figure>\<open>strict_SS\<close> shows a snippet from this integrated source and gives an idea why 
+\<open>TR_MyCommentedIsabelle\<close> is written according to the \<^verbatim>\<open>technical_report\<close> ontology in
+\<^theory>\<open>Isabelle_DOF.technical_report\<close>.
+\<^figure>\<open>strict_SS\<close> shows a snippet from this integrated source and gives an idea why 
 its tight-checking allows for keeping track of underlying Isabelle changes:
 Any reference to an SML operation in some library module is type-checked, and the displayed
 SML-type really corresponds to the type of the operations in the underlying SML environment.
-In the pdf output, these text-fragments were displayed verbatim.
+In the \<^pdf> output, these text-fragments were displayed verbatim.
 \<close>
 
 
@@ -776,14 +775,14 @@ text\<open> This is *\<open>emphasized\<close> and this is a
 \<close>}
 
 Clearly, this is not always possible and, in fact, often \<^isadof> documents will contain 
-\<^LaTeX>-commands, this should be restricted to layout improvements that otherwise are (currently)
+\<^LaTeX>-commands, but this should be restricted to layout improvements that otherwise are (currently)
 not possible. As far as possible, the use of \<^LaTeX>-commands should be restricted to the definition 
 of ontologies and document templates (see @{docitem (unchecked) \<open>isadof_ontologies\<close>}).
 
 Restricting the use of \<^LaTeX> has two advantages: first, \<^LaTeX> commands can circumvent the 
 consistency checks of \<^isadof> and, hence, only if no \<^LaTeX> commands are used, \<^isadof> can 
 ensure that a document that does not generate any error messages in Isabelle/jEdit also generated
-a PDF document. Second, future version of \<^isadof> might support different targets for the 
+a \<^pdf> document. Second, future version of \<^isadof> might support different targets for the 
 document generation (\<^eg>, HTML) which, naturally, are only available to documents not using 
 too complex native \<^LaTeX>-commands. 
 
