@@ -612,17 +612,18 @@ subsection\<open>More operations on types\<close>
 text\<open>
 \<^item> \<^ML>\<open>Term_Subst.map_types_same : (typ -> typ) -> term -> term\<close>
 \<^item> \<^ML>\<open>Term_Subst.map_aterms_same : (term -> term) -> term -> term\<close>
-\<^item> \<^ML>\<open>Term_Subst.instantiate: ((indexname * sort) * typ) list * ((indexname * typ) * term) list 
-                              -> term -> term\<close>
-\<^item> \<^ML>\<open>Term_Subst.instantiateT: ((indexname * sort) * typ) list -> typ -> typ\<close>
-\<^item> \<^ML>\<open>Term_Subst.generalizeT: string list -> int -> typ -> typ\<close>
+\<^item> \<^ML>\<open>Term_Subst.instantiate: typ TVars.table * term Vars.table -> term -> term\<close>
+\<^item> \<^ML>\<open>Term_Subst.instantiateT: typ TVars.table -> typ -> typ\<close>
+\<^item> \<^ML>\<open>Term_Subst.generalizeT: Names.set -> int -> typ -> typ\<close>
                         this is the standard type generalisation function !!!
                         only type-frees in the string-list were taken into account. 
-\<^item> \<^ML>\<open>Term_Subst.generalize: string list * string list -> int -> term -> term\<close>
+\<^item> \<^ML>\<open>Term_Subst.generalize: Names.set * Names.set -> int -> term -> term\<close>
                         this is the standard term generalisation function !!!
                         only type-frees and frees in the string-lists were taken 
                         into account. 
 \<close>
+
+
 
 text \<open>Apparently, a bizarre conversion between the old-style interface and 
   the new-style  \<^ML>\<open>tyenv\<close> is necessary. See the following example.\<close>
@@ -794,11 +795,11 @@ text\<open> We come now to the very heart of the LCF-Kernel of Isabelle, which
 \<^item>  \<^ML>\<open> Thm.forall_intr: cterm -> thm -> thm\<close>
 \<^item>  \<^ML>\<open> Thm.forall_elim: cterm -> thm -> thm\<close>
 \<^item>  \<^ML>\<open> Thm.transfer : theory -> thm -> thm\<close>
-\<^item>  \<^ML>\<open> Thm.generalize: string list * string list -> int -> thm -> thm\<close>
-\<^item>  \<^ML>\<open> Thm.instantiate: ((indexname*sort)*ctyp)list * ((indexname*typ)*cterm) list -> thm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.generalize: Names.set * Names.set -> int -> thm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.instantiate: ctyp TVars.table * cterm Vars.table -> thm -> thm\<close>
 \<close>
 
-text\<open>  They reflect the Pure logic depicted in a number of presentations such as 
+text\<open>  They reflect the Pure logic depicted in a number of presentations such as
   M. Wenzel, \<^emph>\<open>Parallel Proof Checking in Isabelle/Isar\<close>, PLMMS 2009, or simiular papers.
   Notated as logical inference rules, these operations were presented as follows:
 \<close>
