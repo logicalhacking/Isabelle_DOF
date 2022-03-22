@@ -910,14 +910,10 @@ high-level component (more low-level components such as \<^ML>\<open>Global_Theo
 exist) for definitions and axiomatizations is here:
 \<close>
 
-
 text\<open>
 \<^item>  \<^ML>\<open>Specification.definition: (binding * typ option * mixfix) option ->
         (binding * typ option * mixfix) list -> term list -> Attrib.binding * term ->
         local_theory -> (term * (string * thm)) * local_theory\<close>
-\<^item>  \<^ML>\<open>Specification.definition': (binding * typ option * mixfix) option ->
-        (binding * typ option * mixfix) list ->  term list -> Attrib.binding * term ->
-        bool -> local_theory -> (term * (string * thm)) * local_theory\<close>
 \<^item>  \<^ML>\<open>Specification.definition_cmd: (binding * string option * mixfix) option ->
         (binding * string option * mixfix) list -> string list -> Attrib.binding * string ->
          bool -> local_theory -> (term * (string * thm)) * local_theory\<close>
@@ -1187,8 +1183,8 @@ text\<open> The extensibility of Isabelle as a system framework depends on a num
  \<^item> \<^ML>\<open>Toplevel.theory': (bool -> theory -> theory) -> Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.exit: Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.ignored: Position.T -> Toplevel.transition\<close>
- \<^item> \<^ML>\<open>Toplevel.present_local_theory: (xstring * Position.T) option ->
-                       (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition\<close>
+ \<^item> \<^ML>\<open>Toplevel.present_local_theory:  (xstring * Position.T) option ->
+                       (Toplevel.state -> Latex.text) -> Toplevel.transition -> Toplevel.transition\<close>
 
 \<close>
 subsection*[cmdbinding::technical] \<open>Toplevel Transaction Management in the Isar-Engine\<close>
@@ -1857,8 +1853,6 @@ Common Isar Syntax
 
 
 Common Isar Syntax
-\<^item>\<^ML>\<open>Args.embedded_token  : Token.T parser\<close>
-\<^item>\<^ML>\<open>Args.embedded_inner_syntax: string parser\<close>
 \<^item>\<^ML>\<open>Args.embedded_input  : Input.source parser\<close>
 \<^item>\<^ML>\<open>Args.embedded  : string parser\<close>
 \<^item>\<^ML>\<open>Args.embedded_position: (string * Position.T) parser\<close>
