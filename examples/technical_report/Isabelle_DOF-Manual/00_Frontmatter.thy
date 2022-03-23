@@ -21,7 +21,7 @@ section\<open>Local Document Setup.\<close>
 text\<open>Introducing document specific abbreviations and macros:\<close>
 
 define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
-                 isadof  \<rightleftharpoons> \<open>\isadof\<close>
+                 isadof  \<rightleftharpoons> \<open>\isadof{}\<close>
 
 define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
                  BibTeX  \<rightleftharpoons> \<open>\BibTeX{}\<close> 
