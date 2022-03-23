@@ -39,6 +39,9 @@ your installation of Docker supports X11 application, you can start \<^isadof> a
    -v /tmp/.X11-unix:/tmp/.X11-unix \ 
    logicalhacking/isabelle_dof-ë\doflatestversionë_ë\MakeLowercase{\isabellelatestversion}ë \
    isabelle jedit\<close>}
+
+Further configuration of the X11 permissions to authorize docker to start \<^isadof> might be required,
+depending on the user system configuration.
 \<close>
 
 subsection*[installation::technical]\<open>Installation\<close>
@@ -339,7 +342,7 @@ doc_class abstract =
    principal_theorems :: "thm list"\<close>}
 \<close>
 
-text\<open>Note \<^const>\<open>short_title\<close> and \<^const>\<open>abbrev\<close> are optional and have the default\<^const>\<open>None\<close>
+text\<open>Note \<^const>\<open>short_title\<close> and \<^const>\<open>abbrev\<close> are optional and have the default \<^const>\<open>None\<close>
 (no value). Note further, that \<^typ>\<open>abstract\<close>s may have a \<^const>\<open>principal_theorems\<close> list, where
 the built-in \<^isadof> type \<^typ>\<open>thm list\<close> contains references to formally proven theorems that must
 exist in the logical context of this document; this is a decisive feature of \<^isadof> that
@@ -401,8 +404,10 @@ document build process converts this to the corresponding \<^pdf>-output shown i
 text\<open>Recall that the standard syntax for a text-element in \<^isadof> is 
 \<^theory_text>\<open>text*[<id>::<class_id>,<attrs>]\<open> ... text ...\<close>\<close>, but there are a few built-in abbreviations like
 \<^theory_text>\<open>title*[<id>,<attrs>]\<open> ... text ...\<close>\<close> that provide special command-level syntax for text-elements. 
-The other text-elements provide the authors and the abstract as specified by their class-id referring
-to the \<^theory_text>\<open>doc_class\<close>es of \<^verbatim>\<open>scholarly_paper\<close>; we say that these text elements are \<^emph>\<open>instances\<close> 
+The other text-elements provide the authors and the abstract as specified by their
+\<^emph>\<open>class\_id\<close>\<^index>\<open>class\_id@\<open>class_id\<close>\<close>
+referring to the \<^theory_text>\<open>doc_class\<close>es of \<^verbatim>\<open>scholarly_paper\<close>;
+we say that these text elements are \<^emph>\<open>instances\<close> 
 \<^bindex>\<open>instance\<close> of the \<^theory_text>\<open>doc_class\<close>es \<^bindex>\<open>doc\_class\<close> of the underlying ontology. \<close>
 
 text\<open>The paper proceeds by providing instances for introduction, technical sections, 
@@ -540,6 +545,10 @@ side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-
                       caption2="''Exploring an attribute (hyperlinked to the class).''",
                       relative_width2="47",
                       src2="''figures/Dogfood-V-attribute''"]\<open>Navigation via generated hyperlinks.\<close>
+(* TODO: Update the images in fig:Dogfood-IV-jumpInDocCLass side_by_side_figure
+   to align them. This has to wait that the exploration of an attribute is again possible.
+   See: https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/issues/10 *)
+
 text\<open> 
   From these class definitions, \<^isadof> also automatically generated editing 
   support for Isabelle/jEdit. In \autoref{fig-Dogfood-II-bgnd1} and 
