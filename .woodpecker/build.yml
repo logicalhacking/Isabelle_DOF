@@ -2,13 +2,13 @@ pipeline:
   build:
     image: docker.io/logicalhacking/isabelle2021
     commands:
-      - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO/$CI_BRANCH/$CI_BUILD_NUMBER/
+      - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO/$CI_BRANCH/$CI_BUILD_NUMBER/$LATEX
       - mkdir -p $ARTIFACT_DIR
       - export `isabelle getenv ISABELLE_HOME_USER`
+      - echo "ISABELLE_PDFLATEX=\"$LATEX --file-line-error\"" >> $ISABELLE_HOME_USER/etc/settings
       - ./install
       - isabelle build -D . -o browser_info
       - cp -r $ISABELLE_HOME_USER/browser_info $ARTIFACT_DIR
-      - cp output/document.pdf $ARTIFACT_DIR
       - cd $ARTIFACT_DIR
       - cd ..
       - ln -s * latest
@@ -24,4 +24,7 @@ pipeline:
         from_secret: artifacts_ssh
       user: artifacts
 
-      
+matrix:
+  LATEX:
+  - pdflatex
+  - lualatex      
