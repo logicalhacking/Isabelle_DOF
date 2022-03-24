@@ -1850,7 +1850,7 @@ sig
   val value: Proof.context -> term -> term
   val value_select: string -> Proof.context -> term -> term
   val value_cmd: (ODL_Command_Parser.meta_args_t option) -> xstring -> string list -> string
-                 -> Toplevel.state -> Toplevel.transition -> unit
+                 -> Toplevel.state -> Position.T -> unit
   val add_evaluator: binding * (Proof.context -> term -> term) 
     -> theory -> string * theory
 end;
@@ -1898,13 +1898,13 @@ fun meta_args_exec NONE thy = thy
                                     {is_monitor = false} {is_inline = false} 
                                     oid pos (I cid_pos) (I doc_attrs))
 
-fun value_cmd meta_args_opt raw_name modes raw_t state trans =
+fun value_cmd meta_args_opt raw_name modes raw_t state pos =
   let
     val _ = meta_args_exec meta_args_opt
     val ctxt = Toplevel.context_of state;
     val name = intern_evaluator ctxt raw_name;
     val t = Syntax.read_term ctxt raw_t;
-    val term' = DOF_core.transduce_term_global {mk_elaboration=true} (t , Toplevel.pos_of trans)
+    val term' = DOF_core.transduce_term_global {mk_elaboration=true} (t , pos)
                                           (Proof_Context.theory_of ctxt);
     val t' = value_select name ctxt term';
     val ty' = Term.type_of t';
@@ -1928,8 +1928,10 @@ val opt_evaluator =
 val opt_attributes = Scan.option ODL_Command_Parser.attributes
 
 fun pass_trans_to_value_cmd meta_args_opt ((name, modes), t) trans =
-  Toplevel.keep (fn state => value_cmd meta_args_opt name modes t state trans) trans
-
+let val pos = Toplevel.pos_of trans
+in
+  Toplevel.keep (fn state => value_cmd meta_args_opt name modes t state pos) trans
+end
 \<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/isar_cmd.ML\<close>\<close>
 
 (*
@@ -1937,13 +1939,13 @@ fun pass_trans_to_value_cmd meta_args_opt ((name, modes), t) trans =
   and adds the possibility to check Term Annotation Antiquotations (TA)
   with the help of DOF_core.transduce_term_global function
 *)
-fun string_of_term meta_args_opt ctxt s trans =
+fun string_of_term meta_args_opt ctxt s pos =
 let
   val _ = meta_args_exec meta_args_opt
   val t = Syntax.read_term ctxt s;
   val T = Term.type_of t;
   val ctxt' = Proof_Context.augment t ctxt;
-  val _ = DOF_core.transduce_term_global {mk_elaboration=false} (t , Toplevel.pos_of trans)
+  val _ = DOF_core.transduce_term_global {mk_elaboration=false} (t , pos)
                                           (Proof_Context.theory_of ctxt');
 in
   Pretty.string_of
@@ -1958,11 +1960,14 @@ Print_Mode.with_modes modes (fn () => writeln (string_of state arg)) ());
   We want to have the current position to pass it to transduce_term_global in
   string_of_term, so we pass the Toplevel.transition
 *)
-fun print_term meta_args_opt (string_list, string) trans = print_item
-                  (fn state =>
-                      fn string =>
-                         string_of_term meta_args_opt (Toplevel.context_of state) string trans)
-                  (string_list, string) trans;
+fun print_term meta_args_opt (string_list, string) trans =
+let
+  val pos = Toplevel.pos_of trans
+in
+  print_item (fn state =>
+                 fn string => string_of_term meta_args_opt (Toplevel.context_of state) string pos)
+             (string_list, string) trans                     
+end
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>term*\<close> "read and print term"
