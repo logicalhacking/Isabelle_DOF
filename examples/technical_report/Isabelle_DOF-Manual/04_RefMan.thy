@@ -1286,8 +1286,8 @@ text\<open>
   \<^item> registration (as import) of the new ontology in the file \<^path>\<open>src/ontologies/ontologies.thy\<close>. 
   \<^item> activation of the new document setup by executing the install script. You can skip the lengthy 
     checks for the AFP entries and the installation of the Isabelle patch by using the 
-    \<^boxed_bash>\<open>--skip-patch-and-afp\<close> option:
-    @{boxed_bash [display] \<open>ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp\<close>}
+    \<^boxed_bash>\<open>--skip-afp\<close> option:
+    @{boxed_bash [display] \<open>ë\prompt{\isadofdirn}ë ./install --skip-afp\<close>}
 \<close>
 
 subsection\<open>Document Templates\<close>
@@ -1317,8 +1317,8 @@ text\<open>
   \<^item> develop a new \<^LaTeX>-template \<^boxed_bash>\<open>src/document-templates/root-bar.tex\<close>
   \<^item> activation of the new document template  by executing the install script. You can skip the lengthy 
     checks for the AFP entries and the installation of the Isabelle patch by using the 
-    \<^boxed_bash>\<open>--skip-patch-and-afp\<close> option:
-    @{boxed_bash [display] \<open>ë\prompt{\isadofdirn}ë ./install --skip-patch-and-afp\<close>}
+    \<^boxed_bash>\<open>--skip-afp\<close> option:
+    @{boxed_bash [display] \<open>ë\prompt{\isadofdirn}ë ./install --skip-afp\<close>}
 \<close>
 
 
