@@ -10,8 +10,8 @@ It may also contain additional tools and script that are useful for preparing a 
 ### Latest Build
 
 * lualatex
-  * [browser_info](https://artifacts.logicalhacking.com/ci-confidential/Isabelle_DOF/Isabelle_DOF/main/latest/lualatex/browser_info/Unsorted/Isabelle_DOF/)
-  * [aux files](https://artifacts.logicalhacking.com/ci-confidential/Isabelle_DOF/Isabelle_DOF/main/latest/lualatex/)
+  * [browser_info](https://artifacts.logicalhacking.com/ci/Isabelle_DOF/Isabelle_DOF/main/latest/lualatex/browser_info/Unsorted/)
+  * [aux files](https://artifacts.logicalhacking.com/ci/Isabelle_DOF/Isabelle_DOF/main/latest/lualatex/)
 * pdflatex
-  * [browser_info](https://artifacts.logicalhacking.com/ci-confidential/Isabelle_DOF/Isabelle_DOF/main/latest/pdflatex/browser_info/Unsorted/Isabelle_DOF/)
-  * [aux files](https://artifacts.logicalhacking.com/ci-confidential/Isabelle_DOF/Isabelle_DOF/main/latest/pdflatex/)
+  * [browser_info](https://artifacts.logicalhacking.com/ci/Isabelle_DOF/Isabelle_DOF/main/latest/pdflatex/browser_info/Unsorted/)
+  * [aux files](https://artifacts.logicalhacking.com/ci/Isabelle_DOF/Isabelle_DOF/main/latest/pdflatex/)

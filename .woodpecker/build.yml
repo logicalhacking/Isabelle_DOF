@@ -13,7 +13,7 @@ pipeline:
       - isabelle build -D DOF_test
       - cp -r $ISABELLE_HOME_USER/browser_info $ARTIFACT_DIR
       - cd $ARTIFACT_DIR
-      - cd ..
+      - cd ../..
       - ln -s * latest
   deploy:
     image: docker.io/drillster/drone-rsync
