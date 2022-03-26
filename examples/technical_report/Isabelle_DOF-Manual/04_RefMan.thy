@@ -1230,8 +1230,7 @@ text\<open>
   Note that the postfix \<^boxed_bash>\<open>-UNSUPPORTED\<close> denotes experimental ontologies or templates 
   for which further manual setup steps might be required or that are not fully tested. Also note 
   that the \<^LaTeX>-class files required by the templates need to be already installed on your 
-  system. This is mostly a problem for publisher specific templates (\<^eg>, Springer's 
-  \<^path>\<open>llncs.cls\<close>), which cannot be re-distributed due to copyright restrictions.
+  system. This is mostly a problem for publisher specific templates, which cannot be re-distributed due to copyright restrictions.
 \<close>
 
 subsection\<open>Developing Ontologies and their Representation Mappings\<close>
