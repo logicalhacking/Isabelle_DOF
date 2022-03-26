@@ -39,13 +39,13 @@ print_help()
     echo "Run ..."
     echo ""
     echo "  --help, -h                display this help message"
-    echo "  --sign -s                 sign release archive"
+    echo "  --sign, -s                sign release archive"
     echo "                            (default: $SIGN)"
     echo "  --isabelle, -i isabelle   isabelle command used for installation"
     echo "                            (default: $ISABELLE)"
-    echo "  --tag -t tag              use tag for release archive"
+    echo "  --tag tag, -t tag         use tag for release archive"
     echo "                            (default: use master branch)"
-    echo "  --p --publish             publish generated artefact"
+    echo "  --publish, -p             publish generated artefact"
     echo "                            (use master: $PUBLISH)"
 }
 
