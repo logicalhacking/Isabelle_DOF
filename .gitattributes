@@ -1,3 +1,0 @@
-install -crlf
-document-generator/Tools/DOF_mkroot -crlf
-document-generator/document-template/build -crlf
