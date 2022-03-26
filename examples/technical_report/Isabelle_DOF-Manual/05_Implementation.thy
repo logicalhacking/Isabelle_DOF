@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019-2021 University of Exeter 
- *               2018-2021 University of Paris-Saclay
+ *               2019-2022 University of Exeter 
+ *               2018-2022 University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -92,7 +92,7 @@ op >>     : ('a -> 'b * 'c) * ('b -> 'd) -> 'a -> 'd * 'c
 op option : ('a -> 'b * 'a) -> 'a -> 'b option * 'a
 op repeat : ('a -> 'b * 'a) -> 'a -> 'b list * 'a \<close>}
   for alternative, sequence, and piping, as well as combinators for option and repeat. Parsing 
-  combinators have the advantage that they can be smoothlessly integrated into standard programs, 
+  combinators have the advantage that they can be integrated into standard programs, 
   and they enable the dynamic extension of the grammar. There is a more high-level structure 
   \inlinesml{Parse} providing specific combinators for the command-language Isar:
 

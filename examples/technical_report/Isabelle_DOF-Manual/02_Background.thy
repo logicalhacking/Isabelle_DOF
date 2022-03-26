@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019-2021 The University of Exeter 
- *               2018-2021 The University of Paris-Saclay
+ *               2019-2022 The University of Exeter 
+ *               2018-2022 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -50,7 +50,7 @@ with Standard ML (SML) at the bottom layer as implementation  language. The arch
 foresees a \<^emph>\<open>Nano-Kernel\<close> (our terminology) which resides in the SML structure \<^boxed_sml>\<open>Context\<close>. 
 This structure provides a kind of container called \<^emph>\<open>context\<close> providing an identity, an 
 ancestor-list as well as typed, user-defined state for components (plugins) such as \<^isadof>. 
-On top of the latter, the LCF-Kernel, tactics,  automated proof procedures as well as specific 
+On top of the latter, the LCF-Kernel, tactics, automated proof procedures as well as specific 
 support for higher specification constructs were built.\<close>
 
 section*[dof::introduction]\<open>The Document Model Required by \<^dof>\<close>
@@ -72,7 +72,7 @@ declare_reference*["fig:dependency"::text_section]
 text\<open>
   The Isabelle Framework is based on a \<^emph>\<open>document-centric view\<close>\<^bindex>\<open>document-centric view\<close> of 
   a document, treating the input in its integrality as set of (user-programmable) \<^emph>\<open>document element\<close> 
-  that may mutually depend and link to each other; A \<^emph>\<open>document\<close> in our sense is what is configured in a set of 
+  that may mutually depend on and link to each other; A \<^emph>\<open>document\<close> in our sense is what is configured in a set of 
   \<^verbatim>\<open>ROOT\<close>- and \<^verbatim>\<open>ROOTS\<close>-files.
 
   Isabelle assumes a hierarchical document model\<^index>\<open>document model\<close>, \<^ie>, an \<^emph>\<open>integrated\<close> document 
@@ -103,7 +103,7 @@ text\<open> A text-element \<^index>\<open>text-element\<close> may look like th
   @{boxed_theory_text [display]\<open>
 text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, 
    we obtain in \<Gamma> for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
-... so it is a command \<^theory_text>\<open>text\<close> followed by an argument (here in  \<open>\<open> ... \<close>\<close> paranthesis) which 
+... so it is a command \<^theory_text>\<open>text\<close> followed by an argument (here in  \<open>\<open> ... \<close>\<close> parenthesis) which 
 contains characters and a special notation for semantic macros \<^bindex>\<open>semantic macros\<close> 
 (here \<^theory_text>\<open>@{term "fac 5"}).\<close>
 \<close>

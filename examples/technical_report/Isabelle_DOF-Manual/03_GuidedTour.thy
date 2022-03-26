@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019-2021 The University of Exeter 
- *               2018-2021 The University of Paris-Saclay
+ *               2019-2022 The University of Exeter 
+ *               2018-2022 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -235,7 +235,7 @@ section*[writing_doc::technical]\<open>Writing Documents: General Remarks\<close
 
 subsection*[naming::example]\<open>Name-Spaces, Long- and Short-Names\<close>
 text\<open>\<^isadof> is built upon the name space and lexical conventions of Isabelle. Long-names were 
-composed from a name of the session, the name of the theory, and a sequence of local names referring
+composed of a name of the session, the name of the theory, and a sequence of local names referring
 to, \<^eg>, nested specification constructs that were used to identify types, constant symbols, 
 definitions, \<^etc>. The general format of a long-name is 
 
@@ -385,10 +385,10 @@ contained in the theory \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close>. \
 
 subsection\<open>Writing Academic Publications: A Freeform Mathematics Text \<close>
 text*[csp_paper_synthesis::technical, main_author = "Some bu"]\<open>We present a typical mathematical
-paper focussing on its form, not refering in any sense to its content which is out of scope here.
+paper focusing on its form, not referring in any sense to its content which is out of scope here.
 As mentioned before, we chose the paper~@{cite "taha.ea:philosophers:2020"} for this purpose,
 which is written in the so-called free-form style: Formulas are superficially parsed and 
-type-setted, but no deeper type-checking and checking with the underlying logical context
+type-set, but no deeper type-checking and checking with the underlying logical context
 is undertaken. \<close>
 
 figure*[fig0::figure,spawn_columns=False,relative_width="90",src="''figures/header_CSP_source.png''"]
@@ -432,8 +432,8 @@ doc_class "theorem"     = math_content +
 
 
 text\<open>The class \<^typ>\<open>technical\<close> regroups a number of text-elements that contain typical 
-``technical content" in mathematical or engineering papers: code, definitions, theorems, 
-lemmas, examples. From this class, the more stricter class of @{typ \<open>math_content\<close>} is derived,
+technical content in mathematical or engineering papers: code, definitions, theorems, 
+lemmas, examples. From this class, the stricter class of @{typ \<open>math_content\<close>} is derived,
 which is grouped into @{typ "definition"}s and @{typ "theorem"}s (the details of these
 class definitions are omitted here). Note, however, that class identifiers can be abbreviated by 
 standard \<^theory_text>\<open>type_synonym\<close>s for convenience and enumeration types can be defined by the 
@@ -452,10 +452,6 @@ is type-checked; referencing \<^verbatim>\<open>X4\<close> as \<^theory_text>\<o
 by \<^isadof> in Isabelle/jEdit. Note further, that if referenced correctly wrt. the sub-typing 
 hierarchy makes \<^verbatim>\<open>X4\<close> \<^emph>\<open>navigable\<close> in Isabelle/jEdit; a click will cause the IDE to present the 
 defining occurrence of this text-element in the integrated source.
-
-% TODO:
-% The definition \<^theory_text>\<open>@{definition X4}\<close> is not present in the screenshot,
-% it might be better to use  \<^theory_text>\<open>@{definition X22}\<close>.
 
 Note, further, how \<^isadof>-commands like \<^theory_text>\<open>text*\<close> interact with standard Isabelle document
 antiquotations described in the Isabelle Isar Reference Manual in Chapter 4.2 in great detail. 
@@ -573,7 +569,7 @@ Isabelle/jEdit will respond with an error.\<close>
 text\<open>We advise users to experiment with different notation variants.
 Note, further, that the Isabelle \<^latex>\<open>@\{cite ...\}\<close>-text-anti-quotation makes its checking
 on the level of generated \<^verbatim>\<open>.aux\<close>-files, which are not necessarily up-to-date. Ignoring the PIDE
-error-message and compiling a with a consistent bibtex usually makes disappear this behaviour. 
+error-message and compiling a with a consistent bibtex usually makes disappear this behavior. 
 \<close>
 
 section*[cenelec_onto::example]\<open>Writing Certification Documents \<^boxed_theory_text>\<open>CENELEC_50128\<close>\<close>
@@ -605,7 +601,7 @@ text\<open>
   much profit from the control of ontological consistency:  a substantial amount of the work
   of evaluators in formal certification processes consists in  tracing down the links from 
   requirements over assumptions down to elements of evidence, be it in form of semi-formal 
-  documentation, models, code, or  tests.  In a certification process, traceability becomes a major 
+  documentation, models, code, or tests.  In a certification process, traceability becomes a major 
   concern; and providing mechanisms to ensure complete traceability already at the development of 
   the integrated source can in our view increase the speed and reduce the risk certification 
   processes. Making the link-structure machine-checkable, be it between requirements, assumptions, 
@@ -675,7 +671,7 @@ text*[ass123::SRAC]\<open>
 
 This will be shown in the \<^pdf> as follows:
 \<close>
-text*[ass123::SRAC] \<open> The overall sampling frequence of the odometer
+text*[ass123::SRAC] \<open> The overall sampling frequency of the odometer
 subsystem is therefore 14 khz, which includes sampling, computing and
 result communication times \ldots \<close>
 
@@ -722,7 +718,7 @@ We still mention a few of these document antiquotations here:
 \<^item> \<^theory_text>\<open>@{thm \<open>refl\<close>}\<close> or \<^theory_text>\<open>@{thm [display] \<open>refl\<close>}\<close> check that \<^theory_text>\<open>refl\<close> is indeed a reference
   to a theorem; the additional ``style" argument changes the presentation by printing the 
   formula into the output instead of the reference itself,
-\<^item> \<^theory_text>\<open>@{lemma \<open>prop\<close> } by \<open>method\<close>\<close> allows to derive \<open>prop\<close> on the fly, thus garantee 
+\<^item> \<^theory_text>\<open>@{lemma \<open>prop\<close> } by \<open>method\<close>\<close> allows deriving \<open>prop\<close> on the fly, thus guarantee 
   that it is a corrollary of the current context,
 \<^item> \<^theory_text>\<open>@{term \<open>term\<close> }\<close> parses and type-checks \<open>term\<close>,
 \<^item> \<^theory_text>\<open>@{value \<open>term\<close> }\<close> performs the evaluation of \<open>term\<close>,
@@ -798,7 +794,7 @@ too complex native \<^LaTeX>-commands.
 Similarly, (unchecked) forward references should, if possible, be avoided, as they also might
 create dangling references during the document generation that break the document generation.  
 
-Finally, we recommend to use the @{command "check_doc_global"} command at the end of your 
+Finally, we recommend using the @{command "check_doc_global"} command at the end of your 
 document to check the global reference structure. 
 
 \<close>
