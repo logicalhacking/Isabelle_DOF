@@ -29,20 +29,6 @@ text\<open>
 \<close>
 
 section*[getting_started::technical]\<open>Getting Started\<close>
-text\<open>
-As an alternative to installing \<^isadof>{} locally, the latest official release of \<^isadof> is also 
-available on \href{https://cloud.docker.com/u/logicalhacking/}{Docker Hub}. Thus, if you have 
-\href{https://www.docker.com}{Docker} installed and 
-your installation of Docker supports X11 application, you can start \<^isadof> as follows:
-
-@{boxed_bash [display] \<open>ë\prompt{}ë docker run -ti --rm -e DISPLAY=$DISPLAY \
-   -v /tmp/.X11-unix:/tmp/.X11-unix \ 
-   logicalhacking/isabelle_dof-ë\doflatestversionë_ë\MakeLowercase{\isabellelatestversion}ë \
-   isabelle jedit\<close>}
-
-Further configuration of the X11 permissions to authorize docker to start \<^isadof> might be required,
-depending on the user system configuration.
-\<close>
 
 subsection*[installation::technical]\<open>Installation\<close>
 text\<open>
@@ -50,8 +36,8 @@ text\<open>
   \<^LaTeX>. We assume a basic familiarity with a Linux/Unix-like command line (i.e., a shell). 
 
   \<^isadof> requires Isabelle\<^bindex>\<open>Isabelle\<close> (\isabellefullversion) with a recent \<^LaTeX>-distribution
-  (e.g., Tex Live 2021 or later).    
-  \<^isadof> uses a two-part version system (e.g., 1.1.0/Isabelle2021),  where the first part is the version
+  (e.g., Tex Live 2022 or later).    
+  \<^isadof> uses a two-part version system (e.g., 1.2.0/Isabelle2021),  where the first part is the version
   of \<^isadof> (using semantic versioning) and the second part is the supported version of Isabelle. 
   Thus, the same version of \<^isadof> might be available for different versions of Isabelle. 
 \<close>
