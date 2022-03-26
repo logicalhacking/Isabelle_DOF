@@ -4,6 +4,7 @@ pipeline:
     commands:
       - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO/$CI_BRANCH/$CI_BUILD_NUMBER/$LATEX
       - mkdir -p $ARTIFACT_DIR
+      - mkdir -p $ISABELLE_HOME_USER/etc
       - export `isabelle getenv ISABELLE_HOME_USER`
       - echo "ISABELLE_PDFLATEX=\"$LATEX --file-line-error\"" >> $ISABELLE_HOME_USER/etc/settings
       - ./install
