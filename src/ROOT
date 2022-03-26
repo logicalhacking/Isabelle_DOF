@@ -16,18 +16,3 @@ session "Isabelle_DOF" = "Functional-Automata" +
     "DOF/Isa_DOF"
     "ontologies/ontologies"
 
-
-
-
-(*
-session "Isabelle_DOF-tests" = "Isabelle_DOF" + 
-  options [document = false]
-  directories 
-    tests
-  theories
-    "tests/AssnsLemmaThmEtc" 
-    "tests/Concept_ExampleInvariant"
-    "tests/Concept_Example"
-    "tests/InnerSyntaxAntiquotations"
-    "tests/Attributes"
-*)
