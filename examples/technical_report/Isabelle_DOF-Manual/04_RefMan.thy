@@ -38,8 +38,8 @@ text\<open>
 
   \<^isadof> consists consists basically of five components:
   \<^item> the \<^emph>\<open>core\<close> in \<^theory>\<open>Isabelle_DOF.Isa_DOF\<close> providing the \<^emph>\<open>ontology definition language\<close>
-    (called ODL) which allow for the definitions of document-classes
-    and necessary auxiliary datatypes,
+    (ODL) which allow for the definitions of document-classes
+    and necessary datatypes,
   \<^item> the \<^emph>\<open>core\<close> also provides an own \<^emph>\<open>family of commands\<close> such as 
     \<^boxed_theory_text>\<open>text*\<close>, \<^boxed_theory_text>\<open>declare_reference*\<close>, \<^etc>.;
     They allow for the annotation of text-elements with meta-information defined in ODL,
@@ -57,12 +57,12 @@ text\<open>
   system-extensions. Ontologies in \<^isadof> are not just a sequence of descriptions in 
   \<^isadof>'s Ontology Definition Language (ODL). Rather, they are themselves presented as integrated 
   sources that provide textual descriptions, abbreviations, macro-support and even ML-code. 
-  Conceptually, the library of \<^isadof> is currently organized as follows\<^footnote>\<open>Note that the \<^emph>\<open>technical\<close> 
+  Conceptually, the library of \<^isadof> is currently organized as follows\<^footnote>\<open>The \<^emph>\<open>technical\<close> 
   organization is slightly different and shown in 
   @{technical (unchecked) \<open>infrastructure\<close>}.\<close>: 
 %
 \begin{center}
-\begin{minipage}{.9\textwidth}\small
+\begin{minipage}{.9\textwidth}\footnotesize
 \dirtree{%
 .1 COL\DTcomment{The Common Ontology Library}.
 .2 scholarly\_paper\DTcomment{Scientific Papers}.
@@ -216,7 +216,7 @@ text\<open>
   specifications~@{cite "wenzel:isabelle-isar:2020"}, and abstract type declarations.
 \<close>
 
-text\<open>Note that \<^isadof> works internally with fully qualified names in order to avoid confusions 
+text\<open>\<^isadof> works internally with fully qualified names in order to avoid confusions 
 occurring otherwise, for example, in disjoint class hierarchies. This also extends to names for
  \<^boxed_theory_text>\<open>doc_class\<close>es, which must be representable as type-names as well since they
 can be used in attribute types. Since theory names are lexically very liberal 
@@ -241,7 +241,7 @@ A document class\<^bindex>\<open>document class\<close> can be defined using the
      \<^rail>\<open> name '::' '"' type '"' default_clause? \<close>
 \<^item> \<open>invariant_decl\<close>:\<^index>\<open>invariant\_decl@\<open>invariant_decl\<close>\<close>
      Invariants can be specified as predicates over document classes represented as 
-     records in HOL. Note that sufficient type information must be provided in order to
+     records in HOL. Sufficient type information must be provided in order to
      disambiguate the argument of the expression
      and the \<^boxed_text>\<open>\<sigma>\<close> symbol is reserved to reference the instance of the class itself. 
      \<^rail>\<open> 'invariant' (name '::' '"' term '"' + 'and') \<close>
@@ -317,7 +317,7 @@ text-elements and, in some cases, terms.
 
 subsection\<open>Syntax\<close>
 text\<open>In the following, we formally introduce the syntax of the core commands as 
-supported on the Isabelle/Isar level. Note that some more advanced functionality of the core 
+supported on the Isabelle/Isar level. Some more advanced functionality of the core 
 is currently only available in the SML API's of the kernel. 
 
 \<^item> \<open>obj_id\<close>:\<^index>\<open>obj\_id@\<open>obj_id\<close>\<close> (or \<^emph>\<open>oid\<close>\<^index>\<open>oid!oid@\<open>see obj_id\<close>\<close> for short) a \<^emph>\<open>name\<close>
@@ -356,10 +356,10 @@ is currently only available in the SML API's of the kernel.
            \<newline> '\<open>' string '\<close>' '_' '\<open>' string '\<close>' \<close>
 \<close>
 text\<open>Recall that except \<^theory_text>\<open>text*[]\<open>...\<close>\<close>, all \<^isadof> commands were mapped to visible
-layout (such as \<^LaTeX>); these commands have to be wrapped into 
- \<^verbatim>\<open>(*<*) ... (*>*)\<close> brackets if this is undesired. \<close>
+layout; these commands have to be wrapped into 
+ \<^verbatim>\<open>(*<*) ... (*>*)\<close> if this is undesired. \<close>
 
-subsection\<open>Ontologic Text-Contexts and their Management\<close>
+subsection\<open>Ontological Text-Contexts and their Management\<close>
 text\<open> With respect to the family of text elements,
 \<^theory_text>\<open>text*[oid::cid, ...] \<open> \<dots> text \<dots> \<close> \<close> is the core-command of \<^isadof>: it permits to create
 an object of meta-data belonging to the class \<^theory_text>\<open>cid\<close>\<^index>\<open>cid!cid@\<open>see class_id\<close>\<close>.
@@ -368,7 +368,7 @@ The class invariants were checked for all attribute values
 at creation time if not specified otherwise. Unspecified attributed values were represented
 by fresh free variables.
 This instance object is attached to the text-element
-and makes it thus ``trackable" for  \<^isadof>, \<^ie>, it can be referenced
+and makes it thus ``trackable'' for  \<^isadof>, \<^ie>, it can be referenced
 via the \<^theory_text>\<open>oid\<close>\<^index>\<open>oid!oid@\<open>see obj_id\<close>\<close>, its attributes
 can be set by defaults in the class-definitions, or set at creation time, or modified at any
 point after creation via  \<^theory_text>\<open>update_instance*[oid, ...]\<close>. The \<^theory_text>\<open>class_id\<close> is syntactically optional;
@@ -402,7 +402,7 @@ in the context of the SML toplevel of the Isabelle system as in the correspondin
 subsection\<open>Ontological Term-Contexts and their Management\<close>
 text\<open>The major commands providing term-contexts are 
 \<^theory_text>\<open>term*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close> and
-\<^theory_text>\<open>value*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>\<^footnote>\<open>Note that the meta-argument list is optional.\<close>.
+\<^theory_text>\<open>value*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>\<^footnote>\<open>The meta-argument list is optional.\<close>.
 Wrt. creation, track-ability and checking they are analogous to the ontological text and 
 code-commands. However the argument terms may contain term-antiquotations stemming from an
 ontology definition. Both term-contexts were type-checked and \<^emph>\<open>validated\<close> against
@@ -485,7 +485,7 @@ text\<open>
  that introduces several ontology concepts; its  overall class-tree it provides looks as follows:
 %
 \begin{center}
-\begin{minipage}{.9\textwidth}\small
+\begin{minipage}{.9\textwidth}\footnotesize
 \dirtree{%
 .0 .
 .1 Isa\_COL.text\_element.
@@ -511,7 +511,7 @@ doc_class text_element =
    variants      :: "String.literal set" <= "{STR ''outline'', STR ''document''}" 
 \<close>}
 
-As mentioned in @{technical \<open>sss\<close>} (without explaining the origin of \<^typ>\<open>text_element\<close>),
+As mentioned in @{technical \<open>sss\<close>},
 \<^const>\<open>level\<close> defines the section-level (\<^eg>, using a \<^LaTeX>-inspired hierarchy:
 from \<^boxed_theory_text>\<open>Some -1\<close> (corresponding to \<^boxed_latex>\<open>\part\<close>) to 
 \<^boxed_theory_text>\<open>Some 0\<close> (corresponding to \<^boxed_latex>\<open>\chapter\<close>, respectively, \<^boxed_theory_text>\<open>chapter*\<close>) 
@@ -543,9 +543,9 @@ abbreviations:
      ) 
   \<close>
 \<close>
-text\<open> Note that the command syntax follows the implicit convention to add a "*" to 
-the command in order to distinguish them from the standard Isabelle text-commands
-which are not "ontology-aware" but function similar otherwise.\<close>
+text\<open>The command syntax follows the implicit convention to add a ``*''
+to distinguish them from the (similar) standard Isabelle text-commands
+which are not ontology-aware.\<close>
 
 subsection*["text-elements"::technical]\<open>The Ontology \<^verbatim>\<open>scholarly_paper\<close>\<close>
 (*<*)
@@ -556,10 +556,7 @@ ML\<open>writeln (DOF_core.print_doc_class_tree
                  toLaTeX)\<close>
 (*>*)
 text\<open> The \<^verbatim>\<open>scholarly_paper\<close> ontology is oriented towards the classical domains in science:
-\<^enum> mathematics
-\<^enum> informatics
-\<^enum> natural sciences
-\<^enum> technology and/or engineering
+mathematics, informatics, natural sciences, technology, or engineering.
 
 It extends \<^verbatim>\<open>COL\<close> by the following concepts:
 \begin{center}
@@ -1204,8 +1201,8 @@ text\<open>
   This paves the way for a new mechanism to query the ``current'' instances presented as a
   HOL \<^type>\<open>list\<close>.
   Arbitrarily complex queries can therefore be defined inside the logical language.
-  Thus, to get the list of the properties of the instances of the class \<open>result\<close>,
-  or to get the list of the authors of the instances of the \<open>introduction\<close> class,
+  To get the list of the properties of the instances of the class \<open>result\<close>,
+  or to get the list of the authors of the instances of \<open>introduction\<close>,
   it suffices to treat this meta-data as usual:
   @{theory_text [display,indent=5, margin=70] \<open>
 value*\<open>map (result.property) @{result-instances}\<close>
@@ -1216,7 +1213,7 @@ value*\<open>map (text_section.authored_by) @{introduction-instances}\<close>
   @{theory_text [display,indent=5, margin=70] \<open>
 value*\<open>filter (\<lambda>\<sigma>. result.evidence \<sigma> = proof) @{result-instances}\<close>
   \<close>}
-  Analogously, the list of the instances of the class \<open>introduction\<close> whose \<open>level\<close> > 1,
+  The list of the instances of the class \<open>introduction\<close> whose \<open>level\<close> > 1,
   can be filtered by:
   @{theory_text [display,indent=5, margin=70] \<open>
 value*\<open>filter (\<lambda>\<sigma>. the (text_section.level \<sigma>) > 1)
@@ -1255,7 +1252,7 @@ text\<open>
   \<^boxed_bash>\<open>src/ontologies\<close> and consist of an Isabelle theory file and a \<^LaTeX>-style file:
 %
 \begin{center}
-\begin{minipage}{.9\textwidth}\small
+\begin{minipage}{.9\textwidth}\footnotesize
 \dirtree{%
 .1 .
 .2 src.
@@ -1276,7 +1273,7 @@ text\<open>
 \end{center}
 \<close>
 text\<open>
-  Developing a new ontology ``\<^boxed_bash>\<open>foo\<close>'' requires, from a technical perspective, the 
+  Developing a new ontology ``\<^boxed_bash>\<open>foo\<close>'' requires the 
   following steps:
   \<^item> create a new sub-directory \<^boxed_bash>\<open>foo\<close> in the directory \<^boxed_bash>\<open>src/ontologies\<close>
   \<^item> definition of the ontological concepts, using \<^isadof>'s Ontology Definition Language (ODL), in 
@@ -1293,12 +1290,11 @@ text\<open>
 subsection\<open>Document Templates\<close>
 text\<open>
   Document-templates\<^index>\<open>document template\<close> define the overall layout (page size, margins, fonts, 
-  etc.) of the generated documents and are the main technical means for implementing layout 
-  requirements that are, \<^eg>, required by publishers or standardization bodies. Document-templates 
+  etc.) of the generated documents. Document-templates 
   are stored in a directory 
   \<^path>\<open>src/document-templates\<close>:\<^index>\<open>document template!directory structure\<close>
 \begin{center}
-\begin{minipage}{.9\textwidth}\small
+\begin{minipage}{.9\textwidth}\footnotesize
 \dirtree{%
 .1 .
 .2 src.
@@ -1333,11 +1329,9 @@ subsection\<open>The Core Template\<close>
 
 text\<open>
   Document-templates\<^bindex>\<open>document template\<close> define the overall layout (page size, margins, fonts, 
-  etc.) of the generated documents and are the main technical means for implementing layout 
-  requirements that are, \<^eg>, required by publishers or standardization bodies. 
+  etc.) of the generated documents.
   If a new layout is already supported by a \<^LaTeX>-class, then developing basic support for it 
-  is straightforward: after reading the authors guidelines of the new template, 
-  developing basic support for a new document template is straightforward. In most cases, it is 
+  is straightforward: In most cases, it is 
   sufficient to replace the document class in \autoref{lst:dc} of the template and add the 
   \<^LaTeX>-packages that are (strictly) required by the used \<^LaTeX>-setup. In general, we recommend
   to only add \<^LaTeX>-packages that are always necessary for this particular template, as loading
