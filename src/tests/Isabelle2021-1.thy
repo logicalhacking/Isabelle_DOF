@@ -1,6 +1,6 @@
 chapter \<open>Notes on Isabelle/DOF for Isabelle2021-1\<close>
 
-theory NOTES
+theory "Isabelle2021-1"
   imports Main
 begin
 
@@ -16,10 +16,6 @@ text \<open>
 
       \<^verbatim>\<open>isabelle components -l\<close>
 
-  \<^item> In the private terminology of Burkhart, the word "component" has a
-  different meaning: a tool implemented in Isabelle/ML that happens to
-  declare context data (many ML tools do that, it is not very special,
-  similar to defining a \<^verbatim>\<open>datatype\<close> or \<^verbatim>\<open>structure\<close> in ML).
 \<close>
 
 
