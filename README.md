@@ -5,26 +5,15 @@ Isabelle/DOF allows for both conventional typesetting as well as formal
 development. The manual for [Isabelle/DOF 1.1.0/Isabelle2021 is available 
 online.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2021.pdf)
 
-## Running Isabelle/DOF using Docker
-
-As an alternative to installing Isabelle/DOF locally, the latest official release Isabelle/DOF
-is also available on Docker Hub. Thus, if you have Docker installed and your installation of
-Docker supports X11 application, you can start Isabelle/DOF as follows:
-
-```console
-foo@bar:~$ docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix \ 
-           logicalhacking/isabelle_dof-1.1.0_isabelle2021 isabelle jedit
-```
-
 ## Pre-requisites
 
 Isabelle/DOF has two major pre-requisites:
 
-* **Isabelle:** Isabelle/DOF requires [Isabelle 2021](http://isabelle.in.tum.de/website-Isabelle2021/).
-  Please download the Isabelle 2021 distribution for your operating
-  system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2021/).
+* **Isabelle:** Isabelle/DOF requires [Isabelle 2021-1](http://isabelle.in.tum.de/website-Isabelle2021-1/).
+  Please download the Isabelle 2021-1 distribution for your operating
+  system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2021-1/).
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least 
-  [TeX Live 2021](https://www.tug.org/texlive/) with all available updates applied.
+  [TeX Live 2022](https://www.tug.org/texlive/) with all available updates applied.
   
 ## Installation
 
@@ -39,7 +28,7 @@ one), the full path to the ``isabelle`` command needs to be passed as
 using the ``--isabelle`` command line argument of the ``install`` script:
 
 ```console
-foo@bar:~$ ./install --isabelle /usr/local/Isabelle2021/bin/isabelle
+foo@bar:~$ ./install --isabelle /usr/local/Isabelle2021-1/bin/isabelle
 ```
 
 For further command line options of the installer, please use the

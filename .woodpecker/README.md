@@ -9,6 +9,9 @@ It may also contain additional tools and script that are useful for preparing a 
 
 ### Latest Build
 
-* [document.pdf](https://artifacts.logicalhacking.com/ci-confidential/Isabelle_DOF/Isabelle_DOF/main/latest/document.pdf)
-* [browser_info](https://artifacts.logicalhacking.com/ci-confidential/Isabelle_DOF/Isabelle_DOF/main/latest/browser_info/Unsorted/Isabelle_DOF/)
-* [aux files](https://artifacts.logicalhacking.com/ci-confidential/Isabelle_DOF/Isabelle_DOF/main/latest/)
+* lualatex
+  * [browser_info](https://artifacts.logicalhacking.com/ci-confidential/Isabelle_DOF/Isabelle_DOF/main/latest/lualatex/browser_info/Unsorted/Isabelle_DOF/)
+  * [aux files](https://artifacts.logicalhacking.com/ci-confidential/Isabelle_DOF/Isabelle_DOF/main/latest/lualatex/)
+* pdflatex
+  * [browser_info](https://artifacts.logicalhacking.com/ci-confidential/Isabelle_DOF/Isabelle_DOF/main/latest/pdflatex/browser_info/Unsorted/Isabelle_DOF/)
+  * [aux files](https://artifacts.logicalhacking.com/ci-confidential/Isabelle_DOF/Isabelle_DOF/main/latest/pdflatex/)

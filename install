@@ -45,8 +45,7 @@ print_help()
     echo "  --help, -h                display this help message"
     echo "  --isabelle, -i isabelle   isabelle command used for installation"
     echo "                            (default: $ISABELLE)"
-    echo "  --skip-patch-and-afp, -s  skip installation of Isabelle/DOF patch for" 
-    echo "                            Isabelle and required AFP entries. "
+    echo "  --skip-afp, -s            skip installation of AFP entries. "
     echo "                            USE AT YOUR OWN RISK (default: $SKIP)"
 }
 
@@ -106,9 +105,8 @@ check_afp_entries() {
 	mkdir -p .afp
         if curl -s -L $AFP_URL | tar zxf - -C .afp $extract; then 
             for e in $missing; do 
-                echo "           Registering $e in $ISABELLE_HOME_USER/ROOTS"
-		touch $ISABELLE_HOME_USER/ROOTS
-		grep -q $PWD/.afp/$AFP_DATE/thys/$e $ISABELLE_HOME_USER/ROOTS || echo "$PWD/.afp/$AFP_DATE/thys/$e" >> $ISABELLE_HOME_USER/ROOTS 
+                echo "           Registering $e"
+                $ISABELLE components -u "$PWD/.afp/$AFP_DATE/thys/$e"
             done
             echo "           AFP installation successful."
         else
@@ -119,38 +117,6 @@ check_afp_entries() {
             echo "    https://www.isa-afp.org/using.html"
             exit_error
         fi
-    fi
-}
-
-check_isa_dof_patch() {
-    echo "* Check availability of Isabelle/DOF patch:"
-    src="src/patches/thy_output.ML"
-    dst="$ISABELLE_HOME/src/Pure/Thy/thy_output.ML"
-     
-    if command -v cmp > /dev/null 2>&1 && cmp -s "$src" "$dst" ; then
-        echo "  Success: latest Isabelle/DOF patch already applied"
-        if isabelle process -e 'Thy_Output.set_meta_args_parser' &> /dev/null ; then
-            true
-        else
-            echo "  Warning: Isabelle/HOL needs to be rebuild to activate patch."
-        fi
-    else
-        command -v cmp >/dev/null 2>&1 || echo "  Warning: cmp not available, cannot check if patch is already applied."
-        echo "  Warning: Isabelle/DOF patch is not available or outdated."
-        echo "           Trying to patch system ...."
-        if [ ! -f "$dst.backup-by-isadof-installer" ]; then
-            cp -f "$dst" "$dst.backup-by-isadof-installer" || true;
-        fi
-	if (cp -f $src $dst) &> /dev/null; then 
-	    echo "       Applied patch successfully, Isabelle/HOL will be rebuilt during"
-	    echo "       the next start of Isabelle."
-	else
-            echo "  FAILURE: Could not apply Isabelle/DOF patch."
-            echo "    Please copy $src to $dst, e.g.:"
-            echo "       cp -f $src $dst"
-            echo "    and rebuild Isabelle/HOL."
-            exit_error
-	fi
     fi
 }
 
@@ -222,8 +188,7 @@ install_and_register(){
     sed -i -e "s|<isadofurl>|$DOF_URL|" $ISABELLE_HOME_USER/DOF/*/*
     LTX_VERSION="$DATE $DOF_VERSION/$ISABELLE_SHORT_VERSION"
     sed -i -e "s|<isadofltxversion>|$LTX_VERSION|" $ISABELLE_HOME_USER/DOF/*/*
-    touch $ISABELLE_HOME_USER/ROOTS
-    grep -q $PWD'$' $ISABELLE_HOME_USER/ROOTS || echo "$PWD" >> $ISABELLE_HOME_USER/ROOTS 
+    $ISABELLE components -u "$PWD"    
 }
 
 
@@ -235,7 +200,7 @@ do
         --isabelle|-i)
             ISABELLE="$2";
             shift;;
-        --skip-patch-and-afp|-s)
+        --skip-afp|-s)
             SKIP="true";;
         --help|-h)
             print_help
@@ -260,9 +225,8 @@ echo "Isabelle/DOF Installer"
 echo "======================"
 check_isabelle_version
 if [ "$SKIP" = "true" ]; then
-  echo "* Warning: skipping installation of Isabelle patch and AFP entries."
+  echo "* Warning: skipping installation of AFP entries."
 else
-  check_isa_dof_patch
   check_afp_entries
 fi
 check_old_installation

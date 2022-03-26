@@ -612,17 +612,18 @@ subsection\<open>More operations on types\<close>
 text\<open>
 \<^item> \<^ML>\<open>Term_Subst.map_types_same : (typ -> typ) -> term -> term\<close>
 \<^item> \<^ML>\<open>Term_Subst.map_aterms_same : (term -> term) -> term -> term\<close>
-\<^item> \<^ML>\<open>Term_Subst.instantiate: ((indexname * sort) * typ) list * ((indexname * typ) * term) list 
-                              -> term -> term\<close>
-\<^item> \<^ML>\<open>Term_Subst.instantiateT: ((indexname * sort) * typ) list -> typ -> typ\<close>
-\<^item> \<^ML>\<open>Term_Subst.generalizeT: string list -> int -> typ -> typ\<close>
+\<^item> \<^ML>\<open>Term_Subst.instantiate: typ TVars.table * term Vars.table -> term -> term\<close>
+\<^item> \<^ML>\<open>Term_Subst.instantiateT: typ TVars.table -> typ -> typ\<close>
+\<^item> \<^ML>\<open>Term_Subst.generalizeT: Names.set -> int -> typ -> typ\<close>
                         this is the standard type generalisation function !!!
                         only type-frees in the string-list were taken into account. 
-\<^item> \<^ML>\<open>Term_Subst.generalize: string list * string list -> int -> term -> term\<close>
+\<^item> \<^ML>\<open>Term_Subst.generalize: Names.set * Names.set -> int -> term -> term\<close>
                         this is the standard term generalisation function !!!
                         only type-frees and frees in the string-lists were taken 
                         into account. 
 \<close>
+
+
 
 text \<open>Apparently, a bizarre conversion between the old-style interface and 
   the new-style  \<^ML>\<open>tyenv\<close> is necessary. See the following example.\<close>
@@ -794,11 +795,11 @@ text\<open> We come now to the very heart of the LCF-Kernel of Isabelle, which
 \<^item>  \<^ML>\<open> Thm.forall_intr: cterm -> thm -> thm\<close>
 \<^item>  \<^ML>\<open> Thm.forall_elim: cterm -> thm -> thm\<close>
 \<^item>  \<^ML>\<open> Thm.transfer : theory -> thm -> thm\<close>
-\<^item>  \<^ML>\<open> Thm.generalize: string list * string list -> int -> thm -> thm\<close>
-\<^item>  \<^ML>\<open> Thm.instantiate: ((indexname*sort)*ctyp)list * ((indexname*typ)*cterm) list -> thm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.generalize: Names.set * Names.set -> int -> thm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.instantiate: ctyp TVars.table * cterm Vars.table -> thm -> thm\<close>
 \<close>
 
-text\<open>  They reflect the Pure logic depicted in a number of presentations such as 
+text\<open>  They reflect the Pure logic depicted in a number of presentations such as
   M. Wenzel, \<^emph>\<open>Parallel Proof Checking in Isabelle/Isar\<close>, PLMMS 2009, or simiular papers.
   Notated as logical inference rules, these operations were presented as follows:
 \<close>
@@ -909,14 +910,10 @@ high-level component (more low-level components such as \<^ML>\<open>Global_Theo
 exist) for definitions and axiomatizations is here:
 \<close>
 
-
 text\<open>
 \<^item>  \<^ML>\<open>Specification.definition: (binding * typ option * mixfix) option ->
         (binding * typ option * mixfix) list -> term list -> Attrib.binding * term ->
         local_theory -> (term * (string * thm)) * local_theory\<close>
-\<^item>  \<^ML>\<open>Specification.definition': (binding * typ option * mixfix) option ->
-        (binding * typ option * mixfix) list ->  term list -> Attrib.binding * term ->
-        bool -> local_theory -> (term * (string * thm)) * local_theory\<close>
 \<^item>  \<^ML>\<open>Specification.definition_cmd: (binding * string option * mixfix) option ->
         (binding * string option * mixfix) list -> string list -> Attrib.binding * string ->
          bool -> local_theory -> (term * (string * thm)) * local_theory\<close>
@@ -1186,8 +1183,8 @@ text\<open> The extensibility of Isabelle as a system framework depends on a num
  \<^item> \<^ML>\<open>Toplevel.theory': (bool -> theory -> theory) -> Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.exit: Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.ignored: Position.T -> Toplevel.transition\<close>
- \<^item> \<^ML>\<open>Toplevel.present_local_theory: (xstring * Position.T) option ->
-                       (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition\<close>
+ \<^item> \<^ML>\<open>Toplevel.present_local_theory:  (xstring * Position.T) option ->
+                       (Toplevel.state -> Latex.text) -> Toplevel.transition -> Toplevel.transition\<close>
 
 \<close>
 subsection*[cmdbinding::technical] \<open>Toplevel Transaction Management in the Isar-Engine\<close>
@@ -1856,8 +1853,6 @@ Common Isar Syntax
 
 
 Common Isar Syntax
-\<^item>\<^ML>\<open>Args.embedded_token  : Token.T parser\<close>
-\<^item>\<^ML>\<open>Args.embedded_inner_syntax: string parser\<close>
 \<^item>\<^ML>\<open>Args.embedded_input  : Input.source parser\<close>
 \<^item>\<^ML>\<open>Args.embedded  : string parser\<close>
 \<^item>\<^ML>\<open>Args.embedded_position: (string * Position.T) parser\<close>
