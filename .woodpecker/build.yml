@@ -9,6 +9,8 @@ pipeline:
       - echo "ISABELLE_PDFLATEX=\"$LATEX --file-line-error\"" >> $ISABELLE_HOME_USER/etc/settings
       - ./install
       - isabelle build -D . -o browser_info
+      - isabelle mkroot_DOF DOF_test
+      - isabelle build -D DOF_test
       - cp -r $ISABELLE_HOME_USER/browser_info $ARTIFACT_DIR
       - cd $ARTIFACT_DIR
       - cd ..
