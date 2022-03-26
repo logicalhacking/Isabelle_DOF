@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019-2021 The University of Exeter 
- *               2018-2021 The University of Paris-Saclay
+ *               2019-2022 The University of Exeter 
+ *               2018-2022 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -134,9 +134,9 @@ abstract*[abs, keywordlist="[\<open>Ontology\<close>, \<open>Ontological Modelin
   
     It is an unique feature of  \<^isadof>  that ontologies may be used to control
     the link between formal and informal content in documents in a machine
-    checked way. These links can connect both text elements as well as formal
-    modelling elements such as terms, definitions, code  and logical formulas,
-    alltogether \<^emph>\<open>integrated\<close> in a state-of-the-art interactive theorem prover.
+    checked way. These links can connect both text elements and formal
+    modeling elements such as terms, definitions, code  and logical formulas,
+    altogether \<^emph>\<open>integrated\<close> in a state-of-the-art interactive theorem prover.
 
 \<close>
 
