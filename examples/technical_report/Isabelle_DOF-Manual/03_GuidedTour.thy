@@ -139,7 +139,6 @@ The directory  \<^boxed_bash>\<open>myproject\<close> contains the following fil
 .1 .
 .2 myproject.
 .3 document.
-.4 build\DTcomment{Build Script}.
 .4 isadof.cfg\DTcomment{\<^isadof> configuration}.
 .4 preamble.tex\DTcomment{Manual \<^LaTeX>-configuration}.
 .3 ROOT\DTcomment{Isabelle build-configuration}.
