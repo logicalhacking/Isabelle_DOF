@@ -131,7 +131,6 @@ fi
 
 $ISABELLE_TOOL mkroot -n "$NAME" "$DIR"
 echo "    \"preamble.tex\"" >> "$DIR"/ROOT
-echo "    \"build\"" >> "$DIR"/ROOT
 sed -i -e "s/root.tex/isadof.cfg/" "$DIR"/ROOT
 sed -i -e "s/HOL/Isabelle_DOF/" "$DIR"/ROOT
 sed -i -e "s/\"output\"\]/\"output\", document_build = dof\]/" "$DIR"/ROOT
