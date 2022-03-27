@@ -138,7 +138,6 @@ rm -f "$DIR"/document/root.tex
   
 # Creating isadof.cfg
 echo "Template: $TEMPLATE" > "$DIR"/document/isadof.cfg
-cp "$ISABELLE_HOME_USER/DOF/document-template/build" "$DIR"/document/
 for o in $ONTOLOGY; do
   echo "Ontology: $o" >> "$DIR"/document/isadof.cfg;
 done
