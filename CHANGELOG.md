@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   from ROOT files.
 - lipics support is now official, requires document option "document_comment_latex=true"
   in the ROOT file.
+- Isabelle/DOF is now a proper Isabelle component that should be installed using the 
+  "isabelle components" command. The installation script is now only an convenience 
+  means for installing the required AFP entries.
 
 ## 1.2.0 - 2022-03-26
 

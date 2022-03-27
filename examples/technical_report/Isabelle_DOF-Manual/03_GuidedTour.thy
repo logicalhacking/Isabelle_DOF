@@ -70,35 +70,26 @@ subsubsection*[isadof::technical]\<open>Installing \<^isadof>\<close>
 text\<open>
   In the following, we assume that you already downloaded the \<^isadof> distribution 
   (\href{\isadofarchiveurl}{\isadofarchiven}) from the \<^isadof> web site. The main steps for 
-  installing are extracting the \<^isadof> distribution and calling its \<^boxed_bash>\<open>install\<close> script. 
+  installing are extracting the \<^isadof> distribution and calling its \<^boxed_bash>\<open>install-afp\<close> script. 
   We start by extracting the \<^isadof> archive:
 @{boxed_bash [display]\<open>ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë\<close>}
 This will create a directory \texttt{\isadofdirn} containing \<^isadof> distribution.
-Next, we need to invoke the \<^boxed_bash>\<open>install\<close> script. If necessary, the installation 
-automatically downloads additional dependencies from the AFP (\<^url>\<open>https://www.isa-afp.org\<close>), 
-namely the AFP  entries ``Functional Automata''~@{cite "nipkow.ea:functional-Automata-afp:2004"} 
-and ``Regular Sets and Expressions''~@{cite "kraus.ea:regular-sets-afp:2010"}. This might take a 
-few minutes to complete. Moreover, the installation script applies a patch to the Isabelle system, 
-which requires  \<^emph>\<open>write permissions for the Isabelle system directory\<close> and registers \<^isadof> as 
-Isabelle component. 
 
-If the \<^boxed_bash>\<open>isabelle\<close> tool is not in your  \<^boxed_bash>\<open>PATH\<close>, you need to call the 
- \<^boxed_bash>\<open>install\<close> script with the  \<^boxed_bash>\<open>--isabelle\<close> option, passing the full-qualified
-path of the \<^boxed_bash>\<open>isabelle\<close> tool ( \<^boxed_bash>\<open>install --help\<close> gives 
-you an overview of all available configuration options):
+\<^isadof> depends on the the AFP (\<^url>\<open>https://www.isa-afp.org\<close>), namely the AFP  
+entries ``Functional Automata''~@{cite "nipkow.ea:functional-Automata-afp:2004"} and 
+``Regular Sets and Expressions''~@{cite "kraus.ea:regular-sets-afp:2010"}. You can either
+install the complete AFP, following the instructions given at \<^url>\<open>https://www.isa-afp.org/using.html\<close>), 
+or use the provided \<^boxed_bash>\<open>install\<close> script to install a minimal AFP 
+setup into the local \<^isadof> directory. The script needs to be prefixed with the 
+\<^boxed_bash>\<open>isabelle env\<close> command:
 
 @{boxed_bash [display]\<open>ë\prompt{}ë cd ë\isadofdirnë
-ë\prompt{\isadofdirn}ë ./install --isabelle /usr/local/Isabelleë\isabelleversion/bin/isabelleë
+ë\prompt{\isadofdirn}ë isabelle env ./install-afp
 
 Isabelle/DOF Installer
 ======================
 * Checking Isabelle version:
   Success: found supported Isabelle version ë(\isabellefullversion)ë
-* Check availability of Isabelle/DOF patch:
-  Warning: Isabelle/DOF patch is not available or outdated.
-           Trying to patch system ....
-       Applied patch successfully, Isabelle/HOL will be rebuilt during
-       the next start of Isabelle.
 * Checking availability of AFP entries:\<close>}
 
 @{boxed_bash [display]
@@ -110,18 +101,6 @@ Isabelle/DOF Installer
            Registering Functional-Automata iëën 
                  /home/achim/.isabelle/Isabelleë\isabelleversion/ROOTSë
            AFP installation successful.
-* Searching fëëor existing installation:
-  No old installation found.
-* Installing Isabelle/DOF
-  - Installing Tools iëën 
-        /home/achim/.isabelle/Isabelleë\isabelleversion/DOF/Toolsë
-  - Installing document templates iëën 
-        /home/achim/.isabelle/Isabelleë\isabelleversion/DOF/document-templateë
-  - Installing LaTeX styles iëën 
-       /home/achim/.isabelle/Isabelleë\isabelleversion/DOF/latexë
-  - Registering Isabelle/DOF
-    * Registering tools iëën 
-       /home/achim/.isabelle/Isabelleë\isabelleversion/etc/settingsë
 * Installation successful. Enjoy Isabelle/DOF, you can build the session
   Isabelle/DOF and all example documents by executing:
   /usr/local/Isabelleë\isabelleversion/bin/isabelleë build -D . \<close>}

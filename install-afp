@@ -30,23 +30,13 @@
 #set -e
 shopt -s nocasematch
 
-# get global configuration  
-if [ -d .git ]; then
-    export `git show -s --format="COMMIT=%H DATE=%cd" --date=short | sed -e 's|-|/|g'`
-fi    
-source .config
-
 print_help()
 {
-    echo "Usage: install [OPTION] "
+    echo "Usage: isabelle env ./install-afp [OPTION] "
     echo ""
     echo "Run ..."
     echo ""
     echo "  --help, -h                display this help message"
-    echo "  --isabelle, -i isabelle   isabelle command used for installation"
-    echo "                            (default: $ISABELLE)"
-    echo "  --skip-afp, -s            skip installation of AFP entries. "
-    echo "                            USE AT YOUR OWN RISK (default: $SKIP)"
 }
 
 
@@ -88,7 +78,7 @@ check_afp_entries() {
     missing=""
     required="Regular-Sets Functional-Automata"
     for afp in $required; do 
-        res=`$ISABELLE build -n $afp 2>/dev/null || true`
+        res=`$ISABELLE_TOOL build -n $afp 2>/dev/null || true`
         if [ "$res" != "" ]; then 
             echo "  Success: found APF entry $afp."
         else
@@ -106,7 +96,7 @@ check_afp_entries() {
         if curl -s -L $AFP_URL | tar zxf - -C .afp $extract; then 
             for e in $missing; do 
                 echo "           Registering $e"
-                $ISABELLE components -u "$PWD/.afp/$AFP_DATE/thys/$e"
+                $ISABELLE_TOOL components -u "$PWD/.afp/$AFP_DATE/thys/$e"
             done
             echo "           AFP installation successful."
         else
@@ -120,64 +110,15 @@ check_afp_entries() {
     fi
 }
 
-check_old_installation(){
-    echo "* Searching for existing installation:"
-    if [[ -d "$ISABELLE_HOME_USER/DOF" ]]; then
-        echo "  Found old installation, moving it to $ISABELLE_HOME_USER/DOF.bak."
-        rm -rf "$ISABELLE_HOME_USER/DOF.bak"
-        mv "$ISABELLE_HOME_USER/DOF" "$ISABELLE_HOME_USER/DOF.bak"
-    else
-        echo "  No old installation found."
-    fi
-
-}
-
-install_and_register(){
-    echo "* Installing Isabelle/DOF"
-
-    DIR="$ISABELLE_HOME_USER/DOF/document-template"
-    echo "  - Installing document templates in $DIR"
-    mkdir -p "$DIR"
-    cp $GEN_DIR/document-templates/* "$DIR"
-    cp $GEN_DIR/DOF/*/*.sty "$DIR"
-    
-    ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/:.*$//'`
-    sed -i -e "s|%%% CONFIG %%%| \
-      \\\\renewcommand{\\\\dof@isabelleversion}{$ISABELLE_SHORT_VERSION} \
-      \\\\renewcommand{\\\\isabellelatestversion}{$DOF_LATEST_ISABELLE} \
-      \\\\renewcommand{\\\\isabellefullversion}{$ISABELLE_VERSION\\\\xspace} \
-      \\\\renewcommand{\\\\dof@version}{$DOF_VERSION} \
-      \\\\renewcommand{\\\\doflatestversion}{$DOF_LATEST_VERSION} \
-      \\\\renewcommand{\\\\isadoflatestdoi}{$DOF_LATEST_DOI} \
-      \\\\renewcommand{\\\\isadofgenericdoi}{$DOF_GENERIC_DOI} \
-      \\\\renewcommand{\\\\isabelleurl}{$ISABELLE_URL} \
-      \\\\renewcommand{\\\\dofurl}{$DOF_URL} \
-      \\\\renewcommand{\\\\dof@artifacturl}{https://$DOF_ARTIFACT_HOST/$DOF_ARTIFACT_DIR}|" \
-      "$DIR/DOF-core.sty"
-
-    DIR="$ISABELLE_HOME_USER/DOF/latex"
-    echo "  - Installing LaTeX styles in $DIR"
-    mkdir -p "$DIR"
-    cp $GEN_DIR/ontologies/*/*.sty "$DIR"
-    
+register(){
     echo "  - Registering Isabelle/DOF"
-    sed -i -e "s|<isadofurl>|$DOF_URL|" $ISABELLE_HOME_USER/DOF/*/*
-    LTX_VERSION="$DATE $DOF_VERSION/$ISABELLE_SHORT_VERSION"
-    sed -i -e "s|<isadofltxversion>|$LTX_VERSION|" $ISABELLE_HOME_USER/DOF/*/*
-    $ISABELLE components -u "$PWD"    
+    $ISABELLE_TOOL components -u "$PWD"    
 }
 
 
-ISABELLE=`command -v isabelle`
-SKIP="false"
 while [ $# -gt 0 ]
 do
     case "$1" in
-        --isabelle|-i)
-            ISABELLE="$2";
-            shift;;
-        --skip-afp|-s)
-            SKIP="true";;
         --help|-h)
             print_help
             exit 0;;
@@ -187,27 +128,15 @@ do
     shift
 done
 
-
-ACTUAL_ISABELLE_VERSION=`$ISABELLE version`
-GEN_DIR=src
-PROG=`echo $0 | sed 's|.*/||'`;
-VARS=`$ISABELLE getenv ISABELLE_HOME_USER ISABELLE_HOME`
-for i in $VARS; do 
-	export "$i"
-done
+ACTUAL_ISABELLE_VERSION=`$ISABELLE_TOOL version`
 
 echo ""
 echo "Isabelle/DOF Installer"
 echo "======================"
 check_isabelle_version
-if [ "$SKIP" = "true" ]; then
-  echo "* Warning: skipping installation of AFP entries."
-else
-  check_afp_entries
-fi
-check_old_installation
-install_and_register
+check_afp_entries
+register
 echo "* Installation successful. Enjoy Isabelle/DOF, you can build the session"
 echo "  Isabelle/DOF and all example documents by executing:"
-echo "  $ISABELLE build -D ."
+echo "  $ISABELLE_TOOL build -D ."
 exit 0

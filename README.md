@@ -7,38 +7,37 @@ online.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF
 
 ## Pre-requisites
 
-Isabelle/DOF has two major pre-requisites:
+Isabelle/DOF has three major pre-requisites:
 
 * **Isabelle:** Isabelle/DOF requires [Isabelle 2021-1](http://isabelle.in.tum.de/website-Isabelle2021-1/).
   Please download the Isabelle 2021-1 distribution for your operating
-  system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2021-1/).
+  system from the [Isabelle
+  website](http://isabelle.in.tum.de/website-Isabelle2021-1/).
+* **AFP:** Isabelle/DOF requires two entries from the [Archive of
+  Formal Proofs (AFP)](https://www.isa-afp.org/). Please install the 
+  AFP following the instructions given at
+  <https://www.isa-afp.org/using.html>. For your convenience, we also
+  provide a script that only installs the two entries required by
+  Isabelle/DOF into the local Isabelle/DOF directory. You can use this 
+  script as follows:
+  ```console
+  foo@bar:~$ isabelle env ./install-afp
+  ```  
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least 
   [TeX Live 2022](https://www.tug.org/texlive/) with all available updates applied.
   
 ## Installation
 
-In most case, the DOF-plugin can be installed as follows:
+Isabelle/DOF is provided as a Isabelle component. After installing the
+pre-requisites the Isabelle/Archive needs to be unpacked and
+registered.  Change into the directory you unpacked Isabelle/DOF (this
+should be the directory containing this ``README.md'' file) and execute
 
 ```console
-foo@bar:~$ ./install
+foo@bar:~$ isabelle components -u `pwd`
 ```
 
-If a specific Isabelle version should be used (i.e., not the default
-one), the full path to the ``isabelle`` command needs to be passed as
-using the ``--isabelle`` command line argument of the ``install`` script:
-
-```console
-foo@bar:~$ ./install --isabelle /usr/local/Isabelle2021-1/bin/isabelle
-```
-
-For further command line options of the installer, please use the
-built-in help:
-
-```console
-foo@bar:~$ ./install --help
-```
-
-A final step for the installation is:
+The final step for the installation is:
 
 ```console
 foo@bar:~$ isabelle build -D .

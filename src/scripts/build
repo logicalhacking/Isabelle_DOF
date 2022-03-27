@@ -33,6 +33,33 @@ NAME=${2:-root}
 
 ROOT_NAME="root_$NAME"
 
+install_dof_tex(){
+    cp $ISABELLE_DOF_HOME/src/document-templates/* .
+    cp $ISABELLE_DOF_HOME/src/DOF/*/*.sty .
+    cp $ISABELLE_DOF_HOME/src/ontologies/*/*.sty . 
+    
+    ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/:.*$//'`
+    sed -i -e "s|%%% CONFIG %%%| \
+      \\\\renewcommand{\\\\dof@isabelleversion}{$ISABELLE_SHORT_VERSION} \
+      \\\\renewcommand{\\\\isabellelatestversion}{$DOF_LATEST_ISABELLE} \
+      \\\\renewcommand{\\\\isabellefullversion}{$ISABELLE_VERSION\\\\xspace} \
+      \\\\renewcommand{\\\\dof@version}{$DOF_VERSION} \
+      \\\\renewcommand{\\\\doflatestversion}{$DOF_LATEST_VERSION} \
+      \\\\renewcommand{\\\\isadoflatestdoi}{$DOF_LATEST_DOI} \
+      \\\\renewcommand{\\\\isadofgenericdoi}{$DOF_GENERIC_DOI} \
+      \\\\renewcommand{\\\\isabelleurl}{$ISABELLE_URL} \
+      \\\\renewcommand{\\\\dofurl}{$DOF_URL} \
+      \\\\renewcommand{\\\\dof@artifacturl}{https://$DOF_ARTIFACT_HOST/$DOF_ARTIFACT_DIR}|" \
+      "DOF-core.sty"
+
+    
+    sed -i -e "s|<isadofurl>|$DOF_URL|" *.sty
+    sed -i -e "s|<isadofurl>|$DOF_URL|" *.tex
+    LTX_VERSION="$DOF_DATE $DOF_VERSION/$ISABELLE_SHORT_VERSION"
+    sed -i -e "s|<isadofltxversion>|$LTX_VERSION|" *.tex
+    sed -i -e "s|<isadofltxversion>|$LTX_VERSION|" *.sty
+}
+
 [ ! -f "$DIR/$ROOT_NAME.tex" ] && ROOT_NAME="root"
 
 if [ -f "$DIR/$ROOT_NAME.tex" ]; then 
@@ -72,7 +99,9 @@ for o in $ONTOLOGY; do
   >&2 echo "\usepackage{DOF-$o}" >> ontologies.tex;
 done
 
-ROOT="$ISABELLE_HOME_USER/DOF/document-template/root-$TEMPLATE.tex"
+install_dof_tex
+
+ROOT="root-$TEMPLATE.tex"
 if [ ! -f $ROOT ]; then 
     >&2 echo ""
     >&2 echo "Error: Isabelle/DOF document setup not correct"
@@ -83,8 +112,6 @@ if [ ! -f $ROOT ]; then
 fi
 
 cp $ROOT root.tex
-cp $ISABELLE_HOME_USER/DOF/latex/*.sty .
-cp $ISABELLE_HOME_USER/DOF/document-template/*.sty .
 
 # delete outdated aux files from previous runs
 rm -f *.aux 
