@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
  
 - removed explicit use of build script. Requires removing "build" script entry
   from ROOT files.
-
+- lipics support is now official, requires document option "document_comment_latex=true"
+  in the ROOT file.
 
 ## 1.2.0 - 2022-03-26
 

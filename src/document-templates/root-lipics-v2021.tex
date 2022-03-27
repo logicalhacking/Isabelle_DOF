@@ -16,15 +16,17 @@
 %% Warning: Do Not Edit!
 %% =====================
 %% This is the root file for the Isabelle/DOF using the lipics class.
-%% Note that lipics cannot be distributed as part of Isabelle/DOF; you need
-%% to download lipics.cls from 
+%% Note that lipics cannot is *not* distributed as part of Isabelle/DOF; 
+%% you need to download lipics.cls from 
 %% https://www.dagstuhl.de/en/publications/lipics/instructions-for-authors/
 %% and add it manually to the praemble.tex and the ROOT file.
+%% Moreover, the option "document_comment_latex=true" needs to be set 
+%% in the ROOT file.
 %%
 %% All customization and/or additional packages should be added to the file
 %% preamble.tex.
 
-\documentclass[a4paper,UKenglish,cleveref, autoref,thm-restate]{lipics-v2021-dof}
+\documentclass[a4paper,UKenglish,cleveref, autoref,thm-restate]{lipics-v2021}
 \bibliographystyle{plainurl}% the mandatory bibstyle
 \usepackage{isabelle}
 \usepackage{isabellesym}
