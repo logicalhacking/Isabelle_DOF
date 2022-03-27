@@ -8,7 +8,6 @@ session "Isabelle_DOF-Manual" = "Isabelle_DOF" +
     "root.bib"
     "root.mst"
     "preamble.tex"
-    "build"
     "lstisadof-manual.sty" 
     "figures/antiquotations-PIDE.png"
     "figures/cicm2018-combined.png"

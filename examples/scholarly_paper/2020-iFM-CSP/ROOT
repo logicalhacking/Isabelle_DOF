@@ -6,4 +6,3 @@ session "2020-iFM-csp" = "Isabelle_DOF" +
     "isadof.cfg"
     "root.bib"
     "preamble.tex"
-    "build"

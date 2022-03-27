@@ -8,7 +8,6 @@ session "TR_MyCommentedIsabelle" = "Isabelle_DOF" +
     "isadof.cfg"
     "preamble.tex"
     "prooftree.sty"
-    "build"
     "figures/markup-demo.png"
     "figures/text-element.pdf"
     "figures/isabelle-architecture.pdf"

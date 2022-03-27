@@ -7,7 +7,6 @@ session "2018-cicm-isabelle_dof-applications" = "Isabelle_DOF" +
     "isadof.cfg"
     "root.bib"
     "preamble.tex"
-    "build"
     "lstisadof.sty"
     "figures/isabelle-architecture.pdf"
     "figures/Dogfood-Intro.png"

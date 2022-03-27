@@ -5,7 +5,6 @@ session "mini_odo" = "Isabelle_DOF" +
   document_files
     "isadof.cfg"
     "preamble.tex"
-    "build"
     "root.bib"
     "root.mst"
     "lstisadof.sty"
