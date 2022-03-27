@@ -35,21 +35,6 @@ set -e
 ROOT_NAME="root_$NAME"
 [ ! -f "$DIR/$ROOT_NAME.tex" ] && ROOT_NAME="root"
 
-if [ ! -f $ISABELLE_HOME_USER/DOF/document-template/DOF-core.sty ]; then
-    >&2 echo ""
-    >&2 echo "Error: Isabelle/DOF not installed"
-    >&2 echo "====="
-    >&2 echo "This is a Isabelle/DOF project. The document preparation requires"
-    >&2 echo "the Isabelle/DOF framework. Please obtain the framework by cloning"
-    >&2 echo "the Isabelle/DOF git repository, i.e.: "
-    >&2 echo "    git clone <isadofurl>"
-    >&2 echo "You can install the framework as follows:"
-    >&2 echo "    cd Isabelle_DOF/document-generator"
-    >&2 echo "    ./install"
-    >&2 echo ""
-    exit 1
-fi
-
 if [ -f "$DIR/$ROOT_NAME.tex" ]; then 
     >&2 echo ""
     >&2 echo "Error: Found root file ($DIR/$ROOT_NAME.tex)"
@@ -58,25 +43,6 @@ if [ -f "$DIR/$ROOT_NAME.tex" ]; then
     >&2 echo "your project setup. Your $DIR/isadof.cfg should define a Isabelle/DOF"
     >&2 echo "template and your project should not include a root file."
     >&2 echo ""
-    exit 1
-fi
-
-if [ -f "$DIR/ontologies.tex" ]; then 
-    >&2 echo ""
-    >&2 echo "Error: Old project setup, found a ontologies file ($DIR/ontologies.tex)"
-    >&2 echo "====="
-    >&2 echo "Isabelle/DOF does no longer support the use of $DIR/ontologies.tex. The"
-    >&2 echo "required ontologies should be defined in $DIR/isadof.cfg."
-    >&2 echo ""
-    exit 1
-fi
-
-if [ -f "$DIR/$ROOT_NAME.tex" ]; then 
-    >&2 echo ""
-    >&2 echo "Error: Found root file ($DIR/$ROOT_NAME.tex)"
-    >&2 echo "====="
-    >&2 echo "Isabelle/DOF does not make use of the Isabelle root file mechanism."
-    >&2 echo "Please check your Isabelle/DOF setup."
     exit 1
 fi
 

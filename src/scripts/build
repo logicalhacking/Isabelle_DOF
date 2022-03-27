@@ -33,13 +33,8 @@ if [ ! -f $ISABELLE_HOME_USER/DOF/document-template/build_lib.sh ]; then
     >&2 echo "Error: Isabelle/DOF not installed"
     >&2 echo "====="
     >&2 echo "This is a Isabelle/DOF project. The document preparation requires"
-    >&2 echo "the Isabelle/DOF framework. Please obtain the framework by cloning"
-    >&2 echo "the Isabelle/DOF git repository, i.e.: "
-    >&2 echo "    git clone <isadofurl>"
-    >&2 echo "You can install the framework as follows:"
-    >&2 echo "    cd Isabelle_DOF/document-generator"
-    >&2 echo "    ./install"
-    >&2 echo ""
+    >&2 echo "the Isabelle/DOF component from:"
+    >&2 echo "<isadofurl>"
     exit 1
 fi
 

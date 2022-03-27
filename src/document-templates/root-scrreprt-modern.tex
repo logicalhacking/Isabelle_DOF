@@ -55,12 +55,9 @@
 \IfFileExists{DOF-core.sty}{}{%
   \PackageError{DOF-core}{Isabelle/DOF not installed. 
     This is a Isabelle_DOF project. The document preparation requires
-    the Isabelle_DOF framework. Please obtain the framework by cloning
-    the Isabelle_DOF git repository, i.e.: 
-         "git clone <isadofurl>"
-    You can install the framework as follows:
-         "cd Isabelle_DOF/document-generator && ./install"}{%
-    For further help, see <isadofurl>}
+    the Isabelle_DOF component from:
+    <isadofurl>
+  }{For further help, see <isadofurl>}
 }
 \input{ontologies}
 \IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
