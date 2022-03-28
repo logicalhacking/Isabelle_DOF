@@ -993,8 +993,8 @@ text\<open>
   entities, \<^eg>, \<^ML_type>\<open>term\<close> (\<open>\<lambda>\<close>-term), \<^ML_type>\<open>typ\<close>, or
    \<^ML_type>\<open>thm\<close>, we represent the types of the implementation language
   \<^emph>\<open>inside\<close> the HOL type system.  We do, however, not reflect the data of
-  these types. They are just declared abstract types, 
-  ``inhabited'' by special constant symbols carrying strings, for
+  these types. They are just types declared in HOL, 
+  which are ``inhabited'' by special constant symbols carrying strings, for
   example of the format \<^boxed_theory_text>\<open>@{thm <string>}\<close>.
   % TODO:
   % Update meta-types implementation explanation to the new implementation
