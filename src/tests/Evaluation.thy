@@ -6,6 +6,7 @@ theory
   Evaluation
 imports 
   "Isabelle_DOF-tests.TermAntiquotations"
+  "Isabelle_DOF-tests.High_Level_Syntax_Invariants"
 begin
 
 section\<open>\<^theory_text>\<open>ML*\<close>-Annotated SML-commands\<close>
@@ -84,8 +85,8 @@ value*\<open>A.x @{A \<open>xcv1\<close>}\<close>
 
 text\<open>If the attribute of the instance is not initialized, we get an undefined value,
 whose type is the type of the attribute:\<close>
-term*\<open>level @{C \<open>xcv2\<close>}\<close>
-value*\<open>level @{C \<open>xcv2\<close>}\<close>
+term*\<open>B.level @{C \<open>xcv2\<close>}\<close>
+value*\<open>B.level @{C \<open>xcv2\<close>}\<close>
 
 text\<open>The value of a TA is the term itself:\<close>
 term*\<open>C.g @{C \<open>xcv2\<close>}\<close>
@@ -169,5 +170,32 @@ to update the instance @{docitem \<open>xcv4\<close>}:
 (* Error:
 update_instance*[xcv4::F, b+="{(@{A ''xcv3''},@{G ''xcv5''})}"]*)
 
+
+section\<open>\<^theory_text>\<open>assert*\<close>-Annotated assertion-commands\<close>
+
+text\<open>The \<^emph>\<open>assert*\<close>-command allows for logical statements to be checked in the global context.
+It uses the same implementation as the \<^emph>\<open>value*\<close>-command and has the same limitations.
+\<close>
+
+text\<open>Using the ontology defined in \<^theory>\<open>Isabelle_DOF-tests.High_Level_Syntax_Invariants\<close>
+we can check logical statements:\<close>
+
+term*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
+assert*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
+assert*\<open>\<not>(authored_by @{introduction \<open>introduction2\<close>}
+          = authored_by @{introduction \<open>introduction4\<close>})\<close>
+
+text\<open>Assertions must be boolean expressions, so the following assertion triggers an error:\<close>
+(* Error:
+assert*\<open>@{introduction \<open>introduction2\<close>}\<close>*)
+
+text\<open>Assertions must be true, hence the error:\<close>
+(* Error:
+assert*\<open>{@{author \<open>curry\<close>}} = {@{author \<open>church\<close>}}\<close>*)
+
+term*\<open>property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
+assert*\<open>\<not> property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
+
+assert*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
 
 end
