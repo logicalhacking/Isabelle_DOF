@@ -324,21 +324,28 @@ is currently only available in the SML API's of the kernel.
   as specified in @{technical \<open>odl-manual0\<close>}.
 \<^item> \<open>meta_args\<close> : 
    \<^rail>\<open>obj_id ('::' class_id) ((',' attribute '=' HOL_term) *) \<close>
+\<^item> \<^emph>\<open>evaluator\<close>: from @{cite "wenzel:isabelle-isar:2020"}, evaluation is tried first using ML,
+  falling back to normalization by evaluation if this fails. Alternatively a specific
+  evaluator can be selected using square brackets; typical evaluators use the
+  current set of code equations to normalize and include \<open>simp\<close> for fully
+  symbolic evaluation using the simplifier, \<open>nbe\<close> for \<^emph>\<open>normalization by
+  evaluation\<close> and \<^emph>\<open>code\<close> for code generation in SML.
 \<^item> \<open>upd_meta_args\<close> :
    \<^rail>\<open> (obj_id ('::' class_id) ((',' attribute ('=' | '+=') HOL_term) * ))\<close>
 \<^item> \<open>annotated_text_element\<close> :
 \<^rail>\<open> 
-    (  (  @@{command "text*"} '[' meta_args ']' '\<open>' formal_text '\<close>'
+    (  @@{command "text*"} '[' meta_args ']' '\<open>' formal_text '\<close>'
         | @@{command "ML*"}   ('[' meta_args ']')? '\<open>' SML_code '\<close>'
         | @@{command "term*"} ('[' meta_args ']')? '\<open>' HOL_term  '\<close>'
-        | @@{command "value*"} ('[' meta_args ']')? '\<open>' HOL_term  '\<close>'
-       )
-      |
-       (  @@{command "open_monitor*"}  
+        | @@{command "value*"} \<newline> ('[' meta_args ']' ('[' evaluator ']')?)? '\<open>' HOL_term  '\<close>'
+        | @@{command "assert*"} \<newline> ('[' meta_args ']' ('[' evaluator ']')?)? '\<open>' HOL_term '\<close>'
+    )
+  \<close>
+\<^rail>\<open>  
+     (  @@{command "open_monitor*"}  
         | @@{command "close_monitor*"} 
         | @@{command "declare_reference*"} 
-       ) '[' meta_args ']' 
-     ) 
+     ) '[' meta_args ']' 
      | change_status_command
      | inspection_command
      | macro_command
@@ -399,23 +406,35 @@ in the context of the SML toplevel of the Isabelle system as in the correspondin
 \<^theory_text>\<open>ML\<open> \<dots> SML-code \<dots> \<close>\<close>-command.
 \<close>
 
+(*<*)
+declare_reference*["text-elements-expls"::technical]
+(*>*)
+
 subsection\<open>Ontological Term-Contexts and their Management\<close>
 text\<open>The major commands providing term-contexts are 
-\<^theory_text>\<open>term*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close> and
-\<^theory_text>\<open>value*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>\<^footnote>\<open>The meta-argument list is optional.\<close>.
+\<^theory_text>\<open>term*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>,
+\<^theory_text>\<open>value*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close> and
+\<^theory_text>\<open>assert*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>\<^footnote>\<open>The meta-argument list is optional.\<close>.
 Wrt. creation, track-ability and checking they are analogous to the ontological text and 
 code-commands. However the argument terms may contain term-antiquotations stemming from an
 ontology definition. Both term-contexts were type-checked and \<^emph>\<open>validated\<close> against
 the global context (so: in the term \<open>@{A \<open>oid\<close>}\<close>, \<open>oid\<close> is indeed a string which refers 
 to a meta-object belonging to the document class \<open>A\<close>, for example).
-The term-context in the \<open>value*\<close>-command is additionally expanded (\<^eg> replaced) by a term
-denoting the meta-object. This expansion happens \<^emph>\<open>before\<close> evaluation of the term, thus permitting
+The term-context in the \<open>value*\<close>-command and \<^emph>\<open>assert*\<close>-command is additionally expanded
+(\<^eg> replaced) by a term denoting the meta-object.
+This expansion happens \<^emph>\<open>before\<close> evaluation of the term, thus permitting
 executable HOL-functions to interact with meta-objects.
+The \<^emph>\<open>assert*\<close>-command allows for logical statements to be checked in the global context
+(see @{technical (unchecked) \<open>text-elements-expls\<close>}).
+% TODO:
+% Section reference @{docitem (unchecked) \<open>text-elements-expls\<close>} has not the right number
+This is particularly useful to explore formal definitions wrt. their border cases.
 
 Note unspecified attribute values were represented by free fresh variables which constrains \<^dof>
 to choose either the normalization-by-evaluation strategy \<^theory_text>\<open>nbe\<close> or a proof attempt via
 the \<^theory_text>\<open>auto\<close> method. A failure of these strategies will be reported and regarded as non-validation
 of this meta-object. The latter leads to a failure of the entire command.
+
 \<close>
 
 (*<*)
@@ -619,9 +638,6 @@ during the editing process but is only visible in the integrated source but usua
 a \<^typ>\<open>text_element\<close> to a specific \<^typ>\<open>author\<close>. Note that this is possible since \<^isadof> assigns to each
 document class also a class-type which is declared in the HOL environment.\<close>
 
-(*<*)
-declare_reference*["text-elements-expls"::example]
-(*>*)
 text*[s23::example, main_author = "Some(@{author \<open>bu\<close>})"]\<open>
 Recall that concrete authors can be denoted by term-antiquotations generated by \<^isadof>; for example,
 this may be for a text fragment like
@@ -649,7 +665,7 @@ of the \<^isadof> language:
        \<newline>
        '[' meta_args ']' '\<open>' text '\<close>'
      ) 
-     | @@{command "assert*"} '[' meta_args ']' '\<open>' term '\<close>'
+     
   \<close>
 \<close>
 
@@ -680,14 +696,13 @@ text\<open>
   \<^boxed_theory_text>\<open>title*\<open> ... \<close>\<close> or \<^boxed_theory_text>\<open>section*\<open> ... \<close>\<close>, \<^eg>:
 
 @{boxed_theory_text [display]\<open>
- title*[title::title]\<open>Isabelle/DOF\<close>
- subtitle*[subtitle::subtitle]\<open>User and Implementation Manual\<close>
- author*[adb::author, email="\<open>a.brucker@exeter.ac.uk\<close>",
-         orcid="\<open>0000-0002-6355-1200\<close>", http_site="\<open>https://brucker.ch/\<close>",
-         affiliation="\<open>University of Exeter, Exeter, UK\<close>"] \<open>Achim D. Brucker\<close>
- author*[bu::author, email = "\<open>wolff@lri.fr\<close>",
-         affiliation = "\<open>Université Paris-Saclay, LRI, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
-\<close>}
+title*[title::title]\<open>Isabelle/DOF\<close>
+subtitle*[subtitle::subtitle]\<open>User and Implementation Manual\<close>
+author*[adb::author, email="\<open>a.brucker@exeter.ac.uk\<close>",
+        orcid="\<open>0000-0002-6355-1200\<close>", http_site="\<open>https://brucker.ch/\<close>",
+        affiliation="\<open>University of Exeter, Exeter, UK\<close>"] \<open>Achim D. Brucker\<close>
+author*[bu::author, email = "\<open>wolff@lri.fr\<close>",
+         affiliation = "\<open>Université Paris-Saclay, LRI, Paris, France\<close>"]\<open>Burkhart Wolff\<close>\<close>}
 
 \<close>
 
@@ -701,8 +716,7 @@ text\<open>We want to check the consequences of this definition and can add the 
 text*[claim::assertion]\<open>For non-empty lists, our definition yields indeed 
                                the last element of a list.\<close>
 assert*[claim1::assertion] \<open>last[4::int] = 4\<close>    
-assert*[claim2::assertion] \<open>last[1,2,3,4::int] = 4\<close>
-\<close>}
+assert*[claim2::assertion] \<open>last[1,2,3,4::int] = 4\<close>\<close>}
 \<close>
 
 text\<open>
@@ -714,14 +728,12 @@ However, in order to avoid the somewhat tedious consequence:
 
 the choice of the default class can be influenced by setting globally an attribute such as
 @{boxed_theory_text [display]
-\<open>declare[[ Definition_default_class = "definition"]]
- declare[[ Theorem_default_class    = "theorem"]]
-\<close>}
+\<open>declare[[Definition_default_class = "definition"]]
+declare[[Theorem_default_class = "theorem"]]\<close>}
 
 which allows the above example be shortened to:
 @{boxed_theory_text [display]
-\<open>Theorem*[T1, short_name="\<open>DF definition captures deadlock-freeness\<close>"]  \<open> \<dots> \<close>
-\<close>}
+\<open>Theorem*[T1, short_name="\<open>DF definition captures deadlock-freeness\<close>"]  \<open> \<dots> \<close>\<close>}
 \<close>
 
 subsection\<open>The Ontology \<^verbatim>\<open>technical_report\<close>\<close>

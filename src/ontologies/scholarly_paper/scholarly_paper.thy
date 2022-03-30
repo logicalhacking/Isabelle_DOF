@@ -17,8 +17,6 @@ theory scholarly_paper
   imports "../../DOF/Isa_COL"
   keywords "author*" "abstract*"
            "Definition*" "Lemma*" "Theorem*"  :: document_body
-  and      "assert*"                          :: thy_decl
-
 
 begin
 
@@ -347,39 +345,7 @@ doc_class  assertion = math_formal +
    properties    :: "term list"
 
 
-ML\<open>
-(* TODO : Rework this code and make it closer to Definition*. There is still 
-   a rest of "abstract classes in it: any class possessing a properties attribute
-   is admissible to this command, not just  ... *)
-local open ODL_Command_Parser in
 
-fun assertion_cmd'((((((oid,pos),cid_pos),doc_attrs),name_opt:string option),modes : string list),
-                prop) =
-    let fun conv_2_holstring thy =  (bstring_to_holstring (Proof_Context.init_global thy))
-        fun conv_attrs thy = (("properties",pos),"[@{termrepr ''"^conv_2_holstring thy prop ^" ''}]")
-                             ::doc_attrs  
-        fun conv_attrs' thy = map (fn ((lhs,pos),rhs) => (((lhs,pos),"+="),rhs)) (conv_attrs thy)
-        fun mks thy = case DOF_core.get_object_global_opt oid thy of
-                   SOME NONE => (error("update of declared but not created doc_item:" ^ oid))
-                 | SOME _ => (update_instance_command (((oid,pos),cid_pos),conv_attrs' thy) thy)
-                 | NONE   => (create_and_check_docitem 
-                                 {is_monitor = false} {is_inline = false} 
-                                 oid pos cid_pos (conv_attrs thy) thy)
-        val check = (assert_cmd name_opt modes prop) o Proof_Context.init_global
-    in 
-        (* Toplevel.keep (check o Toplevel.context_of) *)
-        Toplevel.theory (fn thy => (check thy; mks thy))
-    end
-
-val attributes = attributes (* re-export *)
-
-end
-val _ =
-  Outer_Syntax.command @{command_keyword "assert*"} 
-                       "evaluate and print term"
-                       (attributes -- opt_evaluator -- opt_modes  -- Parse.term  >> assertion_cmd'); 
-
-\<close>
 
 subsubsection*[ex_ass::example]\<open>Example\<close>
 text\<open>Assertions allow for logical statements to be checked in the global context). \<close>

@@ -31,7 +31,6 @@ that provide direct support in the PIDE framework. \<close>
 theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   imports  Main  
            RegExpInterface    (* Interface to functional regular automata for monitoring *)
-           Assert 
            
   keywords "+=" ":=" "accepts"  "rejects" "invariant"
            
@@ -42,7 +41,7 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            "define_shortcut*"   "define_macro*"          :: thy_decl
 
   and      "text*"              "text-macro*"            :: document_body
-  and      "term*"              "value*"                 :: diag
+  and      "term*" "value*" "assert*"                     :: diag
 
   and      "print_doc_classes"        "print_doc_items" 
            "print_doc_class_template" "check_doc_global" :: diag
@@ -1767,7 +1766,6 @@ end
 
 \<close>
 
-
 ML \<comment> \<open>c.f. \<^file>\<open>~~/src/HOL/Tools/value_command.ML\<close>\<close>
 (*
   The value* command uses the same code as the value command
@@ -1786,7 +1784,7 @@ sig
   val value: Proof.context -> term -> term
   val value_without_elaboration: Proof.context -> term -> term
   val value_select: string -> Proof.context -> term -> term
-  val value_cmd: (ODL_Command_Parser.meta_args_t option) -> xstring -> string list -> string
+  val value_cmd: {assert: bool} -> (ODL_Command_Parser.meta_args_t option) -> xstring -> string list -> string
                  -> Toplevel.state -> Position.T -> unit
   val add_evaluator: binding * (Proof.context -> term -> term) 
     -> theory -> string * theory
@@ -1800,7 +1798,6 @@ structure Evaluators = Theory_Data
 (
   type T = (Proof.context -> term -> term) Name_Space.table;
   val empty = Name_Space.empty_table "evaluator";
-  val extend = I;
   val merge = Name_Space.merge_tables;
 )
 
@@ -1837,7 +1834,7 @@ fun meta_args_exec NONE thy = thy
                                     {is_monitor = false} {is_inline = false} 
                                     oid pos (I cid_pos) (I doc_attrs))
 
-fun value_cmd meta_args_opt raw_name modes raw_t state pos =
+fun value_cmd {assert=assert} meta_args_opt raw_name modes raw_t state pos =
   let
     val _ = meta_args_exec meta_args_opt
     val ctxt = Toplevel.context_of state;
@@ -1847,6 +1844,16 @@ fun value_cmd meta_args_opt raw_name modes raw_t state pos =
                                           (Proof_Context.theory_of ctxt);
     val t' = value_select name ctxt term';
     val ty' = Term.type_of t';
+    val ty' = if assert
+              then case ty' of
+                       \<^typ>\<open>bool\<close> => ty'
+                     | _ =>  error "Assertion expressions must be boolean."
+              else ty'
+    val t'  = if assert
+              then case t'  of
+                       \<^term>\<open>True\<close> => t'
+                     | _ =>  error "Assertion failed."
+              else t'
     val ctxt' = Proof_Context.augment t' ctxt;
     val p = Print_Mode.with_modes modes (fn () =>
       Pretty.block [Pretty.quote (Syntax.pretty_term ctxt' t'), Pretty.fbrk,
@@ -1869,7 +1876,13 @@ val opt_attributes = Scan.option ODL_Command_Parser.attributes
 fun pass_trans_to_value_cmd meta_args_opt ((name, modes), t) trans =
 let val pos = Toplevel.pos_of trans
 in
-  Toplevel.keep (fn state => value_cmd meta_args_opt name modes t state pos) trans
+  Toplevel.keep (fn state => value_cmd {assert=false} meta_args_opt name modes t state pos) trans
+end
+
+fun pass_trans_to_assert_value_cmd meta_args_opt ((name, modes), t) trans =
+let val pos = Toplevel.pos_of trans
+in
+  Toplevel.keep (fn state => value_cmd {assert=true} meta_args_opt name modes t state pos) trans
 end
 \<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/isar_cmd.ML\<close>\<close>
 
@@ -1926,6 +1939,11 @@ val _ = Theory.setup
   #> add_evaluator (\<^binding>\<open>simp\<close>, Code_Simp.dynamic_value) #> snd
   #> add_evaluator (\<^binding>\<open>nbe\<close>, Nbe.dynamic_value) #> snd
   #> add_evaluator (\<^binding>\<open>code\<close>, Code_Evaluation.dynamic_value_strict) #> snd);
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>assert*\<close> "evaluate and assert term"
+    (opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
+     >> (fn (meta_args_opt, eval_args ) => pass_trans_to_assert_value_cmd meta_args_opt eval_args));
 
 end;
 \<close>
@@ -2049,7 +2067,6 @@ val _ =
 
 end
 \<close>
-
 
 ML\<open>
 structure ODL_LTX_Converter = 
