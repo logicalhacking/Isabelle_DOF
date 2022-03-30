@@ -1784,10 +1784,11 @@ sig
   val value: Proof.context -> term -> term
   val value_without_elaboration: Proof.context -> term -> term
   val value_select: string -> Proof.context -> term -> term
-  val value_cmd: {assert: bool} -> (ODL_Command_Parser.meta_args_t option) -> xstring -> string list -> string
-                 -> Toplevel.state -> Position.T -> unit
-  val add_evaluator: binding * (Proof.context -> term -> term) 
-    -> theory -> string * theory
+  val value_cmd:  {assert: bool} -> ODL_Command_Parser.meta_args_t option ->
+                  string ->  string list ->  string -> Position.T
+                  -> theory -> theory
+   val add_evaluator: binding * (Proof.context -> term -> term) 
+                  -> theory -> string * theory
 end;
 
 
@@ -1808,10 +1809,10 @@ fun add_evaluator (b, evaluator) thy =
     val thy' = Evaluators.put tab' thy;
   in (name, thy') end;
 
-fun intern_evaluator ctxt raw_name =
+fun intern_evaluator thy raw_name =
   if raw_name = "" then ""
   else Name_Space.intern (Name_Space.space_of_table
-    (Evaluators.get (Proof_Context.theory_of ctxt))) raw_name;
+    (Evaluators.get (thy))) raw_name;
 
 fun default_value ctxt t =
   if null (Term.add_frees t [])
@@ -1834,15 +1835,14 @@ fun meta_args_exec NONE thy = thy
                                     {is_monitor = false} {is_inline = false} 
                                     oid pos (I cid_pos) (I doc_attrs))
 
-fun value_cmd {assert=assert} meta_args_opt raw_name modes raw_t state pos =
+fun value_cmd {assert=assert} meta_args_opt raw_name modes raw_t pos thy  =
   let
-    val _ = meta_args_exec meta_args_opt
-    val ctxt = Toplevel.context_of state;
-    val name = intern_evaluator ctxt raw_name;
-    val t = Syntax.read_term ctxt raw_t;
+    val thy' = meta_args_exec meta_args_opt thy
+    val name = intern_evaluator thy' raw_name;
+    val t = Syntax.read_term_global thy' raw_t;
     val term' = DOF_core.transduce_term_global {mk_elaboration=true} (t , pos)
-                                          (Proof_Context.theory_of ctxt);
-    val t' = value_select name ctxt term';
+                                          (thy');
+    val t' = value_select name (Proof_Context.init_global thy') term';
     val ty' = Term.type_of t';
     val ty' = if assert
               then case ty' of
@@ -1854,11 +1854,12 @@ fun value_cmd {assert=assert} meta_args_opt raw_name modes raw_t state pos =
                        \<^term>\<open>True\<close> => t'
                      | _ =>  error "Assertion failed."
               else t'
-    val ctxt' = Proof_Context.augment t' ctxt;
+    val ctxt' = Proof_Context.augment t' (Proof_Context.init_global thy');
     val p = Print_Mode.with_modes modes (fn () =>
       Pretty.block [Pretty.quote (Syntax.pretty_term ctxt' t'), Pretty.fbrk,
         Pretty.str "::", Pretty.brk 1, Pretty.quote (Syntax.pretty_typ ctxt' ty')]) ();
-  in Pretty.writeln p end;
+    val _ = Pretty.writeln p 
+  in  thy' end;
 
 val opt_modes =
   Scan.optional (\<^keyword>\<open>(\<close> |-- Parse.!!! (Scan.repeat1 Parse.name --| \<^keyword>\<open>)\<close>)) [];
@@ -1873,16 +1874,16 @@ val opt_evaluator =
 
 val opt_attributes = Scan.option ODL_Command_Parser.attributes
 
-fun pass_trans_to_value_cmd meta_args_opt ((name, modes), t) trans =
-let val pos = Toplevel.pos_of trans
+fun pass_trans_to_value_cmd meta_args_opt ((name, modes), t)  =
+let val pos = Position.none
 in
-  Toplevel.keep (fn state => value_cmd {assert=false} meta_args_opt name modes t state pos) trans
+   Toplevel.theory (value_cmd {assert=false} meta_args_opt name modes t pos) 
 end
 
-fun pass_trans_to_assert_value_cmd meta_args_opt ((name, modes), t) trans =
-let val pos = Toplevel.pos_of trans
+fun pass_trans_to_assert_value_cmd meta_args_opt ((name, modes), t) =
+let val pos = Position.none
 in
-  Toplevel.keep (fn state => value_cmd {assert=true} meta_args_opt name modes t state pos) trans
+  Toplevel.theory (value_cmd {assert=true} meta_args_opt name modes t pos) 
 end
 \<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/isar_cmd.ML\<close>\<close>
 
@@ -1891,9 +1892,9 @@ end
   and adds the possibility to check Term Annotation Antiquotations (TA)
   with the help of DOF_core.transduce_term_global function
 *)
-fun string_of_term meta_args_opt ctxt s pos =
+fun string_of_term meta_args_opt  s pos ctxt =
 let
-  val _ = meta_args_exec meta_args_opt
+  val SS = meta_args_exec meta_args_opt
   val t = Syntax.read_term ctxt s;
   val T = Term.type_of t;
   val ctxt' = Proof_Context.augment t ctxt;
@@ -1917,7 +1918,7 @@ let
   val pos = Toplevel.pos_of trans
 in
   print_item (fn state =>
-                 fn string => string_of_term meta_args_opt (Toplevel.context_of state) string pos)
+                 fn string => string_of_term meta_args_opt string pos (Toplevel.context_of state) )
              (string_list, string) trans                     
 end
 
@@ -2063,7 +2064,7 @@ val _ =
               (ML_Context.exec (fn () =>  
                      (ML_Context.eval_source (ML_Compiler.verbose true ML_Compiler.flags) source)) 
                   #> (meta_args_exec meta_args_opt) 
-                  #>Local_Theory.propagate_ml_env)));
+                  #> Local_Theory.propagate_ml_env)));
 
 end
 \<close>
