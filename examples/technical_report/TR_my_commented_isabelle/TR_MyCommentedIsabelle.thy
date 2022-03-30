@@ -634,6 +634,8 @@ val S' = (map (fn (s,(t,u)) => ((s,t),u)) S) : ((indexname * sort) * typ) list;
             obscured by a number of type-synonyms, where actually identical. *)
 val ty = t_schematic;
 val ty' = Term_Subst.instantiateT S' t_schematic;
+
+(* Don't know how to build a typ TVars.table *)
 val t = (generalize_term @{term "[]"});
 
 val t' = Term_Subst.map_types_same (Term_Subst.instantiateT S') (t)
@@ -956,8 +958,8 @@ fun mk_def name p  =
         val ty_global = ty --> ty
         val args = (((SOME(nameb,SOME ty_global,NoSyn),(Binding.empty_atts,term_prop)),[]),[])
         val cmd = (fn (((decl, spec), prems), params) =>
-                        #2 oo Specification.definition' decl params prems spec)
-    in cmd args true
+                        #2 o Specification.definition decl params prems spec)
+    in cmd args
     end;
 in  Named_Target.theory_map (mk_def "I" @{here} )
 end\<close>
@@ -1214,16 +1216,20 @@ text\<open>
 text\<open>The file \<^file>\<open>~~/src/HOL/Examples/Commands.thy\<close> shows some example Isar command definitions, with the 
      all-important theory header declarations for outer syntax keywords.\<close>
 
+text\<open>@{ML_structure Pure_Syn}\<close>
+
 subsubsection*[ex1137::example]\<open>Examples: \<^theory_text>\<open>text\<close>\<close>
 text\<open> The integration of the  \<^theory_text>\<open>text\<close>-command is done as follows:
 
  @{ML [display]\<open>
   Outer_Syntax.command ("text", @{here}) "formal comment (primary style)"
-    (Parse.opt_target -- Parse.document_source >> Pure_Syn.document_command {markdown = true})
+    (Parse.opt_target -- Parse.document_source >> Document_Output.document_output 
+                                                  {markdown = true, markup = I})
  \<close>}
 
- where \<^ML>\<open>Pure_Syn.document_command\<close> is the defining operation for the 
- "diagnostic" (=side-effect-free) toplevel operation. \<^ML>\<open>Pure_Syn.document_command\<close> looks as follows:
+ where \<^ML>\<open>Document_Output.document_output\<close> is the defining operation for the 
+ "diagnostic" (=side-effect-free) toplevel operation.
+  \<^ML>\<open>Document_Output.document_output\<close> looks as follows:
 
  @{ML [display]\<open> let fun output_document state markdown txt = 
                            Thy_Output.output_document (Toplevel.presentation_context state) markdown txt
@@ -1313,10 +1319,12 @@ subsection*[ex213::example]\<open>A Definition Command (High-level)\<close>
 
 text\<open>A quite complex example is drawn from the Theory \<^verbatim>\<open>Clean\<close>; it generates \<close>
 
+ML\<open>Specification.definition\<close>
+
 ML\<open>
 structure HLDefinitionSample = 
 struct
-fun cmd (decl, spec, prems, params) = #2 oo Specification.definition' decl params prems spec
+fun cmd (decl, spec, prems, params) = #2 o Specification.definition decl params prems spec
 
 fun MON_SE_T res state = state --> optionT(HOLogic.mk_prodT(res,state));
 
@@ -1337,7 +1345,7 @@ fun mk_push_def binding sty lthy =
         val eq = push_eq binding  (Binding.name_of name) rty sty lthy
         val mty = MON_SE_T rty sty 
         val args = (SOME(name, SOME mty, NoSyn), (Binding.empty_atts,eq),[],[])
-    in cmd args true lthy  end;
+    in cmd args lthy  end;
 
 val define_test =  Named_Target.theory_map (mk_push_def (Binding.name "test") @{typ "'a"})
 
@@ -1550,9 +1558,8 @@ Markup.enclose : Markup.T -> string -> string;
 occurence of an item *)
 fun theory_markup (def:bool) (name:string) (id:serial) (pos:Position.T) =
   if id = 0 then Markup.empty
-  else
-    Markup.properties (Position.entity_properties_of def id pos)
-      (Markup.entity Markup.theoryN name);
+  else  Markup.properties (Position.entity_properties_of def id pos)
+                          (Markup.entity Markup.theoryN name);
 Markup.theoryN : string;
 
 serial();   (* A global, lock-guarded serial counter used to produce unique identifiers,
