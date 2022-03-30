@@ -31,7 +31,6 @@ that provide direct support in the PIDE framework. \<close>
 theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   imports  Main  
            RegExpInterface    (* Interface to functional regular automata for monitoring *)
-           Assert 
            
   keywords "+=" ":=" "accepts"  "rejects" "invariant"
            
@@ -42,7 +41,7 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            "define_shortcut*"   "define_macro*"          :: thy_decl
 
   and      "text*"              "text-macro*"            :: document_body
-  and      "term*"              "value*"                 :: diag
+  and      "term*" "value*" "assert*"                     :: diag
 
   and      "print_doc_classes"        "print_doc_items" 
            "print_doc_class_template" "check_doc_global" :: diag
@@ -185,6 +184,7 @@ struct
 
    type docobj =    {pos      : Position.T, 
                      thy_name : string,
+                     input_term : term,
                      value    : term,
                      inline   : bool, 
                      id       : serial, 
@@ -613,11 +613,12 @@ fun get_value_local oid ctxt  = case get_object_local oid ctxt of
                                  | NONE => NONE  
 
 (* missing : setting terms to ground (no type-schema vars, no schema vars. )*)
-fun update_value_global oid upd thy  = 
+fun update_value_global oid upd_input_term upd_value thy  = 
           case get_object_global oid thy of
-               SOME{pos,thy_name,value,inline,id,cid,vcid} => 
+               SOME{pos,thy_name, input_term, value,inline,id,cid,vcid} => 
                    let val tab' = Symtab.update(oid,SOME{pos=pos,thy_name=thy_name,
-                                                         value=upd value,id=id, 
+                                                         input_term=upd_input_term input_term,
+                                                         value=upd_value value,id=id, 
                                                          inline=inline,cid=cid, vcid=vcid})
                    in  map_data_global (upd_docobj_tab(fn{tab,maxano}=>{tab=tab' tab,maxano=maxano})) thy end
              | NONE => error("undefined doc object: "^oid)  
@@ -701,59 +702,9 @@ fun writeln_classrefs ctxt = let  val tab = #docclass_tab(get_data ctxt)
 fun writeln_docrefs ctxt = let  val {tab,...} = #docobj_tab(get_data ctxt)
                            in   writeln (String.concatWith "," (Symtab.keys tab)) end
 
-fun print_doc_items b ctxt = 
-    let val {docobj_tab={tab = x, ...},...}= get_data ctxt;
-        val _ = writeln "=====================================";  
-        fun dfg true = "true" 
-           |dfg false= "false"   
-        fun print_item (n, SOME({cid,vcid,id,pos,thy_name,inline,value})) =
-                 (writeln ("docitem:             "^n);
-                  writeln ("    type:            "^cid);
-                  case vcid of NONE => () | SOME (s) => 
-                  writeln ("    virtual type:    "^ s);
-                  writeln ("    origine:         "^thy_name);
-                  writeln ("    inline:          "^dfg inline);
-                  writeln ("    value:           "^(Syntax.string_of_term ctxt value))
-                 )
-          | print_item (n, NONE) = 
-                 (writeln ("forward reference for docitem: "^n));
-    in  map print_item (Symtab.dest x); 
-        writeln "=====================================\n\n\n" end;
 
 
-fun print_docclass_template cid ctxt = 
-    let val cid_long = read_cid ctxt cid  (* assure that given cid is really a long_cid *)
-        val brute_hierarchy = (get_attributes_local cid_long ctxt)
-        val flatten_hrchy = flat o (map(fn(lname, attrS) => 
-                                           map (fn (s,_,_)=>(lname,(Binding.name_of s))) attrS))
-        fun filter_overrides [] = []
-           |filter_overrides ((ln,s)::S) = (ln,s):: filter_overrides(filter(fn(_,s')=> s<>s')S) 
-        val hierarchy = map (fn(ln,s)=>ln^"."^s)(filter_overrides(flatten_hrchy brute_hierarchy)) 
-        val args = String.concatWith "=%\n , " ("  label=,type":: hierarchy);
-        val template = "\\newisadof{"^cid_long^"}%\n["^args^"=%\n][1]\n{%\n#1%\n}\n\n";
-    in writeln template end;
 
-
-fun print_doc_classes b ctxt = 
-    let val {docobj_tab={tab = x, ...},docclass_tab, ...} = get_data ctxt;
-        val _ = writeln "=====================================";    
-        fun print_attr (n, ty, NONE) = (Binding.print n)
-          | print_attr (n, ty, SOME t)= (Binding.print n^"("^Syntax.string_of_term ctxt t^")")
-        fun print_inv ((lab,pos),trm) = (lab ^"::"^Syntax.string_of_term ctxt trm)
-        fun print_virtual {virtual} = Bool.toString virtual
-        fun print_class (n, {attribute_decl, id, inherits_from, name, virtual, params, thy_name, rejectS, rex,invs}) =
-           (case inherits_from of 
-               NONE => writeln ("docclass: "^n)
-             | SOME(_,nn) => writeln ("docclass: "^n^" = "^nn^" + ");
-            writeln ("    name:       "^(Binding.print name));
-            writeln ("    virtual:    "^(print_virtual virtual));
-            writeln ("    origin:     "^thy_name);
-            writeln ("    attrs:      "^commas (map print_attr attribute_decl));
-            writeln ("    invs:       "^commas (map print_inv invs))
-           );
-    in  map print_class (Symtab.dest docclass_tab); 
-        writeln "=====================================\n\n\n" 
-    end;
 
 fun print_doc_class_tree ctxt P T = 
     let val {docobj_tab={tab = x, ...},docclass_tab, ...} = get_data ctxt;
@@ -769,38 +720,7 @@ fun print_doc_class_tree ctxt P T =
     in  ".0 .\n" ^ tree 1 roots end
 
 
-
-fun check_doc_global (strict_checking : bool) ctxt = 
-    let val {docobj_tab={tab = x, ...}, monitor_tab, ...} = get_data ctxt;
-        val S = map_filter (fn (s,NONE) => SOME s | _ => NONE) (Symtab.dest x)
-        val T = map fst (Symtab.dest monitor_tab)
-    in if null S 
-       then if null T then ()
-            else error("Global consistency error - there are open monitors:  "
-                  ^ String.concatWith "," T) 
-       else error("Global consistency error - Unresolved forward references: "
-                  ^ String.concatWith "," S)   
-    end 
-
-val _ =
-  Outer_Syntax.command \<^command_keyword>\<open>print_doc_classes\<close> "print document classes"
-    (Parse.opt_bang >> (fn b => Toplevel.keep (print_doc_classes b o Toplevel.context_of)));
-
-val _ =
-  Outer_Syntax.command \<^command_keyword>\<open>print_doc_class_template\<close> 
-                       "print document class latex template"
-    (Parse.string >> (fn b => Toplevel.keep (print_docclass_template b o Toplevel.context_of)));
-
-
-val _ =
-  Outer_Syntax.command \<^command_keyword>\<open>print_doc_items\<close>  "print document items"
-    (Parse.opt_bang >> (fn b => Toplevel.keep (print_doc_items b o Toplevel.context_of)));
-
-val _ =
-  Outer_Syntax.command \<^command_keyword>\<open>check_doc_global\<close> "check global document consistency"
-    (Parse.opt_bang >> (fn b => Toplevel.keep (check_doc_global b o Toplevel.context_of)));
-
-val (strict_monitor_checking, strict_monitor_checking_setup) 
+val (strict_monitor_checking, strict_monitor_checking_setup)
      = Attrib.config_bool \<^binding>\<open>strict_monitor_checking\<close> (K false);
 
 val (invariants_checking, invariants_checking_setup) 
@@ -1051,7 +971,6 @@ fun elaborate_instance thy _ _ term_option pos =
                         | SOME(value) =>
                             DOF_core.transduce_term_global {mk_elaboration=true} (value, pos) thy
                    end
-(*DOF_core.transduce_term_global {mk_elaboration=true} (value, pos) thy*)
 
 (*
   The function declare_ISA_class_accessor_and_check_instance uses a prefix
@@ -1323,7 +1242,8 @@ fun generalize_typ n = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,n),so
 fun infer_type thy term = hd (Type_Infer_Context.infer_types (Proof_Context.init_global thy) [term])
 
 
-fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) term = 
+fun calc_update_term {mk_elaboration=mk_elaboration} thy cid_long
+                     (S:(string * Position.T * string * term)list) term = 
     let val cid_ty = cid_2_cidType cid_long thy 
         val generalize_term =  Term.map_types (generalize_typ 0)
         fun toString t = Syntax.string_of_term (Proof_Context.init_global thy) t  
@@ -1357,7 +1277,8 @@ fun calc_update_term thy cid_long (S:(string * Position.T * string * term)list) 
                    |join _ = error("implicit fusion operation not defined for attribute: "^ lhs)
                  (* could be extended to bool, map, multisets, ... *)
                 val rhs' = instantiate_term tyenv' (generalize_term rhs)
-                val rhs'' = DOF_core.transduce_term_global {mk_elaboration=false} (rhs',pos) thy                 
+                val rhs'' = DOF_core.transduce_term_global {mk_elaboration=mk_elaboration}
+                                                           (rhs',pos) thy
              in case opr of 
                   "=" => Const(lnu,lnut) $ Abs ("uu_", lnt, rhs'') $ term
                 | ":=" => Const(lnu,lnut) $ Abs ("uu_", lnt, rhs'') $ term
@@ -1402,7 +1323,11 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
           val trace_attr = [((("trace", @{here}), "+="), "[("^cid_long^", ''"^oid^"'')]")]
           val assns' = map conv_attrs trace_attr
           fun cid_of oid = #cid(the(DOF_core.get_object_global oid thy))
-          fun def_trans oid = #1 o (calc_update_term thy (cid_of oid) assns')
+          fun def_trans_input_term  oid =
+            #1 o (calc_update_term {mk_elaboration=false} thy (cid_of oid) assns')
+          fun def_trans_value oid =
+            #1 o (calc_update_term {mk_elaboration=true} thy (cid_of oid) assns')
+        
           val _ = if null enabled_monitors then () else writeln "registrating in monitors ..." 
           val _ = app (fn n => writeln(oid^" : "^cid_long^" ==> "^n)) enabled_monitors;
            (* check that any transition is possible : *)
@@ -1414,7 +1339,7 @@ fun register_oid_cid_in_open_monitors oid pos cid_long thy =
                          in Symtab.update(n, {accepted_cids=accepted_cids, 
                                               rejected_cids=rejected_cids,
                                               automatas=aS}) tab end
-          fun update_trace mon_oid = DOF_core.update_value_global mon_oid (def_trans mon_oid)
+          fun update_trace mon_oid = DOF_core.update_value_global mon_oid (def_trans_input_term mon_oid) (def_trans_value mon_oid)
           val update_automatons    = DOF_core.upd_monitor_tabs(fold update_info delta_autoS)
       in  thy |> (* update traces of all enabled monitors *)
                  fold (update_trace) (enabled_monitors)
@@ -1492,8 +1417,10 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos do
                                | SOME (cid,_) => if (DOF_core.is_virtual cid thy)
                                                  then SOME (DOF_core.parse_cid_global thy cid)
                                                  else NONE
-    val value_term = if (cid_long = DOF_core.default_cid)
-                     then (Free ("Undefined_Value", @{typ "unit"}))
+    val value_terms = if (cid_long = DOF_core.default_cid)
+                      then let
+                            val undefined_value = Free ("Undefined_Value", @{typ "unit"})
+                           in (undefined_value, undefined_value) end
                           (* 
                              Handle initialization of docitem without a class associated,
                              for example when you just want a document element to be referenceable
@@ -1504,21 +1431,26 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos do
                             val defaults_init = create_default_object thy cid_long
                             fun conv (na, _(*ty*), term) =(Binding.name_of na, Binding.pos_of na, "=", term);
                             val S = map conv (DOF_core.get_attribute_defaults cid_long thy);
-                            val (defaults, _(*ty*), _) = calc_update_term thy cid_long S defaults_init;
+                            val (defaults, _(*ty*), _) = calc_update_term {mk_elaboration=false}
+                                                                      thy cid_long S defaults_init;
                             fun conv_attrs ((lhs, pos), rhs) = (markup2string lhs,pos,"=", Syntax.read_term_global thy rhs)
                             val assns' = map conv_attrs doc_attrs
-                            val (value_term', _(*ty*), _) = calc_update_term thy cid_long assns' defaults
-                          in value_term' end
+                            val (input_term, _(*ty*), _) = calc_update_term {mk_elaboration=false}
+                                                                        thy cid_long assns' defaults
+                            val (value_term', _(*ty*), _) = calc_update_term {mk_elaboration=true}
+                                                                        thy cid_long assns' defaults
+                          in (input_term, value_term') end
     val check_inv =   (DOF_core.get_class_invariant cid_long thy oid is_monitor) 
                             o Context.Theory
 
-  in thy |> DOF_core.define_object_global (oid, {pos      = pos, 
-                                                 thy_name = Context.theory_name thy,
-                                                 value    = value_term,
-                                                 inline   = is_inline,
-                                                 id       = id,
-                                                 cid      = cid_long,
-                                                 vcid     = vcid})
+  in thy |> DOF_core.define_object_global (oid, {pos        = pos, 
+                                                 thy_name   = Context.theory_name thy,
+                                                 input_term = fst value_terms,
+                                                 value      = snd value_terms,
+                                                 inline     = is_inline,
+                                                 id         = id,
+                                                 cid        = cid_long,
+                                                 vcid       = vcid})
          |> register_oid_cid_in_open_monitors oid pos cid_long
          |> (fn thy => (check_inv thy; thy))
          |> (fn thy => if Config.get_global thy DOF_core.invariants_checking = true
@@ -1546,12 +1478,15 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                 fun conv_attrs (((lhs, pos), opn), rhs) = ((markup2string lhs),pos,opn, 
                                                            Syntax.read_term_global thy rhs)
                 val assns' = map conv_attrs doc_attrs
-                val def_trans  = (#1 o (calc_update_term thy cid_long assns'))
+                val def_trans_input_term  =
+                  #1 o (calc_update_term {mk_elaboration=false} thy cid_long assns')
+                val def_trans_value  =
+                  #1 o (calc_update_term {mk_elaboration=true} thy cid_long assns')
                 fun check_inv thy =((DOF_core.get_class_invariant cid_long thy oid {is_monitor=false} 
                                      o Context.Theory ) thy ;
                                     thy)
             in     
-                thy |> DOF_core.update_value_global oid (def_trans)
+                thy |> DOF_core.update_value_global oid def_trans_input_term def_trans_value
                     |> check_inv
             end
 
@@ -1831,7 +1766,6 @@ end
 
 \<close>
 
-
 ML \<comment> \<open>c.f. \<^file>\<open>~~/src/HOL/Tools/value_command.ML\<close>\<close>
 (*
   The value* command uses the same code as the value command
@@ -1848,9 +1782,10 @@ Generic value command for arbitrary evaluators, with default using nbe or SML.
 signature VALUE_COMMAND =
 sig
   val value: Proof.context -> term -> term
+  val value_without_elaboration: Proof.context -> term -> term
   val value_select: string -> Proof.context -> term -> term
-  val value_cmd: (ODL_Command_Parser.meta_args_t option) -> xstring -> string list -> string
-                 -> Toplevel.state -> Toplevel.transition -> unit
+  val value_cmd: {assert: bool} -> (ODL_Command_Parser.meta_args_t option) -> xstring -> string list -> string
+                 -> Toplevel.state -> Position.T -> unit
   val add_evaluator: binding * (Proof.context -> term -> term) 
     -> theory -> string * theory
 end;
@@ -1863,7 +1798,6 @@ structure Evaluators = Theory_Data
 (
   type T = (Proof.context -> term -> term) Name_Space.table;
   val empty = Name_Space.empty_table "evaluator";
-  val extend = I;
   val merge = Name_Space.merge_tables;
 )
 
@@ -1892,22 +1826,34 @@ fun value_select name ctxt =
 fun value ctxt term = value_select "" ctxt
                       (DOF_core.transduce_term_global {mk_elaboration=true} (term , \<^here>)
                                           (Proof_Context.theory_of ctxt))
+val value_without_elaboration = value_select ""
+
 fun meta_args_exec NONE thy = thy
    |meta_args_exec (SOME ((((oid,pos),cid_pos), doc_attrs) : ODL_Command_Parser.meta_args_t)) thy = 
          thy |> (ODL_Command_Parser.create_and_check_docitem 
                                     {is_monitor = false} {is_inline = false} 
                                     oid pos (I cid_pos) (I doc_attrs))
 
-fun value_cmd meta_args_opt raw_name modes raw_t state trans =
+fun value_cmd {assert=assert} meta_args_opt raw_name modes raw_t state pos =
   let
     val _ = meta_args_exec meta_args_opt
     val ctxt = Toplevel.context_of state;
     val name = intern_evaluator ctxt raw_name;
     val t = Syntax.read_term ctxt raw_t;
-    val term' = DOF_core.transduce_term_global {mk_elaboration=true} (t , Toplevel.pos_of trans)
+    val term' = DOF_core.transduce_term_global {mk_elaboration=true} (t , pos)
                                           (Proof_Context.theory_of ctxt);
     val t' = value_select name ctxt term';
     val ty' = Term.type_of t';
+    val ty' = if assert
+              then case ty' of
+                       \<^typ>\<open>bool\<close> => ty'
+                     | _ =>  error "Assertion expressions must be boolean."
+              else ty'
+    val t'  = if assert
+              then case t'  of
+                       \<^term>\<open>True\<close> => t'
+                     | _ =>  error "Assertion failed."
+              else t'
     val ctxt' = Proof_Context.augment t' ctxt;
     val p = Print_Mode.with_modes modes (fn () =>
       Pretty.block [Pretty.quote (Syntax.pretty_term ctxt' t'), Pretty.fbrk,
@@ -1928,8 +1874,16 @@ val opt_evaluator =
 val opt_attributes = Scan.option ODL_Command_Parser.attributes
 
 fun pass_trans_to_value_cmd meta_args_opt ((name, modes), t) trans =
-  Toplevel.keep (fn state => value_cmd meta_args_opt name modes t state trans) trans
+let val pos = Toplevel.pos_of trans
+in
+  Toplevel.keep (fn state => value_cmd {assert=false} meta_args_opt name modes t state pos) trans
+end
 
+fun pass_trans_to_assert_value_cmd meta_args_opt ((name, modes), t) trans =
+let val pos = Toplevel.pos_of trans
+in
+  Toplevel.keep (fn state => value_cmd {assert=true} meta_args_opt name modes t state pos) trans
+end
 \<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/isar_cmd.ML\<close>\<close>
 
 (*
@@ -1937,13 +1891,13 @@ fun pass_trans_to_value_cmd meta_args_opt ((name, modes), t) trans =
   and adds the possibility to check Term Annotation Antiquotations (TA)
   with the help of DOF_core.transduce_term_global function
 *)
-fun string_of_term meta_args_opt ctxt s trans =
+fun string_of_term meta_args_opt ctxt s pos =
 let
   val _ = meta_args_exec meta_args_opt
   val t = Syntax.read_term ctxt s;
   val T = Term.type_of t;
   val ctxt' = Proof_Context.augment t ctxt;
-  val _ = DOF_core.transduce_term_global {mk_elaboration=false} (t , Toplevel.pos_of trans)
+  val _ = DOF_core.transduce_term_global {mk_elaboration=false} (t , pos)
                                           (Proof_Context.theory_of ctxt');
 in
   Pretty.string_of
@@ -1958,11 +1912,14 @@ Print_Mode.with_modes modes (fn () => writeln (string_of state arg)) ());
   We want to have the current position to pass it to transduce_term_global in
   string_of_term, so we pass the Toplevel.transition
 *)
-fun print_term meta_args_opt (string_list, string) trans = print_item
-                  (fn state =>
-                      fn string =>
-                         string_of_term meta_args_opt (Toplevel.context_of state) string trans)
-                  (string_list, string) trans;
+fun print_term meta_args_opt (string_list, string) trans =
+let
+  val pos = Toplevel.pos_of trans
+in
+  print_item (fn state =>
+                 fn string => string_of_term meta_args_opt (Toplevel.context_of state) string pos)
+             (string_list, string) trans                     
+end
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>term*\<close> "read and print term"
@@ -1983,9 +1940,102 @@ val _ = Theory.setup
   #> add_evaluator (\<^binding>\<open>nbe\<close>, Nbe.dynamic_value) #> snd
   #> add_evaluator (\<^binding>\<open>code\<close>, Code_Evaluation.dynamic_value_strict) #> snd);
 
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>assert*\<close> "evaluate and assert term"
+    (opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
+     >> (fn (meta_args_opt, eval_args ) => pass_trans_to_assert_value_cmd meta_args_opt eval_args));
+
 end;
 \<close>
 
+ML\<open>
+fun print_doc_classes b ctxt = 
+    let val {docobj_tab={tab = x, ...},docclass_tab, ...} = DOF_core.get_data ctxt;
+        val _ = writeln "=====================================";    
+        fun print_attr (n, ty, NONE) = (Binding.print n)
+          | print_attr (n, ty, SOME t)= (Binding.print n^"("^Syntax.string_of_term ctxt t^")")
+        fun print_inv ((lab,pos),trm) = (lab ^"::"^Syntax.string_of_term ctxt trm)
+        fun print_virtual {virtual} = Bool.toString virtual
+        fun print_class (n, {attribute_decl, id, inherits_from, name, virtual, params, thy_name, rejectS, rex,invs}) =
+           (case inherits_from of 
+               NONE => writeln ("docclass: "^n)
+             | SOME(_,nn) => writeln ("docclass: "^n^" = "^nn^" + ");
+            writeln ("    name:       "^(Binding.print name));
+            writeln ("    virtual:    "^(print_virtual virtual));
+            writeln ("    origin:     "^thy_name);
+            writeln ("    attrs:      "^commas (map print_attr attribute_decl));
+            writeln ("    invs:       "^commas (map print_inv invs))
+           );
+    in  map print_class (Symtab.dest docclass_tab); 
+        writeln "=====================================\n\n\n" 
+    end;
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>print_doc_classes\<close> "print document classes"
+    (Parse.opt_bang >> (fn b => Toplevel.keep (print_doc_classes b o Toplevel.context_of)));
+
+fun print_docclass_template cid ctxt = 
+    let val cid_long = DOF_core.read_cid ctxt cid  (* assure that given cid is really a long_cid *)
+        val brute_hierarchy = (DOF_core.get_attributes_local cid_long ctxt)
+        val flatten_hrchy = flat o (map(fn(lname, attrS) => 
+                                           map (fn (s,_,_)=>(lname,(Binding.name_of s))) attrS))
+        fun filter_overrides [] = []
+           |filter_overrides ((ln,s)::S) = (ln,s):: filter_overrides(filter(fn(_,s')=> s<>s')S) 
+        val hierarchy = map (fn(ln,s)=>ln^"."^s)(filter_overrides(flatten_hrchy brute_hierarchy)) 
+        val args = String.concatWith "=%\n , " ("  label=,type":: hierarchy);
+        val template = "\\newisadof{"^cid_long^"}%\n["^args^"=%\n][1]\n{%\n#1%\n}\n\n";
+    in writeln template end;
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>print_doc_class_template\<close> 
+                       "print document class latex template"
+    (Parse.string >> (fn b => Toplevel.keep (print_docclass_template b o Toplevel.context_of)));
+
+fun print_doc_items b ctxt = 
+    let val {docobj_tab={tab = x, ...},...}= DOF_core.get_data ctxt;
+        val _ = writeln "=====================================";  
+        fun dfg true = "true" 
+           |dfg false= "false"   
+        fun print_item (n, SOME({cid,vcid,id,pos,thy_name,inline, input_term, value})) =
+                 (writeln ("docitem:             "^n);
+                  writeln ("    type:            "^cid);
+                  case vcid of NONE => () | SOME (s) => 
+                  writeln ("    virtual type:    "^ s);
+                  writeln ("    origine:         "^thy_name);
+                  writeln ("    inline:          "^dfg inline);
+                  writeln ("    input_term:      "
+                           ^ (Syntax.string_of_term
+                                  ctxt (Value_Command.value_without_elaboration ctxt input_term)));
+                  writeln ("    value:           "
+                           ^ (Syntax.string_of_term
+                                  ctxt (Value_Command.value_without_elaboration ctxt value)))
+                 )
+          | print_item (n, NONE) = 
+                 (writeln ("forward reference for docitem: "^n));
+    in  map print_item (Symtab.dest x); 
+        writeln "=====================================\n\n\n" end;
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>print_doc_items\<close>  "print document items"
+    (Parse.opt_bang >> (fn b => Toplevel.keep (print_doc_items b o Toplevel.context_of)));
+
+fun check_doc_global (strict_checking : bool) ctxt = 
+    let val {docobj_tab={tab = x, ...}, monitor_tab, ...} = DOF_core.get_data ctxt;
+        val S = map_filter (fn (s,NONE) => SOME s | _ => NONE) (Symtab.dest x)
+        val T = map fst (Symtab.dest monitor_tab)
+    in if null S 
+       then if null T then ()
+            else error("Global consistency error - there are open monitors:  "
+                  ^ String.concatWith "," T) 
+       else error("Global consistency error - Unresolved forward references: "
+                  ^ String.concatWith "," S)   
+    end
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>check_doc_global\<close> "check global document consistency"
+    (Parse.opt_bang >> (fn b => Toplevel.keep (check_doc_global b o Toplevel.context_of)));
+
+\<close>
 
 \<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/outer_syntax.ML\<close>\<close>
 (*
@@ -2017,7 +2067,6 @@ val _ =
 
 end
 \<close>
-
 
 ML\<open>
 structure ODL_LTX_Converter = 
@@ -2208,25 +2257,9 @@ val basic_entity = Document_Output.antiquotation_pretty_source
     : binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
 
 fun symbex_attr_access0 ctxt proj_term term =
-    (* term assumed to be ground type, (f term) not necessarily *)
-    let val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
-        val ty = type_of (subterm')
-        (* Debug :
-        val _ = writeln ("calculate_attr_access raw term: " 
-                         ^ Syntax.string_of_term ctxt subterm')
-         *)
-        val term' = (Const(@{const_name "HOL.eq"}, ty --> ty --> HOLogic.boolT) 
-                              $ subterm' 
-                              $ Free("_XXXXXXX", ty))
-        val thm = simplify ctxt (Thm.assume(Thm.cterm_of ctxt (HOLogic.mk_Trueprop term')));
-    in  case HOLogic.dest_Trueprop (Thm.concl_of thm) of
-           Free("_XXXXXXX", @{typ "bool"}) => @{const "True"}
-        |  @{const "HOL.Not"} $  Free("_XXXXXXX", @{typ "bool"}) =>  @{const "False"}
-        |  Const(@{const_name "HOL.eq"},_) $ lhs $ Free("_XXXXXXX", _ )=> lhs 
-        |  Const(@{const_name "HOL.eq"},_) $ Free("_XXXXXXX", _ ) $ rhs => rhs
-        |  _ => error ("could not reduce attribute term: " ^
-                       Syntax.string_of_term ctxt subterm')
-    end
+  let val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
+  in Value_Command.value ctxt (subterm') end
+
 
 fun compute_attr_access ctxt attr oid pos pos' = (* template *)
     case DOF_core.get_value_global oid (Context.theory_of ctxt) of 
@@ -2242,6 +2275,7 @@ fun compute_attr_access ctxt attr oid pos pos' = (* template *)
                                                           ^ oid ^ Position.here pos)
                               val proj_term = Const(long_name,dummyT --> ty) 
                           in  symbex_attr_access0 ctxt proj_term term end
+                          (*in  Value_Command.value ctxt term end*)
            | NONE => error("identifier not a docitem reference" ^ Position.here pos)
 
 
@@ -2399,7 +2433,8 @@ fun define_inv cid_long ((lbl, pos), inv) thy =
                                                                      then Free (s, class_scheme_ty)
                                                                      else Free (s, ty)
           | update_attribute_type _ _ t = t
-        val inv_ty = Syntax.read_typ (Proof_Context.init_global thy) ("'a " ^ cid_long ^ schemeN)
+        val inv_ty = Syntax.read_typ (Proof_Context.init_global thy)
+                                     (Name.aT ^ " " ^ cid_long ^ schemeN)
         (* Update the type of each attribute update function to match the type of the
            current class. *)
         val inv_term' = update_attribute_type thy inv_ty inv_term
