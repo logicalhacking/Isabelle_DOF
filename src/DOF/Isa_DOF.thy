@@ -41,7 +41,7 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            "define_shortcut*"   "define_macro*"          :: thy_decl
 
   and      "text*"              "text-macro*"            :: document_body
-  and      "term*" "value*" "assert*"                     :: diag
+  and      "term*"   "value*"   "assert*"                :: document_body
 
   and      "print_doc_classes"        "print_doc_items" 
            "print_doc_class_template" "check_doc_global" :: diag
@@ -1892,9 +1892,8 @@ end
   and adds the possibility to check Term Annotation Antiquotations (TA)
   with the help of DOF_core.transduce_term_global function
 *)
-fun string_of_term meta_args_opt  s pos ctxt =
+fun string_of_term  s pos ctxt =
 let
-  val SS = meta_args_exec meta_args_opt
   val t = Syntax.read_term ctxt s;
   val T = Term.type_of t;
   val ctxt' = Proof_Context.augment t ctxt;
@@ -1906,21 +1905,46 @@ in
       Pretty.str "::", Pretty.brk 1, Pretty.quote (Syntax.pretty_typ ctxt' T)])
 end;
 
-fun print_item string_of (modes, arg) = Toplevel.keep (fn state =>
-Print_Mode.with_modes modes (fn () => writeln (string_of state arg)) ()); 
+fun print_item string_of (modes, arg) state =  
+    Print_Mode.with_modes modes (fn () => writeln (string_of state arg)) (); 
 
 (*
   We want to have the current position to pass it to transduce_term_global in
   string_of_term, so we pass the Toplevel.transition
 *)
+(*
 fun print_term meta_args_opt (string_list, string) trans =
 let
   val pos = Toplevel.pos_of trans
 in
-  print_item (fn state =>
-                 fn string => string_of_term meta_args_opt string pos (Toplevel.context_of state) )
-             (string_list, string) trans                     
+  Toplevel.keep(fn state =>
+                  print_item 
+                    (fn state =>
+                         fn string => 
+                              string_of_term meta_args_opt string pos (Toplevel.context_of state) )
+                    (string_list, string) 
+                    (state) 
+               ) trans                    
 end
+*)
+
+fun print_term meta_args_opt (string_list, string) trans =
+let
+  val pos = Toplevel.pos_of trans
+in
+  Toplevel.theory(fn thy =>
+                     (print_item 
+                        (fn state =>
+                            fn string => 
+                                string_of_term string pos (Toplevel.context_of state) )
+                        (string_list, string) 
+                        (Toplevel.theory_toplevel thy); 
+                     thy |> meta_args_exec meta_args_opt ) 
+                 ) trans                    
+end
+
+val _ = Toplevel.theory
+val _ = Toplevel.theory_toplevel 
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>term*\<close> "read and print term"
@@ -2061,10 +2085,10 @@ val _ =
             (*Toplevel.theory (meta_args_exec meta_args_opt)
             #>*)
             Toplevel.generic_theory
-              (ML_Context.exec (fn () =>  
+              ((ML_Context.exec (fn () =>  
                      (ML_Context.eval_source (ML_Compiler.verbose true ML_Compiler.flags) source)) 
-                  #> (meta_args_exec meta_args_opt) 
-                  #> Local_Theory.propagate_ml_env)));
+              #> (meta_args_exec meta_args_opt) 
+              #> Local_Theory.propagate_ml_env))));
 
 end
 \<close>
