@@ -2065,6 +2065,10 @@ text\<open>
 
 
 
+(*
+Document_Antiquotation
+*)
+
 subsection*[ex33::example] \<open>Example\<close>
 
 ML\<open>
@@ -2077,10 +2081,10 @@ ML\<open>
      
      (* Here is the code to register the above parsers as text antiquotations into the Isabelle
         Framework: *)
-     Thy_Output.antiquotation_pretty_source \<^binding>\<open>theory\<close> 
-                                            (Scan.lift (Parse.position Args.embedded));
+      Document_Output.antiquotation_pretty_source \<^binding>\<open>theory\<close> 
+                                            (Scan.lift (Parse.position Parse.embedded));
      
-     Thy_Output.antiquotation_raw           \<^binding>\<open>file\<close> 
+      Document_Output.antiquotation_raw           \<^binding>\<open>file\<close> 
                                             (Scan.lift (Parse.position Parse.path))  ;
      
 \<close>
@@ -2091,7 +2095,7 @@ text\<open>where we have the registration of the action
      transaction that, of course, has the type \<^ML_type>\<open>theory -> theory\<close> :
 
      @{ML [display] \<open>
-          (fn name => (Thy_Output.antiquotation_pretty_source 
+          (fn name => (Document_Output.antiquotation_pretty_source 
                  name
                 (Scan.lift (Parse.position Args.cartouche_input))))
           : binding -> 
@@ -2111,7 +2115,7 @@ ML\<open> Output.output "bla_1:" \<close>
 text\<open>It provides a number of hooks that can be used for redirection hacks ...\<close>
 
 section \<open> Output: LaTeX \<close>
-text\<open>The heart of the LaTeX generator is to be found in the structure \<^ML_structure>\<open>Thy_Output\<close>.
+text\<open>The heart of the LaTeX generator is to be found in the structure \<^ML_structure>\<open>Document_Output\<close>.
 This is an own parsing and writing process, with the risc that a parsed file in the IDE parsing
 process can not be parsed for the LaTeX Generator. The reason is twofold:
 
@@ -2127,60 +2131,52 @@ Since Isabelle2018, an own AST is provided for the LaTeX syntax, analogously to
 \<^item>\<^ML>\<open>Latex.string: string -> Latex.text\<close>
 \<^item>\<^ML>\<open>Latex.text: string * Position.T -> Latex.text\<close>
 
-\<^item>\<^ML>\<open>Latex.output_text: Latex.text list -> string\<close>
-\<^item>\<^ML>\<open>Latex.output_positions: Position.T -> Latex.text list -> string\<close>
 \<^item>\<^ML>\<open>Latex.output_name: string -> string\<close>
 \<^item>\<^ML>\<open>Latex.output_ascii: string -> string\<close>
 \<^item>\<^ML>\<open>Latex.output_symbols: Symbol.symbol list -> string\<close>
                                                                           
-\<^item>\<^ML>\<open>Latex.begin_delim: string -> string\<close>
-\<^item>\<^ML>\<open>Latex.end_delim: string -> string\<close>
-\<^item>\<^ML>\<open>Latex.begin_tag: string -> string\<close>
-\<^item>\<^ML>\<open>Latex.end_tag: string -> string\<close>
-\<^item>\<^ML>\<open>Latex.environment_block: string -> Latex.text list -> Latex.text\<close>
-\<^item>\<^ML>\<open>Latex.environment: string -> string -> string\<close>
 
-\<^item>\<^ML>\<open>Latex.block: Latex.text list -> Latex.text\<close>
-\<^item>\<^ML>\<open>Latex.enclose_body: string -> string -> Latex.text list -> Latex.text list\<close>
-\<^item>\<^ML>\<open>Latex.enclose_block: string -> string -> Latex.text list -> Latex.text\<close>
+\<^item>\<^ML>\<open>Latex.environment: string -> Latex.text -> Latex.text\<close>
+
+\<^item>\<^ML>\<open>Latex.block: Latex.text -> XML.tree\<close>
 \<close>
 
 
 
 ML\<open> Latex.output_ascii;
-    Latex.environment "isa" "bg";
+    Latex.environment "isa" (Latex.string "bg");
     Latex.output_ascii "a_b:c'é";
     (* Note: *)
     space_implode "sd &e sf dfg" ["qs","er","alpa"]; 
   \<close>
 
-text\<open>Here is an abstract of the main interface to @{ML_structure Thy_Output}:\<close>
+text\<open>Here is an abstract of the main interface to @{ML_structure Document_Output}:\<close>
 
 text\<open>
-\<^item>\<^ML>\<open>Thy_Output.output_document: Proof.context -> {markdown: bool} -> Input.source -> Latex.text list\<close>
-\<^item>\<^ML>\<open>Thy_Output.output_token: Proof.context -> Token.T -> Latex.text list\<close>
-\<^item>\<^ML>\<open>Thy_Output.output_source: Proof.context -> string -> Latex.text list\<close>
-\<^item>\<^ML>\<open>Thy_Output.present_thy: Options.T -> theory -> Thy_Output.segment list -> Latex.text list\<close>
+\<^item>\<^ML>\<open>Document_Output.output_document: Proof.context -> {markdown: bool} -> Input.source -> Latex.text \<close>
+\<^item>\<^ML>\<open>Document_Output.output_token: Proof.context -> Token.T -> Latex.text \<close>
+\<^item>\<^ML>\<open>Document_Output.output_source: Proof.context -> string -> Latex.text \<close>
+\<^item>\<^ML>\<open>Document_Output.present_thy: Options.T -> theory -> Document_Output.segment list -> Latex.text \<close>
 
-\<^item>\<^ML>\<open>Thy_Output.isabelle: Proof.context -> Latex.text list -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.isabelle_typewriter: Proof.context -> Latex.text list -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.typewriter: Proof.context -> string -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.verbatim: Proof.context -> string -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.source: Proof.context -> {embedded: bool} -> Token.src -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.pretty: Proof.context -> Pretty.T -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.pretty_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.pretty_items: Proof.context -> Pretty.T list -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.pretty_items_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T list -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.isabelle: Proof.context -> Latex.text  -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.isabelle_typewriter: Proof.context -> Latex.text  -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.typewriter: Proof.context -> string -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.verbatim: Proof.context -> string -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.source: Proof.context -> {embedded: bool} -> Token.src -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.pretty: Proof.context -> Pretty.T -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.pretty_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.pretty_items: Proof.context -> Pretty.T list -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.pretty_items_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T list -> Latex.text\<close>
 
 Finally a number of antiquotation registries :
 
-\<^item>\<^ML>\<open>Thy_Output.antiquotation_pretty:
+\<^item>\<^ML>\<open>Document_Output.antiquotation_pretty:
                  binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory\<close>
-\<^item>\<^ML>\<open>Thy_Output.antiquotation_pretty_source:
+\<^item>\<^ML>\<open>Document_Output.antiquotation_pretty_source:
                  binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory\<close>
-\<^item>\<^ML>\<open>Thy_Output.antiquotation_raw:
+\<^item>\<^ML>\<open>Document_Output.antiquotation_raw:
                  binding -> 'a context_parser -> (Proof.context -> 'a -> Latex.text) -> theory -> theory\<close>
-\<^item>\<^ML>\<open>Thy_Output.antiquotation_verbatim:
+\<^item>\<^ML>\<open>Document_Output.antiquotation_verbatim:
                binding -> 'a context_parser -> (Proof.context -> 'a -> string) -> theory -> theory\<close>
 \<close>
 
