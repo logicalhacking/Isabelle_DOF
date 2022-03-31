@@ -1917,7 +1917,7 @@ fun print_item string_of (modes, arg) state =
 fun print_term meta_args_opt (string_list, string) trans =
 let
   val pos = Toplevel.pos_of trans
-  fun prin state str = string_of_term str pos (Toplevel.context_of state) 
+  fun prin state str = string_of_term string pos (Toplevel.context_of state) 
 in
   Toplevel.theory(fn thy =>
                      (print_item prin (string_list, string) (Toplevel.theory_toplevel thy); 

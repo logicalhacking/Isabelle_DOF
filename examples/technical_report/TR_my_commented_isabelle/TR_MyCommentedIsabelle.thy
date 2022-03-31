@@ -628,19 +628,20 @@ text\<open>
 text \<open>Apparently, a bizarre conversion between the old-style interface and 
   the new-style  \<^ML>\<open>tyenv\<close> is necessary. See the following example.\<close>
 ML\<open>
-val S = Vartab.dest tyenv;
+val S = Vartab.dest tyenv : (Vartab.key * (sort * typ)) list;
 val S' = (map (fn (s,(t,u)) => ((s,t),u)) S) : ((indexname * sort) * typ) list;
          (* it took me quite some time to find out that these two type representations,
             obscured by a number of type-synonyms, where actually identical. *)
+val S''= TVars.make S': typ TVars.table
 val ty = t_schematic;
-val ty' = Term_Subst.instantiateT S' t_schematic;
+val ty' = Term_Subst.instantiateT S'' t_schematic;
 
 (* Don't know how to build a typ TVars.table *)
 val t = (generalize_term @{term "[]"});
 
-val t' = Term_Subst.map_types_same (Term_Subst.instantiateT S') (t)
+val t' = Term_Subst.map_types_same (Term_Subst.instantiateT (TVars.make S')) (t)
 (* or alternatively : *)
-val t'' = Term.map_types (Term_Subst.instantiateT S') (t)
+val t'' = Term.map_types (Term_Subst.instantiateT S'') (t)
 \<close>
 
 text\<open>A more abstract env for variable management in tactic proofs. A bit difficult to use
