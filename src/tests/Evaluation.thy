@@ -62,13 +62,11 @@ text\<open>Now we can evaluate a term with TA:
 the current implementation return the term which references the object referenced by the TA.
 Here the evualuation of the TA will return the HOL.String which references the theorem:
 \<close>
-value*\<open>@{thm \<open>HOL.refl\<close>}\<close>
+value*\<open>@{thm \<open>HOL.refl\<close>}\<close> \<comment> \<open>syntax check\<close>
 
-value*[axxx::A]\<open>@{thm \<open>HOL.refl\<close>}\<close> (* using the option *)
+value*[axxx::A]\<open>@{thm \<open>HOL.refl\<close>}\<close> \<comment> \<open>defining a reference of class A\<close> 
 
-value*[axxxx::A]\<open>@{thm \<open>HOL.refl\<close>}\<close>
-
-text\<open>check : @{A [display] "axxx"}\<close>
+text\<open>check : @{A [display] "axxx"}\<close> \<comment> \<open>using it\<close> 
 
 text\<open>An instance class is an object which allows us to define the concepts we want in an ontology.
 It is a concept which will be used to implement an ontology. It has roughly the same meaning as
