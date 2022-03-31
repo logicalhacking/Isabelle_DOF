@@ -54,7 +54,9 @@ of the current implementation.
 section\<open>Term Annotation evaluation\<close>
 
 text\<open>We can validate a term with TA:\<close>
-term*\<open>@{thm \<open>HOL.refl\<close>}\<close>
+term*[axx::A]\<open>@{thm \<open>HOL.refl\<close>}\<close>
+
+text\<open>check : @{A [display] "axx"}\<close>
 
 text\<open>Now we can evaluate a term with TA:
 the current implementation return the term which references the object referenced by the TA.
@@ -62,11 +64,11 @@ Here the evualuation of the TA will return the HOL.String which references the t
 \<close>
 value*\<open>@{thm \<open>HOL.refl\<close>}\<close>
 
-value*[axx::A]\<open>@{thm \<open>HOL.refl\<close>}\<close> (* using the option *)
+value*[axxx::A]\<open>@{thm \<open>HOL.refl\<close>}\<close> (* using the option *)
 
-value*[axx::A]\<open>@{thm \<open>HOL.refl\<close>}\<close>
+value*[axxxx::A]\<open>@{thm \<open>HOL.refl\<close>}\<close>
 
-text\<open>check : @{A "ax"}\<close>
+text\<open>check : @{A [display] "axxx"}\<close>
 
 text\<open>An instance class is an object which allows us to define the concepts we want in an ontology.
 It is a concept which will be used to implement an ontology. It has roughly the same meaning as
