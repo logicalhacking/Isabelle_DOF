@@ -1912,33 +1912,15 @@ fun print_item string_of (modes, arg) state =
   We want to have the current position to pass it to transduce_term_global in
   string_of_term, so we pass the Toplevel.transition
 *)
-(*
-fun print_term meta_args_opt (string_list, string) trans =
-let
-  val pos = Toplevel.pos_of trans
-in
-  Toplevel.keep(fn state =>
-                  print_item 
-                    (fn state =>
-                         fn string => 
-                              string_of_term meta_args_opt string pos (Toplevel.context_of state) )
-                    (string_list, string) 
-                    (state) 
-               ) trans                    
-end
-*)
+
 
 fun print_term meta_args_opt (string_list, string) trans =
 let
   val pos = Toplevel.pos_of trans
+  fun prin state str = string_of_term str pos (Toplevel.context_of state) 
 in
   Toplevel.theory(fn thy =>
-                     (print_item 
-                        (fn state =>
-                            fn string => 
-                                string_of_term string pos (Toplevel.context_of state) )
-                        (string_list, string) 
-                        (Toplevel.theory_toplevel thy); 
+                     (print_item prin (string_list, string) (Toplevel.theory_toplevel thy); 
                      thy |> meta_args_exec meta_args_opt ) 
                  ) trans                    
 end

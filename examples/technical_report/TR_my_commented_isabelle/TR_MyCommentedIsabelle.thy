@@ -1215,7 +1215,7 @@ text\<open>
 
 text\<open>The file \<^file>\<open>~~/src/HOL/Examples/Commands.thy\<close> shows some example Isar command definitions, with the 
      all-important theory header declarations for outer syntax keywords.\<close>
-
+ 
 text\<open>@{ML_structure Pure_Syn}\<close>
 
 subsubsection*[ex1137::example]\<open>Examples: \<^theory_text>\<open>text\<close>\<close>
@@ -1231,20 +1231,29 @@ text\<open> The integration of the  \<^theory_text>\<open>text\<close>-command i
  "diagnostic" (=side-effect-free) toplevel operation.
   \<^ML>\<open>Document_Output.document_output\<close> looks as follows:
 
- @{ML [display]\<open> let fun output_document state markdown txt = 
-                           Thy_Output.output_document (Toplevel.presentation_context state) markdown txt
-                     fun document_command markdown (loc, txt) =
-  Toplevel.keep (fn state =>
-    (case loc of
-      NONE => ignore (output_document state markdown txt)
-    | SOME (_, pos) => 
-        error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
-        Toplevel.present_local_theory loc (fn state =>
-              ignore (output_document state markdown txt)) in () end
-   
+ @{ML [display]\<open>let fun document_reports txt =
+  let val pos = Input.pos_of txt in
+    [(pos, Markup.language_document (Input.is_delimited txt)),
+     (pos, Markup.plain_text)]
+  end;
+fun document_output {markdown, markup} (loc, txt) =
+  let
+    fun output st =
+      let
+        val ctxt = Toplevel.presentation_context st;
+        val _ = Context_Position.reports ctxt (document_reports txt);
+      in txt |> Document_Output.output_document ctxt {markdown = markdown} |> markup end;
+  in
+    Toplevel.present (fn st =>
+      (case loc of
+        NONE => output st
+      | SOME (_, pos) =>
+          error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
+    Toplevel.present_local_theory loc output
+  end in () end
 \<close>}
-
 \<close>
+
 subsubsection*[ex1138::example]\<open>Examples: \<^theory_text>\<open>ML\<close>\<close>
 
 text\<open>
@@ -1541,6 +1550,7 @@ text\<open>The structures @{ML_structure Markup} and @{ML_structure Properties} 
   from \<^theory_text>\<open>Isabelle_DOF\<close>. A markup must be tagged with an id; this is done by the @{ML serial}-function
   discussed earlier. Markup operations were used for hyperlinking applications to binding
   occurrences, info for hovering, infos for type ... \<close>  
+
 ML\<open>
 (* Position.report is also a type consisting of a pair of a position and markup. *)
 (* It would solve all my problems if I find a way to infer the defining Position.report
@@ -1556,17 +1566,16 @@ Markup.enclose : Markup.T -> string -> string;
      
 (* example for setting a link, the def flag controls if it is a defining or a binding 
 occurence of an item *)
-fun theory_markup (def:bool) (name:string) (id:serial) (pos:Position.T) =
-  if id = 0 then Markup.empty
-  else  Markup.properties (Position.entity_properties_of def id pos)
-                          (Markup.entity Markup.theoryN name);
 Markup.theoryN : string;
+
+fun theory_markup refN  (def:bool) (name:string) (id:serial) (pos:Position.T) =
+  if id = 0 then Markup.empty
+  else Position.make_entity_markup {def = def} id refN (name, pos);
 
 serial();   (* A global, lock-guarded serial counter used to produce unique identifiers,
                be it on the level of thy-internal states or as reference in markup in
                PIDE *)
 \<close>
-
 
 
 subsection\<open>A simple Example\<close>
@@ -1577,10 +1586,7 @@ val docclassN = "doc_class";
 
 (* derived from: theory_markup; def for "defining occurrence" (true) in contrast to
    "referring occurence" (false). *) 
-fun docclass_markup def name id pos =
-  if id = 0 then Markup.empty
-  else           Markup.properties (Position.entity_properties_of def id pos)
-                                   (Markup.entity docclassN name);   
+val docclass_markup  = theory_markup docclassN  
 
 in
 
@@ -1606,13 +1612,15 @@ fun markup_tvar def_name ps (name, id) =
   let 
     fun markup_elem name = (name, (name, []): Markup.T);
     val (tvarN, tvar) = markup_elem ((case def_name of SOME name => name | _ => "") ^ "'s nickname is");
-    val entity = Markup.entity tvarN name
+    val entity = Markup.entity tvarN name (* ??? *)
     val def = def_name = NONE
   in
     tvar ::
     (if def then I else cons (Markup.keyword_properties Markup.ML_keyword3))
-      (map (fn pos => Markup.properties (Position.entity_properties_of def id pos) entity) ps)
+      (map (fn pos => Position.make_entity_markup {def = def} id tvarN (name, pos) ) ps)
   end
+
+(* Position.make_entity_markup {def = def} id refN (name, pos) *)
 
 fun report [] _ _ = I
   | report ps markup x =
@@ -1860,9 +1868,6 @@ Common Isar Syntax
 
 
 Common Isar Syntax
-\<^item>\<^ML>\<open>Args.embedded_input  : Input.source parser\<close>
-\<^item>\<^ML>\<open>Args.embedded  : string parser\<close>
-\<^item>\<^ML>\<open>Args.embedded_position: (string * Position.T) parser\<close>
 \<^item>\<^ML>\<open>Args.text_input: Input.source parser\<close>
 \<^item>\<^ML>\<open>Args.text      : string parser\<close>
 \<^item>\<^ML>\<open>Args.binding   : Binding.binding parser\<close>
