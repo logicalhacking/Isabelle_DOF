@@ -29,10 +29,15 @@ print_doc_items
 
 section\<open>Definitions, Lemmas, Theorems, Assertions\<close>
 
-
+term\<open>True\<close>
 text*[aa::F, properties = "[@{term ''True''}]"]
 \<open>Our definition of the HOL-Logic has the following properties:\<close>
-assert*[aa::F] "True"
+assert*\<open>F.properties @{F \<open>aa\<close>} = [@{term ''True''}]\<close>
+
+text\<open>For now, as the term annotation is not bound to a meta logic which will translate
+\<^term>\<open>[@{term ''True''}]\<close> to \<^term>\<open>[True]\<close>, we can not use the HOL \<^const>\<open>True\<close> constant
+in the assertion.
+\<close>
 
 (* does not work in batch mode ... 
 (* sample for accessing a property filled with previous assert's of "aa" *)
@@ -70,7 +75,7 @@ different class. "F" and "assertion" have only in common that they posses the at
 
 text\<open>Creation just like that: \<close>
 assert*[ababa::assertion] "3 < (4::int)"
-assert*[ababa::assertion] "0 < (4::int)"
+assert*[ababab::assertion] "0 < (4::int)"
 
 
 end

@@ -707,9 +707,10 @@ author*[bu::author, email = "\<open>wolff@lri.fr\<close>",
 \<close>
 
 text\<open>Assertions allow for logical statements to be checked in the global context.
-This is particularly useful to explore formal definitions wrt. their border cases. \<close>
-
-assert*[ass1::assertion, short_name = "\<open>This is an assertion\<close>"] \<open>last [3] < (4::int)\<close>
+This is particularly useful to explore formal definitions wrt. their border cases.
+@{boxed_theory_text [display]\<open>
+assert*[ass1::assertion, short_name = "\<open>This is an assertion\<close>"] \<open>last [3] < (4::int)\<close>\<close>}
+\<close>
 
 text\<open>We want to check the consequences of this definition and can add the following statements:
 @{boxed_theory_text [display]\<open>
