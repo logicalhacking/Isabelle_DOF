@@ -1,5 +1,5 @@
-%% Copyright (c) 2019 University of Exeter
-%%               2018-2019 University of Paris-Saclay
+%% Copyright (c) 2019-2022 University of Exeter
+%%               2018-2022 University of Paris-Saclay
 %%               2018-2019 The University of Sheffield
 %%
 %% License:
@@ -11,20 +11,22 @@
 %%   The 2-clause BSD-style license.
 %%
 
-%%   <isadofltxversion>
+%%   2022/01/25 Unreleased/Isabelle2021
 
 %% Warning: Do Not Edit!
 %% =====================
 %% This is the root file for the Isabelle/DOF using the lipics class.
-%% Note that lipics cannot be distributed as part of Isabelle/DOF; you need
-%% to download lipics.cls from 
+%% Note that lipics cannot is *not* distributed as part of Isabelle/DOF; 
+%% you need to download lipics.cls from 
 %% https://www.dagstuhl.de/en/publications/lipics/instructions-for-authors/
 %% and add it manually to the praemble.tex and the ROOT file.
+%% Moreover, the option "document_comment_latex=true" needs to be set 
+%% in the ROOT file.
 %%
 %% All customization and/or additional packages should be added to the file
 %% preamble.tex.
 
-\documentclass[a4paper,USenglish,cleveref, autoref]{lipics-v2019}
+\documentclass[a4paper,UKenglish,cleveref, autoref,thm-restate]{lipics-v2021}
 \bibliographystyle{plainurl}% the mandatory bibstyle
 \usepackage{isabelle}
 \usepackage{isabellesym}
@@ -34,12 +36,9 @@
 \IfFileExists{DOF-core.sty}{}{%
   \PackageError{DOF-core}{Isabelle/DOF not installed. 
     This is a Isabelle_DOF project. The document preparation requires
-    the Isabelle_DOF framework. Please obtain the framework by cloning
-    the Isabelle_DOF git repository, i.e.: 
-         "git clone <isadofurl>"
-    You can install the framework as follows:
-         "cd Isabelle_DOF/document-generator && ./install"}{%
-    For further help, see <isadofurl>}
+    the Isabelle_DOF component from:
+    <isadofurl>
+  }{For further help, see <isadofurl>}
 }
 
 

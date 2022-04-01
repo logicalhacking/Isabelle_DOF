@@ -6,14 +6,19 @@ theory
   Evaluation
 imports 
   "Isabelle_DOF-tests.TermAntiquotations"
+  "Isabelle_DOF-tests.High_Level_Syntax_Invariants"
 begin
 
 section\<open>\<^theory_text>\<open>ML*\<close>-Annotated SML-commands\<close>
+ML*[the_function::B,x=\<open>\<open>dfg\<close>\<close>]\<open>fun fac x = if x = 0 then 1 else x * fac(x-1);
+                               val t = @{const_name "List.Nil"}\<close>
+ML\<open>fac 5; t\<close> \<comment> \<open>this is a test that ML* is actually evaluated and the 
+                 resulting toplevel state is preserved.\<close>
+ML*\<open>3+4\<close>     \<comment> \<open>meta-args are optional\<close> 
 
-ML*[the_function::C,x=\<open>\<open>dfg\<close>\<close>]\<open>fun fac x = if x = 0 then 1 else x * fac(x-1)\<close>
-ML*\<open>3+4\<close> (* meta-args are optional *)
+text-macro*[the::C]\<open> @{B [display] "the_function"} \<close>
 
-text\<open>... and here we reference @{B [display] "the_function"}.\<close>
+text\<open>... and here we reference @{B [display] \<open>the_function\<close>}.\<close>
 
 section\<open>\<^theory_text>\<open>value*\<close>-Annotated evaluation-commands\<close>
 
@@ -49,15 +54,19 @@ of the current implementation.
 section\<open>Term Annotation evaluation\<close>
 
 text\<open>We can validate a term with TA:\<close>
-term*\<open>@{thm \<open>HOL.refl\<close>}\<close>
+term*[axx::A]\<open>@{thm \<open>HOL.refl\<close>}\<close>
+
+text\<open>check : @{A [display] "axx"}\<close>
 
 text\<open>Now we can evaluate a term with TA:
 the current implementation return the term which references the object referenced by the TA.
 Here the evualuation of the TA will return the HOL.String which references the theorem:
 \<close>
-value*\<open>@{thm \<open>HOL.refl\<close>}\<close>
+value*\<open>@{thm \<open>HOL.refl\<close>}\<close> \<comment> \<open>syntax check\<close>
 
-value*[a::A]\<open>@{thm \<open>HOL.refl\<close>}\<close> (* using the option *)
+value*[axxx::A]\<open>@{thm \<open>HOL.refl\<close>}\<close> \<comment> \<open>defining a reference of class A\<close> 
+
+text\<open>check : @{A [display] "axxx"}\<close> \<comment> \<open>using it\<close> 
 
 text\<open>An instance class is an object which allows us to define the concepts we want in an ontology.
 It is a concept which will be used to implement an ontology. It has roughly the same meaning as
@@ -82,8 +91,8 @@ value*\<open>A.x @{A \<open>xcv1\<close>}\<close>
 
 text\<open>If the attribute of the instance is not initialized, we get an undefined value,
 whose type is the type of the attribute:\<close>
-term*\<open>level @{C \<open>xcv2\<close>}\<close>
-value*\<open>level @{C \<open>xcv2\<close>}\<close>
+term*\<open>B.level @{C \<open>xcv2\<close>}\<close>
+value*\<open>B.level @{C \<open>xcv2\<close>}\<close>
 
 text\<open>The value of a TA is the term itself:\<close>
 term*\<open>C.g @{C \<open>xcv2\<close>}\<close>
@@ -167,5 +176,32 @@ to update the instance @{docitem \<open>xcv4\<close>}:
 (* Error:
 update_instance*[xcv4::F, b+="{(@{A ''xcv3''},@{G ''xcv5''})}"]*)
 
+
+section\<open>\<^theory_text>\<open>assert*\<close>-Annotated assertion-commands\<close>
+
+text\<open>The \<^emph>\<open>assert*\<close>-command allows for logical statements to be checked in the global context.
+It uses the same implementation as the \<^emph>\<open>value*\<close>-command and has the same limitations.
+\<close>
+
+text\<open>Using the ontology defined in \<^theory>\<open>Isabelle_DOF-tests.High_Level_Syntax_Invariants\<close>
+we can check logical statements:\<close>
+
+term*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
+assert*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
+assert*\<open>\<not>(authored_by @{introduction \<open>introduction2\<close>}
+          = authored_by @{introduction \<open>introduction4\<close>})\<close>
+
+text\<open>Assertions must be boolean expressions, so the following assertion triggers an error:\<close>
+(* Error:
+assert*\<open>@{introduction \<open>introduction2\<close>}\<close>*)
+
+text\<open>Assertions must be true, hence the error:\<close>
+(* Error:
+assert*\<open>{@{author \<open>curry\<close>}} = {@{author \<open>church\<close>}}\<close>*)
+
+term*\<open>property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
+assert*\<open>\<not> property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
+
+assert*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
 
 end

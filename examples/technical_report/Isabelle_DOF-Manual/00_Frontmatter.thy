@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019-2021 The University of Exeter 
- *               2018-2021 The University of Paris-Saclay
+ *               2019-2022 The University of Exeter 
+ *               2018-2022 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -21,7 +21,7 @@ section\<open>Local Document Setup.\<close>
 text\<open>Introducing document specific abbreviations and macros:\<close>
 
 define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
-                 isadof  \<rightleftharpoons> \<open>\isadof\<close>
+                 isadof  \<rightleftharpoons> \<open>\isadof{}\<close>
 
 define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
                  BibTeX  \<rightleftharpoons> \<open>\BibTeX{}\<close> 
@@ -134,9 +134,9 @@ abstract*[abs, keywordlist="[\<open>Ontology\<close>, \<open>Ontological Modelin
   
     It is an unique feature of  \<^isadof>  that ontologies may be used to control
     the link between formal and informal content in documents in a machine
-    checked way. These links can connect both text elements as well as formal
-    modelling elements such as terms, definitions, code  and logical formulas,
-    alltogether \<^emph>\<open>integrated\<close> in a state-of-the-art interactive theorem prover.
+    checked way. These links can connect both text elements and formal
+    modeling elements such as terms, definitions, code  and logical formulas,
+    altogether \<^emph>\<open>integrated\<close> in a state-of-the-art interactive theorem prover.
 
 \<close>
 

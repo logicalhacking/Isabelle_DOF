@@ -1,5 +1,6 @@
 session "Isabelle_DOF-Manual" = "Isabelle_DOF" + 
-  options  [document = pdf, document_output = "output", quick_and_dirty = true]
+  options  [document = pdf, document_output = "output", document_build = dof,
+    quick_and_dirty = true]
   theories
     "Isabelle_DOF-Manual"
   document_files
@@ -7,7 +8,6 @@ session "Isabelle_DOF-Manual" = "Isabelle_DOF" +
     "root.bib"
     "root.mst"
     "preamble.tex"
-    "build"
     "lstisadof-manual.sty" 
     "figures/antiquotations-PIDE.png"
     "figures/cicm2018-combined.png"
@@ -21,6 +21,7 @@ session "Isabelle_DOF-Manual" = "Isabelle_DOF" +
     "figures/Dogfood-Intro.png"
     "figures/Dogfood-IV-jumpInDocCLass.png"
     "figures/Dogfood-V-attribute.png"
+    "figures/Dogfood-VI-linkappl.png"
     "figures/isabelle-architecture.pdf"
     "figures/isabelle-architecture.svg"
     "figures/isadof.png"

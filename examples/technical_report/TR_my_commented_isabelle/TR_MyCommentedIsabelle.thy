@@ -612,32 +612,36 @@ subsection\<open>More operations on types\<close>
 text\<open>
 \<^item> \<^ML>\<open>Term_Subst.map_types_same : (typ -> typ) -> term -> term\<close>
 \<^item> \<^ML>\<open>Term_Subst.map_aterms_same : (term -> term) -> term -> term\<close>
-\<^item> \<^ML>\<open>Term_Subst.instantiate: ((indexname * sort) * typ) list * ((indexname * typ) * term) list 
-                              -> term -> term\<close>
-\<^item> \<^ML>\<open>Term_Subst.instantiateT: ((indexname * sort) * typ) list -> typ -> typ\<close>
-\<^item> \<^ML>\<open>Term_Subst.generalizeT: string list -> int -> typ -> typ\<close>
+\<^item> \<^ML>\<open>Term_Subst.instantiate: typ TVars.table * term Vars.table -> term -> term\<close>
+\<^item> \<^ML>\<open>Term_Subst.instantiateT: typ TVars.table -> typ -> typ\<close>
+\<^item> \<^ML>\<open>Term_Subst.generalizeT: Names.set -> int -> typ -> typ\<close>
                         this is the standard type generalisation function !!!
                         only type-frees in the string-list were taken into account. 
-\<^item> \<^ML>\<open>Term_Subst.generalize: string list * string list -> int -> term -> term\<close>
+\<^item> \<^ML>\<open>Term_Subst.generalize: Names.set * Names.set -> int -> term -> term\<close>
                         this is the standard term generalisation function !!!
                         only type-frees and frees in the string-lists were taken 
                         into account. 
 \<close>
 
+
+
 text \<open>Apparently, a bizarre conversion between the old-style interface and 
   the new-style  \<^ML>\<open>tyenv\<close> is necessary. See the following example.\<close>
 ML\<open>
-val S = Vartab.dest tyenv;
+val S = Vartab.dest tyenv : (Vartab.key * (sort * typ)) list;
 val S' = (map (fn (s,(t,u)) => ((s,t),u)) S) : ((indexname * sort) * typ) list;
          (* it took me quite some time to find out that these two type representations,
             obscured by a number of type-synonyms, where actually identical. *)
+val S''= TVars.make S': typ TVars.table
 val ty = t_schematic;
-val ty' = Term_Subst.instantiateT S' t_schematic;
+val ty' = Term_Subst.instantiateT S'' t_schematic;
+
+(* Don't know how to build a typ TVars.table *)
 val t = (generalize_term @{term "[]"});
 
-val t' = Term_Subst.map_types_same (Term_Subst.instantiateT S') (t)
+val t' = Term_Subst.map_types_same (Term_Subst.instantiateT (TVars.make S')) (t)
 (* or alternatively : *)
-val t'' = Term.map_types (Term_Subst.instantiateT S') (t)
+val t'' = Term.map_types (Term_Subst.instantiateT S'') (t)
 \<close>
 
 text\<open>A more abstract env for variable management in tactic proofs. A bit difficult to use
@@ -794,11 +798,11 @@ text\<open> We come now to the very heart of the LCF-Kernel of Isabelle, which
 \<^item>  \<^ML>\<open> Thm.forall_intr: cterm -> thm -> thm\<close>
 \<^item>  \<^ML>\<open> Thm.forall_elim: cterm -> thm -> thm\<close>
 \<^item>  \<^ML>\<open> Thm.transfer : theory -> thm -> thm\<close>
-\<^item>  \<^ML>\<open> Thm.generalize: string list * string list -> int -> thm -> thm\<close>
-\<^item>  \<^ML>\<open> Thm.instantiate: ((indexname*sort)*ctyp)list * ((indexname*typ)*cterm) list -> thm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.generalize: Names.set * Names.set -> int -> thm -> thm\<close>
+\<^item>  \<^ML>\<open> Thm.instantiate: ctyp TVars.table * cterm Vars.table -> thm -> thm\<close>
 \<close>
 
-text\<open>  They reflect the Pure logic depicted in a number of presentations such as 
+text\<open>  They reflect the Pure logic depicted in a number of presentations such as
   M. Wenzel, \<^emph>\<open>Parallel Proof Checking in Isabelle/Isar\<close>, PLMMS 2009, or simiular papers.
   Notated as logical inference rules, these operations were presented as follows:
 \<close>
@@ -909,14 +913,10 @@ high-level component (more low-level components such as \<^ML>\<open>Global_Theo
 exist) for definitions and axiomatizations is here:
 \<close>
 
-
 text\<open>
 \<^item>  \<^ML>\<open>Specification.definition: (binding * typ option * mixfix) option ->
         (binding * typ option * mixfix) list -> term list -> Attrib.binding * term ->
         local_theory -> (term * (string * thm)) * local_theory\<close>
-\<^item>  \<^ML>\<open>Specification.definition': (binding * typ option * mixfix) option ->
-        (binding * typ option * mixfix) list ->  term list -> Attrib.binding * term ->
-        bool -> local_theory -> (term * (string * thm)) * local_theory\<close>
 \<^item>  \<^ML>\<open>Specification.definition_cmd: (binding * string option * mixfix) option ->
         (binding * string option * mixfix) list -> string list -> Attrib.binding * string ->
          bool -> local_theory -> (term * (string * thm)) * local_theory\<close>
@@ -959,8 +959,8 @@ fun mk_def name p  =
         val ty_global = ty --> ty
         val args = (((SOME(nameb,SOME ty_global,NoSyn),(Binding.empty_atts,term_prop)),[]),[])
         val cmd = (fn (((decl, spec), prems), params) =>
-                        #2 oo Specification.definition' decl params prems spec)
-    in cmd args true
+                        #2 o Specification.definition decl params prems spec)
+    in cmd args
     end;
 in  Named_Target.theory_map (mk_def "I" @{here} )
 end\<close>
@@ -1186,8 +1186,8 @@ text\<open> The extensibility of Isabelle as a system framework depends on a num
  \<^item> \<^ML>\<open>Toplevel.theory': (bool -> theory -> theory) -> Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.exit: Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.ignored: Position.T -> Toplevel.transition\<close>
- \<^item> \<^ML>\<open>Toplevel.present_local_theory: (xstring * Position.T) option ->
-                       (Toplevel.state -> unit) -> Toplevel.transition -> Toplevel.transition\<close>
+ \<^item> \<^ML>\<open>Toplevel.present_local_theory:  (xstring * Position.T) option ->
+                       (Toplevel.state -> Latex.text) -> Toplevel.transition -> Toplevel.transition\<close>
 
 \<close>
 subsection*[cmdbinding::technical] \<open>Toplevel Transaction Management in the Isar-Engine\<close>
@@ -1216,32 +1216,45 @@ text\<open>
 
 text\<open>The file \<^file>\<open>~~/src/HOL/Examples/Commands.thy\<close> shows some example Isar command definitions, with the 
      all-important theory header declarations for outer syntax keywords.\<close>
+ 
+text\<open>@{ML_structure Pure_Syn}\<close>
 
 subsubsection*[ex1137::example]\<open>Examples: \<^theory_text>\<open>text\<close>\<close>
 text\<open> The integration of the  \<^theory_text>\<open>text\<close>-command is done as follows:
 
  @{ML [display]\<open>
   Outer_Syntax.command ("text", @{here}) "formal comment (primary style)"
-    (Parse.opt_target -- Parse.document_source >> Pure_Syn.document_command {markdown = true})
+    (Parse.opt_target -- Parse.document_source >> Document_Output.document_output 
+                                                  {markdown = true, markup = I})
  \<close>}
 
- where \<^ML>\<open>Pure_Syn.document_command\<close> is the defining operation for the 
- "diagnostic" (=side-effect-free) toplevel operation. \<^ML>\<open>Pure_Syn.document_command\<close> looks as follows:
+ where \<^ML>\<open>Document_Output.document_output\<close> is the defining operation for the 
+ "diagnostic" (=side-effect-free) toplevel operation.
+  \<^ML>\<open>Document_Output.document_output\<close> looks as follows:
 
- @{ML [display]\<open> let fun output_document state markdown txt = 
-                           Thy_Output.output_document (Toplevel.presentation_context state) markdown txt
-                     fun document_command markdown (loc, txt) =
-  Toplevel.keep (fn state =>
-    (case loc of
-      NONE => ignore (output_document state markdown txt)
-    | SOME (_, pos) => 
-        error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
-        Toplevel.present_local_theory loc (fn state =>
-              ignore (output_document state markdown txt)) in () end
-   
+ @{ML [display]\<open>let fun document_reports txt =
+  let val pos = Input.pos_of txt in
+    [(pos, Markup.language_document (Input.is_delimited txt)),
+     (pos, Markup.plain_text)]
+  end;
+fun document_output {markdown, markup} (loc, txt) =
+  let
+    fun output st =
+      let
+        val ctxt = Toplevel.presentation_context st;
+        val _ = Context_Position.reports ctxt (document_reports txt);
+      in txt |> Document_Output.output_document ctxt {markdown = markdown} |> markup end;
+  in
+    Toplevel.present (fn st =>
+      (case loc of
+        NONE => output st
+      | SOME (_, pos) =>
+          error ("Illegal target specification -- not a theory context" ^ Position.here pos))) o
+    Toplevel.present_local_theory loc output
+  end in () end
 \<close>}
-
 \<close>
+
 subsubsection*[ex1138::example]\<open>Examples: \<^theory_text>\<open>ML\<close>\<close>
 
 text\<open>
@@ -1316,10 +1329,12 @@ subsection*[ex213::example]\<open>A Definition Command (High-level)\<close>
 
 text\<open>A quite complex example is drawn from the Theory \<^verbatim>\<open>Clean\<close>; it generates \<close>
 
+ML\<open>Specification.definition\<close>
+
 ML\<open>
 structure HLDefinitionSample = 
 struct
-fun cmd (decl, spec, prems, params) = #2 oo Specification.definition' decl params prems spec
+fun cmd (decl, spec, prems, params) = #2 o Specification.definition decl params prems spec
 
 fun MON_SE_T res state = state --> optionT(HOLogic.mk_prodT(res,state));
 
@@ -1340,7 +1355,7 @@ fun mk_push_def binding sty lthy =
         val eq = push_eq binding  (Binding.name_of name) rty sty lthy
         val mty = MON_SE_T rty sty 
         val args = (SOME(name, SOME mty, NoSyn), (Binding.empty_atts,eq),[],[])
-    in cmd args true lthy  end;
+    in cmd args lthy  end;
 
 val define_test =  Named_Target.theory_map (mk_push_def (Binding.name "test") @{typ "'a"})
 
@@ -1536,6 +1551,7 @@ text\<open>The structures @{ML_structure Markup} and @{ML_structure Properties} 
   from \<^theory_text>\<open>Isabelle_DOF\<close>. A markup must be tagged with an id; this is done by the @{ML serial}-function
   discussed earlier. Markup operations were used for hyperlinking applications to binding
   occurrences, info for hovering, infos for type ... \<close>  
+
 ML\<open>
 (* Position.report is also a type consisting of a pair of a position and markup. *)
 (* It would solve all my problems if I find a way to infer the defining Position.report
@@ -1551,18 +1567,16 @@ Markup.enclose : Markup.T -> string -> string;
      
 (* example for setting a link, the def flag controls if it is a defining or a binding 
 occurence of an item *)
-fun theory_markup (def:bool) (name:string) (id:serial) (pos:Position.T) =
-  if id = 0 then Markup.empty
-  else
-    Markup.properties (Position.entity_properties_of def id pos)
-      (Markup.entity Markup.theoryN name);
 Markup.theoryN : string;
+
+fun theory_markup refN  (def:bool) (name:string) (id:serial) (pos:Position.T) =
+  if id = 0 then Markup.empty
+  else Position.make_entity_markup {def = def} id refN (name, pos);
 
 serial();   (* A global, lock-guarded serial counter used to produce unique identifiers,
                be it on the level of thy-internal states or as reference in markup in
                PIDE *)
 \<close>
-
 
 
 subsection\<open>A simple Example\<close>
@@ -1573,10 +1587,7 @@ val docclassN = "doc_class";
 
 (* derived from: theory_markup; def for "defining occurrence" (true) in contrast to
    "referring occurence" (false). *) 
-fun docclass_markup def name id pos =
-  if id = 0 then Markup.empty
-  else           Markup.properties (Position.entity_properties_of def id pos)
-                                   (Markup.entity docclassN name);   
+val docclass_markup  = theory_markup docclassN  
 
 in
 
@@ -1602,13 +1613,15 @@ fun markup_tvar def_name ps (name, id) =
   let 
     fun markup_elem name = (name, (name, []): Markup.T);
     val (tvarN, tvar) = markup_elem ((case def_name of SOME name => name | _ => "") ^ "'s nickname is");
-    val entity = Markup.entity tvarN name
+    val entity = Markup.entity tvarN name (* ??? *)
     val def = def_name = NONE
   in
     tvar ::
     (if def then I else cons (Markup.keyword_properties Markup.ML_keyword3))
-      (map (fn pos => Markup.properties (Position.entity_properties_of def id pos) entity) ps)
+      (map (fn pos => Position.make_entity_markup {def = def} id tvarN (name, pos) ) ps)
   end
+
+(* Position.make_entity_markup {def = def} id refN (name, pos) *)
 
 fun report [] _ _ = I
   | report ps markup x =
@@ -1856,11 +1869,6 @@ Common Isar Syntax
 
 
 Common Isar Syntax
-\<^item>\<^ML>\<open>Args.embedded_token  : Token.T parser\<close>
-\<^item>\<^ML>\<open>Args.embedded_inner_syntax: string parser\<close>
-\<^item>\<^ML>\<open>Args.embedded_input  : Input.source parser\<close>
-\<^item>\<^ML>\<open>Args.embedded  : string parser\<close>
-\<^item>\<^ML>\<open>Args.embedded_position: (string * Position.T) parser\<close>
 \<^item>\<^ML>\<open>Args.text_input: Input.source parser\<close>
 \<^item>\<^ML>\<open>Args.text      : string parser\<close>
 \<^item>\<^ML>\<open>Args.binding   : Binding.binding parser\<close>
@@ -2058,6 +2066,10 @@ text\<open>
 
 
 
+(*
+Document_Antiquotation
+*)
+
 subsection*[ex33::example] \<open>Example\<close>
 
 ML\<open>
@@ -2070,10 +2082,10 @@ ML\<open>
      
      (* Here is the code to register the above parsers as text antiquotations into the Isabelle
         Framework: *)
-     Thy_Output.antiquotation_pretty_source \<^binding>\<open>theory\<close> 
-                                            (Scan.lift (Parse.position Args.embedded));
+      Document_Output.antiquotation_pretty_source \<^binding>\<open>theory\<close> 
+                                            (Scan.lift (Parse.position Parse.embedded));
      
-     Thy_Output.antiquotation_raw           \<^binding>\<open>file\<close> 
+      Document_Output.antiquotation_raw           \<^binding>\<open>file\<close> 
                                             (Scan.lift (Parse.position Parse.path))  ;
      
 \<close>
@@ -2084,7 +2096,7 @@ text\<open>where we have the registration of the action
      transaction that, of course, has the type \<^ML_type>\<open>theory -> theory\<close> :
 
      @{ML [display] \<open>
-          (fn name => (Thy_Output.antiquotation_pretty_source 
+          (fn name => (Document_Output.antiquotation_pretty_source 
                  name
                 (Scan.lift (Parse.position Args.cartouche_input))))
           : binding -> 
@@ -2104,7 +2116,7 @@ ML\<open> Output.output "bla_1:" \<close>
 text\<open>It provides a number of hooks that can be used for redirection hacks ...\<close>
 
 section \<open> Output: LaTeX \<close>
-text\<open>The heart of the LaTeX generator is to be found in the structure \<^ML_structure>\<open>Thy_Output\<close>.
+text\<open>The heart of the LaTeX generator is to be found in the structure \<^ML_structure>\<open>Document_Output\<close>.
 This is an own parsing and writing process, with the risc that a parsed file in the IDE parsing
 process can not be parsed for the LaTeX Generator. The reason is twofold:
 
@@ -2120,60 +2132,52 @@ Since Isabelle2018, an own AST is provided for the LaTeX syntax, analogously to
 \<^item>\<^ML>\<open>Latex.string: string -> Latex.text\<close>
 \<^item>\<^ML>\<open>Latex.text: string * Position.T -> Latex.text\<close>
 
-\<^item>\<^ML>\<open>Latex.output_text: Latex.text list -> string\<close>
-\<^item>\<^ML>\<open>Latex.output_positions: Position.T -> Latex.text list -> string\<close>
 \<^item>\<^ML>\<open>Latex.output_name: string -> string\<close>
 \<^item>\<^ML>\<open>Latex.output_ascii: string -> string\<close>
 \<^item>\<^ML>\<open>Latex.output_symbols: Symbol.symbol list -> string\<close>
                                                                           
-\<^item>\<^ML>\<open>Latex.begin_delim: string -> string\<close>
-\<^item>\<^ML>\<open>Latex.end_delim: string -> string\<close>
-\<^item>\<^ML>\<open>Latex.begin_tag: string -> string\<close>
-\<^item>\<^ML>\<open>Latex.end_tag: string -> string\<close>
-\<^item>\<^ML>\<open>Latex.environment_block: string -> Latex.text list -> Latex.text\<close>
-\<^item>\<^ML>\<open>Latex.environment: string -> string -> string\<close>
 
-\<^item>\<^ML>\<open>Latex.block: Latex.text list -> Latex.text\<close>
-\<^item>\<^ML>\<open>Latex.enclose_body: string -> string -> Latex.text list -> Latex.text list\<close>
-\<^item>\<^ML>\<open>Latex.enclose_block: string -> string -> Latex.text list -> Latex.text\<close>
+\<^item>\<^ML>\<open>Latex.environment: string -> Latex.text -> Latex.text\<close>
+
+\<^item>\<^ML>\<open>Latex.block: Latex.text -> XML.tree\<close>
 \<close>
 
 
 
 ML\<open> Latex.output_ascii;
-    Latex.environment "isa" "bg";
+    Latex.environment "isa" (Latex.string "bg");
     Latex.output_ascii "a_b:c'é";
     (* Note: *)
     space_implode "sd &e sf dfg" ["qs","er","alpa"]; 
   \<close>
 
-text\<open>Here is an abstract of the main interface to @{ML_structure Thy_Output}:\<close>
+text\<open>Here is an abstract of the main interface to @{ML_structure Document_Output}:\<close>
 
 text\<open>
-\<^item>\<^ML>\<open>Thy_Output.output_document: Proof.context -> {markdown: bool} -> Input.source -> Latex.text list\<close>
-\<^item>\<^ML>\<open>Thy_Output.output_token: Proof.context -> Token.T -> Latex.text list\<close>
-\<^item>\<^ML>\<open>Thy_Output.output_source: Proof.context -> string -> Latex.text list\<close>
-\<^item>\<^ML>\<open>Thy_Output.present_thy: Options.T -> theory -> Thy_Output.segment list -> Latex.text list\<close>
+\<^item>\<^ML>\<open>Document_Output.output_document: Proof.context -> {markdown: bool} -> Input.source -> Latex.text \<close>
+\<^item>\<^ML>\<open>Document_Output.output_token: Proof.context -> Token.T -> Latex.text \<close>
+\<^item>\<^ML>\<open>Document_Output.output_source: Proof.context -> string -> Latex.text \<close>
+\<^item>\<^ML>\<open>Document_Output.present_thy: Options.T -> theory -> Document_Output.segment list -> Latex.text \<close>
 
-\<^item>\<^ML>\<open>Thy_Output.isabelle: Proof.context -> Latex.text list -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.isabelle_typewriter: Proof.context -> Latex.text list -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.typewriter: Proof.context -> string -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.verbatim: Proof.context -> string -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.source: Proof.context -> {embedded: bool} -> Token.src -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.pretty: Proof.context -> Pretty.T -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.pretty_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.pretty_items: Proof.context -> Pretty.T list -> Latex.text\<close>
-\<^item>\<^ML>\<open>Thy_Output.pretty_items_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T list -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.isabelle: Proof.context -> Latex.text  -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.isabelle_typewriter: Proof.context -> Latex.text  -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.typewriter: Proof.context -> string -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.verbatim: Proof.context -> string -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.source: Proof.context -> {embedded: bool} -> Token.src -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.pretty: Proof.context -> Pretty.T -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.pretty_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.pretty_items: Proof.context -> Pretty.T list -> Latex.text\<close>
+\<^item>\<^ML>\<open>Document_Output.pretty_items_source: Proof.context -> {embedded: bool} -> Token.src -> Pretty.T list -> Latex.text\<close>
 
 Finally a number of antiquotation registries :
 
-\<^item>\<^ML>\<open>Thy_Output.antiquotation_pretty:
+\<^item>\<^ML>\<open>Document_Output.antiquotation_pretty:
                  binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory\<close>
-\<^item>\<^ML>\<open>Thy_Output.antiquotation_pretty_source:
+\<^item>\<^ML>\<open>Document_Output.antiquotation_pretty_source:
                  binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory\<close>
-\<^item>\<^ML>\<open>Thy_Output.antiquotation_raw:
+\<^item>\<^ML>\<open>Document_Output.antiquotation_raw:
                  binding -> 'a context_parser -> (Proof.context -> 'a -> Latex.text) -> theory -> theory\<close>
-\<^item>\<^ML>\<open>Thy_Output.antiquotation_verbatim:
+\<^item>\<^ML>\<open>Document_Output.antiquotation_verbatim:
                binding -> 'a context_parser -> (Proof.context -> 'a -> string) -> theory -> theory\<close>
 \<close>
 

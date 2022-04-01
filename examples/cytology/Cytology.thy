@@ -69,7 +69,7 @@ onto_class procaryotic_cells = cell +
 onto_class eucaryotic_cells = cell + 
     organelles :: "organelles' list"
     invariant has_nucleus :: "\<lambda>\<sigma>::eucaryotic_cells. \<exists> org \<in> set (organelles \<sigma>). is\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s org"
-    \<comment>\<open>Cells must have at least one nucleus. However, this should be executable.\<close>
+    \<comment> \<open>Cells must have at least one nucleus. However, this should be executable.\<close>
 
 find_theorems (70)name:"eucaryotic_cells"
 find_theorems name:has_nucleus

@@ -2,54 +2,42 @@
 
 Isabelle/DOF is a novel Document Ontology Framework on top of Isabelle.
 Isabelle/DOF allows for both conventional typesetting as well as formal
-development. The manual for [Isabelle/DOF 1.1.0/Isabelle2021 is available 
-online.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2021.pdf)
-
-## Running Isabelle/DOF using Docker
-
-As an alternative to installing Isabelle/DOF locally, the latest official release Isabelle/DOF
-is also available on Docker Hub. Thus, if you have Docker installed and your installation of
-Docker supports X11 application, you can start Isabelle/DOF as follows:
-
-```console
-foo@bar:~$ docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix \ 
-           logicalhacking/isabelle_dof-1.1.0_isabelle2021 isabelle jedit
-```
+development. The manual for [Isabelle/DOF 1.2.0/Isabelle2021 is available 
+online.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.2.0_Isabelle2021.pdf)
 
 ## Pre-requisites
 
-Isabelle/DOF has two major pre-requisites:
+Isabelle/DOF has three major pre-requisites:
 
-* **Isabelle:** Isabelle/DOF requires [Isabelle 2021](http://isabelle.in.tum.de/website-Isabelle2021/).
-  Please download the Isabelle 2021 distribution for your operating
-  system from the [Isabelle website](http://isabelle.in.tum.de/website-Isabelle2021/).
+* **Isabelle:** Isabelle/DOF requires [Isabelle 2021-1](http://isabelle.in.tum.de/website-Isabelle2021-1/).
+  Please download the Isabelle 2021-1 distribution for your operating
+  system from the [Isabelle
+  website](http://isabelle.in.tum.de/website-Isabelle2021-1/).
+* **AFP:** Isabelle/DOF requires two entries from the [Archive of
+  Formal Proofs (AFP)](https://www.isa-afp.org/). Please install the 
+  AFP following the instructions given at
+  <https://www.isa-afp.org/using.html>. For your convenience, we also
+  provide a script that only installs the two entries required by
+  Isabelle/DOF into the local Isabelle/DOF directory. You can use this 
+  script as follows:
+  ```console
+  foo@bar:~$ isabelle env ./install-afp
+  ```  
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least 
-  [TeX Live 2021](https://www.tug.org/texlive/) with all available updates applied.
+  [TeX Live 2022](https://www.tug.org/texlive/) with all available updates applied.
   
 ## Installation
 
-In most case, the DOF-plugin can be installed as follows:
+Isabelle/DOF is provided as a Isabelle component. After installing the
+pre-requisites the Isabelle/Archive needs to be unpacked and
+registered.  Change into the directory you unpacked Isabelle/DOF (this
+should be the directory containing this `README.md` file) and execute
 
 ```console
-foo@bar:~$ ./install
+foo@bar:~$ isabelle components -u `pwd`
 ```
 
-If a specific Isabelle version should be used (i.e., not the default
-one), the full path to the ``isabelle`` command needs to be passed as
-using the ``--isabelle`` command line argument of the ``install`` script:
-
-```console
-foo@bar:~$ ./install --isabelle /usr/local/Isabelle2021/bin/isabelle
-```
-
-For further command line options of the installer, please use the
-built-in help:
-
-```console
-foo@bar:~$ ./install --help
-```
-
-A final step for the installation is:
+The final step for the installation is:
 
 ```console
 foo@bar:~$ isabelle build -D .
@@ -136,6 +124,10 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
 For releases, signed archives including a PDF version of the Isabelle/DOF manual are
 are available:
 
+* Isabelle/DOF 1.2.0/Isabelle2021
+  * [Isabelle_DOF-1.2.0_Isabelle2021.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.2.0_Isabelle2021.pdf)
+  * [Isabelle_DOF-1.2.0_Isabelle2021.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.2.0_Isabelle2021.tar.xz)
+  * [Isabelle_DOF-1.2.0_Isabelle2021.tar.xz.asc](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.2.0_Isabelle2021.tar.xz.asc)
 * Isabelle/DOF 1.1.0/Isabelle2021
   * [Isabelle_DOF-1.1.0_Isabelle2021.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2021.pdf)
   * [Isabelle_DOF-1.1.0_Isabelle2021.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2021.tar.xz)
@@ -192,7 +184,7 @@ SPDX-License-Identifier: BSD-2-Clause
   Processes fit for V-style Certification Procedures.](https://hal.archives-ouvertes.fr/hal-01702815/document)
    In ERTS 2018. <https://hal.archives-ouvertes.fr/hal-01702815>
 
-## Master Repository
+## Upstream Repository
 
-The master git repository for this project is hosted
-<https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF>.
+The upstream git repository, i.e., the single source of truth, for this project is hosted
+at <https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF>.

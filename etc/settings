@@ -1,14 +1,21 @@
+# -*- shell-script -*- :mode=shellscript:
+
+ISABELLE_DOF_HOME="$COMPONENT"
+ISABELLE_TOOLS="$ISABELLE_TOOLS":"$ISABELLE_DOF_HOME/src/Tools"
+ISABELLE_DOCS="$ISABELLE_DOF_HOME/doc":"$ISABELLE_DOCS"
+
 # Isabelle/DOF Version Information
 DOF_VERSION="Unreleased"    # "Unreleased" for development, semantic version for releases 
-DOF_LATEST_VERSION="1.1.0"    
-DOF_LATEST_ISABELLE="Isabelle2021"    
-DOF_LATEST_DOI="10.5281/zenodo.4625176"
+DOF_DATE="00/00/00"
+DOF_LATEST_VERSION="1.2.0"    
+DOF_LATEST_ISABELLE="Isabelle2021"
+DOF_LATEST_DOI="10.5281/zenodo.6385695"
 DOF_GENERIC_DOI="10.5281/zenodo.3370482"
 #
 # Isabelle and AFP Configuration
-ISABELLE_VERSION="Isabelle2021: February 2021"
-ISABELLE_URL="https://isabelle.in.tum.de/website-Isabelle2021/"
-AFP_DATE="afp-2021-03-09"
+ISABELLE_VERSION="Isabelle2021-1"
+ISABELLE_URL="https://isabelle.in.tum.de/website-Isabelle2021-1/"
+AFP_DATE="afp-2021-12-28"
 AFP_URL="https://www.isa-afp.org/release/"$AFP_DATE".tar.gz"
 #
 # Isabelle/DOF Repository Configuration

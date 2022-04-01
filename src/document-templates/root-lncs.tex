@@ -17,10 +17,6 @@
 %% Warning: Do Not Edit!
 %% =====================
 %% This is the root file for the Isabelle/DOF using the lncs class.
-%% Note that lncs cannot be distributed as part of Isabelle/DOF; you need
-%% to download lncs.cls from 
-%% https://www.springer.com/gp/computer-science/lncs/conference-proceedings-guidelines
-%% and add it manually to the praemble.tex and the ROOT file.
 %%
 %% All customization and/or additional packages should be added to the file
 %% preamble.tex.
@@ -39,12 +35,9 @@
 \IfFileExists{DOF-core.sty}{}{%
   \PackageError{DOF-core}{Isabelle/DOF not installed. 
     This is a Isabelle_DOF project. The document preparation requires
-    the Isabelle_DOF framework. Please obtain the framework by cloning
-    the Isabelle_DOF git repository, i.e.: 
-         "git clone <isadofurl>"
-    You can install the framework as follows:
-         "cd Isabelle_DOF/document-generator && ./install"}{%
-    For further help, see <isadofurl>}
+    the Isabelle_DOF component from:
+    <isadofurl>
+  }{For further help, see <isadofurl>}
 }
 \input{ontologies}
 \IfFileExists{preamble.tex}{\input{preamble.tex}}{}%

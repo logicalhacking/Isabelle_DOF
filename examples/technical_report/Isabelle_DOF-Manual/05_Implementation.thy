@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019-2021 University of Exeter 
- *               2018-2021 University of Paris-Saclay
+ *               2019-2022 University of Exeter 
+ *               2018-2022 University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -22,12 +22,12 @@ chapter*[isadof_developers::text_section]\<open>Extending \<^isadof>\<close>
 text\<open>
   In this chapter, we describe the basic implementation aspects of \<^isadof>, which is based on 
   the following design-decisions:
-  \<^item> the entire \<^isadof> is a ``pure add-on,'' \<^ie>, we deliberately resign on the possibility to 
-    modify Isabelle itself.
+  \<^item> the entire \<^isadof> is a ``pure add-on,'' \<^ie>, we deliberately resign the possibility to 
+    modify Isabelle itself,
   \<^item> we made a small exception to this rule: the \<^isadof> package modifies in its installation 
-    about 10 lines in the \LaTeX-generator (\path{src/patches/thy_output.ML}).
+    about 10 lines in the \LaTeX-generator (\path{src/patches/thy_output.ML}),
   \<^item> we decided to make the markup-generation by itself to adapt it as well as possible to the 
-    needs of tracking the linking in documents.
+    needs of tracking the linking in documents,
   \<^item> \<^isadof> is deeply integrated into the Isabelle's IDE (PIDE) to give immediate feedback during 
     editing and other forms of document evolution.
 \<close>
@@ -57,8 +57,9 @@ text\<open>
    fun merge((d1,c1,...),(d2,c2,...)) = (merge_docobj_tab  (d1,d2,...), 
                                          merge_docclass_tab(c1,c2,...))
 );\<close>}
-  where the table  \<^boxed_sml>\<open>docobj_tab\<close> manages document classes and  \<^boxed_sml>\<open>docclass_tab\<close> the
-  environment for class definitions (inducing the inheritance relation). Other tables capture, \eg, 
+  where the table  \<^boxed_sml>\<open>docobj_tab\<close> manages document class instances
+  and \<^boxed_sml>\<open>docclass_tab\<close> the environment for class definitions
+  (inducing the inheritance relation). Other tables capture, \eg, 
   the class invariants, inner-syntax antiquotations. Operations follow the MVC-pattern, where 
   Isabelle/Isar provides the controller part. A typical model operation has the type:
 
@@ -75,7 +76,7 @@ in  (Data.map(apfst decl)(ctxt)
   handle Symtab.DUP _ =>
               error("multiple declaration of document reference"))
 end\<close>}
-  where \<^boxed_theory_text>\<open>Data.map\<close> is the update function resulting from the instantiation of the 
+  where \<^boxed_sml>\<open>Data.map\<close> is the update function resulting from the instantiation of the 
   functor  \<^boxed_sml>\<open>Generic_Data\<close>. This code fragment uses operations from a library structure 
    \<^boxed_sml>\<open>Symtab\<close> that were used to update the appropriate table for document objects in
   the plugin-local state. Possible exceptions to the update operation were mapped to a system-global 
@@ -91,7 +92,7 @@ op >>     : ('a -> 'b * 'c) * ('b -> 'd) -> 'a -> 'd * 'c
 op option : ('a -> 'b * 'a) -> 'a -> 'b option * 'a
 op repeat : ('a -> 'b * 'a) -> 'a -> 'b list * 'a \<close>}
   for alternative, sequence, and piping, as well as combinators for option and repeat. Parsing 
-  combinators have the advantage that they can be smoothlessly integrated into standard programs, 
+  combinators have the advantage that they can be integrated into standard programs, 
   and they enable the dynamic extension of the grammar. There is a more high-level structure 
   \inlinesml{Parse} providing specific combinators for the command-language Isar:
 
@@ -106,7 +107,7 @@ val attributes =(Parse.$$$ "[" |-- (reference
                    |--(Parse.enum ","attribute)))[]))--| Parse.$$$ "]"              
 \end{sml}                                            
 
-  The ``model'' \<^boxed_theory_text>\<open>declare_reference_opn\<close> and ``new'' \<^boxed_theory_text>\<open>attributes\<close> parts were 
+  The ``model'' \<^boxed_sml>\<open>declare_reference_opn\<close> and ``new'' \<^boxed_sml>\<open>attributes\<close> parts were 
   combined via the piping operator and registered in the Isar toplevel:
 
 @{boxed_sml [display]
@@ -141,30 +142,31 @@ text\<open>
                                    (docitem_antiq_gen default_cid) #>
           ML_Antiquotation.inline  <@>{binding docitem_value} 
                                    ML_antiq_docitem_value)\<close>}
-  the text antiquotation \<^boxed_theory_text>\<open>docitem\<close> is declared and bounded to a parser for the argument 
+  the text antiquotation \<^boxed_sml>\<open>docitem\<close> is declared and bounded to a parser for the argument 
   syntax and the overall semantics. This code defines a generic antiquotation to be used in text 
   elements such as
 
 @{boxed_theory_text [display]\<open>
-text\<open>as defined in <@>{docitem \<open>d1\<close>} ...\<close>
+text\<open>as defined in @{docitem \<open>d1\<close>} ...\<close>
 \<close>}
 
-  The subsequent registration \<^boxed_theory_text>\<open>docitem_value\<close> binds code to a ML-antiquotation usable 
+  The subsequent registration \<^boxed_sml>\<open>docitem_value\<close> binds code to a ML-antiquotation usable 
   in an ML context for user-defined extensions; it permits the access to the current ``value'' 
-  of document element, \ie; a term with the entire update history.
+  of document element, \<^ie>, a term with the entire update history.
 
   It is possible to generate antiquotations \emph{dynamically}, as a consequence of a class 
-  definition in ODL. The processing of the ODL class \<^boxed_theory_text>\<open>definition\<close> also \emph{generates}
-  a text antiquotation \<^boxed_theory_text>\<open>@{definition \<open>d1\<close>}\<close>, which works similar to 
+  definition in ODL. The processing of the ODL class \<^typ>\<open>definition\<close> also \emph{generates}
+  a text antiquotation \<^boxed_theory_text>\<open>@{"definition" \<open>d1\<close>}\<close>, which works similar to 
   \<^boxed_theory_text>\<open>@{docitem \<open>d1\<close>}\<close> except for an additional type-check that assures that 
   \<^boxed_theory_text>\<open>d1\<close> is a reference to a definition. These type-checks support the subclass hierarchy.
 \<close>
 
 section\<open>Implementing Second-level Type-Checking\<close>
+
 text\<open>
   On expressions for attribute values, for which we chose to use HOL syntax to avoid that users 
   need to learn another syntax, we implemented an own pass over type-checked terms. Stored in the 
-  late-binding table \<^boxed_theory_text>\<open>ISA_transformer_tab\<close>, we register for each inner-syntax-annotation 
+  late-binding table \<^boxed_sml>\<open>ISA_transformer_tab\<close>, we register for each inner-syntax-annotation 
   (ISA's), a function of type
 
 @{boxed_sml [display]
@@ -184,28 +186,31 @@ text\<open>
 \<close>
 
 section\<open>Implementing Monitors\<close>
+
 text\<open>
   Since monitor-clauses have a regular expression syntax, it is natural to implement them as 
-  deterministic automata. These are stored in the  \<^boxed_theory_text>\<open>docobj_tab\<close> for monitor-objects 
+  deterministic automata. These are stored in the  \<^boxed_sml>\<open>docobj_tab\<close> for monitor-objects 
   in the \<^isadof> component. We implemented the functions:
 
 @{boxed_sml [display]
 \<open>  val  enabled : automaton -> env -> cid list
    val  next    : automaton -> env -> cid -> automaton\<close>}
-  where \<^boxed_theory_text>\<open>env\<close> is basically a map between internal automaton states and class-id's 
-  (\<^boxed_theory_text>\<open>cid\<close>'s). An automaton is said to be \<^emph>\<open>enabled\<close> for a class-id, 
+  where \<^boxed_sml>\<open>env\<close> is basically a map between internal automaton states and class-id's 
+  (\<^boxed_sml>\<open>cid\<close>'s). An automaton is said to be \<^emph>\<open>enabled\<close> for a class-id, 
   iff it either occurs in its accept-set or its reject-set (see @{docitem "sec:monitors"}). During 
   top-down document validation, whenever a text-element is encountered, it is checked if a monitor 
-  is \emph{enabled} for this class; in this case, the \<^boxed_theory_text>\<open>next\<close>-operation is executed. The 
-  transformed automaton recognizing the rest-language is stored in \<^boxed_theory_text>\<open>docobj_tab\<close> if
-  possible; otherwise, if \<^boxed_theory_text>\<open>next\<close> fails, an error is reported. The automata implementation 
+  is \emph{enabled} for this class; in this case, the \<^boxed_sml>\<open>next\<close>-operation is executed. The 
+  transformed automaton recognizing the rest-language is stored in \<^boxed_sml>\<open>docobj_tab\<close> if
+  possible;
+  % TODO: clarify the notion of rest-language
+  otherwise, if \<^boxed_sml>\<open>next\<close> fails, an error is reported. The automata implementation
   is, in large parts, generated from a formalization of functional automata~\cite{nipkow.ea:functional-Automata-afp:2004}.
 \<close>
 
-section\<open>The \LaTeX-Core of \<^isadof>\<close>
+section\<open>The \<^LaTeX>-Core of \<^isadof>\<close>
 text\<open>
-  The \LaTeX-implementation of \<^isadof> heavily relies on the 
-  ``keycommand''~@{cite "chervet:keycommand:2010"} package. In fact, the core \<^isadof> \LaTeX-commands
+  The \<^LaTeX>-implementation of \<^isadof> heavily relies on the 
+  ``keycommand''~@{cite "chervet:keycommand:2010"} package. In fact, the core \<^isadof> \<^LaTeX>-commands
   are just wrappers for the corresponding commands from the keycommand package:
 
 @{boxed_latex [display]
@@ -216,9 +221,9 @@ text\<open>
 \newcommand\provideisadof[1]{%
   \expandafter\providekeycommand\csname isaDof.#1\endcsname}%\<close>}
 
-  The \LaTeX-generator of \<^isadof> maps each \<^boxed_theory_text>\<open>doc_item\<close> to an \LaTeX-environment (recall
-  @{docitem "text-elements"}). As generic \<^boxed_theory_text>\<open>doc_item\<close> are derived from the text element, 
-  the enviornment \inlineltx|{isamarkuptext*}| builds the core of \<^isadof>'s \LaTeX{} implementation. 
+  The \<^LaTeX>-generator of \<^isadof> maps each \<^boxed_theory_text>\<open>doc_item\<close> to an \<^LaTeX>-environment (recall
+  @{docitem "text-elements"}). As generic \<^boxed_theory_text>\<open>doc_item\<close>s are derived from the text element, 
+  the environment \inlineltx|isamarkuptext*| builds the core of \<^isadof>'s \<^LaTeX> implementation. 
   For example, the @{docitem "ass123"} from page \pageref{ass123} is mapped to
 
 @{boxed_latex [display]
@@ -231,7 +236,7 @@ text\<open>
  times ...
 \end{isamarkuptext*}\<close>}
 
-This environment is mapped to a plain \LaTeX command via (again, recall @{docitem "text-elements"}):
+This environment is mapped to a plain \<^LaTeX> command via (again, recall @{docitem "text-elements"}):
 @{boxed_latex [display]
 \<open> \NewEnviron{isamarkuptext*}[1][]{\isaDof[env={text},#1]{\BODY}} \<close>}
 

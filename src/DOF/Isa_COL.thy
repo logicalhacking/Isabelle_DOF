@@ -106,60 +106,32 @@ in
 fun enriched_formal_statement_command ncid (S: (string * string) list) =
    let fun transform_attr doc_attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ 
                                       (("formal_results",@{here}),"([]::thm list)")::doc_attrs
-   in  fn md => fn margs => fn thy => 
+   in  fn margs => fn thy =>
           gen_enriched_document_cmd {inline=true} 
-                                    (transform_cid thy ncid) transform_attr md margs thy 
+                                    (transform_cid thy ncid) transform_attr margs thy 
    end;
 
 fun enriched_document_cmd_exp ncid (S: (string * string) list) =
    (* expands ncid into supertype-check. *)
    let fun transform_attr attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ attrs
-   in  fn md => fn margs => fn thy =>  
-         gen_enriched_document_cmd {inline=true} (transform_cid thy ncid) transform_attr md margs thy
+   in  fn margs => fn thy =>
+         gen_enriched_document_cmd {inline=true} (transform_cid thy ncid) transform_attr margs thy
    end;
 end (* local *)
 
 
-val _ =
-  Outer_Syntax.command ("title*", @{here}) "section heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_text_element_cmd NONE {markdown = false} ))) ;
+fun heading_command (name, pos) descr level =
+  ODL_Command_Parser.document_command (name, pos) descr
+    {markdown = false, body = true} (enriched_text_element_cmd level);
 
-val _ =
-  Outer_Syntax.command ("subtitle*", @{here}) "section heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_text_element_cmd NONE {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("chapter*", @{here}) "section heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_text_element_cmd (SOME(SOME 0)) {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("section*", @{here}) "section heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_text_element_cmd (SOME(SOME 1)) {markdown = false} )));
-
-
-val _ =
-  Outer_Syntax.command ("subsection*", @{here}) "subsection heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_text_element_cmd (SOME(SOME 2)) {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("subsubsection*", @{here}) "subsubsection heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_text_element_cmd (SOME(SOME 3)) {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("paragraph*", @{here}) "paragraph heading"
-    (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_text_element_cmd (SOME(SOME 4)) {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("subparagraph*", @{here}) "subparagraph heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_text_element_cmd (SOME(SOME 5)) {markdown = false} )));
+val _ = heading_command ("title*", @{here}) "section heading" NONE;
+val _ = heading_command ("subtitle*", @{here}) "section heading" NONE;
+val _ = heading_command ("chapter*", @{here}) "section heading" (SOME (SOME 0));
+val _ = heading_command ("section*", @{here}) "section heading" (SOME (SOME 1));
+val _ = heading_command ("subsection*", @{here}) "subsection heading" (SOME (SOME 2));
+val _ = heading_command ("subsubsection*", @{here}) "subsubsection heading" (SOME (SOME 3));
+val _ = heading_command ("paragraph*", @{here}) "paragraph heading" (SOME (SOME 4));
+val _ = heading_command ("subparagraph*", @{here}) "subparagraph heading" (SOME (SOME 5));
 
 end 
 end
@@ -206,24 +178,13 @@ print_doc_classes
 
 subsection\<open>Ontological Macros\<close>
 
-ML\<open> local open ODL_Command_Parser in
+ML\<open>
 (* *********************************************************************** *)
 (* Ontological Macro Command Support                                       *)
 (* *********************************************************************** *)
 
-val _ =
-  Outer_Syntax.command ("figure*", @{here}) "figure"
-    (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (Onto_Macros.enriched_text_element_cmd NONE {markdown = false} )));
-
-val _ =
-  Outer_Syntax.command ("side_by_side_figure*", @{here}) "multiple figures"
-    (attributes --  Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (Onto_Macros.enriched_text_element_cmd NONE {markdown = false} )));
-
-
-
-end 
+val _ = Onto_Macros.heading_command ("figure*", @{here}) "figure" NONE;
+val _ = Onto_Macros.heading_command ("side_by_side_figure*", @{here}) "multiple figures" NONE;
 \<close>
 
 (*<*)
@@ -247,22 +208,22 @@ section\<open>Tables\<close>
 ML\<open>
 local
 
-fun mk_line st1 st2 [a] =  [a @ [Latex.string st2]]
-   |mk_line st1 st2 (a::S) = [a @ [Latex.string st1]] @ mk_line st1 st2 S;
+fun mk_line st1 st2 [a] =  [a @ Latex.string st2]
+   |mk_line st1 st2 (a::S) = [a @ Latex.string st1] @ mk_line st1 st2 S;
 
 fun table_antiquotation name =
-  Thy_Output.antiquotation_raw_embedded name 
+  Document_Output.antiquotation_raw_embedded name 
     (Scan.repeat1(Scan.repeat1(Scan.lift Args.cartouche_input)))
     (fn ctxt => 
       (fn content:Input.source list list =>
           let fun check _ = ()  (* ToDo *)
               val _  = check content
           in  content 
-              |> (map(map (Thy_Output.output_document ctxt {markdown = false})
+              |> (map(map (Document_Output.output_document ctxt {markdown = false})
                   #> mk_line "&" "\\\\"
                   #> List.concat )
                   #> List.concat)
-              |> Latex.enclose_block "\\table[allerhandquatsch]{" "}"
+              |> XML.enclose "\\table[allerhandquatsch]{" "}"
           end
       )
     );
