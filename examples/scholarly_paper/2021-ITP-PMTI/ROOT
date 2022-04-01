@@ -1,12 +1,13 @@
 session "2021-ITP-PMTI" = "Isabelle_DOF" +
-  options [document = pdf, document_output = "output"]
+  options [document = pdf, document_output = "output", document_build = dof,
+    document_comment_latex = true]
   theories
     "paper"
   document_files
     "isadof.cfg"
     "root.bib"
     "preamble.tex"
-    "build"
+    "lipics-v2021.cls"
     "cc-by.pdf"
     "lipics-logo-bw.pdf"
     "orcid.pdf"
