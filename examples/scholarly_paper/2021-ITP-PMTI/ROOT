@@ -8,6 +8,7 @@ session "2021-ITP-PMTI" = "Isabelle_DOF" +
     "root.bib"
     "preamble.tex"
     "lipics-v2021.cls"
+    "spmpscinat.bst"
     "cc-by.pdf"
     "lipics-logo-bw.pdf"
     "orcid.pdf"
