@@ -1244,13 +1244,34 @@ fun infer_type thy term = hd (Type_Infer_Context.infer_types (Proof_Context.init
 
 fun calc_update_term {mk_elaboration=mk_elaboration} thy cid_long
                      (S:(string * Position.T * string * term)list) term = 
-    let val cid_ty = cid_2_cidType cid_long thy 
+    let val cid_ty = cid_2_cidType cid_long thy
         val generalize_term =  Term.map_types (generalize_typ 0)
         fun toString t = Syntax.string_of_term (Proof_Context.init_global thy) t  
         fun instantiate_term S t =
           Term_Subst.map_types_same (Term_Subst.instantiateT (TVars.make S)) (t)
         fun read_assn (lhs, pos:Position.T, opr, rhs) term =
-            let val info_opt = DOF_core.get_attribute_info cid_long (Long_Name.base_name lhs) thy
+            let 
+                fun get_class_name parent_cid attribute_name pos =
+                  let
+                    val {attribute_decl, inherits_from, ...} =
+                                                   the (DOF_core.get_doc_class_global parent_cid thy)
+                  in
+                    if exists (fn (binding, _, _) => Binding.name_of binding = attribute_name)
+                              attribute_decl
+                    then parent_cid
+                    else
+                      case inherits_from of
+                          NONE =>
+                                ISA_core.err ("Attribute not defined for class: " ^ cid_long) pos
+                        | SOME (_, parent_name) =>
+                                              get_class_name parent_name attribute_name pos
+                  end
+                val attr_defined_cid = get_class_name cid_long lhs pos
+                val {id, name, ...} = the (DOF_core.get_doc_class_global attr_defined_cid thy)
+                val markup = docclass_markup false cid_long id (Binding.pos_of name);
+                val ctxt = Context.Theory thy
+                val _    = Context_Position.report_generic ctxt pos markup;
+                val info_opt = DOF_core.get_attribute_info cid_long (Long_Name.base_name lhs) thy
                 val (ln,lnt,lnu,lnut) = case info_opt of 
                                            NONE => error ("unknown attribute >" 
                                                           ^((Long_Name.base_name lhs))
@@ -2008,7 +2029,7 @@ fun print_doc_items b ctxt =
                   writeln ("    type:            "^cid);
                   case vcid of NONE => () | SOME (s) => 
                   writeln ("    virtual type:    "^ s);
-                  writeln ("    origine:         "^thy_name);
+                  writeln ("    origin:          "^thy_name);
                   writeln ("    inline:          "^dfg inline);
                   writeln ("    input_term:      "
                            ^ (Syntax.string_of_term
