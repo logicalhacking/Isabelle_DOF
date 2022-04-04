@@ -90,7 +90,7 @@ do
       NAME="$OPTARG"
       ;;
     o)
-      if [ ! -f "$ISABELLE_DOF_HOME/src/ontologies/*//DOF-$OPTARG.sty" ]; then
+      if [ ! -f "$ISABELLE_DOF_HOME/src/ontologies"/*/DOF-$OPTARG.sty ]; then
           echo "ERROR: Ontology $OPTARG not available!"
           exit 1
       fi
