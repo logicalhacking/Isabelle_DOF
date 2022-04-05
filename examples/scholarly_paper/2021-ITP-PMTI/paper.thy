@@ -80,21 +80,21 @@ setup\<open>(* std_text_antiquotation        \<^binding>\<open>my_text\<close> #
 title*[tit::title]\<open>A Framework for Proving Ontology-Relations and Runtime Testing Ontology Instances\<close>
 
 
-(*author*[idir,
+text*[idir::author,
         email       ="\<open>idir.aitsadoune@centralesupelec.fr\<close>",
         orcid       ="''0000-0002-6484-8276''",
-        affiliation ="\<open>LMF, CentraleSupélec, Université Paris-Saclay, Paris, France\<close>"]\<open>Idir Ait-Sadoune\<close>*)
-(*
-author*[nic,
+        affiliation ="\<open>LMF, CentraleSupélec, Université Paris-Saclay, Paris, France\<close>"]\<open>Idir Ait-Sadoune\<close>
+
+text*[nic::author,
         email       ="\<open>nicolas.meric@universite-paris-saclay.fr\<close>",
         orcid       ="''0000-0002-0756-7072''",
         affiliation ="\<open>LMF, Université Paris-Saclay, Paris, France\<close>"]\<open>Nicolas Méric\<close>
-author*[bu,
+text*[bu::author,
         email       ="\<open>wolff@universite-paris-saclay.fr\<close>",
         affiliation = "\<open>LMF, Université Paris-Saclay, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
 
              
-abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>\<^isabelle>\<close>,\<open>Ontology Mapping\<close>]"]
+text*[abs::abstract, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>Isabelle/HOL\<close>,\<open>Ontology Mapping\<close>]"]
 \<open>  \<^dof> is a novel ontology framework on top of Isabelle 
    @{cite "brucker.ea:isabelledof:2019" and "brucker.ea:isabelle-ontologies:2018"}. 
    \<^dof>  allows for the formal development of ontologies as well as continuous checking that
@@ -118,7 +118,7 @@ abstract*[abs, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<
    the articles of the Archive of Formal Proofs.
   
 \<close>
-*)
+
 
 section*[introheader::introduction]
        \<open> Introduction \<close>
