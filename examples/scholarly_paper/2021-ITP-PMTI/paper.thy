@@ -92,8 +92,7 @@ text*[nic::author,
 text*[bu::author,
         email       ="\<open>wolff@universite-paris-saclay.fr\<close>",
         affiliation = "\<open>LMF, Université Paris-Saclay, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
-
-             
+           
 text*[abs::abstract, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>Isabelle/HOL\<close>,\<open>Ontology Mapping\<close>]"]
 \<open>  \<^dof> is a novel ontology framework on top of Isabelle 
    @{cite "brucker.ea:isabelledof:2019" and "brucker.ea:isabelle-ontologies:2018"}. 
@@ -168,11 +167,9 @@ proofs, text-elements, etc., prevailing in the Isabelle system framework.
 In more detail, \<^dof> introduces a number of ``ontology aware'' text-elements with analogous 
 syntax to standard ones. The difference is a bracket with meta-data of the form:
 @{theory_text [display,indent=5, margin=70] 
-\<open>
-text*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some semi-formal text \<close>
+\<open>text*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some semi-formal text \<close>
 ML*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some SML code \<close>
-...
-\<close>}
+...\<close>}
 In these \<^dof> elements, a meta-data object is created and associated to it. This 
 meta-data can be referenced via its label and used in further computations in text or code.
 %; the details will be explained in the subsequent section. 
@@ -187,15 +184,12 @@ called \<^emph>\<open>antiquotation\<close> that depends on the logical context 
 With standard Isabelle antiquotations, for example, the following text element
 of the integrated source will appear  in Isabelle/PIDE as follows:
 @{theory_text [display,indent=5, margin=70] 
-\<open>
-text\<open> According to the reflexivity axiom @{thm refl}, we obtain in \<Gamma>
-      for @{term "fac 5"} the result @{value "fac 5"}.\<close>
-\<close>}
+\<open>text\<open> According to the reflexivity axiom @{thm refl}, we obtain in \<Gamma>
+      for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
 In the corresponding generated \<^LaTeX> or HTML output, this looks like this:
-@{theory_text [display,indent=5, margin=70] \<open>
-According to the reflexivity axiom \<open>x = x\<close>,
-we obtain in \<Gamma> for \<open>fac 5\<close> the result \<open>120\<close>.
-\<close>}
+@{theory_text [display,indent=5, margin=70]
+\<open>According to the reflexivity axiom \<open>x = x\<close>,
+we obtain in \<Gamma> for \<open>fac 5\<close> the result \<open>120\<close>.\<close>}
 where the meta-texts \<open>@{thm refl}\<close> (``give the presentation of theorem `refl'\,\!''), 
 \<open>@{term "fac 5"}\<close> (``parse and type-check `fac 5' in the previous logical context'')
 and \<open>@{value "fac 5"}\<close> (``compile and execute `fac 5' according to its
@@ -241,10 +235,9 @@ text\<open>As novel contribution, this work extends prior versions of \<^dof> by
   common \<^hol> \<open>\<lambda>\<close>-term syntax.
 \<close>
 text\<open> For example, the \<^dof> evaluation command taking a \<^hol>-expression:
-@{theory_text [display,indent=5, margin=70] \<open>
-value*[ass::Assertion, relvce=2::int]
-      \<open>filter (\<lambda> \<sigma>. relvce \<sigma> > 2) @{Assertion-instances}\<close>
-\<close>}
+@{theory_text [display,indent=5, margin=70]
+\<open>value*[ass::Assertion, relvce=2::int]
+      \<open>filter (\<lambda> \<sigma>. relvce \<sigma> > 2) @{Assertion-instances}\<close>\<close>}
 where \<^dof> command \<open>value*\<close> type-checks, expands in an own validation phase
 the \<open>Assertion-instances\<close>-term antiquotation, and evaluates the resulting \<^hol> expression
 above. Assuming an ontology providing the class \<open>Assertion\<close> having at least the
@@ -342,11 +335,9 @@ text\<open>
   basic concept of requirements from CENELEC 50128~@{cite "bsi:50128:2014"} is captured in ODL as 
   follows:
   @{theory_text [display,indent=5, margin=70]
-\<open>
-doc_class requirement = text_element +   (* derived from text_element    *)
+\<open>doc_class requirement = text_element +   (* derived from text_element    *)
           long_name   ::"string option"  (* an optional string attribute *) 
-          is_concerned::"role set"       (* roles working with this req. *)
-\<close>}
+          is_concerned::"role set"       (* roles working with this req. *)\<close>}
   This ODL class definition maybe part of one or more Isabelle theory--files capturing the entire
   ontology definition. Isabelle's session management allows for pre-compiling them before being 
   imported in the actual target documentation required to be compliant to this ontology. 
@@ -554,8 +545,8 @@ text\<open>
   If we take back the example ontology for mathematical papers
   of~@{cite "brucker.ea:isabelledof:2019"} shown in \autoref{fig-ontology-example}
 \begin{figure}
-@{boxed_theory_text [display] \<open>
-doc_class myauthor =
+@{boxed_theory_text [display]
+\<open>doc_class myauthor =
   email :: "string" <= "''''"
 doc_class mytext_section =
   authored_by :: "myauthor set" <= "{}"
@@ -579,16 +570,15 @@ doc_class myresult = mytechnical +
 doc_class myconclusion = text_section +
   establish :: "(myclaim \<times> myresult) set"
   invariant establish_defined :: "\<forall> x. x \<in> Domain (establish \<sigma>)
-                      \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"
-\<close>}
+                      \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"\<close>}
 \caption{Excerpt of an example ontology for mathematical papers.}
 \label{fig-ontology-example}
 \end{figure}
   we can define some class instances for this ontology with the \<^theory_text>\<open>text*\<close> command,
   as in \autoref{fig-instances-example}.
 \begin{figure}
-@{boxed_theory_text [display] \<open>
-text*[church::myauthor, email="\<open>church@lambda.org\<close>"]\<open>\<close>
+@{boxed_theory_text [display]
+\<open>text*[church::myauthor, email="\<open>church@lambda.org\<close>"]\<open>\<close>
 
 text*[resultProof::myresult, evidence = "proof", property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
 
@@ -597,8 +587,7 @@ text*[resultProof2::myresult, evidence = "proof", property="[@{thm \<open>HOL.sy
 text*[introduction1::myintroduction, authored_by = "{@{myauthor \<open>church\<close>}}", level = "Some 0"]\<open>\<close>
 text*[introduction2::myintroduction, authored_by = "{@{myauthor \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
 
-text*[claimNotion::myclaim, authored_by = "{@{myauthor \<open>church\<close>}}", based_on= "[\<open>Notion1\<close>, \<open>Notion2\<close>]", level = "Some 0"]\<open>\<close>
-\<close>}
+text*[claimNotion::myclaim, authored_by = "{@{myauthor \<open>church\<close>}}", based_on= "[\<open>Notion1\<close>, \<open>Notion2\<close>]", level = "Some 0"]\<open>\<close>\<close>}
 \caption{Some instances of the classes of the ontology of \autoref{fig-ontology-example}.}
 \label{fig-instances-example}
 \end{figure}
@@ -782,21 +771,18 @@ text\<open>
   Thus, to get the list of the properties of the instances of the class \<^typ>\<open>myresult\<close>,
   or to get the list of the authors of the instances of the  \<^typ>\<open>myintroduction\<close> class,
   it suffices to treat this meta-data as usual:
-  @{theory_text [display,indent=5, margin=70] \<open>
-value*\<open>map (myresult.property) @{myresult-instances}\<close>
-value*\<open>map (mytext_section.authored_by) @{myintroduction-instances}\<close>
-  \<close>}
+  @{theory_text [display,indent=5, margin=70]
+\<open>value*\<open>map (myresult.property) @{myresult-instances}\<close>
+value*\<open>map (mytext_section.authored_by) @{myintroduction-instances}\<close>\<close>}
   In order to get the list of the instances of the class \<^typ>\<open>myresult\<close>
   whose \<^const>\<open>evidence\<close> is a \<^const>\<open>proof\<close>, one can use the command:
-  @{theory_text [display,indent=5, margin=70] \<open>
-value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = proof) @{myresult-instances}\<close>
-  \<close>}
+  @{theory_text [display,indent=5, margin=70]
+\<open>value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = proof) @{myresult-instances}\<close>\<close>}
   Analogously, the list of the instances of the class \<^typ>\<open>myintroduction\<close> whose \<^const>\<open>level\<close> > 1,
   can be filtered by:
-  @{theory_text [display,indent=5, margin=70] \<open>
-value*\<open>filter (\<lambda>\<sigma>. the (mytext_section.level \<sigma>) > 1)
-       @{myintroduction-instances}\<close>
-  \<close>}
+  @{theory_text [display,indent=5, margin=70]
+\<open>value*\<open>filter (\<lambda>\<sigma>. the (mytext_section.level \<sigma>) > 1)
+       @{myintroduction-instances}\<close>\<close>}
 \<close>
 
 section*["morphisms"::technical,main_author="Some(@{docitem ''idir''}::author)"] \<open>Proving Morphisms on Ontologies\<close>
@@ -925,8 +911,8 @@ This raises the question of invariant preservation.
 
 text\<open>
 \begin{figure}
-@{boxed_theory_text [display] \<open>
-definition sum 
+@{boxed_theory_text [display]
+\<open>definition sum 
   where "sum S = (fold (+) S 0)"
 
 datatype Hardware_Type = 
@@ -962,8 +948,7 @@ onto_class Hardware = Informatic +
   invariant c1 :: "mass \<sigma> = sum(map Component.mass (composed_of \<sigma>))"
 
 onto_class R_Software = Informatic +
-  version :: int
-\<close>}
+  version :: int\<close>}
 \caption{An extract of a reference ontology.}
 \label{fig-Reference-Ontology-example}
 \end{figure}
@@ -984,8 +969,8 @@ with the masses of its own components.
 
 text\<open>
 \begin{figure}
-@{boxed_theory_text [display] \<open>
-onto_class Item =
+@{boxed_theory_text [display]
+\<open>onto_class Item =
   name :: string
 
 onto_class Product = Item +
@@ -1002,8 +987,7 @@ onto_class Electronic_Component = Product +
 onto_class Computer_Hardware = Product +
   type :: Hardware_Type
   composed_of :: "Product list" 
-  invariant c2 :: "Product.mass \<sigma> = sum(map Product.mass (composed_of \<sigma>))"
-\<close>}
+  invariant c2 :: "Product.mass \<sigma> = sum(map Product.mass (composed_of \<sigma>))"\<close>}
 \caption{An extract of a local (user)  ontology.}
 \label{fig-Local-Ontology-example}
 \end{figure}
@@ -1021,9 +1005,8 @@ equals the sum of all the masses of the products composing the object.
 
 text\<open>
 \begin{figure}
-@{boxed_theory_text [display] \<open>
-
-definition Item_to_Resource_morphism :: "'a Item_scheme \<Rightarrow> Resource" 
+@{boxed_theory_text [display]
+\<open>definition Item_to_Resource_morphism :: "'a Item_scheme \<Rightarrow> Resource" 
            ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
   where    "\<sigma> \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m =  \<lparr>  Resource.tag_attribute = 0::int , 
                                  Resource.name = name \<sigma> \<rparr>" 
@@ -1048,8 +1031,7 @@ definition Computer_Hardware_to_Hardware_morphism ::
                      Hardware.mass = mass \<sigma> ,
                      Hardware.composed_of =
                                       map Product_to_Component_morphism 
-                                          (Computer_Hardware.composed_of \<sigma>) \<rparr>" 
-\<close>}
+                                          (Computer_Hardware.composed_of \<sigma>) \<rparr>"\<close>}
 \caption{An extract of a mapping definitions.}
 \label{fig-mapping-example}
 \end{figure}
@@ -1076,8 +1058,8 @@ of invariants, as we will demonstrate in the following example.\<close>
 
 text\<open>
 \begin{figure}
-@{boxed_theory_text [display] \<open>
-lemma inv_c2_preserved :
+@{boxed_theory_text [display]
+\<open>lemma inv_c2_preserved :
   "c2_inv \<sigma> \<Longrightarrow> c1_inv (\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e)"
   unfolding c1_inv_def c2_inv_def 
             Computer_Hardware_to_Hardware_morphism_def 
@@ -1087,8 +1069,7 @@ lemma inv_c2_preserved :
 lemma Computer_Hardware_to_Hardware_morphism_total :
  "Computer_Hardware_to_Hardware_morphism ` ({X::Computer_Hardware. c2_inv X}) 
     \<subseteq> ({X::Hardware. c1_inv X})"
-  using inv_c2_preserved by auto
-\<close>}
+  using inv_c2_preserved by auto\<close>}
 \caption{Proofs establishing the Invariant Preservation.}
 \label{fig-xxx}
 \end{figure}
@@ -1098,7 +1079,7 @@ meta-data into another format along an ontological mapping are nearly trivial: a
 the invariant and the morphism definitions, the preservation proof is automatic.  
 \<close>
 
-
+(*
 section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] 
 \<open>Mathematics Example : An Extract from OntoMath\textsuperscript{PRO}\<close>
 
@@ -1263,6 +1244,7 @@ onto_class assoc_Method_Problem =
   and thus can help to find the right trade-off between plain vocabularies and 
   highly formalized models.
 \<close>
+*)
 
 section*[concl::conclusion]\<open>Conclusion\<close>
 text\<open>We presented \<^dof>, an ontology framework 
