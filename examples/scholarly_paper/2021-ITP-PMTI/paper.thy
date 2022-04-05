@@ -462,12 +462,12 @@ doc_class myauthor =
 doc_class mytext_section =
   authored_by :: "myauthor set" <= "{}"
   level :: "int option" <= "None"
-doc_class myintroduction = mytext_section +
+doc_class myintro = mytext_section +
   authored_by :: "myauthor set"  <= "UNIV" 
   uses :: "string set"
   invariant author_finite :: "finite (authored_by \<sigma>)"
   and force_level :: "the (level \<sigma>) > 1"
-doc_class myclaim = myintroduction +
+doc_class myclaim = myintro +
   based_on :: "string list"
 doc_class mytechnical = text_section +
   formal_results :: "thm list" 
@@ -488,9 +488,9 @@ declare[[invariants_checking_with_tactics = true]]
 
 text*[church::myauthor, email="\<open>church@lambda.org\<close>"]\<open>\<close>
 
-text*[resultProof::myresult, evidence = "proof", property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
+text*[proof1::myresult, evidence = "proof", property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
 
-text*[resultProof2::myresult, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"]\<open>\<close>
+text*[proof2::myresult, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"]\<open>\<close>
 
 term*\<open>@{myauthor \<open>church\<close>}\<close>
 (*term*\<open>@{myauthor \<open>churche\<close>}\<close>*)
@@ -498,13 +498,13 @@ term*\<open>@{myauthor \<open>church\<close>}\<close>
 value*\<open>email @{myauthor \<open>church\<close>}\<close>
 (*value*\<open>email @{myauthor \<open>churche\<close>}\<close>*)
 
-(*assert*\<open>@{myresult \<open>resultProof\<close>} = @{myresult \<open>resultProof2\<close>}\<close>*)
+(*assert*\<open>@{myresult \<open>proof1\<close>} = @{myresult \<open>proof2\<close>}\<close>*)
 
-(*text*[introduction1::myintroduction, authored_by = "{@{myauthor \<open>church\<close>}}", level = "Some 0"]\<open>\<close>*)
+(*text*[intro1::myintro, authored_by = "{@{myauthor \<open>church\<close>}}", level = "Some 0"]\<open>\<close>*)
 
 (*text*[claimNotion::myclaim, authored_by = "{@{myauthor \<open>church\<close>}}", based_on= "[\<open>Notion1\<close>, \<open>Notion2\<close>]", level = "Some 0"]\<open>\<close>*)
 
-text*[introduction2::myintroduction, authored_by = "{@{myauthor \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
+text*[intro2::myintro, authored_by = "{@{myauthor \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
 
 declare[[invariants_checking = false]]
 declare[[invariants_checking_with_tactics = false]]
@@ -560,12 +560,12 @@ doc_class myauthor =
 doc_class mytext_section =
   authored_by :: "myauthor set" <= "{}"
   level :: "int option" <= "None"
-doc_class myintroduction = mytext_section +
+doc_class myintro = mytext_section +
   authored_by :: "myauthor set"  <= "UNIV" 
   uses :: "string set"
   invariant author_finite :: "finite (authored_by \<sigma>)"
   and force_level :: "the (level \<sigma>) > 1"
-doc_class myclaim = myintroduction +
+doc_class myclaim = myintro +
   based_on :: "string list"
 doc_class mytechnical = text_section +
   formal_results :: "thm list" 
@@ -584,20 +584,17 @@ doc_class myconclusion = text_section +
   as in \autoref{fig-instances-example}.
 \begin{figure}
 @{boxed_theory_text [display]
-\<open>text*[church::myauthor, email="\<open>church@lambda.org\<close>"]\<open>\<close>
-
-text*[resultProof::myresult, evidence = "proof", property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
-
-text*[resultProof2::myresult, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"]\<open>\<close>
-
-text*[introduction1::myintroduction, authored_by = "{@{myauthor \<open>church\<close>}}", level = "Some 0"]\<open>\<close>
-text*[introduction2::myintroduction, authored_by = "{@{myauthor \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
-
-text*[claimNotion::myclaim, authored_by = "{@{myauthor \<open>church\<close>}}", based_on= "[\<open>Notion1\<close>, \<open>Notion2\<close>]", level = "Some 0"]\<open>\<close>\<close>}
+\<open>text*[church::myauthor,email="\<open>church@lambda.org\<close>"]\<open>\<close>
+text*[proof1::myresult,evidence="proof",property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
+text*[proof2::myresult,evidence="proof",property="[@{thm \<open>HOL.sym\<close>}]"]\<open>\<close>
+text*[intro1::myintro,authored_by="{@{myauthor \<open>church\<close>}}",level="Some 0"]\<open>\<close>
+text*[intro2::myintro,authored_by="{@{myauthor \<open>church\<close>}}",level="Some 2"]\<open>\<close>
+text*[claimNotion::myclaim,authored_by="{@{myauthor \<open>church\<close>}}",
+      based_on="[\<open>Notion1\<close>,\<open>Notion2\<close>]",level="Some 0"]\<open>\<close>\<close>}
 \caption{Some instances of the classes of the ontology of \autoref{fig-ontology-example}.}
 \label{fig-instances-example}
 \end{figure}
-  In the instance \<^theory_text>\<open>introduction1\<close>, the term antiquotation  \<^theory_text>\<open>@{myauthor \<open>church\<close>}\<close>,
+  In the instance \<^theory_text>\<open>intro1\<close>, the term antiquotation  \<^theory_text>\<open>@{myauthor \<open>church\<close>}\<close>,
   or its equivalent notation \<^term>\<open>@{myauthor \<open>church\<close>}\<close>, denotes
   the instance \<^theory_text>\<open>church\<close> of the class \<^typ>\<open>myauthor\<close>,
   where \<^theory_text>\<open>church\<close> is a \<^hol>-string.
@@ -671,7 +668,7 @@ text\<open>
   Since term antiquotations are logically uninterpreted constants,
   it is possible to compare class instances logically. The assertion
   in the \<^figure>\<open>term-context-equality-evaluation\<close> fails:
-  the two class instances \<^theory_text>\<open>resultProof\<close> and \<^theory_text>\<open>resultProof2\<close> are not equivalent
+  the two class instances \<^theory_text>\<open>proof1\<close> and \<^theory_text>\<open>proof2\<close> are not equivalent
   because their attribute \<^term>\<open>property\<close> differs.
   When \<^theory_text>\<open>assert*\<close> evaluates the term,
   the term antiquotations \<^term>\<open>@{thm \<open>HOL.refl\<close>}\<close> and \<^term>\<open>@{thm \<open>HOL.sym\<close>}\<close> are checked
@@ -700,7 +697,7 @@ text\<open>
   must be defined when an instance
   of the class \<^typ>\<open>myconclusion\<close> is defined (see the \<^theory_text>\<open>invariant establish_defined\<close>).
 
-  In \autoref{fig-ontology-example}, the \<^theory_text>\<open>invariant author_finite\<close> of the class \<^typ>\<open>myintroduction\<close> 
+  In \autoref{fig-ontology-example}, the \<^theory_text>\<open>invariant author_finite\<close> of the class \<^typ>\<open>myintro\<close> 
   enforces that the user defines the \<^const>\<open>authored_by\<close> set with some valid meta-data of type \<open>myauthor\<close>.
   The \<open>\<sigma>\<close> symbol is reserved and references the future class instance.
   By relying on the implementation of the Records
@@ -718,15 +715,15 @@ declare_reference*["invariant-checking-figure"::figure]
 text\<open>
   The value of each attribute defined for the instances is checked at run-time
   against their class invariants.
-  The instance \<^theory_text>\<open>resultProof\<close> respects the \<^theory_text>\<open>invariant has_property\<close>,
+  The instance \<^theory_text>\<open>proof1\<close> respects the \<^theory_text>\<open>invariant has_property\<close>,
   because we specify its attribute \<^const>\<open>evidence\<close> to the \<^typ>\<open>kind\<close> \<^const>\<open>proof\<close>,
   we also specify its attribute \<^const>\<open>property\<close> with a suited value
   as a \<^type>\<open>list\<close> of \<^type>\<open>thm\<close>.
   In \<^figure>\<open>invariant-checking-figure\<close>,
-  we attempt to specify a new instance \<^theory_text>\<open>introduction1\<close> of the class \<^typ>\<open>myintroduction\<close>.
+  we attempt to specify a new instance \<^theory_text>\<open>intro1\<close> of the class \<^typ>\<open>myintro\<close>.
   However, the invariant checking triggers an error because the
   constraint specified in the \<^theory_text>\<open>invariant force_level\<close> is not respected,
-  when we specify the attribute \<^const>\<open>level\<close> of \<^theory_text>\<open>introduction1\<close> to \<^term>\<open>Some (0::int)\<close>.
+  when we specify the attribute \<^const>\<open>level\<close> of \<^theory_text>\<open>intro1\<close> to \<^term>\<open>Some (0::int)\<close>.
   The \<^theory_text>\<open>invariant force_level\<close> forces the value of the argument
   of the attribute \<^const>\<open>level\<close> to be greater than 1.
 \<close>
@@ -735,8 +732,8 @@ figure*[
   "invariant-checking-figure"::figure
   , relative_width="99"
   , src="''figures/invariant-checking-violated-example''"
-]\<open>The \<^theory_text>\<open>invariant force_level\<close> of the class \<^typ>\<open>myintroduction\<close> is violated by
-  the instance \<^theory_text>\<open>introduction1\<close>.\<close>
+]\<open>The \<^theory_text>\<open>invariant force_level\<close> of the class \<^typ>\<open>myintro\<close> is violated by
+  the instance \<^theory_text>\<open>intro1\<close>.\<close>
 
 (*<*)
 declare_reference*["inherited-invariant-checking-figure"::figure]
@@ -745,7 +742,7 @@ declare_reference*["inherited-invariant-checking-figure"::figure]
 text\<open>
   Classes inherit the invariants from their super-class.
   As the class  \<^typ>\<open>myclaim\<close> is a subclass
-  of the class \<^typ>\<open>myintroduction\<close>, it inherits the \<^typ>\<open>myintroduction\<close> invariants.
+  of the class \<^typ>\<open>myintro\<close>, it inherits the \<^typ>\<open>myintro\<close> invariants.
   Hence the \<^theory_text>\<open>invariant force_level\<close> is checked
   when the instance \<^theory_text>\<open>claimNotion\<close> is defined,
   like in \<^figure>\<open>inherited-invariant-checking-figure\<close>.
@@ -756,15 +753,15 @@ figure*[
   , relative_width="99"
   , src="''figures/inherited-invariant-checking-violated-example''"
 ]\<open>The \<^theory_text>\<open>invariant force_level\<close> of the class \<^typ>\<open>myclaim\<close> is inherited
-  from the class \<^typ>\<open>myintroduction\<close> and is violated by the instance \<^theory_text>\<open>claimNotion\<close>.
+  from the class \<^typ>\<open>myintro\<close> and is violated by the instance \<^theory_text>\<open>claimNotion\<close>.
 \<close>
 
 (*<*)
 value*\<open>map (myresult.property) @{myresult-instances}\<close>
-value*\<open>map (mytext_section.authored_by) @{myintroduction-instances}\<close>
+value*\<open>map (mytext_section.authored_by) @{myintro-instances}\<close>
 
 value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = proof) @{myresult-instances}\<close>
-value*\<open>filter (\<lambda>\<sigma>. the (mytext_section.level \<sigma>) > 1) @{myintroduction-instances}\<close>
+value*\<open>filter (\<lambda>\<sigma>. the (mytext_section.level \<sigma>) > 1) @{myintro-instances}\<close>
 value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = argument) @{myresult-instances}\<close>
 (*>*)
 
@@ -776,20 +773,20 @@ text\<open>
   as a \<^hol> \<^type>\<open>list\<close>.
   Arbitrarily complex queries can therefore be defined inside the logical language.
   Thus, to get the list of the properties of the instances of the class \<^typ>\<open>myresult\<close>,
-  or to get the list of the authors of the instances of the  \<^typ>\<open>myintroduction\<close> class,
+  or to get the list of the authors of the instances of the  \<^typ>\<open>myintro\<close> class,
   it suffices to treat this meta-data as usual:
   @{theory_text [display,indent=5, margin=70]
 \<open>value*\<open>map (myresult.property) @{myresult-instances}\<close>
-value*\<open>map (mytext_section.authored_by) @{myintroduction-instances}\<close>\<close>}
+value*\<open>map (mytext_section.authored_by) @{myintro-instances}\<close>\<close>}
   In order to get the list of the instances of the class \<^typ>\<open>myresult\<close>
   whose \<^const>\<open>evidence\<close> is a \<^const>\<open>proof\<close>, one can use the command:
   @{theory_text [display,indent=5, margin=70]
 \<open>value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = proof) @{myresult-instances}\<close>\<close>}
-  Analogously, the list of the instances of the class \<^typ>\<open>myintroduction\<close> whose \<^const>\<open>level\<close> > 1,
+  Analogously, the list of the instances of the class \<^typ>\<open>myintro\<close> whose \<^const>\<open>level\<close> > 1,
   can be filtered by:
   @{theory_text [display,indent=5, margin=70]
 \<open>value*\<open>filter (\<lambda>\<sigma>. the (mytext_section.level \<sigma>) > 1)
-       @{myintroduction-instances}\<close>\<close>}
+       @{myintro-instances}\<close>\<close>}
 \<close>
 
 section*["morphisms"::technical,main_author="Some(@{docitem ''idir''}::author)"] \<open>Proving Morphisms on Ontologies\<close>
