@@ -399,7 +399,6 @@ subsection\<open>Meta-Objects as Extensible Records\<close>
 text\<open>
 \<^isabelle> supports both fixed and schematic records at the level of terms and 
 types. The notation for terms and types is as follows:
-
 \<^item> fixed record terms     \<^term>\<open>\<lparr>x = a,y = b\<rparr>\<close>; fixed record types \<open>\<lparr>x::A, y::B\<rparr>\<close>,
 \<^item> schematic record terms \<^term>\<open>\<lparr>x = a,y = b, \<dots> = m::'a\<rparr>\<close>;
   schematic record types: \<open>\<lparr>x::A, y::B, \<dots> = 'a\<rparr>\<close> which were usually abbreviated
@@ -546,7 +545,9 @@ text\<open>
   of~@{cite "brucker.ea:isabelledof:2019"} shown in \autoref{fig-ontology-example}
 \begin{figure}
 @{boxed_theory_text [display]
-\<open>doc_class myauthor =
+\<open>datatype kind = expert_opinion | argument | "proof"
+
+doc_class myauthor =
   email :: "string" <= "''''"
 doc_class mytext_section =
   authored_by :: "myauthor set" <= "{}"
@@ -560,9 +561,6 @@ doc_class myclaim = myintroduction +
   based_on :: "string list"
 doc_class mytechnical = text_section +
   formal_results :: "thm list" 
-
-datatype kind = expert_opinion | argument | "proof"
-
 doc_class myresult = mytechnical +
   evidence :: kind
   property :: "thm list" <= "[]"
@@ -815,9 +813,6 @@ onto_class Component = Electronic +
   mass :: int
   dimensions :: "int list" 
 
-onto_class Simulation_Model = Electronic +
-  type :: string
-
 onto_class Informatic = Resource +
   description :: string
 
@@ -827,9 +822,6 @@ onto_class Hardware = Informatic +
   composed_of :: "Component list" 
   invariant c1 :: "mass \<sigma> = sum(map Component.mass (composed_of \<sigma>))"
 
-onto_class R_Software = Informatic +
-  version :: int
-
 (* Local Ontology *)
 onto_class Item =
   name :: string
@@ -838,12 +830,6 @@ onto_class Product = Item +
   serial_number :: int
   provider :: string
   mass :: int
-
-onto_class Computer_Software = Item +
-  version :: int
-
-onto_class Electronic_Component = Product +
-  dimensions :: "int set"
 
 onto_class Computer_Hardware = Product +
   type :: Hardware_Type
@@ -912,51 +898,32 @@ This raises the question of invariant preservation.
 text\<open>
 \begin{figure}
 @{boxed_theory_text [display]
-\<open>definition sum 
-  where "sum S = (fold (+) S 0)"
+\<open>definition sum where "sum S = (fold (+) S 0)"
 
-datatype Hardware_Type = 
-  Motherboard | 
-  Expansion_Card | 
-  Storage_Device | 
-  Fixed_Media | 
-  Removable_Media |
-  Input_Device |
-  Output_Device
+datatype Hardware_Type = Motherboard | Expansion_Card | Storage_Device ...
 
 onto_class Resource =
   name :: string
-
 onto_class Electronic = Resource +
   provider :: string
   manufacturer :: string
-
 onto_class Component = Electronic +
   mass :: int
   dimensions :: "int list" 
-
-onto_class Simulation_Model = Electronic +
-  type :: string
-
 onto_class Informatic = Resource +
   description :: string
-
 onto_class Hardware = Informatic +
   type :: Hardware_Type
   mass :: int
   composed_of :: "Component list" 
-  invariant c1 :: "mass \<sigma> = sum(map Component.mass (composed_of \<sigma>))"
-
-onto_class R_Software = Informatic +
-  version :: int\<close>}
+  invariant c1 :: "mass \<sigma> = sum(map Component.mass (composed_of \<sigma>))"\<close>}
 \caption{An extract of a reference ontology.}
 \label{fig-Reference-Ontology-example}
 \end{figure}
 
 To illustrate this process, we use the reference ontology (considered as a standard) described 
 in the listing  \autoref{fig-Reference-Ontology-example}, defining the \<^typ>\<open>Resource\<close>,
-\<^typ>\<open>Electronic\<close>, \<^typ>\<open>Component\<close>, \<^typ>\<open>Informatic\<close>, \<^typ>\<open>Hardware\<close> and \<^typ>\<open>R_Software\<close>
-concepts (or classes). 
+\<^typ>\<open>Electronic\<close>, \<^typ>\<open>Component\<close>, \<^typ>\<open>Informatic\<close> and \<^typ>\<open>Hardware\<close> concepts (or classes). 
 Each class contains a set of attributes or properties and some local invariants. 
 
 In our example, we focus on the \<^typ>\<open>Hardware\<close> class containing a \<^const>\<open>mass\<close> attribute
@@ -972,18 +939,10 @@ text\<open>
 @{boxed_theory_text [display]
 \<open>onto_class Item =
   name :: string
-
 onto_class Product = Item +
   serial_number :: int
   provider :: string
   mass :: int
-
-onto_class Computer_Software = Item +
-  version :: int
-
-onto_class Electronic_Component = Product +
-  dimensions :: "int set"
-
 onto_class Computer_Hardware = Product +
   type :: Hardware_Type
   composed_of :: "Product list" 
@@ -992,10 +951,9 @@ onto_class Computer_Hardware = Product +
 \label{fig-Local-Ontology-example}
 \end{figure}
 
-For the sake of the argument, we have defined a simple ontology to classify Software and Hardware 
-objects. This ontology is described in \autoref{fig-Local-Ontology-example} and 
-defines the \<^typ>\<open>Item\<close>, \<^typ>\<open>Product\<close>, \<^typ>\<open>Computer_Software\<close> 
-and \<^typ>\<open>Computer_Hardware\<close> concepts.
+For the sake of the argument, we have defined a simple ontology to classify Hardware objects.
+This ontology is described in \autoref{fig-Local-Ontology-example} and 
+defines the \<^typ>\<open>Item\<close>, \<^typ>\<open>Product\<close> and \<^typ>\<open>Computer_Hardware\<close> concepts.
 As for the reference ontology, we focus on the \<^typ>\<open>Computer_Hardware\<close> 
 class defined as a list of products characterised by their mass value.
 This class contains a local \<^theory_text>\<open>invariant c2\<close> to guarantee that its own mass value
@@ -1006,7 +964,9 @@ equals the sum of all the masses of the products composing the object.
 text\<open>
 \begin{figure}
 @{boxed_theory_text [display]
-\<open>definition Item_to_Resource_morphism :: "'a Item_scheme \<Rightarrow> Resource" 
+\<open>
+
+definition Item_to_Resource_morphism :: "'a Item_scheme \<Rightarrow> Resource" 
            ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
   where    "\<sigma> \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m =  \<lparr>  Resource.tag_attribute = 0::int , 
                                  Resource.name = name \<sigma> \<rparr>" 
