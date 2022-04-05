@@ -257,7 +257,6 @@ ITP community allowing a deeper structuring of mathematical libraries
 such as the Archive of Formal Proofs (AFP).
 \<close>
 
-
 (*<*)
 declare_reference*[casestudy::text_section]
 (*>*)
@@ -343,7 +342,7 @@ doc_class requirement = text_element +   (* derived from text_element    *)
           long_name   ::"string option"  (* an optional string attribute *) 
           is_concerned::"role set"       (* roles working with this req. *)
 \<close>}
-  This ODL class definition maybe part of one or more Isabelle theory--files capturing the entire
+  This ODL class definition maybe part of one or more Isabelle theory-files capturing the entire
   ontology definition. Isabelle's session management allows for pre-compiling them before being 
   imported in the actual target documentation required to be compliant to this ontology. 
 
@@ -499,6 +498,14 @@ text*[resultProof::myresult, evidence = "proof", property="[@{thm \<open>HOL.ref
 
 text*[resultProof2::myresult, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"]\<open>\<close>
 
+term*\<open>@{myauthor \<open>church\<close>}\<close>
+(*term*\<open>@{myauthor \<open>churche\<close>}\<close>*)
+
+value*\<open>email @{myauthor \<open>church\<close>}\<close>
+(*value*\<open>email @{myauthor \<open>churche\<close>}\<close>*)
+
+(*assert*\<open>@{myresult \<open>resultProof\<close>} = @{myresult \<open>resultProof2\<close>}\<close>*)
+
 (*text*[introduction1::myintroduction, authored_by = "{@{myauthor \<open>church\<close>}}", level = "Some 0"]\<open>\<close>*)
 
 (*text*[claimNotion::myclaim, authored_by = "{@{myauthor \<open>church\<close>}}", based_on= "[\<open>Notion1\<close>, \<open>Notion2\<close>]", level = "Some 0"]\<open>\<close>*)
@@ -525,7 +532,7 @@ text\<open>
     \<^item> Ontological validation of the term: the meta-data of term antiquotations is 
       parsed and checked in the logical context,
     \<^item> Elaboration of term antiquotations: depending of the antiquotation specific
-      elaboration function, they antiquotations containing references were replaced,
+      elaboration function, the antiquotations containing references were replaced,
       for example, by the object they refer to in the logical context,
     \<^item> Generation of markup information for the Isabelle/PIDE, and
     \<^item> Code generation:
@@ -537,9 +544,10 @@ text\<open>
   and to evaluate a term (the command \<^theory_text>\<open>value\<close>).
   We provide the equivalent commands, respectively \<^theory_text>\<open>term*\<close> and \<^theory_text>\<open>value*\<close>, which 
   additionally support a validation and elaboration phase.
-
+  We also provide an \<^theory_text>\<open>assert*\<close>-command which checks
+  that the evaluation of a term returns \<^const>\<open>True\<close> and fails in other cases.
   Note that term antiquotations are admitted in all \<^dof> commands, not just
-  \<^theory_text>\<open>term*\<close> and \<^theory_text>\<open>value*\<close>. 
+  \<^theory_text>\<open>term*\<close>, \<^theory_text>\<open>value*\<close> and \<^theory_text>\<open>assert*\<close>. 
 \<close>
 
 (*<*)
@@ -601,7 +609,7 @@ text*[claimNotion::myclaim, authored_by = "{@{myauthor \<open>church\<close>}}",
   In the instance \<^theory_text>\<open>introduction1\<close>, the term antiquotation  \<^theory_text>\<open>@{myauthor \<open>church\<close>}\<close>,
   or its equivalent notation \<^term>\<open>@{myauthor \<open>church\<close>}\<close>, denotes
   the instance \<^theory_text>\<open>church\<close> of the class \<^typ>\<open>myauthor\<close>,
-  where \<^theory_text>\<open>church\<close> is an \<^hol>-string.
+  where \<^theory_text>\<open>church\<close> is a \<^hol>-string.
   One can now reference a class instance in a \<^theory_text>\<open>term*\<close> command.
   In the command  \<^theory_text>\<open>term*\<open>@{myauthor \<open>church\<close>}\<close>\<close>
   the term \<^term>\<open>@{myauthor \<open>church\<close>}\<close> is type-checked, \<^ie>, the command \<^theory_text>\<open>term*\<close> checks that
@@ -670,10 +678,11 @@ declare_reference*["term-context-equality-evaluation"::figure]
 
 text\<open>
   Since term antiquotations are logically uninterpreted constants,
-  it is possible to compare class instances logically. \<^figure>\<open>term-context-equality-evaluation\<close>
-  shows that the two class instances \<^theory_text>\<open>resultProof\<close> and \<^theory_text>\<open>resultProof2\<close> are not equivalent
-  because their attribute \<^term>\<open>property\<close> differ.
-  When \<^theory_text>\<open>value*\<close> evaluates the term,
+  it is possible to compare class instances logically. The assertion
+  in the \<^figure>\<open>term-context-equality-evaluation\<close> fails:
+  the two class instances \<^theory_text>\<open>resultProof\<close> and \<^theory_text>\<open>resultProof2\<close> are not equivalent
+  because their attribute \<^term>\<open>property\<close> differs.
+  When \<^theory_text>\<open>assert*\<close> evaluates the term,
   the term antiquotations \<^term>\<open>@{thm \<open>HOL.refl\<close>}\<close> and \<^term>\<open>@{thm \<open>HOL.sym\<close>}\<close> are checked
   against the global context to validate that the \<^hol>-strings \<^term>\<open>\<open>HOL.refl\<close>\<close> and \<^term>\<open>\<open>HOL.sym\<close>\<close>
   reference existing theorems.
@@ -772,8 +781,8 @@ text\<open>
   Any class definition generates term antiquotations checking a class instance or
   the set of instances in a particular logical context; these references were
   elaborated to objects they refer to.
-  This paves the way for a new mechanism to query the ``current'' instances presented as a
-  list of \<^hol> \<^type>\<open>list\<close>.
+  This paves the way for a new mechanism to query the ``current'' instances presented
+  as a \<^hol> \<^type>\<open>list\<close>.
   Arbitrarily complex queries can therefore be defined inside the logical language.
   Thus, to get the list of the properties of the instances of the class \<^typ>\<open>myresult\<close>,
   or to get the list of the authors of the instances of the  \<^typ>\<open>myintroduction\<close> class,
@@ -1046,7 +1055,7 @@ definition Computer_Hardware_to_Hardware_morphism ::
                                       map Product_to_Component_morphism 
                                           (Computer_Hardware.composed_of \<sigma>) \<rparr>" 
 \<close>}
-\caption{An extract of a mapping definitions.}
+\caption{An extract of a mapping definition.}
 \label{fig-mapping-example}
 \end{figure}
 
@@ -1216,7 +1225,7 @@ onto_class Field_of_mathematics =
 \<close>}
   defines the class \<^typ>\<open>Field_of_mathematics\<close> with an attribute \<^theory_text>\<open>Annotations\<close>
   which is a \<^type>\<open>list\<close> of \<^typ>\<open>annotation\<close>s.
-  We can even constraint the type of allowed \<^typ>\<open>annotation\<close>s with an invariant.
+  We can even constrain the type of allowed \<^typ>\<open>annotation\<close>s with an invariant.
   Here the \<^theory_text>\<open>invariant restrict_annotation_F\<close> forces the \<^typ>\<open>annotation\<close>s to be
   a \<^const>\<open>label\<close> or a \<^const>\<open>comment\<close>.
   Subsumption relation is straightforward.
@@ -1276,7 +1285,7 @@ This limits their practical usefulness drastically. Our approach treats invarian
 first-class citizens, and turns them into an object of formal study in, for example, 
 ontological mappings. Such a technology exists, to our knowledge, for the first time.
 
-Our experiments with adaptions of existing ontologies from engineering and mathematics
+Our experiments with adaptations of existing ontologies from engineering and mathematics
 show that \<^dof>'s ODL has sufficient expressive power to cover all aspects
 of languages such as OWL (with perhaps the exception of multiple inheritance on classes).
 However, these ontologies have been developed specifically \<^emph>\<open>in\<close> OWL and target
