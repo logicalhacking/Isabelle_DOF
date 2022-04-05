@@ -584,13 +584,13 @@ doc_class myconclusion = text_section +
   as in \autoref{fig-instances-example}.
 \begin{figure}
 @{boxed_theory_text [display]
-\<open>text*[church::myauthor,email="\<open>church@lambda.org\<close>"]\<open>\<close>
-text*[proof1::myresult,evidence="proof",property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
-text*[proof2::myresult,evidence="proof",property="[@{thm \<open>HOL.sym\<close>}]"]\<open>\<close>
-text*[intro1::myintro,authored_by="{@{myauthor \<open>church\<close>}}",level="Some 0"]\<open>\<close>
-text*[intro2::myintro,authored_by="{@{myauthor \<open>church\<close>}}",level="Some 2"]\<open>\<close>
-text*[claimNotion::myclaim,authored_by="{@{myauthor \<open>church\<close>}}",
-      based_on="[\<open>Notion1\<close>,\<open>Notion2\<close>]",level="Some 0"]\<open>\<close>\<close>}
+\<open>text*[church::myauthor, email="\<open>church@lambda.org\<close>"]\<open>\<close>
+text*[proof1::myresult, evidence="proof", property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
+text*[proof2::myresult, evidence="proof", property="[@{thm \<open>HOL.sym\<close>}]"]\<open>\<close>
+text*[intro1::myintro, authored_by="{@{myauthor \<open>church\<close>}}", level="Some 0"]\<open>\<close>
+text*[intro2::myintro, authored_by="{@{myauthor \<open>church\<close>}}", level="Some 2"]\<open>\<close>
+text*[claimNotion::myclaim, authored_by="{@{myauthor \<open>church\<close>}}"
+      , based_on="[\<open>Notion1\<close>,\<open>Notion2\<close>]", level="Some 0"]\<open>\<close>\<close>}
 \caption{Some instances of the classes of the ontology of \autoref{fig-ontology-example}.}
 \label{fig-instances-example}
 \end{figure}
@@ -709,52 +709,28 @@ text\<open>
 \<close>
 
 (*<*)
-declare_reference*["invariant-checking-figure"::figure]
+declare_reference*["inherited-invariant-checking-figure"::figure]
 (*>*)
 
 text\<open>
   The value of each attribute defined for the instances is checked at run-time
   against their class invariants.
-  The instance \<^theory_text>\<open>proof1\<close> respects the \<^theory_text>\<open>invariant has_property\<close>,
-  because we specify its attribute \<^const>\<open>evidence\<close> to the \<^typ>\<open>kind\<close> \<^const>\<open>proof\<close>,
-  we also specify its attribute \<^const>\<open>property\<close> with a suited value
-  as a \<^type>\<open>list\<close> of \<^type>\<open>thm\<close>.
-  In \<^figure>\<open>invariant-checking-figure\<close>,
-  we attempt to specify a new instance \<^theory_text>\<open>intro1\<close> of the class \<^typ>\<open>myintro\<close>.
-  However, the invariant checking triggers an error because the
-  constraint specified in the \<^theory_text>\<open>invariant force_level\<close> is not respected,
-  when we specify the attribute \<^const>\<open>level\<close> of \<^theory_text>\<open>intro1\<close> to \<^term>\<open>Some (0::int)\<close>.
-  The \<^theory_text>\<open>invariant force_level\<close> forces the value of the argument
-  of the attribute \<^const>\<open>level\<close> to be greater than 1.
-\<close>
-
-figure*[
-  "invariant-checking-figure"::figure
-  , relative_width="99"
-  , src="''figures/invariant-checking-violated-example''"
-]\<open>The \<^theory_text>\<open>invariant force_level\<close> of the class \<^typ>\<open>myintro\<close> is violated by
-  the instance \<^theory_text>\<open>intro1\<close>.\<close>
-
-(*<*)
-declare_reference*["inherited-invariant-checking-figure"::figure]
-(*>*)
-
-text\<open>
-  Classes inherit the invariants from their super-class.
-  As the class  \<^typ>\<open>myclaim\<close> is a subclass
+  Classes also inherit the invariants from their super-class.
+  As the class \<^typ>\<open>myclaim\<close> is a subclass
   of the class \<^typ>\<open>myintro\<close>, it inherits the \<^typ>\<open>myintro\<close> invariants.
-  Hence the \<^theory_text>\<open>invariant force_level\<close> is checked
-  when the instance \<^theory_text>\<open>claimNotion\<close> is defined,
-  like in \<^figure>\<open>inherited-invariant-checking-figure\<close>.
+  In \<^figure>\<open>inherited-invariant-checking-figure\<close>,
+  we attempt to specify a new instance \<^theory_text>\<open>claimNotion\<close> of the class \<^typ>\<open>myclaim\<close>.
+  However, the invariant checking triggers an error because
+  the \<^theory_text>\<open>invariant force_level\<close> forces the value of the argument
+  of the attribute \<^const>\<open>level\<close> to be greater than 1,
+  and we initialize it to \<^term>\<open>Some (0::int)\<close> in \<^theory_text>\<open>claimNotion\<close>.
 \<close>
 
 figure*[
   "inherited-invariant-checking-figure"::figure
   , relative_width="99"
   , src="''figures/inherited-invariant-checking-violated-example''"
-]\<open>The \<^theory_text>\<open>invariant force_level\<close> of the class \<^typ>\<open>myclaim\<close> is inherited
-  from the class \<^typ>\<open>myintro\<close> and is violated by the instance \<^theory_text>\<open>claimNotion\<close>.
-\<close>
+]\<open>Inherited invariant violation.\<close>
 
 (*<*)
 value*\<open>map (myresult.property) @{myresult-instances}\<close>
@@ -782,11 +758,6 @@ value*\<open>map (mytext_section.authored_by) @{myintro-instances}\<close>\<clos
   whose \<^const>\<open>evidence\<close> is a \<^const>\<open>proof\<close>, one can use the command:
   @{theory_text [display,indent=5, margin=70]
 \<open>value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = proof) @{myresult-instances}\<close>\<close>}
-  Analogously, the list of the instances of the class \<^typ>\<open>myintro\<close> whose \<^const>\<open>level\<close> > 1,
-  can be filtered by:
-  @{theory_text [display,indent=5, margin=70]
-\<open>value*\<open>filter (\<lambda>\<sigma>. the (mytext_section.level \<sigma>) > 1)
-       @{myintro-instances}\<close>\<close>}
 \<close>
 
 section*["morphisms"::technical,main_author="Some(@{docitem ''idir''}::author)"] \<open>Proving Morphisms on Ontologies\<close>
