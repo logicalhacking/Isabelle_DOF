@@ -12,3 +12,4 @@ session "mini_odo" = "Isabelle_DOF" +
     "figures/odometer.jpeg"
     "figures/three-phase-odo.pdf"
     "figures/wheel-df.png"
+    "figures/CENELEC-Fig.3-docStructure.png"

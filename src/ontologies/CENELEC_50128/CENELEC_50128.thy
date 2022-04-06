@@ -272,6 +272,8 @@ NOTE Verification is mostly based on document reviews (design, implementation, t
 Definition*[verifier, short_name="''verifier''"]
 \<open>entity that is responsible for one or more verification activities\<close>
 
+chapter\<open>Software Management and Organisation\<close>
+text\<open>Representing chapter 5 in @{cite "bsi:50128:2014"}.\<close>
 
 section\<open>Organization, Roles and Responsabilities\<close>
 text\<open>see also section \<^emph>\<open>Software management and organization\<close>.\<close>
@@ -429,6 +431,21 @@ doc_class TC = requirement +
    is_concerned :: "role set" <= "UNIV" 
    type_synonym timing_constraint = TC
 
+
+section\<open>Personal Competence\<close>
+
+text\<open>pp. 20 MORE TO COME\<close>
+
+section\<open>Lifecycle Issues and Documentation\<close>
+
+text\<open>Figure 3 in Chapter 5: Illustrative Development Lifecycle 1\<close>
+
+text\<open>Global Overview\<close>
+
+figure*[fig3::figure, relative_width="100", 
+ src="''examples/CENELEC_50128/mini_odo/document/figures/CENELEC-Fig.3-docStructure.png''"]
+\<open>Illustrative Development Lifecycle 1\<close>
+                                     
 section\<open>Software Assurance related Entities and Concepts\<close>
 
 
@@ -494,121 +511,124 @@ doc_class judgement =
 
 section\<open> Design and Test Documents \<close> 
 
-doc_class cenelec_text = text_element +
+doc_class cenelec_document = text_element +
    phase        :: "phase"
+   level        :: "int option" <= "Some(-1)" \<comment> \<open>Must be a "chapter" in the 
+                                                 overall document\<close>
    is_concerned :: "role set" <= "UNIV" 
+text\<open>see Fig.3.\<close>
 
 
-
-doc_class SYSREQS = cenelec_text + 
+doc_class SYSREQS = cenelec_document + 
    phase        :: "phase"  <= "SYSDEV_ext" 
-   accepts      "\<lbrace>objectives||requirement||cenelec_text\<rbrace>\<^sup>+ "       
+   accepts      "\<lbrace>objectives||requirement||cenelec_document\<rbrace>\<^sup>+ "       
    type_synonym system_requirements_specification = SYSREQS
 
-doc_class SYSSREQS = cenelec_text + 
+doc_class SYSSREQS = cenelec_document + 
    phase        :: "phase"  <= "SYSDEV_ext" 
    type_synonym system_safety_requirements_specification = SYSSREQS
 
-doc_class SYSAD = cenelec_text + 
+doc_class SYSAD = cenelec_document + 
    phase        :: "phase"  <= "SYSDEV_ext" 
    type_synonym system_architecture_description = SYSAD
 
-doc_class SYSS_pl = cenelec_text + 
+doc_class SYSS_pl = cenelec_document + 
    phase        :: "phase"  <= "SPl" 
    type_synonym system_safety_plan = SYSS_pl
 
-doc_class SYS_VnV_pl = cenelec_text + 
+doc_class SYS_VnV_pl = cenelec_document + 
    phase        :: "phase"  <= "SPl" 
    type_synonym system_VnV_plan = SYS_VnV_pl
 
-doc_class SWRS = cenelec_text + 
+doc_class SWRS = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_requirements_specification = SWRS
 
-doc_class SWRVR = cenelec_text + 
+doc_class SWRVR = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_requirements_verification_report = SWRVR
 
 
-doc_class SWTS = cenelec_text + 
+doc_class SWTS = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_test_specification = SWTS
 
-doc_class SWAS = cenelec_text + 
+doc_class SWAS = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_architecture_specification = SWAS
 
-doc_class SWDS = cenelec_text + 
+doc_class SWDS = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_design_specification = SWDS
 
-doc_class SWIS = cenelec_text + 
+doc_class SWIS = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_interface_specification = SWIS
 
-doc_class SWITS = cenelec_text + 
+doc_class SWITS = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_integration_test_specification = SWITS
 
-doc_class SWHITS = cenelec_text + 
+doc_class SWHITS = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_hardware_integration_test_specification = SWHITS
 
-doc_class SWADVR = cenelec_text + 
+doc_class SWADVR = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_architecture_and_design_verification_report = SWADVR
 
-doc_class SWCDS = cenelec_text + 
+doc_class SWCDS = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_component_design_specification = SWCDS
 
-doc_class SWCTS = cenelec_text + 
+doc_class SWCTS = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_component_test_specification = SWCTS
 
-doc_class SWCDVR = cenelec_text + 
+doc_class SWCDVR = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_component_design_verification_report = SWCDVR
 
 
-doc_class SWSCD = cenelec_text + 
+doc_class SWSCD = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_source_code_and_documentation = SWSCD
 
-doc_class SWCTR = cenelec_text + 
+doc_class SWCTR = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_component_test_report = SWCTR
 
-doc_class SWSCVR = cenelec_text + 
+doc_class SWSCVR = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_source_code_verification_report = SWSCVR
 
-doc_class SWHAITR = cenelec_text +
+doc_class SWHAITR = cenelec_document +
    phase        :: "phase"  <= "SD" 
    type_synonym software_hardware_integration_test_report = SWHAITR
 
-doc_class SWIVR = cenelec_text +
+doc_class SWIVR = cenelec_document +
    phase        :: "phase"  <= "SD" 
    type_synonym software_integration_verification_report = SWIVR
 
-doc_class SWTR_global = cenelec_text + 
+doc_class SWTR_global = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym overall_software_test_report = SWTR_global
 
-doc_class SWVALR = cenelec_text +
+doc_class SWVALR = cenelec_document +
    phase        :: "phase"  <= "SD" 
    type_synonym software_validation_report = SWVALR
 
-doc_class SWDD = cenelec_text + 
+doc_class SWDD = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_deployment_documents = SWDD
 
-doc_class SWMD = cenelec_text + 
+doc_class SWMD = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_maintenance_documents = SWMD
 
  
 section\<open> Software Assurance \<close>
+\<comment> \<open>MORE TO COME\<close>
 
 subsection\<open> Software Testing \<close>
 text\<open>Objective: 
@@ -732,13 +752,16 @@ doc_class test_documentation =
                       \<lbrace>test_environment||test_tool\<rbrace>\<^sup>+ ~~
                       \<lbrakk>test_requirement\<rbrakk>  ~~ 
                       test_adm_role"
-             accepts "test_specification ~~ 
-                      \<lbrace>test_case~~test_result\<rbrace>\<^sup>+ ~~ 
-                      \<lbrace>test_environment||test_tool\<rbrace>\<^sup>+ ~~
-                      \<lbrakk>test_requirement \<rbrakk> ~~ 
-                      test_adm_role"
 
 
+section\<open>Global Documentation Structure\<close>
+
+doc_class documentation_structure = text_element +
+   level :: "int option" <= "Some(-1::int)" 
+   accepts "SYSREQS  ~~  \<comment> \<open>system_requirements_specification\<close>
+            SYSSREQS ~~  \<comment> \<open>system_safety_requirements_specification\<close> 
+            SYSAD ~~     \<comment> \<open>system_architecture description\<close>
+            SYSS_pl      \<comment> \<open>system safety plan\<close>   "
 
 section\<open> META : Testing and Validation \<close>
 
