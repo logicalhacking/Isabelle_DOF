@@ -3,7 +3,6 @@ theory "paper"
   imports "Isabelle_DOF.scholarly_paper"
 begin
 
-
 open_monitor*[this::article]
 
 declare[[ strict_monitor_checking  = false]]

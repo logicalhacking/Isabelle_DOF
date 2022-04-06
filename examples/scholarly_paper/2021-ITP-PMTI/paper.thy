@@ -17,6 +17,7 @@ define_shortcut* hol      \<rightleftharpoons> \<open>HOL\<close>
                  html     \<rightleftharpoons> \<open>HTML\<close>
                  csp      \<rightleftharpoons> \<open>CSP\<close>      \<comment>\<open>obsolete\<close>
                  holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>  \<comment>\<open>obsolete\<close> 
+ 
 
 ML\<open>
 
