@@ -540,7 +540,7 @@ text\<open>
   We provide the equivalent commands, respectively \<^theory_text>\<open>term*\<close> and \<^theory_text>\<open>value*\<close>, which 
   additionally support a validation and elaboration phase.
   We also provide an \<^theory_text>\<open>assert*\<close>-command which checks
-  that the evaluation of a term returns \<^const>\<open>True\<close> and fails in other cases.
+  that the evaluation of a term returns \<^const>\<open>True\<close> and fails otherwise.
   Note that term antiquotations are admitted in all \<^dof> commands, not just
   \<^theory_text>\<open>term*\<close>, \<^theory_text>\<open>value*\<close> and \<^theory_text>\<open>assert*\<close>. 
 \<close>
