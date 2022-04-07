@@ -1374,14 +1374,11 @@ fun check_invariants thy oid =
   let
     val value = the (DOF_core.get_value_global oid thy)
     val cid = #cid (the (DOF_core.get_object_global oid thy))
-    (*val _ = writeln ("cid: " ^ @{make_string} (Long_Name.base_name cid))*)
     fun get_all_invariants cid thy =
-      let val invs = #invs (the (DOF_core.get_doc_class_global cid thy))
-      in case DOF_core.get_doc_class_global cid thy of
-             NONE => error("undefined class id for invariants: " ^ cid)
-           | SOME ({inherits_from=NONE, ...}) => invs
-           | SOME ({inherits_from=SOME(_,father), ...}) => (invs) @ (get_all_invariants father thy)
-      end
+       case DOF_core.get_doc_class_global cid thy of
+          NONE => error("undefined class id for invariants: " ^ cid)
+        | SOME ({inherits_from=NONE, invs, ...}) => invs
+        | SOME ({inherits_from=SOME(_,father), invs, ...}) => (invs) @ (get_all_invariants father thy)
     val invariants = get_all_invariants cid thy
     val inv_and_apply_list = 
       let fun mk_inv_and_apply inv value thy =
