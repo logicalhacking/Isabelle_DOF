@@ -331,7 +331,7 @@ is currently only available in the SML API's of the kernel.
   symbolic evaluation using the simplifier, \<open>nbe\<close> for \<^emph>\<open>normalization by
   evaluation\<close> and \<^emph>\<open>code\<close> for code generation in SML.
 \<^item> \<open>upd_meta_args\<close> :
-   \<^rail>\<open> (obj_id ('::' class_id) ((',' attribute ('=' | '+=') HOL_term) * ))\<close>
+   \<^rail>\<open> (obj_id ('::' class_id) ((',' attribute (':=' | '+=') HOL_term) * ))\<close>
 \<^item> \<open>annotated_text_element\<close> :
 \<^rail>\<open> 
     (  @@{command "text*"} '[' meta_args ']' '\<open>' formal_text '\<close>'
