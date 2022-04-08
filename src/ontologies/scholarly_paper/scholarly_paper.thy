@@ -305,7 +305,7 @@ val _ =
     {markdown = true, body = true}
     (fn meta_args => fn thy =>
       let
-        val ddc = Config.get_global thy Definition_default_class
+        val ddc = Config.get_global thy Lemma_default_class
         val use_Lemma_default = SOME(((ddc = "") ? (K "math_content")) ddc)
       in
         Onto_Macros.enriched_formal_statement_command
@@ -317,7 +317,7 @@ val _ =
     {markdown = true, body = true}
     (fn meta_args => fn thy =>
       let
-        val ddc = Config.get_global thy Definition_default_class
+        val ddc = Config.get_global thy Theorem_default_class
         val use_Theorem_default = SOME(((ddc = "") ? (K "math_content")) ddc)
       in
         Onto_Macros.enriched_formal_statement_command 
