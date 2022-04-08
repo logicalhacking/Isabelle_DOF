@@ -553,6 +553,7 @@ doc_class SWTS = cenelec_document +
    phase        :: "phase"  <= "SD" 
    type_synonym software_test_specification = SWTS
 
+   
 doc_class SWAS = cenelec_document + 
    phase        :: "phase"  <= "SD" 
    type_synonym software_architecture_specification = SWAS
@@ -561,8 +562,21 @@ doc_class SWDS = cenelec_document +
    phase        :: "phase"  <= "SD" 
    type_synonym software_design_specification = SWDS
 
+doc_class SWIS_component_element =
+   \<comment> \<open>channel, input - output of an operation, public global varianles ...\<close>
+   op_name           :: "string"
+   op_args_ty        :: "(string \<times> typ) list"
+   op_res_ty         :: "typ list"
+   op_exn_ty         :: "(string \<times> typ) list"
+   pre_cond          :: "thm list" <= "[]"
+   post_cond         :: "thm list" <= "[]"
+   boundary_pre_cond :: "thm list" <= "[]"
+   type_synonym SWIS_CE = SWIS_component_element
+
+
 doc_class SWIS = cenelec_document + 
    phase        :: "phase"  <= "SD" 
+   compionents  :: "SWIS_component_element list"
    type_synonym software_interface_specification = SWIS
 
 doc_class SWITS = cenelec_document + 
