@@ -94,7 +94,8 @@ text*[bu::author,
         email       ="\<open>wolff@universite-paris-saclay.fr\<close>",
         affiliation = "\<open>LMF, Université Paris-Saclay, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
            
-text*[abs::abstract, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>Isabelle/HOL\<close>,\<open>Ontology Mapping\<close>]"]
+text*[abs::abstract, 
+      keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>Isabelle/HOL\<close>,\<open>Ontology Mapping\<close>,\<open>Certification\<close>]"]
 \<open>  \<^dof> is an ontology framework on top of Isabelle 
    @{cite "brucker.ea:isabelledof:2019" and "brucker.ea:isabelle-ontologies:2018"}. 
    \<^dof>  allows for the formal development of ontologies as well as continuous checking that
