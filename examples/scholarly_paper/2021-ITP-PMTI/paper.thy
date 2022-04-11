@@ -95,7 +95,7 @@ text*[bu::author,
         affiliation = "\<open>LMF, Université Paris-Saclay, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
            
 text*[abs::abstract, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>Isabelle/HOL\<close>,\<open>Ontology Mapping\<close>]"]
-\<open>  \<^dof> is a novel ontology framework on top of Isabelle 
+\<open>  \<^dof> is an ontology framework on top of Isabelle 
    @{cite "brucker.ea:isabelledof:2019" and "brucker.ea:isabelle-ontologies:2018"}. 
    \<^dof>  allows for the formal development of ontologies as well as continuous checking that
    a formal document under development conforms to an underlying ontology. 
@@ -103,19 +103,16 @@ text*[abs::abstract, keywordlist="[\<open>Ontologies\<close>,\<open>Formal Docum
    Thus, \<^dof> is designed to annotate and interact with typed meta-data 
    within formal developments in Isabelle.  
 
-%   While prior versions of \<^dof> provided already a mechanism to check ontological \<^emph>\<open>rules\<close>  
-%   (in OWL terminology) or \<^emph>\<open>class invariants\<close> (in UML/OCL terminology) via hand-written SML test-code,
-%   we provide in this paper a novel mechanism to specify \<^emph>\<open>invariants\<close> in \<^hol> via a reflection
-%   mechanism. 
    In this paper we extend  \<^dof> with \<^emph>\<open>invariants\<close> via a reflection mechanism,
    which serve as equivalent to the concept of ontological \<^emph>\<open>rules\<close> (in OWL terminology) or
    \<^emph>\<open>class invariants\<close> (in UML/OCL terminology).
    This allows for both efficient run-time checking of abstract properties of formal
-   content \<^bold>\<open>as well as\<close> formal proofs that establish mappings between different ontologies in 
-   general and specific ontology instances in concrete cases. 
+   content under evolution \<^bold>\<open>as well as\<close> formal proofs that establish mappings between different 
+   ontologies in general and specific ontology instances in concrete cases. 
    With this feature widely called \<^emph>\<open>ontology mapping\<close> in the literature, our framework paves the 
-   way for a deeper integration of ontological information in, for example,
-   the articles of the Archive of Formal Proofs.
+   way for advanced use of ontological information in technical documents such as ``semantic'' search and
+   translation. We demonstrate the use of these new features for the modeling of critical elements in 
+   an extended  ontology used for formal developments targeting a CENELEC certification.
   
 \<close>
 
