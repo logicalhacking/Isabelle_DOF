@@ -1193,6 +1193,27 @@ our ontology covering these is therefore out of reach of this paper.
 Rather, we present how the novel concepts like invariants and term-antiquotations are used in 
 selected elements in this ontology.
 
+@{theory_text [display] \<open>
+doc_class SWIS_component_element =
+   \<comment> \<open>channel, input - output of an operation, public global varianles ...\<close>
+   op_name           :: "string"
+   op_args_ty        :: "(string \<times> typ) list"
+   op_res_ty         :: "typ list"
+   op_exn_ty         :: "(string \<times> typ) list"
+   pre_cond          :: "thm list" <= "[]"
+   post_cond         :: "thm list" <= "[]"
+   boundary_pre_cond :: "thm list" <= "[]"
+   type_synonym SWIS_CE = SWIS_component_element
+
+doc_class SWIS = cenelec_document + 
+   phase        :: "phase"  <= "SCDES" 
+   role         :: "role set"           \<comment> \<open>design team\<close>
+   written_by   :: "DES"                \<comment> \<open>design team\<close>
+   components  :: "SWIS_component_element list"
+   type_synonym software_interface_specification = SWIS
+\<close>}
+
+
 \<close>
 
 

@@ -575,8 +575,8 @@ doc_class SWIS_component_element =
 
 
 doc_class SWIS = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
-   compionents  :: "SWIS_component_element list"
+   phase        :: "phase"  <= "SCDES" 
+   components  :: "SWIS_component_element list"
    type_synonym software_interface_specification = SWIS
 
 doc_class SWITS = cenelec_document + 
