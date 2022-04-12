@@ -1013,7 +1013,7 @@ meta-data into another format along an ontological mapping are nearly trivial: a
 the invariant and the morphism definitions, the preservation proof is automatic. The advantage 
 of using the \<^dof> framework compared to approaches like ATL or EXPRESS-X is 
 the possibility of formally verifying the \<^emph>\<open>mapping rules\<close>. \<^ie>  proving the preservation 
-of invariants, as we will demonstrate in the following example.\<close>
+of invariants, as we have demonstrated in the previous example.\<close>
 
 (*
 section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] 
