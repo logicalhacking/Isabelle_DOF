@@ -1183,6 +1183,19 @@ onto_class assoc_Method_Problem =
 \<close>
 *)
 
+section*[appl_certif::technical]\<open>Application: CENELEC Ontology\<close>
+text\<open>From its beginning, \<^dof> had been used for documents containing formal models targeting 
+certifications. A major case-study from the railways domain based on the CENELEC 50128 standard
+had been published earlier (cf. @{cite "DBLP:conf-ifm-BruckerW19"}) \<^footnote>\<open> Our CENELEC ontology in 
+\<^dof> can be found at \<^url>\<open>https://github.com/logicalhacking/Isabelle_DOF/blob/main/src/ontologies/CENELEC_50128/CENELEC_50128.thy\<close>.\<close>.
+The CENELEC Standard comprises 18 ``Design and Test Documents''; a fully fledged description of 
+our ontology covering these is therefore out of reach of this paper.
+Rather, we present how the novel concepts like invariants and term-antiquotations are used in 
+selected elements in this ontology.
+
+\<close>
+
+
 section*[concl::conclusion]\<open>Conclusion\<close>
 text\<open>We presented \<^dof>, an ontology framework 
 deeply integrating continuous-check\slash continuous-build functionality into
