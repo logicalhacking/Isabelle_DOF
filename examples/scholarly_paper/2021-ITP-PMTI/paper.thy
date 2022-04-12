@@ -988,10 +988,7 @@ This mapping shows that the structure of a (user) ontology may be arbitrarily di
 from the one of a standard ontology it references. 
 \<close>
 
-text\<open>
-The advantage of using the \<^dof> framework compared to approaches like ATL or EXPRESS-X is 
-the possibility of formally verifying the \<^emph>\<open>mapping rules\<close>. \<^ie>  proving the preservation 
-of invariants, as we will demonstrate in the following example.\<close>
+
 
 text\<open>
 \begin{figure}
@@ -1013,8 +1010,10 @@ lemma Computer_Hardware_to_Hardware_morphism_total :
 \<close>
 text\<open>The example proof in \autoref{fig-xxx} for a simple, but typical example of reformatting
 meta-data into another format along an ontological mapping are nearly trivial: after unfolding
-the invariant and the morphism definitions, the preservation proof is automatic.  
-\<close>
+the invariant and the morphism definitions, the preservation proof is automatic. The advantage 
+of using the \<^dof> framework compared to approaches like ATL or EXPRESS-X is 
+the possibility of formally verifying the \<^emph>\<open>mapping rules\<close>. \<^ie>  proving the preservation 
+of invariants, as we will demonstrate in the following example.\<close>
 
 (*
 section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] 
