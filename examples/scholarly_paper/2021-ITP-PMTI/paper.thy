@@ -1189,14 +1189,14 @@ According to CENELEC Table C.1, for example, we specify the category of ``Design
 as follows:
 @{boxed_theory_text [display] \<open>
 doc_class cenelec_document = text_element +
-   phase        :: phase
+   phase         :: phase
    written_by   :: role      \<comment> \<open>Annex C Table C.1 \<close>
-   fst_check    :: role      \<comment> \<open>Annex C Table C.1 \<close>
+   fst_check     :: role      \<comment> \<open>Annex C Table C.1 \<close>
    snd_check    :: role      \<comment> \<open>Annex C Table C.1 \<close>
    ... 
    invariant must_be_chapter :: "text_element.level \<sigma> = Some(0)"
    invariant two_eyes_prcple :: "written_by \<sigma> \<noteq> fst_check \<sigma> 
-                                 \<and> written_by \<sigma> \<noteq> snd_check \<sigma>"
+                                     \<and> written_by \<sigma> \<noteq> snd_check \<sigma>"
 \<close>}
 This class refers to the ``software phases'' the standard postulates (like \<open>SPL\<close> for 
 ``Software Planning'' or \<open>SCDES\<close> for ``Software Component Design'') 
@@ -1205,7 +1205,7 @@ Similarly, the standard postulates ``roles'' that certain specified teams in the
 (like \<open>VER\<close> for verification and \<open>VAL\<close> for validation). We added invariants that specify 
 certain constraints implicit in the standard: for example, a \<open>cenelec_document\<close> must have
 the textual structure of a chapter (the \<open>level\<close>-attribute is inherited from an underlying 
-ontology library specifying text-elements) as well as the two-eyes-principle between authors and
+ontology library specifying basic text-elements) as well as the two-eyes-principle between authors and
 checkers of this document.
 \<close>
 text\<open> The concrete instance of the  \<open>cenelec_document\<close> - class is the 
@@ -1214,8 +1214,8 @@ where the role assignment is done for this document type as follows:
 @{boxed_theory_text [display] \<open>
 doc_class SWIS = cenelec_document + \<comment> \<open>software interface specification\<close> 
    phase        :: "phase"  <= "SCDES"      written_by   :: "role"   <= "DES"
-   fst_check    :: "role"   <= "VER"        snd_check    :: "role"   <= "VAL"
-   components   :: "SWIS_E list"
+   fst_check    :: "role"   <= "VER"           snd_check    :: "role"   <= "VAL"
+   components:: "SWIS_E list"
 \<close>} 
 The structural constraints expressed so far can in principle be covered by any 
 conventional validation process and suitable editing support (\<^eg>,  Protégé @{cite "protege"}). 
@@ -1223,10 +1223,10 @@ However, a closer look at the class \<open>SWIS_E\<close> (``software interface 
 element'') referenced in the \<open>components\<close>-attribute reveals the unique power of \<^dof>:
 @{boxed_theory_text [display] \<open>
 doc_class SWIS_E =
-   op_name           :: "string"
+   op_name          :: "string"
    op_args_res       :: "(string \<times> typ) list \<times> typ" \<comment> \<open>args and result type\<close>
-   pre_cond          :: "(string \<times> thm) list"       \<comment> \<open>labels and predicates\<close>
-   post_cond         :: "(string \<times> thm) list"       \<comment> \<open>labels and predicates\<close>
+   pre_cond          :: "(string \<times> thm) list"        \<comment> \<open>labels and predicates\<close>
+   post_cond         :: "(string \<times> thm) list"        \<comment> \<open>labels and predicates\<close>
    invariant well_formed_pre :: "\<forall>cond \<in> set(map snd (pre_cond \<sigma>)). 
                                               iswff\<^sub>p\<^sub>r\<^sub>e (op_args_res \<sigma>) (cond)"
    invariant well_formed_post:: ...
