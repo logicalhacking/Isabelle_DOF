@@ -1176,24 +1176,27 @@ onto_class assoc_Method_Problem =
 section*[appl_certif::technical]\<open>Application: CENELEC Ontology\<close>
 text\<open>From its beginning, \<^dof> had been used for documents containing formal models targeting 
 certifications. A major case-study from the railways domain based on the CENELEC 50128 standard
-had been published earlier (cf. @{cite "DBLP:conf-ifm-BruckerW19"}) \<^footnote>\<open> Our CENELEC ontology in 
-\<^dof> can be found at \<^url>\<open>https://github.com/logicalhacking/Isabelle_DOF/blob/main/src/ontologies/CENELEC_50128/CENELEC_50128.thy\<close>.\<close>.
+had been published earlier (cf. @{cite "DBLP:conf-ifm-BruckerW19"}) 
+\<^footnote>\<open> Our CENELEC ontology in 
+\<^dof> can be found at 
+\<^url>\<open>https://github.com/logicalhacking/Isabelle_DOF/blob/main/src/ontologies/CENELEC_50128/CENELEC_50128.thy\<close>.\<close>.
 The CENELEC Standard comprises 18 different ``Design and Test Documents''; a fully fledged description of 
 our ontology covering these is therefore out of reach of this paper.
-Rather, we present how the novel concepts like invariants and term-antiquotations are used in 
+Rather, we present how the novel concepts such as invariants and term-antiquotations are used in 
 selected elements in this ontology.
 
 According to CENELEC Table C.1, for example, we specify the category of ``Design and Test Documents''
 as follows:
-@{theory_text [display] \<open>
+@{boxed_theory_text [display] \<open>
 doc_class cenelec_document = text_element +
    phase        :: phase
    written_by   :: role      \<comment> \<open>Annex C Table C.1 \<close>
-   fst_check    :: role      \<comment> \<open>Annex C Table C.1\<close>
-   snd_check    :: role      \<comment> \<open>Annex C Table C.1\<close>
+   fst_check    :: role      \<comment> \<open>Annex C Table C.1 \<close>
+   snd_check    :: role      \<comment> \<open>Annex C Table C.1 \<close>
    ... 
    invariant must_be_chapter :: "text_element.level \<sigma> = Some(0)"
-   invariant two_eyes_prcple :: "written_by \<sigma> \<noteq> fst_check \<sigma> \<and> written_by \<sigma> \<noteq> snd_check \<sigma>"
+   invariant two_eyes_prcple :: "written_by \<sigma> \<noteq> fst_check \<sigma> 
+                                 \<and> written_by \<sigma> \<noteq> snd_check \<sigma>"
 \<close>}
 This class refers to the ``software phases'' the standard postulates (like \<open>SPL\<close> for 
 ``Software Planning'' or \<open>SCDES\<close> for ``Software Component Design'') 
@@ -1205,35 +1208,45 @@ the textual structure of a chapter (the \<open>level\<close>-attribute is inheri
 ontology library specifying text-elements) as well as the two-eyes-principle between authors and
 checkers of this document.
 \<close>
-(*
-text\<open>The concrete instance of the  \<open>cenelec_document\<close>-class is the
-\<open>software_interface_specification\<close> (\<open>SWIS\<close> for short) as shown below,
-where the role attribution as done for this document type accordingly:
-@{theory_text [display] \<open>
-doc_class SWIS = cenelec_document +  \<comment> \<open>software_interface_specification\<close> 
-   phase        :: "phase"  <= "SCDES" 
-   written_by   :: "role"   <= "DES"
-   fst_check    :: "role"   <= "VER"
-   snd_check    :: "role"   <= "VAL"
+text\<open> The concrete instance of the  \<open>cenelec_document\<close> - class is the 
+\<open>software_interface_specification\<close> (\<open>SWIS\<close> for short) as shown below, 
+where the role assignment is done for this document type as follows: 
+@{boxed_theory_text [display] \<open>
+doc_class SWIS = cenelec_document + \<comment> \<open>software interface specification\<close> 
+   phase        :: "phase"  <= "SCDES"      written_by   :: "role"   <= "DES"
+   fst_check    :: "role"   <= "VER"        snd_check    :: "role"   <= "VAL"
    components   :: "SWIS_E list"
-\<close>}\<close>
-text\<open>
-While the structural constraints presented so far can in principle be covered by any 
-conventional validation process and the editing be supported by, \<^eg>, the Protégé editor 
-@{cite "protege"}, a closer look at the class \<open>SWIS_E\<close> (``software interface specification element'')
-referenced in the \<open>components\<close>-attribute reveals the unique power of \<^dof>: 
-@{theory_text [display] \<open>
+\<close>} 
+The structural constraints expressed so far can in principle be covered by any 
+conventional validation process and suitable editing support (\<^eg>,  Protégé @{cite "protege"}). 
+However, a closer look at the class \<open>SWIS_E\<close> (``software interface specification 
+element'') referenced in the \<open>components\<close>-attribute reveals the unique power of \<^dof>:
+@{boxed_theory_text [display] \<open>
 doc_class SWIS_E =
-   \<comment> \<open>input - output of an operation; alternatives could be channels or public global variables ...\<close>
    op_name           :: "string"
-   op_args_res       :: "(string \<times> typ) list \<times> typ"
-   pre_cond          :: "(string \<times> thm) list" \<comment> \<open>labels and predicates\<close>
-   post_cond         :: "(string \<times> thm) list" \<comment> \<open>labels and predicates\<close>
+   op_args_res       :: "(string \<times> typ) list \<times> typ" \<comment> \<open>args and result type\<close>
+   pre_cond          :: "(string \<times> thm) list"       \<comment> \<open>labels and predicates\<close>
+   post_cond         :: "(string \<times> thm) list"       \<comment> \<open>labels and predicates\<close>
+   invariant well_formed_pre :: "\<forall>cond \<in> set(map snd (pre_cond \<sigma>)). 
+                                              iswff\<^sub>p\<^sub>r\<^sub>e (op_args_res \<sigma>) (cond)"
+   invariant well_formed_post:: ...
 \<close>}
+where the constants \<open>iswff\<^sub>p\<^sub>r\<^sub>e\<close> is bound to a functions at the SML-level, that
+is executed during the evaluation phase of these invariants and that checks:
+\<^item> Any \<open>cond\<close> is indeed a valid definition in the global logical context of Isabelle/HOL
+  (taking HOL-libraries but also the concrete safety specification into account).
+\<^item> Any such definition has the syntactic form: \<open>pre_<name> (a\<^sub>1::\<tau>\<^sub>1) ... (a\<^sub>n::\<tau>\<^sub>n) \<equiv> <predicate>\<close>,
+  where the \<open>(a\<^sub>1::\<tau>\<^sub>1) ... (a\<^sub>n::\<tau>\<^sub>n)\<close> correspond to the argument list of the operation.
+\<^item> The case for the post-condition is treated analogously. \<close>
 
-
+text\<open>Note that this technique can also be applied to impose specific constraints on types in 
+Isabelle/HOL. For example, via the SI-package available in the Isabelle AFP
+\<^footnote>\<open>\<^url>\<open>https://www.isa-afp.org/entries/Physical_Quantities.html\<close>\<close>, it is possible to express
+that the result of some calculation is of type
+\<open>32 unsigned [m\<^sup>os\<^sup>-\<^sup>2]\<close>, so a 32-bit unsigned integer representing an acceleration in the SI-system.
+Therefore it is possible to impose that some values refer to physical dimensions
+measured in a concrete metrological system. 
 \<close>
-*)
 
 section*[concl::conclusion]\<open>Conclusion\<close>
 text\<open>We presented \<^dof>, an ontology framework 
