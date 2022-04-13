@@ -1177,7 +1177,7 @@ section*[appl_certif::technical]\<open>Application: CENELEC Ontology\<close>
 text\<open>From its beginning, \<^dof> had been used for documents containing formal models targeting 
 certifications. A major case-study from the railways domain based on the CENELEC 50128 standard
 had been published earlier (cf. @{cite "DBLP:conf-ifm-BruckerW19"}) 
-\<^footnote>\<open> Our CENELEC ontology in 
+\<^footnote>\<open>Our CENELEC ontology in 
 \<^dof> can be found at 
 \<^url>\<open>https://github.com/logicalhacking/Isabelle_DOF/blob/main/src/ontologies/CENELEC_50128/CENELEC_50128.thy\<close>.\<close>.
 The CENELEC Standard comprises 18 different ``Design and Test Documents''; a fully fledged description of 
@@ -1201,16 +1201,16 @@ doc_class cenelec_document = text_element +
 This class refers to the ``software phases'' the standard postulates (like \<open>SPL\<close> for 
 ``Software Planning'' or \<open>SCDES\<close> for ``Software Component Design'') 
 which we model by a corresponding enumeration types (not shown here).  
-Similarly, the standard postulates ``roles'' that certain specified teams in the overall process
+Similarly, the standard postulates ``roles'' that certain specified teams posses in the overall process
 (like \<open>VER\<close> for verification and \<open>VAL\<close> for validation). We added invariants that specify 
 certain constraints implicit in the standard: for example, a \<open>cenelec_document\<close> must have
 the textual structure of a chapter (the \<open>level\<close>-attribute is inherited from an underlying 
 ontology library specifying basic text-elements) as well as the two-eyes-principle between authors and
-checkers of this document.
+checkers of these chapters.
 \<close>
-text\<open> The concrete instance of the  \<open>cenelec_document\<close> - class is the 
-\<open>software_interface_specification\<close> (\<open>SWIS\<close> for short) as shown below, 
-where the role assignment is done for this document type as follows: 
+text\<open> The concrete sub-class of  \<open>cenelec_document\<close> is the 
+\<open>software_interface_specification\<close>-class (\<open>SWIS\<close> for short) as shown below, 
+which provides the role assignment required for this document type: 
 @{boxed_theory_text [display] \<open>
 doc_class SWIS = cenelec_document + \<comment> \<open>software interface specification\<close> 
    phase        :: "phase"  <= "SCDES"      written_by   :: "role"   <= "DES"
@@ -1218,7 +1218,7 @@ doc_class SWIS = cenelec_document + \<comment> \<open>software interface specifi
    components:: "SWIS_E list"
 \<close>} 
 The structural constraints expressed so far can in principle be covered by any 
-conventional validation process and suitable editing support (\<^eg>,  Protégé @{cite "protege"}). 
+hand-coded validation process and suitable editing support (\<^eg>,  Protégé @{cite "protege"}). 
 However, a closer look at the class \<open>SWIS_E\<close> (``software interface specification 
 element'') referenced in the \<open>components\<close>-attribute reveals the unique power of \<^dof>:
 @{boxed_theory_text [display] \<open>
@@ -1239,11 +1239,11 @@ is executed during the evaluation phase of these invariants and that checks:
   where the \<open>(a\<^sub>1::\<tau>\<^sub>1) ... (a\<^sub>n::\<tau>\<^sub>n)\<close> correspond to the argument list of the operation.
 \<^item> The case for the post-condition is treated analogously. \<close>
 
-text\<open>Note that this technique can also be applied to impose specific constraints on types in 
-Isabelle/HOL. For example, via the SI-package available in the Isabelle AFP
+text\<open>Note that this technique can also be applied to impose specific syntactic constraints on 
+HOL types. For example, via the SI-package available in the Isabelle AFP
 \<^footnote>\<open>\<^url>\<open>https://www.isa-afp.org/entries/Physical_Quantities.html\<close>\<close>, it is possible to express
 that the result of some calculation is of type
-\<open>32 unsigned [m\<^sup>os\<^sup>-\<^sup>2]\<close>, so a 32-bit unsigned integer representing an acceleration in the SI-system.
+\<open>32 unsigned [m\<^sup>os\<^sup>-\<^sup>2]\<close>, so a 32-bit natural representing an acceleration in the SI-system.
 Therefore it is possible to impose that some values refer to physical dimensions
 measured in a concrete metrological system. 
 \<close>
