@@ -513,11 +513,14 @@ section\<open> Design and Test Documents \<close>
 
 doc_class cenelec_document = text_element +
    phase        :: "phase"
-   level        :: "int option" <= "Some(-1)" \<comment> \<open>Must be a "chapter" in the overall document\<close>
+   level        :: "int option" <= "Some(0)" 
    written_by   :: role                       \<comment> \<open>Annex C Table C.1 \<close>
    fst_check    :: role                       \<comment> \<open>Annex C Table C.1\<close>
    snd_check    :: role                       \<comment> \<open>Annex C Table C.1\<close>
    is_concerned :: "role set" <= "UNIV" 
+   invariant must_be_chapter :: "text_element.level \<sigma> = Some(0)" 
+   invariant three_eyes_prcpl:: "  written_by \<sigma> \<noteq> fst_check \<sigma> 
+                                 \<and> written_by \<sigma> \<noteq> snd_check \<sigma>"
 text\<open>see Fig.3.\<close>
 
 

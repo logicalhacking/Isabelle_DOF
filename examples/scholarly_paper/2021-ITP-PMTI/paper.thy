@@ -1178,32 +1178,62 @@ text\<open>From its beginning, \<^dof> had been used for documents containing fo
 certifications. A major case-study from the railways domain based on the CENELEC 50128 standard
 had been published earlier (cf. @{cite "DBLP:conf-ifm-BruckerW19"}) \<^footnote>\<open> Our CENELEC ontology in 
 \<^dof> can be found at \<^url>\<open>https://github.com/logicalhacking/Isabelle_DOF/blob/main/src/ontologies/CENELEC_50128/CENELEC_50128.thy\<close>.\<close>.
-The CENELEC Standard comprises 18 ``Design and Test Documents''; a fully fledged description of 
+The CENELEC Standard comprises 18 different ``Design and Test Documents''; a fully fledged description of 
 our ontology covering these is therefore out of reach of this paper.
 Rather, we present how the novel concepts like invariants and term-antiquotations are used in 
 selected elements in this ontology.
 
+According to CENELEC Table C.1, for example, we specify the category of ``Design and Test Documents''
+as follows:
 @{theory_text [display] \<open>
-doc_class SWIS_component_element =
-   \<comment> \<open>channel, input - output of an operation, public global varianles ...\<close>
-   op_name           :: "string"
-   op_args_ty        :: "(string \<times> typ) list \<times> typ"
-   pre_cond          :: "(string \<times> thm) list" <= "[]" \<comment> \<open>labels and predicates\<close>
-   post_cond         :: "(string \<times> thm) list" <= "[]" \<comment> \<open>labels and predicates\<close>
-   type_synonym SWIS_CE = SWIS_component_element
-
-doc_class SWIS = cenelec_document + 
+doc_class cenelec_document = text_element +
+   phase        :: phase
+   written_by   :: role      \<comment> \<open>Annex C Table C.1 \<close>
+   fst_check    :: role      \<comment> \<open>Annex C Table C.1\<close>
+   snd_check    :: role      \<comment> \<open>Annex C Table C.1\<close>
+   ... 
+   invariant must_be_chapter :: "text_element.level \<sigma> = Some(0)"
+   invariant two_eyes_prcple :: "written_by \<sigma> \<noteq> fst_check \<sigma> \<and> written_by \<sigma> \<noteq> snd_check \<sigma>"
+\<close>}
+This class refers to the ``software phases'' the standard postulates (like \<open>SPL\<close> for 
+``Software Planning'' or \<open>SCDES\<close> for ``Software Component Design'') 
+which we model by a corresponding enumeration types (not shown here).  
+Similarly, the standard postulates ``roles'' that certain specified teams in the overall process
+(like \<open>VER\<close> for verification and \<open>VAL\<close> for validation). We added invariants that specify 
+certain constraints implicit in the standard: for example, a \<open>cenelec_document\<close> must have
+the textual structure of a chapter (the \<open>level\<close>-attribute is inherited from an underlying 
+ontology library specifying text-elements) as well as the two-eyes-principle between authors and
+checkers of this document.
+\<close>
+(*
+text\<open>The concrete instance of the  \<open>cenelec_document\<close>-class is the
+\<open>software_interface_specification\<close> (\<open>SWIS\<close> for short) as shown below,
+where the role attribution as done for this document type accordingly:
+@{theory_text [display] \<open>
+doc_class SWIS = cenelec_document +  \<comment> \<open>software_interface_specification\<close> 
    phase        :: "phase"  <= "SCDES" 
-   role         :: "role set"           \<comment> \<open>design team\<close>
-   written_by   :: "DES"                \<comment> \<open>design team\<close>
-   components  :: "SWIS_component_element list"
-   type_synonym software_interface_specification = SWIS
+   written_by   :: "role"   <= "DES"
+   fst_check    :: "role"   <= "VER"
+   snd_check    :: "role"   <= "VAL"
+   components   :: "SWIS_E list"
+\<close>}\<close>
+text\<open>
+While the structural constraints presented so far can in principle be covered by any 
+conventional validation process and the editing be supported by, \<^eg>, the Protégé editor 
+@{cite "protege"}, a closer look at the class \<open>SWIS_E\<close> (``software interface specification element'')
+referenced in the \<open>components\<close>-attribute reveals the unique power of \<^dof>: 
+@{theory_text [display] \<open>
+doc_class SWIS_E =
+   \<comment> \<open>input - output of an operation; alternatives could be channels or public global variables ...\<close>
+   op_name           :: "string"
+   op_args_res       :: "(string \<times> typ) list \<times> typ"
+   pre_cond          :: "(string \<times> thm) list" \<comment> \<open>labels and predicates\<close>
+   post_cond         :: "(string \<times> thm) list" \<comment> \<open>labels and predicates\<close>
 \<close>}
 
 
-
 \<close>
-
+*)
 
 section*[concl::conclusion]\<open>Conclusion\<close>
 text\<open>We presented \<^dof>, an ontology framework 
