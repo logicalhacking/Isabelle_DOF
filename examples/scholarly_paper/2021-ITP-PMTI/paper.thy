@@ -1237,39 +1237,37 @@ subsection*[rw::related_work]\<open>Related Work\<close>
 
 text\<open>There are a number of approaches to use ontologies for structuring the link between
 information and knowledge, and to make it amenable to 
- ``semantic'' search in or consistency checking of documents:
+ ``semantic'' search in or consistency checking of documents.
+Some are targeting mathematical libraries:
 
-\<^item> The search engine \<^url>\<open>http://shinh.org/wfs\<close> uses a quite brute-force, 
-  but practical approach. It is getting its raw-data from Wikipedia and PlanetMath 
-  and similar sites, and uses clever text-based search methods in 
+\<^item> The search engine \<^url>\<open>http://shinh.org/wfs\<close> uses clever text-based search methods in 
   a large number of formulas, agnostic of their logical context, and of formal proof.
 
-\<^item> The OAF project @{cite "KohlhaseR21"} comes closest to our ideal of wide-spread
-  use of ontologies for search in mathematical libraries.
-  The project developed a common ontological format, called  OMDoc/MMT, and 
-  developed six \<^emph>\<open>export\<close> functions from major ITP systems into it. The more difficult task to 
-  develop \<^emph>\<open>import\<close> functions has not been addressed, not to mention the construction
-  of imported proofs in a native tactic proof format. Rather, the emphasis was put on building
+\<^item> The OAF project @{cite "KohlhaseR21"}
+  developed a common ontological format, called  OMDoc/MMT, and 
+  developed six \<^emph>\<open>export\<close> functions from major ITP systems into it.
+  The emphasis was put on building
   a server infrastructure based on conventional, rather heavy-weight database and OWL technology.
-  Our approach targets so far only one ITP system and its libraries, and emphasizes 
-  type-safeness, expressive power and ``depth'' of meta-data, which is adapted
-  to the specific needs of ITP systems and theory developments.
 
-\<^item> There are meanwhile a number of proposals of ontologies targeting mathematics: 
+\<^item> There are meanwhile a number of proposals of ontologies targeting mathematics:
   \<^item>  OntoMath\textsuperscript{PRO} @{cite "Nevzorova2014OntoMathPO"} proposes a 
      ``taxonomy of the fields of mathematics'' (pp 110). In total, 
-     OntoMath\textsuperscript{PRO} contains the daunting number of 3,449 classes, which is in part due to 
+     OntoMath\textsuperscript{PRO} contains the daunting number of 3,449 classes,
+     which is in part due to 
      the need to compensate the lack of general datatype definition methods for meta-data.
-     It is inspired from a translation of the Russian Federal Standard for Higher Education 
-     on mathematics for master students,
-     which makes it nevertheless an interesting starting point for a future development
-     of a mathematics ontology in the \<^dof> framework.
   \<^item> Other ontologies worth mentioning are DBpedia @{cite "10.1007/978-3-540-76298-0_52"}, 
     which provides with the \<^emph>\<open>SPARQL endpoint\<close>  \<^url>\<open>http://dbpedia.org/sparql\<close> a search engine, 
     and the more general ScienceWISE \<^footnote>\<open>\<^url>\<open>http://sciencewise.info/ontology/\<close>.\<close>
     that allows users to introduce their own category concepts. 
-    Both suffer from the lack of deeper meta-data modeling, and the latter is still at the beginning 
-    (ScienceWISE marks the Mathematics part as ``under construction'').
+
+
+  Our approach emphasizes type-safeness, expressive power and ``depth'' of meta-data,
+  which is adapted to the specific needs of ITP systems and theory developments.
+  It is a concrete proposal for the ITP community allowing
+  a deeper structuring of mathematical libraries
+  such as the Isabelle Archive of Formal Proofs (AFP)~@{cite "AFP-ref22"}
+  which passed the impressive numbers of 650 articles, 
+  written by 420 authors at the beginning of 2022.
 
 %   \<^url>\<open>https://github.com/CLLKazan/OntoMathPro\<close> 
 %
