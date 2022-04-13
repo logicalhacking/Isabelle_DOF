@@ -154,7 +154,7 @@ the following is needed: \<^vs>\<open>0.2cm\<close>
 
 text\<open>  \<^vs>\<open>-0.2cm\<close>
 Recently, \<^dof> @{cite "brucker.ea:isabelledof:2019" and "brucker.ea:isabelle-ontologies:2018"}
-\<^footnote>\<open>The official releases are available at \<^url>\<open>https://zenodo.org/record/3370483#.YfWg6S-B1qt\<close>, the
+\<^footnote>\<open>The official releases are available at \<^url>\<open>https://zenodo.org/record/6385695\<close>, the
   developer version at \<^url>\<open>https://github.com/logicalhacking/Isabelle_DOF\<close>.\<close> 
 has been designed as an Isabelle component that attempts to answer these needs. 
  \<^dof> generates from  ontology definitions directly integrated into Isabelle theories
@@ -226,7 +226,7 @@ and typed reference mechanisms inside text- and ML-contexts.
 *)
 
 text\<open>As novel contribution, this work extends prior versions of \<^dof> by 
-\<^enum> support of antiquotions in a new class of contexts, namely \<^emph>\<open>term contexts\<close> 
+\<^enum> support of antiquotations in a new class of contexts, namely \<^emph>\<open>term contexts\<close> 
   (rather than SML code or semi-formal text). Thus, annotations generated
   from  \<^dof> may also occur in \<open>\<lambda>\<close>-terms used to denote meta-data. 
 \<^enum> formal, machine-checked invariants on meta-data, which correspond to the concept of 
@@ -392,34 +392,19 @@ record T =
 term "\<lparr>x = a,y = b\<rparr>"
 (*>*)
 
-subsection\<open>Meta-Objects as Extensible Records\<close>
-(* too fat ? what do we need of this ? *)
 text\<open>
-\<^isabelle> supports both fixed and schematic records at the level of terms and 
+\<^isabelle> supports records at the level of terms and 
 types. The notation for terms and types is as follows:
-\<^item> fixed record terms     \<^term>\<open>\<lparr>x = a,y = b\<rparr>\<close>; fixed record types \<open>\<lparr>x::A, y::B\<rparr>\<close>,
-\<^item> schematic record terms \<^term>\<open>\<lparr>x = a,y = b, \<dots> = m::'a\<rparr>\<close>;
-  schematic record types: \<open>\<lparr>x::A, y::B, \<dots> = 'a\<rparr>\<close> which were usually abbreviated
-  to \<^typ>\<open>'a T_scheme\<close>,
-\<^item> selectors are written \<^term>\<open>x(R::'a T_scheme)\<close>, \<^term>\<open>y(R::'a T_scheme)\<close>, and
-\<^item> updates were denoted \<^theory_text>\<open>r\<lparr>x := a\<rparr>\<lparr>y := b\<rparr>\<close> or just \<^term>\<open>r\<lparr>x:=a, y:=b\<rparr>\<close>.
-\<close>
-
-text\<open> ... where the so-called more-field \<open>\<dots>\<close> is used to ``fill-in'' record-extensions.
-Schematic record types @{cite "naraschewski1998object"} allow for simulating object-oriented features such as 
-(single-)inheritance while maintaining a compositional style of verification: 
-it is possible to prove a property \<^term>\<open>P (a::'a T_scheme)\<close>
-which will remain true for all extensions (which are just instances of the
-\<^typ>\<open>'a T_scheme\<close>-type). 
-
+\<^item> record terms \<^term>\<open>\<lparr>x = a,y = b\<rparr>\<close>; record types \<open>\<lparr>x::A, y::B\<rparr>\<close>,
+\<^item> selectors are written \<^term>\<open>x(R::T)\<close>, \<^term>\<open>y(R::T)\<close>.
 \<close>
 
 text\<open>In \<^dof>, \<^verbatim>\<open>onto_class\<close>es and the logically equivalent  \<^verbatim>\<open>doc_class\<close>es were
-represented by schematic record types and instances thereof by schematic terms. 
-Invariants of an \<^verbatim>\<open>onto_class\<close> are thus predicates over schematic record
-types and can therefore be inherited in a subclass. \<^dof> handles the parametric  
-polymorphism implicitly. 
+represented by record types and instances thereof by terms. 
+Invariants of an \<^verbatim>\<open>onto_class\<close> are thus predicates over record
+types and can therefore be inherited in a subclass.
 \<close>
+
 
 subsection\<open>Advanced Evaluation in Isabelle\<close>
 text\<open>Besides the powerful, but relatively slow rewriting-based proof method 
@@ -812,30 +797,30 @@ onto_class Computer_Hardware = Product +
   composed_of :: "Product list" 
   invariant c2 :: "Product.mass \<sigma> = sum(map Product.mass (composed_of \<sigma>))"
 
-definition Item_to_Resource_morphism :: "'a Item_scheme \<Rightarrow> Resource" 
+definition Item_to_Resource_morphism :: "Item \<Rightarrow> Resource" 
            ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
   where    "\<sigma> \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m =  \<lparr>  Resource.tag_attribute = 0::int , 
                                  Resource.name = name \<sigma> \<rparr>" 
-  
-definition Product_to_Component_morphism :: "'a Product_scheme \<Rightarrow> Component"
+
+definition Product_to_Component_morphism :: "Product \<Rightarrow> Component"
            ("_ \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t" [1000]999)
   where "  \<sigma> \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t = \<lparr> Resource.tag_attribute = 1::int ,
                                  Resource.name = name \<sigma> ,
-                                 Electronic.provider  = Product.provider \<sigma> ,
+                                 Electronic.provider  = provider \<sigma> ,
                                  Electronic.manufacturer  = ''no manufacturer'' ,
-                                 Component.mass = Product.mass \<sigma> ,
+                                 Component.mass = mass \<sigma> ,
                                  Component.dimensions = [] \<rparr>" 
 
-definition Computer_Hardware_to_Hardware_morphism :: "'a Computer_Hardware_scheme \<Rightarrow> Hardware"
+definition Computer_Hardware_to_Hardware_morphism :: "Computer_Hardware \<Rightarrow> Hardware"
            ("_ \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e" [1000]999)
            where "\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e =
                   \<lparr>  Resource.tag_attribute = 2::int ,
                      Resource.name = name \<sigma> ,
                      Informatic.description = ''no description'', 
-                     Hardware.type = Computer_Hardware.type \<sigma> ,
+                     Hardware.type = type \<sigma> ,
                      Hardware.mass = mass \<sigma> ,
                      Hardware.composed_of = map Product_to_Component_morphism 
-                                                (Computer_Hardware.composed_of \<sigma>)
+                                                (composed_of \<sigma>)
                    \<rparr>" 
 
 lemma inv_c2_preserved :
@@ -942,32 +927,31 @@ text\<open>
 @{boxed_theory_text [display]
 \<open>
 
-definition Item_to_Resource_morphism :: "'a Item_scheme \<Rightarrow> Resource" 
+definition Item_to_Resource_morphism :: "Item \<Rightarrow> Resource" 
            ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
   where    "\<sigma> \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m =  \<lparr>  Resource.tag_attribute = 0::int , 
                                  Resource.name = name \<sigma> \<rparr>" 
-  
-definition Product_to_Component_morphism :: "'a Product_scheme \<Rightarrow> Component"
+
+definition Product_to_Component_morphism :: "Product \<Rightarrow> Component"
            ("_ \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t" [1000]999)
   where "  \<sigma> \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t = \<lparr> Resource.tag_attribute = 1::int ,
                                  Resource.name = name \<sigma> ,
-                                 Electronic.provider  = Product.provider \<sigma> ,
-                                 Electronic.manufacturer  = '''' ,
-                                 Component.mass = Product.mass \<sigma> ,
+                                 Electronic.provider  = provider \<sigma> ,
+                                 Electronic.manufacturer  = ''no manufacturer'' ,
+                                 Component.mass = mass \<sigma> ,
                                  Component.dimensions = [] \<rparr>" 
 
 definition Computer_Hardware_to_Hardware_morphism ::
-             "'a Computer_Hardware_scheme \<Rightarrow> Hardware"
-             ("_ \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e" [1000]999)
+            "Computer_Hardware \<Rightarrow> Hardware"
+           ("_ \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e" [1000]999)
            where "\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e =
                   \<lparr>  Resource.tag_attribute = 2::int ,
                      Resource.name = name \<sigma> ,
                      Informatic.description = ''no description'', 
-                     Hardware.type = Computer_Hardware.type \<sigma> ,
+                     Hardware.type = type \<sigma> ,
                      Hardware.mass = mass \<sigma> ,
-                     Hardware.composed_of =
-                                      map Product_to_Component_morphism 
-                                          (Computer_Hardware.composed_of \<sigma>) \<rparr>"\<close>}
+                     Hardware.composed_of = map Product_to_Component_morphism 
+                                                (composed_of \<sigma>) \<rparr>"\<close>}
 \caption{An extract of a mapping definition.}
 
 \label{fig-mapping-example}
