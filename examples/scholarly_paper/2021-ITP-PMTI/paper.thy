@@ -406,15 +406,22 @@ types and can therefore be inherited in a subclass.
 \<close>
 
 
-subsection\<open>Advanced Evaluation in Isabelle\<close>
-text\<open>Besides the powerful, but relatively slow rewriting-based proof method 
-\<^theory_text>\<open>simp\<close>, there are basically two other techniques for the evaluation of terms:
-\<^item> evaluation via reflection into SML (\<^theory_text>\<open>eval\<close>), and
+subsection\<open>Term-Evaluations in Isabelle\<close>
+text\<open>Besides the powerful, but relatively slow Isabelle rewriting-based proof method,
+ there are  two other techniques for term evaluation:
+\<^item> evaluation via reflection @{cite "HaftmannN10"} (\<^theory_text>\<open>eval\<close>), and
 \<^item> normalization by evaluation @{cite "AehligHN12"} (\<^theory_text>\<open>nbe\<close>).\<close>
 
+text\<open> \<^noindent>  The former is based on a nearly one-to-one compilation of HOL-level datatype specifications 
+and function definitions into SML datatypes and functions.
+The latter technique --- enabling free variables in terms --- uses a generic data-universe
+enriched by explicit variables. Both techniques are several orders of magnitude more efficient 
+than standard rewriting. \<^dof> uses both to generate code that evaluates invariant and data-integrity 
+checks on-the-fly during editing. For all examples in our library, this form of runtime-testing
+ is sufficiently fast to remain unnoticed by the user.
+\<close>
+(*
 text\<open>
-The former is based on a nearly one-to-one compilation of datatype specification 
-constructs and recursive  function definitions into SML datatypes and functions.
 The generated code is directly compiled by the underlying SML compiler of the 
 Isabelle platform. This way, pattern-matching becomes natively compiled rather
 than interpreted as in the matching process of \<^theory_text>\<open>simp\<close>. @{cite "AehligHN12"} 
@@ -433,7 +440,7 @@ for ontological classes on the fly during editing, paving the way for both
 a uniform specification language of ontological data --- namely \<^hol> --- as
 well as the possibility to \<^emph>\<open>prove\<close> properties over and relations between
 classes.\<close>
-
+*)
 
 section*[invariants::technical,main_author="Some(@{docitem ''nic''}::author)"] 
 \<open>Term-Context Support, Invariants and Queries in DOF\<close>
