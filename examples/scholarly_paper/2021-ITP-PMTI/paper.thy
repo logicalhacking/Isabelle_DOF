@@ -399,10 +399,10 @@ types. The notation for terms and types is as follows:
 \<^item> selectors are written \<^term>\<open>x(R::T)\<close>, \<^term>\<open>y(R::T)\<close>.
 \<close>
 
-text\<open>In \<^dof>, \<^verbatim>\<open>onto_class\<close>es and the logically equivalent  \<^verbatim>\<open>doc_class\<close>es were
-represented by record types and instances thereof by terms. 
-Invariants of an \<^verbatim>\<open>onto_class\<close> are thus predicates over record
-types and can therefore be inherited in a subclass.
+text\<open>  \<^noindent> In fact, \<^verbatim>\<open>onto_class\<close>es and the logically equivalent  \<^verbatim>\<open>doc_class\<close>es were
+represented by \<^emph>\<open>extensible\<close> record types and instances thereof by HOL terms. 
+Invariants of an \<^verbatim>\<open>onto_class\<close> are just predicates over extensible record
+types and can therefore be applied to a subclass; Details can be found in @{cite"brucker.ea:isabelledof:2019"}.  
 \<close>
 
 
@@ -414,8 +414,8 @@ text\<open>Besides the powerful, but relatively slow Isabelle rewriting-based pr
 
 text\<open> \<^noindent>  The former is based on a nearly one-to-one compilation of HOL-level datatype specifications 
 and function definitions into SML datatypes and functions.
-The latter technique --- enabling free variables in terms --- uses a generic data-universe
-enriched by explicit variables. Both techniques are several orders of magnitude more efficient 
+The latter technique --- allowing for free variables in terms --- uses a generic data-universe
+enriched by explicit variables. Both techniques are several orders of magnitude faster 
 than standard rewriting. \<^dof> uses both to generate code that evaluates invariant and data-integrity 
 checks on-the-fly during editing. For all examples in our library, this form of runtime-testing
  is sufficiently fast to remain unnoticed by the user.
