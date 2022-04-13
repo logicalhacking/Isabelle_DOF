@@ -1187,12 +1187,9 @@ selected elements in this ontology.
 doc_class SWIS_component_element =
    \<comment> \<open>channel, input - output of an operation, public global varianles ...\<close>
    op_name           :: "string"
-   op_args_ty        :: "(string \<times> typ) list"
-   op_res_ty         :: "typ list"
-   op_exn_ty         :: "(string \<times> typ) list"
-   pre_cond          :: "thm list" <= "[]"
-   post_cond         :: "thm list" <= "[]"
-   boundary_pre_cond :: "thm list" <= "[]"
+   op_args_ty        :: "(string \<times> typ) list \<times> typ"
+   pre_cond          :: "(string \<times> thm) list" <= "[]" \<comment> \<open>labels and predicates\<close>
+   post_cond         :: "(string \<times> thm) list" <= "[]" \<comment> \<open>labels and predicates\<close>
    type_synonym SWIS_CE = SWIS_component_element
 
 doc_class SWIS = cenelec_document + 
@@ -1202,6 +1199,7 @@ doc_class SWIS = cenelec_document +
    components  :: "SWIS_component_element list"
    type_synonym software_interface_specification = SWIS
 \<close>}
+
 
 
 \<close>

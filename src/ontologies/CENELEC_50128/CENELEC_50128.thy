@@ -278,30 +278,30 @@ text\<open>Representing chapter 5 in @{cite "bsi:50128:2014"}.\<close>
 section\<open>Organization, Roles and Responsabilities\<close>
 text\<open>see also section \<^emph>\<open>Software management and organization\<close>.\<close>
 
-datatype role =  PM  (* Program Manager *) 
-              |  RQM (* Requirements Manager *)
-              |  DES (* Designer *)
-              |  IMP (* Implementer *)
-              |  ASR (* Assessor *)
-              |  INT (* Integrator *)
-              |  TST (* Tester *)
-              |  VER (* Verifier *)
-              |  VnV (* Verification and Validation *)
-              |  VAL (* Validator *)
+datatype role =  PM     \<comment> \<open>Program Manager\<close>
+              |  RQM    \<comment> \<open>Requirements Manager\<close> 
+              |  DES    \<comment> \<open>Designer\<close>
+              |  IMP    \<comment> \<open>Implementer\<close> 
+              |  ASR    \<comment> \<open>Assessor\<close> 
+              |  INT    \<comment> \<open>Integrator\<close> 
+              |  TST    \<comment> \<open>Tester\<close>
+              |  VER    \<comment> \<open>Verifier\<close>
+              |  VnV    \<comment> \<open>Verification and Validation\<close>
+              |  VAL    \<comment> \<open>Validator\<close>
 
 
 
-datatype phase = SYSDEV_ext (* System Development Phase (external) *) 
-               | SPl   (* Software Planning *)
-               | SR    (* Software Requirement      *) 
-               | SA    (* Software Architecture     *)
-               | SDES  (* Software Design           *)
-               | SCDES (* Software Component Design *)
-               | CInT  (* Component Implementation and Testing *)
-               | SI    (* Software Integration      *)
-               | SV    (* Software Validation       *)
-               | SD    (* Software Deployment       *)
-               | SM    (* Software Maintenance      *)
+datatype phase = SYSDEV_ext \<comment> \<open> System Development Phase (external)\<close>  
+               | SPl   \<comment> \<open>Software Planning\<close>
+               | SR    \<comment> \<open>Software Requirement\<close> 
+               | SA    \<comment> \<open>Software Architecture\<close>
+               | SDES  \<comment> \<open>Software Design\<close>
+               | SCDES \<comment> \<open>Software Component Design\<close> 
+               | CInT  \<comment> \<open>Component Implementation and Testing\<close>
+               | SI    \<comment> \<open>Software Integration\<close>
+               | SV    \<comment> \<open>Software Validation\<close>
+               | SD    \<comment> \<open>Software Deployment\<close>
+               | SM    \<comment> \<open>Software Maintenance\<close>
 
 abbreviation software_requirement      :: "phase" where "software_requirement  \<equiv> SR"
 abbreviation software_architecture     :: "phase" where "software_architecture \<equiv> SA"
@@ -562,21 +562,20 @@ doc_class SWDS = cenelec_document +
    phase        :: "phase"  <= "SD" 
    type_synonym software_design_specification = SWDS
 
-doc_class SWIS_component_element =
-   \<comment> \<open>channel, input - output of an operation, public global varianles ...\<close>
+doc_class SWIS_CE =
+   \<comment> \<open>channel, input - output of an operation, public global variables ...\<close>
    op_name           :: "string"
-   op_args_ty        :: "(string \<times> typ) list"
-   op_res_ty         :: "typ list"
+   op_args_ty        :: "(string \<times> typ) list \<times> typ"
    op_exn_ty         :: "(string \<times> typ) list"
    pre_cond          :: "thm list" <= "[]"
    post_cond         :: "thm list" <= "[]"
    boundary_pre_cond :: "thm list" <= "[]"
-   type_synonym SWIS_CE = SWIS_component_element
+   type_synonym software_interface_specification_component = SWIS_CE
 
 
 doc_class SWIS = cenelec_document + 
    phase        :: "phase"  <= "SCDES" 
-   components  :: "SWIS_component_element list"
+   components  :: "SWIS_CE list"
    type_synonym software_interface_specification = SWIS
 
 doc_class SWITS = cenelec_document + 
@@ -770,12 +769,15 @@ doc_class test_documentation =
 
 section\<open>Global Documentation Structure\<close>
 
-doc_class documentation_structure = text_element +
-   level :: "int option" <= "Some(-1::int)" 
-   accepts "SYSREQS  ~~  \<comment> \<open>system_requirements_specification\<close>
-            SYSSREQS ~~  \<comment> \<open>system_safety_requirements_specification\<close> 
-            SYSAD ~~     \<comment> \<open>system_architecture description\<close>
-            SYSS_pl      \<comment> \<open>system safety plan\<close>   "
+doc_class global_documentation_structure = text_element +
+   level :: "int option" <= "Some(-1::int)"  \<comment> \<open>document must be a chapter\<close>
+   accepts "SYSREQS      ~~                  \<comment> \<open>system_requirements_specification\<close>
+            SYSSREQS     ~~                  \<comment> \<open>system_safety_requirements_specification\<close> 
+            SYSAD        ~~                  \<comment> \<open>system_architecture description\<close>
+            SYSS_pl      ~~                  \<comment> \<open>system safety plan\<close> 
+            (SWRS || SWTS)  "                \<comment> \<open>software requirements specification OR
+                                                 overall software test specification\<close> 
+(* MORE TO COME : *)
 
 section\<open> META : Testing and Validation \<close>
 
