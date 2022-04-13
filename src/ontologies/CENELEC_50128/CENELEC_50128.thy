@@ -513,8 +513,10 @@ section\<open> Design and Test Documents \<close>
 
 doc_class cenelec_document = text_element +
    phase        :: "phase"
-   level        :: "int option" <= "Some(-1)" \<comment> \<open>Must be a "chapter" in the 
-                                                 overall document\<close>
+   level        :: "int option" <= "Some(-1)" \<comment> \<open>Must be a "chapter" in the overall document\<close>
+   written_by   :: role                       \<comment> \<open>Annex C Table C.1 \<close>
+   fst_check    :: role                       \<comment> \<open>Annex C Table C.1\<close>
+   snd_check    :: role                       \<comment> \<open>Annex C Table C.1\<close>
    is_concerned :: "role set" <= "UNIV" 
 text\<open>see Fig.3.\<close>
 
@@ -562,20 +564,23 @@ doc_class SWDS = cenelec_document +
    phase        :: "phase"  <= "SD" 
    type_synonym software_design_specification = SWDS
 
-doc_class SWIS_CE =
-   \<comment> \<open>channel, input - output of an operation, public global variables ...\<close>
+doc_class SWIS_E =
+   \<comment> \<open>input - output of an operation; alternatives could be channels or public global variables ...\<close>
    op_name           :: "string"
    op_args_ty        :: "(string \<times> typ) list \<times> typ"
-   op_exn_ty         :: "(string \<times> typ) list"
-   pre_cond          :: "thm list" <= "[]"
-   post_cond         :: "thm list" <= "[]"
+   raises_exn        :: "(string \<times> typ) list"         \<comment> \<open>exn name and value\<close>
+   pre_cond          :: "(string \<times> thm) list" <= "[]" \<comment> \<open>labels and predicates\<close>
+   post_cond         :: "(string \<times> thm) list" <= "[]" \<comment> \<open>labels and predicates\<close>
    boundary_pre_cond :: "thm list" <= "[]"
-   type_synonym software_interface_specification_component = SWIS_CE
+   type_synonym software_interface_specification_element = SWIS_E
 
 
 doc_class SWIS = cenelec_document + 
    phase        :: "phase"  <= "SCDES" 
-   components  :: "SWIS_CE list"
+   written_by   :: "role"  <= "DES"
+   fst_check    :: "role"  <= "VER"
+   snd_check    :: "role"  <= "VAL"
+   components   :: "SWIS_E list"
    type_synonym software_interface_specification = SWIS
 
 doc_class SWITS = cenelec_document + 
@@ -758,7 +763,7 @@ doc_class test_requirement = test_item +
 doc_class test_adm_role = test_item +
              name :: string
 
-doc_class test_documentation = 
+doc_class test_documentation =    (* OUTDATED ? *)
              no :: "nat"
              accepts "test_specification ~~ 
                       \<lbrace>test_case~~test_result\<rbrace>\<^sup>+ ~~ 
