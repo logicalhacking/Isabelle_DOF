@@ -989,13 +989,13 @@ text\<open>
   unfolding c1_inv_def c2_inv_def 
             Computer_Hardware_to_Hardware_morphism_def 
             Product_to_Component_morphism_def  
-  using comp_def by (auto)
+  using comp_def by auto
 
-lemma Computer_Hardware_to_Hardware_morphism_total :
- "Computer_Hardware_to_Hardware_morphism ` ({X::Computer_Hardware. c2_inv X}) 
-    \<subseteq> ({X::Hardware. c1_inv X})"
+lemma Computer_Hardware_to_Hardware_total :
+         "Computer_Hardware_to_Hardware_morphism ` ({X. c2_inv X}) 
+      \<subseteq> ({X::Hardware. c1_inv X})"
   using inv_c2_preserved by auto\<close>}
-\caption{Proofs establishing the Invariant Preservation.}
+\caption{Proofs establishing an Invariant Preservation.}
 \label{fig-xxx}
 \end{figure}
 \<close>
@@ -1233,10 +1233,13 @@ doc_class SWIS_E =
 \<close>}
 where the constants \<open>iswff\<^sub>p\<^sub>r\<^sub>e\<close> is bound to a functions at the SML-level, that
 is executed during the evaluation phase of these invariants and that checks:
-\<^item> Any \<open>cond\<close> is indeed a valid definition in the global logical context of Isabelle/HOL
-  (taking HOL-libraries but also the concrete safety specification into account).
-\<^item> Any such definition has the syntactic form: \<open>pre_<name> (a\<^sub>1::\<tau>\<^sub>1) ... (a\<^sub>n::\<tau>\<^sub>n) \<equiv> <predicate>\<close>,
-  where the \<open>(a\<^sub>1::\<tau>\<^sub>1) ... (a\<^sub>n::\<tau>\<^sub>n)\<close> correspond to the argument list of the operation.
+\<^item> Any \<open>cond\<close> is indeed a valid definition in the global logical context
+  (taking HOL-libraries but also the concrete certification target model into account).
+\<^item> Any such definition has the syntactic form:
+  \<^vs>\<open>-0.3cm\<close>
+  @{cartouche [display,indent=10,margin=70] \<open>pre_<op_name> (a\<^sub>1::\<tau>\<^sub>1) ... (a\<^sub>n::\<tau>\<^sub>n) \<equiv> <predicate>,\<close>}
+  \<^vs>\<open>-0.3cm\<close>
+  where the \<open>(a\<^sub>1::\<tau>\<^sub>1) ... (a\<^sub>n::\<tau>\<^sub>n)\<close> correspond to the argument list.
 \<^item> The case for the post-condition is treated analogously. \<close>
 
 text\<open>Note that this technique can also be applied to impose specific syntactic constraints on 
@@ -1244,7 +1247,7 @@ HOL types. For example, via the SI-package available in the Isabelle AFP
 \<^footnote>\<open>\<^url>\<open>https://www.isa-afp.org/entries/Physical_Quantities.html\<close>\<close>, it is possible to express
 that the result of some calculation is of type
 \<open>32 unsigned [m\<^sup>os\<^sup>-\<^sup>2]\<close>, so a 32-bit natural representing an acceleration in the SI-system.
-Therefore it is possible to impose that some values refer to physical dimensions
+Therefore it is possible to impose that certain values refer to physical dimensions
 measured in a concrete metrological system. 
 \<close>
 
