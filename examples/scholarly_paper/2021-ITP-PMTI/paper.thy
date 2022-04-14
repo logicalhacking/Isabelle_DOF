@@ -80,19 +80,18 @@ setup\<open>(* std_text_antiquotation        \<^binding>\<open>my_text\<close> #
 
 title*[tit::title]\<open>A Framework for Proving Ontology-Relations and Runtime Testing Ontology Instances\<close>
 
-
 text*[idir::author,
         email       ="\<open>idir.aitsadoune@centralesupelec.fr\<close>",
         orcid       ="''0000-0002-6484-8276''",
-        affiliation ="\<open>LMF, CentraleSupélec, Université Paris-Saclay, Paris, France\<close>"]\<open>Idir Ait-Sadoune\<close>
+        affiliation ="\<open>Université Paris-Saclay, CentraleSupélec, LMF, France\<close>"]\<open>Idir Ait-Sadoune\<close>
 
 text*[nic::author,
         email       ="\<open>nicolas.meric@universite-paris-saclay.fr\<close>",
         orcid       ="''0000-0002-0756-7072''",
-        affiliation ="\<open>LMF, Université Paris-Saclay, Paris, France\<close>"]\<open>Nicolas Méric\<close>
+        affiliation ="\<open>Université Paris-Saclay, LMF, France\<close>"]\<open>Nicolas Méric\<close>
 text*[bu::author,
         email       ="\<open>wolff@universite-paris-saclay.fr\<close>",
-        affiliation = "\<open>LMF, Université Paris-Saclay, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
+        affiliation = "\<open>Université Paris-Saclay, LMF, France\<close>"]\<open>Burkhart Wolff\<close>
            
 text*[abs::abstract, 
       keywordlist="[\<open>Ontologies\<close>,\<open>Formal Documents\<close>,\<open>Formal Development\<close>,\<open>Isabelle/HOL\<close>,\<open>Ontology Mapping\<close>,\<open>Certification\<close>]"]
@@ -1198,7 +1197,7 @@ doc_class cenelec_document = text_element +
    invariant two_eyes_prcple :: "written_by \<sigma> \<noteq> fst_check \<sigma> 
                                      \<and> written_by \<sigma> \<noteq> snd_check \<sigma>"
 \<close>}
-This class refers to the ``software phases'' the standard postulates (like \<open>SPL\<close> for 
+This class refers to the ``software phases'' the standard postulates (like \<open>SPl\<close> for 
 ``Software Planning'' or \<open>SCDES\<close> for ``Software Component Design'') 
 which we model by a corresponding enumeration types (not shown here).  
 Similarly, the standard postulates ``roles'' that certain specified teams posses in the overall process
@@ -1220,7 +1219,8 @@ doc_class SWIS = cenelec_document + \<comment> \<open>software interface specifi
 The structural constraints expressed so far can in principle be covered by any 
 hand-coded validation process and suitable editing support (\<^eg>,  Protégé @{cite "protege"}). 
 However, a closer look at the class \<open>SWIS_E\<close> (``software interface specification 
-element'') referenced in the \<open>components\<close>-attribute reveals the unique power of \<^dof>:
+element'') referenced in the \<open>components\<close>-attribute reveals the unique power of \<^dof>;
+rather than saying ``there must be a pre-condition'', \<^dof> can be far more precise:
 @{boxed_theory_text [display] \<open>
 doc_class SWIS_E =
    op_name          :: "string"
@@ -1242,11 +1242,11 @@ is executed during the evaluation phase of these invariants and that checks:
   where the \<open>(a\<^sub>1::\<tau>\<^sub>1) ... (a\<^sub>n::\<tau>\<^sub>n)\<close> correspond to the argument list.
 \<^item> The case for the post-condition is treated analogously. \<close>
 
-text\<open>Note that this technique can also be applied to impose specific syntactic constraints on 
+text\<open>Note that this technique can also be applied to impose specific syntactic constraints on
 HOL types. For example, via the SI-package available in the Isabelle AFP
 \<^footnote>\<open>\<^url>\<open>https://www.isa-afp.org/entries/Physical_Quantities.html\<close>\<close>, it is possible to express
 that the result of some calculation is of type
-\<open>32 unsigned [m\<^sup>os\<^sup>-\<^sup>2]\<close>, so a 32-bit natural representing an acceleration in the SI-system.
+\<open>32 unsigned [m\<^sup>\<cdot>s\<^sup>-\<^sup>2]\<close>, so a 32-bit natural representing an acceleration in the SI-system.
 Therefore it is possible to impose that certain values refer to physical dimensions
 measured in a concrete metrological system. 
 \<close>
