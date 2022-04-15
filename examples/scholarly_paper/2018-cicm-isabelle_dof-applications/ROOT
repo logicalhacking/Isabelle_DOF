@@ -6,6 +6,7 @@ session "2018-cicm-isabelle_dof-applications" = "Isabelle_DOF" +
   document_files
     "isadof.cfg"
     "root.bib"
+    "authorarchive.sty"
     "preamble.tex"
     "lstisadof.sty"
     "figures/isabelle-architecture.pdf"
