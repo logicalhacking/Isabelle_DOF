@@ -15,8 +15,7 @@ theory
   AssnsLemmaThmEtc
 imports 
   "Isabelle_DOF.Conceptual"  
-  "Isabelle_DOF.math_paper"
-  "Isabelle_DOF.scholarly_paper" (* for assert notation *)
+  "Isabelle_DOF.scholarly_paper"
 begin
 
 section\<open>Elementary Creation of Doc-items and Access of their Attibutes\<close>
