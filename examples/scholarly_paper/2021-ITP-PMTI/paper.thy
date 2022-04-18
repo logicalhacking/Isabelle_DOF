@@ -1251,33 +1251,7 @@ Therefore it is possible to impose that certain values refer to physical dimensi
 measured in a concrete metrological system. 
 \<close>
 
-section*[concl::conclusion]\<open>Conclusion\<close>
-text\<open>We presented \<^dof>, an ontology framework 
-deeply integrating continuous-check\slash continuous-build functionality into
-the formal development process in \<^hol>. The novel feature of term-contexts in \<^dof>,
-which permits term-antiquotations elaborated in the parsing process, paves the
-way for the abstract specification of meta-data constraints as well the possibility
-of advanced search in the meta-data of document elements. Thus it profits and
-extends  Isabelle's document-centric view on formal development.
-
-Many ontological languages such as OWL as well as the meta-modeling technology 
-available for UML/OCL provide concepts for semantic rules and constraints, but
-leave the validation checking usually to external tools (if implementing them at all).
-This limits their practical usefulness drastically. Our approach treats invariants as 
-first-class citizens, and turns them into an object of formal study in, for example, 
-ontological mappings. Such a technology exists, to our knowledge, for the first time.
-
-Our experiments with adaptations of existing ontologies from engineering and mathematics
-show that \<^dof>'s ODL has sufficient expressive power to cover all aspects
-of languages such as OWL (with perhaps the exception of multiple inheritance on classes).
-However, these ontologies have been developed specifically \<^emph>\<open>in\<close> OWL and target
-its specific support, the Protégé editor @{cite "protege"}. We argue that \<^dof> might ask 
-for a re-engineering of these ontologies: less deep hierarchies, rather deeper structure 
-in meta-data and stronger invariants.
-\<close>
-
-
-subsection*[rw::related_work]\<open>Related Work\<close>
+section*[rw::related_work]\<open>Related Work\<close>
 
 text\<open>There are a number of approaches to use ontologies for structuring the link between
 information and knowledge, and to make it amenable to 
@@ -1304,6 +1278,14 @@ Some are targeting mathematical libraries:
     and the more general ScienceWISE \<^footnote>\<open>\<^url>\<open>http://sciencewise.info/ontology/\<close>.\<close>
     that allows users to introduce their own category concepts. 
 
+Regarding using formal methods to formalise standards, Event-B method was used by
+Fotso et al. @{cite "FotsoFLM18"} to propose a specification of the hybrid ERTMS/ETCS level 3 standard,
+in which requirements are specified using SysML/KAOS goal diagrams that are translated into 
+Event-B, and domain-specific properties are specified by ontologies.
+
+In another case, Mendil et al. @{cite "MendilASMP21"} proposes an Event-B framework for formalising standard
+ conformance through formal modelling of standards as ontologies. 
+The proposed approach was exemplified on ARINC 661 standard and weather radar system application.
 
   Our approach emphasizes type-safeness, expressive power and ``depth'' of meta-data,
   which is adapted to the specific needs of ITP systems and theory developments.
@@ -1322,7 +1304,33 @@ Some are targeting mathematical libraries:
 %  exist approaches based on strong type systems 
 \<close>
 
-subsection*[fw::related_work]\<open>Future Work\<close>
+section*[concl::conclusion]\<open>Conclusion\<close>
+text\<open>We presented \<^dof>, an ontology framework 
+deeply integrating continuous-check\slash continuous-build functionality into
+the formal development process in \<^hol>. The novel feature of term-contexts in \<^dof>,
+which permits term-antiquotations elaborated in the parsing process, paves the
+way for the abstract specification of meta-data constraints as well the possibility
+of advanced search in the meta-data of document elements. Thus it profits and
+extends  Isabelle's document-centric view on formal development.
+
+Many ontological languages such as OWL as well as the meta-modeling technology 
+available for UML/OCL provide concepts for semantic rules and constraints, but
+leave the validation checking usually to external tools (if implementing them at all).
+This limits their practical usefulness drastically. Our approach treats invariants as 
+first-class citizens, and turns them into an object of formal study in, for example, 
+ontological mappings. Such a technology exists, to our knowledge, for the first time.
+
+Our experiments with adaptations of existing ontologies from engineering and mathematics
+show that \<^dof>'s ODL has sufficient expressive power to cover all aspects
+of languages such as OWL (with perhaps the exception of multiple inheritance on classes).
+However, these ontologies have been developed specifically \<^emph>\<open>in\<close> OWL and target
+its specific support, the Protégé editor @{cite "protege"}. We argue that \<^dof> might ask 
+for a re-engineering of these ontologies: less deep hierarchies, rather deeper structure 
+in meta-data and stronger invariants.
+\<close>
+
+(*subsection*[fw::related_work]\<open>Future Work\<close>*)
+
 text\<open> We plan to complement \<^dof> with incremental LaTeX generation and a previewing facility
 that will further increase the usability of our framework for the ontology-conform editing
 of formal content, be it in the engineering or the mathematics domain
