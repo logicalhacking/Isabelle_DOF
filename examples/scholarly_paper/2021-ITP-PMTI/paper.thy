@@ -117,14 +117,25 @@ text*[abs::abstract,
 \<close>
 
 
-section*[introheader::introduction]
-       \<open> Introduction \<close>
+section*[introheader::introduction] \<open> Introduction \<close>
+
 text*[introtext::introduction]\<open>
 The linking of \<^emph>\<open>formal\<close> and \<^emph>\<open>informal\<close> information is perhaps the most pervasive challenge 
 in the digitization of knowledge and its propagation. Unsurprisingly, this problem reappears 
 in the libraries with formalized mathematics and engineering such as the Isabelle Archive of 
 Formal Proofs @{cite "AFP-ref22"}, which passed the impressive numbers of 650 articles, 
-written by 420 authors at the beginning of 2022. Still, while the problem of logical consistency 
+written by 420 authors at the beginning of 2022. Together with the AFP, there is also a growing 
+body on articles concerned with formal software engineering such as standardized language 
+definitions (e.g., @{cite "CakeML-AFP" and "brucker.ea:featherweight:2014"}), 
+data-structures 
+(e.g., @{cite "brucker.ea:afp-core-dom:2018" and "Splay_Tree-AFP"}), hardware- models 
+(e.g., @{cite "SPARCv8-AFP"}), 
+security-related specifications 
+(e.g., @{cite "brucker.ea:upf-firewall:2017" and "Security_Protocol_Refinement-AFP"}), 
+or operating systems (e. g., @{cite "verbeek.ea:formal:2014" and "klein.ea:comprehensive:2014"}).
+
+
+Still, while the problem of logical consistency
 even under system-changes and pervasive theory evolution is technically solved via continuous 
 proof-checking, the problem of knowledge retrieval and of linking semi-formal explanations to 
 definitions and proofs remains largely open.
@@ -1235,7 +1246,7 @@ where the constants \<open>iswff\<^sub>p\<^sub>r\<^sub>e\<close> is bound to a f
 is executed during the evaluation phase of these invariants and that checks:
 \<^item> Any \<open>cond\<close> is indeed a valid definition in the global logical context
   (taking HOL-libraries but also the concrete certification target model into account).
-\<^item> Any such definition has the syntactic form:
+\<^item> Any such HOL definition has the syntactic form:
   \<^vs>\<open>-0.3cm\<close>
   @{cartouche [display,indent=10,margin=70] \<open>pre_<op_name> (a\<^sub>1::\<tau>\<^sub>1) ... (a\<^sub>n::\<tau>\<^sub>n) \<equiv> <predicate>,\<close>}
   \<^vs>\<open>-0.3cm\<close>
@@ -1243,7 +1254,7 @@ is executed during the evaluation phase of these invariants and that checks:
 \<^item> The case for the post-condition is treated analogously. \<close>
 
 text\<open>Note that this technique can also be applied to impose specific syntactic constraints on
-HOL types. For example, via the SI-package available in the Isabelle AFP
+types. For example, via the SI-package available in the Isabelle AFP
 \<^footnote>\<open>\<^url>\<open>https://www.isa-afp.org/entries/Physical_Quantities.html\<close>\<close>, it is possible to express
 that the result of some calculation is of type
 \<open>32 unsigned [m\<^sup>\<cdot>s\<^sup>-\<^sup>2]\<close>, so a 32-bit natural representing an acceleration in the SI-system.

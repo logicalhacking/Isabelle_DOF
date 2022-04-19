@@ -580,9 +580,9 @@ doc_class SWIS_E =
 
 doc_class SWIS = cenelec_document + 
    phase        :: "phase"  <= "SCDES" 
-   written_by   :: "role"  <= "DES"
-   fst_check    :: "role"  <= "VER"
-   snd_check    :: "role"  <= "VAL"
+   written_by   :: "role"   <= "DES"
+   fst_check    :: "role"   <= "VER"
+   snd_check    :: "role"   <= "VAL"
    components   :: "SWIS_E list"
    type_synonym software_interface_specification = SWIS
 
