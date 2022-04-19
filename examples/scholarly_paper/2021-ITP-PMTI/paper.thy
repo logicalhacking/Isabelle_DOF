@@ -291,7 +291,7 @@ text\<open>
   to \<^emph>\<open>specify\<close> a formal ontology,
   and ways to \<^emph>\<open>annotate\<close> an integrated document written in \<^isabelle> with the specified
   meta-data. Additionally, \<^dof> generates from an ontology a family of 
-  \<^emph>\<open>antiquotations\<close> allowing to establish  machine-checked links between classified entities. 
+  \<^emph>\<open>anti\-quotations\<close> allowing to specify  machine-checked links between ODL entities. 
 %  Unlike UML, however, \<^dof> allows for integrated documents with informal and formal elements
 %  including the necessary management of logical contexts. 
 
@@ -300,8 +300,9 @@ text\<open>
   during development and evolution of the integrated source. This includes rich editing support, 
   including on-the-fly semantics checks, hinting, or auto-completion. 
   \<^dof> supports \<^LaTeX>-based document generation as well as ontology-aware ``views'' on 
-  the integrated document, \<^ie>, specific versions of generated PDF addressing, 
-  for example, different stake-holders. 
+  the integrated document, \<^ie>, specific versions of generated PDF addressing, \<^eg>,
+  different stake-holders. 
+
 \<close>
 
 (*<*)
@@ -327,20 +328,19 @@ text\<open>
   \<^item> a special link, the reference to a super-class,
     establishes an \<^emph>\<open>is-a\<close> relation between classes.
 %  classes may refer to other classes via a regular expression in an optional \<^emph>\<open>where\<close> clause 
-%    (a class with a where clause is called \<^emph>\<open>monitor\<close>).
+%    (a class with a where clause is called \<^emph>\<open>monitor\<close>).\<close>
 
-
-  \fixIsarList The types of attributes are \<^hol>-types. Thus, ODL can refer to any predefined type 
+text\<open>\<^vs>\<open>-0.2cm\<close> The types of attributes are \<^hol>-types. Thus, ODL can refer to any predefined type 
   from the \<^hol> library, \<^eg>, \<^type>\<open>string\<close>, \<^type>\<open>int\<close> as well as parameterized types, \<^eg>, 
   \<^type>\<open>option\<close>,  \<^type>\<open>list\<close>. As a consequence of the Isabelle document model, ODL definitions 
   may be arbitrarily mixed with standard \<^hol> type definitions. Document class definitions are 
   \<^hol>-types, allowing for formal \<^emph>\<open>links\<close> to and between ontological concepts. For example, the 
   basic concept of requirements from CENELEC 50128~@{cite "bsi:50128:2014"} is captured in ODL as 
   follows:
-  @{theory_text [display,indent=5, margin=70]
-\<open>doc_class requirement = text_element +   (* derived from text_element    *)
-          long_name   ::"string option"  (* an optional string attribute *) 
-          is_concerned::"role set"       (* roles working with this req. *)\<close>}
+  @{theory_text [display,indent=10, margin=70]
+\<open>doc_class requirement = text_element +   (* \<comment> \<open>derived from text_element\<close> *)
+          long_name   ::"string option"   (* \<comment> \<open>an optional string attribute\<close> *)
+          is_concerned::"role set"        (* \<comment> \<open>roles working with this req.\<close> *) \<close>}
   This ODL class definition maybe part of one or more Isabelle theory-files capturing the entire
   ontology definition. Isabelle's session management allows for pre-compiling them before being 
   imported in the actual target documentation required to be compliant to this ontology. 
@@ -1178,7 +1178,7 @@ onto_class assoc_Method_Problem =
 \<close>
 *)
 
-section*[appl_certif::technical]\<open>Application: CENELEC Ontology\<close>
+section*[appl_certif::technical]\<open>Selected Applications to the CENELEC Ontology\<close>
 text\<open>From its beginning, \<^dof> had been used for documents containing formal models targeting 
 certifications. A major case-study from the railways domain based on the CENELEC 50128 standard
 had been published earlier (cf. @{cite "DBLP:conf-ifm-BruckerW19"}) 
