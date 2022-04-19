@@ -135,15 +135,15 @@ Still, while the problem of logical consistency
 even under system-changes and pervasive theory evolution is technically solved via continuous 
 proof-checking, the problem of knowledge retrieval and of linking semi-formal explanations to 
 definitions and proofs remains largely open.
-
-The \<^emph>\<open>knowledge\<close> problem of the increasingly massive \<^emph>\<open>digital information\<close> available
-incites numerous research efforts summarized under the labels ``semantic web'', 
-``integrated document management'', or any form of advanced ``semantic'' text processing. 
-These technologies are increasingly important  in jurisprudence, medical research and 
-life-sciences in order to tame their respective publication tsunamies. The central role 
-in these technologies is played by \<^emph>\<open>document ontologies\<close>, \<^ie>, a machine-readable form 
+% The \<^emph>\<open>knowledge\<close> problem of the increasingly massive \<^emph>\<open>digital information\<close> available
+% incites numerous research efforts summarized under the labels ``semantic web'', 
+% ``integrated document management'', or any form of advanced ``semantic'' text processing. 
+% These technologies are increasingly important  in jurisprudence, medical research and 
+% life-sciences in order to tame their respective publication tsunamies. 
+The central role in technologies adressing the \<^emph>\<open>knowledge\<close> problem
+is played by \<^emph>\<open>document ontologies\<close>, \<^ie>, a machine-readable form
 of meta-data attached to document-elements as well as their document discourse. In order 
-to make these techniques applicable to the area of \<^emph>\<open>formal theory development\<close>, 
+to make these techniques applicable to \<^emph>\<open>formal theory development\<close> , 
 the following is needed: \<^vs>\<open>0.2cm\<close>
 
 \<^item> a general mechanism to define and develop \<^emph>\<open>domain-specific\<close> ontologies,
@@ -171,7 +171,7 @@ proofs, text-elements, etc., prevailing in the Isabelle system framework.
 
 In more detail, \<^dof> introduces a number of ``ontology aware'' text-elements with analogous 
 syntax to standard ones. The difference is a bracket with meta-data of the form:
-@{theory_text [display,indent=5, margin=70] 
+@{theory_text [display,indent=10, margin=70] 
 \<open>text*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some semi-formal text \<close>
 ML*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some SML code \<close>
 ...\<close>}
@@ -188,13 +188,13 @@ called \<^emph>\<open>antiquotation\<close> that depends on the logical context 
 
 With standard Isabelle antiquotations, for example, the following text element
 of the integrated source will appear  in Isabelle/PIDE as follows:
-@{theory_text [display,indent=5, margin=70] 
+@{theory_text [display,indent=10, margin=70] 
 \<open>text\<open> According to the reflexivity axiom @{thm refl}, we obtain in \<Gamma>
-      for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
+       for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
 In the corresponding generated \<^LaTeX> or HTML output, this looks like this:
-@{theory_text [display,indent=5, margin=70]
-\<open>According to the reflexivity axiom \<open>x = x\<close>,
-we obtain in \<Gamma> for \<open>fac 5\<close> the result \<open>120\<close>.\<close>}
+@{cartouche [display,indent=17, margin=70]
+  \<open>According to the reflexivity axiom \<open>x = x\<close>, we obtain in \<Gamma> 
+ for \<open>fac 5\<close> the result \<open>120\<close>.\<close>}
 where the meta-texts \<open>@{thm refl}\<close> (``give the presentation of theorem `refl'\,\!''), 
 \<open>@{term "fac 5"}\<close> (``parse and type-check `fac 5' in the previous logical context'')
 and \<open>@{value "fac 5"}\<close> (``compile and execute `fac 5' according to its
@@ -239,25 +239,24 @@ text\<open>As novel contribution, this work extends prior versions of \<^dof> by
   ``rules'' in OWL~ @{cite "OWL2014"} or ``constraints'' in UML, and which can be specified in 
   common \<^hol> \<open>\<lambda>\<close>-term syntax.
 \<close>
-text\<open> For example, the \<^dof> evaluation command taking a \<^hol>-expression:
-@{theory_text [display,indent=5, margin=70]
-\<open>value*[ass::Assertion, relvce=2::int]
-      \<open>filter (\<lambda> \<sigma>. relvce \<sigma> > 2) @{Assertion-instances}\<close>\<close>}
+text\<open> \<^noindent> For example, the \<^dof> command evaluating the \<^hol>-expression:
+@{theory_text [display,indent=10, margin=70]
+\<open>value*[ass::Assertion, relvce=4::int] 
+        \<open>filter (\<lambda> \<sigma>. relvce \<sigma> > 2) @{Assertion-instances}\<close>\<close>}
 where \<^dof> command \<open>value*\<close> type-checks, expands in an own validation phase
 the \<open>Assertion-instances\<close>-term antiquotation, and evaluates the resulting \<^hol> expression
 above. Assuming an ontology providing the class \<open>Assertion\<close> having at least the
 integer attribute \<open>relvce\<close>, the command finally creates an instance of \<open>Assertion\<close> and 
-binds this to the label \<open>ass\<close> for further use.
+binds this to label \<open>ass\<close>, while setting its \<open>relvce\<close> to 4.
 
-Beyond the gain of expressivity in \<^dof> ontologies, term-antiquotations pave the way 
+Beyond the gain of expressivity in \<^dof> ontologies, term-anti\-quotations pave the way 
 for advanced queries of elements inside an integrated source, and invariants 
 allow for formal proofs over the relations/translations of ontologies and ontology-instances.
 The latter question raised scientific interest under the label ``ontology mapping'' for 
 which we therefore present a formal solution. To sum up, we completed \<^dof> to
 a fairly rich, ITP-oriented ontology language, which is a concrete proposal for the 
 ITP community allowing a deeper structuring of mathematical libraries
-such as the Archive of Formal Proofs (AFP).
-\<close>
+such as the AFP.\<close>
 
 (*<*)
 declare_reference*[casestudy::text_section]
