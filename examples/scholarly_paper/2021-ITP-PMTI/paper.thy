@@ -98,28 +98,24 @@ text*[abs::abstract,
 \<open>  \<^dof> is an ontology framework on top of Isabelle 
    @{cite "brucker.ea:isabelledof:2019" and "brucker.ea:isabelle-ontologies:2018"}. 
    \<^dof>  allows for the formal development of ontologies as well as continuous checking that
-   a formal document under development conforms to an underlying ontology. 
-   Such a document may contain text and code elements as well as formal Isabelle definitions and proofs.
-   Thus, \<^dof> is designed to annotate and interact with typed meta-data 
+   a formal document under development conforms to an underlying ontology. Such a document may 
+   contain text and code elements as well as formal Isabelle definitions and proofs.
+   Thus, \<^dof> is designed to annotate and trace typed meta-data 
    within formal developments in Isabelle.  
 
-   In this paper we extend  \<^dof> with \<^emph>\<open>invariants\<close> via a reflection mechanism,
-   which serve as equivalent to the concept of ontological \<^emph>\<open>rules\<close> (in OWL terminology) or
-   \<^emph>\<open>class invariants\<close> (in UML/OCL terminology).
-   This allows for both efficient run-time checking of abstract properties of formal
-   content under evolution \<^bold>\<open>as well as\<close> formal proofs that establish mappings between different 
-   ontologies in general and specific ontology instances in concrete cases. 
+   In this paper we extend  \<^dof> with \<^emph>\<open>invariants\<close> (or: ontological \<^emph>\<open>rules\<close>). Via a reflection 
+   mechanism, this allows for efficient run-time checking of abstract properties of formal
+   content under evolution. Additionally, invariants have a formal represention in HOL amenable to
+   formal proofs over mappings between different ontologies.  
    With this feature widely called \<^emph>\<open>ontology mapping\<close> in the literature, our framework paves the 
-   way for advanced use of ontological information in technical documents such as ``semantic'' search and
-   translation. We demonstrate the use of these new features for the modeling of critical elements in 
-   an extended  ontology used for formal developments targeting a CENELEC certification.
-  
-\<close>
-
+   way for advanced uses such as ``semantic'' search and translation. We demonstrate the use of 
+   these new features in an extended  ontology used for formal developments targeting CENELEC 
+   certifications.
+    \<^vs>\<open>-0.3cm\<close> \<close>
 
 section*[introheader::introduction] \<open> Introduction \<close>
 
-text*[introtext::introduction]\<open>
+text*[introtext::introduction]\<open> \<^vs>\<open>-0.2cm\<close>
 The linking of \<^emph>\<open>formal\<close> and \<^emph>\<open>informal\<close> information is perhaps the most pervasive challenge 
 in the digitization of knowledge and its propagation. Unsurprisingly, this problem reappears 
 in the libraries with formalized mathematics and engineering such as the Isabelle Archive of 
