@@ -392,7 +392,7 @@ record T =
 
 term "\<lparr>x = a,y = b\<rparr>"
 (*>*)
-text\<open>\<^vs>\<open>-0.2cm\<close> \<^noindent> \<^isabelle> supports records at the level of terms and 
+text\<open>\<^vs>\<open>-0.1cm\<close> \<^noindent> \<^isabelle> supports records at the level of terms and 
 types. The notation for terms and types is as follows: \<^vs>\<open>-0.2cm\<close>
 \<^item> record terms \<^term>\<open>\<lparr>x = a,y = b\<rparr>\<close> and corresponding record types \<open>\<lparr>x::A, y::B\<rparr>\<close>,
 \<^item> the resulting selectors are written \<^term>\<open>x(r::T)\<close>, \<^term>\<open>y(r::T)\<close>.\<close>
@@ -526,10 +526,10 @@ text\<open>
   and to evaluate a term (the command \<^theory_text>\<open>value\<close>).
   We provide the equivalent commands, respectively \<^theory_text>\<open>term*\<close> and \<^theory_text>\<open>value*\<close>, which 
   additionally support a validation and elaboration phase.
-  We also provide an \<^theory_text>\<open>assert*\<close>-command which checks
-  that the evaluation of a term returns \<^const>\<open>True\<close> and fails otherwise.
+  A variant of  \<^theory_text>\<open>value*\<close> is  \<^theory_text>\<open>assert*\<close>, which additionally checks
+  that the term-evaluation results in \<^const>\<open>True\<close>.
   Note that term antiquotations are admitted in all \<^dof> commands, not just
-  \<^theory_text>\<open>term*\<close>, \<^theory_text>\<open>value*\<close> and \<^theory_text>\<open>assert*\<close>. 
+  \<^theory_text>\<open>term*\<close>, \<^theory_text>\<open>value*\<close> etc. 
 \<close>
 
 (*<*)
@@ -612,8 +612,8 @@ declare_reference*["evaluation-example"::side_by_side_figure]
 
 text\<open>
   The command \<^theory_text>\<open>value*\<open>email @{author \<open>church\<close>}\<close>\<close>
-  type-checks the antiquotation \<^term>\<open>@{myauthor \<open>church\<close>}\<close>,
-  and then returns the value of the attribute \<^const>\<open>email\<close> for the \<^theory_text>\<open>church\<close> instance,
+  validates \<^term>\<open>@{myauthor \<open>church\<close>}\<close>
+  and returns the attribute-value of \<^const>\<open>email\<close> for the \<^theory_text>\<open>church\<close> instance,
   \<^ie> the \<^hol> string \<^term>\<open>''church@lambda.org''\<close>
   (see \<^side_by_side_figure>\<open>evaluation-example\<close>).
 \<close>
@@ -656,13 +656,12 @@ text\<open>
   Since term antiquotations are logically uninterpreted constants,
   it is possible to compare class instances logically. The assertion
   in the \<^figure>\<open>term-context-equality-evaluation\<close> fails:
-  the two class instances \<^theory_text>\<open>proof1\<close> and \<^theory_text>\<open>proof2\<close> are not equivalent
+  the class instances \<^theory_text>\<open>proof1\<close> and \<^theory_text>\<open>proof2\<close> are not equivalent
   because their attribute \<^term>\<open>property\<close> differs.
   When \<^theory_text>\<open>assert*\<close> evaluates the term,
   the term antiquotations \<^term>\<open>@{thm \<open>HOL.refl\<close>}\<close> and \<^term>\<open>@{thm \<open>HOL.sym\<close>}\<close> are checked
-  against the global context to validate that the \<^hol>-strings \<^term>\<open>\<open>HOL.refl\<close>\<close> and \<^term>\<open>\<open>HOL.sym\<close>\<close>
-  reference existing theorems.
-
+  against the global context such that the strings \<^term>\<open>\<open>HOL.refl\<close>\<close> and \<^term>\<open>\<open>HOL.sym\<close>\<close>
+  denote existing theorems.
 \<close>
 
 figure*[
