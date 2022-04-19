@@ -1010,8 +1010,6 @@ fun elaborate_instances_list thy isa_name _ _ _ =
     val base_name' = DOF_core.get_class_name_without_prefix (base_name_without_suffix)
     val class_typ = Proof_Context.read_typ (Proof_Context.init_global thy)
                                                 (base_name')
-    val class_list_typ = Proof_Context.read_typ (Proof_Context.init_global thy)
-                                                (base_name' ^ " List.list")
     val tab = #tab(#docobj_tab(DOF_core.get_data_global thy))
     val table_list = Symtab.dest tab
     fun get_instances_name_list _ [] = []
@@ -1028,13 +1026,7 @@ fun elaborate_instances_list thy isa_name _ _ _ =
           end
     val long_class_name = DOF_core.read_cid_global thy base_name'
     val values_list = get_instances_name_list long_class_name table_list
-    val hol_list_terms_list =
-      fold
-        (fn x =>
-         fn y =>
-         Const (@{const_name "Cons"}, [class_typ, class_list_typ] ---> class_list_typ) $ x $ y)
-        values_list (Const (@{const_name "Nil"}, class_list_typ))
-  in hol_list_terms_list end
+  in HOLogic.mk_list class_typ values_list end
 
 fun declare_class_instances_annotation thy doc_class_name =
   let
