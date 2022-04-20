@@ -47,7 +47,7 @@ Brucker, A.D., Wolff, B.: {Isabelle/DOF}: Design and implementation. In:
 \bibitem{DBLP:conf-ifm-BruckerW19}
 Brucker, A.D., Wolff, B.: Using ontologies in formal developments targeting
   certification. In: {IFM} 2019, Proceedings. LNCS, vol. 11918, pp.
-  65--82. Springer (2019). \doi{10.1007/978-3-030-34968-4\_4}
+  65--82. Springer (2019). \doi{10.1007/978-3-030-34968-4_4}
 
 \bibitem{bsi:50128:2014}
 Bs en 50128:2011: Railway applications -- communication, signalling and
@@ -55,23 +55,24 @@ Bs en 50128:2011: Railway applications -- communication, signalling and
   Standard, Britisch Standards Institute (BSI) (Apr 2014)
 
 \bibitem{books/daglib/0032976}
-Euzenat, J., Shvaiko, P.: Ontology Matching, Second Edition. Springer (2013)
+Euzenat, J., Shvaiko, P.: Ontology Matching, Second Edition. Springer (2013).
+  \doi{10.1007/978-3-642-38721-0}
 
 \bibitem{atl}
 {Eclipse Foundation}: Atl - a model transformation technology,
-  \url{https://www.eclipse.org/atl/}
+  \url{https://www.eclipse.org/atl/}, {A}ccessed: 2022-03-15
 
 \bibitem{FotsoFLM18}
 Fotso, S.J.T., Frappier, M., Laleau, R., Mammar, A.: Modeling the hybrid
   {ERTMS/ETCS} level 3 standard using a formal requirements engineering
   approach. In: Abstract State Machines, Alloy, B, TLA, VDM, and {Z} - 6th
   International Conference, {ABZ}, Southampton, UK. LLNCS, vol. 10817, pp.
-  262--276. Springer (2018). \doi{10.1007/978-3-319-91271-4\_18}
+  262--276. Springer (2018). \doi{10.1007/978-3-319-91271-4_18}
 
 \bibitem{HaftmannN10}
 Haftmann, F., Nipkow, T.: Code generation via higher-order rewrite systems. In:
   {FLOPS} 2010, Proceedings. LNCS, vol.~6009, pp. 103--117.
-  Springer (2010). \doi{10.1007/978-3-642-12251-4\_9}
+  Springer (2010). \doi{10.1007/978-3-642-12251-4_9}
 
 \bibitem{SPARCv8-AFP}
 Hou, Z., Sanan, D., Tiu, A., Liu, Y.: A formal model for the sparcv8 isa and a
@@ -102,7 +103,7 @@ Kohlhase, M., Rabe, F.: Experiences from exporting major proof assistant
 Mendil, I., A{\"{\i}}t-Ameur, Y., Singh, N.K., M{\'{e}}ry, D., Palanque, P.A.:
   Standard conformance-by-construction with event-b. In: {FMICS}.
   LNCS, vol. 12863, pp. 126--146. Springer (2021).
-  \doi{10.1007/978-3-030-85248-1\_8}
+  \doi{10.1007/978-3-030-85248-1_8}
 
 \bibitem{protege}
 Musen, M.A.: The prot\'{e}g\'{e} project: A look back and a look forward. AI
@@ -126,7 +127,7 @@ Nipkow, T., Ro{\ss}kopf, S.: Isabelle's metalogic: Formalization and proof
 \bibitem{OWL2014}
 Sengupta, K., Hitzler, P.: Web ontology language {(OWL)}. In: Encyclopedia of
   Social Network Analysis and Mining, pp. 2374--2378 (2014).
-  \doi{10.1007/978-1-4614-6170-8\_113}
+  \doi{10.1007/978-1-4614-6170-8_113}
 
 \bibitem{Security_Protocol_Refinement-AFP}
 Sprenger, C., Somaini, I.: Developing security protocols by refinement. Archive
