@@ -26,21 +26,18 @@ Brucker, A.D., Ait-Sadoune, I., Crisafulli, P., Wolff, B.: Using the {Isabelle}
 
 \bibitem{brucker.ea:upf-firewall:2017}
 Brucker, A.D., Br{\"u}gger, L., Wolff, B.: Formal network models and their
-  application to firewall policies. Archive of Formal Proofs  (Jan 2017),
-  \url{http://www.isa-afp.org/entries/UPF_Firewall.shtml}, Formal proof
-  development
+  application to firewall policies. AFP (Jan 2017),
+  \url{http://www.isa-afp.org/entries/UPF_Firewall.shtml}
 
 \bibitem{brucker.ea:afp-core-dom:2018}
-Brucker, A.D., Herzberg, M.: The {Core} {DOM}. Archive of Formal Proofs  (Dec
+Brucker, A.D., Herzberg, M.: The {Core} {DOM}. AFP (Dec
   2018),
-  \url{http://www.isa-afp.org/entries/Core_DOM.html}, Formal proof development
+  \url{http://www.isa-afp.org/entries/Core_DOM.html}
 
 \bibitem{brucker.ea:featherweight:2014}
 Brucker, A.D., Tuong, F., Wolff, B.: {Featherweight} {OCL}: A proposal for a
-  machine-checked formal semantics for {OCL} 2.5. Archive of Formal Proofs
-  (Jan 2014),
-  \url{http://www.isa-afp.org/entries/Featherweight_OCL.shtml}, Formal proof
-  development
+  machine-checked formal semantics for {OCL} 2.5. AFP (Jan 2014),
+  \url{http://www.isa-afp.org/entries/Featherweight_OCL.shtml}
 
 \bibitem{brucker.ea:isabelledof:2019}
 Brucker, A.D., Wolff, B.: {Isabelle/DOF}: Design and implementation. In:
@@ -78,13 +75,12 @@ Haftmann, F., Nipkow, T.: Code generation via higher-order rewrite systems. In:
 
 \bibitem{SPARCv8-AFP}
 Hou, Z., Sanan, D., Tiu, A., Liu, Y.: A formal model for the sparcv8 isa and a
-  proof of non-interference for the leon3 processor. Archive of Formal Proofs
-  (Oct 2016), \url{http://isa-afp.org/entries/SPARCv8.html}, Formal proof
-  development
+  proof of non-interference for the leon3 processor. AFP
+  (Oct 2016), \url{http://isa-afp.org/entries/SPARCv8.html}
 
 \bibitem{CakeML-AFP}
-Hupel, L., Zhang, Y.: Cakeml. Archive of Formal Proofs  (Mar 2018),
-  \url{http://isa-afp.org/entries/CakeML.html}, Formal proof development
+Hupel, L., Zhang, Y.: Cakeml. AFP (Mar 2018),
+  \url{http://isa-afp.org/entries/CakeML.html}
 
 \bibitem{klein.ea:comprehensive:2014}
 Klein, G., Andronick, J., Elphinstone, K., Murray, T.C., Sewell, T., Kolanski,
@@ -99,7 +95,7 @@ Kohlhase, M., Rabe, F.: Experiences from exporting major proof assistant
 
 \bibitem{AFP-ref22}
 {M.Eberl and G. Klein and A. Lochbihler and T. Nipkow and L. Paulson and R.
-  Thiemann (eds)}: {A}rchive of {F}ormal {P}roofs. \url{https://afp-isa.org}
+  Thiemann (eds)}: AFP. \url{https://afp-isa.org}
   (2022), {A}ccessed: 2022-03-15
 
 \bibitem{MendilASMP21}
@@ -119,8 +115,8 @@ Nevzorova, O., Zhiltsov, N., Kirillovich, A., Lipachev, E.K.:
   \doi{10.1007/978-3-319-11716-4_9}
 
 \bibitem{Splay_Tree-AFP}
-Nipkow, T.: Splay tree. Archive of Formal Proofs  (Aug 2014),
-  \url{http://isa-afp.org/entries/Splay_Tree.html}, Formal proof development
+Nipkow, T.: Splay tree. AFP (Aug 2014),
+  \url{http://isa-afp.org/entries/Splay_Tree.html}
 
 \bibitem{10.1007/978-3-030-79876-5_6}
 Nipkow, T., Ro{\ss}kopf, S.: Isabelle's metalogic: Formalization and proof
@@ -141,8 +137,8 @@ Sprenger, C., Somaini, I.: Developing security protocols by refinement. Archive
 \bibitem{verbeek.ea:formal:2014}
 Verbeek, F., Tverdyshev, S., Havle, O., Blasum, H., Langenstein, B., Stephan,
   W., Nemouchi, Y., Feliachi, A., Wolff, B., Schmaltz, J.: Formal specification
-  of a generic separation kernel. Archive of Formal Proofs  (Jul 2014),
-  \url{http://isa-afp.org/entries/CISC-Kernel.html}, Formal proof development
+  of a generic separation kernel. AFP (Jul 2014),
+  \url{http://isa-afp.org/entries/CISC-Kernel.html}
 
 \bibitem{wenzel:isabelle-isar:2020}
 Wenzel, M.: The Isabelle/Isar Reference Manual (2020), part of the Isabelle
