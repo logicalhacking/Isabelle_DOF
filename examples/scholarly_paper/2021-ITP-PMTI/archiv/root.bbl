@@ -1,0 +1,151 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\providecommand{\doi}[1]{https://doi.org/#1}
+
+\bibitem{AehligHN12}
+Aehlig, K., Haftmann, F., Nipkow, T.: A compiled implementation of
+  normalisation by evaluation. J. Funct. Program.  \textbf{22}(1),  9--30
+  (2012). \doi{10.1017/S0956796812000019},
+
+\bibitem{BGPP95}
+Ameur, Y.A., Besnard, F., Girard, P., Pierra, G., Potier, J.: Formal
+  specification and metaprogramming in the {EXPRESS} language. In: SEKE'95, Proceedings. pp.
+  181--188. Knowledge Systems Institute (1995)
+
+\bibitem{10.1007/978-3-540-76298-0_52}
+Auer, S., Bizer, C., Kobilarov, G., Lehmann, J., Cyganiak, R., Ives, Z.:
+  {DB}pedia: A nucleus for a web of open data. In: The Semantic Web.
+  pp. 722--735. Springer, Berlin, Heidelberg (2007)
+
+\bibitem{brucker.ea:isabelle-ontologies:2018}
+Brucker, A.D., Ait-Sadoune, I., Crisafulli, P., Wolff, B.: Using the {Isabelle}
+  ontology framework: Linking the formal with the informal.
+  In: CICM. No. 11006 in LNCS, Springer-Verlag, Heidelberg (2018).
+  \doi{10.1007/978-3-319-96812-4_3},
+
+\bibitem{brucker.ea:upf-firewall:2017}
+Brucker, A.D., Br{\"u}gger, L., Wolff, B.: Formal network models and their
+  application to firewall policies. Archive of Formal Proofs  (Jan 2017),
+  \url{http://www.isa-afp.org/entries/UPF_Firewall.shtml}, Formal proof
+  development
+
+\bibitem{brucker.ea:afp-core-dom:2018}
+Brucker, A.D., Herzberg, M.: The {Core} {DOM}. Archive of Formal Proofs  (Dec
+  2018),
+  \url{http://www.isa-afp.org/entries/Core_DOM.html}, Formal proof development
+
+\bibitem{brucker.ea:featherweight:2014}
+Brucker, A.D., Tuong, F., Wolff, B.: {Featherweight} {OCL}: A proposal for a
+  machine-checked formal semantics for {OCL} 2.5. Archive of Formal Proofs
+  (Jan 2014),
+  \url{http://www.isa-afp.org/entries/Featherweight_OCL.shtml}, Formal proof
+  development
+
+\bibitem{brucker.ea:isabelledof:2019}
+Brucker, A.D., Wolff, B.: {Isabelle/DOF}: Design and implementation. In:
+  SEFM. No. 11724 in LNCS,
+  Springer-Verlag, Heidelberg (2019). \doi{10.1007/978-3-030-30446-1_15}
+
+\bibitem{DBLP:conf-ifm-BruckerW19}
+Brucker, A.D., Wolff, B.: Using ontologies in formal developments targeting
+  certification. In: {IFM} 2019, Proceedings. LNCS, vol. 11918, pp.
+  65--82. Springer (2019). \doi{10.1007/978-3-030-34968-4\_4}
+
+\bibitem{bsi:50128:2014}
+Bs en 50128:2011: Railway applications -- communication, signalling and
+  processing systems -- software for railway control and protecting systems.
+  Standard, Britisch Standards Institute (BSI) (Apr 2014)
+
+\bibitem{books/daglib/0032976}
+Euzenat, J., Shvaiko, P.: Ontology Matching, Second Edition. Springer (2013)
+
+\bibitem{atl}
+Fondation, E.: Atl - a model transformation technology,
+  \url{https://www.eclipse.org/atl/}
+
+\bibitem{FotsoFLM18}
+Fotso, S.J.T., Frappier, M., Laleau, R., Mammar, A.: Modeling the hybrid
+  {ERTMS/ETCS} level 3 standard using a formal requirements engineering
+  approach. In: Abstract State Machines, Alloy, B, TLA, VDM, and {Z} - 6th
+  International Conference, {ABZ}, Southampton, UK. LLNCS, vol. 10817, pp.
+  262--276. Springer (2018). \doi{10.1007/978-3-319-91271-4\_18}
+
+\bibitem{HaftmannN10}
+Haftmann, F., Nipkow, T.: Code generation via higher-order rewrite systems. In:
+  {FLOPS} 2010, Proceedings. LNCS, vol.~6009, pp. 103--117.
+  Springer (2010). \doi{10.1007/978-3-642-12251-4\_9}
+
+\bibitem{SPARCv8-AFP}
+Hou, Z., Sanan, D., Tiu, A., Liu, Y.: A formal model for the sparcv8 isa and a
+  proof of non-interference for the leon3 processor. Archive of Formal Proofs
+  (Oct 2016), \url{http://isa-afp.org/entries/SPARCv8.html}, Formal proof
+  development
+
+\bibitem{CakeML-AFP}
+Hupel, L., Zhang, Y.: Cakeml. Archive of Formal Proofs  (Mar 2018),
+  \url{http://isa-afp.org/entries/CakeML.html}, Formal proof development
+
+\bibitem{klein.ea:comprehensive:2014}
+Klein, G., Andronick, J., Elphinstone, K., Murray, T.C., Sewell, T., Kolanski,
+  R., Heiser, G.: Comprehensive formal verification of an {OS} microkernel.
+  {ACM} Trans. Comput. Syst.  \textbf{32}(1),  2:1--2:70 (2014).
+  \doi{10.1145/2560537}
+
+\bibitem{KohlhaseR21}
+Kohlhase, M., Rabe, F.: Experiences from exporting major proof assistant
+  libraries. J. Autom. Reason.  \textbf{65}(8),  1265--1298 (2021).
+  \doi{10.1007/s10817-021-09604-0}
+
+\bibitem{AFP-ref22}
+{M.Eberl and G. Klein and A. Lochbihler and T. Nipkow and L. Paulson and R.
+  Thiemann (eds)}: {A}rchive of {F}ormal {P}roofs. \url{https://afp-isa.org}
+  (2022), accessed: 2018-12-06
+
+\bibitem{MendilASMP21}
+Mendil, I., A{\"{\i}}t-Ameur, Y., Singh, N.K., M{\'{e}}ry, D., Palanque, P.A.:
+  Standard conformance-by-construction with event-b. In: {FMICS}.
+  LNCS, vol. 12863, pp. 126--146. Springer (2021).
+  \doi{10.1007/978-3-030-85248-1\_8}
+
+\bibitem{protege}
+Musen, M.A.: The prot\'{e}g\'{e} project: A look back and a look forward. AI
+  Matters  \textbf{1}(4),  4–12 (jun 2015). \doi{10.1145/2757001.2757003}
+
+\bibitem{Nevzorova2014OntoMathPO}
+Nevzorova, O., Zhiltsov, N., Kirillovich, A., Lipachev, E.K.:
+  Onto{Ma}th\textsuperscript{PRO} ontology: {A} linked data hub for
+  mathematics. ArXiv  \textbf{abs/1407.4833} (2014).
+  \doi{10.1007/978-3-319-11716-4_9}
+
+\bibitem{Splay_Tree-AFP}
+Nipkow, T.: Splay tree. Archive of Formal Proofs  (Aug 2014),
+  \url{http://isa-afp.org/entries/Splay_Tree.html}, Formal proof development
+
+\bibitem{10.1007/978-3-030-79876-5_6}
+Nipkow, T., Ro{\ss}kopf, S.: Isabelle's metalogic: Formalization and proof
+  checker. In: Platzer, A., Sutcliffe, G. (eds.) Automated Deduction -- CADE
+  28. pp. 93--110. Springer International Publishing, Cham (2021)
+
+\bibitem{OWL2014}
+Sengupta, K., Hitzler, P.: Web ontology language {(OWL)}. In: Encyclopedia of
+  Social Network Analysis and Mining, pp. 2374--2378 (2014).
+  \doi{10.1007/978-1-4614-6170-8\_113}
+
+\bibitem{Security_Protocol_Refinement-AFP}
+Sprenger, C., Somaini, I.: Developing security protocols by refinement. Archive
+  of Formal Proofs  (May 2017),
+  \url{http://isa-afp.org/entries/Security_Protocol_Refinement.html}, Formal
+  proof development
+
+\bibitem{verbeek.ea:formal:2014}
+Verbeek, F., Tverdyshev, S., Havle, O., Blasum, H., Langenstein, B., Stephan,
+  W., Nemouchi, Y., Feliachi, A., Wolff, B., Schmaltz, J.: Formal specification
+  of a generic separation kernel. Archive of Formal Proofs  (Jul 2014),
+  \url{http://isa-afp.org/entries/CISC-Kernel.html}, Formal proof development
+
+\bibitem{wenzel:isabelle-isar:2020}
+Wenzel, M.: The Isabelle/Isar Reference Manual (2020), part of the Isabelle
+  distribution.
+
+\end{thebibliography}
