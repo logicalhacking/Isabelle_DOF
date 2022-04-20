@@ -254,8 +254,9 @@ for advanced queries of elements inside an integrated source, and invariants
 allow for formal proofs over the relations/translations of ontologies and ontology-instances.
 The latter question raised scientific interest under the label ``ontology mapping'' for 
 which we therefore present a formal solution. To sum up, we completed \<^dof> to
-a fairly rich, ITP-oriented ontology language, which is a concrete proposal for the 
-ITP community allowing a deeper structuring of mathematical libraries
+a fairly rich, ITP-oriented ontology language, which is a concrete proposal for formal
+development projects targeting a certification, for technical documentation or books
+with a high amount of machine-checked formal content or for mathematical libraries
 such as the AFP.\<close>
 
 (*<*)
