@@ -1,13 +1,11 @@
 session "2021-ITP-PMTI" = "Isabelle_DOF" +
-  options [document = pdf, document_output = "output", document_build = dof,
-    document_comment_latex = true]
+  options [document = pdf, document_output = "output", document_build = dof]
   theories
     "paper"
   document_files
     "isadof.cfg"
     "root.bib"
     "preamble.tex"
-    "spmpscinat.bst"
     "figures/Req-Appl-ex.png"
     "figures/formal-development.png"
     "figures/Req-Def-ex.png"
