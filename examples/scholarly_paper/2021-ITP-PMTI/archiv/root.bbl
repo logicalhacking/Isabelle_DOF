@@ -61,7 +61,7 @@ Bs en 50128:2011: Railway applications -- communication, signalling and
 Euzenat, J., Shvaiko, P.: Ontology Matching, Second Edition. Springer (2013)
 
 \bibitem{atl}
-Fondation, E.: Atl - a model transformation technology,
+{Eclipse Foundation}: Atl - a model transformation technology,
   \url{https://www.eclipse.org/atl/}
 
 \bibitem{FotsoFLM18}
@@ -100,7 +100,7 @@ Kohlhase, M., Rabe, F.: Experiences from exporting major proof assistant
 \bibitem{AFP-ref22}
 {M.Eberl and G. Klein and A. Lochbihler and T. Nipkow and L. Paulson and R.
   Thiemann (eds)}: {A}rchive of {F}ormal {P}roofs. \url{https://afp-isa.org}
-  (2022), accessed: 2018-12-06
+  (2022), {A}ccessed: 2022-03-15
 
 \bibitem{MendilASMP21}
 Mendil, I., A{\"{\i}}t-Ameur, Y., Singh, N.K., M{\'{e}}ry, D., Palanque, P.A.:
