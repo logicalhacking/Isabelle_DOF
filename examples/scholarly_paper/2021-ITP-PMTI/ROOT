@@ -7,7 +7,6 @@ session "2021-ITP-PMTI" = "Isabelle_DOF" +
     "isadof.cfg"
     "root.bib"
     "preamble.tex"
-    "spmpscinat.bst"
     "figures/Req-Appl-ex.png"
     "figures/formal-development.png"
     "figures/Req-Def-ex.png"
