@@ -331,7 +331,7 @@ is currently only available in the SML API's of the kernel.
   symbolic evaluation using the simplifier, \<open>nbe\<close> for \<^emph>\<open>normalization by
   evaluation\<close> and \<^emph>\<open>code\<close> for code generation in SML.
 \<^item> \<open>upd_meta_args\<close> :
-   \<^rail>\<open> (obj_id ('::' class_id) ((',' attribute ('=' | '+=') HOL_term) * ))\<close>
+   \<^rail>\<open> (obj_id ('::' class_id) ((',' attribute (':=' | '+=') HOL_term) * ))\<close>
 \<^item> \<open>annotated_text_element\<close> :
 \<^rail>\<open> 
     (  @@{command "text*"} '[' meta_args ']' '\<open>' formal_text '\<close>'
@@ -1009,9 +1009,6 @@ text\<open>
   these types. They are just types declared in HOL, 
   which are ``inhabited'' by special constant symbols carrying strings, for
   example of the format \<^boxed_theory_text>\<open>@{thm <string>}\<close>.
-  % TODO:
-  % Update meta-types implementation explanation to the new implementation
-  % in repository commit 08c101c5440eee2a087068581952026e88c39f6a
   When HOL
   expressions were used to denote values of \<^boxed_theory_text>\<open>doc_class\<close>
   instance attributes, this requires additional checks after

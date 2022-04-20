@@ -200,9 +200,10 @@ text\<open>Assertions must be true, hence the error:\<close>
 assert*\<open>{@{author \<open>curry\<close>}} = {@{author \<open>church\<close>}}\<close>*)
 
 term*\<open>property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
-assert*[ass::A]\<open>\<not> property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
+assert*[assertionA::A]\<open>\<not> property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
 
-text\<open>@{A [display] "ass"}}\<close>
+text-macro*[assertionAA::A]\<open>@{A [display] "assertionA"}\<close> 
+text\<open>... and here we reference @{A [display] \<open>assertionA\<close>}.\<close>
 
 assert*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
 

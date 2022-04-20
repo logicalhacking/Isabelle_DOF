@@ -181,7 +181,6 @@ Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
     -o ONTOLOGY  (default: scholarly_paper)
        Available ontologies:
        * CENELEC_50128
-       * math_exam
        * scholarly_paper
        * technical_report
     -t TEMPLATE   (default: scrartcl)
@@ -505,9 +504,6 @@ side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-
                       caption2="''Exploring an attribute (hyperlinked to the class).''",
                       relative_width2="47",
                       src2="''figures/Dogfood-V-attribute''"]\<open>Navigation via generated hyperlinks.\<close>
-(* TODO: Update the images in fig:Dogfood-IV-jumpInDocCLass side_by_side_figure
-   to align them. This has to wait that the exploration of an attribute is again possible.
-   See: https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/issues/10 *)
 
 text\<open> 
   From these class definitions, \<^isadof> also automatically generated editing 
