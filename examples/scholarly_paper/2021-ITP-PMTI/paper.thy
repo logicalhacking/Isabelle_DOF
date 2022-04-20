@@ -929,9 +929,7 @@ equals the sum of all the masses of the products composing the object.
 text\<open>
 \begin{figure}
 @{boxed_theory_text [display]
-\<open>
-
-definition Item_to_Resource_morphism :: "Item \<Rightarrow> Resource" 
+\<open>definition Item_to_Resource_morphism :: "Item \<Rightarrow> Resource" 
            ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
   where    "\<sigma> \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m =  \<lparr>  Resource.tag_attribute = 0::int , 
                                  Resource.name = name \<sigma> \<rparr>" 
