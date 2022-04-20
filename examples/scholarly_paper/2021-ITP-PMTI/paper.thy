@@ -401,7 +401,7 @@ types. The notation for terms and types is as follows: \<^vs>\<open>-0.2cm\<clos
 text\<open> \<^noindent> In fact, \<^theory_text>\<open>onto_class\<close>es and the logically equivalent  \<^theory_text>\<open>doc_class\<close>es were
 represented by \<^emph>\<open>extensible\<close> record types and instances thereof by HOL terms 
 (see @{cite"brucker.ea:isabelledof:2019"} for details.).  
-Invariants of an \<^verbatim>\<open>onto_class\<close> are just predicates over extensible record
+Invariants of an \<^theory_text>\<open>onto_class\<close> are just predicates over extensible record
 types and were applied to subclasses. \<close>
 
 subsection\<open>Term-Evaluations in Isabelle\<close>
