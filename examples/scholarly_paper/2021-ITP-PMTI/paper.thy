@@ -398,7 +398,7 @@ types. The notation for terms and types is as follows: \<^vs>\<open>-0.2cm\<clos
 \<^item> record terms \<^term>\<open>\<lparr>x = a,y = b\<rparr>\<close> and corresponding record types \<open>\<lparr>x::A, y::B\<rparr>\<close>,
 \<^item> the resulting selectors are written \<^term>\<open>x(r::T)\<close>, \<^term>\<open>y(r::T)\<close>.\<close>
 
-text\<open> \<^noindent> In fact, \<^verbatim>\<open>onto_class\<close>es and the logically equivalent  \<^verbatim>\<open>doc_class\<close>es were
+text\<open> \<^noindent> In fact, \<^theory_text>\<open>onto_class\<close>es and the logically equivalent  \<^theory_text>\<open>doc_class\<close>es were
 represented by \<^emph>\<open>extensible\<close> record types and instances thereof by HOL terms 
 (see @{cite"brucker.ea:isabelledof:2019"} for details.).  
 Invariants of an \<^verbatim>\<open>onto_class\<close> are just predicates over extensible record
