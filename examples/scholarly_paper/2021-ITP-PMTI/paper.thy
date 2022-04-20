@@ -457,7 +457,7 @@ doc_class myintro = mytext_section +
   and force_level :: "the (level \<sigma>) > 1"
 doc_class myclaim = myintro +
   based_on :: "string list"
-doc_class mytechnical = text_section +
+doc_class mytechnical = mytext_section +
   formal_results :: "thm list" 
 
 datatype kind = expert_opinion | argument | "proof"
@@ -1002,174 +1002,64 @@ of using the \<^dof> framework compared to approaches like ATL or EXPRESS-X is
 the possibility of formally verifying the \<^emph>\<open>mapping rules\<close>. \<^ie>  proving the preservation 
 of invariants, as we have demonstrated in the previous example.\<close>
 
-(*
-section*[ontoexample::text_section,main_author="Some(@{docitem ''idir''}::author)"] 
-\<open>Mathematics Example : An Extract from OntoMath\textsuperscript{PRO}\<close>
-
 (*<*)
-(* OntoMathPro_Ontology example *)
+text\<open>Ontology example extracted from
+\<^file>\<open>$ISABELLE_DOF_HOME/src/ontologies/CENELEC_50128/CENELEC_50128.thy\<close> and adapted\<close>
 
-datatype dc = creator string | title string
+datatype role =  PM     \<comment> \<open>Program Manager\<close>
+              |  RQM    \<comment> \<open>Requirements Manager\<close> 
+              |  DES    \<comment> \<open>Designer\<close>
+              |  IMP    \<comment> \<open>Implementer\<close> 
+              |  ASR    \<comment> \<open>Assessor\<close> 
+              |  INT    \<comment> \<open>Integrator\<close> 
+              |  TST    \<comment> \<open>Tester\<close>
+              |  VER    \<comment> \<open>Verifier\<close>
+              |  VnV    \<comment> \<open>Verification and Validation\<close>
+              |  VAL    \<comment> \<open>Validator\<close>
 
-datatype owl =
-    backwardCompatibleWith string
-  | deprecated string
-  | incompatibleWith string
-  | priorVersion string
-  | versionInfo string
-  
-datatype rdfs =
-    comment string
-  | isDefinedBy string
-  | label string
-  | seeAlso string
+datatype phase = SYSDEV_ext \<comment> \<open> System Development Phase (external)\<close>  
+               | SPl   \<comment> \<open>Software Planning\<close>
+               | SR    \<comment> \<open>Software Requirement\<close> 
+               | SA    \<comment> \<open>Software Architecture\<close>
+               | SDES  \<comment> \<open>Software Design\<close>
+               | SCDES \<comment> \<open>Software Component Design\<close> 
+               | CInT  \<comment> \<open>Component Implementation and Testing\<close>
+               | SI    \<comment> \<open>Software Integration\<close>
+               | SV    \<comment> \<open>Software Validation\<close>
+               | SD    \<comment> \<open>Software Deployment\<close>
+               | SM    \<comment> \<open>Software Maintenance\<close>
 
-datatype annotation = DC dc | OWL owl |  RDFS rdfs
+doc_class cenelec_document = text_element +
+   phase         :: phase
+   written_by   :: role      \<comment> \<open>Annex C Table C.1 \<close>
+   fst_check     :: role      \<comment> \<open>Annex C Table C.1 \<close>
+   snd_check    :: role      \<comment> \<open>Annex C Table C.1 \<close>
+   invariant must_be_chapter :: "text_element.level \<sigma> = Some(0)"
+   invariant two_eyes_prcple :: "written_by \<sigma> \<noteq> fst_check \<sigma> 
+                                     \<and> written_by \<sigma> \<noteq> snd_check \<sigma>"
 
-onto_class Top =
-  Annotations :: "annotation list"
+definition "iswff\<^sub>p\<^sub>r\<^sub>e" :: "bool" 
+  where "iswff\<^sub>p\<^sub>r\<^sub>e \<equiv> True"
 
-onto_class Field_of_mathematics =
-  Annotations :: "annotation list" <= "[RDFS (label ''Field of mathematics'')]"
-  invariant restrict_annotation_F ::"set (Annotations \<sigma>) \<subseteq>
-                                              range (RDFS o label) \<union> range (RDFS o comment)"
+doc_class SWIS_E =
+   op_name          :: "string"
+   op_args_res       :: "(string \<times> typ) list \<times> typ" \<comment> \<open>args and result type\<close>
+   pre_cond          :: "(string \<times> thm) list"        \<comment> \<open>labels and predicates\<close>
+   post_cond         :: "(string \<times> thm) list"        \<comment> \<open>labels and predicates\<close>
+  (* invariant well_formed_pre :: "\<forall>cond \<in> set(map snd (pre_cond \<sigma>)). 
+                                              iswff\<^sub>p\<^sub>r\<^sub>e (op_args_res \<sigma>) (cond)"
+   invariant well_formed_post:: ...*)
 
-onto_class Mathematical_knowledge_object =
-  Annotations :: "annotation list"
-  invariant restrict_annotation_M ::"set (Annotations \<sigma>) \<subseteq>
-                                              range (RDFS o label) \<union> range (RDFS o comment)"
-
-onto_class assoc_F_M =
-  contains:: "(Field_of_mathematics \<times> Mathematical_knowledge_object) set"
-  invariant contains_defined :: "\<forall> x. x \<in> Domain (contains \<sigma>)
-                                              \<longrightarrow> (\<exists> y \<in> Range (contains \<sigma>). (x, y) \<in> contains \<sigma>)"
-
-onto_class assoc_M_F =
-  belongs_to :: "(Mathematical_knowledge_object \<times> Field_of_mathematics) set"
-  invariant belong_to_defined :: "\<forall> x. x \<in> Domain (belongs_to \<sigma>)
-                                           \<longrightarrow> (\<exists> y \<in> Range (belongs_to \<sigma>). (x, y) \<in> belongs_to \<sigma>)"
-
-onto_class assoc_M_M =
-  is_defined_by :: "(Mathematical_knowledge_object \<times> Mathematical_knowledge_object) set"
-  invariant is_defined_by_defined :: "\<forall> x. x \<in> Domain (is_defined_by \<sigma>)
-                                    \<longrightarrow> (\<exists> y \<in> Range (is_defined_by \<sigma>). (x, y) \<in> is_defined_by \<sigma>)"
-(*typedef 'a A'_scheme =
-  "{x :: 'a A_scheme. "
-*)
-
-onto_class assoc_M_M' =
-  "defines" :: "(Mathematical_knowledge_object \<times> Mathematical_knowledge_object) set"
-  invariant defines_defined :: "\<forall> x. x \<in> Domain (defines \<sigma>)
-                                    \<longrightarrow> (\<exists> y \<in> Range (defines \<sigma>). (x, y) \<in> defines \<sigma>)"
-
-onto_class assoc_M_M_see_also =
-  see_also :: "(Mathematical_knowledge_object rel) set" 
-  invariant see_also_trans :: "\<forall> r \<in> (see_also \<sigma>). trans r"
-  invariant see_also_sym :: "\<forall> r \<in> (see_also \<sigma>). sym r"
-
-onto_class Problem = Mathematical_knowledge_object +
-  Annotations :: "annotation list"
-  
-onto_class Method = Mathematical_knowledge_object +
-  Annotations :: "annotation list"
-
-onto_class assoc_Problem_Method =
-  is_solved_by :: "(Problem \<times> Method) set"
-  invariant is_solved_by_defined :: "\<forall> x. x \<in> Domain (is_solved_by \<sigma>)
-                                    \<longrightarrow> (\<exists> y \<in> Range (is_solved_by \<sigma>). (x, y) \<in> is_solved_by \<sigma>)"
-
-onto_class assoc_Method_Problem =
-  solves :: "(Method \<times> Problem) set"
-  invariant solves_defined :: "\<forall> x. x \<in> Domain (solves \<sigma>)
-                                    \<longrightarrow> (\<exists> y \<in> Range (solves \<sigma>). (x, y) \<in> solves \<sigma>)"
+doc_class SWIS = cenelec_document + \<comment> \<open>software interface specification\<close> 
+   phase        :: "phase"  <= "SCDES"      written_by   :: "role"   <= "DES"
+   fst_check    :: "role"   <= "VER"           snd_check    :: "role"   <= "VAL"
+   components:: "SWIS_E list"
+   type_synonym software_interface_specification = SWIS
 
 (*>*)
 
-text\<open>
-  The \<^emph>\<open>OntoMath\textsuperscript{PRO}\<close> ontology~@{cite "Nevzorova2014OntoMathPO"}
-  is an OWL ontology of mathematical knowledge concepts.
-  It possesses the \<^emph>\<open>is-a\<close> semantics for hierarchies of mathematical knowledge elements,
-  and defines these elements as two hierarchies of classes:
-  a taxonomy of the fields of mathematics and a taxonomy of mathematical knowledge objects.
-  It defines two main type of relations for these two taxonomies:
-  directed relations between elements of the two hierarchies
-  like \<^const>\<open>belongs_to\<close>, \<^const>\<open>contains\<close>, \<^const>\<open>defines\<close>, \<^const>\<open>is_defined_by\<close>, \<^const>\<open>solves\<close>,
-  \<^const>\<open>is_solved_by\<close>, and a symmetric transitive associative relation \<^const>\<open>see_also\<close>
-  between two mathematical knowledge objects.
-  It also represents links with external resources
-  such as DBpedia~@{cite "10.1007/978-3-540-76298-0_52"}
-  with annotations properties~@{cite "Parsia:12:OWO"}.
-  \<^dof> covers a wide range of the OWL concepts used by the OntoMath\textsuperscript{PRO} ontology.
-  We can represent the annotations properties as datatypes and
-  then attach them as an attributes list to a class.
-  For example the declaration:
-@{theory_text [display,indent=5, margin=70] \<open>
-datatype dc = creator string | title string
-datatype owl =   backwardCompatibleWith string
-               | deprecated string
-               | incompatibleWith string
-               | priorVersion string
-               | versionInfo string
-datatype rdfs =   comment string
-                | isDefinedBy string
-                | label string
-                | seeAlso string
-datatype annotation = DC dc | OWL owl |  RDFS rdfs
+section*[appl_certif::technical]\<open>Application: CENELEC Ontology\<close>
 
-onto_class Field_of_mathematics =
-  Annotations :: "annotation list" <= "[RDFS (label ''Field of mathematics'')]"
-  invariant restrict_annotation_F ::"set (Annotations \<sigma>) \<subseteq>
-                                       range (RDFS o label)
-                                       \<union> range (RDFS o comment)"
-\<close>}
-  defines the class \<^typ>\<open>Field_of_mathematics\<close> with an attribute \<^theory_text>\<open>Annotations\<close>
-  which is a \<^type>\<open>list\<close> of \<^typ>\<open>annotation\<close>s.
-  We can even constrain the type of allowed \<^typ>\<open>annotation\<close>s with an invariant.
-  Here the \<^theory_text>\<open>invariant restrict_annotation_F\<close> forces the \<^typ>\<open>annotation\<close>s to be
-  a \<^const>\<open>label\<close> or a \<^const>\<open>comment\<close>.
-  Subsumption relation is straightforward.
-  The OntoMath\textsuperscript{PRO} ontology defines
-  a \<^typ>\<open>Problem\<close> and a \<^typ>\<open>Method\<close>
-  as subclasses of the class \<^typ>\<open>Mathematical_knowledge_object\<close>.
-  It gives in \<^dof>:
-@{theory_text [display,indent=5, margin=70] \<open>
-onto_class Problem = Mathematical_knowledge_object +
-  Annotations :: "annotation list"
-  
-onto_class Method = Mathematical_knowledge_object +
-  Annotations :: "annotation list"
-\<close>}
-  We can express the relations between the two taxonomies
-  with association \<^theory_text>\<open>onto_class\<close>es which specify
-  the relation as an attribute and enforces the relation with an \<^theory_text>\<open>invariant\<close>.
-  The two directed relations \<^const>\<open>is_solved_by\<close> and \<^const>\<open>solves\<close>
-  between \<^typ>\<open>Problem\<close> and a \<^typ>\<open>Method\<close> can be represented in \<^dof> like this:
-@{theory_text [display,indent=5, margin=70] \<open>
-onto_class assoc_Problem_Method =
-  is_solved_by :: "(Problem \<times> Method) set"
-  invariant is_solved_by_defined :: "\<forall> x. x \<in> Domain (is_solved_by \<sigma>)
-              \<longrightarrow> (\<exists> y \<in> Range (is_solved_by \<sigma>). (x, y) \<in> is_solved_by \<sigma>)"
-
-onto_class assoc_Method_Problem =
-  solves :: "(Method \<times> Problem) set"
-  invariant solves_defined :: "\<forall> x. x \<in> Domain (solves \<sigma>)
-              \<longrightarrow> (\<exists> y \<in> Range (solves \<sigma>). (x, y) \<in> solves \<sigma>)"
-\<close>}
-  where the attributes \<^const>\<open>is_solved_by\<close> and \<^const>\<open>solves\<close> define the relations
-  of the classes and the invariants \<^theory_text>\<open>is_solved_by_defined\<close> and \<^theory_text>\<open>solves_defined\<close> enforce
-  the existence of the relations when one define instances of the classes.
-
-  \<^dof> allows to define ontologies and specify constraints
-  on their concepts.
-  Additionally it dynamically checks at run-time the concepts when defining instances.
-  It offers an environment to define and test ontologies in an integrated document,
-  where all the knowledge and the proof-checking can be specified,
-  and thus can help to find the right trade-off between plain vocabularies and 
-  highly formalized models.
-\<close>
-*)
-
-section*[appl_certif::technical]\<open>Selected Applications to the CENELEC Ontology\<close>
 text\<open>From its beginning, \<^dof> had been used for documents containing formal models targeting 
 certifications. A major case-study from the railways domain based on the CENELEC 50128 standard
 had been published earlier (cf. @{cite "DBLP:conf-ifm-BruckerW19"}) 
@@ -1183,8 +1073,8 @@ selected elements in this ontology.
 
 According to CENELEC Table C.1, for example, we specify the category of ``Design and Test Documents''
 as follows:
-@{boxed_theory_text [display] \<open>
-doc_class cenelec_document = text_element +
+@{boxed_theory_text [display]
+\<open>doc_class cenelec_document = text_element +
    phase         :: phase
    written_by   :: role      \<comment> \<open>Annex C Table C.1 \<close>
    fst_check     :: role      \<comment> \<open>Annex C Table C.1 \<close>
@@ -1192,45 +1082,44 @@ doc_class cenelec_document = text_element +
    ... 
    invariant must_be_chapter :: "text_element.level \<sigma> = Some(0)"
    invariant two_eyes_prcple :: "written_by \<sigma> \<noteq> fst_check \<sigma> 
-                                     \<and> written_by \<sigma> \<noteq> snd_check \<sigma>"
-\<close>}
-This class refers to the ``software phases'' the standard postulates (like \<open>SPl\<close> for 
-``Software Planning'' or \<open>SCDES\<close> for ``Software Component Design'') 
+                                     \<and> written_by \<sigma> \<noteq> snd_check \<sigma>"\<close>}
+
+This class refers to the ``software phases'' the standard postulates (like \<^const>\<open>SPl\<close> for 
+``Software Planning'' or \<^const>\<open>SCDES\<close> for ``Software Component Design'') 
 which we model by a corresponding enumeration types (not shown here).  
-Similarly, the standard postulates ``roles'' that certain specified teams posses in the overall process
-(like \<open>VER\<close> for verification and \<open>VAL\<close> for validation). We added invariants that specify 
-certain constraints implicit in the standard: for example, a \<open>cenelec_document\<close> must have
-the textual structure of a chapter (the \<open>level\<close>-attribute is inherited from an underlying 
+Similarly, the standard postulates ``roles'' that certain specified teams possess in the overall process
+(like \<^const>\<open>VER\<close> for verification and \<^const>\<open>VAL\<close> for validation). We added invariants that specify 
+certain constraints implicit in the standard: for example, a \<^typ>\<open>cenelec_document\<close> must have
+the textual structure of a chapter (the \<^emph>\<open>level\<close>-attribute is inherited from an underlying 
 ontology library specifying basic text-elements) as well as the two-eyes-principle between authors and
 checkers of these chapters.
 \<close>
-text\<open> The concrete sub-class of  \<open>cenelec_document\<close> is the 
-\<open>software_interface_specification\<close>-class (\<open>SWIS\<close> for short) as shown below, 
+text\<open> The concrete sub-class of  \<^typ>\<open>cenelec_document\<close> is the 
+\<^typ>\<open>software_interface_specification\<close>-class (\<^typ>\<open>SWIS\<close> for short) as shown below, 
 which provides the role assignment required for this document type: 
 @{boxed_theory_text [display] \<open>
+
 doc_class SWIS = cenelec_document + \<comment> \<open>software interface specification\<close> 
    phase        :: "phase"  <= "SCDES"      written_by   :: "role"   <= "DES"
    fst_check    :: "role"   <= "VER"           snd_check    :: "role"   <= "VAL"
-   components:: "SWIS_E list"
-\<close>} 
+   components:: "SWIS_E list"\<close>} 
 The structural constraints expressed so far can in principle be covered by any 
 hand-coded validation process and suitable editing support (\<^eg>,  Protégé @{cite "protege"}). 
-However, a closer look at the class \<open>SWIS_E\<close> (``software interface specification 
-element'') referenced in the \<open>components\<close>-attribute reveals the unique power of \<^dof>;
+However, a closer look at the class \<^typ>\<open>SWIS_E\<close> (``software interface specification 
+element'') referenced in the \<^const>\<open>components\<close>-attribute reveals the unique power of \<^dof>;
 rather than saying ``there must be a pre-condition'', \<^dof> can be far more precise:
-@{boxed_theory_text [display] \<open>
-doc_class SWIS_E =
+@{boxed_theory_text [display]
+\<open>doc_class SWIS_E =
    op_name          :: "string"
    op_args_res       :: "(string \<times> typ) list \<times> typ" \<comment> \<open>args and result type\<close>
    pre_cond          :: "(string \<times> thm) list"        \<comment> \<open>labels and predicates\<close>
    post_cond         :: "(string \<times> thm) list"        \<comment> \<open>labels and predicates\<close>
    invariant well_formed_pre :: "\<forall>cond \<in> set(map snd (pre_cond \<sigma>)). 
                                               iswff\<^sub>p\<^sub>r\<^sub>e (op_args_res \<sigma>) (cond)"
-   invariant well_formed_post:: ...
-\<close>}
-where the constants \<open>iswff\<^sub>p\<^sub>r\<^sub>e\<close> is bound to a functions at the SML-level, that
+   invariant well_formed_post:: ...\<close>}
+where the constant \<^const>\<open>iswff\<^sub>p\<^sub>r\<^sub>e\<close> is bound to a function at the SML-level, that
 is executed during the evaluation phase of these invariants and that checks:
-\<^item> Any \<open>cond\<close> is indeed a valid definition in the global logical context
+\<^item> Any \<^emph>\<open>cond\<close> is indeed a valid definition in the global logical context
   (taking HOL-libraries but also the concrete certification target model into account).
 \<^item> Any such HOL definition has the syntactic form:
   \<^vs>\<open>-0.3cm\<close>
@@ -1253,44 +1142,34 @@ section*[rw::related_work]\<open>Related Work\<close>
 text\<open>There are a number of approaches to use ontologies for structuring the link between
 information and knowledge, and to make it amenable to 
  ``semantic'' search in or consistency checking of documents.
-Some are targeting mathematical libraries:
-
-\<^item> The search engine \<^url>\<open>http://shinh.org/wfs\<close> uses clever text-based search methods in 
-  a large number of formulas, agnostic of their logical context, and of formal proof.
-
-\<^item> The OAF project @{cite "KohlhaseR21"}
+Some are targeting mathematical libraries,
+like the search engine \<^url>\<open>http://shinh.org/wfs\<close> which uses clever text-based search methods in 
+  a large number of formulas, agnostic of their logical context and of formal proof,
+or the OAF project @{cite "KohlhaseR21"} which
   developed a common ontological format, called  OMDoc/MMT, and 
-  developed six \<^emph>\<open>export\<close> functions from major ITP systems into it.
+  six \<^emph>\<open>export\<close> functions from major ITP systems into it.
   The emphasis was put on building
   a server infrastructure based on conventional, rather heavy-weight database and OWL technology.
 
-\<^item> There are meanwhile a number of proposals of ontologies targeting mathematics:
-  \<^item>  OntoMath\textsuperscript{PRO} @{cite "Nevzorova2014OntoMathPO"} proposes a 
+There are also a number of proposals of ontologies targeting mathematics:
+the OntoMath\textsuperscript{PRO} @{cite "Nevzorova2014OntoMathPO"} proposes a 
      ``taxonomy of the fields of mathematics'' (pp 110). In total, 
      OntoMath\textsuperscript{PRO} contains the daunting number of 3,449 classes,
      which is in part due to 
      the need to compensate the lack of general datatype definition methods for meta-data.
-  \<^item> Other ontologies worth mentioning are DBpedia @{cite "10.1007/978-3-540-76298-0_52"}, 
+Other ontologies worth mentioning are DBpedia @{cite "10.1007/978-3-540-76298-0_52"}, 
     which provides with the \<^emph>\<open>SPARQL endpoint\<close>  \<^url>\<open>http://dbpedia.org/sparql\<close> a search engine, 
     and the more general ScienceWISE \<^footnote>\<open>\<^url>\<open>http://sciencewise.info/ontology/\<close>.\<close>
-    that allows users to introduce their own category concepts. 
+    that allows users to introduce their own category concepts.
 
 Regarding using formal methods to formalise standards, Event-B method was used by
 Fotso et al. @{cite "FotsoFLM18"} to propose a specification of the hybrid ERTMS/ETCS level 3 standard,
 in which requirements are specified using SysML/KAOS goal diagrams that are translated into 
 Event-B, and domain-specific properties are specified by ontologies.
 
-In another case, Mendil et al. @{cite "MendilASMP21"} proposes an Event-B framework for formalising standard
+In another case, Mendil et al. @{cite "MendilASMP21"} propose an Event-B framework for formalising standard
  conformance through formal modelling of standards as ontologies. 
 The proposed approach was exemplified on ARINC 661 standard and weather radar system application.
-
-  Our approach emphasizes type-safeness, expressive power and ``depth'' of meta-data,
-  which is adapted to the specific needs of ITP systems and theory developments.
-  It is a concrete proposal for the ITP community allowing
-  a deeper structuring of mathematical libraries
-  such as the Isabelle Archive of Formal Proofs (AFP)~@{cite "AFP-ref22"}
-  which passed the impressive numbers of 650 articles, 
-  written by 420 authors at the beginning of 2022.
 
 %   \<^url>\<open>https://github.com/CLLKazan/OntoMathPro\<close> 
 %
