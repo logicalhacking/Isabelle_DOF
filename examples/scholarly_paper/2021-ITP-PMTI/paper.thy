@@ -801,10 +801,6 @@ onto_class Computer_Hardware = Product +
   composed_of :: "Product list" 
   invariant c2 :: "Product.mass \<sigma> = sum(map Product.mass (composed_of \<sigma>))"
 
-definition Item_to_Resource_morphism :: "Item \<Rightarrow> Resource" 
-           ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
-  where    "\<sigma> \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m =  \<lparr>  Resource.tag_attribute = 0::int , 
-                                 Resource.name = name \<sigma> \<rparr>" 
 
 definition Product_to_Component_morphism :: "Product \<Rightarrow> Component"
            ("_ \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t" [1000]999)
@@ -844,24 +840,48 @@ text\<open>
 The \<^dof> framework does not assume that all documents refer to the same ontology. 
 Each document may even build its local ontology without any external reference. 
 It may also be based on several reference ontologies (\<^eg>, from the  \<^dof> library). 
-
 Since ontological instances possess \<^emph>\<open>representations inside the logic\<close>,
 the relationship between a local ontology and a reference ontology can be formalised
-using a morphism function also inside the logic. 
-More precisely, the instances of local ontology classes may be described as the image of a 
+using a morphism function also inside the logic. More precisely, the instances of local ontology 
+classes may be described as the image of a 
 transformation applied to one or several other instances of class(es) belonging to another 
-ontology. 
-
-Thanks to the morphism relationship, the obtained class may either import meta-data 
+ontology. Thanks to the morphism relationship, the obtained class may either import meta-data 
 (definitions are preserved)  or map meta-data (the properties are different but 
 are semantically equivalent) that are defined in the referenced class(es). 
 It may also provide additional properties. This means that morphisms may be injective, 
 surjective, bijective, and thus describe abstract relations between ontologies.
 This raises the question of invariant preservation.
 \<close>
-
 text\<open>
-\begin{figure}
+To illustrate this process, we have defined a simple ontology to classify Hardware objects.
+%This ontology is described in \autoref{fig-Local-Ontology-example
+
+%\begin{figure}[!h]
+@{boxed_theory_text [display]
+\<open>onto_class Item =
+  name :: string
+onto_class Product = Item +
+  serial_number :: int
+  provider :: string
+  mass :: int
+onto_class Computer_Hardware = Product +
+  type :: Hardware_Type
+  composed_of :: "Product list" 
+  invariant c2 :: "Product.mass \<sigma> = sum(map Product.mass (composed_of \<sigma>))"\<close>}
+%\caption{An extract of a local (user)  ontology.}
+%\label{fig-Local-Ontology-example}
+%\end{figure}
+%} 
+
+This ontology defines the \<^typ>\<open>Item\<close>, \<^typ>\<open>Product\<close> and \<^typ>\<open>Computer_Hardware\<close> concepts (or classes).  
+Each class contains a set of attributes or properties and some local invariants.
+In this example, we focus on the \<^typ>\<open>Computer_Hardware\<close> 
+class defined as a list of products characterised by their mass value.
+This class contains a local \<^theory_text>\<open>invariant c2\<close> to guarantee that its own mass value
+equals the sum of all the masses of the products composing the object.
+For the sake of the argument, we use the reference ontology (considered as a standard)
+described in this listing :
+%\begin{figure}
 @{boxed_theory_text [display]
 \<open>definition sum where "sum S = (fold (+) S 0)"
 
@@ -882,68 +902,42 @@ onto_class Hardware = Informatic +
   mass :: int
   composed_of :: "Component list" 
   invariant c1 :: "mass \<sigma> = sum(map Component.mass (composed_of \<sigma>))"\<close>}
-\caption{An extract of a reference ontology.}
-\label{fig-Reference-Ontology-example}
-\end{figure}
+%\caption{An extract of a reference ontology.}
+%\label{fig-Reference-Ontology-example}
+%\end{figure}
 
-To illustrate this process, we use the reference ontology (considered as a standard) described 
-in the listing  \autoref{fig-Reference-Ontology-example}, defining the \<^typ>\<open>Resource\<close>,
-\<^typ>\<open>Electronic\<close>, \<^typ>\<open>Component\<close>, \<^typ>\<open>Informatic\<close> and \<^typ>\<open>Hardware\<close> concepts (or classes). 
-Each class contains a set of attributes or properties and some local invariants. 
-
+This ontology defines  the \<^typ>\<open>Resource\<close>,
+\<^typ>\<open>Electronic\<close>, \<^typ>\<open>Component\<close>, \<^typ>\<open>Informatic\<close> and \<^typ>\<open>Hardware\<close> concepts.
 In our example, we focus on the \<^typ>\<open>Hardware\<close> class containing a \<^const>\<open>mass\<close> attribute
 and composed of a list of components with a \<^const>\<open>mass\<close> attribute formalising
 the mass value of each component.
 The \<^typ>\<open>Hardware\<close> class also contains a local \<^theory_text>\<open>invariant c1\<close>
 to define a constraint linking the global mass of a \<^typ>\<open>Hardware\<close> object
 with the masses of its own components.  
+
 \<close>
 
 text\<open>
-\begin{figure}
+To check the coherence of our local ontology, we define a relationship between the local ontology 
+and the reference ontology using morphism functions (or mapping rules as in ATL framework~@{cite "atl"}
+or EXPRESS-X language~@{cite "BGPP95"}). These rules are applied to define the relationship 
+between one class of the local ontology to one or several other class(es) described in the reference 
+ontology. In our case, we have define two morphises, \<^const>\<open>Product_to_Component_morphism\<close>
+and \<^const>\<open>Computer_Hardware_to_Hardware_morphism\<close>, detailed in the following listing : 
+
+%\begin{figure}
 @{boxed_theory_text [display]
-\<open>onto_class Item =
-  name :: string
-onto_class Product = Item +
-  serial_number :: int
-  provider :: string
-  mass :: int
-onto_class Computer_Hardware = Product +
-  type :: Hardware_Type
-  composed_of :: "Product list" 
-  invariant c2 :: "Product.mass \<sigma> = sum(map Product.mass (composed_of \<sigma>))"\<close>}
-\caption{An extract of a local (user)  ontology.}
-\label{fig-Local-Ontology-example}
-\end{figure}
-
-For the sake of the argument, we have defined a simple ontology to classify Hardware objects.
-This ontology is described in \autoref{fig-Local-Ontology-example} and 
-defines the \<^typ>\<open>Item\<close>, \<^typ>\<open>Product\<close> and \<^typ>\<open>Computer_Hardware\<close> concepts.
-As for the reference ontology, we focus on the \<^typ>\<open>Computer_Hardware\<close> 
-class defined as a list of products characterised by their mass value.
-This class contains a local \<^theory_text>\<open>invariant c2\<close> to guarantee that its own mass value
-equals the sum of all the masses of the products composing the object.
-\<close>
-
-
-text\<open>
-\begin{figure}
-@{boxed_theory_text [display]
-\<open>definition Item_to_Resource_morphism :: "Item \<Rightarrow> Resource" 
-           ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
-  where    "\<sigma> \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m =  \<lparr>  Resource.tag_attribute = 0::int , 
-                                 Resource.name = name \<sigma> \<rparr>" 
-
-definition Product_to_Component_morphism :: "Product \<Rightarrow> Component"
-           ("_ \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t" [1000]999)
+\<open>definition Product_to_Component_morphism :: 
+            "Product \<Rightarrow> Component" ("_ \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t" [1000]999)
   where "  \<sigma> \<langle>Component\<rangle>\<^sub>P\<^sub>r\<^sub>o\<^sub>d\<^sub>u\<^sub>c\<^sub>t = \<lparr> Resource.tag_attribute = 1::int ,
                                  Resource.name = name \<sigma> ,
                                  Electronic.provider  = provider \<sigma> ,
                                  Electronic.manufacturer  = ''no manufacturer'' ,
                                  Component.mass = mass \<sigma> ,
-                                 Component.dimensions = [] \<rparr>" 
+                                 Component.dimensions = [] \<rparr>"\<close>} 
 
-definition Computer_Hardware_to_Hardware_morphism ::
+@{boxed_theory_text [display]
+\<open>definition Computer_Hardware_to_Hardware_morphism ::
             "Computer_Hardware \<Rightarrow> Hardware"
            ("_ \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e" [1000]999)
            where "\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e =
@@ -954,30 +948,22 @@ definition Computer_Hardware_to_Hardware_morphism ::
                      Hardware.mass = mass \<sigma> ,
                      Hardware.composed_of = map Product_to_Component_morphism 
                                                 (composed_of \<sigma>) \<rparr>"\<close>}
-\caption{An extract of a mapping definition.}
+%\caption{An extract of a mapping definition.}
+%\label{fig-mapping-example}
+%\end{figure}
 
-\label{fig-mapping-example}
-\end{figure}
 
-
-To check the coherence of our local ontology, we define a relationship between the local ontology 
-and the reference ontology using morphism functions (or mapping rules as in ATL framework~@{cite "atl"}
-or EXPRESS-X language~@{cite "BGPP95"}). These rules are applied to define the relationship 
-between one class of the local ontology to one or several other class(es) described in the reference 
-ontology. 
-
-\<^const>\<open>Product_to_Component_morphism\<close> and \<^const>\<open>Computer_Hardware_to_Hardware_morphism\<close>
-definitions, detailed in \autoref{fig-mapping-example},
-specify how \<^typ>\<open>Product\<close> or \<^typ>\<open>Computer_Hardware\<close> objects are mapped to \<^typ>\<open>Component\<close> 
+These definitions specify how \<^typ>\<open>Product\<close> or \<^typ>\<open>Computer_Hardware\<close> objects are mapped to \<^typ>\<open>Component\<close> 
 or \<^typ>\<open>Hardware\<close> objects defined in the reference ontology.
 This mapping shows that the structure of a (user) ontology may be arbitrarily different
 from the one of a standard ontology it references. 
 \<close>
 
-
-
 text\<open>
-\begin{figure}
+The following example proof  for a simple, but typical example of reformatting
+meta-data into another format along an ontological mapping are nearly trivial: 
+
+%\begin{figure}
 @{boxed_theory_text [display]
 \<open>lemma inv_c2_preserved :
   "c2_inv \<sigma> \<Longrightarrow> c1_inv (\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e)"
@@ -990,16 +976,16 @@ lemma Computer_Hardware_to_Hardware_total :
          "Computer_Hardware_to_Hardware_morphism ` ({X. c2_inv X}) 
       \<subseteq> ({X::Hardware. c1_inv X})"
   using inv_c2_preserved by auto\<close>}
-\caption{Proofs establishing an Invariant Preservation.}
-\label{fig-xxx}
-\end{figure}
-\<close>
-text\<open>The example proof in \autoref{fig-xxx} for a simple, but typical example of reformatting
-meta-data into another format along an ontological mapping are nearly trivial: after unfolding
+%\caption{Proofs establishing an Invariant Preservation.}
+%\label{fig-xxx}
+%\end{figure}
+
+After unfolding
 the invariant and the morphism definitions, the preservation proof is automatic. The advantage 
 of using the \<^dof> framework compared to approaches like ATL or EXPRESS-X is 
 the possibility of formally verifying the \<^emph>\<open>mapping rules\<close>. \<^ie>  proving the preservation 
-of invariants, as we have demonstrated in the previous example.\<close>
+of invariants, as we have demonstrated in the previous example.
+\<close>
 
 (*<*)
 text\<open>Ontology example extracted from
@@ -1169,7 +1155,6 @@ Regarding using formal methods to formalise standards, Event-B method was used b
 Fotso et al. @{cite "FotsoFLM18"} to propose a specification of the hybrid ERTMS/ETCS level 3 standard,
 in which requirements are specified using SysML/KAOS goal diagrams that are translated into 
 Event-B, and domain-specific properties are specified by ontologies.
-
 In another case, Mendil et al. @{cite "MendilASMP21"} propose an Event-B framework for formalising standard
  conformance through formal modelling of standards as ontologies. 
 The proposed approach was exemplified on ARINC 661 standard and weather radar system application.
@@ -1183,7 +1168,7 @@ The proposed approach was exemplified on ARINC 661 standard and weather radar sy
 %  exist approaches based on strong type systems 
 \<close>
 
-section*[concl::conclusion]\<open>Conclusion\<close>
+section*[concl::conclusion]\<open>Conclusion and Future Work\<close>
 text\<open>We presented \<^dof>, an ontology framework 
 deeply integrating continuous-check\slash continuous-build functionality into
 the formal development process in \<^hol>. The novel feature of term-contexts in \<^dof>,
