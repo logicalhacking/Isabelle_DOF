@@ -1037,6 +1037,9 @@ doc_class cenelec_document = text_element +
    invariant two_eyes_prcple :: "written_by \<sigma> \<noteq> fst_check \<sigma> 
                                      \<and> written_by \<sigma> \<noteq> snd_check \<sigma>"
 
+(* artificial definition to enable checking in text\<open>\<close>
+   It will have to be implemented to enable the invariant well_formed_pre in SWIS_E.
+*)
 definition "iswff\<^sub>p\<^sub>r\<^sub>e" :: "bool" 
   where "iswff\<^sub>p\<^sub>r\<^sub>e \<equiv> True"
 
@@ -1045,6 +1048,7 @@ doc_class SWIS_E =
    op_args_res       :: "(string \<times> typ) list \<times> typ" \<comment> \<open>args and result type\<close>
    pre_cond          :: "(string \<times> thm) list"        \<comment> \<open>labels and predicates\<close>
    post_cond         :: "(string \<times> thm) list"        \<comment> \<open>labels and predicates\<close>
+  (* iswff\<^sub>p\<^sub>r\<^sub>e  will have to be implemented to enable the invariant well_formed_pre. *)
   (* invariant well_formed_pre :: "\<forall>cond \<in> set(map snd (pre_cond \<sigma>)). 
                                               iswff\<^sub>p\<^sub>r\<^sub>e (op_args_res \<sigma>) (cond)"
    invariant well_formed_post:: ...*)
