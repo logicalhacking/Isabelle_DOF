@@ -880,7 +880,7 @@ class defined as a list of products characterised by their mass value.
 This class contains a local \<^theory_text>\<open>invariant c2\<close> to guarantee that its own mass value
 equals the sum of all the masses of the products composing the object.
 For the sake of the argument, we use the reference ontology (considered as a standard)
-described in this listing :
+described in this listing:
 %\begin{figure}
 @{boxed_theory_text [display]
 \<open>definition sum where "sum S = (fold (+) S 0)"
@@ -923,7 +923,7 @@ and the reference ontology using morphism functions (or mapping rules as in ATL 
 or EXPRESS-X language~@{cite "BGPP95"}). These rules are applied to define the relationship 
 between one class of the local ontology to one or several other class(es) described in the reference 
 ontology. In our case, we have define two morphises, \<^const>\<open>Product_to_Component_morphism\<close>
-and \<^const>\<open>Computer_Hardware_to_Hardware_morphism\<close>, detailed in the following listing : 
+and \<^const>\<open>Computer_Hardware_to_Hardware_morphism\<close>, detailed in the following listing: 
 
 %\begin{figure}
 @{boxed_theory_text [display]
