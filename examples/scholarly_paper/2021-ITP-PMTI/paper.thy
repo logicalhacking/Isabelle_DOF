@@ -566,7 +566,7 @@ doc_class myconclusion = text_section +
   establish :: "(myclaim \<times> myresult) set"
   invariant establish_defined :: "\<forall> x. x \<in> Domain (establish \<sigma>)
                       \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"\<close>}
-\caption{Excerpt of an example ontology for mathematical papers.}
+\caption{Excerpt of an Example Ontology for mathematical Papers.}
 \label{fig-ontology-example}
 \end{figure}
   we can define some class instances for this ontology with the \<^theory_text>\<open>text*\<close> command,
@@ -580,7 +580,7 @@ text*[intro1::myintro, authored_by="{@{myauthor \<open>church\<close>}}", level=
 text*[intro2::myintro, authored_by="{@{myauthor \<open>church\<close>}}", level="Some 2"]\<open>\<close>
 text*[claimNotion::myclaim, authored_by="{@{myauthor \<open>church\<close>}}"
       , based_on="[\<open>Notion1\<close>,\<open>Notion2\<close>]", level="Some 0"]\<open>\<close>\<close>}
-\caption{Some instances of the classes of the ontology of \autoref{fig-ontology-example}.}
+\caption{Some Instances of the Classes of the Ontology of \autoref{fig-ontology-example}.}
 \label{fig-instances-example}
 \end{figure}
   In the instance \<^theory_text>\<open>intro1\<close>, the term antiquotation  \<^theory_text>\<open>@{myauthor \<open>church\<close>}\<close>,
@@ -598,14 +598,14 @@ text*[claimNotion::myclaim, authored_by="{@{myauthor \<open>church\<close>}}"
 side_by_side_figure*[
   "type-checking-example"::side_by_side_figure
   , anchor="''fig-term-type-checking-ex''"
-  , caption="''church is an existing instance.''"
+  , caption="''Church is an existing Instance.''"
   , relative_width="48"
   , src="''figures/term-context-checking-example''"
   , anchor2="''fig-term-type-checking-failed-ex''"
-  , caption2="''The churche instance is not defined.''"
+  , caption2="''The Churche Instance is not defined.''"
   , relative_width2="48"
   , src2="''figures/term-context-failed-checking-example''"
-]\<open>Type-checking of antiquotations in term context.\<close>
+]\<open>Type-Checking of Antiquotations in a Term-Context.\<close>
 
 (*<*)
 declare_reference*["evaluation-example"::side_by_side_figure]
@@ -622,14 +622,14 @@ text\<open>
 side_by_side_figure*[
   "evaluation-example"::side_by_side_figure
   , anchor="''fig-term-evaluation-ex''"
-  , caption="''The evaluation succeeds and returns the value.''"
+  , caption="''The Evaluation succeeds.''"
   , relative_width="48"
   , src="''figures/term-context-evaluation-example''"
   , anchor2="''fig-term-failed-evaluation-ex''"
-  , caption2="''The evaluation fails, due to the undefined instance.''"
+  , caption2="''The Evaluation fails.''"
   , relative_width2="48"
   , src2="''figures/term-context-failed-evaluation-example''"
-]\<open>Evaluation of antiquotations in a term context.\<close>
+]\<open>Evaluation of Antiquotations in a Term-Context.\<close>
 
 (*
 figure*[
@@ -669,7 +669,7 @@ figure*[
   "term-context-equality-evaluation"::figure
   , relative_width="80"
   , src="''figures/term-context-equality-evaluation-example''"
-]\<open>Evaluation of the equivalence of two class instances.
+]\<open>Evaluation of the Equivalence of two Class Instances.
 \<close>
 
 text\<open>
@@ -718,7 +718,7 @@ figure*[
   "inherited-invariant-checking-figure"::figure
   , relative_width="99"
   , src="''figures/inherited-invariant-checking-violated-example''"
-]\<open>Inherited invariant violation.\<close>
+]\<open>Inherited Invariant Violation.\<close>
 
 (*<*)
 value*\<open>map (myresult.property) @{myresult-instances}\<close>
