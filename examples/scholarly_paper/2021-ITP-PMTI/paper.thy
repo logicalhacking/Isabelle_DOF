@@ -590,7 +590,7 @@ text*[claimNotion::myclaim, authored_by="{@{myauthor \<open>church\<close>}}"
   One can now reference a class instance in a \<^theory_text>\<open>term*\<close> command.
   In the command  \<^theory_text>\<open>term*\<open>@{myauthor \<open>church\<close>}\<close>\<close>
   the term \<^term>\<open>@{myauthor \<open>church\<close>}\<close> is type-checked, \<^ie>, the command \<^theory_text>\<open>term*\<close> checks that
-  \<^theory_text>\<open>church\<close> references a term of type \<^typ>\<open>myauthor\<close> against the global context.
+  \<^theory_text>\<open>church\<close> references a term of type \<^typ>\<open>myauthor\<close> against the global context
   (see \<^side_by_side_figure>\<open>type-checking-example\<close>).
 \<close>
 
@@ -908,8 +908,8 @@ onto_class Hardware = Informatic +
 
 This ontology defines  the \<^typ>\<open>Resource\<close>,
 \<^typ>\<open>Electronic\<close>, \<^typ>\<open>Component\<close>, \<^typ>\<open>Informatic\<close> and \<^typ>\<open>Hardware\<close> concepts.
-In our example, we focus on the \<^typ>\<open>Hardware\<close> class containing a \<^const>\<open>mass\<close> attribute
-and composed of a list of components with a \<^const>\<open>mass\<close> attribute formalising
+In our example, we focus on the \<^typ>\<open>Hardware\<close> class containing a \<^const>\<open>Component.mass\<close> attribute
+and composed of a list of components with a \<^const>\<open>Component.mass\<close> attribute formalising
 the mass value of each component.
 The \<^typ>\<open>Hardware\<close> class also contains a local \<^theory_text>\<open>invariant c1\<close>
 to define a constraint linking the global mass of a \<^typ>\<open>Hardware\<close> object
@@ -922,7 +922,7 @@ To check the coherence of our local ontology, we define a relationship between t
 and the reference ontology using morphism functions (or mapping rules as in ATL framework~@{cite "atl"}
 or EXPRESS-X language~@{cite "BGPP95"}). These rules are applied to define the relationship 
 between one class of the local ontology to one or several other class(es) described in the reference 
-ontology. In our case, we have define two morphises, \<^const>\<open>Product_to_Component_morphism\<close>
+ontology. In our case, we have define two morphisms, \<^const>\<open>Product_to_Component_morphism\<close>
 and \<^const>\<open>Computer_Hardware_to_Hardware_morphism\<close>, detailed in the following listing: 
 
 %\begin{figure}
@@ -983,7 +983,7 @@ lemma Computer_Hardware_to_Hardware_total :
 After unfolding
 the invariant and the morphism definitions, the preservation proof is automatic. The advantage 
 of using the \<^dof> framework compared to approaches like ATL or EXPRESS-X is 
-the possibility of formally verifying the \<^emph>\<open>mapping rules\<close>. \<^ie>  proving the preservation 
+the possibility of formally verifying the \<^emph>\<open>mapping rules\<close>, \<^ie>,  proving the preservation 
 of invariants, as we have demonstrated in the previous example.
 \<close>
 
