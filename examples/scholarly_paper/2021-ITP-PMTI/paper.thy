@@ -1133,23 +1133,30 @@ information and knowledge, and to make it amenable to
  ``semantic'' search in or consistency checking of documents.
 Some are targeting mathematical libraries,
 like the search engine \<^url>\<open>http://shinh.org/wfs\<close> which uses clever text-based search methods in 
-  a large number of formulas, agnostic of their logical context and of formal proof,
-or the OAF project @{cite "KohlhaseR21"} which
-  developed a common ontological format, called  OMDoc/MMT, and 
-  six \<^emph>\<open>export\<close> functions from major ITP systems into it.
-  The emphasis was put on building
-  a server infrastructure based on conventional, rather heavy-weight database and OWL technology.
+a large number of formulas, agnostic of their logical context and of formal proof,
+or the OAF project @{cite "KohlhaseR21"} which developed a common ontological format,
+called  OMDoc/MMT, and six \<^emph>\<open>export\<close> functions from major ITP systems into it.
+The more difficult task to develop import functions has not been addressed, not to mention
+the construction of imported proofs in a native tactic proof format. Rather, the emphasis
+was put on building a server infrastructure based on conventional, rather heavy-weight
+database and OWL technology. Our approach targets so far only one ITP system and
+its libraries, and emphasizes type-safeness, expressive power and “depth” of meta-data,
+which is adapted to the specific needs of ITP systems and theory developments.
 
 There are also a number of proposals of ontologies targeting mathematics:
 the OntoMath\textsuperscript{PRO} @{cite "Nevzorova2014OntoMathPO"} proposes a 
-     ``taxonomy of the fields of mathematics'' (pp 110). In total, 
-     OntoMath\textsuperscript{PRO} contains the daunting number of 3,449 classes,
-     which is in part due to 
-     the need to compensate the lack of general datatype definition methods for meta-data.
+``taxonomy of the fields of mathematics'' (p. 6).
+In total, OntoMath\textsuperscript{PRO} contains the daunting number of 3,449 classes,
+which is in part due to the need to compensate
+the lack of general datatype definition methods for meta-data.
+It is nevertheless an interesting starting point for a future development of a mathematics ontology
+in the \<^dof> framework.
 Other ontologies worth mentioning are DBpedia @{cite "10.1007/978-3-540-76298-0_52"}, 
-    which provides with the \<^emph>\<open>SPARQL endpoint\<close>  \<^url>\<open>http://dbpedia.org/sparql\<close> a search engine, 
-    and the more general ScienceWISE \<^footnote>\<open>\<^url>\<open>http://sciencewise.info/ontology/\<close>.\<close>
-    that allows users to introduce their own category concepts.
+which provides with the \<^emph>\<open>SPARQL endpoint\<close>  \<^url>\<open>http://dbpedia.org/sparql\<close> a search engine, 
+and the more general ScienceWISE \<^footnote>\<open>\<^url>\<open>http://sciencewise.info/ontology/\<close>.\<close>
+that allows users to introduce their own category concepts.
+Both suffer from the lack of deeper meta-data modeling, and the latter is still at the beginning
+(ScienceWISE marks the Mathematics part as ``under construction'').
 
 Regarding using formal methods to formalise standards, Event-B method was used by
 Fotso et al. @{cite "FotsoFLM18"} to propose a specification of the hybrid ERTMS/ETCS level 3 standard,
