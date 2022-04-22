@@ -353,7 +353,7 @@ side_by_side_figure*["text-elements"::side_by_side_figure,anchor="''fig-Req-Def-
                       src2="''figures/Req-Appl-ex''"]\<open>Referencing a Requirement. \<close>
 
 text\<open>@{figure "text-elements"} shows an ontological annotation of a requirement and its referencing
-  via an antiquotation \<^theory_text>\<open>requirement \<open>req1\<close>\<close>; the latter is generated from the above 
+  via an antiquotation \<^theory_text>\<open>@{requirement \<open>req1\<close>}\<close>; the latter is generated from the above 
   class definition. Undefined or ill-typed references were rejected, the high-lighting displays 
   the hyperlinking which is activated on a click. The class-definition of \<open>requirement\<close> and its 
   documentation is also revisited via one activation click.\<close>
@@ -730,8 +730,8 @@ value*\<open>filter (\<lambda>\<sigma>. myresult.evidence \<sigma> = argument) @
 (*>*)
 
 text\<open>
-  Any class definition generates term antiquotations checking a class instance or
-  the set of instances in a particular logical context; these references were
+  Any class definition generates term antiquotations checking a class instance reference
+  in a particular logical context; these references were
   elaborated to objects they refer to.
   This paves the way for a new mechanism to query the ``current'' instances presented
   as a \<^hol> \<^type>\<open>list\<close>.
@@ -909,6 +909,7 @@ onto_class Hardware = Informatic +
 This ontology defines  the \<^typ>\<open>Resource\<close>,
 \<^typ>\<open>Electronic\<close>, \<^typ>\<open>Component\<close>, \<^typ>\<open>Informatic\<close> and \<^typ>\<open>Hardware\<close> concepts.
 In our example, we focus on the \<^typ>\<open>Hardware\<close> class containing a \<^const>\<open>Component.mass\<close> attribute
+inherited from the \<^typ>\<open>Component\<close> class
 and composed of a list of components with a \<^const>\<open>Component.mass\<close> attribute formalising
 the mass value of each component.
 The \<^typ>\<open>Hardware\<close> class also contains a local \<^theory_text>\<open>invariant c1\<close>
@@ -960,7 +961,7 @@ from the one of a standard ontology it references.
 \<close>
 
 text\<open>
-The following example proof  for a simple, but typical example of reformatting
+The following example proofs for a simple, but typical example of reformatting
 meta-data into another format along an ontological mapping are nearly trivial: 
 
 %\begin{figure}
@@ -968,9 +969,9 @@ meta-data into another format along an ontological mapping are nearly trivial:
 \<open>lemma inv_c2_preserved :
   "c2_inv \<sigma> \<Longrightarrow> c1_inv (\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e)"
   unfolding c1_inv_def c2_inv_def 
-            Computer_Hardware_to_Hardware_morphism_def 
+            Computer_Hardware_to_Hardware_morphism_def
             Product_to_Component_morphism_def  
-  using comp_def by auto
+  by (auto simp: comp_def)
 
 lemma Computer_Hardware_to_Hardware_total :
          "Computer_Hardware_to_Hardware_morphism ` ({X. c2_inv X}) 
@@ -1083,8 +1084,8 @@ the textual structure of a chapter (the \<^emph>\<open>level\<close>-attribute i
 ontology library specifying basic text-elements) as well as the two-eyes-principle between authors and
 checkers of these chapters.
 \<close>
-text\<open> The concrete sub-class of  \<^typ>\<open>cenelec_document\<close> is the 
-\<^typ>\<open>software_interface_specification\<close>-class (\<^typ>\<open>SWIS\<close> for short) as shown below, 
+text\<open> The concrete sub-class of  \<^typ>\<open>cenelec_document\<close> is the class \<^typ>\<open>SWIS\<close>
+(``software interface specification'') as shown below, 
 which provides the role assignment required for this document type: 
 @{boxed_theory_text [display] \<open>
 
@@ -1114,7 +1115,7 @@ is executed during the evaluation phase of these invariants and that checks:
   \<^vs>\<open>-0.3cm\<close>
   @{cartouche [display,indent=10,margin=70] \<open>pre_<op_name> (a\<^sub>1::\<tau>\<^sub>1) ... (a\<^sub>n::\<tau>\<^sub>n) \<equiv> <predicate>,\<close>}
   \<^vs>\<open>-0.3cm\<close>
-  where the \<open>(a\<^sub>1::\<tau>\<^sub>1) ... (a\<^sub>n::\<tau>\<^sub>n)\<close> correspond to the argument list.
+  where \<open>(a\<^sub>1::\<tau>\<^sub>1) ... (a\<^sub>n::\<tau>\<^sub>n)\<close> correspond to the argument list.
 \<^item> The case for the post-condition is treated analogously. \<close>
 
 text\<open>Note that this technique can also be applied to impose specific syntactic constraints on
