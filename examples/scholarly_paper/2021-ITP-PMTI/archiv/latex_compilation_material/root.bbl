@@ -6,7 +6,7 @@
 \bibitem{AehligHN12}
 Aehlig, K., Haftmann, F., Nipkow, T.: A compiled implementation of
   normalisation by evaluation. J. Funct. Program.  \textbf{22}(1),  9--30
-  (2012). \doi{10.1017/S0956796812000019},
+  (2012). \doi{10.1017/S0956796812000019}
 
 \bibitem{BGPP95}
 Ameur, Y.A., Besnard, F., Girard, P., Pierra, G., Potier, J.: Formal
@@ -96,7 +96,7 @@ Kohlhase, M., Rabe, F.: Experiences from exporting major proof assistant
 
 \bibitem{AFP-ref22}
 {M.Eberl and G. Klein and A. Lochbihler and T. Nipkow and L. Paulson and R.
-  Thiemann (eds)}: AFP. \url{https://afp-isa.org}
+  Thiemann (eds)}: Archive of Formal Proofs. \url{https://afp-isa.org}
   (2022), {A}ccessed: 2022-03-15
 
 \bibitem{MendilASMP21}
@@ -130,10 +130,8 @@ Sengupta, K., Hitzler, P.: Web ontology language {(OWL)}. In: Encyclopedia of
   \doi{10.1007/978-1-4614-6170-8_113}
 
 \bibitem{Security_Protocol_Refinement-AFP}
-Sprenger, C., Somaini, I.: Developing security protocols by refinement. Archive
-  of Formal Proofs  (May 2017),
-  \url{http://isa-afp.org/entries/Security_Protocol_Refinement.html}, Formal
-  proof development
+Sprenger, C., Somaini, I.: Developing security protocols by refinement. AFP (May 2017),
+  \url{http://isa-afp.org/entries/Security_Protocol_Refinement.html}
 
 \bibitem{verbeek.ea:formal:2014}
 Verbeek, F., Tverdyshev, S., Havle, O., Blasum, H., Langenstein, B., Stephan,
