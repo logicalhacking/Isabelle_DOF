@@ -10,8 +10,9 @@
 %%   OR
 %%   The 2-clause BSD-style license.
 %%
+%%   SPDX-License-Identifier: LPPL-1.3c+ OR BSD-2-Clause
 
-%%   2022/01/25 Unreleased/Isabelle2021
+%%   <isadofltxversion>
 
 %% Warning: Do Not Edit!
 %% =====================
@@ -81,10 +82,7 @@
 \maketitle
 \input{session}
 % optional bibliography
-\IfFileExists{root.bib}{%
-{\small  
-  \bibliography{root}
-}}{}
+\IfFileExists{root.bib}{{\small\bibliography{root}}}{}
 \end{document}
 
 %%% Local Variables:

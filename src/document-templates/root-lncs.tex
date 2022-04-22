@@ -1,5 +1,5 @@
-%% Copyright (c) 2019 University of Exeter
-%%               2018-2019 University of Paris-Saclay
+%% Copyright (c) 2019-2022 University of Exeter
+%%               2018-2022 University of Paris-Saclay
 %%               2018-2019 The University of Sheffield
 %%
 %% License:
@@ -26,6 +26,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[USenglish]{babel}
+\bibliographystyle{splncs04}
 \usepackage{isabelle}
 \usepackage{xcolor}
 \usepackage{isabellesym}
@@ -86,14 +87,7 @@
 \maketitle
 \input{session}
 % optional bibliography
-\IfFileExists{root.bib}{%
-{\small   \renewcommand{\doi}[1]{}
-  \newcommand{\urlprefix}{}
-
-  \bibliographystyle{splncs04}
-  
-  \bibliography{root}
-}}{}
+\IfFileExists{root.bib}{{\small\bibliography{root}}}{}
 \end{document}
 
 %%% Local Variables:

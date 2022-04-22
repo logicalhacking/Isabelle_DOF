@@ -1,5 +1,5 @@
-%% Copyright (c) 2019-2021 University of Exeter
-%%               2018-2021 University of Paris-Saclay
+%% Copyright (c) 2019-2022 University of Exeter
+%%               2018-2022 University of Paris-Saclay
 %%               2018-2019 The University of Sheffield
 %%
 %% License:
@@ -12,7 +12,7 @@
 %%
 %%   SPDX-License-Identifier: LPPL-1.3c+ OR BSD-2-Clause
 
-%%   2021/03/22 Unreleased/Isabelle2021
+%%   <isadofltxversion>
 
 %% Warning: Do Not Edit!
 %% =====================
@@ -74,16 +74,10 @@
 \newcommand{\subfigureautorefname}{\figureautorefname}
 \newcommand{\lstnumberautorefname}{Line}
 
-
-
 \maketitle
 \input{session}
 % optional bibliography
-\IfFileExists{root.bib}{%
-{\small  
-  \newcommand{\urlprefix}{}
-  \bibliography{root}
-}}{}
+\IfFileExists{root.bib}{{\bibliography{root}}}{}
 \end{document}
 
 %%% Local Variables:

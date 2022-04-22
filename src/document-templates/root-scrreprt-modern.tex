@@ -1,5 +1,5 @@
-%% Copyright (c) 2019 University of Exeter
-%%               2018-2019 University of Paris-Saclay
+%% Copyright (c) 2019-2022 University of Exeter
+%%               2018-2022 University of Paris-Saclay
 %%               2018-2019 The University of Sheffield
 %%
 %% License:
@@ -94,9 +94,7 @@
 \end{frontmatter}
 \input{session}
 % optional bibliography
-\IfFileExists{root.bib}{%
-    \bibliography{root}
-}{}
+\IfFileExists{root.bib}{{\bibliography{root}}}{}
 \end{document}
 
 %%% Local Variables:
