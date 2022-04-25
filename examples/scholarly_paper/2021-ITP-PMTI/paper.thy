@@ -961,8 +961,9 @@ from the one of a standard ontology it references.
 \<close>
 
 text\<open>
-The following example proofs for a simple, but typical example of reformatting
-meta-data into another format along an ontological mapping are nearly trivial: 
+After defining the mapping rules, now we have to deal with the question of invariant preservation. 
+The following example proofs for a simple but typical example of reformatting meta-data into another 
+format along an ontological mapping are nearly trivial:
 
 %\begin{figure}
 @{boxed_theory_text [display]
@@ -1166,6 +1167,9 @@ Event-B, and domain-specific properties are specified by ontologies.
 In another case, Mendil et al. @{cite "MendilASMP21"} propose an Event-B framework for formalising standard
  conformance through formal modelling of standards as ontologies. 
 The proposed approach was exemplified on ARINC 661 standard and weather radar system application.
+These works are essentially interested in expressing ontological concepts in a formal method 
+but do not explicitly deal with the formalisation of rules/invariants defined in ontologies 
+and are not interested in the question of mapping ontologies.
 
 %   \<^url>\<open>https://github.com/CLLKazan/OntoMathPro\<close> 
 %
