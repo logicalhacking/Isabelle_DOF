@@ -254,10 +254,10 @@ for advanced queries of elements inside an integrated source, and invariants
 allow for formal proofs over the relations/translations of ontologies and ontology-instances.
 The latter question raised scientific interest under the label ``ontology mapping'' for 
 which we therefore present a formal solution. To sum up, we completed \<^dof> to
-a fairly rich, ITP-oriented ontology language, which is a concrete proposal for formal
-development projects targeting a certification, for technical documentation or books
-with a high amount of machine-checked formal content or for mathematical libraries
-such as the AFP.\<close>
+a fairly rich ontology language oriented to interactive theorem proving (ITP) systems, 
+which is a concrete proposal for formal development projects targeting a certification, 
+for technical documentation, for books with a high amount of machine-checked formal content 
+or for mathematical libraries such as the AFP.\<close>
 
 (*<*)
 declare_reference*[casestudy::text_section]
@@ -1160,16 +1160,16 @@ that allows users to introduce their own category concepts.
 Both suffer from the lack of deeper meta-data modeling, and the latter is still at the beginning
 (ScienceWISE marks the Mathematics part as ``under construction'').
 
-Regarding using formal methods to formalise standards, Event-B method was used by
-Fotso et al. @{cite "FotsoFLM18"} to propose a specification of the hybrid ERTMS/ETCS level 3 standard,
-in which requirements are specified using SysML/KAOS goal diagrams that are translated into 
-Event-B, and domain-specific properties are specified by ontologies.
+Regarding the use of formal methods to formalise standards, the Event-B method was proposed by
+Fotso et al. @{cite "FotsoFLM18"} for specifications of the hybrid ERTMS/ETCS level 3 standard,
+in which requirements are specified using SysML/KAOS goal diagrams. The latter were translated into 
+Event-B, where domain-specific properties were specified by ontologies.
 In another case, Mendil et al. @{cite "MendilASMP21"} propose an Event-B framework for formalising standard
  conformance through formal modelling of standards as ontologies. 
-The proposed approach was exemplified on ARINC 661 standard and weather radar system application.
+The proposed approach was exemplified on ARINC 661 standard im the ntext of a weather radar system application.
 These works are essentially interested in expressing ontological concepts in a formal method 
-but do not explicitly deal with the formalisation of rules/invariants defined in ontologies 
-and are not interested in the question of mapping ontologies.
+but do not explicitly deal with the formalisation of rules/invariants defined in ontologies. 
+The question of ontology-mappings is not addressed.
 
 %   \<^url>\<open>https://github.com/CLLKazan/OntoMathPro\<close> 
 %
