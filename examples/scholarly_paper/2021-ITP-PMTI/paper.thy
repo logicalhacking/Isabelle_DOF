@@ -90,7 +90,7 @@ text*[nic::author,
         orcid       ="''0000-0002-0756-7072''",
         affiliation ="\<open>Université Paris-Saclay, LMF, France\<close>"]\<open>Nicolas Méric\<close>
 text*[bu::author,
-        email       ="\<open>wolff@universite-paris-saclay.fr\<close>",
+        email       ="\<open>burkhart.wolff@universite-paris-saclay.fr\<close>",
         affiliation = "\<open>Université Paris-Saclay, LMF, France\<close>"]\<open>Burkhart Wolff\<close>
            
 text*[abs::abstract, 
