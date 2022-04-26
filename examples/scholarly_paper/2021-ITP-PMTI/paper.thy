@@ -1166,7 +1166,8 @@ in which requirements are specified using SysML/KAOS goal diagrams. The latter w
 Event-B, where domain-specific properties were specified by ontologies.
 In another case, Mendil et al. @{cite "MendilASMP21"} propose an Event-B framework for formalising standard
  conformance through formal modelling of standards as ontologies. 
-The proposed approach was exemplified on ARINC 661 standard im the ntext of a weather radar system application.
+The proposed approach was exemplified on ARINC 661 standard
+in the context of a weather radar system application.
 These works are essentially interested in expressing ontological concepts in a formal method 
 but do not explicitly deal with the formalisation of rules/invariants defined in ontologies. 
 The question of ontology-mappings is not addressed.
