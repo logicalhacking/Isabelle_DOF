@@ -3,7 +3,7 @@ chapter\<open>Common Criteria Definitions\<close>
 (*<<*)
 theory CC_terminology
 
-imports  "../technical_report/technical_report" 
+imports  "Isabelle_DOF.technical_report" 
 
 begin
 

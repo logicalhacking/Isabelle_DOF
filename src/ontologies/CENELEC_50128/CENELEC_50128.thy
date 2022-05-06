@@ -25,7 +25,7 @@ identifies:
 
 (*<<*)  
 theory CENELEC_50128
-  imports  "../technical_report/technical_report"
+  imports  "Isabelle_DOF.technical_report"
 begin
 
 (* this is a hack and should go into an own ontology, providing thingsd like:

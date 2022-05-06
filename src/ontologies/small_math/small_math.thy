@@ -14,7 +14,7 @@
 section\<open>An example ontology for a math paper\<close>
 
 theory small_math
-   imports "../../DOF/Isa_COL"
+   imports "Isabelle_DOF.Isa_COL"
 begin
 
 doc_class title =

@@ -14,7 +14,7 @@
 section\<open>An example ontology for scientific, MINT-oriented papers.\<close>
 
 theory scholarly_paper
-  imports "../../DOF/Isa_COL"
+  imports "Isabelle_DOF.Isa_COL"
   keywords "author*" "abstract*"
            "Definition*" "Lemma*" "Theorem*"  :: document_body
 
