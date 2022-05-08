@@ -454,7 +454,7 @@ doc_class mytext_section =
 doc_class myintro = mytext_section +
   authored_by :: "myauthor set"  <= "UNIV" 
   uses :: "string set"
-  invariant author_finite :: "finite (authored_by \<sigma>)"
+  invariant author_set :: "authored_by \<sigma> \<noteq> {}"
   and force_level :: "the (level \<sigma>) > 1"
 doc_class myclaim = myintro +
   based_on :: "string list"
@@ -467,7 +467,7 @@ doc_class myresult = mytechnical +
   evidence :: kind
   property :: "thm list" <= "[]"
   invariant has_property :: "evidence \<sigma> = proof \<longleftrightarrow> property \<sigma> \<noteq> []"
-doc_class myconclusion = text_section +
+doc_class myconclusion = mytext_section +
   establish :: "(myclaim \<times> myresult) set"
   invariant establish_defined :: "\<forall> x. x \<in> Domain (establish \<sigma>)
                       \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"
@@ -552,17 +552,17 @@ doc_class mytext_section =
 doc_class myintro = mytext_section +
   authored_by :: "myauthor set"  <= "UNIV" 
   uses :: "string set"
-  invariant author_finite :: "finite (authored_by \<sigma>)"
+  invariant author_set :: "authored_by \<sigma> \<noteq> {}"
   and force_level :: "the (level \<sigma>) > 1"
 doc_class myclaim = myintro +
   based_on :: "string list"
-doc_class mytechnical = text_section +
+doc_class mytechnical = mytext_section +
   formal_results :: "thm list" 
 doc_class myresult = mytechnical +
   evidence :: kind
   property :: "thm list" <= "[]"
   invariant has_property :: "evidence \<sigma> = proof \<longleftrightarrow> property \<sigma> \<noteq> []"
-doc_class myconclusion = text_section +
+doc_class myconclusion = mytext_section +
   establish :: "(myclaim \<times> myresult) set"
   invariant establish_defined :: "\<forall> x. x \<in> Domain (establish \<sigma>)
                       \<longrightarrow> (\<exists> y \<in> Range (establish \<sigma>). (x, y) \<in> establish \<sigma>)"\<close>}
@@ -685,8 +685,8 @@ text\<open>
   must be defined when an instance
   of the class \<^typ>\<open>myconclusion\<close> is defined (see the \<^theory_text>\<open>invariant establish_defined\<close>).
 
-  In \autoref{fig-ontology-example}, the \<^theory_text>\<open>invariant author_finite\<close> of the class \<^typ>\<open>myintro\<close> 
-  enforces that the user defines the \<^const>\<open>authored_by\<close> set with some valid meta-data of type \<open>myauthor\<close>.
+  In \autoref{fig-ontology-example}, the \<^theory_text>\<open>invariant author_set\<close> of the class \<^typ>\<open>myintro\<close> 
+  enforces that a \<^typ>\<open>myintro\<close> instance has at least one author.
   The \<open>\<sigma>\<close> symbol is reserved and references the future class instance.
   By relying on the implementation of the Records
   in \<^isabelle>~@{cite "wenzel:isabelle-isar:2020"},
