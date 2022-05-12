@@ -148,7 +148,7 @@ implement specific functions\<close>
 Definition*[PM, short_name="''project management''"]
 \<open>administrative and/or technical conduct of a project, including safety aspects\<close>
 
-Definition*[PGMGR, short_name="''project manager''"]
+Definition*[PMGR, short_name="''project manager''"]
 \<open>entity that carries out project management\<close>
 
 Definition*[reliability]
@@ -160,7 +160,7 @@ Definition*[robustness]
 Definition*[RMGR, short_name="''requirements manager''"]
 \<open>entity that carries out requirements management\<close>
 
-Definition*[RMGMT, short_name="''requirements management''"]
+Definition*[RM, short_name="''requirements management''"]
 \<open>the process of eliciting, documenting, analysing, prioritising and agreeing on requirements and 
 then controlling change and communicating to relevant stakeholders. It is a continuous process 
 throughout a project\<close>
@@ -190,20 +190,23 @@ Definition*[SB, short_name="''software baseline''"]
 \<open>complete and consistent set of source code, executable files, configuration files, 
 installation scripts and documentation that are needed for a software release. Information about 
 compilers, operating systems, preexisting software and dependent tools is stored as part of the 
-baseline. This will enable the organisation to software deployment
-transferring, installing and activating a deliverable software baseline that has already been 
-released and assessed
-\<close>
+baseline. This will enable the organisation to reproduce defined versions and be the input
+for future releases at enhancements or at upgrade in the maintenance phase\<close>
 
+Definition*[SD, short_name="''software deployment''"]
+\<open>transferring, installing and activating a deliverable software baseline that has already been 
+released and assessed\<close>
 
 
 Definition*[SWLC, short_name="''software life-cycle''"]
 \<open>those activities occurring during a period of time that starts when
 software is conceived and ends when the software is no longer available for use. The software life 
 cycle typically includes a requirements phase, design phase,test phase, integration phase, 
-deployment phase and a maintenance phase 3.1.35 software maintainability
-capability of the software to be modified; to correct faults, improve to a different environment
-\<close>
+deployment phase and a maintenance phase\<close>
+
+Definition*[SWMA, short_name="''software maintainability''"]
+\<open>capability of the software to be modified; to correct faults,
+improve performance or other attributes, or adapt it to a different environment\<close>
 
 Definition*[SM, short_name="''software maintenance''"]
 \<open> action, or set of actions, carried out on software after deployment functionality
@@ -211,7 +214,8 @@ performance or other attributes, or adapt it with the aim of enhancing or correc
 
 Definition*[SOSIL, short_name="''software safety integrity level''"]
 \<open>classification number which determines the techniques and measures that have to be applied to 
-software NOTE Safety-related software has been classified into five safety integrity levels, where 
+software
+NOTE: Safety-related software has been classified into five safety integrity levels, where 
 0 is the lowest and 4 the highest.\<close>
 
 Definition*[supplier]
@@ -230,20 +234,20 @@ performance compared to the corresponding requirements specification\<close>
 
 Definition*[TCT1, short_name="''tool class T1''"]
 \<open>generates no outputs which can directly or indirectly contribute to the executable code 
-(including data) of the software NOTE 11 examples include: a text editor or a requirement or 
+(including data) of the software
+NOTE: T1 examples include: a text editor or a requirement or 
 design support tool with no automatic code generation capabilities; configuration control tools.\<close>
 
 Definition*[TCT2,short_name="''tool class T2''"]
 \<open>supports the test or verification of the design or executable code, where errors in the tool 
 can fail to reveal defects but cannot directly create errors in the executable software
-NOTE T2 examples include: a test harness generator; a test coverage measurement tool; a static 
-analysis tool. reproduce defined versions and be the input for future releases at enhancements or 
-at upgrade in the maintenance phase
-\<close>
+NOTE: T2 examples include: a test harness generator; a test coverage measurement tool; a static 
+analysis tool.\<close>
 
 Definition*[TCT3, short_name="''tool class T3''"]
 \<open>generates outputs which can directly or indirectly contribute to the executable code 
-(including data) of the safety related system NOTE T3 examples include: a source code compiler, 
+(including data) of the safety related system
+NOTE: T3 examples include: a source code compiler, 
 a data/algorithms compiler, a tool to change set-points during system operation; an optimising 
 compiler where the relationship between the source code program and the generated object code is 
 not obvious; a compiler that incorporates an executable run-time package into the executable code.
@@ -266,7 +270,8 @@ Definition*[verification, short_name="''verification''"]
 \<open>process of examination followed by a judgment based on evidence that output items (process,
 documentation, software or application) of a specific development phase fulfils the requirements of 
 that phase with respect to completeness, correctness and consistency.
-NOTE Verification is mostly based on document reviews (design, implementation, test documents etc.).
+NOTE: Verification is mostly based on document reviews
+(design, implementation, test documents etc.).
 \<close>
 
 Definition*[verifier, short_name="''verifier''"]
