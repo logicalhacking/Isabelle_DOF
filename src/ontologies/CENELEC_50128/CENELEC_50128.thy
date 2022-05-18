@@ -298,9 +298,8 @@ datatype role =  PM     \<comment> \<open>Program Manager\<close>
 
 datatype phase = SYSDEV_ext \<comment> \<open> System Development Phase (external)\<close>  
                | SPl   \<comment> \<open>Software Planning\<close>
-               | SR    \<comment> \<open>Software Requirement\<close> 
-               | SA    \<comment> \<open>Software Architecture\<close>
-               | SDES  \<comment> \<open>Software Design\<close>
+               | SR    \<comment> \<open>Software Requirements\<close> 
+               | SADES \<comment> \<open>Software Architecture and Design\<close>
                | SCDES \<comment> \<open>Software Component Design\<close> 
                | CInT  \<comment> \<open>Component Implementation and Testing\<close>
                | SI    \<comment> \<open>Software Integration\<close>
@@ -308,9 +307,9 @@ datatype phase = SYSDEV_ext \<comment> \<open> System Development Phase (externa
                | SD    \<comment> \<open>Software Deployment\<close>
                | SM    \<comment> \<open>Software Maintenance\<close>
 
-abbreviation software_requirement      :: "phase" where "software_requirement  \<equiv> SR"
-abbreviation software_architecture     :: "phase" where "software_architecture \<equiv> SA"
-abbreviation software_design           :: "phase" where "software_design       \<equiv> SD"
+abbreviation software_requirements      :: "phase" where "software_requirements  \<equiv> SR"
+abbreviation software_architecture_and_design :: "phase"
+  where "software_architecture_and_design \<equiv> SADES"
 abbreviation software_component_design :: "phase" where "software_component_design \<equiv> SCDES"
 abbreviation component_implementation_and_testing :: "phase" 
                                                   where "component_implementation_and_testing \<equiv> CInT"
@@ -450,7 +449,10 @@ text\<open>Global Overview\<close>
 figure*[fig3::figure, relative_width="100", 
  src="''examples/CENELEC_50128/mini_odo/document/figures/CENELEC-Fig.3-docStructure.png''"]
 \<open>Illustrative Development Lifecycle 1\<close>
-                                     
+
+text\<open>Actually, the Figure 4 in Chapter 5: Illustrative Development Lifecycle 2 is more fidele
+to the remaining document: Software Architecture and Dediwn phases are merged, like in 7.3.\<close>
+
 section\<open>Software Assurance related Entities and Concepts\<close>
 
 
@@ -519,57 +521,61 @@ section\<open> Design and Test Documents \<close>
 doc_class cenelec_document = text_element +
    phase        :: "phase"
    level        :: "int option" <= "Some(0)" 
-   written_by   :: role                       \<comment> \<open>Annex C Table C.1 \<close>
-   fst_check    :: role                       \<comment> \<open>Annex C Table C.1\<close>
-   snd_check    :: role                       \<comment> \<open>Annex C Table C.1\<close>
+   written_by   :: "role option"              \<comment> \<open>Annex C Table C.1 \<close>
+   fst_check    :: "role option"              \<comment> \<open>Annex C Table C.1\<close>
+   snd_check    :: "role option"              \<comment> \<open>Annex C Table C.1\<close>
    is_concerned :: "role set" <= "UNIV" 
    invariant must_be_chapter :: "text_element.level \<sigma> = Some(0)" 
    invariant three_eyes_prcpl:: "  written_by \<sigma> \<noteq> fst_check \<sigma> 
                                  \<and> written_by \<sigma> \<noteq> snd_check \<sigma>"
-text\<open>see Fig.3.\<close>
+   
+text\<open>see \<^figure>\<open>fig3\<close> and Fig 4 in Chapter 5: Illustrative Development Lifecycle 2\<close>
 
+doc_class external_specification =
+  phase        :: "phase"  <= "SYSDEV_ext"
 
-doc_class SYSREQS = cenelec_document + 
+doc_class SYSREQS = external_specification + 
    phase        :: "phase"  <= "SYSDEV_ext" 
-   accepts      "\<lbrace>objectives||requirement||cenelec_document\<rbrace>\<^sup>+ "       
+   (*accepts      "\<lbrace>objectives||requirement||cenelec_document\<rbrace>\<^sup>+ "*)       
    type_synonym system_requirements_specification = SYSREQS
 
-doc_class SYSSREQS = cenelec_document + 
+doc_class SYSSREQS = external_specification + 
    phase        :: "phase"  <= "SYSDEV_ext" 
    type_synonym system_safety_requirements_specification = SYSSREQS
 
-doc_class SYSAD = cenelec_document + 
+doc_class SYSAD = external_specification + 
    phase        :: "phase"  <= "SYSDEV_ext" 
    type_synonym system_architecture_description = SYSAD
 
-doc_class SYSS_pl = cenelec_document + 
-   phase        :: "phase"  <= "SPl" 
+doc_class SYSS_pl = external_specification + 
+   phase        :: "phase"  <= "SYSDEV_ext" 
    type_synonym system_safety_plan = SYSS_pl
 
-doc_class SYS_VnV_pl = cenelec_document + 
-   phase        :: "phase"  <= "SPl" 
+(* SYS_VnV_pl exists in Figure 3 but not in Figure 4 *)
+doc_class SYS_VnV_pl = external_specification +
+   phase        :: "phase"  <= "SYSDEV_ext" 
    type_synonym system_VnV_plan = SYS_VnV_pl
 
 doc_class SWRS = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SR" 
    type_synonym software_requirements_specification = SWRS
 
 doc_class SWRVR = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SR" 
    type_synonym software_requirements_verification_report = SWRVR
 
 
 doc_class SWTS = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SR" 
    type_synonym software_test_specification = SWTS
 
    
 doc_class SWAS = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SADES" 
    type_synonym software_architecture_specification = SWAS
 
 doc_class SWDS = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SADES" 
    type_synonym software_design_specification = SWDS
 
 doc_class SWIS_E =
@@ -584,64 +590,64 @@ doc_class SWIS_E =
 
 
 doc_class SWIS = cenelec_document + 
-   phase        :: "phase"  <= "SCDES" 
-   written_by   :: "role"   <= "DES"
-   fst_check    :: "role"   <= "VER"
-   snd_check    :: "role"   <= "VAL"
+   phase        :: "phase"  <= "SADES" 
+   written_by   :: "role option"   <= "Some DES"
+   fst_check    :: "role option"   <= "Some VER"
+   snd_check    :: "role option"   <= "Some VAL"
    components   :: "SWIS_E list"
-   type_synonym software_interface_specification = SWIS
+   type_synonym software_interfaces_specification = SWIS
 
 doc_class SWITS = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SADES"
    type_synonym software_integration_test_specification = SWITS
 
 doc_class SWHITS = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SADES"
    type_synonym software_hardware_integration_test_specification = SWHITS
 
 doc_class SWADVR = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SADES" 
    type_synonym software_architecture_and_design_verification_report = SWADVR
 
 doc_class SWCDS = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SCDES" 
    type_synonym software_component_design_specification = SWCDS
 
 doc_class SWCTS = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SCDES" 
    type_synonym software_component_test_specification = SWCTS
 
 doc_class SWCDVR = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SCDES" 
    type_synonym software_component_design_verification_report = SWCDVR
 
 
 doc_class SWSCD = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "CInT" 
    type_synonym software_source_code_and_documentation = SWSCD
 
 doc_class SWCTR = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "CInT" 
    type_synonym software_component_test_report = SWCTR
 
 doc_class SWSCVR = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "CInT" 
    type_synonym software_source_code_verification_report = SWSCVR
 
 doc_class SWHAITR = cenelec_document +
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SI" 
    type_synonym software_hardware_integration_test_report = SWHAITR
 
 doc_class SWIVR = cenelec_document +
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SI" 
    type_synonym software_integration_verification_report = SWIVR
 
 doc_class SWTR_global = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SV" 
    type_synonym overall_software_test_report = SWTR_global
 
 doc_class SWVALR = cenelec_document +
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SV" 
    type_synonym software_validation_report = SWVALR
 
 doc_class SWDD = cenelec_document + 
@@ -649,7 +655,7 @@ doc_class SWDD = cenelec_document +
    type_synonym software_deployment_documents = SWDD
 
 doc_class SWMD = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
+   phase        :: "phase"  <= "SM" 
    type_synonym software_maintenance_documents = SWMD
 
  
