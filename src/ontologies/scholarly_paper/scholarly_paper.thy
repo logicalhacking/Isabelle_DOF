@@ -46,12 +46,12 @@ doc_class abstract =
 
 ML\<open>
 val _ =
-  ODL_Command_Parser.document_command ("abstract*", @{here}) "Textual Definition"
+  Monitor_Command_Parser.document_command ("abstract*", @{here}) "Textual Definition"
     {markdown = true, body = true}
     (Onto_Macros.enriched_document_cmd_exp (SOME "abstract") []);
 
 val _ =
-  ODL_Command_Parser.document_command ("author*", @{here}) "Textual Definition"
+  Monitor_Command_Parser.document_command ("author*", @{here}) "Textual Definition"
     {markdown = true, body = true}
     (Onto_Macros.enriched_document_cmd_exp (SOME "author") []);
 \<close>
@@ -286,10 +286,10 @@ setup\<open>Definition_default_class_setup\<close>
 setup\<open>Lemma_default_class_setup\<close>
 setup\<open>Theorem_default_class_setup\<close>
 
-ML\<open> local open ODL_Command_Parser in
+ML\<open> local open ODL_Meta_Args_Parser in
 
 val _ = 
-  ODL_Command_Parser.document_command ("Definition*", @{here}) "Textual Definition"
+  Monitor_Command_Parser.document_command ("Definition*", @{here}) "Textual Definition"
     {markdown = true, body = true}
     (fn meta_args => fn thy =>
       let
@@ -301,7 +301,7 @@ val _ =
       end);
 
 val _ =
-  ODL_Command_Parser.document_command ("Lemma*", @{here}) "Textual Lemma Outline"
+  Monitor_Command_Parser.document_command ("Lemma*", @{here}) "Textual Lemma Outline"
     {markdown = true, body = true}
     (fn meta_args => fn thy =>
       let
@@ -313,7 +313,7 @@ val _ =
       end);
 
 val _ =
-  ODL_Command_Parser.document_command ("Theorem*", @{here}) "Textual Theorem Outline"
+  Monitor_Command_Parser.document_command ("Theorem*", @{here}) "Textual Theorem Outline"
     {markdown = true, body = true}
     (fn meta_args => fn thy =>
       let

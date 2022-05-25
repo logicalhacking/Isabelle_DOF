@@ -65,7 +65,7 @@ ML\<open>
 
 structure Onto_Macros =
 struct
-local open ODL_Command_Parser in
+local open ODL_Meta_Args_Parser in
 (* *********************************************************************** *)
 (* Ontological Macro Command Support                                       *)
 (* *********************************************************************** *)
@@ -79,7 +79,7 @@ fun enriched_text_element_cmd level =
                   NONE => doc_attrs 
                 | SOME(NONE)   => (("level",@{here}),"None")::doc_attrs
                 | SOME(SOME x) => (("level",@{here}),"Some("^ Int.toString x ^"::int)")::doc_attrs
-   in  gen_enriched_document_cmd {inline=true} I transform end; 
+   in Monitor_Command_Parser.gen_enriched_document_cmd {inline=true} I transform end; 
 
 (*
 val enriched_document_command_macro = 
@@ -107,7 +107,7 @@ fun enriched_formal_statement_command ncid (S: (string * string) list) =
    let fun transform_attr doc_attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ 
                                       (("formal_results",@{here}),"([]::thm list)")::doc_attrs
    in  fn margs => fn thy =>
-          gen_enriched_document_cmd {inline=true} 
+          Monitor_Command_Parser.gen_enriched_document_cmd {inline=true} 
                                     (transform_cid thy ncid) transform_attr margs thy 
    end;
 
@@ -115,13 +115,14 @@ fun enriched_document_cmd_exp ncid (S: (string * string) list) =
    (* expands ncid into supertype-check. *)
    let fun transform_attr attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ attrs
    in  fn margs => fn thy =>
-         gen_enriched_document_cmd {inline=true} (transform_cid thy ncid) transform_attr margs thy
+         Monitor_Command_Parser.gen_enriched_document_cmd {inline=true} (transform_cid thy ncid)
+                                                                            transform_attr margs thy
    end;
 end (* local *)
 
 
 fun heading_command (name, pos) descr level =
-  ODL_Command_Parser.document_command (name, pos) descr
+  Monitor_Command_Parser.document_command (name, pos) descr
     {markdown = false, body = true} (enriched_text_element_cmd level);
 
 val _ = heading_command ("title*", @{here}) "section heading" NONE;

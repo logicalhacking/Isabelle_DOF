@@ -92,8 +92,8 @@ term "C"
 
 text\<open>Voila what happens on the ML level:\<close>
 ML\<open>val Type("Conceptual.B.B_ext",[Type("Conceptual.C.C_ext",t)]) = @{typ "C"};
-   val @{typ "D"} = ODL_Command_Parser.cid_2_cidType "Conceptual.D" @{theory};
-   val @{typ "E"} = ODL_Command_Parser.cid_2_cidType "Conceptual.E" @{theory};
+   val @{typ "D"} = Value_Command.Docitem_Parser.cid_2_cidType "Conceptual.D" @{theory};
+   val @{typ "E"} = Value_Command.Docitem_Parser.cid_2_cidType "Conceptual.E" @{theory};
   \<close>
 
 text*[dfgdfg2::C, z = "None"]\<open> Lorem ipsum ... @{thm refl} \<close> 
