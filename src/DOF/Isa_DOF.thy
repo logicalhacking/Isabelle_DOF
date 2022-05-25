@@ -215,6 +215,10 @@ struct
    type docclass_inv_tab = (string -> {is_monitor:bool} -> Context.generic -> bool) Symtab.table
    val  initial_docclass_inv_tab : docclass_inv_tab = Symtab.empty
 
+   type docclass_closing_inv_tab =
+                              (string -> {is_monitor:bool} -> Context.generic -> bool) Symtab.table
+   val  initial_docclass_closing_inv_tab : docclass_closing_inv_tab = Symtab.empty
+
    type open_monitor_info = {accepted_cids : string list,
                              rejected_cids : string list,
                              automatas     : RegExpInterface.automaton list
@@ -232,20 +236,22 @@ structure Data = Generic_Data
                 docclass_tab        : docclass_tab,
                 ISA_transformer_tab : ISA_transformer_tab,
                 monitor_tab         : monitor_tab,
-                docclass_inv_tab    : docclass_inv_tab}
+                docclass_inv_tab    : docclass_inv_tab,
+                docclass_closing_inv_tab : docclass_closing_inv_tab}
   val empty  = {docobj_tab          = initial_docobj_tab,
                 docclass_tab        = initial_docclass_tab,
                 ISA_transformer_tab = initial_ISA_tab,
                 monitor_tab         = initial_monitor_tab,
-                docclass_inv_tab    = initial_docclass_inv_tab
+                docclass_inv_tab    = initial_docclass_inv_tab,
+                docclass_closing_inv_tab = initial_docclass_closing_inv_tab
                } 
   val extend =  I
   fun merge(   {docobj_tab=d1,docclass_tab = c1,
                  ISA_transformer_tab = e1, monitor_tab=m1,
-                 docclass_inv_tab = n1},
+                 docclass_inv_tab = n1, docclass_closing_inv_tab = cn1},
                {docobj_tab=d2,docclass_tab = c2,
                  ISA_transformer_tab = e2, monitor_tab=m2,
-                 docclass_inv_tab = n2})  = 
+                 docclass_inv_tab = n2, docclass_closing_inv_tab = cn2})  = 
                {docobj_tab=merge_docobj_tab   (d1,d2), 
                 docclass_tab = merge_docclass_tab (c1,c2),
                 (*
@@ -257,7 +263,9 @@ structure Data = Generic_Data
                 ISA_transformer_tab = Symtab.merge (fn (_ , _) => true)(e1,e2),
                 monitor_tab =  override(m1,m2), 
                      (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
-                docclass_inv_tab = override(n1,n2)
+                docclass_inv_tab = override(n1,n2),
+                     (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
+                docclass_closing_inv_tab = override(cn1,cn2)
                      (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
                }
 );
@@ -269,25 +277,35 @@ val get_data_global = Data.get o Context.Theory;
 val map_data_global = Context.theory_map o map_data;
 
 
-fun upd_docobj_tab f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab,docclass_inv_tab} = 
+fun upd_docobj_tab f {docobj_tab,docclass_tab,ISA_transformer_tab,
+                      monitor_tab,docclass_inv_tab, docclass_closing_inv_tab} = 
             {docobj_tab = f docobj_tab, docclass_tab=docclass_tab, 
              ISA_transformer_tab=ISA_transformer_tab, monitor_tab=monitor_tab,
-             docclass_inv_tab=docclass_inv_tab};
-fun upd_docclass_tab f {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z, monitor_tab,  docclass_inv_tab} = 
+             docclass_inv_tab=docclass_inv_tab, docclass_closing_inv_tab=docclass_closing_inv_tab};
+fun upd_docclass_tab f {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z,
+                        monitor_tab,  docclass_inv_tab, docclass_closing_inv_tab} = 
             {docobj_tab=x,docclass_tab = f y,ISA_transformer_tab = z, monitor_tab=monitor_tab,
-             docclass_inv_tab=docclass_inv_tab};
-fun upd_ISA_transformers f{docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z, monitor_tab, docclass_inv_tab} = 
+             docclass_inv_tab=docclass_inv_tab, docclass_closing_inv_tab=docclass_closing_inv_tab};
+fun upd_ISA_transformers f {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = z,
+                            monitor_tab, docclass_inv_tab, docclass_closing_inv_tab} = 
             {docobj_tab=x,docclass_tab = y,ISA_transformer_tab = f z, monitor_tab=monitor_tab, 
-             docclass_inv_tab=docclass_inv_tab};
-fun upd_monitor_tabs f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab, docclass_inv_tab} = 
+             docclass_inv_tab=docclass_inv_tab, docclass_closing_inv_tab=docclass_closing_inv_tab};
+fun upd_monitor_tabs f {docobj_tab,docclass_tab,ISA_transformer_tab,
+                        monitor_tab, docclass_inv_tab, docclass_closing_inv_tab} = 
             {docobj_tab = docobj_tab,docclass_tab = docclass_tab,
              ISA_transformer_tab = ISA_transformer_tab, monitor_tab = f monitor_tab, 
-             docclass_inv_tab=docclass_inv_tab};
-fun upd_docclass_inv_tab f {docobj_tab,docclass_tab,ISA_transformer_tab, monitor_tab, docclass_inv_tab} = 
+             docclass_inv_tab=docclass_inv_tab, docclass_closing_inv_tab=docclass_closing_inv_tab};
+fun upd_docclass_inv_tab f {docobj_tab,docclass_tab,ISA_transformer_tab,
+                            monitor_tab, docclass_inv_tab, docclass_closing_inv_tab} = 
             {docobj_tab = docobj_tab,docclass_tab = docclass_tab,
              ISA_transformer_tab = ISA_transformer_tab, monitor_tab = monitor_tab, 
-             docclass_inv_tab    = f docclass_inv_tab};
+             docclass_inv_tab    = f docclass_inv_tab, docclass_closing_inv_tab=docclass_closing_inv_tab};
 
+fun upd_docclass_closing_inv_tab f {docobj_tab,docclass_tab,ISA_transformer_tab,
+                            monitor_tab, docclass_inv_tab, docclass_closing_inv_tab} = 
+            {docobj_tab = docobj_tab,docclass_tab = docclass_tab,
+             ISA_transformer_tab = ISA_transformer_tab, monitor_tab = monitor_tab, 
+             docclass_inv_tab=docclass_inv_tab, docclass_closing_inv_tab= f docclass_closing_inv_tab};
 
 fun get_accepted_cids  ({accepted_cids, ... } : open_monitor_info) = accepted_cids
 fun get_automatas      ({automatas, ... }     : open_monitor_info) = automatas
@@ -413,11 +431,28 @@ fun update_class_invariant cid_long f thy =
                         thy
     end
 
+fun update_class_closing_invariant cid_long f thy = 
+    let val  _ = if is_defined_cid_global' cid_long thy then () 
+                 else error("undefined class id : " ^cid_long)
+    in  map_data_global (upd_docclass_closing_inv_tab (Symtab.update (cid_long, 
+                        (fn ctxt => ((writeln("Closing Invariant check of: " ^cid_long); f ctxt )))))) 
+                        thy
+    end
+
 fun get_class_invariant cid_long thy =
     let val  _ = if is_defined_cid_global' cid_long thy then () 
                  else error("undefined class id : " ^cid_long)
         val {docclass_inv_tab, ...} =  get_data_global thy
     in  case Symtab.lookup  docclass_inv_tab cid_long of 
+            NONE   => K(K(K true))
+          | SOME f => f
+    end
+
+fun get_class_closing_invariant cid_long thy =
+    let val  _ = if is_defined_cid_global' cid_long thy then () 
+                 else error("undefined class id : " ^cid_long)
+        val {docclass_closing_inv_tab, ...} =  get_data_global thy
+    in  case Symtab.lookup  docclass_closing_inv_tab cid_long of 
             NONE   => K(K(K true))
           | SOME f => f
     end
@@ -1755,8 +1790,11 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
         val markup = docref_markup false oid id pos;
         val _ = Context_Position.report (Proof_Context.init_global thy) pos markup;
         val check_inv =   (DOF_core.get_class_invariant cid_long thy oid) {is_monitor=true} 
+                           o Context.Theory
+        val check_closing_inv =   (DOF_core.get_class_closing_invariant cid_long thy oid) {is_monitor=true} 
                            o Context.Theory 
-    in  thy |> update_instance_command args
+    in  thy |> (fn thy => (check_closing_inv thy; thy))
+            |> update_instance_command args
             |> (fn thy => (check_inv thy; thy))
             |> (fn thy => if Config.get_global thy DOF_core.invariants_checking = true
                           then Value_Command.Docitem_Parser.check_invariants thy oid
