@@ -1711,21 +1711,26 @@ fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Pars
             {is_monitor=true}  (* this is a monitor *)
             {is_inline=false} (* monitors are always inline *)                                                               
             oid pos cid_pos doc_attrs thy
-        fun compute_enabled_set cid thy = 
-                     case DOF_core.get_doc_class_global cid thy of
-                       SOME X => let val ralph = RegExpInterface.alphabet (#rejectS X)
+        fun compute_enabled_set cid thy =
+          let
+            val long_cid = DOF_core.read_cid (Proof_Context.init_global thy) cid
+          in
+            case DOF_core.get_doc_class_global long_cid thy of
+                SOME X => let val ralph = RegExpInterface.alphabet (#rejectS X)
                                      val alph = RegExpInterface.ext_alphabet ralph (#rex X)
                                  in  (alph, map (RegExpInterface.rexp_term2da alph)(#rex X)) end 
-                     | NONE => error("Internal error: class id undefined. ");
-        
+              | NONE => error("Internal error: class id undefined. ")
+          end
         fun create_monitor_entry thy =  
-            let val {cid, ...} = the(DOF_core.get_object_global oid thy)
+            let val cid = case cid_pos of
+                              NONE => ISA_core.err ("You must specified a monitor class.") pos
+                            | SOME (cid, _) => cid
                 val (S, aS) = compute_enabled_set cid thy
                 val info = {accepted_cids = S, rejected_cids = [], automatas  = aS }
             in  DOF_core.map_data_global(DOF_core.upd_monitor_tabs(Symtab.update(oid, info )))(thy)
             end
     in
-        o_m_c oid pos cid_pos doc_attrs  #> create_monitor_entry  
+        create_monitor_entry  #> o_m_c oid pos cid_pos doc_attrs
     end;
 
 
