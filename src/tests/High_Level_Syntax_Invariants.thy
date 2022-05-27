@@ -34,6 +34,11 @@ text\<open>The  symbol \<^term>\<open>\<sigma>\<close> is reserved and reference
   Now let's define two instances, one of each class:\<close>
 
 text*[testinv1::class_inv1, int1=4]\<open>lorem ipsum...\<close>
+update_instance*[testinv1::class_inv1, int1:="3"]
+(* When not commented, should violated the invariant:
+update_instance*[testinv1::class_inv1, int1:=1]
+*)
+
 text*[testinv2::class_inv2, int1=3, int2=1]\<open>lorem ipsum...\<close>
 
 text\<open>
@@ -98,7 +103,6 @@ text\<open>Next we define some instances (docitems): \<close>
 declare[[invariants_checking_with_tactics = true]]
 
 text*[church::author, email="\<open>church@lambda.org\<close>"]\<open>\<close>
-(*text*[introduction1::introduction, authored_by = "{@{author \<open>church\<close>}}", level = "Some 0"]\<open>\<close>*)
 
 text*[resultProof::result, evidence = "proof", property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
 text*[resultArgument::result, evidence = "argument"]\<open>\<close>
@@ -112,6 +116,12 @@ declare[[invariants_checking_with_tactics = true]]
 
 text*[curry::author, email="\<open>curry@lambda.org\<close>"]\<open>\<close>
 text*[introduction2::introduction, authored_by = "{@{author \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
+(* When not commented, should violated the invariant:
+update_instance*[introduction2::introduction
+                  , authored_by := "{@{author \<open>church\<close>}}"
+                  , level := "Some 1"]
+*)
+
 text*[introduction3::introduction, authored_by = "{@{author \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
 text*[introduction4::introduction, authored_by = "{@{author \<open>curry\<close>}}", level = "Some 4"]\<open>\<close>
 
@@ -133,5 +143,7 @@ value*\<open>property @{result \<open>resultProof\<close>} = property @{result \
 value*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
 
 declare[[invariants_checking_with_tactics = false]]
+
+declare[[invariants_checking = false]]
 
 end

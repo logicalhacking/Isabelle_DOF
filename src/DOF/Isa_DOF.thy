@@ -1699,6 +1699,9 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
             in     
                 thy |> DOF_core.update_value_global oid def_trans_input_term def_trans_value
                     |> check_inv
+                    |> (fn thy => if Config.get_global thy DOF_core.invariants_checking = true
+                                  then Value_Command.Docitem_Parser.check_invariants thy oid
+                                  else thy)
             end
 
 
@@ -1755,6 +1758,9 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
                            o Context.Theory 
     in  thy |> update_instance_command args
             |> (fn thy => (check_inv thy; thy))
+            |> (fn thy => if Config.get_global thy DOF_core.invariants_checking = true
+                          then Value_Command.Docitem_Parser.check_invariants thy oid
+                          else thy)
             |> delete_monitor_entry
     end 
 
