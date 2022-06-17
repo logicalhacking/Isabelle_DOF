@@ -281,18 +281,21 @@ chapter\<open>Software Management and Organisation\<close>
 text\<open>Representing chapter 5 in @{cite "bsi:50128:2014"}.\<close>
 
 section\<open>Organization, Roles and Responsabilities\<close>
-text\<open>see also section \<^emph>\<open>Software management and organization\<close>.\<close>
+text\<open>See also section \<^emph>\<open>Software management and organization\<close>. and Annex B and C\<close>
 
-datatype role =  PM     \<comment> \<open>Program Manager\<close>
-              |  RQM    \<comment> \<open>Requirements Manager\<close> 
+text\<open>REQ role in Table C.1 is assumed to be a typo and should be RQM.\<close>
+
+datatype role =  RQM    \<comment> \<open>Requirements Manager\<close> 
               |  DES    \<comment> \<open>Designer\<close>
               |  IMP    \<comment> \<open>Implementer\<close> 
-              |  ASR    \<comment> \<open>Assessor\<close> 
-              |  INT    \<comment> \<open>Integrator\<close> 
               |  TST    \<comment> \<open>Tester\<close>
               |  VER    \<comment> \<open>Verifier\<close>
-              |  VnV    \<comment> \<open>Verification and Validation\<close>
+              |  INT    \<comment> \<open>Integrator\<close>
               |  VAL    \<comment> \<open>Validator\<close>
+              |  ASR    \<comment> \<open>Assessor\<close> 
+              |  PM     \<comment> \<open>Program Manager\<close>
+              |  CM     \<comment> \<open>Configuration Manager\<close>
+              |  No_Role_Defined \<comment> \<open>See Annex C footnote a\<close>
 
 
 
@@ -303,20 +306,26 @@ datatype phase = SYSDEV_ext \<comment> \<open> System Development Phase (externa
                | SCDES \<comment> \<open>Software Component Design\<close> 
                | CInT  \<comment> \<open>Component Implementation and Testing\<close>
                | SI    \<comment> \<open>Software Integration\<close>
-               | SV    \<comment> \<open>Software Validation\<close>
+               | SV    \<comment> \<open>Overall Software Testing/Final Validation\<close>
+               | SCADA    \<comment> \<open>Systems Configured by Application Data/Algorithms\<close>
                | SD    \<comment> \<open>Software Deployment\<close>
                | SM    \<comment> \<open>Software Maintenance\<close>
+               | SA    \<comment> \<open>Software Assessment\<close>
 
+abbreviation software_planning      :: "phase" where "software_planning  \<equiv> SPl"
 abbreviation software_requirements      :: "phase" where "software_requirements  \<equiv> SR"
 abbreviation software_architecture_and_design :: "phase"
   where "software_architecture_and_design \<equiv> SADES"
 abbreviation software_component_design :: "phase" where "software_component_design \<equiv> SCDES"
 abbreviation component_implementation_and_testing :: "phase" 
-                                                  where "component_implementation_and_testing \<equiv> CInT"
+  where "component_implementation_and_testing \<equiv> CInT"
 abbreviation software_integration      :: "phase" where "software_integration \<equiv> SI"
 abbreviation software_validation       :: "phase" where "software_validation  \<equiv> SV"
+abbreviation systems_configured_application_data_algorithm :: "phase"
+  where "systems_configured_application_data_algorithm  \<equiv> SCADA"
 abbreviation software_deployment       :: "phase" where "software_deployment  \<equiv> SD"
 abbreviation software_maintenance      :: "phase" where "software_maintenance \<equiv> SM"
+abbreviation software_assessment      :: "phase" where "software_assessment \<equiv> SM"
 
 term "SR" (* meta-test *)
 
@@ -327,8 +336,17 @@ datatype sil = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
 
 type_synonym safety_integration_level = sil
 
+text\<open>Requirement levels specified Annex A: we use the term \<^emph>\<open>normative level\<close> to distinguish
+them from the requirements specified in the standard.\<close>
 
-doc_class objectives =
+datatype normative_level =
+  M     \<comment> \<open>(Mandatory)\<close>
+  | HR  \<comment> \<open>Highly Recommended\<close>
+  | R   \<comment> \<open>Recommended\<close>
+  | Any \<comment> \<open>No recommendation\<close>
+  | NR  \<comment> \<open>Not Recommended\<close>
+
+doc_class objective =
    long_name    :: "string option"
    is_concerned :: "role set"
 
@@ -425,7 +443,7 @@ doc_class SIR = requirement +
    type_synonym safety_integrity_requirement = SIR
 
 text\<open>The following class is a bit unclear about usage and seems to be in 
-sfcual mismatch with @{typ objectives}: \<close>
+sfcual mismatch with @{typ objective}: \<close>
 doc_class SILA = requirement +
    is_concerned :: "role set" <= "UNIV" 
    alloc        :: "sil" <= "SIL0" 
@@ -529,11 +547,14 @@ section\<open> Design and Test Documents \<close>
 
 doc_class cenelec_document = text_element +
    phase        :: "phase"
-   level        :: "int option" <= "Some(0)" 
+   sil          :: "sil"
+   level        :: "int option" <= "Some(0)"
+   nlvl         :: "normative_level"          \<comment> \<open>Annex A Table A.1\<close>
    written_by   :: "role option"              \<comment> \<open>Annex C Table C.1 \<close>
    fst_check    :: "role option"              \<comment> \<open>Annex C Table C.1\<close>
    snd_check    :: "role option"              \<comment> \<open>Annex C Table C.1\<close>
-   is_concerned :: "role set" <= "UNIV" 
+   is_concerned :: "role set" <= "UNIV"
+   accepts      "\<lbrace>objective\<rbrace>\<^sup>+||\<lbrace>requirement\<rbrace>\<^sup>+"
    invariant must_be_chapter :: "text_element.level \<sigma> = Some(0)" 
    invariant three_eyes_prcpl:: "  written_by \<sigma> \<noteq> fst_check \<sigma> 
                                  \<and> written_by \<sigma> \<noteq> snd_check \<sigma>"
@@ -545,7 +566,6 @@ doc_class external_specification =
 
 doc_class SYSREQS = external_specification + 
    phase        :: "phase"  <= "SYSDEV_ext" 
-   (*accepts      "\<lbrace>objectives||requirement||cenelec_document\<rbrace>\<^sup>+ "*)       
    type_synonym system_requirements_specification = SYSREQS
 
 doc_class SYSSREQS = external_specification + 
@@ -560,31 +580,69 @@ doc_class SYSS_pl = external_specification +
    phase        :: "phase"  <= "SYSDEV_ext" 
    type_synonym system_safety_plan = SYSS_pl
 
-(* SYS_VnV_pl exists in Figure 3 but not in Figure 4 *)
+(* SYS_VnV_pl exists in Figure 3 but not in Figure 4: surely a typo in Figure 4 *)
 doc_class SYS_VnV_pl = external_specification +
    phase        :: "phase"  <= "SYSDEV_ext" 
    type_synonym system_VnV_plan = SYS_VnV_pl
+                        
+doc_class SQAP = cenelec_document +
+   phase        :: "phase"  <= "SPl"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_sqap :: "nlvl \<sigma> = HR"
+   type_synonym software_quality_assurance_plan = SQAP
+
+doc_class SQAVR = cenelec_document + 
+   phase        :: "phase"  <= "SPl"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_sqavr :: "nlvl \<sigma> = HR"
+type_synonym software_quality_assurance_verfication_report = SQAVR
+
+doc_class SCMP = cenelec_document + 
+   phase        :: "phase"  <= "SPl"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_scmp :: "nlvl \<sigma> = HR"
+type_synonym software_configuration_management_plan = SCMP
+
+doc_class SVP = cenelec_document + 
+   phase        :: "phase"  <= "SPl"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_svp :: "nlvl \<sigma> = HR"
+type_synonym software_verification_plan = SVP
+
+doc_class SVAP = cenelec_document + 
+   phase        :: "phase"  <= "SPl"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_svap :: "nlvl \<sigma> = HR"
+type_synonym software_validation_plan = SVAP
 
 doc_class SWRS = cenelec_document + 
-   phase        :: "phase"  <= "SR" 
-   type_synonym software_requirements_specification = SWRS
+   phase        :: "phase"  <= "SR"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swrs :: "nlvl \<sigma> = HR"
+type_synonym software_requirements_specification = SWRS
+
+doc_class OSWTS = cenelec_document + 
+   phase        :: "phase"  <= "SR"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_oswts :: "nlvl \<sigma> = HR"
+   type_synonym overall_software_test_specification = OSWTS
 
 doc_class SWRVR = cenelec_document + 
-   phase        :: "phase"  <= "SR" 
-   type_synonym software_requirements_verification_report = SWRVR
-
-
-doc_class SWTS = cenelec_document + 
-   phase        :: "phase"  <= "SR" 
-   type_synonym software_test_specification = SWTS
-
+   phase        :: "phase"  <= "SR"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swrvr :: "nlvl \<sigma> = HR"
+type_synonym software_requirements_verification_report = SWRVR
    
 doc_class SWAS = cenelec_document + 
    phase        :: "phase"  <= "SADES" 
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swas :: "nlvl \<sigma> = HR"
    type_synonym software_architecture_specification = SWAS
 
 doc_class SWDS = cenelec_document + 
-   phase        :: "phase"  <= "SADES" 
+   phase        :: "phase"  <= "SADES"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swds :: "nlvl \<sigma> = HR"
    type_synonym software_design_specification = SWDS
 
 doc_class SWIS_E =
@@ -600,74 +658,400 @@ doc_class SWIS_E =
 
 doc_class SWIS = cenelec_document + 
    phase        :: "phase"  <= "SADES" 
+   nlvl :: "normative_level" <= "HR"
    written_by   :: "role option"   <= "Some DES"
    fst_check    :: "role option"   <= "Some VER"
    snd_check    :: "role option"   <= "Some VAL"
    components   :: "SWIS_E list"
-   type_synonym software_interfaces_specification = SWIS
+   invariant force_nlvl_swis :: "nlvl \<sigma> = HR"
+   type_synonym software_interface_specifications = SWIS
 
 doc_class SWITS = cenelec_document + 
    phase        :: "phase"  <= "SADES"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swits :: "nlvl \<sigma> = HR"
    type_synonym software_integration_test_specification = SWITS
 
 doc_class SWHITS = cenelec_document + 
    phase        :: "phase"  <= "SADES"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swhits :: "nlvl \<sigma> = HR"
    type_synonym software_hardware_integration_test_specification = SWHITS
 
 doc_class SWADVR = cenelec_document + 
-   phase        :: "phase"  <= "SADES" 
+   phase        :: "phase"  <= "SADES"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swadvr :: "nlvl \<sigma> = HR"
    type_synonym software_architecture_and_design_verification_report = SWADVR
 
 doc_class SWCDS = cenelec_document + 
-   phase        :: "phase"  <= "SCDES" 
+   phase        :: "phase"  <= "SCDES"
+   invariant force_nlvl_swcds :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_component_design_specification = SWCDS
 
 doc_class SWCTS = cenelec_document + 
-   phase        :: "phase"  <= "SCDES" 
+   phase        :: "phase"  <= "SCDES"
+   invariant force_nlvl_swcts :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_component_test_specification = SWCTS
 
 doc_class SWCDVR = cenelec_document + 
-   phase        :: "phase"  <= "SCDES" 
+   phase        :: "phase"  <= "SCDES"
+   invariant force_nlvl_swcdvr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_component_design_verification_report = SWCDVR
 
-
 doc_class SWSCD = cenelec_document + 
-   phase        :: "phase"  <= "CInT" 
+   phase        :: "phase"  <= "CInT"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swscd :: "nlvl \<sigma> = HR"
    type_synonym software_source_code_and_documentation = SWSCD
 
 doc_class SWCTR = cenelec_document + 
-   phase        :: "phase"  <= "CInT" 
+   phase        :: "phase"  <= "CInT"
+   invariant force_nlvl_swctr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_component_test_report = SWCTR
 
 doc_class SWSCVR = cenelec_document + 
-   phase        :: "phase"  <= "CInT" 
+   phase        :: "phase"  <= "CInT"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swscvr :: "nlvl \<sigma> = HR"
    type_synonym software_source_code_verification_report = SWSCVR
 
+doc_class SWITR = cenelec_document +
+   phase        :: "phase"  <= "SI"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_switr :: "nlvl \<sigma> = HR"
+   type_synonym software_integration_test_report = SWITR
+
 doc_class SWHAITR = cenelec_document +
-   phase        :: "phase"  <= "SI" 
+   phase        :: "phase"  <= "SI"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swhaitr :: "nlvl \<sigma> = HR"
    type_synonym software_hardware_integration_test_report = SWHAITR
 
 doc_class SWIVR = cenelec_document +
    phase        :: "phase"  <= "SI" 
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swivr :: "nlvl \<sigma> = HR"
    type_synonym software_integration_verification_report = SWIVR
 
-doc_class SWTR_global = cenelec_document + 
-   phase        :: "phase"  <= "SV" 
-   type_synonym overall_software_test_report = SWTR_global
+doc_class OSWTR = cenelec_document + 
+   phase        :: "phase"  <= "SV"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_oswtr :: "nlvl \<sigma> = HR"
+type_synonym overall_software_test_report = OSWTR
 
 doc_class SWVALR = cenelec_document +
    phase        :: "phase"  <= "SV" 
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swvalr :: "nlvl \<sigma> = HR"
    type_synonym software_validation_report = SWVALR
 
-doc_class SWDD = cenelec_document + 
-   phase        :: "phase"  <= "SD" 
-   type_synonym software_deployment_documents = SWDD
+doc_class TVALR = cenelec_document +
+   phase        :: "phase"  <= "SV"
+   invariant force_nlvl_tvalr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
+   type_synonym tools_validation_report = TVALR
 
-doc_class SWMD = cenelec_document + 
-   phase        :: "phase"  <= "SM" 
-   type_synonym software_maintenance_documents = SWMD
+doc_class SWVRN = cenelec_document +
+   phase        :: "phase"  <= "SV"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swvrn :: "nlvl \<sigma> = HR"
+   type_synonym software_validation_release_note = SWVRN
 
- 
+doc_class ARS = cenelec_document +
+   phase        :: "phase"  <= "SCADA"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_ars :: "nlvl \<sigma> = HR"
+   type_synonym application_requirements_specification = ARS
+
+doc_class APP = cenelec_document +
+   phase        :: "phase"  <= "SCADA"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_APP :: "nlvl \<sigma> = HR"
+   type_synonym application_preparation_plan = APP
+
+doc_class ATS = cenelec_document +
+   phase        :: "phase"  <= "SCADA"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_ats :: "nlvl \<sigma> = HR"
+   type_synonym application_test_specification = ATS
+
+doc_class AAD = cenelec_document +
+   phase        :: "phase"  <= "SCADA"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_aad :: "nlvl \<sigma> = HR"
+   type_synonym application_architecture_design = AAD
+
+doc_class APVR = cenelec_document +
+   phase        :: "phase"  <= "SCADA"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_apvr :: "nlvl \<sigma> = HR"
+   type_synonym application_preparation_verification_report = APVR
+
+doc_class ATR = cenelec_document +
+   phase        :: "phase"  <= "SCADA"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_atr :: "nlvl \<sigma> = HR"
+   type_synonym application_test_report= ATR
+
+doc_class SOCOADA = cenelec_document +
+   phase        :: "phase"  <= "SCADA"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_socoada :: "nlvl \<sigma> = HR"
+   type_synonym source_code_application_data_algorithms = SOCOADA
+
+doc_class ADAVR = cenelec_document +
+   phase        :: "phase"  <= "SCADA"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_adavr :: "nlvl \<sigma> = HR"
+   type_synonym application_data_algorithms_verification_report= ADAVR
+
+doc_class SWRDP = cenelec_document + 
+   phase        :: "phase"  <= "SD"
+   invariant force_nlvl_swrdp :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
+   type_synonym software_release_deployment_plan = SWRDP
+
+doc_class SWDM = cenelec_document + 
+   phase        :: "phase"  <= "SD"
+   invariant force_nlvl_swdm :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
+   type_synonym software_deployment_manual = SWDM
+
+doc_class SWDRN = cenelec_document + 
+   phase        :: "phase"  <= "SD"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swdrn :: "nlvl \<sigma> = HR"
+   type_synonym software_deployment_release_notes = SWDRN
+
+doc_class SWDR = cenelec_document + 
+   phase        :: "phase"  <= "SD"
+   invariant force_nlvl_swdr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
+   type_synonym software_deployment_records = SWDR
+
+doc_class SWDVR = cenelec_document + 
+   phase        :: "phase"  <= "SD"
+   invariant force_nlvl_swdvr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
+   type_synonym software_deployment_verification_report = SWDVR
+
+doc_class SWMP = cenelec_document + 
+   phase        :: "phase"  <= "SM"
+   invariant force_nlvl_swmp :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
+   type_synonym software_maintenance_plan = SWMP
+
+doc_class SWCR = cenelec_document + 
+   phase        :: "phase"  <= "SM"
+   nlvl :: "normative_level" <= "HR"
+   invariant force_nlvl_swcr :: "nlvl \<sigma> = HR"
+   type_synonym software_change_records = SWCR
+
+doc_class SWMR = cenelec_document +
+   phase        :: "phase"  <= "SM"
+   invariant force_nlvl_swmr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
+type_synonym software_maintenance_records = SWMR
+
+doc_class SWMVR = cenelec_document + 
+   phase        :: "phase"  <= "SM"
+   invariant force_nlvl_swmvr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
+   type_synonym software_maintenance_verification_report = SWMVR
+
+doc_class SWAP = cenelec_document + 
+   phase        :: "phase"  <= "SA"
+   invariant force_nlvl_swap :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
+   type_synonym software_assessment_plan = SWAP
+
+doc_class SWAR = cenelec_document + 
+   phase        :: "phase"  <= "SA"
+   invariant force_nlvl_swar :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
+   type_synonym software_assessment_report = SWAR
+
+text\<open>Table A.1: Lifecycle Issues and Documentation (5.3).
+The requirement levels of table A.1 is expressed with monitor classes:
+first the SIL of each class is enforced to be the same as the monitor class SIL,
+then, when closing the monitor, the normative level (requirement level in CENELEC lingua)
+of each CENELEC document instance is checked and warning/errors are triggered
+if they do not respect the monitor class SIL\<close>
+
+doc_class monitor_SIL =
+  sil :: sil
+
+doc_class monitor_SIL0 = monitor_SIL +
+  sil :: sil <= SIL0
+  accepts "\<lbrakk>SQAP\<rbrakk> ~~ \<lbrakk>SQAVR\<rbrakk> ~~ \<lbrakk>SCMP\<rbrakk> ~~ \<lbrakk>SVP\<rbrakk> ~~ \<lbrakk>SVAP\<rbrakk>
+           ~~ \<lbrakk>SWRS\<rbrakk> ~~ \<lbrakk>OSWTS\<rbrakk> ~~ \<lbrakk>SWRVR\<rbrakk>
+           ~~ \<lbrakk>SWAS\<rbrakk> ~~ \<lbrakk>SWDS\<rbrakk> ~~ \<lbrakk>SWIS\<rbrakk> ~~ \<lbrakk>SWITS\<rbrakk> ~~ \<lbrakk>SWHITS\<rbrakk> ~~ \<lbrakk>SWADVR\<rbrakk>
+           ~~ \<lbrakk>SWCDS\<rbrakk> ~~ \<lbrakk>SWCTS\<rbrakk> ~~ \<lbrakk>SWCDVR\<rbrakk>
+           ~~ \<lbrakk>SWSCD\<rbrakk> ~~ \<lbrakk>SWCTR\<rbrakk> ~~ \<lbrakk>SWSCVR\<rbrakk>
+           ~~ \<lbrakk>SWITR\<rbrakk> ~~ \<lbrakk>SWHAITR\<rbrakk> ~~ \<lbrakk>SWIVR\<rbrakk>
+           ~~ \<lbrakk>OSWTR\<rbrakk> ~~ \<lbrakk>SWVALR\<rbrakk> ~~ \<lbrakk>TVALR\<rbrakk> ~~ \<lbrakk>SWVRN\<rbrakk>
+           ~~ \<lbrakk>ARS\<rbrakk> ~~ \<lbrakk>APP\<rbrakk> ~~ \<lbrakk>ATS\<rbrakk> ~~ \<lbrakk>AAD\<rbrakk> ~~ \<lbrakk>APVR\<rbrakk> ~~ \<lbrakk>ATR\<rbrakk> ~~ \<lbrakk>SOCOADA\<rbrakk> ~~ \<lbrakk>ADAVR\<rbrakk>
+           ~~ \<lbrakk>SWRDP\<rbrakk> ~~ \<lbrakk>SWDM\<rbrakk> ~~ \<lbrakk>SWDRN\<rbrakk> ~~ \<lbrakk>SWDR\<rbrakk> ~~ \<lbrakk>SWDVR\<rbrakk>
+           ~~ \<lbrakk>SWMP\<rbrakk> ~~ \<lbrakk>SWCR\<rbrakk> ~~ \<lbrakk>SWMR\<rbrakk> ~~ \<lbrakk>SWMVR\<rbrakk>
+           ~~ \<lbrakk>SWAP\<rbrakk> ~~ \<lbrakk>SWAR\<rbrakk>"
+  invariant force_sil0 :: "sil \<sigma> = SIL0"
+
+doc_class monitor_SIL1 = monitor_SIL +
+  sil :: sil <= SIL1
+  accepts "\<lbrakk>SQAP\<rbrakk> ~~ \<lbrakk>SQAVR\<rbrakk> ~~ \<lbrakk>SCMP\<rbrakk> ~~ \<lbrakk>SVP\<rbrakk> ~~ \<lbrakk>SVAP\<rbrakk>
+           ~~ \<lbrakk>SWRS\<rbrakk> ~~ \<lbrakk>OSWTS\<rbrakk> ~~ \<lbrakk>SWRVR\<rbrakk>
+           ~~ \<lbrakk>SWAS\<rbrakk> ~~ \<lbrakk>SWDS\<rbrakk> ~~ \<lbrakk>SWIS\<rbrakk> ~~ \<lbrakk>SWITS\<rbrakk> ~~ \<lbrakk>SWHITS\<rbrakk> ~~ \<lbrakk>SWADVR\<rbrakk>
+           ~~ \<lbrakk>SWCDS\<rbrakk> ~~ \<lbrakk>SWCTS\<rbrakk> ~~ \<lbrakk>SWCDVR\<rbrakk>
+           ~~ \<lbrakk>SWSCD\<rbrakk> ~~ \<lbrakk>SWCTR\<rbrakk> ~~ \<lbrakk>SWSCVR\<rbrakk>
+           ~~ \<lbrakk>SWITR\<rbrakk> ~~ \<lbrakk>SWHAITR\<rbrakk> ~~ \<lbrakk>SWIVR\<rbrakk>
+           ~~ \<lbrakk>OSWTR\<rbrakk> ~~ \<lbrakk>SWVALR\<rbrakk> ~~ \<lbrakk>TVALR\<rbrakk> ~~ \<lbrakk>SWVRN\<rbrakk>
+           ~~ \<lbrakk>ARS\<rbrakk> ~~ \<lbrakk>APP\<rbrakk> ~~ \<lbrakk>ATS\<rbrakk> ~~ \<lbrakk>AAD\<rbrakk> ~~ \<lbrakk>APVR\<rbrakk> ~~ \<lbrakk>ATR\<rbrakk> ~~ \<lbrakk>SOCOADA\<rbrakk> ~~ \<lbrakk>ADAVR\<rbrakk>
+           ~~ \<lbrakk>SWRDP\<rbrakk> ~~ \<lbrakk>SWDM\<rbrakk> ~~ \<lbrakk>SWDRN\<rbrakk> ~~ \<lbrakk>SWDR\<rbrakk> ~~ \<lbrakk>SWDVR\<rbrakk>
+           ~~ \<lbrakk>SWMP\<rbrakk> ~~ \<lbrakk>SWCR\<rbrakk> ~~ \<lbrakk>SWMR\<rbrakk> ~~ \<lbrakk>SWMVR\<rbrakk>
+           ~~ \<lbrakk>SWAP\<rbrakk> ~~ \<lbrakk>SWAR\<rbrakk>"
+  invariant force_sil1 :: "sil \<sigma> = SIL1"
+
+doc_class monitor_SIL2 = monitor_SIL +
+  sil :: sil <= SIL2
+  accepts "\<lbrakk>SQAP\<rbrakk> ~~ \<lbrakk>SQAVR\<rbrakk> ~~ \<lbrakk>SCMP\<rbrakk> ~~ \<lbrakk>SVP\<rbrakk> ~~ \<lbrakk>SVAP\<rbrakk>
+           ~~ \<lbrakk>SWRS\<rbrakk> ~~ \<lbrakk>OSWTS\<rbrakk> ~~ \<lbrakk>SWRVR\<rbrakk>
+           ~~ \<lbrakk>SWAS\<rbrakk> ~~ \<lbrakk>SWDS\<rbrakk> ~~ \<lbrakk>SWIS\<rbrakk> ~~ \<lbrakk>SWITS\<rbrakk> ~~ \<lbrakk>SWHITS\<rbrakk> ~~ \<lbrakk>SWADVR\<rbrakk>
+           ~~ \<lbrakk>SWCDS\<rbrakk> ~~ \<lbrakk>SWCTS\<rbrakk> ~~ \<lbrakk>SWCDVR\<rbrakk>
+           ~~ \<lbrakk>SWSCD\<rbrakk> ~~ \<lbrakk>SWCTR\<rbrakk> ~~ \<lbrakk>SWSCVR\<rbrakk>
+           ~~ \<lbrakk>SWITR\<rbrakk> ~~ \<lbrakk>SWHAITR\<rbrakk> ~~ \<lbrakk>SWIVR\<rbrakk>
+           ~~ \<lbrakk>OSWTR\<rbrakk> ~~ \<lbrakk>SWVALR\<rbrakk> ~~ \<lbrakk>TVALR\<rbrakk> ~~ \<lbrakk>SWVRN\<rbrakk>
+           ~~ \<lbrakk>ARS\<rbrakk> ~~ \<lbrakk>APP\<rbrakk> ~~ \<lbrakk>ATS\<rbrakk> ~~ \<lbrakk>AAD\<rbrakk> ~~ \<lbrakk>APVR\<rbrakk> ~~ \<lbrakk>ATR\<rbrakk> ~~ \<lbrakk>SOCOADA\<rbrakk> ~~ \<lbrakk>ADAVR\<rbrakk>
+           ~~ \<lbrakk>SWRDP\<rbrakk> ~~ \<lbrakk>SWDM\<rbrakk> ~~ \<lbrakk>SWDRN\<rbrakk> ~~ \<lbrakk>SWDR\<rbrakk> ~~ \<lbrakk>SWDVR\<rbrakk>
+           ~~ \<lbrakk>SWMP\<rbrakk> ~~ \<lbrakk>SWCR\<rbrakk> ~~ \<lbrakk>SWMR\<rbrakk> ~~ \<lbrakk>SWMVR\<rbrakk>
+           ~~ \<lbrakk>SWAP\<rbrakk> ~~ \<lbrakk>SWAR\<rbrakk>"
+  invariant force_sil2 :: "sil \<sigma> = SIL2"
+
+doc_class monitor_SIL3 = monitor_SIL +
+  sil :: sil <= SIL3
+  accepts "\<lbrakk>SQAP\<rbrakk> ~~ \<lbrakk>SQAVR\<rbrakk> ~~ \<lbrakk>SCMP\<rbrakk> ~~ \<lbrakk>SVP\<rbrakk> ~~ \<lbrakk>SVAP\<rbrakk>
+           ~~ \<lbrakk>SWRS\<rbrakk> ~~ \<lbrakk>OSWTS\<rbrakk> ~~ \<lbrakk>SWRVR\<rbrakk>
+           ~~ \<lbrakk>SWAS\<rbrakk> ~~ \<lbrakk>SWDS\<rbrakk> ~~ \<lbrakk>SWIS\<rbrakk> ~~ \<lbrakk>SWITS\<rbrakk> ~~ \<lbrakk>SWHITS\<rbrakk> ~~ \<lbrakk>SWADVR\<rbrakk>
+           ~~ \<lbrakk>SWCDS\<rbrakk> ~~ \<lbrakk>SWCTS\<rbrakk> ~~ \<lbrakk>SWCDVR\<rbrakk>
+           ~~ \<lbrakk>SWSCD\<rbrakk> ~~ \<lbrakk>SWCTR\<rbrakk> ~~ \<lbrakk>SWSCVR\<rbrakk>
+           ~~ \<lbrakk>SWITR\<rbrakk> ~~ \<lbrakk>SWHAITR\<rbrakk> ~~ \<lbrakk>SWIVR\<rbrakk>
+           ~~ \<lbrakk>OSWTR\<rbrakk> ~~ \<lbrakk>SWVALR\<rbrakk> ~~ \<lbrakk>TVALR\<rbrakk> ~~ \<lbrakk>SWVRN\<rbrakk>
+           ~~ \<lbrakk>ARS\<rbrakk> ~~ \<lbrakk>APP\<rbrakk> ~~ \<lbrakk>ATS\<rbrakk> ~~ \<lbrakk>AAD\<rbrakk> ~~ \<lbrakk>APVR\<rbrakk> ~~ \<lbrakk>ATR\<rbrakk> ~~ \<lbrakk>SOCOADA\<rbrakk> ~~ \<lbrakk>ADAVR\<rbrakk>
+           ~~ \<lbrakk>SWRDP\<rbrakk> ~~ \<lbrakk>SWDM\<rbrakk> ~~ \<lbrakk>SWDRN\<rbrakk> ~~ \<lbrakk>SWDR\<rbrakk> ~~ \<lbrakk>SWDVR\<rbrakk>
+           ~~ \<lbrakk>SWMP\<rbrakk> ~~ \<lbrakk>SWCR\<rbrakk> ~~ \<lbrakk>SWMR\<rbrakk> ~~ \<lbrakk>SWMVR\<rbrakk>
+           ~~ \<lbrakk>SWAP\<rbrakk> ~~ \<lbrakk>SWAR\<rbrakk>"
+  invariant force_sil3 :: "sil \<sigma> = SIL3"
+
+doc_class monitor_SIL4 = monitor_SIL +
+  sil :: sil <= SIL4
+  accepts "\<lbrakk>SQAP\<rbrakk> ~~ \<lbrakk>SQAVR\<rbrakk> ~~ \<lbrakk>SCMP\<rbrakk> ~~ \<lbrakk>SVP\<rbrakk> ~~ \<lbrakk>SVAP\<rbrakk>
+           ~~ \<lbrakk>SWRS\<rbrakk> ~~ \<lbrakk>OSWTS\<rbrakk> ~~ \<lbrakk>SWRVR\<rbrakk>
+           ~~ \<lbrakk>SWAS\<rbrakk> ~~ \<lbrakk>SWDS\<rbrakk> ~~ \<lbrakk>SWIS\<rbrakk> ~~ \<lbrakk>SWITS\<rbrakk> ~~ \<lbrakk>SWHITS\<rbrakk> ~~ \<lbrakk>SWADVR\<rbrakk>
+           ~~ \<lbrakk>SWCDS\<rbrakk> ~~ \<lbrakk>SWCTS\<rbrakk> ~~ \<lbrakk>SWCDVR\<rbrakk>
+           ~~ \<lbrakk>SWSCD\<rbrakk> ~~ \<lbrakk>SWCTR\<rbrakk> ~~ \<lbrakk>SWSCVR\<rbrakk>
+           ~~ \<lbrakk>SWITR\<rbrakk> ~~ \<lbrakk>SWHAITR\<rbrakk> ~~ \<lbrakk>SWIVR\<rbrakk>
+           ~~ \<lbrakk>OSWTR\<rbrakk> ~~ \<lbrakk>SWVALR\<rbrakk> ~~ \<lbrakk>TVALR\<rbrakk> ~~ \<lbrakk>SWVRN\<rbrakk>
+           ~~ \<lbrakk>ARS\<rbrakk> ~~ \<lbrakk>APP\<rbrakk> ~~ \<lbrakk>ATS\<rbrakk> ~~ \<lbrakk>AAD\<rbrakk> ~~ \<lbrakk>APVR\<rbrakk> ~~ \<lbrakk>ATR\<rbrakk> ~~ \<lbrakk>SOCOADA\<rbrakk> ~~ \<lbrakk>ADAVR\<rbrakk>
+           ~~ \<lbrakk>SWRDP\<rbrakk> ~~ \<lbrakk>SWDM\<rbrakk> ~~ \<lbrakk>SWDRN\<rbrakk> ~~ \<lbrakk>SWDR\<rbrakk> ~~ \<lbrakk>SWDVR\<rbrakk>
+           ~~ \<lbrakk>SWMP\<rbrakk> ~~ \<lbrakk>SWCR\<rbrakk> ~~ \<lbrakk>SWMR\<rbrakk> ~~ \<lbrakk>SWMVR\<rbrakk>
+           ~~ \<lbrakk>SWAP\<rbrakk> ~~ \<lbrakk>SWAR\<rbrakk>"
+  invariant force_sil4 :: "sil \<sigma> = SIL4"
+
+ML\<open>
+fun check_sil oid _ ctxt =
+  let
+    val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
+    val monitor_record_value = #value (the (DOF_core.get_object_local oid ctxt'))
+    val Const _ $ _ $ monitor_sil $ _ = monitor_record_value
+    val traces = AttributeAccess.compute_trace_ML ctxt oid \<^here> \<^here>
+    fun check_sil'' [] = true
+      | check_sil'' (x::xs) =
+          let
+            val (_, doc_oid) = x
+            val doc_record_value = #value (the (DOF_core.get_object_local doc_oid ctxt'))
+            val Const _ $ _ $ _ $ _ $ _ $ cenelec_document_ext = doc_record_value
+            val Const _ $ _ $ _ $ doc_sil $ _ $ _ $ _ $ _ $ _ $ _ = cenelec_document_ext
+          in 
+            if doc_sil <> monitor_sil
+            then error(doc_oid
+                       ^ " cenelec document SIL must be: "
+                       ^ Syntax.string_of_term ctxt' monitor_sil)
+            else check_sil'' xs end
+  in check_sil'' traces end
+\<close>
+
+setup\<open>DOF_core.update_class_invariant "CENELEC_50128.monitor_SIL0" check_sil\<close>
+
+text\<open>
+A more generic example of check_sil which can be generalized:
+it is decoupled from the CENELEC current implementation
+but is much less efficient regarding time computation by relying on Isabelle evaluation mechanism.\<close>
+ML\<open>
+fun check_sil_slow oid _ ctxt =
+  let 
+    val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
+    val monitor_record_value = #value (the (DOF_core.get_object_local oid ctxt'))
+    val monitor_cid = #cid (the (DOF_core.get_object_local oid ctxt'))
+    val monitor_sil_typ = (Syntax.read_typ ctxt' monitor_cid) --> @{typ "sil"}
+    val monitor_sil = Value_Command.value ctxt'
+                    (Const("CENELEC_50128.monitor_SIL.sil", monitor_sil_typ) $ monitor_record_value)
+    val traces = AttributeAccess.compute_trace_ML ctxt oid \<^here> \<^here>
+    fun check_sil'  [] = true
+      | check_sil' (x::xs) =
+          let
+            val (doc_cid, doc_oid) = x
+            val doc_record_value = #value (the (DOF_core.get_object_local doc_oid ctxt'))
+            val doc_sil_typ = (Syntax.read_typ ctxt' doc_cid) --> @{typ "sil"} 
+            val doc_sil = Value_Command.value ctxt'
+                    (Const ("CENELEC_50128.cenelec_document.sil", doc_sil_typ) $ doc_record_value)
+          in 
+            if doc_sil <> monitor_sil
+            then error(doc_oid
+                       ^ " cenelec document SIL must be: "
+                       ^ Syntax.string_of_term ctxt' monitor_sil)
+            else check_sil' xs end
+  in check_sil' traces end
+\<close>
+
+(*setup\<open>DOF_core.update_class_invariant "CENELEC_50128.monitor_SIL0" check_sil_slow\<close>*)
+
+(* As traces of monitor instances (docitems) are updated each time an instance is declared
+  (with text*, section*, etc.), invariants checking functions which use traces must
+  be declared as lazy invariants, to be checked only when closing a monitor, i.e.,
+  after the monitor traces are populated.
+*)
+ML\<open>
+fun check_required_documents oid _ ctxt = 
+  let
+    val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
+    val {monitor_tab,...} = DOF_core.get_data ctxt'
+    val {accepted_cids, ...} = the (Symtab.lookup monitor_tab oid)
+    val traces = AttributeAccess.compute_trace_ML ctxt oid \<^here> \<^here>
+    fun check_required_documents' [] = true
+      | check_required_documents' (cid::cids) =
+          if exists (fn (doc_cid, _) => equal cid doc_cid) traces
+          then check_required_documents' cids
+          else
+            let
+              val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
+              val monitor_record_value = #value (the (DOF_core.get_object_local oid ctxt'))
+              val Const _ $ _ $ monitor_sil $ _ = monitor_record_value
+            in error ("A " ^ cid ^ " cenelec document is required with "
+                      ^ Syntax.string_of_term ctxt' monitor_sil)
+            end
+  in check_required_documents' accepted_cids end
+\<close>
+
+setup\<open>DOF_core.update_class_lazy_invariant "CENELEC_50128.monitor_SIL0" check_required_documents\<close>
+
+(* Test pattern matching for the records of the current CENELEC implementation classes,
+   and used by checking functions.
+   If the test failed, then it means that the CENELEC implementation has changed
+   (the class definitions have been updated) and the checking functions must be updated.
+*)
+text*[MonitorPatternMatchingTest::monitor_SIL0]\<open>\<close>
+text*[CenelecClassPatternMatchingTest::SQAP, sil = "SIL0"]\<open>\<close>
+ML\<open>
+val thy = @{theory}
+val monitor_record_value =
+      #value (the (DOF_core.get_object_global "MonitorPatternMatchingTest" thy))
+val Const _ $ _ $ monitor_sil $ _ = monitor_record_value
+val doc_record_value = #value (the (DOF_core.get_object_global
+                                              "CenelecClassPatternMatchingTest" thy))
+val Const _ $ _ $ _ $ _ $ _ $ cenelec_document_ext = doc_record_value
+val Const _ $ _ $ _ $ doc_sil $ _ $ _ $ _ $ _ $ _ $ _ = cenelec_document_ext
+\<close>
+
 section\<open> Software Assurance \<close>
 \<comment> \<open>MORE TO COME\<close>
 
@@ -680,7 +1064,7 @@ specification to the extent achievable by the selected test coverage.
 
 text\<open>Outputs:
 \<^enum> @{typ overall_software_test_report}
-\<^enum> @{typ software_test_specification} Overall Software Test Specification
+\<^enum> @{typ overall_software_test_specification} Overall Software Test Specification
 \<^enum> Overall Software Test Report
 \<^enum> Software Integration Test Specification
 \<^enum> Software Integration Test Report
@@ -803,7 +1187,7 @@ doc_class global_documentation_structure = text_element +
             SYSSREQS     ~~                  \<comment> \<open>system_safety_requirements_specification\<close> 
             SYSAD        ~~                  \<comment> \<open>system_architecture description\<close>
             SYSS_pl      ~~                  \<comment> \<open>system safety plan\<close> 
-            (SWRS || SWTS)  "                \<comment> \<open>software requirements specification OR
+            (SWRS || OSWTS)  "                \<comment> \<open>software requirements specification OR
                                                  overall software test specification\<close> 
 (* MORE TO COME : *)
 
