@@ -33,16 +33,15 @@ Symtab.dest docitem_tab;
 Symtab.dest docclass_tab;
 \<close>
 
-
+ML\<open>open Document_Output;\<close>
+ML\<open>open XML; XML.string_of\<close>
 
 ML\<open> 
-Pure_Syn.document_command;
 
-val _ = Thy_Output.output_document
+val _ = Document_Output.document_output
 
-fun gen_enriched_document_command2 cid_transform attr_transform 
-                                  markdown  
-                                  (((((oid,pos),cid_pos), doc_attrs) : ODL_Command_Parser.meta_args_t,
+fun gen_enriched_document_command2 name {body} cid_transform attr_transform markdown
+                                  (((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t,
                                      xstring_opt:(xstring * Position.T) option),
                                     toks:Input.source) 
                                   : theory -> theory =
@@ -54,23 +53,29 @@ fun gen_enriched_document_command2 cid_transform attr_transform
                                       val _ =   Context_Position.reports ctxt
                                                 [(pos, Markup.language_document (Input.is_delimited toks)),
                                                  (pos, Markup.plain_text)];
+                                      fun markup xml = let val m = if body then Markup.latex_body 
+                                                                   else Markup.latex_heading
+                                                       in [XML.Elem (m (Latex.output_name name), 
+                                                           xml)] end;
 
-                                      val text = Thy_Output.output_document 
+                                      val text = Document_Output.output_document 
                                                                  (Proof_Context.init_global thy) 
                                                                  markdown toks
+(*   type file = {path: Path.T, pos: Position.T, content: string} *) 
 
+                                      val strg = XML.string_of (hd (Latex.output text))
                                       val file = {path = Path.make [oid ^ "_snippet.tex"],
                                                   pos = @{here}, 
-                                                  content = Latex.output_text text}
- 
+                                                  content = strg}
+                                      
                                       val _ = Generated_Files.write_file (Path.make ["latex_test"]) 
                                                                          file
-                                      val _ = writeln (Latex.output_text text)
+                                      val _ = writeln (strg)
                                   in  thy end
        
        (* ... generating the level-attribute syntax *)
   in   
-       (   ODL_Command_Parser.create_and_check_docitem 
+       (   Value_Command.Docitem_Parser.create_and_check_docitem 
                               {is_monitor = false} {is_inline = false} 
                               oid pos (cid_transform cid_pos) (attr_transform doc_attrs)
         #>  check_n_tex_text ) 
@@ -78,8 +83,8 @@ fun gen_enriched_document_command2 cid_transform attr_transform
 
 val _ =
   Outer_Syntax.command ("text-", @{here}) "formal comment macro"
-    (ODL_Command_Parser.attributes -- Parse.opt_target -- Parse.document_source 
-      >> (Toplevel.theory o (gen_enriched_document_command2 I I {markdown = true} )));
+    (ODL_Meta_Args_Parser.attributes -- Parse.opt_target -- Parse.document_source 
+      >> (Toplevel.theory o (gen_enriched_document_command2 "TTT" {body=true} I I {markdown = true} )));
 
 (* copied from Pure_syn for experiments *)
 
@@ -91,9 +96,11 @@ fun output_document2 state markdown txt =
       Context_Position.reports ctxt
         [(pos, Markup.language_document (Input.is_delimited txt)),
          (pos, Markup.plain_text)];
-    val txt' = Thy_Output.output_document ctxt markdown txt
-    val _ = writeln (Latex.output_text txt')
-  in Thy_Output.output_document ctxt markdown txt end;
+    val txt' = Document_Output.output_document ctxt markdown txt
+    val strg = XML.string_of (hd (Latex.output txt'))
+
+    val _ = writeln (strg)
+  in Document_Output.output_document ctxt markdown txt end;
 
 fun document_command2 markdown (loc, txt) =
   Toplevel.keep (fn state =>
@@ -104,7 +111,7 @@ fun document_command2 markdown (loc, txt) =
                                ^ Position.here pos))) 
  o 
   Toplevel.present_local_theory loc 
-                (fn state => ignore (output_document2 state markdown txt));
+                (fn state =>  (output_document2 state markdown txt));
 
 
 val _ =
@@ -121,7 +128,7 @@ Tool: Sphinx.
 
 \<close>
 
-text*[aaa::B]\<open>dfg @{thm [display] refl}\<close>
+text*[aaaa::B]\<open>dfg @{thm [display] refl}\<close>
                             
 text-[dfgdfg::B]
 \<open> Lorem ipsum ...  @{thm [display] refl} _ Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
@@ -174,9 +181,9 @@ text\<open>Std Abbreviations. Inspired by the block *\<open>control spacing\<clo
 ML\<open>
 val _ =
   Theory.setup
-   (   Thy_Output.antiquotation_raw \<^binding>\<open>doof\<close> (Scan.succeed ())
+   (   Document_Output.antiquotation_raw \<^binding>\<open>doof\<close> (Scan.succeed ())
           (fn _ => fn () => Latex.string "\\emph{doof}")
-    #> Thy_Output.antiquotation_raw \<^binding>\<open>LATEX\<close> (Scan.succeed ())
+    #> Document_Output.antiquotation_raw \<^binding>\<open>LATEX\<close> (Scan.succeed ())
           (fn _ => fn () => Latex.string "\\textbf{LaTeX}") 
    )
 \<close>
@@ -220,8 +227,8 @@ fun prepare_text ctxt =
 
 fun string_2_text_antiquotation ctxt text = 
         prepare_text ctxt text
-        |> Thy_Output.output_source ctxt
-        |> Thy_Output.isabelle ctxt
+        |> Document_Output.output_source ctxt
+        |> Document_Output.isabelle ctxt
 
 fun string_2_theory_text_antiquotation ctxt text =
       let
@@ -229,12 +236,12 @@ fun string_2_theory_text_antiquotation ctxt text =
       in
         prepare_text ctxt text
         |> Token.explode0 keywords
-        |> maps (Thy_Output.output_token ctxt)
-        |> Thy_Output.isabelle ctxt
+        |> maps (Document_Output.output_token ctxt)
+        |> Document_Output.isabelle ctxt
       end
 
 fun gen_text_antiquotation name reportNcheck compile =
-  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
+  Document_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
     (fn ctxt => fn text:Input.source =>
       let
         val _ = reportNcheck ctxt text;
@@ -287,7 +294,7 @@ fun theory_text_antiquotation name =
 
 fun enclose_env ctxt block_env body =
   if Config.get ctxt Document_Antiquotation.thy_output_display
-  then Latex.environment_block block_env [body]
+  then Latex.environment block_env body
   else body;
 
 
