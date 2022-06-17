@@ -503,6 +503,15 @@ datatype vnt_technique =
 
 type_synonym verification_and_testing_technique = vnt_technique
 
+(* modelling exampe of a table ... *)
+
+datatype recommandation_level = M | R | HR
+
+fun table_A_5 :: "vnt_technique \<Rightarrow> sil \<Rightarrow> recommandation_level option"
+  where "table_A_5 (formal_proof _) = Map.empty(          SIL1 \<mapsto> R, SIL2 \<mapsto> R, SIL3 \<mapsto> HR,SIL4 \<mapsto> HR)"
+       |"table_A_5 stat_analysis    = Map.empty(SIL0 \<mapsto> R,SIL1 \<mapsto> HR,SIL2 \<mapsto> HR,SIL3 \<mapsto> HR,SIL4 \<mapsto> HR)"
+       |"table_A_5 (dyn_analysis _) = Map.empty(SIL0 \<mapsto> R,SIL1 \<mapsto> HR,SIL2 \<mapsto> HR,SIL3 \<mapsto> HR,SIL4 \<mapsto> HR)"
+       |"table_A_5 metrics          = Map.empty(          SIL1 \<mapsto> R, SIL2 \<mapsto> R ,SIL3 \<mapsto> R ,SIL4 \<mapsto> R )"
 
 text\<open>The objective of software verification is to examine and arrive at a \<^emph>\<open>judgement\<close> based on 
 \<^emph>\<open>evidence\<close> that  output items (process, documentation, software or application) of a specific 
