@@ -15,7 +15,9 @@ theory
   OutOfOrderPresntn
 imports 
   "Isabelle_DOF.Conceptual"
-keywords "text-" "textN"    :: document_body 
+keywords "text-" "textN"    :: document_body  
+    and  "Figure*"          :: document_body 
+
 begin
 
 section\<open>Elementary Creation of Doc-items and Access of their Attibutes\<close>
@@ -71,7 +73,10 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
                                       val _ = Generated_Files.write_file (Path.make ["latex_test"]) 
                                                                          file
                                       val _ = writeln (strg)
-                                  in  thy end
+                                  in  thy end \<comment> \<open>important observation: thy is not modified.
+                                                  This implies that several text block can be 
+                                                  processed in parallel in a future, as long
+                                                  as they are associated to one meta arg.\<close>
        
        (* ... generating the level-attribute syntax *)
   in   
@@ -123,10 +128,9 @@ val _ =
 
 
 text\<open>And here a tex - text macro.\<close>
-text\<open>Pythons reStructuredText (RST). @{url \<open>https://de.wikipedia.org/wiki/ReStructuredText\<close>}.
-Tool: Sphinx.
-
-\<close>
+text\<open>Pythons ReStructuredText (RST). 
+     @{url \<open>https://de.wikipedia.org/wiki/ReStructuredText\<close>}. Tool: Sphinx.
+    \<close>
 
 text*[aaaa::B]\<open>dfg @{thm [display] refl}\<close>
                             
@@ -323,8 +327,177 @@ val _ = Theory.setup
 \<close>
 
 textN\<open> 
-      @{boxed_cartouche  [display]  \<open>definition dfg = \<lambda>x. x\<close>}
+      @{boxed_cartouche   [display] \<open>definition dfg = \<lambda>x. x\<close>}
       @{boxed_theory_text [display] \<open>doc_class dfg = \<lambda>x... \<Gamma>\<close>}  \<close>
-               
+
+
+
+section\<open>Section Experiments of picture-content\<close>
+
+
+ML\<open>
+
+val thy_output_display = Attrib.setup_option_bool ("thy_output_display", \<^here>);
+
+val caption_param = Config.declare_string ("caption", \<^here>) (K "");
+val width_param   = Config.declare_int    ("width", \<^here>)   (K 80);  \<comment> \<open>char per line\<close>
+val scale_param   = Config.declare_int    ("scale", \<^here>)   (K 100); \<comment> \<open>in percent\<close>
+
+Config.put caption_param;
+Config.put_global;
+Config.get ;
+
+(*
+      Latex.string (enclose "[" "]" (String.concat [ label_and_type, ", args={", (commas str_args), "}"]))
+*)
+
+(*
+\begin{figure}[h]
+
+     \centering
+     \includegraphics[scale=0.5]{graph_a}
+     \caption{An example graph}
+
+     \label{fig:x cubed graph}
+\end{figure}
+
+
+\begin{figure}
+
+     \centering
+     \begin{subfigure}[b]{0.3\textwidth}
+
+         \centering
+         \includegraphics[width=\textwidth]{graph1}
+         \caption{$y=x$}
+
+         \label{fig:y equals x}
+     \end{subfigure}
+
+     \hfill
+     \begin{subfigure}[b]{0.3\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{graph2}
+         \caption{$y=3sinx$}
+
+         \label{fig:three sin x}
+     \end{subfigure}
+
+     \hfill
+     \begin{subfigure}[b]{0.3\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{graph3}
+         \caption{$y=5/x$}
+
+         \label{fig:five over x}
+     \end{subfigure}
+
+  \caption{Three simple graphs}
+  \label{fig:three graphs}
+\end{figure}
+
+
+\begin{wrapfigure}{l}{0.5\textwidth}
+     \centering
+     \includegraphics[width=1.5cm]{logo.png}
+\end{wrapfigure}
+
+*)
+
+datatype figure_type   = single | subfigure | float_embedded
+
+(* to check if this can be done more properly: user-state or attributes ??? *)
+val figure_mode        = Unsynchronized.ref(float_embedded)
+val figure_label       = Unsynchronized.ref(NONE:string option)
+val figure_proportions = Unsynchronized.ref([]:int list)
+(* invariant : !figure_mode = subfigure_embedded ==> length(!figure_proportions) > 1 *)
+
+fun figure_antiq (check: Proof.context -> Path.T option -> Input.source -> Path.T) =
+  Args.context -- Scan.lift Parse.path_input >> (fn (ctxt, source) =>
+   (check ctxt NONE source;
+    let val cap = Config.get ctxt caption_param
+        val cap_txt = if cap = "" then "" else (Library.enclose "\n\\caption{" "}\n" cap)
+                      \<comment> \<open>this is naive. one should add an evaluation of doc antiquotations here\<close>
+        val wdth= Config.get ctxt width_param
+        val wdth_ltx = (if wdth = 100 then "" 
+                       else if 10<=wdth andalso wdth<=99 
+                            then "width=0."^(Int.toString wdth)
+                            else if 1<=wdth then "width=0.0"^(Int.toString wdth)
+                                 else error "width out of range (must be between 1 and 100"
+                       )^"\\textwidth"
+        val scl = Config.get ctxt scale_param
+        val scl_ltx = if scl = 100 then "" 
+                       else if 10<=scl andalso scl<=99 then "scale=0."^(Int.toString scl)
+                            else if 1<=scl then "scale=0.0"^(Int.toString scl)
+                                 else error "scale out of range (must be between 1 and 100"
+        val fig_args = Library.enclose "[" "]" (commas [wdth_ltx,scl_ltx])
+        val _ = writeln cap
+        fun proportion () = "0."^ (Int.toString (100 div length(!figure_proportions)))
+                             \<comment> \<open>naive: assumes equal proportions\<close>
+        fun core arg = "\n\\centering\n"
+                       ^"\\includegraphics"
+                       ^fig_args^(Library.enclose "{" "}" arg)
+                       ^cap_txt
+                       \<comment> \<open>add internal labels here\<close>
+        fun pat arg = case !figure_mode of
+                       single => core arg   
+                      |subfigure =>   "\n\\begin{subfigure}[b]{"^proportion ()^"\\textwidth}"
+                                     ^ core arg 
+                                     ^"\n\\end{subfigure}\n"
+                      |float_embedded => "\n\\begin{wrapfigure}{r}{"^wdth_ltx^"}"
+                                         ^ core arg 
+                                         ^"\n\\end{wrapfigure}\n"
+                   
+    in   (Latex.output_ascii_breakable "/" (Input.string_of source))
+        |> pat
+        |> Latex.string
+    end));
+
+val _ = Theory.setup
+ (Document_Antiquotation.setup_option \<^binding>\<open>width\<close> 
+       (Config.put width_param o Document_Antiquotation.integer) #>
+  Document_Antiquotation.setup_option \<^binding>\<open>scale\<close> 
+       (Config.put scale_param o Document_Antiquotation.integer) #>
+  Document_Antiquotation.setup_option \<^binding>\<open>caption\<close> 
+       (Config.put caption_param) #>
+  Document_Output.antiquotation_raw_embedded \<^binding>\<open>figure_content\<close> 
+       (figure_antiq Resources.check_file) (K I)
+
+ );
+\<close>
+
+textN\<open>
+@{figure_content [width=40, scale=35, caption="This is a test"] "../ROOT"}
+\<close>
+
+ML\<open>
+open Scan
+\<close>
+
+ML\<open>
+
+fun gen_enriched_document_command3 name {body} cid_transform attr_transform markdown
+                                  (((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t,
+                                     xstring_opt:(xstring * Position.T) option),
+                                    toks:Input.source list)
+= gen_enriched_document_command2 name {body=body} cid_transform attr_transform markdown
+                                  (((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t,
+                                     xstring_opt:(xstring * Position.T) option),
+                                    hd toks) \<comment> \<open>Hack : drop second and thrd args.\<close>
+
+val _ =
+  Outer_Syntax.command ("Figure*", @{here}) "formal comment macro"
+    (ODL_Meta_Args_Parser.attributes -- Parse.opt_target -- Scan.repeat1 Parse.document_source 
+      >> (Toplevel.theory o (gen_enriched_document_command3 "TTT" {body=true} I I {markdown = true} )));
+
+
+\<close>
+
+Figure*[fff::figure]
+   \<open>@{figure_content [width=40, scale=35, caption="This is a test"] "../ROOT"}\<close> 
+   \<open>snd\<close>   \<comment> \<open>Hack : dropped so far\<close>
+   \<open>thrd\<close>  \<comment> \<open>Hack : dropped so far\<close>
+
+
 end
 (*>*)
