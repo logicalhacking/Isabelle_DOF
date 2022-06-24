@@ -10,8 +10,7 @@
 %%   OR
 %%   The 2-clause BSD-style license.
 %%
-
-%%   2022/01/25 Unreleased/Isabelle2021
+%%   SPDX-License-Identifier: LPPL-1.3c+ OR BSD-2-Clause
 
 %% Warning: Do Not Edit!
 %% =====================
@@ -28,20 +27,9 @@
 
 \documentclass[a4paper,UKenglish,cleveref, autoref,thm-restate]{lipics-v2021}
 \bibliographystyle{plainurl}% the mandatory bibstyle
-\usepackage{isabelle}
-\usepackage{isabellesym}
-% \usepackage{amsmath}
-% \usepackage{DOF-amssymb}
 \usepackage[numbers, sort&compress, sectionbib]{natbib}
-\IfFileExists{DOF-core.sty}{}{%
-  \PackageError{DOF-core}{Isabelle/DOF not installed. 
-    This is a Isabelle_DOF project. The document preparation requires
-    the Isabelle_DOF component from:
-    <isadofurl>
-  }{For further help, see <isadofurl>}
-}
 
-
+\input{dof-common}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % provide an alternative definition of 
@@ -67,24 +55,21 @@
 \makeatother
 % end: scholarly_paper.author
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{ontologies}
 \renewcommand{\DOFauthor}{}
 \renewcommand{\DOFinstitute}{}
 \expandafter\newcommand\csname 2authand\endcsname{}
 \expandafter\newcommand\csname 3authand\endcsname{}
 \expandafter\newcommand\csname 4authand\endcsname{}
 
-\IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
+
 \begin{document}
-
-
 \maketitle
 \input{session}
 % optional bibliography
 \IfFileExists{root.bib}{%
-{\small  
+\small  
   \bibliography{root}
-}}{}
+}{}
 \end{document}
 
 %%% Local Variables:

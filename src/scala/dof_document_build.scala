@@ -31,13 +31,14 @@
 package isabelle_dof
 
 import isabelle._
+import java.io.{File => JFile}
 
 
 object DOF_Document_Build
 {
   class Engine extends Document_Build.Bash_Engine("dof")
   {
-    override def use_build_script: Boolean = true
+    // override def use_build_script: Boolean = true
 
     override def prepare_directory(
       context: Document_Build.Context,
@@ -59,7 +60,49 @@ object DOF_Document_Build
       }
       val dof_home= Path.explode(Isabelle_System.getenv_strict("ISABELLE_DOF_HOME"));
       // print(context.options.string("dof_url"));
-      Isabelle_System.copy_file(dof_home + Path.explode("src/scripts/build"), directory.doc_dir);
+      
+      // copy Isabelle/DOF LaTeX templates
+      val template_dir = dof_home + Path.explode("src/document-templates/")
+      // TODO: error handling in case 1) template does not exist or 2) root.tex does already exist
+      Isabelle_System.copy_file(template_dir + Path.explode("root-"+context.options.string("dof_template")+".tex"), 
+                                directory.doc_dir+Path.explode("root.tex"))
+      Isabelle_System.copy_file(template_dir + Path.explode("dof-common.tex"), 
+                                directory.doc_dir)
+
+      // copy Isabelle/DOF LaTeX styles 
+      val doc_jdir = new JFile(directory.doc_dir.implode)
+      val styles = File.find_files(new JFile(dof_home.implode),((f:JFile) => f.getName().endsWith(".sty")), true)
+      for (sty <- styles) { 
+        Isabelle_System.copy_file(sty, doc_jdir)
+      }
+
+      // create ontology.sty
+      val regex = """^.*\.""".r
+      val ltx_styles =  context.options.string("dof_ontologies").split(" +").map(s => regex.replaceAllIn(s,""))
+      File.write(directory.doc_dir+Path.explode("ontologies.tex"),
+      ltx_styles.mkString("\\usepackage{DOF-","}\n\\usepackage{DOF-","}\n"))
+
+      // create dof-config.sty
+      File.write(directory.doc_dir+Path.explode("dof-config.sty"), """
+\newcommand{\isabelleurl}{https://isabelle.in.tum.de/website-Isabelle2021-1/""" + context.options.string("dof_isabelle") + """}
+\newcommand{\dofurl}{""" + context.options.string("dof_url") + """}
+\newcommand{\dof@isabelleversion}{""" + context.options.string("dof_isabelle") + """}
+\newcommand{\isabellefullversion}{""" + context.options.string("dof_isabelle") + """\xspace}
+\newcommand{\dof@version}{""" + context.options.string("dof_version") + """}
+\newcommand{\dof@artifacturl}{""" + context.options.string("dof_artifact_dir") + """}
+\newcommand{\doflatestversion}{""" + context.options.string("dof_latest_version") + """}
+\newcommand{\isadoflatestdoi}{""" + context.options.string("dof_latest_doi") + """}
+\newcommand{\isadofgenericdoi}{""" + context.options.string("dof_generic_doi") + """}
+\newcommand{\isabellelatestversion}{""" + context.options.string("dof_latest_isabelle") + """}
+""")
+ /*
+      sed -i -e "s|<isadofurl>|$DOF_URL|" *.sty
+    sed -i -e "s|<isadofurl>|$DOF_URL|" *.tex
+    LTX_VERSION="$DOF_DATE $DOF_VERSION/$ISABELLE_SHORT_VERSION"
+    sed -i -e "s|<isadofltxversion>|$LTX_VERSION|" *.tex
+    sed -i -e "s|<isadofltxversion>|$LTX_VERSION|" *.sty
+  */
+  //    Isabelle_System.copy_file(dof_home + Path.explode("src/scripts/build"), directory.doc_dir);
 
       directory
     }

@@ -1,5 +1,5 @@
-%% Copyright (c) 2019-2021 University of Exeter
-%%               2018-2021 University of Paris-Saclay
+%% Copyright (c) 2019-2022 University of Exeter
+%%               2018-2022 University of Paris-Saclay
 %%               2018-2019 The University of Sheffield
 %%
 %% License:
@@ -11,8 +11,6 @@
 %%   The 2-clause BSD-style license.
 %%
 %%   SPDX-License-Identifier: LPPL-1.3c+ OR BSD-2-Clause
-
-%%   2021/03/22 Unreleased/Isabelle2021
 
 %% Warning: Do Not Edit!
 %% =====================
@@ -26,24 +24,16 @@
 \documentclass[]{svjour3}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
 \usepackage{mathptmx}
 \bibliographystyle{abbrvnat}
-\usepackage[USenglish]{babel}
-\usepackage{isabelle}
-\usepackage{xcolor}
-\usepackage{isabellesym}
+
+\input{dof-common}
+
 \usepackage{amsmath}
 \usepackage{DOF-amssymb}
 \usepackage[numbers, sort&compress, sectionbib]{natbib}
-\IfFileExists{DOF-core.sty}{}{%
-  \PackageError{DOF-core}{Isabelle/DOF not installed. 
-    This is a Isabelle_DOF project. The document preparation requires
-    the Isabelle_DOF component from:
-    <isadofurl>
-  }{For further help, see <isadofurl>}
-}
-\input{ontologies}
-\IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
+\usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \setcounter{tocdepth}{3} 
@@ -56,21 +46,9 @@
 } % more detailed digital TOC (aka bookmarks)
 \sloppy
 \allowdisplaybreaks[4]
-\urlstyle{rm}
-\isabellestyle{it}
 \usepackage[caption]{subfig}
 \usepackage[size=footnotesize]{caption}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% Overrides the (rightfully issued) warning by Koma Script that \rm
-%%% etc. should not be used (they are deprecated since more than a
-%%% decade)
-  \DeclareOldFontCommand{\rm}{\normalfont\rmfamily}{\mathrm}
-  \DeclareOldFontCommand{\sf}{\normalfont\sffamily}{\mathsf}
-  \DeclareOldFontCommand{\tt}{\normalfont\ttfamily}{\mathtt}
-  \DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf}
-  \DeclareOldFontCommand{\it}{\normalfont\itshape}{\mathit}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
 \selectlanguage{USenglish}%

@@ -14,8 +14,7 @@
 
 \NeedsTeXFormat{LaTeX2e}\relax
 \ProvidesPackage{DOF-core}
-  [<isadofltxversion>%
-  Document-Type Support Framework for Isabelle.]
+  [00/00/0000 Document-Type Support Framework for Isabelle.]
 
 \RequirePackage{keycommand}
 \RequirePackage{environ}
@@ -24,19 +23,7 @@
 \RequirePackage{etoolbox}
 \RequirePackage{fp}
 
-\newcommand{\isabelleurl}{UNDEFINED}
-\newcommand{\dofurl}{UNDEFINED}
-\newcommand{\dof@isabelleversion}{UNDEFINED}
-\newcommand{\isabellefullversion}{UNDEFINED\xspace}
-\newcommand{\dof@version}{UNDEFINED}
-\newcommand{\dof@artifacturl}{UNDEFINED}
-\newcommand{\doflatestversion}{UNDEFINED}
-\newcommand{\isadoflatestdoi}{UNDEFINED}
-\newcommand{\isadofgenericdoi}{UNDEFINED}
-\newcommand{\isabellelatestversion}{Isabelle2019}
-
-%%% CONFIG %%%
-
+\RequirePackage{dof-config}
 \newcommand{\isabelleversion}{\dof@isabelleversion\xspace}
 \newcommand{\dofversion}{\dof@version\xspace}
 \newcommand{\isadofversion}{\dofversion/\isabelleversion}

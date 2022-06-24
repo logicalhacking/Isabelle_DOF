@@ -5,9 +5,11 @@ section "Isabelle/DOF"
 public option dof_document_class : string = "scrreprt-modern"
   -- "Default document class for Isabelle/DOF documents"
 
-public option dof_presentation_ontologies : string = "technical_report scholarly_paper"
-  -- "ontologies (separated by blanks)"
+public option dof_ontologies : string = "Isabelle_DOF.technical_report Isabelle_DOF.scholarly_paper"
+  -- "Isabelle/DOF ontologies (separated by blanks)"
 
+public option dof_template : string = "scrartcl"
+  -- "Isabelle/DOF document template (separated by blanks)"
 
 option dof_version : string = "Unreleased" 
   -- "Isabelle/DOF version" 

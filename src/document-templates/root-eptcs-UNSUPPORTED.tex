@@ -1,5 +1,5 @@
-%% Copyright (c) 2019 University of Exeter
-%%               2018-2019 University of Paris-Saclay
+%% Copyright (c) 2019-2022 University of Exeter
+%%               2018-2022 University of Paris-Saclay
 %%               2018-2019 The University of Sheffield
 %%
 %% License:
@@ -11,8 +11,6 @@
 %%   The 2-clause BSD-style license.
 %%
 %%   SPDX-License-Identifier: LPPL-1.3c+ OR BSD-2-Clause
-
-%%   <isadofltxversion>
 
 %% Warning: Do Not Edit!
 %% =====================
@@ -26,25 +24,17 @@
 
 \documentclass[submission,copyright,creativecommons]{eptcs}
 \bibliographystyle{eptcs}% the mandatory bibstyle
+
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[USenglish]{babel}
-\usepackage{isabelle}
-%\usepackage{underscore}
-\usepackage{xcolor}
-\usepackage{isabellesym}
+
+\input{dof-common}
+
 \usepackage{amsmath}
 \usepackage{DOF-amssymb}
 \usepackage[numbers, sort&compress, sectionbib]{natbib}
-\IfFileExists{DOF-core.sty}{}{%
-  \PackageError{DOF-core}{Isabelle/DOF not installed. 
-    This is a Isabelle_DOF project. The document preparation requires
-    the Isabelle_DOF framework. Please obtain the framework by cloning
-    the Isabelle_DOF component from:
-    <isadofurl>
-  }{For further help, see <isadofurl>}
-}
-
+\usepackage{xcolor}
 \newcommand{\subtitle}[1]{%
   \PackageError{DOF-eptcs-UNSUPPORTED}
                {The LaTeX class eptcs does not support subtitles.}
@@ -54,7 +44,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % provide an alternative definition of 
 % begin: scholarly_paper.author
-\RequirePackage{DOF-core}
 \newcommand{\dofeptcsinstitute}[1]{\mbox{}\\\protect\scriptsize%
   \protect\begin{tabular}[t]{@{\protect\footnotesize}c@{}}%
     #1%
@@ -80,15 +69,15 @@
 \makeatother
 % end: scholarly_paper.author
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\input{ontologies}
 
-\IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
+
 \begin{document}
-
 \maketitle
 \input{session}
 % optional bibliography
-\IfFileExists{root.bib}{{\bibliography{root}}}{}
+\IfFileExists{root.bib}{%
+    \bibliography{root}
+}{}
 \end{document}
 
 %%% Local Variables:
