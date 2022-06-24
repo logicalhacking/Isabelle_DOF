@@ -72,7 +72,8 @@ object DOF_Mkroot
     File.write(root_path,
       "session " + Mkroot.root_name(name) + " = " + Mkroot.root_name(parent) + """ +
   options [document = pdf, document_output = "output", document_build = dof, dof_ontologies = """" 
-       + ontologies.mkString(" ") + """", dof_template = """ + Mkroot.root_name(template) + """] 
+       + ontologies.mkString(" ") + """", dof_template = """ + Mkroot.root_name(template) 
+       + """, document_comment_latex=true] 
 (*theories [document = false]
     A
     B*)
