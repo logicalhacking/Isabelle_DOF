@@ -13,6 +13,7 @@ option dof_version : string = "Unreleased"
      (* "Unreleased" for development, semantic version for releases *)
 
 option dof_isabelle : string = "2021-1" 
+option dof_afp : string = "afp-2021-12-28"
 
 option dof_latest_version : string = "1.2.0"    
 option dof_latest_isabelle : string = "Isabelle2021"
