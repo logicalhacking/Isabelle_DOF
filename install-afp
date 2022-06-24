@@ -129,6 +129,12 @@ do
     shift
 done
 
+if [ -z ${ISABELLE_TOOL+x} ];
+then
+    print_help
+    exit 1
+fi
+
 ACTUAL_ISABELLE_VERSION=`$ISABELLE_TOOL version`
 
 ISABELLE_VERSION="Isabelle$($ISABELLE_TOOL options -g dof_isabelle)"
