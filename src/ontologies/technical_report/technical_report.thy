@@ -14,7 +14,7 @@
 section\<open>An example ontology for a scholarly paper\<close>
 
 theory technical_report
-   imports "../scholarly_paper/scholarly_paper"
+   imports "Isabelle_DOF.scholarly_paper"
 begin              
 
 (* for reports paper: invariant: level \<ge> -1 *)

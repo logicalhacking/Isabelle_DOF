@@ -13,8 +13,11 @@
 
 section\<open>A conceptual introduction into DOF and its features:\<close>
 
-theory Conceptual
-  imports "../../DOF/Isa_DOF" "../../DOF/Isa_COL"
+theory 
+  Conceptual
+imports 
+  "Isabelle_DOF.Isa_DOF" 
+  "Isabelle_DOF.Isa_COL"
 begin
 
 

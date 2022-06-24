@@ -48,7 +48,6 @@
 \sloppy
 \allowdisplaybreaks[4]
 
-
 \begin{document}
 \renewcommand{\chapterautorefname}{Chapter}
 \renewcommand{\sectionautorefname}{Section}
@@ -60,9 +59,7 @@
 \tableofcontents
 \input{session}
 % optional bibliography
-\IfFileExists{root.bib}{%
-    \bibliography{root}
-}{}
+\IfFileExists{root.bib}{{\bibliography{root}}}{}
 \end{document}
 
 %%% Local Variables:

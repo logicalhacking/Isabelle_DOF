@@ -49,7 +49,6 @@
 \usepackage[caption]{subfig}
 \usepackage[size=footnotesize]{caption}
 
-
 \begin{document}
 \selectlanguage{USenglish}%
 \renewcommand{\bibname}{References}%
@@ -63,16 +62,10 @@
 \newcommand{\subfigureautorefname}{\figureautorefname}
 \newcommand{\lstnumberautorefname}{Line}
 
-
-
 \maketitle
 \input{session}
 % optional bibliography
-\IfFileExists{root.bib}{%
-{\small  
-  \newcommand{\urlprefix}{}
-  \bibliography{root}
-}}{}
+\IfFileExists{root.bib}{{\bibliography{root}}}{}
 \end{document}
 
 %%% Local Variables:

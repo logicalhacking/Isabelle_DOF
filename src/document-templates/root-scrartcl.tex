@@ -49,7 +49,6 @@
 \sloppy
 \allowdisplaybreaks[4]
 
-
 \newenvironment{frontmatter}{}{}
 
 \begin{document}
@@ -58,9 +57,7 @@
 \end{frontmatter}
 \input{session}
 % optional bibliography
-\IfFileExists{root.bib}{%
-    \bibliography{root}
-}{}
+\IfFileExists{root.bib}{{\bibliography{root}}}{}
 \end{document}
 
 %%% Local Variables:

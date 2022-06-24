@@ -24,9 +24,8 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[USenglish]{babel}
-
 \input{dof-common}
-
+\bibliographystyle{splncs04}
 \usepackage{amsmath}
 \usepackage{DOF-amssymb}
 
@@ -58,7 +57,6 @@
 \renewcommand{\floatpagefraction}{0.7}        % require fuller float pages
 \renewcommand{\dblfloatpagefraction}{0.7}     % require fuller float pages
 
-
 \begin{document}
 \selectlanguage{USenglish}%
 \renewcommand{\bibname}{References}%
@@ -77,14 +75,7 @@
   \maketitle
 \input{session}
 % optional bibliography
-\IfFileExists{root.bib}{%
-{\small   \renewcommand{\doi}[1]{}
-  \newcommand{\urlprefix}{}
-
-  \bibliographystyle{splncs04}
-  
-  \bibliography{root}
-}}{}
+\IfFileExists{root.bib}{{\small\bibliography{root}}}{}
 \end{document}
 
 %%% Local Variables:
