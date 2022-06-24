@@ -145,6 +145,7 @@ Now use the following command line to build the session:
     Scala_Project.here, args =>
   {
     var init_repos = false
+    var help = false
     var session_name = ""
     var session_parent = "Isabelle_DOF"
     var ontologies:List[String] = List()
@@ -164,14 +165,15 @@ Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
       "I" ->  (arg => init_repos = true),
       "n:" -> (arg => session_name = arg),
       "o:"  -> (arg => ontologies = ontologies :+ arg),
-      "t:"  -> (arg => template = arg)
+      "t:"  -> (arg => template = arg),
+      "h"  -> (arg => help = true)
     )
 
     val more_args = getopts(args)
 
     ontologies = if (ontologies.isEmpty) List("scholarly_paper") else ontologies
   
-
+    if (help) {getopts.usage()} else {()}
     val session_dir =
       more_args match {
         case Nil => Path.current
