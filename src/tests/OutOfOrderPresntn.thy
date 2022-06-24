@@ -33,10 +33,9 @@ val {docobj_tab={tab = docitem_tab, ...},docclass_tab, ISA_transformer_tab, moni
     = DOF_core.get_data @{context};
 Symtab.dest docitem_tab;
 Symtab.dest docclass_tab;
+app;
 \<close>
 
-ML\<open>open Document_Output;\<close>
-ML\<open>open XML; XML.string_of\<close>
 
 ML\<open> 
 
@@ -45,12 +44,12 @@ val _ = Document_Output.document_output
 fun gen_enriched_document_command2 name {body} cid_transform attr_transform markdown
                                   (((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t,
                                      xstring_opt:(xstring * Position.T) option),
-                                    toks:Input.source) 
+                                    toks_list:Input.source list) 
                                   : theory -> theory =
   let  val toplvl = Toplevel.theory_toplevel
 
        (* as side-effect, generates markup *)
-       fun check_n_tex_text thy = let val ctxt = Toplevel.presentation_context (toplvl thy);
+       fun check_n_tex_text thy toks = let val ctxt = Toplevel.presentation_context (toplvl thy);
                                       val pos = Input.pos_of toks;
                                       val _ =   Context_Position.reports ctxt
                                                 [(pos, Markup.language_document (Input.is_delimited toks)),
@@ -73,7 +72,7 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
                                       val _ = Generated_Files.write_file (Path.make ["latex_test"]) 
                                                                          file
                                       val _ = writeln (strg)
-                                  in  thy end \<comment> \<open>important observation: thy is not modified.
+                                  in  () end \<comment> \<open>important observation: thy is not modified.
                                                   This implies that several text block can be 
                                                   processed in parallel in a future, as long
                                                   as they are associated to one meta arg.\<close>
@@ -83,12 +82,12 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
        (   Value_Command.Docitem_Parser.create_and_check_docitem 
                               {is_monitor = false} {is_inline = false} 
                               oid pos (cid_transform cid_pos) (attr_transform doc_attrs)
-        #>  check_n_tex_text ) 
+        #> (fn thy => (app (check_n_tex_text thy) toks_list; thy))) 
   end;
 
 val _ =
   Outer_Syntax.command ("text-", @{here}) "formal comment macro"
-    (ODL_Meta_Args_Parser.attributes -- Parse.opt_target -- Parse.document_source 
+    (ODL_Meta_Args_Parser.attributes -- Parse.opt_target -- Scan.repeat1 Parse.document_source 
       >> (Toplevel.theory o (gen_enriched_document_command2 "TTT" {body=true} I I {markdown = true} )));
 
 (* copied from Pure_syn for experiments *)
@@ -471,10 +470,6 @@ textN\<open>
 \<close>
 
 ML\<open>
-open Scan
-\<close>
-
-ML\<open>
 
 fun gen_enriched_document_command3 name {body} cid_transform attr_transform markdown
                                   (((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t,
@@ -483,20 +478,22 @@ fun gen_enriched_document_command3 name {body} cid_transform attr_transform mark
 = gen_enriched_document_command2 name {body=body} cid_transform attr_transform markdown
                                   (((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t,
                                      xstring_opt:(xstring * Position.T) option),
-                                    hd toks) \<comment> \<open>Hack : drop second and thrd args.\<close>
+                                     toks) \<comment> \<open>Hack : drop second and thrd args.\<close>
 
 val _ =
-  Outer_Syntax.command ("Figure*", @{here}) "formal comment macro"
+  Outer_Syntax.command ("Figure*", @{here}) "multiple figure"
     (ODL_Meta_Args_Parser.attributes -- Parse.opt_target -- Scan.repeat1 Parse.document_source 
-      >> (Toplevel.theory o (gen_enriched_document_command3 "TTT" {body=true} I I {markdown = true} )));
+      >> (Toplevel.theory o (gen_enriched_document_command2 "TTT" {body=true} I I {markdown = true} )));
 
 
 \<close>
 
-Figure*[fff::figure]
+Figure*[fff::figure,src="\<open>this is a side-by-side\<close>"]
    \<open>@{figure_content [width=40, scale=35, caption="This is a test"] "../ROOT"}\<close> 
-   \<open>snd\<close>   \<comment> \<open>Hack : dropped so far\<close>
-   \<open>thrd\<close>  \<comment> \<open>Hack : dropped so far\<close>
+   \<open> \<^doof> \<^LATEX> \<close>  
+   \<open>\<^theory_text>\<open>definition df = ... \<close>
+    @{ML      [display] \<open> let val x = 3 + 4 in true end\<close>}
+    @{cartouche [display]   \<open> @{figure "cfgdfg"}\<close>}\<close>  
 
 
 end
