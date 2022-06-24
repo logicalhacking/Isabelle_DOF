@@ -2,34 +2,36 @@
 
 Isabelle/DOF is a novel Document Ontology Framework on top of Isabelle.
 Isabelle/DOF allows for both conventional typesetting as well as formal
-development. The manual for [Isabelle/DOF 1.2.0/Isabelle2021 is available 
+development. The manual for [Isabelle/DOF 1.2.0/Isabelle2021 is available
 online.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.2.0_Isabelle2021.pdf)
 
 ## Pre-requisites
 
-Isabelle/DOF has three major pre-requisites:
+Isabelle/DOF has three major prerequisites:
 
 * **Isabelle:** Isabelle/DOF requires [Isabelle 2021-1](http://isabelle.in.tum.de/website-Isabelle2021-1/).
   Please download the Isabelle 2021-1 distribution for your operating
   system from the [Isabelle
   website](http://isabelle.in.tum.de/website-Isabelle2021-1/).
 * **AFP:** Isabelle/DOF requires two entries from the [Archive of
-  Formal Proofs (AFP)](https://www.isa-afp.org/). Please install the 
+  Formal Proofs (AFP)](https://www.isa-afp.org/). Please install the
   AFP following the instructions given at
   <https://www.isa-afp.org/using.html>. For your convenience, we also
   provide a script that only installs the two entries required by
-  Isabelle/DOF into the local Isabelle/DOF directory. You can use this 
+  Isabelle/DOF into the local Isabelle/DOF directory. You can use this
   script as follows:
+
   ```console
   foo@bar:~$ isabelle env ./install-afp
   ```  
-* **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least 
+
+* **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least
   [TeX Live 2022](https://www.tug.org/texlive/) with all available updates applied.
   
 ## Installation
 
 Isabelle/DOF is provided as a Isabelle component. After installing the
-pre-requisites the Isabelle/Archive needs to be unpacked and
+prerequisites the Isabelle/Archive needs to be unpacked and
 registered.  Change into the directory you unpacked Isabelle/DOF (this
 should be the directory containing this `README.md` file) and execute
 
@@ -78,16 +80,16 @@ Isabelle projects that use DOF need to be created using
 foo@bar:~$ isabelle mkroot_DOF
 ```
 
-The ``mkroot_DOF`` command takes the same parameter as the standard
+The ``dof_mkroot`` command takes the same parameter as the standard
 ``mkroot`` command of Isabelle. Thereafter, the normal Isabelle
 command for building documents can be used.
 
 Using the ``-o`` option, different ontology setups can be
-selected and using the ``-t`` option, different LaTeX setups 
+selected and using the ``-t`` option, different LaTeX setups
 can be selected. For example,
 
 ```console
-foo@bar:~$ isabelle mkroot_DOF -o scholarly_paper -t scrartcl
+foo@bar:~$ isabelle dof_mkroot -o scholarly_paper -t scrartcl
 ```
 
 creates a setup using the scholarly_paper ontology and the article
@@ -97,31 +99,21 @@ The help (option ``-h``) show a list of all supported ontologies and
 document templates:
 
 ```console
-foo@bar:~$ isabelle mkroot_DOF -h
-
-Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
+foo@bar:~$ isabelle dof_mkroot -h
+Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
 
   Options are:
-    -h           print this help text and exit
-    -n NAME      alternative session name (default: DIR base name)
-    -o ONTOLOGY  (default: scholarly_paper)
-       Available ontologies:
-       * cenelec_50128
-       * mathex
-       * scholarly_paper
-    -t TEMPLATE   (default: scrartcl)
-       Available document templates:
-       * lncs
-       * scrartcl
-       * scrreprt
-       * scrreprt-modern
+    -I           init Mercurial repository and add generated files
+    -n NAME      alternative session name (default: directory base name)
+    -o ONTOLOGY  ontology (default: scholarly_paper)
+    -t TEMPLATE  tempalte (default: scrartcl)
 
-  Prepare session root DIR (default: current directory).
+  Prepare session root directory (default: current directory).
 ```
 
 ## Releases
 
-For releases, signed archives including a PDF version of the Isabelle/DOF manual are
+For releases, signed archives including a PDF version of the Isabelle/DOF manual
 are available:
 
 * Isabelle/DOF 1.2.0/Isabelle2021
@@ -153,7 +145,7 @@ Main contacts:
 * Idir Ait-Sadoune
 * Paolo Crisafulli
 * Chantal Keller
-* Nicolas Méric 
+* Nicolas Méric
 
 ## License
 
@@ -176,11 +168,11 @@ SPDX-License-Identifier: BSD-2-Clause
   Computer Science (11724), Springer-Verlag, 2019.
   [doi:10.1007/978-3-030-30446-1_15](https://doi.org/10.1007/978-3-030-30446-1_15).
 
-* Achim D. Brucker, Burkhart Wolff. [Using Ontologies in Formal Developments Targeting Certification](https://www.brucker.ch/bibliography/download/2019/brucker.ea-ontologies-certification-2019.pdf). In 
+* Achim D. Brucker, Burkhart Wolff. [Using Ontologies in Formal Developments Targeting Certification](https://www.brucker.ch/bibliography/download/2019/brucker.ea-ontologies-certification-2019.pdf). In
   Integrated Formal Methods (IFM). Lecture Notes in Computer Science (11918). Springer-Verlag 2019.
   [doi:10.1007/978-3-030-34968-4_4](http://dx.doi.org/10.1007/978-3-030-34968-4_4)  
 
-* Sergio Bezzecchi, Paolo Crisafulli, Charlotte Pichot, and Burkhart Wolff. [Making Agile Development 
+* Sergio Bezzecchi, Paolo Crisafulli, Charlotte Pichot, and Burkhart Wolff. [Making Agile Development
   Processes fit for V-style Certification Procedures.](https://hal.archives-ouvertes.fr/hal-01702815/document)
    In ERTS 2018. <https://hal.archives-ouvertes.fr/hal-01702815>
 
