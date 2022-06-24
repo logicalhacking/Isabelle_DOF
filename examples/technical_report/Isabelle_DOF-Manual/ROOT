@@ -1,10 +1,10 @@
 session "Isabelle_DOF-Manual" = "Isabelle_DOF" + 
   options  [document = pdf, document_output = "output", document_build = dof,
+    dof_ontologies = "technical_report cenelec_50128", dof_template = "scrreprt-modern",
     quick_and_dirty = true]
   theories
     "Isabelle_DOF-Manual"
   document_files
-    "isadof.cfg"
     "root.bib"
     "root.mst"
     "preamble.tex"
