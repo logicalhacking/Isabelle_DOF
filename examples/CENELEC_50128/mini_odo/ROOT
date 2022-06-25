@@ -1,9 +1,9 @@
 session "mini_odo" = "Isabelle_DOF" +
-  options [document = pdf, document_output = "output", document_build = dof]
+  options [document = pdf, document_output = "output", document_build = dof,
+           dof_ontologies = "technical_report cenelec_50128", dof_template = "scrreprt-modern"]
   theories
     "mini_odo"
   document_files
-    "isadof.cfg"
     "preamble.tex"
     "root.bib"
     "root.mst"
@@ -12,3 +12,4 @@ session "mini_odo" = "Isabelle_DOF" +
     "figures/odometer.jpeg"
     "figures/three-phase-odo.pdf"
     "figures/wheel-df.png"
+

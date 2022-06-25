@@ -12,8 +12,6 @@
 %%
 %%   SPDX-License-Identifier: LPPL-1.3c+ OR BSD-2-Clause
 
-%%   <isadofltxversion>
-
 %% Warning: Do Not Edit!
 %% =====================
 %% This is the root file for the Isabelle/DOF using the scrreprt class with 
@@ -27,13 +25,18 @@
 \documentclass[fontsize=11pt,paper=a4,open=right,twoside,abstract=true]{scrreprt}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
 \usepackage{textcomp}
 \bibliographystyle{abbrvnat}
-\usepackage[varqu,varl]{zi4}% inconsolata typewriter
-\usepackage{amsmath,amsthm}
+\usepackage{amsthm}
 \usepackage{newtxsf}
+
+\input{dof-common}
+
+\usepackage{amsmath}
+\usepackage{DOF-amssymb}
 \renewcommand\familydefault{\sfdefault}
-\usepackage{xcolor}
 \colorlet{DOFsectioncolor}{blue!60!black}
 \addtokomafont{chapterentrypagenumber}{\color{DOFsectioncolor}}
 \addtokomafont{chapterentry}{\color{DOFsectioncolor}}
@@ -45,25 +48,15 @@
 \addtokomafont{paragraph}{\color{DOFsectioncolor}}
 \addtokomafont{subparagraph}{\color{DOFsectioncolor}}
 
-\usepackage[english]{babel}
 \RequirePackage[caption]{subfig}
-\usepackage{isabelle}
-\usepackage{isabellesym}
 \renewcommand{\isastyletext}{\normalsize\normalfont\sffamily}
 \renewcommand{\isastyletxt}{\normalfont\sffamily}
 \renewcommand{\isastylecmt}{\normalfont\sffamily}
-\IfFileExists{DOF-core.sty}{}{%
-  \PackageError{DOF-core}{Isabelle/DOF not installed. 
-    This is a Isabelle_DOF project. The document preparation requires
-    the Isabelle_DOF component from:
-    <isadofurl>
-  }{For further help, see <isadofurl>}
-}
-\input{ontologies}
-\IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
+
 \usepackage{amsmath}
 \usepackage{DOF-amssymb}
 \usepackage[numbers, sort&compress, sectionbib]{natbib}
+\usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \setcounter{tocdepth}{2} 
@@ -76,8 +69,6 @@
 } % more detailed digital TOC (aka bookmarks)
 \sloppy
 \allowdisplaybreaks[4]
-\urlstyle{sf}
-\isabellestyle{it}
 
 \newenvironment{frontmatter}{}{}
 

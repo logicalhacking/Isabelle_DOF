@@ -54,7 +54,7 @@ text\<open>
 Depending on your operating system and depending if you put Isabelle's  \<^boxed_bash>\<open>bin\<close> directory
 in your  \<^boxed_bash>\<open>PATH\<close>, you will need to invoke  \<^boxed_bash>\<open>isabelle\<close> using its
 full qualified path, \<^eg>:
-@{boxed_bash [display]\<open>ë\prompt{}ë /usr/local/Isabelleë\isabelleversionë/bin/isabelle version
+@{boxed_bash [display]\<open>ë\prompt{}ë /usr/local/Isabelleë\isabelleversion/bin/isabelleë version
 ë\isabellefullversionë\<close>}
 \<close>
 
@@ -115,15 +115,17 @@ session and all example documents, execute:
 subsection*[first_project::technical]\<open>Creating an \<^isadof> Project\<close>
 text\<open>
   \<^isadof> provides its own variant of Isabelle's 
-  \<^boxed_bash>\<open>mkroot\<close> tool, called \<^boxed_bash>\<open>mkroot_DOF\<close>\index{mkroot\_DOF}:
-@{boxed_bash [display]\<open>ë\prompt{}ë isabelle mkroot_DOF myproject
+  \<^boxed_bash>\<open>mkroot\<close> tool, called \<^boxed_bash>\<open>dof_mkroot\<close>\index{mkroot\_DOF}:
+@{boxed_bash [display]\<open>ë\prompt{}ë isabelle dof_mkroot myproject
 
 Preparing session "myproject" iëën "myproject"
   creating "myproject/ROOT"
-  creating "myproject/document/root.tex"
+  creating "myproject/myproject.thy"
+  creating "myproject/document/preamble.tex"
 
-Now use the following coëëmmand line to build the session:
-  isabelle build -D myproject \<close>}
+Now use the following commanëëd line to build the session:
+
+  isabelle build -D myproject\<close>}
   The created project uses the default configuration (the ontology for writing academic papers 
   (scholarly\_paper) using a report layout based on the article class (\<^boxed_latex>\<open>scrartcl\<close>) of 
   the KOMA-Script bundle~@{cite "kohm:koma-script:2019"}). The directory \<^boxed_bash>\<open>myproject\<close> 
@@ -139,21 +141,24 @@ The directory  \<^boxed_bash>\<open>myproject\<close> contains the following fil
 .1 .
 .2 myproject.
 .3 document.
-.4 isadof.cfg\DTcomment{\<^isadof> configuration}.
 .4 preamble.tex\DTcomment{Manual \<^LaTeX>-configuration}.
+.3 myproject.thy\DTcomment{Example theory file}.
 .3 ROOT\DTcomment{Isabelle build-configuration}.
 }
 \end{minipage}
 \end{center}
-The \<^isadof> configuration (\<^boxed_bash>\<open>isadof.cfg\<close>) specifies the required
-ontologies and the document template using a YAML syntax.\<^footnote>\<open>Isabelle power users will recognize that 
+
+The main two configuration files\<^footnote>\<open>Isabelle power users will recognize that
 \<^isadof>'s document setup does not make use of a file \<^boxed_bash>\<open>root.tex\<close>: this file is 
-replaced by built-in document templates.\<close> The main two configuration files for 
-users are:
+replaced by built-in document templates.\<close>  for users are: 
 \<^item> The file \<^boxed_bash>\<open>ROOT\<close>\<^index>\<open>ROOT\<close>, which defines the Isabelle session. New theory files as well as new 
   files required by the document generation (\<^eg>, images, bibliography database using \<^BibTeX>, local
   \<^LaTeX>-styles) need to be registered in this file. For details of Isabelle's build system, please 
-  consult the Isabelle System Manual~@{cite "wenzel:system-manual:2020"}.
+  consult the Isabelle System Manual~@{cite "wenzel:system-manual:2020"}. In addition to the 
+  standard features of, this file also contains \<^isadof> specific configurations:
+  \<^item>  \<^boxed_bash>\<open>dof_ontologies\<close> a list of (fully qualified) ontologies, separated by spaces, used 
+     by the project. 
+  \<^item>  \<^boxed_bash>\<open>dof_template\<close> the document template.
 \<^item> The file \<^boxed_bash>\<open>preamble.tex\<close>\<^index>\<open>preamble.tex\<close>, which allows users to add additional 
   \<^LaTeX>-packages or to add/modify \<^LaTeX>-commands. 
 \<close>
@@ -166,31 +171,21 @@ text\<open>
     obtains and adds the necessary \<^LaTeX> class file. 
     This is due to licensing restrictions).\<close>
 text\<open> 
-  This can be configured by using the command-line options of \<^boxed_bash>\<open>mkroot_DOF\<close>. In 
+  This can be configured by using the command-line options of \<^boxed_bash>\<open>dof_mkroot\<close>. In 
   Particular, \<^boxed_bash>\<open>-o\<close> allows selecting the ontology and \<^boxed_bash>\<open>-t\<close> allows selecting 
-  the document template. The built-in help (using  \<^boxed_bash>\<open>-h\<close>) shows all available options 
-  as well as a complete list of the available document templates and ontologies: 
+  the document template. The built-in help (using  \<^boxed_bash>\<open>-h\<close>) shows all available options: 
 
-  @{boxed_bash [display]\<open>ë\prompt{}ë isabelle mkroot_DOF -h
+  @{boxed_bash [display]\<open>ë\prompt{}ë isabelle dof_mkroot -h
 
-Usage: isabelle mkroot_DOF [OPTIONS] [DIR]
+Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
 
   Options are:
-    -h           print this hëëelp text and exëëit
-    -n NAME      alternative session name (default: DIR base name)
-    -o ONTOLOGY  (default: scholarly_paper)
-       Available ontologies:
-       * CENELEC_50128
-       * scholarly_paper
-       * technical_report
-    -t TEMPLATE   (default: scrartcl)
-       Available document templates:
-       * lncs
-       * scrartcl
-       * scrreprt-modern
-       * scrreprt
+    -I           init Mercurial repository and add generated files
+    -n NAME      alternative session name (default: directory base name)
+    -o ONTOLOGY  ontology (default: scholarly_paper)
+    -t TEMPLATE  tempalte (default: scrartcl)
 
-  Prepare session root DIR (default: current directory). \<close>}
+  Prepare session root directory (default: current directory).\<close>}
 
 \<close>
 

@@ -2,18 +2,18 @@
 
 section "Isabelle/DOF"
 
-public option dof_document_class : string = "scrreprt-modern"
-  -- "Default document class for Isabelle/DOF documents"
+public option dof_template : string = "scrreprt-modern"
+  -- "Default document template for Isabelle/DOF documents"
 
-public option dof_presentation_ontologies : string = "technical_report scholarly_paper"
-  -- "ontologies (separated by blanks)"
-
+public option dof_ontologies : string = "Isabelle_DOF.technical_report Isabelle_DOF.scholarly_paper"
+  -- "Isabelle/DOF ontologies (separated by blanks)"
 
 option dof_version : string = "Unreleased" 
   -- "Isabelle/DOF version" 
      (* "Unreleased" for development, semantic version for releases *)
 
 option dof_isabelle : string = "2021-1" 
+option dof_afp : string = "afp-2021-12-28"
 
 option dof_latest_version : string = "1.2.0"    
 option dof_latest_isabelle : string = "Isabelle2021"

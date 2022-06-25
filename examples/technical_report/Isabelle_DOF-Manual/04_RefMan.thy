@@ -1236,7 +1236,7 @@ section*[infrastructure::technical]\<open>Technical Infrastructure\<close>
 text\<open> 
   The list of fully supported (\<^ie>, supporting both interactive ontological modeling and 
   document generation) ontologies and the list of supported document templates can be 
-  obtained by calling \<^boxed_bash>\<open>isabelle mkroot_DOF -h\<close> (see \<^technical>\<open>first_project\<close>).
+  obtained by calling \<^boxed_bash>\<open>isabelle dof_mkroot -h\<close> (see \<^technical>\<open>first_project\<close>).
   Note that the postfix \<^boxed_bash>\<open>-UNSUPPORTED\<close> denotes experimental ontologies or templates 
   for which further manual setup steps might be required or that are not fully tested. Also note 
   that the \<^LaTeX>-class files required by the templates need to be already installed on your 
@@ -1360,14 +1360,7 @@ text\<open>
 \usepackage{isabelle,isabellesym,amssymb} % Required (by Isabelle)
 \usepackage{amsmath}           % Used by some ontologies  
 \bibliographystyle{abbrv}
-\IfFileExists{DOF-core.sty}{}{ % Required by Isabelle/DOF
-  \PackageError{DOF-core}{The doëëcument preparation 
-   requires the Isabelle/DOF framework.}{For further help, see 
-   ë\url{\dofurl}ë
-}
-\input{ontologies}             % This will include the document specific 
-                               % ontologies from isadof.cfg
-\IfFileExists{preamble.tex}{\input{preamble.tex}}{}  
+\input{dof-common} % setup shared between all Isabelle/DOF templates
 \usepackage{graphicx}          % Required for images. 
 \usepackage[caption]{subfig}
 \usepackage[size=footnotesize]{caption}
@@ -1393,7 +1386,7 @@ text\<open>
 
 subsubsection\<open>Getting Started\<close>
 text\<open>
-  In general, we recommend creating a test project (\<^eg>, using \<^boxed_bash>\<open>isabelle mkroot_DOF\<close>)
+  In general, we recommend creating a test project (\<^eg>, using \<^boxed_bash>\<open>isabelle dof_mkroot\<close>)
   to develop new document templates or ontology representations. The default setup of the \<^isadof>
   build system generated a \<^path>\<open>output/document\<close> directory with a self-contained \<^LaTeX>-setup. In 
   this directory, you can directly use \<^LaTeX> on the main file, called \<^path>\<open>root.tex\<close>:

@@ -12,8 +12,6 @@
 %%
 %%   SPDX-License-Identifier: LPPL-1.3c+ OR BSD-2-Clause
 
-%%   <isadofltxversion>
-
 %% Warning: Do Not Edit!
 %% =====================
 %% This is the root file for the Isabelle/DOF using the scrartcl class.
@@ -23,26 +21,21 @@
 
 \RequirePackage{ifvtex}
 \documentclass[abstract=true,fontsize=11pt,DIV=12,paper=a4]{scrartcl}
+
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
 \usepackage{textcomp}
 \bibliographystyle{abbrvnat}
-\usepackage[english]{babel}
 \RequirePackage[caption]{subfig}
-\usepackage{isabelle}
-\usepackage{isabellesym}
-\IfFileExists{DOF-core.sty}{}{%
-  \PackageError{DOF-core}{Isabelle/DOF not installed. 
-    This is a Isabelle_DOF project. The document preparation requires
-    the Isabelle_DOF component from:
-    <isadofurl>
-  }{For further help, see <isadofurl>}
-}
-\input{ontologies}
-\IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
+
+\input{dof-common}
+
 \usepackage{amsmath}
 \usepackage{DOF-amssymb}
 \usepackage[numbers, sort&compress, sectionbib]{natbib}
+\usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \setcounter{tocdepth}{3} 
@@ -55,15 +48,12 @@
 } % more detailed digital TOC (aka bookmarks)
 \sloppy
 \allowdisplaybreaks[4]
-\urlstyle{rm}
-\isabellestyle{it}
 
 \newenvironment{frontmatter}{}{}
 
 \begin{document}
 \begin{frontmatter}
   \maketitle
-  % \tableofcontents
 \end{frontmatter}
 \input{session}
 % optional bibliography
