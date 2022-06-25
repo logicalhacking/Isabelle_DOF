@@ -19,8 +19,15 @@
 %% All customization and/or additional packages should be added to the file
 %% preamble.tex.
 
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,USenglish]{babel}
+
 \usepackage{isabelle}
 \usepackage{isabellesym}
+
+\usepackage{xcolor}
+
 \IfFileExists{DOF-core.sty}{}{%
   \PackageError{DOF-core}{Isabelle/DOF not installed. 
     This is a Isabelle/DOF project. The document preparation requires
