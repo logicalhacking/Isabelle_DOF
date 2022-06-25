@@ -77,7 +77,7 @@ The DOF-plugin provides an alternative to Isabelle's ``mkroot`` command.
 Isabelle projects that use DOF need to be created using
 
 ```console
-foo@bar:~$ isabelle mkroot_DOF
+foo@bar:~$ isabelle dof_mkroot
 ```
 
 The ``dof_mkroot`` command takes the same parameter as the standard
