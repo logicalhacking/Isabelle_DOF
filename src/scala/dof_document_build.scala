@@ -95,15 +95,6 @@ object DOF_Document_Build
 \newcommand{\isadofgenericdoi}{""" + context.options.string("dof_generic_doi") + """}
 \newcommand{\isabellelatestversion}{""" + context.options.string("dof_latest_isabelle") + """}
 """)
- /*
-      sed -i -e "s|<isadofurl>|$DOF_URL|" *.sty
-    sed -i -e "s|<isadofurl>|$DOF_URL|" *.tex
-    LTX_VERSION="$DOF_DATE $DOF_VERSION/$ISABELLE_SHORT_VERSION"
-    sed -i -e "s|<isadofltxversion>|$LTX_VERSION|" *.tex
-    sed -i -e "s|<isadofltxversion>|$LTX_VERSION|" *.sty
-  */
-  //    Isabelle_System.copy_file(dof_home + Path.explode("src/scripts/build"), directory.doc_dir);
-
       directory
     }
   }
