@@ -9,12 +9,20 @@ pipeline:
       - echo "ISABELLE_PDFLATEX=\"$LATEX --file-line-error\"" >> $ISABELLE_HOME_USER/etc/settings
       - isabelle components -u `pwd` 
       - isabelle build -D . -o browser_info
-      - isabelle mkroot_DOF DOF_test
+      - isabelle dof_mkroot DOF_test
       - isabelle build -D DOF_test
       - cp -r $ISABELLE_HOME_USER/browser_info $ARTIFACT_DIR
       - cd $ARTIFACT_DIR
       - cd ../..
       - ln -s * latest
+  build:
+    image: docker.io/logicalhacking/isabelle2021-1
+    commands:
+      - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO/$CI_BRANCH/$CI_BUILD_NUMBER/lualatex
+      - mkdir -p $ARTIFACT_DIR
+      - export ISABELLE_VERSION=`isabelle version`
+      - ./.woodpecker/mk_release -d
+      - cp Isabelle_DOF-Unreleased_$ISABELLE_VERSION.tar.xz $ARTIFACT_DIR/../
   deploy:
     image: docker.io/drillster/drone-rsync
     settings:
