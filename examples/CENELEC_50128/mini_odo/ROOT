@@ -1,6 +1,6 @@
 session "mini_odo" = "Isabelle_DOF" +
   options [document = pdf, document_output = "output", document_build = dof,
-           dof_ontologies = "technical_report cenelec_50128", dof_template = "scrreprt-modern"]
+           dof_ontologies = "Isabelle_DOF.technical_report Isabelle_DOF.cenelec_50128", dof_template = "scrreprt-modern"]
   theories
     "mini_odo"
   document_files
