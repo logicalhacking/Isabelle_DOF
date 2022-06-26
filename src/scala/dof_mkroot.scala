@@ -149,7 +149,8 @@ Now use the following command line to build the session:
     var session_name = ""
     var session_parent = "Isabelle_DOF"
     var ontologies:List[String] = List()
-    var template = "scrartcl"
+    var template = session_parent + ".scrartcl"
+    val default_ontologies = List(session_parent+".scholarly_paper")
 
     val getopts = Getopts("""
 Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
@@ -171,7 +172,7 @@ Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
 
     val more_args = getopts(args)
 
-    ontologies = if (ontologies.isEmpty) List("Isabelle_DOF.scholarly_paper") else ontologies
+    ontologies = if (ontologies.isEmpty) default_ontologies else ontologies
   
     if (help) {getopts.usage()} else {()}
     val session_dir =
