@@ -375,6 +375,7 @@ Config.get ;
 
      \hfill
      \begin{subfigure}[b]{0.3\textwidth}
+
          \centering
          \includegraphics[width=\textwidth]{graph2}
          \caption{$y=3sinx$}
@@ -384,6 +385,7 @@ Config.get ;
 
      \hfill
      \begin{subfigure}[b]{0.3\textwidth}
+
          \centering
          \includegraphics[width=\textwidth]{graph3}
          \caption{$y=5/x$}
@@ -397,8 +399,11 @@ Config.get ;
 
 
 \begin{wrapfigure}{l}{0.5\textwidth}
+
      \centering
      \includegraphics[width=1.5cm]{logo.png}
+     \caption{$y=5/x$}
+
 \end{wrapfigure}
 
 *)
@@ -491,10 +496,18 @@ val _ =
 Figure*[fff::figure,src="\<open>this is a side-by-side\<close>"]
    \<open>@{figure_content [width=40, scale=35, caption="This is a test"] "../ROOT"}\<close> 
    \<open> \<^doof> \<^LATEX> \<close>  
-   \<open>\<^theory_text>\<open>definition df = ... \<close>
-    @{ML      [display] \<open> let val x = 3 + 4 in true end\<close>}
-    @{cartouche [display]   \<open> @{figure "cfgdfg"}\<close>}\<close>  
+   \<open> \<^theory_text>\<open>definition df = ... \<close>
+     @{ML        [display]   \<open> let val x = 3 + 4 in true end\<close>}
+     @{cartouche [display]   \<open> @{figure "cfgdfg"}\<close>}
+   \<close>  
 
+
+Figure*[ffff::figure,caption="\<open>this is another 2 side-by-side\<close>"]
+   \<open>@{figure_content [width=40, scale=35, caption="This is a left test"] "../ROOT"}\<close> 
+   \<open>@{figure_content [width=40, scale=35, caption="This is a right test"] "../ROOT"}\<close>  
+
+
+text\<open> @{figure "ffff(2)"}\<close>
 
 end
 (*>*)
