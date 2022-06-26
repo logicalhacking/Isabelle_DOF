@@ -50,5 +50,5 @@ pipeline:
 
 matrix:
   LATEX:
-  - pdflatex
   - lualatex      
+  - pdflatex
