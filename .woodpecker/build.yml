@@ -15,7 +15,7 @@ pipeline:
       - cd $ARTIFACT_DIR
       - cd ../..
       - ln -s * latest
-  build:
+  archive:
     image: docker.io/logicalhacking/isabelle2021-1
     commands:
       - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO/$CI_BRANCH/$CI_BUILD_NUMBER/$LATEX
@@ -46,7 +46,7 @@ pipeline:
         from_secret: email
       from: ci@logicalhacking.com
     when:
-      status: [ changed, failure ]    
+      status: [ failure ]    
 
 matrix:
   LATEX:
