@@ -1,6 +1,6 @@
 session "2018-cicm-isabelle_dof-applications" = "Isabelle_DOF" + 
   options  [document = pdf, document_output = "output", document_build = dof,
-   dof_ontologies = "Isabelle_DOF.scholarly_paper", dof_template = lncs, 
+   dof_ontologies = "Isabelle_DOF.scholarly_paper", dof_template = Isabelle_DOF.lncs, 
    quick_and_dirty = true]
   theories
     IsaDofApplications

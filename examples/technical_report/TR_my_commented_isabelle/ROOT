@@ -1,6 +1,6 @@
 session "TR_MyCommentedIsabelle" = "Isabelle_DOF" +
   options [document = pdf, document_output = "output", document_build = dof,
-           dof_ontologies = "Isabelle_DOF.technical_report", dof_template = scrreprt,
+           dof_ontologies = "Isabelle_DOF.technical_report", dof_template = Isabelle_DOF.scrreprt,
     quick_and_dirty = true]
   theories
     "TR_MyCommentedIsabelle"
