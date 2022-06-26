@@ -18,11 +18,14 @@ pipeline:
   build:
     image: docker.io/logicalhacking/isabelle2021-1
     commands:
-      - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO/$CI_BRANCH/$CI_BUILD_NUMBER/lualatex
+      - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO/$CI_BRANCH/$CI_BUILD_NUMBER/$LATEX
       - mkdir -p $ARTIFACT_DIR
       - export ISABELLE_VERSION=`isabelle version`
       - ./.woodpecker/mk_release -d
       - cp Isabelle_DOF-Unreleased_$ISABELLE_VERSION.tar.xz $ARTIFACT_DIR/../
+    when:
+      matrix:
+        LATEX: lualatex
   deploy:
     image: docker.io/drillster/drone-rsync
     settings:
