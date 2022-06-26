@@ -104,7 +104,6 @@ create_archive()
     (mv $ISADOF_WORK_DIR $ISADOF_DIR)    
     (cd $BUILD_DIR && tar cf $ISADOF_TAR.tar $ISADOF_TAR && xz $ISADOF_DIR.tar)
     mv $BUILD_DIR/$ISADOF_TAR.tar.xz .
-    rm -rf $BUILD_DIR
 }
 
 sign_archive()
@@ -127,8 +126,6 @@ USE_TAG="false"
 SIGN="false"
 PUBLISH="false"
 BUILD_DIR=`mktemp -d`
-ISABELLE_HOME_USER=`mktemp -d`
-export ISABELLE_HOME_USER
 ISADOF_WORK_DIR="$BUILD_DIR/Isabelle_DOF"
 while [ $# -gt 0 ]
 do
@@ -156,13 +153,18 @@ done
 
 clone_repo
 
-$ISABELLE components -x `pwd`
+ISADOF_MAIN_DIR=`pwd`
+
+$ISABELLE components -x $ISADOF_MAIN_DIR
 $ISABELLE components -u $ISADOF_WORK_DIR
 
-VARS=`$ISABELLE getenv ISABELLE_VERSION DOF_VERSION ISABELLE_HOME_USER`
+VARS=`$ISABELLE getenv ISABELLE_TOOL`
 for i in $VARS; do
         export "$i"
 done
+
+ISABELLE_VERSION="Isabelle$($ISABELLE_TOOL options -g dof_isabelle)"
+DOF_VERSION="$($ISABELLE_TOOL options -g dof_version)"
 
 ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/:.*$//'`
 ISADOF_TAR="Isabelle_DOF-"$DOF_VERSION"_"$ISABELLE_SHORT_VERSION
@@ -170,6 +172,9 @@ ISADOF_DIR="$BUILD_DIR/$ISADOF_TAR"
 
 check_isabelle_version
 build_and_install_manuals
+
+$ISABELLE components -x $ISADOF_WORK_DIR
+$ISABELLE components -u $ISADOF_MAIN_DIR
 
 create_archive
 
@@ -181,10 +186,6 @@ if [ "$PUBLISH" = "true" ]; then
     publish_archive
 fi
 
-$ISABELLE components -x $ISADOF_WORK_DIR
-$ISABELLE components -u `pwd`
-
-rm -rf ISABELLE_HOME_USER
-rm -rf ISADOF_WORK_DIR
+rm -rf $BUILD_DIR
 
 exit 0 
