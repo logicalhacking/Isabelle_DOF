@@ -171,7 +171,7 @@ Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
 
     val more_args = getopts(args)
 
-    ontologies = if (ontologies.isEmpty) List("scholarly_paper") else ontologies
+    ontologies = if (ontologies.isEmpty) List("Isabelle_DOF.scholarly_paper") else ontologies
   
     if (help) {getopts.usage()} else {()}
     val session_dir =
