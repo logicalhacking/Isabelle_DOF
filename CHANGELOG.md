@@ -12,14 +12,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - The project-specific configuration is not part of the `ROOT` file, the formerly 
-  used `isadof.cfg` is obsolete and no longer supported.
+  used `isadof.cfg` is obsolete and no longer supported. 
 - Removed explicit use of build script. Requires removing "build" script entry
   from ROOT files.
 - Support for the `lipics` LaTeX style is now official. This requires document 
   option `document_comment_latex=true` in the ROOT file.
 - Isabelle/DOF is now a proper Isabelle component that should be installed using the
-  `isabelle components` command. The installation script is now only a convenience
-  means for installing the required AFP entries.
+  `isabelle components` command. The installation script is now only a convenient way 
+  of installing the required AFP entries.
 
 ## 1.2.0 - 2022-03-26
 
