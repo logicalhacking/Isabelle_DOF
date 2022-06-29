@@ -170,7 +170,8 @@ clone_repo
 ISADOF_MAIN_DIR=`pwd`
 
 if [ "$DIRTY" = "true" ]; then
-   echo "Running in Quick and Dirty mode!"
+    echo "Running in Quick and Dirty mode!"
+    $ISABELLE components -u $ISADOF_MAIN_DIR
 else
     $ISABELLE components -x $ISADOF_MAIN_DIR
     $ISABELLE components -u $ISADOF_WORK_DIR
