@@ -1,11 +1,8 @@
-(* *************************************************************************
- * Copyright (C)
- *               2020      The University of Sheffield
- *               2019      The University of Exeter
- *               2018-2019 The University of Paris-Saclay
+(*************************************************************************
+ * Copyright (C) 
+ *               2019-2022 The University of Exeter 
+ *               2019-2022 The University of Paris-Saclay
  *
- * Authors : Yakoub Nemouchi
- *           Burhart Wolff
  * License:
  *   This program can be redistributed and/or modified under the terms
  *   of the 2-clause BSD-style license.

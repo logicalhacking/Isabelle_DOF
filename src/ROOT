@@ -10,6 +10,7 @@ session "Isabelle_DOF" = "Functional-Automata" +
     "ontologies/scholarly_paper"
     "ontologies/small_math"
     "ontologies/technical_report"
+    "ontologies/CC_v3_1_R5"
   theories
     "DOF/Isa_DOF"
     "ontologies/ontologies"

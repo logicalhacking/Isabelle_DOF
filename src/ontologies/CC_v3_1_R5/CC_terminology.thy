@@ -1,3 +1,15 @@
+(*************************************************************************
+ * Copyright (C) 
+ *               2019-2022 The University of Exeter 
+ *               2019-2022 The University of Paris-Saclay
+ *
+ * License:
+ *   This program can be redistributed and/or modified under the terms
+ *   of the 2-clause BSD-style license.
+ *
+ *   SPDX-License-Identifier: BSD-2-Clause
+ *************************************************************************)
+
 chapter\<open>Common Criteria Definitions\<close>
 
 (*<<*)
