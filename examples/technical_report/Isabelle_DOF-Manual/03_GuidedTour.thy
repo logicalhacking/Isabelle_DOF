@@ -75,16 +75,20 @@ text\<open>
 @{boxed_bash [display]\<open>ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë\<close>}
 This will create a directory \texttt{\isadofdirn} containing \<^isadof> distribution.
 
-\<^isadof> depends on the the AFP (\<^url>\<open>https://www.isa-afp.org\<close>), namely the AFP  
+Next, we need to register \<^isadof> as an Isabelle component:
+
+@{boxed_bash [display]\<open>ë\prompt{}ë isabelle components -u ë\mbox{\isadofdirn}ë\<close>}
+
+Moreover, \<^isadof> depends on the the AFP (\<^url>\<open>https://www.isa-afp.org\<close>), namely the AFP  
 entries ``Functional Automata''~@{cite "nipkow.ea:functional-Automata-afp:2004"} and 
 ``Regular Sets and Expressions''~@{cite "kraus.ea:regular-sets-afp:2010"}. You can either
 install the complete AFP, following the instructions given at \<^url>\<open>https://www.isa-afp.org/using.html\<close>), 
 or use the provided \<^boxed_bash>\<open>install\<close> script to install a minimal AFP 
 setup into the local \<^isadof> directory. The script needs to be prefixed with the 
-\<^boxed_bash>\<open>isabelle env\<close> command:
+\<^boxed_bash>\<open>isabelle eëënv\<close> command:
 
 @{boxed_bash [display]\<open>ë\prompt{}ë cd ë\isadofdirnë
-ë\prompt{\isadofdirn}ë isabelle env ./install-afp
+ë\prompt{\isadofdirn}ë isabelle eëënv ë\mbox{./install-afp}ë
 
 Isabelle/DOF Installer
 ======================
