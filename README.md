@@ -30,10 +30,9 @@ Isabelle/DOF has three major prerequisites:
   
 ## Installation
 
-Isabelle/DOF is provided as a Isabelle component. After installing the
-prerequisites the Isabelle/Archive needs to be unpacked and
-registered.  Change into the directory you unpacked Isabelle/DOF (this
-should be the directory containing this `README.md` file) and execute
+Isabelle/DOF is provided as an Isabelle component. After installing the
+prerequisites, change into the directory containing Isabelle/DOF (this should be
+the directory containing this `README.md` file) and execute
 
 ```console
 foo@bar:~$ isabelle components -u `pwd`
