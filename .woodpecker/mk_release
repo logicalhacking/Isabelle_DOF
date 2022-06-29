@@ -81,13 +81,25 @@ build_and_install_manuals()
     echo "* Building manual"
 
     if [ "$DIRTY" = "true" ]; then
-        $ISABELLE build -d . Isabelle_DOF-Manual 2018-cicm-isabelle_dof-applications
-        mkdir -p $ISADOF_WORK_DIR/examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/
-        cp examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/document.pdf \
-           $ISADOF_WORK_DIR/examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/
-        mkdir -p $ISADOF_WORK_DIR/examples/technical_report/Isabelle_DOF-Manual/output/
-        cp examples/technical_report/Isabelle_DOF-Manual/output/document.pdf \
-           $ISADOF_WORK_DIR/examples/technical_report/Isabelle_DOF-Manual/output/
+        if [ -z ${ARTIFACT_DIR+x} ]; then
+            echo "  * Quick and Dirty Mode (local build)"
+            $ISABELLE build -d . Isabelle_DOF-Manual 2018-cicm-isabelle_dof-applications
+            mkdir -p $ISADOF_WORK_DIR/examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/
+            cp examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/document.pdf \
+               $ISADOF_WORK_DIR/examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/
+            mkdir -p $ISADOF_WORK_DIR/examples/technical_report/Isabelle_DOF-Manual/output/
+            cp examples/technical_report/Isabelle_DOF-Manual/output/document.pdf \
+               $ISADOF_WORK_DIR/examples/technical_report/Isabelle_DOF-Manual/output/;
+        else
+            echo "  * Quick and Dirty Mode (running on CI)"
+            mkdir -p $ISADOF_WORK_DIR/examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/
+            cp $ARTIFACT_DIR/browser_info/Unsorted/2018-cicm-isabelle_dof-applications/document.pdf
+               $ISADOF_WORK_DIR/examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/
+ 
+            mkdir -p $ISADOF_WORK_DIR/examples/technical_report/Isabelle_DOF-Manual/output/
+            cp $ARTIFACT_DIR/browser_info/Unsorted/Isabelle_DOF-Manual/document.pdf
+               $ISADOF_WORK_DIR/examples/technical_report/Isabelle_DOF-Manual/output/;
+        fi
     else
         (cd $ISADOF_WORK_DIR && $ISABELLE env ./install-afp)
         (cd $ISADOF_WORK_DIR && $ISABELLE build -c -D . )
