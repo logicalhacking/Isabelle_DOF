@@ -68,8 +68,6 @@ object DOF_Document_Build
       val  template = regex.replaceAllIn(context.options.string("dof_template"),"")
       Isabelle_System.copy_file(template_dir + Path.explode("root-"+template+".tex"), 
                                 directory.doc_dir+Path.explode("root.tex"))
-      Isabelle_System.copy_file(template_dir + Path.explode("dof-common.tex"), 
-                                directory.doc_dir)
 
       // copy Isabelle/DOF LaTeX styles 
       val doc_jdir = new JFile(directory.doc_dir.implode)

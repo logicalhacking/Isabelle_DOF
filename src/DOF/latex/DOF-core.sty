@@ -16,12 +16,25 @@
 \ProvidesPackage{DOF-core}
   [00/00/0000 Document-Type Support Framework for Isabelle.]
 
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,USenglish]{babel}
+
 \RequirePackage{keycommand}
 \RequirePackage{environ}
 \RequirePackage{graphicx}
+\RequirePackage{xcolor}
 \RequirePackage{xspace}
 \RequirePackage{etoolbox}
 \RequirePackage{fp}
+
+\usepackage{isabelle}
+\usepackage{isabellesym}
+
+\isabellestyle{it}
+
+
+
 
 \RequirePackage{dof-config}
 \newcommand{\isabelleversion}{\dof@isabelleversion\xspace}
@@ -145,3 +158,8 @@
 \newisadof{macroExp}[label=,type=][1]{MMM \autoref{#1}}   %% place_holder
 % end: label and ref
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{No Title Given}
+\author{No Author Given}
+\input{ontologies}
+\IfFileExists{preamble.tex}{\input{preamble.tex}}{}%
