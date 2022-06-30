@@ -502,12 +502,13 @@ Figure*[fff::figure,src="\<open>this is a side-by-side\<close>"]
    \<close>  
 
 
-Figure*[ffff::figure,caption="\<open>this is another 2 side-by-side\<close>"]
+Figure*[ffff::figure,(* caption *) src="\<open>this is another 2 side-by-side\<close>"]
    \<open>@{figure_content [width=40, scale=35, caption="This is a left test"] "../ROOT"}\<close> 
    \<open>@{figure_content [width=40, scale=35, caption="This is a right test"] "../ROOT"}\<close>  
 
-
+(* proposed syntax for sub-figure labels :
 text\<open> @{figure "ffff(2)"}\<close>
+ *)
 
 end
 (*>*)
