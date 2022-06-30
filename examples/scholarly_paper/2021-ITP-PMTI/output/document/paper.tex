@@ -1,0 +1,1546 @@
+%
+\begin{isabellebody}%
+\setisabellecontext{paper}%
+%
+\isadelimtheory
+%
+\endisadelimtheory
+%
+\isatagtheory
+%
+\endisatagtheory
+{\isafoldtheory}%
+%
+\isadelimtheory
+%
+\endisadelimtheory
+%
+\isadelimML
+%
+\endisadelimML
+%
+\isatagML
+%
+\endisatagML
+{\isafoldML}%
+%
+\isadelimML
+%
+\endisadelimML
+
+\begin{isamarkuptitle*}
+[label = {tit},type = {scholarly_paper.title}, args={label = {tit},type = {scholarly_paper.title}, scholarly_paper.title.short_title = {}}]A Framework for Proving Ontology-Relations and Runtime Testing Ontology Instances
+\end{isamarkuptitle*}\isamarkuptrue%
+
+\begin{isamarkuptext*}
+[label = {idir},type = {scholarly_paper.author}, args={label = {idir},type = {scholarly_paper.author}, scholarly_paper.author.email = {idir.aitsadoune@centralesupelec.fr}, scholarly_paper.author.orcid = {0000-0002-6484-8276}, scholarly_paper.author.affiliation = {Université Paris-Saclay, CentraleSupélec, LMF, France}, scholarly_paper.author.http_site = {}}]Idir Ait-Sadoune
+\end{isamarkuptext*}\isamarkuptrue%
+
+\begin{isamarkuptext*}
+[label = {nic},type = {scholarly_paper.author}, args={label = {nic},type = {scholarly_paper.author}, scholarly_paper.author.email = {nicolas.meric@universite-paris-saclay.fr}, scholarly_paper.author.orcid = {0000-0002-0756-7072}, scholarly_paper.author.affiliation = {Université Paris-Saclay, LMF, France}, scholarly_paper.author.http_site = {}}]Nicolas Méric
+\end{isamarkuptext*}\isamarkuptrue%
+
+\begin{isamarkuptext*}
+[label = {bu},type = {scholarly_paper.author}, args={label = {bu},type = {scholarly_paper.author}, scholarly_paper.author.email = {burkhart.wolff@universite-paris-saclay.fr}, scholarly_paper.author.affiliation = {Université Paris-Saclay, LMF, France}, scholarly_paper.author.http_site = {}, scholarly_paper.author.orcid = {}}]Burkhart Wolff
+\end{isamarkuptext*}\isamarkuptrue%
+
+\begin{isamarkuptext*}
+[label = {abs},type = {scholarly_paper.abstract}, args={label = {abs},type = {scholarly_paper.abstract}, scholarly_paper.abstract.keywordlist = {{Ontologies, Formal Documents, Formal Development, Isabelle/HOL, Ontology Mapping, Certification}}}]Isabelle/DOF is an ontology framework on top of Isabelle 
+   \cite{brucker.ea:isabelledof:2019,brucker.ea:isabelle-ontologies:2018}. 
+   Isabelle/DOF  allows for the formal development of ontologies as well as continuous checking that
+   a formal document under development conforms to an underlying ontology. Such a document may 
+   contain text and code elements as well as formal Isabelle definitions and proofs.
+   Thus, Isabelle/DOF is designed to annotate and trace typed meta-data 
+   within formal developments in Isabelle.  
+
+   In this paper we extend  Isabelle/DOF with \emph{invariants} (or: ontological \emph{rules}). Via a reflection 
+   mechanism, this allows for efficient run-time checking of abstract properties of formal
+   content under evolution. Additionally, invariants have a formal represention in HOL amenable to
+   formal proofs over mappings between different ontologies.  
+   With this feature widely called \emph{ontology mapping} in the literature, our framework paves the 
+   way for advanced uses such as ``semantic'' search and translation. We demonstrate the use of 
+   these new features in an extended  ontology used for formal developments targeting CENELEC 
+   certifications.
+    \vspace{-0.3cm}
+\end{isamarkuptext*}\isamarkuptrue%
+
+\begin{isamarkupsection*}
+[label = {introheader},type = {scholarly_paper.introduction}, args={label = {introheader},type = {scholarly_paper.introduction}, Isa_COL.text_element.level = {}, Isa_COL.text_element.referentiable = {False}, Isa_COL.text_element.variants = {{STR ''outline'', STR ''document''}}, scholarly_paper.text_section.main_author = {}, scholarly_paper.text_section.fixme_list = {}, Isa_COL.text_element.level = {}}]Introduction
+\end{isamarkupsection*}\isamarkuptrue%
+
+\begin{isamarkuptext*}
+[label = {introtext},type = {scholarly_paper.introduction}, args={label = {introtext},type = {scholarly_paper.introduction}, Isa_COL.text_element.level = {}, Isa_COL.text_element.referentiable = {False}, Isa_COL.text_element.variants = {{STR ''outline'', STR ''document''}}, scholarly_paper.text_section.main_author = {}, scholarly_paper.text_section.fixme_list = {}, Isa_COL.text_element.level = {}}]\vspace{-0.2cm}
+The linking of \emph{formal} and \emph{informal} information is perhaps the most pervasive challenge 
+in the digitization of knowledge and its propagation. Unsurprisingly, this problem reappears 
+in the libraries with formalized mathematics and engineering such as the Isabelle Archive of 
+Formal Proofs \cite{AFP-ref22} (AFP), which passed the impressive numbers of 650 articles, 
+written by 420 authors at the beginning of 2022. Together with the AFP, there is also a growing 
+body on articles concerned with formal software engineering such as standardized language 
+definitions (e.g., \cite{CakeML-AFP,brucker.ea:featherweight:2014}), 
+data-structures 
+(e.g., \cite{brucker.ea:afp-core-dom:2018,Splay_Tree-AFP}), hardware- models 
+(e.g., \cite{SPARCv8-AFP}), 
+security-related specifications 
+(e.g., \cite{brucker.ea:upf-firewall:2017,Security_Protocol_Refinement-AFP}), 
+or operating systems (e. g., \cite{verbeek.ea:formal:2014,klein.ea:comprehensive:2014}).
+
+
+Still, while the problem of logical consistency
+even under system-changes and pervasive theory evolution is technically solved via continuous 
+proof-checking, the problem of knowledge retrieval and of linking semi-formal explanations to 
+definitions and proofs remains largely open.
+% The \emph{knowledge} problem of the increasingly massive \emph{digital information} available
+% incites numerous research efforts summarized under the labels ``semantic web'', 
+% ``integrated document management'', or any form of advanced ``semantic'' text processing. 
+% These technologies are increasingly important  in jurisprudence, medical research and 
+% life-sciences in order to tame their respective publication tsunamies. 
+The central role in technologies adressing the \emph{knowledge} problem
+is played by \emph{document ontologies}, \ie, a machine-readable form
+of meta-data attached to document-elements as well as their document discourse. In order 
+to make these techniques applicable to \emph{formal theory development},
+the following is needed: \vspace{0.2cm}
+
+%
+\begin{itemize}%
+\item a general mechanism to define and develop \emph{domain-specific} ontologies,
+
+\item ... that should be adapted to entities occurring in formal theories,
+\ie, provide built-in support for types, terms, theorems, proofs, etc.,
+
+\item ways to annotate meta-data generated by ontologies to the document elements,
+as ``deep'' as possible, together with strong validation checks,
+
+\item a smooth integration into the theory document development process, and
+
+\item ways to relate ontologies and ontology-conform documents along different
+ontologies by \emph{ontological mappings} and \emph{data translations}
+\footnote{We follow throughout this text the terminology established in 
+              \cite{books/daglib/0032976}, pp. 39 ff.}.%
+\end{itemize}
+\end{isamarkuptext*}\isamarkuptrue%
+
+\begin{isamarkuptext}
+\vspace{-0.2cm}
+Recently, Isabelle/DOF \cite{brucker.ea:isabelledof:2019,brucker.ea:isabelle-ontologies:2018}
+\footnote{The official releases are available at \url{https://zenodo.org/record/6385695}, the
+  developer version at \url{https://github.com/logicalhacking/Isabelle_DOF}.} 
+has been designed as an Isabelle component that attempts to answer these needs. 
+ Isabelle/DOF generates from  ontology definitions directly integrated into Isabelle theories
+typed meta-data, that may be annotated to a number of document elements and that were 
+validated ``on-the-fly'' during the general continuous type and proof-checking process 
+in an IDE (Isabelle/PIDE). Thus, we extend the document-centric view on code, definitions, 
+proofs, text-elements, etc., prevailing in the Isabelle system framework.
+
+In more detail, Isabelle/DOF introduces a number of ``ontology aware'' text-elements with analogous 
+syntax to standard ones. The difference is a bracket with meta-data of the form:
+
+\begin{isabelle}
+\ \ \ \ \ \ \ \ \ \ \isacommand{text{\isacharasterisk}{\kern0pt}}{\isacharbrackleft}{\kern0pt}label{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}classid{\isacharcomma}{\kern0pt}\ attr\isactrlsub {\isadigit{1}}{\isacharequal}{\kern0pt}E\isactrlsub {\isadigit{1}}{\isacharcomma}{\kern0pt}\ \isacommand{{\isachardot}{\kern0pt}{\isachardot}{\kern0pt}}\isacommand{{\isachardot}{\kern0pt}}\ attr\isactrlsub n{\isacharequal}{\kern0pt}E\isactrlsub n{\isacharbrackright}{\kern0pt}{\isacartoucheopen}\ some\ semi{\isacharminus}{\kern0pt}formal\ text\ {\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ \ \ \isacommand{ML{\isacharasterisk}{\kern0pt}}{\isacharbrackleft}{\kern0pt}label{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}classid{\isacharcomma}{\kern0pt}\ attr\isactrlsub {\isadigit{1}}{\isacharequal}{\kern0pt}E\isactrlsub {\isadigit{1}}{\isacharcomma}{\kern0pt}\ \isacommand{{\isachardot}{\kern0pt}{\isachardot}{\kern0pt}}\isacommand{{\isachardot}{\kern0pt}}\ attr\isactrlsub n{\isacharequal}{\kern0pt}E\isactrlsub n{\isacharbrackright}{\kern0pt}{\isacartoucheopen}\ some\ SML\ code\ {\isacartoucheclose}\isanewline
+\ \ \ \ \ \ \ \ \ \ \isacommand{{\isachardot}{\kern0pt}{\isachardot}{\kern0pt}}\isacommand{{\isachardot}{\kern0pt}}
+\end{isabelle}
+In these Isabelle/DOF elements, a meta-data object is created and associated to it. This 
+meta-data can be referenced via its label and used in further computations in text or code.
+%; the details will be explained in the subsequent section. 
+
+Admittedly, Isabelle is not the first system that comes into one's mind when writing a scientific 
+paper, a book, or a larger technical documentation. However, it has a typesetting system inside 
+which is in the tradition of document generation systems such as mkd, Document! X, Doxygen, 
+Javadoc, etc., and which embed formal content such as formula pretty-prints into semi-formal text 
+or code. The analogous mechanism the Isabelle system provides is a machine-checked macro 
+called \emph{antiquotation} that depends on the logical context of the document element.
+
+With standard Isabelle antiquotations, for example, the following text element
+of the integrated source will appear  in Isabelle/PIDE as follows:
+
+\begin{isabelle}
+\ \ \ \ \ \ \ \ \ \ \isacommand{text}{\isacartoucheopen}\ According\ to\ the\ reflexivity\ axiom\ {\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}thm\ refl{\isacharbraceright}{\kern0pt}{\isacharcomma}{\kern0pt}\ we\ obtain\ in\ {\isasymGamma}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ for\ {\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}term\ {\isachardoublequote}{\kern0pt}fac\ {\isadigit{5}}{\isachardoublequote}{\kern0pt}{\isacharbraceright}{\kern0pt}\ the\ result\ {\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}value\ {\isachardoublequote}{\kern0pt}fac\ {\isadigit{5}}{\isachardoublequote}{\kern0pt}{\isacharbraceright}{\kern0pt}{\isachardot}{\kern0pt}{\isacartoucheclose}
+\end{isabelle}
+In the corresponding generated LaTeX or HTML output, this looks like this:
+
+\begin{isabelle}
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ According\ to\ the\ reflexivity\ axiom\ {\isasymopen}x\ {\isacharequal}{\kern0pt}\ x{\isasymclose}{\isacharcomma}{\kern0pt}\ we\ obtain\ in\ {\isasymGamma}\ \isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ for\ {\isasymopen}fac\ {\isadigit{5}}{\isasymclose}\ the\ result\ {\isasymopen}{\isadigit{1}}{\isadigit{2}}{\isadigit{0}}{\isasymclose}{\isachardot}{\kern0pt}
+\end{isabelle}
+where the meta-texts \isa{{\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}thm\ refl{\isacharbraceright}{\kern0pt}} (``give the presentation of theorem `refl'\,\!''), 
+\isa{{\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}term\ {\isachardoublequote}{\kern0pt}fac\ {\isadigit{5}}{\isachardoublequote}{\kern0pt}{\isacharbraceright}{\kern0pt}} (``parse and type-check `fac 5' in the previous logical context'')
+and \isa{{\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}value\ {\isachardoublequote}{\kern0pt}fac\ {\isadigit{5}}{\isachardoublequote}{\kern0pt}{\isacharbraceright}{\kern0pt}} (``compile and execute `fac 5' according to its
+definitions'') are built-in antiquotations in HOL. 
+
+One distinguishing feature of Isabelle/DOF is that specific antiquotations \emph{were generated from
+an ontology} rather than being hard-coded into the Isabelle system infrastructure.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkuptext}
+As novel contribution, this work extends prior versions of Isabelle/DOF by 
+
+%
+\begin{enumerate}%
+\item support of antiquotations in a new class of contexts, namely \emph{term contexts} 
+(rather than SML code or semi-formal text). Thus, annotations generated
+from  Isabelle/DOF may also occur in \isa{{\isasymlambda}}-terms used to denote meta-data. 
+
+\item formal, machine-checked invariants on meta-data, which correspond to the concept of 
+``rules'' in OWL~ \cite{OWL2014} or ``constraints'' in UML, and which can be specified in 
+common HOL \isa{{\isasymlambda}}-term syntax.%
+\end{enumerate}
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkuptext}
+\noindent For example, the Isabelle/DOF command evaluating the HOL-expression:
+
+\begin{isabelle}
+\ \ \ \ \ \ \ \ \ \ \isacommand{value{\isacharasterisk}{\kern0pt}}{\isacharbrackleft}{\kern0pt}ass{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}Assertion{\isacharcomma}{\kern0pt}\ relvce{\isacharequal}{\kern0pt}{\isadigit{4}}{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}int{\isacharbrackright}{\kern0pt}\ \isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacartoucheopen}filter\ {\isacharparenleft}{\kern0pt}{\isasymlambda}\ {\isasymsigma}{\isachardot}{\kern0pt}\ relvce\ {\isasymsigma}\ {\isachargreater}{\kern0pt}\ {\isadigit{2}}{\isacharparenright}{\kern0pt}\ {\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}Assertion{\isacharminus}{\kern0pt}instances{\isacharbraceright}{\kern0pt}{\isacartoucheclose}
+\end{isabelle}
+where Isabelle/DOF command \isa{value{\isacharasterisk}{\kern0pt}} type-checks, expands in an own validation phase
+the \isa{Assertion{\isacharminus}{\kern0pt}instances}-term antiquotation, and evaluates the resulting HOL expression
+above. Assuming an ontology providing the class \isa{Assertion} having at least the
+integer attribute \isa{relvce}, the command finally creates an instance of \isa{Assertion} and 
+binds this to label \isa{ass}, while setting its \isa{relvce} to 4.
+
+Beyond the gain of expressivity in Isabelle/DOF ontologies, term-anti\-quotations pave the way 
+for advanced queries of elements inside an integrated source, and invariants 
+allow for formal proofs over the relations/translations of ontologies and ontology-instances.
+The latter question raised scientific interest under the label ``ontology mapping'' for 
+which we therefore present a formal solution. To sum up, we completed Isabelle/DOF to
+a fairly rich ontology language oriented to interactive theorem proving (ITP) systems, 
+which is a concrete proposal for formal development projects targeting a certification, 
+for technical documentation, for books with a high amount of machine-checked formal content 
+or for mathematical libraries such as the AFP.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkupsection*}
+[label = {bgrnd},type = {scholarly_paper.background}, args={label = {bgrnd},type = {scholarly_paper.background}, scholarly_paper.text_section.main_author = {@{docitem ''bu''}}, Isa_COL.text_element.level = {}, Isa_COL.text_element.referentiable = {False}, Isa_COL.text_element.variants = {{STR ''outline'', STR ''document''}}, scholarly_paper.text_section.fixme_list = {}, Isa_COL.text_element.level = {}}]Background
+\end{isamarkupsection*}\isamarkuptrue%
+
+\begin{isamarkupsubsection*}
+[label = {bgrnd_isadof},type = {scholarly_paper.background}, args={label = {bgrnd_isadof},type = {scholarly_paper.background}, Isa_COL.text_element.level = {}, Isa_COL.text_element.referentiable = {False}, Isa_COL.text_element.variants = {{STR ''outline'', STR ''document''}}, scholarly_paper.text_section.main_author = {}, scholarly_paper.text_section.fixme_list = {}, Isa_COL.text_element.level = {}}]The Isabelle/DOF Framework
+\end{isamarkupsubsection*}\isamarkuptrue%
+
+\begin{isamarkuptext}
+Isabelle/DOF~\cite{brucker.ea:isabelle-ontologies:2018,brucker.ea:isabelledof:2019} 
+  is a document ontology framework that extends Isabelle/HOL.
+  Isabelle/DOF offers basically two things: a language called Ontology Definition Language (ODL)
+  to \emph{specify} a formal ontology,
+  and ways to \emph{annotate} an integrated document written in Isabelle/HOL with the specified
+  meta-data. Additionally, Isabelle/DOF generates from an ontology a family of 
+  \emph{anti\-quotations} allowing to specify  machine-checked links between ODL entities. 
+%  Unlike UML, however, Isabelle/DOF allows for integrated documents with informal and formal elements
+%  including the necessary management of logical contexts. 
+
+  The perhaps most attractive aspect of Isabelle/DOF is its deep integration into the IDE of Isabelle 
+  (Isabelle/PIDE), which allows a hypertext-like navigation as well as fast user-feedback
+  during development and evolution of the integrated source. This includes rich editing support, 
+  including on-the-fly semantics checks, hinting, or auto-completion. 
+  Isabelle/DOF supports LaTeX-based document generation as well as ontology-aware ``views'' on 
+  the integrated document, \ie, specific versions of generated PDF addressing, \eg,
+  different stake-holders.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkupsubsection*}
+[label = {bgrnd_ODL},type = {scholarly_paper.background}, args={label = {bgrnd_ODL},type = {scholarly_paper.background}, Isa_COL.text_element.level = {}, Isa_COL.text_element.referentiable = {False}, Isa_COL.text_element.variants = {{STR ''outline'', STR ''document''}}, scholarly_paper.text_section.main_author = {}, scholarly_paper.text_section.fixme_list = {}, Isa_COL.text_element.level = {}}]A Guided Tour through ODL
+\end{isamarkupsubsection*}\isamarkuptrue%
+
+\begin{isamarkuptext}
+Isabelle/DOF provides a strongly typed ODL that provides the usual 
+concepts of ontologies such as
+
+%
+\begin{itemize}%
+\item \emph{document class} (using the \isa{\isacommand{doc{\isacharunderscore}{\kern0pt}class}} keyword) that describes a concept,
+
+\item \emph{attributes} specific to document classes (attributes might be initialized with default 
+values), and
+
+\item a special link, the reference to a super-class,
+establishes an \emph{is-a} relation between classes.
+%  classes may refer to other classes via a regular expression in an optional \emph{where} clause 
+%    (a class with a where clause is called \emph{monitor}).%
+\end{itemize}
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkuptext}
+\vspace{-0.2cm} The types of attributes are HOL-types. Thus, ODL can refer to any predefined type 
+  from the HOL library, \eg, \isa{string}, \isa{int} as well as parameterized types, \eg, 
+  \isa{option},  \isa{list}. As a consequence of the Isabelle document model, ODL definitions 
+  may be arbitrarily mixed with standard HOL type definitions. Document class definitions are 
+  HOL-types, allowing for formal \emph{links} to and between ontological concepts. For example, the 
+  basic concept of requirements from CENELEC 50128~\cite{bsi:50128:2014} is captured in ODL as 
+  follows:
+  
+\begin{isabelle}
+\ \ \ \ \ \ \ \ \ \ \isacommand{doc{\isacharunderscore}{\kern0pt}class}\ requirement\ {\isacharequal}{\kern0pt}\ text{\isacharunderscore}{\kern0pt}element\ {\isacharplus}{\kern0pt}\ \ \ \isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ long{\isacharunderscore}{\kern0pt}name\ \ \ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}{\isachardoublequoteopen}string\ option{\isachardoublequoteclose}\ \ \ \isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is{\isacharunderscore}{\kern0pt}concerned{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}{\isachardoublequoteopen}role\ set{\isachardoublequoteclose}\ \ \ \ \ \ \ \ \ 
+\end{isabelle}
+  This ODL class definition maybe part of one or more Isabelle theory-files capturing the entire
+  ontology definition. Isabelle's session management allows for pre-compiling them before being 
+  imported in the actual target document.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkupsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure*}
+[label = {text-elements},type = {Isa_COL.side_by_side_figure}, args={label = {text-elements},type = {Isa_COL.side_by_side_figure}, Isa_COL.side_by_side_figure.anchor = {fig-Req-Def-ex}, Isa_COL.side_by_side_figure.caption = {A Text-Element as Requirement.}, Isa_COL.figure.relative_width = {48}, Isa_COL.figure.src = {figures/Req-Def-ex}, Isa_COL.side_by_side_figure.anchor2 = {fig-Req-Appl-ex}, Isa_COL.side_by_side_figure.caption2 = {Referencing a Requirement.}, Isa_COL.side_by_side_figure.relative_width2 = {48}, Isa_COL.side_by_side_figure.src2 = {figures/Req-Appl-ex}, Isa_COL.figure.spawn_columns = {True}}]Referencing a Requirement.
+\end{isamarkupsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure*}\isamarkuptrue%
+
+\begin{isamarkuptext}
+\csname isaDof.ref\endcsname[type={Isa_COL.figure}]     {text-elements} shows an ontological annotation of a requirement and its referencing
+  via an antiquotation \isa{{\isacharat}{\kern0pt}\isacommand{{\isacharbraceleft}{\kern0pt}}requirement\ {\isacartoucheopen}req{\isadigit{1}}{\isacartoucheclose}\isacommand{{\isacharbraceright}{\kern0pt}}}; the latter is generated from the above 
+  class definition. Undefined or ill-typed references were rejected, the high-lighting displays 
+  the hyperlinking which is activated on a click. The class-definition of \isa{requirement} and its 
+  documentation is also revisited via one activation click.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkuptext}
+\vspace{-0.1cm} \noindent Isabelle/HOL supports records at the level of terms and 
+types. The notation for terms and types is as follows: \vspace{-0.2cm}
+
+%
+\begin{itemize}%
+\item record terms \isa{{\isasymlparr}x\ {\isacharequal}{\kern0pt}\ a{\isacharcomma}{\kern0pt}\ y\ {\isacharequal}{\kern0pt}\ b{\isasymrparr}} and corresponding record types \isa{{\isasymlparr}x{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}A{\isacharcomma}{\kern0pt}\ y{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}B{\isasymrparr}},
+
+\item the resulting selectors are written \isa{x\ r}, \isa{y\ r}.%
+\end{itemize}
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkuptext}
+\noindent In fact, \isa{\isacommand{onto{\isacharunderscore}{\kern0pt}class}}es and the logically equivalent  \isa{\isacommand{doc{\isacharunderscore}{\kern0pt}class}}es were
+represented by \emph{extensible} record types and instances thereof by HOL terms 
+(see \cite{brucker.ea:isabelledof:2019} for details.).  
+Invariants of an \isa{\isacommand{onto{\isacharunderscore}{\kern0pt}class}} are just predicates over extensible record
+types and were applied to subclasses.
+\end{isamarkuptext}\isamarkuptrue%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+%
+\isatagdocument
+%
+\isamarkupsubsection{Term-Evaluations in Isabelle%
+}
+\isamarkuptrue%
+%
+\endisatagdocument
+{\isafolddocument}%
+%
+\isadelimdocument
+%
+\endisadelimdocument
+
+\begin{isamarkuptext}
+Besides the powerful, but relatively slow Isabelle rewriting-based proof method,
+there are  two other techniques for term evaluation: \vspace{-0.2cm}
+
+%
+\begin{itemize}%
+\item evaluation via reflection \cite{HaftmannN10} (\isa{eval}), and
+
+\item normalization by evaluation \cite{AehligHN12} (\isa{nbe}).%
+\end{itemize}
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkuptext}
+\noindent  The former is based on a nearly one-to-one compilation of HOL-level datatype specifications 
+and function definitions into SML datatypes and functions.
+The latter technique --- allowing for free variables in terms --- uses a generic data-universe
+enriched by explicit variables. Both techniques are several orders of magnitude faster 
+than standard rewriting. Isabelle/DOF uses both to generate code that evaluates invariant and data-integrity 
+checks on-the-fly during editing. For all examples in our library, this form of runtime-testing
+ is sufficiently fast to remain unnoticed by the user.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkupsection*}
+[label = {invariants},type = {scholarly_paper.technical}, args={label = {invariants},type = {scholarly_paper.technical}, scholarly_paper.text_section.main_author = {@{docitem ''nic''}}, Isa_COL.text_element.level = {}, Isa_COL.text_element.referentiable = {False}, Isa_COL.text_element.variants = {{STR ''outline'', STR ''document''}}, scholarly_paper.text_section.fixme_list = {}, Isa_COL.text_element.level = {}, scholarly_paper.technical.definition_list = {}, scholarly_paper.technical.status = {description}}]Term-Context Support, Invariants and Queries in DOF
+\end{isamarkupsection*}\isamarkuptrue%
+
+\begin{isamarkuptext}
+To offer a smooth integration into the \emph{formal} theory development process,
+Isabelle/HOL should be able to dynamically interpret the source document.
+But the specific antiquotations introduced by Isabelle/DOF are not directly recognized
+by Isabelle/HOL, and the process of term checking and evaluation must be enriched.
+Previous works~\cite{brucker.ea:isabelle-ontologies:2018,brucker.ea:isabelledof:2019}
+added a validation step for the SML and semi-formal text contexts.
+To support Isabelle/DOF antiquotations in the term contexts, the validation step should
+be improved and a new step, which we call \emph{elaboration} must be added to allow
+these antiquotations in \isa{{\isasymlambda}}-terms.
+The resulting process encompasses the following steps:
+
+%
+\begin{itemize}%
+\item Parsing of the term which represents the object in HOL,
+
+\item Typeinference/Typechecking of the term,
+
+\item Ontological validation of the term: the meta-data of term antiquotations is 
+parsed and checked in the logical context,
+
+\item Elaboration of term antiquotations: depending of the antiquotation specific
+elaboration function, the antiquotations containing references were replaced,
+for example, by the object they refer to in the logical context,
+
+\item Generation of markup information for the Isabelle/PIDE, and
+
+\item Code generation:
+
+%
+\begin{itemize}%
+\item Evaluation of HOL expressions with ontological annotations,
+
+\item Generation of ontological invariants processed simultaneously
+with the generation of the document (a theory in HOL).%
+\end{itemize}%
+\end{itemize}
+
+Isabelle/HOL provides inspection commands to type-check (the command \isa{\isacommand{term}})
+and to evaluate a term (the command \isa{\isacommand{value}}).
+We provide the equivalent commands, respectively \isa{\isacommand{term{\isacharasterisk}{\kern0pt}}} and \isa{\isacommand{value{\isacharasterisk}{\kern0pt}}}, which 
+additionally support a validation and elaboration phase.
+A variant of  \isa{\isacommand{value{\isacharasterisk}{\kern0pt}}} is  \isa{\isacommand{assert{\isacharasterisk}{\kern0pt}}}, which additionally checks
+that the term-evaluation results in \isa{True}.
+Note that term antiquotations are admitted in all Isabelle/DOF commands, not just
+\isa{\isacommand{term{\isacharasterisk}{\kern0pt}}}, \isa{\isacommand{value{\isacharasterisk}{\kern0pt}}} etc. 
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkuptext}
+If we take back the example ontology for mathematical papers
+  of~\cite{brucker.ea:isabelledof:2019} shown in \autoref{fig-ontology-example}
+\begin{figure}
+
+\begin{isarbox}
+
+\begin{isabelle}
+\isacommand{datatype}\ kind\ {\isacharequal}{\kern0pt}\ expert{\isacharunderscore}{\kern0pt}opinion\ {\isacharbar}{\kern0pt}\ argument\ {\isacharbar}{\kern0pt}\ {\isachardoublequoteopen}proof{\isachardoublequoteclose}\isanewline
+\isanewline
+\isacommand{doc{\isacharunderscore}{\kern0pt}class}\ myauthor\ {\isacharequal}{\kern0pt}\isanewline
+\ \ email\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}string{\isachardoublequoteclose}\ {\isacharless}{\kern0pt}{\isacharequal}{\kern0pt}\ {\isachardoublequoteopen}{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}{\isachardoublequoteclose}\isanewline
+\isacommand{doc{\isacharunderscore}{\kern0pt}class}\ mytext{\isacharunderscore}{\kern0pt}section\ {\isacharequal}{\kern0pt}\isanewline
+\ \ authored{\isacharunderscore}{\kern0pt}by\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}myauthor\ set{\isachardoublequoteclose}\ {\isacharless}{\kern0pt}{\isacharequal}{\kern0pt}\ {\isachardoublequoteopen}{\isacharbraceleft}{\kern0pt}{\isacharbraceright}{\kern0pt}{\isachardoublequoteclose}\isanewline
+\ \ level\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}int\ option{\isachardoublequoteclose}\ {\isacharless}{\kern0pt}{\isacharequal}{\kern0pt}\ {\isachardoublequoteopen}None{\isachardoublequoteclose}\isanewline
+\isacommand{doc{\isacharunderscore}{\kern0pt}class}\ myintro\ {\isacharequal}{\kern0pt}\ mytext{\isacharunderscore}{\kern0pt}section\ {\isacharplus}{\kern0pt}\isanewline
+\ \ authored{\isacharunderscore}{\kern0pt}by\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}myauthor\ set{\isachardoublequoteclose}\ \ {\isacharless}{\kern0pt}{\isacharequal}{\kern0pt}\ {\isachardoublequoteopen}UNIV{\isachardoublequoteclose}\ \isanewline
+\ \ uses\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}string\ set{\isachardoublequoteclose}\isanewline
+\ \ \isakeyword{invariant}\ author{\isacharunderscore}{\kern0pt}set\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}authored{\isacharunderscore}{\kern0pt}by\ {\isasymsigma}\ {\isasymnoteq}\ {\isacharbraceleft}{\kern0pt}{\isacharbraceright}{\kern0pt}{\isachardoublequoteclose}\isanewline
+\ \ \isakeyword{and}\ force{\isacharunderscore}{\kern0pt}level\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}the\ {\isacharparenleft}{\kern0pt}level\ {\isasymsigma}{\isacharparenright}{\kern0pt}\ {\isachargreater}{\kern0pt}\ {\isadigit{1}}{\isachardoublequoteclose}\isanewline
+\isacommand{doc{\isacharunderscore}{\kern0pt}class}\ myclaim\ {\isacharequal}{\kern0pt}\ myintro\ {\isacharplus}{\kern0pt}\isanewline
+\ \ based{\isacharunderscore}{\kern0pt}on\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}string\ list{\isachardoublequoteclose}\isanewline
+\isacommand{doc{\isacharunderscore}{\kern0pt}class}\ mytechnical\ {\isacharequal}{\kern0pt}\ mytext{\isacharunderscore}{\kern0pt}section\ {\isacharplus}{\kern0pt}\isanewline
+\ \ formal{\isacharunderscore}{\kern0pt}results\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}thm\ list{\isachardoublequoteclose}\ \isanewline
+\isacommand{doc{\isacharunderscore}{\kern0pt}class}\ myresult\ {\isacharequal}{\kern0pt}\ mytechnical\ {\isacharplus}{\kern0pt}\isanewline
+\ \ evidence\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ kind\isanewline
+\ \ property\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}thm\ list{\isachardoublequoteclose}\ {\isacharless}{\kern0pt}{\isacharequal}{\kern0pt}\ {\isachardoublequoteopen}{\isacharbrackleft}{\kern0pt}{\isacharbrackright}{\kern0pt}{\isachardoublequoteclose}\isanewline
+\ \ \isakeyword{invariant}\ has{\isacharunderscore}{\kern0pt}property\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}evidence\ {\isasymsigma}\ {\isacharequal}{\kern0pt}\ proof\ {\isasymlongleftrightarrow}\ property\ {\isasymsigma}\ {\isasymnoteq}\ {\isacharbrackleft}{\kern0pt}{\isacharbrackright}{\kern0pt}{\isachardoublequoteclose}\isanewline
+\isacommand{doc{\isacharunderscore}{\kern0pt}class}\ myconclusion\ {\isacharequal}{\kern0pt}\ mytext{\isacharunderscore}{\kern0pt}section\ {\isacharplus}{\kern0pt}\isanewline
+\ \ establish\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}{\isacharparenleft}{\kern0pt}myclaim\ {\isasymtimes}\ myresult{\isacharparenright}{\kern0pt}\ set{\isachardoublequoteclose}\isanewline
+\ \ \isakeyword{invariant}\ establish{\isacharunderscore}{\kern0pt}defined\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}{\isasymforall}\ x{\isachardot}{\kern0pt}\ x\ {\isasymin}\ Domain\ {\isacharparenleft}{\kern0pt}establish\ {\isasymsigma}{\isacharparenright}{\kern0pt}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlongrightarrow}\ {\isacharparenleft}{\kern0pt}{\isasymexists}\ y\ {\isasymin}\ Range\ {\isacharparenleft}{\kern0pt}establish\ {\isasymsigma}{\isacharparenright}{\kern0pt}{\isachardot}{\kern0pt}\ {\isacharparenleft}{\kern0pt}x{\isacharcomma}{\kern0pt}\ y{\isacharparenright}{\kern0pt}\ {\isasymin}\ establish\ {\isasymsigma}{\isacharparenright}{\kern0pt}{\isachardoublequoteclose}
+\end{isabelle}
+\end{isarbox}
+\caption{Excerpt of an Example Ontology for mathematical Papers.}
+\label{fig-ontology-example}
+\end{figure}
+  we can define some class instances for this ontology with the \isa{\isacommand{text{\isacharasterisk}{\kern0pt}}} command,
+  as in \autoref{fig-instances-example}.
+\begin{figure}
+
+\begin{isarbox}
+
+\begin{isabelle}
+\isacommand{text{\isacharasterisk}{\kern0pt}}{\isacharbrackleft}{\kern0pt}church{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}myauthor{\isacharcomma}{\kern0pt}\ email{\isacharequal}{\kern0pt}{\isachardoublequoteopen}{\isasymopen}church{\isacharat}{\kern0pt}lambda{\isachardot}{\kern0pt}org{\isasymclose}{\isachardoublequoteclose}{\isacharbrackright}{\kern0pt}{\isacartoucheopen}{\isacartoucheclose}\isanewline
+\isacommand{text{\isacharasterisk}{\kern0pt}}{\isacharbrackleft}{\kern0pt}proof{\isadigit{1}}{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}myresult{\isacharcomma}{\kern0pt}\ evidence{\isacharequal}{\kern0pt}{\isachardoublequoteopen}proof{\isachardoublequoteclose}{\isacharcomma}{\kern0pt}\ property{\isacharequal}{\kern0pt}{\isachardoublequoteopen}{\isacharbrackleft}{\kern0pt}{\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}thm\ {\isasymopen}HOL{\isachardot}{\kern0pt}refl{\isasymclose}{\isacharbraceright}{\kern0pt}{\isacharbrackright}{\kern0pt}{\isachardoublequoteclose}{\isacharbrackright}{\kern0pt}{\isacartoucheopen}{\isacartoucheclose}\isanewline
+\isacommand{text{\isacharasterisk}{\kern0pt}}{\isacharbrackleft}{\kern0pt}proof{\isadigit{2}}{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}myresult{\isacharcomma}{\kern0pt}\ evidence{\isacharequal}{\kern0pt}{\isachardoublequoteopen}proof{\isachardoublequoteclose}{\isacharcomma}{\kern0pt}\ property{\isacharequal}{\kern0pt}{\isachardoublequoteopen}{\isacharbrackleft}{\kern0pt}{\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}thm\ {\isasymopen}HOL{\isachardot}{\kern0pt}sym{\isasymclose}{\isacharbraceright}{\kern0pt}{\isacharbrackright}{\kern0pt}{\isachardoublequoteclose}{\isacharbrackright}{\kern0pt}{\isacartoucheopen}{\isacartoucheclose}\isanewline
+\isacommand{text{\isacharasterisk}{\kern0pt}}{\isacharbrackleft}{\kern0pt}intro{\isadigit{1}}{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}myintro{\isacharcomma}{\kern0pt}\ authored{\isacharunderscore}{\kern0pt}by{\isacharequal}{\kern0pt}{\isachardoublequoteopen}{\isacharbraceleft}{\kern0pt}{\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}myauthor\ {\isasymopen}church{\isasymclose}{\isacharbraceright}{\kern0pt}{\isacharbraceright}{\kern0pt}{\isachardoublequoteclose}{\isacharcomma}{\kern0pt}\ level{\isacharequal}{\kern0pt}{\isachardoublequoteopen}Some\ {\isadigit{0}}{\isachardoublequoteclose}{\isacharbrackright}{\kern0pt}{\isacartoucheopen}{\isacartoucheclose}\isanewline
+\isacommand{text{\isacharasterisk}{\kern0pt}}{\isacharbrackleft}{\kern0pt}intro{\isadigit{2}}{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}myintro{\isacharcomma}{\kern0pt}\ authored{\isacharunderscore}{\kern0pt}by{\isacharequal}{\kern0pt}{\isachardoublequoteopen}{\isacharbraceleft}{\kern0pt}{\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}myauthor\ {\isasymopen}church{\isasymclose}{\isacharbraceright}{\kern0pt}{\isacharbraceright}{\kern0pt}{\isachardoublequoteclose}{\isacharcomma}{\kern0pt}\ level{\isacharequal}{\kern0pt}{\isachardoublequoteopen}Some\ {\isadigit{2}}{\isachardoublequoteclose}{\isacharbrackright}{\kern0pt}{\isacartoucheopen}{\isacartoucheclose}\isanewline
+\isacommand{text{\isacharasterisk}{\kern0pt}}{\isacharbrackleft}{\kern0pt}claimNotion{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}myclaim{\isacharcomma}{\kern0pt}\ authored{\isacharunderscore}{\kern0pt}by{\isacharequal}{\kern0pt}{\isachardoublequoteopen}{\isacharbraceleft}{\kern0pt}{\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}myauthor\ {\isasymopen}church{\isasymclose}{\isacharbraceright}{\kern0pt}{\isacharbraceright}{\kern0pt}{\isachardoublequoteclose}\isanewline
+\ \ \ \ \ \ {\isacharcomma}{\kern0pt}\ based{\isacharunderscore}{\kern0pt}on{\isacharequal}{\kern0pt}{\isachardoublequoteopen}{\isacharbrackleft}{\kern0pt}{\isasymopen}Notion{\isadigit{1}}{\isasymclose}{\isacharcomma}{\kern0pt}{\isasymopen}Notion{\isadigit{2}}{\isasymclose}{\isacharbrackright}{\kern0pt}{\isachardoublequoteclose}{\isacharcomma}{\kern0pt}\ level{\isacharequal}{\kern0pt}{\isachardoublequoteopen}Some\ {\isadigit{0}}{\isachardoublequoteclose}{\isacharbrackright}{\kern0pt}{\isacartoucheopen}{\isacartoucheclose}
+\end{isabelle}
+\end{isarbox}
+\caption{Some Instances of the Classes of the Ontology of \autoref{fig-ontology-example}.}
+\label{fig-instances-example}
+\end{figure}
+  In the instance \isa{intro{\isadigit{1}}}, the term antiquotation  \isa{{\isacharat}{\kern0pt}\isacommand{{\isacharbraceleft}{\kern0pt}}myauthor\ {\isacartoucheopen}church{\isacartoucheclose}\isacommand{{\isacharbraceright}{\kern0pt}}},
+  or its equivalent notation \isa{{\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}myauthor\ {\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}church{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}{\isacharbraceright}{\kern0pt}}, denotes
+  the instance \isa{church} of the class \isa{myauthor},
+  where \isa{church} is a HOL-string.
+  One can now reference a class instance in a \isa{\isacommand{term{\isacharasterisk}{\kern0pt}}} command.
+  In the command  \isa{\isacommand{term{\isacharasterisk}{\kern0pt}}{\isacartoucheopen}{\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}myauthor\ {\isasymopen}church{\isasymclose}{\isacharbraceright}{\kern0pt}{\isacartoucheclose}}
+  the term \isa{{\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}myauthor\ {\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}church{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}{\isacharbraceright}{\kern0pt}} is type-checked, \ie, the command \isa{\isacommand{term{\isacharasterisk}{\kern0pt}}} checks that
+  \isa{church} references a term of type \isa{myauthor} against the global context
+  (see \csname isaDof.ref\endcsname[type={Isa_COL.side_by_side_figure}]     {type-checking-example}).
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkupsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure*}
+[label = {type-checking-example},type = {Isa_COL.side_by_side_figure}, args={label = {type-checking-example},type = {Isa_COL.side_by_side_figure}, Isa_COL.side_by_side_figure.anchor = {fig-term-type-checking-ex}, Isa_COL.side_by_side_figure.caption = {Church is an existing Instance.}, Isa_COL.figure.relative_width = {48}, Isa_COL.figure.src = {figures/term-context-checking-example}, Isa_COL.side_by_side_figure.anchor2 = {fig-term-type-checking-failed-ex}, Isa_COL.side_by_side_figure.caption2 = {The Churche Instance is not defined.}, Isa_COL.side_by_side_figure.relative_width2 = {48}, Isa_COL.side_by_side_figure.src2 = {figures/term-context-failed-checking-example}, Isa_COL.figure.spawn_columns = {True}}]Type-Checking of Antiquotations in a Term-Context.
+\end{isamarkupsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure*}\isamarkuptrue%
+
+\begin{isamarkuptext}
+The command \isa{\isacommand{value{\isacharasterisk}{\kern0pt}}{\isacartoucheopen}email\ {\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}author\ {\isasymopen}church{\isasymclose}{\isacharbraceright}{\kern0pt}{\isacartoucheclose}}
+  validates \isa{{\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}myauthor\ {\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}church{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}{\isacharbraceright}{\kern0pt}}
+  and returns the attribute-value of \isa{myauthor{\isachardot}{\kern0pt}email} for the \isa{church} instance,
+  \ie the HOL string \isa{{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}church{\isacharat}{\kern0pt}lambda{\isachardot}{\kern0pt}org{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}}
+  (see \csname isaDof.ref\endcsname[type={Isa_COL.side_by_side_figure}]     {evaluation-example}).
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkupsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure*}
+[label = {evaluation-example},type = {Isa_COL.side_by_side_figure}, args={label = {evaluation-example},type = {Isa_COL.side_by_side_figure}, Isa_COL.side_by_side_figure.anchor = {fig-term-evaluation-ex}, Isa_COL.side_by_side_figure.caption = {The Evaluation succeeds.}, Isa_COL.figure.relative_width = {48}, Isa_COL.figure.src = {figures/term-context-evaluation-example}, Isa_COL.side_by_side_figure.anchor2 = {fig-term-failed-evaluation-ex}, Isa_COL.side_by_side_figure.caption2 = {The Evaluation fails.}, Isa_COL.side_by_side_figure.relative_width2 = {48}, Isa_COL.side_by_side_figure.src2 = {figures/term-context-failed-evaluation-example}, Isa_COL.figure.spawn_columns = {True}}]Evaluation of Antiquotations in a Term-Context.
+\end{isamarkupsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure*}\isamarkuptrue%
+
+\begin{isamarkuptext}
+Since term antiquotations are logically uninterpreted constants,
+  it is possible to compare class instances logically. The assertion
+  in the \csname isaDof.ref\endcsname[type={Isa_COL.figure}]     {term-context-equality-evaluation} fails:
+  the class instances \isa{proof{\isadigit{1}}} and \isa{proof{\isadigit{2}}} are not equivalent
+  because their attribute \isa{property} differs.
+  When \isa{\isacommand{assert{\isacharasterisk}{\kern0pt}}} evaluates the term,
+  the term antiquotations \isa{{\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}thm\ {\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}HOL{\isachardot}{\kern0pt}refl{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}{\isacharbraceright}{\kern0pt}} and \isa{{\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}thm\ {\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}HOL{\isachardot}{\kern0pt}sym{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}{\isacharbraceright}{\kern0pt}} are checked
+  against the global context such that the strings \isa{{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}HOL{\isachardot}{\kern0pt}refl{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}} and \isa{{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}HOL{\isachardot}{\kern0pt}sym{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}}
+  denote existing theorems.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkupfigure*}
+[label = {term-context-equality-evaluation},type = {Isa_COL.figure}, args={label = {term-context-equality-evaluation},type = {Isa_COL.figure}, Isa_COL.figure.relative_width = {80}, Isa_COL.figure.src = {figures/term-context-equality-evaluation-example}, Isa_COL.figure.spawn_columns = {True}}]Evaluation of the Equivalence of two Class Instances.
+\end{isamarkupfigure*}\isamarkuptrue%
+
+\begin{isamarkuptext}
+The mechanism of term annotations is also used for the new concept of 
+  invariant constraints which can be specified in common HOL syntax.
+  They were introduced by the keyword \isa{\isakeyword{invariant}}
+  in a class definition (recall \autoref{fig-ontology-example}).
+  Following the constraints proposed in \cite{brucker.ea:isabelle-ontologies:2018}, 
+  one can specify that any instance of a class \isa{myresult}
+  finally has a non-empty property list, if its \isa{kind} is \isa{proof}
+  (see the \isa{\isakeyword{invariant}\ has{\isacharunderscore}{\kern0pt}property}), or that 
+  the relation between \isa{myclaim} and \isa{myresult} expressed in the attribute \isa{establish}
+  must be defined when an instance
+  of the class \isa{myconclusion} is defined (see the \isa{\isakeyword{invariant}\ establish{\isacharunderscore}{\kern0pt}defined}).
+
+  In \autoref{fig-ontology-example}, the \isa{\isakeyword{invariant}\ author{\isacharunderscore}{\kern0pt}set} of the class \isa{myintro} 
+  enforces that a \isa{myintro} instance has at least one author.
+  The \isa{{\isasymsigma}} symbol is reserved and references the future class instance.
+  By relying on the implementation of the Records
+  in Isabelle/HOL~\cite{wenzel:isabelle-isar:2020},
+  one can reference an attribute of an instance using its selector function.
+  For example, \isa{establish\ {\isasymsigma}} denotes the value
+  of the attribute \isa{establish}
+  of the future instance of the class \isa{myconclusion}.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkuptext}
+The value of each attribute defined for the instances is checked at run-time
+  against their class invariants.
+  Classes also inherit the invariants from their super-class.
+  As the class \isa{myclaim} is a subclass
+  of the class \isa{myintro}, it inherits the \isa{myintro} invariants.
+  In \csname isaDof.ref\endcsname[type={Isa_COL.figure}]     {inherited-invariant-checking-figure},
+  we attempt to specify a new instance \isa{claimNotion} of the class \isa{myclaim}.
+  However, the invariant checking triggers an error because
+  the \isa{\isakeyword{invariant}\ force{\isacharunderscore}{\kern0pt}level} forces the value of the argument
+  of the attribute \isa{mytext{\isacharunderscore}{\kern0pt}section{\isachardot}{\kern0pt}level} to be greater than 1,
+  and we initialize it to \isa{Some\ {\isadigit{0}}} in \isa{claimNotion}.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkupfigure*}
+[label = {inherited-invariant-checking-figure},type = {Isa_COL.figure}, args={label = {inherited-invariant-checking-figure},type = {Isa_COL.figure}, Isa_COL.figure.relative_width = {99}, Isa_COL.figure.src = {figures/inherited-invariant-checking-violated-example}, Isa_COL.figure.spawn_columns = {True}}]Inherited Invariant Violation.
+\end{isamarkupfigure*}\isamarkuptrue%
+
+\begin{isamarkuptext}
+Any class definition generates term antiquotations checking a class instance reference
+  in a particular logical context; these references were
+  elaborated to objects they refer to.
+  This paves the way for a new mechanism to query the ``current'' instances presented
+  as a HOL \isa{list}.
+  Arbitrarily complex queries can therefore be defined inside the logical language.
+  Thus, to get the list of the properties of the instances of the class \isa{myresult},
+  or to get the list of the authors of the instances of the  \isa{myintro} class,
+  it suffices to treat this meta-data as usual:
+  
+\begin{isabelle}
+\ \ \ \ \ \isacommand{value{\isacharasterisk}{\kern0pt}}{\isacartoucheopen}map\ {\isacharparenleft}{\kern0pt}myresult{\isachardot}{\kern0pt}property{\isacharparenright}{\kern0pt}\ {\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}myresult{\isacharminus}{\kern0pt}instances{\isacharbraceright}{\kern0pt}{\isacartoucheclose}\isanewline
+\ \ \ \ \ \isacommand{value{\isacharasterisk}{\kern0pt}}{\isacartoucheopen}map\ {\isacharparenleft}{\kern0pt}mytext{\isacharunderscore}{\kern0pt}section{\isachardot}{\kern0pt}authored{\isacharunderscore}{\kern0pt}by{\isacharparenright}{\kern0pt}\ {\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}myintro{\isacharminus}{\kern0pt}instances{\isacharbraceright}{\kern0pt}{\isacartoucheclose}
+\end{isabelle}
+  In order to get the list of the instances of the class \isa{myresult}
+  whose \isa{evidence} is a \isa{proof}, one can use the command:
+  
+\begin{isabelle}
+\ \ \ \ \ \isacommand{value{\isacharasterisk}{\kern0pt}}{\isacartoucheopen}filter\ {\isacharparenleft}{\kern0pt}{\isasymlambda}{\isasymsigma}{\isachardot}{\kern0pt}\ myresult{\isachardot}{\kern0pt}evidence\ {\isasymsigma}\ {\isacharequal}{\kern0pt}\ proof{\isacharparenright}{\kern0pt}\ {\isacharat}{\kern0pt}{\isacharbraceleft}{\kern0pt}myresult{\isacharminus}{\kern0pt}instances{\isacharbraceright}{\kern0pt}{\isacartoucheclose}
+\end{isabelle}
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkupsection*}
+[label = {morphisms},type = {scholarly_paper.technical}, args={label = {morphisms},type = {scholarly_paper.technical}, scholarly_paper.text_section.main_author = {@{docitem ''idir''}}, Isa_COL.text_element.level = {}, Isa_COL.text_element.referentiable = {False}, Isa_COL.text_element.variants = {{STR ''outline'', STR ''document''}}, scholarly_paper.text_section.fixme_list = {}, Isa_COL.text_element.level = {}, scholarly_paper.technical.definition_list = {}, scholarly_paper.technical.status = {description}}]Proving Morphisms on Ontologies
+\end{isamarkupsection*}\isamarkuptrue%
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isadelimproof
+%
+\endisadelimproof
+%
+\isatagproof
+%
+\endisatagproof
+{\isafoldproof}%
+%
+\isadelimproof
+%
+\endisadelimproof
+
+\begin{isamarkuptext}
+The Isabelle/DOF framework does not assume that all documents refer to the same ontology. 
+Each document may even build its local ontology without any external reference. 
+It may also be based on several reference ontologies (\eg, from the  Isabelle/DOF library). 
+Since ontological instances possess \emph{representations inside the logic},
+the relationship between a local ontology and a reference ontology can be formalised
+using a morphism function also inside the logic. More precisely, the instances of local ontology 
+classes may be described as the image of a 
+transformation applied to one or several other instances of class(es) belonging to another 
+ontology. Thanks to the morphism relationship, the obtained class may either import meta-data 
+(definitions are preserved)  or map meta-data (the properties are different but 
+are semantically equivalent) that are defined in the referenced class(es). 
+It may also provide additional properties. This means that morphisms may be injective, 
+surjective, bijective, and thus describe abstract relations between ontologies.
+This raises the question of invariant preservation.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkuptext}
+To illustrate this process, we have defined a simple ontology to classify Hardware objects.
+%This ontology is described in \autoref{fig-Local-Ontology-example
+
+%\begin{figure}[!h]
+
+\begin{isarbox}
+
+\begin{isabelle}
+\isacommand{onto{\isacharunderscore}{\kern0pt}class}\ Item\ {\isacharequal}{\kern0pt}\isanewline
+\ \ name\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ string\isanewline
+\isacommand{onto{\isacharunderscore}{\kern0pt}class}\ Product\ {\isacharequal}{\kern0pt}\ Item\ {\isacharplus}{\kern0pt}\isanewline
+\ \ serial{\isacharunderscore}{\kern0pt}number\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ int\isanewline
+\ \ provider\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ string\isanewline
+\ \ mass\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ int\isanewline
+\isacommand{onto{\isacharunderscore}{\kern0pt}class}\ Computer{\isacharunderscore}{\kern0pt}Hardware\ {\isacharequal}{\kern0pt}\ Product\ {\isacharplus}{\kern0pt}\isanewline
+\ \ type\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ Hardware{\isacharunderscore}{\kern0pt}Type\isanewline
+\ \ composed{\isacharunderscore}{\kern0pt}of\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}Product\ list{\isachardoublequoteclose}\ \isanewline
+\ \ \isakeyword{invariant}\ c{\isadigit{2}}\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}Product{\isachardot}{\kern0pt}mass\ {\isasymsigma}\ {\isacharequal}{\kern0pt}\ sum{\isacharparenleft}{\kern0pt}map\ Product{\isachardot}{\kern0pt}mass\ {\isacharparenleft}{\kern0pt}composed{\isacharunderscore}{\kern0pt}of\ {\isasymsigma}{\isacharparenright}{\kern0pt}{\isacharparenright}{\kern0pt}{\isachardoublequoteclose}
+\end{isabelle}
+\end{isarbox}
+%\caption{An extract of a local (user)  ontology.}
+%\label{fig-Local-Ontology-example}
+%\end{figure}
+%} 
+
+This ontology defines the \isa{Item}, \isa{Product} and \isa{Computer{\isacharunderscore}{\kern0pt}Hardware} concepts (or classes).  
+Each class contains a set of attributes or properties and some local invariants.
+In this example, we focus on the \isa{Computer{\isacharunderscore}{\kern0pt}Hardware} 
+class defined as a list of products characterised by their mass value.
+This class contains a local \isa{\isakeyword{invariant}\ c{\isadigit{2}}} to guarantee that its own mass value
+equals the sum of all the masses of the products composing the object.
+For the sake of the argument, we use the reference ontology (considered as a standard)
+described in this listing:
+%\begin{figure}
+
+\begin{isarbox}
+
+\begin{isabelle}
+\isacommand{definition}\ sum\ \isakeyword{where}\ {\isachardoublequoteopen}sum\ S\ {\isacharequal}{\kern0pt}\ {\isacharparenleft}{\kern0pt}fold\ {\isacharparenleft}{\kern0pt}{\isacharplus}{\kern0pt}{\isacharparenright}{\kern0pt}\ S\ {\isadigit{0}}{\isacharparenright}{\kern0pt}{\isachardoublequoteclose}\isanewline
+\isanewline
+\isacommand{datatype}\ Hardware{\isacharunderscore}{\kern0pt}Type\ {\isacharequal}{\kern0pt}\ Motherboard\ {\isacharbar}{\kern0pt}\ Expansion{\isacharunderscore}{\kern0pt}Card\ {\isacharbar}{\kern0pt}\ Storage{\isacharunderscore}{\kern0pt}Device\ \isacommand{{\isachardot}{\kern0pt}{\isachardot}{\kern0pt}}\isacommand{{\isachardot}{\kern0pt}}\isanewline
+\isanewline
+\isacommand{onto{\isacharunderscore}{\kern0pt}class}\ Resource\ {\isacharequal}{\kern0pt}\isanewline
+\ \ name\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ string\isanewline
+\isacommand{onto{\isacharunderscore}{\kern0pt}class}\ Electronic\ {\isacharequal}{\kern0pt}\ Resource\ {\isacharplus}{\kern0pt}\isanewline
+\ \ provider\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ string\isanewline
+\ \ manufacturer\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ string\isanewline
+\isacommand{onto{\isacharunderscore}{\kern0pt}class}\ Component\ {\isacharequal}{\kern0pt}\ Electronic\ {\isacharplus}{\kern0pt}\isanewline
+\ \ mass\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ int\isanewline
+\ \ dimensions\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}int\ list{\isachardoublequoteclose}\ \isanewline
+\isacommand{onto{\isacharunderscore}{\kern0pt}class}\ Informatic\ {\isacharequal}{\kern0pt}\ Resource\ {\isacharplus}{\kern0pt}\isanewline
+\ \ description\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ string\isanewline
+\isacommand{onto{\isacharunderscore}{\kern0pt}class}\ Hardware\ {\isacharequal}{\kern0pt}\ Informatic\ {\isacharplus}{\kern0pt}\isanewline
+\ \ type\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ Hardware{\isacharunderscore}{\kern0pt}Type\isanewline
+\ \ mass\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ int\isanewline
+\ \ composed{\isacharunderscore}{\kern0pt}of\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}Component\ list{\isachardoublequoteclose}\ \isanewline
+\ \ \isakeyword{invariant}\ c{\isadigit{1}}\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}mass\ {\isasymsigma}\ {\isacharequal}{\kern0pt}\ sum{\isacharparenleft}{\kern0pt}map\ Component{\isachardot}{\kern0pt}mass\ {\isacharparenleft}{\kern0pt}composed{\isacharunderscore}{\kern0pt}of\ {\isasymsigma}{\isacharparenright}{\kern0pt}{\isacharparenright}{\kern0pt}{\isachardoublequoteclose}
+\end{isabelle}
+\end{isarbox}
+%\caption{An extract of a reference ontology.}
+%\label{fig-Reference-Ontology-example}
+%\end{figure}
+
+This ontology defines  the \isa{Resource},
+\isa{Electronic}, \isa{Component}, \isa{Informatic} and \isa{Hardware} concepts.
+In our example, we focus on the \isa{Hardware} class containing a \isa{Component{\isachardot}{\kern0pt}mass} attribute
+inherited from the \isa{Component} class
+and composed of a list of components with a \isa{Component{\isachardot}{\kern0pt}mass} attribute formalising
+the mass value of each component.
+The \isa{Hardware} class also contains a local \isa{\isakeyword{invariant}\ c{\isadigit{1}}}
+to define a constraint linking the global mass of a \isa{Hardware} object
+with the masses of its own components.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkuptext}
+To check the coherence of our local ontology, we define a relationship between the local ontology 
+and the reference ontology using morphism functions (or mapping rules as in ATL framework~\cite{atl}
+or EXPRESS-X language~\cite{BGPP95}). These rules are applied to define the relationship 
+between one class of the local ontology to one or several other class(es) described in the reference 
+ontology. In our case, we have define two morphisms, \isa{Product{\isacharunderscore}{\kern0pt}to{\isacharunderscore}{\kern0pt}Component{\isacharunderscore}{\kern0pt}morphism}
+and \isa{Computer{\isacharunderscore}{\kern0pt}Hardware{\isacharunderscore}{\kern0pt}to{\isacharunderscore}{\kern0pt}Hardware{\isacharunderscore}{\kern0pt}morphism}, detailed in the following listing: 
+
+%\begin{figure}
+
+\begin{isarbox}
+
+\begin{isabelle}
+\isacommand{definition}\ Product{\isacharunderscore}{\kern0pt}to{\isacharunderscore}{\kern0pt}Component{\isacharunderscore}{\kern0pt}morphism\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ \isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ {\isachardoublequoteopen}Product\ {\isasymRightarrow}\ Component{\isachardoublequoteclose}\ {\isacharparenleft}{\kern0pt}{\isachardoublequoteopen}{\isacharunderscore}{\kern0pt}\ {\isasymlangle}Component{\isasymrangle}\isactrlsub P\isactrlsub r\isactrlsub o\isactrlsub d\isactrlsub u\isactrlsub c\isactrlsub t{\isachardoublequoteclose}\ {\isacharbrackleft}{\kern0pt}{\isadigit{1}}{\isadigit{0}}{\isadigit{0}}{\isadigit{0}}{\isacharbrackright}{\kern0pt}{\isadigit{9}}{\isadigit{9}}{\isadigit{9}}{\isacharparenright}{\kern0pt}\isanewline
+\ \ \isakeyword{where}\ {\isachardoublequoteopen}\ \ {\isasymsigma}\ {\isasymlangle}Component{\isasymrangle}\isactrlsub P\isactrlsub r\isactrlsub o\isactrlsub d\isactrlsub u\isactrlsub c\isactrlsub t\ {\isacharequal}{\kern0pt}\ {\isasymlparr}\ Resource{\isachardot}{\kern0pt}tag{\isacharunderscore}{\kern0pt}attribute\ {\isacharequal}{\kern0pt}\ {\isadigit{1}}{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}int\ {\isacharcomma}{\kern0pt}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Resource{\isachardot}{\kern0pt}name\ {\isacharequal}{\kern0pt}\ name\ {\isasymsigma}\ {\isacharcomma}{\kern0pt}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Electronic{\isachardot}{\kern0pt}provider\ \ {\isacharequal}{\kern0pt}\ provider\ {\isasymsigma}\ {\isacharcomma}{\kern0pt}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Electronic{\isachardot}{\kern0pt}manufacturer\ \ {\isacharequal}{\kern0pt}\ {\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}no\ manufacturer{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}\ {\isacharcomma}{\kern0pt}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Component{\isachardot}{\kern0pt}mass\ {\isacharequal}{\kern0pt}\ mass\ {\isasymsigma}\ {\isacharcomma}{\kern0pt}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Component{\isachardot}{\kern0pt}dimensions\ {\isacharequal}{\kern0pt}\ {\isacharbrackleft}{\kern0pt}{\isacharbrackright}{\kern0pt}\ {\isasymrparr}{\isachardoublequoteclose}
+\end{isabelle}
+\end{isarbox} 
+
+
+\begin{isarbox}
+
+\begin{isabelle}
+\isacommand{definition}\ Computer{\isacharunderscore}{\kern0pt}Hardware{\isacharunderscore}{\kern0pt}to{\isacharunderscore}{\kern0pt}Hardware{\isacharunderscore}{\kern0pt}morphism\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ {\isachardoublequoteopen}Computer{\isacharunderscore}{\kern0pt}Hardware\ {\isasymRightarrow}\ Hardware{\isachardoublequoteclose}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}{\kern0pt}{\isachardoublequoteopen}{\isacharunderscore}{\kern0pt}\ {\isasymlangle}Hardware{\isasymrangle}\isactrlsub C\isactrlsub o\isactrlsub m\isactrlsub p\isactrlsub u\isactrlsub t\isactrlsub e\isactrlsub r\isactrlsub H\isactrlsub a\isactrlsub r\isactrlsub d\isactrlsub w\isactrlsub a\isactrlsub r\isactrlsub e{\isachardoublequoteclose}\ {\isacharbrackleft}{\kern0pt}{\isadigit{1}}{\isadigit{0}}{\isadigit{0}}{\isadigit{0}}{\isacharbrackright}{\kern0pt}{\isadigit{9}}{\isadigit{9}}{\isadigit{9}}{\isacharparenright}{\kern0pt}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \isakeyword{where}\ {\isachardoublequoteopen}{\isasymsigma}\ {\isasymlangle}Hardware{\isasymrangle}\isactrlsub C\isactrlsub o\isactrlsub m\isactrlsub p\isactrlsub u\isactrlsub t\isactrlsub e\isactrlsub r\isactrlsub H\isactrlsub a\isactrlsub r\isactrlsub d\isactrlsub w\isactrlsub a\isactrlsub r\isactrlsub e\ {\isacharequal}{\kern0pt}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymlparr}\ \ Resource{\isachardot}{\kern0pt}tag{\isacharunderscore}{\kern0pt}attribute\ {\isacharequal}{\kern0pt}\ {\isadigit{2}}{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}int\ {\isacharcomma}{\kern0pt}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Resource{\isachardot}{\kern0pt}name\ {\isacharequal}{\kern0pt}\ name\ {\isasymsigma}\ {\isacharcomma}{\kern0pt}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Informatic{\isachardot}{\kern0pt}description\ {\isacharequal}{\kern0pt}\ {\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}no\ description{\isacharprime}{\kern0pt}{\isacharprime}{\kern0pt}{\isacharcomma}{\kern0pt}\ \isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Hardware{\isachardot}{\kern0pt}type\ {\isacharequal}{\kern0pt}\ type\ {\isasymsigma}\ {\isacharcomma}{\kern0pt}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Hardware{\isachardot}{\kern0pt}mass\ {\isacharequal}{\kern0pt}\ mass\ {\isasymsigma}\ {\isacharcomma}{\kern0pt}\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Hardware{\isachardot}{\kern0pt}composed{\isacharunderscore}{\kern0pt}of\ {\isacharequal}{\kern0pt}\ map\ Product{\isacharunderscore}{\kern0pt}to{\isacharunderscore}{\kern0pt}Component{\isacharunderscore}{\kern0pt}morphism\ \isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isacharparenleft}{\kern0pt}composed{\isacharunderscore}{\kern0pt}of\ {\isasymsigma}{\isacharparenright}{\kern0pt}\ {\isasymrparr}{\isachardoublequoteclose}
+\end{isabelle}
+\end{isarbox}
+%\caption{An extract of a mapping definition.}
+%\label{fig-mapping-example}
+%\end{figure}
+
+
+These definitions specify how \isa{Product} or \isa{Computer{\isacharunderscore}{\kern0pt}Hardware} objects are mapped to \isa{Component} 
+or \isa{Hardware} objects defined in the reference ontology.
+This mapping shows that the structure of a (user) ontology may be arbitrarily different
+from the one of a standard ontology it references.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkuptext}
+After defining the mapping rules, now we have to deal with the question of invariant preservation. 
+The following example proofs for a simple but typical example of reformatting meta-data into another 
+format along an ontological mapping are nearly trivial:
+
+%\begin{figure}
+
+\begin{isarbox}
+
+\begin{isabelle}
+\isacommand{lemma}\ inv{\isacharunderscore}{\kern0pt}c{\isadigit{2}}{\isacharunderscore}{\kern0pt}preserved\ {\isacharcolon}{\kern0pt}\isanewline
+\ \ {\isachardoublequoteopen}c{\isadigit{2}}{\isacharunderscore}{\kern0pt}inv\ {\isasymsigma}\ {\isasymLongrightarrow}\ c{\isadigit{1}}{\isacharunderscore}{\kern0pt}inv\ {\isacharparenleft}{\kern0pt}{\isasymsigma}\ {\isasymlangle}Hardware{\isasymrangle}\isactrlsub C\isactrlsub o\isactrlsub m\isactrlsub p\isactrlsub u\isactrlsub t\isactrlsub e\isactrlsub r\isactrlsub H\isactrlsub a\isactrlsub r\isactrlsub d\isactrlsub w\isactrlsub a\isactrlsub r\isactrlsub e{\isacharparenright}{\kern0pt}{\isachardoublequoteclose}\isanewline
+\ \ \isacommand{unfolding}\ c{\isadigit{1}}{\isacharunderscore}{\kern0pt}inv{\isacharunderscore}{\kern0pt}def\ c{\isadigit{2}}{\isacharunderscore}{\kern0pt}inv{\isacharunderscore}{\kern0pt}def\ \isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ Computer{\isacharunderscore}{\kern0pt}Hardware{\isacharunderscore}{\kern0pt}to{\isacharunderscore}{\kern0pt}Hardware{\isacharunderscore}{\kern0pt}morphism{\isacharunderscore}{\kern0pt}def\isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ Product{\isacharunderscore}{\kern0pt}to{\isacharunderscore}{\kern0pt}Component{\isacharunderscore}{\kern0pt}morphism{\isacharunderscore}{\kern0pt}def\ \ \isanewline
+\ \ \isacommand{by}\ {\isacharparenleft}{\kern0pt}auto\ simp{\isacharcolon}{\kern0pt}\ comp{\isacharunderscore}{\kern0pt}def{\isacharparenright}{\kern0pt}\isanewline
+\isanewline
+\isacommand{lemma}\ Computer{\isacharunderscore}{\kern0pt}Hardware{\isacharunderscore}{\kern0pt}to{\isacharunderscore}{\kern0pt}Hardware{\isacharunderscore}{\kern0pt}total\ {\isacharcolon}{\kern0pt}\isanewline
+\ \ \ \ \ \ \ \ \ {\isachardoublequoteopen}Computer{\isacharunderscore}{\kern0pt}Hardware{\isacharunderscore}{\kern0pt}to{\isacharunderscore}{\kern0pt}Hardware{\isacharunderscore}{\kern0pt}morphism\ {\isacharbackquote}{\kern0pt}\ {\isacharparenleft}{\kern0pt}{\isacharbraceleft}{\kern0pt}X{\isachardot}{\kern0pt}\ c{\isadigit{2}}{\isacharunderscore}{\kern0pt}inv\ X{\isacharbraceright}{\kern0pt}{\isacharparenright}{\kern0pt}\ \isanewline
+\ \ \ \ \ \ {\isasymsubseteq}\ {\isacharparenleft}{\kern0pt}{\isacharbraceleft}{\kern0pt}X{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}Hardware{\isachardot}{\kern0pt}\ c{\isadigit{1}}{\isacharunderscore}{\kern0pt}inv\ X{\isacharbraceright}{\kern0pt}{\isacharparenright}{\kern0pt}{\isachardoublequoteclose}\isanewline
+\ \ \isacommand{using}\ inv{\isacharunderscore}{\kern0pt}c{\isadigit{2}}{\isacharunderscore}{\kern0pt}preserved\ \isacommand{by}\ auto
+\end{isabelle}
+\end{isarbox}
+%\caption{Proofs establishing an Invariant Preservation.}
+%\label{fig-xxx}
+%\end{figure}
+
+After unfolding
+the invariant and the morphism definitions, the preservation proof is automatic. The advantage 
+of using the Isabelle/DOF framework compared to approaches like ATL or EXPRESS-X is 
+the possibility of formally verifying the \emph{mapping rules}, \ie,  proving the preservation 
+of invariants, as we have demonstrated in the previous example.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkupsection*}
+[label = {appl_certif},type = {scholarly_paper.technical}, args={label = {appl_certif},type = {scholarly_paper.technical}, Isa_COL.text_element.level = {}, Isa_COL.text_element.referentiable = {False}, Isa_COL.text_element.variants = {{STR ''outline'', STR ''document''}}, scholarly_paper.text_section.main_author = {}, scholarly_paper.text_section.fixme_list = {}, Isa_COL.text_element.level = {}, scholarly_paper.technical.definition_list = {}, scholarly_paper.technical.status = {status.description}}]Application: CENELEC Ontology
+\end{isamarkupsection*}\isamarkuptrue%
+
+\begin{isamarkuptext}
+From its beginning, Isabelle/DOF had been used for documents containing formal models targeting 
+certifications. A major case-study from the railways domain based on the CENELEC 50128 standard
+had been published earlier (cf. \cite{DBLP:conf-ifm-BruckerW19}) 
+\footnote{Our CENELEC ontology in 
+Isabelle/DOF can be found at 
+\url{https://github.com/logicalhacking/Isabelle_DOF/blob/main/src/ontologies/CENELEC_50128/CENELEC_50128.thy}.}.
+The CENELEC Standard comprises 18 different ``Design and Test Documents''; a fully fledged description of 
+our ontology covering these is therefore out of reach of this paper.
+Rather, we present how the novel concepts such as invariants and term-antiquotations are used in 
+selected elements in this ontology.
+
+According to CENELEC Table C.1, for example, we specify the category of ``Design and Test Documents''
+as follows:
+
+\begin{isarbox}
+
+\begin{isabelle}
+\isacommand{doc{\isacharunderscore}{\kern0pt}class}\ cenelec{\isacharunderscore}{\kern0pt}document\ {\isacharequal}{\kern0pt}\ text{\isacharunderscore}{\kern0pt}element\ {\isacharplus}{\kern0pt}\isanewline
+\ \ \ phase\ \ \ \ \ \ \ \ \ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ phase\isanewline
+\ \ \ written{\isacharunderscore}{\kern0pt}by\ \ \ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ role\ \ \ \ \ \ %
+\isamarkupcmt{Annex C Table C.1%
+}\isanewline
+\ \ \ fst{\isacharunderscore}{\kern0pt}check\ \ \ \ \ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ role\ \ \ \ \ \ %
+\isamarkupcmt{Annex C Table C.1%
+}\isanewline
+\ \ \ snd{\isacharunderscore}{\kern0pt}check\ \ \ \ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ role\ \ \ \ \ \ %
+\isamarkupcmt{Annex C Table C.1%
+}\isanewline
+\ \ \ \isacommand{{\isachardot}{\kern0pt}{\isachardot}{\kern0pt}}\isacommand{{\isachardot}{\kern0pt}}\ \isanewline
+\ \ \ \isakeyword{invariant}\ must{\isacharunderscore}{\kern0pt}be{\isacharunderscore}{\kern0pt}chapter\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}text{\isacharunderscore}{\kern0pt}element{\isachardot}{\kern0pt}level\ {\isasymsigma}\ {\isacharequal}{\kern0pt}\ Some{\isacharparenleft}{\kern0pt}{\isadigit{0}}{\isacharparenright}{\kern0pt}{\isachardoublequoteclose}\isanewline
+\ \ \ \isakeyword{invariant}\ two{\isacharunderscore}{\kern0pt}eyes{\isacharunderscore}{\kern0pt}prcple\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}written{\isacharunderscore}{\kern0pt}by\ {\isasymsigma}\ {\isasymnoteq}\ fst{\isacharunderscore}{\kern0pt}check\ {\isasymsigma}\ \isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\isasymand}\ written{\isacharunderscore}{\kern0pt}by\ {\isasymsigma}\ {\isasymnoteq}\ snd{\isacharunderscore}{\kern0pt}check\ {\isasymsigma}{\isachardoublequoteclose}
+\end{isabelle}
+\end{isarbox}
+
+This class refers to the ``software phases'' the standard postulates (like \isa{SPl} for 
+``Software Planning'' or \isa{SCDES} for ``Software Component Design'') 
+which we model by a corresponding enumeration types (not shown here).  
+Similarly, the standard postulates ``roles'' that certain specified teams possess in the overall process
+(like \isa{VER} for verification and \isa{VAL} for validation). We added invariants that specify 
+certain constraints implicit in the standard: for example, a \isa{cenelec{\isacharunderscore}{\kern0pt}document} must have
+the textual structure of a chapter (the \emph{level}-attribute is inherited from an underlying 
+ontology library specifying basic text-elements) as well as the two-eyes-principle between authors and
+checkers of these chapters.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkuptext}
+The concrete sub-class of  \isa{cenelec{\isacharunderscore}{\kern0pt}document} is the class \isa{SWIS}
+(``software interface specification'') as shown below, 
+which provides the role assignment required for this document type: 
+
+\begin{isarbox}
+
+\begin{isabelle}
+\isanewline
+\isanewline
+\isacommand{doc{\isacharunderscore}{\kern0pt}class}\ SWIS\ {\isacharequal}{\kern0pt}\ cenelec{\isacharunderscore}{\kern0pt}document\ {\isacharplus}{\kern0pt}\ %
+\isamarkupcmt{software interface specification%
+}\ \isanewline
+\ \ \ phase\ \ \ \ \ \ \ \ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}phase{\isachardoublequoteclose}\ \ {\isacharless}{\kern0pt}{\isacharequal}{\kern0pt}\ {\isachardoublequoteopen}SCDES{\isachardoublequoteclose}\ \ \ \ \ \ written{\isacharunderscore}{\kern0pt}by\ \ \ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}role{\isachardoublequoteclose}\ \ \ {\isacharless}{\kern0pt}{\isacharequal}{\kern0pt}\ {\isachardoublequoteopen}DES{\isachardoublequoteclose}\isanewline
+\ \ \ fst{\isacharunderscore}{\kern0pt}check\ \ \ \ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}role{\isachardoublequoteclose}\ \ \ {\isacharless}{\kern0pt}{\isacharequal}{\kern0pt}\ {\isachardoublequoteopen}VER{\isachardoublequoteclose}\ \ \ \ \ \ \ \ \ \ \ snd{\isacharunderscore}{\kern0pt}check\ \ \ \ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}role{\isachardoublequoteclose}\ \ \ {\isacharless}{\kern0pt}{\isacharequal}{\kern0pt}\ {\isachardoublequoteopen}VAL{\isachardoublequoteclose}\isanewline
+\ \ \ components{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}SWIS{\isacharunderscore}{\kern0pt}E\ list{\isachardoublequoteclose}
+\end{isabelle}
+\end{isarbox} 
+The structural constraints expressed so far can in principle be covered by any 
+hand-coded validation process and suitable editing support (\eg,  Protégé \cite{protege}). 
+However, a closer look at the class \isa{SWIS{\isacharunderscore}{\kern0pt}E} (``software interface specification 
+element'') referenced in the \isa{components}-attribute reveals the unique power of Isabelle/DOF;
+rather than saying ``there must be a pre-condition'', Isabelle/DOF can be far more precise:
+
+\begin{isarbox}
+
+\begin{isabelle}
+\isacommand{doc{\isacharunderscore}{\kern0pt}class}\ SWIS{\isacharunderscore}{\kern0pt}E\ {\isacharequal}{\kern0pt}\isanewline
+\ \ \ op{\isacharunderscore}{\kern0pt}name\ \ \ \ \ \ \ \ \ \ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}string{\isachardoublequoteclose}\isanewline
+\ \ \ op{\isacharunderscore}{\kern0pt}args{\isacharunderscore}{\kern0pt}res\ \ \ \ \ \ \ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}{\isacharparenleft}{\kern0pt}string\ {\isasymtimes}\ typ{\isacharparenright}{\kern0pt}\ list\ {\isasymtimes}\ typ{\isachardoublequoteclose}\ %
+\isamarkupcmt{args and result type%
+}\isanewline
+\ \ \ pre{\isacharunderscore}{\kern0pt}cond\ \ \ \ \ \ \ \ \ \ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}{\isacharparenleft}{\kern0pt}string\ {\isasymtimes}\ thm{\isacharparenright}{\kern0pt}\ list{\isachardoublequoteclose}\ \ \ \ \ \ \ \ %
+\isamarkupcmt{labels and predicates%
+}\isanewline
+\ \ \ post{\isacharunderscore}{\kern0pt}cond\ \ \ \ \ \ \ \ \ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}{\isacharparenleft}{\kern0pt}string\ {\isasymtimes}\ thm{\isacharparenright}{\kern0pt}\ list{\isachardoublequoteclose}\ \ \ \ \ \ \ \ %
+\isamarkupcmt{labels and predicates%
+}\isanewline
+\ \ \ \isakeyword{invariant}\ well{\isacharunderscore}{\kern0pt}formed{\isacharunderscore}{\kern0pt}pre\ {\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ {\isachardoublequoteopen}{\isasymforall}cond\ {\isasymin}\ set{\isacharparenleft}{\kern0pt}map\ snd\ {\isacharparenleft}{\kern0pt}pre{\isacharunderscore}{\kern0pt}cond\ {\isasymsigma}{\isacharparenright}{\kern0pt}{\isacharparenright}{\kern0pt}{\isachardot}{\kern0pt}\ \isanewline
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ iswff\isactrlsub p\isactrlsub r\isactrlsub e\ {\isacharparenleft}{\kern0pt}op{\isacharunderscore}{\kern0pt}args{\isacharunderscore}{\kern0pt}res\ {\isasymsigma}{\isacharparenright}{\kern0pt}\ {\isacharparenleft}{\kern0pt}cond{\isacharparenright}{\kern0pt}{\isachardoublequoteclose}\isanewline
+\ \ \ \isakeyword{invariant}\ well{\isacharunderscore}{\kern0pt}formed{\isacharunderscore}{\kern0pt}post{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}\ \isacommand{{\isachardot}{\kern0pt}{\isachardot}{\kern0pt}}\isacommand{{\isachardot}{\kern0pt}}
+\end{isabelle}
+\end{isarbox}
+where the constant \isa{iswff\isactrlsub p\isactrlsub r\isactrlsub e} is bound to a function at the SML-level, that
+is executed during the evaluation phase of these invariants and that checks:
+
+%
+\begin{itemize}%
+\item Any \emph{cond} is indeed a valid definition in the global logical context
+(taking HOL-libraries but also the concrete certification target model into account).
+
+\item Any such HOL definition has the syntactic form:
+\vspace{-0.3cm}
+
+\begin{isabelle}
+\ \ \ \ \ \ \ \ \ \ pre{\isacharunderscore}{\kern0pt}{\isacharless}{\kern0pt}op{\isacharunderscore}{\kern0pt}name{\isachargreater}{\kern0pt}\ {\isacharparenleft}{\kern0pt}a\isactrlsub {\isadigit{1}}{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}{\isasymtau}\isactrlsub {\isadigit{1}}{\isacharparenright}{\kern0pt}\ {\isachardot}{\kern0pt}{\isachardot}{\kern0pt}{\isachardot}{\kern0pt}\ {\isacharparenleft}{\kern0pt}a\isactrlsub n{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}{\isasymtau}\isactrlsub n{\isacharparenright}{\kern0pt}\ {\isasymequiv}\ {\isacharless}{\kern0pt}predicate{\isachargreater}{\kern0pt}{\isacharcomma}{\kern0pt}
+\end{isabelle}
+\vspace{-0.3cm}
+where \isa{{\isacharparenleft}{\kern0pt}a\isactrlsub {\isadigit{1}}{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}{\isasymtau}\isactrlsub {\isadigit{1}}{\isacharparenright}{\kern0pt}\ {\isachardot}{\kern0pt}{\isachardot}{\kern0pt}{\isachardot}{\kern0pt}\ {\isacharparenleft}{\kern0pt}a\isactrlsub n{\isacharcolon}{\kern0pt}{\isacharcolon}{\kern0pt}{\isasymtau}\isactrlsub n{\isacharparenright}{\kern0pt}} correspond to the argument list.
+
+\item The case for the post-condition is treated analogously. %
+\end{itemize}
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkuptext}
+Note that this technique can also be applied to impose specific syntactic constraints on
+types. For example, via the SI-package available in the Isabelle AFP
+\footnote{\url{https://www.isa-afp.org/entries/Physical_Quantities.html}}, it is possible to express
+that the result of some calculation is of type
+\isa{{\isadigit{3}}{\isadigit{2}}\ unsigned\ {\isacharbrackleft}{\kern0pt}m\isactrlsup {\isasymcdot}s\isactrlsup {\isacharminus}{\kern0pt}\isactrlsup {\isadigit{2}}{\isacharbrackright}{\kern0pt}}, so a 32-bit natural representing an acceleration in the SI-system.
+Therefore it is possible to impose that certain values refer to physical dimensions
+measured in a concrete metrological system.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkupsection*}
+[label = {rw},type = {scholarly_paper.related_work}, args={label = {rw},type = {scholarly_paper.related_work}, Isa_COL.text_element.level = {}, Isa_COL.text_element.referentiable = {False}, Isa_COL.text_element.variants = {{STR ''outline'', STR ''document''}}, scholarly_paper.text_section.main_author = {}, scholarly_paper.text_section.fixme_list = {}, Isa_COL.text_element.level = {}, scholarly_paper.text_section.main_author = {}, scholarly_paper.text_section.main_author = {}}]Related Work
+\end{isamarkupsection*}\isamarkuptrue%
+
+\begin{isamarkuptext}
+There are a number of approaches to use ontologies for structuring the link between
+information and knowledge, and to make it amenable to 
+ ``semantic'' search in or consistency checking of documents.
+Some are targeting mathematical libraries,
+like the search engine \url{http://shinh.org/wfs} which uses clever text-based search methods in 
+a large number of formulas, agnostic of their logical context and of formal proof,
+or the OAF project \cite{KohlhaseR21} which developed a common ontological format,
+called  OMDoc/MMT, and six \emph{export} functions from major ITP systems into it.
+The more difficult task to develop import functions has not been addressed, not to mention
+the construction of imported proofs in a native tactic proof format. Rather, the emphasis
+was put on building a server infrastructure based on conventional, rather heavy-weight
+database and OWL technology. Our approach targets so far only one ITP system and
+its libraries, and emphasizes type-safeness, expressive power and “depth” of meta-data,
+which is adapted to the specific needs of ITP systems and theory developments.
+
+There are also a number of proposals of ontologies targeting mathematics:
+the OntoMath\textsuperscript{PRO} \cite{Nevzorova2014OntoMathPO} proposes a 
+``taxonomy of the fields of mathematics'' (p. 6).
+In total, OntoMath\textsuperscript{PRO} contains the daunting number of 3,449 classes,
+which is in part due to the need to compensate
+the lack of general datatype definition methods for meta-data.
+It is nevertheless an interesting starting point for a future development of a mathematics ontology
+in the Isabelle/DOF framework.
+Other ontologies worth mentioning are DBpedia \cite{10.1007/978-3-540-76298-0_52}, 
+which provides with the \emph{SPARQL endpoint}  \url{http://dbpedia.org/sparql} a search engine, 
+and the more general ScienceWISE \footnote{\url{http://sciencewise.info/ontology/}.}
+that allows users to introduce their own category concepts.
+Both suffer from the lack of deeper meta-data modeling, and the latter is still at the beginning
+(ScienceWISE marks the Mathematics part as ``under construction'').
+
+Regarding the use of formal methods to formalise standards, the Event-B method was proposed by
+Fotso et al. \cite{FotsoFLM18} for specifications of the hybrid ERTMS/ETCS level 3 standard,
+in which requirements are specified using SysML/KAOS goal diagrams. The latter were translated into 
+Event-B, where domain-specific properties were specified by ontologies.
+In another case, Mendil et al. \cite{MendilASMP21} propose an Event-B framework for formalising standard
+ conformance through formal modelling of standards as ontologies. 
+The proposed approach was exemplified on ARINC 661 standard
+in the context of a weather radar system application.
+These works are essentially interested in expressing ontological concepts in a formal method 
+but do not explicitly deal with the formalisation of rules/invariants defined in ontologies. 
+The question of ontology-mappings is not addressed.
+
+%   \url{https://github.com/CLLKazan/OntoMathPro} 
+%
+% ITEM The "Ontology for Engineering Mathematics" 
+%  \url{https://tomgruber.org/writing/an-ontology-for-engineering-mathematics} is
+%  is  unfortunately only a half-baked approach to model physical quantities
+%  and SI-measurements. Instead of using ontologies for this purpose, there
+%  exist approaches based on strong type systems
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkupsection*}
+[label = {concl},type = {scholarly_paper.conclusion}, args={label = {concl},type = {scholarly_paper.conclusion}, Isa_COL.text_element.level = {}, Isa_COL.text_element.referentiable = {False}, Isa_COL.text_element.variants = {{STR ''outline'', STR ''document''}}, scholarly_paper.text_section.main_author = {}, scholarly_paper.text_section.fixme_list = {}, Isa_COL.text_element.level = {}, scholarly_paper.text_section.main_author = {}}]Conclusion and Future Work
+\end{isamarkupsection*}\isamarkuptrue%
+
+\begin{isamarkuptext}
+We presented Isabelle/DOF, an ontology framework 
+deeply integrating continuous-check\slash continuous-build functionality into
+the formal development process in HOL. The novel feature of term-contexts in Isabelle/DOF,
+which permits term-antiquotations elaborated in the parsing process, paves the
+way for the abstract specification of meta-data constraints as well the possibility
+of advanced search in the meta-data of document elements. Thus it profits and
+extends  Isabelle's document-centric view on formal development.
+
+Many ontological languages such as OWL as well as the meta-modeling technology 
+available for UML/OCL provide concepts for semantic rules and constraints, but
+leave the validation checking usually to external tools (if implementing them at all).
+This limits their practical usefulness drastically. Our approach treats invariants as 
+first-class citizens, and turns them into an object of formal study in, for example, 
+ontological mappings. Such a technology exists, to our knowledge, for the first time.
+
+Our experiments with adaptations of existing ontologies from engineering and mathematics
+show that Isabelle/DOF's ODL has sufficient expressive power to cover all aspects
+of languages such as OWL (with perhaps the exception of multiple inheritance on classes).
+However, these ontologies have been developed specifically \emph{in} OWL and target
+its specific support, the Protégé editor \cite{protege}. We argue that Isabelle/DOF might ask 
+for a re-engineering of these ontologies: less deep hierarchies, rather deeper structure 
+in meta-data and stronger invariants.
+\end{isamarkuptext}\isamarkuptrue%
+
+\begin{isamarkuptext}
+We plan to complement Isabelle/DOF with incremental LaTeX generation and a previewing facility
+that will further increase the usability of our framework for the ontology-conform editing
+of formal content, be it in the engineering or the mathematics domain
+(this paper has been edited in Isabelle/DOF, of course).
+
+Another line of future application is to increase the ``depth'' of built-in term antiquotations such
+as \isa{{\isacharat}{\kern0pt}\isacommand{{\isacharbraceleft}{\kern0pt}}\isacommand{typ}\ {\isacartoucheopen}{\isacharprime}{\kern0pt}{\isasymtau}{\isacartoucheclose}\isacommand{{\isacharbraceright}{\kern0pt}}}, \isa{{\isacharat}{\kern0pt}\isacommand{{\isacharbraceleft}{\kern0pt}}\isacommand{term}\ {\isacartoucheopen}a\ {\isacharplus}{\kern0pt}\ b{\isacartoucheclose}\isacommand{{\isacharbraceright}{\kern0pt}}} and \isa{{\isacharat}{\kern0pt}\isacommand{{\isacharbraceleft}{\kern0pt}}\isacommand{thm}\ {\isacartoucheopen}HOL{\isachardot}{\kern0pt}refl{\isacartoucheclose}\isacommand{{\isacharbraceright}{\kern0pt}}}, which are currently implemented 
+just as validations in the current logical context. In the future, they could  optionally be expanded 
+to the types, terms and theorems (with proof objects attached) in a meta-model of the Isabelle Kernel 
+such as the one presented in \cite{10.1007/978-3-030-79876-5_6} (also available in the AFP). 
+This will allow for definitions of query-functions in, \eg, proof-objects, and pave the way 
+to annotate them with typed meta-data. Such a technology could be relevant for the interoperability 
+of proofs across different ITP platforms.
+\end{isamarkuptext}\isamarkuptrue%
+%
+\isadelimtheory
+%
+\endisadelimtheory
+%
+\isatagtheory
+%
+\endisatagtheory
+{\isafoldtheory}%
+%
+\isadelimtheory
+%
+\endisadelimtheory
+%
+\end{isabellebody}%
+\endinput
+%:%file=paper.tex%:%
+%:%32=81%:%
+%:%36=86%:%
+%:%40=91%:%
+%:%44=94%:%
+%:%48=98%:%
+%:%49=99%:%
+%:%50=100%:%
+%:%51=101%:%
+%:%52=102%:%
+%:%53=103%:%
+%:%54=104%:%
+%:%55=105%:%
+%:%56=106%:%
+%:%57=107%:%
+%:%58=108%:%
+%:%59=109%:%
+%:%60=110%:%
+%:%61=111%:%
+%:%62=112%:%
+%:%63=113%:%
+%:%64=114%:%
+%:%68=116%:%
+%:%72=118%:%
+%:%73=119%:%
+%:%74=120%:%
+%:%75=121%:%
+%:%76=122%:%
+%:%77=123%:%
+%:%78=124%:%
+%:%79=125%:%
+%:%80=126%:%
+%:%81=127%:%
+%:%82=128%:%
+%:%83=129%:%
+%:%84=130%:%
+%:%85=131%:%
+%:%88=134%:%
+%:%89=135%:%
+%:%90=136%:%
+%:%91=137%:%
+%:%92=138%:%
+%:%93=139%:%
+%:%94=140%:%
+%:%95=141%:%
+%:%96=142%:%
+%:%97=143%:%
+%:%98=144%:%
+%:%99=145%:%
+%:%100=146%:%
+%:%101=147%:%
+%:%105=149%:%
+%:%107=150%:%
+%:%108=151%:%
+%:%110=152%:%
+%:%111=153%:%
+%:%113=154%:%
+%:%115=155%:%
+%:%116=156%:%
+%:%117=157%:%
+%:%118=158%:%
+%:%123=161%:%
+%:%124=162%:%
+%:%125=163%:%
+%:%126=164%:%
+%:%127=165%:%
+%:%128=166%:%
+%:%129=167%:%
+%:%130=168%:%
+%:%131=169%:%
+%:%132=170%:%
+%:%133=171%:%
+%:%134=172%:%
+%:%135=173%:%
+%:%141=177%:%
+%:%142=178%:%
+%:%143=179%:%
+%:%144=180%:%
+%:%145=181%:%
+%:%146=182%:%
+%:%147=183%:%
+%:%148=184%:%
+%:%149=185%:%
+%:%150=186%:%
+%:%151=187%:%
+%:%152=188%:%
+%:%153=189%:%
+%:%154=190%:%
+%:%159=193%:%
+%:%160=194%:%
+%:%165=197%:%
+%:%166=198%:%
+%:%167=199%:%
+%:%168=200%:%
+%:%169=201%:%
+%:%170=202%:%
+%:%171=203%:%
+%:%172=204%:%
+%:%176=234%:%
+%:%180=235%:%
+%:%181=236%:%
+%:%182=237%:%
+%:%184=238%:%
+%:%185=239%:%
+%:%186=240%:%
+%:%191=242%:%
+%:%196=245%:%
+%:%197=246%:%
+%:%198=247%:%
+%:%199=248%:%
+%:%200=249%:%
+%:%201=250%:%
+%:%202=251%:%
+%:%203=252%:%
+%:%204=253%:%
+%:%205=254%:%
+%:%206=255%:%
+%:%207=256%:%
+%:%208=257%:%
+%:%209=258%:%
+%:%210=259%:%
+%:%211=260%:%
+%:%215=266%:%
+%:%219=286%:%
+%:%223=288%:%
+%:%223=289%:%
+%:%224=290%:%
+%:%225=291%:%
+%:%226=292%:%
+%:%227=293%:%
+%:%228=294%:%
+%:%229=295%:%
+%:%230=296%:%
+%:%231=297%:%
+%:%232=298%:%
+%:%233=299%:%
+%:%234=300%:%
+%:%235=301%:%
+%:%236=302%:%
+%:%237=303%:%
+%:%238=304%:%
+%:%239=305%:%
+%:%243=322%:%
+%:%247=324%:%
+%:%248=325%:%
+%:%252=326%:%
+%:%254=327%:%
+%:%255=328%:%
+%:%257=329%:%
+%:%258=330%:%
+%:%259=331%:%
+%:%260=332%:%
+%:%265=334%:%
+%:%266=335%:%
+%:%267=336%:%
+%:%268=337%:%
+%:%269=338%:%
+%:%270=339%:%
+%:%271=340%:%
+%:%272=341%:%
+%:%277=344%:%
+%:%278=345%:%
+%:%279=346%:%
+%:%280=347%:%
+%:%284=353%:%
+%:%288=355%:%
+%:%289=356%:%
+%:%290=357%:%
+%:%291=358%:%
+%:%292=359%:%
+%:%296=396%:%
+%:%297=397%:%
+%:%301=398%:%
+%:%303=399%:%
+%:%308=401%:%
+%:%309=402%:%
+%:%310=403%:%
+%:%311=404%:%
+%:%312=405%:%
+%:%321=407%:%
+%:%333=408%:%
+%:%334=409%:%
+%:%338=410%:%
+%:%340=411%:%
+%:%345=413%:%
+%:%346=414%:%
+%:%347=415%:%
+%:%348=416%:%
+%:%349=417%:%
+%:%350=418%:%
+%:%351=419%:%
+%:%355=444%:%
+%:%359=503%:%
+%:%360=504%:%
+%:%361=505%:%
+%:%362=506%:%
+%:%363=507%:%
+%:%364=508%:%
+%:%365=509%:%
+%:%366=510%:%
+%:%367=511%:%
+%:%368=512%:%
+%:%372=513%:%
+%:%374=514%:%
+%:%376=515%:%
+%:%377=516%:%
+%:%379=517%:%
+%:%380=518%:%
+%:%381=519%:%
+%:%383=520%:%
+%:%385=521%:%
+%:%389=522%:%
+%:%391=523%:%
+%:%392=524%:%
+%:%396=526%:%
+%:%397=527%:%
+%:%398=528%:%
+%:%399=529%:%
+%:%400=530%:%
+%:%401=531%:%
+%:%402=532%:%
+%:%403=533%:%
+%:%407=541%:%
+%:%408=542%:%
+%:%409=543%:%
+%:%439=568%:%
+%:%440=569%:%
+%:%441=570%:%
+%:%442=571%:%
+%:%443=572%:%
+%:%444=573%:%
+%:%445=574%:%
+%:%458=582%:%
+%:%459=583%:%
+%:%460=584%:%
+%:%461=585%:%
+%:%462=586%:%
+%:%463=587%:%
+%:%464=588%:%
+%:%465=589%:%
+%:%466=590%:%
+%:%467=591%:%
+%:%468=592%:%
+%:%469=593%:%
+%:%470=594%:%
+%:%474=608%:%
+%:%478=615%:%
+%:%479=616%:%
+%:%480=617%:%
+%:%481=618%:%
+%:%482=619%:%
+%:%486=632%:%
+%:%490=657%:%
+%:%491=658%:%
+%:%492=659%:%
+%:%493=660%:%
+%:%494=661%:%
+%:%495=662%:%
+%:%496=663%:%
+%:%497=664%:%
+%:%498=665%:%
+%:%502=672%:%
+%:%506=676%:%
+%:%507=677%:%
+%:%508=678%:%
+%:%509=679%:%
+%:%510=680%:%
+%:%511=681%:%
+%:%512=682%:%
+%:%513=683%:%
+%:%514=684%:%
+%:%515=685%:%
+%:%516=686%:%
+%:%517=687%:%
+%:%518=688%:%
+%:%519=689%:%
+%:%520=690%:%
+%:%521=691%:%
+%:%522=692%:%
+%:%523=693%:%
+%:%524=694%:%
+%:%525=695%:%
+%:%526=696%:%
+%:%530=704%:%
+%:%531=705%:%
+%:%532=706%:%
+%:%533=707%:%
+%:%534=708%:%
+%:%535=709%:%
+%:%536=710%:%
+%:%537=711%:%
+%:%538=712%:%
+%:%539=713%:%
+%:%540=714%:%
+%:%544=721%:%
+%:%548=733%:%
+%:%549=734%:%
+%:%550=735%:%
+%:%551=736%:%
+%:%552=737%:%
+%:%553=738%:%
+%:%554=739%:%
+%:%555=740%:%
+%:%556=741%:%
+%:%557=742%:%
+%:%561=744%:%
+%:%562=745%:%
+%:%563=746%:%
+%:%564=747%:%
+%:%571=751%:%
+%:%601=840%:%
+%:%602=841%:%
+%:%603=842%:%
+%:%604=843%:%
+%:%605=844%:%
+%:%606=845%:%
+%:%607=846%:%
+%:%608=847%:%
+%:%609=848%:%
+%:%610=849%:%
+%:%611=850%:%
+%:%612=851%:%
+%:%613=852%:%
+%:%614=853%:%
+%:%618=856%:%
+%:%619=857%:%
+%:%620=858%:%
+%:%621=859%:%
+%:%637=870%:%
+%:%638=871%:%
+%:%639=872%:%
+%:%640=873%:%
+%:%641=874%:%
+%:%642=875%:%
+%:%643=876%:%
+%:%644=877%:%
+%:%645=878%:%
+%:%646=879%:%
+%:%647=880%:%
+%:%648=881%:%
+%:%649=882%:%
+%:%650=883%:%
+%:%651=884%:%
+%:%676=904%:%
+%:%677=905%:%
+%:%678=906%:%
+%:%679=907%:%
+%:%680=908%:%
+%:%681=909%:%
+%:%682=910%:%
+%:%683=911%:%
+%:%684=912%:%
+%:%685=913%:%
+%:%686=914%:%
+%:%687=915%:%
+%:%688=916%:%
+%:%689=917%:%
+%:%693=922%:%
+%:%694=923%:%
+%:%695=924%:%
+%:%696=925%:%
+%:%697=926%:%
+%:%698=927%:%
+%:%699=928%:%
+%:%700=929%:%
+%:%714=938%:%
+%:%715=939%:%
+%:%732=951%:%
+%:%733=952%:%
+%:%734=953%:%
+%:%735=954%:%
+%:%736=955%:%
+%:%737=956%:%
+%:%738=957%:%
+%:%739=958%:%
+%:%740=959%:%
+%:%741=960%:%
+%:%745=964%:%
+%:%746=965%:%
+%:%747=966%:%
+%:%748=967%:%
+%:%749=968%:%
+%:%766=980%:%
+%:%767=981%:%
+%:%768=982%:%
+%:%769=983%:%
+%:%770=984%:%
+%:%771=985%:%
+%:%772=986%:%
+%:%773=987%:%
+%:%774=988%:%
+%:%775=989%:%
+%:%779=1052%:%
+%:%783=1054%:%
+%:%784=1055%:%
+%:%785=1056%:%
+%:%786=1057%:%
+%:%787=1058%:%
+%:%788=1059%:%
+%:%789=1060%:%
+%:%790=1061%:%
+%:%791=1062%:%
+%:%792=1063%:%
+%:%793=1064%:%
+%:%794=1065%:%
+%:%795=1066%:%
+%:%816=1076%:%
+%:%817=1077%:%
+%:%818=1078%:%
+%:%819=1079%:%
+%:%820=1080%:%
+%:%821=1081%:%
+%:%822=1082%:%
+%:%823=1083%:%
+%:%824=1084%:%
+%:%825=1085%:%
+%:%826=1086%:%
+%:%830=1088%:%
+%:%831=1089%:%
+%:%832=1090%:%
+%:%846=1096%:%
+%:%847=1097%:%
+%:%848=1098%:%
+%:%849=1099%:%
+%:%850=1100%:%
+%:%851=1101%:%
+%:%872=1111%:%
+%:%873=1112%:%
+%:%877=1113%:%
+%:%878=1114%:%
+%:%880=1115%:%
+%:%881=1116%:%
+%:%886=1118%:%
+%:%887=1119%:%
+%:%889=1120%:%
+%:%894=1122%:%
+%:%895=1123%:%
+%:%896=1124%:%
+%:%897=1125%:%
+%:%898=1126%:%
+%:%899=1127%:%
+%:%900=1128%:%
+%:%904=1131%:%
+%:%908=1133%:%
+%:%909=1134%:%
+%:%910=1135%:%
+%:%911=1136%:%
+%:%912=1137%:%
+%:%913=1138%:%
+%:%914=1139%:%
+%:%915=1140%:%
+%:%916=1141%:%
+%:%917=1142%:%
+%:%918=1143%:%
+%:%919=1144%:%
+%:%920=1145%:%
+%:%921=1146%:%
+%:%922=1147%:%
+%:%923=1148%:%
+%:%924=1149%:%
+%:%925=1150%:%
+%:%926=1151%:%
+%:%927=1152%:%
+%:%928=1153%:%
+%:%929=1154%:%
+%:%930=1155%:%
+%:%931=1156%:%
+%:%932=1157%:%
+%:%933=1158%:%
+%:%934=1159%:%
+%:%935=1160%:%
+%:%936=1161%:%
+%:%937=1162%:%
+%:%938=1163%:%
+%:%939=1164%:%
+%:%940=1165%:%
+%:%941=1166%:%
+%:%942=1167%:%
+%:%943=1168%:%
+%:%944=1169%:%
+%:%945=1170%:%
+%:%946=1171%:%
+%:%947=1172%:%
+%:%948=1173%:%
+%:%949=1174%:%
+%:%950=1175%:%
+%:%951=1176%:%
+%:%952=1177%:%
+%:%953=1178%:%
+%:%954=1179%:%
+%:%955=1180%:%
+%:%956=1181%:%
+%:%960=1184%:%
+%:%964=1185%:%
+%:%965=1186%:%
+%:%966=1187%:%
+%:%967=1188%:%
+%:%968=1189%:%
+%:%969=1190%:%
+%:%970=1191%:%
+%:%971=1192%:%
+%:%972=1193%:%
+%:%973=1194%:%
+%:%974=1195%:%
+%:%975=1196%:%
+%:%976=1197%:%
+%:%977=1198%:%
+%:%978=1199%:%
+%:%979=1200%:%
+%:%980=1201%:%
+%:%981=1202%:%
+%:%982=1203%:%
+%:%983=1204%:%
+%:%984=1205%:%
+%:%985=1206%:%
+%:%989=1211%:%
+%:%990=1212%:%
+%:%991=1213%:%
+%:%992=1214%:%
+%:%993=1215%:%
+%:%994=1216%:%
+%:%995=1217%:%
+%:%996=1218%:%
+%:%997=1219%:%
+%:%998=1220%:%
+%:%999=1221%:%
+%:%1000=1222%:%
+%:%1001=1223%:%

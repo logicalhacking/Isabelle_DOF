@@ -2,13 +2,13 @@
 theory "paper"
   imports "Isabelle_DOF.scholarly_paper"
 begin
-
+ 
 open_monitor*[this::article]
 
 declare[[ strict_monitor_checking  = false]]
 declare[[ Definition_default_class = "definition"]]
-declare[[ Lemma_default_class      = "lemma"]]
 declare[[ Theorem_default_class    = "theorem"]]
+declare[[ Lemma_default_class      = "lemma"]]
 
 define_shortcut* hol      \<rightleftharpoons> \<open>HOL\<close>
                  isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
