@@ -111,12 +111,6 @@ check_afp_entries() {
     fi
 }
 
-register(){
-    echo "  - Registering Isabelle/DOF"
-    $ISABELLE_TOOL components -u "$PWD"    
-}
-
-
 while [ $# -gt 0 ]
 do
     case "$1" in
@@ -142,12 +136,12 @@ AFP_DATE="$($ISABELLE_TOOL options -g dof_afp)"
 AFP_URL="https://www.isa-afp.org/release/"$AFP_DATE".tar.gz"
 
 echo ""
-echo "Isabelle/DOF Installer"
-echo "======================"
+echo "Isabelle/DOF AFP Installation Utility"
+echo "====================================="
 check_isabelle_version
 check_afp_entries
-register
-echo "* Installation successful. Enjoy Isabelle/DOF, you can build the session"
-echo "  Isabelle/DOF and all example documents by executing:"
+echo "* AFP Installation successful."
+echo "  You should now be able to enjoy Isabelle/DOF by building its session"
+echo "  and all example documents by executing:"
 echo "  $ISABELLE_TOOL build -D ."
 exit 0
