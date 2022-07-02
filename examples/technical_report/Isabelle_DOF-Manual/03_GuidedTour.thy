@@ -69,8 +69,7 @@ text\<open>
 subsubsection*[isadof::technical]\<open>Installing \<^isadof>\<close>
 text\<open>
   In the following, we assume that you already downloaded the \<^isadof> distribution 
-  (\href{\isadofarchiveurl}{\isadofarchiven}) from the \<^isadof> web site. The main steps for 
-  installing are extracting the \<^isadof> distribution and calling its \<^boxed_bash>\<open>install-afp\<close> script. 
+  (\href{\isadofarchiveurl}{\isadofarchiven}) from the \<^isadof> web site. 
   We start by extracting the \<^isadof> archive:
 @{boxed_bash [display]\<open>ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë\<close>}
 This will create a directory \texttt{\isadofdirn} containing \<^isadof> distribution.

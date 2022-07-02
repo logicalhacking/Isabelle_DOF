@@ -18,9 +18,15 @@ Isabelle/DOF has three major prerequisites:
   AFP following the instructions given at
   <https://www.isa-afp.org/using.html>. For your convenience, we also
   provide a script that only installs the two entries required by
-  Isabelle/DOF into the local Isabelle/DOF directory. You can use this
-  script as follows:
+  Isabelle/DOF into the local Isabelle/DOF directory. First, Isabelle/DOF
+  needs to be registered as an Isabelle component:
+  
+  ```console
+  foo@bar:~$ isabelle components -u `pwd`
+  ```  
 
+  Thereafter, the AFP entries can be installed as follows:
+  
   ```console
   foo@bar:~$ isabelle env ./install-afp
   ```  
@@ -32,7 +38,9 @@ Isabelle/DOF has three major prerequisites:
 
 Isabelle/DOF is provided as an Isabelle component. After installing the
 prerequisites, change into the directory containing Isabelle/DOF (this should be
-the directory containing this `README.md` file) and execute
+the directory containing this `README.md` file) and execute (if you executed
+this command already during the installation of the pre-requisites, you 
+can skip it now):
 
 ```console
 foo@bar:~$ isabelle components -u `pwd`
