@@ -132,6 +132,17 @@ fi
 ACTUAL_ISABELLE_VERSION=`$ISABELLE_TOOL version`
 
 ISABELLE_VERSION="Isabelle$($ISABELLE_TOOL options -g dof_isabelle)"
+
+if [ ${ISABELLE_VERSION} = "Isabelle" ];
+then
+   echo "Error: cannot find Isabelle/DOF configuration, please check that you"
+   echo "       registered Isabelle/DOF as an Isabelle component, e.g., using" 
+   echo "       isabelle components -u $PWD"
+   exit 1
+fi
+
+
+
 AFP_DATE="$($ISABELLE_TOOL options -g dof_afp)"
 AFP_URL="https://www.isa-afp.org/release/"$AFP_DATE".tar.gz"
 
