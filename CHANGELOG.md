@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-## [1.3.0] - 2022-07-08
+## 1.3.0 - 2022-07-08
 
 ### Changed
 
@@ -24,9 +24,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   of installing the required AFP entries.
 - `mkroot_DOF` has been renamed to `dof_mkroot` (and reimplemented in Scala).
 
-## [1.2.0] - 2022-03-26
+## 1.2.0 - 2022-03-26
 
-## [1.1.0] - 2021-03-20
+## 1.1.0 - 2021-03-20
 
 ### Added
 
