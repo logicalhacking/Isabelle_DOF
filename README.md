@@ -123,6 +123,13 @@ Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
 For releases, signed archives including a PDF version of the Isabelle/DOF manual
 are available:
 
+* Isabelle/DOF 1.3.0/Isabelle2021-1
+  * [Isabelle_DOF-1.3.0_Isabelle2021-1.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.pdf)
+  * [Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz)
+  * [Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz.asc](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz.asc)
+
+### Older Releases 
+
 * Isabelle/DOF 1.2.0/Isabelle2021
   * [Isabelle_DOF-1.2.0_Isabelle2021.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.2.0_Isabelle2021.pdf)
   * [Isabelle_DOF-1.2.0_Isabelle2021.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.2.0_Isabelle2021.tar.xz)
