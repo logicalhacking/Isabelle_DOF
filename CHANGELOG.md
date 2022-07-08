@@ -44,6 +44,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - First public release
 
 [Unreleased]: https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/compare/v1.3.0/Isabelle2021...HEAD
-[v1.3.0]: https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/compare/v1.2.0/Isabelle2021...v1.3.0/Isabelle2021-1
-[v1.2.0]: https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/compare/v1.1.0/Isabelle2021...v1.2.0/Isabelle2021
-[v1.1.0]: https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/compare/v1.0.0/Isabelle2019...v1.1.0/Isabelle2021
+[1.3.0]: https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/compare/v1.2.0/Isabelle2021...v1.3.0/Isabelle2021-1
+[1.2.0]: https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/compare/v1.1.0/Isabelle2021...v1.2.0/Isabelle2021
+[1.1.0]: https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/compare/v1.0.0/Isabelle2019...v1.1.0/Isabelle2021
