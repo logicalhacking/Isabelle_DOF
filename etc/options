@@ -8,7 +8,7 @@ public option dof_template : string = "scrreprt-modern"
 public option dof_ontologies : string = "Isabelle_DOF.technical_report Isabelle_DOF.scholarly_paper"
   -- "Isabelle/DOF ontologies (separated by blanks)"
 
-option dof_version : string = "1.3.0" 
+option dof_version : string = "Unreleased" 
   -- "Isabelle/DOF version" 
      (* "Unreleased" for development, semantic version for releases *)
 
