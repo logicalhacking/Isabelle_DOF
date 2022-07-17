@@ -118,7 +118,7 @@ ML\<open>
       fun is_sml_file f = String.isSuffix ".ML" (Path.implode (#path f))
       val files = (map (Generated_Files.check_files_in (Context.proof_of ctxt)) args) 
       val ml_files = filter is_sml_file (map #1 (maps Generated_Files.get_files_in files))
-      val ml_content = map (fn f => Syntax.read_input (#content f)) ml_files
+      val ml_content = map (fn f => Syntax.read_input (Bytes.content (#content f))) ml_files
       fun eval ml_content   = fold (fn sml => (ML_Context.exec 
                                            (fn () => ML_Context.eval_source ML_Compiler.flags sml))) 
                                    ml_content 
