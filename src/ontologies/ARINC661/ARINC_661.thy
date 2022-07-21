@@ -203,19 +203,4 @@ doc_class PicturePushButton = Widget +
           (* TO BE COMPLETED *)
           invariant force_widget_type_8 :: "widget_type \<sigma> = A661_PICTURE_PUSH_BUTTON"
 
-(* INSTANCES *)
-text*[TemperatureCelciusScale::Picture, widget_ident=4642,parent_ident="Some 4641"]\<open>\<close>
-text*[TemperatureIndicatedPointer::Symbol, widget_ident=4643,parent_ident="Some 4641"]\<open>\<close>
-text*[TemperatureSelectedPointer::Symbol, widget_ident=4644,parent_ident="Some 4641"]\<open>\<close>
-text*[IndicatedTempDRO::Label, widget_ident=4645,parent_ident="Some 4641", label_string="\<open>24\<close>"]\<open>\<close>
-text*[IndicatedUnitLabel::Label, widget_ident=4645,parent_ident="Some 4641", label_string="\<open>C\<close>"]\<open>\<close>
-text*[IncreaseSelectTemp::PicturePushButton, widget_ident=4646,parent_ident="Some 4641"]\<open>\<close>
-text*[DecreaseSelectTemp::PicturePushButton, widget_ident=4647,parent_ident="Some 4641"]\<open>\<close>
-
-text*[CabinTempPanel::Panel, widget_ident=4641]\<open>\<close>
-
-text*[Layer66::Layer, layer_id=66, widgets_tree="{CabinTempPanel, DecreaseSelectTemp, IncreaseSelectTemp, IndicatedUnitLabel, IndicatedTempDRO, TemperatureSelectedPointer, TemperatureIndicatedPointer, TemperatureCelciusScale}"]\<open>\<close>
-
-text*[CabineTemperature::Window, application_id="0x6788", contained_layers="{@{Layer \<open>Layer66\<close>}}"]\<open>\<close>
-
 end
