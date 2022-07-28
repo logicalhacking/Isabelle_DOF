@@ -3,6 +3,13 @@ theory ARINC_661
 
 begin
 
+(* COCKPIT DISPLAY SYSTEM = CDS *)
+
+datatype A661_BOOL = 
+                    A661_TRUE
+                  | A661_FALSE
+                  | A661_TRUE_WITH_VALIDATION 
+
 datatype Alignment = 
                      A661_BOTTOM_CENTER 
                    | A661_BOTTOM_LEFT 
@@ -57,7 +64,7 @@ doc_class Layer =
           height          :: int
           width           :: int
           visible         :: bool
-          enable          :: bool
+          enable          :: A661_BOOL
           widgets_tree    :: "Widget set"
 
 (* invariant : When a layer becomes inactive, its visibility is turned off 
@@ -78,6 +85,11 @@ doc_class DisplayUnit =
           type_synonym UserApplication = DisplayUnit
           type_synonym UA = UserApplication
 
+doc_class CockpitDisplaySystem =
+          name             :: string
+          contained_du     :: DisplayUnit
+          type_synonym CDS = CockpitDisplaySystem
+
 section\<open>WIDGET LIBRARY\<close>
 
 text\<open>The ActiveArea is transparent rectangular widget. 
@@ -88,7 +100,7 @@ an event notification sent to the owner UA of the widget. \<close>
 doc_class ActiveArea = Widget +
           widget_type           :: WidgetType <= A661_ACTIVE_AREA
           visible               :: bool
-          enable                :: bool
+          enable                :: A661_BOOL
           (* style_set :: ? *)
           pos_x                 :: int
           pos_y                 :: int
@@ -108,7 +120,7 @@ The position of the BasicContainer can be changed at run-time.\<close>
 doc_class BasicContainer = Widget +
           widget_type           :: WidgetType <= A661_BASIC_CONTAINER
           visible               :: bool
-          enable                :: bool
+          enable                :: A661_BOOL
           pos_x                 :: int
           pos_y                 :: int
           invariant force_widget_type_2 :: "widget_type \<sigma> = A661_BASIC_CONTAINER"
@@ -128,7 +140,7 @@ reference point of the Panel.\<close>
 doc_class Panel = Widget +
           widget_type           :: WidgetType <= A661_PANEL
           visible               :: bool
-          enable                :: bool
+          enable                :: A661_BOOL
           (* style_set :: ? *)
           pos_x                 :: int
           pos_y                 :: int
@@ -192,7 +204,7 @@ text\<open>A PicturePushButton widget is a PushButton including a picture and po
 doc_class PicturePushButton = Widget +
           widget_type           :: WidgetType <= A661_PICTURE_PUSH_BUTTON
           visible               :: bool
-          enable                :: bool
+          enable                :: A661_BOOL
           anonymous             :: bool
           (* style_set :: ? *)
           pos_x                 :: int
@@ -202,5 +214,27 @@ doc_class PicturePushButton = Widget +
           (* picture_reference :: ? *)
           (* TO BE COMPLETED *)
           invariant force_widget_type_8 :: "widget_type \<sigma> = A661_PICTURE_PUSH_BUTTON"
+
+
+section\<open>UA Validation\<close>
+text\<open>
+After the "@{typ \<open>CDS\<close>}"  sends a pilot interaction event to the "@{typ \<open>UA\<close>}", 
+the "@{typ \<open>CDS\<close>}" may suspend further pilot 
+interactions (exact scope is implementation dependent) to allow the  "@{typ \<open>UA\<close>}" 
+time to validate the event. In order for this to occur, all of the following are required:
+
+1 - CDS will need to know which specific widget instances contain events which will need to be 
+validated by the UA. To support this the "@{typ \<open>UA\<close>}" ("@{doc_class DisplayUnit}")  
+ must set the Enable (A661_ENABLE) parameter 
+to A661_TRUE_WITH_VALIDATION for each applicable widget instance in either the DF and/or 
+during run-time.
+
+2 - The UA will need to send a notification to let the CDS know when the UA has completed 
+validating the event. This is accomplished when the UA sends the Run-time Modifiable 
+Parameter A661_ENTRY_VALID.
+
+A661_ENTRY_VALID messages should be ignored if the value of the Enable parameter is anything 
+but A661_TRUE_WITH_VALIDATION.
+\<close>
 
 end

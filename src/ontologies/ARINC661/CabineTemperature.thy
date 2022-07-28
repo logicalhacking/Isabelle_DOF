@@ -24,7 +24,7 @@ value*[CabinTempPanel::Panel, widget_ident=4641]
 value*[Layer66::Layer, layer_id=66, widgets_tree="{CabinTempPanel, DecreaseSelectTemp, IncreaseSelectTemp, IndicatedUnitLabel, IndicatedTempDRO, TemperatureSelectedPointer, TemperatureIndicatedPointer, TemperatureCelciusScale}"]
 \<open>@{Layer \<open>Layer66\<close>}\<close>
 
-value*[CabineTemperature::Window, application_id="0x6788", contained_layers="{@{Layer \<open>Layer66\<close>}}"]
+value*[CabineTemperature::Window, application_id="6788", contained_layers="{@{Layer \<open>Layer66\<close>}}"]
 \<open>@{Window \<open>CabineTemperature\<close>}\<close>
 
 end
