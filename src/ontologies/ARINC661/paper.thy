@@ -17,7 +17,7 @@ define_shortcut*  isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
 
 (********************************************************)
 (* TITLE ************************************************)
-title*[tit::title]\<open>New Title\<close>
+title*[tit::title]\<open>A UI-component Description and its conformance to the ARINC Standard\<close>
 
 (**********************************************************)
 (* AUTHORS ************************************************)
@@ -31,8 +31,15 @@ author*[bu,email= "\<open>wolff@lri.fr\<close>",affiliation = "\<open>LMF, Unive
 (***********************************************************)
 (* ABSTRACT ************************************************)
 abstract*[abs, keywordlist="[\<open>w1\<close>,\<open>w2\<close>,\<open>w3\<close>,\<open>w4\<close>]"]
-\<open>  
-Abstract content
+\<open> We describe a new case-study in the domain of user-interfaces (UI) for safety-critical avionics systems.
+  We use \<^isadof> designed to handle documents with both formal and informal in order
+  to \<^emph>\<open>model\<close> the ontology of the relevant  ARINC 661 standard as well as the semi-formal 
+  \<^emph>\<open>description\<close> for a concrete UI component. The purpose of the exercise is to demonstrate
+  the conformance of the formal component model and its conformance to both the informal as
+  well as semi-formal, ontologically modeled aspects of the standard.
+  
+  In particular, We show how ontological invariants can be linked to safety-properties 
+  in the UI domain.
 \<close>
 text\<open>\<close>
 
