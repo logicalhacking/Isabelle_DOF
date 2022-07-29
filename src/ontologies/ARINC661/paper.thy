@@ -17,11 +17,12 @@ define_shortcut*  isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
 
 (********************************************************)
 (* TITLE ************************************************)
-title*[tit::title]\<open>Formal Conformance of A Saftety-Critical UI-component with the ARINC Standard\<close>
+title*[tit::title]\<open>Formal Conformance of a Safety-Critical UI-Component with the ARINC Standard\<close>
 
 (**********************************************************)
 (* AUTHORS ************************************************)
-author*[idir,email="\<open>idir.aitsadoune@centralesupelec.fr\<close>",affiliation="\<open>LMF, CentraleSupelec, Université Paris-Saclay\<close>"]
+author*[idir,email="\<open>idir.aitsadoune@centralesupelec.fr\<close>",
+        affiliation="\<open>LMF, CentraleSupelec, Université Paris-Saclay\<close>"]
 \<open>Idir Ait-Sadoune\<close>
 author*[nicolas,email="\<open>nicolas.meric@lri.fr\<close>",affiliation="\<open>LMF, Université Paris-Saclay\<close>"]
 \<open>Nicolas Méric\<close>
