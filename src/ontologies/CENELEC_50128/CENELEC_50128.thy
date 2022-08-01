@@ -601,7 +601,7 @@ doc_class judgement =
 section\<open> A Classification of CENELEC Reports and Documents \<close> 
 
 (* should we rename this as "report" ??? bu *)
-doc_class cenelec_document = text_element +
+doc_class cenelec_report = text_element +
    phase        :: "phase"
    sil          :: "sil"
    level        :: "int option" <= "Some(0)"
@@ -641,61 +641,61 @@ doc_class SYS_VnV_pl = external_specification +
    phase        :: "phase"  <= "SYSDEV_ext" 
    type_synonym system_VnV_plan = SYS_VnV_pl
                         
-doc_class SQAP = cenelec_document +
+doc_class SQAP = cenelec_report +
    phase        :: "phase"  <= "SPl"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_sqap :: "nlvl \<sigma> = HR"
    type_synonym software_quality_assurance_plan = SQAP
 
-doc_class SQAVR = cenelec_document + 
+doc_class SQAVR = cenelec_report + 
    phase        :: "phase"  <= "SPl"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_sqavr :: "nlvl \<sigma> = HR"
 type_synonym software_quality_assurance_verfication_report = SQAVR
 
-doc_class SCMP = cenelec_document + 
+doc_class SCMP = cenelec_report + 
    phase        :: "phase"  <= "SPl"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_scmp :: "nlvl \<sigma> = HR"
 type_synonym software_configuration_management_plan = SCMP
 
-doc_class SVP = cenelec_document + 
+doc_class SVP = cenelec_report + 
    phase        :: "phase"  <= "SPl"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_svp :: "nlvl \<sigma> = HR"
 type_synonym software_verification_plan = SVP
 
-doc_class SVAP = cenelec_document + 
+doc_class SVAP = cenelec_report + 
    phase        :: "phase"  <= "SPl"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_svap :: "nlvl \<sigma> = HR"
 type_synonym software_validation_plan = SVAP
 
-doc_class SWRS = cenelec_document + 
+doc_class SWRS = cenelec_report + 
    phase        :: "phase"  <= "SR"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swrs :: "nlvl \<sigma> = HR"
 type_synonym software_requirements_specification = SWRS
 
-doc_class OSWTS = cenelec_document + 
+doc_class OSWTS = cenelec_report + 
    phase        :: "phase"  <= "SR"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_oswts :: "nlvl \<sigma> = HR"
    type_synonym overall_software_test_specification = OSWTS
 
-doc_class SWRVR = cenelec_document + 
+doc_class SWRVR = cenelec_report + 
    phase        :: "phase"  <= "SR"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swrvr :: "nlvl \<sigma> = HR"
 type_synonym software_requirements_verification_report = SWRVR
    
-doc_class SWAS = cenelec_document + 
+doc_class SWAS = cenelec_report + 
    phase        :: "phase"  <= "SADES" 
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swas :: "nlvl \<sigma> = HR"
    type_synonym software_architecture_specification = SWAS
 
-doc_class SWDS = cenelec_document + 
+doc_class SWDS = cenelec_report + 
    phase        :: "phase"  <= "SADES"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swds :: "nlvl \<sigma> = HR"
@@ -712,7 +712,7 @@ doc_class SWIS_E =
    type_synonym software_interface_specification_element = SWIS_E
 
 
-doc_class SWIS = cenelec_document + 
+doc_class SWIS = cenelec_report + 
    phase        :: "phase"  <= "SADES" 
    nlvl :: "normative_level" <= "HR"
    written_by   :: "role option"   <= "Some DES"
@@ -722,198 +722,198 @@ doc_class SWIS = cenelec_document +
    invariant force_nlvl_swis :: "nlvl \<sigma> = HR"
    type_synonym software_interface_specifications = SWIS
 
-doc_class SWITS = cenelec_document + 
+doc_class SWITS = cenelec_report + 
    phase        :: "phase"  <= "SADES"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swits :: "nlvl \<sigma> = HR"
    type_synonym software_integration_test_specification = SWITS
 
-doc_class SWHITS = cenelec_document + 
+doc_class SWHITS = cenelec_report + 
    phase        :: "phase"  <= "SADES"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swhits :: "nlvl \<sigma> = HR"
    type_synonym software_hardware_integration_test_specification = SWHITS
 
-doc_class SWADVR = cenelec_document + 
+doc_class SWADVR = cenelec_report + 
    phase        :: "phase"  <= "SADES"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swadvr :: "nlvl \<sigma> = HR"
    type_synonym software_architecture_and_design_verification = SWADVR
 
-doc_class SWCDS = cenelec_document + 
+doc_class SWCDS = cenelec_report + 
    phase        :: "phase"  <= "SCDES"
    invariant force_nlvl_swcds :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_component_design_specification = SWCDS
 
-doc_class SWCTS = cenelec_document + 
+doc_class SWCTS = cenelec_report + 
    phase        :: "phase"  <= "SCDES"
    invariant force_nlvl_swcts :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_component_test_specification = SWCTS
 
-doc_class SWCDVR = cenelec_document + 
+doc_class SWCDVR = cenelec_report + 
    phase        :: "phase"  <= "SCDES"
    invariant force_nlvl_swcdvr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_component_design_verification = SWCDVR
 
-doc_class SWSCD = cenelec_document + 
+doc_class SWSCD = cenelec_report + 
    phase        :: "phase"  <= "CInT"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swscd :: "nlvl \<sigma> = HR"
    type_synonym software_source_code_and_documentation = SWSCD
 
-doc_class SWCTR = cenelec_document + 
+doc_class SWCTR = cenelec_report + 
    phase        :: "phase"  <= "CInT"
    invariant force_nlvl_swctr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_component_test_report = SWCTR
 
-doc_class SWSCVR = cenelec_document + 
+doc_class SWSCVR = cenelec_report + 
    phase        :: "phase"  <= "CInT"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swscvr :: "nlvl \<sigma> = HR"
    type_synonym software_source_code_verification_report = SWSCVR
 
-doc_class SWITR = cenelec_document +
+doc_class SWITR = cenelec_report +
    phase        :: "phase"  <= "SI"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_switr :: "nlvl \<sigma> = HR"
    type_synonym software_integration_test_report = SWITR
 
-doc_class SWHAITR = cenelec_document +
+doc_class SWHAITR = cenelec_report +
    phase        :: "phase"  <= "SI"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swhaitr :: "nlvl \<sigma> = HR"
    type_synonym software_hardware_integration_test_report = SWHAITR
 
-doc_class SWIVR = cenelec_document +
+doc_class SWIVR = cenelec_report +
    phase        :: "phase"  <= "SI" 
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swivr :: "nlvl \<sigma> = HR"
    type_synonym software_integration_verification_report = SWIVR
 
-doc_class OSWTR = cenelec_document + 
+doc_class OSWTR = cenelec_report + 
    phase        :: "phase"  <= "SV"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_oswtr :: "nlvl \<sigma> = HR"
 type_synonym overall_software_test_report = OSWTR
 
-doc_class SWVALR = cenelec_document +
+doc_class SWVALR = cenelec_report +
    phase        :: "phase"  <= "SV" 
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swvalr :: "nlvl \<sigma> = HR"
    type_synonym software_validation_report = SWVALR
 
-doc_class TVALR = cenelec_document +
+doc_class TVALR = cenelec_report +
    phase        :: "phase"  <= "SV"
    invariant force_nlvl_tvalr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym tools_validation_report = TVALR
 
-doc_class SWVRN = cenelec_document +
+doc_class SWVRN = cenelec_report +
    phase        :: "phase"  <= "SV"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swvrn :: "nlvl \<sigma> = HR"
    type_synonym software_validation_release_note = SWVRN
 
-doc_class ARS = cenelec_document +
+doc_class ARS = cenelec_report +
    phase        :: "phase"  <= "SCADA"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_ars :: "nlvl \<sigma> = HR"
    type_synonym application_requirements_specification = ARS
 
-doc_class APP = cenelec_document +
+doc_class APP = cenelec_report +
    phase        :: "phase"  <= "SCADA"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_APP :: "nlvl \<sigma> = HR"
    type_synonym application_preparation_plan = APP
 
-doc_class ATS = cenelec_document +
+doc_class ATS = cenelec_report +
    phase        :: "phase"  <= "SCADA"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_ats :: "nlvl \<sigma> = HR"
    type_synonym application_test_specification = ATS
 
-doc_class AAD = cenelec_document +
+doc_class AAD = cenelec_report +
    phase        :: "phase"  <= "SCADA"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_aad :: "nlvl \<sigma> = HR"
    type_synonym application_architecture_design = AAD
 
-doc_class APVR = cenelec_document +
+doc_class APVR = cenelec_report +
    phase        :: "phase"  <= "SCADA"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_apvr :: "nlvl \<sigma> = HR"
    type_synonym application_preparation_verification_report = APVR
 
-doc_class ATR = cenelec_document +
+doc_class ATR = cenelec_report +
    phase        :: "phase"  <= "SCADA"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_atr :: "nlvl \<sigma> = HR"
    type_synonym application_test_report= ATR
 
-doc_class SOCOADA = cenelec_document +
+doc_class SOCOADA = cenelec_report +
    phase        :: "phase"  <= "SCADA"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_socoada :: "nlvl \<sigma> = HR"
    type_synonym source_code_application_data_algorithms = SOCOADA
 
-doc_class ADAVR = cenelec_document +
+doc_class ADAVR = cenelec_report +
    phase        :: "phase"  <= "SCADA"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_adavr :: "nlvl \<sigma> = HR"
    type_synonym application_data_algorithms_verification_report= ADAVR
 
-doc_class SWRDP = cenelec_document + 
+doc_class SWRDP = cenelec_report + 
    phase        :: "phase"  <= "SD"
    invariant force_nlvl_swrdp :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_release_deployment_plan = SWRDP
 
-doc_class SWDM = cenelec_document + 
+doc_class SWDM = cenelec_report + 
    phase        :: "phase"  <= "SD"
    invariant force_nlvl_swdm :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_deployment_manual = SWDM
 
-doc_class SWDRN = cenelec_document + 
+doc_class SWDRN = cenelec_report + 
    phase        :: "phase"  <= "SD"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swdrn :: "nlvl \<sigma> = HR"
    type_synonym software_deployment_release_notes = SWDRN
 
-doc_class SWDR = cenelec_document + 
+doc_class SWDR = cenelec_report + 
    phase        :: "phase"  <= "SD"
    invariant force_nlvl_swdr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_deployment_records = SWDR
 
-doc_class SWDVR = cenelec_document + 
+doc_class SWDVR = cenelec_report + 
    phase        :: "phase"  <= "SD"
    invariant force_nlvl_swdvr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_deployment_verification_report = SWDVR
 
-doc_class SWMP = cenelec_document + 
+doc_class SWMP = cenelec_report + 
    phase        :: "phase"  <= "SM"
    invariant force_nlvl_swmp :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_maintenance_plan = SWMP
 
-doc_class SWCR = cenelec_document + 
+doc_class SWCR = cenelec_report + 
    phase        :: "phase"  <= "SM"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swcr :: "nlvl \<sigma> = HR"
    type_synonym software_change_records = SWCR
 
-doc_class SWMR = cenelec_document +
+doc_class SWMR = cenelec_report +
    phase        :: "phase"  <= "SM"
    invariant force_nlvl_swmr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
 type_synonym software_maintenance_records = SWMR
 
-doc_class SWMVR = cenelec_document + 
+doc_class SWMVR = cenelec_report + 
    phase        :: "phase"  <= "SM"
    invariant force_nlvl_swmvr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_maintenance_verification_report = SWMVR
 
-doc_class SWAP = cenelec_document + 
+doc_class SWAP = cenelec_report + 
    phase        :: "phase"  <= "SA"
    invariant force_nlvl_swap :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_assessment_plan = SWAP
 
-doc_class SWAR = cenelec_document + 
+doc_class SWAR = cenelec_report + 
    phase        :: "phase"  <= "SA"
    invariant force_nlvl_swar :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
    type_synonym software_assessment_report = SWAR

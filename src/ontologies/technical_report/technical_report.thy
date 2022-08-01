@@ -48,7 +48,7 @@ text\<open>The \<^doc_class>\<open>code\<close> is a general stub for free-form 
         \<^enum> C code.
 
 It is intended that later refinements of this "stub" as done in \<^verbatim>\<open>Isabelle_C\<close> which come with their
-own content checking and, of course, presentation styles. 
+own content checking and presentation styles. 
 \<close>
 
 doc_class "SML"     = code +
