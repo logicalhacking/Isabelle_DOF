@@ -2429,6 +2429,8 @@ val parse_cid  = Scan.lift(Parse.position Args.name)
 val parse_oid' = Term_Style.parse -- parse_oid
 val parse_cid' = Term_Style.parse -- parse_cid
 
+
+
 val parse_attribute_access = (parse_oid
                               --| (Scan.lift @{keyword "::"}) 
                               -- Scan.lift (Parse.position Args.name))
@@ -2473,6 +2475,25 @@ fun pretty_trace_style ctxt (style, (oid,pos)) =
 fun pretty_cid_style ctxt (style, (cid,pos)) = 
           Document_Output.pretty_term ctxt (style (compute_cid_repr ctxt cid pos));
 
+(* NEW VERSION: PLEASE INTEGRATE ALL OVER : *)
+fun context_position_parser parse_con (ctxt, toks) = 
+     let val pos = case toks of 
+                    a :: _ => Token.pos_of a 
+                  | _ => @{here}             \<comment> \<open>a real hack !\<close>
+         val (res, (ctxt', toks')) = parse_con (ctxt, toks)
+     in  ((res,pos),(ctxt', toks')) end
+
+val parse_cid = (context_position_parser Args.typ_abbrev)
+          >> (fn (Type(ss,_),pos) =>  (pos,ss)
+                |( _,pos) => ISA_core.err "Undefined Class Id" pos);
+
+
+val parse_cid' = Term_Style.parse -- parse_cid
+
+fun pretty_cid_style ctxt (style,(pos,cid)) = 
+    (*reconversion to term in order to haave access to term print options like: short_names etc...) *)
+          Document_Output.pretty_term ctxt ((compute_cid_repr ctxt cid pos));
+
 in
 val _ = Theory.setup 
            (ML_Antiquotation.inline  \<^binding>\<open>docitem\<close> 
@@ -2483,6 +2504,7 @@ val _ = Theory.setup
                (fn (ctxt,toks) => (parse_oid >> trace_attr_2_ML ctxt) (ctxt, toks)) #>
             basic_entity  \<^binding>\<open>trace_attribute\<close>  parse_oid'  pretty_trace_style #>
             basic_entity  \<^binding>\<open>doc_class\<close>  parse_cid'  pretty_cid_style #>
+            basic_entity  \<^binding>\<open>onto_class\<close> parse_cid'  pretty_cid_style #>
             basic_entity  \<^binding>\<open>docitem_attribute\<close>  parse_attribute_access' pretty_attr_access_style
            )
 end

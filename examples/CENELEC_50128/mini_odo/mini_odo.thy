@@ -19,6 +19,8 @@ theory
   "Isabelle_DOF.technical_report"
 begin
 declare[[strict_monitor_checking=true]]
+define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
+                 isadof  \<rightleftharpoons> \<open>\isadof{}\<close>
 (*>*)
 
 title*[title::title]\<open>The CENELEC 50128 Ontology\<close> 
@@ -27,14 +29,31 @@ subtitle*[subtitle::subtitle]\<open>Case Study: An Odometer-Subsystem\<close>
 chapter*[casestudy::technical]\<open>An Odometer-Subsystem\<close>
 text\<open>
   In our case study, we will follow the phases of analysis, design, and implementation of the 
-  odometry function of a train. This software processes data from an odometer to compute the position, 
-  speed, and acceleration of a train. This system provides the basis for many 
-  safety critical decisions, \eg, the opening of the doors. Due to its relatively small size, it 
+  odometry function of a train. This \<^cenelec_term>\<open>SF\<close> processes data from an odometer to compute 
+  the position,  speed, and acceleration of a train. This system provides the basis for many 
+  safety critical decisions, \<^eg>, the opening of the doors. Due to its relatively small size, it 
   is a manageable, albeit realistic target for a comprehensive formal development: it covers a 
-  physical model of the environment, the physical and architectural model of the odometer including
-  the problem of numerical sampling, and the boundaries of efficient computations. The interplay 
+  physical model of the environment, the physical and architectural model of the odometer,
+  but also the  \<^cenelec_term>\<open>SFRS\<close> aspects including
+  the problem of numerical sampling and the boundaries of efficient computations. The interplay 
   between environment and measuring-device as well as the implementation problems on a platform 
-  with limited resources makes the odometer a fairly typical safety critical embedded system.
+  with limited resources makes the odometer a fairly typical \<^cenelec_term>\<open>safety\<close> critical 
+ \<^cenelec_term>\<open>component\<close> of an embedded system.
+
+  The case-study is presented in form of an \<^emph>\<open>integrated source\<close> in \<^isadof> containing all four
+  reports from the phases:
+    \<^item> \<^term>\<open>software_requirements\<close>, \<^ie> the \<^onto_class>\<open>SWRS\<close> \<^typ>\<open>software_requirements_specification\<close>(-report)
+    \<^item> \<^term>\<open>software_architecture_and_design\<close>, \<^ie> the \<^typ>\<open>software_design_specification\<close>(-report)
+    \<^item> \<^term>\<open>component_implementation_and_testing\<close>, \<^ie> the \<^typ>\<open>software_architecture_and_design_verification\<close>(-report)
+    \<^item> \<^term>\<open>component_implementation_and_testing\<close>, \<^ie> the \<^typ>\<open>software_component_design_verification\<close>(-report)
+
+  The objective of this case study is to demonstrate deep-semantical ontologoies in 
+  software developments targeting certifications, and in particular, how \<^isadof>'s 
+  integrated source concept permits to assure \<^cenelec_term>\<open>traceability\<close>.
+
+  \<^bold>\<open>NOTE\<close> that this case study has aspects that were actually covered by CENELEC 50126 - 
+  the 'systems'-counterpart covering hardware aspects. Recall that the CENELEC 50128 covers
+  software. 
 
   Due to space reasons, we will focus  on the analysis part of the integrated 
   document; the design and code parts will only be outlined in a final resume. The 
@@ -45,7 +64,7 @@ text\<open>
   development.
 \<close>
 
-section\<open>System Requirements as an \<^emph>\<open>Integrated Source\<close>\<close>
+section\<open>A CENELEC-conform development as an \<^emph>\<open>Integrated Source\<close>\<close>
 text\<open>Accurate information of a train's location along a track is in an important prerequisite   
 to safe railway operation. Position, speed and acceleration measurement usually lies on a 
 set of independent measurements based on different physical principles---as a way to enhance 
@@ -74,17 +93,19 @@ text\<open>
 
   This model is already based on several fundamental assumptions relevant for the correct
   functioning of the system and for its integration into the system as a whole. In 
-  particular, we need to make the following assumptions explicit:\vspace{-.3cm}
-  \<^item>  that the wheel is perfectly circular with a given, constant radius,
-  \<^item>  that the slip between the trains wheel and the track negligible,
-  \<^item>  the distance between all teeth of a wheel is the same and constant, and  
-  \<^item>  the sampling rate of positions is a given constant.
+  particular, we need to make the following assumptions explicit: \<^vs>\<open>-0.3cm\<close>
+
+      \<^item>  that the wheel is perfectly circular with a given, constant radius,
+      \<^item>  that the slip between the trains wheel and the track negligible,
+      \<^item>  the distance between all teeth of a wheel is the same and constant, and  
+      \<^item>  the sampling rate of positions is a given constant.
 
 
   These assumptions have to be traced throughout the certification process as
+
   \<^emph>\<open>derived requirements\<close> (or, in CENELEC terminology, as \<^emph>\<open>exported constraints\<close>), which is
   also reflected by their tracing throughout the body of certification documents. This may result
-  in operational regulations, \eg, regular checks for tolerable wheel defects. As for the
+  in operational regulations, \<^eg>, regular checks for tolerable wheel defects. As for the
   \<^emph>\<open>no slip\<close>-assumption, this leads to the modeling of constraints under which physical 
   slip can be neglected: the device can only produce reliable results under certain physical
   constraints (speed and acceleration limits). Moreover, the \<^emph>\<open>no slip\<close>-assumption motivates
@@ -112,7 +133,7 @@ subsection\<open>Capturing ``System Interfaces.''\<close>
 text\<open>
   The requirements analysis also contains a sub-document \<^emph>\<open>functions and interfaces\<close> 
   (CENELEC notion) describing the technical format of the output of the odometry function. 
-  This section, \eg, specifies the output \<^emph>\<open>speed\<close> as given by a \<^verbatim>\<open>int_32\<close> to be the 
+  This section, \<^eg>, specifies the output \<^emph>\<open>speed\<close> as given by a \<^verbatim>\<open>int_32\<close> to be the 
   ``Estimation of the speed (in mm/sec) evaluated  over the latest $N_{\text{avg}}$ samples''
   where the speed refers to the physical speed of the train and $N_{\text{avg}}$ a parameter of the
   sub-system configuration. \<close>
@@ -143,7 +164,7 @@ text\<open>
   The design provides a function that manages an internal first-in-first-out buffer of 
   shaft-encodings and corresponding positions. Central for the design is a step-function analyzing 
   new incoming shaft encodings, checking them and propagating two kinds of error-states (one allowing 
-  recovery, another one, fatal, signaling, \eg, a defect of the receiver hardware), 
+  recovery, another one, fatal, signaling, \<^eg>, a defect of the receiver hardware), 
   calculating the relative position, speed and acceleration.
 \<close>
 
@@ -316,7 +337,7 @@ text\<open>
   \isadof is designed to annotate text elements with structured meta-information and to reference
   these text elements throughout the integrated source. A classical application of this capability 
   is the annotation of concepts and terms definitions---be them informal, semi-formal or formal---and 
-  their consistent referencing. In the context of our CENELEC ontology, \eg, we can translate the 
+  their consistent referencing. In the context of our CENELEC ontology, \<^eg>, we can translate the 
   third chapter of @{cite "bsi:50128:2014"} ``Terms, Definitions and Abbreviations'' directly 
   into our Ontology Definition Language (ODL). Picking one example out of 49, consider the definition 
   of the concept ``traceability'' in paragraphs 3.1.46 (a notion referenced 31 times in the standard), 
@@ -370,7 +391,7 @@ datatype vnt_technique =
   suggest that their work is superfluous. Our framework allows to statically check that tests or proofs 
   have been provided, at places where the ontology requires them to be, and both assessors and developers 
   can rely on this check and navigate through related information easily. It does not guarantee that
-  intended concepts for, \eg, safety or security have been adequately modeled. 
+  intended concepts for, \<^eg>, safety or security have been adequately modeled. 
 \<close>
 
 section*[moe::text_section]
@@ -386,7 +407,7 @@ doc_class requirement = text_element +
 where the \inlineisar*roles* are exactly the ones defined in the previous section and represent 
 the groups of stakeholders in the CENELEC process. Therefore, the \inlineisar+is_concerned+-attribute 
 allows expressing who ``owns'' this text-element. \isadof supports a role-based 
-presentation, \eg,  different presentation styles of the 
+presentation, \<^eg>,  different presentation styles of the 
 integrated source may decide to highlight, to omit, to defer into an annex, text entities 
 according to the role-set.  
 
@@ -400,17 +421,17 @@ doc_class sub_requirement =
 
 section*[claimsreqevidence::text_section]\<open>Tracking Claims, Derived Requirements and Evidence\<close>
 text\<open>An example for making explicit implicit principles,
-consider the following statement @{cite "bsi:50128:2014"}, pp. 25.:\vspace{-1.5mm}
+consider the following statement @{cite "bsi:50128:2014"}, pp. 25.: \<^vs>\<open>-0.15cm\<close> 
 \begin{quote}\small
 The objective of software verification is to examine and arrive at a judgment based on 
 evidence that output items (process, documentation, software or application) of a specific 
 development phase fulfill the requirements and plans with respect to completeness, correctness 
 and consistency.
-\end{quote}\vspace{-1.5mm}
+\end{quote} \<^vs>\<open>-0.15cm\<close> 
 The terms \<^emph>\<open>judgment\<close> and \<^emph>\<open>evidence\<close> are used as a kind of leitmotif throughout the CENELEC 
 standard, but they are neither explained nor even listed in the general glossary. However, the 
 standard is fairly explicit on the \<^emph>\<open>phase\<close>s and the organizational roles that different stakeholders 
-should have in the process. Our version to express this key concept of judgment, \eg, by 
+should have in the process. Our version to express this key concept of judgment, \<^eg>, by 
 the following concept:
 \begin{isar}
 doc_class judgement =    
@@ -461,7 +482,7 @@ text*[J1::judgement, refers_to="<@>{docitem <open>encoder_props<close>}",
 \end{isar}
 The references \inlineisar|<@>{...}|, called antiquotation, allow us not only to reference to 
 formal concepts, they are checked for consistency and there are also antiquotations that 
-print the formally checked content (\eg, the statement of a theorem). 
+print the formally checked content (\<^eg>, the statement of a theorem). 
 \<close>
 
 subsection\<open>Exporting Claims of the Requirements Specification.\<close>

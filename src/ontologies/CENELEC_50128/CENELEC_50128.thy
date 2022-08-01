@@ -15,9 +15,9 @@ chapter \<open>An Outline of a CENELEC Ontology\<close>
 
 text\<open> NOTE: An Ontology-Model of a certification standard such as CENELEC or Common Criteria 
 identifies:
-- notions (conceptual \emph{categories}) having \emph{instances}
+- notions (conceptual \<^emph>\<open>categories\<close>) having \<^emph>\<open>instances\<close>
   (similar to classes and objects),
-- their subtype relation (eg., a "SRAC" is an "assumption"),
+- their \<^emph>\<open>subtype\<close> relation (eg., a "SRAC" is an "assumption"),
 - their syntactical structure 
   (for the moment: defined by regular expressions describing the
    order of category instances in the overall document as a regular language)
@@ -40,22 +40,77 @@ begin
 *) 
    
 
-text\<open>We re-use the class @\<open>typ math_content\<close>, which provides also a framework for
+text\<open>We re-use the class \<^typ>\<open>math_content\<close>, which provides also a framework for
 semi-formal "math-alike" terminology, which we re-use by this definition.\<close>
 
 doc_class semi_formal_content = math_content +
       status        :: status <= "semiformal" 
-      mcc           :: math_content_class <= "terminology"
+      mcc           :: math_content_class 
+
+
 
 type_synonym sfc = semi_formal_content  
 
-(*>>*)
+doc_class cenelec_term = semi_formal_content + 
+      mcc          :: math_content_class <= "terminology"
 
-declare[[ Definition_default_class="semi_formal_content"]]
+
+text\<open> in the following, all \<^theory_text>\<open>Definition*\<close> statements are interpreted as 
+     \<^doc_class>\<open>cenelec_term\<close>s, i.e. semi-formal teminological definitions.\<close>
+
+(*
+ML\<open>
+val typ_abbrev = Scan.lift
+\<close>
+
+ML\<open>
+Parse.position: ( Token.T list -> 'a *  Token.T list) -> ('a * Position.T) parser;
+Scan.lift(Parse.position Args.name) ; 
+Args.name_position;
+Proof_Context.read_typ_abbrev;
+
+ Args.typ_abbrev : Context.generic * Token.T list ->  typ  * (Context.generic * Token.T list) ;
+
+ Proof_Context.read_typ_abbrev;
+
+(Args.typ_abbrev >> (fn Type(ss,_) =>  ss
+                      | _ => error "Undefined Class Id"))
+                 
+
+\<close>
+ML\<open>
+
+fun context_position_parser parse_con (ctxt, toks) = 
+     let val pos = case toks of 
+                    a :: _ => Token.pos_of a 
+                  | _ => @{here}             \<comment> \<open>a real hack !\<close>
+         val (res, (ctxt', toks')) = parse_con (ctxt, toks)
+     in  ((res,pos),(ctxt', toks')) end
+
+val parse_cid = (context_position_parser Args.typ_abbrev)
+          >> (fn (Type(ss,_),pos) =>  (pos,ss)
+                |( _,pos) => ISA_core.err "Undefined Class Id" pos);
+
+
+val parse_cid' = Term_Style.parse -- parse_cid
+
+fun pretty_cid_style ctxt (style,(pos,cid)) = 
+    (*reconversion to term in order to haave access to term print options like: short_names etc...) *)
+          Document_Output.pretty_term ctxt ((AttributeAccess.compute_cid_repr ctxt cid pos));
+
+val _ = Theory.setup (AttributeAccess.basic_entity \<^binding>\<open>Onto_class\<close> parse_cid' pretty_cid_style) 
+
+\<close>
+
+text\<open> \<^Onto_class>\<open>cenelec_term\<close> \<close>
+
+*)
+
+declare[[ Definition_default_class="cenelec_term"]]
+(*>>*)
 
 
 text\<open> Excerpt of the BE EN 50128:2011, page 22. \<close>
-
 
 section\<open>Terms and Definitions\<close>
 
@@ -66,90 +121,90 @@ requirements and to form  a judgement as to whether the software is fit for its 
 Safety assessment is focused on but not limited to the safety properties of a system.\<close>
 
 Definition*[assessor, short_name="''assessor''"]
-\<open>entity that carries out an assessment\<close>
+\<open>entity that carries out an assessment.\<close>
 
 Definition*[COTS, short_name="''commercial off-the-shelf software''"]
 \<open>software defined by market-driven need, commercially available and whose fitness for purpose 
-has been demonstrated by a broad spectrum of commercial users\<close>
+has been demonstrated by a broad spectrum of commercial users.\<close>
 
 
 Definition*[component]
 \<open>a constituent part of software which has well-defined interfaces and behaviour 
 with respect to the software architecture and design and fulfils the following 
 criteria:
-\<^enum> it is designed according to “Components” (see Table A.20);
-\<^enum> it covers a specific subset of software requirements;
-\<^enum> it is clearly identified and has an independent version inside the 
-  configuration management system or is a part of a collection of components 
-   (e. g. subsystems) which have an independent version
+   \<^enum> it is designed according to “Components” (see Table A.20);
+   \<^enum> it covers a specific subset of software requirements;
+   \<^enum> it is clearly identified and has an independent version inside the 
+     configuration management system or is a part of a collection of components 
+      (e. g. subsystems) which have an independent version
 \<close>
 typ "sfc"
 
 Definition*[CMGR, short_name="''configuration manager''"]
 \<open>entity that is responsible for implementing and carrying out the processes
 for the configuration management of documents, software and related tools including 
-\<^emph>\<open>change management\<close>\<close>
+\<^emph>\<open>change management\<close>.\<close>
 
 Definition*[customer]
-\<open>entity which purchases a railway control and protection system including the software\<close>
+\<open>entity which purchases a railway control and protection system including the software.\<close>
 
 Definition*[designer]
 \<open>entity that analyses and transforms specified requirements into acceptable design solutions 
-which have the required safety integrity level\<close>
+which have the required safety integrity level.\<close>
 
 Definition*[entity]
-\<open>person, group or organisation who fulfils a role as defined in this European Standard\<close>
+\<open>person, group or organisation who fulfils a role as defined in this European Standard.\<close>
 
 declare_reference*[fault]
 Definition*[error]
 \<open>defect, mistake or inaccuracy which could result in failure or in a deviation 
-from the intended performance or behaviour (cf. @{semi_formal_content (unchecked) \<open>fault\<close>}))\<close>
+from the intended performance or behaviour (cf. @{cenelec_term (unchecked) \<open>fault\<close>})).\<close>
 
 Definition*[fault]
 \<open>defect, mistake or inaccuracy which could result in failure or in a deviation 
-from the intended performance or behaviour (cf @{semi_formal_content \<open>error\<close>})\<close>
+from the intended performance or behaviour (cf @{cenelec_term \<open>error\<close>}).\<close>
 
 Definition*[failure]
-\<open>unacceptable difference between required and observed performance\<close>
+\<open>unacceptable difference between required and observed performance.\<close>
 
 Definition*[FT, short_name="''fault tolerance''"]
 \<open>built-in capability of a system to provide continued correct provision of service as specified, 
-in the presence of a limited number of hardware or software faults\<close>
+in the presence of a limited number of hardware or software faults.\<close>
 
 Definition*[firmware]
 \<open>software stored in read-only memory or in semi-permanent storage such as flash memory, in a 
-way that is functionally independent of applicative software\<close>
+way that is functionally independent of applicative software.\<close>
 
 Definition*[GS,short_name="''generic software''"]
 \<open>software which can be used for a variety of installations purely by the provision of 
-application-specific data and/or algorithms\<close>
+application-specific data and/or algorithms.\<close>
 
 Definition*[implementer]
-\<open>entity that transforms specified designs into their physical realisation\<close> 
+\<open>entity that transforms specified designs into their physical realisation.\<close> 
 
 Definition*[integration]
 \<open>process of assembling software and/or hardware items, according to the architectural and 
-design specification, and testing the integrated unit\<close>
+design specification, and testing the integrated unit.\<close>
 
 Definition*[integrator]
-\<open>entity that carries out software integration\<close>
+\<open>entity that carries out software integration.\<close>
 
-Definition*[PES :: sfc, short_name="''pre-existing software''"]
+Definition*[PES, short_name="''pre-existing software''"]
 \<open>software developed prior to the application currently in question, including COTS (commercial 
-off-the shelf) and open source software\<close>
+off-the shelf) and open source software.\<close>
 
-Definition*[OSS :: sfc, short_name="''open source software''"]
-\<open>source code available to the general public with relaxed or non-existent copyright restrictions\<close>
+Definition*[OS, short_name="''open source software''"]
+\<open>source code available to the general public with relaxed or non-existent copyright restrictions.\<close>
 
 Definition*[PLC, short_name="''programmable logic controller''"]
 \<open>solid-state control system which has a user programmable memory for storage of instructions to 
-implement specific functions\<close>
+implement specific functions.\<close>
 
 Definition*[PM, short_name="''project management''"]
-\<open>administrative and/or technical conduct of a project, including safety aspects\<close>
+\<open>administrative and/or technical conduct of a project, including safety aspects.\<close>
 
 Definition*[PMGR, short_name="''project manager''"]
-\<open>entity that carries out project management\<close>
+\<open>entity that carries out \<^cenelec_term>\<open>PM\<close>.\<close>
 
 Definition*[reliability]
 \<open>ability of an item to perform a required function under given conditions for a given period of time\<close>
@@ -157,52 +212,52 @@ Definition*[reliability]
 Definition*[robustness]
 \<open>ability of an item to detect and handle abnormal situations\<close>
 
-Definition*[RMGR, short_name="''requirements manager''"]
-\<open>entity that carries out requirements management\<close>
-
 Definition*[RM, short_name="''requirements management''"]
 \<open>the process of eliciting, documenting, analysing, prioritising and agreeing on requirements and 
 then controlling change and communicating to relevant stakeholders. It is a continuous process 
 throughout a project\<close>
 
+Definition*[RMGR, short_name="''requirements manager''"]
+\<open>entity that carries out \<^cenelec_term>\<open>RM\<close>.\<close>
+
 Definition*[risk]
 \<open>combination of the rate of occurrence of accidents and incidents resulting in harm (caused by 
-a hazard) and the degree of severity of that harm\<close>
+a hazard) and the degree of severity of that harm.\<close>
 
 Definition*[safety]
-\<open>freedom from unacceptable levels of risk of harm to people\<close>
+\<open>freedom from unacceptable levels of risk of harm to people.\<close>
 
 Definition*[SA, short_name="''safety authority''"]
 \<open>body responsible for certifying that safety related software or services comply with relevant 
-statutory safety requirements\<close>
+statutory safety requirements.\<close>
 
 Definition*[SF, short_name="''safety function''"]
-\<open>a function that implements a part or whole of a safety requirement\<close>
+\<open>a function that implements a part or whole of a safety requirement.\<close>
 
 Definition*[SFRS, short_name= "''safety-related software''"]
-\<open>software which performs safety functions\<close>
+\<open>software which performs safety functions.\<close>
 
 Definition*[software]
 \<open>intellectual creation comprising the programs, procedures, rules, data and any associated 
-documentation pertaining to the operation of a system\<close>
+documentation pertaining to the operation of a system.\<close>
 
 Definition*[SB, short_name="''software baseline''"]
 \<open>complete and consistent set of source code, executable files, configuration files, 
 installation scripts and documentation that are needed for a software release. Information about 
 compilers, operating systems, preexisting software and dependent tools is stored as part of the 
 baseline. This will enable the organisation to reproduce defined versions and be the input
-for future releases at enhancements or at upgrade in the maintenance phase\<close>
+for future releases at enhancements or at upgrade in the maintenance phase.\<close>
 
 Definition*[SD, short_name="''software deployment''"]
 \<open>transferring, installing and activating a deliverable software baseline that has already been 
-released and assessed\<close>
+released and assessed.\<close>
 
 
 Definition*[SWLC, short_name="''software life-cycle''"]
 \<open>those activities occurring during a period of time that starts when
 software is conceived and ends when the software is no longer available for use. The software life 
-cycle typically includes a requirements phase, design phase,test phase, integration phase, 
-deployment phase and a maintenance phase\<close>
+cycle typically includes a requirements phase, design phase, test phase, integration phase, 
+deployment phase and a maintenance phase.\<close>
 
 Definition*[SWMA, short_name="''software maintainability''"]
 \<open>capability of the software to be modified; to correct faults,
@@ -210,11 +265,12 @@ improve performance or other attributes, or adapt it to a different environment\
 
 Definition*[SM, short_name="''software maintenance''"]
 \<open> action, or set of actions, carried out on software after deployment functionality
-performance or other attributes, or adapt it with the aim of enhancing or correcting its\<close>
+performance or other attributes, or adapt it with the aim of enhancing or correcting its behaviour.\<close>
 
 Definition*[SOSIL, short_name="''software safety integrity level''"]
 \<open>classification number which determines the techniques and measures that have to be applied to 
-software
+software.
+
 NOTE: Safety-related software has been classified into five safety integrity levels, where 
 0 is the lowest and 4 the highest.\<close>
 
@@ -255,16 +311,16 @@ not obvious; a compiler that incorporates an executable run-time package into th
 Definition*[traceability, short_name="''traceability''"]
 \<open>degree to which relationship can be established between two or more products of a development 
 process, especially those having a predecessor/successor or master/subordinate relationship to one 
-another\<close>
+another.\<close>
 
 Definition*[validation, short_name="''validation''"]
 \<open>process of analysis followed by a judgment based on evidence to
 documentation, software or application) fits the user needs,in particular with respect to safety 
 and quality and determine whether an item (e.g. process, with emphasis on the suitability of its 
-operation in accordance to its purpose in its intended environment\<close>
+operation in accordance to its purpose in its intended environment.\<close>
 
 Definition*[validator, short_name="''validator''"]
-\<open>entity that is responsible for the validation\<close>
+\<open>entity that is responsible for the validation.\<close>
 
 Definition*[verification, short_name="''verification''"]
 \<open>process of examination followed by a judgment based on evidence that output items (process,
@@ -275,13 +331,13 @@ NOTE: Verification is mostly based on document reviews
 \<close>
 
 Definition*[verifier, short_name="''verifier''"]
-\<open>entity that is responsible for one or more verification activities\<close>
+\<open>entity that is responsible for one or more verification activities.\<close>
 
 chapter\<open>Software Management and Organisation\<close>
 text\<open>Representing chapter 5 in @{cite "bsi:50128:2014"}.\<close>
 
 section\<open>Organization, Roles and Responsabilities\<close>
-text\<open>See also section \<^emph>\<open>Software management and organization\<close>. and Annex B and C\<close>
+text\<open>See also section \<^emph>\<open>Software management and organization\<close> and Annex B and C.\<close>
 
 text\<open>REQ role in Table C.1 is assumed to be a typo and should be RQM.\<close>
 
@@ -300,17 +356,17 @@ datatype role =  RQM    \<comment> \<open>Requirements Manager\<close>
 
 
 datatype phase = SYSDEV_ext \<comment> \<open> System Development Phase (external)\<close>  
-               | SPl   \<comment> \<open>Software Planning\<close>
-               | SR    \<comment> \<open>Software Requirements\<close> 
-               | SADES \<comment> \<open>Software Architecture and Design\<close>
-               | SCDES \<comment> \<open>Software Component Design\<close> 
-               | CInT  \<comment> \<open>Component Implementation and Testing\<close>
-               | SI    \<comment> \<open>Software Integration\<close>
-               | SV    \<comment> \<open>Overall Software Testing/Final Validation\<close>
-               | SCADA    \<comment> \<open>Systems Configured by Application Data/Algorithms\<close>
-               | SD    \<comment> \<open>Software Deployment\<close>
-               | SM    \<comment> \<open>Software Maintenance\<close>
-               | SA    \<comment> \<open>Software Assessment\<close>
+               | SPl        \<comment> \<open>Software Planning\<close>
+               | SR         \<comment> \<open>Software Requirements\<close> 
+               | SADES      \<comment> \<open>Software Architecture and Design\<close>
+               | SCDES      \<comment> \<open>Software Component Design\<close> 
+               | CInT       \<comment> \<open>Component Implementation and Testing\<close>
+               | SI         \<comment> \<open>Software Integration\<close>
+               | SV         \<comment> \<open>Overall Software Testing/Final Validation\<close>
+               | SCADA      \<comment> \<open>Systems Configured by Application Data/Algorithms\<close>
+               | SD         \<comment> \<open>Software Deployment\<close>
+               | SM         \<comment> \<open>Software Maintenance\<close>
+               | SA         \<comment> \<open>Software Assessment\<close>
 
 abbreviation software_planning      :: "phase" where "software_planning  \<equiv> SPl"
 abbreviation software_requirements      :: "phase" where "software_requirements  \<equiv> SR"
@@ -340,7 +396,7 @@ text\<open>Requirement levels specified Annex A: we use the term \<^emph>\<open>
 them from the requirements specified in the standard.\<close>
 
 datatype normative_level =
-  M     \<comment> \<open>(Mandatory)\<close>
+    M   \<comment> \<open>(Mandatory)\<close>
   | HR  \<comment> \<open>Highly Recommended\<close>
   | R   \<comment> \<open>Recommended\<close>
   | Any \<comment> \<open>No recommendation\<close>
@@ -365,14 +421,15 @@ doc_class safety_requirement = requirement +
    formal_definition    :: "thm list"
 
                               
-text\<open>The category @{emph \<open>hypothesis\<close>} is used for assumptions from the 
-      foundational mathematical or physical domain, so for example: 
-      \<^item>   the Mordell-Lang conjecture holds,   
-      \<^item>   euklidian geometry is assumed, or
-      \<^item>   Newtonian (non-relativistic) physics is assumed,
-     Their acceptance is inherently outside the scope of the model
-     and can only established inside certification process by
-     authority argument.
+text\<open>
+The category \<^emph>\<open>hypothesis\<close> is used for assumptions from the 
+foundational mathematical or physical domain, so for example: 
+    \<^item>   the Mordell-Lang conjecture holds,   
+    \<^item>   euklidian geometry is assumed, or
+    \<^item>   Newtonian (non-relativistic) physics is assumed,
+Their acceptance is inherently outside the scope of the model
+and can only established inside certification process by
+authority argument.
 \<close>
   
 datatype hyp_type = physical | mathematical | computational | other
@@ -384,7 +441,7 @@ doc_class hypothesis = requirement +
       hyp_type :: hyp_type <= physical  (* default *)
 
 text\<open> The following sub-class of security related hypothesis might comprise, for example:
-      \<^item>   @{term "P \<noteq> NP"},
+      \<^item>   \<^term>\<open>P \<noteq> NP\<close>,
       \<^item>   or the computational hardness  of certain functions 
           relevant for cryptography (like prime-factorization).
       (* speculation bu, not 50128 *)\<close>
@@ -469,7 +526,7 @@ figure*[fig3::figure, relative_width="100",
 \<open>Illustrative Development Lifecycle 1\<close>
 
 text\<open>Actually, the Figure 4 in Chapter 5: Illustrative Development Lifecycle 2 is more fidele
-to the remaining document: Software Architecture and Dediwn phases are merged, like in 7.3.\<close>
+to the remaining document: Software Architecture and Design phases are merged, like in 7.3.\<close>
 
 section\<open>Software Assurance related Entities and Concepts\<close>
 
@@ -541,8 +598,9 @@ doc_class judgement =
    status          :: status
    is_concerned    :: "role set" <= "{VER,ASR,VAL}" 
 
-section\<open> Design and Test Documents \<close> 
+section\<open> A Classification of CENELEC Reports and Documents \<close> 
 
+(* should we rename this as "report" ??? bu *)
 doc_class cenelec_document = text_element +
    phase        :: "phase"
    sil          :: "sil"
@@ -680,7 +738,7 @@ doc_class SWADVR = cenelec_document +
    phase        :: "phase"  <= "SADES"
    nlvl :: "normative_level" <= "HR"
    invariant force_nlvl_swadvr :: "nlvl \<sigma> = HR"
-   type_synonym software_architecture_and_design_verification_report = SWADVR
+   type_synonym software_architecture_and_design_verification = SWADVR
 
 doc_class SWCDS = cenelec_document + 
    phase        :: "phase"  <= "SCDES"
@@ -695,7 +753,7 @@ doc_class SWCTS = cenelec_document +
 doc_class SWCDVR = cenelec_document + 
    phase        :: "phase"  <= "SCDES"
    invariant force_nlvl_swcdvr :: "if sil \<sigma> = SIL0 then nlvl \<sigma> = R else nlvl \<sigma> = HR"
-   type_synonym software_component_design_verification_report = SWCDVR
+   type_synonym software_component_design_verification = SWCDVR
 
 doc_class SWSCD = cenelec_document + 
    phase        :: "phase"  <= "CInT"
