@@ -77,7 +77,7 @@ check_isabelle_version() {
 check_afp_entries() {
     echo "* Checking availability of AFP entries:"
     missing=""
-    required="Regular-Sets Functional-Automata"
+    required="Regular-Sets Functional-Automata Physical_Quantities"
     for afp in $required; do 
         res=`$ISABELLE_TOOL build -n $afp 2>/dev/null || true`
         if [ "$res" != "" ]; then 
