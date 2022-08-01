@@ -2462,7 +2462,7 @@ fun trace_attr_2_ML ctxt (oid:string,pos) =
 
 fun compute_cid_repr ctxt cid pos = 
       if DOF_core.is_defined_cid_local  cid ctxt then Const(cid,dummyT)
-      else ISA_core.err "Undefined Class Id" pos
+      else ISA_core.err ("Undefined Class Identifier:"^cid) pos
 
 local
 
