@@ -14,9 +14,10 @@
 (*<*)
 theory 
   mini_odo
-  imports  
+imports  
   "Isabelle_DOF.CENELEC_50128" 
   "Isabelle_DOF.technical_report"
+  "Physical_Quantities.SI_Pretty"
 begin
 declare[[strict_monitor_checking=true]]
 define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
@@ -41,14 +42,14 @@ text\<open>
 
   The case-study is presented in form of an \<^emph>\<open>integrated source\<close> in \<^isadof> containing all four
   reports from the phases:
-    \<^item> \<^term>\<open>software_requirements\<close>, \<^ie> the \<^onto_class>\<open>SWRS\<close> 
+    \<^item> \<^term>\<open>software_requirements\<close> with deliverable \<^doc_class>\<open>SWRS\<close> 
        (or long:\<^typ>\<open>software_requirements_specification\<close>(-report))
-    \<^item> \<^term>\<open>software_architecture_and_design\<close>, \<^ie> the \<^onto_class>\<open>SWDS\<close> 
+    \<^item> \<^term>\<open>software_architecture_and_design\<close> with deliverable \<^doc_class>\<open>SWDS\<close> 
       (or long: \<^typ>\<open>software_design_specification\<close>(-report))
-    \<^item> \<^term>\<open>component_implementation_and_testing\<close>, \<^ie> the \<^onto_class>\<open>SWADVR\<close>
-      (or long: \<^typ>\<open>software_architecture_and_design_verification\<close>(-report))
-    \<^item> \<^term>\<open>component_implementation_and_testing\<close>, \<^ie> the \<^onto_class>\<open>SWADVR\<close>
+    \<^item> \<^term>\<open>software_component_design\<close> with deliverable \<^doc_class>\<open>SWCDVR\<close>
       (or long: \<^typ>\<open>software_component_design_verification\<close>(-report).)
+    \<^item> \<^term>\<open>component_implementation_and_testing\<close> with deliverable \<^doc_class>\<open>SWADVR\<close>
+      (or long: \<^typ>\<open>software_architecture_and_design_verification\<close>(-report))
 
   The objective of this case study is to demonstrate deep-semantical ontologoies in 
   software developments targeting certifications, and in particular, how \<^isadof>'s 
@@ -186,6 +187,14 @@ text\<open>
   in AutoCorres.
 \<close>
 
+(*<*)
+      definition teeth_per_wheelturn::nat  ("tpw") where "tpw \<equiv> SOME x. x > 0"
+      definition wheel_diameter     ::"real[m]" ("w\<^sub>d") where "w\<^sub>d \<equiv> SOME x. x > 0" 
+      definition wheel_circumference::"real[m]" ("w\<^sub>0") where "w\<^sub>0 \<equiv> pi *\<^sub>Q w\<^sub>d"
+      definition \<delta>s\<^sub>r\<^sub>e\<^sub>s               ::"real[m]" where "\<delta>s\<^sub>r\<^sub>e\<^sub>s \<equiv> 1 / (2 * 3 * tpw) *\<^sub>Q w\<^sub>0 "
+(*>*)
+
+
 section\<open>Formal Enrichment of the Software Requirements Specification\<close>
 text\<open>
   After the \<^emph>\<open>capture\<close>-phase, where we converted/integrated existing informal analysis and design 
@@ -195,9 +204,9 @@ text\<open>
 
       @{theory_text [display]\<open>
       definition teeth_per_wheelturn::nat  ("tpw") where "tpw \<equiv> SOME x. x > 0"
-      definition wheel_diameter::real ("w\<^sub>d") where "w\<^sub>d \<equiv> SOME x. x > 0" 
-      definition wheel_circumference::real ("w\<^sub>0") where "w\<^sub>0 \<equiv> pi * w\<^sub>d"
-      definition \<delta>s\<^sub>r\<^sub>e\<^sub>s::real where "\<delta>s\<^sub>r\<^sub>e\<^sub>s \<equiv> w\<^sub>0 / (2 * 3 * tpw)"
+      definition wheel_diameter::"real[m]" ("w\<^sub>d") where "w\<^sub>d \<equiv> SOME x. x > 0" 
+      definition wheel_circumference::"real[m]" ("w\<^sub>0") where "w\<^sub>0 \<equiv> pi *\<^sub>Q w\<^sub>d"
+      definition \<delta>s\<^sub>r\<^sub>e\<^sub>s::"real[m]" where "\<delta>s\<^sub>r\<^sub>e\<^sub>s \<equiv> 1 / (2 * 3 * tpw) *\<^sub>Q w\<^sub>0 "
       \<close>}
  
   Here, \<open>real\<close> refers to the real numbers as defined in the HOL-Analysis  library, which provides 
@@ -207,9 +216,17 @@ text\<open>
   \<^assumption>\<open>perfect-wheel\<close> is translated into a calculation of the circumference of the
   wheel, while \<open>\<delta>s\<^sub>r\<^sub>e\<^sub>s\<close>, the resolution of the odometer, can be calculated 
   from the these parameters. HOL-Analysis permits to formalize the fundamental physical observables:
+\<close>
 
+(*<*)
+type_synonym distance_function = "real[s] \<Rightarrow> real[m]" 
+consts  Speed::"distance_function \<Rightarrow> real[s] \<Rightarrow> real[m\<cdot>s\<^sup>-\<^sup>1]"
+consts  Accel::"distance_function \<Rightarrow> real[s] \<Rightarrow> real[m\<cdot>s\<^sup>-\<^sup>2]"
+
+(*>*)
+text\<open>
       @{theory_text [display]\<open>
-      type_synonym distance_function = "real\<Rightarrow>real"  
+      type_synonym distance_function = "real[s]\<Rightarrow>real[m]"  
       definition Speed::"distance_function\<Rightarrow>real\<Rightarrow>real"  where "Speed f \<equiv> deriv f"
       definition Accel::"distance_function\<Rightarrow>real\<Rightarrow>real"  where "Accel f \<equiv> deriv (deriv f)" 
       \<close>}
