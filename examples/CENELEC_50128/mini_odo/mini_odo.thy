@@ -17,7 +17,7 @@ theory
 imports  
   "Isabelle_DOF.CENELEC_50128" 
   "Isabelle_DOF.technical_report"
-  "Physical_Quantities.SI_Pretty"
+  "Physical_Quantities.SI" "Physical_Quantities.SI_Pretty"
 begin
 declare[[strict_monitor_checking=true]]
 define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
@@ -222,6 +222,7 @@ text\<open>
 type_synonym distance_function = "real[s] \<Rightarrow> real[m]" 
 consts       Speed::"distance_function \<Rightarrow> real[s] \<Rightarrow> real[m\<cdot>s\<^sup>-\<^sup>1]"
 consts       Accel::"distance_function \<Rightarrow> real[s] \<Rightarrow> real[m\<cdot>s\<^sup>-\<^sup>2]"
+definition   "kilohertz = kilo *\<^sub>Q hertz" 
 
 (*>*)
 text\<open>
@@ -285,13 +286,17 @@ where \<open>init\<^sub>p\<^sub>o\<^sub>s\<close> is the initial position of the
 parameter of the configuration of a system.
 
 Finally, we can formally define the required performances. From the interface description
-and the global model parameters such as wheel diameter, the number of teeth per wheel, the sampling 
-frequency etc., we can infer the maximal time of service as well the maximum distance the
-device can measure. 
-As an example configuration, choosing 1m for
-\<open>w\<^sub>d\<close>, 100 for \<open>tpw\<close>, 80km/h \<open>Speed\<^sub>M\<^sub>a\<^sub>x\<close>,
-and 14400Hz for the sampling frequency, results in an odometer resolution of 2.3mm,  
-a maximum distance of 9878km, and a maximal system up-time of 123.4 hours.
+and the global model parameters such as wheel diameter, the number of teeth per wheel, the 
+sampling frequency etc., we can infer the maximal time of service as well the maximum distance 
+the device can measure.  As an example configuration, choosing:
+
+   \<^item> \<^term>\<open>(1 *\<^sub>Q metre)::real[m]\<close> for  \<^term>\<open>w\<^sub>d\<close>, 
+   \<^item> \<^term>\<open>100 :: real\<close> for  \<^term>\<open>tpw\<close>, 
+   \<^item> \<^term>\<open>80 *\<^sub>Q kilo *\<^sub>Q metre \<^bold>/ hour :: real[m\<cdot>s\<^sup>-\<^sup>1] \<close> for  \<^term>\<open>Speed\<^sub>M\<^sub>a\<^sub>x\<close>,
+   \<^item> \<^term>\<open>14.4 *\<^sub>Q kilo *\<^sub>Q hertz\<close> for the sampling frequency,
+ 
+results in an odometer resolution of \<^term>\<open>2.3 *\<^sub>Q milli *\<^sub>Q metre\<close>, a maximum distance of 
+\<^term>\<open>9878*\<^sub>Q kilo *\<^sub>Q metre\<close>, and a maximal system up-time of \<^term>\<open>123.4 *\<^sub>Q hour\<close>s.
 The required precision of an odometer can be defined by a constant describing
 the maximally allowed difference between \<open>df(n*\<delta>t)\<close>  and 
 \<open>sampling df init\<^sub>p\<^sub>o\<^sub>s \<delta>t n\<close> for all \<open>init\<^sub>p\<^sub>o\<^sub>s \<in>{0..5}\<close>.
