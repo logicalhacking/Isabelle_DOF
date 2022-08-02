@@ -220,8 +220,8 @@ text\<open>
 
 (*<*)
 type_synonym distance_function = "real[s] \<Rightarrow> real[m]" 
-consts  Speed::"distance_function \<Rightarrow> real[s] \<Rightarrow> real[m\<cdot>s\<^sup>-\<^sup>1]"
-consts  Accel::"distance_function \<Rightarrow> real[s] \<Rightarrow> real[m\<cdot>s\<^sup>-\<^sup>2]"
+consts       Speed::"distance_function \<Rightarrow> real[s] \<Rightarrow> real[m\<cdot>s\<^sup>-\<^sup>1]"
+consts       Accel::"distance_function \<Rightarrow> real[s] \<Rightarrow> real[m\<cdot>s\<^sup>-\<^sup>2]"
 
 (*>*)
 text\<open>
