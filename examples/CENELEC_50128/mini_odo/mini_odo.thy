@@ -615,8 +615,8 @@ text\<open>
 \<^item> \<open>@{file "mini_odo.thy"}\<close> : @{file "mini_odo.thy"}
 \<^item> \<open>@{value "3+4::int"}}\<close> : @{value "3+4::int"}
 \<^item> \<open>@{const hd}\<close> : @{const hd}
-\<^item> \<open>@{theory HOL.List}\<close> : @{theory HOL.List}
-\<^item> \<open>@{term "3"}\<close> : @{term "3"}
+\<^item> \<open>@{theory HOL.List}\<close> : @{theory HOL.List}s
+\<^item> \<open>@{tserm "3"}\<close> : @{term "3"}
 \<^item> \<open>@{type bool}\<close> : @{type bool}
 \<^item> \<open>@{thm term [show_types] "f x = a + x"}\<close> : @{term [show_types] "f x = a + x"}
 \<close>
@@ -624,10 +624,10 @@ text\<open>
 text\<open>Examples for declaration of typed doc-classes "assumption" (sic!) and "hypothesis" (sic!!),
      concepts defined in the underlying ontology @{theory "Isabelle_DOF.CENELEC_50128"}. \<close>
 text*[ass2::assumption, long_name="Some ''assumption one''"] \<open> The subsystem Y is safe. \<close>
-text*[hyp1::hypothesis] \<open> P not equal NP \<close>
+text*[hyp1::hypothesis] \<open> P \<noteq> NP \<close>
   
 text\<open>  
-   A real example fragment from a larger project, declaring a text-element as a
+   A real example fragment fsrom a larger project, declaring a text-element as a
    "safety-related application condition", a concept defined in the 
    @{theory "Isabelle_DOF.CENELEC_50128"} ontology:\<close>  
 
