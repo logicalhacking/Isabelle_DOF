@@ -628,7 +628,7 @@ text\<open>
 text\<open>Examples for declaration of typed doc-classes "assumption" (sic!) and "hypothesis" (sic!!),
      concepts defined in the underlying ontology @{theory "Isabelle_DOF.CENELEC_50128"}. \<close>
 text*[ass2::assumption, long_name="Some ''assumption one''"] \<open> The subsystem Y is safe. \<close>
-text*[hyp1::hypothesis] \<open> P \<noteq> NP \<close>
+text*[hyp1::hypothesis] \<open> \<open>P \<noteq> NP\<close> \<close>
   
 text\<open>  
    A real example fragment fsrom a larger project, declaring a text-element as a
