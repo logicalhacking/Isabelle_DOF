@@ -222,7 +222,11 @@ text\<open>
 type_synonym distance_function = "real[s] \<Rightarrow> real[m]" 
 consts       Speed::"distance_function \<Rightarrow> real[s] \<Rightarrow> real[m\<cdot>s\<^sup>-\<^sup>1]"
 consts       Accel::"distance_function \<Rightarrow> real[s] \<Rightarrow> real[m\<cdot>s\<^sup>-\<^sup>2]"
-definition   "kilohertz = kilo *\<^sub>Q hertz" 
+consts       Speed\<^sub>M\<^sub>a\<^sub>x::"real[m\<cdot>s\<^sup>-\<^sup>1]"
+
+(* Non - SI conform common abrbreviations *)
+definition   "kmh \<equiv> kilo *\<^sub>Q metre \<^bold>/ hour :: real[m\<cdot>s\<^sup>-\<^sup>1]"
+definition   "kHz \<equiv> kilo *\<^sub>Q hertz :: real[s\<^sup>-\<^sup>1]"
 
 (*>*)
 text\<open>
@@ -290,13 +294,13 @@ and the global model parameters such as wheel diameter, the number of teeth per 
 sampling frequency etc., we can infer the maximal time of service as well the maximum distance 
 the device can measure.  As an example configuration, choosing:
 
-   \<^item> \<^term>\<open>(1 *\<^sub>Q metre)::real[m]\<close> for  \<^term>\<open>w\<^sub>d\<close>, 
-   \<^item> \<^term>\<open>100 :: real\<close> for  \<^term>\<open>tpw\<close>, 
-   \<^item> \<^term>\<open>80 *\<^sub>Q kilo *\<^sub>Q metre \<^bold>/ hour :: real[m\<cdot>s\<^sup>-\<^sup>1] \<close> for  \<^term>\<open>Speed\<^sub>M\<^sub>a\<^sub>x\<close>,
-   \<^item> \<^term>\<open>14.4 *\<^sub>Q kilo *\<^sub>Q hertz\<close> for the sampling frequency,
+   \<^item> \<^term>\<open>(1 *\<^sub>Q metre)::real[m]\<close>      for  \<^term>\<open>w\<^sub>d\<close>   (wheel-diameter), 
+   \<^item> \<^term>\<open>100         :: real\<close>        for  \<^term>\<open>tpw\<close> (teeth per wheel), 
+   \<^item> \<^term>\<open>80 *\<^sub>Q kmh   :: real[m\<cdot>s\<^sup>-\<^sup>1]\<close>  for  \<^term>\<open>Speed\<^sub>M\<^sub>a\<^sub>x\<close>,
+   \<^item> \<^term>\<open>14.4 *\<^sub>Q kHz :: real[s\<^sup>-\<^sup>1]\<close>    for the sampling frequency,
  
 results in an odometer resolution of \<^term>\<open>2.3 *\<^sub>Q milli *\<^sub>Q metre\<close>, a maximum distance of 
-\<^term>\<open>9878*\<^sub>Q kilo *\<^sub>Q metre\<close>, and a maximal system up-time of \<^term>\<open>123.4 *\<^sub>Q hour\<close>s.
+\<^term>\<open>9878 *\<^sub>Q kilo *\<^sub>Q metre\<close>, and a maximal system up-time of \<^term>\<open>123.4 *\<^sub>Q hour\<close>s.
 The required precision of an odometer can be defined by a constant describing
 the maximally allowed difference between \<open>df(n*\<delta>t)\<close>  and 
 \<open>sampling df init\<^sub>p\<^sub>o\<^sub>s \<delta>t n\<close> for all \<open>init\<^sub>p\<^sub>o\<^sub>s \<in>{0..5}\<close>.
