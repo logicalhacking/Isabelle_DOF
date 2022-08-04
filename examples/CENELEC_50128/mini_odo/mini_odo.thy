@@ -225,8 +225,8 @@ consts       Accel::"distance_function \<Rightarrow> real[s] \<Rightarrow> real[
 consts       Speed\<^sub>M\<^sub>a\<^sub>x::"real[m\<cdot>s\<^sup>-\<^sup>1]"
 
 (* Non - SI conform common abrbreviations *)
-definition   "kmh \<equiv> kilo *\<^sub>Q metre \<^bold>/ hour :: real[m\<cdot>s\<^sup>-\<^sup>1]"
-definition   "kHz \<equiv> kilo *\<^sub>Q hertz :: real[s\<^sup>-\<^sup>1]"
+definition   "kmh \<equiv> kilo *\<^sub>Q metre \<^bold>/ hour :: 'a::{field,ring_char_0}[m\<cdot>s\<^sup>-\<^sup>1]"
+definition   "kHz \<equiv> kilo *\<^sub>Q hertz :: 'a::{field,ring_char_0}[s\<^sup>-\<^sup>1]"
 
 (*>*)
 text\<open>
