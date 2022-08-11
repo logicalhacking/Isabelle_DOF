@@ -52,8 +52,8 @@ object DOF_Document_Build
       // produced by alternative presentation hook (workaround for missing Toplevel.present_theory)
       for (name <- context.document_theories) {
         val path = Path.basic(Document_Build.tex_name(name))
-        val xml =
-          YXML.parse_body(context.get_export(name.theory, Export.DOCUMENT_LATEX + "_dof").text)
+        val entry = context.session_context(name.theory, Export.DOCUMENT_LATEX + "_dof", permissive = true)
+        val xml = YXML.parse_body(entry.text)
         if (xml.nonEmpty) {
           File.Content(path, xml).output(latex_output(_, file_pos = path.implode_symbolic))
             .write(directory.doc_dir)
