@@ -14,9 +14,10 @@
 (*<*)
 theory 
   mini_odo
-  imports  
+imports  
   "Isabelle_DOF.CENELEC_50128" 
   "Isabelle_DOF.technical_report"
+  "Physical_Quantities.SI" "Physical_Quantities.SI_Pretty"
 begin
 declare[[strict_monitor_checking=true]]
 define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
@@ -41,14 +42,14 @@ text\<open>
 
   The case-study is presented in form of an \<^emph>\<open>integrated source\<close> in \<^isadof> containing all four
   reports from the phases:
-    \<^item> \<^term>\<open>software_requirements\<close>, \<^ie> the \<^onto_class>\<open>SWRS\<close> 
+    \<^item> \<^term>\<open>software_requirements\<close> with deliverable \<^doc_class>\<open>SWRS\<close> 
        (or long:\<^typ>\<open>software_requirements_specification\<close>(-report))
-    \<^item> \<^term>\<open>software_architecture_and_design\<close>, \<^ie> the \<^onto_class>\<open>SWDS\<close> 
+    \<^item> \<^term>\<open>software_architecture_and_design\<close> with deliverable \<^doc_class>\<open>SWDS\<close> 
       (or long: \<^typ>\<open>software_design_specification\<close>(-report))
-    \<^item> \<^term>\<open>component_implementation_and_testing\<close>, \<^ie> the \<^onto_class>\<open>SWADVR\<close>
-      (or long: \<^typ>\<open>software_architecture_and_design_verification\<close>(-report))
-    \<^item> \<^term>\<open>component_implementation_and_testing\<close>, \<^ie> the \<^onto_class>\<open>SWADVR\<close>
+    \<^item> \<^term>\<open>software_component_design\<close> with deliverable \<^doc_class>\<open>SWCDVR\<close>
       (or long: \<^typ>\<open>software_component_design_verification\<close>(-report).)
+    \<^item> \<^term>\<open>component_implementation_and_testing\<close> with deliverable \<^doc_class>\<open>SWADVR\<close>
+      (or long: \<^typ>\<open>software_architecture_and_design_verification\<close>(-report))
 
   The objective of this case study is to demonstrate deep-semantical ontologoies in 
   software developments targeting certifications, and in particular, how \<^isadof>'s 
@@ -186,6 +187,14 @@ text\<open>
   in AutoCorres.
 \<close>
 
+(*<*)
+      definition teeth_per_wheelturn::nat  ("tpw") where "tpw \<equiv> SOME x. x > 0"
+      definition wheel_diameter     ::"real[m]" ("w\<^sub>d") where "w\<^sub>d \<equiv> SOME x. x > 0" 
+      definition wheel_circumference::"real[m]" ("w\<^sub>0") where "w\<^sub>0 \<equiv> pi *\<^sub>Q w\<^sub>d"
+      definition \<delta>s\<^sub>r\<^sub>e\<^sub>s               ::"real[m]" where "\<delta>s\<^sub>r\<^sub>e\<^sub>s \<equiv> 1 / (2 * 3 * tpw) *\<^sub>Q w\<^sub>0 "
+(*>*)
+
+
 section\<open>Formal Enrichment of the Software Requirements Specification\<close>
 text\<open>
   After the \<^emph>\<open>capture\<close>-phase, where we converted/integrated existing informal analysis and design 
@@ -195,9 +204,9 @@ text\<open>
 
       @{theory_text [display]\<open>
       definition teeth_per_wheelturn::nat  ("tpw") where "tpw \<equiv> SOME x. x > 0"
-      definition wheel_diameter::real ("w\<^sub>d") where "w\<^sub>d \<equiv> SOME x. x > 0" 
-      definition wheel_circumference::real ("w\<^sub>0") where "w\<^sub>0 \<equiv> pi * w\<^sub>d"
-      definition \<delta>s\<^sub>r\<^sub>e\<^sub>s::real where "\<delta>s\<^sub>r\<^sub>e\<^sub>s \<equiv> w\<^sub>0 / (2 * 3 * tpw)"
+      definition wheel_diameter::"real[m]" ("w\<^sub>d") where "w\<^sub>d \<equiv> SOME x. x > 0" 
+      definition wheel_circumference::"real[m]" ("w\<^sub>0") where "w\<^sub>0 \<equiv> pi *\<^sub>Q w\<^sub>d"
+      definition \<delta>s\<^sub>r\<^sub>e\<^sub>s::"real[m]" where "\<delta>s\<^sub>r\<^sub>e\<^sub>s \<equiv> 1 / (2 * 3 * tpw) *\<^sub>Q w\<^sub>0 "
       \<close>}
  
   Here, \<open>real\<close> refers to the real numbers as defined in the HOL-Analysis  library, which provides 
@@ -207,9 +216,22 @@ text\<open>
   \<^assumption>\<open>perfect-wheel\<close> is translated into a calculation of the circumference of the
   wheel, while \<open>\<delta>s\<^sub>r\<^sub>e\<^sub>s\<close>, the resolution of the odometer, can be calculated 
   from the these parameters. HOL-Analysis permits to formalize the fundamental physical observables:
+\<close>
 
+(*<*)
+type_synonym distance_function = "real[s] \<Rightarrow> real[m]" 
+consts       Speed::"distance_function \<Rightarrow> real[s] \<Rightarrow> real[m\<cdot>s\<^sup>-\<^sup>1]"
+consts       Accel::"distance_function \<Rightarrow> real[s] \<Rightarrow> real[m\<cdot>s\<^sup>-\<^sup>2]"
+consts       Speed\<^sub>M\<^sub>a\<^sub>x::"real[m\<cdot>s\<^sup>-\<^sup>1]"
+
+(* Non - SI conform common abrbreviations *)
+definition   "kmh \<equiv> kilo *\<^sub>Q metre \<^bold>/ hour :: 'a::{field,ring_char_0}[m\<cdot>s\<^sup>-\<^sup>1]"
+definition   "kHz \<equiv> kilo *\<^sub>Q hertz :: 'a::{field,ring_char_0}[s\<^sup>-\<^sup>1]"
+
+(*>*)
+text\<open>
       @{theory_text [display]\<open>
-      type_synonym distance_function = "real\<Rightarrow>real"  
+      type_synonym distance_function = "real[s]\<Rightarrow>real[m]"  
       definition Speed::"distance_function\<Rightarrow>real\<Rightarrow>real"  where "Speed f \<equiv> deriv f"
       definition Accel::"distance_function\<Rightarrow>real\<Rightarrow>real"  where "Accel f \<equiv> deriv (deriv f)" 
       \<close>}
@@ -268,13 +290,17 @@ where \<open>init\<^sub>p\<^sub>o\<^sub>s\<close> is the initial position of the
 parameter of the configuration of a system.
 
 Finally, we can formally define the required performances. From the interface description
-and the global model parameters such as wheel diameter, the number of teeth per wheel, the sampling 
-frequency etc., we can infer the maximal time of service as well the maximum distance the
-device can measure. 
-As an example configuration, choosing 1m for
-\<open>w\<^sub>d\<close>, 100 for \<open>tpw\<close>, 80km/h \<open>Speed\<^sub>M\<^sub>a\<^sub>x\<close>,
-and 14400Hz for the sampling frequency, results in an odometer resolution of 2.3mm,  
-a maximum distance of 9878km, and a maximal system up-time of 123.4 hours.
+and the global model parameters such as wheel diameter, the number of teeth per wheel, the 
+sampling frequency etc., we can infer the maximal time of service as well the maximum distance 
+the device can measure.  As an example configuration, choosing:
+
+   \<^item> \<^term>\<open>(1 *\<^sub>Q metre)::real[m]\<close>      for  \<^term>\<open>w\<^sub>d\<close>   (wheel-diameter), 
+   \<^item> \<^term>\<open>100         :: real\<close>        for  \<^term>\<open>tpw\<close> (teeth per wheel), 
+   \<^item> \<^term>\<open>80 *\<^sub>Q kmh   :: real[m\<cdot>s\<^sup>-\<^sup>1]\<close>  for  \<^term>\<open>Speed\<^sub>M\<^sub>a\<^sub>x\<close>,
+   \<^item> \<^term>\<open>14.4 *\<^sub>Q kHz :: real[s\<^sup>-\<^sup>1]\<close>    for the sampling frequency,
+ 
+results in an odometer resolution of \<^term>\<open>2.3 *\<^sub>Q milli *\<^sub>Q metre\<close>, a maximum distance of 
+\<^term>\<open>9878 *\<^sub>Q kilo *\<^sub>Q metre\<close>, and a maximal system up-time of \<^term>\<open>123.4 *\<^sub>Q hour\<close>s.
 The required precision of an odometer can be defined by a constant describing
 the maximally allowed difference between \<open>df(n*\<delta>t)\<close>  and 
 \<open>sampling df init\<^sub>p\<^sub>o\<^sub>s \<delta>t n\<close> for all \<open>init\<^sub>p\<^sub>o\<^sub>s \<in>{0..5}\<close>.
@@ -593,8 +619,8 @@ text\<open>
 \<^item> \<open>@{file "mini_odo.thy"}\<close> : @{file "mini_odo.thy"}
 \<^item> \<open>@{value "3+4::int"}}\<close> : @{value "3+4::int"}
 \<^item> \<open>@{const hd}\<close> : @{const hd}
-\<^item> \<open>@{theory HOL.List}\<close> : @{theory HOL.List}
-\<^item> \<open>@{term "3"}\<close> : @{term "3"}
+\<^item> \<open>@{theory HOL.List}\<close> : @{theory HOL.List}s
+\<^item> \<open>@{tserm "3"}\<close> : @{term "3"}
 \<^item> \<open>@{type bool}\<close> : @{type bool}
 \<^item> \<open>@{thm term [show_types] "f x = a + x"}\<close> : @{term [show_types] "f x = a + x"}
 \<close>
@@ -602,10 +628,10 @@ text\<open>
 text\<open>Examples for declaration of typed doc-classes "assumption" (sic!) and "hypothesis" (sic!!),
      concepts defined in the underlying ontology @{theory "Isabelle_DOF.CENELEC_50128"}. \<close>
 text*[ass2::assumption, long_name="Some ''assumption one''"] \<open> The subsystem Y is safe. \<close>
-text*[hyp1::hypothesis] \<open> P not equal NP \<close>
+text*[hyp1::hypothesis] \<open> \<open>P \<noteq> NP\<close> \<close>
   
 text\<open>  
-   A real example fragment from a larger project, declaring a text-element as a
+   A real example fragment fsrom a larger project, declaring a text-element as a
    "safety-related application condition", a concept defined in the 
    @{theory "Isabelle_DOF.CENELEC_50128"} ontology:\<close>  
 
