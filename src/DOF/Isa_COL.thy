@@ -212,11 +212,56 @@ local
 fun mk_line st1 st2 [a] =  [a @ Latex.string st2]
    |mk_line st1 st2 (a::S) = [a @ Latex.string st1] @ mk_line st1 st2 S;
 
+(* tab attributes for global setup *)
+
+val (tab_cell_placing, tab_cell_placing_setup)
+     = Attrib.config_string \<^binding>\<open>tab_cell_placing\<close> (K "center");
+val (tab_cell_height, tab_cell_height_setup)
+     = Attrib.config_int \<^binding>\<open>tab_cell_height\<close> (K ~1);
+val (tab_cell_width, tab_cell_width_setup)
+     = Attrib.config_int \<^binding>\<open>tab_cell_width\<close> (K ~1);
+val (tab_cell_bgnd_color, tab_cell_bgnd_color_setup)
+     = Attrib.config_int \<^binding>\<open>tab_cell_bgnd_height\<close> (K ~1);
+val (tab_cell_line_color, tab_cell_line_color_setup)
+     = Attrib.config_int \<^binding>\<open>tab_cell_line_color\<close> (K ~1);
+val (tab_cell_line_width, tab_cell_line_width_setup)
+     = Attrib.config_int \<^binding>\<open>tab_cell_line_height\<close> (K ~1);
+
+val _ = Theory.setup(   tab_cell_placing_setup
+                     #> tab_cell_height_setup
+                     #> tab_cell_width_setup
+                     #> tab_cell_bgnd_color_setup
+                     #> tab_cell_line_color_setup
+                     #> tab_cell_line_width_setup
+                    )
+
+val cell_placingN    = "cell_placing"
+val cell_heightN     = "cell_height" 
+val cell_widthN      = "cell_width"
+val cell_bgnd_colorN = "cell_bgnd_color" 
+val cell_line_colorN = "cell_line_color"
+val cell_line_widthN = "cell_line_width" 
+
+val tabitem_modes = Scan.optional (Args.parens (Parse.list1(  Args.$$$ cell_placingN   
+                                                           || Args.$$$ cell_heightN    
+                                                           || Args.$$$ cell_widthN     
+                                                           || Args.$$$ cell_bgnd_colorN
+                                                           || Args.$$$ cell_line_colorN
+                                                           || Args.$$$ cell_line_widthN))) []
+
+
+
+
+
+val tab_config_parser = tabitem_modes : (string list) parser
+val table_parser = Scan.lift tab_config_parser 
+                   -- Scan.repeat1(Scan.repeat1(Scan.lift Args.cartouche_input))
+
 fun table_antiquotation name =
   Document_Output.antiquotation_raw_embedded name 
-    (Scan.repeat1(Scan.repeat1(Scan.lift Args.cartouche_input)))
+    table_parser
     (fn ctxt => 
-      (fn content:Input.source list list =>
+      (fn (_,content:Input.source list list) =>
           let fun check _ = ()  (* ToDo *)
               val _  = check content
           in  content 
@@ -231,15 +276,26 @@ fun table_antiquotation name =
 
 in
 
-val _ =
-  Theory.setup (table_antiquotation \<^binding>\<open>table_inline\<close> );
+val _ = Theory.setup (table_antiquotation \<^binding>\<open>table_inline\<close> );
 
+
+(*
+
+
+fun setup_option name opt thy = thy
+  |> Data.map (apsnd (Name_Space.define (Context.Theory thy) true (name, opt) #> #2));
+
+*)
 end
 \<close>
 
+
+declare[[tab_cell_placing="left",tab_cell_height=18]]
+
 section\<open>Tests\<close>
 (*<*)
-text\<open> @{table_inline [display]
+text\<open> @{table_inline  [display] (cell_placing,cell_height,cell_width,
+                                 cell_bgnd_color,cell_line_color,cell_line_width)
           \<open>\<open>\<open>dfg\<close>\<open>dfg\<close>\<open>dfg\<close>\<close>
            \<open>\<open>1\<close>  \<open>2\<close>  \<open>3\<close>\<close>
           \<close>}\<close>
