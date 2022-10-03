@@ -214,18 +214,91 @@ fun mk_line st1 st2 [a] =  [a @ Latex.string st2]
 
 (* tab attributes for global setup *)
 
+type cell_config =   {cell_placing    : string list, 
+                      cell_height     : int list,
+                      cell_width      : int list,
+                      cell_bgnd_color : string list,
+                      cell_line_color : string list,
+                      cell_line_width : int list}
+
+val mt_cell_config = {cell_placing   = [],
+                      cell_height    = [],    
+                      cell_width     = [],    
+                      cell_bgnd_color= [], 
+                      cell_line_color= [], 
+                      cell_line_width= [] }: cell_config
+
+(* doof wie 100 m feldweg. *)
+fun upd_cell_placing key 
+            {cell_placing,cell_height,cell_width, cell_bgnd_color,   
+             cell_line_color,cell_line_width} : cell_config = 
+            {cell_placing   = cell_placing @ [key],  cell_height    = cell_height,    
+             cell_width     = cell_width,            cell_bgnd_color= cell_bgnd_color, 
+             cell_line_color= cell_line_color,       cell_line_width= cell_line_width } 
+            : cell_config
+
+fun upd_cell_height num 
+            {cell_placing,cell_height,cell_width, cell_bgnd_color,   
+             cell_line_color,cell_line_width} : cell_config = 
+            {cell_placing   = cell_placing ,  cell_height    = cell_height @ [num],    
+             cell_width     = cell_width,     cell_bgnd_color= cell_bgnd_color, 
+             cell_line_color= cell_line_color,cell_line_width= cell_line_width } 
+            : cell_config
+
+fun upd_cell_width num 
+            {cell_placing,cell_height,cell_width, cell_bgnd_color,   
+             cell_line_color,cell_line_width} : cell_config = 
+            {cell_placing   = cell_placing ,   cell_height    = cell_height,    
+             cell_width     = cell_width@[num],cell_bgnd_color= cell_bgnd_color, 
+             cell_line_color= cell_line_color, cell_line_width= cell_line_width } 
+            : cell_config
+
+fun upd_cell_bgnd_color str 
+            {cell_placing,cell_height,cell_width, cell_bgnd_color,   
+             cell_line_color,cell_line_width} : cell_config = 
+            {cell_placing   = cell_placing ,   cell_height    = cell_height,    
+             cell_width     = cell_width,      cell_bgnd_color= cell_bgnd_color@[str], 
+             cell_line_color= cell_line_color, cell_line_width= cell_line_width } 
+            : cell_config
+
+fun upd_cell_line_color str 
+            {cell_placing,cell_height,cell_width, cell_bgnd_color,   
+             cell_line_color,cell_line_width} : cell_config = 
+            {cell_placing   = cell_placing ,         cell_height    = cell_height,    
+             cell_width     = cell_width,            cell_bgnd_color= cell_bgnd_color, 
+             cell_line_color= cell_line_color@[str], cell_line_width= cell_line_width } 
+            : cell_config
+
+fun upd_cell_line_width num 
+            {cell_placing,cell_height,cell_width, cell_bgnd_color,   
+             cell_line_color,cell_line_width} : cell_config = 
+            {cell_placing   = cell_placing ,   cell_height    = cell_height,    
+             cell_width     = cell_width,      cell_bgnd_color= cell_bgnd_color, 
+             cell_line_color= cell_line_color, cell_line_width= cell_line_width@[num] } 
+            : cell_config
+
+
 val (tab_cell_placing, tab_cell_placing_setup)
      = Attrib.config_string \<^binding>\<open>tab_cell_placing\<close> (K "center");
 val (tab_cell_height, tab_cell_height_setup)
-     = Attrib.config_int \<^binding>\<open>tab_cell_height\<close> (K ~1);
+     = Attrib.config_int \<^binding>\<open>tab_cell_height\<close> (K 12);
 val (tab_cell_width, tab_cell_width_setup)
-     = Attrib.config_int \<^binding>\<open>tab_cell_width\<close> (K ~1);
+     = Attrib.config_int \<^binding>\<open>tab_cell_width\<close> (K 50);
 val (tab_cell_bgnd_color, tab_cell_bgnd_color_setup)
-     = Attrib.config_int \<^binding>\<open>tab_cell_bgnd_height\<close> (K ~1);
+     = Attrib.config_string \<^binding>\<open>tab_cell_bgnd_height\<close> (K "white");
 val (tab_cell_line_color, tab_cell_line_color_setup)
-     = Attrib.config_int \<^binding>\<open>tab_cell_line_color\<close> (K ~1);
+     = Attrib.config_string \<^binding>\<open>tab_cell_line_color\<close> (K "black");
 val (tab_cell_line_width, tab_cell_line_width_setup)
-     = Attrib.config_int \<^binding>\<open>tab_cell_line_height\<close> (K ~1);
+     = Attrib.config_int \<^binding>\<open>tab_cell_line_height\<close> (K 1);
+
+fun curr_cell_config ctxt = {cell_placing    = [Config.get ctxt tab_cell_placing],
+                             cell_height     = [Config.get ctxt tab_cell_height],    
+                             cell_width      = [Config.get ctxt tab_cell_width],    
+                             cell_bgnd_color = [Config.get ctxt tab_cell_bgnd_color], 
+                             cell_line_color = [Config.get ctxt tab_cell_line_color], 
+                             cell_line_width = [Config.get ctxt tab_cell_line_width]}
+                          : cell_config
+
 
 val _ = Theory.setup(   tab_cell_placing_setup
                      #> tab_cell_height_setup
@@ -242,18 +315,48 @@ val cell_bgnd_colorN = "cell_bgnd_color"
 val cell_line_colorN = "cell_line_color"
 val cell_line_widthN = "cell_line_width" 
 
-val tabitem_modes = Scan.optional (Args.parens (Parse.list1(  Args.$$$ cell_placingN   
-                                                           || Args.$$$ cell_heightN    
-                                                           || Args.$$$ cell_widthN     
-                                                           || Args.$$$ cell_bgnd_colorN
-                                                           || Args.$$$ cell_line_colorN
-                                                           || Args.$$$ cell_line_widthN))) []
+val placing_scan = Args.$$$ "left" || Args.$$$ "center" || Args.$$$ "right" 
+
+val color_scan   =   Args.$$$ "none" || Args.$$$ "red" || Args.$$$ "green" 
+                  || Args.$$$ "blue" || Args.$$$ "black"
 
 
+val tabitem_modes = Scan.optional 
+                      (Args.parens 
+                         (Parse.list1
+                           (   (Args.$$$ cell_placingN |-- Args.$$$ "=" -- placing_scan
+                                >> (fn (_, k) => upd_cell_placing k))   
+                            || (Args.$$$ cell_heightN |-- Args.$$$ "=" -- Parse.int
+                                >> (fn (_, k) => upd_cell_height k))    
+                            || (Args.$$$ cell_widthN |-- Args.$$$ "=" -- Parse.int
+                                >> (fn (_, k) => upd_cell_width k))    
+                            || (Args.$$$ cell_bgnd_colorN |-- Args.$$$ "=" -- color_scan
+                                >> (fn (_, k) => upd_cell_bgnd_color k))
+                            || (Args.$$$ cell_line_colorN |-- Args.$$$ "=" -- color_scan
+                                >> (fn (_, k) => upd_cell_line_color k))
+                            || (Args.$$$ cell_line_widthN |-- Args.$$$ "=" -- Parse.int
+                                >> (fn (_, k) => upd_cell_line_width k))
+                      ))) []
+
+(*
+val tabitem_modes = Scan.optional (Args.parens 
+                       (Parse.list1
+                           (Args.$$$ cell_placingN   
+                         || Args.$$$ cell_heightN    
+                         || Args.$$$ cell_widthN     
+                         || Args.$$$ cell_bgnd_colorN
+                         || Args.$$$ cell_line_colorN
+                         || Args.$$$ cell_line_widthN))) []
+*)
+
+datatype table_tree  = mk_tab    of cell_config * tab_group
+                     | mk_cell   of cell_config * Input.source
+   and   tab_group   = mk_row    of cell_config * table_tree list
+                     | mk_column of cell_config * table_tree list
+                                             
 
 
-
-val tab_config_parser = tabitem_modes : (string list) parser
+val tab_config_parser = tabitem_modes : ((cell_config -> cell_config) list) parser
 val table_parser = Scan.lift tab_config_parser 
                    -- Scan.repeat1(Scan.repeat1(Scan.lift Args.cartouche_input))
 
@@ -294,8 +397,8 @@ declare[[tab_cell_placing="left",tab_cell_height=18]]
 
 section\<open>Tests\<close>
 (*<*)
-text\<open> @{table_inline  [display] (cell_placing,cell_height,cell_width,
-                                 cell_bgnd_color,cell_line_color,cell_line_width)
+text\<open> @{table_inline  [display] (cell_placing = center,cell_height = 12,cell_width = 12,
+                                 cell_bgnd_color=black,cell_line_color=red,cell_line_width=234)
           \<open>\<open>\<open>dfg\<close>\<open>dfg\<close>\<open>dfg\<close>\<close>
            \<open>\<open>1\<close>  \<open>2\<close>  \<open>3\<close>\<close>
           \<close>}\<close>

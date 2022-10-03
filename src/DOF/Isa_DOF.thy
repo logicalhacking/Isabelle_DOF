@@ -2044,6 +2044,20 @@ fun document_command (name, pos) descr mark cmd =
    (Theory.setup o Document_Commands.map)
      (AList.update (op =) (name, document_output_reports name mark)));
 
+fun document_command' (name, pos) descr mark  =
+  (Outer_Syntax.command (name, pos) descr
+    (ODL_Meta_Args_Parser.attributes -- Parse.document_source >>
+      (fn (meta_args, text) =>
+        Toplevel.theory (fn thy =>
+          let
+            val _ =
+              (case get_document_command thy name of
+                SOME pr => ignore (pr meta_args text (Proof_Context.init_global thy))
+              | NONE => ());
+          in thy end)));
+   (Theory.setup o Document_Commands.map)
+     (AList.update (op =) (name, document_output_reports name mark)));
+
 end;
 
 
