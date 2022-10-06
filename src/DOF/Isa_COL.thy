@@ -177,7 +177,50 @@ doc_class figure_group =
 
 print_doc_classes
 
-subsection\<open>Ontological Macros\<close>
+section\<open>Ontological Macros\<close>
+
+subsection\<open>Layout Trimming Commands (with syntactic checks)\<close>
+
+ML\<open> 
+local
+
+val scan_cm = Scan.ahead (Basic_Symbol_Pos.$$$ "c" |-- Basic_Symbol_Pos.$$$ "m" ) ;
+val scan_pt = Scan.ahead (Basic_Symbol_Pos.$$$ "p" |-- Basic_Symbol_Pos.$$$ "t" ) ;
+val scan_blank = Scan.repeat (   Basic_Symbol_Pos.$$$ " "
+                              || Basic_Symbol_Pos.$$$ "\t" 
+                              || Basic_Symbol_Pos.$$$ "\n");
+
+val scan_latex_measure = (scan_blank
+                          |-- Scan.option (Basic_Symbol_Pos.$$$ "-")
+                          |-- Symbol_Pos.scan_nat 
+                          |-- (Scan.option ((Basic_Symbol_Pos.$$$ ".") |-- Symbol_Pos.scan_nat))
+                          |-- scan_blank
+                          |-- (scan_cm || scan_pt)
+                          |-- scan_blank
+                         );
+in           
+
+fun check_latex_measure _ src  = 
+         let val _ = ((Scan.catch scan_latex_measure (Symbol_Pos.explode(Input.source_content src)))
+                     handle Fail _ => error ("syntax error in LaTeX measure") )
+         in () end
+end\<close>
+
+
+
+setup\<open> DOF_lib.define_macro \<^binding>\<open>vs\<close>  "\\vspace{" "}" (check_latex_measure) \<close> 
+setup\<open> DOF_lib.define_macro \<^binding>\<open>hs\<close>  "\\hspace{" "}" (check_latex_measure) \<close> 
+
+(*<*)
+
+text\<open>Tests: \<^vs>\<open>-0.14cm\<close>\<close>
+ML\<open> check_latex_measure @{context} (Input.string "-3.14 cm") \<close>
+define_macro* vs2 \<rightleftharpoons> \<open>\vspace{\<close> _ \<open>}\<close> (check_latex_measure) (* checkers NYI on Isar-level *)
+define_macro* hs2 \<rightleftharpoons> \<open>\hspace{\<close> _ \<open>}\<close> (* works fine without checker.*)
+
+(*>*)
+
+subsection\<open>Figures\<close>
 
 ML\<open>
 (* *********************************************************************** *)
@@ -200,7 +243,7 @@ setup\<open>\<close>
 *)
 (*>*)
 
-section\<open>Tables\<close>
+subsection\<open>Tables\<close>
 (* TODO ! ! ! *)
 (* dito the future monitor: table - block *)
 (* some studies *)
@@ -391,6 +434,11 @@ fun setup_option name opt thy = thy
 *)
 end
 \<close>
+
+
+define_shortcut* clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
+                 hf \<rightleftharpoons> \<open>\hfill\<close> 
+                 br \<rightleftharpoons> \<open>\break\<close> 
 
 
 declare[[tab_cell_placing="left",tab_cell_height=18]]
