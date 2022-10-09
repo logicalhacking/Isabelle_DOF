@@ -177,9 +177,9 @@ doc_class figure_group =
 
 print_doc_classes
 
-section\<open>Ontological Macros\<close>
 
-subsection\<open>Layout Trimming Commands (with syntactic checks)\<close>
+
+section\<open>Layout Trimming Commands (with syntactic checks)\<close>
 
 ML\<open> 
 local
@@ -190,6 +190,8 @@ val scan_blank = Scan.repeat (   Basic_Symbol_Pos.$$$ " "
                               || Basic_Symbol_Pos.$$$ "\t" 
                               || Basic_Symbol_Pos.$$$ "\n");
 
+in
+
 val scan_latex_measure = (scan_blank
                           |-- Scan.option (Basic_Symbol_Pos.$$$ "-")
                           |-- Symbol_Pos.scan_nat 
@@ -197,13 +199,16 @@ val scan_latex_measure = (scan_blank
                           |-- scan_blank
                           |-- (scan_cm || scan_pt)
                           |-- scan_blank
-                         );
-in           
-
+                         ) ;
+           
 fun check_latex_measure _ src  = 
          let val _ = ((Scan.catch scan_latex_measure (Symbol_Pos.explode(Input.source_content src)))
                      handle Fail _ => error ("syntax error in LaTeX measure") )
          in () end
+
+val parse_latex_measure = Args.text_input >> (fn src => (check_latex_measure () (* dummy arg *) src; 
+                                       (fst o Input.source_content) src )  )
+
 end\<close>
 
 
@@ -214,13 +219,16 @@ setup\<open> DOF_lib.define_macro \<^binding>\<open>hs\<close>  "\\hspace{" "}" 
 (*<*)
 
 text\<open>Tests: \<^vs>\<open>-0.14cm\<close>\<close>
-ML\<open> check_latex_measure @{context} (Input.string "-3.14 cm") \<close>
+
+ML\<open> check_latex_measure @{context} (Input.string "-0.14 cm") \<close>
 define_macro* vs2 \<rightleftharpoons> \<open>\vspace{\<close> _ \<open>}\<close> (check_latex_measure) (* checkers NYI on Isar-level *)
 define_macro* hs2 \<rightleftharpoons> \<open>\hspace{\<close> _ \<open>}\<close> (* works fine without checker.*)
 
 (*>*)
 
 subsection\<open>Figures\<close>
+
+ML\<open>open Args\<close>
 
 ML\<open>
 (* *********************************************************************** *)
@@ -248,7 +256,6 @@ subsection\<open>Tables\<close>
 (* dito the future monitor: table - block *)
 (* some studies *)
 
-
 ML\<open>
 local
 
@@ -258,11 +265,11 @@ fun mk_line st1 st2 [a] =  [a @ Latex.string st2]
 (* tab attributes for global setup *)
 
 type cell_config =   {cell_placing    : string list, 
-                      cell_height     : int list,
-                      cell_width      : int list,
+                      cell_height     : string list,
+                      cell_width      : string list,
                       cell_bgnd_color : string list,
                       cell_line_color : string list,
-                      cell_line_width : int list}
+                      cell_line_width : string list}
 
 val mt_cell_config = {cell_placing   = [],
                       cell_height    = [],    
@@ -315,32 +322,32 @@ fun upd_cell_line_color str
 fun upd_cell_line_width num 
             {cell_placing,cell_height,cell_width, cell_bgnd_color,   
              cell_line_color,cell_line_width} : cell_config = 
-            {cell_placing   = cell_placing ,   cell_height    = cell_height,    
-             cell_width     = cell_width,      cell_bgnd_color= cell_bgnd_color, 
-             cell_line_color= cell_line_color, cell_line_width= cell_line_width@[num] } 
+            {cell_placing    = cell_placing ,   cell_height     = cell_height,    
+             cell_width      = cell_width,      cell_bgnd_color = cell_bgnd_color, 
+             cell_line_color = cell_line_color, cell_line_width = cell_line_width@[num] } 
             : cell_config
 
 
 val (tab_cell_placing, tab_cell_placing_setup)
      = Attrib.config_string \<^binding>\<open>tab_cell_placing\<close> (K "center");
 val (tab_cell_height, tab_cell_height_setup)
-     = Attrib.config_int \<^binding>\<open>tab_cell_height\<close> (K 12);
+     = Attrib.config_string \<^binding>\<open>tab_cell_height\<close> (K "0.0cm");
 val (tab_cell_width, tab_cell_width_setup)
-     = Attrib.config_int \<^binding>\<open>tab_cell_width\<close> (K 50);
+     = Attrib.config_string \<^binding>\<open>tab_cell_width\<close> (K "0.0cm");
 val (tab_cell_bgnd_color, tab_cell_bgnd_color_setup)
      = Attrib.config_string \<^binding>\<open>tab_cell_bgnd_height\<close> (K "white");
 val (tab_cell_line_color, tab_cell_line_color_setup)
      = Attrib.config_string \<^binding>\<open>tab_cell_line_color\<close> (K "black");
 val (tab_cell_line_width, tab_cell_line_width_setup)
-     = Attrib.config_int \<^binding>\<open>tab_cell_line_height\<close> (K 1);
+     = Attrib.config_string \<^binding>\<open>tab_cell_line_height\<close> (K "0.0cm");
 
-fun curr_cell_config ctxt = {cell_placing    = [Config.get ctxt tab_cell_placing],
-                             cell_height     = [Config.get ctxt tab_cell_height],    
-                             cell_width      = [Config.get ctxt tab_cell_width],    
-                             cell_bgnd_color = [Config.get ctxt tab_cell_bgnd_color], 
-                             cell_line_color = [Config.get ctxt tab_cell_line_color], 
-                             cell_line_width = [Config.get ctxt tab_cell_line_width]}
-                          : cell_config
+fun default_cell_config ctxt = {cell_placing    = [Config.get ctxt tab_cell_placing],
+                                cell_height     = [Config.get ctxt tab_cell_height],    
+                                cell_width      = [Config.get ctxt tab_cell_width],    
+                                cell_bgnd_color = [Config.get ctxt tab_cell_bgnd_color], 
+                                cell_line_color = [Config.get ctxt tab_cell_line_color], 
+                                cell_line_width = [Config.get ctxt tab_cell_line_width]}
+                              : cell_config
 
 
 val _ = Theory.setup(   tab_cell_placing_setup
@@ -360,37 +367,41 @@ val cell_line_widthN = "cell_line_width"
 
 val placing_scan = Args.$$$ "left" || Args.$$$ "center" || Args.$$$ "right" 
 
-val color_scan   =   Args.$$$ "none" || Args.$$$ "red" || Args.$$$ "green" 
-                  || Args.$$$ "blue" || Args.$$$ "black"
+val color_scan   =   Args.$$$ "none" || Args.$$$ "red" || Args.$$$ "green"                   || Args.$$$ "blue" || Args.$$$ "black"
 
+(*
 
-val tabitem_modes = Scan.optional 
+val _ = Scan.lift 
+
+fun lift scan (st, xs) =
+  let val (y, xs') = scan xs
+  in (y, (st, xs')) end;
+
+*)
+
+fun tabitem_modes (ctxt, toks) = 
+       let val (y, toks') = ((((Scan.optional 
                       (Args.parens 
                          (Parse.list1
                            (   (Args.$$$ cell_placingN |-- Args.$$$ "=" -- placing_scan
                                 >> (fn (_, k) => upd_cell_placing k))   
-                            || (Args.$$$ cell_heightN |-- Args.$$$ "=" -- Parse.int
+                            || (Args.$$$ cell_heightN |-- Args.$$$ "=" -- parse_latex_measure
                                 >> (fn (_, k) => upd_cell_height k))    
-                            || (Args.$$$ cell_widthN |-- Args.$$$ "=" -- Parse.int
+                            || (Args.$$$ cell_widthN |-- Args.$$$ "=" -- parse_latex_measure
                                 >> (fn (_, k) => upd_cell_width k))    
                             || (Args.$$$ cell_bgnd_colorN |-- Args.$$$ "=" -- color_scan
                                 >> (fn (_, k) => upd_cell_bgnd_color k))
                             || (Args.$$$ cell_line_colorN |-- Args.$$$ "=" -- color_scan
                                 >> (fn (_, k) => upd_cell_line_color k))
-                            || (Args.$$$ cell_line_widthN |-- Args.$$$ "=" -- Parse.int
+                            || (Args.$$$ cell_line_widthN |-- Args.$$$ "=" -- parse_latex_measure
                                 >> (fn (_, k) => upd_cell_line_width k))
-                      ))) []
+                      ))) [K (default_cell_config (Context.the_proof ctxt))]) 
+                      : (cell_config -> cell_config) list parser)
+                      >> (foldl1 (op #>)))
+                      : (cell_config -> cell_config) parser)
+                      (toks)
+        in (y, (ctxt, toks')) end
 
-(*
-val tabitem_modes = Scan.optional (Args.parens 
-                       (Parse.list1
-                           (Args.$$$ cell_placingN   
-                         || Args.$$$ cell_heightN    
-                         || Args.$$$ cell_widthN     
-                         || Args.$$$ cell_bgnd_colorN
-                         || Args.$$$ cell_line_colorN
-                         || Args.$$$ cell_line_widthN))) []
-*)
 
 datatype table_tree  = mk_tab    of cell_config * tab_group
                      | mk_cell   of cell_config * Input.source
@@ -399,16 +410,17 @@ datatype table_tree  = mk_tab    of cell_config * tab_group
                                              
 
 
-val tab_config_parser = tabitem_modes : ((cell_config -> cell_config) list) parser
-val table_parser = Scan.lift tab_config_parser 
-                   -- Scan.repeat1(Scan.repeat1(Scan.lift Args.cartouche_input))
+val tab_config_parser =  tabitem_modes : ((cell_config -> cell_config) ) context_parser
+val table_parser =  tab_config_parser -- Scan.repeat1(Scan.repeat1(Scan.lift Args.cartouche_input))
 
 fun table_antiquotation name =
   Document_Output.antiquotation_raw_embedded name 
     table_parser
     (fn ctxt => 
-      (fn (_,content:Input.source list list) =>
-          let fun check _ = ()  (* ToDo *)
+      (fn (cfg_trans,content:Input.source list list) =>
+          let val cfg = cfg_trans mt_cell_config
+              val _ = writeln ("XXX"^ @{make_string} cfg)
+              fun check _ = ()  (* ToDo *)
               val _  = check content
           in  content 
               |> (map(map (Document_Output.output_document ctxt {markdown = false})
@@ -424,14 +436,6 @@ in
 
 val _ = Theory.setup (table_antiquotation \<^binding>\<open>table_inline\<close> );
 
-
-(*
-
-
-fun setup_option name opt thy = thy
-  |> Data.map (apsnd (Name_Space.define (Context.Theory thy) true (name, opt) #> #2));
-
-*)
 end
 \<close>
 
@@ -441,18 +445,22 @@ define_shortcut* clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
                  br \<rightleftharpoons> \<open>\break\<close> 
 
 
-declare[[tab_cell_placing="left",tab_cell_height=18]]
+declare[[tab_cell_placing="left",tab_cell_height="18.0cm"]]
 
 section\<open>Tests\<close>
 (*<*)
-text\<open> @{table_inline  [display] (cell_placing = center,cell_height = 12,cell_width = 12,
-                                 cell_bgnd_color=black,cell_line_color=red,cell_line_width=234)
+text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open>12.0cm\<close>,
+                                 cell_height =\<open>13pt\<close>,  cell_width = \<open>12.0cm\<close>,
+                                 cell_bgnd_color=black,cell_line_color=red,cell_line_width=\<open>12.0cm\<close>)
           \<open>\<open>\<open>dfg\<close>\<open>dfg\<close>\<open>dfg\<close>\<close>
            \<open>\<open>1\<close>  \<open>2\<close>  \<open>3\<close>\<close>
           \<close>}\<close>
 (*>*)
 ML\<open>@{term "side_by_side_figure"};
    @{typ "doc_class rexp"}; 
-   DOF_core.SPY;\<close>
+   DOF_core.SPY;
+
+op |> ;
+\<close>
 
 end
