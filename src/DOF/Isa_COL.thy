@@ -256,6 +256,35 @@ subsection\<open>Tables\<close>
 (* dito the future monitor: table - block *)
 (* some studies *)
 
+text\<open>Tables are (sub) document-elements represented inside the documentation antiquotation
+language. The used technology is similar to the existing railroad-diagram support 
+(cf. \<^url>\<open>https://isabelle.in.tum.de/doc/isar-ref.pdf\<close>, Sec. 4.5). 
+
+However, tables are not directly based on the ideosynchrasies of Knuth-based language design ---
+
+However, tables come with a more abstract structure model than conventional typesetting in the 
+LaTeX tradition. It is based of the following principles:
+  \<^item> The core unit of a table is a \<^emph>\<open>cell\<close> having a \<^emph>\<open>configuration\<close>, i.e. a
+    number of attributes specifying its width, height, borderline, etc. 
+    A cell may be \<^emph>\<open>elementary\<close>, i.e. containing structured text or \<^emph>\<open>compound\<close>, 
+    i.e. containing a sub-table.
+  \<^item> A \<^emph>\<open>table\<close> contains either a list of \<^emph>\<open>rows\<close> or a list of \<^emph>\<open>columns\<close>, which are both
+    lists of cells.
+  \<^item> The tables, rows and columns posses own configurations.
+  \<^item> Concerning the layout, \<^emph>\<open>propagation\<close>  laws of configurations control that 
+    information flows top-down from tables to rows or columns, from rows/columns to cells,
+    from left to right within rows and from top to bottom in columns; propagation produces
+    the desired presentation effect of tables that cells appear somewhat uniform in it. 
+  \<^item> Since rows are lists of cells, configurations are also a list of attributes.
+    Attributes of the same kind may appear repeatedly. If the sub-list of attributes 
+    of the same kind is shorter than the list of cells it is referring to, than
+    the last element in this sub-list is duplicated as many times as necessary. This feature
+    of configuration propagation is called \<^emph>\<open>filling\<close>.
+  \<^item> Lists of rows and lists of cells consists of the same number of cells.
+  \<^item> Since propagation and filling induce a congruence relation on table trees, a normalisation
+    process is a necessary pre-requisite for the compilation to LaTeX.
+\<close>
+
 ML\<open>
 local
 
@@ -403,9 +432,9 @@ fun tabitem_modes (ctxt, toks) =
         in (y, (ctxt, toks')) end
 
 
-datatype table_tree  = mk_tab    of cell_config * tab_group
+datatype table_tree  = mk_tab    of cell_config * cell_group
                      | mk_cell   of cell_config * Input.source
-   and   tab_group   = mk_row    of cell_config * table_tree list
+   and   cell_group  = mk_row    of cell_config * table_tree list
                      | mk_column of cell_config * table_tree list
                                              
 
@@ -460,7 +489,6 @@ ML\<open>@{term "side_by_side_figure"};
    @{typ "doc_class rexp"}; 
    DOF_core.SPY;
 
-op |> ;
 \<close>
 
 end
