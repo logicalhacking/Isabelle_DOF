@@ -442,9 +442,9 @@ datatype table_tree  = mk_tab    of cell_config * cell_group
 val tab_config_parser =  tabitem_modes : ((cell_config -> cell_config) ) context_parser
 val table_parser =  tab_config_parser -- Scan.repeat1(Scan.repeat1(Scan.lift Args.cartouche_input))
 
-fun table_antiquotation name =
+fun table_antiquotation name scan =
   Document_Output.antiquotation_raw_embedded name 
-    table_parser
+    scan
     (fn ctxt => 
       (fn (cfg_trans,content:Input.source list list) =>
           let val cfg = cfg_trans mt_cell_config
@@ -463,7 +463,12 @@ fun table_antiquotation name =
 
 in
 
-val _ = Theory.setup (table_antiquotation \<^binding>\<open>table_inline\<close> );
+val _ = Theory.setup (   table_antiquotation \<^binding>\<open>table_inline\<close> table_parser
+                      #> table_antiquotation \<^binding>\<open>cell\<close> table_parser
+                      #> table_antiquotation \<^binding>\<open>row\<close> table_parser
+                      #> table_antiquotation \<^binding>\<open>column\<close> table_parser
+                      #> table_antiquotation \<^binding>\<open>subtab\<close> table_parser
+                     );
 
 end
 \<close>
@@ -481,14 +486,16 @@ section\<open>Tests\<close>
 text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open>12.0cm\<close>,
                                  cell_height =\<open>13pt\<close>,  cell_width = \<open>12.0cm\<close>,
                                  cell_bgnd_color=black,cell_line_color=red,cell_line_width=\<open>12.0cm\<close>)
-          \<open>\<open>\<open>dfg\<close>\<open>dfg\<close>\<open>dfg\<close>\<close>
-           \<open>\<open>1\<close>  \<open>2\<close>  \<open>3\<close>\<close>
+          \<open>\<open>\<^cell>\<open>dfg\<close> \<^col>\<open>dfg\<close> \<^row>\<open>dfg\<close> @{cell (cell_height =\<open>12.0cm\<close>) \<open>abracadabra\<close>}\<close>
+           \<open>\<open>1\<close>  \<open>2\<close>  \<open>3\<sigma>\<close>\<close>
           \<close>}\<close>
 (*>*)
+
 ML\<open>@{term "side_by_side_figure"};
    @{typ "doc_class rexp"}; 
    DOF_core.SPY;
 
 \<close>
 
+text\<open>@{term_ \<open>3 + 4::int\<close>} @{value_ \<open>3 + 4::int\<close>} \<close>
 end

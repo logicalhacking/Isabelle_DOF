@@ -1730,6 +1730,9 @@ end
 val _ = Toplevel.theory
 val _ = Toplevel.theory_toplevel 
 
+
+
+(* setup ontology aware commands *)
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>term*\<close> "read and print term"
     (opt_attributes -- (opt_modes -- Parse.term) 
@@ -1740,19 +1743,34 @@ val _ =
     (opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
      >> (fn (meta_args_opt, eval_args ) => pass_trans_to_value_cmd meta_args_opt eval_args));
 
-val _ = Theory.setup
-  (Document_Output.antiquotation_pretty_source_embedded \<^binding>\<open>value*\<close>
-    (Scan.lift opt_evaluator -- Term_Style.parse -- Args.term)
-    (fn ctxt => fn ((name, style), t) =>
-      Document_Output.pretty_term ctxt (style (value_select name ctxt t)))
-  #> add_evaluator (\<^binding>\<open>simp\<close>, Code_Simp.dynamic_value) #> snd
-  #> add_evaluator (\<^binding>\<open>nbe\<close>, Nbe.dynamic_value) #> snd
-  #> add_evaluator (\<^binding>\<open>code\<close>, Code_Evaluation.dynamic_value_strict) #> snd);
-
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>assert*\<close> "evaluate and assert term"
     (opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
      >> (fn (meta_args_opt, eval_args ) => pass_trans_to_assert_value_cmd meta_args_opt eval_args));
+
+(* setup ontology - aware text antiquotations. Due to lexical restrictions, we can not
+   declare them as value* or term*, although we will refer to them this way in papers. *)
+local 
+  fun pretty_term_style ctxt (style: term -> term, t) =
+      Document_Output.pretty_term ctxt (style t);
+in
+val _ = Theory.setup
+  (Document_Output.antiquotation_pretty_source_embedded \<^binding>\<open>value_\<close>
+    (Scan.lift opt_evaluator -- Term_Style.parse -- Args.term)
+    (fn ctxt => fn ((name, style), t) =>
+      Document_Output.pretty_term ctxt (style (value_select name ctxt t)))
+     (* incomplete : without validation and expansion TODO *)
+  #> Document_Output.antiquotation_pretty_source_embedded \<^binding>\<open>term_\<close> 
+             (Term_Style.parse -- Args.term) pretty_term_style 
+     (* incomplete : without validation TODO *))
+end
+
+(* setup evaluators  *)
+val _ = Theory.setup(
+     add_evaluator (\<^binding>\<open>simp\<close>, Code_Simp.dynamic_value) #> snd
+  #> add_evaluator (\<^binding>\<open>nbe\<close>, Nbe.dynamic_value) #> snd
+  #> add_evaluator (\<^binding>\<open>code\<close>, Code_Evaluation.dynamic_value_strict) #> snd);
+
 
 end;  (* structure Value_Command *)
 
