@@ -461,14 +461,57 @@ fun table_antiquotation name scan =
       )
     );
 
+fun cell_antiquotation name scan =
+    Document_Output.antiquotation_raw_embedded name 
+    scan
+    (fn ctxt => 
+      (fn (cfg_trans,content:Input.source) => 
+          let val cfg = cfg_trans mt_cell_config
+              val _ = writeln ("XXX"^ @{make_string} cfg) 
+          in  content |> Document_Output.output_document ctxt {markdown = false}
+          end
+      )
+    )
+
+fun row_antiquotation name scan =
+    Document_Output.antiquotation_raw_embedded name 
+    scan
+    (fn ctxt => 
+      (fn (cfg_trans,content:Input.source list) => 
+          let val cfg = cfg_trans mt_cell_config
+              val _ = writeln ("XXX"^ @{make_string} cfg) 
+          in  content |> (map (Document_Output.output_document ctxt {markdown = false})
+                          #> List.concat)
+          end
+      )
+    )
+
+fun column_antiquotation name scan =
+    Document_Output.antiquotation_raw_embedded name 
+    scan
+    (fn ctxt => 
+      (fn (cfg_trans,content:Input.source list) => 
+          let val cfg = cfg_trans mt_cell_config
+              val _ = writeln ("XXX"^ @{make_string} cfg) 
+          in  content |> (map (Document_Output.output_document ctxt {markdown = false})
+                          #> List.concat)
+          end
+      )
+    )
+
 in
 
-val _ = Theory.setup (   table_antiquotation \<^binding>\<open>table_inline\<close> table_parser
-                      #> table_antiquotation \<^binding>\<open>cell\<close> table_parser
-                      #> table_antiquotation \<^binding>\<open>row\<close> table_parser
-                      #> table_antiquotation \<^binding>\<open>column\<close> table_parser
-                      #> table_antiquotation \<^binding>\<open>subtab\<close> table_parser
-                     );
+val _ = Theory.setup 
+           (   table_antiquotation  \<^binding>\<open>table_inline\<close> 
+                                    table_parser
+            #> table_antiquotation  \<^binding>\<open>subtab\<close> table_parser
+            #> cell_antiquotation   \<^binding>\<open>cell\<close>   
+                                    (tab_config_parser--Scan.lift Args.cartouche_input)
+            #> row_antiquotation    \<^binding>\<open>row\<close>  
+                                    (tab_config_parser--Scan.repeat1(Scan.lift Args.cartouche_input))  
+            #> column_antiquotation \<^binding>\<open>column\<close> 
+                                    (tab_config_parser--Scan.repeat1(Scan.lift Args.cartouche_input))
+           );
 
 end
 \<close>
@@ -488,7 +531,8 @@ text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open
                                  cell_bgnd_color=black,cell_line_color=red,cell_line_width=\<open>12.0cm\<close>)
           \<open>\<open>\<^cell>\<open>dfg\<close> \<^col>\<open>dfg\<close> \<^row>\<open>dfg\<close> @{cell (cell_height =\<open>12.0cm\<close>) \<open>abracadabra\<close>}\<close>
            \<open>\<open>1\<close>  \<open>2\<close>  \<open>3\<sigma>\<close>\<close>
-          \<close>}\<close>
+          \<close>}
+      \<^cell>\<open>dfg\<close>  @{row \<open>is technical\<close> \<open> \<open>\<sigma> * a\<^sub>4\<close> \<close>}\<close>
 (*>*)
 
 ML\<open>@{term "side_by_side_figure"};
