@@ -1183,7 +1183,7 @@ text\<open> The extensibility of Isabelle as a system framework depends on a num
  \<^item> \<^ML>\<open>Toplevel.theory: (theory -> theory) -> Toplevel.transition -> Toplevel.transition\<close>
    adjoins a theory transformer.
  \<^item> \<^ML>\<open>Toplevel.generic_theory: (generic_theory -> generic_theory) -> Toplevel.transition -> Toplevel.transition\<close>
- \<^item> \<^ML>\<open>Toplevel.theory': (bool -> theory -> theory) -> Toplevel.transition -> Toplevel.transition\<close>
+ \<^item> \<^ML>\<open>Toplevel.theory': (bool -> theory -> theory) -> Toplevel.presentation -> Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.exit: Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.ignored: Position.T -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.present_local_theory:  (xstring * Position.T) option ->
@@ -1865,12 +1865,11 @@ Common Isar Syntax
 \<^item>\<^ML>\<open>Args.name_position: (string * Position.T) parser\<close>
 \<^item>\<^ML>\<open>Args.cartouche_inner_syntax: string parser\<close>
 \<^item>\<^ML>\<open>Args.cartouche_input: Input.source parser\<close>
-\<^item>\<^ML>\<open>Args.text_token: Token.T parser \<close>
 
 
 Common Isar Syntax
-\<^item>\<^ML>\<open>Args.text_input: Input.source parser\<close>
-\<^item>\<^ML>\<open>Args.text      : string parser\<close>
+\<^item>\<^ML>\<open>Parse.embedded_input: Input.source parser\<close>
+\<^item>\<^ML>\<open>Parse.embedded : string parser\<close>
 \<^item>\<^ML>\<open>Args.binding   : Binding.binding parser\<close>
 
 Common Stuff related to Inner Syntax Parsing
@@ -1893,8 +1892,7 @@ Common Isar Syntax
 \<^item>\<^ML>\<open>Args.named_source: (Token.T -> Token.src) -> Token.src parser\<close>
 \<^item>\<^ML>\<open>Args.named_typ   : (string -> typ) -> typ parser\<close>
 \<^item>\<^ML>\<open>Args.named_term : (string -> term) -> term parser\<close>
-\<^item>\<^ML>\<open>Args.text_declaration: (Input.source -> declaration) -> declaration parser\<close>
-\<^item>\<^ML>\<open>Args.cartouche_declaration: (Input.source -> declaration) -> declaration parser\<close>
+\<^item>\<^ML>\<open>Args.embedded_declaration: (Input.source -> declaration) -> declaration parser\<close>
 \<^item>\<^ML>\<open>Args.typ_abbrev  : typ context_parser\<close>
 \<^item>\<^ML>\<open>Args.typ: typ context_parser\<close>
 \<^item>\<^ML>\<open>Args.term: term context_parser\<close>
@@ -1903,8 +1901,6 @@ Common Isar Syntax
 \<^item>\<^ML>\<open>Args.named_source: (Token.T -> Token.src) -> Token.src parser\<close>
 \<^item>\<^ML>\<open>Args.named_typ : (string -> typ) -> typ parser\<close>
 \<^item>\<^ML>\<open>Args.named_term: (string -> term) -> term parser\<close>
-\<^item>\<^ML>\<open>Args.text_declaration: (Input.source -> declaration) -> declaration parser\<close>
-\<^item>\<^ML>\<open>Args.cartouche_declaration: (Input.source -> declaration) -> declaration parser\<close>
 
 Syntax for some major Pure commands in Isar
 \<^item>\<^ML>\<open>Args.prop: term context_parser\<close>

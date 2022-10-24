@@ -2364,7 +2364,7 @@ val docitem_modes = Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ unc
                                    {unchecked = false, define= false} (* default *);
 
 
-val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.text_input))
+val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Parse.embedded_input))
                                    : ({define:bool,unchecked:bool} * Input.source) context_parser;
 
 
@@ -2835,7 +2835,7 @@ fun string_2_theory_text_antiquotation ctxt text =
       end
 
 fun gen_text_antiquotation name reportNcheck compile =
-  Document_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
+  Document_Output.antiquotation_raw_embedded name (Scan.lift Parse.embedded_input)
     (fn ctxt => fn text:Input.source =>
       let
         val _ = reportNcheck ctxt text;
@@ -2848,7 +2848,7 @@ fun std_text_antiquotation name (* redefined in these more abstract terms *) =
 
 (* should be the same as (2020):
 fun text_antiquotation name =
-  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
+  Thy_Output.antiquotation_raw_embedded name (Scan.lift Parse.embedded_input)
     (fn ctxt => fn text =>
       let
         val _ = report_text ctxt text;
@@ -2864,7 +2864,7 @@ fun std_theory_text_antiquotation name (* redefined in these more abstract terms
 
 (* should be the same as (2020):
 fun theory_text_antiquotation name =
-  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
+  Thy_Output.antiquotation_raw_embedded name (Scan.lift Parse.embedded_input)
     (fn ctxt => fn text =>
       let
         val keywords = Thy_Header.get_keywords' ctxt;

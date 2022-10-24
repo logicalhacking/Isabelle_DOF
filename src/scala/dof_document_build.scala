@@ -50,14 +50,14 @@ object DOF_Document_Build
       val directory = context.prepare_directory(dir, doc, latex_output)
 
       // produced by alternative presentation hook (workaround for missing Toplevel.present_theory)
-      for (name <- context.document_theories) {
+      for {
+        name <- context.document_theories.iterator
+        entry <- context.session_context.get(name.theory, Export.DOCUMENT_LATEX + "_dof")
+      } {
         val path = Path.basic(Document_Build.tex_name(name))
-        val xml =
-          YXML.parse_body(context.get_export(name.theory, Export.DOCUMENT_LATEX + "_dof").text)
-        if (xml.nonEmpty) {
-          File.Content(path, xml).output(latex_output(_, file_pos = path.implode_symbolic))
-            .write(directory.doc_dir)
-        }
+        val xml = YXML.parse_body(entry.text)
+        File.content(path, xml).output(latex_output(_, file_pos = path.implode_symbolic))
+          .write(directory.doc_dir)
       }
       val dof_home= Path.explode(Isabelle_System.getenv_strict("ISABELLE_DOF_HOME"));
       // print(context.options.string("dof_url"));
