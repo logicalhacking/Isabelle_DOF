@@ -8,5 +8,5 @@ sources = \
   src/scala/dof_mkroot.scala \
   src/scala/dof_tools.scala
 services = \
-  isabelle_dof.DOF_Tools \
-  isabelle_dof.DOF_Document_Build$Engine
+  isabelle.dof.DOF_Tools \
+  isabelle.dof.DOF_Document_Build$Engine

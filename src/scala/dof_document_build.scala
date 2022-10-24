@@ -28,7 +28,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-package isabelle_dof
+package isabelle.dof
 
 import isabelle._
 import java.io.{File => JFile}

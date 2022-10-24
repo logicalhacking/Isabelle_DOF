@@ -29,7 +29,7 @@
  */
 
  
-package isabelle_dof
+package isabelle.dof
 
 import isabelle._
 
