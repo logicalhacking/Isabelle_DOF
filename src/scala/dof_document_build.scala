@@ -58,20 +58,20 @@ object DOF_Document_Build
         File.content(path, xml).output(latex_output(_, file_pos = path.implode_symbolic))
           .write(directory.doc_dir)
       }
-      val dof_home = Path.explode(Isabelle_System.getenv_strict("ISABELLE_DOF_HOME"));
+      val isabelle_dof_dir = context.session_context.sessions_structure("Isabelle_DOF").dir
       // print(context.options.string("dof_url"));
       
       // copy Isabelle/DOF LaTeX templates
-      val template_dir = dof_home + Path.explode("src/document-templates")
+      val template_dir = isabelle_dof_dir + Path.explode("document-templates")
       // TODO: error handling in case 1) template does not exist or 2) root.tex does already exist
       val  template = regex.replaceAllIn(context.options.string("dof_template"),"")
       Isabelle_System.copy_file(template_dir + Path.explode("root-"+template+".tex"), 
                                 directory.doc_dir+Path.explode("root.tex"))
 
       // copy Isabelle/DOF LaTeX styles
-      List(Path.explode("src/DOF/latex"), Path.explode("src/ontologies"))
+      List(Path.explode("DOF/latex"), Path.explode("ontologies"))
         .flatMap(dir =>
-          File.find_files((dof_home + dir).file,
+          File.find_files((isabelle_dof_dir + dir).file,
             file => file.getName.endsWith(".sty"), include_dirs = true))
         .foreach(sty => Isabelle_System.copy_file(sty, directory.doc_dir.file))
 
