@@ -9,10 +9,10 @@ online.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF
 
 Isabelle/DOF has three major prerequisites:
 
-* **Isabelle:** Isabelle/DOF requires [Isabelle 2021-1](http://isabelle.in.tum.de/website-Isabelle2021-1/).
-  Please download the Isabelle 2021-1 distribution for your operating
+* **Isabelle:** Isabelle/DOF requires [Isabelle 2022](http://isabelle.in.tum.de/website-Isabelle2022/).
+  Please download the Isabelle 2022 distribution for your operating
   system from the [Isabelle
-  website](http://isabelle.in.tum.de/website-Isabelle2021-1/).
+  website](http://isabelle.in.tum.de/website-Isabelle2022/).
 * **AFP:** Isabelle/DOF requires two entries from the [Archive of
   Formal Proofs (AFP)](https://www.isa-afp.org/). Please install the
   AFP following the instructions given at

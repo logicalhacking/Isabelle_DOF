@@ -12,8 +12,8 @@ option dof_version : string = "Unreleased"
   -- "Isabelle/DOF version" 
      (* "Unreleased" for development, semantic version for releases *)
 
-option dof_isabelle : string = "2021-1" 
-option dof_afp : string = "afp-2021-12-28"
+option dof_isabelle : string = "2022" 
+option dof_afp : string = "afp-2022-10-27"
 
 option dof_latest_version : string = "1.3.0"    
 option dof_latest_isabelle : string = "Isabelle2021-1"
