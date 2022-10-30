@@ -206,7 +206,7 @@ fun check_latex_measure _ src  =
                      handle Fail _ => error ("syntax error in LaTeX measure") )
          in () end
 
-val parse_latex_measure = Args.text_input >> (fn src => (check_latex_measure () (* dummy arg *) src; 
+val parse_latex_measure = Parse.embedded_input >> (fn src => (check_latex_measure () (* dummy arg *) src; 
                                        (fst o Input.source_content) src )  )
 
 end\<close>
