@@ -70,7 +70,7 @@ clone_repo()
         echo "  * Switching to tag $TAG"
         (cd $ISADOF_WORK_DIR && git checkout $TAG)
     else
-        echo "  * Not tag specified, using master branch"
+        echo "  * No tag specified, using master branch"
     fi
     (cd $ISADOF_WORK_DIR && git show -s --format="COMMIT=%H%nDATE=%cd" --date=short | sed -e 's|-|/|g') >> $ISADOF_WORK_DIR/etc/settings
     
