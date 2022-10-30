@@ -28,10 +28,9 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-package isabelle_dof
+package isabelle.dof
 
 import isabelle._
-import java.io.{File => JFile}
 
 
 object DOF_Document_Build
@@ -50,31 +49,31 @@ object DOF_Document_Build
       val directory = context.prepare_directory(dir, doc, latex_output)
 
       // produced by alternative presentation hook (workaround for missing Toplevel.present_theory)
-      for (name <- context.document_theories) {
+      for {
+        name <- context.document_theories.iterator
+        entry <- context.session_context.get(name.theory, Export.DOCUMENT_LATEX + "_dof")
+      } {
         val path = Path.basic(Document_Build.tex_name(name))
-        val entry = context.session_context(name.theory, Export.DOCUMENT_LATEX + "_dof", permissive = true)
         val xml = YXML.parse_body(entry.text)
-        if (xml.nonEmpty) {
-          File.Content(path, xml).output(latex_output(_, file_pos = path.implode_symbolic))
-            .write(directory.doc_dir)
-        }
+        File.content(path, xml).output(latex_output(_, file_pos = path.implode_symbolic))
+          .write(directory.doc_dir)
       }
-      val dof_home= Path.explode(Isabelle_System.getenv_strict("ISABELLE_DOF_HOME"));
+      val isabelle_dof_dir = context.session_context.sessions_structure("Isabelle_DOF").dir
       // print(context.options.string("dof_url"));
       
       // copy Isabelle/DOF LaTeX templates
-      val template_dir = dof_home + Path.explode("src/document-templates/")
+      val template_dir = isabelle_dof_dir + Path.explode("document-templates")
       // TODO: error handling in case 1) template does not exist or 2) root.tex does already exist
       val  template = regex.replaceAllIn(context.options.string("dof_template"),"")
       Isabelle_System.copy_file(template_dir + Path.explode("root-"+template+".tex"), 
                                 directory.doc_dir+Path.explode("root.tex"))
 
-      // copy Isabelle/DOF LaTeX styles 
-      val doc_jdir = new JFile(directory.doc_dir.implode)
-      val styles = File.find_files(new JFile(dof_home.implode),((f:JFile) => f.getName().endsWith(".sty")), true)
-      for (sty <- styles) { 
-        Isabelle_System.copy_file(sty, doc_jdir)
-      }
+      // copy Isabelle/DOF LaTeX styles
+      List(Path.explode("DOF/latex"), Path.explode("ontologies"))
+        .flatMap(dir =>
+          File.find_files((isabelle_dof_dir + dir).file,
+            file => file.getName.endsWith(".sty"), include_dirs = true))
+        .foreach(sty => Isabelle_System.copy_file(sty, directory.doc_dir.file))
 
       // create ontology.sty
       val ltx_styles =  context.options.string("dof_ontologies").split(" +").map(s => regex.replaceAllIn(s,""))

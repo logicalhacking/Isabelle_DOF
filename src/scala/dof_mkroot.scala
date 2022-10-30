@@ -34,7 +34,7 @@
 Prepare session root directory for Isabelle/DOF.
 */
 
-package isabelle_dof
+package isabelle.dof
 
 import isabelle._
 
