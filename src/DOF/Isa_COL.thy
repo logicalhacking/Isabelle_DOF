@@ -177,7 +177,58 @@ doc_class figure_group =
 
 print_doc_classes
 
-subsection\<open>Ontological Macros\<close>
+
+
+section\<open>Layout Trimming Commands (with syntactic checks)\<close>
+
+ML\<open> 
+local
+
+val scan_cm = Scan.ahead (Basic_Symbol_Pos.$$$ "c" |-- Basic_Symbol_Pos.$$$ "m" ) ;
+val scan_pt = Scan.ahead (Basic_Symbol_Pos.$$$ "p" |-- Basic_Symbol_Pos.$$$ "t" ) ;
+val scan_blank = Scan.repeat (   Basic_Symbol_Pos.$$$ " "
+                              || Basic_Symbol_Pos.$$$ "\t" 
+                              || Basic_Symbol_Pos.$$$ "\n");
+
+in
+
+val scan_latex_measure = (scan_blank
+                          |-- Scan.option (Basic_Symbol_Pos.$$$ "-")
+                          |-- Symbol_Pos.scan_nat 
+                          |-- (Scan.option ((Basic_Symbol_Pos.$$$ ".") |-- Symbol_Pos.scan_nat))
+                          |-- scan_blank
+                          |-- (scan_cm || scan_pt)
+                          |-- scan_blank
+                         ) ;
+           
+fun check_latex_measure _ src  = 
+         let val _ = ((Scan.catch scan_latex_measure (Symbol_Pos.explode(Input.source_content src)))
+                     handle Fail _ => error ("syntax error in LaTeX measure") )
+         in () end
+
+val parse_latex_measure = Args.text_input >> (fn src => (check_latex_measure () (* dummy arg *) src; 
+                                       (fst o Input.source_content) src )  )
+
+end\<close>
+
+
+
+setup\<open> DOF_lib.define_macro \<^binding>\<open>vs\<close>  "\\vspace{" "}" (check_latex_measure) \<close> 
+setup\<open> DOF_lib.define_macro \<^binding>\<open>hs\<close>  "\\hspace{" "}" (check_latex_measure) \<close> 
+
+(*<*)
+
+text\<open>Tests: \<^vs>\<open>-0.14cm\<close>\<close>
+
+ML\<open> check_latex_measure @{context} (Input.string "-0.14 cm") \<close>
+define_macro* vs2 \<rightleftharpoons> \<open>\vspace{\<close> _ \<open>}\<close> (check_latex_measure) (* checkers NYI on Isar-level *)
+define_macro* hs2 \<rightleftharpoons> \<open>\hspace{\<close> _ \<open>}\<close> (* works fine without checker.*)
+
+(*>*)
+
+subsection\<open>Figures\<close>
+
+ML\<open>open Args\<close>
 
 ML\<open>
 (* *********************************************************************** *)
@@ -200,11 +251,39 @@ setup\<open>\<close>
 *)
 (*>*)
 
-section\<open>Tables\<close>
+subsection\<open>Tables\<close>
 (* TODO ! ! ! *)
 (* dito the future monitor: table - block *)
 (* some studies *)
 
+text\<open>Tables are (sub) document-elements represented inside the documentation antiquotation
+language. The used technology is similar to the existing railroad-diagram support 
+(cf. \<^url>\<open>https://isabelle.in.tum.de/doc/isar-ref.pdf\<close>, Sec. 4.5). 
+
+However, tables are not directly based on the ideosynchrasies of Knuth-based language design ---
+
+However, tables come with a more abstract structure model than conventional typesetting in the 
+LaTeX tradition. It is based of the following principles:
+  \<^item> The core unit of a table is a \<^emph>\<open>cell\<close> having a \<^emph>\<open>configuration\<close>, i.e. a
+    number of attributes specifying its width, height, borderline, etc. 
+    A cell may be \<^emph>\<open>elementary\<close>, i.e. containing structured text or \<^emph>\<open>compound\<close>, 
+    i.e. containing a sub-table.
+  \<^item> A \<^emph>\<open>table\<close> contains either a list of \<^emph>\<open>rows\<close> or a list of \<^emph>\<open>columns\<close>, which are both
+    lists of cells.
+  \<^item> The tables, rows and columns posses own configurations.
+  \<^item> Concerning the layout, \<^emph>\<open>propagation\<close>  laws of configurations control that 
+    information flows top-down from tables to rows or columns, from rows/columns to cells,
+    from left to right within rows and from top to bottom in columns; propagation produces
+    the desired presentation effect of tables that cells appear somewhat uniform in it. 
+  \<^item> Since rows are lists of cells, configurations are also a list of attributes.
+    Attributes of the same kind may appear repeatedly. If the sub-list of attributes 
+    of the same kind is shorter than the list of cells it is referring to, than
+    the last element in this sub-list is duplicated as many times as necessary. This feature
+    of configuration propagation is called \<^emph>\<open>filling\<close>.
+  \<^item> Lists of rows and lists of cells consists of the same number of cells.
+  \<^item> Since propagation and filling induce a congruence relation on table trees, a normalisation
+    process is a necessary pre-requisite for the compilation to LaTeX.
+\<close>
 
 ML\<open>
 local
@@ -212,12 +291,165 @@ local
 fun mk_line st1 st2 [a] =  [a @ Latex.string st2]
    |mk_line st1 st2 (a::S) = [a @ Latex.string st1] @ mk_line st1 st2 S;
 
-fun table_antiquotation name =
+(* tab attributes for global setup *)
+
+type cell_config =   {cell_placing    : string list, 
+                      cell_height     : string list,
+                      cell_width      : string list,
+                      cell_bgnd_color : string list,
+                      cell_line_color : string list,
+                      cell_line_width : string list}
+
+val mt_cell_config = {cell_placing   = [],
+                      cell_height    = [],    
+                      cell_width     = [],    
+                      cell_bgnd_color= [], 
+                      cell_line_color= [], 
+                      cell_line_width= [] }: cell_config
+
+(* doof wie 100 m feldweg. *)
+fun upd_cell_placing key 
+            {cell_placing,cell_height,cell_width, cell_bgnd_color,   
+             cell_line_color,cell_line_width} : cell_config = 
+            {cell_placing   = cell_placing @ [key],  cell_height    = cell_height,    
+             cell_width     = cell_width,            cell_bgnd_color= cell_bgnd_color, 
+             cell_line_color= cell_line_color,       cell_line_width= cell_line_width } 
+            : cell_config
+
+fun upd_cell_height num 
+            {cell_placing,cell_height,cell_width, cell_bgnd_color,   
+             cell_line_color,cell_line_width} : cell_config = 
+            {cell_placing   = cell_placing ,  cell_height    = cell_height @ [num],    
+             cell_width     = cell_width,     cell_bgnd_color= cell_bgnd_color, 
+             cell_line_color= cell_line_color,cell_line_width= cell_line_width } 
+            : cell_config
+
+fun upd_cell_width num 
+            {cell_placing,cell_height,cell_width, cell_bgnd_color,   
+             cell_line_color,cell_line_width} : cell_config = 
+            {cell_placing   = cell_placing ,   cell_height    = cell_height,    
+             cell_width     = cell_width@[num],cell_bgnd_color= cell_bgnd_color, 
+             cell_line_color= cell_line_color, cell_line_width= cell_line_width } 
+            : cell_config
+
+fun upd_cell_bgnd_color str 
+            {cell_placing,cell_height,cell_width, cell_bgnd_color,   
+             cell_line_color,cell_line_width} : cell_config = 
+            {cell_placing   = cell_placing ,   cell_height    = cell_height,    
+             cell_width     = cell_width,      cell_bgnd_color= cell_bgnd_color@[str], 
+             cell_line_color= cell_line_color, cell_line_width= cell_line_width } 
+            : cell_config
+
+fun upd_cell_line_color str 
+            {cell_placing,cell_height,cell_width, cell_bgnd_color,   
+             cell_line_color,cell_line_width} : cell_config = 
+            {cell_placing   = cell_placing ,         cell_height    = cell_height,    
+             cell_width     = cell_width,            cell_bgnd_color= cell_bgnd_color, 
+             cell_line_color= cell_line_color@[str], cell_line_width= cell_line_width } 
+            : cell_config
+
+fun upd_cell_line_width num 
+            {cell_placing,cell_height,cell_width, cell_bgnd_color,   
+             cell_line_color,cell_line_width} : cell_config = 
+            {cell_placing    = cell_placing ,   cell_height     = cell_height,    
+             cell_width      = cell_width,      cell_bgnd_color = cell_bgnd_color, 
+             cell_line_color = cell_line_color, cell_line_width = cell_line_width@[num] } 
+            : cell_config
+
+
+val (tab_cell_placing, tab_cell_placing_setup)
+     = Attrib.config_string \<^binding>\<open>tab_cell_placing\<close> (K "center");
+val (tab_cell_height, tab_cell_height_setup)
+     = Attrib.config_string \<^binding>\<open>tab_cell_height\<close> (K "0.0cm");
+val (tab_cell_width, tab_cell_width_setup)
+     = Attrib.config_string \<^binding>\<open>tab_cell_width\<close> (K "0.0cm");
+val (tab_cell_bgnd_color, tab_cell_bgnd_color_setup)
+     = Attrib.config_string \<^binding>\<open>tab_cell_bgnd_height\<close> (K "white");
+val (tab_cell_line_color, tab_cell_line_color_setup)
+     = Attrib.config_string \<^binding>\<open>tab_cell_line_color\<close> (K "black");
+val (tab_cell_line_width, tab_cell_line_width_setup)
+     = Attrib.config_string \<^binding>\<open>tab_cell_line_height\<close> (K "0.0cm");
+
+fun default_cell_config ctxt = {cell_placing    = [Config.get ctxt tab_cell_placing],
+                                cell_height     = [Config.get ctxt tab_cell_height],    
+                                cell_width      = [Config.get ctxt tab_cell_width],    
+                                cell_bgnd_color = [Config.get ctxt tab_cell_bgnd_color], 
+                                cell_line_color = [Config.get ctxt tab_cell_line_color], 
+                                cell_line_width = [Config.get ctxt tab_cell_line_width]}
+                              : cell_config
+
+
+val _ = Theory.setup(   tab_cell_placing_setup
+                     #> tab_cell_height_setup
+                     #> tab_cell_width_setup
+                     #> tab_cell_bgnd_color_setup
+                     #> tab_cell_line_color_setup
+                     #> tab_cell_line_width_setup
+                    )
+
+val cell_placingN    = "cell_placing"
+val cell_heightN     = "cell_height" 
+val cell_widthN      = "cell_width"
+val cell_bgnd_colorN = "cell_bgnd_color" 
+val cell_line_colorN = "cell_line_color"
+val cell_line_widthN = "cell_line_width" 
+
+val placing_scan = Args.$$$ "left" || Args.$$$ "center" || Args.$$$ "right" 
+
+val color_scan   =   Args.$$$ "none" || Args.$$$ "red" || Args.$$$ "green"                   || Args.$$$ "blue" || Args.$$$ "black"
+
+(*
+
+val _ = Scan.lift 
+
+fun lift scan (st, xs) =
+  let val (y, xs') = scan xs
+  in (y, (st, xs')) end;
+
+*)
+
+fun tabitem_modes (ctxt, toks) = 
+       let val (y, toks') = ((((Scan.optional 
+                      (Args.parens 
+                         (Parse.list1
+                           (   (Args.$$$ cell_placingN |-- Args.$$$ "=" -- placing_scan
+                                >> (fn (_, k) => upd_cell_placing k))   
+                            || (Args.$$$ cell_heightN |-- Args.$$$ "=" -- parse_latex_measure
+                                >> (fn (_, k) => upd_cell_height k))    
+                            || (Args.$$$ cell_widthN |-- Args.$$$ "=" -- parse_latex_measure
+                                >> (fn (_, k) => upd_cell_width k))    
+                            || (Args.$$$ cell_bgnd_colorN |-- Args.$$$ "=" -- color_scan
+                                >> (fn (_, k) => upd_cell_bgnd_color k))
+                            || (Args.$$$ cell_line_colorN |-- Args.$$$ "=" -- color_scan
+                                >> (fn (_, k) => upd_cell_line_color k))
+                            || (Args.$$$ cell_line_widthN |-- Args.$$$ "=" -- parse_latex_measure
+                                >> (fn (_, k) => upd_cell_line_width k))
+                      ))) [K (default_cell_config (Context.the_proof ctxt))]) 
+                      : (cell_config -> cell_config) list parser)
+                      >> (foldl1 (op #>)))
+                      : (cell_config -> cell_config) parser)
+                      (toks)
+        in (y, (ctxt, toks')) end
+
+
+datatype table_tree  = mk_tab    of cell_config * cell_group
+                     | mk_cell   of cell_config * Input.source
+   and   cell_group  = mk_row    of cell_config * table_tree list
+                     | mk_column of cell_config * table_tree list
+                                             
+
+
+val tab_config_parser =  tabitem_modes : ((cell_config -> cell_config) ) context_parser
+val table_parser =  tab_config_parser -- Scan.repeat1(Scan.repeat1(Scan.lift Args.cartouche_input))
+
+fun table_antiquotation name scan =
   Document_Output.antiquotation_raw_embedded name 
-    (Scan.repeat1(Scan.repeat1(Scan.lift Args.cartouche_input)))
+    scan
     (fn ctxt => 
-      (fn content:Input.source list list =>
-          let fun check _ = ()  (* ToDo *)
+      (fn (cfg_trans,content:Input.source list list) =>
+          let val cfg = cfg_trans mt_cell_config
+              val _ = writeln ("XXX"^ @{make_string} cfg)
+              fun check _ = ()  (* ToDo *)
               val _  = check content
           in  content 
               |> (map(map (Document_Output.output_document ctxt {markdown = false})
@@ -229,23 +461,85 @@ fun table_antiquotation name =
       )
     );
 
+fun cell_antiquotation name scan =
+    Document_Output.antiquotation_raw_embedded name 
+    scan
+    (fn ctxt => 
+      (fn (cfg_trans,content:Input.source) => 
+          let val cfg = cfg_trans mt_cell_config
+              val _ = writeln ("XXX"^ @{make_string} cfg) 
+          in  content |> Document_Output.output_document ctxt {markdown = false}
+          end
+      )
+    )
+
+fun row_antiquotation name scan =
+    Document_Output.antiquotation_raw_embedded name 
+    scan
+    (fn ctxt => 
+      (fn (cfg_trans,content:Input.source list) => 
+          let val cfg = cfg_trans mt_cell_config
+              val _ = writeln ("XXX"^ @{make_string} cfg) 
+          in  content |> (map (Document_Output.output_document ctxt {markdown = false})
+                          #> List.concat)
+          end
+      )
+    )
+
+fun column_antiquotation name scan =
+    Document_Output.antiquotation_raw_embedded name 
+    scan
+    (fn ctxt => 
+      (fn (cfg_trans,content:Input.source list) => 
+          let val cfg = cfg_trans mt_cell_config
+              val _ = writeln ("XXX"^ @{make_string} cfg) 
+          in  content |> (map (Document_Output.output_document ctxt {markdown = false})
+                          #> List.concat)
+          end
+      )
+    )
+
 in
 
-val _ =
-  Theory.setup (table_antiquotation \<^binding>\<open>table_inline\<close> );
+val _ = Theory.setup 
+           (   table_antiquotation  \<^binding>\<open>table_inline\<close> 
+                                    table_parser
+            #> table_antiquotation  \<^binding>\<open>subtab\<close> table_parser
+            #> cell_antiquotation   \<^binding>\<open>cell\<close>   
+                                    (tab_config_parser--Scan.lift Args.cartouche_input)
+            #> row_antiquotation    \<^binding>\<open>row\<close>  
+                                    (tab_config_parser--Scan.repeat1(Scan.lift Args.cartouche_input))  
+            #> column_antiquotation \<^binding>\<open>column\<close> 
+                                    (tab_config_parser--Scan.repeat1(Scan.lift Args.cartouche_input))
+           );
 
 end
 \<close>
 
+
+define_shortcut* clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
+                 hf \<rightleftharpoons> \<open>\hfill\<close> 
+                 br \<rightleftharpoons> \<open>\break\<close> 
+
+
+declare[[tab_cell_placing="left",tab_cell_height="18.0cm"]]
+
 section\<open>Tests\<close>
 (*<*)
-text\<open> @{table_inline [display]
-          \<open>\<open>\<open>dfg\<close>\<open>dfg\<close>\<open>dfg\<close>\<close>
-           \<open>\<open>1\<close>  \<open>2\<close>  \<open>3\<close>\<close>
-          \<close>}\<close>
+text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open>12.0cm\<close>,
+                                 cell_height =\<open>13pt\<close>,  cell_width = \<open>12.0cm\<close>,
+                                 cell_bgnd_color=black,cell_line_color=red,cell_line_width=\<open>12.0cm\<close>)
+          \<open>\<open>\<^cell>\<open>dfg\<close> \<^col>\<open>dfg\<close> \<^row>\<open>dfg\<close> @{cell (cell_height =\<open>12.0cm\<close>) \<open>abracadabra\<close>}\<close>
+           \<open>\<open>1\<close>  \<open>2\<close>  \<open>3\<sigma>\<close>\<close>
+          \<close>}
+      \<^cell>\<open>dfg\<close>  @{row \<open>is technical\<close> \<open> \<open>\<sigma> * a\<^sub>4\<close> \<close>}\<close>
 (*>*)
+
 ML\<open>@{term "side_by_side_figure"};
    @{typ "doc_class rexp"}; 
-   DOF_core.SPY;\<close>
+   DOF_core.SPY;
 
+\<close>
+
+text\<open>@{term_ \<open>3 + 4::int\<close>} @{value_ \<open>3 + 4::int\<close>} \<close>
 end

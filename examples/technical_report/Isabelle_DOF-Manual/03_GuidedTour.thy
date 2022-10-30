@@ -326,21 +326,24 @@ doc_class text_section = text_element +
 \<close>}
 
 The \<^const>\<open>Isa_COL.text_element.level\<close>-attibute \<^index>\<open>level\<close> enables doc-notation support for
-headers, chapters, sections, and subsections; we follow here the \<^LaTeX> terminology on levels to which \<^isadof> is currently targeting at.
-The values are interpreted accordingly to the \<^LaTeX> standard. The correspondence between the levels
-and the structural entities is summarized as follows:
+headers, chapters, sections, and subsections; we follow here the \<^LaTeX> terminology on levels to 
+which \<^isadof> is currently targeting at. The values are interpreted accordingly to the \<^LaTeX> 
+standard. The correspondence between the levels and the structural entities is summarized 
+as follows:
 
-   \<^item> part          \<^index>\<open>part\<close>          \<open>Some -1\<close> \vspace{-0.3cm}
-   \<^item> chapter       \<^index>\<open>chapter\<close>       \<open>Some 0\<close>  \vspace{-0.3cm}
-   \<^item> section       \<^index>\<open>section\<close>       \<open>Some 1\<close>  \vspace{-0.3cm}
-   \<^item> subsection    \<^index>\<open>subsection\<close>    \<open>Some 2\<close>  \vspace{-0.3cm}
-   \<^item> subsubsection \<^index>\<open>subsubsection\<close> \<open>Some 3\<close>  \vspace{-0.1cm}
+   \<^item> part          \<^index>\<open>part\<close>          \<open>Some -1\<close> \<^vs>\<open>-0.3cm\<close>
+   \<^item> chapter       \<^index>\<open>chapter\<close>       \<open>Some 0\<close>  \<^vs>\<open>-0.3cm\<close>
+   \<^item> section       \<^index>\<open>section\<close>       \<open>Some 1\<close>  \<^vs>\<open>-0.3cm\<close>
+   \<^item> subsection    \<^index>\<open>subsection\<close>    \<open>Some 2\<close>  \<^vs>\<open>-0.3cm\<close>
+   \<^item> subsubsection \<^index>\<open>subsubsection\<close> \<open>Some 3\<close>  \<^vs>\<open>-0.3cm\<close>
 
 Additional means assure that the following invariant is maintained in a document 
 conforming to \<^verbatim>\<open>scholarly_paper\<close>:
 
 \center {\<open>level > 0\<close>}
 \<close>
+
+text\<open>\<^vs>\<open>1.0cm\<close>\<close>
 
 text\<open> The rest of the ontology introduces concepts for \<^typ>\<open>introduction\<close>, \<^typ>\<open>conclusion\<close>,
 \<^typ>\<open>related_work\<close>, \<^typ>\<open>bibliography\<close> etc. More details can be found in \<^verbatim>\<open>scholarly_paper\<close>
