@@ -14,22 +14,9 @@ Isabelle/DOF has three major prerequisites:
   system from the [Isabelle
   website](http://isabelle.in.tum.de/website-Isabelle2022/).
 * **AFP:** Isabelle/DOF requires two entries from the [Archive of
-  Formal Proofs (AFP)](https://www.isa-afp.org/). Please install the
+  Formal Proofs (AFP)](https://www.isa-afp.org/).  Please install the
   AFP following the instructions given at
-  <https://www.isa-afp.org/using.html>. For your convenience, we also
-  provide a script that only installs the two entries required by
-  Isabelle/DOF into the local Isabelle/DOF directory. First, Isabelle/DOF
-  needs to be registered as an Isabelle component:
-  
-  ```console
-  foo@bar:~$ isabelle components -u `pwd`
-  ```  
-
-  Thereafter, the AFP entries can be installed as follows:
-  
-  ```console
-  foo@bar:~$ isabelle env ./install-afp
-  ```  
+  <https://www.isa-afp.org/using.html>. 
 
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least
   [TeX Live 2022](https://www.tug.org/texlive/) with all available updates applied.
