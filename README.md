@@ -17,7 +17,6 @@ Isabelle/DOF has three major prerequisites:
   Formal Proofs (AFP)](https://www.isa-afp.org/).  Please install the
   AFP following the instructions given at
   <https://www.isa-afp.org/using.html>. 
-
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least
   [TeX Live 2022](https://www.tug.org/texlive/) with all available updates applied.
   
