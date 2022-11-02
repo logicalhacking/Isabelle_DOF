@@ -35,6 +35,8 @@ print_help()
 {
     echo "Usage: isabelle env ./install-afp [OPTION] "
     echo ""
+    echo "Warning: This tools is deprecated."
+    echo ""
     echo "Run ..."
     echo ""
     echo "  --help, -h                display this help message"
@@ -44,11 +46,29 @@ print_help()
 
 exit_error() {
     echo ""
-    echo "  *** Isabelle/DOF installation FAILED, please check the README.md for help ***"
+    echo "  *** Local AFP installation FAILED, please check the README.md for help ***"
     echo ""
     exit 1
 }
 
+confirm_usage() {
+    echo "* From Isabelle2021-1 on, the recommended method for making the whole AFP "
+    echo "  available to Isabelle is the isabelle components -u command."
+    echo "  For doing so, please follow the instructions at: "
+    echo "  https://www.isa-afp.org/help/"
+    echo ""
+    echo "  Alternatively, you can continue, on your own risk, to install only"
+    echo "  the AFP entries required to run Isabelle/DOF."
+    echo ""
+    read -p "    Still continue (y/N)? " -n 1 -r
+    echo 
+    if [[ $REPLY =~ ^[Yy]$ ]];
+    then 
+        echo "    Continuing installation on your OWN risk."
+    else
+        exit_error
+    fi
+}
 check_isabelle_version() {
     echo "* Checking Isabelle version:"
     if [ "$ISABELLE_VERSION" != "$ACTUAL_ISABELLE_VERSION" ]; then
@@ -149,6 +169,7 @@ AFP_URL="https://www.isa-afp.org/release/"$AFP_DATE".tar.gz"
 echo ""
 echo "Isabelle/DOF AFP Installation Utility"
 echo "====================================="
+confirm_usage
 check_isabelle_version
 check_afp_entries
 echo "* AFP Installation successful."

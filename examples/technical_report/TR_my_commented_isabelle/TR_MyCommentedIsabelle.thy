@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019-2021 The University of Exeter 
- *               2018-2021 The University of Paris-Saclay
+ *               2019-2022 The University of Exeter 
+ *               2018-2022 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -23,7 +23,7 @@ open_monitor*[this::report]
 (*>*)
 
 title*[tit::title]\<open>My Personal, Eclectic Isabelle Programming Manual\<close> 
-subtitle*[stit::subtitle]\<open>Version : Isabelle 2020\<close>
+subtitle*[stit::subtitle]\<open>Version : Isabelle 2022\<close>
 text*[bu::author,     
       email       = "''wolff@lri.fr''",
       affiliation = "\<open>Université Paris-Saclay, LRI, France\<close>"]\<open>Burkhart Wolff\<close>
@@ -1183,7 +1183,7 @@ text\<open> The extensibility of Isabelle as a system framework depends on a num
  \<^item> \<^ML>\<open>Toplevel.theory: (theory -> theory) -> Toplevel.transition -> Toplevel.transition\<close>
    adjoins a theory transformer.
  \<^item> \<^ML>\<open>Toplevel.generic_theory: (generic_theory -> generic_theory) -> Toplevel.transition -> Toplevel.transition\<close>
- \<^item> \<^ML>\<open>Toplevel.theory': (bool -> theory -> theory) -> Toplevel.transition -> Toplevel.transition\<close>
+ \<^item> \<^ML>\<open>Toplevel.theory': (bool -> theory -> theory) -> Toplevel.presentation -> Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.exit: Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.ignored: Position.T -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.present_local_theory:  (xstring * Position.T) option ->
@@ -1845,6 +1845,7 @@ text\<open>The second part is much more high-level, and can be found under \<^ML
   This is perhaps meant with the fairly cryptic comment:
   "Quasi-inner syntax based on outer tokens: concrete argument syntax of
   attributes, methods etc." at the beginning of this structure.\<close>
+ML\<open>open Args\<close>  
 
 text\<open> Some more combinators
 \<^item>\<^ML>\<open>Args.symbolic : Token.T parser\<close>
@@ -1865,12 +1866,11 @@ Common Isar Syntax
 \<^item>\<^ML>\<open>Args.name_position: (string * Position.T) parser\<close>
 \<^item>\<^ML>\<open>Args.cartouche_inner_syntax: string parser\<close>
 \<^item>\<^ML>\<open>Args.cartouche_input: Input.source parser\<close>
-\<^item>\<^ML>\<open>Args.text_token: Token.T parser \<close>
 
 
 Common Isar Syntax
-\<^item>\<^ML>\<open>Args.text_input: Input.source parser\<close>
-\<^item>\<^ML>\<open>Args.text      : string parser\<close>
+\<^item>\<^ML>\<open>Parse.embedded_input: Input.source parser\<close>
+\<^item>\<^ML>\<open>Parse.embedded      : string parser\<close>
 \<^item>\<^ML>\<open>Args.binding   : Binding.binding parser\<close>
 
 Common Stuff related to Inner Syntax Parsing
@@ -1893,8 +1893,7 @@ Common Isar Syntax
 \<^item>\<^ML>\<open>Args.named_source: (Token.T -> Token.src) -> Token.src parser\<close>
 \<^item>\<^ML>\<open>Args.named_typ   : (string -> typ) -> typ parser\<close>
 \<^item>\<^ML>\<open>Args.named_term : (string -> term) -> term parser\<close>
-\<^item>\<^ML>\<open>Args.text_declaration: (Input.source -> declaration) -> declaration parser\<close>
-\<^item>\<^ML>\<open>Args.cartouche_declaration: (Input.source -> declaration) -> declaration parser\<close>
+\<^item>\<^ML>\<open>Args.embedded_declaration: (Input.source -> declaration) -> declaration parser\<close>
 \<^item>\<^ML>\<open>Args.typ_abbrev  : typ context_parser\<close>
 \<^item>\<^ML>\<open>Args.typ: typ context_parser\<close>
 \<^item>\<^ML>\<open>Args.term: term context_parser\<close>
@@ -1903,8 +1902,6 @@ Common Isar Syntax
 \<^item>\<^ML>\<open>Args.named_source: (Token.T -> Token.src) -> Token.src parser\<close>
 \<^item>\<^ML>\<open>Args.named_typ : (string -> typ) -> typ parser\<close>
 \<^item>\<^ML>\<open>Args.named_term: (string -> term) -> term parser\<close>
-\<^item>\<^ML>\<open>Args.text_declaration: (Input.source -> declaration) -> declaration parser\<close>
-\<^item>\<^ML>\<open>Args.cartouche_declaration: (Input.source -> declaration) -> declaration parser\<close>
 
 Syntax for some major Pure commands in Isar
 \<^item>\<^ML>\<open>Args.prop: term context_parser\<close>
@@ -2132,7 +2129,6 @@ Since Isabelle2018, an own AST is provided for the LaTeX syntax, analogously to
 \<^item>\<^ML>\<open>Latex.string: string -> Latex.text\<close>
 \<^item>\<^ML>\<open>Latex.text: string * Position.T -> Latex.text\<close>
 
-\<^item>\<^ML>\<open>Latex.output_name: string -> string\<close>
 \<^item>\<^ML>\<open>Latex.output_ascii: string -> string\<close>
 \<^item>\<^ML>\<open>Latex.output_symbols: Symbol.symbol list -> string\<close>
                                                                           

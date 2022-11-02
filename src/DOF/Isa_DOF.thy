@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019      The University of Exeter 
- *               2018-2019 The University of Paris-Saclay
+ *               2019-2022 The University of Exeter 
+ *               2018-2022 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -1965,6 +1965,23 @@ fun document_output {markdown: bool, markup: Latex.text -> Latex.text} meta_args
     val output_text = Document_Output.output_document ctxt {markdown = markdown} text;
   in markup (output_meta @ output_text) end;
 
+    val output_name = (* was available as Latex.output_name in Isabelle 2021-1 and earlier *)
+          translate_string
+          (fn "_" => "UNDERSCORE"
+            | "'" => "PRIME"
+            | "0" => "ZERO"
+            | "1" => "ONE"
+            | "2" => "TWO"
+            | "3" => "THREE"
+            | "4" => "FOUR"
+            | "5" => "FIVE"
+            | "6" => "SIX"
+            | "7" => "SEVEN"
+            | "8" => "EIGHT"
+            | "9" => "NINE"
+            | s => s);
+
+
 fun document_output_reports name {markdown, body} meta_args text ctxt =
   let
     val pos = Input.pos_of text;
@@ -1974,7 +1991,7 @@ fun document_output_reports name {markdown, body} meta_args text ctxt =
          (pos, Markup.plain_text)];
     fun markup xml =
       let val m = if body then Markup.latex_body else Markup.latex_heading
-      in [XML.Elem (m (Latex.output_name name), xml)] end;
+      in [XML.Elem (m (output_name name), xml)] end;
   in document_output {markdown = markdown, markup = markup} meta_args text ctxt end;
 
 
@@ -2364,7 +2381,7 @@ val docitem_modes = Scan.optional (Args.parens (Args.$$$ defineN || Args.$$$ unc
                                    {unchecked = false, define= false} (* default *);
 
 
-val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Args.text_input))
+val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Parse.embedded_input))
                                    : ({define:bool,unchecked:bool} * Input.source) context_parser;
 
 
@@ -2835,7 +2852,7 @@ fun string_2_theory_text_antiquotation ctxt text =
       end
 
 fun gen_text_antiquotation name reportNcheck compile =
-  Document_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
+  Document_Output.antiquotation_raw_embedded name (Scan.lift Parse.embedded_input)
     (fn ctxt => fn text:Input.source =>
       let
         val _ = reportNcheck ctxt text;
@@ -2848,7 +2865,7 @@ fun std_text_antiquotation name (* redefined in these more abstract terms *) =
 
 (* should be the same as (2020):
 fun text_antiquotation name =
-  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
+  Thy_Output.antiquotation_raw_embedded name (Scan.lift Parse.embedded_input)
     (fn ctxt => fn text =>
       let
         val _ = report_text ctxt text;
@@ -2864,7 +2881,7 @@ fun std_theory_text_antiquotation name (* redefined in these more abstract terms
 
 (* should be the same as (2020):
 fun theory_text_antiquotation name =
-  Thy_Output.antiquotation_raw_embedded name (Scan.lift Args.text_input)
+  Thy_Output.antiquotation_raw_embedded name (Scan.lift Parse.embedded_input)
     (fn ctxt => fn text =>
       let
         val keywords = Thy_Header.get_keywords' ctxt;
@@ -2886,11 +2903,10 @@ fun theory_text_antiquotation name =
 
 
 fun environment_delim name =
- ("%\n\\begin{" ^ Latex.output_name name ^ "}\n",
-  "\n\\end{" ^ Latex.output_name name ^ "}");
+ ("%\n\\begin{" ^ Monitor_Command_Parser.output_name name ^ "}\n",
+  "\n\\end{" ^ Monitor_Command_Parser.output_name name ^ "}");
 
 fun environment_block name = environment_delim name |-> XML.enclose;
-
 
 fun enclose_env verbatim ctxt block_env body =
   if Config.get ctxt Document_Antiquotation.thy_output_display
@@ -2901,6 +2917,7 @@ fun enclose_env verbatim ctxt block_env body =
 
 end
 \<close>
+
 
 ML\<open>
 local 

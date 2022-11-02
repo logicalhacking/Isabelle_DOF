@@ -1,6 +1,6 @@
 pipeline:
   build:
-    image: docker.io/logicalhacking/isabelle2021-1
+    image: docker.io/logicalhacking/isabelle2022
     commands:
       - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO/$CI_BRANCH/$CI_BUILD_NUMBER/$LATEX
       - mkdir -p $ARTIFACT_DIR
@@ -16,7 +16,7 @@ pipeline:
       - cd ../..
       - ln -s * latest
   archive:
-    image: docker.io/logicalhacking/isabelle2021-1
+    image: docker.io/logicalhacking/isabelle2022
     commands:
       - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO/$CI_BRANCH/$CI_BUILD_NUMBER/$LATEX
       - mkdir -p $ARTIFACT_DIR
