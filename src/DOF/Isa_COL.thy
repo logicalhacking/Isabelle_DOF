@@ -300,34 +300,46 @@ fun fig_content_modes (ctxt, toks) =
                       (toks)
         in (y, (ctxt, toks')) end
 
+fun document_antiq (check: Proof.context -> Path.T option -> Input.source -> Path.T) =
+  Args.context -- Scan.lift Parse.path_input >> (fn (ctxt, source) =>
+   (check ctxt NONE source;
+    Latex.string (Latex.output_ascii_breakable "/" (Input.string_of source))
+    |> Latex.macro "isatt"));
+
 
 fun fig_content_antiquotation name scan =
   (Document_Output.antiquotation_raw_embedded name 
-    (scan)
+    (scan : ((fig_content -> fig_content) * Input.source) context_parser)
     (fn ctxt => 
-      (fn (cfg_trans,content:Input.source) =>
-          let val cfg = cfg_trans mt_fig_content
-              val _ = writeln ("XXX"^ @{make_string} cfg)
-              fun check content = ()  (* ToDo: must be declared source of type png, ... *)
-              val _  = check content
-          in  content 
+      (fn (cfg_trans,file:Input.source) =>
+          let val {relative_width,scale,caption} = cfg_trans mt_fig_content
+              val _ = if relative_width < 0 orelse scale<0 then error("negative parameter.") 
+                                                           else ()
+              val wdth_s = if relative_width = 100 then ""
+                           else "width="^Real.toString((Real.fromInt relative_width) 
+                                              / (Real.fromInt 100))^"\textwidth" 
+              val scale_s = if scale = 100 then ""
+                           else "scale="^Real.toString((Real.fromInt scale) / (Real.fromInt 100))
+              val cp_ltx = Document_Output.output_document ctxt {markdown = false} caption
+              val path  = Resources.check_file ctxt NONE file
+              val _ = writeln("file "^Path.file_name path)  
+                  (* ToDo: must be declared source of type png or jpeg or pdf, ... *)
+          in  file 
               |> (Document_Output.output_document ctxt {markdown = false})
               |> XML.enclose "\\includegraphics[allerhandquatsch]{" "}"
           end
       )
     ));
 
-val _ = fig_content_antiquotation : binding 
+val _ = fig_content_antiquotation 
+        : binding 
          -> ((fig_content -> fig_content) * Input.source) context_parser 
          -> theory -> theory
 
 val _ = Theory.setup 
            (   fig_content_antiquotation \<^binding>\<open>fig_content\<close> 
-               (fig_content_modes -- Scan.lift(Parse.document_source)))
+               (fig_content_modes -- Scan.lift(Parse.path_input)))
 
-\<close>
-
-ML\<open>
 \<close>
 
 subsection\<open>Tables\<close>
@@ -598,7 +610,7 @@ val _ = Theory.setup
 end
 \<close>
 
-
+text\<open> @{file "../ROOT"} \<close>
 define_shortcut* clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
                  hf \<rightleftharpoons> \<open>\hfill\<close> 
                  br \<rightleftharpoons> \<open>\break\<close> 
@@ -609,7 +621,7 @@ declare[[tab_cell_placing="left",tab_cell_height="18.0cm"]]
 section\<open>Tests\<close>
 (*<*)
 
-text\<open> @{fig_content   [display] (scale = 80, width=80, caption=\<open>dsf \<open>\<sigma>\<^sub>i\<close> gdfg\<close>) \<open>sdfsdf\<close>}\<close>
+text\<open> @{fig_content   [display] (scale = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) \<open>../ROOT\<close>}\<close>
 text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open>12.0cm\<close>,
                                  cell_height =\<open>13pt\<close>,  cell_width = \<open>12.0cm\<close>,
                                  cell_bgnd_color=black,cell_line_color=red,cell_line_width=\<open>12.0cm\<close>)
