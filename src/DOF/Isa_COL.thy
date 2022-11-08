@@ -313,20 +313,22 @@ fun fig_content_antiquotation name scan =
     (fn ctxt => 
       (fn (cfg_trans,file:Input.source) =>
           let val {relative_width,scale,caption} = cfg_trans mt_fig_content
-              val _ = if relative_width < 0 orelse scale<0 then error("negative parameter.") 
-                                                           else ()
+              val _      = if relative_width < 0 orelse scale<0 then error("negative parameter.") 
+                                                                else ()
               val wdth_s = if relative_width = 100 then ""
                            else "width="^Real.toString((Real.fromInt relative_width) 
                                               / (Real.fromInt 100))^"\textwidth" 
-              val scale_s = if scale = 100 then ""
+              val scale_s= if scale = 100 then ""
                            else "scale="^Real.toString((Real.fromInt scale) / (Real.fromInt 100))
-              val cp_ltx = Document_Output.output_document ctxt {markdown = false} caption
-              val path  = Resources.check_file ctxt NONE file
-              val _ = writeln("file "^Path.file_name path)  
+              val arg    = enclose "[" "]" (commas [wdth_s,scale_s])
+              val lab    = Document_Output.output_document ctxt {markdown = false} caption
+              val path   = Resources.check_file ctxt NONE file
+              val _      = writeln("file "^Path.file_name path)  
                   (* ToDo: must be declared source of type png or jpeg or pdf, ... *)
           in  file 
-              |> (Document_Output.output_document ctxt {markdown = false})
-              |> XML.enclose "\\includegraphics[allerhandquatsch]{" "}"
+              |> (Latex.string o Input.string_of)
+              |> (XML.enclose ("\\includegraphics"^arg^"{") "}")
+              |> (fn X => X @ Latex.macro "capture" lab)
           end
       )
     ));
@@ -338,7 +340,7 @@ val _ = fig_content_antiquotation
 
 val _ = Theory.setup 
            (   fig_content_antiquotation \<^binding>\<open>fig_content\<close> 
-               (fig_content_modes -- Scan.lift(Parse.path_input)))
+                                         (fig_content_modes -- Scan.lift(Parse.path_input)))
 
 \<close>
 
