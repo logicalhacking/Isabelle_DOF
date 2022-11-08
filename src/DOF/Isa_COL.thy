@@ -251,6 +251,85 @@ setup\<open>\<close>
 *)
 (*>*)
 
+subsubsection\<open>Figure Content\<close>
+text\<open>The intermediate development goal is to separate the ontological, top-level construct 
+\<open>figure*\<close>, which will remain a referentiable, ontological document unit, from the more versatile
+\<^emph>\<open>import\<close> of a figure. The hope is that this opens the way for more orthogonality and
+abstraction from the LaTeX engine.
+\<close>
+
+ML\<open>
+
+type fig_content =   {relative_width  : int, (* percent of textwidth, default 100 *)
+                      scale           : int, (* percent, default 100 *)
+                      caption         : Input.source (* default empty *)}
+
+val mt_fig_content = {relative_width  = 100,
+                      scale           = 100,    
+                      caption         = Input.empty }: fig_content
+
+(* doof wie 100 m feldweg. *)
+fun upd_relative_width key {relative_width,scale,caption } : fig_content = 
+            {relative_width = key,scale = scale,caption = caption}: fig_content
+
+fun upd_scale key  {relative_width,scale,caption } : fig_content = 
+            {relative_width = relative_width,scale = key,caption = caption}: fig_content
+
+fun upd_caption key {relative_width,scale,caption} : fig_content = 
+            {relative_width = relative_width,scale = scale,caption= key}: fig_content
+
+
+val widthN     = "width"
+val scaleN     = "scale" 
+val captionN   = "caption";
+
+fun fig_content_modes (ctxt, toks) = 
+       let val (y, toks') = ((((Scan.optional 
+                      (Args.parens 
+                         (Parse.list1
+                           (   (Args.$$$ widthN |-- Args.$$$ "=" -- Parse.int
+                                >> (fn (_, k) => upd_relative_width k))   
+                            || (Args.$$$ scaleN |-- Args.$$$ "=" -- Parse.int
+                                >> (fn (_, k) => upd_scale k))    
+                            || (Args.$$$ captionN |-- Args.$$$ "=" -- Parse.document_source
+                                >> (fn (_, k) => upd_caption k))    
+                      ))) [K mt_fig_content]) 
+                      : (fig_content -> fig_content) list parser)
+                      >> (foldl1 (op #>)))
+                      : (fig_content -> fig_content) parser)
+                      (toks)
+        in (y, (ctxt, toks')) end
+
+
+fun fig_content_antiquotation name scan =
+  (Document_Output.antiquotation_raw_embedded name 
+    (scan)
+    (fn ctxt => 
+      (fn (cfg_trans,content:Input.source) =>
+          let val cfg = cfg_trans mt_fig_content
+              val _ = writeln ("XXX"^ @{make_string} cfg)
+              fun check content = ()  (* ToDo: must be declared source of type png, ... *)
+              val _  = check content
+          in  content 
+              |> (Document_Output.output_document ctxt {markdown = false})
+              |> XML.enclose "\\includegraphics[allerhandquatsch]{" "}"
+          end
+      )
+    ));
+
+val _ = fig_content_antiquotation : binding 
+         -> ((fig_content -> fig_content) * Input.source) context_parser 
+         -> theory -> theory
+
+val _ = Theory.setup 
+           (   fig_content_antiquotation \<^binding>\<open>fig_content\<close> 
+               (fig_content_modes -- Scan.lift(Parse.document_source)))
+
+\<close>
+
+ML\<open>
+\<close>
+
 subsection\<open>Tables\<close>
 (* TODO ! ! ! *)
 (* dito the future monitor: table - block *)
@@ -356,7 +435,7 @@ fun upd_cell_line_width num
              cell_line_color = cell_line_color, cell_line_width = cell_line_width@[num] } 
             : cell_config
 
-
+(*global default configs *)
 val (tab_cell_placing, tab_cell_placing_setup)
      = Attrib.config_string \<^binding>\<open>tab_cell_placing\<close> (K "center");
 val (tab_cell_height, tab_cell_height_setup)
@@ -387,6 +466,8 @@ val _ = Theory.setup(   tab_cell_placing_setup
                      #> tab_cell_line_width_setup
                     )
 
+
+(*syntax for local tab specifier *)
 val cell_placingN    = "cell_placing"
 val cell_heightN     = "cell_height" 
 val cell_widthN      = "cell_width"
@@ -396,7 +477,8 @@ val cell_line_widthN = "cell_line_width"
 
 val placing_scan = Args.$$$ "left" || Args.$$$ "center" || Args.$$$ "right" 
 
-val color_scan   =   Args.$$$ "none" || Args.$$$ "red" || Args.$$$ "green"                   || Args.$$$ "blue" || Args.$$$ "black"
+val color_scan   =   Args.$$$ "none" || Args.$$$ "red" || Args.$$$ "green"                   
+                  || Args.$$$ "blue" || Args.$$$ "black"
 
 (*
 
@@ -526,6 +608,8 @@ declare[[tab_cell_placing="left",tab_cell_height="18.0cm"]]
 
 section\<open>Tests\<close>
 (*<*)
+
+text\<open> @{fig_content   [display] (scale = 80, width=80, caption=\<open>dsf \<open>\<sigma>\<^sub>i\<close> gdfg\<close>) \<open>sdfsdf\<close>}\<close>
 text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open>12.0cm\<close>,
                                  cell_height =\<open>13pt\<close>,  cell_width = \<open>12.0cm\<close>,
                                  cell_bgnd_color=black,cell_line_color=red,cell_line_width=\<open>12.0cm\<close>)
