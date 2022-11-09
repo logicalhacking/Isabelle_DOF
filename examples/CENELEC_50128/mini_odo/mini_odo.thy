@@ -294,7 +294,7 @@ and the global model parameters such as wheel diameter, the number of teeth per 
 sampling frequency etc., we can infer the maximal time of service as well the maximum distance 
 the device can measure.  As an example configuration, choosing:
 
-   \<^item> \<^term>\<open>(1 *\<^sub>Q metre)::real[m]\<close>      for  \<^term>\<open>w\<^sub>d\<close>   (wheel-diameter), 
+   \<^item> \<^term>\<open>(1 *\<^sub>Q metre):: real[m]\<close>      for  \<^term>\<open>w\<^sub>d\<close>   (wheel-diameter), 
    \<^item> \<^term>\<open>100         :: real\<close>        for  \<^term>\<open>tpw\<close> (teeth per wheel), 
    \<^item> \<^term>\<open>80 *\<^sub>Q kmh   :: real[m\<cdot>s\<^sup>-\<^sup>1]\<close>  for  \<^term>\<open>Speed\<^sub>M\<^sub>a\<^sub>x\<close>,
    \<^item> \<^term>\<open>14.4 *\<^sub>Q kHz :: real[s\<^sup>-\<^sup>1]\<close>    for the sampling frequency,
@@ -654,9 +654,9 @@ text*[t10::test_result]
   test-execution via, \<^eg>, a makefile or specific calls to a test-environment or test-engine. \<close>
 
 
-text
-\<open>  Finally some examples of references to doc-items, i.e. text-elements 
-   with declared  meta-information and status. \<close> 
+text \<open> Finally some examples of references to doc-items, i.e. text-elements 
+       with declared  meta-information and status. \<close> 
+
 text \<open> As established by @{test_result (unchecked) \<open>t10\<close>}, 
                          @{test_result (define) \<open>t10\<close>} \<close>
 text \<open> the               @{test_result \<open>t10\<close>}                      

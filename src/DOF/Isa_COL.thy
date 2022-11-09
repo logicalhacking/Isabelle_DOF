@@ -353,7 +353,7 @@ text\<open>Tables are (sub) document-elements represented inside the documentati
 language. The used technology is similar to the existing railroad-diagram support 
 (cf. \<^url>\<open>https://isabelle.in.tum.de/doc/isar-ref.pdf\<close>, Sec. 4.5). 
 
-However, tables are not directly based on the ideosynchrasies of Knuth-based language design ---
+However, tables are not directly based on the idiosyncrasies of Knuth-based language design ---
 
 However, tables come with a more abstract structure model than conventional typesetting in the 
 LaTeX tradition. It is based of the following principles:

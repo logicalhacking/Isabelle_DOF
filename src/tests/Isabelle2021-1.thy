@@ -196,6 +196,8 @@ text \<open>
   example:
 
     \<^ML>\<open>\<^Type>\<open>nat\<close>\<close>
+    \<^ML>\<open>\<^Type>\<open>prod \<^Type>\<open>int\<close> \<^Type>\<open>int\<close>\<close>\<close>
+
     \<^ML>\<open>fn (A, B) => \<^Type>\<open>fun A B\<close>\<close>
     \<^ML>\<open>\<^Type_fn>\<open>fun A B => \<open>(A, B)\<close>\<close>\<close>
 

@@ -352,8 +352,8 @@ Config.get ;
 
 (*
 \begin{figure}[h]
-
      \centering
+
      \includegraphics[scale=0.5]{graph_a}
      \caption{An example graph}
 
@@ -362,35 +362,37 @@ Config.get ;
 
 
 \begin{figure}
-
      \centering
+
      \begin{subfigure}[b]{0.3\textwidth}
 
          \centering
          \includegraphics[width=\textwidth]{graph1}
          \caption{$y=x$}
 
-         \label{fig:y equals x}
+         \label{fig:y equals x}   (* PROBLEM *)
      \end{subfigure}
 
      \hfill
+
      \begin{subfigure}[b]{0.3\textwidth}
 
          \centering
          \includegraphics[width=\textwidth]{graph2}
          \caption{$y=3sinx$}
 
-         \label{fig:three sin x}
+         \label{fig:three sin x}  (* PROBLEM *)
      \end{subfigure}
 
      \hfill
+
      \begin{subfigure}[b]{0.3\textwidth}
 
          \centering
          \includegraphics[width=\textwidth]{graph3}
          \caption{$y=5/x$}
 
-         \label{fig:five over x}
+         \label{fig:five over x} (* PROBLEM *)
      \end{subfigure}
 
   \caption{Three simple graphs}
