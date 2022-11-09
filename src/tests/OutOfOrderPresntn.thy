@@ -67,7 +67,7 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
                                       val strg = XML.string_of (hd (Latex.output text))
                                       val file = {path = Path.make [oid ^ "_snippet.tex"],
                                                   pos = @{here}, 
-                                                  content = strg}
+                                                  content = Bytes.string strg}
                                       
                                       val _ = Generated_Files.write_file (Path.make ["latex_test"]) 
                                                                          file
@@ -125,7 +125,7 @@ val _ =
 
 \<close>
 
-
+ML\<open>open Bytes\<close>
 text\<open>And here a tex - text macro.\<close>
 text\<open>Pythons ReStructuredText (RST). 
      @{url \<open>https://de.wikipedia.org/wiki/ReStructuredText\<close>}. Tool: Sphinx.
@@ -436,7 +436,7 @@ fun figure_antiq (check: Proof.context -> Path.T option -> Input.source -> Path.
                                  else error "scale out of range (must be between 1 and 100"
         val fig_args = Library.enclose "[" "]" (commas [wdth_ltx,scl_ltx])
         val _ = writeln cap
-        fun proportion () = "0."^ (Int.toString (100 div length(!figure_proportions)))
+        fun proportion () = "0."^ (Int.toString (100 div List.length(!figure_proportions)))
                              \<comment> \<open>naive: assumes equal proportions\<close>
         fun core arg = "\n\\centering\n"
                        ^"\\includegraphics"
