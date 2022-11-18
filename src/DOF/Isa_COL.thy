@@ -157,6 +157,9 @@ doc_class figure   =
    placement        :: placement  
    spawn_columns    :: bool <= True 
 
+doc_class figure2   =  figure +
+   caption          :: string
+
 
 doc_class side_by_side_figure = figure +
    anchor           :: "string"
