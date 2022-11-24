@@ -1182,9 +1182,9 @@ text\<open>
 fun check_result_inv oid {is_monitor:bool} ctxt =
   let
     val kind =
-      AttributeAccess.compute_attr_access ctxt "evidence" oid NONE <@>{here}
+      ISA_core.compute_attr_access ctxt "evidence" oid NONE <@>{here}
     val prop =
-      AttributeAccess.compute_attr_access ctxt "property" oid NONE <@>{here}
+      ISA_core.compute_attr_access ctxt "property" oid NONE <@>{here}
     val tS = HOLogic.dest_list prop
   in  case kind of
        <@>{term "proof"} => if not(null tS) then true

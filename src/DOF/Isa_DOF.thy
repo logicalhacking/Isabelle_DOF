@@ -839,8 +839,8 @@ versions might extend this feature substantially.\<close>
 
 subsection\<open> Syntax \<close> 
 
-typedecl "doc_class"
- 
+datatype "doc_class" = mk string
+
 \<comment> \<open>and others in the future : file, http, thy, ...\<close> 
 
 datatype "typ" = ISA_typ string  ("@{typ _}")
@@ -851,6 +851,7 @@ datatype "file" = ISA_file string  ("@{file _}")
 datatype "thy" = ISA_thy string  ("@{thy _}")
 consts ISA_docitem      :: "string \<Rightarrow> 'a"                ("@{docitem _}")
 datatype "docitem_attr" = ISA_docitem_attr string  string ("@{docitemattr (_) :: (_)}")
+datatype "trace_attribute" = ISA_trace_attribute string ("@{trace-attribute _}")
 
 \<comment> \<open>Dynamic setup of inner syntax cartouche\<close>
 
@@ -1046,6 +1047,14 @@ fun ML_isa_check_docitem thy (term, req_ty, pos) _ =
            else err ("faulty reference to docitem: "^name) pos
   in  ML_isa_check_generic check thy (term, pos) end
 
+fun ML_isa_check_trace_attribute thy (term, _, pos) s =
+  let
+    fun check thy (name, _)  =
+      case DOF_core.get_object_global name thy of
+          NONE =>  err ("No class instance: " ^ name) pos
+        | SOME(_) => ()
+  in ML_isa_check_generic check thy (term, pos) end
+
 fun ML_isa_elaborate_generic (_:theory) isa_name ty term_option _ =
   case term_option of
       NONE => error("Wrong term option. You must use a defined term")
@@ -1141,6 +1150,50 @@ fun declare_class_instances_annotation thy doc_class_name =
                     {check=check_identity, elaborate= elaborate_instances_list}) thy end)
   end                            
 
+fun symbex_attr_access0 ctxt proj_term term =
+let
+      val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
+in Value_Command.value ctxt (subterm') end
+
+fun compute_attr_access ctxt attr oid pos_option pos' = (* template *)
+    case DOF_core.get_value_global oid (Context.theory_of ctxt) of 
+            SOME term => let val ctxt =  (Proof_Context.init_global (Context.theory_of ctxt))
+                              val SOME{cid,pos=pos_decl,id,...} = DOF_core.get_object_local oid ctxt
+                              val docitem_markup = docref_markup false oid id pos_decl; 
+                              val _ = Context_Position.report ctxt pos' docitem_markup;
+                              val (* (long_cid, attr_b,ty) = *)
+                                  {long_name, typ=ty, def_pos, ...} = 
+                                       case DOF_core.get_attribute_info_local cid attr ctxt of
+                                            SOME f => f
+                                          | NONE => error("attribute undefined for reference: "
+                                                          ^ oid ^ Position.here (the pos_option))
+                              val proj_term = Const(long_name,dummyT --> ty)
+                              val _ = case pos_option of
+                                          NONE => ()
+                                        | SOME pos =>
+                                            let 
+                                              val class_name = Long_Name.qualifier long_name
+                                              val SOME{id,...} = DOF_core.get_doc_class_local class_name ctxt
+                                              val class_markup = docclass_markup false class_name id def_pos
+                                            in Context_Position.report ctxt pos class_markup end
+                          in  symbex_attr_access0 ctxt proj_term term end
+                          (*in  Value_Command.value ctxt term end*)
+           | NONE => error("identifier not a docitem reference" ^ Position.here pos')
+
+fun ML_isa_elaborate_trace_attribute (thy:theory) _ _ term_option pos =
+case term_option of
+    NONE => err ("Malformed term annotation") pos
+  | SOME term => 
+      let
+        val oid = HOLogic.dest_string term
+        val traces = compute_attr_access (Context.Theory thy) "trace" oid NONE pos
+        fun conv (\<^Const>\<open>Pair \<^typ>\<open>doc_class rexp\<close> \<^typ>\<open>string\<close>\<close>
+                    $ (\<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close> $ (\<^Const>\<open>mk\<close> $ s)) $ S) =
+          let val s' =  DOF_core.read_cid (Proof_Context.init_global thy) (HOLogic.dest_string s)
+          in \<^Const>\<open>Pair \<^typ>\<open>string\<close> \<^typ>\<open>string\<close>\<close> $ HOLogic.mk_string s' $ S end
+        val traces' = map conv (HOLogic.dest_list traces)
+      in HOLogic.mk_list \<^Type>\<open>prod \<^typ>\<open>string\<close> \<^typ>\<open>string\<close>\<close> traces' end
+
 (* utilities *)
 
 fun property_list_dest ctxt X = (map (fn Const ("Isa_DOF.ISA_term", _) $ s => HOLogic.dest_string s 
@@ -1167,7 +1220,8 @@ setup\<open>DOF_core.update_isa_global("Isa_DOF.file.file",
                   {check=ISA_core.ML_isa_check_file, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
 setup\<open>DOF_core.update_isa_global("Isa_DOF.docitem",
               {check=ISA_core.ML_isa_check_docitem, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
-
+setup\<open>DOF_core.update_isa_global("Isa_DOF.trace_attribute.trace_attribute",
+              {check=ISA_core.ML_isa_check_trace_attribute, elaborate=ISA_core.ML_isa_elaborate_trace_attribute}) \<close>
 section\<open> Syntax for Annotated Documentation Commands (the '' View'' Part I) \<close>
 
 
@@ -1351,7 +1405,7 @@ fun create_default_object thy class_name =
     fun attr_to_free (binding, typ, _) = Free (purified_class_name ^ "_"
                                                ^ (Binding.name_of binding)
                                                ^ "_Attribute_Not_Initialized", typ)
-    val class_list' = DOF_core.get_attributes class_name thy
+    val class_list = DOF_core.get_attributes class_name thy
     fun attrs_filter [] = [] 
       | attrs_filter (x::xs) =
           let val (cid, ys) = x
@@ -1362,13 +1416,15 @@ fun create_default_object thy class_name =
                        then true
                        else is_duplicated y xs end
           in (cid, filter_out (fn y => is_duplicated y xs) ys)::attrs_filter xs end
-    val class_list'' = rev (attrs_filter (rev class_list'))
-    fun add_tag_to_attrs_free tag_attr thy (cid, filtered_attr_list) =
+    val class_list' = rev (attrs_filter (rev class_list))
+    val tag_attr = HOLogic.mk_number @{typ "int"}
+    fun add_tag_to_attrs_free' tag_attr thy (cid, filtered_attr_list) =
       if DOF_core.is_virtual cid thy
-      then (attr_to_free tag_attr)::(map (attr_to_free) filtered_attr_list)
+      then (tag_attr (serial ()))::(map (attr_to_free) filtered_attr_list)
       else (map (attr_to_free) filtered_attr_list)
-    val class_list''' = flat (map (add_tag_to_attrs_free DOF_core.tag_attr thy) class_list'')
-  in list_comb (make_const, (attr_to_free DOF_core.tag_attr)::class_list''') end
+    val class_list'' = flat (map (add_tag_to_attrs_free' tag_attr thy) class_list')
+  in list_comb (make_const, (tag_attr (serial()))::class_list'') end
+
 
 fun check_classref {is_monitor=is_monitor} (SOME(cid,pos')) thy = 
           let 
@@ -2444,42 +2500,15 @@ struct
 val basic_entity = Document_Output.antiquotation_pretty_source 
     : binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
 
-fun symbex_attr_access0 ctxt proj_term term =
-  let val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
-  in Value_Command.value ctxt (subterm') end
-
-
-fun compute_attr_access ctxt attr oid pos_option pos' = (* template *)
-    case DOF_core.get_value_global oid (Context.theory_of ctxt) of 
-            SOME term => let val ctxt =  (Proof_Context.init_global (Context.theory_of ctxt))
-                              val SOME{cid,pos=pos_decl,id,...} = DOF_core.get_object_local oid ctxt
-                              val docitem_markup = docref_markup false oid id pos_decl; 
-                              val _ = Context_Position.report ctxt pos' docitem_markup;
-                              val (* (long_cid, attr_b,ty) = *)
-                                  {long_name, typ=ty, def_pos, ...} = 
-                                       case DOF_core.get_attribute_info_local cid attr ctxt of
-                                            SOME f => f
-                                          | NONE => error("attribute undefined for reference: "
-                                                          ^ oid ^ Position.here (the pos_option))
-                              val proj_term = Const(long_name,dummyT --> ty)
-                              val _ = case pos_option of
-                                          NONE => ()
-                                        | SOME pos =>
-                                            let 
-                                              val class_name = Long_Name.qualifier long_name
-                                              val SOME{id,...} = DOF_core.get_doc_class_local class_name ctxt
-                                              val class_markup = docclass_markup false class_name id def_pos
-                                            in Context_Position.report ctxt pos class_markup end
-                          in  symbex_attr_access0 ctxt proj_term term end
-                          (*in  Value_Command.value ctxt term end*)
-           | NONE => error("identifier not a docitem reference" ^ Position.here pos')
-
-
 fun compute_trace_ML ctxt oid pos_opt pos' =
     (* grabs attribute, and converts its HOL-term into (textual) ML representation *)
-    let val term = compute_attr_access ctxt "trace" oid pos_opt pos'
-        fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
-    in  map conv (HOLogic.dest_list term) end
+  let val term = ISA_core.compute_attr_access ctxt "trace" oid pos_opt pos'
+      fun conv (\<^Const>\<open>Pair \<^typ>\<open>doc_class rexp\<close> \<^typ>\<open>string\<close>\<close>
+                  $ (\<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close> $ (\<^Const>\<open>mk\<close> $ s)) $ S) =
+        let val s' =  DOF_core.read_cid (Context.proof_of ctxt) (HOLogic.dest_string s)
+        in (s', HOLogic.dest_string S) end
+  in  map conv (HOLogic.dest_list term) end
+
 
 val parse_oid  = Scan.lift(Parse.position Args.name) 
 val parse_cid  = Scan.lift(Parse.position Args.name) 
@@ -2498,7 +2527,7 @@ val parse_attribute_access' = Term_Style.parse -- parse_attribute_access
                                  ((string * Position.T) * (string * Position.T))) context_parser
 
 fun attr_2_ML ctxt ((attr:string,pos),(oid:string,pos')) = (ML_Syntax.atomic o ML_Syntax.print_term) 
-                                                           (compute_attr_access ctxt attr oid (SOME pos) pos') 
+                                                           (ISA_core.compute_attr_access ctxt attr oid (SOME pos) pos') 
 
 
 val TERM_STORE = let val dummy_term = Bound 0
@@ -2524,10 +2553,10 @@ fun compute_cid_repr ctxt cid pos =
 local
 
 fun pretty_attr_access_style ctxt (style, ((attr,pos),(oid,pos'))) = 
-           Document_Output.pretty_term ctxt (style (compute_attr_access (Context.Proof ctxt) 
+           Document_Output.pretty_term ctxt (style (ISA_core.compute_attr_access (Context.Proof ctxt) 
                                                                     attr oid (SOME pos) pos'));
 fun pretty_trace_style ctxt (style, (oid,pos)) = 
-          Document_Output.pretty_term ctxt (style (compute_attr_access  (Context.Proof ctxt) 
+          Document_Output.pretty_term ctxt (style (ISA_core.compute_attr_access  (Context.Proof ctxt) 
                                                                    "trace" oid NONE pos));
 fun pretty_cid_style ctxt (style, (cid,pos)) = 
           Document_Output.pretty_term ctxt (style (compute_cid_repr ctxt cid pos));
@@ -2697,7 +2726,13 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
                              else error("no overloading allowed.")
       val record_fields = map_filter (check_n_filter thy) fields
               (* adding const symbol representing doc-class for Monitor-RegExps.*)
-    in thy |> (Sign.add_consts_cmd [(binding,  "doc_class Regular_Exp.rexp", Mixfix.NoSyn)])
+      val constant_typ = \<^typ>\<open>doc_class rexp\<close>
+      val constant_term = \<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close>
+                         $ (\<^Const>\<open>mk\<close>
+                         $ HOLogic.mk_string (Binding.name_of binding))
+      val eq =  mk_meta_eq(Free(Binding.name_of binding, constant_typ), constant_term)
+      val args = (SOME(binding,NONE,NoSyn), (Binding.empty_atts,eq),[],[])
+    in thy |> Named_Target.theory_map (def_cmd args)
            |> (fn thy =>
                  case parent' of
                      NONE => (Record.add_record

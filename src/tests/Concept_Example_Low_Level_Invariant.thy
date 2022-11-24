@@ -44,7 +44,7 @@ subsection*[b::A, x = "5"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 text\<open>Setting a sample invariant, referring to attribute value "x":\<close>
 ML\<open>fun check_A_invariant oid {is_monitor:bool} ctxt = 
-      let val term =  AttributeAccess.compute_attr_access ctxt "x" oid NONE @{here} 
+      let val term =  ISA_core.compute_attr_access ctxt "x" oid NONE @{here} 
           val (@{typ "int"},x_value) = HOLogic.dest_number term
       in  if x_value > 5 then error("class A invariant violation") else true end
 \<close>
@@ -80,8 +80,11 @@ to take sub-classing into account:
 \<close>
 
 ML\<open>fun check_M_invariant oid {is_monitor} ctxt = 
-      let val term =  AttributeAccess.compute_attr_access ctxt "trace" oid NONE @{here} 
-          fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
+      let val term =  ISA_core.compute_attr_access ctxt "trace" oid NONE @{here} 
+          fun conv (\<^Const>\<open>Pair \<^typ>\<open>doc_class rexp\<close> \<^typ>\<open>string\<close>\<close>
+                      $ (\<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close> $ (\<^Const>\<open>mk\<close> $ s)) $ S) =
+            let val s' =  DOF_core.read_cid (Context.proof_of ctxt) (HOLogic.dest_string s)
+            in (s', HOLogic.dest_string S) end
           val string_pair_list = map conv (HOLogic.dest_list term) 
           val cid_list = map fst string_pair_list
           val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
@@ -113,10 +116,15 @@ subsection*[f::E]                \<open> Lectus accumsan velit ultrices, ... }\<
 section*[f2::E]                  \<open> Lectus accumsan velit ultrices, ... }\<close>
 *)
 
-ML\<open>val term = AttributeAccess.compute_attr_access 
-                  (Context.Proof @{context}) "trace" "struct" NONE @{here} ;
+ML\<open>val ctxt = @{context}
+   val term = ISA_core.compute_attr_access 
+                  (Context.Proof ctxt) "trace" "struct" NONE @{here} ;
    fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
-   val string_pair_list = map conv (HOLogic.dest_list term)
+   fun conv' (\<^Const>\<open>Pair \<^typ>\<open>doc_class rexp\<close> \<^typ>\<open>string\<close>\<close>
+                      $ (\<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close> $ (\<^Const>\<open>mk\<close> $ s)) $ S) =
+     let val s' =  DOF_core.read_cid ctxt (HOLogic.dest_string s)
+     in (s', HOLogic.dest_string S) end
+   val string_pair_list = map conv' (HOLogic.dest_list term)
   \<close>
 
 

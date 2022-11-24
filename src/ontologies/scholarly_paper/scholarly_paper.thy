@@ -456,7 +456,7 @@ in
 fun check ctxt cidS mon_id pos_opt =
     let val trace  = AttributeAccess.compute_trace_ML ctxt mon_id pos_opt @{here}
         val groups = partition (Context.proof_of ctxt) cidS trace
-        fun get_level_raw oid = AttributeAccess.compute_attr_access ctxt "level" oid NONE @{here};
+        fun get_level_raw oid = ISA_core.compute_attr_access ctxt "level" oid NONE @{here};
         fun get_level oid = dest_option (snd o HOLogic.dest_number) (get_level_raw (oid));
         fun check_level_hd a = case (get_level (snd a)) of
                                   NONE => error("Invariant violation: leading section" ^ snd a ^ 
