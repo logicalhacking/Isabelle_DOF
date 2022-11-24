@@ -65,8 +65,8 @@ doc_class result = technical +
 
 
 ML\<open>fun check_invariant_invariant oid {is_monitor:bool} ctxt =
-      let val kind_term = AttributeAccess.compute_attr_access ctxt "kind" oid @{here} @{here} 
-          val property_termS = AttributeAccess.compute_attr_access ctxt "property" oid @{here} @{here} 
+      let val kind_term = AttributeAccess.compute_attr_access ctxt "kind" oid NONE @{here} 
+          val property_termS = AttributeAccess.compute_attr_access ctxt "property" oid NONE @{here} 
           val tS = HOLogic.dest_list property_termS
       in  case kind_term of
             @{term "proof"} => if not(null tS) then true
@@ -137,10 +137,10 @@ fun dest_option _ (Const (@{const_name "None"}, _)) = NONE
 
 in 
 
-fun check ctxt cidS mon_id pos =
-    let val trace  = AttributeAccess.compute_trace_ML ctxt mon_id pos @{here}
+fun check ctxt cidS mon_id pos_opt =
+    let val trace  = AttributeAccess.compute_trace_ML ctxt mon_id pos_opt @{here}
         val groups = partition (Context.proof_of ctxt) cidS trace
-        fun get_level_raw oid = AttributeAccess.compute_attr_access ctxt "level" oid @{here} @{here};
+        fun get_level_raw oid = AttributeAccess.compute_attr_access ctxt "level" oid NONE @{here};
         fun get_level oid = dest_option (snd o HOLogic.dest_number) (get_level_raw (oid));
         fun check_level_hd a = case (get_level (snd a)) of
                                   NONE => error("Invariant violation: leading section" ^ snd a ^ 
@@ -165,7 +165,7 @@ end
 \<close>
 
 setup\<open> let val cidS = ["small_math.introduction","small_math.technical", "small_math.conclusion"];
-           fun body moni_oid _ ctxt = (Small_Math_trace_invariant.check  ctxt cidS moni_oid @{here};
+           fun body moni_oid _ ctxt = (Small_Math_trace_invariant.check  ctxt cidS moni_oid NONE;
                                        true)
        in  DOF_core.update_class_invariant "small_math.article" body end\<close>
 

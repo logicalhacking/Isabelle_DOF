@@ -453,10 +453,10 @@ fun dest_option _ (Const (@{const_name "None"}, _)) = NONE
 
 in 
 
-fun check ctxt cidS mon_id pos =
-    let val trace  = AttributeAccess.compute_trace_ML ctxt mon_id pos @{here}
+fun check ctxt cidS mon_id pos_opt =
+    let val trace  = AttributeAccess.compute_trace_ML ctxt mon_id pos_opt @{here}
         val groups = partition (Context.proof_of ctxt) cidS trace
-        fun get_level_raw oid = AttributeAccess.compute_attr_access ctxt "level" oid @{here} @{here};
+        fun get_level_raw oid = AttributeAccess.compute_attr_access ctxt "level" oid NONE @{here};
         fun get_level oid = dest_option (snd o HOLogic.dest_number) (get_level_raw (oid));
         fun check_level_hd a = case (get_level (snd a)) of
                                   NONE => error("Invariant violation: leading section" ^ snd a ^ 
@@ -484,7 +484,7 @@ end
 setup\<open> let val cidS = ["scholarly_paper.introduction","scholarly_paper.technical", 
                        "scholarly_paper.example", "scholarly_paper.conclusion"];
            fun body moni_oid _ ctxt = (Scholarly_paper_trace_invariant.check 
-                                                    ctxt cidS moni_oid @{here};
+                                                    ctxt cidS moni_oid NONE;
                                        true)
        in  DOF_core.update_class_invariant "scholarly_paper.article" body end\<close>
 

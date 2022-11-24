@@ -2449,27 +2449,35 @@ fun symbex_attr_access0 ctxt proj_term term =
   in Value_Command.value ctxt (subterm') end
 
 
-fun compute_attr_access ctxt attr oid pos pos' = (* template *)
+fun compute_attr_access ctxt attr oid pos_option pos' = (* template *)
     case DOF_core.get_value_global oid (Context.theory_of ctxt) of 
             SOME term => let val ctxt =  (Proof_Context.init_global (Context.theory_of ctxt))
                               val SOME{cid,pos=pos_decl,id,...} = DOF_core.get_object_local oid ctxt
-                              val markup = docref_markup false oid id pos_decl;
-                              val _ = Context_Position.report ctxt pos' markup;
+                              val docitem_markup = docref_markup false oid id pos_decl; 
+                              val _ = Context_Position.report ctxt pos' docitem_markup;
                               val (* (long_cid, attr_b,ty) = *)
-                                  {long_name, typ=ty,...} = 
+                                  {long_name, typ=ty, def_pos, ...} = 
                                        case DOF_core.get_attribute_info_local cid attr ctxt of
                                             SOME f => f
                                           | NONE => error("attribute undefined for reference: "
-                                                          ^ oid ^ Position.here pos)
-                              val proj_term = Const(long_name,dummyT --> ty) 
+                                                          ^ oid ^ Position.here (the pos_option))
+                              val proj_term = Const(long_name,dummyT --> ty)
+                              val _ = case pos_option of
+                                          NONE => ()
+                                        | SOME pos =>
+                                            let 
+                                              val class_name = Long_Name.qualifier long_name
+                                              val SOME{id,...} = DOF_core.get_doc_class_local class_name ctxt
+                                              val class_markup = docclass_markup false class_name id def_pos
+                                            in Context_Position.report ctxt pos class_markup end
                           in  symbex_attr_access0 ctxt proj_term term end
                           (*in  Value_Command.value ctxt term end*)
-           | NONE => error("identifier not a docitem reference" ^ Position.here pos)
+           | NONE => error("identifier not a docitem reference" ^ Position.here pos')
 
 
-fun compute_trace_ML ctxt oid pos pos' =
+fun compute_trace_ML ctxt oid pos_opt pos' =
     (* grabs attribute, and converts its HOL-term into (textual) ML representation *)
-    let val term = compute_attr_access ctxt "trace" oid pos pos'
+    let val term = compute_attr_access ctxt "trace" oid pos_opt pos'
         fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
     in  map conv (HOLogic.dest_list term) end
 
@@ -2490,7 +2498,7 @@ val parse_attribute_access' = Term_Style.parse -- parse_attribute_access
                                  ((string * Position.T) * (string * Position.T))) context_parser
 
 fun attr_2_ML ctxt ((attr:string,pos),(oid:string,pos')) = (ML_Syntax.atomic o ML_Syntax.print_term) 
-                                                           (compute_attr_access ctxt attr oid pos pos') 
+                                                           (compute_attr_access ctxt attr oid (SOME pos) pos') 
 
 
 val TERM_STORE = let val dummy_term = Bound 0
@@ -2507,7 +2515,7 @@ fun get_instance_value_2_ML ctxt (oid:string,pos) =
 fun trace_attr_2_ML ctxt (oid:string,pos) =
     let val print_string_pair = ML_Syntax.print_pair  ML_Syntax.print_string ML_Syntax.print_string
         val toML = (ML_Syntax.atomic o (ML_Syntax.print_list print_string_pair))
-    in  toML (compute_trace_ML ctxt oid @{here} pos) end
+    in  toML (compute_trace_ML ctxt oid NONE pos) end 
 
 fun compute_cid_repr ctxt cid pos = 
       if DOF_core.is_defined_cid_local  cid ctxt then Const(cid,dummyT)
@@ -2515,12 +2523,12 @@ fun compute_cid_repr ctxt cid pos =
 
 local
 
-fun pretty_attr_access_style ctxt (style, ((oid,pos),(attr,pos'))) = 
+fun pretty_attr_access_style ctxt (style, ((attr,pos),(oid,pos'))) = 
            Document_Output.pretty_term ctxt (style (compute_attr_access (Context.Proof ctxt) 
-                                                                    attr oid pos pos'));
+                                                                    attr oid (SOME pos) pos'));
 fun pretty_trace_style ctxt (style, (oid,pos)) = 
           Document_Output.pretty_term ctxt (style (compute_attr_access  (Context.Proof ctxt) 
-                                                                   "trace" oid pos pos));
+                                                                   "trace" oid NONE pos));
 fun pretty_cid_style ctxt (style, (cid,pos)) = 
           Document_Output.pretty_term ctxt (style (compute_cid_repr ctxt cid pos));
 

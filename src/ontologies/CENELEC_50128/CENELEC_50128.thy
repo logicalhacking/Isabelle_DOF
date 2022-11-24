@@ -1009,7 +1009,7 @@ fun check_sil oid _ ctxt =
     val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
     val monitor_record_value = #value (the (DOF_core.get_object_local oid ctxt'))
     val Const _ $ _ $ monitor_sil $ _ = monitor_record_value
-    val traces = AttributeAccess.compute_trace_ML ctxt oid \<^here> \<^here>
+    val traces = AttributeAccess.compute_trace_ML ctxt oid NONE \<^here>
     fun check_sil'' [] = true
       | check_sil'' (x::xs) =
           let
@@ -1041,7 +1041,7 @@ fun check_sil_slow oid _ ctxt =
     val monitor_sil_typ = (Syntax.read_typ ctxt' monitor_cid) --> @{typ "sil"}
     val monitor_sil = Value_Command.value ctxt'
                     (Const("CENELEC_50128.monitor_SIL.sil", monitor_sil_typ) $ monitor_record_value)
-    val traces = AttributeAccess.compute_trace_ML ctxt oid \<^here> \<^here>
+    val traces = AttributeAccess.compute_trace_ML ctxt oid NONE \<^here>
     fun check_sil'  [] = true
       | check_sil' (x::xs) =
           let
@@ -1072,7 +1072,7 @@ fun check_required_documents oid _ ctxt =
     val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
     val {monitor_tab,...} = DOF_core.get_data ctxt'
     val {accepted_cids, ...} = the (Symtab.lookup monitor_tab oid)
-    val traces = AttributeAccess.compute_trace_ML ctxt oid \<^here> \<^here>
+    val traces = AttributeAccess.compute_trace_ML ctxt oid NONE \<^here>
     fun check_required_documents' [] = true
       | check_required_documents' (cid::cids) =
           if exists (fn (doc_cid, _) => equal cid doc_cid) traces

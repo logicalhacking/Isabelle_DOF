@@ -168,7 +168,7 @@ update_instance*[omega::E, y+="[''en'']"]
 ML\<open> val s =  map HOLogic.dest_string (HOLogic.dest_list @{docitem_attribute y::omega}); \<close>
 
 subsection\<open> Example text antiquotation:\<close>
-text\<open> @{docitem_attribute omega::y}  \<close>
+text\<open> @{docitem_attribute y::omega}  \<close>
 
 
 section\<open>Simulation of a Monitor\<close>
