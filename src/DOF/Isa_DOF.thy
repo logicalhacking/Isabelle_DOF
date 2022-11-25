@@ -851,7 +851,7 @@ datatype "file" = ISA_file string  ("@{file _}")
 datatype "thy" = ISA_thy string  ("@{thy _}")
 consts ISA_docitem      :: "string \<Rightarrow> 'a"                ("@{docitem _}")
 datatype "docitem_attr" = ISA_docitem_attr string  string ("@{docitemattr (_) :: (_)}")
-datatype "trace_attribute" = ISA_trace_attribute string ("@{trace-attribute _}")
+consts ISA_trace_attribute :: "string \<Rightarrow> (string * string) list" ("@{trace-attribute _}")
 
 \<comment> \<open>Dynamic setup of inner syntax cartouche\<close>
 
@@ -1220,7 +1220,7 @@ setup\<open>DOF_core.update_isa_global("Isa_DOF.file.file",
                   {check=ISA_core.ML_isa_check_file, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
 setup\<open>DOF_core.update_isa_global("Isa_DOF.docitem",
               {check=ISA_core.ML_isa_check_docitem, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
-setup\<open>DOF_core.update_isa_global("Isa_DOF.trace_attribute.trace_attribute",
+setup\<open>DOF_core.update_isa_global("Isa_DOF.trace_attribute",
               {check=ISA_core.ML_isa_check_trace_attribute, elaborate=ISA_core.ML_isa_elaborate_trace_attribute}) \<close>
 section\<open> Syntax for Annotated Documentation Commands (the '' View'' Part I) \<close>
 

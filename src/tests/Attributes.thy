@@ -195,10 +195,10 @@ text\<open>@{trace_attribute figs1}\<close>
 
 text\<open>Test trace_attribute term antiquotation:\<close>
 
-term*\<open>@{trace-attribute \<open>figs1\<close>}\<close>
-value*\<open>@{trace-attribute \<open>figs1\<close>}\<close>
-term*\<open>@{trace-attribute \<open>aaa\<close>}\<close>
-value*\<open>@{trace-attribute \<open>aaa\<close>}\<close>
+term*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
+value*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
+term*\<open>map fst @{trace-attribute \<open>aaa\<close>}\<close>
+value*\<open>map fst @{trace-attribute \<open>aaa\<close>}\<close>
 
 (*<*)
 text\<open>Final Status:\<close>
