@@ -37,13 +37,13 @@ ML\<open>
 
 find_theorems (60) name:"Conceptual.M." 
 
-value [simp]"trace(M.make undefined [] ())"
-value "ok(M.make undefined_AAA [] ())"
-value "trace(M.make undefined_AAA [] ())"
-value "tag_attribute(M.make undefined_AAA [] ())"
+value [simp]"M.trace(M.make undefined [] ())"
+value "M.ok(M.make undefined_AAA [] ())"
+value "M.trace(M.make undefined_AAA [] ())"
+value "M.tag_attribute(M.make undefined_AAA [] ())"
 
 
-value "ok(M.make 0 [] ())"
+value "M.ok(M.make 0 [] ())"
 (*
 value "ok(M.make undefined [] ())"
 value "ok(M.make 0 [] undefined)"
@@ -199,6 +199,10 @@ term*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
 value*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
 term*\<open>map fst @{trace-attribute \<open>aaa\<close>}\<close>
 value*\<open>map fst @{trace-attribute \<open>aaa\<close>}\<close>
+(* When not commented, should trigger an error:
+value*\<open>@{trace-attribute \<open>dfgdfg\<close>}\<close>
+*)
+
 
 (*<*)
 text\<open>Final Status:\<close>

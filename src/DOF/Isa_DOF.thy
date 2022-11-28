@@ -1165,8 +1165,14 @@ fun compute_attr_access ctxt attr oid pos_option pos' = (* template *)
                                   {long_name, typ=ty, def_pos, ...} = 
                                        case DOF_core.get_attribute_info_local cid attr ctxt of
                                             SOME f => f
-                                          | NONE => error("attribute undefined for reference: "
-                                                          ^ oid ^ Position.here (the pos_option))
+                                          | NONE =>  error("attribute undefined for reference: "
+                                                           ^ oid
+                                                           ^ Position.here
+                                                             (the pos_option handle Option.Option =>
+                                                               error("Attribute "
+                                                                      ^ attr
+                                                                      ^ " undefined for reference: "
+                                                                      ^ oid ^ Position.here pos')))
                               val proj_term = Const(long_name,dummyT --> ty)
                               val _ = case pos_option of
                                           NONE => ()
