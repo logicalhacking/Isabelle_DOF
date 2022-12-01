@@ -29,7 +29,7 @@ this command already during the installation of the prerequisites, you can skip
 it now):
 
 ```console
-foo@bar:~$ isabelle components -u `pwd`
+foo@bar:~$ isabelle components -u .
 ```
 
 The final step for the installation is:
