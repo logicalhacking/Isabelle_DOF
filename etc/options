@@ -2,7 +2,7 @@
 
 section "Isabelle/DOF"
 
-public option dof_template : string = "scrreprt-modern"
+public option dof_template : string = "Isabelle_DOF.scrreprt-modern"
   -- "Default document template for Isabelle/DOF documents"
 
 public option dof_ontologies : string = "Isabelle_DOF.technical_report Isabelle_DOF.scholarly_paper"
