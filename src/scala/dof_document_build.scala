@@ -58,8 +58,7 @@ object DOF_Document_Build
         File.content(path, xml).output(latex_output(_, file_pos = path.implode_symbolic))
           .write(directory.doc_dir)
       }
-      val isabelle_dof_dir = context.session_context.sessions_structure("Isabelle_DOF").dir
-      // print(context.options.string("dof_url"));
+      val isabelle_dof_dir = context.session_context.sessions_structure(DOF.session).dir
       
       // copy Isabelle/DOF LaTeX templates
       val template_dir = isabelle_dof_dir + Path.explode("document-templates")
@@ -82,16 +81,16 @@ object DOF_Document_Build
 
       // create dof-config.sty
       File.write(directory.doc_dir+Path.explode("dof-config.sty"), """
-\newcommand{\isabelleurl}{https://isabelle.in.tum.de/website-Isabelle2022/""" + context.options.string("dof_isabelle") + """}
-\newcommand{\dofurl}{""" + context.options.string("dof_url") + """}
-\newcommand{\dof@isabelleversion}{""" + context.options.string("dof_isabelle") + """}
-\newcommand{\isabellefullversion}{""" + context.options.string("dof_isabelle") + """\xspace}
-\newcommand{\dof@version}{""" + context.options.string("dof_version") + """}
-\newcommand{\dof@artifacturl}{""" + context.options.string("dof_artifact_dir") + """}
-\newcommand{\doflatestversion}{""" + context.options.string("dof_latest_version") + """}
-\newcommand{\isadoflatestdoi}{""" + context.options.string("dof_latest_doi") + """}
-\newcommand{\isadofgenericdoi}{""" + context.options.string("dof_generic_doi") + """}
-\newcommand{\isabellelatestversion}{""" + context.options.string("dof_latest_isabelle") + """}
+\newcommand{\isabelleurl}{https://isabelle.in.tum.de/website-Isabelle2022/""" + DOF.isabelle_version + """}
+\newcommand{\dofurl}{""" + DOF.url + """}
+\newcommand{\dof@isabelleversion}{""" + DOF.isabelle_version + """}
+\newcommand{\isabellefullversion}{""" + DOF.isabelle_version + """\xspace}
+\newcommand{\dof@version}{""" + DOF.version + """}
+\newcommand{\dof@artifacturl}{""" + DOF.artifact_dir + """}
+\newcommand{\doflatestversion}{""" + DOF.latest_version + """}
+\newcommand{\isadoflatestdoi}{""" + DOF.latest_doi + """}
+\newcommand{\isadofgenericdoi}{""" + DOF.generic_doi + """}
+\newcommand{\isabellelatestversion}{""" + DOF.latest_isabelle + """}
 """)
       directory
     }

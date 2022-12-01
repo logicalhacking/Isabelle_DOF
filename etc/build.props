@@ -4,6 +4,7 @@ no_build = false
 requirements = \
   env:ISABELLE_SCALA_JAR
 sources = \
+  src/scala/dof.scala \
   src/scala/dof_document_build.scala \
   src/scala/dof_mkroot.scala \
   src/scala/dof_tools.scala

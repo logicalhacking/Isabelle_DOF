@@ -147,10 +147,10 @@ Now use the following command line to build the session:
     var init_repos = false
     var help = false
     var session_name = ""
-    var session_parent = "Isabelle_DOF"
+    var session_parent = DOF.session
     var ontologies:List[String] = List()
-    var template = session_parent + ".scrartcl"
-    val default_ontologies = List(session_parent+".scholarly_paper")
+    var template = DOF.session + ".scrartcl"
+    val default_ontologies = List(DOF.session + ".scholarly_paper")
 
     val getopts = Getopts("""
 Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
@@ -182,7 +182,7 @@ Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
         case _ => getopts.usage()
       }
 
-    mkroot(session_parent=session_parent, session_name = session_name, session_dir = session_dir, init_repos = init_repos,
-      ontologies = ontologies, template = template, progress = new Console_Progress)
+    mkroot(session_parent = session_parent, session_name = session_name, session_dir = session_dir,
+      init_repos = init_repos, ontologies = ontologies, template = template, progress = new Console_Progress)
   })
 }
