@@ -28,7 +28,12 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+
+/*** constants and parameters for Isabelle/DOF ***/
+
 package isabelle.dof
+
+import isabelle._
 
 
 object DOF {
@@ -39,8 +44,12 @@ object DOF {
     // Isabelle/DOF version: "Unreleased" for development, semantic version for releases
 
   val session = "Isabelle_DOF"
-  val default_ontology = "Isabelle_DOF.scholarly_paper"
-  val default_template = "Isabelle_DOF.scrartcl"
+
+  val ontologies: List[String] = List("Isabelle_DOF.scholarly_paper")
+  def implode_ontologies(list: List[String]): String = Word.implode(list)
+  def explode_ontologies(text: String): List[String] = Word.explode(text)
+
+  val template = "Isabelle_DOF.scrartcl"
 
   val latest_version = "1.3.0"
   val latest_isabelle = "Isabelle2021-1"

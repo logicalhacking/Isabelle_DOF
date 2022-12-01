@@ -44,8 +44,8 @@ object DOF_Mkroot
     session_name: String = "",
     session_dir: Path = Path.current,
     init_repos: Boolean = false,
-    ontologies: List[String] = List(DOF.default_ontology),
-    template: String = DOF.default_template,
+    ontologies: List[String] = DOF.ontologies,
+    template: String = DOF.template,
     progress: Progress = new Progress): Unit =
   {
     Isabelle_System.make_directory(session_dir)
@@ -68,7 +68,7 @@ object DOF_Mkroot
     File.write(root_path,
       "session " + Mkroot.root_name(name) + " = " + Mkroot.root_name(DOF.session) + """ +
   options [document = pdf, document_output = "output", document_build = dof, dof_ontologies = """"
-       + ontologies.mkString(" ") + """", dof_template = """ + Mkroot.root_name(template)
+       + quote(DOF.implode_ontologies(ontologies)) + """", dof_template = """ + quote(template)
        + """, document_comment_latex = true]
 (*theories [document = false]
     A
@@ -146,8 +146,8 @@ Now use the following command line to build the session:
     var init_repos = false
     var help = false
     var session_name = ""
-    var ontologies = List(DOF.default_ontology)
-    var template = DOF.default_template
+    var ontologies = DOF.ontologies
+    var template = DOF.template
 
     val getopts = Getopts("""
 Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
@@ -156,15 +156,16 @@ Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
     -I           init Mercurial repository and add generated files
     -h           print help
     -n NAME      alternative session name (default: directory base name)
-    -o ONTOLOGY  additional ontology (default: """ + quote(DOF.default_ontology) + """)
-    -t TEMPLATE  template (default: """ + quote(DOF.default_template) + """)
+    -o NAMES     list of ontologies, separated by blanks (default: """ +
+                  quote(DOF.implode_ontologies(DOF.ontologies)) + """)
+    -t NAME      template (default: """ + quote(DOF.template) + """)
 
   Prepare session root directory for Isabelle/DOF (default: current directory).
 """,
       "I" -> (_ => init_repos = true),
       "h" -> (_ => help = true),
       "n:" -> (arg => session_name = arg),
-      "o:" -> (arg => ontologies = ontologies ::: List(arg)),
+      "o:" -> (arg => ontologies = DOF.explode_ontologies(arg)),
       "t:" -> (arg => template = arg))
 
     val more_args = getopts(args)

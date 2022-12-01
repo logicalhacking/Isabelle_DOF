@@ -77,7 +77,8 @@ object DOF_Document_Build
 
       // create ontology.sty
       val ltx_styles =
-        context.options.string("dof_ontologies").split(" +").map(s => regex.replaceAllIn(s, ""))
+        DOF.explode_ontologies(context.options.string("dof_ontologies"))
+          .map(s => regex.replaceAllIn(s, ""))
       File.write(directory.doc_dir + Path.explode("ontologies.tex"),
         ltx_styles.mkString("\\usepackage{DOF-", "}\n\\usepackage{DOF-", "}\n"))
 
