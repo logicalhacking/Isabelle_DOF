@@ -2027,23 +2027,6 @@ fun document_output {markdown: bool, markup: Latex.text -> Latex.text} meta_args
     val output_text = Document_Output.output_document ctxt {markdown = markdown} text;
   in markup (output_meta @ output_text) end;
 
-    val output_name = (* was available as Latex.output_name in Isabelle 2021-1 and earlier *)
-          translate_string
-          (fn "_" => "UNDERSCORE"
-            | "'" => "PRIME"
-            | "0" => "ZERO"
-            | "1" => "ONE"
-            | "2" => "TWO"
-            | "3" => "THREE"
-            | "4" => "FOUR"
-            | "5" => "FIVE"
-            | "6" => "SIX"
-            | "7" => "SEVEN"
-            | "8" => "EIGHT"
-            | "9" => "NINE"
-            | s => s);
-
-
 fun document_output_reports name {markdown, body} meta_args text ctxt =
   let
     val pos = Input.pos_of text;
@@ -2053,7 +2036,7 @@ fun document_output_reports name {markdown, body} meta_args text ctxt =
          (pos, Markup.plain_text)];
     fun markup xml =
       let val m = if body then Markup.latex_body else Markup.latex_heading
-      in [XML.Elem (m (output_name name), xml)] end;
+      in [XML.Elem (m (Latex.output_name name), xml)] end;
   in document_output {markdown = markdown, markup = markup} meta_args text ctxt end;
 
 
@@ -2952,8 +2935,8 @@ fun theory_text_antiquotation name =
 
 
 fun environment_delim name =
- ("%\n\\begin{" ^ Monitor_Command_Parser.output_name name ^ "}\n",
-  "\n\\end{" ^ Monitor_Command_Parser.output_name name ^ "}");
+ ("%\n\\begin{" ^ Latex.output_name name ^ "}\n",
+  "\n\\end{" ^ Latex.output_name name ^ "}");
 
 fun environment_block name = environment_delim name |-> XML.enclose;
 
