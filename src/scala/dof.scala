@@ -33,6 +33,7 @@ package isabelle.dof
 
 object DOF {
   val isabelle_version = "2022"
+  val isabelle_url = "https://isabelle.in.tum.de/website-Isabelle2022"
 
   val version = "Unreleased"
     // Isabelle/DOF version: "Unreleased" for development, semantic version for releases

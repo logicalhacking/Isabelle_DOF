@@ -83,7 +83,7 @@ object DOF_Document_Build
 
       // create dof-config.sty
       File.write(directory.doc_dir + Path.explode("dof-config.sty"), """
-\newcommand{\isabelleurl}{https://isabelle.in.tum.de/website-Isabelle2022/""" + DOF.isabelle_version + """}
+\newcommand{\isabelleurl}{""" + DOF.isabelle_url + """}
 \newcommand{\dofurl}{""" + DOF.url + """}
 \newcommand{\dof@isabelleversion}{""" + DOF.isabelle_version + """}
 \newcommand{\isabellefullversion}{""" + DOF.isabelle_version + """\xspace}
