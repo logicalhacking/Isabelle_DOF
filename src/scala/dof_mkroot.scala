@@ -29,10 +29,7 @@
  */
 
 
-/*  Author:     Makarius
-
-Prepare session root directory for Isabelle/DOF.
-*/
+/*** Prepare session root directory for Isabelle/DOF ***/
 
 package isabelle.dof
 
@@ -46,16 +43,14 @@ object DOF_Mkroot
   def mkroot(
     session_name: String = "",
     session_dir: Path = Path.current,
-    session_parent: String = "",
     init_repos: Boolean = false,
-    template: String = "",
-    ontologies: List[String] = Nil,
+    ontologies: List[String] = List(DOF.default_ontology),
+    template: String = DOF.default_template,
     progress: Progress = new Progress): Unit =
   {
     Isabelle_System.make_directory(session_dir)
 
     val name = proper_string(session_name) getOrElse session_dir.absolute_file.getName
-    val parent = proper_string(session_parent) getOrElse Isabelle_System.getenv("ISABELLE_LOGIC")
 
     val root_path = session_dir + Sessions.ROOT
     if (root_path.file.exists) error("Cannot overwrite existing " + root_path)
@@ -71,7 +66,7 @@ object DOF_Mkroot
     progress.echo("  creating " + root_path)
 
     File.write(root_path,
-      "session " + Mkroot.root_name(name) + " = " + Mkroot.root_name(parent) + """ +
+      "session " + Mkroot.root_name(name) + " = " + Mkroot.root_name(DOF.session) + """ +
   options [document = pdf, document_output = "output", document_build = dof, dof_ontologies = """"
        + ontologies.mkString(" ") + """", dof_template = """ + Mkroot.root_name(template)
        + """, document_comment_latex = true]
@@ -151,24 +146,23 @@ Now use the following command line to build the session:
     var init_repos = false
     var help = false
     var session_name = ""
-    var session_parent = DOF.session
-    var ontologies = List.empty[String]
-    var template = DOF.session + ".scrartcl"
-    val default_ontologies = List(DOF.session + ".scholarly_paper")
+    var ontologies = List(DOF.default_ontology)
+    var template = DOF.default_template
 
     val getopts = Getopts("""
 Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
 
   Options are:
     -I           init Mercurial repository and add generated files
+    -h           print help
     -n NAME      alternative session name (default: directory base name)
-    -o ONTOLOGY  ontology (default: scholarly_paper)
-    -t TEMPLATE  tempalte (default: scrartcl)
+    -o ONTOLOGY  additional ontology (default: """ + quote(DOF.default_ontology) + """)
+    -t TEMPLATE  template (default: """ + quote(DOF.default_template) + """)
 
-  Prepare session root directory (default: current directory).
+  Prepare session root directory for Isabelle/DOF (default: current directory).
 """,
-      "I" -> (arg => init_repos = true),
-      "h" -> (arg => help = true),
+      "I" -> (_ => init_repos = true),
+      "h" -> (_ => help = true),
       "n:" -> (arg => session_name = arg),
       "o:" -> (arg => ontologies = ontologies ::: List(arg)),
       "t:" -> (arg => template = arg))
@@ -183,9 +177,8 @@ Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
 
     if (help) getopts.usage()
 
-    mkroot(session_parent = session_parent, session_name = session_name, session_dir = session_dir,
+    mkroot(session_name = session_name, session_dir = session_dir,
       init_repos = init_repos, progress = new Console_Progress,
-      ontologies = if (ontologies.isEmpty) default_ontologies else ontologies,
-      template = template)
+      ontologies = ontologies, template = template)
   })
 }
