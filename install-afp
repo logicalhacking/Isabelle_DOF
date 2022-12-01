@@ -157,7 +157,7 @@ if [ ${ISABELLE_VERSION} = "Isabelle" ];
 then
    echo "Error: cannot find Isabelle/DOF configuration, please check that you"
    echo "       registered Isabelle/DOF as an Isabelle component, e.g., using" 
-   echo "       isabelle components -u $PWD"
+   echo "       isabelle components -u ."
    exit 1
 fi
 
