@@ -44,7 +44,6 @@ object DOF_Document_Build
       dir: Path,
       doc: Document_Build.Document_Variant): Document_Build.Directory =
     {
-      val regex = """^.*\.""".r
       val latex_output = new Latex_Output(context.options)
       val directory = context.prepare_directory(dir, doc, latex_output)
 
@@ -63,7 +62,7 @@ object DOF_Document_Build
       // copy Isabelle/DOF LaTeX templates
       val template_dir = isabelle_dof_dir + Path.explode("document-templates")
       // TODO: error handling in case 1) template does not exist or 2) root.tex does already exist
-      val template = regex.replaceAllIn(context.options.string("dof_template"), "")
+      val template = Long_Name.base_name(context.options.string("dof_template"))
       Isabelle_System.copy_file(
         template_dir + Path.explode("root-" + template + ".tex"),
         directory.doc_dir + Path.explode("root.tex"))
@@ -76,11 +75,9 @@ object DOF_Document_Build
         .foreach(sty => Isabelle_System.copy_file(sty, directory.doc_dir.file))
 
       // create ontology.sty
-      val ltx_styles =
-        DOF.explode_ontologies(context.options.string("dof_ontologies"))
-          .map(s => regex.replaceAllIn(s, ""))
+      val ontologies = DOF.explode_ontologies(context.options.string("dof_ontologies"))
       File.write(directory.doc_dir + Path.explode("ontologies.tex"),
-        ltx_styles.mkString("\\usepackage{DOF-", "}\n\\usepackage{DOF-", "}\n"))
+        ontologies.map(name => "\\usepackage{DOF-" + Long_Name.base_name(name) + "}\n").mkString)
 
       // create dof-config.sty
       File.write(directory.doc_dir + Path.explode("dof-config.sty"), """
