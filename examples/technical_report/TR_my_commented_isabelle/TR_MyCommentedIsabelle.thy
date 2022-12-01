@@ -62,7 +62,7 @@ text\<open> \<^vs>\<open>-0.5cm\<close>
   Isabelle and Isabelle/HOL, a complementary text to the unfortunately somewhat outdated 
   "The Isabelle Cookbook" in \<^url>\<open>https://nms.kcl.ac.uk/christian.urban/Cookbook/\<close>. 
   The present text is also complementary to the current version of 
-  \<^url>\<open>https://isabelle.in.tum.de/dist/Isabelle2021/doc/isar-ref.pdf\<close>
+  \<^url>\<open>https://isabelle.in.tum.de/doc/isar-ref.pdf\<close>
   "The Isabelle/Isar Implementation" by Makarius Wenzel in that it focusses on subjects
   not covered there, or presents alternative explanations for which I believe, based on my 
   experiences with students and Phds, that they are helpful.

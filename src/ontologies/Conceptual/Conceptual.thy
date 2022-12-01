@@ -28,7 +28,7 @@ doc_class A =
 subsection\<open>Excursion: On the semantic consequences of this definition: \<close>
 
 text\<open>This class definition leads an implicit Isabelle/HOL  \<^theory_text>\<open>record\<close>  definition 
-(cf. \<^url>\<open>https://isabelle.in.tum.de/dist/Isabelle2021/doc/isar-ref.pdf\<close>, chapter 11.6.).
+(cf. \<^url>\<open>https://isabelle.in.tum.de/doc/isar-ref.pdf\<close>, chapter 11.6.).
 Consequently, \<^theory_text>\<open>doc_class\<close>'es inherit the entire theory-infrastructure from Isabelle records:
 \<^enum> there is a HOL-type \<^typ>\<open>A\<close> and its extensible version \<^typ>\<open>'a A_scheme\<close> 
 \<^enum> there are HOL-terms representing \<^emph>\<open>doc_class instances\<close> with the high-level syntax:
