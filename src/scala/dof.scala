@@ -59,10 +59,10 @@ object DOF {
   val url = "https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF"
     // Isabelle/DOF source repository
 
+  // Isabelle/DOF release artifacts
   val artifact_dir = "releases/Isabelle_DOF/Isabelle_DOF"
-    // Isabelle/DOF release artifacts
-
   val artifact_host = "artifacts.logicalhacking.com"
+  val artifact_url: String = "https://" + artifact_host + "/" + artifact_dir
 
   def options(opts: Options): Options = opts + "document_comment_latex"
 }

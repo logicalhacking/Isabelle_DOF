@@ -87,7 +87,7 @@ object DOF_Document_Build
 \newcommand{\dof@isabelleversion}{""" + DOF.isabelle_version + """}
 \newcommand{\isabellefullversion}{""" + DOF.isabelle_version + """\xspace}
 \newcommand{\dof@version}{""" + DOF.version + """}
-\newcommand{\dof@artifacturl}{""" + DOF.artifact_dir + """}
+\newcommand{\dof@artifacturl}{""" + DOF.artifact_url + """}
 \newcommand{\doflatestversion}{""" + DOF.latest_version + """}
 \newcommand{\isadoflatestdoi}{""" + DOF.latest_doi + """}
 \newcommand{\isadofgenericdoi}{""" + DOF.generic_doi + """}
