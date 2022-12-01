@@ -48,16 +48,6 @@ object DOF_Document_Build
       val latex_output = new Latex_Output(options)
       val directory = context.prepare_directory(dir, doc, latex_output)
 
-      // produced by alternative presentation hook (workaround for missing Toplevel.present_theory)
-      for {
-        name <- context.document_theories.iterator
-        entry <- context.session_context.get(name.theory, Export.DOCUMENT_LATEX + "_dof")
-      } {
-        val path = Path.basic(Document_Build.tex_name(name))
-        val xml = YXML.parse_body(entry.text)
-        File.content(path, xml).output(latex_output(_, file_pos = path.implode_symbolic))
-          .write(directory.doc_dir)
-      }
       val isabelle_dof_dir = context.session_context.sessions_structure(DOF.session).dir
 
       // copy Isabelle/DOF LaTeX templates

@@ -2042,103 +2042,11 @@ fun document_output_reports name {markdown, body} meta_args text ctxt =
 
 (* document output commands *)
 
-local
-
-(* alternative presentation hook (workaround for missing Toplevel.present_theory) *)
-
-structure Document_Commands = Theory_Data
-(
-  type T = (string * (ODL_Meta_Args_Parser.meta_args_t
-                      -> Input.source -> Proof.context -> Latex.text)) list;
-  val empty = [];
-  val merge = AList.merge (op =) (K true);
-);
-
-fun get_document_command thy name =
-  AList.lookup (op =) (Document_Commands.get thy) name;
-
-fun document_segment (segment: Document_Output.segment) =
-  (case #span segment of
-    Command_Span.Span (Command_Span.Command_Span (name, _), _) =>
-      (case try Toplevel.theory_of (#state segment) of
-        SOME thy => get_document_command thy name
-      | _ => NONE)
-  | _ => NONE);
-
-fun present_segment (segment: Document_Output.segment) =
-  (case document_segment segment of
-    SOME pr =>
-      let
-        val {span, command = tr, prev_state = st, state = st'} = segment;
-        val src = Command_Span.content (#span segment) |> filter_out Document_Source.is_improper;
-        val parse = ODL_Meta_Args_Parser.attributes -- Parse.document_source;
-        fun present ctxt =
-          let val (meta_args, text) = #1 (Token.syntax (Scan.lift parse) src ctxt);
-          in pr meta_args text ctxt end;
-        val tr' =
-          Toplevel.empty
-          |> Toplevel.name (Toplevel.name_of tr)
-          |> Toplevel.position (Toplevel.pos_of tr)
-          |> Toplevel.present (Toplevel.presentation_context #> present);
-        val st'' = Toplevel.command_exception false tr' st'
-          handle Runtime.EXCURSION_FAIL (exn, _) => Exn.reraise exn;
-        val FIXME =
-          Toplevel.setmp_thread_position tr (fn () =>
-            writeln ("present_segment" ^ Position.here (Toplevel.pos_of tr) ^ "\n" ^
-              XML.string_of (XML.Elem (Markup.empty, the_default [] (Toplevel.output_of st'))) ^ "\n---\n" ^
-              XML.string_of (XML.Elem (Markup.empty, the_default [] (Toplevel.output_of st''))))) ()
-      in {span = span, command = tr, prev_state = st, state = st''} end
-  | _ => segment);
-
-val _ =
-  Theory.setup (Thy_Info.add_presentation (fn {options, segments, ...} => fn thy =>
-    if exists (Toplevel.is_skipped_proof o #state) segments then ()
-    else
-      let
-        val segments' = map present_segment segments;
-        val body = Document_Output.present_thy options thy segments';
-      in
-        if Options.string options "document" = "false" orelse
-          forall (is_none o document_segment) segments' then ()
-        else
-          let
-            val thy_name = Context.theory_name thy;
-            val latex = Latex.isabelle_body thy_name body;
-          in Export.export thy \<^path_binding>\<open>document/latex_dof\<close> latex end
-      end));
-
-in
-
 fun document_command (name, pos) descr mark cmd =
-  (Outer_Syntax.command (name, pos) descr
-    (ODL_Meta_Args_Parser.attributes -- Parse.document_source >>
-      (fn (meta_args, text) =>
-        Toplevel.theory (fn thy =>
-          let
-            val thy' = cmd meta_args thy;
-            val _ =
-              (case get_document_command thy' name of
-                SOME pr => ignore (pr meta_args text (Proof_Context.init_global thy'))
-              | NONE => ());
-          in thy' end)));
-   (Theory.setup o Document_Commands.map)
-     (AList.update (op =) (name, document_output_reports name mark)));
-
-fun document_command' (name, pos) descr mark  =
-  (Outer_Syntax.command (name, pos) descr
-    (ODL_Meta_Args_Parser.attributes -- Parse.document_source >>
-      (fn (meta_args, text) =>
-        Toplevel.theory (fn thy =>
-          let
-            val _ =
-              (case get_document_command thy name of
-                SOME pr => ignore (pr meta_args text (Proof_Context.init_global thy))
-              | NONE => ());
-          in thy end)));
-   (Theory.setup o Document_Commands.map)
-     (AList.update (op =) (name, document_output_reports name mark)));
-
-end;
+  Outer_Syntax.command (name, pos) descr
+    (ODL_Meta_Args_Parser.attributes -- Parse.document_source >> (fn (meta_args, text) =>
+      Toplevel.theory' (fn _ => cmd meta_args)
+      (Toplevel.presentation_context #> document_output_reports name mark meta_args text #> SOME)));
 
 
 (* Core Command Definitions *)

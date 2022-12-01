@@ -107,13 +107,8 @@ subsection \<open>Document commands\<close>
 
 text \<open>
   Isar toplevel commands now support a uniform concept for
-  \<^ML_type>\<open>Toplevel.presentation\<close>, but the exported interfaces are
-  limited to commands that do not change the semantic state: see
+  \<^ML_type>\<open>Toplevel.presentation\<close>, e.g. see
   \<^ML>\<open>Toplevel.present\<close> and \<^ML>\<open>Toplevel.present_local_theory\<close>.
-
-  Since \<^verbatim>\<open>Toplevel.present_theory\<close> is missing in Isabelle2021-1, we use a
-  workaround with an alternative presentation hook: it exports
-  \<^verbatim>\<open>document/latex_dof\<close> files instead of regular \<^verbatim>\<open>document/latex_dof\<close>.
 \<close>
 
 
