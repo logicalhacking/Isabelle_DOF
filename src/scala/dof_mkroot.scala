@@ -67,8 +67,8 @@ object DOF_Mkroot
 
     File.write(root_path,
       "session " + Mkroot.root_name(name) + " = " + Mkroot.root_name(DOF.session) + """ +
-  options [document = pdf, document_output = "output", document_build = dof, dof_ontologies = """"
-       + quote(DOF.implode_ontologies(ontologies)) + """", dof_template = """ + quote(template)
+  options [document = pdf, document_output = "output", document_build = dof, dof_ontologies = """
+       + quote(DOF.implode_ontologies(ontologies)) + """, dof_template = """ + quote(template)
        + """, document_comment_latex = true]
 (*theories [document = false]
     A
