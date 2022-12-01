@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 
- *               2021-2022 The University of Exeter. 
- *               2021-2022 The University of Paris-Saclay. 
+ * Copyright (c)
+ *               2021-2022 The University of Exeter.
+ *               2021-2022 The University of Paris-Saclay.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,13 +59,14 @@ object DOF_Document_Build
           .write(directory.doc_dir)
       }
       val isabelle_dof_dir = context.session_context.sessions_structure(DOF.session).dir
-      
+
       // copy Isabelle/DOF LaTeX templates
       val template_dir = isabelle_dof_dir + Path.explode("document-templates")
       // TODO: error handling in case 1) template does not exist or 2) root.tex does already exist
-      val  template = regex.replaceAllIn(context.options.string("dof_template"),"")
-      Isabelle_System.copy_file(template_dir + Path.explode("root-"+template+".tex"), 
-                                directory.doc_dir+Path.explode("root.tex"))
+      val template = regex.replaceAllIn(context.options.string("dof_template"), "")
+      Isabelle_System.copy_file(
+        template_dir + Path.explode("root-" + template + ".tex"),
+        directory.doc_dir + Path.explode("root.tex"))
 
       // copy Isabelle/DOF LaTeX styles
       List(Path.explode("DOF/latex"), Path.explode("ontologies"))
@@ -75,12 +76,13 @@ object DOF_Document_Build
         .foreach(sty => Isabelle_System.copy_file(sty, directory.doc_dir.file))
 
       // create ontology.sty
-      val ltx_styles =  context.options.string("dof_ontologies").split(" +").map(s => regex.replaceAllIn(s,""))
-      File.write(directory.doc_dir+Path.explode("ontologies.tex"),
-      ltx_styles.mkString("\\usepackage{DOF-","}\n\\usepackage{DOF-","}\n"))
+      val ltx_styles =
+        context.options.string("dof_ontologies").split(" +").map(s => regex.replaceAllIn(s, ""))
+      File.write(directory.doc_dir + Path.explode("ontologies.tex"),
+        ltx_styles.mkString("\\usepackage{DOF-", "}\n\\usepackage{DOF-", "}\n"))
 
       // create dof-config.sty
-      File.write(directory.doc_dir+Path.explode("dof-config.sty"), """
+      File.write(directory.doc_dir + Path.explode("dof-config.sty"), """
 \newcommand{\isabelleurl}{https://isabelle.in.tum.de/website-Isabelle2022/""" + DOF.isabelle_version + """}
 \newcommand{\dofurl}{""" + DOF.url + """}
 \newcommand{\dof@isabelleversion}{""" + DOF.isabelle_version + """}
