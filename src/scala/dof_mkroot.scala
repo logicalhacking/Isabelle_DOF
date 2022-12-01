@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 
- *               2021-2022 The University of Exeter. 
- *               2021-2022 The University of Paris-Saclay. 
+ * Copyright (c)
+ *               2021-2022 The University of Exeter.
+ *               2021-2022 The University of Paris-Saclay.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@ package isabelle.dof
 
 import isabelle._
 
+
 object DOF_Mkroot
 {
   /** mkroot **/
@@ -48,7 +49,7 @@ object DOF_Mkroot
     session_parent: String = "",
     init_repos: Boolean = false,
     template: String = "",
-    ontologies: List[String] = List(),
+    ontologies: List[String] = Nil,
     progress: Progress = new Progress): Unit =
   {
     Isabelle_System.make_directory(session_dir)
@@ -71,33 +72,35 @@ object DOF_Mkroot
 
     File.write(root_path,
       "session " + Mkroot.root_name(name) + " = " + Mkroot.root_name(parent) + """ +
-  options [document = pdf, document_output = "output", document_build = dof, dof_ontologies = """" 
-       + ontologies.mkString(" ") + """", dof_template = """ + Mkroot.root_name(template) 
-       + """, document_comment_latex=true] 
+  options [document = pdf, document_output = "output", document_build = dof, dof_ontologies = """"
+       + ontologies.mkString(" ") + """", dof_template = """ + Mkroot.root_name(template)
+       + """, document_comment_latex = true]
 (*theories [document = false]
     A
     B*)
   theories
-    """ + Mkroot.root_name(name) + """    
+    """ + Mkroot.root_name(name) + """
   document_files
     "preamble.tex"
 """)
 
-    val thy = session_dir + Path.explode(name+".thy")
+    val thy = session_dir + Path.explode(name + ".thy")
     progress.echo("  creating " + thy)
     File.write(thy,
       "theory\n  " + name + "\nimports\n  " + ontologies.mkString("\n  ") +  """
 begin
-  
+
 end
 """)
 
 
+    /* preamble */
 
     val preamble_tex = session_dir + Path.explode("document/preamble.tex")
     progress.echo("  creating " + preamble_tex)
     Isabelle_System.make_directory(preamble_tex.dir)
     File.write(preamble_tex,"""%% This is a placeholder for user-specific configuration and packages.""")
+
 
     /* Mercurial repository */
 
@@ -139,6 +142,7 @@ Now use the following command line to build the session:
   }
 
 
+
   /** Isabelle tool wrapper **/
 
   val isabelle_tool = Isabelle_Tool("dof_mkroot", "prepare session root directory for Isabelle/DOF",
@@ -148,7 +152,7 @@ Now use the following command line to build the session:
     var help = false
     var session_name = ""
     var session_parent = DOF.session
-    var ontologies:List[String] = List()
+    var ontologies = List.empty[String]
     var template = DOF.session + ".scrartcl"
     val default_ontologies = List(DOF.session + ".scholarly_paper")
 
@@ -163,18 +167,13 @@ Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
 
   Prepare session root directory (default: current directory).
 """,
-      "I" ->  (arg => init_repos = true),
+      "I" -> (arg => init_repos = true),
+      "h" -> (arg => help = true),
       "n:" -> (arg => session_name = arg),
-      "o:"  -> (arg => ontologies = ontologies :+ arg),
-      "t:"  -> (arg => template = arg),
-      "h"  -> (arg => help = true)
-    )
+      "o:" -> (arg => ontologies = ontologies ::: List(arg)),
+      "t:" -> (arg => template = arg))
 
     val more_args = getopts(args)
-
-    ontologies = if (ontologies.isEmpty) default_ontologies else ontologies
-  
-    if (help) {getopts.usage()} else {()}
     val session_dir =
       more_args match {
         case Nil => Path.current
@@ -182,7 +181,11 @@ Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
         case _ => getopts.usage()
       }
 
+    if (help) getopts.usage()
+
     mkroot(session_parent = session_parent, session_name = session_name, session_dir = session_dir,
-      init_repos = init_repos, ontologies = ontologies, template = template, progress = new Console_Progress)
+      init_repos = init_repos, progress = new Console_Progress,
+      ontologies = if (ontologies.isEmpty) default_ontologies else ontologies,
+      template = template)
   })
 }
