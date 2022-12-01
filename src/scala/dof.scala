@@ -40,8 +40,8 @@ object DOF {
   val isabelle_version = "2022"
   val isabelle_url = "https://isabelle.in.tum.de/website-Isabelle2022"
 
+  // Isabelle/DOF version: "Unreleased" for development, semantic version for releases
   val version = "Unreleased"
-    // Isabelle/DOF version: "Unreleased" for development, semantic version for releases
 
   val session = "Isabelle_DOF"
 
@@ -56,8 +56,8 @@ object DOF {
   val latest_doi = "10.5281/zenodo.6810799"
   val generic_doi = "10.5281/zenodo.3370482"
 
+  // Isabelle/DOF source repository
   val url = "https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF"
-    // Isabelle/DOF source repository
 
   // Isabelle/DOF release artifacts
   val artifact_dir = "releases/Isabelle_DOF/Isabelle_DOF"

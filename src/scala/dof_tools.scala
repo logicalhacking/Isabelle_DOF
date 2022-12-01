@@ -28,6 +28,8 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+
+/*** command-line tools for Isabelle/DOF ***/
  
 package isabelle.dof
 

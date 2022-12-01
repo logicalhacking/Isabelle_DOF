@@ -28,6 +28,8 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+/*** document build engine for Isabelle/DOF ***/
+
 package isabelle.dof
 
 import isabelle._

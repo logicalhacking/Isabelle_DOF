@@ -29,7 +29,7 @@
  */
 
 
-/*** Prepare session root directory for Isabelle/DOF ***/
+/*** prepare session root directory for Isabelle/DOF ***/
 
 package isabelle.dof
 
