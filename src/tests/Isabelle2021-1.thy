@@ -174,7 +174,7 @@ section \<open>Miscellaneous NEWS and Notes\<close>
 
 text \<open>
   \<^item> Document preparation: there are many new options etc. that might help
-    to fine-tune DOF output, e.g. \<^system_option>\<open>document_comment_latex\<close>.
+    to fine-tune DOF output, e.g. \<^system_option>\<open>document_heading_prefix\<close>.
 
   \<^item> ML: Theory_Data / Generic_Data: "val extend = I" has been removed;
     obsolete since Isabelle2021.

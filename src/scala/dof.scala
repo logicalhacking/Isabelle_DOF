@@ -63,4 +63,6 @@ object DOF {
     // Isabelle/DOF release artifacts
 
   val artifact_host = "artifacts.logicalhacking.com"
+
+  def options(opts: Options): Options = opts + "document_comment_latex"
 }
