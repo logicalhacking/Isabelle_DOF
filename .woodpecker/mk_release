@@ -189,13 +189,12 @@ else
     $ISABELLE components -u $ISADOF_WORK_DIR
 fi
 
-$ISABELLE_TOOL scala_build
-
 VARS=`$ISABELLE getenv ISABELLE_TOOL`
 for i in $VARS; do
         export "$i"
 done
 
+$ISABELLE_TOOL scala_build
 ISABELLE_VERSION="Isabelle$($ISABELLE_TOOL java isabelle.dof.DOF isabelle_version)"
 DOF_VERSION="$($ISABELLE_TOOL java isabelle.dof.DOF dof_version)"
 
