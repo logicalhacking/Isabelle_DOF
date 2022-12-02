@@ -72,7 +72,7 @@ object DOF {
       case List("dof_version") => println(version)
       case bad =>
         error("Bad Java command-line arguments" +
-          (if (bad.isEmpty) "" else bad.mkString(":\n", "\n  ", "")))
+          (if (bad.isEmpty) "" else bad.mkString(":\n  ", "\n  ", "")))
     }
   }
 }
