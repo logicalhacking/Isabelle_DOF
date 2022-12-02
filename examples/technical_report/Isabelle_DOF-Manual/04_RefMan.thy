@@ -1233,7 +1233,8 @@ value*\<open>filter (\<lambda>\<sigma>. the (text_section.level \<sigma>) > 1)
 
 section*[infrastructure::technical]\<open>Technical Infrastructure\<close>
 
-text\<open> 
+text\<open>
+  %FIXME update story concerning "list"
   The list of fully supported (\<^ie>, supporting both interactive ontological modeling and 
   document generation) ontologies and the list of supported document templates can be 
   obtained by calling \<^boxed_bash>\<open>isabelle dof_mkroot -h\<close> (see \<^technical>\<open>first_project\<close>).
@@ -1320,6 +1321,7 @@ text\<open>
 text\<open>
   Developing a new document template ``\<^boxed_bash>\<open>bar\<close>'' requires the following steps:
   \<^item> develop a new \<^LaTeX>-template \<^boxed_bash>\<open>src/document-templates/root-bar.tex\<close>
+  \<^item> add a suitable \<^theory_text>\<open>define_template\<close> command to theory \<^theory>\<open>Isabelle_DOF.Isa_DOF\<close>.
   \<^item> activation of the new document template  by executing the \<^boxed_bash>\<open>install\<close> script. You can skip the lengthy 
     checks for the AFP entries and the installation of the Isabelle patch by using the 
     \<^boxed_bash>\<open>--skip-afp\<close> option:
