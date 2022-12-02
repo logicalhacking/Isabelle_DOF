@@ -155,8 +155,8 @@ Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
     -I           init Mercurial repository and add generated files
     -h           print help
     -n NAME      alternative session name (default: directory base name)
-    -o NAMES     list of ontologies, separated by blanks (default: """ +
-                  quote(DOF.implode_ontologies(DOF.ontologies)) + """)
+    -o NAMES     list of ontologies, separated by blanks
+                 (default: """ + quote(DOF.implode_ontologies(DOF.ontologies)) + """)
     -t NAME      template (default: """ + quote(DOF.template) + """)
 
   Prepare session root directory for Isabelle/DOF (default: current directory).

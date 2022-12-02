@@ -91,15 +91,18 @@ templates:
 
 ```console
 foo@bar:~$ isabelle dof_mkroot -h
+
 Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
 
   Options are:
     -I           init Mercurial repository and add generated files
+    -h           print help
     -n NAME      alternative session name (default: directory base name)
-    -o ONTOLOGY  ontology (default: scholarly_paper)
-    -t TEMPLATE  tempalte (default: scrartcl)
+    -o NAMES     list of ontologies, separated by blanks
+                 (default: "Isabelle_DOF.technical_report Isabelle_DOF.scholarly_paper")
+    -t NAME      template (default: "Isabelle_DOF.scrreprt-modern")
 
-  Prepare session root directory (default: current directory).
+  Prepare session root directory for Isabelle/DOF (default: current directory).
 ```
 
 ## Releases
