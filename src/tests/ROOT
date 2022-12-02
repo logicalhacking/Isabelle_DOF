@@ -7,6 +7,6 @@ session "Isabelle_DOF-tests" = "Isabelle_DOF" +
     "TermAntiquotations"
     "Attributes"
     "Evaluation"
-    "Isabelle2021-1"
+    "Isabelle2022"
     "High_Level_Syntax_Invariants"
     "Ontology_Matching_Example"

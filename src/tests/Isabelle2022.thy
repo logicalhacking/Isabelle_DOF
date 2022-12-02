@@ -1,6 +1,6 @@
-chapter \<open>Notes on Isabelle/DOF for Isabelle2021-1\<close>
+chapter \<open>Notes on Isabelle/DOF for Isabelle2022\<close>
 
-theory "Isabelle2021-1"
+theory "Isabelle2022"
   imports Main
 begin
 
@@ -50,7 +50,7 @@ text \<open>
     \<^action>\<open>plugin-options\<close> (according to their \<^verbatim>\<open>section\<close>)
 
     \<^item> all options (public and non-public) are available for command-line
-    usage, e.g. \<^verbatim>\<open>isabelle build -o dof_url="..."\<close>
+    usage, e.g. \<^verbatim>\<open>isabelle build -o dof_isabelle="..."\<close>
 
     \<^item> access to options in Isabelle/ML:
 
@@ -170,9 +170,6 @@ section \<open>Miscellaneous NEWS and Notes\<close>
 text \<open>
   \<^item> Document preparation: there are many new options etc. that might help
     to fine-tune DOF output, e.g. \<^system_option>\<open>document_heading_prefix\<close>.
-
-  \<^item> ML: Theory_Data / Generic_Data: "val extend = I" has been removed;
-    obsolete since Isabelle2021.
 
   \<^item> ML: \<^ML>\<open>Thm.instantiate\<close> and related operations now use explicit
     abstract types for the instantiate, see \<^file>\<open>~~/src/Pure/term_items.ML\<close>
