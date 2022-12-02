@@ -189,6 +189,8 @@ else
     $ISABELLE components -u $ISADOF_WORK_DIR
 fi
 
+$ISABELLE_TOOL scala_build
+
 VARS=`$ISABELLE getenv ISABELLE_TOOL`
 for i in $VARS; do
         export "$i"
