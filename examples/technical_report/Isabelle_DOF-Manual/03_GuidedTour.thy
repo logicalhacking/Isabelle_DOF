@@ -161,7 +161,6 @@ replaced by built-in document templates.\<close>  for users are:
   standard features of, this file also contains \<^isadof> specific configurations:
   \<^item>  \<^boxed_bash>\<open>dof_ontologies\<close> a list of (fully qualified) ontologies, separated by spaces, used 
      by the project. 
-  \<^item>  \<^boxed_bash>\<open>dof_template\<close> the (fully qualified) document template.
   \<^item>  \<^boxed_bash>\<open>document_build=dof\<close> needs to be present, to tell Isabelle, to use the 
   Isabelle/DOF backend for the document generation.
 \<^item> The file \<^boxed_bash>\<open>preamble.tex\<close>\<^index>\<open>preamble.tex\<close>, which allows users to add additional 

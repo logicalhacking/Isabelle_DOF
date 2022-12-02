@@ -52,13 +52,26 @@ object DOF_Document_Build
 
       val isabelle_dof_dir = context.session_context.sessions_structure(DOF.session).dir
 
-      // copy Isabelle/DOF LaTeX templates
-      val template_dir = isabelle_dof_dir + Path.explode("document-templates")
-      // TODO: error handling in case 1) template does not exist or 2) root.tex does already exist
-      val template = Long_Name.base_name(options.string("dof_template"))
-      Isabelle_System.copy_file(
-        template_dir + Path.explode("root-" + template + ".tex"),
-        directory.doc_dir + Path.explode("root.tex"))
+      // root.tex from exported template
+      File.write(directory.doc_dir + Path.explode("root.tex"),
+        {
+          val templates =
+            Library.distinct(
+              for {
+                name <- context.document_theories
+                entry <- context.session_context.get(name.theory, "dof/root.tex")
+              } yield entry.theory_name -> entry.text)
+
+          Library.duplicates(templates, (p, q) => p._2 == q._2) match {
+            case Nil if templates.nonEmpty => templates.head._2
+            case Nil =>
+              error("No 'use_template' command in document theories of session " +
+                quote(context.session))
+            case dups =>
+              error("Conflicting 'use_template' commands in theories: " +
+                commas_quote(dups.map(_._1)))
+          }
+        })
 
       // copy Isabelle/DOF LaTeX styles
       List(Path.explode("DOF/latex"), Path.explode("ontologies"))

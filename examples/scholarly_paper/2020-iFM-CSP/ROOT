@@ -1,6 +1,6 @@
 session "2020-iFM-csp" = "Isabelle_DOF" +
   options [document = pdf, document_output = "output", document_build = dof,
-  dof_ontologies = "Isabelle_DOF.scholarly_paper", dof_template = Isabelle_DOF.scrartcl]
+  dof_ontologies = "Isabelle_DOF.scholarly_paper"]
   theories
     "paper"
   document_files

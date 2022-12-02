@@ -43,6 +43,8 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   and      "text*"              "text-macro*"            :: document_body
   and      "term*"   "value*"   "assert*"                :: document_body
 
+  and      "use_template"                                :: thy_decl
+  and      "define_template"                             :: thy_load
   and      "print_doc_classes"        "print_doc_items" 
            "print_doc_class_template" "check_doc_global" :: diag
 
@@ -2878,7 +2880,98 @@ val _ =  Outer_Syntax.command \<^command_keyword>\<open>define_macro*\<close> "d
 \<close>
 
 
+section \<open>Document templates\<close>
 
+ML \<open>
+signature DOCUMENT_TEMPLATE =
+sig
+  val template_space: Context.generic -> Name_Space.T
+  val print_template: Context.generic -> string -> string
+  val check_template: Context.generic -> xstring * Position.T -> {name: string, text: string}
+  val use_template: Context.generic -> xstring * Position.T -> unit
+  val define_template: binding * string -> theory -> string * theory
+end;
+
+structure Document_Template: DOCUMENT_TEMPLATE =
+struct
+
+(* theory data *)
+
+structure Data = Theory_Data
+(
+  type T = string Name_Space.table;
+  val empty = Name_Space.empty_table "document_template";
+  val merge = Name_Space.merge_tables;
+);
+
+val template_space = Name_Space.space_of_table o Data.get o Context.theory_of;
+
+fun print_template context =
+  Name_Space.markup_extern (Context.proof_of context) (template_space context)
+  #> uncurry Markup.markup;
+
+fun check_template context arg =
+  let val (name, text) = Name_Space.check context (Data.get (Context.theory_of context)) arg
+  in {name = name, text = text} end;
+
+fun use_template context arg =
+  let val {text, ...} = check_template context arg
+  in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/root.tex\<close> [XML.Text text] end;
+
+fun define_template (binding, text) thy =
+  let
+    val naming_context =
+      Proof_Context.init_global thy
+      |> Proof_Context.map_naming (Name_Space.root_path #> Name_Space.add_path "Isabelle_DOF")
+      |> Context.Proof;
+    val (name, data') = Data.get thy |> Name_Space.define naming_context true (binding, text);
+    val thy' = Data.put data' thy;
+  in (name, thy') end;
+
+
+(* Isar commands *)
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>use_template\<close>
+    "use DOF document template (as defined within theory context)"
+    (Parse.position Parse.name >> (fn arg =>
+      Toplevel.theory (fn thy => (use_template (Context.Theory thy) arg; thy))));
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>define_template\<close>
+    "define DOF document template (via LaTeX style file)"
+    (Parse.position Resources.provide_parse_file >>
+      (fn (get_file, pos) => Toplevel.theory (fn thy =>
+        let
+          fun err msg = error (msg ^ Position.here pos);
+
+          val (file, thy1) = get_file thy;
+          val file_name = Path.file_name (#src_path file);
+          val file_prefix = "root-";
+          val file_suffix = ".tex";
+          val bname =
+            (case try (unprefix file_prefix) file_name of
+              NONE => err ("File name needs to have prefix " ^ quote file_prefix)
+            | SOME file_name' =>
+                (case try (unsuffix file_suffix) file_name' of
+                  NONE => err ("File name needs to have suffix " ^ quote file_suffix)
+                | SOME bname => bname));
+          val binding = Binding.make (bname, pos);
+          val text = cat_lines (#lines file);
+          val (name, thy2) = define_template (binding, text) thy1;
+          val _ = writeln ("Defined template " ^ quote (print_template (Context.Theory thy2) name));
+        in thy2 end)));
+
+end;
+\<close>
+
+define_template "../document-templates/root-eptcs-UNSUPPORTED.tex"
+define_template "../document-templates/root-lipics-v2021-UNSUPPORTED.tex"
+define_template "../document-templates/root-lncs.tex"
+define_template "../document-templates/root-scrartcl.tex"
+define_template "../document-templates/root-scrreprt-modern.tex"
+define_template "../document-templates/root-scrreprt.tex"
+define_template "../document-templates/root-svjour3-UNSUPPORTED.tex"
 
 (*
 ML\<open>

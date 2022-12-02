@@ -17,6 +17,8 @@ theory TR_MyCommentedIsabelle
 
 begin
 
+use_template "scrreprt"
+
 define_shortcut* isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
 
 open_monitor*[this::report] 

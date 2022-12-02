@@ -68,7 +68,7 @@ object DOF_Mkroot
     File.write(root_path,
       "session " + Mkroot.root_name(name) + " = " + Mkroot.root_name(DOF.session) + """ +
   options [document = pdf, document_output = "output", document_build = dof, dof_ontologies = """
-       + quote(DOF.implode_ontologies(ontologies)) + """, dof_template = """ + quote(template) + """]
+       + quote(DOF.implode_ontologies(ontologies)) + """]
 (*theories [document = false]
     A
     B*)
@@ -83,6 +83,8 @@ object DOF_Mkroot
     File.write(thy,
       "theory\n  " + name + "\nimports\n  " + ontologies.mkString("\n  ") +  """
 begin
+
+use_template """ + quote(template) + """
 
 end
 """)

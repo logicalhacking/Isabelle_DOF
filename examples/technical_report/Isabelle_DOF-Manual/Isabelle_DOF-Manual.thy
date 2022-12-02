@@ -15,6 +15,7 @@
 theory "Isabelle_DOF-Manual"
   imports "05_Implementation"
 begin
+use_template "scrreprt-modern"
 close_monitor*[this]
 check_doc_global
 text\<open>Resulting trace in \<^verbatim>\<open>doc_item\<close> ''this'': \<close>

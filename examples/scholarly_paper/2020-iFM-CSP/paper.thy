@@ -3,6 +3,7 @@ theory "paper"
   imports "Isabelle_DOF.scholarly_paper"
 begin
 
+use_template "scrartcl"
 
 open_monitor*[this::article]
 

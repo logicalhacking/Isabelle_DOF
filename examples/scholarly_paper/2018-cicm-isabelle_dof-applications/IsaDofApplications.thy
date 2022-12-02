@@ -16,6 +16,8 @@ theory IsaDofApplications
   imports "Isabelle_DOF.scholarly_paper"
 begin
 
+use_template "lncs"
+
 open_monitor*[this::article] 
 declare[[strict_monitor_checking=false]]
 

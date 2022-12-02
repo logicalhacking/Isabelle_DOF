@@ -19,6 +19,7 @@ imports
   "Isabelle_DOF.technical_report"
   "Physical_Quantities.SI" "Physical_Quantities.SI_Pretty"
 begin
+use_template "scrreprt-modern"
 declare[[strict_monitor_checking=true]]
 define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
                  isadof  \<rightleftharpoons> \<open>\isadof{}\<close>
