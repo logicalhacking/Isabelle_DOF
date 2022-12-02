@@ -125,14 +125,14 @@ fun heading_command (name, pos) descr level =
   Monitor_Command_Parser.document_command (name, pos) descr
     {markdown = false, body = true} (enriched_text_element_cmd level);
 
-val _ = heading_command ("title*", @{here}) "section heading" NONE;
-val _ = heading_command ("subtitle*", @{here}) "section heading" NONE;
-val _ = heading_command ("chapter*", @{here}) "section heading" (SOME (SOME 0));
-val _ = heading_command ("section*", @{here}) "section heading" (SOME (SOME 1));
-val _ = heading_command ("subsection*", @{here}) "subsection heading" (SOME (SOME 2));
-val _ = heading_command ("subsubsection*", @{here}) "subsubsection heading" (SOME (SOME 3));
-val _ = heading_command ("paragraph*", @{here}) "paragraph heading" (SOME (SOME 4));
-val _ = heading_command ("subparagraph*", @{here}) "subparagraph heading" (SOME (SOME 5));
+val _ = heading_command \<^command_keyword>\<open>title*\<close> "section heading" NONE;
+val _ = heading_command \<^command_keyword>\<open>subtitle*\<close> "section heading" NONE;
+val _ = heading_command \<^command_keyword>\<open>chapter*\<close> "section heading" (SOME (SOME 0));
+val _ = heading_command \<^command_keyword>\<open>section*\<close> "section heading" (SOME (SOME 1));
+val _ = heading_command \<^command_keyword>\<open>subsection*\<close> "subsection heading" (SOME (SOME 2));
+val _ = heading_command \<^command_keyword>\<open>subsubsection*\<close> "subsubsection heading" (SOME (SOME 3));
+val _ = heading_command \<^command_keyword>\<open>paragraph*\<close> "paragraph heading" (SOME (SOME 4));
+val _ = heading_command \<^command_keyword>\<open>subparagraph*\<close> "subparagraph heading" (SOME (SOME 5));
 
 end 
 end
@@ -238,8 +238,8 @@ ML\<open>
 (* Ontological Macro Command Support                                       *)
 (* *********************************************************************** *)
 
-val _ = Onto_Macros.heading_command ("figure*", @{here}) "figure" NONE;
-val _ = Onto_Macros.heading_command ("side_by_side_figure*", @{here}) "multiple figures" NONE;
+val _ = Onto_Macros.heading_command \<^command_keyword>\<open>figure*\<close> "figure" NONE;
+val _ = Onto_Macros.heading_command \<^command_keyword>\<open>side_by_side_figure*\<close> "multiple figures" NONE;
 \<close>
 
 (*<*)

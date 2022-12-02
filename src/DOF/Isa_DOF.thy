@@ -158,7 +158,7 @@ struct
 
    fun  merge_docclass_tab (otab,otab') = Symtab.merge (op =) (otab,otab') 
 
-   val tag_attr = (Binding.make("tag_attribute",@{here}), \<^Type>\<open>int\<close>, Mixfix.NoSyn)
+   val tag_attr = (\<^binding>\<open>tag_attribute\<close>, \<^Type>\<open>int\<close>, Mixfix.NoSyn)
         (* Attribute hidden to the user and used internally by isabelle_DOF.
            For example, this allows to add a specific id to a class
            to be able to reference the class internally.
@@ -2045,37 +2045,37 @@ fun document_command (name, pos) descr mark cmd =
 (* Core Command Definitions *)
 
 val _ =
-  Outer_Syntax.command @{command_keyword "open_monitor*"} 
+  Outer_Syntax.command \<^command_keyword>\<open>open_monitor*\<close>
                        "open a document reference monitor"
                        (ODL_Meta_Args_Parser.attributes
                         >> (Toplevel.theory o open_monitor_command));
 
 val _ =
-  Outer_Syntax.command @{command_keyword "close_monitor*"} 
+  Outer_Syntax.command \<^command_keyword>\<open>close_monitor*\<close>
                        "close a document reference monitor"
                        (ODL_Meta_Args_Parser.attributes_upd
                         >> (Toplevel.theory o close_monitor_command)); 
 
 
 val _ =
-  Outer_Syntax.command @{command_keyword "update_instance*"} 
+  Outer_Syntax.command \<^command_keyword>\<open>update_instance*\<close>
                        "update meta-attributes of an instance of a document class"
                         (ODL_Meta_Args_Parser.attributes_upd
                          >> (Toplevel.theory o update_instance_command)); 
 
 val _ =
-  document_command ("text*", @{here}) "formal comment (primary style)"
+  document_command \<^command_keyword>\<open>text*\<close> "formal comment (primary style)"
     {markdown = true, body = true} (gen_enriched_document_cmd {inline=true} I I);
 
 
 (* This is just a stub at present *)
 val _ =
-  document_command ("text-macro*", @{here}) "formal comment macro"
+  document_command \<^command_keyword>\<open>text-macro*\<close> "formal comment macro"
     {markdown = true, body = true}
     (gen_enriched_document_cmd {inline=false} (* declare as macro *) I I);
 
 val _ =
-  Outer_Syntax.command @{command_keyword "declare_reference*"} 
+  Outer_Syntax.command \<^command_keyword>\<open>declare_reference*\<close>
                        "declare document reference"
                        (ODL_Meta_Args_Parser.attributes >> (fn (((oid,pos),cid),doc_attrs) =>  
                                       (Toplevel.theory (DOF_core.declare_object_global oid))));
@@ -2523,7 +2523,7 @@ fun read_fields raw_fields ctxt =
       val ctxt' = fold Variable.declare_typ Ts ctxt;
     in (fields, terms, ctxt') end;
 
-val trace_attr = ((Binding.make("trace",@{here}), "(doc_class rexp \<times> string) list",Mixfix.NoSyn),
+val trace_attr = ((\<^binding>\<open>trace\<close>, "(doc_class rexp \<times> string) list",Mixfix.NoSyn),
                   SOME "[]"): ((binding * string * mixfix) * string option)
 
 fun def_cmd (decl, spec, prems, params) lthy =
