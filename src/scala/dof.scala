@@ -65,4 +65,14 @@ object DOF {
   val artifact_url: String = "https://" + artifact_host + "/" + artifact_dir
 
   def options(opts: Options): Options = opts + "document_comment_latex"
+
+  def main(args: Array[String]): Unit = {
+    args.toList match {
+      case List("isabelle_version") => println(isabelle_version)
+      case List("dof_version") => println(version)
+      case bad =>
+        error("Bad Java command-line arguments" +
+          (if (bad.isEmpty) "" else bad.mkString(":\n", "\n  ", "")))
+    }
+  }
 }

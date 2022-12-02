@@ -194,8 +194,8 @@ for i in $VARS; do
         export "$i"
 done
 
-ISABELLE_VERSION="Isabelle$($ISABELLE_TOOL options -g dof_isabelle)"
-DOF_VERSION="$($ISABELLE_TOOL options -g dof_version)"
+ISABELLE_VERSION="Isabelle$($ISABELLE_TOOL java isabelle.dof.DOF isabelle_version)"
+DOF_VERSION="$($ISABELLE_TOOL java isabelle.dof.DOF dof_version)"
 
 ISABELLE_SHORT_VERSION=`echo $ISABELLE_VERSION | sed -e 's/:.*$//'`
 ISADOF_TAR="Isabelle_DOF-"$DOF_VERSION"_"$ISABELLE_SHORT_VERSION
