@@ -251,7 +251,6 @@ structure Data = Generic_Data
                 docclass_eager_inv_tab = initial_docclass_eager_inv_tab,
                 docclass_lazy_inv_tab = initial_docclass_lazy_inv_tab
                } 
-  val extend =  I
   fun merge(   {docobj_tab=d1,docclass_tab = c1,
                  ISA_transformer_tab = e1, monitor_tab=m1,
                  docclass_inv_tab = n1,

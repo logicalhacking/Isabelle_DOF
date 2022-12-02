@@ -364,7 +364,7 @@ subsection*[t213::example]\<open>Mechanism 2 : Extending the Global Context \<op
 
 text\<open>A central mechanism for constructing user-defined data is by the \<^ML_functor>\<open>Generic_Data\<close>-functor.
   A plugin needing some data \<^verbatim>\<open>T\<close> and providing it with implementations for an 
-  \<^verbatim>\<open>empty\<close>, and operations  \<^verbatim>\<open>merge\<close> and \<^verbatim>\<open>extend\<close>, can construct a lense with operations
+  \<^verbatim>\<open>empty\<close>, and operation \<^verbatim>\<open>merge\<close>, can construct a lense with operations
   \<^verbatim>\<open>get\<close> and \<^verbatim>\<open>put\<close> that attach this data into the generic system context. Rather than using
   unsynchronized SML mutable variables, this is the mechanism to introduce component local
   data in Isabelle, which allows to manage this data for the necessary backtrack and synchronization
@@ -373,14 +373,12 @@ text\<open>A central mechanism for constructing user-defined data is by the \<^M
 ML \<open>
      datatype X = mt
      val init = mt;
-     val ext = I
      fun merge (X,Y) = mt
      
      structure Data = Generic_Data
      (
        type T = X
        val empty  = init
-       val extend = ext
        val merge  = merge
      );  
 \<close>
