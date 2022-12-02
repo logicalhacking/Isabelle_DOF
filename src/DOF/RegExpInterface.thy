@@ -178,7 +178,7 @@ local open RegExpChecker in
 
   type automaton = state * ((Int.int -> state -> state) * (state -> bool))
 
-  val add_atom = fold_aterms (fn Const(c as(_,Type(@{type_name "rexp"},_)))=> insert (op=) c |_=>I);
+  val add_atom = fold_aterms (fn Const (c as (_, \<^Type>\<open>rexp _\<close>)) => insert (op=) c | _=> I);
   fun alphabet termS  =  rev(map fst (fold add_atom termS []));
   fun ext_alphabet env termS  =  
          let val res = rev(map fst (fold add_atom termS [])) @ env;
@@ -187,14 +187,14 @@ local open RegExpChecker in
                      else ()
          in res end;
 
-  fun conv (Const(@{const_name "Regular_Exp.rexp.Zero"},_)) _ = Zero
-     |conv (Const(@{const_name "Regular_Exp.rexp.One"},_)) _ = Onea 
-     |conv (Const(@{const_name "Regular_Exp.rexp.Times"},_) $ X $ Y) env = Times(conv X env, conv Y env)
-     |conv (Const(@{const_name "Regular_Exp.rexp.Plus"},_) $ X $ Y) env = Plus(conv X env, conv Y env)
-     |conv (Const(@{const_name "Regular_Exp.rexp.Star"},_) $ X) env = Star(conv X env)
-     |conv (Const(@{const_name "RegExpInterface.opt"},_) $ X) env = Plus(conv X env, Onea)
-     |conv (Const(@{const_name "RegExpInterface.rep1"},_) $ X) env = Times(conv X env, Star(conv X env))
-     |conv (Const (s, Type(@{type_name "rexp"},_))) env = 
+  fun conv \<^Const_>\<open>Regular_Exp.rexp.Zero _\<close> _ = Zero
+     |conv \<^Const_>\<open>Regular_Exp.rexp.One _\<close> _ = Onea 
+     |conv \<^Const_>\<open>Regular_Exp.rexp.Times _ for X Y\<close> env = Times(conv X env, conv Y env)
+     |conv \<^Const_>\<open>Regular_Exp.rexp.Plus _ for X Y\<close> env = Plus(conv X env, conv Y env)
+     |conv \<^Const_>\<open>Regular_Exp.rexp.Star _ for X\<close> env = Star(conv X env)
+     |conv \<^Const_>\<open>RegExpInterface.opt _ for X\<close> env = Plus(conv X env, Onea)
+     |conv \<^Const_>\<open>RegExpInterface.rep1 _ for X\<close> env = Times(conv X env, Star(conv X env))
+     |conv (Const (s, \<^Type>\<open>rexp _\<close>)) env =
                let val n = find_index (fn x => x = s) env 
                    val _ = if n<0 then error"conversion error of regexp."  else ()
                in  Atom(n) end

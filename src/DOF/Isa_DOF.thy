@@ -158,7 +158,7 @@ struct
 
    fun  merge_docclass_tab (otab,otab') = Symtab.merge (op =) (otab,otab') 
 
-   val tag_attr = (Binding.make("tag_attribute",@{here}), @{typ "int"},Mixfix.NoSyn)
+   val tag_attr = (Binding.make("tag_attribute",@{here}), \<^Type>\<open>int\<close>, Mixfix.NoSyn)
         (* Attribute hidden to the user and used internally by isabelle_DOF.
            For example, this allows to add a specific id to a class
            to be able to reference the class internally.
@@ -363,7 +363,7 @@ fun is_subclass (ctxt) s t = is_subclass0(#docclass_tab(get_data ctxt)) s t
 fun is_subclass_global thy s t = is_subclass0(#docclass_tab(get_data_global thy)) s t
 
 
-fun typ_to_cid (Type(s,[@{typ "unit"}])) = Long_Name.qualifier s
+fun typ_to_cid (Type(s,[\<^Type>\<open>unit\<close>])) = Long_Name.qualifier s
    |typ_to_cid (Type(_,[T])) = typ_to_cid T
    |typ_to_cid _ = error("type is not an ontological type.")
 
@@ -1036,7 +1036,7 @@ fun ML_isa_check_docitem thy (term, req_ty, pos) _ =
                  |  SOME {pos=pos_decl,cid,id,...} => 
                          let val ctxt = (Proof_Context.init_global thy)
                              val req_class = case req_ty of 
-                                         Type("fun",[_,T]) =>  DOF_core.typ_to_cid T
+                                         \<^Type>\<open>fun _ T\<close> => DOF_core.typ_to_cid T
                                        | _ => error("can not infer type for: "^ name)
                          in if cid <> DOF_core.default_cid 
                                andalso not(DOF_core.is_subclass ctxt cid req_class)
@@ -1202,10 +1202,10 @@ case term_option of
 
 (* utilities *)
 
-fun property_list_dest ctxt X = (map (fn Const ("Isa_DOF.ISA_term", _) $ s => HOLogic.dest_string s 
-                                        |Const ("Isa_DOF.ISA_term_repr",_) $ s 
-                                                  => holstring_to_bstring ctxt (HOLogic.dest_string s))  
-                                     (HOLogic.dest_list X))
+fun property_list_dest ctxt X =
+  map (fn \<^Const_>\<open>ISA_term for s\<close> => HOLogic.dest_string s
+         |\<^Const_>\<open>ISA_term_repr for s\<close> => holstring_to_bstring ctxt (HOLogic.dest_string s))
+    (HOLogic.dest_list X)
 
 end; (* struct *)
                                                             
@@ -1390,7 +1390,7 @@ structure Docitem_Parser =
 struct
 
 fun cid_2_cidType cid_long thy =
-    if cid_long = DOF_core.default_cid then @{typ "unit"}
+    if cid_long = DOF_core.default_cid then \<^Type>\<open>unit\<close>
     else let val t = #docclass_tab(DOF_core.get_data_global thy)
              fun ty_name cid = cid^"."^  Long_Name.base_name cid ^ Record.extN
              fun fathers cid_long = case Symtab.lookup t cid_long of
@@ -1401,7 +1401,7 @@ fun cid_2_cidType cid_long thy =
                      | SOME ({inherits_from=NONE, ...}) => [cid_long]
                      | SOME ({inherits_from=SOME(_,father), ...}) => 
                            cid_long :: (fathers father) 
-         in fold (fn x => fn y => Type(ty_name x,[y])) (fathers cid_long) @{typ "unit"}  
+         in fold (fn x => fn y => Type(ty_name x,[y])) (fathers cid_long) \<^Type>\<open>unit\<close>  
          end
 
 fun create_default_object thy class_name = 
@@ -1423,7 +1423,7 @@ fun create_default_object thy class_name =
                        else is_duplicated y xs end
           in (cid, filter_out (fn y => is_duplicated y xs) ys)::attrs_filter xs end
     val class_list' = rev (attrs_filter (rev class_list))
-    val tag_attr = HOLogic.mk_number @{typ "int"}
+    val tag_attr = HOLogic.mk_number \<^Type>\<open>int\<close>
     fun add_tag_to_attrs_free' tag_attr thy (cid, filtered_attr_list) =
       if DOF_core.is_virtual cid thy
       then (tag_attr (serial ()))::(map (attr_to_free) filtered_attr_list)
@@ -1497,14 +1497,9 @@ fun calc_update_term {mk_elaboration=mk_elaboration} thy cid_long
                 val tyenv' = (map (fn (s,(t,u)) => ((s,t),u)) (Vartab.dest tyenv))
                 val _ = if Long_Name.base_name lhs = lhs orelse ln = lhs then ()
                         else error("illegal notation for attribute of "^cid_long)
-                fun join (ttt as @{typ "int"}) 
-                         = Const (@{const_name "Groups.plus"}, ttt --> ttt --> ttt)
-                   |join (ttt as @{typ "string"}) 
-                         = Const (@{const_name "List.append"}, ttt --> ttt --> ttt)
-                   |join (ttt as Type(@{type_name "set"},_)) 
-                         = Const (@{const_name "Lattices.sup"}, ttt --> ttt --> ttt)
-                   |join (ttt as Type(@{type_name "list"},_)) 
-                         = Const (@{const_name "List.append"}, ttt --> ttt --> ttt)
+                fun join (ttt as \<^Type>\<open>int\<close>) = \<^Const>\<open>Groups.plus ttt\<close>
+                   |join (ttt as \<^Type>\<open>set _\<close>) = \<^Const>\<open>Lattices.sup ttt\<close>
+                   |join \<^Type>\<open>list A\<close> = \<^Const>\<open>List.append A\<close>
                    |join _ = error("implicit fusion operation not defined for attribute: "^ lhs)
                  (* could be extended to bool, map, multisets, ... *)
                 val rhs' = instantiate_term tyenv' (generalize_term rhs)
@@ -1647,7 +1642,7 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos do
                                                  else NONE
     val value_terms = if (cid_long = DOF_core.default_cid)
                       then let
-                            val undefined_value = Free ("Undefined_Value", @{typ "unit"})
+                            val undefined_value = Free ("Undefined_Value", \<^Type>\<open>unit\<close>)
                            in (undefined_value, undefined_value) end
                           (* 
                              Handle initialization of docitem without a class associated,
@@ -1954,18 +1949,16 @@ fun meta_args_2_latex thy ((((lab, _), cid_opt), attr_list) : ODL_Meta_Args_Pars
         (* val _   = writeln("meta_args_2_string cid_long:"^ cid_long ) *)
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
 
-        fun ltx_of_term _ _ (Const ("List.list.Cons", @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $ t2) 
-                  = HOLogic.dest_string (Const ("List.list.Cons", @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $  t2)
-          | ltx_of_term _ _ (Const ("List.list.Nil", _)) = ""
-          | ltx_of_term _ _ (@{term "numeral :: _ \<Rightarrow> _"} $ t) = Int.toString(HOLogic.dest_numeral t)
-          | ltx_of_term ctx encl ((Const ("List.list.Cons", _) $ t1) $ t2) = 
-                                               let val inner = (case t2 of 
-                                                                  Const ("List.list.Nil", _) =>  (ltx_of_term ctx true t1) 
-                                                                | _ => ((ltx_of_term ctx false t1)^", " ^(ltx_of_term ctx false t2))
-                                                             )
-                                               in if encl then enclose "{" "}" inner else inner end
-          | ltx_of_term _ _ (Const ("Option.option.None", _)) = ""
-          | ltx_of_term ctxt _ (Const ("Option.option.Some", _)$t) = ltx_of_term ctxt true t
+        fun ltx_of_term _ _ (c as \<^Const_>\<open>Cons \<^Type>\<open>char\<close> for _ _\<close>) = HOLogic.dest_string c
+          | ltx_of_term _ _ \<^Const_>\<open>Nil _\<close> = ""
+          | ltx_of_term _ _ \<^Const_>\<open>numeral _ for t\<close> = Int.toString(HOLogic.dest_numeral t)
+          | ltx_of_term ctx encl \<^Const_>\<open>Cons _ for t1 t2\<close> =
+              let val inner = (case t2 of 
+                                 \<^Const_>\<open>Nil _\<close> => ltx_of_term ctx true t1
+                              | _ => ((ltx_of_term ctx false t1)^", " ^(ltx_of_term ctx false t2)))
+              in if encl then enclose "{" "}" inner else inner end
+          | ltx_of_term _ _ \<^Const_>\<open>None _\<close> = ""
+          | ltx_of_term ctxt _ \<^Const_>\<open>Some _ for t\<close> = ltx_of_term ctxt true t
           | ltx_of_term ctxt _ t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
 
 
@@ -2225,20 +2218,16 @@ fun meta_args_2_string thy ((((lab, _), cid_opt), attr_list) : ODL_Meta_Args_Par
         (* val _   = writeln("meta_args_2_string cid_long:"^ cid_long ) *)
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
 
-        fun ltx_of_term _ _ (Const (@{const_name \<open>Cons\<close>}, 
-                                    @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $ t2) 
-                  = HOLogic.dest_string (Const (@{const_name \<open>Cons\<close>}, 
-                                                @{typ "char \<Rightarrow> char list \<Rightarrow> char list"}) $ t1 $  t2)
-          | ltx_of_term _ _ (Const (@{const_name \<open>Nil\<close>}, _)) = ""
-          | ltx_of_term _ _ (@{term "numeral :: _ \<Rightarrow> _"} $ t) = Int.toString(HOLogic.dest_numeral t)
-          | ltx_of_term ctx encl ((Const (@{const_name \<open>Cons\<close>}, _) $ t1) $ t2) = 
-                let val inner = (case t2 of 
-                                   Const (@{const_name \<open>Nil\<close>}, _) =>  (ltx_of_term ctx true t1) 
-                                 | _ => ((ltx_of_term ctx false t1)^", " ^(ltx_of_term ctx false t2))
-                              )
+        fun ltx_of_term _ _ (c as \<^Const_>\<open>Cons \<^Type>\<open>char\<close> for _ _\<close>) = HOLogic.dest_string c
+          | ltx_of_term _ _ \<^Const_>\<open>Nil _\<close> = ""
+          | ltx_of_term _ _ \<^Const_>\<open>numeral _ for t\<close> = Int.toString(HOLogic.dest_numeral t)
+          | ltx_of_term ctx encl \<^Const_>\<open>Cons _ for t1 t2\<close> =
+              let val inner = (case t2 of
+                                 \<^Const_>\<open>Nil _\<close> => ltx_of_term ctx true t1
+                               | _ => ((ltx_of_term ctx false t1)^", " ^(ltx_of_term ctx false t2)))
                 in if encl then enclose "{" "}" inner else inner end
-          | ltx_of_term _ _ (Const (@{const_name \<open>None\<close>}, _)) = ""
-          | ltx_of_term ctxt _ (Const (@{const_name \<open>Some\<close>}, _)$t) = ltx_of_term ctxt true t
+          | ltx_of_term _ _ \<^Const_>\<open>None _\<close> = ""
+          | ltx_of_term ctxt _ \<^Const_>\<open>Some _ for t\<close> = ltx_of_term ctxt true t
           | ltx_of_term ctxt _ t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
 
 
@@ -2546,8 +2535,7 @@ fun def_cmd (decl, spec, prems, params) lthy =
         (Frees.defined (Frees.build (Frees.add_frees lhs'))) [(x, T)]
   in lthy' end
 
-fun meta_eq_const T = Const (\<^const_name>\<open>Pure.eq\<close>, T --> T --> propT);
-fun mk_meta_eq (t, u) = meta_eq_const (fastype_of t) $ t $ u;
+fun mk_meta_eq (t, u) = \<^Const>\<open>Pure.eq \<open>fastype_of t\<close> for t u\<close>;
 
 fun define_cond binding f_sty   cond_suffix read_cond (ctxt:local_theory) = 
        let val bdg = Binding.suffix_name cond_suffix binding
