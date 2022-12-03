@@ -83,7 +83,8 @@ object DOF_Mkroot
     val thy = session_dir + Path.explode(name + ".thy")
     progress.echo("  creating " + thy)
     File.write(thy,
-      "theory\n  " + name + "\nimports\n  " + ontologies.mkString("\n  ") +  """
+      "theory\n  " + name +
+      "\nimports\n  " + ontologies.map("Isabelle_DOF." + _).mkString("\n  ") +  """
 begin
 
 use_template """ + quote(template) + """
