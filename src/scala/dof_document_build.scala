@@ -78,9 +78,7 @@ object DOF_Document_Build
 
       // copy Isabelle/DOF LaTeX styles
       List(Path.explode("DOF/latex"), Path.explode("ontologies"))
-        .flatMap(dir =>
-          File.find_files((isabelle_dof_dir + dir).file,
-            file => file.getName.endsWith(".sty"), include_dirs = true))
+        .flatMap(dir => File.find_files((isabelle_dof_dir + dir).file, _.getName.endsWith(".sty")))
         .foreach(sty => Isabelle_System.copy_file(sty, directory.doc_dir.file))
 
       // ontologies.tex from exports
