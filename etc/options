@@ -1,6 +1,0 @@
-(* :mode=isabelle-options: *)
-
-section "Isabelle/DOF"
-
-public option dof_ontologies : string = "Isabelle_DOF.technical_report Isabelle_DOF.scholarly_paper"
-  -- "Isabelle/DOF ontologies (separated by blanks)"

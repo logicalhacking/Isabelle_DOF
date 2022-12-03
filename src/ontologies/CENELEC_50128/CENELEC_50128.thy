@@ -28,6 +28,8 @@ theory CENELEC_50128
   imports  "Isabelle_DOF.technical_report"
 begin
 
+define_ontology "DOF-CENELEC_50128.sty"
+
 (* this is a hack and should go into an own ontology, providing thingsd like:
   - Assumption*
   - Hypothesis*

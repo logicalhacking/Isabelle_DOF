@@ -72,7 +72,7 @@ object DOF_Document_Build
 
       val isabelle_dof_dir = context.session_context.sessions_structure(DOF.session).dir
 
-      // root.tex from exported template
+      // root.tex from exports
       File.write(directory.doc_dir + Path.explode("root.tex"),
         the_document_entry(context, "dof/root.tex", "use_template").text)
 
@@ -83,10 +83,15 @@ object DOF_Document_Build
             file => file.getName.endsWith(".sty"), include_dirs = true))
         .foreach(sty => Isabelle_System.copy_file(sty, directory.doc_dir.file))
 
-      // create ontology.sty
-      val ontologies = DOF.explode_ontologies(options.string("dof_ontologies"))
+      // ontologies.tex from exports
+      val ontologies = {
+        val xml = the_document_entry(context, "dof/ontologies", "use_ontology").uncompressed_yxml
+        import XML.Decode._
+        list(pair(string, string))(xml)
+      }
       File.write(directory.doc_dir + Path.explode("ontologies.tex"),
-        ontologies.map(name => "\\usepackage{DOF-" + Long_Name.base_name(name) + "}\n").mkString)
+        (for ((name, _) <- ontologies)
+          yield { "\\usepackage{DOF-" + Long_Name.base_name(name) + "}\n" }).mkString)
 
       // create dof-config.sty
       File.write(directory.doc_dir + Path.explode("dof-config.sty"), """

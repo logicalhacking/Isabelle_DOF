@@ -159,8 +159,6 @@ replaced by built-in document templates.\<close>  for users are:
   \<^LaTeX>-styles) need to be registered in this file. For details of Isabelle's build system, please 
   consult the Isabelle System Manual~@{cite "wenzel:system-manual:2020"}. In addition to the 
   standard features of, this file also contains \<^isadof> specific configurations:
-  \<^item>  \<^boxed_bash>\<open>dof_ontologies\<close> a list of (fully qualified) ontologies, separated by spaces, used 
-     by the project. 
   \<^item>  \<^boxed_bash>\<open>document_build=dof\<close> needs to be present, to tell Isabelle, to use the 
   Isabelle/DOF backend for the document generation.
 \<^item> The file \<^boxed_bash>\<open>preamble.tex\<close>\<^index>\<open>preamble.tex\<close>, which allows users to add additional 

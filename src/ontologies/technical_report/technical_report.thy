@@ -17,6 +17,8 @@ theory technical_report
    imports "Isabelle_DOF.scholarly_paper"
 begin              
 
+define_ontology "DOF-technical_report.sty"
+
 (* for reports paper: invariant: level \<ge> -1 *)
 
 section\<open>More Global Text Elements for Reports\<close>

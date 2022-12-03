@@ -1,6 +1,5 @@
 session "mini_odo" = "Isabelle_DOF" +
-  options [document = pdf, document_output = "output", document_build = dof,
-           dof_ontologies = "Isabelle_DOF.technical_report Isabelle_DOF.cenelec_50128"]
+  options [document = pdf, document_output = "output", document_build = dof]
   sessions 
     "Physical_Quantities"
   theories

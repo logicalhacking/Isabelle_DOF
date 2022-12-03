@@ -14,10 +14,10 @@
 (*<*)
 theory TR_MyCommentedIsabelle
   imports "Isabelle_DOF.technical_report" 
-
 begin
 
 use_template "scrreprt"
+use_ontology "technical_report"
 
 define_shortcut* isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
 

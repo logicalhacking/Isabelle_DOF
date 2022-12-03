@@ -4,6 +4,7 @@ theory "paper"
 begin
 
 use_template "scrartcl"
+use_ontology "scholarly_paper"
 
 open_monitor*[this::article]
 

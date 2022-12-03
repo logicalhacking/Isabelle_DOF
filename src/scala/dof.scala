@@ -47,12 +47,6 @@ object DOF {
 
   val session = "Isabelle_DOF"
 
-  def implode_ontologies(list: List[String]): String = Word.implode(list)
-  def explode_ontologies(text: String): List[String] = Word.explode(text)
-  val ontologies: List[String] =
-    explode_ontologies("Isabelle_DOF.technical_report Isabelle_DOF.scholarly_paper")
-  val template = "Isabelle_DOF.scrreprt-modern"
-
   val latest_version = "1.3.0"
   val latest_isabelle = "Isabelle2021-1"
   val latest_doi = "10.5281/zenodo.6810799"

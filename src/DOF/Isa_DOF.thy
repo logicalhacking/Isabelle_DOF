@@ -43,8 +43,8 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   and      "text*"              "text-macro*"            :: document_body
   and      "term*"   "value*"   "assert*"                :: document_body
 
-  and      "use_template"                                :: thy_decl
-  and      "define_template"                             :: thy_load
+  and      "use_template" "use_ontology"                 :: thy_decl
+  and      "define_template" "define_ontology"           :: thy_load
   and      "print_doc_classes"        "print_doc_items" 
            "print_doc_class_template" "check_doc_global" :: diag
 
@@ -2886,10 +2886,15 @@ ML \<open>
 signature DOCUMENT_CONTEXT =
 sig
   val template_space: Context.generic -> Name_Space.T
+  val ontology_space: Context.generic -> Name_Space.T
   val print_template: Context.generic -> string -> string
-  val check_template: Context.generic -> xstring * Position.T -> {name: string, text: string}
-  val use_template: Context.generic -> xstring * Position.T -> unit
+  val print_ontology: Context.generic -> string -> string
+  val check_template: Context.generic -> xstring * Position.T -> string * string
+  val check_ontology: Context.generic -> xstring * Position.T -> string * string
   val define_template: binding * string -> theory -> string * theory
+  val define_ontology: binding * string -> theory -> string * theory
+  val use_template: Context.generic -> xstring * Position.T -> unit
+  val use_ontology: Context.generic -> (xstring * Position.T) list -> unit
 end;
 
 structure Document_Context: DOCUMENT_CONTEXT =
@@ -2897,11 +2902,17 @@ struct
 
 (* theory data *)
 
+local
+
 structure Data = Theory_Data
 (
-  type T = string Name_Space.table;
-  val empty = Name_Space.empty_table "document_template";
-  val merge = Name_Space.merge_tables;
+  type T = string Name_Space.table * string Name_Space.table;
+  val empty : T =
+   (Name_Space.empty_table "document_template",
+    Name_Space.empty_table "document_ontology");
+  fun merge ((templates1, ontologies1), (templates2, ontologies2)) =
+   (Name_Space.merge_tables (templates1, templates2),
+    Name_Space.merge_tables (ontologies1, ontologies2));
 );
 
 fun naming_context thy =
@@ -2909,25 +2920,59 @@ fun naming_context thy =
   |> Proof_Context.map_naming (Name_Space.root_path #> Name_Space.add_path "Isabelle_DOF")
   |> Context.Proof;
 
-val template_space = Name_Space.space_of_table o Data.get o Context.theory_of;
+fun get_space which = Name_Space.space_of_table o which o Data.get o Context.theory_of;
 
-fun print_template context =
-  Name_Space.markup_extern (Context.proof_of context) (template_space context)
+fun print which context =
+  Name_Space.markup_extern (Context.proof_of context) (get_space which context)
   #> uncurry Markup.markup;
 
-fun check_template context arg =
-  let val (name, text) = Name_Space.check context (Data.get (Context.theory_of context)) arg
-  in {name = name, text = text} end;
+fun check which context arg =
+  Name_Space.check context (which (Data.get (Context.theory_of context))) arg;
+
+fun define (get, ap) (binding, arg) thy =
+  let
+    val (name, table') =
+      Data.get thy |> get |> Name_Space.define (naming_context thy) true (binding, arg);
+    val thy' = (Data.map o ap) (K table') thy;
+  in (name, thy') end;
+
+fun strip prfx sffx (path, pos) =
+  (case try (unprefix prfx) (Path.file_name path) of
+    NONE => error ("File name needs to have prefix " ^ quote prfx ^ Position.here pos)
+  | SOME a =>
+      (case try (unsuffix sffx) a of
+        NONE => error ("File name needs to have suffix " ^ quote sffx ^ Position.here pos)
+      | SOME b => b));
+
+in
+
+val template_space = get_space fst;
+val ontology_space = get_space snd;
+
+val print_template = print fst;
+val print_ontology = print snd;
+
+val check_template = check fst;
+val check_ontology = check snd;
+
+val define_template = define (fst, apfst);
+val define_ontology = define (snd, apsnd);
 
 fun use_template context arg =
-  let val {text, ...} = check_template context arg
-  in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/root.tex\<close> [XML.Text text] end;
+  let val xml = arg |> check_template context |> snd |> XML.string
+  in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/root.tex\<close> xml end;
 
-fun define_template (binding, text) thy =
+fun use_ontology context args =
   let
-    val (name, data') = Data.get thy |> Name_Space.define (naming_context thy) true (binding, text);
-    val thy' = Data.put data' thy;
-  in (name, thy') end;
+    val xml = args
+      |> map (check_ontology context)
+      |> let open XML.Encode in list (pair string string) end;
+  in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/ontologies\<close> xml end;
+
+val strip_template = strip "root-" ".tex";
+val strip_ontology = strip "DOF-" ".sty";
+
+end;
 
 
 (* Isar commands *)
@@ -2939,29 +2984,32 @@ val _ =
       Toplevel.theory (fn thy => (use_template (Context.Theory thy) arg; thy))));
 
 val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>use_ontology\<close>
+    "use DOF document ontologies (as defined within theory context)"
+    (Parse.and_list1 (Parse.position Parse.name) >> (fn args =>
+      Toplevel.theory (fn thy => (use_ontology (Context.Theory thy) args; thy))));
+
+val _ =
   Outer_Syntax.command \<^command_keyword>\<open>define_template\<close>
-    "define DOF document template (via LaTeX style file)"
+    "define DOF document template (via LaTeX root file)"
     (Parse.position Resources.provide_parse_file >>
       (fn (get_file, pos) => Toplevel.theory (fn thy =>
         let
-          fun err msg = error (msg ^ Position.here pos);
-
-          val (file, thy1) = get_file thy;
-          val file_name = Path.file_name (#src_path file);
-          val file_prefix = "root-";
-          val file_suffix = ".tex";
-          val bname =
-            (case try (unprefix file_prefix) file_name of
-              NONE => err ("File name needs to have prefix " ^ quote file_prefix)
-            | SOME file_name' =>
-                (case try (unsuffix file_suffix) file_name' of
-                  NONE => err ("File name needs to have suffix " ^ quote file_suffix)
-                | SOME bname => bname));
-          val binding = Binding.make (bname, pos);
+          val (file, thy') = get_file thy;
+          val binding = Binding.make (strip_template (#src_path file, pos), pos);
           val text = cat_lines (#lines file);
-          val (name, thy2) = define_template (binding, text) thy1;
-          val _ = writeln ("Defined template " ^ quote (print_template (Context.Theory thy2) name));
-        in thy2 end)));
+        in #2 (define_template (binding, text) thy') end)));
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>define_ontology\<close>
+    "define DOF document ontology (via LaTeX style file)"
+    (Parse.position Resources.provide_parse_file >>
+      (fn (get_file, pos) => Toplevel.theory (fn thy =>
+        let
+          val (file, thy') = get_file thy;
+          val binding = Binding.make (strip_ontology (#src_path file, pos), pos);
+          val text = cat_lines (#lines file);
+        in #2 (define_ontology (binding, text) thy') end)));
 
 end;
 \<close>

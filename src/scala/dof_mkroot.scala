@@ -40,12 +40,15 @@ object DOF_Mkroot
 {
   /** mkroot **/
 
+  val default_ontologies: List[String] = List("technical_report", "scholarly_paper")
+  val default_template = "scrreprt-modern"
+
   def mkroot(
     session_name: String = "",
     session_dir: Path = Path.current,
     init_repos: Boolean = false,
-    ontologies: List[String] = DOF.ontologies,
-    template: String = DOF.template,
+    ontologies: List[String] = default_ontologies,
+    template: String = default_template,
     progress: Progress = new Progress): Unit =
   {
     Isabelle_System.make_directory(session_dir)
@@ -67,8 +70,7 @@ object DOF_Mkroot
 
     File.write(root_path,
       "session " + Mkroot.root_name(name) + " = " + Mkroot.root_name(DOF.session) + """ +
-  options [document = pdf, document_output = "output", document_build = dof, dof_ontologies = """
-       + quote(DOF.implode_ontologies(ontologies)) + """]
+  options [document = pdf, document_output = "output", document_build = dof]
 (*theories [document = false]
     A
     B*)
@@ -85,6 +87,7 @@ object DOF_Mkroot
 begin
 
 use_template """ + quote(template) + """
+use_ontology """ + ontologies.map(quote).mkString(" and ") + """
 
 end
 """)
@@ -147,8 +150,8 @@ Now use the following command line to build the session:
     var init_repos = false
     var help = false
     var session_name = ""
-    var ontologies = DOF.ontologies
-    var template = DOF.template
+    var ontologies = default_ontologies
+    var template = default_template
 
     val getopts = Getopts("""
 Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
@@ -158,15 +161,15 @@ Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
     -h           print help
     -n NAME      alternative session name (default: directory base name)
     -o NAMES     list of ontologies, separated by blanks
-                 (default: """ + quote(DOF.implode_ontologies(DOF.ontologies)) + """)
-    -t NAME      template (default: """ + quote(DOF.template) + """)
+                 (default: """ + quote(Word.implode(default_ontologies)) + """)
+    -t NAME      template (default: """ + quote(default_template) + """)
 
   Prepare session root directory for Isabelle/DOF (default: current directory).
 """,
       "I" -> (_ => init_repos = true),
       "h" -> (_ => help = true),
       "n:" -> (arg => session_name = arg),
-      "o:" -> (arg => ontologies = DOF.explode_ontologies(arg)),
+      "o:" -> (arg => ontologies = Word.explode(arg)),
       "t:" -> (arg => template = arg))
 
     val more_args = getopts(args)

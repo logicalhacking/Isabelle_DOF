@@ -44,7 +44,7 @@ text \<open>
     we see more and more alternatives, e.g. system options or services in
     Isabelle/Scala (see below).
 
-  \<^item> \<^file>\<open>$ISABELLE_DOF_HOME/etc/options\<close> should not be used for regular
+  \<^item> \<^path>\<open>$ISABELLE_DOF_HOME/etc/options\<close> should not be used for regular
     Isabelle/DOF applications: thus it works properly within Isabelle/AFP,
     where the component context is missing.
 \<close>
