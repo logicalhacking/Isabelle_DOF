@@ -44,33 +44,9 @@ text \<open>
     we see more and more alternatives, e.g. system options or services in
     Isabelle/Scala (see below).
 
-  \<^item> \<^file>\<open>$ISABELLE_DOF_HOME/etc/options\<close>
-
-    \<^item> options declared as \<^verbatim>\<open>public\<close> appear in the Isabelle/jEdit dialog
-    \<^action>\<open>plugin-options\<close> (according to their \<^verbatim>\<open>section\<close>)
-
-    \<^item> all options (public and non-public) are available for command-line
-    usage, e.g. \<^verbatim>\<open>isabelle build -o dof_isabelle="..."\<close>
-
-    \<^item> access to options in Isabelle/ML:
-
-      \<^item> implicit (for the running ML session)
-        \<^ML>\<open>Options.default_string \<^system_option>\<open>dof_isabelle\<close>\<close>
-
-      \<^item> explicit (e.g. for each theories section in
-      \<^file>\<open>$ISABELLE_HOME/src/Pure/Tools/build.ML\<close>):
-        \<^ML>\<open>fn options => Options.string options \<^system_option>\<open>dof_isabelle\<close>\<close>
-
-    \<^item> access in Isabelle/Scala is always explicit; the initial options
-      should be created only once and passed around as explicit argument:
-
-      \<^scala>\<open>{
-        val options = isabelle.Options.init();
-        options.string("dof_isabelle");
-      }\<close>
-
-      Note: there are no antiquotations in Isabelle/Scala, so the literal
-      string \<^scala>\<open>"dof_isabelle"\<close> is unchecked.
+  \<^item> \<^file>\<open>$ISABELLE_DOF_HOME/etc/options\<close> should not be used for regular
+    Isabelle/DOF applications: thus it works properly within Isabelle/AFP,
+    where the component context is missing.
 \<close>
 
 
