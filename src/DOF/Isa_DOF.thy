@@ -2883,7 +2883,7 @@ val _ =  Outer_Syntax.command \<^command_keyword>\<open>define_macro*\<close> "d
 section \<open>Document templates\<close>
 
 ML \<open>
-signature DOCUMENT_TEMPLATE =
+signature DOCUMENT_CONTEXT =
 sig
   val template_space: Context.generic -> Name_Space.T
   val print_template: Context.generic -> string -> string
@@ -2892,7 +2892,7 @@ sig
   val define_template: binding * string -> theory -> string * theory
 end;
 
-structure Document_Template: DOCUMENT_TEMPLATE =
+structure Document_Context: DOCUMENT_CONTEXT =
 struct
 
 (* theory data *)
@@ -2903,6 +2903,11 @@ structure Data = Theory_Data
   val empty = Name_Space.empty_table "document_template";
   val merge = Name_Space.merge_tables;
 );
+
+fun naming_context thy =
+  Proof_Context.init_global thy
+  |> Proof_Context.map_naming (Name_Space.root_path #> Name_Space.add_path "Isabelle_DOF")
+  |> Context.Proof;
 
 val template_space = Name_Space.space_of_table o Data.get o Context.theory_of;
 
@@ -2920,11 +2925,7 @@ fun use_template context arg =
 
 fun define_template (binding, text) thy =
   let
-    val naming_context =
-      Proof_Context.init_global thy
-      |> Proof_Context.map_naming (Name_Space.root_path #> Name_Space.add_path "Isabelle_DOF")
-      |> Context.Proof;
-    val (name, data') = Data.get thy |> Name_Space.define naming_context true (binding, text);
+    val (name, data') = Data.get thy |> Name_Space.define (naming_context thy) true (binding, text);
     val thy' = Data.put data' thy;
   in (name, thy') end;
 
