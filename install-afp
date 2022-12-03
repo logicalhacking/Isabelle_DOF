@@ -151,7 +151,7 @@ fi
 
 ACTUAL_ISABELLE_VERSION=`$ISABELLE_TOOL version`
 
-ISABELLE_VERSION="Isabelle$($ISABELLE_TOOL options -g dof_isabelle)"
+ISABELLE_VERSION="Isabelle$($ISABELLE_TOOL dof_param -b isabelle_version)"
 
 if [ ${ISABELLE_VERSION} = "Isabelle" ];
 then
@@ -163,7 +163,7 @@ fi
 
 
 
-AFP_DATE="$($ISABELLE_TOOL options -g dof_afp)"
+AFP_DATE="$($ISABELLE_TOOL dof_param -b afp_version)"
 AFP_URL="https://www.isa-afp.org/release/"$AFP_DATE".tar.gz"
 
 echo ""

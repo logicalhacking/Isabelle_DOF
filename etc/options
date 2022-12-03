@@ -4,7 +4,3 @@ section "Isabelle/DOF"
 
 public option dof_ontologies : string = "Isabelle_DOF.technical_report Isabelle_DOF.scholarly_paper"
   -- "Isabelle/DOF ontologies (separated by blanks)"
-
-(*for install-afp only*)
-option dof_isabelle : string = "2022"
-option dof_afp : string = "afp-2022-10-27"

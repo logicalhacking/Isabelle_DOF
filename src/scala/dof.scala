@@ -40,6 +40,8 @@ object DOF {
   val isabelle_version = "2022"
   val isabelle_url = "https://isabelle.in.tum.de/website-Isabelle2022"
 
+  val afp_version = "afp-2022-10-27"
+
   // Isabelle/DOF version: "Unreleased" for development, semantic version for releases
   val version = "Unreleased"
 
@@ -80,6 +82,7 @@ object DOF {
   val parameters: List[Parameter] =
     List(
       Parameter("isabelle_version", isabelle_version),
+      Parameter("afp_version", afp_version),
       Parameter("dof_version", version))
 
   def print_parameters(names: List[String],
