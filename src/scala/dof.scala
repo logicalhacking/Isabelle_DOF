@@ -66,13 +66,55 @@ object DOF {
 
   def options(opts: Options): Options = opts + "document_comment_latex"
 
-  def main(args: Array[String]): Unit = {
-    args.toList match {
-      case List("isabelle_version") => println(isabelle_version)
-      case List("dof_version") => println(version)
-      case bad =>
-        error("Bad Java command-line arguments" +
-          (if (bad.isEmpty) "" else bad.mkString(":\n  ", "\n  ", "")))
-    }
+
+
+  /** Isabelle tool wrapper **/
+
+  sealed case class Parameter(name: String, value: String) {
+    override def toString: String = name
+
+    def print(value_only: Boolean): String =
+      if (value_only) value else name + "=" + value
   }
+
+  val parameters: List[Parameter] =
+    List(
+      Parameter("isabelle_version", isabelle_version),
+      Parameter("dof_version", version))
+
+  def print_parameters(names: List[String],
+    all: Boolean = false,
+    value_only: Boolean = false,
+    progress: Progress = new Progress
+  ): Unit = {
+    val bad = names.filter(name => !parameters.exists(_.name == name))
+    if (bad.nonEmpty) error("Unknown parameter(s): " + commas_quote(bad))
+
+    val params = if (all) parameters else parameters.filter(p => names.contains(p.name))
+    for (p <- params) progress.echo(p.print(value_only))
+  }
+
+  val isabelle_tool = Isabelle_Tool("dof_param", "print Isabelle/DOF parameters",
+    Scala_Project.here, args =>
+  {
+    var all = false
+    var value_only = false
+
+    val getopts = Getopts("""
+Usage: isabelle dof_param [OPTIONS] NAMES
+
+  Options are:
+    -a           print all parameters
+    -b           print values only (default: NAME=VALUE)
+
+  Print given Isabelle/DOF parameters, with names from the list:
+  """ + commas_quote(parameters.map(_.toString)),
+      "a" -> (_ => all = true),
+      "b" -> (_ => value_only = true))
+
+    val names = getopts(args)
+    if (names.isEmpty && !all) getopts.usage()
+
+    print_parameters(names, all = all, value_only = value_only, progress = new Console_Progress)
+  })
 }

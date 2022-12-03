@@ -37,5 +37,6 @@ import isabelle._
 
 
 class DOF_Tools extends Isabelle_Scala_Tools(
-  DOF_Mkroot.isabelle_tool
+  DOF.isabelle_tool,
+  DOF_Mkroot.isabelle_tool,
 )
