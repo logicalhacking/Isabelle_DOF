@@ -39,7 +39,27 @@ object DOF_Document_Build
 {
   class Engine extends Document_Build.Bash_Engine("dof")
   {
-    // override def use_build_script: Boolean = true
+    def the_document_entry(
+      context: Document_Build.Context,
+      entry_name: String,
+      command: String
+    ): Export.Entry = {
+      val entries =
+        for {
+          name <- context.document_theories
+          entry <- context.session_context.get(name.theory, entry_name)
+        } yield entry
+
+      entries match {
+        case List(entry) => entry
+        case Nil =>
+          error("No '" + command + "' command in document theories of session " +
+            quote(context.session))
+        case dups =>
+          error("Multiple '" + command + "' commands in theories " +
+            commas_quote(dups.map(_.theory_name).sorted.distinct))
+      }
+    }
 
     override def prepare_directory(
       context: Document_Build.Context,
@@ -54,24 +74,7 @@ object DOF_Document_Build
 
       // root.tex from exported template
       File.write(directory.doc_dir + Path.explode("root.tex"),
-        {
-          val templates =
-            Library.distinct(
-              for {
-                name <- context.document_theories
-                entry <- context.session_context.get(name.theory, "dof/root.tex")
-              } yield entry.theory_name -> entry.text)
-
-          Library.duplicates(templates, (p, q) => p._2 == q._2) match {
-            case Nil if templates.nonEmpty => templates.head._2
-            case Nil =>
-              error("No 'use_template' command in document theories of session " +
-                quote(context.session))
-            case dups =>
-              error("Conflicting 'use_template' commands in theories: " +
-                commas_quote(dups.map(_._1)))
-          }
-        })
+        the_document_entry(context, "dof/root.tex", "use_template").text)
 
       // copy Isabelle/DOF LaTeX styles
       List(Path.explode("DOF/latex"), Path.explode("ontologies"))
