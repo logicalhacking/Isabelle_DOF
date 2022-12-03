@@ -83,7 +83,8 @@ object DOF {
     List(
       Parameter("isabelle_version", isabelle_version),
       Parameter("afp_version", afp_version),
-      Parameter("dof_version", version))
+      Parameter("dof_version", version)
+    ).sortBy(_.name)
 
   def print_parameters(names: List[String],
     all: Boolean = false,
