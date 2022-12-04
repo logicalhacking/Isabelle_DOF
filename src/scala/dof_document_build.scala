@@ -39,24 +39,20 @@ object DOF_Document_Build
 {
   class Engine extends Document_Build.Bash_Engine("dof")
   {
-    def the_document_entry(
-      context: Document_Build.Context,
-      entry_name: String,
-      command: String
-    ): Export.Entry = {
+    def the_document_entry(context: Document_Build.Context, name: String): Export.Entry = {
       val entries =
         for {
-          name <- context.document_theories
-          entry <- context.session_context.get(name.theory, entry_name)
+          node_name <- context.document_theories
+          entry <- context.session_context.get(node_name.theory, name)
         } yield entry
 
       entries match {
         case List(entry) => entry
         case Nil =>
-          error("No '" + command + "' command in document theories of session " +
+          error("Missing export " + quote(name) + " for document theories of session " +
             quote(context.session))
         case dups =>
-          error("Multiple '" + command + "' commands in theories " +
+          error("Multiple exports " + quote(name) + " for theories " +
             commas_quote(dups.map(_.theory_name).sorted.distinct))
       }
     }
@@ -74,7 +70,7 @@ object DOF_Document_Build
 
       // root.tex from exports
       File.write(directory.doc_dir + Path.explode("root.tex"),
-        the_document_entry(context, "dof/use_template", "use_template").text)
+        the_document_entry(context, "dof/use_template").text)
 
       // copy Isabelle/DOF LaTeX styles
       List(Path.explode("DOF/latex"), Path.explode("ontologies"))
@@ -83,7 +79,7 @@ object DOF_Document_Build
 
       // ontologies.tex from exports
       File.write(directory.doc_dir + Path.explode("ontologies.tex"),
-        split_lines(the_document_entry(context, "dof/use_ontology", "use_ontology").text)
+        split_lines(the_document_entry(context, "dof/use_ontology").text)
           .map(name => "\\usepackage{DOF-" + name + "}\n").mkString)
 
       // create dof-config.sty
