@@ -2880,7 +2880,7 @@ val _ =  Outer_Syntax.command \<^command_keyword>\<open>define_macro*\<close> "d
 \<close>
 
 
-section \<open>Document templates\<close>
+section \<open>Document context: template and ontology\<close>
 
 ML \<open>
 signature DOCUMENT_CONTEXT =
