@@ -74,7 +74,7 @@ object DOF_Document_Build
 
       // root.tex from exports
       File.write(directory.doc_dir + Path.explode("root.tex"),
-        the_document_entry(context, "dof/root.tex", "use_template").text)
+        the_document_entry(context, "dof/use_template", "use_template").text)
 
       // copy Isabelle/DOF LaTeX styles
       List(Path.explode("DOF/latex"), Path.explode("ontologies"))
@@ -83,7 +83,7 @@ object DOF_Document_Build
 
       // ontologies.tex from exports
       val ontologies = {
-        val xml = the_document_entry(context, "dof/ontologies", "use_ontology").uncompressed_yxml
+        val xml = the_document_entry(context, "dof/use_ontology", "use_ontology").uncompressed_yxml
         import XML.Decode._
         list(pair(string, string))(xml)
       }

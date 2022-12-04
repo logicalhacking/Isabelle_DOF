@@ -2960,14 +2960,14 @@ val define_ontology = define (snd, apsnd);
 
 fun use_template context arg =
   let val xml = arg |> check_template context |> snd |> XML.string
-  in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/root.tex\<close> xml end;
+  in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/use_template\<close> xml end;
 
 fun use_ontology context args =
   let
     val xml = args
       |> map (check_ontology context)
       |> let open XML.Encode in list (pair string string) end;
-  in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/ontologies\<close> xml end;
+  in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/use_ontology\<close> xml end;
 
 val strip_template = strip "root-" ".tex";
 val strip_ontology = strip "DOF-" ".sty";
