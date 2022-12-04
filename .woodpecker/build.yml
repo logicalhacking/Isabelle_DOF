@@ -7,7 +7,7 @@ pipeline:
       - export `isabelle getenv ISABELLE_HOME_USER`
       - mkdir -p $ISABELLE_HOME_USER/etc
       - echo "ISABELLE_PDFLATEX=\"$LATEX --file-line-error\"" >> $ISABELLE_HOME_USER/etc/settings
-      - isabelle components -u `pwd` 
+      - isabelle components -u .
       - isabelle build -D . -o browser_info
       - isabelle dof_mkroot DOF_test
       - isabelle build -D DOF_test
