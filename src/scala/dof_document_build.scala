@@ -68,21 +68,21 @@ object DOF_Document_Build
 
       val isabelle_dof_dir = context.session_context.sessions_structure(DOF.session).dir
 
-      // root.tex from exports
-      File.write(directory.doc_dir + Path.explode("root.tex"),
-        the_document_entry(context, "dof/use_template").text)
-
-      // copy Isabelle/DOF LaTeX styles
+      // LaTeX styles from Isabelle/DOF directory
       List(Path.explode("DOF/latex"), Path.explode("ontologies"))
         .flatMap(dir => File.find_files((isabelle_dof_dir + dir).file, _.getName.endsWith(".sty")))
         .foreach(sty => Isabelle_System.copy_file(sty, directory.doc_dir.file))
 
-      // ontologies.tex from exports
+      // ontologies.tex from session exports
       File.write(directory.doc_dir + Path.explode("ontologies.tex"),
         split_lines(the_document_entry(context, "dof/use_ontology").text)
           .map(name => "\\usepackage{DOF-" + name + "}\n").mkString)
 
-      // create dof-config.sty
+      // root.tex from session exports
+      File.write(directory.doc_dir + Path.explode("root.tex"),
+        the_document_entry(context, "dof/use_template").text)
+
+      // dof-config.sty
       File.write(directory.doc_dir + Path.explode("dof-config.sty"), """
 \newcommand{\isabelleurl}{""" + DOF.isabelle_url + """}
 \newcommand{\dofurl}{""" + DOF.url + """}
