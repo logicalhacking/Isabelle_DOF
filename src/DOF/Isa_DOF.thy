@@ -2965,8 +2965,8 @@ fun use_template context arg =
 fun use_ontology context args =
   let
     val xml = args
-      |> map (check_ontology context)
-      |> let open XML.Encode in list (pair string string) end;
+      |> map (check_ontology context #> fst #> Long_Name.base_name)
+      |> cat_lines |> XML.string;
   in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/use_ontology\<close> xml end;
 
 val strip_template = strip "root-" ".tex";

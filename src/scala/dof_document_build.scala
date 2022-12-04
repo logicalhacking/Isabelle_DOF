@@ -82,14 +82,9 @@ object DOF_Document_Build
         .foreach(sty => Isabelle_System.copy_file(sty, directory.doc_dir.file))
 
       // ontologies.tex from exports
-      val ontologies = {
-        val xml = the_document_entry(context, "dof/use_ontology", "use_ontology").uncompressed_yxml
-        import XML.Decode._
-        list(pair(string, string))(xml)
-      }
       File.write(directory.doc_dir + Path.explode("ontologies.tex"),
-        (for ((name, _) <- ontologies)
-          yield { "\\usepackage{DOF-" + Long_Name.base_name(name) + "}\n" }).mkString)
+        split_lines(the_document_entry(context, "dof/use_ontology", "use_ontology").text)
+          .map(name => "\\usepackage{DOF-" + name + "}\n").mkString)
 
       // create dof-config.sty
       File.write(directory.doc_dir + Path.explode("dof-config.sty"), """
