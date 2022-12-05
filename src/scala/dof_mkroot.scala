@@ -62,7 +62,9 @@ object DOF_Mkroot
     val document_path = session_dir + Path.explode("document")
     if (document_path.file.exists) error("Cannot overwrite existing " + document_path)
 
-    progress.echo("\nCreating session " + quote(name) + " in " + session_dir.absolute)
+    progress.echo(
+      (if (quiet) "" else "\n") +
+      "Initializing session " + quote(name) + " in " + session_dir.absolute)
 
 
     /* ROOT */
@@ -106,7 +108,8 @@ end
     /* Mercurial repository */
 
     if (init_repos) {
-      progress.echo("  \nInitializing Mercurial repository " + session_dir)
+      progress.echo(
+        (if (quiet) "" else "\n") + "Initializing Mercurial repository " + session_dir.absolute)
 
       val hg = Mercurial.init_repository(session_dir)
 
