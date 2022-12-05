@@ -3031,27 +3031,14 @@ external_file "../scala/dof_mkroot.scala"
 external_file "../scala/dof.scala"
 external_file "../scala/dof_tools.scala"
 
-ML_command \<open>
-  Isabelle_System.with_tmp_dir "scala_build" (fn dir =>
-    let
-      val _ = Isabelle_System.copy_file (\<^master_dir> + Path.explode "../../etc/build.props") dir;
-      val scala_dir = \<^master_dir> + Path.explode "../scala";
-      val dest = Isabelle_System.make_directory (dir + Path.explode "src/scala");
-      val _ =
-        List.app (fn name => Isabelle_System.copy_file (scala_dir + Path.basic name) dest)
-          ["dof_document_build.scala",
-           "dof_mkroot.scala",
-           "dof.scala",
-           "dof_tools.scala"];
-      val [jar_name, jar_bytes, output] =
-        \<^scala>\<open>scala_build\<close> [Bytes.string (Isabelle_System.absolute_path dir)];
-      val _ = writeln (Bytes.content output);
-    in
-      Export.export \<^theory>
-        (Path.explode_binding0 (Bytes.content jar_name))
-        (Bytes.contents_blob jar_bytes)
-    end)
-\<close>
+scala_build_generated_files
+  external_files
+    "build.props" (in "../../etc")
+  and
+    "src/scala/dof_document_build.scala"
+    "src/scala/dof_mkroot.scala"
+    "src/scala/dof.scala"
+    "src/scala/dof_tools.scala" (in "../..")
 
 (*
 ML\<open>
