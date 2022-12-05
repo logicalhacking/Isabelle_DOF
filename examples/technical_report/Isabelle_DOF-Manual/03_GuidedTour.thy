@@ -186,10 +186,11 @@ Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
     -h           print help
     -n NAME      alternative session name (default: directory base name)
     -o NAMES     list of ontologies, separated by blanks
-                 (default: "Isabelle_DOF.technical_report Isabelle_DOF.scholarly_paper")
-    -t NAME      template (default: "Isabelle_DOF.scrreprt-modern")
+                 (default: "technical_report scholarly_paper")
+    -q           quiet mode: less verbosity
+    -t NAME      template (default: "scrreprt-modern")
 
-  Prepare session root directory for Isabelle/DOF (default: current directory).\<close>}
+  Create session root directory for Isabelle/DOF (default: current directory).\<close>}
 \<close>
 
 section*[writing_doc::technical]\<open>Writing Documents: General Remarks\<close>

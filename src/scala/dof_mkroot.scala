@@ -29,7 +29,7 @@
  */
 
 
-/*** prepare session root directory for Isabelle/DOF ***/
+/*** create session root directory for Isabelle/DOF ***/
 
 package isabelle.dof
 
@@ -49,6 +49,7 @@ object DOF_Mkroot
     init_repos: Boolean = false,
     ontologies: List[String] = default_ontologies,
     template: String = default_template,
+    quiet: Boolean = false,
     progress: Progress = new Progress): Unit =
   {
     Isabelle_System.make_directory(session_dir)
@@ -61,12 +62,12 @@ object DOF_Mkroot
     val document_path = session_dir + Path.explode("document")
     if (document_path.file.exists) error("Cannot overwrite existing " + document_path)
 
-    progress.echo("\nPreparing session " + quote(name) + " in " + session_dir)
+    progress.echo("\nCreating session " + quote(name) + " in " + session_dir.absolute)
 
 
     /* ROOT */
 
-    progress.echo("  creating " + root_path)
+    progress.echo_if(!quiet, "  creating " + root_path)
 
     File.write(root_path,
       "session " + Mkroot.root_name(name) + " = " + Mkroot.root_name(DOF.session) + """ +
@@ -81,7 +82,7 @@ object DOF_Mkroot
 """)
 
     val thy = session_dir + Path.explode(name + ".thy")
-    progress.echo("  creating " + thy)
+    progress.echo_if(!quiet, "  creating " + thy)
     File.write(thy,
       "theory\n  " + name +
       "\nimports\n  " + ontologies.map("Isabelle_DOF." + _).mkString("\n  ") +  """
@@ -97,7 +98,7 @@ end
     /* preamble */
 
     val preamble_tex = session_dir + Path.explode("document/preamble.tex")
-    progress.echo("  creating " + preamble_tex)
+    progress.echo_if(!quiet, "  creating " + preamble_tex)
     Isabelle_System.make_directory(preamble_tex.dir)
     File.write(preamble_tex,"""%% This is a placeholder for user-specific configuration and packages.""")
 
@@ -133,7 +134,7 @@ syntax: regexp
 
     {
       val print_dir = session_dir.implode
-      progress.echo("""
+      progress.echo_if(!quiet, """
 Now use the following command line to build the session:
 
   isabelle build -D """ +
@@ -145,7 +146,7 @@ Now use the following command line to build the session:
 
   /** Isabelle tool wrapper **/
 
-  val isabelle_tool = Isabelle_Tool("dof_mkroot", "prepare session root directory for Isabelle/DOF",
+  val isabelle_tool = Isabelle_Tool("dof_mkroot", "create session root directory for Isabelle/DOF",
     Scala_Project.here, args =>
   {
     var init_repos = false
@@ -153,6 +154,7 @@ Now use the following command line to build the session:
     var session_name = ""
     var ontologies = default_ontologies
     var template = default_template
+    var quiet = false
 
     val getopts = Getopts("""
 Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
@@ -163,14 +165,16 @@ Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
     -n NAME      alternative session name (default: directory base name)
     -o NAMES     list of ontologies, separated by blanks
                  (default: """ + quote(Word.implode(default_ontologies)) + """)
+    -q           quiet mode: less verbosity
     -t NAME      template (default: """ + quote(default_template) + """)
 
-  Prepare session root directory for Isabelle/DOF (default: current directory).
+  Create session root directory for Isabelle/DOF (default: current directory).
 """,
       "I" -> (_ => init_repos = true),
       "h" -> (_ => help = true),
       "n:" -> (arg => session_name = arg),
       "o:" -> (arg => ontologies = Word.explode(arg)),
+      "q" -> (_ => quiet = true),
       "t:" -> (arg => template = arg))
 
     val more_args = getopts(args)
@@ -183,8 +187,10 @@ Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
 
     if (help) getopts.usage()
 
+    val progress = new Console_Progress
+
     mkroot(session_name = session_name, session_dir = session_dir,
-      init_repos = init_repos, progress = new Console_Progress,
+      init_repos = init_repos, quiet = quiet, progress = progress,
       ontologies = ontologies, template = template)
   })
 }

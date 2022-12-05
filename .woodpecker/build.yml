@@ -10,7 +10,7 @@ pipeline:
       - isabelle build -D . -o browser_info
       - isabelle components -u .
       - isabelle build -D . -o browser_info
-      - isabelle dof_mkroot DOF_test
+      - isabelle dof_mkroot -q DOF_test
       - isabelle build -D DOF_test
       - cp -r $ISABELLE_HOME_USER/browser_info $ARTIFACT_DIR
       - cd $ARTIFACT_DIR
