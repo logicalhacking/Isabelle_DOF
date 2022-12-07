@@ -199,9 +199,15 @@ term*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
 value*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
 term*\<open>map fst @{trace-attribute \<open>aaa\<close>}\<close>
 value*\<open>map fst @{trace-attribute \<open>aaa\<close>}\<close>
-(* When not commented, should trigger an error:
-value*\<open>@{trace-attribute \<open>dfgdfg\<close>}\<close>
-*)
+value*\<open>(map fst @{trace-attribute \<open>aaa\<close>}) \<close>
+
+definition example_expression where "example_expression \<equiv> \<lbrace>\<lfloor>''Conceptual.A''\<rfloor> || \<lfloor>''Conceptual.F''\<rfloor>\<rbrace>\<^sup>*"
+value* \<open> DA.accepts (na2da (rexp2na example_expression)) (map fst @{trace-attribute \<open>aaa\<close>}) \<close>
+
+definition word_test  :: "'a list \<Rightarrow> 'a rexp \<Rightarrow> bool" (infix "is\<^sub>\<longrightarrow>in" 60)
+  where " w is\<^sub>\<longrightarrow>in rexp \<equiv>  DA.accepts (na2da (rexp2na rexp)) (w)"
+
+value* \<open>  (map fst @{trace-attribute \<open>aaa\<close>}) is\<^sub>\<longrightarrow>in example_expression \<close>
 
 
 (*<*)
