@@ -204,10 +204,10 @@ value*\<open>(map fst @{trace-attribute \<open>aaa\<close>}) \<close>
 definition example_expression where "example_expression \<equiv> \<lbrace>\<lfloor>''Conceptual.A''\<rfloor> || \<lfloor>''Conceptual.F''\<rfloor>\<rbrace>\<^sup>*"
 value* \<open> DA.accepts (na2da (rexp2na example_expression)) (map fst @{trace-attribute \<open>aaa\<close>}) \<close>
 
-definition word_test  :: "'a list \<Rightarrow> 'a rexp \<Rightarrow> bool" (infix "is\<^sub>\<longrightarrow>in" 60)
-  where " w is\<^sub>\<longrightarrow>in rexp \<equiv>  DA.accepts (na2da (rexp2na rexp)) (w)"
+definition word_test  :: "'a list \<Rightarrow> 'a rexp \<Rightarrow> bool" (infix "is-in" 60)
+  where " w is-in rexp \<equiv>  DA.accepts (na2da (rexp2na rexp)) (w)"
 
-value* \<open>  (map fst @{trace-attribute \<open>aaa\<close>}) is\<^sub>\<longrightarrow>in example_expression \<close>
+value* \<open> (map fst @{trace-attribute \<open>aaa\<close>}) is-in example_expression \<close>
 
 
 (*<*)
