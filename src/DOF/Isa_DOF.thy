@@ -1622,7 +1622,9 @@ fun check_invariants thy oid =
                          (* If Goal.prove does not fail, then the evaluation is considered True,
                             else an error is triggered by Goal.prove *)
                          in @{term True} end)
-                   else ISA_core.err ("Invariant " ^ inv_name ^ " violated." ) pos
+                   else ISA_core.err ("Fail to check invariant "
+                                      ^ inv_name
+                                      ^ ". Try to activate invariants_checking_with_tactics.") pos
       in (if evaluated_term = \<^term>\<open>True\<close>
           then ((inv_name, pos), term)
           else ISA_core.err ("Invariant " ^ inv_name ^ " violated") pos)
