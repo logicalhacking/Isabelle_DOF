@@ -52,7 +52,7 @@ abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Alg
 \<close>
 text\<open>\<close>
 section*[introheader::introduction,main_author="Some(@{docitem ''bu''}::author)"]\<open> Introduction \<close> 
-text*[introtext::introduction]\<open>
+text*[introtext::introduction, level="Some 1"]\<open>
 Communicating Sequential Processes (\<^csp>) is a language 
 to specify and verify patterns of interaction of concurrent systems.
 Together with CCS and LOTOS, it belongs to the family of \<^emph>\<open>process algebras\<close>. 
@@ -154,7 +154,7 @@ processes \<open>Skip\<close> (successful termination) and \<open>Stop\<close> (
 \<open>\<T>(Skip) = \<T>(Stop) = {[]}\<close>.
 Note that the trace sets, representing all \<^emph>\<open>partial\<close> history, is in general prefix closed.\<close>
 
-text*[ex1::math_example, status=semiformal] \<open>
+text*[ex1::math_example, status=semiformal, level="Some 1"] \<open>
 Let two processes be defined as follows:
 
   \<^enum>  \<open>P\<^sub>d\<^sub>e\<^sub>t = (a \<rightarrow> Stop) \<box> (b \<rightarrow> Stop)\<close>
@@ -354,7 +354,7 @@ Roscoe and Brooks @{cite "Roscoe1992AnAO"} finally proposed another ordering, ca
 that completeness could at least be assured for read-operations. This more complex ordering 
 is based on the concept \<^emph>\<open>refusals after\<close> a trace \<open>s\<close> and defined by \<open>\<R> P s \<equiv> {X | (s, X) \<in> \<F> P}\<close>.\<close>
 
-Definition*[process_ordering, short_name="''process ordering''"]\<open>
+Definition*[process_ordering, level= "Some 2", short_name="''process ordering''"]\<open>
 We define \<open>P \<sqsubseteq> Q \<equiv> \<psi>\<^sub>\<D> \<and> \<psi>\<^sub>\<R> \<and> \<psi>\<^sub>\<M> \<close>,  where 
 \<^enum>  \<open>\<psi>\<^sub>\<D> = \<D> P \<supseteq> \<D> Q \<close>
 \<^enum> \<open>\<psi>\<^sub>\<R> = s \<notin> \<D> P \<Rightarrow> \<R> P s = \<R> Q s\<close>  
@@ -530,10 +530,10 @@ To handle termination better, we added two new processes \<open>CHAOS\<^sub>S\<^
 \<close>
 
 (*<*) (* a test ...*)
-text*[X22 ::math_content   ]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                           \<close>
-text*[X32::"definition", mcc=defn]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>        \<close>
-Definition*[X42]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>  \<close>
-Definition*[X52::"definition"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close> \<close>
+text*[X22 ::math_content, level="Some 2"  ]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                           \<close>
+text*[X32::"definition", level="Some 2", mcc=defn]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>        \<close>
+Definition*[X42, level="Some 2"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>  \<close>
+Definition*[X52::"definition", level="Some 2"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close> \<close>
 
 text\<open> The \<open>RUN\<close>-process defined @{math_content X22} represents the process that accepts all 
 events, but never stops nor deadlocks. The \<open>CHAOS\<close>-process comes in two variants shown in 
@@ -541,11 +541,11 @@ events, but never stops nor deadlocks. The \<open>CHAOS\<close>-process comes in
 stops or accepts any offered event, whereas \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> can additionally terminate.\<close>
 (*>*)
 
-Definition*[X2]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                    \<close>
-Definition*[X3]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>         \<close>
-Definition*[X4]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<close>
-Definition*[X5]\<open>\<open>DF A \<equiv> \<mu> X. (\<sqinter> x \<in> A \<rightarrow> X)\<close>                       \<close>
-Definition*[X6]\<open>\<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. ((\<sqinter> x \<in> A \<rightarrow> X) \<sqinter> SKIP)\<close>          \<close> 
+Definition*[X2, level="Some 2"]\<open>\<open>RUN A \<equiv> \<mu> X. \<box> x \<in> A \<rightarrow> X\<close>                    \<close>
+Definition*[X3, level="Some 2"]\<open>\<open>CHAOS A \<equiv> \<mu> X. (STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>         \<close>
+Definition*[X4, level="Some 2"]\<open>\<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. (SKIP \<sqinter> STOP \<sqinter> (\<box> x \<in> A \<rightarrow> X))\<close>\<close>
+Definition*[X5, level="Some 2"]\<open>\<open>DF A \<equiv> \<mu> X. (\<sqinter> x \<in> A \<rightarrow> X)\<close>                       \<close>
+Definition*[X6, level="Some 2"]\<open>\<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<equiv> \<mu> X. ((\<sqinter> x \<in> A \<rightarrow> X) \<sqinter> SKIP)\<close>          \<close> 
 
 text\<open>In the following, we denote \<open> \<R>\<P> = {DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P, DF, RUN, CHAOS, CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P}\<close>. 
 All five  reference processes are divergence-free.
@@ -607,16 +607,16 @@ handled separately. One contribution of our work is establish their precise rela
 the Failure/Divergence Semantics of \<^csp>.\<close>
 
 (* bizarre: Definition* does not work for this single case *)
-text*[X10::"definition"]\<open> \<open>deadlock\<^sub>-free P \<equiv>  DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close>  \<close>
+text*[X10::"definition", level="Some 2"]\<open> \<open>deadlock\<^sub>-free P \<equiv>  DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close>  \<close>
 
 text\<open>\<^noindent> A process \<open>P\<close> is deadlock-free if and only if after any trace \<open>s\<close> without \<open>\<surd>\<close>, the union of \<open>\<surd>\<close> 
 and all events of \<open>P\<close> can never be a refusal set associated to \<open>s\<close>, which means that \<open>P\<close> cannot 
 be deadlocked after any non-terminating trace.   
 \<close>
 
-Theorem*[T1, short_name="\<open>DF definition captures deadlock-freeness\<close>"]
+Theorem*[T1, short_name="\<open>DF definition captures deadlock-freeness\<close>", level="Some 2"]
 \<open> \hfill \break \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<surd>}\<union>events_of P) \<notin> \<F> P)\<close> \<close>   
-Definition*[X11]\<open>  \<open>livelock\<^sub>-free P \<equiv> \<D> P = {} \<close>   \<close>
+Definition*[X11, level="Some 2"]\<open>  \<open>livelock\<^sub>-free P \<equiv> \<D> P = {} \<close>   \<close>
 
 text\<open> Recall that all five reference processes are livelock-free. 
 We also have the following lemmas about the 
@@ -630,7 +630,7 @@ text\<open>
 Finally, we proved the following theorem that confirms the relationship between the two vital
 properties:
 \<close>
-Theorem*[T2, short_name="''DF implies LF''"]
+Theorem*[T2, short_name="''DF implies LF''", level="Some 2"]
   \<open>  \<open>deadlock_free P \<longrightarrow> livelock_free P\<close>   \<close>
 
 text\<open>
@@ -797,7 +797,7 @@ This normal form is closed under deterministic and  communication operators.
 The advantage of this format is that we can mimick the well-known product automata construction
 for an arbitrary number of synchronized processes under normal form.
 We only show the case of the synchronous product of two processes: \<close>
-text*[T3::"theorem", short_name="\<open>Product Construction\<close>"]\<open>
+text*[T3::"theorem", short_name="\<open>Product Construction\<close>", level="Some 2"]\<open>
 Parallel composition translates to normal form:
 @{cartouche [display,indent=5]\<open>(P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<tau>\<^sub>1,\<upsilon>\<^sub>1\<rbrakk> \<sigma>\<^sub>1) || (P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<tau>\<^sub>2,\<upsilon>\<^sub>2\<rbrakk> \<sigma>\<^sub>2) = 
     P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<lambda>(\<sigma>\<^sub>1,\<sigma>\<^sub>2). \<tau>\<^sub>1 \<sigma>\<^sub>1 \<inter> \<tau>\<^sub>2 \<sigma>\<^sub>2 , \<lambda>(\<sigma>\<^sub>1,\<sigma>\<^sub>2).\<lambda>e.(\<upsilon>\<^sub>1 \<sigma>\<^sub>1 e, \<upsilon>\<^sub>2 \<sigma>\<^sub>2 e)\<rbrakk> (\<sigma>\<^sub>1,\<sigma>\<^sub>2)\<close>}
@@ -817,7 +817,7 @@ states via the closure \<open>\<RR>\<close>, which is defined inductively over:
 Thus, normalization leads to a new characterization of deadlock-freeness inspired 
 from automata theory. We formally proved the following theorem:\<close>
 
-text*[T4::"theorem", short_name="\<open>DF vs. Reacheability\<close>"]
+text*[T4::"theorem", short_name="\<open>DF vs. Reacheability\<close>", level="Some 2"]
 \<open> If each reachable state \<open>s \<in> (\<RR> \<tau> \<upsilon>)\<close> has outgoing transitions,
 the \<^csp> process is deadlock-free: 
 @{cartouche [display,indent=10] \<open>\<forall>\<sigma> \<in> (\<RR> \<tau> \<upsilon> \<sigma>\<^sub>0). \<tau> \<sigma> \<noteq> {} \<Longrightarrow> deadlock_free (P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<tau>,\<upsilon>\<rbrakk> \<sigma>\<^sub>0)\<close>}

@@ -12,7 +12,7 @@ text\<open>
   theory attribute must be set:\<close>
 
 
-declare[[invariants_checking = true]]
+declare[[invariants_strict_checking = true]]
 
 text\<open>For example, let's define the following two classes:\<close>
 
@@ -144,6 +144,6 @@ value*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \
 
 declare[[invariants_checking_with_tactics = false]]
 
-declare[[invariants_checking = false]]
+declare[[invariants_strict_checking = false]]
 
 end

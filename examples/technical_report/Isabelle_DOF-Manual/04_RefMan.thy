@@ -1041,10 +1041,11 @@ text\<open>
   Ontological classes as described so far are too liberal in many situations.
   There is a first high-level syntax implementation for class invariants.
   These invariants can be checked when an instance of the class is defined.
-  To enable the checking of the invariants, the \<^boxed_theory_text>\<open>invariants_checking\<close>
+  To enable the strict checking of the invariants,
+  the \<^boxed_theory_text>\<open>invariants_strict_checking\<close>
   theory attribute must be set:
   @{boxed_theory_text [display]\<open>
-  declare[[invariants_checking = true]]\<close>}
+  declare[[invariants_strict_checking = true]]\<close>}
 
   For example, let's define the following two classes:
   @{boxed_theory_text [display]\<open>
@@ -1104,6 +1105,12 @@ text\<open>
   All specified constraints are already checked in the IDE of \<^dof> while editing.
   The invariant \<^boxed_theory_text>\<open>author_finite\<close> enforces that the user sets the 
   \<^boxed_theory_text>\<open>authored_by\<close> set.
+  The invariants \<^theory_text>\<open>author_finite\<close> and \<^theory_text>\<open>establish_defined\<close> can not be checked directly
+  and need a little help.
+  We can set the \<open>invariants_checking_with_tactics\<close> theory attribute to help the checking.
+  It will enable a basic tactic, using unfold and auto:
+  @{boxed_theory_text [display]\<open>
+  declare[[invariants_checking_with_tactics = true]]\<close>}
   There are still some limitations with this high-level syntax.
   For now, the high-level syntax does not support  monitors (see \<^technical>\<open>sec:monitors\<close>).
   For example, one would like to delay a final error message till the

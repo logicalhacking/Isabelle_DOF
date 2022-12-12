@@ -813,8 +813,8 @@ fun print_doc_class_tree ctxt P T =
 val (strict_monitor_checking, strict_monitor_checking_setup)
      = Attrib.config_bool \<^binding>\<open>strict_monitor_checking\<close> (K false);
 
-val (invariants_checking, invariants_checking_setup) 
-     = Attrib.config_bool \<^binding>\<open>invariants_checking\<close> (K false);
+val (invariants_strict_checking, invariants_strict_checking_setup) 
+     = Attrib.config_bool \<^binding>\<open>invariants_strict_checking\<close> (K false);
 
 val (invariants_checking_with_tactics, invariants_checking_with_tactics_setup) 
      = Attrib.config_bool \<^binding>\<open>invariants_checking_with_tactics\<close> (K false);
@@ -825,7 +825,7 @@ end (* struct *)
 \<close>
 
 setup\<open>DOF_core.strict_monitor_checking_setup
-      #> DOF_core.invariants_checking_setup
+      #> DOF_core.invariants_strict_checking_setup
       #> DOF_core.invariants_checking_with_tactics_setup\<close>
 
 section\<open> Syntax for Term Annotation Antiquotations (TA)\<close>
@@ -948,6 +948,7 @@ structure ISA_core =
 struct
 
 fun err msg pos = error (msg ^ Position.here pos);
+fun warn msg pos = warning (msg ^ Position.here pos);
 
 fun check_path check_file ctxt dir (name, pos) =
   let
@@ -1600,11 +1601,12 @@ fun check_invariants thy oid =
       end
     fun check_invariants' ((inv_name, pos), term) =
       let val ctxt = Proof_Context.init_global thy
+          val trivial_true = \<^term>\<open>True\<close> |> HOLogic.mk_Trueprop |> Thm.cterm_of ctxt |> Thm.trivial
           val evaluated_term = value ctxt term
                 handle ERROR e =>
                   if (String.isSubstring "Wellsortedness error" e)
                       andalso (Config.get_global thy DOF_core.invariants_checking_with_tactics)
-                   then (warning("Invariants checking uses proof tactics");
+                  then (warning("Invariants checking uses proof tactics");
                          let val prop_term = HOLogic.mk_Trueprop term
                              val thms = Proof_Context.get_thms ctxt (inv_name ^ def_suffixN)
                              (* Get the make definition (def(1) of the record) *)
@@ -1614,22 +1616,37 @@ fun check_invariants thy oid =
                                                   (K ((unfold_tac ctxt thms') THEN (auto_tac ctxt)))
                                      |> Thm.close_derivation \<^here>
                                      handle ERROR e =>
-                                       ISA_core.err ("Invariant "
+                                       let
+                                         val msg_intro = "Invariant "
                                                       ^ inv_name
                                                       ^ " failed to be checked using proof tactics"
-                                                      ^ " with error: "
-                                                      ^ e) pos
+                                                      ^ " with error:\n"
+                                       in 
+                                         if Config.get_global thy DOF_core.invariants_strict_checking
+                                         then ISA_core.err (msg_intro ^ e) pos
+                                         else (ISA_core.warn (msg_intro ^ e) pos; trivial_true) end
                          (* If Goal.prove does not fail, then the evaluation is considered True,
                             else an error is triggered by Goal.prove *)
                          in @{term True} end)
-                   else ISA_core.err ("Fail to check invariant "
-                                      ^ inv_name
-                                      ^ ". Try to activate invariants_checking_with_tactics.") pos
-      in (if evaluated_term = \<^term>\<open>True\<close>
-          then ((inv_name, pos), term)
-          else ISA_core.err ("Invariant " ^ inv_name ^ " violated") pos)
+                  else \<^term>\<open>True \<Longrightarrow> True\<close>
+      in case evaluated_term of
+             \<^term>\<open>True\<close> => ((inv_name, pos), term)
+           | \<^term>\<open>True \<Longrightarrow> True\<close> =>
+                let val msg_intro = "Fail to check invariant "
+                                    ^ inv_name
+                                    ^ ".\nMaybe you can try "
+                                    ^ "to activate invariants_checking_with_tactics\n"
+                                    ^ "if your invariant is checked against doc_class algebraic "
+                                    ^ "types like 'doc_class list' or 'doc_class set'"
+                in if Config.get_global thy DOF_core.invariants_strict_checking
+                   then ISA_core.err (msg_intro) pos
+                   else (ISA_core.warn (msg_intro) pos; ((inv_name, pos), term)) end
+           | _ => let val msg_intro = "Invariant " ^ inv_name ^ " violated"
+                  in if Config.get_global thy DOF_core.invariants_strict_checking
+                     then ISA_core.err msg_intro pos
+                     else  (ISA_core.warn msg_intro pos; ((inv_name, pos), term)) end
       end
-    val _ = map check_invariants' inv_and_apply_list 
+    val _ = map check_invariants' inv_and_apply_list
   in thy end
 
 fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos doc_attrs thy = 
@@ -1639,20 +1656,19 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos do
     (* creates a markup label for this position and reports it to the PIDE framework;
      this label is used as jump-target for point-and-click feature. *)
     val cid_long = check_classref is_monitor cid_pos thy
+    val default_cid = cid_long = DOF_core.default_cid
     val vcid = case cid_pos of   NONE => NONE
                                | SOME (cid,_) => if (DOF_core.is_virtual cid thy)
                                                  then SOME (DOF_core.parse_cid_global thy cid)
                                                  else NONE
-    val value_terms = if (cid_long = DOF_core.default_cid)
+    val value_terms = if default_cid
                       then let
-                            val undefined_value = Free ("Undefined_Value", \<^Type>\<open>unit\<close>)
+                             val undefined_value = Free ("Undefined_Value", \<^Type>\<open>unit\<close>)
                            in (undefined_value, undefined_value) end
-                          (* 
-                             Handle initialization of docitem without a class associated,
-                             for example when you just want a document element to be referenceable
-                             without using the burden of ontology classes.
-                             ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close>
-                          *)
+                            (* Handle initialization of docitem without a class associated,
+                               for example when you just want a document element to be referenceable
+                               without using the burden of ontology classes.
+                               ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
                      else let
                             val defaults_init = create_default_object thy cid_long
                             fun conv (na, _(*ty*), term) =(Binding.name_of na, Binding.pos_of na, "=", term);
@@ -1684,9 +1700,15 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos do
                                o Context.Theory) thy; thy)
                        else thy)
          |> (fn thy => (check_inv thy; thy))
-         |> (fn thy => if Config.get_global thy DOF_core.invariants_checking = true
-                       then check_invariants thy oid
-                       else thy)
+         (* Bypass checking of high-level invariants when the class default_cid = "text",
+            the top (default) document class.
+            We want the class default_cid to stay abstract
+            and not have the capability to be defined with attribute, invariants, etc.
+            Hence this bypass handles docitem without a class associated,
+            for example when you just want a document element to be referenceable
+            without using the burden of ontology classes.
+            ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
+         |> (fn thy => if default_cid then thy else check_invariants thy oid)
   end
 
 end (* structure Docitem_Parser *)
@@ -1870,9 +1892,7 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
             in     
                 thy |> DOF_core.update_value_global oid def_trans_input_term def_trans_value
                     |> check_inv
-                    |> (fn thy => if Config.get_global thy DOF_core.invariants_checking = true
-                                  then Value_Command.Docitem_Parser.check_invariants thy oid
-                                  else thy)
+                    |> (fn thy => Value_Command.Docitem_Parser.check_invariants thy oid)
             end
 
 
@@ -1932,9 +1952,7 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
     in  thy |> (fn thy => (check_lazy_inv thy; thy))
             |> update_instance_command args
             |> (fn thy => (check_inv thy; thy))
-            |> (fn thy => if Config.get_global thy DOF_core.invariants_checking = true
-                          then Value_Command.Docitem_Parser.check_invariants thy oid
-                          else thy)
+            |> (fn thy => Value_Command.Docitem_Parser.check_invariants thy oid)
             |> delete_monitor_entry
     end 
 

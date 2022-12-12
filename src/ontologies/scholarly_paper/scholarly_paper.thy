@@ -69,7 +69,7 @@ which we formalize into:\<close>
 doc_class text_section = text_element +
    main_author :: "author option"  <=  None
    fixme_list  :: "string list"    <=  "[]" 
-   level       :: "int  option"    <=  "None"   
+   level       :: "int  option"    <=  "None"
    (* this attribute enables doc-notation support section* etc.
       we follow LaTeX terminology on levels 
                 part          = Some -1
