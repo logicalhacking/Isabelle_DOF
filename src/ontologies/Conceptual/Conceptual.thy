@@ -177,4 +177,47 @@ text*[ sdfg :: F] \<open> Lorem ipsum @{thm refl}\<close>
 text*[ xxxy ] \<open> Lorem ipsum @{F \<open>sdfg\<close>} rate @{thm refl}\<close>  
 close_monitor*[aaa]
 
-end     
+doc_class test_monitor_free =
+  tmhd :: int
+doc_class test_monitor_head =
+  tmhd :: int
+doc_class test_monitor_A = test_monitor_head +
+  tmA :: int
+doc_class test_monitor_B = test_monitor_A +
+  tmB :: int
+doc_class test_monitor_C = test_monitor_A +
+  tmC :: int
+doc_class test_monitor_D = test_monitor_B +
+  tmD :: int
+doc_class test_monitor_E = test_monitor_D +
+  tmE :: int
+
+doc_class monitor_M =
+  tmM :: int
+  rejects "test_monitor_A"
+  accepts "test_monitor_head ~~ test_monitor_B ~~ test_monitor_C"
+
+declare[[free_class_in_monitor_checking]]
+
+open_monitor*[test_monitor_M::monitor_M]
+
+text*[testFree::test_monitor_free]\<open>\<close>
+
+open_monitor*[test_monitor_M2::monitor_M]
+
+text*[test_monitor_A1::test_monitor_A]\<open>\<close>
+text*[testFree2::test_monitor_free]\<open>\<close>
+text*[test_monitor_head1::test_monitor_head]\<open>\<close>
+text*[testFree3::test_monitor_free]\<open>\<close>
+text*[test_monitor_B1::test_monitor_B]\<open>\<close>
+text*[testFree4::test_monitor_free]\<open>\<close>
+text*[test_monitor_D1::test_monitor_D]\<open>\<close>
+text*[testFree5::test_monitor_free]\<open>\<close>
+text*[test_monitor_C1::test_monitor_C]\<open>\<close>
+text*[testFree6::test_monitor_free]\<open>\<close>
+
+close_monitor*[test_monitor_M2]
+
+close_monitor*[test_monitor_M]
+
+end

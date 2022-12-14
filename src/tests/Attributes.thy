@@ -173,9 +173,20 @@ text\<open> @{docitem_attribute y::omega}  \<close>
 
 section\<open>Simulation of a Monitor\<close>
 
+declare[[free_class_in_monitor_checking]]
+
+ML\<open>
+val thy  = \<^theory>
+val long_cid = "Isa_COL.figure_group"
+val t = DOF_core.get_doc_class_global long_cid thy
+\<close>
 open_monitor*[figs1::figure_group, 
               caption="''Sample ''"]  
-
+ML\<open>
+val thy = \<^theory>
+val {monitor_tab,...} = DOF_core.get_data_global thy
+\<close>
+text*[testFreeA::A]\<open>\<close>
 figure*[fig_A::figure, spawn_columns=False,
         relative_width="90",
         src="''figures/A.png''"]
@@ -185,6 +196,47 @@ figure*[fig_B::figure,
         spawn_columns=False,relative_width="90",
         src="''figures/B.png''"]
        \<open> The B train \ldots \<close>  
+open_monitor*[figs2::figure_group, 
+              caption="''Sample ''"]
+ML\<open>
+val thy = \<^theory>
+val {monitor_tab,...} = DOF_core.get_data_global thy
+\<close>
+figure*[fig_C::figure, spawn_columns=False,
+        relative_width="90",
+        src="''figures/A.png''"]
+       \<open> The C train \ldots \<close>
+open_monitor*[figs3::figure_group, 
+              caption="''Sample ''"]
+ML\<open>
+val thy = \<^theory>
+val {monitor_tab,...} = DOF_core.get_data_global thy
+\<close>
+
+figure*[fig_D::figure, 
+        spawn_columns=False,relative_width="90",
+        src="''figures/B.png''"]
+       \<open> The D train \ldots \<close>
+close_monitor*[figs3]
+
+open_monitor*[figs4::figure_group, 
+              caption="''Sample ''"]
+ML\<open>
+val thy = \<^theory>
+val {monitor_tab,...} = DOF_core.get_data_global thy
+\<close>
+
+text*[testRejected1::figure_group, caption="''figures/A.png''"]
+       \<open> The A train \ldots \<close>
+
+figure*[fig_E::figure,
+        spawn_columns=False,relative_width="90",
+        src="''figures/B.png''"]
+       \<open> The E train \ldots \<close>
+close_monitor*[figs4]
+close_monitor*[figs2]
+text*[testRejected2::figure_group, caption="''figures/A.png''"]
+       \<open> The A train \ldots \<close>
 
 close_monitor*[figs1]  
 
@@ -199,7 +251,8 @@ term*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
 value*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
 term*\<open>map fst @{trace-attribute \<open>aaa\<close>}\<close>
 value*\<open>map fst @{trace-attribute \<open>aaa\<close>}\<close>
-value*\<open>(map fst @{trace-attribute \<open>aaa\<close>}) \<close>
+term*\<open>map fst @{trace-attribute \<open>test_monitor_M\<close>}\<close>
+value*\<open>map fst @{trace-attribute \<open>test_monitor_M\<close>}\<close>
 
 definition example_expression where "example_expression \<equiv> \<lbrace>\<lfloor>''Conceptual.A''\<rfloor> || \<lfloor>''Conceptual.F''\<rfloor>\<rbrace>\<^sup>*"
 value* \<open> DA.accepts (na2da (rexp2na example_expression)) (map fst @{trace-attribute \<open>aaa\<close>}) \<close>
