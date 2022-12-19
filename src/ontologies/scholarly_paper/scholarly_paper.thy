@@ -83,15 +83,19 @@ doc_class text_section = text_element +
 
 doc_class "conclusion" = text_section +
    main_author :: "author option"  <=  None
+   invariant L\<^sub>c\<^sub>o\<^sub>n\<^sub>c    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
    
 doc_class related_work = "conclusion" +
    main_author :: "author option"  <=  None
+   invariant L\<^sub>r\<^sub>w    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
 doc_class bibliography = text_section +
    style       :: "string option"  <=  "Some ''LNCS''"
+   invariant L\<^sub>b\<^sub>i\<^sub>b    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
 doc_class annex = "text_section" +
    main_author :: "author option"  <=  None
+   invariant L\<^sub>a\<^sub>n\<^sub>n\<^sub>e\<^sub>x    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
 (*
 datatype sc_dom = math | info | natsc | eng 
@@ -103,6 +107,7 @@ subsection\<open>Introductions\<close>
 doc_class introduction = text_section +
    comment :: string
    claims  :: "thm list"
+   invariant L\<^sub>i\<^sub>n\<^sub>t\<^sub>r\<^sub>o    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
 text\<open>Technical text-elements posses a status: they can be either an \<^emph>\<open>informal explanation\<close> /
 description or a kind of introductory text to definition etc. or a \<^emph>\<open>formal statement\<close> similar
@@ -117,6 +122,7 @@ A formal statement can, but must not have a reference to true formal Isabelle/Is
 doc_class background = text_section +
    comment :: string
    claims  :: "thm list"
+   invariant L\<^sub>b\<^sub>a\<^sub>c\<^sub>k    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
 
 subsection\<open>Technical Content and its Formats\<close>
@@ -134,7 +140,7 @@ doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
    status          :: status <= "description"
    formal_results  :: "thm list"
-   invariant L1    :: "the (level \<sigma>) > 0"
+   invariant L\<^sub>t\<^sub>e\<^sub>c\<^sub>h  :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
 type_synonym tc = technical (* technical content *)
 
@@ -150,6 +156,7 @@ doc_class example  = text_section +
    referentiable   :: bool <= True
    status          :: status <= "description"
    short_name      :: string <= "''''"
+   invariant L\<^sub>e\<^sub>x\<^sub>a    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
 
 subsection\<open>Freeform Mathematical Content\<close>
