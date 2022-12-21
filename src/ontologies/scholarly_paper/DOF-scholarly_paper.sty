@@ -171,12 +171,12 @@
 
 % \newcommand{\formalMathStmt[label, mcc, ]
 % end: scholarly_paper.abstract
-% | "rule" | "assn" | "expl" | rem      | "notation" | "terminology"
+% | "rule" | "assn" | "assm" | "expl" | rem      | "notation" | "terminology"
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newisadof{text.scholarly_paper.math_content}%
 [label=,type=%
  , scholarly_paper.math_content.short_name ={} % {} or \relax
- , scholarly_paper.math_content.mcc     = % "def" | "axm" | "thm" | "lem" | "prop" | "rule" | "assn"
+ , scholarly_paper.math_content.mcc     = % "def" | "axm" | "thm" | "lem" | "prop" | "rule" | "assn" | "assm"
  , Isa_COL.text_element.level         =%
  , Isa_COL.text_element.referentiable =%
  , Isa_COL.text_element.variants      =%
@@ -279,6 +279,15 @@
                           \end{assertion}}
                     }%
                    }%
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{assm}}    
+                   {%
+                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+                         {\begin{assumption} \label{\commandkey{label}} #1 \end{assumption} }
+                         {\begin{assumption} [\commandkey{scholarly_paper.math_content.short_name}] 
+                                             \label{\commandkey{label}} #1 
+                          \end{assumption}}
+                    }%
+                   }%
         {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{notation}}    
                    {%
                     {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
@@ -299,6 +308,7 @@
                    }%
         {%     
            \typeout{Internal error: enumeration out of sync with ontology scholarly-paper.} 
+        }%
         }%
         }%
         }%

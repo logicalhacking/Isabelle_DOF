@@ -167,7 +167,7 @@ provided \<^emph>\<open>theorem environments\<close> (see \<^verbatim>\<open>tex
 that it is well-established and compatible with many LaTeX - styles.\<close>
 
 datatype math_content_class = "defn"   | "axm"  | "thm"  | "lem" | "cor" | "prop" 
-                            | "expl"   | "rule" | "assn" 
+                            | "expl"   | "rule" | "assn" | "assm"
                             | rem      | "notation" | "terminology"
 
 (*

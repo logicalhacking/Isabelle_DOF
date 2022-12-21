@@ -173,8 +173,9 @@ Definition* [eal_def, tag= "''evaluation assurance level''"]
  CC predefined assurance scale, that form an assurance package\<close>
 
 Definition* [eval_auth_def, tag="''evaluation authority''"] 
-\<open>body that sets the standards and monitors the quality of evaluations conducted by bodies within a specific community and
- implements the CC for that community by means of an evaluation scheme\<close>
+\<open>body that sets the standards and monitors the quality of evaluations conducted 
+ by bodies within a specific community and implements the CC for that community 
+ by means of an evaluation scheme\<close>
 
 Definition* [eval_schm_def, tag="''evaluation scheme''"] 
 \<open>administrative and regulatory framework under which the CC is applied by an 
