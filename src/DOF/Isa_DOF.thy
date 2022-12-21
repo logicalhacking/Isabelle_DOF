@@ -346,6 +346,8 @@ fun upd_docclass_lazy_inv_tab f {docobj_tab,docclass_tab,ISA_transformer_tab,
              docclass_lazy_inv_tab=f docclass_lazy_inv_tab};
 
 fun get_accepted_cids  ({accepted_cids, ... } : open_monitor_info) = accepted_cids
+fun get_rejected_cids  ({rejected_cids, ... } : open_monitor_info) = rejected_cids
+fun get_alphabet monitor_info = (get_accepted_cids monitor_info) @ (get_rejected_cids monitor_info)
 fun get_automatas      ({automatas, ... }     : open_monitor_info) = automatas
 
 
@@ -813,8 +815,14 @@ fun print_doc_class_tree ctxt P T =
 val (strict_monitor_checking, strict_monitor_checking_setup)
      = Attrib.config_bool \<^binding>\<open>strict_monitor_checking\<close> (K false);
 
-val (invariants_checking, invariants_checking_setup) 
-     = Attrib.config_bool \<^binding>\<open>invariants_checking\<close> (K false);
+val (free_class_in_monitor_checking, free_class_in_monitor_checking_setup)
+     = Attrib.config_bool \<^binding>\<open>free_class_in_monitor_checking\<close> (K false);
+
+val (free_class_in_monitor_strict_checking, free_class_in_monitor_strict_checking_setup)
+     = Attrib.config_bool \<^binding>\<open>free_class_in_monitor_strict_checking\<close> (K false);
+
+val (invariants_strict_checking, invariants_strict_checking_setup) 
+     = Attrib.config_bool \<^binding>\<open>invariants_strict_checking\<close> (K false);
 
 val (invariants_checking_with_tactics, invariants_checking_with_tactics_setup) 
      = Attrib.config_bool \<^binding>\<open>invariants_checking_with_tactics\<close> (K false);
@@ -825,7 +833,9 @@ end (* struct *)
 \<close>
 
 setup\<open>DOF_core.strict_monitor_checking_setup
-      #> DOF_core.invariants_checking_setup
+      #> DOF_core.free_class_in_monitor_checking_setup
+      #> DOF_core.free_class_in_monitor_strict_checking_setup
+      #> DOF_core.invariants_strict_checking_setup
       #> DOF_core.invariants_checking_with_tactics_setup\<close>
 
 section\<open> Syntax for Term Annotation Antiquotations (TA)\<close>
@@ -948,6 +958,7 @@ structure ISA_core =
 struct
 
 fun err msg pos = error (msg ^ Position.here pos);
+fun warn msg pos = warning (msg ^ Position.here pos);
 
 fun check_path check_file ctxt dir (name, pos) =
   let
@@ -1433,7 +1444,7 @@ fun create_default_object thy class_name =
   in list_comb (make_const, (tag_attr (serial()))::class_list'') end
 
 
-fun check_classref {is_monitor=is_monitor} (SOME(cid,pos')) thy = 
+fun check_classref {is_monitor=is_monitor} (SOME(cid,pos)) thy = 
           let 
               val cid_long = DOF_core.read_cid_global thy cid  
                             
@@ -1443,10 +1454,10 @@ fun check_classref {is_monitor=is_monitor} (SOME(cid,pos')) thy =
                       else ()
               val markup = docclass_markup false cid id (Binding.pos_of bind_target);
               val ctxt = Context.Theory thy
-              val _    = Context_Position.report_generic ctxt pos' markup;
-          in  cid_long 
+              val _    = Context_Position.report_generic ctxt pos markup;
+          in  (cid_long, pos)
           end
-   | check_classref _ NONE _ = DOF_core.default_cid 
+   | check_classref _ NONE _ = (DOF_core.default_cid, \<^here>) 
 
 
 fun generalize_typ n = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,n),sort));
@@ -1514,67 +1525,104 @@ fun calc_update_term {mk_elaboration=mk_elaboration} thy cid_long
              end   
      in Sign.certify_term thy  (fold read_assn S term) end
 
-fun msg thy txt = if Config.get_global thy DOF_core.strict_monitor_checking
-                  then error txt
-                  else warning txt 
+fun msg thy txt pos = if Config.get_global thy DOF_core.strict_monitor_checking
+                  then ISA_core.err txt pos
+                  else ISA_core.warn txt pos
 
-fun register_oid_cid_in_open_monitors oid pos cid_long thy = 
-      let val {monitor_tab,...} = DOF_core.get_data_global thy
-          fun is_enabled (n, info) = 
-                         if exists (DOF_core.is_subclass_global thy cid_long) 
-                                   (DOF_core.get_accepted_cids info) 
-                         then SOME n 
-                         else NONE
-          (* filtering those monitors with automata, whose alphabet contains the
-             cid of this oid. The enabled ones were selected and moved to their successor state
-             along the super-class id. The evaluation is in parallel, simulating a product
-             semantics without expanding the subclass relationship. *)
-          fun is_enabled_for_cid moid =
-                         let val {accepted_cids, automatas, ...} = 
-                                              the(Symtab.lookup monitor_tab moid)
-                             val indexS= 1 upto (length automatas)
-                             val indexed_autoS = automatas ~~ indexS
-                             fun check_for_cid (A,n) = 
-                                   let val accS = (RegExpInterface.enabled A accepted_cids)
-                                       val is_subclass = DOF_core.is_subclass_global thy
-                                       val idx = find_index (is_subclass cid_long) accS
-                                   in  if idx < 0 
-                                       then (msg thy ("monitor "^moid^"(" ^ Int.toString n 
-                                                       ^") not enabled for doc_class: "^cid_long);A)
-                                       else RegExpInterface.next A accepted_cids (nth accS idx)
+fun register_oid_cid_in_open_monitors oid pos cid_pos thy = 
+  let val {monitor_tab,...} = DOF_core.get_data_global thy
+      val cid_long= fst cid_pos
+      val pos' = snd cid_pos
+      fun is_enabled (n, info) = 
+                     if exists (DOF_core.is_subclass_global thy cid_long) 
+                               (DOF_core.get_alphabet info)
+                     then SOME n 
+                     else if Config.get_global thy DOF_core.free_class_in_monitor_strict_checking
+                             orelse  Config.get_global thy DOF_core.free_class_in_monitor_checking
+                          then SOME n
+                          else NONE
+      (* filtering those monitors with automata, whose alphabet contains the
+         cid of this oid. The enabled ones were selected and moved to their successor state
+         along the super-class id. The evaluation is in parallel, simulating a product
+         semantics without expanding the subclass relationship. *)
+      fun is_enabled_for_cid moid =
+        let val {accepted_cids, automatas, rejected_cids, ...} = 
+                              the(Symtab.lookup monitor_tab moid)
+            val indexS= 1 upto (length automatas)
+            val indexed_autoS = automatas ~~ indexS
+            fun check_for_cid (A,n) = 
+              let fun direct_super_class _ cid [] = cid
+                    | direct_super_class thy cid (x::xs) =
+                        if DOF_core.is_subclass_global thy cid x
+                        then direct_super_class thy cid xs
+                        else direct_super_class thy x xs
+                  val accS = (RegExpInterface.enabled A accepted_cids)
+                  val accS' = filter (DOF_core.is_subclass_global thy cid_long) accS
+                  fun first_super_class cids =
+                      case List.getItem cids
+                        of  SOME (hd,tl) => SOME (direct_super_class thy hd tl)
+                          | NONE => NONE
+                  val first_accepted = first_super_class accS'
+                  val rejectS = filter (DOF_core.is_subclass_global thy cid_long) rejected_cids
+                  val first_rejected = first_super_class rejectS
+              in
+                case first_accepted of
+                    NONE => (case first_rejected of
+                                 NONE =>
+                                   let val msg_intro = ("accepts clause " ^ Int.toString n 
+                                                        ^ " of monitor " ^ moid
+                                                        ^ " not enabled for doc_class: " ^ cid_long)
+                                   in
+                                     if Config.get_global thy DOF_core.free_class_in_monitor_strict_checking
+                                     then ISA_core.err msg_intro pos'
+                                     else if Config.get_global thy DOF_core.free_class_in_monitor_checking
+                                          then (ISA_core.warn msg_intro pos';A)
+                                          else A
                                    end
-                         in (moid,map check_for_cid indexed_autoS)  end  
-          val enabled_monitors = List.mapPartial is_enabled (Symtab.dest monitor_tab)
-          fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
-                                                     Syntax.read_term_global thy rhs)
-          val trace_attr = [((("trace", @{here}), "+="), "[("^cid_long^", ''"^oid^"'')]")]
-          val assns' = map conv_attrs trace_attr
-          fun cid_of oid = #cid(the(DOF_core.get_object_global oid thy))
-          fun def_trans_input_term  oid =
-            #1 o (calc_update_term {mk_elaboration=false} thy (cid_of oid) assns')
-          fun def_trans_value oid =
-            (#1 o (calc_update_term {mk_elaboration=true} thy (cid_of oid) assns'))
-            #> value (Proof_Context.init_global thy)
-          val _ = if null enabled_monitors then () else writeln "registrating in monitors ..." 
-          val _ = app (fn n => writeln(oid^" : "^cid_long^" ==> "^n)) enabled_monitors;
-           (* check that any transition is possible : *)
-          fun inst_class_inv x = DOF_core.get_class_invariant(cid_of x) thy x {is_monitor=false}
-          fun class_inv_checks ctxt = map (fn x => inst_class_inv x ctxt) enabled_monitors
-          val delta_autoS = map is_enabled_for_cid enabled_monitors; 
-          fun update_info (n, aS) (tab: DOF_core.monitor_tab) =  
-                         let val {accepted_cids,rejected_cids,...} = the(Symtab.lookup tab n)
-                         in Symtab.update(n, {accepted_cids=accepted_cids, 
-                                              rejected_cids=rejected_cids,
-                                              automatas=aS}) tab end
-          fun update_trace mon_oid = DOF_core.update_value_global mon_oid (def_trans_input_term mon_oid) (def_trans_value mon_oid)
-          val update_automatons    = DOF_core.upd_monitor_tabs(fold update_info delta_autoS)
-      in  thy |> (* update traces of all enabled monitors *)
-                 fold (update_trace) (enabled_monitors)
-              |> (* check class invariants of enabled monitors *)
-                 (fn thy => (class_inv_checks (Context.Theory thy); thy))
-              |> (* update the automata of enabled monitors *)
-                 DOF_core.map_data_global(update_automatons)
-      end
+                               | SOME _ => (msg thy ("accepts clause " ^ Int.toString n 
+                                                     ^ " of monitor " ^ moid
+                                                     ^ " rejected doc_class: " ^ cid_long) pos';A))
+                  | SOME accepted => (case first_rejected of
+                                          NONE => RegExpInterface.next A accepted_cids (accepted)
+                                        | SOME rejected =>
+                                            if DOF_core.is_subclass_global thy accepted rejected
+                                            then RegExpInterface.next A accepted_cids (accepted)
+                                            else (msg thy ("accepts clause " ^ Int.toString n 
+                                                           ^ " of monitor " ^ moid
+                                                           ^ " rejected doc_class: " ^ cid_long) pos';A))
+              end
+         in (moid,map check_for_cid indexed_autoS)  end  
+      val enabled_monitors = List.mapPartial is_enabled (Symtab.dest monitor_tab)
+      fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
+                                                 Syntax.read_term_global thy rhs)
+      val trace_attr = [((("trace", @{here}), "+="), "[("^cid_long^", ''"^oid^"'')]")]
+      val assns' = map conv_attrs trace_attr
+      fun cid_of oid = #cid(the(DOF_core.get_object_global oid thy))
+      fun def_trans_input_term  oid =
+        #1 o (calc_update_term {mk_elaboration=false} thy (cid_of oid) assns')
+      fun def_trans_value oid =
+        (#1 o (calc_update_term {mk_elaboration=true} thy (cid_of oid) assns'))
+        #> value (Proof_Context.init_global thy)
+      val _ = if null enabled_monitors then () else writeln "registrating in monitors ..." 
+      val _ = app (fn n => writeln(oid^" : "^cid_long^" ==> "^n)) enabled_monitors;
+       (* check that any transition is possible : *)
+      fun inst_class_inv x = DOF_core.get_class_invariant(cid_of x) thy x {is_monitor=false}
+      fun class_inv_checks ctxt = map (fn x => inst_class_inv x ctxt) enabled_monitors
+      val delta_autoS = map is_enabled_for_cid enabled_monitors; 
+      fun update_info (n, aS) (tab: DOF_core.monitor_tab) =  
+                     let val {accepted_cids,rejected_cids,...} = the(Symtab.lookup tab n)
+                     in Symtab.update(n, {accepted_cids=accepted_cids, 
+                                          rejected_cids=rejected_cids,
+                                          automatas=aS}) tab end
+      fun update_trace mon_oid = DOF_core.update_value_global mon_oid (def_trans_input_term mon_oid) (def_trans_value mon_oid)
+      val update_automatons    = DOF_core.upd_monitor_tabs(fold update_info delta_autoS)
+  in  thy |> (* update traces of all enabled monitors *)
+             fold (update_trace) (enabled_monitors)
+          |> (* check class invariants of enabled monitors *)
+             (fn thy => (class_inv_checks (Context.Theory thy); thy))
+          |> (* update the automata of enabled monitors *)
+             DOF_core.map_data_global(update_automatons)
+  end
 
 fun check_invariants thy oid =
   let
@@ -1600,11 +1648,12 @@ fun check_invariants thy oid =
       end
     fun check_invariants' ((inv_name, pos), term) =
       let val ctxt = Proof_Context.init_global thy
+          val trivial_true = \<^term>\<open>True\<close> |> HOLogic.mk_Trueprop |> Thm.cterm_of ctxt |> Thm.trivial
           val evaluated_term = value ctxt term
                 handle ERROR e =>
                   if (String.isSubstring "Wellsortedness error" e)
                       andalso (Config.get_global thy DOF_core.invariants_checking_with_tactics)
-                   then (warning("Invariants checking uses proof tactics");
+                  then (warning("Invariants checking uses proof tactics");
                          let val prop_term = HOLogic.mk_Trueprop term
                              val thms = Proof_Context.get_thms ctxt (inv_name ^ def_suffixN)
                              (* Get the make definition (def(1) of the record) *)
@@ -1614,22 +1663,37 @@ fun check_invariants thy oid =
                                                   (K ((unfold_tac ctxt thms') THEN (auto_tac ctxt)))
                                      |> Thm.close_derivation \<^here>
                                      handle ERROR e =>
-                                       ISA_core.err ("Invariant "
+                                       let
+                                         val msg_intro = "Invariant "
                                                       ^ inv_name
                                                       ^ " failed to be checked using proof tactics"
-                                                      ^ " with error: "
-                                                      ^ e) pos
+                                                      ^ " with error:\n"
+                                       in 
+                                         if Config.get_global thy DOF_core.invariants_strict_checking
+                                         then ISA_core.err (msg_intro ^ e) pos
+                                         else (ISA_core.warn (msg_intro ^ e) pos; trivial_true) end
                          (* If Goal.prove does not fail, then the evaluation is considered True,
                             else an error is triggered by Goal.prove *)
                          in @{term True} end)
-                   else ISA_core.err ("Fail to check invariant "
-                                      ^ inv_name
-                                      ^ ". Try to activate invariants_checking_with_tactics.") pos
-      in (if evaluated_term = \<^term>\<open>True\<close>
-          then ((inv_name, pos), term)
-          else ISA_core.err ("Invariant " ^ inv_name ^ " violated") pos)
+                  else \<^term>\<open>True \<Longrightarrow> True\<close>
+      in case evaluated_term of
+             \<^term>\<open>True\<close> => ((inv_name, pos), term)
+           | \<^term>\<open>True \<Longrightarrow> True\<close> =>
+                let val msg_intro = "Fail to check invariant "
+                                    ^ inv_name
+                                    ^ ".\nMaybe you can try "
+                                    ^ "to activate invariants_checking_with_tactics\n"
+                                    ^ "if your invariant is checked against doc_class algebraic "
+                                    ^ "types like 'doc_class list' or 'doc_class set'"
+                in if Config.get_global thy DOF_core.invariants_strict_checking
+                   then ISA_core.err (msg_intro) pos
+                   else (ISA_core.warn (msg_intro) pos; ((inv_name, pos), term)) end
+           | _ => let val msg_intro = "Invariant " ^ inv_name ^ " violated"
+                  in if Config.get_global thy DOF_core.invariants_strict_checking
+                     then ISA_core.err msg_intro pos
+                     else  (ISA_core.warn msg_intro pos; ((inv_name, pos), term)) end
       end
-    val _ = map check_invariants' inv_and_apply_list 
+    val _ = map check_invariants' inv_and_apply_list
   in thy end
 
 fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos doc_attrs thy = 
@@ -1638,21 +1702,21 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos do
     val _ = Position.report pos (docref_markup true oid id pos);
     (* creates a markup label for this position and reports it to the PIDE framework;
      this label is used as jump-target for point-and-click feature. *)
-    val cid_long = check_classref is_monitor cid_pos thy
+    val cid_pos' = check_classref is_monitor cid_pos thy
+    val cid_long = fst cid_pos'
+    val default_cid = cid_long = DOF_core.default_cid
     val vcid = case cid_pos of   NONE => NONE
                                | SOME (cid,_) => if (DOF_core.is_virtual cid thy)
                                                  then SOME (DOF_core.parse_cid_global thy cid)
                                                  else NONE
-    val value_terms = if (cid_long = DOF_core.default_cid)
+    val value_terms = if default_cid
                       then let
-                            val undefined_value = Free ("Undefined_Value", \<^Type>\<open>unit\<close>)
+                             val undefined_value = Free ("Undefined_Value", \<^Type>\<open>unit\<close>)
                            in (undefined_value, undefined_value) end
-                          (* 
-                             Handle initialization of docitem without a class associated,
-                             for example when you just want a document element to be referenceable
-                             without using the burden of ontology classes.
-                             ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close>
-                          *)
+                            (* Handle initialization of docitem without a class associated,
+                               for example when you just want a document element to be referenceable
+                               without using the burden of ontology classes.
+                               ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
                      else let
                             val defaults_init = create_default_object thy cid_long
                             fun conv (na, _(*ty*), term) =(Binding.name_of na, Binding.pos_of na, "=", term);
@@ -1678,15 +1742,21 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos do
                                                  id         = id,
                                                  cid        = cid_long,
                                                  vcid       = vcid})
-         |> register_oid_cid_in_open_monitors oid pos cid_long
+         |> register_oid_cid_in_open_monitors oid pos cid_pos'
          |> (fn thy => if #is_monitor(is_monitor)
                        then (((DOF_core.get_class_eager_invariant cid_long thy oid) is_monitor 
                                o Context.Theory) thy; thy)
                        else thy)
          |> (fn thy => (check_inv thy; thy))
-         |> (fn thy => if Config.get_global thy DOF_core.invariants_checking = true
-                       then check_invariants thy oid
-                       else thy)
+         (* Bypass checking of high-level invariants when the class default_cid = "text",
+            the top (default) document class.
+            We want the class default_cid to stay abstract
+            and not have the capability to be defined with attribute, invariants, etc.
+            Hence this bypass handles docitem without a class associated,
+            for example when you just want a document element to be referenceable
+            without using the burden of ontology classes.
+            ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
+         |> (fn thy => if default_cid then thy else check_invariants thy oid)
   end
 
 end (* structure Docitem_Parser *)
@@ -1848,8 +1918,9 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                                        val _ = Context_Position.report ctxt pos markup;
                                    in  cid end
                              | NONE => error("undefined doc_class.")
-                val cid_long = Value_Command.Docitem_Parser.check_classref {is_monitor = false}
+                val cid_pos' = Value_Command.Docitem_Parser.check_classref {is_monitor = false}
                                                                                         cid_pos thy
+                val cid_long = fst cid_pos'
                 val _ = if cid_long = DOF_core.default_cid  orelse cid = cid_long 
                         then () 
                         else error("incompatible classes:"^cid^":"^cid_long)
@@ -1870,9 +1941,7 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
             in     
                 thy |> DOF_core.update_value_global oid def_trans_input_term def_trans_value
                     |> check_inv
-                    |> (fn thy => if Config.get_global thy DOF_core.invariants_checking = true
-                                  then Value_Command.Docitem_Parser.check_invariants thy oid
-                                  else thy)
+                    |> (fn thy => Value_Command.Docitem_Parser.check_invariants thy oid)
             end
 
 
@@ -1891,31 +1960,33 @@ fun open_monitor_command  ((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Pars
           in
             case DOF_core.get_doc_class_global long_cid thy of
                 SOME X => let val ralph = RegExpInterface.alphabet (#rejectS X)
-                                     val alph = RegExpInterface.ext_alphabet ralph (#rex X)
-                                 in  (alph, map (RegExpInterface.rexp_term2da alph)(#rex X)) end 
+                                     val aalph = RegExpInterface.alphabet (#rex X)
+                                 in  (aalph, ralph, map (RegExpInterface.rexp_term2da aalph)(#rex X)) end 
               | NONE => error("Internal error: class id undefined. ")
           end
         fun create_monitor_entry thy =  
             let val cid = case cid_pos of
                               NONE => ISA_core.err ("You must specified a monitor class.") pos
                             | SOME (cid, _) => cid
-                val (S, aS) = compute_enabled_set cid thy
-                val info = {accepted_cids = S, rejected_cids = [], automatas  = aS }
+                val (accS, rejectS, aS) = compute_enabled_set cid thy
+                val info = {accepted_cids = accS, rejected_cids = rejectS, automatas  = aS }
             in  DOF_core.map_data_global(DOF_core.upd_monitor_tabs(Symtab.update(oid, info )))(thy)
             end
     in
-        create_monitor_entry  #> o_m_c oid pos cid_pos doc_attrs
+      o_m_c oid pos cid_pos doc_attrs #> create_monitor_entry
     end;
 
 
 fun close_monitor_command (args as (((oid:string,pos),cid_pos),
                                     doc_attrs: (((string*Position.T)*string)*string)list)) thy = 
     let val {monitor_tab,...} = DOF_core.get_data_global thy
-        fun check_if_final aS = let val i = find_index (not o RegExpInterface.final) aS
-                                in  if i >= 0 
+        fun check_if_final aS = let val i = (find_index (not o RegExpInterface.final) aS) + 1
+                                in  if i >= 1 
                                     then
                                       Value_Command.Docitem_Parser.msg thy
-                                        ("monitor number "^Int.toString i^" not in final state.")
+                                                    ("accepts clause " ^ Int.toString i 
+                                                     ^ " of monitor " ^ oid
+                                                     ^ " not in final state.") pos
                                     else ()
                                 end
         val _ =  case Symtab.lookup monitor_tab oid of
@@ -1932,9 +2003,7 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
     in  thy |> (fn thy => (check_lazy_inv thy; thy))
             |> update_instance_command args
             |> (fn thy => (check_inv thy; thy))
-            |> (fn thy => if Config.get_global thy DOF_core.invariants_checking = true
-                          then Value_Command.Docitem_Parser.check_invariants thy oid
-                          else thy)
+            |> (fn thy => Value_Command.Docitem_Parser.check_invariants thy oid)
             |> delete_monitor_entry
     end 
 

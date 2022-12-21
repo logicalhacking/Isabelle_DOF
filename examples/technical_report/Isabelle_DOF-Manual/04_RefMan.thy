@@ -1041,10 +1041,11 @@ text\<open>
   Ontological classes as described so far are too liberal in many situations.
   There is a first high-level syntax implementation for class invariants.
   These invariants can be checked when an instance of the class is defined.
-  To enable the checking of the invariants, the \<^boxed_theory_text>\<open>invariants_checking\<close>
+  To enable the strict checking of the invariants,
+  the \<^boxed_theory_text>\<open>invariants_strict_checking\<close>
   theory attribute must be set:
   @{boxed_theory_text [display]\<open>
-  declare[[invariants_checking = true]]\<close>}
+  declare[[invariants_strict_checking = true]]\<close>}
 
   For example, let's define the following two classes:
   @{boxed_theory_text [display]\<open>
@@ -1104,8 +1105,15 @@ text\<open>
   All specified constraints are already checked in the IDE of \<^dof> while editing.
   The invariant \<^boxed_theory_text>\<open>author_finite\<close> enforces that the user sets the 
   \<^boxed_theory_text>\<open>authored_by\<close> set.
+  The invariants \<^theory_text>\<open>author_finite\<close> and \<^theory_text>\<open>establish_defined\<close> can not be checked directly
+  and need a little help.
+  We can set the \<open>invariants_checking_with_tactics\<close> theory attribute to help the checking.
+  It will enable a basic tactic, using unfold and auto:
+  @{boxed_theory_text [display]\<open>
+  declare[[invariants_checking_with_tactics = true]]\<close>}
   There are still some limitations with this high-level syntax.
-  For now, the high-level syntax does not support  monitors (see \<^technical>\<open>sec:monitors\<close>).
+  For now, the high-level syntax does not support the checking of
+  specific monitor behaviors (see \<^technical>\<open>sec:monitors\<close>).
   For example, one would like to delay a final error message till the
   closing of a monitor.
   For this use-case you can use low-level class invariants (see \<^technical>\<open>sec:low_level_inv\<close>).
@@ -1147,6 +1155,20 @@ text\<open>
     instances of \<open>S\<close>.
 \<close>
 text\<open>
+  Should the specified ranges of admissible instances not be observed, warnings will be triggered.
+  To forbid the violation of the specified ranges,
+  one can enable the \<^boxed_theory_text>\<open>strict_monitor_checking\<close> theory attribute:
+  @{boxed_theory_text [display]\<open>declare[[strict_monitor_checking = true]]\<close>}
+  It is possible to enable the tracing of free classes occurring inside the scope of a monitor by
+  enabling the \<^boxed_theory_text>\<open>free_class_in_monitor_checking\<close>
+  theory attribute:
+  @{boxed_theory_text [display]\<open>declare[[free_class_in_monitor_checking = true]]\<close>}
+  Then a warning will be triggered when defining an instance of a free class
+  inside the scope of a monitor.
+  To forbid free classes inside the scope of a monitor, one can enable the
+  \<^boxed_theory_text>\<open>free_class_in_monitor_strict_checking\<close> theory attribute:
+  @{boxed_theory_text [display]\<open>declare[[free_class_in_monitor_strict_checking = true]]\<close>}
+
   Monitored document sections can be nested and overlap; thus, it is
   possible to combine the effect of different monitors. For example, it
   would be possible to refine the \<^boxed_theory_text>\<open>example\<close> section by its own
@@ -1164,8 +1186,9 @@ text\<open>
   header delimiting the borders of its representation. Class invariants
   on monitors allow for specifying structural properties on document
   sections.
-  For now, the high-level syntax of invariants is not supported for monitors and you must use 
-  the low-level class invariants (see \<^technical>\<open>sec:low_level_inv\<close>.\<close>
+  For now, the high-level syntax of invariants does not support the checking of
+  specific monitor behaviors like the one above and you must use 
+  the low-level class invariants (see \<^technical>\<open>sec:low_level_inv\<close>).\<close>
 
 
 subsection*["sec:low_level_inv"::technical]\<open>ODL Low-level Class Invariants\<close>
