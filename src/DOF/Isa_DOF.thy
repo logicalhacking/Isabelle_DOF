@@ -1457,7 +1457,7 @@ fun check_classref {is_monitor=is_monitor} (SOME(cid,pos)) thy =
               val _    = Context_Position.report_generic ctxt pos markup;
           in  (cid_long, pos)
           end
-   | check_classref _ NONE _ = (DOF_core.default_cid, \<^here>) 
+   | check_classref _ NONE _ = (DOF_core.default_cid, Position.none) 
 
 
 fun generalize_typ n = Term.map_type_tfree (fn (str,sort)=> Term.TVar((str,n),sort));
