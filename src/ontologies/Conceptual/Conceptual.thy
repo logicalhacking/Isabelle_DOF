@@ -220,4 +220,6 @@ close_monitor*[test_monitor_M2]
 
 close_monitor*[test_monitor_M]
 
+declare[[free_class_in_monitor_checking = false]]
+
 end

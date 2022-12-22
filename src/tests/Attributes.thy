@@ -240,6 +240,8 @@ text*[testRejected2::figure_group, caption="''figures/A.png''"]
 
 close_monitor*[figs1]  
 
+declare[[free_class_in_monitor_checking = false]]
+
 text\<open>Resulting trace of figs1 as ML antiquotation: \<close>
 ML  \<open>@{trace_attribute figs1}\<close>
 text\<open>Resulting trace of figs as text antiquotation:\<close>
