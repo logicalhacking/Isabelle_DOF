@@ -1187,8 +1187,16 @@ text\<open>
   on monitors allow for specifying structural properties on document
   sections.
   For now, the high-level syntax of invariants does not support the checking of
-  specific monitor behaviors like the one above and you must use 
-  the low-level class invariants (see \<^technical>\<open>sec:low_level_inv\<close>).\<close>
+  specific monitor behaviors like the one just described and you must use 
+  the low-level class invariants (see \<^technical>\<open>sec:low_level_inv\<close>).
+
+  Low-level invariants checking can be set up to be triggered
+  when opening a monitor, when closing a monitor, or both
+  by using the \<^ML>\<open>DOF_core.update_class_eager_invariant\<close>,
+  \<^ML>\<open>DOF_core.update_class_lazy_invariant\<close>, or \<^ML>\<open>DOF_core.update_class_invariant\<close> commands
+  respectfully, to add the invariants to the theory context
+  (See \<^technical>\<open>sec:low_level_inv\<close> for an example).
+\<close>
 
 
 subsection*["sec:low_level_inv"::technical]\<open>ODL Low-level Class Invariants\<close>

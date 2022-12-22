@@ -1064,9 +1064,9 @@ fun check_sil_slow oid _ ctxt =
 (*setup\<open>DOF_core.update_class_invariant "CENELEC_50128.monitor_SIL0" check_sil_slow\<close>*)
 
 (* As traces of monitor instances (docitems) are updated each time an instance is declared
-  (with text*, section*, etc.), invariants checking functions which use traces must
-  be declared as lazy invariants, to be checked only when closing a monitor, i.e.,
-  after the monitor traces are populated.
+  (with text*, section*, etc.), invariants checking functions which check the full list of traces
+  must be declared as lazy invariants, to be checked only when closing a monitor, i.e.,
+  after all the monitor traces are populated.
 *)
 ML\<open>
 fun check_required_documents oid _ ctxt = 
