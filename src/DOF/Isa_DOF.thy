@@ -821,6 +821,9 @@ val (free_class_in_monitor_checking, free_class_in_monitor_checking_setup)
 val (free_class_in_monitor_strict_checking, free_class_in_monitor_strict_checking_setup)
      = Attrib.config_bool \<^binding>\<open>free_class_in_monitor_strict_checking\<close> (K false);
 
+val (invariants_checking, invariants_checking_setup) 
+     = Attrib.config_bool \<^binding>\<open>invariants_checking\<close> (K true);
+
 val (invariants_strict_checking, invariants_strict_checking_setup) 
      = Attrib.config_bool \<^binding>\<open>invariants_strict_checking\<close> (K false);
 
@@ -835,6 +838,7 @@ end (* struct *)
 setup\<open>DOF_core.strict_monitor_checking_setup
       #> DOF_core.free_class_in_monitor_checking_setup
       #> DOF_core.free_class_in_monitor_strict_checking_setup
+      #> DOF_core.invariants_checking_setup
       #> DOF_core.invariants_strict_checking_setup
       #> DOF_core.invariants_checking_with_tactics_setup\<close>
 
@@ -1756,7 +1760,9 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos do
             for example when you just want a document element to be referenceable
             without using the burden of ontology classes.
             ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
-         |> (fn thy => if default_cid then thy else check_invariants thy oid)
+         |> (fn thy => if default_cid then thy
+                       else if Config.get_global thy DOF_core.invariants_checking
+                            then check_invariants thy oid else thy)
   end
 
 end (* structure Docitem_Parser *)
@@ -1941,7 +1947,9 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
             in     
                 thy |> DOF_core.update_value_global oid def_trans_input_term def_trans_value
                     |> check_inv
-                    |> (fn thy => Value_Command.Docitem_Parser.check_invariants thy oid)
+                    |> (fn thy => if Config.get_global thy DOF_core.invariants_checking
+                                  then Value_Command.Docitem_Parser.check_invariants thy oid
+                                  else thy)
             end
 
 
@@ -2003,7 +2011,9 @@ fun close_monitor_command (args as (((oid:string,pos),cid_pos),
     in  thy |> (fn thy => (check_lazy_inv thy; thy))
             |> update_instance_command args
             |> (fn thy => (check_inv thy; thy))
-            |> (fn thy => Value_Command.Docitem_Parser.check_invariants thy oid)
+            |> (fn thy => if Config.get_global thy DOF_core.invariants_checking
+                          then Value_Command.Docitem_Parser.check_invariants thy oid
+                          else thy)
             |> delete_monitor_entry
     end 
 

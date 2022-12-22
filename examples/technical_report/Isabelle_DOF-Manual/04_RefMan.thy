@@ -1040,8 +1040,15 @@ subsection*["sec:class_inv"::technical]\<open>ODL Class Invariants\<close>
 text\<open>
   Ontological classes as described so far are too liberal in many situations.
   There is a first high-level syntax implementation for class invariants.
-  These invariants can be checked when an instance of the class is defined.
+  These invariants are checked when an instance of the class is defined,
+  and trigger warnings.
+  The checking is enabled by default but can be disabled with the
+  \<^boxed_theory_text>\<open>invariants_checking\<close> theory attribute:
+  @{boxed_theory_text [display]\<open>
+  declare[[invariants_checking = false]]\<close>}
+
   To enable the strict checking of the invariants,
+  that is to trigger errors instead of warnings,
   the \<^boxed_theory_text>\<open>invariants_strict_checking\<close>
   theory attribute must be set:
   @{boxed_theory_text [display]\<open>
