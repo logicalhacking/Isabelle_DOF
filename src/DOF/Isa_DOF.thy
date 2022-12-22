@@ -787,6 +787,14 @@ fun transduce_term_global {mk_elaboration=mk_elaboration} (term,pos) thy =
           |T t = t
     in T term end
 
+fun elaborate_term ctxt term = transduce_term_global {mk_elaboration=true}
+                                                              (term , Position.none)
+                                                              (Proof_Context.theory_of ctxt)
+
+fun check_term ctxt term = transduce_term_global {mk_elaboration=false}
+                                                              (term , Position.none)
+                                                              (Proof_Context.theory_of ctxt)
+
 fun writeln_classrefs ctxt = let  val tab = #docclass_tab(get_data ctxt)
                              in   writeln (String.concatWith "," (Symtab.keys tab)) end
 
@@ -1397,9 +1405,14 @@ fun value_select name ctxt =
   then default_value ctxt
   else Name_Space.get (Evaluators.get (Proof_Context.theory_of ctxt)) name ctxt;
 
-fun value ctxt term = value_select "" ctxt
-                      (DOF_core.transduce_term_global {mk_elaboration=true} (term , \<^here>)
-                                          (Proof_Context.theory_of ctxt))
+fun value_select' name ctxt =
+  if name = ""
+  then (DOF_core.elaborate_term ctxt) #> default_value ctxt
+  else (DOF_core.elaborate_term ctxt)
+       #> Name_Space.get (Evaluators.get (Proof_Context.theory_of ctxt)) name ctxt;
+
+val value = value_select' ""
+
 val value_without_elaboration = value_select ""
 
 structure Docitem_Parser = 
@@ -1888,17 +1901,15 @@ val _ =
    declare them as value* or term*, although we will refer to them this way in papers. *)
 local 
   fun pretty_term_style ctxt (style: term -> term, t) =
-      Document_Output.pretty_term ctxt (style t);
+      Document_Output.pretty_term ctxt (style (DOF_core.check_term ctxt t));
 in
 val _ = Theory.setup
   (Document_Output.antiquotation_pretty_source_embedded \<^binding>\<open>value_\<close>
     (Scan.lift opt_evaluator -- Term_Style.parse -- Args.term)
     (fn ctxt => fn ((name, style), t) =>
-      Document_Output.pretty_term ctxt (style (value_select name ctxt t)))
-     (* incomplete : without validation and expansion TODO *)
+      Document_Output.pretty_term ctxt (style (value_select' name ctxt t)))
   #> Document_Output.antiquotation_pretty_source_embedded \<^binding>\<open>term_\<close> 
-             (Term_Style.parse -- Args.term) pretty_term_style 
-     (* incomplete : without validation TODO *))
+             (Term_Style.parse -- Args.term) pretty_term_style)
 end
 
 (* setup evaluators  *)
