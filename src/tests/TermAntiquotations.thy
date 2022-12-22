@@ -104,15 +104,19 @@ text\<open>We can also reference an attribute of the instance.
 Here we reference the attribute r of the class F which has the type @{typ \<open>thm list\<close>}.\<close>
 term*\<open>r @{F \<open>xcv4\<close>}\<close>
 
-term \<open>@{A \<open>xcv2\<close>}\<close>
-
 text\<open>We declare a new text element. Note that the class name contains an underscore "_".\<close>
 text*[te::text_element]\<open>Lorem ipsum...\<close>
 
 text\<open>Unfortunately due to different lexical conventions for constant symbols and mixfix symbols
-     this term antiquotation has to be denoted like this: @{term\<open>@{text-element \<open>ee\<close>}\<close>}.
+     this term antiquotation has to be denoted like this: @{term_ \<open>@{text-element \<open>te\<close>}\<close>}.
      We need to substitute an hyphen "-" for the underscore "_".\<close>
 term*\<open>@{text-element \<open>te\<close>}\<close>
+
+text\<open>Terms containing term antiquotations can be checked and evaluated
+using \<^theory_text>\<open>term_\<close> and \<^theory_text>\<open>value_\<close> text antiquotations respectively:
+We can print the term @{term_ \<open>r @{F \<open>xcv4\<close>}\<close>} with \<open>@{term_ \<open>r @{F \<open>xcv4\<close>}\<close>}\<close>
+or get the value of the \<^const>\<open>F.r\<close> attribute of @{docitem \<open>xcv4\<close>} with \<open>@{value_ \<open>r @{F \<open>xcv4\<close>}\<close>}\<close>
+\<close>
 
 end
 

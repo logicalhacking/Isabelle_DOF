@@ -410,7 +410,7 @@ in the context of the SML toplevel of the Isabelle system as in the correspondin
 declare_reference*["text-elements-expls"::technical]
 (*>*)
 
-subsection\<open>Ontological Term-Contexts and their Management\<close>
+subsection*["subsec:onto-term-ctxt"::technical]\<open>Ontological Term-Contexts and their Management\<close>
 text\<open>The major commands providing term-contexts are 
 \<^theory_text>\<open>term*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>,
 \<^theory_text>\<open>value*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close> and
@@ -418,8 +418,9 @@ text\<open>The major commands providing term-contexts are
 Wrt. creation, track-ability and checking they are analogous to the ontological text and 
 code-commands. However the argument terms may contain term-antiquotations stemming from an
 ontology definition. Both term-contexts were type-checked and \<^emph>\<open>validated\<close> against
-the global context (so: in the term \<open>@{A \<open>oid\<close>}\<close>, \<open>oid\<close> is indeed a string which refers 
-to a meta-object belonging to the document class \<open>A\<close>, for example).
+the global context (so: in the term @{term_ \<open>@{author \<open>bu\<close>}\<close>}, \<open>bu\<close>
+is indeed a string which refers to a meta-object belonging
+to the document class \<^typ>\<open>author\<close>, for example).
 The term-context in the \<open>value*\<close>-command and \<^emph>\<open>assert*\<close>-command is additionally expanded
 (\<^eg> replaced) by a term denoting the meta-object.
 This expansion happens \<^emph>\<open>before\<close> evaluation of the term, thus permitting
@@ -1201,7 +1202,7 @@ text\<open>
   when opening a monitor, when closing a monitor, or both
   by using the \<^ML>\<open>DOF_core.update_class_eager_invariant\<close>,
   \<^ML>\<open>DOF_core.update_class_lazy_invariant\<close>, or \<^ML>\<open>DOF_core.update_class_invariant\<close> commands
-  respectfully, to add the invariants to the theory context
+  respectively, to add the invariants to the theory context
   (See \<^technical>\<open>sec:low_level_inv\<close> for an example).
 \<close>
 

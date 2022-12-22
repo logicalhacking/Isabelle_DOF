@@ -692,7 +692,23 @@ text\<open>There are options to display sub-parts of formulas etc., but it is a 
 of tight-checking that the information must be given complete and exactly in the syntax of
 Isabelle. This may be over-precise and a burden to readers not familiar with Isabelle, which may
 motivate authors to choose the aforementioned freeform-style.
+
+Additionally, documents antiquotations were added to check and evaluate terms with
+term antiquotations:
+\<^item> \<^theory_text>\<open>@{term_ \<open>term\<close> }\<close> parses and type-checks \<open>term\<close> with term antiquotations,
+  for instance \<^theory_text>\<open>@{term_ \<open>@{cenelec-term \<open>FT\<close>}\<close>}\<close> will parse and check
+  that \<open>FT\<close> is indeed an instance of the class \<^typ>\<open>cenelec_term\<close>,
+\<^item> \<^theory_text>\<open>@{value_ \<open>term\<close> }\<close> performs the evaluation of \<open>term\<close> with term antiquotations,
+  for instance \<^theory_text>\<open>@{value_ \<open>mcc @{cenelec-term \<open>FT\<close>}\<close>}\<close>
+  will print the value of the \<^const>\<open>mcc\<close> attribute of the instance \<open>FT\<close>.
 \<close>
+
+(*<*)
+declare_reference*["subsec:onto-term-ctxt"::technical]
+(*>*)
+
+text\<open>They are text-contexts equivalents to the \<^theory_text>\<open>term*\<close> and \<^theory_text>\<open>value*\<close> commands
+     for term-contexts introduced in @{technical (unchecked) \<open>subsec:onto-term-ctxt\<close>}\<close>
 
 subsection\<open>A Technical Report with Tight Checking\<close>
 text\<open>An example of tight checking is a small programming manual developed by the
