@@ -404,6 +404,17 @@ a referentiable meta-object of class \<^theory_text>\<open>cid\<close> is create
 The SML-code is type-checked and executed 
 in the context of the SML toplevel of the Isabelle system as in the corresponding 
 \<^theory_text>\<open>ML\<open> \<dots> SML-code \<dots> \<close>\<close>-command.
+Additionally, ML antiquotations were added to check and evaluate terms with
+term antiquotations:
+\<^item> \<^theory_text>\<open>@{term_ \<open>term\<close> }\<close> parses and type-checks \<open>term\<close> with term antiquotations,
+  for instance \<^theory_text>\<open>@{term_ \<open>@{cenelec-term \<open>FT\<close>}\<close>}\<close> will parse and check
+  that \<open>FT\<close> is indeed an instance of the class \<^typ>\<open>cenelec_term\<close>,
+\<^item> \<^theory_text>\<open>@{value_ \<open>term\<close> }\<close> performs the evaluation of \<open>term\<close> with term antiquotations,
+  for instance \<^theory_text>\<open>@{value_ \<open>mcc @{cenelec-term \<open>FT\<close>}\<close>}\<close>
+  will print the value of the \<^const>\<open>mcc\<close> attribute of the instance \<open>FT\<close>.
+  \<^theory_text>\<open>value_\<close> may have an optional argument between square brackets to specify the evaluator:
+  \<open>@{value_ [nbe] \<open>mcc @{cenelec-term \<open>FT\<close>}\<close>}\<close> forces \<open>value_\<close> to evaluate
+  the term using normalization by evaluation (see @{cite "wenzel:isabelle-isar:2020"}).
 \<close>
 
 (*<*)
@@ -435,7 +446,6 @@ Note unspecified attribute values were represented by free fresh variables which
 to choose either the normalization-by-evaluation strategy \<^theory_text>\<open>nbe\<close> or a proof attempt via
 the \<^theory_text>\<open>auto\<close> method. A failure of these strategies will be reported and regarded as non-validation
 of this meta-object. The latter leads to a failure of the entire command.
-
 \<close>
 
 (*<*)

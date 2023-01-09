@@ -1405,11 +1405,12 @@ fun value_select name ctxt =
   then default_value ctxt
   else Name_Space.get (Evaluators.get (Proof_Context.theory_of ctxt)) name ctxt;
 
-fun value_select' name ctxt =
-  if name = ""
+fun value_select' raw_name ctxt =
+  if raw_name = ""
   then (DOF_core.elaborate_term ctxt) #> default_value ctxt
   else (DOF_core.elaborate_term ctxt)
-       #> Name_Space.get (Evaluators.get (Proof_Context.theory_of ctxt)) name ctxt;
+       #> (let val name = intern_evaluator (Proof_Context.theory_of ctxt) raw_name in
+           Name_Space.get (Evaluators.get (Proof_Context.theory_of ctxt)) name ctxt end);
 
 val value = value_select' ""
 
@@ -1902,14 +1903,22 @@ val _ =
 local 
   fun pretty_term_style ctxt (style: term -> term, t) =
       Document_Output.pretty_term ctxt (style (DOF_core.check_term ctxt t));
+  fun print_term ctxt t = ML_Syntax.print_term (DOF_core.check_term (Context.proof_of ctxt) t)
 in
 val _ = Theory.setup
   (Document_Output.antiquotation_pretty_source_embedded \<^binding>\<open>value_\<close>
     (Scan.lift opt_evaluator -- Term_Style.parse -- Args.term)
     (fn ctxt => fn ((name, style), t) =>
       Document_Output.pretty_term ctxt (style (value_select' name ctxt t)))
+  #> ML_Antiquotation.inline_embedded \<^binding>\<open>value_\<close>
+      ((Scan.lift opt_evaluator -- Args.term)
+      #> (fn ((name, t),(ctxt, ts)) =>
+           (((value_select' name (Context.proof_of ctxt) t)
+             |> (ML_Syntax.atomic o (print_term ctxt))), (ctxt, ts))))
   #> Document_Output.antiquotation_pretty_source_embedded \<^binding>\<open>term_\<close> 
-             (Term_Style.parse -- Args.term) pretty_term_style)
+             (Term_Style.parse -- Args.term) pretty_term_style
+  #> ML_Antiquotation.inline_embedded \<^binding>\<open>term_\<close>
+       (fn (ctxt, ts) => (Args.term >> (ML_Syntax.atomic o (print_term ctxt))) (ctxt, ts)))
 end
 
 (* setup evaluators  *)

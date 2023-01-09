@@ -118,5 +118,17 @@ We can print the term @{term_ \<open>r @{F \<open>xcv4\<close>}\<close>} with \<
 or get the value of the \<^const>\<open>F.r\<close> attribute of @{docitem \<open>xcv4\<close>} with \<open>@{value_ \<open>r @{F \<open>xcv4\<close>}\<close>}\<close>
 \<close>
 
+text\<open>There also are \<^theory_text>\<open>term_\<close> and \<^theory_text>\<open>value_\<close> ML antiquotations:
+\<^ML>\<open>@{term_ \<open>r @{F \<open>xcv4\<close>}\<close>}\<close> will return the ML representation of the term \<^term_>\<open>r @{F \<open>xcv4\<close>}\<close>,
+and \<^ML>\<open>@{value_ \<open>r @{F \<open>xcv4\<close>}\<close>}\<close> will return the ML representation
+of the value of the \<^const>\<open>F.r\<close> attribute of @{docitem \<open>xcv4\<close>}.
+\<^theory_text>\<open>value_\<close> may have an optional argument between square brackets to specify the evaluator:
+\<close>
+
+ML\<open>
+val t = @{term_ \<open>r @{F \<open>xcv4\<close>}\<close>}
+val tt = @{value_ [nbe] \<open>r @{F \<open>xcv4\<close>}\<close>}
+\<close>
+
 end
 
