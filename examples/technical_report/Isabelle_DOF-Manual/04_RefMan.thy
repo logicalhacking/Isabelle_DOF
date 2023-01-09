@@ -338,7 +338,7 @@ is currently only available in the SML API's of the kernel.
         | @@{command "ML*"}   ('[' meta_args ']')? '\<open>' SML_code '\<close>'
         | @@{command "term*"} ('[' meta_args ']')? '\<open>' HOL_term  '\<close>'
         | (@@{command "value*"} 
-          | @@{command "assert*"}) \<newline> ('[' meta_args ']' ('[' evaluator ']')?)? '\<open>' HOL_term '\<close>'
+          | @@{command "assert*"}) \<newline> ('[' meta_args ']')? ('[' evaluator ']')? '\<open>' HOL_term '\<close>'
     )
   \<close>
 \<^rail>\<open>  

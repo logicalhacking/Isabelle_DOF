@@ -116,6 +116,12 @@ text\<open>Terms containing term antiquotations can be checked and evaluated
 using \<^theory_text>\<open>term_\<close> and \<^theory_text>\<open>value_\<close> text antiquotations respectively:
 We can print the term @{term_ \<open>r @{F \<open>xcv4\<close>}\<close>} with \<open>@{term_ \<open>r @{F \<open>xcv4\<close>}\<close>}\<close>
 or get the value of the \<^const>\<open>F.r\<close> attribute of @{docitem \<open>xcv4\<close>} with \<open>@{value_ \<open>r @{F \<open>xcv4\<close>}\<close>}\<close>
+\<^theory_text>\<open>value_\<close> may have an optional argument between square brackets to specify the evaluator but this
+argument must be specified after a default optional argument already defined
+by the text antiquotation implementation.
+So one must use the following syntax if he does not want to specify the first optional argument:
+\<open>@{value_ [] [nbe] \<open>r @{F \<open>xcv4\<close>}\<close>}\<close>. Note the empty brackets.
+
 \<close>
 
 text\<open>There also are \<^theory_text>\<open>term_\<close> and \<^theory_text>\<open>value_\<close> ML antiquotations:

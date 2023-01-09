@@ -207,4 +207,8 @@ text\<open>... and here we reference @{A [display] \<open>assertionA\<close>}.\<
 
 assert*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
 
+text\<open>The optional evaluator of \<open>value*\<close> and \<open>assert*\<close> must be specified before the meta arguments:\<close>
+value* [optional_test_A::A, x=6] [nbe] \<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A-instances}\<close>
+assert* [resultProof3::result, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"] [nbe]
+        \<open>evidence @{result \<open>resultProof3\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
 end
