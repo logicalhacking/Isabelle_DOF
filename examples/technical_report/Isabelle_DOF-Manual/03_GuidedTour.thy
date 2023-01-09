@@ -701,6 +701,11 @@ term antiquotations:
 \<^item> \<^theory_text>\<open>@{value_ \<open>term\<close> }\<close> performs the evaluation of \<open>term\<close> with term antiquotations,
   for instance \<^theory_text>\<open>@{value_ \<open>mcc @{cenelec-term \<open>FT\<close>}\<close>}\<close>
   will print the value of the \<^const>\<open>mcc\<close> attribute of the instance \<open>FT\<close>.
+  \<^theory_text>\<open>value_\<close> may have an optional argument between square brackets to specify the evaluator but this
+  argument must be specified after a default optional argument already defined
+  by the text antiquotation implementation.
+  So one must use the following syntax if he does not want to specify the first optional argument:
+  \<open>@{value_ [] [nbe] \<open>r @{F \<open>xcv4\<close>}\<close>}\<close>. Note the empty brackets.
 \<close>
 
 (*<*)
