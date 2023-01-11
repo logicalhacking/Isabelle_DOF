@@ -1898,7 +1898,8 @@ val _ =
     (opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
      >> (fn (meta_args_opt, eval_args ) => pass_trans_to_assert_value_cmd meta_args_opt eval_args));
 
-(* setup ontology - aware text antiquotations. Due to lexical restrictions, we can not
+
+(* setup ontology - aware text and ML antiquotations. Due to lexical restrictions, we can not
    declare them as value* or term*, although we will refer to them this way in papers. *)
 local 
   fun pretty_term_style ctxt (style: term -> term, t) =
