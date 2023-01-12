@@ -235,8 +235,7 @@ A document class\<^bindex>\<open>document class\<close> can be defined using the
      We call document classes with an \<open>accepts_clause\<close> 
      \<^emph>\<open>monitor classes\<close> or \<^emph>\<open>monitors\<close> for short.
      \<^rail>\<open> (@@{command "doc_class"}| @@{command "onto_class"}) class_id '=' (class_id '+')? (attribute_decl+) \<newline>
-           (invariant_decl *) 
-           (accepts_clause rejects_clause?)?\<close>
+           (invariant_decl *) (((rejects_clause accepts_clause) | accepts_clause) *)\<close>
 \<^item> \<open>attribute_decl\<close>:\<^index>\<open>attribute\_decl@\<open>attribute_decl\<close>\<close>
      \<^rail>\<open> name '::' '"' type '"' default_clause? \<close>
 \<^item> \<open>invariant_decl\<close>:\<^index>\<open>invariant\_decl@\<open>invariant_decl\<close>\<close>
@@ -245,10 +244,10 @@ A document class\<^bindex>\<open>document class\<close> can be defined using the
      disambiguate the argument of the expression
      and the \<^boxed_text>\<open>\<sigma>\<close> symbol is reserved to reference the instance of the class itself. 
      \<^rail>\<open> 'invariant' (name '::' '"' term '"' + 'and') \<close>
-\<^item> \<open>accepts_clause\<close>:\<^index>\<open>accepts\_clause@\<open>accepts_clause\<close>\<close>
-     \<^rail>\<open> 'accepts' '"' regexpr '"'\<close>
 \<^item> \<open>rejects_clause\<close>:\<^index>\<open>rejects\_clause@\<open>rejects_clause\<close>\<close>
      \<^rail>\<open> 'rejects' (class_id * ',') \<close>
+\<^item> \<open>accepts_clause\<close>:\<^index>\<open>accepts\_clause@\<open>accepts_clause\<close>\<close>
+     \<^rail>\<open> 'accepts' ('"' regexpr '"' + 'and')\<close>
 \<^item> \<open>default_clause\<close>:\<^index>\<open>default\_clause@\<open>default_clause\<close>\<close> 
      \<^rail>\<open> '<=' '"' expr '"' \<close>
 \<^item> \<open>regexpr\<close>:\<^index>\<open>regexpr@\<open>regexpr\<close>\<close>

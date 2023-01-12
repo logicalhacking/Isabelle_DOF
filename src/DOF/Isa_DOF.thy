@@ -2764,7 +2764,7 @@ val parse_doc_class = (Parse_Spec.overloaded
           -- Scan.repeat1 (Parse.const_binding -- Scan.option (\<^keyword>\<open><=\<close> |-- Parse.term))
           )
       -- (   Scan.optional (\<^keyword>\<open>rejects\<close>    |-- Parse.enum1 "," Parse.term) []
-          -- Scan.repeat   (\<^keyword>\<open>accepts\<close>    |-- Parse.term)
+          -- Scan.repeats   (\<^keyword>\<open>accepts\<close>    |-- (Parse.and_list Parse.term))
           -- Scan.repeats ((\<^keyword>\<open>invariant\<close>) |-- parse_invariants))
      )
 
