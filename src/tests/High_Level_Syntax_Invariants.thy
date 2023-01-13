@@ -47,6 +47,32 @@ text\<open>
   it inherits @{doc_class class_inv1} invariants.
   Hence the \<^term>\<open>int1\<close> invariant is checked when the instance @{docitem testinv2} is defined.\<close>
 
+text\<open>Test invariant for attributes of attributes: \<close>
+
+doc_class inv_test1 =
+  a :: int
+
+doc_class inv_test2 =
+  b :: "inv_test1"
+  c:: int
+  invariant inv_test2 :: "c \<sigma> = 1"
+  invariant inv_test2' :: "a (b \<sigma>) = 2"
+
+doc_class inv_test3 = inv_test1 +
+  b :: "inv_test1"
+  c:: int
+  invariant inv_test3 :: "a \<sigma> = 1"
+  invariant inv_test3' :: "a (b \<sigma>) = 2"
+
+text\<open>To support invariant on attributes in attributes
+and invariant on attributes of the superclasses,
+we check that the type of the attribute of the subclass is ground:\<close>
+ML\<open>
+val Type(st, [ty]) = \<^typ>\<open>inv_test1\<close>
+val Type(st', [ty']) = \<^typ>\<open>'a inv_test1_scheme\<close>
+val t = ty = \<^typ>\<open>unit\<close>
+\<close>
+
 text\<open>Now assume the following ontology:\<close>
 
 doc_class title =

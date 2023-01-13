@@ -2649,30 +2649,40 @@ fun define_cond binding f_sty   cond_suffix read_cond (ctxt:local_theory) =
 fun define_inv cid_long ((lbl, pos), inv) thy = 
     let val bdg = Binding.make (lbl,pos)
         val inv_term = Syntax.read_term (Proof_Context.init_global thy) inv
-        fun update_attribute_type thy class_scheme_ty
+        (* Rewrite selectors types to allow invariants on attributes of the superclasses
+           using the polymorphic type of the class *)
+        fun update_attribute_type thy class_scheme_ty cid_long
             (Const (s, Type (st,[ty, ty'])) $ t) =
               let
                 val cid = Long_Name.qualifier s
               in case DOF_core.get_doc_class_global cid thy of
                      NONE => Const (s, Type(st,[ty, ty']))
-                             $ (update_attribute_type thy class_scheme_ty t)
-                   | SOME _ => Const(s, Type(st,[class_scheme_ty, ty']))
-                               $ (update_attribute_type thy class_scheme_ty t)
+                             $ (update_attribute_type thy class_scheme_ty cid_long t)
+                   | SOME _ => if DOF_core.is_subclass_global thy cid_long cid
+                               then let val Type(st', tys') = ty
+                                    in if tys' = [\<^typ>\<open>unit\<close>]
+                                       then Const (s, Type(st,[ty, ty']))
+                                            $ (update_attribute_type thy class_scheme_ty cid_long t)
+                                       else Const(s, Type(st,[class_scheme_ty, ty']))
+                                            $ (update_attribute_type thy class_scheme_ty cid_long t)
+                                    end
+                               else Const (s, Type(st,[ty, ty']))
+                                    $ (update_attribute_type thy class_scheme_ty cid_long t)
               end
-          | update_attribute_type thy class_scheme_ty (t $ t') =
-              (update_attribute_type thy class_scheme_ty t)
-              $ (update_attribute_type thy class_scheme_ty t')
-          | update_attribute_type thy class_scheme_ty (Abs(s, ty, t)) =
-              Abs(s, ty, update_attribute_type thy class_scheme_ty t)
-          | update_attribute_type _ class_scheme_ty (Free(s, ty)) = if s = invariantN 
+          | update_attribute_type thy class_scheme_ty cid_long (t $ t') =
+              (update_attribute_type thy class_scheme_ty cid_long t)
+              $ (update_attribute_type thy class_scheme_ty cid_long t')
+          | update_attribute_type thy class_scheme_ty cid_long (Abs(s, ty, t)) =
+              Abs(s, ty, update_attribute_type thy class_scheme_ty cid_long t)
+          | update_attribute_type _ class_scheme_ty _ (Free(s, ty)) = if s = invariantN 
                                                                      then Free (s, class_scheme_ty)
                                                                      else Free (s, ty)
-          | update_attribute_type _ _ t = t
+          | update_attribute_type _ _ _ t = t
         val inv_ty = Syntax.read_typ (Proof_Context.init_global thy)
                                      (Name.aT ^ " " ^ cid_long ^ schemeN)
         (* Update the type of each attribute update function to match the type of the
            current class. *)
-        val inv_term' = update_attribute_type thy inv_ty inv_term
+        val inv_term' = update_attribute_type thy inv_ty cid_long inv_term
         val eq_inv_ty = inv_ty --> HOLogic.boolT
         val abs_term = Term.lambda (Free (invariantN, inv_ty)) inv_term'
     in  thy |> Named_Target.theory_map (define_cond bdg eq_inv_ty invariant_suffixN abs_term) end
