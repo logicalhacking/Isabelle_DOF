@@ -235,7 +235,7 @@ A document class\<^bindex>\<open>document class\<close> can be defined using the
      We call document classes with an \<open>accepts_clause\<close> 
      \<^emph>\<open>monitor classes\<close> or \<^emph>\<open>monitors\<close> for short.
      \<^rail>\<open> (@@{command "doc_class"}| @@{command "onto_class"}) class_id '=' (class_id '+')? (attribute_decl+) \<newline>
-           (invariant_decl *) (((rejects_clause accepts_clause) | accepts_clause) *)\<close>
+           (invariant_decl *) (rejects_clause accepts_clause)? \<newline> (accepts_clause *)\<close>
 \<^item> \<open>attribute_decl\<close>:\<^index>\<open>attribute\_decl@\<open>attribute_decl\<close>\<close>
      \<^rail>\<open> name '::' '"' type '"' default_clause? \<close>
 \<^item> \<open>invariant_decl\<close>:\<^index>\<open>invariant\_decl@\<open>invariant_decl\<close>\<close>
