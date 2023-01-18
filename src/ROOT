@@ -11,6 +11,7 @@ session "Isabelle_DOF" = "Functional-Automata" +
     "ontologies/small_math"
     "ontologies/technical_report"
     "ontologies/CC_v3_1_R5"
+    "ontologies/CC_2022_R1"
   theories
     "DOF/Isa_DOF"
     "ontologies/ontologies"
