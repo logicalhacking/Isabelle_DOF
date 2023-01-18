@@ -61,8 +61,18 @@ doc_class inv_test2 =
 doc_class inv_test3 = inv_test1 +
   b :: "inv_test1"
   c:: int
-  invariant inv_test3 :: "a \<sigma> = 1"
+  invariant inv_test3 :: "a \<sigma> = 2"
   invariant inv_test3' :: "a (b \<sigma>) = 2"
+
+doc_class inv_test4 = inv_test2 +
+  d :: "inv_test3"
+  invariant inv_test4 :: "a (inv_test2.b \<sigma>) = 2"
+  invariant inv_test4' :: "a (d \<sigma>) = 2"
+
+text*[inv_test1_instance::inv_test1, a=2]\<open>\<close>
+text*[inv_test3_instance::inv_test3, a=2, b="@{inv-test1 \<open>inv_test1_instance\<close>}" ]\<open>\<close>
+text*[inv_test4_instance::inv_test4, b="@{inv-test1 \<open>inv_test1_instance\<close>}"
+                                   , c=1, d="@{inv-test3 \<open>inv_test3_instance\<close>}"]\<open>\<close>
 
 text\<open>To support invariant on attributes in attributes
 and invariant on attributes of the superclasses,
