@@ -1,0 +1,7 @@
+session "Isabelle_DOF-Proofs" = "HOL-Proofs" +
+  options [document = false,  record_proofs = 2, parallel_limit = 500, document_build = dof]
+  sessions
+    "Isabelle_DOF"
+  theories
+    Isabelle_DOF.ontologies
+    Isabelle_DOF.Isa_DOF
