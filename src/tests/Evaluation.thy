@@ -11,10 +11,9 @@ begin
 
 section\<open>\<^theory_text>\<open>ML*\<close>-Annotated SML-commands\<close>
 ML*[the_function::B,x=\<open>\<open>dfg\<close>\<close>]\<open>fun fac x = if x = 0 then 1 else x * fac(x-1);
-                               val t = @{const_name "List.Nil"}\<close>
+                               val t = \<^value_>\<open>x @{B \<open>the_function\<close>}\<close>\<close>
 ML\<open>fac 5; t\<close> \<comment> \<open>this is a test that ML* is actually evaluated and the 
                  resulting toplevel state is preserved.\<close>
-ML*\<open>3+4\<close>     \<comment> \<open>meta-args are optional\<close> 
 
 text-macro*[the::C]\<open> @{B [display] "the_function"} \<close>
 
@@ -207,7 +206,7 @@ text\<open>... and here we reference @{A [display] \<open>assertionA\<close>}.\<
 
 assert*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
 
-text\<open>The optional evaluator of \<open>value*\<close> and \<open>assert*\<close> must be specified before the meta arguments:\<close>
+text\<open>The optional evaluator of \<open>value*\<close> and \<open>assert*\<close> must be specified after the meta arguments:\<close>
 value* [optional_test_A::A, x=6] [nbe] \<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A-instances}\<close>
 assert* [resultProof3::result, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"] [nbe]
         \<open>evidence @{result \<open>resultProof3\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>

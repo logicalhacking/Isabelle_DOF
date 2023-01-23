@@ -1301,6 +1301,8 @@ type meta_args_t = (((string * Position.T) *
                      (string * Position.T) option)
                     * ((string * Position.T) * string) list)
 
+val empty_meta_args = ((("", Position.none), NONE), [])
+
 val is_improper = not o (Token.is_proper orf Token.is_begin_ignore orf Token.is_end_ignore);
 val improper = Scan.many is_improper; (* parses white-space and comments *)
 
@@ -1334,7 +1336,9 @@ val attributes =
      |-- (reference -- 
          (Scan.optional(Parse.$$$ "," -- improper |-- (Parse.enum "," (improper |-- attribute)))) []))
      --| Parse.$$$ "]"
-     --| improper)  : meta_args_t parser 
+     --| improper)  : meta_args_t parser
+
+val opt_attributes = Scan.optional attributes empty_meta_args
 
 val attributes_upd =  
     ((Parse.$$$ "[" 
@@ -1781,9 +1785,12 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos do
 
 end (* structure Docitem_Parser *)
 
-fun meta_args_exec NONE thy = thy
-   |meta_args_exec (SOME ((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t)) thy = 
-         thy |> (Docitem_Parser.create_and_check_docitem 
+val empty_meta_args = ((("", Position.none), NONE), [])
+
+fun meta_args_exec (meta_args as (((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) thy = 
+         thy |> (if meta_args = empty_meta_args
+                 then (K thy)
+                 else Docitem_Parser.create_and_check_docitem 
                                     {is_monitor = false} {is_inline = false} 
                                     oid pos (I cid_pos) (I doc_attrs))
 
@@ -1823,8 +1830,6 @@ val opt_evaluator =
   We want to have the current position to pass it to transduce_term_global in
   value_cmd, so we pass the Toplevel.transition
 *)
-
-val opt_attributes = Scan.option ODL_Meta_Args_Parser.attributes
 
 fun pass_trans_to_value_cmd meta_args_opt ((name, modes), t)  =
 let val pos = Position.none
@@ -1869,7 +1874,7 @@ fun print_item string_of (modes, arg) state =
 fun print_term meta_args_opt (string_list, string) trans =
 let
   val pos = Toplevel.pos_of trans
-  fun prin state str = string_of_term string pos (Toplevel.context_of state) 
+  fun prin state _ = string_of_term string pos (Toplevel.context_of state) 
 in
   Toplevel.theory(fn thy =>
                      (print_item prin (string_list, string) (Toplevel.theory_toplevel thy); 
@@ -1885,17 +1890,17 @@ val _ = Toplevel.theory_toplevel
 (* setup ontology aware commands *)
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>term*\<close> "read and print term"
-    (opt_attributes -- (opt_modes -- Parse.term) 
+    (ODL_Meta_Args_Parser.opt_attributes -- (opt_modes -- Parse.term) 
      >> (fn (meta_args_opt, eval_args ) => print_term meta_args_opt eval_args));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>value*\<close> "evaluate and print term"
-    (opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
+    (ODL_Meta_Args_Parser.opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
      >> (fn (meta_args_opt, eval_args ) => pass_trans_to_value_cmd meta_args_opt eval_args));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>assert*\<close> "evaluate and assert term"
-    (opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
+    (ODL_Meta_Args_Parser.opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
      >> (fn (meta_args_opt, eval_args ) => pass_trans_to_assert_value_cmd meta_args_opt eval_args));
 
 
@@ -2281,25 +2286,25 @@ ML\<open>
 structure ML_star_Command =
 struct
 
-fun meta_args_exec NONE  = I:generic_theory -> generic_theory
-   |meta_args_exec (SOME ((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t))  = 
-          Context.map_theory (Value_Command.Docitem_Parser.create_and_check_docitem 
+fun meta_args_exec (meta_args as (((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) thy = 
+         thy |> (if meta_args = Value_Command.empty_meta_args
+                 then (K thy)
+                 else Context.map_theory (Value_Command.Docitem_Parser.create_and_check_docitem 
                                     {is_monitor = false} {is_inline = false} 
                                     oid pos (I cid_pos) (I doc_attrs))
+)
 
 val attributes_opt = Scan.option ODL_Meta_Args_Parser.attributes
 
 val _ =
   Outer_Syntax.command ("ML*", \<^here>) "ODL annotated ML text within theory or local theory"
-    ((attributes_opt -- Parse.ML_source) 
+    ((ODL_Meta_Args_Parser.attributes -- Parse.ML_source) 
      >> (fn (meta_args_opt, source) =>
-            (*Toplevel.theory (meta_args_exec meta_args_opt)
-            #>*)
             Toplevel.generic_theory
-              ((ML_Context.exec (fn () =>  
+              ((meta_args_exec meta_args_opt)
+               #> (ML_Context.exec (fn () =>  
                      (ML_Context.eval_source (ML_Compiler.verbose true ML_Compiler.flags) source)) 
-              #> (meta_args_exec meta_args_opt) 
-              #> Local_Theory.propagate_ml_env))));
+               #> Local_Theory.propagate_ml_env))));
 
 end
 \<close>
