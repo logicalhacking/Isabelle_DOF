@@ -79,7 +79,9 @@ text*[ex_SPD::SPD]\<open>
 SECURITY PROBLEM DEFINITION
 The security problem definition of the DBMS PP Extended Package – Access History does not change the security problem definition of the DBMS PP base.
 \<close>
-text*[ex_error::text_element]\<open>\<close>
+(* text*[ex_error::text_element]\<open>
+This instance is an example of the use of the reject clause by   \<^monitor_PP_control>\<open>PP_monitor2\<close>
+\<close> *)
 text*[ex_treats::Threats]\<open>
 Threats
 This extended package neither adds to nor alters the threats given in [DBMS PP].
