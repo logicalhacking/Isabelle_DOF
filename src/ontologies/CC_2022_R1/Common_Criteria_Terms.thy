@@ -1,4 +1,4 @@
-theory Common_criteria_terms
+theory Common_Criteria_Terms
   imports  "Isabelle_DOF.technical_report"
 begin
 
@@ -15,6 +15,7 @@ type_synonym sfc = semi_formal_content
 
 doc_class cc_term = semi_formal_content + 
       mcc          :: math_content_class <= "terminology"
+      level        :: "int option" <= "Some 1"
 
 type_synonym common_criteria_term = cc_term 
 

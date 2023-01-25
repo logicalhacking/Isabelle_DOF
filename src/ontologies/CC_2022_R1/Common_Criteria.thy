@@ -12,7 +12,7 @@ identifies:
 
 (*<<*)  
 theory Common_Criteria
-  imports  "Isabelle_DOF.Common_Criteria_terms"
+  imports  "Isabelle_DOF.Common_Criteria_Terms"
 begin
 
 define_shortcut* csp      \<rightleftharpoons> \<open>CSP\<close>

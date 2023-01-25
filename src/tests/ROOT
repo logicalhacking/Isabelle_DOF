@@ -9,5 +9,6 @@ session "Isabelle_DOF-tests" = "Isabelle_DOF" +
     "Evaluation"
     "High_Level_Syntax_Invariants"
     "Ontology_Matching_Example"
+    "Common_Criteria_Tests"
   theories [condition = ISABELLE_DOF_HOME]
     "Isabelle2022"
