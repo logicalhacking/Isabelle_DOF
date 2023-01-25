@@ -8,12 +8,13 @@ begin
   https://www.commoncriteriaportal.org/files/ppfiles/pp0088V2b_EP_AH_pdf.pdf
 
 *)
-open_monitor* [PP_monitor1::monitor_PP_spec]
-open_monitor* [PP_monitor2::monitor_PP_control]
-text*[PP_title:: title, 
+open_monitor* [ex_PP_monitor1::monitor_PP_spec]
+open_monitor* [ex_PP_monitor2::monitor_PP_control]
+text*[ex_title:: title, 
     short_title = "Some ''DBMS PP Extended Package  Access History''"]\<open>
 DBMS PP Extended Package – Access History\<close>
-open_monitor* [Intro_monitor::PP_introduction_monitor]
+
+open_monitor* [ex_Intro_monitor::PP_introduction_monitor]
 text*[ex_intro::PP_introduction]\<open>
 INTRODUCTION TO THE DBMS PP EXTENDED PACKAGE
 \<close>
@@ -21,7 +22,7 @@ text*[ex_identification::PP_reference,
 version = "''1.02''", 
 sponsors = "[''DBMS Working Group / Technical Community'']", 
 publication_date = "''23rd March, 2017''",
-cc_title = "@{title \<open>PP_title\<close>}"]\<open>
+cc_title = "@{title \<open>ex_title\<close>}"]\<open>
 DBMS PP Extended Package Identification
 Title: DBMS PP Extended Package – Access History DBMS PP Extended Package Abbreviation: AH Sponsor: DBMS Working Group / Technical Community CC Version: Common Criteria (CC) Version 3.1 R4
 EP Version: 1.02
@@ -57,8 +58,9 @@ text*[ex_documents_conventions::PP_introduction_report]\<open>
 Document Conventions
 The document convention explained in Chapter 1.4 of [DBMS PP] are applicable in this document.
 \<close>
-close_monitor*[Intro_monitor]
-open_monitor*[Conformance_monitor::Conformance_monitor]
+close_monitor*[ex_Intro_monitor]
+
+open_monitor*[ex_Conformance_monitor::Conformance_monitor]
 text*[ex_Conf_claims::Conformance]\<open>
 CONFORMANCE CLAIMS
 The following sections describe the conformance claims of the Database Management System Protection Profile (DBMS PP).
@@ -73,8 +75,9 @@ This extended package does not depend on other DBMS PP extended packages.
 This package can only be claimed together with the DBMS PP base package, in the version defined in [DBMS PP].
 This extended package does not conflict with any other DBMS PP extended package at the time of publication.
 \<close>
-close_monitor*[Conformance_monitor]
-open_monitor*[SPD_monitor::SPD_monitor]
+close_monitor*[ex_Conformance_monitor]
+
+open_monitor*[ex_SPD_monitor::SPD_monitor]
 text*[ex_SPD::SPD]\<open>
 SECURITY PROBLEM DEFINITION
 The security problem definition of the DBMS PP Extended Package – Access History does not change the security problem definition of the DBMS PP base.
@@ -94,9 +97,104 @@ text*[ex_Assumptions::Assumptions]\<open>
 Assumptions
 This extended package neither adds to nor alters the assumptions given in [DBMS PP].
 \<close>
-close_monitor*[SPD_monitor]
-close_monitor*[PP_monitor2]
-close_monitor*[PP_monitor1]
+close_monitor*[ex_SPD_monitor]
+
+open_monitor*[ex_SO_monitor::SO_monitor]
+text*[ex_SO::SO]\<open>
+SECURITY OBJECTIVES
+This section identifies the additional security objectives of the TOE and its supporting environment met by this extended package.
+These security objectives identify the responsibilities of the TOE and its environment in meeting the security problem definition (SPD).
+\<close>
+text*[ex_TOE_SO::SO_for_TOE]\<open>
+TOE Security Objectives
+This extended package specifies one additional security objective in addition to those given in [DBMS PP].
+\<close>
+text*[ex_OE_SO::SO_for_OE]\<open>
+Operational Environment Security Objectives
+This extended package neither adds to nor alters the operational environment security objectives given in [DBMS PP].
+\<close>
+text*[ex_R_for_SO::SOR]\<open>
+Rationale for Security Objectives
+The table below gives a summary of the policies, and threats relating to the TOE security objectives.
+Security objectives coverage
+Rationale for the Security objectives sufficiency
+The table below gives the rationale for the TOE security objectives. In this extended package security objective O.ACCESS_HISTORY is supportive in reducing the threats T.ACCESS_TSFDATA, T.IA_MASQUERADE and T.TSF_COMPROMISE given in the base DBMS PP.
+\<close>
+close_monitor*[ex_SO_monitor]
+
+open_monitor*[ex_ECD_monitor::ECD_monitor]
+text*[ex_ESFR::ECD]\<open>
+EXTENDED SECURITY FUNCTIONAL REQUIREMENTS
+This extended package defines one extended SFR.
+\<close>
+text*[ex_ESFR_spe::PP_ECD_report]\<open>
+Extended Security Functional Requirements Specified By This Extended Package
+FTA_TAH_(EXT).1 TOE access information
+FTA_TAH_(EXT).1 TOE access information provides the requirement for a TOE to make available information related to attempts to establish a session.
+Component levelling
+FTA_TAH_(EXT).1 is not hierarchical to any other components. Management: FTA_TAH_(EXT).1
+There are no management activities foreseen.
+Audit: FTA_TAH_(EXT).1
+There are no auditable events foreseen.
+FTA_TAH_(EXT).1 TOE access information
+Hierarchical to: No other components.
+Dependencies: No dependencies.
+FTA_TAH_(EXT).1.1
+Upon a session establishment attempt, the TSF shall store
+a. the [date and time] of the session establishment attempt of the user.
+b. the incremental count of successive unsuccessful session establishment attempt(s).
+FTA_TAH_(EXT).1.2
+Upon successful session establishment, the TSF shall allow the [date and time] of
+a. the previous last successful session establishment, and
+b. the last unsuccessful attempt to session establishment and the number of unsuccessful attempts since the previous last successful session establishment
+to be retrieved by the user.
+\<close>
+text*[ex_R_for_ESFR::PP_ECD_report]\<open>
+Rationale For The Extended Security Functional Requirement
+The table below presents a rationale for the inclusion of the extended functional security requirements found in this extended package.
+\<close>
+close_monitor*[ex_ECD_monitor]
+
+open_monitor*[ex_SR_monitor::SR_monitor]
+text*[ex_SR::SR]\<open>
+SECURITY REQUIREMENTS
+\<close>
+text*[ex_ASFR::SFR]\<open>
+Additional Security Functional Requirements to The Base DBMS PP
+This section defines the functional requirements for the TOE that are amended or specified by this extended package.
+Functional requirements in this extended package were drawn directly from Part 2 of the CC [1b], or were based on Part 2 of the CC, including the use of extended components. These requirements are relevant to supporting the secure operation of the TOE.
+TOE Access (FTA)
+FTA_TAH_(EXT).1 TOE access information FTA_TAH_(EXT).1.1
+Upon a session establishment attempt, the TSF shall store
+a. the [date and time] of the session establishment attempt of the user.
+b. the incremental count of successive unsuccessful session establishment attempt(s).
+FTA_TAH_(EXT).1.2
+Upon successful session establishment, the TSF shall allow the [date and time] of
+a. the previous last successful session establishment, and
+b. the last unsuccessful attempt to session establishment and the number of unsuccessful attempts since the previous last successful session establishment
+to be retrieved by the user.
+\<close>
+text*[ex_SFRR::SFR]\<open>
+Security Functional Requirements Refined from The Base DBMS PP
+Security Audit (FAU)
+FAU_GEN.1 Audit data generation
+\<close>
+text*[ex_R_for_ASFR::SFR]\<open>
+Rationale For The Additional TOE Security Functional Requirements
+The following table provides the rationale for the selection of the security functional requirements. It traces each TOE security objective to the identified security functional requirements.
+\<close>
+text*[ex_R_for_all_SFRD::SFR]\<open>
+Rationale for Satisfying All Security Functional Requirement Dependencies
+This extended package does not contain any additional or amended SFRs that have dependencies.
+\<close>
+text*[ex_::SAR]\<open>
+Security Assurance Requirements
+This extended package neither adds to nor alters the security assurance requirements given in [DBMS PP].
+\<close>
+close_monitor*[ex_SR_monitor]
+
+close_monitor*[ex_PP_monitor2]
+close_monitor*[ex_PP_monitor1]
 
 
 end
