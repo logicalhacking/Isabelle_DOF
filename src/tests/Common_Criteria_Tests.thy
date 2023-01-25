@@ -15,7 +15,7 @@ title*[ex_title:: title,
 DBMS PP Extended Package – Access History\<close>
 
 open_monitor* [ex_Intro_monitor::PP_introduction_monitor]
-chapter*[ex_intro::PP_introduction]\<open>
+chapter*[ex_intro::PP_introduction]\<open>)
 INTRODUCTION TO THE DBMS PP EXTENDED PACKAGE
 \<close>
 section*[title_identification::PP_reference, 
@@ -98,7 +98,7 @@ This extended package does not conflict with any other DBMS PP extended package 
 close_monitor*[ex_Conformance_monitor]
 
 open_monitor*[ex_SPD_monitor::SPD_monitor]
-chapter*[title_SPD::SPD]\<open>
+chapter*[title_SPD::SPD]\<open>)
 SECURITY PROBLEM DEFINITION
 \<close>
 text*[ex_SPD::PP_SPD_report]\<open>
@@ -203,7 +203,7 @@ SECURITY REQUIREMENTS
 section*[title_ASFR::SFR]\<open>
 Additional Security Functional Requirements to The Base DBMS PP
 \<close>
-text*[ex_ASFR::PP_SR_report]\<open>
+text*[ex_ASFR::PP_SR_report]\<open>)
 This section defines the functional requirements for the TOE that are amended or specified by this extended package.
 Functional requirements in this extended package were drawn directly from Part 2 of the CC [1b], or were based on Part 2 of the CC, including the use of extended components. These requirements are relevant to supporting the secure operation of the TOE.
 TOE Access (FTA)
