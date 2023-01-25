@@ -154,24 +154,13 @@ doc_class ECD_section = PP_ECD_report +
 (* Declaration of the sections in the Security requirements *)
 
 doc_class SR = PP_SR_report +
-    
     level             ::    "int option" <= "Some 0"
 
 doc_class SFR = PP_SR_report +
-    level             ::    "int option" <= "Some 2"
     cc_spec_section  ::    "cc_spec_section" <= "SFRs"
 
 doc_class SAR = PP_SR_report +
-    level             ::    "int option" <= "Some 2"
     cc_spec_section  ::    "cc_spec_section" <= "SARs"
-    
-doc_class SFRs = PP_SR_report +
-    cc_spec_section  ::    "cc_spec_section" <= "SFRs"
-    accepts "\<lbrace>SFR\<rbrace>\<^sup>+"
-
-doc_class SARs = PP_SR_report +
-    cc_spec_section  ::    "cc_spec_section" <= "SARs"
-    accepts "\<lbrace>SAR\<rbrace>\<^sup>+"
 
 (* Declaration of the monitor of each chapter of the PP specification *)
 
@@ -193,11 +182,11 @@ doc_class SO_monitor =
 
 doc_class ECD_monitor = 
     cc_spec         ::    "cc_spec" <= "PP"
-    accepts "\<lbrace>ECD_section\<rbrace>\<^sup>+"
+    accepts "ECD ~~ \<lbrace>PP_ECD_report\<rbrace>\<^sup>+"
 
 doc_class SR_monitor = 
     cc_spec         ::    "cc_spec" <= "PP"
-    accepts "SFRs ~~ SARs"
+    accepts "SR ~~ \<lbrace>SFR\<rbrace>\<^sup>+ ~~ \<lbrace>SAR\<rbrace>\<^sup>+"
 
 doc_class Appendix = cc_spec_report +
     level             ::    "int option" <= "Some 0"
