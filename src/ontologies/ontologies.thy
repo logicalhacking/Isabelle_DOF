@@ -19,6 +19,7 @@ imports
   "scholarly_paper/scholarly_paper"
   "small_math/small_math"
   "technical_report/technical_report"
+  "CC_2022_R1/Common_Criteria"
   (* "CC_v3_1_R5/CC_v3_1_R5" *)
 begin
 end
