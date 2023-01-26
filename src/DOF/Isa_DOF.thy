@@ -2524,16 +2524,15 @@ fun attr_2_ML ctxt ((attr:string,pos),(oid:string,pos')) = (ML_Syntax.atomic o M
                                                            (ISA_core.compute_attr_access ctxt attr oid (SOME pos) pos') 
 
 
-val TERM_STORE = let val dummy_term = Bound 0
-                 in  Unsynchronized.ref (dummy_term) end
-
 fun get_instance_value_2_ML ctxt (oid:string,pos) =
-    let val term = case DOF_core.get_value_global oid (Context.theory_of ctxt) of
-                    SOME(t) => t
+    let val ctxt' = Context.the_proof ctxt
+        val value = case DOF_core.get_object_local oid ctxt' of
+                    SOME({pos=pos_decl,id,value,...}) =>
+                      let val markup = docref_markup false oid id pos_decl
+                          val _ = Context_Position.report ctxt' pos markup
+                      in value end
                   | NONE    => error "not an object id"
-        val _ = (TERM_STORE := term)  (* export to the ML Context *)
-    in  "! AttributeAccess.TERM_STORE" end
-
+    in  ML_Syntax.print_term value end
 
 fun trace_attr_2_ML ctxt (oid:string,pos) =
     let val print_string_pair = ML_Syntax.print_pair  ML_Syntax.print_string ML_Syntax.print_string
