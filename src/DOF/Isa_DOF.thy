@@ -1510,11 +1510,14 @@ fun calc_update_term {mk_elaboration=mk_elaboration} thy cid_long
                         | SOME (_, parent_name) =>
                                               get_class_name parent_name attribute_name pos
                   end
-                val attr_defined_cid = get_class_name cid_long lhs pos
-                val {id, name, ...} = the (DOF_core.get_doc_class_global attr_defined_cid thy)
-                val markup = docclass_markup false cid_long id (Binding.pos_of name);
-                val ctxt = Context.Theory thy
-                val _    = Context_Position.report_generic ctxt pos markup;
+                val _ = if mk_elaboration
+                        then
+                          let val attr_defined_cid = get_class_name cid_long lhs pos
+                              val {id, name, ...} = the (DOF_core.get_doc_class_global attr_defined_cid thy)
+                              val markup = docclass_markup false cid_long id (Binding.pos_of name);
+                              val ctxt = Context.Theory thy
+                          in Context_Position.report_generic ctxt pos markup end
+                        else ()
                 val info_opt = DOF_core.get_attribute_info cid_long (Long_Name.base_name lhs) thy
                 val (ln,lnt,lnu,lnut) = case info_opt of 
                                            NONE => error ("unknown attribute >" 
@@ -2130,11 +2133,11 @@ fun document_output {markdown: bool, markup: Latex.text -> Latex.text} meta_args
 
 fun document_output_reports name {markdown, body} meta_args text ctxt =
   let
-    val pos = Input.pos_of text;
+    (*val pos = Input.pos_of text;
     val _ =
       Context_Position.reports ctxt
         [(pos, Markup.language_document (Input.is_delimited text)),
-         (pos, Markup.plain_text)];
+         (pos, Markup.plain_text)];*)
     fun markup xml =
       let val m = if body then Markup.latex_body else Markup.latex_heading
       in [XML.Elem (m (Latex.output_name name), xml)] end;
