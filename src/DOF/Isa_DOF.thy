@@ -705,16 +705,28 @@ fun get_value_local oid ctxt  = case get_object_local oid ctxt of
                                  | NONE => NONE  
 
 (* missing : setting terms to ground (no type-schema vars, no schema vars. )*)
-fun update_value_global oid upd_input_term upd_value thy  = 
+fun update_value_global oid upd_value thy  = 
           case get_object_global oid thy of
                SOME{pos,thy_name, input_term, value,inline,id,cid,vcid} => 
                    let val tab' = Symtab.update(oid,SOME{pos=pos,thy_name=thy_name,
-                                                         input_term=upd_input_term input_term,
+                                                         input_term= input_term,
                                                          value=upd_value value,id=id, 
                                                          inline=inline,cid=cid, vcid=vcid})
                    in  map_data_global (upd_docobj_tab(fn{tab,maxano}=>{tab=tab' tab,maxano=maxano})) thy end
              | NONE => error("undefined doc object: "^oid)  
 
+fun update_input_term_global oid upd_input_term thy  = 
+          case get_object_global oid thy of
+               SOME{pos,thy_name, input_term, value,inline,id,cid,vcid} => 
+                   let val tab' = Symtab.update(oid,SOME{pos=pos,thy_name=thy_name,
+                                                         input_term=upd_input_term input_term,
+                                                         value= value,id=id, 
+                                                         inline=inline,cid=cid, vcid=vcid})
+                   in  map_data_global (upd_docobj_tab(fn{tab,maxano}=>{tab=tab' tab,maxano=maxano})) thy end
+             | NONE => error("undefined doc object: "^oid)  
+
+fun update_value_input_term_global oid upd_input_term upd_value thy  = 
+  update_value_global oid upd_value thy |> update_input_term_global oid upd_input_term
 
 val ISA_prefix = "ISA_"  (* ISA's must be declared in Isa_DOF.thy  !!! *)
 
@@ -819,6 +831,8 @@ fun print_doc_class_tree ctxt P T =
         val roots = filter(is_class_son NONE) class_tab
     in  ".0 .\n" ^ tree 1 roots end
 
+val (object_value_debug, object_value_debug_setup)
+     = Attrib.config_bool \<^binding>\<open>object_value_debug\<close> (K false);
 
 val (strict_monitor_checking, strict_monitor_checking_setup)
      = Attrib.config_bool \<^binding>\<open>strict_monitor_checking\<close> (K false);
@@ -843,7 +857,8 @@ end (* struct *)
 
 \<close>
 
-setup\<open>DOF_core.strict_monitor_checking_setup
+setup\<open>DOF_core.object_value_debug_setup
+      #> DOF_core.strict_monitor_checking_setup
       #> DOF_core.free_class_in_monitor_checking_setup
       #> DOF_core.free_class_in_monitor_strict_checking_setup
       #> DOF_core.invariants_checking_setup
@@ -1639,7 +1654,11 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
                      in Symtab.update(n, {accepted_cids=accepted_cids, 
                                           rejected_cids=rejected_cids,
                                           automatas=aS}) tab end
-      fun update_trace mon_oid = DOF_core.update_value_global mon_oid (def_trans_input_term mon_oid) (def_trans_value mon_oid)
+      fun update_trace mon_oid =
+        if Config.get_global thy DOF_core.object_value_debug
+        then DOF_core.update_value_input_term_global mon_oid
+                                   (def_trans_input_term mon_oid) (def_trans_value mon_oid)
+        else DOF_core.update_value_global mon_oid (def_trans_value mon_oid)
       val update_automatons    = DOF_core.upd_monitor_tabs(fold update_info delta_autoS)
   in  thy |> (* update traces of all enabled monitors *)
              fold (update_trace) (enabled_monitors)
@@ -1750,11 +1769,14 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} oid pos cid_pos do
                                                                       thy cid_long S defaults_init;
                             fun conv_attrs ((lhs, pos), rhs) = (markup2string lhs,pos,"=", Syntax.read_term_global thy rhs)
                             val assns' = map conv_attrs doc_attrs
-                            val (input_term, _(*ty*), _) = calc_update_term {mk_elaboration=false}
-                                                                        thy cid_long assns' defaults
                             val (value_term', _(*ty*), _) = calc_update_term {mk_elaboration=true}
                                                                         thy cid_long assns' defaults
-                          in (input_term, value_term') end
+                          in if Config.get_global thy DOF_core.object_value_debug
+                             then let
+                                    val (input_term, _(*ty*), _) = calc_update_term {mk_elaboration=false}
+                                                                        thy cid_long assns' defaults
+                                  in (input_term, value_term') end
+                             else (\<^term>\<open>()\<close>, value_term') end
     val check_inv =   (DOF_core.get_class_invariant cid_long thy oid is_monitor) 
                             o Context.Theory
 
@@ -1974,7 +1996,11 @@ fun update_instance_command  (((oid:string,pos),cid_pos),
                                      o Context.Theory ) thy ;
                                     thy)
             in     
-                thy |> DOF_core.update_value_global oid def_trans_input_term def_trans_value
+                thy |> (if Config.get_global thy DOF_core.object_value_debug 
+                        then DOF_core.update_value_input_term_global oid
+                                   def_trans_input_term def_trans_value
+                        else DOF_core.update_value_global oid
+                                   def_trans_value)
                     |> check_inv
                     |> (fn thy => if Config.get_global thy DOF_core.invariants_checking
                                   then Value_Command.Docitem_Parser.check_invariants thy oid
@@ -2251,7 +2277,9 @@ fun print_doc_items b ctxt =
                   writeln ("    virtual type:    "^ s);
                   writeln ("    origin:          "^thy_name);
                   writeln ("    inline:          "^dfg inline);
-                  writeln ("    input_term:      "^ (Syntax.string_of_term ctxt input_term));
+                  (if Config.get ctxt DOF_core.object_value_debug
+                   then  writeln ("    input_term:      "^ (Syntax.string_of_term ctxt input_term))
+                   else ());
                   writeln ("    value:           "^ (Syntax.string_of_term ctxt value))
                  )
           | print_item (n, NONE) = 

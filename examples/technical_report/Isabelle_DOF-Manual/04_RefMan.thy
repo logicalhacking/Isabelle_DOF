@@ -458,7 +458,16 @@ text\<open>\<^isadof> provides a number of inspection commands.
 \<^item> \<^ML>\<open>DOF_core.print_doc_class_tree\<close> allows for presenting (fragments) of
   class-inheritance trees (currently only available at ML level),
 \<^item> \<^theory_text>\<open>print_doc_items\<close> allows  to view the status of the internal
-  object-table of text-elements that were tracked, and 
+  object-table of text-elements that were tracked.
+  The theory attribute \<^theory_text>\<open>object_value_debug\<close> allows to inspect
+  the term of instances value before its elaboration and normalization.
+  Adding:
+  @{boxed_theory_text [display]\<open>
+  declare[[object_value_debug = true]]\<close>}
+  ... to the theory
+  will add the raw value term to the instance object-table for all the subsequent
+  declared instances (using \<^theory_text>\<open>text*\<close> for instance).
+  The raw term will be available in the \<open>input_term\<close> field of \<^theory_text>\<open>print_doc_items\<close> output and,
 \<^item> \<^theory_text>\<open>check_doc_global\<close> checks if all declared object references have been
   defined, all monitors are in a final state, and checks the final invariant  
   on all objects (cf. @{technical (unchecked) \<open>sec:advanced\<close>})
