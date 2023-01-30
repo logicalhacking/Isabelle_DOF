@@ -2565,6 +2565,16 @@ fun get_instance_value_2_ML ctxt (oid:string,pos) =
                   | NONE    => error "not an object id"
     in  ML_Syntax.print_term value end
 
+fun get_instance_name_2_ML ctxt (oid:string,pos) =
+    let val ctxt' = Context.the_proof ctxt
+        val _ = case DOF_core.get_object_local oid ctxt' of
+                    SOME({pos=pos_decl,id,...}) =>
+                      let val markup = docref_markup false oid id pos_decl
+                          val _ = Context_Position.report ctxt' pos markup
+                      in () end
+                  | NONE    => error "not an object id"
+    in "\"" ^ oid ^ "\"" end
+
 fun trace_attr_2_ML ctxt (oid:string,pos) =
     let val print_string_pair = ML_Syntax.print_pair  ML_Syntax.print_string ML_Syntax.print_string
         val toML = (ML_Syntax.atomic o (ML_Syntax.print_list print_string_pair))
@@ -2574,6 +2584,15 @@ fun compute_cid_repr ctxt cid pos =
       if DOF_core.is_defined_cid_local  cid ctxt then Const(cid,dummyT)
       else ISA_core.err ("Undefined Class Identifier:"^cid) pos
 
+fun compute_name_repr ctxt oid pos =
+  let val _ = case DOF_core.get_object_local oid ctxt of
+                  SOME({pos=pos_decl,id,...}) =>
+                    let val markup = docref_markup false oid id pos_decl
+                        val _ = Context_Position.report ctxt pos markup
+                    in () end
+                | NONE    => error "not an object id"
+  in HOLogic.mk_string oid end
+
 local
 
 fun pretty_attr_access_style ctxt (style, ((attr,pos),(oid,pos'))) = 
@@ -2582,6 +2601,10 @@ fun pretty_attr_access_style ctxt (style, ((attr,pos),(oid,pos'))) =
 fun pretty_trace_style ctxt (style, (oid,pos)) = 
           Document_Output.pretty_term ctxt (style (ISA_core.compute_attr_access  (Context.Proof ctxt) 
                                                                    "trace" oid NONE pos));
+
+fun pretty_name_style ctxt (style, (oid,pos)) =
+          Document_Output.pretty_term ctxt (style (compute_name_repr  ctxt oid pos))
+
 fun pretty_cid_style ctxt (style, (cid,pos)) = 
           Document_Output.pretty_term ctxt (style (compute_cid_repr ctxt cid pos));
 
@@ -2612,10 +2635,13 @@ val _ = Theory.setup
                (fn (ctxt,toks) => (parse_attribute_access >>  attr_2_ML ctxt) (ctxt, toks))  #>
             ML_Antiquotation.inline  \<^binding>\<open>trace_attribute\<close>  
                (fn (ctxt,toks) => (parse_oid >> trace_attr_2_ML ctxt) (ctxt, toks)) #>
+            ML_Antiquotation.inline  \<^binding>\<open>docitem_name\<close>  
+               (fn (ctxt,toks) => (parse_oid >> get_instance_name_2_ML ctxt) (ctxt, toks)) #>
             basic_entity  \<^binding>\<open>trace_attribute\<close>  parse_oid'  pretty_trace_style #>
             basic_entity  \<^binding>\<open>doc_class\<close>  parse_cid'  pretty_cid_style #>
             basic_entity  \<^binding>\<open>onto_class\<close> parse_cid'  pretty_cid_style #>
-            basic_entity  \<^binding>\<open>docitem_attribute\<close>  parse_attribute_access' pretty_attr_access_style
+            basic_entity  \<^binding>\<open>docitem_attribute\<close>  parse_attribute_access' pretty_attr_access_style #>
+            basic_entity  \<^binding>\<open>docitem_name\<close>  parse_oid' pretty_name_style
            )
 end
 end

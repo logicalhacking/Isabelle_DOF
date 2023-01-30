@@ -91,11 +91,12 @@ update_instance*[xcv4::F, b+="{(@{docitem ''xcv3''},@{docitem ''xcv5''})}"]
 text\<open>And here is the results of some ML-term antiquotations:\<close>
 ML\<open> @{docitem_attribute b::xcv4} \<close>
 ML\<open> @{docitem xcv4}              \<close>
+ML\<open> @{docitem_name xcv4}         \<close>
 ML\<open> @{trace_attribute aaa}       \<close>
 
 text\<open>Now we might need to reference a class instance in a term command and we would like
 Isabelle to check that this instance is indeed an instance of this class.
-Here, we want to reference the instance @{docitem \<open>xcv4\<close>} previously defined.
+Here, we want to reference the instance @{docitem_name "xcv4"} previously defined.
 We can use the term* command which extends the classic term command
 and does the appropriate checking.\<close>
 term*\<open>@{F \<open>xcv4\<close>}\<close>
