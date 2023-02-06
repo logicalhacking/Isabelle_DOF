@@ -65,7 +65,7 @@ text\<open>
 \<close>
 
 (*<*)
-declare_reference*["fig:dependency"::text_section]
+declare_reference*["fig:dependency"::figure]
 (*>*)
 
 

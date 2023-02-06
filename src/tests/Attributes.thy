@@ -25,14 +25,15 @@ print_doc_items
 
 (* this corresponds to low-level accesses : *)
 ML\<open>  
-val {docobj_tab={tab = docitem_tab, ...},docclass_tab, ISA_transformer_tab, monitor_tab,...} 
+val docitem_tab = DOF_core.get_instances \<^context>
+val {docclass_tab, ISA_transformer_tab, monitor_tab,...} 
     = DOF_core.get_data @{context};
-Symtab.dest docitem_tab;
+Name_Space.dest_table docitem_tab;
 Symtab.dest docclass_tab;
 \<close>
 ML\<open>
-#value(the(the(Symtab.lookup docitem_tab "aaa")))
-
+val (oid, DOF_core.Instance {value, ...}) =
+    Name_Space.check (Context.Proof \<^context>) (DOF_core.get_instances \<^context>) ("aaa", Position.none)
 \<close>
 
 find_theorems (60) name:"Conceptual.M." 
@@ -124,11 +125,11 @@ DOF_core.get_attribute_info  "Conceptual.C" "z" @{theory};
 
 
 ML\<open>
-DOF_core.get_value_local "sdf"   @{context};
-DOF_core.get_value_local "sdfg"  @{context};
-DOF_core.get_value_local "xxxy"  @{context};
-DOF_core.get_value_local "dfgdfg" @{context};
-DOF_core.get_value_local "omega" @{context};
+DOF_core.get_value_local ("sdf", Position.none)   @{context};
+DOF_core.get_value_local ("sdfg", Position.none)  @{context};
+DOF_core.get_value_local ("xxxy", Position.none)  @{context};
+DOF_core.get_value_local ("dfgdfg", Position.none) @{context};
+DOF_core.get_value_local ("omega", Position.none) @{context};
 \<close>
 
 text\<open>A not too trivial test: default y -> [].

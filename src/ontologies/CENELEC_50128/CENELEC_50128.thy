@@ -157,10 +157,10 @@ which have the required safety integrity level.\<close>
 Definition*[entity]
 \<open>person, group or organisation who fulfils a role as defined in this European Standard.\<close>
 
-declare_reference*[fault]
+declare_reference*[fault::cenelec_term]
 Definition*[error]
 \<open>defect, mistake or inaccuracy which could result in failure or in a deviation 
-from the intended performance or behaviour (cf. @{cenelec_term (unchecked) \<open>fault\<close>})).\<close>
+from the intended performance or behaviour (cf. @{cenelec_term (unchecked) \<open>fault\<close>}).\<close>
 
 Definition*[fault]
 \<open>defect, mistake or inaccuracy which could result in failure or in a deviation 
@@ -1009,14 +1009,16 @@ ML\<open>
 fun check_sil oid _ ctxt =
   let
     val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
-    val monitor_record_value = #value (the (DOF_core.get_object_local oid ctxt'))
+    val DOF_core.Instance {value = monitor_record_value, ...} =
+                          DOF_core.get_object_global (oid, Position.none) (Context.theory_of ctxt)
     val Const _ $ _ $ monitor_sil $ _ = monitor_record_value
     val traces = AttributeAccess.compute_trace_ML ctxt oid NONE \<^here>
     fun check_sil'' [] = true
       | check_sil'' (x::xs) =
           let
             val (_, doc_oid) = x
-            val doc_record_value = #value (the (DOF_core.get_object_local doc_oid ctxt'))
+            val DOF_core.Instance {value = doc_record_value, ...} =
+                      DOF_core.get_object_global (doc_oid, Position.none) (Context.theory_of ctxt)
             val Const _ $ _ $ _ $ _ $ _ $ cenelec_document_ext = doc_record_value
             val Const _ $ _ $ _ $ doc_sil $ _ $ _ $ _ $ _ $ _ $ _ = cenelec_document_ext
           in 
@@ -1038,8 +1040,10 @@ ML\<open>
 fun check_sil_slow oid _ ctxt =
   let 
     val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
-    val monitor_record_value = #value (the (DOF_core.get_object_local oid ctxt'))
-    val monitor_cid = #cid (the (DOF_core.get_object_local oid ctxt'))
+    val DOF_core.Instance {value = monitor_record_value, ...} =
+                          DOF_core.get_object_global (oid, Position.none) (Context.theory_of ctxt)
+    val DOF_core.Instance {cid = monitor_cid, ...} =
+                          DOF_core.get_object_global (oid, Position.none) (Context.theory_of ctxt)
     val monitor_sil_typ = (Syntax.read_typ ctxt' monitor_cid) --> @{typ "sil"}
     val monitor_sil = Value_Command.value ctxt'
                     (Const("CENELEC_50128.monitor_SIL.sil", monitor_sil_typ) $ monitor_record_value)
@@ -1048,7 +1052,8 @@ fun check_sil_slow oid _ ctxt =
       | check_sil' (x::xs) =
           let
             val (doc_cid, doc_oid) = x
-            val doc_record_value = #value (the (DOF_core.get_object_local doc_oid ctxt'))
+            val DOF_core.Instance {value = doc_record_value, ...} =
+                    DOF_core.get_object_global (doc_oid, Position.none) (Context.theory_of ctxt)
             val doc_sil_typ = (Syntax.read_typ ctxt' doc_cid) --> @{typ "sil"} 
             val doc_sil = Value_Command.value ctxt'
                     (Const ("CENELEC_50128.cenelec_document.sil", doc_sil_typ) $ doc_record_value)
@@ -1082,7 +1087,8 @@ fun check_required_documents oid _ ctxt =
           else
             let
               val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
-              val monitor_record_value = #value (the (DOF_core.get_object_local oid ctxt'))
+              val DOF_core.Instance {value = monitor_record_value, ...} =
+                          DOF_core.get_object_global (oid, Position.none) (Context.theory_of ctxt)
               val Const _ $ _ $ monitor_sil $ _ = monitor_record_value
             in error ("A " ^ cid ^ " cenelec document is required with "
                       ^ Syntax.string_of_term ctxt' monitor_sil)
@@ -1101,11 +1107,11 @@ text*[MonitorPatternMatchingTest::monitor_SIL0]\<open>\<close>
 text*[CenelecClassPatternMatchingTest::SQAP, sil = "SIL0"]\<open>\<close>
 ML\<open>
 val thy = @{theory}
-val monitor_record_value =
-      #value (the (DOF_core.get_object_global "MonitorPatternMatchingTest" thy))
+val DOF_core.Instance {value = monitor_record_value, ...} =
+                                      DOF_core.get_object_global ("MonitorPatternMatchingTest", Position.none) thy
 val Const _ $ _ $ monitor_sil $ _ = monitor_record_value
-val doc_record_value = #value (the (DOF_core.get_object_global
-                                              "CenelecClassPatternMatchingTest" thy))
+val DOF_core.Instance {value = doc_record_value, ...} =
+                                      DOF_core.get_object_global ("CenelecClassPatternMatchingTest", Position.none) thy
 val Const _ $ _ $ _ $ _ $ _ $ cenelec_document_ext = doc_record_value
 val Const _ $ _ $ _ $ doc_sil $ _ $ _ $ _ $ _ $ _ $ _ = cenelec_document_ext
 \<close>
@@ -1266,8 +1272,9 @@ ML
   DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.test_requirement"; \<close>
 
 ML
-\<open> val {docobj_tab={maxano, tab=ref_tab},docclass_tab=class_tab,...} = DOF_core.get_data @{context};
-  Symtab.dest ref_tab;
+\<open> val ref_tab = DOF_core.get_instances \<^context> 
+  val {docclass_tab=class_tab,...} = DOF_core.get_data @{context};
+  Name_Space.dest_table ref_tab;
   Symtab.dest class_tab; \<close>
 
 ML

@@ -41,8 +41,9 @@ ODL on a paradigmatical example.
 
 
 text\<open>Voila the content of the Isabelle_DOF environment so far:\<close>
-ML\<open> 
-val {docobj_tab={tab = x, ...},docclass_tab, ISA_transformer_tab,...} = DOF_core.get_data @{context}; 
+ML\<open>
+val x = DOF_core.get_instances \<^context>
+val {docclass_tab, ISA_transformer_tab,...} = DOF_core.get_data @{context}; 
      Symtab.dest ISA_transformer_tab; 
 \<close>
 
