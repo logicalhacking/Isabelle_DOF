@@ -246,8 +246,8 @@ struct
       SOME entry => entry
     | NONE => raise TYPE ("Unknown instance: " ^ quote i, [], []));
 
-  fun the_instance instances i =
-    the_entry_key instances i
+  fun the_instance instance i =
+    the_entry_key instance i
 
    type ISA_transformers = {check     :
                               (theory -> term * typ * Position.T -> string -> term option),
