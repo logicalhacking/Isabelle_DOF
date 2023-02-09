@@ -26,7 +26,7 @@ print_doc_items
 (* this corresponds to low-level accesses : *)
 ML\<open>  
 val docitem_tab = DOF_core.get_instances \<^context>
-val {docclass_tab, ISA_transformer_tab, monitor_tab,...} 
+val {docclass_tab, ISA_transformer_tab, ...} 
     = DOF_core.get_data @{context};
 Name_Space.dest_table docitem_tab;
 Symtab.dest docclass_tab;
@@ -183,10 +183,7 @@ val t = DOF_core.get_doc_class_global long_cid thy
 \<close>
 open_monitor*[figs1::figure_group, 
               caption="''Sample ''"]  
-ML\<open>
-val thy = \<^theory>
-val {monitor_tab,...} = DOF_core.get_data_global thy
-\<close>
+ML\<open>val monitor_infos = DOF_core.get_monitor_infos \<^context>\<close>
 text*[testFreeA::A]\<open>\<close>
 figure*[fig_A::figure, spawn_columns=False,
         relative_width="90",
@@ -199,20 +196,14 @@ figure*[fig_B::figure,
        \<open> The B train \ldots \<close>  
 open_monitor*[figs2::figure_group, 
               caption="''Sample ''"]
-ML\<open>
-val thy = \<^theory>
-val {monitor_tab,...} = DOF_core.get_data_global thy
-\<close>
+ML\<open>val monitor_infos = DOF_core.get_monitor_infos \<^context>\<close>
 figure*[fig_C::figure, spawn_columns=False,
         relative_width="90",
         src="''figures/A.png''"]
        \<open> The C train \ldots \<close>
 open_monitor*[figs3::figure_group, 
               caption="''Sample ''"]
-ML\<open>
-val thy = \<^theory>
-val {monitor_tab,...} = DOF_core.get_data_global thy
-\<close>
+ML\<open>val monitor_infos = DOF_core.get_monitor_infos \<^context>\<close>
 
 figure*[fig_D::figure, 
         spawn_columns=False,relative_width="90",
@@ -222,10 +213,7 @@ close_monitor*[figs3]
 
 open_monitor*[figs4::figure_group, 
               caption="''Sample ''"]
-ML\<open>
-val thy = \<^theory>
-val {monitor_tab,...} = DOF_core.get_data_global thy
-\<close>
+ML\<open>val monitor_infos = DOF_core.get_monitor_infos \<^context>\<close>
 
 text*[testRejected1::figure_group, caption="''figures/A.png''"]
        \<open> The A train \ldots \<close>

@@ -1077,8 +1077,8 @@ ML\<open>
 fun check_required_documents oid _ ctxt = 
   let
     val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
-    val {monitor_tab,...} = DOF_core.get_data ctxt'
-    val {accepted_cids, ...} = the (Symtab.lookup monitor_tab oid)
+    val DOF_core.Monitor_Info {accepted_cids, ...} =
+                      DOF_core.get_monitor_info_global (oid, Position.none) (Context.theory_of ctxt)
     val traces = AttributeAccess.compute_trace_ML ctxt oid NONE \<^here>
     fun check_required_documents' [] = true
       | check_required_documents' (cid::cids) =

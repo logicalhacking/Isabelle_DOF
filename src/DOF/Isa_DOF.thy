@@ -73,6 +73,7 @@ val invariantN = "\<sigma>"
 val makeN = "make"
 val schemeN = "_scheme"
 val instanceN = "instance"
+val monitor_infoN = "monitor_info"
 
 (* derived from: theory_markup *) 
 fun docref_markup_gen refN def name id pos =
@@ -241,13 +242,10 @@ struct
       (map (Pretty.mark_str o #1) (Name_Space.markup_table verbose ctxt (get_instances ctxt)))
     |> Pretty.writeln;
 
-  fun the_entry_key T i =
+  fun the_instance T i =
     (case Name_Space.lookup_key T i of
       SOME entry => entry
     | NONE => raise TYPE ("Unknown instance: " ^ quote i, [], []));
-
-  fun the_instance instance i =
-    the_entry_key instance i
 
    type ISA_transformers = {check     :
                               (theory -> term * typ * Position.T -> string -> term option),
@@ -268,13 +266,52 @@ struct
                               (string -> {is_monitor:bool} -> Context.generic -> bool) Symtab.table
   val  initial_docclass_lazy_inv_tab : docclass_lazy_inv_tab = Symtab.empty
 
-   type open_monitor_info = {accepted_cids : string list,
-                             rejected_cids : string list,
-                             automatas     : RegExpInterface.automaton list
-   }
 
-   type monitor_tab = open_monitor_info Symtab.table
-   val  initial_monitor_tab:monitor_tab = Symtab.empty
+  datatype monitor_info = Monitor_Info of 
+    {accepted_cids : string list,
+     rejected_cids : string list,
+     automatas     : RegExpInterface.automaton list}
+
+
+  fun make_monitor_info (accepted_cids, rejected_cids, automatas) =
+    Monitor_Info {accepted_cids = accepted_cids,
+                      rejected_cids = rejected_cids,
+                      automatas = automatas}
+
+  structure Monitor_Info = Theory_Data
+  (
+    type T =  monitor_info Name_Space.table;
+    val empty : T = Name_Space.empty_table monitor_infoN;
+    fun merge data : T = Name_Space.merge_tables data;
+  );
+
+  val get_monitor_infos = Monitor_Info.get o Proof_Context.theory_of
+
+  fun check_monitor_info ctxt =
+    #1 o Name_Space.check (Context.Proof ctxt) (get_monitor_infos ctxt);
+
+  fun add_monitor_info name monitor_info thy =
+    thy |> Monitor_Info.map
+      (Name_Space.define (Context.Theory thy) true (name, monitor_info) #> #2);
+
+  fun update_monitor_info name monitor_info thy =
+    thy |> Monitor_Info.map
+      (Name_Space.define (Context.Theory thy) false (name, monitor_info) #> #2);
+
+  fun update_monitor_info_entry name new_monitor_info thy =
+      thy |> Monitor_Info.map
+        (Name_Space.map_table_entry name (fn _ => new_monitor_info));
+
+  fun print_monitors_infos verbose ctxt =
+    Pretty.big_list "Isabelle.DOF Monitor_Infos:"
+      (map (Pretty.mark_str o #1) (Name_Space.markup_table verbose ctxt (get_monitor_infos ctxt)))
+    |> Pretty.writeln;
+
+  fun the_monitor_info T i =
+    (case Name_Space.lookup_key T i of
+      SOME entry => entry
+    | NONE => raise TYPE ("Unknown monitor_info: " ^ quote i, [], []));
+
 
    fun override(t1,t2) = fold(Symtab.update)(Symtab.dest t2)(t1)
 
@@ -283,23 +320,21 @@ structure Data = Generic_Data
 (
   type T =     {docclass_tab        : docclass_tab,
                 ISA_transformer_tab : ISA_transformer_tab,
-                monitor_tab         : monitor_tab,
                 docclass_inv_tab    : docclass_inv_tab,
                 docclass_eager_inv_tab : docclass_eager_inv_tab,
                 docclass_lazy_inv_tab : docclass_lazy_inv_tab}
   val empty  = {docclass_tab        = initial_docclass_tab,
                 ISA_transformer_tab = initial_ISA_tab,
-                monitor_tab         = initial_monitor_tab,
                 docclass_inv_tab    = initial_docclass_inv_tab,
                 docclass_eager_inv_tab = initial_docclass_eager_inv_tab,
                 docclass_lazy_inv_tab = initial_docclass_lazy_inv_tab
                } 
   fun merge(   {docclass_tab = c1,
-                 ISA_transformer_tab = e1, monitor_tab=m1,
+                 ISA_transformer_tab = e1,
                  docclass_inv_tab = n1,
                  docclass_eager_inv_tab = en1, docclass_lazy_inv_tab = ln1},
                {docclass_tab = c2,
-                 ISA_transformer_tab = e2, monitor_tab=m2,
+                 ISA_transformer_tab = e2,
                  docclass_inv_tab = n2,
                  docclass_eager_inv_tab = en2, docclass_lazy_inv_tab = ln2})  = 
                {docclass_tab = merge_docclass_tab (c1,c2),
@@ -310,8 +345,6 @@ structure Data = Generic_Data
                   is impossible and some choice has to be made... Alternative: Symtab.join ?
                 *)
                 ISA_transformer_tab = Symtab.merge (fn (_ , _) => true)(e1,e2),
-                monitor_tab =  override(m1,m2), 
-                     (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
                 docclass_inv_tab = override(n1,n2),
                      (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
                 docclass_eager_inv_tab = override(en1,en2),
@@ -329,58 +362,50 @@ val map_data_global = Context.theory_map o map_data;
 
 
 fun upd_docclass_tab f {docclass_tab = y,ISA_transformer_tab = z,
-                        monitor_tab,  docclass_inv_tab,
+                        docclass_inv_tab,
                         docclass_eager_inv_tab, docclass_lazy_inv_tab} = 
-            {docclass_tab = f y,ISA_transformer_tab = z, monitor_tab=monitor_tab,
+            {docclass_tab = f y,ISA_transformer_tab = z,
              docclass_inv_tab=docclass_inv_tab,
              docclass_eager_inv_tab=docclass_eager_inv_tab,
              docclass_lazy_inv_tab=docclass_lazy_inv_tab};
 fun upd_ISA_transformers f {docclass_tab = y,ISA_transformer_tab = z,
-                            monitor_tab, docclass_inv_tab,
+                            docclass_inv_tab,
                             docclass_eager_inv_tab, docclass_lazy_inv_tab} = 
-            {docclass_tab = y,ISA_transformer_tab = f z, monitor_tab=monitor_tab, 
+            {docclass_tab = y,ISA_transformer_tab = f z, 
              docclass_inv_tab=docclass_inv_tab,
              docclass_eager_inv_tab=docclass_eager_inv_tab,
              docclass_lazy_inv_tab=docclass_lazy_inv_tab};
-fun upd_monitor_tabs f {docclass_tab,ISA_transformer_tab,
-                        monitor_tab, docclass_inv_tab,
-                        docclass_eager_inv_tab, docclass_lazy_inv_tab} =
-            {docclass_tab = docclass_tab,
-             ISA_transformer_tab = ISA_transformer_tab, monitor_tab = f monitor_tab, 
-             docclass_inv_tab=docclass_inv_tab,
-             docclass_eager_inv_tab=docclass_eager_inv_tab,
-             docclass_lazy_inv_tab=docclass_lazy_inv_tab};             
 fun upd_docclass_inv_tab f {docclass_tab,ISA_transformer_tab,
-                            monitor_tab, docclass_inv_tab,
+                            docclass_inv_tab,
                             docclass_eager_inv_tab, docclass_lazy_inv_tab} =
             {docclass_tab = docclass_tab,
-             ISA_transformer_tab = ISA_transformer_tab, monitor_tab = monitor_tab, 
+             ISA_transformer_tab = ISA_transformer_tab,
              docclass_inv_tab    = f docclass_inv_tab,
              docclass_eager_inv_tab=docclass_eager_inv_tab,
              docclass_lazy_inv_tab=docclass_lazy_inv_tab};
 
 fun upd_docclass_eager_inv_tab f {docclass_tab,ISA_transformer_tab,
-                            monitor_tab, docclass_inv_tab,
+                            docclass_inv_tab,
                             docclass_eager_inv_tab, docclass_lazy_inv_tab} =
             {docclass_tab = docclass_tab,
-             ISA_transformer_tab = ISA_transformer_tab, monitor_tab = monitor_tab, 
+             ISA_transformer_tab = ISA_transformer_tab, 
              docclass_inv_tab=docclass_inv_tab,
              docclass_eager_inv_tab=f docclass_eager_inv_tab,
              docclass_lazy_inv_tab=docclass_lazy_inv_tab};
 
 fun upd_docclass_lazy_inv_tab f {docclass_tab,ISA_transformer_tab,
-                            monitor_tab, docclass_inv_tab,
+                            docclass_inv_tab,
                             docclass_eager_inv_tab, docclass_lazy_inv_tab} =
             {docclass_tab = docclass_tab,
-             ISA_transformer_tab = ISA_transformer_tab, monitor_tab = monitor_tab, 
+             ISA_transformer_tab = ISA_transformer_tab, 
              docclass_inv_tab=docclass_inv_tab,
              docclass_eager_inv_tab=docclass_eager_inv_tab,
              docclass_lazy_inv_tab=f docclass_lazy_inv_tab};
 
-fun get_accepted_cids  ({accepted_cids, ... } : open_monitor_info) = accepted_cids
-fun get_rejected_cids  ({rejected_cids, ... } : open_monitor_info) = rejected_cids
+fun get_accepted_cids  (Monitor_Info {accepted_cids, ... }) = accepted_cids
+fun get_rejected_cids  (Monitor_Info {rejected_cids, ... }) = rejected_cids
 fun get_alphabet monitor_info = (get_accepted_cids monitor_info) @ (get_rejected_cids monitor_info)
-fun get_automatas      ({automatas, ... }     : open_monitor_info) = automatas
+fun get_automatas      (Monitor_Info {automatas, ... }) = automatas
 
 
 (* doc-class-name management: We still use the record-package for internally 
@@ -611,6 +636,18 @@ fun get_object_global (oid, pos) thy  =
                                     (get_instances (Proof_Context.init_global thy)) (oid, [pos])
   in instance end
 
+fun get_monitor_info_global (oid, pos) thy  =
+  let
+    val ((oid', rs), monitor_info) = Name_Space.check_reports (Context.Theory thy)
+                                    (get_monitor_infos (Proof_Context.init_global thy)) (oid, [pos])
+  in monitor_info end
+
+fun get_monitor_info_name_global (oid, pos) thy  =
+  let
+    val ((oid', rs), monitor_info) = Name_Space.check_reports (Context.Theory thy)
+                                    (get_monitor_infos (Proof_Context.init_global thy)) (oid, [pos])
+  in oid' end
+
 fun get_doc_class_global cid thy = 
     if cid = default_cid then error("default class access") (* TODO *)
     else let val t = #docclass_tab(get_data_global thy)
@@ -689,7 +726,9 @@ fun get_value_local (oid, pos) ctxt  =
 
 fun update_value_global name pos upd_value thy  =
   let
-    val binding = Binding.make (name, pos)
+    val binding = if Long_Name.is_qualified name
+                  then Binding.make (Long_Name.base_name name, pos)
+                  else Binding.make (name, pos)
     val ((oid, rs), instance) = Name_Space.check_reports (Context.Theory thy)
                                     (get_instances (Proof_Context.init_global thy)) (name, [pos])
     val Instance {defined, pos, thy_name, input_term, value, inline, id, cid, vcid} = instance
@@ -699,7 +738,9 @@ fun update_value_global name pos upd_value thy  =
 
 fun update_input_term_global name pos upd_input_term thy  = 
   let
-    val binding = Binding.make (name, pos)
+    val binding = if Long_Name.is_qualified name
+                  then Binding.make (Long_Name.base_name name, pos)
+                  else Binding.make (name, pos)
     val ((oid, rs), instance) = Name_Space.check_reports (Context.Theory thy)
                                     (get_instances (Proof_Context.init_global thy)) (name, [pos])
     val Instance {defined, pos, thy_name, input_term, value, inline, id, cid, vcid} = instance
@@ -1532,24 +1573,22 @@ fun msg thy txt pos = if Config.get_global thy DOF_core.strict_monitor_checking
                   else ISA_core.warn txt pos
 
 fun register_oid_cid_in_open_monitors oid pos cid_pos thy = 
-  let val {monitor_tab,...} = DOF_core.get_data_global thy
-      val cid_long= fst cid_pos
+  let val cid_long= fst cid_pos
       val pos' = snd cid_pos
-      fun is_enabled (n, info) = 
+      fun is_enabled (n, monitor_info) = 
                      if exists (DOF_core.is_subclass_global thy cid_long) 
-                               (DOF_core.get_alphabet info)
-                     then SOME n 
+                               (DOF_core.get_alphabet monitor_info)
+                     then SOME (n, monitor_info)
                      else if Config.get_global thy DOF_core.free_class_in_monitor_strict_checking
                              orelse  Config.get_global thy DOF_core.free_class_in_monitor_checking
-                          then SOME n
+                          then SOME (n, monitor_info)
                           else NONE
       (* filtering those monitors with automata, whose alphabet contains the
          cid of this oid. The enabled ones were selected and moved to their successor state
          along the super-class id. The evaluation is in parallel, simulating a product
          semantics without expanding the subclass relationship. *)
-      fun is_enabled_for_cid moid =
-        let val {accepted_cids, automatas, rejected_cids, ...} = 
-                              the(Symtab.lookup monitor_tab moid)
+      fun is_enabled_for_cid (moid , monitor_info) =
+        let val DOF_core.Monitor_Info {accepted_cids, automatas, rejected_cids, ...} = monitor_info
             val indexS= 1 upto (length automatas)
             val indexed_autoS = automatas ~~ indexS
             fun check_for_cid (A,n) = 
@@ -1593,8 +1632,9 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
                                                            ^ " of monitor " ^ moid
                                                            ^ " rejected doc_class: " ^ cid_long) pos';A))
               end
-         in (moid,map check_for_cid indexed_autoS)  end  
-      val enabled_monitors = List.mapPartial is_enabled (Symtab.dest monitor_tab)
+         in (moid,map check_for_cid indexed_autoS, monitor_info)  end  
+      val enabled_monitors = List.mapPartial is_enabled
+                      (Name_Space.dest_table (DOF_core.get_monitor_infos (Proof_Context.init_global thy)))
       fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
                                                  Syntax.read_term_global thy rhs)
       val trace_attr = [((("trace", @{here}), "+="), "[("^cid_long^", ''"^oid^"'')]")]
@@ -1607,28 +1647,27 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
         (#1 o (calc_update_term {mk_elaboration=true} thy (cid_of oid) assns'))
         #> value (Proof_Context.init_global thy)
       val _ = if null enabled_monitors then () else writeln "registrating in monitors ..." 
-      val _ = app (fn n => writeln(oid^" : "^cid_long^" ==> "^n)) enabled_monitors;
+      val _ = app (fn (n, _) => writeln(oid^" : "^cid_long^" ==> "^n)) enabled_monitors;
        (* check that any transition is possible : *)
       fun inst_class_inv x = DOF_core.get_class_invariant(cid_of x) thy x {is_monitor=false}
-      fun class_inv_checks ctxt = map (fn x => inst_class_inv x ctxt) enabled_monitors
-      val delta_autoS = map is_enabled_for_cid enabled_monitors; 
-      fun update_info (n, aS) (tab: DOF_core.monitor_tab) =  
-                     let val {accepted_cids,rejected_cids,...} = the(Symtab.lookup tab n)
-                     in Symtab.update(n, {accepted_cids=accepted_cids, 
-                                          rejected_cids=rejected_cids,
-                                          automatas=aS}) tab end
+      fun class_inv_checks ctxt = map (fn (x, _) => inst_class_inv x ctxt) enabled_monitors
+      val delta_autoS = map is_enabled_for_cid  enabled_monitors; 
+      fun update_info (n, aS, monitor_info) =  
+        let val DOF_core.Monitor_Info {accepted_cids,rejected_cids,...} = monitor_info
+        in Name_Space.map_table_entry n (fn _ => DOF_core.make_monitor_info
+                                                              (accepted_cids, rejected_cids, aS))
+        end
       fun update_trace mon_oid =
         if Config.get_global thy DOF_core.object_value_debug
         then DOF_core.update_value_input_term_global mon_oid pos
                                    (def_trans_input_term mon_oid) (def_trans_value mon_oid)
         else DOF_core.update_value_global mon_oid pos (def_trans_value mon_oid)
-      val update_automatons    = DOF_core.upd_monitor_tabs(fold update_info delta_autoS)
   in  thy |> (* update traces of all enabled monitors *)
-             fold (update_trace) (enabled_monitors)
+             fold update_trace (map #1 enabled_monitors)
           |> (* check class invariants of enabled monitors *)
              (fn thy => (class_inv_checks (Context.Theory thy); thy))
           |> (* update the automata of enabled monitors *)
-             DOF_core.map_data_global(update_automatons)
+              DOF_core.Monitor_Info.map (fold update_info delta_autoS)
   end
 
 fun check_invariants thy (oid, pos) =
@@ -1993,7 +2032,7 @@ fun open_monitor_command  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Par
                             | SOME (cid, _) => cid
                 val (accS, rejectS, aS) = compute_enabled_set cid thy
                 val info = {accepted_cids = accS, rejected_cids = rejectS, automatas  = aS }
-            in  DOF_core.map_data_global(DOF_core.upd_monitor_tabs(Symtab.update(oid, info )))(thy)
+            in DOF_core.add_monitor_info (Binding.make (oid, pos)) (DOF_core.Monitor_Info info) thy
             end
     in
       o_m_c oid pos cid_pos doc_attrs #> create_monitor_entry oid
@@ -2002,8 +2041,7 @@ fun open_monitor_command  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Par
 
 fun close_monitor_command (args as (((oid, pos), cid_pos),
                                     doc_attrs: (((string*Position.T)*string)*string)list)) thy = 
-    let val {monitor_tab,...} = DOF_core.get_data_global thy
-        fun check_if_final aS = let val i = (find_index (not o RegExpInterface.final) aS) + 1
+    let fun check_if_final aS = let val i = (find_index (not o RegExpInterface.final) aS) + 1
                                 in  if i >= 1 
                                     then
                                       Value_Command.Docitem_Parser.msg thy
@@ -2012,10 +2050,11 @@ fun close_monitor_command (args as (((oid, pos), cid_pos),
                                                      ^ " not in final state.") pos
                                     else ()
                                 end
-        val _ =  case Symtab.lookup monitor_tab oid of
-                     SOME {automatas,...} => check_if_final automatas 
-                  |  NONE => error ("Not belonging to a monitor class: "^oid)
-        val delete_monitor_entry = DOF_core.map_data_global (DOF_core.upd_monitor_tabs (Symtab.delete oid))
+        val _ = let val DOF_core.Monitor_Info {automatas,...} =
+                                                  DOF_core.get_monitor_info_global (oid, pos) thy
+                in check_if_final automatas end
+        val oid' = DOF_core.get_monitor_info_name_global (oid, pos) thy
+        val delete_monitor_entry = DOF_core.Monitor_Info.map (Name_Space.del_table oid')
         val DOF_core.Instance {cid=cid_long, id, ...} = DOF_core.get_object_global (oid, pos) thy
         val markup = docref_markup false oid id pos;
         val _ = Context_Position.report (Proof_Context.init_global thy) pos markup;
@@ -2258,11 +2297,10 @@ val _ =
     (Parse.opt_bang >> (fn b => Toplevel.keep (print_doc_items b o Toplevel.context_of)));
 
 fun check_doc_global (strict_checking : bool) ctxt = 
-  let val {monitor_tab, ...} = DOF_core.get_data ctxt;
-      val S = ctxt |> DOF_core.get_instances |> Name_Space.dest_table
+  let val S = ctxt |> DOF_core.get_instances |> Name_Space.dest_table
               |> filter (fn (_, DOF_core.Instance {defined,...}) => (not defined))
               |> map #1
-      val T = map fst (Symtab.dest monitor_tab)
+      val T = map fst (Name_Space.dest_table (DOF_core.get_monitor_infos ctxt))
   in if null S 
      then if null T then ()
           else error("Global consistency error - there are open monitors:  "
