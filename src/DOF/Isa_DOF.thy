@@ -632,8 +632,10 @@ fun define_object_global {define = define} ((oid, pos), bbb) thy  =
 
 fun get_object_global (oid, pos) thy  =
   let
+    val ctxt = Proof_Context.init_global thy
     val ((oid', rs), instance) = Name_Space.check_reports (Context.Theory thy)
-                                    (get_instances (Proof_Context.init_global thy)) (oid, [pos])
+                                    (get_instances ctxt) (oid, [pos])
+    (*val _ = Context_Position.reports ctxt rs;*)
   in instance end
 
 fun get_monitor_info_global (oid, pos) thy  =
@@ -1968,7 +1970,7 @@ fun update_instance_command  (((oid, pos), cid_pos),
                               doc_attrs: (((string*Position.T)*string)*string)list) thy
             : theory = 
             let val cid = let val DOF_core.Instance {pos=pos_decl,cid,id,...} =
-                                                      DOF_core.get_object_global (oid, pos) thy
+                                                DOF_core.get_object_global (oid, Position.none) thy
                               val markup = docref_markup false oid id pos_decl;
                               val ctxt = Proof_Context.init_global thy;
                               val _ = Context_Position.report ctxt pos markup;
@@ -2055,8 +2057,9 @@ fun close_monitor_command (args as (((oid, pos), cid_pos),
                 in check_if_final automatas end
         val oid' = DOF_core.get_monitor_info_name_global (oid, pos) thy
         val delete_monitor_entry = DOF_core.Monitor_Info.map (Name_Space.del_table oid')
-        val DOF_core.Instance {cid=cid_long, id, ...} = DOF_core.get_object_global (oid, pos) thy
-        val markup = docref_markup false oid id pos;
+        val DOF_core.Instance {cid=cid_long, id, pos=pos_decl, ...} =
+                                                          DOF_core.get_object_global (oid, pos) thy
+        val markup = docref_markup false oid id pos_decl;
         val _ = Context_Position.report (Proof_Context.init_global thy) pos markup;
         val check_inv =   (DOF_core.get_class_invariant cid_long thy oid) {is_monitor=true} 
                            o Context.Theory
