@@ -125,11 +125,11 @@ DOF_core.get_attribute_info  "Conceptual.C" "z" @{theory};
 
 
 ML\<open>
-DOF_core.get_value_local ("sdf", Position.none)   @{context};
-DOF_core.get_value_local ("sdfg", Position.none)  @{context};
-DOF_core.get_value_local ("xxxy", Position.none)  @{context};
-DOF_core.get_value_local ("dfgdfg", Position.none) @{context};
-DOF_core.get_value_local ("omega", Position.none) @{context};
+DOF_core.get_value_local "sdf"   @{context};
+DOF_core.get_value_local "sdfg"  @{context};
+DOF_core.get_value_local "xxxy"  @{context};
+DOF_core.get_value_local "dfgdfg" @{context};
+DOF_core.get_value_local "omega" @{context};
 \<close>
 
 text\<open>A not too trivial test: default y -> [].
