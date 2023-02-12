@@ -717,27 +717,32 @@ fun get_value_local oid ctxt  =
 
 (* missing : setting terms to ground (no type-schema vars, no schema vars. )*)
 
-fun update_value_global name pos upd_value thy  =
+fun binding_from_instance_pos name thy  =
   let
-    val binding = if Long_Name.is_qualified name
-                  then Binding.make (Long_Name.base_name name, pos)
-                  else Binding.make (name, pos)
+    val ns = get_instances (Proof_Context.init_global thy)
+                         |> Name_Space.space_of_table 
+    val {pos, ...} = Name_Space.the_entry ns (get_object_name_global name thy)
+  in if Long_Name.is_qualified name
+     then Binding.make (Long_Name.base_name name, pos)
+     else Binding.make (name, pos)end
+
+fun update_value_global name upd_value thy  =
+  let
+    val binding = binding_from_instance_pos name thy
     val Instance {defined, input_term, value, inline, id, cid, vcid} = get_object_global name thy 
     val instance' = make_instance (defined, input_term, upd_value value, inline, id, cid, vcid)
   in update_instance binding (instance') thy end
 
-fun update_input_term_global name pos upd_input_term thy  = 
+fun update_input_term_global name upd_input_term thy  = 
   let
-    val binding = if Long_Name.is_qualified name
-                  then Binding.make (Long_Name.base_name name, pos)
-                  else Binding.make (name, pos)
+    val binding = binding_from_instance_pos name thy
     val Instance {defined, input_term, value, inline, id, cid, vcid} = get_object_global name thy 
     val instance' = make_instance (defined, upd_input_term input_term,
                                    value, inline, id, cid, vcid)
   in update_instance binding (instance') thy end
 
-fun update_value_input_term_global name pos upd_input_term upd_value thy  = 
-  update_value_global name pos upd_value thy |> update_input_term_global name pos upd_input_term
+fun update_value_input_term_global name upd_input_term upd_value thy  = 
+  update_value_global name upd_value thy |> update_input_term_global name upd_input_term
 
 
 val ISA_prefix = "ISA_"  (* ISA's must be declared in Isa_DOF.thy  !!! *)
@@ -1629,13 +1634,6 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
          in (moid,map check_for_cid indexed_autoS, monitor_info)  end  
       val enabled_monitors = List.mapPartial is_enabled
                       (Name_Space.dest_table (DOF_core.get_monitor_infos (Proof_Context.init_global thy)))
-      val enabled_monitors_pos =
-        enabled_monitors
-        |> map (fn (s, mi) =>
-                  let val ns = DOF_core.get_instances (Proof_Context.init_global thy)
-                               |> Name_Space.space_of_table 
-                      val {pos, ...} = Name_Space.the_entry ns s
-                   in (s, pos) end)
       fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
                                                  Syntax.read_term_global thy rhs)
       val trace_attr = [((("trace", @{here}), "+="), "[("^cid_long^", ''"^oid^"'')]")]
@@ -1658,13 +1656,13 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
         in Name_Space.map_table_entry n (fn _ => DOF_core.make_monitor_info
                                                               (accepted_cids, rejected_cids, aS))
         end
-      fun update_trace (mon_oid, pos) =
+      fun update_trace mon_oid =
         if Config.get_global thy DOF_core.object_value_debug
-        then DOF_core.update_value_input_term_global mon_oid pos
+        then DOF_core.update_value_input_term_global mon_oid
                                    (def_trans_input_term mon_oid) (def_trans_value mon_oid)
-        else DOF_core.update_value_global mon_oid pos (def_trans_value mon_oid)
+        else DOF_core.update_value_global mon_oid (def_trans_value mon_oid)
   in  thy |> (* update traces of all enabled monitors *)
-             fold update_trace enabled_monitors_pos
+             fold update_trace (map #1 enabled_monitors)
           |> (* check class invariants of enabled monitors *)
              (fn thy => (class_inv_checks (Context.Theory thy); thy))
           |> (* update the automata of enabled monitors *)
@@ -1991,16 +1989,11 @@ fun update_instance_command  (((oid, pos), cid_pos),
                 fun check_inv thy =((DOF_core.get_class_invariant cid_long thy oid {is_monitor=false} 
                                      o Context.Theory ) thy ;
                                     thy)
-                val ns = DOF_core.get_instances (Proof_Context.init_global thy)
-                         |> Name_Space.space_of_table 
-                val {pos = pos', ...} =
-                                  Name_Space.the_entry ns (DOF_core.get_object_name_global oid thy)
             in     
                 thy |> (if Config.get_global thy DOF_core.object_value_debug 
-                        then DOF_core.update_value_input_term_global oid pos'
+                        then DOF_core.update_value_input_term_global oid
                                    def_trans_input_term def_trans_value
-                        else DOF_core.update_value_global oid pos'
-                                   def_trans_value)
+                        else DOF_core.update_value_global oid def_trans_value)
                     |> check_inv
                     |> (fn thy => if Config.get_global thy DOF_core.invariants_checking
                                   then Value_Command.Docitem_Parser.check_invariants thy (oid, pos)
