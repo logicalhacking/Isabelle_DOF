@@ -74,6 +74,7 @@ val makeN = "make"
 val schemeN = "_scheme"
 val instanceN = "instance"
 val monitor_infoN = "monitor_info"
+val isa_transformerN = "isa_transformer"
 
 (* derived from: theory_markup *) 
 fun docref_markup_gen refN def name id pos =
@@ -242,13 +243,48 @@ struct
       SOME entry => entry
     | NONE => raise TYPE ("Unknown instance: " ^ quote i, [], []));
 
-   type ISA_transformers = {check     :
-                              (theory -> term * typ * Position.T -> string -> term option),
-                            elaborate : (theory -> string -> typ -> term option -> Position.T -> term)
-                           }
 
-   type ISA_transformer_tab = ISA_transformers Symtab.table
-   val  initial_ISA_tab:ISA_transformer_tab = Symtab.empty
+  datatype isa_transformer = ISA_Transformer of 
+    {check     : (theory -> term * typ * Position.T -> string -> term option),
+     elaborate : (theory -> string -> typ -> term option -> Position.T -> term)}
+
+  fun make_isa_transformer (check, elaborate) =
+    ISA_Transformer {check = check, elaborate = elaborate}
+
+  structure ISA_Transformers = Theory_Data
+  (
+    type T = isa_transformer Name_Space.table;
+    val empty : T = Name_Space.empty_table isa_transformerN;
+    fun merge data : T = Name_Space.merge_tables data;
+  );
+
+  val get_isa_transformers = ISA_Transformers.get o Proof_Context.theory_of
+
+  fun check_isa_transformer ctxt =
+    #1 o Name_Space.check (Context.Proof ctxt) (get_isa_transformers ctxt);
+
+  fun add_isa_transformer name isa_transformer thy =
+    thy |> ISA_Transformers.map
+      (Name_Space.define (Context.Theory thy) true (name, isa_transformer) #> #2);
+
+  fun update_isa_transformer name isa_transformer thy =
+    thy |> ISA_Transformers.map
+      (Name_Space.define (Context.Theory thy) false (name, isa_transformer) #> #2);
+
+  fun update_isa_transformer_entry name new_isa_transformer thy =
+    thy |> ISA_Transformers.map
+      (Name_Space.map_table_entry name (fn _ => new_isa_transformer));
+
+  fun print_isa_transformers verbose ctxt =
+    Pretty.big_list "Isabelle.DOF ISA_Transformers:"
+      (map (Pretty.mark_str o #1) (Name_Space.markup_table verbose ctxt (get_isa_transformers ctxt)))
+    |> Pretty.writeln;
+
+  fun the_isa_transformer T i =
+    (case Name_Space.lookup_key T i of
+      SOME entry => entry
+    | NONE => raise TYPE ("Unknown isa_transformer: " ^ quote i, [], []));
+
 
    type docclass_inv_tab = (string -> {is_monitor:bool} -> Context.generic -> bool) Symtab.table
    val  initial_docclass_inv_tab : docclass_inv_tab = Symtab.empty
@@ -314,32 +350,21 @@ struct
 structure Data = Generic_Data
 (
   type T =     {docclass_tab        : docclass_tab,
-                ISA_transformer_tab : ISA_transformer_tab,
                 docclass_inv_tab    : docclass_inv_tab,
                 docclass_eager_inv_tab : docclass_eager_inv_tab,
                 docclass_lazy_inv_tab : docclass_lazy_inv_tab}
   val empty  = {docclass_tab        = initial_docclass_tab,
-                ISA_transformer_tab = initial_ISA_tab,
                 docclass_inv_tab    = initial_docclass_inv_tab,
                 docclass_eager_inv_tab = initial_docclass_eager_inv_tab,
                 docclass_lazy_inv_tab = initial_docclass_lazy_inv_tab
                } 
   fun merge(   {docclass_tab = c1,
-                 ISA_transformer_tab = e1,
                  docclass_inv_tab = n1,
                  docclass_eager_inv_tab = en1, docclass_lazy_inv_tab = ln1},
                {docclass_tab = c2,
-                 ISA_transformer_tab = e2,
                  docclass_inv_tab = n2,
                  docclass_eager_inv_tab = en2, docclass_lazy_inv_tab = ln2})  = 
                {docclass_tab = merge_docclass_tab (c1,c2),
-                (*
-                  The following merge is ultra-critical: the transformer tabs were
-                  just extended by letting *the first* entry with the same long-name win.
-                  Since the range is a (call-back) function, a comparison on its content
-                  is impossible and some choice has to be made... Alternative: Symtab.join ?
-                *)
-                ISA_transformer_tab = Symtab.merge (fn (_ , _) => true)(e1,e2),
                 docclass_inv_tab = override(n1,n2),
                      (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
                 docclass_eager_inv_tab = override(en1,en2),
@@ -356,43 +381,33 @@ val get_data_global = Data.get o Context.Theory;
 val map_data_global = Context.theory_map o map_data;
 
 
-fun upd_docclass_tab f {docclass_tab = y,ISA_transformer_tab = z,
+fun upd_docclass_tab f {docclass_tab = y,
                         docclass_inv_tab,
                         docclass_eager_inv_tab, docclass_lazy_inv_tab} = 
-            {docclass_tab = f y,ISA_transformer_tab = z,
+            {docclass_tab = f y,
              docclass_inv_tab=docclass_inv_tab,
              docclass_eager_inv_tab=docclass_eager_inv_tab,
              docclass_lazy_inv_tab=docclass_lazy_inv_tab};
-fun upd_ISA_transformers f {docclass_tab = y,ISA_transformer_tab = z,
-                            docclass_inv_tab,
-                            docclass_eager_inv_tab, docclass_lazy_inv_tab} = 
-            {docclass_tab = y,ISA_transformer_tab = f z, 
-             docclass_inv_tab=docclass_inv_tab,
-             docclass_eager_inv_tab=docclass_eager_inv_tab,
-             docclass_lazy_inv_tab=docclass_lazy_inv_tab};
-fun upd_docclass_inv_tab f {docclass_tab,ISA_transformer_tab,
+fun upd_docclass_inv_tab f {docclass_tab,
                             docclass_inv_tab,
                             docclass_eager_inv_tab, docclass_lazy_inv_tab} =
             {docclass_tab = docclass_tab,
-             ISA_transformer_tab = ISA_transformer_tab,
              docclass_inv_tab    = f docclass_inv_tab,
              docclass_eager_inv_tab=docclass_eager_inv_tab,
              docclass_lazy_inv_tab=docclass_lazy_inv_tab};
 
-fun upd_docclass_eager_inv_tab f {docclass_tab,ISA_transformer_tab,
+fun upd_docclass_eager_inv_tab f {docclass_tab,
                             docclass_inv_tab,
                             docclass_eager_inv_tab, docclass_lazy_inv_tab} =
             {docclass_tab = docclass_tab,
-             ISA_transformer_tab = ISA_transformer_tab, 
              docclass_inv_tab=docclass_inv_tab,
              docclass_eager_inv_tab=f docclass_eager_inv_tab,
              docclass_lazy_inv_tab=docclass_lazy_inv_tab};
 
-fun upd_docclass_lazy_inv_tab f {docclass_tab,ISA_transformer_tab,
+fun upd_docclass_lazy_inv_tab f {docclass_tab,
                             docclass_inv_tab,
                             docclass_eager_inv_tab, docclass_lazy_inv_tab} =
             {docclass_tab = docclass_tab,
-             ISA_transformer_tab = ISA_transformer_tab, 
              docclass_inv_tab=docclass_inv_tab,
              docclass_eager_inv_tab=docclass_eager_inv_tab,
              docclass_lazy_inv_tab=f docclass_lazy_inv_tab};
@@ -745,7 +760,7 @@ fun update_value_input_term_global name upd_input_term upd_value thy  =
   update_value_global name upd_value thy |> update_input_term_global name upd_input_term
 
 
-val ISA_prefix = "ISA_"  (* ISA's must be declared in Isa_DOF.thy  !!! *)
+val ISA_prefix = "Isabelle_DOF_"
 
 val doc_class_prefix = ISA_prefix ^ "doc_class_"
 
@@ -766,54 +781,38 @@ fun is_class_ISA thy s = let val bname = Long_Name.base_name s
                                is_defined_cid_global (class_name) thy end
                            else false end
 
-fun get_isa_global isa thy  =  
-            case Symtab.lookup (#ISA_transformer_tab(get_data_global thy)) (ISA_prefix^isa) of 
-                 NONE      => error("undefined inner syntax antiquotation: "^isa)
-               | SOME(bbb) => bbb
-                               
-
-fun get_isa_local isa ctxt  = case Symtab.lookup (#ISA_transformer_tab(get_data ctxt)) (ISA_prefix^isa) of 
-                                       NONE => error("undefined inner syntax antiquotation: "^isa)
-                                      |SOME(bbb) => bbb
-
-fun update_isa map_data_fun (isa, trans) ctxt =
-  let
-    val bname = Long_Name.base_name isa;
-    val qual = Long_Name.qualifier isa;
-    val long_name = Long_Name.qualify qual (ISA_prefix ^ bname);
-  in map_data_fun (upd_ISA_transformers(Symtab.update(long_name, trans))) ctxt end
-
- fun update_isa_local (isa, trans) ctxt  = update_isa  map_data (isa, trans) ctxt
-
-fun update_isa_global (isa, trans) thy  = update_isa  map_data_global (isa, trans) thy
 
 fun transduce_term_global {mk_elaboration=mk_elaboration} (term,pos) thy =
     (* pre: term should be fully typed in order to allow type-related term-transformations *)
-    let val tab = #ISA_transformer_tab(get_data_global thy)
-        fun T(Const(s,ty) $ t) = if is_ISA s
-                                 then case Symtab.lookup tab s of
-                                          NONE => error("undefined inner syntax antiquotation: "^s)
-                                        | SOME({check=check, elaborate=elaborate}) =>
-                                            case check thy (t,ty,pos) s of
-                                               NONE => Const(s,ty) $ t
-                                               (* checking isa, may raise error though. *)
-                                             | SOME t => if mk_elaboration 
-                                                         then elaborate thy s ty (SOME t) pos
-                                                         else Const(s,ty) $ t
-                                                         (* transforming isa *)
-                                 else (Const(s,ty) $ (T t))
-          |T(t1 $ t2) = T(t1) $ T(t2)
-          |T(Const(s,ty)) = if is_ISA s
-                            then case Symtab.lookup tab s of
-                                     NONE => error("undefined inner syntax antiquotation: "^s)
-                                   | SOME({elaborate=elaborate, ...}) =>
-                                       if mk_elaboration 
-                                       then elaborate thy s ty NONE pos
-                                       else Const(s, ty)
-                                       (* transforming isa *)
-                            else Const(s, ty)
-          |T(Abs(s,ty,t)) = Abs(s,ty,T t)
-          |T t = t
+    let val ctxt = Proof_Context.init_global thy
+        val tab = get_isa_transformers ctxt  
+        fun T(Const(s,ty) $ t) =
+                if is_ISA s
+                then let val name = check_isa_transformer ctxt (s, Position.none)
+                         val (_, ISA_Transformer {check, elaborate}) = the_isa_transformer tab name
+                     in case check thy (t,ty,pos) s of
+                            NONE => Const(s,ty) $ t
+                            (* checking isa, may raise error though. *)
+                         | SOME t => if mk_elaboration 
+                                     then elaborate thy s ty (SOME t) pos
+                                     else Const(s,ty) $ t
+                                     (* transforming isa *)
+                     end
+                else (Const(s,ty) $ (T t))
+          | T(t1 $ t2) = T(t1) $ T(t2)
+          | T(Const(s,ty)) =
+                if is_ISA s
+                then 
+                  let val name = check_isa_transformer ctxt (s, Position.none)
+                      val (_, ISA_Transformer {elaborate, ...}) = the_isa_transformer tab name
+                  in if mk_elaboration 
+                     then elaborate thy s ty NONE pos
+                     else Const(s, ty)
+                     (* transforming isa *)
+                  end
+                else Const(s, ty)
+          | T(Abs(s,ty,t)) = Abs(s,ty,T t)
+          | T t = t
     in T term end
 
 fun elaborate_term ctxt term = transduce_term_global {mk_elaboration=true}
@@ -893,15 +892,15 @@ datatype "doc_class" = mk string
 
 \<comment> \<open>and others in the future : file, http, thy, ...\<close> 
 
-datatype "typ" = ISA_typ string  ("@{typ _}")
-datatype "term" = ISA_term string  ("@{term _}")
-consts ISA_term_repr    :: "string \<Rightarrow> term"              ("@{termrepr _}")
-datatype "thm" = ISA_thm string  ("@{thm _}")
-datatype "file" = ISA_file string  ("@{file _}")
-datatype "thy" = ISA_thy string  ("@{thy _}")
-consts ISA_docitem      :: "string \<Rightarrow> 'a"                ("@{docitem _}")
-datatype "docitem_attr" = ISA_docitem_attr string  string ("@{docitemattr (_) :: (_)}")
-consts ISA_trace_attribute :: "string \<Rightarrow> (string * string) list" ("@{trace-attribute _}")
+datatype "typ" = Isabelle_DOF_typ string  ("@{typ _}")
+datatype "term" = Isabelle_DOF_term string  ("@{term _}")
+consts Isabelle_DOF_term_repr    :: "string \<Rightarrow> term"              ("@{termrepr _}")
+datatype "thm" = Isabelle_DOF_thm string  ("@{thm _}")
+datatype "file" = Isabelle_DOF_file string  ("@{file _}")
+datatype "thy" = Isabelle_DOF_thy string  ("@{thy _}")
+consts Isabelle_DOF_docitem      :: "string \<Rightarrow> 'a"                ("@{docitem _}")
+datatype "docitem_attr" = Isabelle_DOF_docitem_attr string  string ("@{docitemattr (_) :: (_)}")
+consts Isabelle_DOF_trace_attribute :: "string \<Rightarrow> (string * string) list" ("@{trace-attribute _}")
 
 \<comment> \<open>Dynamic setup of inner syntax cartouche\<close>
 
@@ -1135,15 +1134,8 @@ fun declare_ISA_class_accessor_and_check_instance doc_class_name =
     val mixfix_string = "@{" ^ conv_class_name ^ " _}"
   in
     Sign.add_consts_cmd [(bind, typestring, Mixfix.mixfix(mixfix_string))]
-    #> (fn thy => let
-                    val long_name = DOF_core.read_cid_global thy (Binding.name_of doc_class_name)
-                    val qual = Long_Name.qualifier long_name
-                    val class_name = Long_Name.qualify qual
-                            (DOF_core.get_doc_class_name_without_ISA_prefix (Binding.name_of bind))
-                  in
-                    DOF_core.update_isa_global
-                             (class_name, {check=check_instance, elaborate=elaborate_instance}) thy
-                  end)
+    #> DOF_core.add_isa_transformer bind (DOF_core.make_isa_transformer 
+                                                              (check_instance, elaborate_instance))
   end
 
 fun elaborate_instances_list thy isa_name _ _ pos =
@@ -1179,14 +1171,8 @@ fun declare_class_instances_annotation thy doc_class_name =
     val mixfix_string = "@{" ^ conv_class_name' ^ "}"
   in
     Sign.add_consts [(bind', class_list_typ, Mixfix.mixfix(mixfix_string))]
-    #> (fn thy => let
-                    val long_name = DOF_core.read_cid_global thy (Binding.name_of doc_class_name)
-                    val qual = Long_Name.qualifier long_name
-                    val transformer_name = Long_Name.qualify qual
-                                (DOF_core.get_doc_class_name_without_ISA_prefix (Binding.name_of bind'))
-                  in
-                    DOF_core.update_isa_global (transformer_name,
-                    {check=check_identity, elaborate= elaborate_instances_list}) thy end)
+    #>  DOF_core.add_isa_transformer bind' (DOF_core.make_isa_transformer
+                                                        (check_identity, elaborate_instances_list))
   end                            
 
 fun symbex_attr_access0 ctxt proj_term term =
@@ -1245,8 +1231,8 @@ case term_option of
 (* utilities *)
 
 fun property_list_dest ctxt X =
-  map (fn \<^Const_>\<open>ISA_term for s\<close> => HOLogic.dest_string s
-         |\<^Const_>\<open>ISA_term_repr for s\<close> => holstring_to_bstring ctxt (HOLogic.dest_string s))
+  map (fn \<^Const_>\<open>Isabelle_DOF_term for s\<close> => HOLogic.dest_string s
+         |\<^Const_>\<open>Isabelle_DOF_term_repr for s\<close> => holstring_to_bstring ctxt (HOLogic.dest_string s))
     (HOLogic.dest_list X)
 
 end; (* struct *)
@@ -1255,21 +1241,41 @@ end; (* struct *)
 
 
 subsection\<open> Isar - Setup\<close>
+(* Isa_transformers declaration for Isabelle_DOF term anti-quotations (typ, term, thm, etc.).
+   They must be declared in the same theory file as the one of the declaration
+   of Isabelle_DOF term anti-quotations !!! *)
+setup\<open>
+[(\<^type_name>\<open>typ\<close>, ISA_core.ML_isa_check_typ, ISA_core.ML_isa_elaborate_generic)
+  , (\<^type_name>\<open>term\<close>, ISA_core.ML_isa_check_term, ISA_core.ML_isa_elaborate_generic)
+  , (\<^type_name>\<open>thm\<close>, ISA_core.ML_isa_check_thm, ISA_core.ML_isa_elaborate_generic)
+  , (\<^type_name>\<open>file\<close>, ISA_core.ML_isa_check_file, ISA_core.ML_isa_elaborate_generic)]
+|> fold (fn (n, check, elaborate) => fn thy =>
+let val ns = Sign.tsig_of thy |> Type.type_space
+    val name = n
+    val {pos, ...} = Name_Space.the_entry ns name
+    val bname = Long_Name.base_name name
+    val binding = Binding.make (bname, pos)
+    val binding' = (Binding.prefix_name DOF_core.ISA_prefix binding)
+                  |> Binding.prefix false bname
+in  DOF_core.add_isa_transformer binding' ((check, elaborate) |> DOF_core.make_isa_transformer) thy
+end)
+#>
+([(\<^const_name>\<open>Isabelle_DOF_term_repr\<close>,
+    ISA_core.check_identity, ISA_core.ML_isa_elaborate_generic)
+  ,(\<^const_name>\<open>Isabelle_DOF_docitem\<close>,
+      ISA_core.ML_isa_check_docitem, ISA_core.ML_isa_elaborate_generic)
+  ,(\<^const_name>\<open>Isabelle_DOF_trace_attribute\<close>,
+      ISA_core.ML_isa_check_trace_attribute, ISA_core.ML_isa_elaborate_trace_attribute)]
+|> fold (fn (n, check, elaborate) => fn thy =>
+let val ns = Sign.consts_of thy |> Consts.space_of
+    val name = n
+    val {pos, ...} = Name_Space.the_entry ns name
+    val bname =  Long_Name.base_name name
+    val binding = Binding.make (bname, pos)
+in  DOF_core.add_isa_transformer binding ((check, elaborate) |> DOF_core.make_isa_transformer) thy
+end))
+\<close>
 
-setup\<open>DOF_core.update_isa_global("Isa_DOF.typ.typ",
-                  {check=ISA_core.ML_isa_check_typ, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
-setup\<open>DOF_core.update_isa_global("Isa_DOF.term.term",
-                  {check=ISA_core.ML_isa_check_term, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
-setup\<open>DOF_core.update_isa_global("Isa_DOF.term_repr",
-                    {check=ISA_core.check_identity, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
-setup\<open>DOF_core.update_isa_global("Isa_DOF.thm.thm",
-                  {check=ISA_core.ML_isa_check_thm, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
-setup\<open>DOF_core.update_isa_global("Isa_DOF.file.file",
-                  {check=ISA_core.ML_isa_check_file, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
-setup\<open>DOF_core.update_isa_global("Isa_DOF.docitem",
-              {check=ISA_core.ML_isa_check_docitem, elaborate=ISA_core.ML_isa_elaborate_generic}) \<close>
-setup\<open>DOF_core.update_isa_global("Isa_DOF.trace_attribute",
-              {check=ISA_core.ML_isa_check_trace_attribute, elaborate=ISA_core.ML_isa_elaborate_trace_attribute}) \<close>
 section\<open> Syntax for Annotated Documentation Commands (the '' View'' Part I) \<close>
 
 
