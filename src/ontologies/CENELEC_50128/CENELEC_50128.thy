@@ -1030,7 +1030,14 @@ fun check_sil oid _ ctxt =
   in check_sil'' traces end
 \<close>
 
-setup\<open>DOF_core.update_class_invariant "CENELEC_50128.monitor_SIL0" check_sil\<close>
+setup\<open>
+(fn thy =>
+let val ctxt = Proof_Context.init_global thy
+    val binding = let val cid = DOF_core.read_cid ctxt "monitor_SIL0"
+                  in the ((DOF_core.get_data ctxt |> #docclass_tab |> Symtab.lookup) cid)
+                     |> #name end
+       in  DOF_core.add_ml_invariant binding check_sil thy end)
+\<close>
 
 text\<open>
 A more generic example of check_sil which can be generalized:
@@ -1066,7 +1073,14 @@ fun check_sil_slow oid _ ctxt =
   in check_sil' traces end
 \<close>
 
-(*setup\<open>DOF_core.update_class_invariant "CENELEC_50128.monitor_SIL0" check_sil_slow\<close>*)
+(*setup\<open>
+(fn thy =>
+let val ctxt = Proof_Context.init_global thy
+    val binding = let val cid = DOF_core.read_cid ctxt "monitor_SIL0"
+                  in the ((DOF_core.get_data ctxt |> #docclass_tab |> Symtab.lookup) cid)
+                     |> #name end
+       in  DOF_core.add_ml_invariant binding check_sil_slow thy end)
+\<close>*)
 
 (* As traces of monitor instances (docitems) are updated each time an instance is declared
   (with text*, section*, etc.), invariants checking functions which check the full list of traces
@@ -1096,7 +1110,14 @@ fun check_required_documents oid _ ctxt =
   in check_required_documents' accepted_cids end
 \<close>
 
-setup\<open>DOF_core.update_class_lazy_invariant "CENELEC_50128.monitor_SIL0" check_required_documents\<close>
+setup\<open>
+(fn thy =>
+let val ctxt = Proof_Context.init_global thy
+    val binding = let val cid = DOF_core.read_cid ctxt "monitor_SIL0"
+                  in the ((DOF_core.get_data ctxt |> #docclass_tab |> Symtab.lookup) cid)
+                     |> #name end
+       in  DOF_core.add_closing_ml_invariant binding check_required_documents thy end)
+\<close>
 
 (* Test pattern matching for the records of the current CENELEC implementation classes,
    and used by checking functions.

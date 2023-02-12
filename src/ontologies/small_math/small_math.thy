@@ -64,7 +64,9 @@ doc_class result = technical +
 
 
 
-ML\<open>fun check_invariant_invariant oid {is_monitor:bool} ctxt =
+ML\<open>
+fn thy =>
+let fun check_invariant_invariant oid {is_monitor:bool} ctxt =
       let val kind_term = ISA_core.compute_attr_access ctxt "kind" oid NONE @{here} 
           val property_termS = ISA_core.compute_attr_access ctxt "property" oid NONE @{here} 
           val tS = HOLogic.dest_list property_termS
@@ -73,9 +75,14 @@ ML\<open>fun check_invariant_invariant oid {is_monitor:bool} ctxt =
                                else error("class class invariant violation") 
            | _ => false
       end
+      val ctxt = Proof_Context.init_global thy
+      val binding = let val cid = DOF_core.read_cid ctxt "result"
+                  in the ((DOF_core.get_data ctxt |> #docclass_tab |> Symtab.lookup) cid)
+                     |> #name end
+in DOF_core.add_ml_invariant binding check_invariant_invariant thy end
 \<close>
 
-setup\<open>DOF_core.update_class_invariant "small_math.result" check_invariant_invariant\<close>
+(*setup\<open>DOF_core.add_ml_invariant "small_math.result" check_invariant_invariant\<close>*)
 
 
 doc_class example    = technical +
@@ -164,10 +171,17 @@ end
 end
 \<close>
 
-setup\<open> let val cidS = ["small_math.introduction","small_math.technical", "small_math.conclusion"];
+setup\<open>
+fn thy =>
+let val cidS = ["small_math.introduction","small_math.technical", "small_math.conclusion"];
            fun body moni_oid _ ctxt = (Small_Math_trace_invariant.check  ctxt cidS moni_oid NONE;
                                        true)
-       in  DOF_core.update_class_invariant "small_math.article" body end\<close>
+    val ctxt = Proof_Context.init_global thy
+    val binding = let val cid = DOF_core.read_cid ctxt "article"
+                  in the ((DOF_core.get_data ctxt |> #docclass_tab |> Symtab.lookup) cid)
+                     |> #name end
+in DOF_core.add_ml_invariant binding body thy end
+\<close>
 
 end
 

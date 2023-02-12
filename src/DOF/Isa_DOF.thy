@@ -69,12 +69,13 @@ val def_suffixN = "_" ^ defN
 val defsN = defN ^ "s"
 val instances_of_suffixN = "_instances"
 val invariant_suffixN = "_inv"
-val invariantN = "\<sigma>"
+val instance_placeholderN = "\<sigma>"
 val makeN = "make"
 val schemeN = "_scheme"
 val instanceN = "instance"
 val monitor_infoN = "monitor_info"
 val isa_transformerN = "isa_transformer"
+val ml_invariantN = "ml_invariant"
 
 (* derived from: theory_markup *) 
 fun docref_markup_gen refN def name id pos =
@@ -286,16 +287,134 @@ struct
     | NONE => raise TYPE ("Unknown isa_transformer: " ^ quote i, [], []));
 
 
-   type docclass_inv_tab = (string -> {is_monitor:bool} -> Context.generic -> bool) Symtab.table
-   val  initial_docclass_inv_tab : docclass_inv_tab = Symtab.empty
+  type ml_invariant = string -> {is_monitor:bool} -> Context.generic -> bool
 
-  type docclass_eager_inv_tab =
-                              (string -> {is_monitor:bool} -> Context.generic -> bool) Symtab.table
-  val  initial_docclass_eager_inv_tab : docclass_eager_inv_tab = Symtab.empty
+  structure ML_Invariants = Theory_Data
+  (
+    type T = ml_invariant Name_Space.table;
+    val empty : T = Name_Space.empty_table ml_invariantN;
+    fun merge data : T = Name_Space.merge_tables data;
+  );
 
-  type docclass_lazy_inv_tab =
-                              (string -> {is_monitor:bool} -> Context.generic -> bool) Symtab.table
-  val  initial_docclass_lazy_inv_tab : docclass_lazy_inv_tab = Symtab.empty
+  val get_ml_invariants = ML_Invariants.get o Proof_Context.theory_of
+
+  fun get_ml_invariant_global cid thy  =
+    Name_Space.check (Context.Theory thy)
+                      (get_ml_invariants (Proof_Context.init_global thy)) (cid, Position.none) |> #2
+
+  fun get_ml_invariant_name_global cid thy  =
+    Name_Space.check (Context.Theory thy)
+                      (get_ml_invariants (Proof_Context.init_global thy)) (cid, Position.none) |> #1
+
+  fun check_ml_invariant ctxt =
+    #1 o Name_Space.check (Context.Proof ctxt) (get_ml_invariants ctxt);
+
+  fun add_ml_invariant name ml_invariant thy =
+    thy |> ML_Invariants.map
+      (Name_Space.define (Context.Theory thy) true (name, ml_invariant) #> #2);
+
+  fun update_ml_invariant name ml_invariant thy =
+    thy |> ML_Invariants.map
+      (Name_Space.define (Context.Theory thy) false (name, ml_invariant) #> #2);
+
+  fun update_ml_invariant_entry name new_ml_invariant thy =
+    thy |> ML_Invariants.map
+      (Name_Space.map_table_entry name (fn _ => new_ml_invariant));
+
+  fun print_ml_invariants verbose ctxt =
+    Pretty.big_list "Isabelle.DOF ML_Invariants:"
+      (map (Pretty.mark_str o #1) (Name_Space.markup_table verbose ctxt (get_ml_invariants ctxt)))
+    |> Pretty.writeln;
+
+  fun the_ml_invariant T i =
+    (case Name_Space.lookup_key T i of
+      SOME entry => entry
+    | NONE => raise TYPE ("Unknown ml_invariant: " ^ quote i, [], []));
+
+
+  structure Opening_ML_Invariants = Theory_Data
+  (
+    type T = ml_invariant Name_Space.table;
+    val empty : T = Name_Space.empty_table ml_invariantN;
+    fun merge data : T = Name_Space.merge_tables data;
+  );
+
+  val get_opening_ml_invariants = Opening_ML_Invariants.get o Proof_Context.theory_of
+
+  fun get_opening_ml_invariant_global cid thy  =
+    Name_Space.check (Context.Theory thy)
+              (get_opening_ml_invariants (Proof_Context.init_global thy)) (cid, Position.none) |> #2
+
+  fun get_opening_ml_invariant_name_global cid thy  =
+    Name_Space.check (Context.Theory thy)
+              (get_opening_ml_invariants (Proof_Context.init_global thy)) (cid, Position.none) |> #1
+
+  fun check_opening_ml_invariant ctxt =
+    #1 o Name_Space.check (Context.Proof ctxt) (get_opening_ml_invariants ctxt);
+
+  fun add_opening_ml_invariant name opening_ml_invariant thy =
+    thy |> Opening_ML_Invariants.map
+      (Name_Space.define (Context.Theory thy) true (name, opening_ml_invariant) #> #2);
+
+  fun update_opening_ml_invariant name opening_ml_invariant thy =
+    thy |> Opening_ML_Invariants.map
+      (Name_Space.define (Context.Theory thy) false (name, opening_ml_invariant) #> #2);
+
+  fun update_opening_ml_invariant_entry name new_opening_ml_invariant thy =
+    thy |> Opening_ML_Invariants.map
+      (Name_Space.map_table_entry name (fn _ => new_opening_ml_invariant));
+
+  fun print_opening_ml_invariants verbose ctxt =
+    Pretty.big_list "Isabelle.DOF Opening_ML_Invariants:"
+      (map (Pretty.mark_str o #1) (Name_Space.markup_table verbose ctxt (get_opening_ml_invariants ctxt)))
+    |> Pretty.writeln;
+
+  fun the_opening_ml_invariant T i =
+    (case Name_Space.lookup_key T i of
+      SOME entry => entry
+    | NONE => raise TYPE ("Unknown opening_ml_invariant: " ^ quote i, [], []));
+
+  structure Closing_ML_Invariants = Theory_Data
+  (
+    type T = ml_invariant Name_Space.table;
+    val empty : T = Name_Space.empty_table ml_invariantN;
+    fun merge data : T = Name_Space.merge_tables data;
+  );
+
+  val get_closing_ml_invariants = Closing_ML_Invariants.get o Proof_Context.theory_of
+
+  fun get_closing_ml_invariant_global cid thy  =
+    Name_Space.check (Context.Theory thy)
+              (get_closing_ml_invariants (Proof_Context.init_global thy)) (cid, Position.none) |> #2
+
+  fun get_closing_ml_invariant_name_global cid thy  =
+    Name_Space.check (Context.Theory thy)
+              (get_closing_ml_invariants (Proof_Context.init_global thy)) (cid, Position.none) |> #1
+
+  fun check_closing_ml_invariant ctxt =
+    #1 o Name_Space.check (Context.Proof ctxt) (get_closing_ml_invariants ctxt);
+
+  fun add_closing_ml_invariant name closing_ml_invariant thy =
+    thy |> Closing_ML_Invariants.map
+      (Name_Space.define (Context.Theory thy) true (name, closing_ml_invariant) #> #2);
+
+  fun update_closing_ml_invariant name closing_ml_invariant thy =
+    thy |> Closing_ML_Invariants.map
+      (Name_Space.define (Context.Theory thy) false (name, closing_ml_invariant) #> #2);
+
+  fun update_closing_ml_invariant_entry name new_closing_ml_invariant thy =
+    thy |> Closing_ML_Invariants.map
+      (Name_Space.map_table_entry name (fn _ => new_closing_ml_invariant));
+
+  fun print_closing_ml_invariants verbose ctxt =
+    Pretty.big_list "Isabelle.DOF Closing_ML_Invariants:"
+      (map (Pretty.mark_str o #1) (Name_Space.markup_table verbose ctxt (get_closing_ml_invariants ctxt)))
+    |> Pretty.writeln;
+
+  fun the_closing_ml_invariant T i =
+    (case Name_Space.lookup_key T i of
+      SOME entry => entry
+    | NONE => raise TYPE ("Unknown closing_ml_invariant: " ^ quote i, [], []));
 
 
   datatype monitor_info = Monitor_Info of 
@@ -349,29 +468,11 @@ struct
 (* registrating data of the Isa_DOF component *)
 structure Data = Generic_Data
 (
-  type T =     {docclass_tab        : docclass_tab,
-                docclass_inv_tab    : docclass_inv_tab,
-                docclass_eager_inv_tab : docclass_eager_inv_tab,
-                docclass_lazy_inv_tab : docclass_lazy_inv_tab}
-  val empty  = {docclass_tab        = initial_docclass_tab,
-                docclass_inv_tab    = initial_docclass_inv_tab,
-                docclass_eager_inv_tab = initial_docclass_eager_inv_tab,
-                docclass_lazy_inv_tab = initial_docclass_lazy_inv_tab
-               } 
-  fun merge(   {docclass_tab = c1,
-                 docclass_inv_tab = n1,
-                 docclass_eager_inv_tab = en1, docclass_lazy_inv_tab = ln1},
-               {docclass_tab = c2,
-                 docclass_inv_tab = n2,
-                 docclass_eager_inv_tab = en2, docclass_lazy_inv_tab = ln2})  = 
-               {docclass_tab = merge_docclass_tab (c1,c2),
-                docclass_inv_tab = override(n1,n2),
-                     (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
-                docclass_eager_inv_tab = override(en1,en2),
-                     (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
-                docclass_lazy_inv_tab = override(ln1,ln2)
-                     (* PROVISORY  ... ITS A REAL QUESTION HOW TO DO THIS!*)
-               }
+  type T =     {docclass_tab        : docclass_tab}
+  val empty  = {docclass_tab        = initial_docclass_tab} 
+  fun merge(   {docclass_tab = c1},
+               {docclass_tab = c2})  = 
+               {docclass_tab = merge_docclass_tab (c1,c2) }
 );
 
 
@@ -381,36 +482,8 @@ val get_data_global = Data.get o Context.Theory;
 val map_data_global = Context.theory_map o map_data;
 
 
-fun upd_docclass_tab f {docclass_tab = y,
-                        docclass_inv_tab,
-                        docclass_eager_inv_tab, docclass_lazy_inv_tab} = 
-            {docclass_tab = f y,
-             docclass_inv_tab=docclass_inv_tab,
-             docclass_eager_inv_tab=docclass_eager_inv_tab,
-             docclass_lazy_inv_tab=docclass_lazy_inv_tab};
-fun upd_docclass_inv_tab f {docclass_tab,
-                            docclass_inv_tab,
-                            docclass_eager_inv_tab, docclass_lazy_inv_tab} =
-            {docclass_tab = docclass_tab,
-             docclass_inv_tab    = f docclass_inv_tab,
-             docclass_eager_inv_tab=docclass_eager_inv_tab,
-             docclass_lazy_inv_tab=docclass_lazy_inv_tab};
-
-fun upd_docclass_eager_inv_tab f {docclass_tab,
-                            docclass_inv_tab,
-                            docclass_eager_inv_tab, docclass_lazy_inv_tab} =
-            {docclass_tab = docclass_tab,
-             docclass_inv_tab=docclass_inv_tab,
-             docclass_eager_inv_tab=f docclass_eager_inv_tab,
-             docclass_lazy_inv_tab=docclass_lazy_inv_tab};
-
-fun upd_docclass_lazy_inv_tab f {docclass_tab,
-                            docclass_inv_tab,
-                            docclass_eager_inv_tab, docclass_lazy_inv_tab} =
-            {docclass_tab = docclass_tab,
-             docclass_inv_tab=docclass_inv_tab,
-             docclass_eager_inv_tab=docclass_eager_inv_tab,
-             docclass_lazy_inv_tab=f docclass_lazy_inv_tab};
+fun upd_docclass_tab f {docclass_tab = y} = 
+            {docclass_tab = f y};
 
 fun get_accepted_cids  (Monitor_Info {accepted_cids, ... }) = accepted_cids
 fun get_rejected_cids  (Monitor_Info {rejected_cids, ... }) = rejected_cids
@@ -496,57 +569,6 @@ fun is_virtual cid thy = let val tab = (#docclass_tab(get_data_global thy))
                               | SOME ({virtual=virtual, ...}) => #virtual virtual
                          end
 
-
-fun update_class_invariant cid_long f thy =
-    let val  _ = if is_defined_cid_global' cid_long thy then () 
-                 else error("undefined class id : " ^cid_long)
-    in  map_data_global (upd_docclass_inv_tab (Symtab.update (cid_long, 
-                        (fn ctxt => ((writeln("Inv check of : " ^cid_long); f ctxt )))))) 
-                        thy
-    end
-
-fun update_class_eager_invariant cid_long f thy = 
-    let val  _ = if is_defined_cid_global' cid_long thy then () 
-                 else error("undefined class id : " ^cid_long)
-    in  map_data_global (upd_docclass_eager_inv_tab (Symtab.update (cid_long, 
-                        (fn ctxt => ((writeln("Eager Invariant check of: " ^cid_long); f ctxt )))))) 
-                        thy
-    end
-
-fun update_class_lazy_invariant cid_long f thy = 
-    let val  _ = if is_defined_cid_global' cid_long thy then () 
-                 else error("undefined class id : " ^cid_long)
-    in  map_data_global (upd_docclass_lazy_inv_tab (Symtab.update (cid_long, 
-                        (fn ctxt => ((writeln("Lazy Invariant check of: " ^cid_long); f ctxt )))))) 
-                        thy
-    end
-
-fun get_class_invariant cid_long thy =
-    let val  _ = if is_defined_cid_global' cid_long thy then () 
-                 else error("undefined class id : " ^cid_long)
-        val {docclass_inv_tab, ...} =  get_data_global thy
-    in  case Symtab.lookup  docclass_inv_tab cid_long of 
-            NONE   => K(K(K true))
-          | SOME f => f
-    end
-
-fun get_class_eager_invariant cid_long thy =
-    let val  _ = if is_defined_cid_global' cid_long thy then () 
-                 else error("undefined class id : " ^cid_long)
-        val {docclass_eager_inv_tab, ...} =  get_data_global thy
-    in  case Symtab.lookup  docclass_eager_inv_tab cid_long of 
-            NONE   => K(K(K true))
-          | SOME f => f
-    end
-
-fun get_class_lazy_invariant cid_long thy =
-    let val  _ = if is_defined_cid_global' cid_long thy then () 
-                 else error("undefined class id : " ^cid_long)
-        val {docclass_lazy_inv_tab, ...} =  get_data_global thy
-    in  case Symtab.lookup  docclass_lazy_inv_tab cid_long of 
-            NONE   => K(K(K true))
-          | SOME f => f
-    end
 
 val SPY = Unsynchronized.ref(Bound 0)
 
@@ -1646,15 +1668,20 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
       val assns' = map conv_attrs trace_attr
       fun cid_of oid = let val DOF_core.Instance params = DOF_core.get_object_global oid thy
                         in #cid params end
+      val ctxt = Proof_Context.init_global thy
       fun def_trans_input_term  oid =
         #1 o (calc_update_term {mk_elaboration=false} thy (cid_of oid) assns')
       fun def_trans_value oid =
         (#1 o (calc_update_term {mk_elaboration=true} thy (cid_of oid) assns'))
-        #> value (Proof_Context.init_global thy)
+        #> value ctxt
       val _ = if null enabled_monitors then () else writeln "registrating in monitors ..." 
       val _ = app (fn (n, _) => writeln(oid^" : "^cid_long^" ==> "^n)) enabled_monitors;
        (* check that any transition is possible : *)
-      fun inst_class_inv x = DOF_core.get_class_invariant(cid_of x) thy x {is_monitor=false}
+      fun inst_class_inv x = let val invs = DOF_core.get_ml_invariants ctxt
+                                 val check_option = Name_Space.lookup invs (cid_of x)
+                             in case check_option of
+                                   NONE => (K true)
+                                 | SOME check => (check x {is_monitor=false}) end
       fun class_inv_checks ctxt = map (fn (x, _) => inst_class_inv x ctxt) enabled_monitors
       val delta_autoS = map is_enabled_for_cid  enabled_monitors; 
       fun update_info (n, aS, monitor_info) =  
@@ -1783,8 +1810,12 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} oi
                                                                         thy cid_long assns' defaults
                                   in (input_term, value_term') end
                              else (\<^term>\<open>()\<close>, value_term') end
-    val check_inv =   (DOF_core.get_class_invariant cid_long thy oid is_monitor) 
-                            o Context.Theory
+    val check_inv = Context.Theory
+                    #> (let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
+                            val check_option = Name_Space.lookup invs cid_long
+                        in case check_option of
+                              NONE => (K true)
+                            | SOME check => (check oid is_monitor) end)
   in thy |> DOF_core.define_object_global {define = define} ((oid, pos), {defined = false,
                                                  input_term = fst value_terms,
                                                  value      = value (Proof_Context.init_global thy)
@@ -1795,9 +1826,13 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} oi
                                                  vcid       = vcid})
          |> register_oid_cid_in_open_monitors oid pos cid_pos'
          |> (fn thy => if #is_monitor(is_monitor)
-                       then (((DOF_core.get_class_eager_invariant cid_long thy oid) is_monitor 
-                               o Context.Theory) thy; thy)
-                       else thy)
+                       then ((Context.Theory
+                              #> (let val invs = DOF_core.get_opening_ml_invariants (Proof_Context.init_global thy)
+                                      val check_option = Name_Space.lookup invs cid_long
+                                  in case check_option of
+                                         NONE => (K true)
+                                       | SOME check => (check oid is_monitor) end)) thy; thy)
+                        else thy)
          |> (fn thy => (check_inv thy; thy))
          (* Bypass checking of high-level invariants when the class default_cid = "text",
             the top (default) document class.
@@ -1992,9 +2027,13 @@ fun update_instance_command  (((oid, pos), cid_pos),
                   #1 o (Value_Command.Docitem_Parser.calc_update_term {mk_elaboration=true}
                                                                                 thy cid_long assns')
                   #> Value_Command.value (Proof_Context.init_global thy)
-                fun check_inv thy =((DOF_core.get_class_invariant cid_long thy oid {is_monitor=false} 
-                                     o Context.Theory ) thy ;
-                                    thy)
+                fun check_inv thy =
+                      ((Context.Theory
+                        #> (let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
+                                val check_option = Name_Space.lookup invs cid_long
+                            in case check_option of
+                                  NONE => (K true)
+                                | SOME check => (check oid {is_monitor=false}) end) ) thy ; thy)
             in     
                 thy |> (if Config.get_global thy DOF_core.object_value_debug 
                         then DOF_core.update_value_input_term_global oid
@@ -2062,11 +2101,21 @@ fun close_monitor_command (args as (((oid, pos), cid_pos),
         val markup = DOF_core.get_object_name_global oid thy
                       |> Name_Space.markup (Name_Space.space_of_table instances)
         val _ = Context_Position.report ctxt pos markup;
-        val check_inv =   (DOF_core.get_class_invariant cid_long thy oid) {is_monitor=true} 
-                           o Context.Theory
-        val check_lazy_inv =   (DOF_core.get_class_lazy_invariant cid_long thy oid) {is_monitor=true} 
-                           o Context.Theory 
-    in  thy |> (fn thy => (check_lazy_inv thy; thy))
+        val check_inv =
+                  Context.Theory
+                  #> (let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
+                          val check_option = Name_Space.lookup invs cid_long
+                       in case check_option of
+                             NONE => (K true)
+                           | SOME check => (check oid {is_monitor=true}) end)
+        val check_closing_inv =
+                     Context.Theory
+                     #> (let val invs = DOF_core.get_closing_ml_invariants (Proof_Context.init_global thy)
+                              val check_option = Name_Space.lookup invs cid_long
+                         in case check_option of
+                                NONE => (K true)
+                              | SOME check => (check oid {is_monitor=true}) end) 
+    in  thy |> (fn thy => (check_closing_inv thy; thy))
             |> update_instance_command args
             |> (fn thy => (check_inv thy; thy))
             |> (fn thy => if Config.get_global thy DOF_core.invariants_checking
@@ -2737,7 +2786,7 @@ fun define_inv cid_long ((lbl, pos), inv) thy =
               $ (update_attribute_type thy class_scheme_ty cid_long t')
           | update_attribute_type thy class_scheme_ty cid_long (Abs(s, ty, t)) =
               Abs(s, ty, update_attribute_type thy class_scheme_ty cid_long t)
-          | update_attribute_type _ class_scheme_ty _ (Free(s, ty)) = if s = invariantN 
+          | update_attribute_type _ class_scheme_ty _ (Free(s, ty)) = if s = instance_placeholderN 
                                                                      then Free (s, class_scheme_ty)
                                                                      else Free (s, ty)
           | update_attribute_type _ _ _ t = t
@@ -2747,7 +2796,7 @@ fun define_inv cid_long ((lbl, pos), inv) thy =
            current class. *)
         val inv_term' = update_attribute_type thy inv_ty cid_long inv_term
         val eq_inv_ty = inv_ty --> HOLogic.boolT
-        val abs_term = Term.lambda (Free (invariantN, inv_ty)) inv_term'
+        val abs_term = Term.lambda (Free (instance_placeholderN, inv_ty)) inv_term'
     in  thy |> Named_Target.theory_map (define_cond bdg eq_inv_ty invariant_suffixN abs_term) end
 
 fun add_doc_class_cmd overloaded (raw_params, binding)

@@ -1218,8 +1218,8 @@ text\<open>
 
   Low-level invariants checking can be set up to be triggered
   when opening a monitor, when closing a monitor, or both
-  by using the \<^ML>\<open>DOF_core.update_class_eager_invariant\<close>,
-  \<^ML>\<open>DOF_core.update_class_lazy_invariant\<close>, or \<^ML>\<open>DOF_core.update_class_invariant\<close> commands
+  by using the \<^ML>\<open>DOF_core.add_opening_ml_invariant\<close>,
+  \<^ML>\<open>DOF_core.add_closing_ml_invariant\<close>, or \<^ML>\<open>DOF_core.add_ml_invariant\<close> commands
   respectively, to add the invariants to the theory context
   (See \<^technical>\<open>sec:low_level_inv\<close> for an example).
 \<close>
