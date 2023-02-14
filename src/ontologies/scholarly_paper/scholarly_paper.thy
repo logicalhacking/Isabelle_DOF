@@ -495,9 +495,7 @@ let val cidS = ["scholarly_paper.introduction","scholarly_paper.technical",
                        "scholarly_paper.example", "scholarly_paper.conclusion"];
     fun body moni_oid _ ctxt = (Scholarly_paper_trace_invariant.check ctxt cidS moni_oid NONE; true)
     val ctxt = Proof_Context.init_global thy
-    val binding = let val cid = DOF_core.read_cid ctxt "article"
-                  in the ((DOF_core.get_data ctxt |> #docclass_tab |> Symtab.lookup) cid)
-                     |> #name end
+    val binding = DOF_core.binding_from_onto_class_pos "article" thy
 in  DOF_core.add_ml_invariant binding body thy end)
 \<close>
 

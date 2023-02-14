@@ -61,6 +61,7 @@ ML\<open>
 
 val docrefN   = "docref";    
 val docclassN = "doc_class";
+val onto_classN = "onto_class";
 
 (** name components **)
 
@@ -146,23 +147,84 @@ ML\<open>
 structure DOF_core =
  
 struct
-   type virtual = {virtual : bool}
-   type docclass_struct = {params         : (string * sort) list,          (*currently not used *)
-                           name           : binding,
-                           virtual        : virtual, 
-                           thy_name       : string, id : serial,           (* for pide *)
-                           inherits_from  : (typ list * string) option,    (* imports *)
-                           attribute_decl : (binding*typ*term option)list, (* class local *)
-                           rejectS        : term list,
-                           rex            : term list,
-                           invs           : ((string * Position.T) * term) list  } (* monitoring regexps --- product semantics*)
 
+  datatype onto_class = Onto_Class of 
+    {params         : (string * sort) list,          (*currently not used *)
+     name           : binding,
+     virtual        : {virtual : bool}, 
+     thy_name       : string, id : serial,           (* for pide *)
+     inherits_from  : (typ list * string) option,    (* imports *)
+     attribute_decl : (binding*typ*term option)list, (* class local *)
+     rejectS        : term list,
+     rex            : term list,
+     invs           : ((string * Position.T) * term) list  } (* monitoring regexps --- product semantics*)
 
-   type docclass_tab = docclass_struct Symtab.table
+  fun make_onto_class (params, name, virtual, thy_name, id, inherits_from, attribute_decl
+                       , rejectS, rex, invs) =
+    Onto_Class {params = params, name = name, virtual = virtual, thy_name = thy_name, id = id
+                , inherits_from = inherits_from, attribute_decl = attribute_decl, rejectS = rejectS
+                , rex = rex, invs = invs}
 
-   val  initial_docclass_tab = Symtab.empty:docclass_tab 
+  structure Onto_Classes = Theory_Data
+  (
+    type T =  onto_class Name_Space.table;
+    val empty : T = Name_Space.empty_table onto_classN;
+    fun merge data : T = Name_Space.merge_tables data;
+  );
 
-   fun  merge_docclass_tab (otab,otab') = Symtab.merge (op =) (otab,otab') 
+  val get_onto_classes = Onto_Classes.get o Proof_Context.theory_of
+
+  fun get_onto_class_global name thy  =
+    Name_Space.check (Context.Theory thy)
+                      (get_onto_classes (Proof_Context.init_global thy)) (name, Position.none) |> #2
+
+  (* takes class synonyms into account *)
+  fun get_onto_class_global' name thy  =
+    let val name' = name |> Syntax.read_typ_global thy
+                         |> Syntax.string_of_typ_global thy
+                         |> YXML.parse_body |> XML.content_of
+    in Name_Space.check (Context.Theory thy)
+                    (get_onto_classes (Proof_Context.init_global thy)) (name', Position.none) |> #2
+    end
+
+  fun get_onto_class_name_global name thy  =
+    Name_Space.check (Context.Theory thy)
+                      (get_onto_classes (Proof_Context.init_global thy)) (name, Position.none) |> #1
+
+  (* takes class synonyms into account *)
+  fun get_onto_class_name_global' name thy  =
+    let val name' = name |> Syntax.read_typ_global thy
+                         |> Syntax.string_of_typ_global thy
+                         |> YXML.parse_body |> XML.content_of
+    in Name_Space.check (Context.Theory thy)
+                    (get_onto_classes (Proof_Context.init_global thy)) (name', Position.none) |> #1
+    end
+
+  fun check_onto_class ctxt =
+    #1 o Name_Space.check (Context.Proof ctxt) (get_onto_classes ctxt);
+
+  fun add_onto_class name onto_class thy =
+    thy |> Onto_Classes.map
+      (Name_Space.define (Context.Theory thy) true (name, onto_class) #> #2);
+
+  fun update_onto_class name onto_class thy =
+    thy |> Onto_Classes.map
+      (Name_Space.define (Context.Theory thy) false (name, onto_class) #> #2);
+
+  fun update_onto_class_entry name new_onto_class thy =
+    thy |> Onto_Classes.map
+      (Name_Space.map_table_entry name (fn _ => new_onto_class));
+
+  fun print_onto_classes verbose ctxt =
+    Pretty.big_list "Isabelle.DOF Onto_Classes:"
+      (map (Pretty.mark_str o #1) (Name_Space.markup_table verbose ctxt (get_onto_classes ctxt)))
+    |> Pretty.writeln;
+
+  fun the_onto_class T i =
+    (case Name_Space.lookup_key T i of
+      SOME entry => entry
+    | NONE => raise TYPE ("Unknown onto_class: " ^ quote i, [], []));
+
 
    val tag_attr = (\<^binding>\<open>tag_attribute\<close>, \<^Type>\<open>int\<close>, Mixfix.NoSyn)
         (* Attribute hidden to the user and used internally by isabelle_DOF.
@@ -172,21 +234,22 @@ struct
 
    val  default_cid = "text"    (* the top (default) document class: everything is a text.*)
 
-   fun  is_subclass0 (tab:docclass_tab) s t =
-        let val _ = case Symtab.lookup tab t of 
-                          NONE => if t <> default_cid 
-                                  then error ("document superclass not defined: "^t) 
-                                  else default_cid
-                       |  SOME _ => ""
-            fun father_is_sub s = case Symtab.lookup tab s of 
-                          NONE => error ("document subclass not defined: "^s)
-                       |  SOME ({inherits_from=NONE, ...}) => s = t
-                       |  SOME ({inherits_from=SOME (_,s'), ...}) => 
-                                  s' = t orelse father_is_sub s' 
-        in s = t orelse 
-           (t = default_cid  andalso Symtab.defined tab s ) orelse
-           (s <> default_cid andalso father_is_sub s)
-        end
+  fun is_subclass0 s t ctxt =
+    let fun get id = if id = default_cid
+                     then default_cid
+                     else check_onto_class ctxt (id, Position.none)
+        val s' = get s
+        val t' = get t
+        fun father_is_sub s = case get_onto_class_global s (Proof_Context.theory_of ctxt)  of 
+                                  (Onto_Class {inherits_from=NONE, ...}) => s' = t'
+                                | (Onto_Class {inherits_from=SOME (_,s''), ...}) => 
+                                                                  s'' = t' orelse father_is_sub s''
+        val s'_defined = s' |> Name_Space.declared (get_onto_classes ctxt
+                                                    |> Name_Space.space_of_table)
+    in s' = t' orelse
+       (t' = default_cid  andalso s'_defined) orelse
+       (s' <> default_cid andalso father_is_sub s')
+    end
 
 
   datatype instance = Instance of 
@@ -479,28 +542,6 @@ struct
     | NONE => raise TYPE ("Unknown monitor_info: " ^ quote i, [], []));
 
 
-   fun override(t1,t2) = fold(Symtab.update)(Symtab.dest t2)(t1)
-
-(* registrating data of the Isa_DOF component *)
-structure Data = Generic_Data
-(
-  type T =     {docclass_tab        : docclass_tab}
-  val empty  = {docclass_tab        = initial_docclass_tab} 
-  fun merge(   {docclass_tab = c1},
-               {docclass_tab = c2})  = 
-               {docclass_tab = merge_docclass_tab (c1,c2) }
-);
-
-
-val get_data = Data.get o Context.Proof;
-val map_data = Data.map;
-val get_data_global = Data.get o Context.Theory;
-val map_data_global = Context.theory_map o map_data;
-
-
-fun upd_docclass_tab f {docclass_tab = y} = 
-            {docclass_tab = f y};
-
 fun get_accepted_cids  (Monitor_Info {accepted_cids, ... }) = accepted_cids
 fun get_rejected_cids  (Monitor_Info {rejected_cids, ... }) = rejected_cids
 fun get_alphabet monitor_info = (get_accepted_cids monitor_info) @ (get_rejected_cids monitor_info)
@@ -518,8 +559,9 @@ fun get_automatas      (Monitor_Info {automatas, ... }) = automatas
    However, we use Syntax.read_typ in order to allow type-synonyms which requires
    an appropriate adaption in read_cid.*)
  
-fun is_subclass (ctxt) s t = is_subclass0(#docclass_tab(get_data ctxt)) s t
-fun is_subclass_global thy s t = is_subclass0(#docclass_tab(get_data_global thy)) s t
+fun is_subclass (ctxt) s t = is_subclass0 s t ctxt
+fun is_subclass_global thy s t = let val ctxt = Proof_Context.init_global thy
+                                 in  is_subclass0  s t ctxt end
 
 
 fun typ_to_cid (Type(s,[\<^Type>\<open>unit\<close>])) = Long_Name.qualifier s
@@ -527,63 +569,13 @@ fun typ_to_cid (Type(s,[\<^Type>\<open>unit\<close>])) = Long_Name.qualifier s
    |typ_to_cid _ = error("type is not an ontological type.")
 
 
-fun parse_cid ctxt cid =
-(* parses a type lexically/syntactically, checks absence of type vars *) 
-         (case Syntax.parse_typ ctxt cid of
-                 Type(tyname, [])  =>  tyname
-                | _ => error "illegal type-format for doc-class-name.")
-         handle ERROR _ => "" (* ignore error *)
+fun get_onto_class_name_super_class_global _ "text" = default_cid
+  | get_onto_class_name_super_class_global thy cid = get_onto_class_name_global' cid thy
 
 
-fun read_cid ctxt "text" = default_cid (* text = default_cid *)
-  | read_cid ctxt cid =
-(* parses a type syntactically, type-identification, checking as class id *)
-         (case Syntax.read_typ ctxt cid of
-                 ty as Type(tyname, _)  => let val res = typ_to_cid ty
-                                               val t = #docclass_tab(get_data ctxt)
-                                           in  if Symtab.defined t res 
-                                               then res
-                                               else error("type identifier not a class id:"^res) 
-                                           end
-                | _ => error "illegal type-format for doc-class-name.")
-         handle ERROR _ =>  error("type identifier not a class id:"^cid) 
-
-fun parse_cid_global thy cid = parse_cid (Proof_Context.init_global thy) cid
-fun read_cid_global thy cid  = read_cid (Proof_Context.init_global thy) cid
-        
-
-fun is_defined_cid_global cid thy = 
-(* works with short and long names *)
-                                    let val t = #docclass_tab(get_data_global thy)
-                                    in  cid=default_cid orelse 
-                                        Symtab.defined t (parse_cid_global thy cid) 
-                                    end
-
-fun is_defined_cid_global' cid_long thy = 
-(* works with long names only *)
-                                    let val t = #docclass_tab(get_data_global thy)
-                                    in  cid_long=default_cid orelse  Symtab.defined t cid_long end
-
-
-fun is_defined_cid_local cid ctxt  = 
-(* works with short and long names *)
-                                     let val t = #docclass_tab(get_data ctxt)
-                                     in  cid=default_cid orelse 
-                                         Symtab.defined t (parse_cid ctxt cid) 
-                                     end
-
-fun is_defined_cid_local' cid_long ctxt  = 
-(* works with long names only *)
-                                     let val t = #docclass_tab(get_data ctxt)
-                                     in  cid_long=default_cid orelse Symtab.defined t cid_long  end
-
-fun is_virtual cid thy = let val tab = (#docclass_tab(get_data_global thy))
-                             (* takes class synonyms into account *)
-                             val long_name = read_cid_global thy cid
-                         in case Symtab.lookup tab long_name of
-                                NONE =>  error("Undefined class id: " ^ cid)
-                              | SOME ({virtual=virtual, ...}) => #virtual virtual
-                         end
+fun is_virtual cid thy =
+  let val Onto_Class {virtual, ...} = get_onto_class_global' cid thy
+  in virtual |> #virtual end
 
 
 val SPY = Unsynchronized.ref(Bound 0)
@@ -598,7 +590,7 @@ fun check_regexps term =
         (* Missing: Checks on constants such as undefined, ... *)
     in  term end
 
-fun check_reject_atom cid_long term = 
+fun check_reject_atom term = 
     let val _ = case fold_aterms  Term.add_free_names term [] of
                    n::_ => error("No free variables allowed in monitor regexp:" ^ n)
                  | _ => ()  
@@ -616,23 +608,15 @@ fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms i
                                             the space where it is ... *)
         val cid = (Binding.name_of binding)
         val pos = (Binding.pos_of binding)
-    
-        val _   = if is_defined_cid_global cid thy
+        (*val _   = if is_defined_cid_global cid thy
                   then error("redefinition of document class:"^cid )
-                  else ()
-        val parent' = map_option (map_snd (read_cid_global thy)) parent
-        (* weird construction. Necessary since parse produces at rare cases 
-           string representations that do no longer have the lexis of a type name. *)
-        val cid_long  = parse_cid_global thy cid
-        val cid_long' = parse_cid_global thy cid_long
-        val _ = if cid_long' <> "" then ()
-                else error("Could not construct type from doc_class (lexical problem?)")
-
+                  else ()*)
+        (* takes class synonyms into account *)
+        val parent' = map_option (map_snd (fn x => get_onto_class_name_global' x thy)) parent
         val id = serial ();
         val _ = Position.report pos (docclass_markup true cid id pos);
-    
         val rejectS = map (Syntax.read_term_global thy) reject_Atoms;
-        val _ = map (check_reject_atom cid_long)  rejectS; 
+        val _ = map (check_reject_atom) rejectS; 
         val reg_exps = map (Syntax.read_term_global thy) rexp;
         val _ = map check_regexps reg_exps
         val _ = if not(null rejectS) andalso (null reg_exps) 
@@ -641,20 +625,8 @@ fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms i
                 then error("invariant labels must be unique"^  Position.here (snd(fst(hd invs)))) 
                 else ()
         val invs' = map (map_snd(Syntax.read_term_global thy)) invs 
-        val info = {params=params', 
-                    name = binding,
-                    virtual = virtual,
-                    thy_name = nn, 
-                    id = id, (* for pide --- really fresh or better reconstruct 
-                                from prior record definition ? For the moment: own
-                                generation of serials ... *)
-                    inherits_from = parent',
-                    attribute_decl = fields , 
-                    rejectS = rejectS,
-                    rex = reg_exps, 
-                    invs =  invs'}
-    
-    in   map_data_global(upd_docclass_tab(Symtab.update(cid_long,info)))(thy)
+    in  thy |> add_onto_class binding (make_onto_class (params', binding, virtual, nn, id, parent'
+                                                        , fields, rejectS, reg_exps, invs'))
     end
 
 fun define_object_global {define = define} ((oid, pos), bbb) thy  = 
@@ -678,33 +650,16 @@ fun define_object_global {define = define} ((oid, pos), bbb) thy  =
           else add_instance binding (Instance bbb) thy
   end
 
-fun get_doc_class_global cid thy = 
-    if cid = default_cid then error("default class access") (* TODO *)
-    else let val t = #docclass_tab(get_data_global thy)
-         in  (Symtab.lookup t cid) end
-    
-
-fun get_doc_class_local cid ctxt = 
-    if cid = default_cid then error("default class access") (* TODO *)
-    else let val t = #docclass_tab(get_data ctxt)
-         in  (Symtab.lookup t cid) end
-
-
-fun is_defined_cid_local cid ctxt  = let val t = #docclass_tab(get_data ctxt)
-                                     in  cid=default_cid orelse 
-                                         Symtab.defined t (parse_cid ctxt cid) 
-                                     end
 
 fun get_attributes_local cid ctxt =
   if cid = default_cid then []
-  else let val t = #docclass_tab(get_data ctxt)
-           val cid_long = read_cid ctxt cid (* to assure that the given cid is really a long_cid *)
-       in  case Symtab.lookup t cid_long of
-             NONE => error("undefined class id for attributes: "^cid)
-             | (SOME ({inherits_from=NONE,
-                       attribute_decl = X, ...})) => [(cid_long,X)]
-             | (SOME ({inherits_from=SOME(_,father),
-                       attribute_decl = X, ...})) =>
+  else let val cid_long = get_onto_class_name_global cid (Proof_Context.theory_of ctxt)
+       in 
+       case get_onto_class_global cid (Proof_Context.theory_of ctxt) of
+           Onto_Class {inherits_from=NONE,
+                       attribute_decl = X, ...} => [(cid_long,X)]
+         | Onto_Class {inherits_from=SOME(_,father),
+                       attribute_decl = X, ...} =>
                                                    get_attributes_local father ctxt @ [(cid_long,X)]
        end
 
@@ -754,14 +709,20 @@ fun get_value_local oid ctxt  =
 
 (* missing : setting terms to ground (no type-schema vars, no schema vars. )*)
 
-fun binding_from_instance_pos name thy  =
+fun binding_from_pos get_objects get_objects_name name thy  =
   let
-    val ns = get_instances (Proof_Context.init_global thy)
+    val ns = get_objects (Proof_Context.init_global thy)
                          |> Name_Space.space_of_table 
-    val {pos, ...} = Name_Space.the_entry ns (get_instance_name_global name thy)
+    val {pos, ...} = Name_Space.the_entry ns (get_objects_name name thy)
   in if Long_Name.is_qualified name
      then Binding.make (Long_Name.base_name name, pos)
      else Binding.make (name, pos)end
+
+fun binding_from_onto_class_pos name thy  =
+  binding_from_pos get_onto_classes get_onto_class_name_global name thy
+
+fun binding_from_instance_pos name thy  =
+  binding_from_pos get_instances get_instance_name_global name thy
 
 fun update_value_global name upd_value thy  =
   let
@@ -791,17 +752,6 @@ fun is_ISA s = String.isPrefix ISA_prefix (Long_Name.base_name s)
 fun get_class_name_without_prefix s = String.extract (s, String.size(doc_class_prefix), NONE)
 
 fun get_doc_class_name_without_ISA_prefix s = String.extract (s, String.size(ISA_prefix), NONE)
-
-fun is_class_ISA thy s = let val bname = Long_Name.base_name s
-                             val qual = Long_Name.qualifier s
-                         in
-                           if String.isPrefix doc_class_prefix bname then
-                             let
-                               val class_name =
-                                        Long_Name.qualify qual (get_class_name_without_prefix bname)
-                             in
-                               is_defined_cid_global (class_name) thy end
-                           else false end
 
 
 fun transduce_term_global {mk_elaboration=mk_elaboration} (term,pos) thy =
@@ -845,23 +795,19 @@ fun check_term ctxt term = transduce_term_global {mk_elaboration=false}
                                                               (term , Position.none)
                                                               (Proof_Context.theory_of ctxt)
 
-fun writeln_classrefs ctxt = let  val tab = #docclass_tab(get_data ctxt)
-                             in   writeln (String.concatWith "," (Symtab.keys tab)) end
-
-
-
 
 fun print_doc_class_tree ctxt P T = 
-    let val {docclass_tab, ...} = get_data ctxt;
-        val class_tab:(string * docclass_struct)list = (Symtab.dest docclass_tab)
-        fun is_class_son X (n, dc:docclass_struct) = (X = #inherits_from dc)
-        fun tree lev ([]:(string * docclass_struct)list) = ""
-           |tree lev ((n,R)::S) = (if P(lev,n) 
+    let val classes = Name_Space.dest_table (get_onto_classes ctxt)
+        fun is_class_son X (_, onto_class) =
+          let val Onto_Class inherits_from = onto_class
+          in (inherits_from |> #inherits_from) = X end
+        fun tree _ [] = ""
+           |tree lev ((n,_)::S) = (if P(lev,n) 
                                   then "."^Int.toString lev^" "^(T n)^"{...}.\n"
-                                       ^ (tree(lev + 1)(filter(is_class_son(SOME([],n)))class_tab))
+                                       ^ (tree(lev + 1)(filter(is_class_son(SOME([],n))) classes))
                                   else "."^Int.toString lev^" ... \n") 
                                   ^ (tree lev S)
-        val roots = filter(is_class_son NONE) class_tab
+        val roots = filter(is_class_son NONE) classes
     in  ".0 .\n" ^ tree 1 roots end
 
 val (object_value_debug, object_value_debug_setup)
@@ -1169,7 +1115,7 @@ fun elaborate_instances_list thy isa_name _ _ pos =
     val base_name' = DOF_core.get_class_name_without_prefix (base_name_without_suffix)
     val class_typ = Proof_Context.read_typ (Proof_Context.init_global thy)
                                                 (base_name')
-    val long_class_name = DOF_core.read_cid_global thy base_name'
+    val long_class_name = DOF_core.get_onto_class_name_global base_name' thy 
     val values = thy |> Proof_Context.init_global |> DOF_core.get_instances
                  |> Name_Space.dest_table 
                  |> filter (fn (_, instance) =>
@@ -1231,7 +1177,7 @@ fun compute_attr_access ctxt attr oid pos_option pos' = (* template *)
               | SOME pos =>
                   let 
                     val class_name = Long_Name.qualifier long_name
-                    val SOME{id,...} = DOF_core.get_doc_class_local class_name ctxt'
+                    val DOF_core.Onto_Class {id,...} = DOF_core.get_onto_class_global class_name thy
                     val class_markup = docclass_markup false class_name id def_pos
                   in Context_Position.report ctxt' pos class_markup end
   in  symbex_attr_access0 ctxt' proj_term value end
@@ -1245,7 +1191,7 @@ case term_option of
         val traces = compute_attr_access (Context.Theory thy) "trace" oid NONE pos
         fun conv (\<^Const>\<open>Pair \<^typ>\<open>doc_class rexp\<close> \<^typ>\<open>string\<close>\<close>
                     $ (\<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close> $ (\<^Const>\<open>mk\<close> $ s)) $ S) =
-          let val s' =  DOF_core.read_cid (Proof_Context.init_global thy) (HOLogic.dest_string s)
+          let val s' =  DOF_core.get_onto_class_name_global (HOLogic.dest_string s) thy 
           in \<^Const>\<open>Pair \<^typ>\<open>string\<close> \<^typ>\<open>string\<close>\<close> $ HOLogic.mk_string s' $ S end
         val traces' = map conv (HOLogic.dest_list traces)
       in HOLogic.mk_list \<^Type>\<open>prod \<^typ>\<open>string\<close> \<^typ>\<open>string\<close>\<close> traces' end
@@ -1470,16 +1416,11 @@ struct
 
 fun cid_2_cidType cid_long thy =
     if cid_long = DOF_core.default_cid then \<^Type>\<open>unit\<close>
-    else let val t = #docclass_tab(DOF_core.get_data_global thy)
-             fun ty_name cid = cid^"."^  Long_Name.base_name cid ^ Record.extN
-             fun fathers cid_long = case Symtab.lookup t cid_long of
-                       NONE => let val ctxt = Proof_Context.init_global thy
-                                   val tty = Syntax.parse_typ (Proof_Context.init_global thy) cid_long
-                               in  error("undefined doc class id :"^cid_long)
-                               end 
-                     | SOME ({inherits_from=NONE, ...}) => [cid_long]
-                     | SOME ({inherits_from=SOME(_,father), ...}) => 
-                           cid_long :: (fathers father) 
+    else let fun ty_name cid = cid^"."^  Long_Name.base_name cid ^ Record.extN
+             fun fathers cid_long = case DOF_core.get_onto_class_global cid_long thy of
+                                        DOF_core.Onto_Class {inherits_from=NONE, ...} => [cid_long]
+                                      | DOF_core.Onto_Class {inherits_from=SOME(_,father), ...} => 
+                                                                        cid_long :: (fathers father) 
          in fold (fn x => fn y => Type(ty_name x,[y])) (fathers cid_long) \<^Type>\<open>unit\<close>  
          end
 
@@ -1513,9 +1454,9 @@ fun create_default_object thy class_name =
 
 fun check_classref {is_monitor=is_monitor} (SOME(cid,pos)) thy = 
           let 
-              val cid_long = DOF_core.read_cid_global thy cid  
-                            
-              val {id, name=bind_target,rex,...} = the(DOF_core.get_doc_class_global cid_long thy)
+              val cid_long = DOF_core.get_onto_class_name_global' cid thy
+              val DOF_core.Onto_Class {id, name=bind_target,rex,...} =
+                                                        DOF_core.get_onto_class_global cid_long thy
               val _ = if is_monitor andalso (null rex orelse cid_long= DOF_core.default_cid ) 
                       then error("should be monitor class!")
                       else ()
@@ -1542,8 +1483,8 @@ fun calc_update_term {mk_elaboration=mk_elaboration} thy cid_long
             let 
                 fun get_class_name parent_cid attribute_name pos =
                   let
-                    val {attribute_decl, inherits_from, ...} =
-                                                   the (DOF_core.get_doc_class_global parent_cid thy)
+                    val DOF_core.Onto_Class {attribute_decl, inherits_from, ...} = 
+                                                      DOF_core.get_onto_class_global parent_cid thy
                   in
                     if exists (fn (binding, _, _) => Binding.name_of binding = attribute_name)
                               attribute_decl
@@ -1558,7 +1499,8 @@ fun calc_update_term {mk_elaboration=mk_elaboration} thy cid_long
                 val _ = if mk_elaboration
                         then
                           let val attr_defined_cid = get_class_name cid_long lhs pos
-                              val {id, name, ...} = the (DOF_core.get_doc_class_global attr_defined_cid thy)
+                              val DOF_core.Onto_Class {id, name, ...} =
+                                                DOF_core.get_onto_class_global attr_defined_cid thy
                               val markup = docclass_markup false cid_long id (Binding.pos_of name);
                               val ctxt = Context.Theory thy
                           in Context_Position.report_generic ctxt pos markup end
@@ -1708,10 +1650,10 @@ fun check_invariants thy (oid, pos) =
     val DOF_core.Instance params = DOF_core.get_instance_global oid thy
     val cid = #cid params
     fun get_all_invariants cid thy =
-       case DOF_core.get_doc_class_global cid thy of
-          NONE => error("undefined class id for invariants: " ^ cid)
-        | SOME ({inherits_from=NONE, invs, ...}) => invs
-        | SOME ({inherits_from=SOME(_,father), invs, ...}) => (invs) @ (get_all_invariants father thy)
+       case DOF_core.get_onto_class_global cid thy of
+           DOF_core.Onto_Class {inherits_from=NONE, invs, ...} => invs
+         | DOF_core.Onto_Class {inherits_from=SOME(_,father), invs, ...} =>
+                                                          (invs) @ (get_all_invariants father thy)
     val invariants = get_all_invariants cid thy
     val inv_and_apply_list = 
       let fun mk_inv_and_apply inv value thy =
@@ -1778,13 +1720,13 @@ fun check_invariants thy (oid, pos) =
 
 fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} oid pos cid_pos doc_attrs thy =
   let
-    val id = serial ();                               
+    val id = serial ();
     val cid_pos' = check_classref is_monitor cid_pos thy
     val cid_long = fst cid_pos'
     val default_cid = cid_long = DOF_core.default_cid
     val vcid = case cid_pos of   NONE => NONE
                                | SOME (cid,_) => if (DOF_core.is_virtual cid thy)
-                                                 then SOME (DOF_core.parse_cid_global thy cid)
+                                                 then SOME (DOF_core.get_onto_class_name_global' cid thy)
                                                  else NONE
     val value_terms = if default_cid
                       then let
@@ -2058,14 +2000,10 @@ fun open_monitor_command  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Par
             oid pos cid_pos doc_attrs thy
         fun compute_enabled_set cid thy =
           let
-            val long_cid = DOF_core.read_cid (Proof_Context.init_global thy) cid
-          in
-            case DOF_core.get_doc_class_global long_cid thy of
-                SOME X => let val ralph = RegExpInterface.alphabet (#rejectS X)
-                                     val aalph = RegExpInterface.alphabet (#rex X)
-                                 in  (aalph, ralph, map (RegExpInterface.rexp_term2da aalph)(#rex X)) end 
-              | NONE => error("Internal error: class id undefined. ")
-          end
+            val DOF_core.Onto_Class X = DOF_core.get_onto_class_global' cid thy
+            val ralph = RegExpInterface.alphabet (#rejectS X)
+            val aalph = RegExpInterface.alphabet (#rex X)
+          in  (aalph, ralph, map (RegExpInterface.rexp_term2da aalph)(#rex X)) end 
         fun create_monitor_entry oid thy =  
             let val cid = case cid_pos of
                               NONE => ISA_core.err ("You must specified a monitor class.") pos
@@ -2135,7 +2073,7 @@ fun meta_args_2_latex thy ((((lab, pos), cid_opt), attr_list) : ODL_Meta_Args_Pa
                                                DOF_core.get_instance_global lab thy
                                         in cid |> #cid end
                                   
-                              | SOME(cid,_) => DOF_core.parse_cid_global thy cid        
+                              | SOME(cid,_) => DOF_core.get_onto_class_name_global' cid thy        
         (* val _   = writeln("meta_args_2_string cid_long:"^ cid_long ) *)
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
 
@@ -2279,13 +2217,14 @@ end (* structure Monitor_Command_Parser *)
 
 ML\<open>
 fun print_doc_classes b ctxt = 
-    let val {docclass_tab, ...} = DOF_core.get_data ctxt;
+    let val classes = Name_Space.dest_table (DOF_core.get_onto_classes ctxt)
         val _ = writeln "=====================================";    
         fun print_attr (n, ty, NONE) = (Binding.print n)
           | print_attr (n, ty, SOME t)= (Binding.print n^"("^Syntax.string_of_term ctxt t^")")
         fun print_inv ((lab,pos),trm) = (lab ^"::"^Syntax.string_of_term ctxt trm)
         fun print_virtual {virtual} = Bool.toString virtual
-        fun print_class (n, {attribute_decl, id, inherits_from, name, virtual, params, thy_name, rejectS, rex,invs}) =
+        fun print_class (n, DOF_core.Onto_Class {attribute_decl, id, inherits_from, name, virtual
+                                                 , params, thy_name, rejectS, rex,invs}) =
            (case inherits_from of 
                NONE => writeln ("docclass: "^n)
              | SOME(_,nn) => writeln ("docclass: "^n^" = "^nn^" + ");
@@ -2295,7 +2234,7 @@ fun print_doc_classes b ctxt =
             writeln ("    attrs:      "^commas (map print_attr attribute_decl));
             writeln ("    invs:       "^commas (map print_inv invs))
            );
-    in  map print_class (Symtab.dest docclass_tab); 
+    in  map print_class classes; 
         writeln "=====================================\n\n\n" 
     end;
 
@@ -2304,7 +2243,8 @@ val _ =
     (Parse.opt_bang >> (fn b => Toplevel.keep (print_doc_classes b o Toplevel.context_of)));
 
 fun print_docclass_template cid ctxt = 
-    let val cid_long = DOF_core.read_cid ctxt cid  (* assure that given cid is really a long_cid *)
+    let (* takes class synonyms into account *)
+        val cid_long = DOF_core.get_onto_class_name_global' cid (Proof_Context.theory_of ctxt)
         val brute_hierarchy = (DOF_core.get_attributes_local cid_long ctxt)
         val flatten_hrchy = flat o (map(fn(lname, attrS) => 
                                            map (fn (s,_,_)=>(lname,(Binding.name_of s))) attrS))
@@ -2410,7 +2350,7 @@ fun meta_args_2_string thy ((((lab, pos), cid_opt), attr_list) : ODL_Meta_Args_P
                                 NONE => let val DOF_core.Instance cid =
                                                DOF_core.get_instance_global lab thy
                                         in cid |> #cid end
-                              | SOME(cid,_) => DOF_core.parse_cid_global thy cid        
+                              | SOME(cid,_) => DOF_core.get_onto_class_name_global cid thy        
         (* val _   = writeln("meta_args_2_string cid_long:"^ cid_long ) *)
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
 
@@ -2586,7 +2526,7 @@ fun compute_trace_ML ctxt oid pos_opt pos' =
   let val term = ISA_core.compute_attr_access ctxt "trace" oid pos_opt pos'
       fun conv (\<^Const>\<open>Pair \<^typ>\<open>doc_class rexp\<close> \<^typ>\<open>string\<close>\<close>
                   $ (\<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close> $ (\<^Const>\<open>mk\<close> $ s)) $ S) =
-        let val s' =  DOF_core.read_cid (Context.proof_of ctxt) (HOLogic.dest_string s)
+        let val s' =  DOF_core.get_onto_class_name_global (HOLogic.dest_string s) (Context.theory_of ctxt)
         in (s', HOLogic.dest_string S) end
   in  map conv (HOLogic.dest_list term) end
 
@@ -2634,8 +2574,8 @@ fun trace_attr_2_ML ctxt (oid:string,pos) =
     in  toML (compute_trace_ML ctxt oid NONE pos) end 
 
 fun compute_cid_repr ctxt cid pos = 
-      if DOF_core.is_defined_cid_local  cid ctxt then Const(cid,dummyT)
-      else ISA_core.err ("Undefined Class Identifier:"^cid) pos
+  let val _ = DOF_core.get_onto_class_name_global cid (Proof_Context.theory_of ctxt)
+  in Const(cid,dummyT) end
 
 fun compute_name_repr ctxt oid pos =
   let val instances = DOF_core.get_instances ctxt
@@ -2767,7 +2707,8 @@ fun define_inv cid_long ((lbl, pos), inv) thy =
             (Const (s, Type (st,[ty, ty'])) $ t) =
               let
                 val cid = Long_Name.qualifier s
-              in case DOF_core.get_doc_class_global cid thy of
+              in case Name_Space.lookup
+                        (DOF_core.get_onto_classes (Proof_Context.init_global thy)) cid of
                      NONE => Const (s, Type(st,[ty, ty']))
                              $ (update_attribute_type thy class_scheme_ty cid_long t)
                    | SOME _ => if DOF_core.is_subclass_global thy cid_long cid
@@ -2801,15 +2742,18 @@ fun define_inv cid_long ((lbl, pos), inv) thy =
 
 fun add_doc_class_cmd overloaded (raw_params, binding)
                       raw_parent raw_fieldsNdefaults reject_Atoms regexps invariants thy =
-    let
+    let 
       val ctxt = Proof_Context.init_global thy;
       val params = map (apsnd (Typedecl.read_constraint ctxt)) raw_params;
       val ctxt1 = fold (Variable.declare_typ o TFree) params ctxt;
-      fun cid thy = DOF_core.parse_cid_global thy (Binding.name_of binding)    
+      fun cid thy = (* takes class synonyms into account *)
+                    DOF_core.get_onto_class_name_global' (Binding.name_of binding) thy
       val (parent, ctxt2) = read_parent raw_parent ctxt1;
       val parent_cid_long =  map_optional snd DOF_core.default_cid parent;
       (* takes class synonyms into account *)
-      val parent' = map_option (map_snd (K (DOF_core.read_cid_global thy parent_cid_long))) parent
+      val parent' = map_option
+                      (map_snd (K (DOF_core.get_onto_class_name_super_class_global thy parent_cid_long)))
+                      parent
       val parent'_cid_long =  map_optional snd DOF_core.default_cid parent';
       val raw_fieldsNdefaults' = filter (fn((bi,_,_),_) => Binding.name_of bi <> "trace") 
                                         raw_fieldsNdefaults

@@ -44,7 +44,7 @@ text\<open>Voila the content of the Isabelle_DOF environment so far:\<close>
 ML\<open>
 val x = DOF_core.get_instances \<^context>
 val isa_transformer_tab = DOF_core.get_isa_transformers \<^context>
-val {docclass_tab,...} = DOF_core.get_data @{context}; 
+val docclass_tab = DOF_core.get_onto_classes \<^context>; 
 Name_Space.dest_table isa_transformer_tab; 
 \<close>
 

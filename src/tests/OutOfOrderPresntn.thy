@@ -29,13 +29,13 @@ print_doc_items
 
 (* this corresponds to low-level accesses : *)
 ML\<open>
-val docitem_tab = DOF_core.get_instances \<^context>
-val isa_transformer_tab = DOF_core.get_isa_transformers \<^context>
-val {docclass_tab, ...} 
-    = DOF_core.get_data @{context};
+val docitem_tab = DOF_core.get_instances \<^context>;
+val isa_transformer_tab = DOF_core.get_isa_transformers \<^context>;
+val docclass_tab = DOF_core.get_onto_classes \<^context>;
+
 Name_Space.dest_table docitem_tab;
 Name_Space.dest_table isa_transformer_tab;
-Symtab.dest docclass_tab;
+Name_Space.dest_table docclass_tab;
 app;
 \<close>
 

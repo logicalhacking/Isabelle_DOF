@@ -30,7 +30,7 @@ theory Isa_COL
            "figure*"       "side_by_side_figure*" :: document_body 
 
 begin
-  
+
 section\<open>Basic Text and Text-Structuring Elements\<close>
 
 text\<open> The attribute @{term "level"} in the subsequent enables doc-notation support section* etc.
@@ -92,8 +92,8 @@ local
 fun transform_cid thy NONE X = X
    |transform_cid thy (SOME ncid) NONE =  (SOME(ncid,@{here}))
    |transform_cid thy (SOME cid) (SOME (sub_cid,pos)) =
-                             let val cid_long  = DOF_core.read_cid_global thy cid
-                                 val sub_cid_long =  DOF_core.read_cid_global thy sub_cid
+                             let val cid_long  = DOF_core.get_onto_class_name_global' cid thy
+                                 val sub_cid_long =  DOF_core.get_onto_class_name_global' sub_cid thy
                              in  if DOF_core.is_subclass_global thy  sub_cid_long cid_long
                                  then (SOME (sub_cid,pos))
                                  else (* (SOME (sub_cid,pos)) *)
@@ -146,7 +146,8 @@ datatype placement = pl_h  | (*here*)
                      pl_ht | (*here ->  top*) 
                      pl_hb   (*here ->  bottom*)
 
-ML\<open>(Symtab.defined (#docclass_tab(DOF_core.get_data_global @{theory}))) "side_by_side_figure"\<close>
+ML\<open> "side_by_side_figure"  |> Name_Space.declared (DOF_core.get_onto_classes \<^context>
+                                                    |> Name_Space.space_of_table)\<close>
 
 print_doc_classes
 

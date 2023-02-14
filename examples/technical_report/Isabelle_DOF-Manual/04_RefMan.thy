@@ -350,8 +350,7 @@ is currently only available in the SML API's of the kernel.
      | macro_command
   \<close>
 \<^item> \<^isadof> \<open>change_status_command\<close> :
-  \<^rail>\<open>  (@@{command "update_instance*"} '[' upd_meta_args ']')
-       |  (@@{command "declare_reference*"} (obj_id ('::' class_id)))\<close>
+  \<^rail>\<open>  (@@{command "update_instance*"} '[' upd_meta_args ']')\<close>
 \<^item> \<^isadof> \<open>inspection_command\<close> :
   \<^rail>\<open>    @@{command "print_doc_classes"}
         |  @@{command "print_doc_items"} 

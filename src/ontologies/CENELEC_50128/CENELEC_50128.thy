@@ -1033,10 +1033,8 @@ fun check_sil oid _ ctxt =
 setup\<open>
 (fn thy =>
 let val ctxt = Proof_Context.init_global thy
-    val binding = let val cid = DOF_core.read_cid ctxt "monitor_SIL0"
-                  in the ((DOF_core.get_data ctxt |> #docclass_tab |> Symtab.lookup) cid)
-                     |> #name end
-       in  DOF_core.add_ml_invariant binding check_sil thy end)
+    val binding = DOF_core.binding_from_onto_class_pos "monitor_SIL0" thy
+in  DOF_core.add_ml_invariant binding check_sil thy end)
 \<close>
 
 text\<open>
@@ -1076,10 +1074,8 @@ fun check_sil_slow oid _ ctxt =
 (*setup\<open>
 (fn thy =>
 let val ctxt = Proof_Context.init_global thy
-    val binding = let val cid = DOF_core.read_cid ctxt "monitor_SIL0"
-                  in the ((DOF_core.get_data ctxt |> #docclass_tab |> Symtab.lookup) cid)
-                     |> #name end
-       in  DOF_core.add_ml_invariant binding check_sil_slow thy end)
+    val binding = DOF_core.binding_from_onto_class_pos "monitor_SIL0" thy
+in  DOF_core.add_ml_invariant binding check_sil_slow thy end)
 \<close>*)
 
 (* As traces of monitor instances (docitems) are updated each time an instance is declared
@@ -1111,12 +1107,10 @@ fun check_required_documents oid _ ctxt =
 \<close>
 
 setup\<open>
-(fn thy =>
+fn thy =>
 let val ctxt = Proof_Context.init_global thy
-    val binding = let val cid = DOF_core.read_cid ctxt "monitor_SIL0"
-                  in the ((DOF_core.get_data ctxt |> #docclass_tab |> Symtab.lookup) cid)
-                     |> #name end
-       in  DOF_core.add_closing_ml_invariant binding check_required_documents thy end)
+    val binding = DOF_core.binding_from_onto_class_pos "monitor_SIL0" thy
+in  DOF_core.add_closing_ml_invariant binding check_required_documents thy end
 \<close>
 
 (* Test pattern matching for the records of the current CENELEC implementation classes,
@@ -1281,10 +1275,10 @@ section\<open> META : Testing and Validation \<close>
 text\<open>Test : @{semi_formal_content \<open>COTS\<close>}\<close>
 
 ML
-\<open> DOF_core.read_cid_global @{theory} "requirement";
-  DOF_core.read_cid_global @{theory} "SRAC";
-  DOF_core.is_defined_cid_global "SRAC" @{theory};
-  DOF_core.is_defined_cid_global "EC" @{theory}; \<close>
+\<open> DOF_core.get_onto_class_name_global "requirement" @{theory};
+  DOF_core.get_onto_class_name_global "SRAC" @{theory};
+  DOF_core.get_onto_class_global "SRAC" @{theory};
+  DOF_core.get_onto_class_global "EC" @{theory}; \<close>
 
 ML
 \<open> DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.EC";
@@ -1294,15 +1288,15 @@ ML
 
 ML
 \<open> val ref_tab = DOF_core.get_instances \<^context> 
-  val {docclass_tab=class_tab,...} = DOF_core.get_data @{context};
+  val docclass_tab = DOF_core.get_onto_classes @{context};
   Name_Space.dest_table ref_tab;
-  Symtab.dest class_tab; \<close>
+  Name_Space.dest_table docclass_tab; \<close>
 
 ML
 \<open> val internal_data_of_SRAC_definition = DOF_core.get_attributes_local "SRAC" @{context} \<close> 
 
 ML
-\<open> DOF_core.read_cid_global         @{theory}  "requirement";
+\<open> DOF_core.get_onto_class_name_global "requirement" @{theory};
   Syntax.parse_typ                 @{context} "requirement";
   val Type(t,_) = Syntax.parse_typ @{context} "requirement" handle ERROR _ => dummyT; 
   Syntax.read_typ                  @{context} "hypothesis"  handle  _ => dummyT;

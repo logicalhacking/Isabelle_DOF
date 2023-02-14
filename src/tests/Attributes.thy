@@ -27,9 +27,9 @@ print_doc_items
 ML\<open>  
 val docitem_tab = DOF_core.get_instances \<^context>
 val isa_transformer_tab = DOF_core.get_isa_transformers \<^context>
-val {docclass_tab, ...} = DOF_core.get_data @{context};
+val docclass_tab = DOF_core.get_onto_classes @{context};
 Name_Space.dest_table docitem_tab;
-Symtab.dest docclass_tab;
+Name_Space.dest_table docclass_tab;
 \<close>
 ML\<open>
 val (oid, DOF_core.Instance {value, ...}) =
@@ -176,11 +176,6 @@ section\<open>Simulation of a Monitor\<close>
 
 declare[[free_class_in_monitor_checking]]
 
-ML\<open>
-val thy  = \<^theory>
-val long_cid = "Isa_COL.figure_group"
-val t = DOF_core.get_doc_class_global long_cid thy
-\<close>
 open_monitor*[figs1::figure_group, 
               caption="''Sample ''"]  
 ML\<open>val monitor_infos = DOF_core.get_monitor_infos \<^context>\<close>
