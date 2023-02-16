@@ -150,20 +150,16 @@ struct
 
   datatype onto_class = Onto_Class of 
     {params         : (string * sort) list,          (*currently not used *)
-     name           : binding,
      virtual        : {virtual : bool}, 
-     thy_name       : string, id : serial,           (* for pide *)
      inherits_from  : (typ list * string) option,    (* imports *)
      attribute_decl : (binding*typ*term option)list, (* class local *)
      rejectS        : term list,
      rex            : term list,
      invs           : ((string * Position.T) * term) list  } (* monitoring regexps --- product semantics*)
 
-  fun make_onto_class (params, name, virtual, thy_name, id, inherits_from, attribute_decl
-                       , rejectS, rex, invs) =
-    Onto_Class {params = params, name = name, virtual = virtual, thy_name = thy_name, id = id
-                , inherits_from = inherits_from, attribute_decl = attribute_decl, rejectS = rejectS
-                , rex = rex, invs = invs}
+  fun make_onto_class (params, virtual, inherits_from, attribute_decl , rejectS, rex, invs) =
+    Onto_Class {params = params, virtual = virtual, inherits_from = inherits_from
+                , attribute_decl = attribute_decl, rejectS = rejectS , rex = rex, invs = invs}
 
   structure Onto_Classes = Theory_Data
   (
@@ -257,7 +253,6 @@ struct
      input_term: term,
      value: term,
      inline: bool, 
-     id: serial, 
      cid: string,
      vcid: string option}
 
@@ -265,13 +260,12 @@ struct
      input_term = \<^term>\<open>()\<close>,
      value = \<^term>\<open>()\<close>,
      inline = false, 
-     id = 0, 
      cid = "",
      vcid = NONE}
 
-  fun make_instance (defined, input_term, value, inline, id, cid, vcid) =
-    Instance {defined = defined, input_term = input_term, value = value, inline = inline,
-               id = id, cid = cid, vcid = vcid}
+  fun make_instance (defined, input_term, value, inline, cid, vcid) =
+    Instance {defined = defined, input_term = input_term, value = value, inline = inline
+              , cid = cid, vcid = vcid}
 
   structure Instances = Theory_Data
   (
@@ -604,15 +598,12 @@ fun check_reject_atom term =
 fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms invs virtual thy  = 
 (* This operation is executed in a context where the record has already been defined, but
    its conversion into a class is not yet done. *)
-    let val nn = Context.theory_name thy (* in case that we need the thy-name to identify
-                                            the space where it is ... *)
-        (*val cid = (Binding.name_of binding)
+    let (*val cid = (Binding.name_of binding)
         val _   = if is_defined_cid_global cid thy
                   then error("redefinition of document class:"^cid )
                   else ()*)
         (* takes class synonyms into account *)
         val parent' = map_option (map_snd (fn x => get_onto_class_name_global' x thy)) parent
-        val id = serial ();
         val rejectS = map (Syntax.read_term_global thy) reject_Atoms;
         val _ = map (check_reject_atom) rejectS; 
         val reg_exps = map (Syntax.read_term_global thy) rexp;
@@ -623,8 +614,8 @@ fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms i
                 then error("invariant labels must be unique"^  Position.here (snd(fst(hd invs)))) 
                 else ()
         val invs' = map (map_snd(Syntax.read_term_global thy)) invs 
-    in  thy |> add_onto_class binding (make_onto_class (params', binding, virtual, nn, id, parent'
-                                                        , fields, rejectS, reg_exps, invs'))
+    in  thy |> add_onto_class binding (make_onto_class (params', virtual, parent', fields
+                                                        , rejectS, reg_exps, invs'))
     end
 
 fun define_object_global {define = define} ((oid, pos), bbb) thy  = 
@@ -636,8 +627,8 @@ fun define_object_global {define = define} ((oid, pos), bbb) thy  =
     val (oid', instance) = Name_Space.check (Context.Theory thy)
                                 (get_instances (Proof_Context.init_global thy)) (oid, Position.none)
                                 handle ERROR _ => (undefined_instance, empty_instance)
-    val {input_term, value, inline, id, cid, vcid, ...} = bbb
-    val instance' = make_instance (define, input_term, value, inline, id, cid, vcid)
+    val {input_term, value, inline, cid, vcid, ...} = bbb
+    val instance' = make_instance (define, input_term, value, inline, cid, vcid)
   in if oid' = undefined_instance andalso instance = empty_instance
      then add_instance binding instance' thy
      else if define 
@@ -725,16 +716,16 @@ fun binding_from_instance_pos name thy  =
 fun update_value_global name upd_value thy  =
   let
     val binding = binding_from_instance_pos name thy
-    val Instance {defined, input_term, value, inline, id, cid, vcid} = get_instance_global name thy 
-    val instance' = make_instance (defined, input_term, upd_value value, inline, id, cid, vcid)
+    val Instance {defined, input_term, value, inline, cid, vcid} = get_instance_global name thy 
+    val instance' = make_instance (defined, input_term, upd_value value, inline, cid, vcid)
   in update_instance binding (instance') thy end
 
 fun update_input_term_global name upd_input_term thy  = 
   let
     val binding = binding_from_instance_pos name thy
-    val Instance {defined, input_term, value, inline, id, cid, vcid} = get_instance_global name thy 
+    val Instance {defined, input_term, value, inline, cid, vcid} = get_instance_global name thy 
     val instance' = make_instance (defined, upd_input_term input_term,
-                                   value, inline, id, cid, vcid)
+                                   value, inline, cid, vcid)
   in update_instance binding (instance') thy end
 
 fun update_value_input_term_global name upd_input_term upd_value thy  = 
@@ -1721,7 +1712,6 @@ fun check_invariants thy (oid, pos) =
 
 fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} oid pos cid_pos doc_attrs thy =
   let
-    val id = serial ();
     val cid_pos' = check_classref is_monitor cid_pos thy
     val cid_long = fst cid_pos'
     val default_cid = cid_long = DOF_core.default_cid
@@ -1764,7 +1754,6 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} oi
                                                  value      = value (Proof_Context.init_global thy)
                                                                     (snd value_terms),
                                                  inline     = is_inline,
-                                                 id         = id,
                                                  cid        = cid_long,
                                                  vcid       = vcid})
          |> register_oid_cid_in_open_monitors oid pos cid_pos'
@@ -2224,14 +2213,12 @@ fun print_doc_classes b ctxt =
           | print_attr (n, ty, SOME t)= (Binding.print n^"("^Syntax.string_of_term ctxt t^")")
         fun print_inv ((lab,pos),trm) = (lab ^"::"^Syntax.string_of_term ctxt trm)
         fun print_virtual {virtual} = Bool.toString virtual
-        fun print_class (n, DOF_core.Onto_Class {attribute_decl, id, inherits_from, name, virtual
-                                                 , params, thy_name, rejectS, rex,invs}) =
+        fun print_class (n, DOF_core.Onto_Class {attribute_decl, inherits_from, virtual
+                                                 , params, rejectS, rex, invs}) =
            (case inherits_from of 
                NONE => writeln ("docclass: "^n)
              | SOME(_,nn) => writeln ("docclass: "^n^" = "^nn^" + ");
-            writeln ("    name:       "^(Binding.print name));
             writeln ("    virtual:    "^(print_virtual virtual));
-            writeln ("    origin:     "^thy_name);
             writeln ("    attrs:      "^commas (map print_attr attribute_decl));
             writeln ("    invs:       "^commas (map print_inv invs))
            );
@@ -2266,7 +2253,7 @@ fun print_doc_items b ctxt =
         val _ = writeln "=====================================";  
         fun dfg true = "true" 
            |dfg false= "false"   
-        fun print_item (n, DOF_core.Instance {defined,cid,vcid,id, inline, input_term, value}) =
+        fun print_item (n, DOF_core.Instance {defined,cid,vcid, inline, input_term, value}) =
                  ((if defined then 
                   writeln ("docitem:             "^n)
                   else
