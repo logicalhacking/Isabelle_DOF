@@ -606,15 +606,13 @@ fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms i
    its conversion into a class is not yet done. *)
     let val nn = Context.theory_name thy (* in case that we need the thy-name to identify
                                             the space where it is ... *)
-        val cid = (Binding.name_of binding)
-        val pos = (Binding.pos_of binding)
-        (*val _   = if is_defined_cid_global cid thy
+        (*val cid = (Binding.name_of binding)
+        val _   = if is_defined_cid_global cid thy
                   then error("redefinition of document class:"^cid )
                   else ()*)
         (* takes class synonyms into account *)
         val parent' = map_option (map_snd (fn x => get_onto_class_name_global' x thy)) parent
         val id = serial ();
-        val _ = Position.report pos (docclass_markup true cid id pos);
         val rejectS = map (Syntax.read_term_global thy) reject_Atoms;
         val _ = map (check_reject_atom) rejectS; 
         val reg_exps = map (Syntax.read_term_global thy) rexp;
@@ -1160,7 +1158,7 @@ fun compute_attr_access ctxt attr oid pos_option pos' = (* template *)
                  |> Name_Space.markup (Name_Space.space_of_table instances)
     val _ = Context_Position.report ctxt' pos' markup;
     val (* (long_cid, attr_b,ty) = *)
-        {long_name, typ=ty, def_pos, ...} = 
+        {long_name, typ=ty, ...} = 
       case DOF_core.get_attribute_info_local cid attr ctxt' of
           SOME f => f
         | NONE =>  error("attribute undefined for reference: "
@@ -1177,9 +1175,10 @@ fun compute_attr_access ctxt attr oid pos_option pos' = (* template *)
               | SOME pos =>
                   let 
                     val class_name = Long_Name.qualifier long_name
-                    val DOF_core.Onto_Class {id,...} = DOF_core.get_onto_class_global class_name thy
-                    val class_markup = docclass_markup false class_name id def_pos
-                  in Context_Position.report ctxt' pos class_markup end
+                    val onto_classes = DOF_core.get_onto_classes ctxt'
+                    val markup = DOF_core.get_onto_class_name_global class_name thy
+                                 |> Name_Space.markup (Name_Space.space_of_table onto_classes)
+                  in Context_Position.report ctxt' pos markup end
   in  symbex_attr_access0 ctxt' proj_term value end
 
 fun ML_isa_elaborate_trace_attribute (thy:theory) _ _ term_option pos =
@@ -1455,14 +1454,15 @@ fun create_default_object thy class_name =
 fun check_classref {is_monitor=is_monitor} (SOME(cid,pos)) thy = 
           let 
               val cid_long = DOF_core.get_onto_class_name_global' cid thy
-              val DOF_core.Onto_Class {id, name=bind_target,rex,...} =
-                                                        DOF_core.get_onto_class_global cid_long thy
+              val DOF_core.Onto_Class {rex, ...} = DOF_core.get_onto_class_global cid_long thy
               val _ = if is_monitor andalso (null rex orelse cid_long= DOF_core.default_cid ) 
                       then error("should be monitor class!")
                       else ()
-              val markup = docclass_markup false cid id (Binding.pos_of bind_target);
-              val ctxt = Context.Theory thy
-              val _    = Context_Position.report_generic ctxt pos markup;
+              val ctxt = Proof_Context.init_global thy
+              val onto_classes = DOF_core.get_onto_classes ctxt
+              val markup = DOF_core.get_onto_class_name_global cid_long thy
+                           |> Name_Space.markup (Name_Space.space_of_table onto_classes)
+              val _ = Context_Position.report ctxt pos markup;
           in  (cid_long, pos)
           end
    | check_classref _ NONE _ = (DOF_core.default_cid, Position.none) 
@@ -1475,8 +1475,9 @@ fun infer_type thy term = hd (Type_Infer_Context.infer_types (Proof_Context.init
 fun calc_update_term {mk_elaboration=mk_elaboration} thy cid_long
                      (S:(string * Position.T * string * term)list) term = 
     let val cid_ty = cid_2_cidType cid_long thy
+        val ctxt = Proof_Context.init_global thy
         val generalize_term =  Term.map_types (generalize_typ 0)
-        fun toString t = Syntax.string_of_term (Proof_Context.init_global thy) t  
+        fun toString t = Syntax.string_of_term ctxt t  
         fun instantiate_term S t =
           Term_Subst.map_types_same (Term_Subst.instantiateT (TVars.make S)) (t)
         fun read_assn (lhs, pos:Position.T, opr, rhs) term =
@@ -1492,18 +1493,18 @@ fun calc_update_term {mk_elaboration=mk_elaboration} thy cid_long
                     else
                       case inherits_from of
                           NONE =>
-                                ISA_core.err ("Attribute " ^ attribute_name ^ " not defined for class: " ^ cid_long) pos
+                                ISA_core.err ("Attribute " ^ attribute_name
+                                              ^ " not defined for class: " ^ cid_long) pos
                         | SOME (_, parent_name) =>
                                               get_class_name parent_name attribute_name pos
                   end
                 val _ = if mk_elaboration
                         then
                           let val attr_defined_cid = get_class_name cid_long lhs pos
-                              val DOF_core.Onto_Class {id, name, ...} =
-                                                DOF_core.get_onto_class_global attr_defined_cid thy
-                              val markup = docclass_markup false cid_long id (Binding.pos_of name);
-                              val ctxt = Context.Theory thy
-                          in Context_Position.report_generic ctxt pos markup end
+                              val onto_classes = DOF_core.get_onto_classes ctxt
+                              val markup = DOF_core.get_onto_class_name_global attr_defined_cid thy
+                                           |> Name_Space.markup (Name_Space.space_of_table onto_classes)
+                          in Context_Position.report ctxt pos markup end
                         else ()
                 val info_opt = DOF_core.get_attribute_info cid_long (Long_Name.base_name lhs) thy
                 val (ln,lnt,lnu,lnut) = case info_opt of 
