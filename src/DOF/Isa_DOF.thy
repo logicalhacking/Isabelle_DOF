@@ -174,11 +174,14 @@ struct
     Name_Space.check (Context.Theory thy)
                       (get_onto_classes (Proof_Context.init_global thy)) (name, Position.none) |> #2
 
+  fun resolve_syn thy name =
+     name |> Syntax.read_typ_global thy
+          |> Syntax.string_of_typ_global thy
+          |> YXML.parse_body |> XML.content_of
+
   (* takes class synonyms into account *)
   fun get_onto_class_global' name thy  =
-    let val name' = name |> Syntax.read_typ_global thy
-                         |> Syntax.string_of_typ_global thy
-                         |> YXML.parse_body |> XML.content_of
+    let val name' = name |> resolve_syn thy
     in Name_Space.check (Context.Theory thy)
                     (get_onto_classes (Proof_Context.init_global thy)) (name', Position.none) |> #2
     end
@@ -189,9 +192,7 @@ struct
 
   (* takes class synonyms into account *)
   fun get_onto_class_name_global' name thy  =
-    let val name' = name |> Syntax.read_typ_global thy
-                         |> Syntax.string_of_typ_global thy
-                         |> YXML.parse_body |> XML.content_of
+    let val name' = name |> resolve_syn thy
     in Name_Space.check (Context.Theory thy)
                     (get_onto_classes (Proof_Context.init_global thy)) (name', Position.none) |> #1
     end
@@ -687,11 +688,11 @@ fun get_value_local oid ctxt  =
 
 (* missing : setting terms to ground (no type-schema vars, no schema vars. )*)
 
-fun binding_from_pos get_objects get_objects_name name thy  =
+fun binding_from_pos get_objects get_object_name name thy  =
   let
     val ns = get_objects (Proof_Context.init_global thy)
                          |> Name_Space.space_of_table 
-    val {pos, ...} = Name_Space.the_entry ns (get_objects_name name thy)
+    val {pos, ...} = Name_Space.the_entry ns (get_object_name name thy)
   in if Long_Name.is_qualified name
      then Binding.make (Long_Name.base_name name, pos)
      else Binding.make (name, pos)end
@@ -1105,7 +1106,7 @@ fun elaborate_instances_list thy isa_name _ _ pos =
 fun declare_class_instances_annotation thy doc_class_name =
   let
     val bind = Binding.prefix_name DOF_core.doc_class_prefix doc_class_name
-    val bind' = Binding.suffix_name instances_of_suffixN bind
+               |> Binding.suffix_name instances_of_suffixN
     val class_list_typ = Proof_Context.read_typ (Proof_Context.init_global thy)
                                                 ((Binding.name_of doc_class_name) ^ " List.list")
     (* Unfortunately due to different lexical conventions for constant symbols and mixfix symbols
@@ -1115,8 +1116,8 @@ fun declare_class_instances_annotation thy doc_class_name =
                                         ((Binding.name_of doc_class_name) ^ instances_of_suffixN)
     val mixfix_string = "@{" ^ conv_class_name' ^ "}"
   in
-    Sign.add_consts [(bind', class_list_typ, Mixfix.mixfix(mixfix_string))]
-    #>  DOF_core.add_isa_transformer bind' ((check_identity, elaborate_instances_list)
+    Sign.add_consts [(bind, class_list_typ, Mixfix.mixfix(mixfix_string))]
+    #>  DOF_core.add_isa_transformer bind ((check_identity, elaborate_instances_list)
                                             |> DOF_core.make_isa_transformer)
   end                            
 
@@ -1201,9 +1202,9 @@ let val ns = Sign.tsig_of thy |> Type.type_space
     val {pos, ...} = Name_Space.the_entry ns name
     val bname = Long_Name.base_name name
     val binding = Binding.make (bname, pos)
-    val binding' = (Binding.prefix_name DOF_core.ISA_prefix binding)
-                  |> Binding.prefix false bname
-in  DOF_core.add_isa_transformer binding' ((check, elaborate) |> DOF_core.make_isa_transformer) thy
+                   |> Binding.prefix_name DOF_core.ISA_prefix
+                   |> Binding.prefix false bname
+in  DOF_core.add_isa_transformer binding ((check, elaborate) |> DOF_core.make_isa_transformer) thy
 end)
 #>
 ([(\<^const_name>\<open>Isabelle_DOF_term_repr\<close>,
