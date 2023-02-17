@@ -150,6 +150,7 @@ struct
 
   datatype onto_class = Onto_Class of 
     {params         : (string * sort) list,          (*currently not used *)
+     name           : binding,
      virtual        : {virtual : bool}, 
      inherits_from  : (typ list * string) option,    (* imports *)
      attribute_decl : (binding*typ*term option)list, (* class local *)
@@ -157,8 +158,8 @@ struct
      rex            : term list,
      invs           : ((string * Position.T) * term) list  } (* monitoring regexps --- product semantics*)
 
-  fun make_onto_class (params, virtual, inherits_from, attribute_decl , rejectS, rex, invs) =
-    Onto_Class {params = params, virtual = virtual, inherits_from = inherits_from
+  fun make_onto_class (params, name, virtual, inherits_from, attribute_decl , rejectS, rex, invs) =
+    Onto_Class {params = params, name = name, virtual = virtual, inherits_from = inherits_from
                 , attribute_decl = attribute_decl, rejectS = rejectS , rex = rex, invs = invs}
 
   structure Onto_Classes = Theory_Data
@@ -604,7 +605,7 @@ fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms i
                 then error("invariant labels must be unique"^  Position.here (snd(fst(hd invs)))) 
                 else ()
         val invs' = map (map_snd(Syntax.read_term_global thy)) invs 
-    in  thy |> add_onto_class binding (make_onto_class (params', virtual, parent', fields
+    in  thy |> add_onto_class binding (make_onto_class (params', binding, virtual, parent', fields
                                                         , rejectS, reg_exps, invs'))
     end
 
@@ -2201,11 +2202,12 @@ fun print_doc_classes b ctxt =
           | print_attr (n, ty, SOME t)= (Binding.print n^"("^Syntax.string_of_term ctxt t^")")
         fun print_inv ((lab,pos),trm) = (lab ^"::"^Syntax.string_of_term ctxt trm)
         fun print_virtual {virtual} = Bool.toString virtual
-        fun print_class (n, DOF_core.Onto_Class {attribute_decl, inherits_from, virtual
+        fun print_class (n, DOF_core.Onto_Class {attribute_decl, name, inherits_from, virtual
                                                  , params, rejectS, rex, invs}) =
            (case inherits_from of 
                NONE => writeln ("docclass: "^n)
              | SOME(_,nn) => writeln ("docclass: "^n^" = "^nn^" + ");
+            writeln ("    name:       "^(Binding.print name));
             writeln ("    virtual:    "^(print_virtual virtual));
             writeln ("    attrs:      "^commas (map print_attr attribute_decl));
             writeln ("    invs:       "^commas (map print_inv invs))
