@@ -200,16 +200,13 @@ struct
     #1 o Name_Space.check (Context.Proof ctxt) (get_onto_classes ctxt);
 
   fun add_onto_class name onto_class thy =
-    thy |> Onto_Classes.map
-      (Name_Space.define (Context.Theory thy) true (name, onto_class) #> #2);
+    thy |> Onto_Classes.map (Name_Space.define (Context.Theory thy) true (name, onto_class) #> #2);
 
   fun update_onto_class name onto_class thy =
-    thy |> Onto_Classes.map
-      (Name_Space.define (Context.Theory thy) false (name, onto_class) #> #2);
+    thy |> Onto_Classes.map (Name_Space.define (Context.Theory thy) false (name, onto_class) #> #2);
 
-  fun update_onto_class_entry name new_onto_class thy =
-    thy |> Onto_Classes.map
-      (Name_Space.map_table_entry name (fn _ => new_onto_class));
+  fun update_onto_class_entry name new_onto_class =
+    Onto_Classes.map (Name_Space.map_table_entry name (K new_onto_class));
 
   fun print_onto_classes verbose ctxt =
     Pretty.big_list "Isabelle.DOF Onto_Classes:"
@@ -288,16 +285,13 @@ struct
     #1 o Name_Space.check (Context.Proof ctxt) (get_instances ctxt);
 
   fun add_instance name instance thy =
-    thy |> Instances.map
-      (Name_Space.define (Context.Theory thy) true (name, instance) #> #2);
+    thy |> Instances.map (Name_Space.define (Context.Theory thy) true (name, instance) #> #2);
 
   fun update_instance name instance thy =
-    thy |> Instances.map
-      (Name_Space.define (Context.Theory thy) false (name, instance) #> #2);
+    thy |> Instances.map (Name_Space.define (Context.Theory thy) false (name, instance) #> #2);
 
-  fun update_instance_entry name new_instance thy =
-    thy |> Instances.map
-      (Name_Space.map_table_entry name (fn _ => new_instance));
+  fun update_instance_entry name new_instance =
+    Instances.map (Name_Space.map_table_entry name (K new_instance));
 
   fun print_instances verbose ctxt =
     Pretty.big_list "Isabelle.DOF Instances:"
@@ -338,8 +332,7 @@ struct
       (Name_Space.define (Context.Theory thy) false (name, isa_transformer) #> #2);
 
   fun update_isa_transformer_entry name new_isa_transformer thy =
-    thy |> ISA_Transformers.map
-      (Name_Space.map_table_entry name (fn _ => new_isa_transformer));
+    ISA_Transformers.map (Name_Space.map_table_entry name (K new_isa_transformer));
 
   fun print_isa_transformers verbose ctxt =
     Pretty.big_list "Isabelle.DOF ISA_Transformers:"
@@ -382,9 +375,8 @@ struct
     thy |> ML_Invariants.map
       (Name_Space.define (Context.Theory thy) false (name, ml_invariant) #> #2);
 
-  fun update_ml_invariant_entry name new_ml_invariant thy =
-    thy |> ML_Invariants.map
-      (Name_Space.map_table_entry name (fn _ => new_ml_invariant));
+  fun update_ml_invariant_entry name new_ml_invariant =
+    ML_Invariants.map (Name_Space.map_table_entry name (K new_ml_invariant));
 
   fun print_ml_invariants verbose ctxt =
     Pretty.big_list "Isabelle.DOF ML_Invariants:"
@@ -425,9 +417,8 @@ struct
     thy |> Opening_ML_Invariants.map
       (Name_Space.define (Context.Theory thy) false (name, opening_ml_invariant) #> #2);
 
-  fun update_opening_ml_invariant_entry name new_opening_ml_invariant thy =
-    thy |> Opening_ML_Invariants.map
-      (Name_Space.map_table_entry name (fn _ => new_opening_ml_invariant));
+  fun update_opening_ml_invariant_entry name new_opening_ml_invariant =
+    Opening_ML_Invariants.map (Name_Space.map_table_entry name (K new_opening_ml_invariant));
 
   fun print_opening_ml_invariants verbose ctxt =
     Pretty.big_list "Isabelle.DOF Opening_ML_Invariants:"
@@ -467,9 +458,8 @@ struct
     thy |> Closing_ML_Invariants.map
       (Name_Space.define (Context.Theory thy) false (name, closing_ml_invariant) #> #2);
 
-  fun update_closing_ml_invariant_entry name new_closing_ml_invariant thy =
-    thy |> Closing_ML_Invariants.map
-      (Name_Space.map_table_entry name (fn _ => new_closing_ml_invariant));
+  fun update_closing_ml_invariant_entry name new_closing_ml_invariant =
+    Closing_ML_Invariants.map (Name_Space.map_table_entry name (K new_closing_ml_invariant));
 
   fun print_closing_ml_invariants verbose ctxt =
     Pretty.big_list "Isabelle.DOF Closing_ML_Invariants:"
@@ -521,9 +511,8 @@ struct
     thy |> Monitor_Info.map
       (Name_Space.define (Context.Theory thy) false (name, monitor_info) #> #2);
 
-  fun update_monitor_info_entry name new_monitor_info thy =
-      thy |> Monitor_Info.map
-        (Name_Space.map_table_entry name (fn _ => new_monitor_info));
+  fun update_monitor_info_entry name new_monitor_info =
+    Monitor_Info.map (Name_Space.map_table_entry name (K new_monitor_info));
 
   fun print_monitors_infos verbose ctxt =
     Pretty.big_list "Isabelle.DOF Monitor_Infos:"
@@ -618,25 +607,25 @@ fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms i
                                                         , rejectS, reg_exps, invs'))
     end
 
-fun define_object_global {define = define} ((oid, pos), bbb) thy  = 
+fun define_object_global {define = define} ((oid, pos), instance) thy  = 
   let
     val binding = if Long_Name.is_qualified oid
                   then Binding.make (Long_Name.base_name oid, pos)
                   else Binding.make (oid, pos)
     val undefined_instance = "undefined_instance"
-    val (oid', instance) = Name_Space.check (Context.Theory thy)
+    val (oid', instance') = Name_Space.check (Context.Theory thy)
                                 (get_instances (Proof_Context.init_global thy)) (oid, Position.none)
                                 handle ERROR _ => (undefined_instance, empty_instance)
-    val {input_term, value, inline, cid, vcid, ...} = bbb
-    val instance' = make_instance (define, input_term, value, inline, cid, vcid)
-  in if oid' = undefined_instance andalso instance = empty_instance
-     then add_instance binding instance' thy
+    val Instance {input_term, value, inline, cid, vcid, ...} = instance
+    val instance'' = make_instance (define, input_term, value, inline, cid, vcid)
+  in if oid' = undefined_instance andalso instance' = empty_instance
+     then add_instance binding instance'' thy
      else if define 
-          then let val Instance {defined, ...} = instance
+          then let val Instance {defined, ...} = instance'
                in  if defined
-                   then add_instance binding instance' thy
-                   else update_instance_entry oid' instance' thy end
-          else add_instance binding (Instance bbb) thy
+                   then add_instance binding instance'' thy
+                   else update_instance_entry oid' instance'' thy end
+          else add_instance binding instance thy
   end
 
 
@@ -718,15 +707,14 @@ fun update_value_global name upd_value thy  =
     val binding = binding_from_instance_pos name thy
     val Instance {defined, input_term, value, inline, cid, vcid} = get_instance_global name thy 
     val instance' = make_instance (defined, input_term, upd_value value, inline, cid, vcid)
-  in update_instance binding (instance') thy end
+  in update_instance binding instance' thy end
 
 fun update_input_term_global name upd_input_term thy  = 
   let
     val binding = binding_from_instance_pos name thy
     val Instance {defined, input_term, value, inline, cid, vcid} = get_instance_global name thy 
-    val instance' = make_instance (defined, upd_input_term input_term,
-                                   value, inline, cid, vcid)
-  in update_instance binding (instance') thy end
+    val instance' = make_instance (defined, upd_input_term input_term, value, inline, cid, vcid)
+  in update_instance binding instance' thy end
 
 fun update_value_input_term_global name upd_input_term upd_value thy  = 
   update_value_global name upd_value thy |> update_input_term_global name upd_input_term
@@ -1091,8 +1079,8 @@ fun declare_ISA_class_accessor_and_check_instance doc_class_name =
     val mixfix_string = "@{" ^ conv_class_name ^ " _}"
   in
     Sign.add_consts_cmd [(bind, typestring, Mixfix.mixfix(mixfix_string))]
-    #> DOF_core.add_isa_transformer bind (DOF_core.make_isa_transformer 
-                                                              (check_instance, elaborate_instance))
+    #> DOF_core.add_isa_transformer bind ((check_instance, elaborate_instance)
+                                          |> DOF_core.make_isa_transformer)
   end
 
 fun elaborate_instances_list thy isa_name _ _ pos =
@@ -1128,8 +1116,8 @@ fun declare_class_instances_annotation thy doc_class_name =
     val mixfix_string = "@{" ^ conv_class_name' ^ "}"
   in
     Sign.add_consts [(bind', class_list_typ, Mixfix.mixfix(mixfix_string))]
-    #>  DOF_core.add_isa_transformer bind' (DOF_core.make_isa_transformer
-                                                        (check_identity, elaborate_instances_list))
+    #>  DOF_core.add_isa_transformer bind' ((check_identity, elaborate_instances_list)
+                                            |> DOF_core.make_isa_transformer)
   end                            
 
 fun symbex_attr_access0 ctxt proj_term term =
@@ -1620,8 +1608,8 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
       val delta_autoS = map is_enabled_for_cid  enabled_monitors; 
       fun update_info (n, aS, monitor_info) =  
         let val DOF_core.Monitor_Info {accepted_cids,rejected_cids,...} = monitor_info
-        in Name_Space.map_table_entry n (fn _ => DOF_core.make_monitor_info
-                                                              (accepted_cids, rejected_cids, aS))
+        in Name_Space.map_table_entry n (K ((accepted_cids, rejected_cids, aS)
+                                            |> DOF_core.make_monitor_info))
         end
       fun update_trace mon_oid =
         if Config.get_global thy DOF_core.object_value_debug
@@ -1749,13 +1737,12 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} oi
                         in case check_option of
                               NONE => (K true)
                             | SOME check => (check oid is_monitor) end)
-  in thy |> DOF_core.define_object_global {define = define} ((oid, pos), {defined = false,
-                                                 input_term = fst value_terms,
-                                                 value      = value (Proof_Context.init_global thy)
-                                                                    (snd value_terms),
-                                                 inline     = is_inline,
-                                                 cid        = cid_long,
-                                                 vcid       = vcid})
+  in thy |> DOF_core.define_object_global
+              {define = define} ((oid, pos), DOF_core.make_instance
+                                               (false, fst value_terms,
+                                                (snd value_terms)
+                                                |> value (Proof_Context.init_global thy),
+                                                 is_inline, cid_long, vcid))
          |> register_oid_cid_in_open_monitors oid pos cid_pos'
          |> (fn thy => if #is_monitor(is_monitor)
                        then ((Context.Theory
