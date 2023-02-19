@@ -953,7 +953,7 @@ fun check_path check_file ctxt dir (name, pos) =
 
     val path = Path.append dir (Path.explode name) handle ERROR msg => err msg pos;
     val _ = Path.expand path handle ERROR msg => err msg pos;
-    val _ = Context_Position.report ctxt pos (Markup.path (Path.implode_symbolic path));
+    val _ = Context_Position.report ctxt pos (Markup.path (File.symbolic_path path));
     val _ =
       (case check_file of
         NONE => path
@@ -1857,13 +1857,10 @@ let
   fun prin state _ = string_of_term string pos (Toplevel.context_of state) 
 in
   Toplevel.theory(fn thy =>
-                     (print_item prin (string_list, string) (Toplevel.theory_toplevel thy); 
+                     (print_item prin (string_list, string) (Toplevel.make_state (SOME thy));
                      thy |> meta_args_exec meta_args_opt ) 
                  ) trans                    
 end
-
-val _ = Toplevel.theory
-val _ = Toplevel.theory_toplevel 
 
 
 
@@ -2146,7 +2143,7 @@ fun document_command (name, pos) descr mark cmd =
   Outer_Syntax.command (name, pos) descr
     (ODL_Meta_Args_Parser.attributes -- Parse.document_source >> (fn (meta_args, text) =>
       Toplevel.theory' (fn _ => cmd meta_args)
-      (Toplevel.presentation_context #> document_output_reports name mark meta_args text #> SOME)));
+      (SOME (Toplevel.presentation_context #> document_output_reports name mark meta_args text))));
 
 
 (* Core Command Definitions *)
@@ -3198,7 +3195,6 @@ ML\<open> (String.concatWith ","); Token.content_of\<close>
 
 ML\<open>
  Document.state;
-Session.get_keywords();
  Parse.command;
  Parse.tags;
 \<close>

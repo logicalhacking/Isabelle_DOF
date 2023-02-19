@@ -1144,8 +1144,7 @@ text\<open>
    necessary infrastructure ---  i.e. the operations to pack and unpack theories and
    queries  on it:
 
-\<^item> \<^ML>\<open> Toplevel.theory_toplevel: theory -> Toplevel.state\<close>
-\<^item> \<^ML>\<open> Toplevel.init_toplevel: unit -> Toplevel.state\<close>
+\<^item> \<^ML>\<open> Toplevel.make_state: theory option -> Toplevel.state\<close>
 \<^item> \<^ML>\<open> Toplevel.is_toplevel: Toplevel.state -> bool\<close>
 \<^item> \<^ML>\<open> Toplevel.is_theory: Toplevel.state -> bool\<close>
 \<^item> \<^ML>\<open> Toplevel.is_proof: Toplevel.state -> bool\<close>
@@ -1183,7 +1182,7 @@ text\<open> The extensibility of Isabelle as a system framework depends on a num
  \<^item> \<^ML>\<open>Toplevel.theory: (theory -> theory) -> Toplevel.transition -> Toplevel.transition\<close>
    adjoins a theory transformer.
  \<^item> \<^ML>\<open>Toplevel.generic_theory: (generic_theory -> generic_theory) -> Toplevel.transition -> Toplevel.transition\<close>
- \<^item> \<^ML>\<open>Toplevel.theory': (bool -> theory -> theory) -> Toplevel.presentation -> Toplevel.transition -> Toplevel.transition\<close>
+ \<^item> \<^ML>\<open>Toplevel.theory': (bool -> theory -> theory) -> Toplevel.presentation option -> Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.exit: Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.ignored: Position.T -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.present_local_theory:  (xstring * Position.T) option ->
@@ -1201,7 +1200,6 @@ text\<open>
  \<^item>  \<^ML>\<open>Document.state : unit -> Document.state\<close>, giving the state as a "collection" of named
      nodes, each consisting of an editable list of commands, associated with asynchronous 
      execution process,
- \<^item>  \<^ML>\<open>Session.get_keywords : unit -> Keyword.keywords\<close>, this looks to be session global,
  \<^item>  \<^ML>\<open>Thy_Header.get_keywords : theory -> Keyword.keywords\<close> this looks to be just theory global.
 
 
@@ -1275,7 +1273,6 @@ subsection\<open>Miscellaneous\<close>
 
 text\<open>Here are a few queries relevant for the global config of the isar engine:\<close>
 ML\<open> Document.state();\<close>
-ML\<open> Session.get_keywords(); (* this looks to be  session global. *) \<close>
 ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>
 
   
@@ -2153,7 +2150,7 @@ text\<open>
 \<^item>\<^ML>\<open>Document_Output.output_document: Proof.context -> {markdown: bool} -> Input.source -> Latex.text \<close>
 \<^item>\<^ML>\<open>Document_Output.output_token: Proof.context -> Token.T -> Latex.text \<close>
 \<^item>\<^ML>\<open>Document_Output.output_source: Proof.context -> string -> Latex.text \<close>
-\<^item>\<^ML>\<open>Document_Output.present_thy: Options.T -> theory -> Document_Output.segment list -> Latex.text \<close>
+\<^item>\<^ML>\<open>Document_Output.present_thy: Options.T -> Keyword.keywords -> string -> Document_Output.segment list -> Latex.text \<close>
 
 \<^item>\<^ML>\<open>Document_Output.isabelle: Proof.context -> Latex.text  -> Latex.text\<close>
 \<^item>\<^ML>\<open>Document_Output.isabelle_typewriter: Proof.context -> Latex.text  -> Latex.text\<close>
