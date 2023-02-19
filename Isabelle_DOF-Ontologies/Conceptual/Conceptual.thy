@@ -163,8 +163,7 @@ doc_class M =
 
 (*
 ML\<open> Document.state();\<close>
-ML\<open> Session.get_keywords(); (* this looks to be really session global. *)
-    Outer_Syntax.command; \<close>
+ML\<open> Outer_Syntax.command; \<close>
 ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>
 *)
 
