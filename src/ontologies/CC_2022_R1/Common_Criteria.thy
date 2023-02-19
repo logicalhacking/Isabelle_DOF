@@ -55,41 +55,59 @@ doc_class cc_spec_report = text_element +
 
 doc_class PP_report = cc_spec_report +
     cc_spec           ::    "cc_spec" <= "PP"
-    level             ::    "int option" <= "Some 1"
+    level             ::    "int option"
     invariant PP_spec ::    \<open>cc_spec \<sigma> = PP\<close>
 
 (* Declaration of the superclass of each chapter of the specification of PP*)
 doc_class PP_introduction_report = PP_report +
-    cc_spec_chapter     ::    "cc_spec_chapter" <= "Introduction"
+    cc_spec_chapter   ::    "cc_spec_chapter" <= "Introduction"
     invariant introduction_chapter ::  \<open>cc_spec_chapter \<sigma> = Introduction\<close>
 
-doc_class PP_Conformance_report = PP_report +
+doc_class PP_introduction_title = PP_introduction_report +
+    level             ::    "int option" <= "Some 1"
+
+doc_class PP_conformance_report = PP_report +
     cc_spec_chapter     ::    "cc_spec_chapter" <= "Conformance"
     invariant conformance_chapter ::  \<open>cc_spec_chapter \<sigma> = Conformance\<close>
+
+doc_class PP_conformance_title = PP_conformance_report +
+    level             ::    "int option" <= "Some 1"
 
 doc_class PP_SPD_report = PP_report +
     cc_spec_chapter       ::    "cc_spec_chapter" <= "SPD"
     invariant SPD_chapter ::  \<open>cc_spec_chapter \<sigma> = SPD\<close>
 
+doc_class PP_SPD_title = PP_SPD_report +
+    level             ::    "int option" <= "Some 1"
+
 doc_class PP_SO_report = PP_report +
     cc_spec_chapter       ::    "cc_spec_chapter" <= "SO"
     invariant SO_chapter  ::  \<open>cc_spec_chapter \<sigma> = SO\<close>
+
+doc_class PP_SO_title = PP_SO_report +
+    level             ::    "int option" <= "Some 1"
 
 doc_class PP_ECD_report = PP_report +
     cc_spec_chapter       ::    "cc_spec_chapter" <= "ECD"
     invariant ECD_chapter ::  \<open>cc_spec_chapter \<sigma> = ECD\<close>
 
+doc_class PP_ECD_title = PP_ECD_report +
+    level             ::    "int option" <= "Some 1"
+
 doc_class PP_SR_report = PP_report +
 cc_spec_chapter       ::    "cc_spec_chapter" <= "SR"
     invariant SR_chapter  ::  \<open>cc_spec_chapter \<sigma> = SR\<close>
 
+doc_class PP_SR_title = PP_SR_report +
+    level             ::    "int option" <= "Some 1"
+
 (* Declaration of the sections in the PP introduction *)
-doc_class PP_introduction = PP_introduction_report +
+doc_class PP_introduction = PP_introduction_title +
     level             ::    "int option" <= "Some 0"
 
-doc_class PP_reference = PP_introduction_report +
+doc_class PP_reference = PP_introduction_title +
     cc_spec_section   ::    "cc_spec_section" <= "PP_reference"
-    cc_title             ::    "title"
+    cc_title          ::    "title"
     version           ::    "string" <= "''''"
     sponsors          ::    "string list" <= "[]"
     publication_date  ::    "string" <= "''''"
@@ -101,66 +119,66 @@ doc_class PP_reference = PP_introduction_report +
 term\<open>scholarly_paper.short_title (cc_title a) \<noteq> None \<and> 
      the(scholarly_paper.short_title (cc_title a)) \<noteq> ''''\<close>
 
-doc_class PP_overview = PP_introduction_report +
-    cc_spec_section  ::    "cc_spec_section" <= "PP_overview"
+doc_class PP_overview = PP_introduction_title +
+    cc_spec_section   ::    "cc_spec_section" <= "PP_overview"
 
 (* Declaration of the sections in the conformance *)
 
-doc_class Conformance = PP_Conformance_report +
+doc_class Conformance = PP_conformance_title +
     level             ::    "int option" <= "Some 0"
 
 (* Declaration of the sections in the security problem definition *)
 
-doc_class SPD = PP_SPD_report +
+doc_class SPD = PP_SPD_title +
     cc_definition     ::    "cc_term option" <= "Some @{cc-term \<open>SPD\<close>}"
     level             ::    "int option" <= "Some 0"
 
-doc_class Threats = PP_SPD_report +
-    cc_spec_section  ::    "cc_spec_section" <= "Threats"
+doc_class Threats = PP_SPD_title +
+    cc_spec_section   ::    "cc_spec_section" <= "Threats"
 
-doc_class Assumptions = PP_SPD_report +
-    cc_spec_section  ::    "cc_spec_section" <= "Assumptions"
+doc_class Assumptions = PP_SPD_title +
+    cc_spec_section   ::    "cc_spec_section" <= "Assumptions"
 
-doc_class OSPs = PP_SPD_report +
-    cc_spec_section  ::    "cc_spec_section" <= "OSPs"
+doc_class OSPs = PP_SPD_title +
+    cc_spec_section   ::    "cc_spec_section" <= "OSPs"
     type_synonym organizational_security_policies = OSPs
 
 (* Declaration of the sections in the security objectives *)
 
-doc_class SO = PP_SO_report +
+doc_class SO = PP_SO_title +
     level             ::    "int option" <= "Some 0"
 
-doc_class SO_for_TOE = PP_SO_report +
-    cc_spec_section  ::    "cc_spec_section" <= "SO_for_TOE"
+doc_class SO_for_TOE = PP_SO_title +
+    cc_spec_section   ::    "cc_spec_section" <= "SO_for_TOE"
     type_synonym security_objectives_for_the_TOE = SO_for_TOE
 
-doc_class SO_for_OE = PP_SO_report +
-    cc_spec_section  ::    "cc_spec_section" <= "SO_for_OE"
+doc_class SO_for_OE = PP_SO_title +
+    cc_spec_section   ::    "cc_spec_section" <= "SO_for_OE"
     type_synonym security_objectives_for_the_operational_environment = SO_for_TOE
 
-doc_class SOR = PP_SO_report +
-    cc_spec_section  ::    "cc_spec_section" <= "SOR"
+doc_class SOR = PP_SO_title +
+    cc_spec_section   ::    "cc_spec_section" <= "SOR"
     type_synonym security_objectives_rationale = SOR
 
 (* Declaration of the sections in the extended components definition *)
 
-doc_class ECD = PP_ECD_report +
+doc_class ECD = PP_ECD_title +
     level             ::    "int option" <= "Some 0"
 
-doc_class ECD_section = PP_ECD_report +
-    ECD_title           ::    "title"
+doc_class ECD_section = PP_ECD_title +
+    level             ::    "int option" <= "Some 1"
     type_synonym extended_component_definition = ECD_section
 
 (* Declaration of the sections in the Security requirements *)
 
-doc_class SR = PP_SR_report +
+doc_class SR = PP_SR_title +
     level             ::    "int option" <= "Some 0"
 
-doc_class SFR = PP_SR_report +
-    cc_spec_section  ::    "cc_spec_section" <= "SFRs"
+doc_class SFR = PP_SR_title +
+    cc_spec_section   ::    "cc_spec_section" <= "SFRs"
 
-doc_class SAR = PP_SR_report +
-    cc_spec_section  ::    "cc_spec_section" <= "SARs"
+doc_class SAR = PP_SR_title +
+    cc_spec_section   ::    "cc_spec_section" <= "SARs"
 
 (* Declaration of the monitor of each chapter of the PP specification *)
 
@@ -170,7 +188,7 @@ doc_class PP_introduction_monitor =
 
 doc_class Conformance_monitor = 
     cc_spec         ::    "cc_spec" <= "PP"
-    accepts "Conformance ~~ \<lbrace>PP_Conformance_report\<rbrace>\<^sup>*"
+    accepts "Conformance ~~ \<lbrace>PP_conformance_report\<rbrace>\<^sup>*"
 
 doc_class SPD_monitor = 
     cc_spec         ::    "cc_spec" <= "PP"
@@ -189,10 +207,6 @@ doc_class SR_monitor =
     accepts "SR ~~ \<lbrace>SFR\<rbrace>\<^sup>+ ~~ \<lbrace>SAR\<rbrace>\<^sup>+"
 
 doc_class Appendix = cc_spec_report +
-    level             ::    "int option" <= "Some 0"
-    letter          ::    "char"
-
-doc_class Annex = cc_spec_report +
     level             ::    "int option" <= "Some 0"
     letter          ::    "char"
 
