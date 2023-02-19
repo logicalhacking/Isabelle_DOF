@@ -10,15 +10,18 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-chapter\<open>Common Criteria Definitions\<close>
+chapter\<open>Common Criteria\<close>
+section\<open>Terminology\<close>
 
 (*<<*)
 theory CC_terminology
 
-imports  "Isabelle_DOF.technical_report" 
+imports  
+"document_setup"
+"Isabelle_DOF.technical_report" 
 
 begin
-
+(*>>*)
 text\<open>We re-use the class @\<open>typ math_content\<close>, which provides also a framework for
 semi-formal terminology, which we re-use by this definition.\<close>
 
@@ -35,20 +38,19 @@ type_synonym concept = concept_definition
 declare[[ Definition_default_class="concept_definition"]]
 
 
-(*>>*)
 
-section \<open>Terminology\<close>
+subsection \<open>Terminology\<close>
 
 
-subsection \<open>Terms and definitions common in the CC\<close>
+subsubsection \<open>Terms and definitions common in the CC\<close>
 
 Definition* [aas_def, tag= "''adverse actions''"]
  \<open>actions performed by a threat agent on an asset\<close>
 
-declare_reference*[toe_def]
+declare_reference*[toeDef]
 
 Definition* [assts_def, tag="''assets''"]
- \<open>entities that the owner of the @{docitem toe_def} presumably places value upon \<close>
+ \<open>entities that the owner of the @{docitem toeDef} presumably places value upon \<close>
 
 Definition* [asgn_def, tag="''assignment''"]
 \<open>the specification of an identified parameter in a component (of the CC) or requirement.\<close>
@@ -56,7 +58,7 @@ Definition* [asgn_def, tag="''assignment''"]
 declare_reference*[sfrs_def]
 
 Definition* [assrc_def, tag="''assurance''"]
-  \<open>grounds for confidence that a @{docitem toe_def} meets the @{docitem sfrs_def}\<close>
+  \<open>grounds for confidence that a @{docitem toeDef} meets the @{docitem sfrs_def}\<close>
 
 Definition* [attptl_def, tag="''attack potential''"] 
   \<open>measure of the effort to be expended in attacking a TOE, expressed in terms of 
@@ -69,9 +71,9 @@ Definition* [authdata_def, tag="''authentication data''"]
   \<open>information used to verify the claimed identity of a user\<close>
 
 Definition* [authusr_def, tag = "''authorised user''"] 
-\<open>@{docitem toe_def} user who may, in accordance with the @{docitem sfrs_def}, perform an operation\<close>
+\<open>@{docitem toeDef} user who may, in accordance with the @{docitem sfrs_def}, perform an operation\<close>
 
-Definition* [bpp_def, tag="''Base Protection Profile''"] 
+Definition* [bppDef, tag="''Base Protection Profile''"] 
 \<open>Protection Profile used as a basis to build a Protection Profile Configuration\<close>
 
 Definition* [cls_def,tag="''class''"]
@@ -104,8 +106,8 @@ Definition* [cfrm_def,tag="''confirm''"]
  term is only applied to evaluator actions.\<close>
 
 Definition* [cnnctvty_def, tag="''connectivity''"]
-\<open>property of the @{docitem toe_def} allowing interaction with IT entities external to the 
- @{docitem toe_def}
+\<open>property of the @{docitem toeDef} allowing interaction with IT entities external to the 
+ @{docitem toeDef}
 
  This includes exchange of data by wire or by wireless means, over any
  distance in any environment or configuration.\<close>
@@ -118,17 +120,17 @@ Definition* [cnt_vrb_def, tag="''counter, verb''"]
 \<open>meet an attack where the impact of a particular threat is mitigated 
  but not necessarily eradicated\<close>
 
-declare_reference*[st_def]
-declare_reference*[pp_def]
+declare_reference*[stDef]
+declare_reference*[ppDef]
 
 Definition* [dmnst_conf_def, tag="''demonstrable conformance''"] 
-\<open>relation between an @{docitem st_def} and a @{docitem pp_def}, where the @{docitem st_def} 
+\<open>relation between an @{docitem stDef} and a @{docitem ppDef}, where the @{docitem stDef} 
  provides a solution which solves the generic security problem in the PP
 
-The @{docitem pp_def} and the @{docitem st_def} may contain entirely different statements that discuss
+The @{docitem ppDef} and the @{docitem stDef} may contain entirely different statements that discuss
 different entities, use different concepts etc. Demonstrable conformance is
-also suitable for a @{docitem toe_def} type where several similar @{docitem pp_def}s already exist, thus
-allowing the ST author to claim conformance to these @{docitem pp_def}s simultaneously,
+also suitable for a @{docitem toeDef} type where several similar @{docitem ppDef}s already exist, thus
+allowing the ST author to claim conformance to these @{docitem ppDef}s simultaneously,
 thereby saving work.\<close>
 
 Definition* [dmstrt_def, tag="''demonstrate''"] 
@@ -136,9 +138,9 @@ Definition* [dmstrt_def, tag="''demonstrate''"]
 
 Definition* [dpndcy, tag="''dependency''"] 
 \<open>relationship between components such that if a requirement based on the depending 
- component is included in a @{docitem pp_def}, ST or package, a requirement based on 
- the component that is depended upon must normally also be included in the @{docitem pp_def}, 
- @{docitem st_def} or package\<close>
+ component is included in a @{docitem ppDef}, ST or package, a requirement based on 
+ the component that is depended upon must normally also be included in the @{docitem ppDef}, 
+ @{docitem stDef} or package\<close>
 
 Definition* [dscrb_def, tag="''describe''"] 
 \<open>provide specific details of an entity\<close>
@@ -153,7 +155,7 @@ Definition* [dtrmn_def, tag="''determine''"]
  performed which needs to be reviewed\<close>
 
 Definition* [devenv_def, tag="''development environment''"] 
-\<open>environment in which the @{docitem toe_def} is developed\<close>
+\<open>environment in which the @{docitem toeDef} is developed\<close>
 
 Definition* [elmnt_def, tag="''element''"] 
 \<open>indivisible statement of a security need\<close>
@@ -165,7 +167,7 @@ Definition* [ensr_def, tag="''ensure''"]
  consequence is not fully certain, on the basis of that action alone.\<close>
 
 Definition* [eval_def, tag="''evaluation''"] 
-\<open>assessment of a @{docitem pp_def}, an @{docitem st_def} or a @{docitem toe_def}, 
+\<open>assessment of a @{docitem ppDef}, an @{docitem stDef} or a @{docitem toeDef}, 
  against defined criteria.\<close>
 
 Definition* [eal_def, tag= "''evaluation assurance level''"] 
@@ -181,11 +183,11 @@ Definition* [eval_schm_def, tag="''evaluation scheme''"]
 \<open>administrative and regulatory framework under which the CC is applied by an 
  evaluation authority within a specific community\<close>
 
-Definition* [exst_def, tag="''exhaustive''"]
+Definition* [exstDef, tag="''exhaustive''"]
 \<open>characteristic of a methodical approach taken to perform an
 analysis or activity according to an unambiguous plan
 This term is used in the CC with respect to conducting an analysis or other
-activity. It is related to “systematic” but is considerably stronger, in that it
+activity. It is related to ``systematic'' but is considerably stronger, in that it
 indicates not only that a methodical approach has been taken to perform the
 analysis or activity according to an unambiguous plan, but that the plan that
 was followed is sufficient to ensure that all possible avenues have been
@@ -236,7 +238,7 @@ Definition* [intl_com_chan_def, tag ="''internal communication channel''"]
 Definition* [int_toe_trans, tag="''internal TOE transfer''"] 
   \<open>communicating data between separated parts of the TOE\<close>
 
-Definition* [inter_consist_def, tag="''internally consistent''"] 
+Definition* [inter_consistDef, tag="''internally consistent''"] 
   \<open>no apparent contradictions exist between any aspects of an entity
 
    In terms of documentation, this means that there can be no statements within
@@ -271,7 +273,7 @@ Definition* [org_sec_po_def, tag="''organisational security policy''"]
 
 Definition* [pckg_def, tag="''package''"] 
 \<open>named set of either security functional or security assurance requirements 
- An example of a package is “EAL 3”.\<close>
+ An example of a package is ``EAL 3''.\<close>
 
 Definition* [pp_config_def, tag="''Protection Profile Configuration''"] 
 \<open>Protection Profile composed of Base Protection Profiles and Protection Profile Module\<close>
@@ -279,7 +281,7 @@ Definition* [pp_config_def, tag="''Protection Profile Configuration''"]
 Definition* [pp_eval_def, tag="''Protection Profile evaluation''"]
 \<open> assessment of a PP against defined criteria \<close>
 
-Definition* [pp_def, tag="''Protection Profile''"] 
+Definition* [ppDef, tag="''Protection Profile''"] 
 \<open>implementation-independent statement of security needs for a TOE type\<close>
 
 Definition* [ppm_def, tag="''Protection Profile Module''"] 
@@ -299,7 +301,7 @@ Definition* [ref_def, tag="''refinement''"]
 
 Definition* [role_def, tag="''role''"] 
 \<open>predefined set of rules establishing the allowed interactions between
- a user and the @{docitem toe_def}\<close>
+ a user and the @{docitem toeDef}\<close>
 
 declare_reference*[sfp_def]
 
@@ -309,7 +311,7 @@ Definition* [scrt_def, tag="''secret''"]
 
 declare_reference*[sfr_def]
 
-Definition* [sec_st_def, tag="''secure state''"] 
+Definition* [sec_stDef, tag="''secure state''"] 
 \<open>state in which the @{docitem tsf_def} data are consistent and the  @{docitem tsf_def} 
  continues correct enforcement of the  @{docitem sfr_def}s\<close>
 
@@ -329,18 +331,20 @@ Definition* [sec_obj_def, tag="''security objective''"]
 Definition* [sec_prob_def, tag ="''security problem''"] 
 \<open>statement which in a formal manner defines the nature and scope of the security that 
 the TOE is intended to address This statement consists of a combination of:
-  \begin{itemize}
- \item threats to be countered by the TOE and its operational environment,
- \item the OSPs enforced by the TOE and its operational environment, and
- \item the assumptions that are upheld for the operational environment of the TOE.
- \end{itemize}\<close>
+\begin{itemize}
+\item threats to be countered by the TOE and its operational environment,
+\item the OSPs enforced by the TOE and its operational environment, and
+\item the assumptions that are upheld for the operational environment of the TOE.
+\end{itemize}\<close>
 
 Definition* [sr_def, tag="''security requirement''", short_tag="Some(''SR'')"] 
 \<open>requirement, stated in a standardised language, which is meant to contribute 
  to achieving the security objectives for a TOE\<close>
-text \<open>@{docitem toe_def}\<close>
-Definition* [st, tag="''Security Target''", short_tag="Some(''ST'')"] 
-\<open>implementation-dependent statement of security needs for a specific i\<section>dentified @{docitem toe_def}\<close>
+(*<*)
+text \<open>@{docitem toeDef}\<close>
+(*>*)
+Definition* [st, tag="''Security Target''", short_tag="Some(''ST'')"]
+\<open>implementation-dependent statement of security needs for a specific identified @{docitem toeDef}\<close>
 
 Definition* [slct_def, tag="''selection''"] 
 \<open>specification of one or more items from a list in a component\<close>
@@ -386,7 +390,7 @@ Definition* [tr_vrb_def, tag="''trace, verb''"]
 \<open>perform an informal correspondence analysis between two entities with only a 
  minimal level of rigour\<close>
 
-Definition* [trnsfs_out_toe_def, tag="''transfers outside of the TOE''"] 
+Definition* [trnsfs_out_toeDef, tag="''transfers outside of the TOE''"] 
 \<open>TSF mediated communication of data to entities not under the control of the TSF\<close>
 
 Definition* [transl_def, tag= "''translation''"]
@@ -431,13 +435,13 @@ effort is required of the evaluator.\<close>
 
 Definition* [dev_def, tag="''Developer''"]
 \<open>who respond to actual or perceived consumer security requirements in 
- constructing a @{docitem toe_def}, reference this  CC_Part_3 
+ constructing a @{docitem toeDef}, reference this  CC\_Part\_3 
  when interpreting statements of assurance requirements and determining
  assurance approaches of @{docitem toe}s.\<close>
 
 Definition*[evalu_def, tag="'' Evaluator''"]
-\<open>who use the assurance requirements defined in CC_Part_3 
+\<open>who use the assurance requirements defined in CC\_Part\_3 
  as mandatory statement of evaluation criteria when determining the assurance 
- of @{docitem toe_def}s and when evaluating @{docitem pp_def}s and @{docitem st_def}s.\<close>
+ of @{docitem toeDef}s and when evaluating @{docitem ppDef}s and @{docitem stDef}s.\<close>
 
 end

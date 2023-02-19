@@ -10,16 +10,18 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
+section\<open>CC 3.1.R5\<close>
 (*<*)
 theory  "CC_v3_1_R5"
-  imports  "Isabelle_DOF.technical_report" 
+  imports 
+ "Isabelle_DOF.technical_report" 
            "CC_terminology"
 
 
 begin
 (*>*)
 
-section \<open>General Infrastructure on CC Evaluations\<close>
+subsection \<open>General Infrastructure on CC Evaluations\<close>
 
 datatype EALs = EAL1 |  EAL2 |  EAL3 |  EAL4 |  EAL5 |  EAL6 | EAL7
 
@@ -30,7 +32,7 @@ doc_class CC_structure_element =(* text_element + *)
 doc_class CC_text_element = text_element +
           eval_level :: EALs
 
-section \<open>Security target ontology\<close>
+subsection \<open>Security target ontology\<close>
 
 
 doc_class st_ref_cls = CC_text_element +
