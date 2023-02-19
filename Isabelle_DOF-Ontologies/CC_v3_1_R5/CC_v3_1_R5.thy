@@ -12,7 +12,8 @@
 
 (*<*)
 theory  "CC_v3_1_R5"
-  imports  "Isabelle_DOF.technical_report" 
+  imports 
+ "Isabelle_DOF.technical_report" 
            "CC_terminology"
 
 

@@ -16,6 +16,7 @@ section\<open>A conceptual introduction into DOF and its features:\<close>
 theory 
   Conceptual
 imports 
+"document_setup"
   "Isabelle_DOF.Isa_DOF" 
   "Isabelle_DOF.Isa_COL"
 begin
@@ -31,12 +32,12 @@ text\<open>This class definition leads an implicit Isabelle/HOL  \<^theory_text>
 (cf. \<^url>\<open>https://isabelle.in.tum.de/doc/isar-ref.pdf\<close>, chapter 11.6.).
 Consequently, \<^theory_text>\<open>doc_class\<close>'es inherit the entire theory-infrastructure from Isabelle records:
 \<^enum> there is a HOL-type \<^typ>\<open>A\<close> and its extensible version \<^typ>\<open>'a A_scheme\<close> 
-\<^enum> there are HOL-terms representing \<^emph>\<open>doc_class instances\<close> with the high-level syntax:
+\<^enum> there are HOL-terms representing \<^emph>\<open>doc\_class instances\<close> with the high-level syntax:
     \<^enum> \<^term>\<open>undefined\<lparr>level := Some (1::int), x := 5::int \<rparr> :: A\<close>
       (Note that this way to construct an instance is not necessarily computable
     \<^enum> \<^term>\<open>\<lparr>tag_attribute = X, level = Y, x = Z\<rparr> :: A\<close>
     \<^enum> \<^term>\<open>\<lparr>tag_attribute = X, level = Y, x = Z, \<dots> = M\<rparr> :: ('a A_scheme)\<close>
-\<^enum> there is an entire proof infra-structure allowing to reason about \<^emph>\<open>doc_class instances\<close>;
+\<^enum> there is an entire proof infra-structure allowing to reason about \<^emph>\<open>doc\_class instances\<close>;
   this involves the constructor, the selectors (representing the  \<^emph>\<open>attributes\<close> in OO lingo)
   the update functions, the rules to establish equality and, if possible the code generator
   setups:

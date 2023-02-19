@@ -1,11 +1,14 @@
 session "Isabelle_DOF-Ontologies" = "Isabelle_DOF" + 
-  options [document = false]
+  options  [document = pdf, document_output = "output", document_build = dof]
   directories
     "CC_v3_1_R5"
     "Conceptual"
     "small_math"
   theories
+    "document_setup"
     "CC_v3_1_R5/CC_v3_1_R5"
     "CC_v3_1_R5/CC_terminology"  
     "Conceptual/Conceptual"
     "small_math/small_math"
+  document_files
+    ".empty"
