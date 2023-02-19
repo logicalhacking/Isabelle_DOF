@@ -16,7 +16,6 @@ theory
   "04_RefMan"
   imports 
     "03_GuidedTour" 
-    "technical_report"
 begin
 
 declare_reference*[infrastructure::technical]

@@ -16,8 +16,6 @@ theory
     "03_GuidedTour" 
   imports 
     "02_Background"
-    "technical_report"
-    "CENELEC_50128"
 begin
 (*>*)
 
