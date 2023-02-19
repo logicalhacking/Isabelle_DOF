@@ -34,7 +34,7 @@ They are the key-mechanism to denote
 \<^item> Ontological F-Links, i.e. attributes referring to formal entities inside Isabelle (such as thm's)
 
 This file contains a number of examples resulting from the 
-% @ {theory "Isabelle_DOF-tests.Conceptual"} does not work here --- why ?
+% @ {theory "Isabelle_DOF-Unit-Tests.Conceptual"} does not work here --- why ?
 \<^theory_text>\<open>Conceptual\<close> - ontology; the emphasis of this presentation is to present the expressivity of 
 ODL on a paradigmatical example.
 \<close>

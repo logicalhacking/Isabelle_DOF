@@ -5,8 +5,8 @@ text\<open>Term Annotation Antiquotations (TA) can be evaluated with the help of
 theory 
   Evaluation
 imports 
-  "Isabelle_DOF-tests.TermAntiquotations"
-  "Isabelle_DOF-tests.High_Level_Syntax_Invariants"
+  "Isabelle_DOF-Unit-Tests.TermAntiquotations"
+  "Isabelle_DOF-Unit-Tests.High_Level_Syntax_Invariants"
 begin
 
 section\<open>\<^theory_text>\<open>ML*\<close>-Annotated SML-commands\<close>
@@ -182,7 +182,7 @@ text\<open>The \<^emph>\<open>assert*\<close>-command allows for logical stateme
 It uses the same implementation as the \<^emph>\<open>value*\<close>-command and has the same limitations.
 \<close>
 
-text\<open>Using the ontology defined in \<^theory>\<open>Isabelle_DOF-tests.High_Level_Syntax_Invariants\<close>
+text\<open>Using the ontology defined in \<^theory>\<open>Isabelle_DOF-Unit-Tests.High_Level_Syntax_Invariants\<close>
 we can check logical statements:\<close>
 
 term*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>

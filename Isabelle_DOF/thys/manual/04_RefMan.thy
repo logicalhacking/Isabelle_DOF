@@ -16,7 +16,7 @@ theory
   "04_RefMan"
   imports 
     "03_GuidedTour" 
-    "Isabelle_DOF.technical_report"
+    "technical_report"
 begin
 
 declare_reference*[infrastructure::technical]
@@ -304,7 +304,7 @@ text\<open>
   that are included in a following \<^LaTeX>-run. For such complex examples, we refer the interested 
   reader to  the style files provided in the \<^isadof> distribution. In particular 
   the definitions of the concepts \<^boxed_theory_text>\<open>title*\<close> and \<^boxed_theory_text>\<open>author*\<close> in the 
-  file \<^file>\<open>../../../src/ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close> show examples of protecting 
+  file \<^file>\<open>../../ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close> show examples of protecting 
   special characters in definitions that need to make use of a entries in an aux-file. 
 \<close>
 
@@ -855,7 +855,7 @@ appropriate for this type of long-and-tedious documents,
 subsubsection\<open>Examples\<close>
 text\<open>
 The category ``exported constraint (EC)'' is, in the file 
-\<^file>\<open>../../../src/ontologies/CENELEC_50128/CENELEC_50128.thy\<close> defined as follows:
+\<^file>\<open>../../ontologies/CENELEC_50128/CENELEC_50128.thy\<close> defined as follows:
 
 @{boxed_theory_text [display]\<open>
 doc_class requirement = text_element +
@@ -870,7 +870,7 @@ doc_class EC = AC  +
 \<close>}
 
 We now define the document representations, in the file 
-\<^file>\<open>../../../src/ontologies/CENELEC_50128/DOF-CENELEC_50128.sty\<close>. Let us assume that we want to 
+\<^file>\<open>../../ontologies/CENELEC_50128/DOF-CENELEC_50128.sty\<close>. Let us assume that we want to 
 register the definition of EC's in a dedicated table of contents (\<^boxed_latex>\<open>tos\<close>) 
 and use an earlier defined environment \inlineltx|\begin{EC}...\end{EC}| for their graphical 
 representation. Note that the \inlineltx|\newisadof{}[]{}|-command requires the 
@@ -1315,7 +1315,7 @@ text\<open>
   the Isabelle proof language, for example, or other more advanced concepts.
 
   Technically, ontologies\<^index>\<open>ontology!directory structure\<close> are stored in a directory 
-  \<^boxed_bash>\<open>src/ontologies\<close> and consist of an Isabelle theory file and a \<^LaTeX>-style file:
+  \<^boxed_bash>\<open>ontologies\<close> and consist of an Isabelle theory file and a \<^LaTeX>-style file:
 %
 \begin{center}
 \begin{minipage}{.9\textwidth}\footnotesize
@@ -1341,12 +1341,12 @@ text\<open>
 text\<open>
   Developing a new ontology ``\<^boxed_bash>\<open>foo\<close>'' requires the 
   following steps:
-  \<^item> create a new sub-directory \<^boxed_bash>\<open>foo\<close> in the directory \<^boxed_bash>\<open>src/ontologies\<close>
+  \<^item> create a new sub-directory \<^boxed_bash>\<open>foo\<close> in the directory \<^boxed_bash>\<open>ontologies\<close>
   \<^item> definition of the ontological concepts, using \<^isadof>'s Ontology Definition Language (ODL), in 
-    a new theory file \<^path>\<open>src/ontologies/foo/foo.thy\<close>.  
+    a new theory file \<^path>\<open>ontologies/foo/foo.thy\<close>.  
   \<^item> definition of the document representation for the ontological concepts in a \LaTeX-style 
-    file \<^path>\<open>src/ontologies/foo/DOF-foo.sty\<close>
-  \<^item> registration (as import) of the new ontology in the file \<^path>\<open>src/ontologies/ontologies.thy\<close>. 
+    file \<^path>\<open>ontologies/foo/DOF-foo.sty\<close>
+  \<^item> registration (as import) of the new ontology in the file \<^path>\<open>ontologies/ontologies.thy\<close>. 
   \<^item> activation of the new document setup by executing the install script. You can skip the lengthy 
     checks for the AFP entries and the installation of the Isabelle patch by using the 
     \<^boxed_bash>\<open>--skip-afp\<close> option:
@@ -1477,8 +1477,8 @@ text\<open>
   introduced \inlineltx|\expanded{}|-primitive 
   (see \<^url>\<open>https://www.texdev.net/2018/12/06/a-new-primitive-expanded\<close>) is particularly useful. 
   Examples of its use can be found, \<^eg>, in the ontology-styles 
-  \<^file>\<open>../../../src/ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close> or 
-  \<^file>\<open>../../../src/ontologies/CENELEC_50128/DOF-CENELEC_50128.sty\<close>.  For details about the expansion mechanism 
+  \<^file>\<open>../../ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close> or 
+  \<^file>\<open>../../ontologies/CENELEC_50128/DOF-CENELEC_50128.sty\<close>.  For details about the expansion mechanism 
   in general, we refer the reader to the \<^LaTeX> literature (\<^eg>,~@{cite "knuth:texbook:1986"
   and "mittelbach.ea:latex:1999" and "eijkhout:latex-cs:2012"}).  
 \<close>
@@ -1495,7 +1495,7 @@ text\<open>
   affiliations both as entities with a many-to-many relationship.
 
   The ontology representation
-  \<^file>\<open>../../../src/ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close> contains an example that, firstly, 
+  \<^file>\<open>../../ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close> contains an example that, firstly, 
   shows how to write the author and affiliation information into the auxiliary file for re-use 
   in the next \<^LaTeX>-run and, secondly, shows how to collect the author and affiliation 
   information into an \<^boxed_latex>\<open>\author\<close> and a \<^boxed_latex>\<open>\institution\<close> statement, each of 
@@ -1580,7 +1580,7 @@ text\<open>
 \end{ltx}
 
   For a real-world example testing for multiple classes, see 
-  \<^file>\<open>../../../src/ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close>:
+  \<^file>\<open>../../ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close>:
 
   We encourage this clear and machine-checkable enforcement of restrictions while, at the same
   time, we also encourage to provide a package option to overwrite them. The latter allows 

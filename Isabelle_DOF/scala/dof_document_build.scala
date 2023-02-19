@@ -69,7 +69,7 @@ object DOF_Document_Build
       val isabelle_dof_dir = context.session_context.sessions_structure(DOF.session).dir
 
       // LaTeX styles from Isabelle/DOF directory
-      List(Path.explode("DOF/latex"), Path.explode("ontologies"))
+      List(Path.explode("latex/styles"), Path.explode("ontologies"))
         .flatMap(dir => File.find_files((isabelle_dof_dir + dir).file, _.getName.endsWith(".sty")))
         .foreach(sty => Isabelle_System.copy_file(sty, directory.doc_dir.file))
 

@@ -14,23 +14,25 @@
 
 %% Warning: Do Not Edit!
 %% =====================
-%% This is the root file for the Isabelle/DOF using the scrartcl class.
+%% This is the root file for the Isabelle/DOF using the scrreprt class.
 %%
 %% All customization and/or additional packages should be added to the file
 %% preamble.tex.
 
 \RequirePackage{ifvtex}
-\RequirePackage{fix-cm}
-\documentclass[]{svjour3}
+\documentclass[fontsize=11pt,paper=a4,open=right,twoside,abstract=true]{scrreprt}
 
 \usepackage{DOF-core}
-\usepackage{mathptmx}
+
+\usepackage{textcomp}
 \bibliographystyle{abbrvnat}
+\RequirePackage[caption]{subfig}
 
 
 \usepackage[numbers, sort&compress, sectionbib]{natbib}
+
 \usepackage{hyperref}
-\setcounter{tocdepth}{3} 
+\setcounter{tocdepth}{2} 
 \hypersetup{%
    bookmarksdepth=3
   ,pdfpagelabels
@@ -40,24 +42,17 @@
 } % more detailed digital TOC (aka bookmarks)
 \sloppy
 \allowdisplaybreaks[4]
-\usepackage[caption]{subfig}
-\usepackage[size=footnotesize]{caption}
 
 \begin{document}
-\selectlanguage{USenglish}%
-\renewcommand{\bibname}{References}%
-\renewcommand{\figurename}{Fig.}
-\renewcommand{\abstractname}{Abstract.}
-\renewcommand{\subsubsectionautorefname}{Sect.}
-\renewcommand{\subsectionautorefname}{Sect.}
-\renewcommand{\sectionautorefname}{Sect.}
-\renewcommand{\figureautorefname}{Fig.}
+\renewcommand{\chapterautorefname}{Chapter}
+\renewcommand{\sectionautorefname}{Section}
+\renewcommand{\subsectionautorefname}{Section}
+\renewcommand{\subsubsectionautorefname}{Section}
 \newcommand{\subtableautorefname}{\tableautorefname}
 \newcommand{\subfigureautorefname}{\figureautorefname}
-\newcommand{\lstnumberautorefname}{Line}
-
 \maketitle
-\input{session}
+\tableofcontents
+\IfFileExists{dof_session.tex}{\input{dof_session}}{\input{session}}
 % optional bibliography
 \IfFileExists{root.bib}{{\bibliography{root}}}{}
 \end{document}

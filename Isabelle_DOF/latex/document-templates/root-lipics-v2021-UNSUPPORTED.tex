@@ -62,7 +62,7 @@
 
 \begin{document}
 \maketitle
-\input{session}
+\IfFileExists{dof_session.tex}{\input{dof_session}}{\input{session}}
 % optional bibliography
 \IfFileExists{root.bib}{%
 \small  

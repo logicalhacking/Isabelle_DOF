@@ -74,7 +74,7 @@
 \maketitle
 \tableofcontents
 \end{frontmatter}
-\input{session}
+\IfFileExists{dof_session.tex}{\input{dof_session}}{\input{session}}
 % optional bibliography
 \IfFileExists{root.bib}{{\bibliography{root}}}{}
 \end{document}

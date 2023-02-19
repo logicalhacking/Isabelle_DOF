@@ -13,7 +13,7 @@
 
 (*<*)
 theory "00_Frontmatter"
-  imports "Isabelle_DOF.technical_report"
+  imports "technical_report"
 begin
 
 
