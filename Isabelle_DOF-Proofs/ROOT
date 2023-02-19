@@ -1,4 +1,4 @@
-session "Isabelle_DOF-Proofs" = "HOL-Proofs" +
+session "Isabelle_DOF-Proofs" (proofs) = "HOL-Proofs" +
   options [document = false,  record_proofs = 2, parallel_limit = 500, document_build = dof]
   sessions
     "Isabelle_DOF"
