@@ -20,7 +20,7 @@ For historical reasons, \<^emph>\<open>term antiquotations\<close> are called th
 theory 
   TermAntiquotations
 imports 
-  "Isabelle_DOF.Conceptual"
+  "Isabelle_DOF-Ontologies.Conceptual"
 begin
 
 text\<open>Since the syntax chosen for values of doc-class attributes is HOL-syntax --- requiring

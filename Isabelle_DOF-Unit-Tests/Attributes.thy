@@ -14,7 +14,7 @@
 theory 
   Attributes
 imports 
-  "Isabelle_DOF.Conceptual"
+  "Isabelle_DOF-Ontologies.Conceptual"
 begin
 
 section\<open>Elementary Creation of Doc-items and Access of their Attibutes\<close>

@@ -16,10 +16,10 @@ chapter\<open>Setting and modifying attributes of doc-items\<close>
 theory 
   Concept_Example
 imports 
-  "Isabelle_DOF.Conceptual" (* we use the generic "Conceptual" ontology *)
+  "Isabelle_DOF-Ontologies.Conceptual" (* we use the generic "Conceptual" ontology *)
 begin
 
-text\<open>@{theory "Isabelle_DOF.Conceptual"} provides a monitor @{typ M} enforcing a particular document structure.
+text\<open>@{theory "Isabelle_DOF-Ontologies.Conceptual"} provides a monitor @{typ M} enforcing a particular document structure.
      Here, we say: From now on, this structural rules are respected wrt. all doc\_classes M is
      enabled for.\<close>
 open_monitor*[struct::M]  

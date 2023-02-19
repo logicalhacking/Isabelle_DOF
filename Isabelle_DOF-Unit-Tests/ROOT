@@ -1,4 +1,4 @@
-session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF" + 
+session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" + 
   options [document = false]
   theories
     "AssnsLemmaThmEtc" 

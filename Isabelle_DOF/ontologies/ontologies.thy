@@ -15,10 +15,7 @@ theory
   ontologies
 imports
   "CENELEC_50128/CENELEC_50128"
-  "Conceptual/Conceptual"
   "scholarly_paper/scholarly_paper"
-  "small_math/small_math"
   "technical_report/technical_report"
-  (* "CC_v3_1_R5/CC_v3_1_R5" *)
 begin
 end

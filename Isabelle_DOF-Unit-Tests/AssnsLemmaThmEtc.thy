@@ -14,7 +14,7 @@
 theory 
   AssnsLemmaThmEtc
 imports 
-  "Isabelle_DOF.Conceptual"  
+  "Isabelle_DOF-Ontologies.Conceptual"  
   "Isabelle_DOF.scholarly_paper"
 begin
 

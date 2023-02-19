@@ -153,7 +153,7 @@ value*\<open>@{A-instances}\<close>
 text\<open>Warning: If you make a request on attributes that are undefined in some instances,
 you will get a result which includes these unresolved cases.
 In the following example, we request the instances of the @{doc_class A}.
-But we have defined an instance @{docitem \<open>test\<close>} in theory @{theory Isabelle_DOF.Conceptual}
+But we have defined an instance @{docitem \<open>test\<close>} in theory @{theory "Isabelle_DOF-Ontologies.Conceptual"}
 whose our theory inherits from, and this docitem instance does not initialize its attribute \<^emph>\<open>x\<close>.
 So in the request result we get an unresolved case because the evaluator can not get
 the value of the \<^emph>\<open>x\<close> attribute of the instance @{docitem \<open>test\<close>}:\<close>
