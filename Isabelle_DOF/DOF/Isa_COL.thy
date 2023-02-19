@@ -626,7 +626,7 @@ declare[[tab_cell_placing="left",tab_cell_height="18.0cm"]]
 
 section\<open>Tests\<close>
 (*<*)
-
+(*
 text\<open> @{fig_content   [display] (scale = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
                       \<open>../../examples/scholarly_paper/2018-cicm-isabelle_dof-applications/document/figures/isabelle-architecture.pdf\<close>}\<close>
 text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open>12.0cm\<close>,
@@ -636,6 +636,7 @@ text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open
            \<open>\<open>1\<close>  \<open>2\<close>  \<open>3\<sigma>\<close>\<close>
           \<close>}
       \<^cell>\<open>dfg\<close>  @{row \<open>is technical\<close> \<open> \<open>\<sigma> * a\<^sub>4\<close> \<close>}\<close>
+*)
 (*>*)
 
 ML\<open>@{term "side_by_side_figure"};
