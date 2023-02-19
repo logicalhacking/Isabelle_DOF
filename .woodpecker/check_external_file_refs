@@ -1,0 +1,26 @@
+#/bin/sh
+
+DIRREGEXP="\\.\\.\\/"
+
+REGEXP=$DIRREGEXP
+DIR=$DIRMATCH
+failed=0
+for i in $(seq 1 10); do 
+  FILES=`find * -mindepth $((i-1)) -maxdepth $i -type f | xargs`
+  if [ -n "$FILES" ]; then 
+    grep -s ${REGEXP} ${FILES}
+    exit=$?
+    if [ "$exit" -eq 0 ] ; then
+      failed=1
+    fi
+  fi
+  REGEXP="${DIRREGEXP}${REGEXP}"
+done
+
+
+if [ "$failed" -ne 0 ] ; then
+    echo "Error: Forbidden reference to files outside of session directory!" 
+    exit 1
+fi
+
+
