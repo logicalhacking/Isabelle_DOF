@@ -11,7 +11,7 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-section\<open>An example ontology for a math paper\<close>
+chapter\<open>An example ontology for a math paper\<close>
 
 theory small_math
    imports 

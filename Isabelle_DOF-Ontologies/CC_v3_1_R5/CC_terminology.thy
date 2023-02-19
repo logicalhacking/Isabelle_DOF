@@ -10,7 +10,8 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-chapter\<open>Common Criteria Definitions\<close>
+chapter\<open>Common Criteria\<close>
+section\<open>Terminology\<close>
 
 (*<<*)
 theory CC_terminology
@@ -38,10 +39,10 @@ declare[[ Definition_default_class="concept_definition"]]
 
 
 
-section \<open>Terminology\<close>
+subsection \<open>Terminology\<close>
 
 
-subsection \<open>Terms and definitions common in the CC\<close>
+subsubsection \<open>Terms and definitions common in the CC\<close>
 
 Definition* [aas_def, tag= "''adverse actions''"]
  \<open>actions performed by a threat agent on an asset\<close>

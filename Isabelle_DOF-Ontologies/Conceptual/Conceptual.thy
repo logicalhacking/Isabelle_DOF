@@ -11,7 +11,7 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-section\<open>A conceptual introduction into DOF and its features:\<close>
+chapter\<open>A conceptual introduction into DOF and its features:\<close>
 
 theory 
   Conceptual
@@ -26,7 +26,7 @@ doc_class A =
    level :: "int option"
    x :: int
 
-subsection\<open>Excursion: On the semantic consequences of this definition: \<close>
+section\<open>Excursion: On the semantic consequences of this definition: \<close>
 
 text\<open>This class definition leads an implicit Isabelle/HOL  \<^theory_text>\<open>record\<close>  definition 
 (cf. \<^url>\<open>https://isabelle.in.tum.de/doc/isar-ref.pdf\<close>, chapter 11.6.).
@@ -77,7 +77,7 @@ A_make zero (SOME one) (add one one)
 \<close>
 
 
-subsection\<open>An independent class-tree root: \<close>
+section\<open>An independent class-tree root: \<close>
 
 
 doc_class B =
@@ -90,7 +90,7 @@ text\<open>We may even use type-synonyms for class synonyms ...\<close>
 type_synonym XX = B
 
 
-subsection\<open>Examples of inheritance \<close>
+section\<open>Examples of inheritance \<close>
 
 doc_class C = XX +                           
    z :: "A option"             <= None      (* A LINK, i.e. an attribute that has a type
