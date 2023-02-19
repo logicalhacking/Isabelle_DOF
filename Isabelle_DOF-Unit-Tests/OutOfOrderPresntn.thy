@@ -476,7 +476,7 @@ val _ = Theory.setup
 \<close>
 
 textN\<open>
-@{figure_content [width=40, scale=35, caption="This is a test"] "../ROOT"}
+@{figure_content [width=40, scale=35, caption="This is a test"] "ROOT"}
 \<close>
 
 ML\<open>
@@ -499,7 +499,7 @@ val _ =
 \<close>
 
 Figure*[fff::figure,src="\<open>this is a side-by-side\<close>"]
-   \<open>@{figure_content [width=40, scale=35, caption="This is a test"] "../ROOT"}\<close> 
+   \<open>@{figure_content [width=40, scale=35, caption="This is a test"] "ROOT"}\<close> 
    \<open> \<^doof> \<^LATEX> \<close>  
    \<open> \<^theory_text>\<open>definition df = ... \<close>
      @{ML        [display]   \<open> let val x = 3 + 4 in true end\<close>}
@@ -509,8 +509,8 @@ Figure*[fff::figure,src="\<open>this is a side-by-side\<close>"]
 
 
 Figure*[ffff::figure2, caption="\<open>this is another 2 side-by-side\<close>"]
-   \<open>@{figure_content [width=40, scale=35, caption="This is a left test"] "../ROOT"}\<close> 
-   \<open>@{figure_content [width=40, scale=35, caption="This is a right test"] "../ROOT"}\<close>  
+   \<open>@{figure_content [width=40, scale=35, caption="This is a left test"] "ROOT"}\<close> 
+   \<open>@{figure_content [width=40, scale=35, caption="This is a right test"] "ROOT"}\<close>  
 
 (* proposed syntax for sub-figure labels :
 text\<open> @{figure "ffff(2)"}\<close>

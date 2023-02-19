@@ -628,7 +628,7 @@ section\<open>Tests\<close>
 (*<*)
 (*
 text\<open> @{fig_content   [display] (scale = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
-                      \<open>../../examples/scholarly_paper/2018-cicm-isabelle_dof-applications/document/figures/isabelle-architecture.pdf\<close>}\<close>
+                      \<open>examples/scholarly_paper/2018-cicm-isabelle_dof-applications/document/figures/isabelle-architecture.pdf\<close>}\<close>
 text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open>12.0cm\<close>,
                                  cell_height =\<open>13pt\<close>,  cell_width = \<open>12.0cm\<close>,
                                  cell_bgnd_color=black,cell_line_color=red,cell_line_width=\<open>12.0cm\<close>)
