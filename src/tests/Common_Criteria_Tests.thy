@@ -53,7 +53,8 @@ This document is structured as follows:
 • Chapter 1 provides the introduction into the DBMS PP extended package.
 • Chapter 2 specifies the conformance claims for the DBMS PP extended package.
 • Chapter 3 contains the security problem definition applicable to this DBMS PP extended package.
-• Chapter 4 defines the objectives to be covered by TOEs that are conformant to this DBMS PP extended package.
+• Chapter 4 defines the objectives to be covered by \<^cc_term>\<open>TOE\<close>s that are conformant to this DBMS 
+            \<^cc_term>\<open>PP\<close>  extended package.
 • Chapter 5 contains the definition of extended components used in this DBMS PP extended package.
 • Chapter 6 holds the security requirements definition for this DBMS PP extended package. database management system.
 \<close>
@@ -118,9 +119,8 @@ Organizational Security Policies
 text*[ex_OSPs::PP_SPD_report]\<open>
 This extended package neither adds to nor alters any organizational security policies given in [DBMS PP].
 \<close>
-section*[title_Assumptions::Assumptions]\<open>
-Assumptions
-\<close>
+section*[title_Assumptions::Assumptions]\<open>Assumptions\<close>
+
 text*[ex_Assumptions::PP_SPD_report]\<open>
 This extended package neither adds to nor alters the assumptions given in [DBMS PP].
 \<close>
@@ -131,8 +131,8 @@ chapter*[title_SO::SO]\<open>
 SECURITY OBJECTIVES
 \<close>
 text*[ex_SO::PP_SO_report]\<open>
-This section identifies the additional security objectives of the TOE and its supporting environment met by this extended package.
-These security objectives identify the responsibilities of the TOE and its environment in meeting the security problem definition (SPD).
+This section identifies the additional security objectives of the \<^cc_term>\<open>TOE\<close> and its supporting environment met by this extended package.
+These security objectives identify the responsibilities of the cc_term>\<open>TOE\<close> and its environment in meeting the security problem definition (SPD).
 \<close>
 section*[title_TOE_SO::SO_for_TOE]\<open>
 TOE Security Objectives
@@ -144,11 +144,11 @@ section*[title_OE_SO::SO_for_OE]\<open>
 Operational Environment Security Objectives
 \<close>
 text*[ex_OE_SO::PP_SO_report]\<open>
-This extended package neither adds to nor alters the operational environment security objectives given in [DBMS PP].
+This extended package neither adds to nor alters the operational environment security objectives 
+given in [DBMS PP].
 \<close>
-section*[title_R_for_SO::SOR]\<open>
-Rationale for Security Objectives
-\<close>
+section*[title_R_for_SO::SOR]\<open>Rationale for Security Objectives\<close>
+
 text*[ex_R_for_SO::PP_SO_report]\<open>
 The table below gives a summary of the policies, and threats relating to the TOE security objectives.
 Security objectives coverage
