@@ -15,7 +15,6 @@ type_synonym sfc = semi_formal_content
 
 doc_class cc_term = semi_formal_content + 
       mcc          :: math_content_class <= "terminology"
-      level        :: "int option" <= "Some 1"
 
 type_synonym common_criteria_term = cc_term 
 
@@ -29,14 +28,14 @@ text\<open> Excerpt of the BE EN 50128:2011, page 22. \<close>
 
 section\<open>Terms and Definitions\<close>
 
-declare_reference*[evaluator]
-declare_reference*[developer]
+declare_reference*[evaluator::cc_term]
+declare_reference*[developer::cc_term]
 Definition*[action]
 \<open>documented activity of the @{cc_term (unchecked) \<open>evaluator\<close>}
  or  @{cc_term (unchecked) \<open>developer\<close>}\<close>
 
-declare_reference*[entity]
-declare_reference*[TSF]
+declare_reference*[entity::cc_term]
+declare_reference*[TSF::cc_term]
 Definition*[admministrator]
 \<open> @{cc_term (unchecked) \<open>entity\<close>} that has a level of trust with respect to 
 all policies implemented by the  @{cc_term (unchecked) \<open>TSF\<close>}\<close>
@@ -44,13 +43,13 @@ all policies implemented by the  @{cc_term (unchecked) \<open>TSF\<close>}\<clos
 Definition*[API, short_name="''application programming interface''"]
 \<open>\<close>
 
-declare_reference*[threat_agent]
-declare_reference*[asset]
+declare_reference*[threat_agent::cc_term]
+declare_reference*[asset::cc_term]
 Definition*[adverse_action]
 \<open> \<^cc_term>\<open>action\<close> performed by a @{cc_term (unchecked) \<open>threat_agent\<close>} 
 on an @{cc_term (unchecked) \<open>asset\<close>}\<close>
 
-declare_reference*[TOE]
+declare_reference*[TOE::cc_term]
 Definition*[asset]
 \<open>  @{cc_term (unchecked) \<open>entity\<close>}  that the owner of 
 the  @{cc_term (unchecked) \<open>TOE\<close>} presumably places value on\<close>
@@ -58,12 +57,12 @@ the  @{cc_term (unchecked) \<open>TOE\<close>} presumably places value on\<close
 Definition*[assignement]
 \<open>specification of an identified parameter in a functional or assurance component\<close>
 
-declare_reference*[SFR]
+declare_reference*[SFR::cc_term]
 Definition*[assurance]
 \<open>grounds for confidence that a @{cc_term (unchecked) \<open>TOE\<close>} meets
 the security functional requirements @{cc_term (unchecked) \<open>SFR\<close>}s \<close>
 
-declare_reference*[SAR]
+declare_reference*[SAR::cc_term]
 Definition*[AP, short_name="''assurance package''"]
 \<open>named set of  @{cc_term (unchecked) \<open>SAR\<close>}s\<close>
 
@@ -81,16 +80,16 @@ Definition*[autorized_user]
 \<open> @{cc_term (unchecked) \<open>entity\<close>} who may, in accordance with the @{cc_term (unchecked) \<open>SFR\<close>}s,
  perform an operation on the  @{cc_term (unchecked) \<open>TOE\<close>}\<close>
 
-declare_reference*[independent_entity]
-declare_reference*[dependent_component]
+declare_reference*[independent_entity::cc_term]
+declare_reference*[dependent_component::cc_term]
 Definition*[base_component]
 \<open> @{cc_term (unchecked) \<open>independent_entity\<close>} in a multi-component product that provides
  services and resources to one or more  @{cc_term (unchecked) \<open>dependent_component\<close>}(s)\<close>
 
-declare_reference*[PP]
-declare_reference*[PP_module]
-declare_reference*[PP_module_base]
-declare_reference*[PP_config]
+declare_reference*[PP::cc_term]
+declare_reference*[PP_module::cc_term]
+declare_reference*[PP_module_base::cc_term]
+declare_reference*[PP_config::cc_term]
 Definition*[base_PP, short_name="''base Protection Profile''"]
 \<open> @{cc_term (unchecked) \<open>PP\<close>} specified in a  @{cc_term (unchecked) \<open>PP_module\<close>}, 
 as part of that @{cc_term (unchecked) \<open>PP_module\<close>}’s @{cc_term (unchecked) \<open>PP_module_base\<close>},
@@ -114,7 +113,7 @@ Definition*[component]
 \<open>〈taxonomy〉 smallest selectable set of elements on which requirements may be based OU
   <composition> @{cc_term (unchecked) \<open>entity\<close>} which provides resources and services in a product\<close>
 
-declare_reference*[composed_TOE]
+declare_reference*[composed_TOE::cc_term]
 Definition*[component_TOE, short_name="''component target of evaluation''"]
 \<open>(evaluated) @{cc_term (unchecked) \<open>TOE\<close>}
  that is a component of another @{cc_term (unchecked) \<open>composed_TOE\<close>}\<close>
@@ -130,8 +129,8 @@ Definition*[composed_TOE, short_name="''composed target of evaluation''"]
 Definition*[composed_evaluation, short_name="''composed evaluation''"]
 \<open>evaluation of a \<^cc_term>\<open>composed_TOE\<close> using the specific evaluation technique applicable to \<^cc_term>\<open>composed_TOE\<close>s\<close>
 
-declare_reference*[composite_product]
-declare_reference*[composite_TOE]
+declare_reference*[composite_product::cc_term]
+declare_reference*[composite_TOE::cc_term]
 Definition*[composite_evaluation, short_name="''composite evaluation''"]
 \<open>evaluation of a @{cc_term (unchecked) \<open>composite_TOE\<close>}/@{cc_term (unchecked) \<open>composite_product\<close>}
  using the specific composite evaluation technique\<close>
@@ -161,22 +160,22 @@ Definition*[CMS, short_name="''configuration management system''"]
 Definition*[counter]
 \<open>act on or respond to a particular threat so that the threat is eradicated or mitigated\<close>
 
-declare_reference*[ST]
-declare_reference*[PP_configuration]
+declare_reference*[ST::cc_term]
+declare_reference*[PP_configuration::cc_term]
 Definition*[DC, short_name="''demonstrable conformance''"]
 \<open>relation between a @{cc_term (unchecked) \<open>PP\<close>}/@{cc_term (unchecked) \<open>ST\<close>} (PP/ST)
  and a @{cc_term (unchecked) \<open>PP\<close>}, or an @{cc_term (unchecked) \<open>ST\<close>} and
  a @{cc_term (unchecked) \<open>PP_configuration\<close>}, where the PP/ST provides an equivalent or
  more restrictive solution that solves the generic security problem in the PP/PP-Configuration\<close>
 
-declare_reference*[FP]
+declare_reference*[FP::cc_term]
 Definition*[dependency]
 \<open>relationship between components such that a @{cc_term (unchecked) \<open>PP\<close>}, @{cc_term (unchecked) \<open>ST\<close>},
  @{cc_term (unchecked) \<open>FP\<close>} or \<^cc_term>\<open>AP\<close>} including a component
  also includes any other \<^cc_term>\<open>component\<close>s that are identified as being depended upon
  or include a rationale as to why they are not\<close>
 
-declare_reference*[dependent_entity]
+declare_reference*[dependent_entity::cc_term]
 Definition*[dependent_component, short_name="''dependent component''"]
 \<open>@{cc_term (unchecked)\<open>dependent_entity\<close>} in a multi-component product that relies on
  the provision of services and resources by one or more \<^cc_term>\<open>base_component\<close>s\<close>
@@ -187,9 +186,9 @@ Definition*[dependent_TOE, short_name="''dependent target of evaluation''"]
 Definition*[developper]
 \<open>organization responsible for the development of the @{cc_term (unchecked)\<open>TOE\<close>}\<close>
 
-declare_reference*[SPD]
-declare_reference*[SO]
-declare_reference*[operational_environment]
+declare_reference*[SPD::cc_term]
+declare_reference*[SO::cc_term]
+declare_reference*[operational_environment::cc_term]
 Definition*[direct_rationale, short_name="''direct rationale''"]
 \<open>type of @{cc_term (unchecked)\<open>PP\<close>}, @{cc_term (unchecked)\<open>PP_module\<close>} or @{cc_term (unchecked)\<open>ST\<close>}
  in which the @{cc_term (unchecked)\<open>SPD\<close>} elements are mapped directly to
@@ -217,7 +216,7 @@ Definition*[EA, short_name="''evaluation activity''"]
 Definition*[EAL, short_name="''evaluation assurance level''"]
 \<open>well-formed package of @{cc_term (unchecked)\<open>SAR\<close>} representing a point on the pre- defined assurance scale\<close>
 
-declare_reference*[evaluation_scheme]
+declare_reference*[evaluation_scheme::cc_term]
 Definition*[evaluation_authority, short_name="''evaluation authority''"]
 \<open>body operating an @{cc_term (unchecked)\<open>evaluation_scheme\<close>}\<close>
 
@@ -227,7 +226,7 @@ Definition*[EM, short_name="''evaluation method''"]
 Definition*[evaluation_scheme, short_name="''evaluation scheme''"]
 \<open>rules, procedures and management to carrying evaluations of IT product security\<close>
 
-declare_reference*[overall_verdict]
+declare_reference*[overall_verdict::cc_term]
 Definition*[ETR, short_name="''evaluation technical report''"]
 \<open>documentation of the @{cc_term (unchecked)\<open>overall_verdict\<close>} and its justification, produced
  by the @{cc_term (unchecked)\<open>evaluator\<close>}, and submitted to an \<^cc_term>\<open>evaluation_authority\<close>\<close>
@@ -265,7 +264,7 @@ Definition*[FP, short_name="''functional package''"]
  and @{cc_term (unchecked)\<open>SO\<close>}s derived from that SPD
 \<close>
 
-declare_reference*[multi_assurance_evaluation]
+declare_reference*[multi_assurance_evaluation::cc_term]
 Definition*[global_AP, short_name="''global assurance package''"]
 \<open>\<^cc_term>\<open>AP\<close> that applies to the entire  @{cc_term (unchecked)\<open>TOE\<close>} in a
   @{cc_term (unchecked)\<open>multi_assurance_evaluation\<close>}\<close>
@@ -273,7 +272,7 @@ Definition*[global_AP, short_name="''global assurance package''"]
 Definition*[guidance_documentation, short_name="''guidance documentation''"]
 \<open>documentation that describes the delivery, preparation, operation, management and/or use of the @{cc_term (unchecked)\<open>TOE\<close>}\<close>
 
-declare_reference*[refinement]
+declare_reference*[refinement::cc_term]
 Definition*[implementation_representation, short_name="''implementation representation''"]
 \<open>least abstract representation of the @{cc_term (unchecked)\<open>TSF\<close>}, specifically the one
  that is used to create the TSF itself without further design @{cc_term (unchecked)\<open>refinement\<close>}\<close>
