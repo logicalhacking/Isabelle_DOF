@@ -1,4 +1,4 @@
-session "mini_odo" = "Isabelle_DOF" +
+session "mini_odo" = "Isabelle_DOF-Ontologies" +
   options [document = pdf, document_output = "output", document_build = dof]
   sessions 
     "Physical_Quantities"

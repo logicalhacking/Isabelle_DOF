@@ -3108,8 +3108,9 @@ fun use_template context arg =
 
 fun use_ontology context args =
   let
-    val xml = args
-      |> map (check_ontology context #> fst #> Long_Name.base_name)
+    val xml = args                                       
+     (* |> map (check_ontology context #> fst #> Long_Name.base_name) *)
+      |> map (check_ontology context #> fst )
       |> cat_lines |> XML.string;
   in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/use_ontology\<close> xml end;
 

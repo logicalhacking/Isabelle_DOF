@@ -17,7 +17,7 @@ theory IsaDofApplications
 begin
 
 use_template "lncs"
-use_ontology "scholarly_paper"
+use_ontology "Isabelle_DOF.scholarly_paper"
 
 open_monitor*[this::article] 
 declare[[strict_monitor_checking=false]]

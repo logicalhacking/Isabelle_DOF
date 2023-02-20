@@ -15,7 +15,7 @@
 theory 
   mini_odo
 imports  
-  "Isabelle_DOF.CENELEC_50128" 
+  "Isabelle_DOF-Ontologies.CENELEC_50128" 
   "Isabelle_DOF.technical_report"
   "Physical_Quantities.SI" "Physical_Quantities.SI_Pretty"
 begin
@@ -628,14 +628,14 @@ text\<open>
 \<close>
 
 text\<open>Examples for declaration of typed doc-classes "assumption" (sic!) and "hypothesis" (sic!!),
-     concepts defined in the underlying ontology @{theory "Isabelle_DOF.CENELEC_50128"}. \<close>
+     concepts defined in the underlying ontology @{theory "Isabelle_DOF-Ontologies.CENELEC_50128"}. \<close>
 text*[ass2::assumption, long_name="Some ''assumption one''"] \<open> The subsystem Y is safe. \<close>
 text*[hyp1::hypothesis] \<open> \<open>P \<noteq> NP\<close> \<close>
   
 text\<open>  
-   A real example fragment fsrom a larger project, declaring a text-element as a
+   A real example fragment from a larger project, declaring a text-element as a
    "safety-related application condition", a concept defined in the 
-   @{theory "Isabelle_DOF.CENELEC_50128"} ontology:\<close>  
+   @{theory "Isabelle_DOF-Ontologies.CENELEC_50128"} ontology:\<close>  
 
 text*[hyp2::hypothesis]\<open>Under the assumption @{assumption \<open>ass2\<close>} we establish the following: ... \<close>
 

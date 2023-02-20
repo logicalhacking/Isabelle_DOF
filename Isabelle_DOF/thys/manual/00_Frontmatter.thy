@@ -15,11 +15,10 @@
 theory "00_Frontmatter"
   imports 
     "Isabelle_DOF.technical_report"
-    "Isabelle_DOF.CENELEC_50128"
 begin
  
 use_template "scrreprt-modern"
-use_ontology "technical_report" and "CENELEC_50128"
+use_ontology "technical_report"
 
 
 

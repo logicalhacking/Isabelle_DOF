@@ -403,9 +403,6 @@ in the context of the SML toplevel of the Isabelle system as in the correspondin
 \<^theory_text>\<open>ML\<open> \<dots> SML-code \<dots> \<close>\<close>-command.
 Additionally, ML antiquotations were added to check and evaluate terms with
 term antiquotations:
-\<^item> \<^theory_text>\<open>@{term_ \<open>term\<close> }\<close> parses and type-checks \<open>term\<close> with term antiquotations,
-  for instance \<^theory_text>\<open>@{term_ \<open>@{cenelec-term \<open>FT\<close>}\<close>}\<close> will parse and check
-  that \<open>FT\<close> is indeed an instance of the class \<^typ>\<open>cenelec_term\<close>,
 \<^item> \<^theory_text>\<open>@{value_ \<open>term\<close> }\<close> performs the evaluation of \<open>term\<close> with term antiquotations,
   for instance \<^theory_text>\<open>@{value_ \<open>mcc @{cenelec-term \<open>FT\<close>}\<close>}\<close>
   will print the value of the \<^const>\<open>mcc\<close> attribute of the instance \<open>FT\<close>.
@@ -788,128 +785,6 @@ high-level arranged at root-class level,
 \end{center}
 \<close>
 
-
-subsection\<open>A Domain-Specific Ontology: \<^verbatim>\<open>CENELEC_50128\<close>\<close>
-(*<*)
-ML\<open>val toLaTeX = String.translate (fn c => if c = #"_" then "\\_" else String.implode[c])\<close>     
-ML\<open>writeln (DOF_core.print_doc_class_tree 
-                 @{context} (fn (n,l) =>  true (*     String.isPrefix "technical_report" l 
-                                         orelse String.isPrefix "Isa_COL" l *)) 
-                 toLaTeX)\<close>
-(*>*)
-text\<open> The \<^verbatim>\<open>CENELEC_50128\<close> ontology in \<^theory>\<open>Isabelle_DOF.CENELEC_50128\<close>
-is an example of a domain-specific ontology.
-It is based on  \<^verbatim>\<open>technical_report\<close> since we assume that this kind of format will be most
-appropriate for this type of long-and-tedious documents,
-
-%
-\begin{center}
-\begin{minipage}{.9\textwidth}\footnotesize
-\dirtree{%
-.0 .
-.1 CENELEC\_50128.judgement\DTcomment{...}.
-.1 CENELEC\_50128.test\_item\DTcomment{...}.
-.2 CENELEC\_50128.test\_case\DTcomment{...}.
-.2 CENELEC\_50128.test\_tool\DTcomment{...}.
-.2 CENELEC\_50128.test\_result\DTcomment{...}.
-.2 CENELEC\_50128.test\_adm\_role\DTcomment{...}.
-.2 CENELEC\_50128.test\_environment\DTcomment{...}.
-.2 CENELEC\_50128.test\_requirement\DTcomment{...}.
-.2 CENELEC\_50128.test\_specification\DTcomment{...}.
-.1 CENELEC\_50128.objectives\DTcomment{...}.
-.1 CENELEC\_50128.design\_item\DTcomment{...}.
-.2 CENELEC\_50128.interface\DTcomment{...}.
-.1 CENELEC\_50128.sub\_requirement\DTcomment{...}.
-.1 CENELEC\_50128.test\_documentation\DTcomment{...}.
-.1 Isa\_COL.text\_element\DTcomment{...}.
-.2 CENELEC\_50128.requirement\DTcomment{...}.
-.3 CENELEC\_50128.TC\DTcomment{...}.
-.3 CENELEC\_50128.FnI\DTcomment{...}.
-.3 CENELEC\_50128.SIR\DTcomment{...}.
-.3 CENELEC\_50128.CoAS\DTcomment{...}.
-.3 CENELEC\_50128.HtbC\DTcomment{...}.
-.3 CENELEC\_50128.SILA\DTcomment{...}.
-.3 CENELEC\_50128.assumption\DTcomment{...}.
-.4 CENELEC\_50128.AC\DTcomment{...}.
-.5 CENELEC\_50128.EC\DTcomment{...}.
-.6 CENELEC\_50128.SRAC\DTcomment{...}.
-.3 CENELEC\_50128.hypothesis\DTcomment{...}.
-.4 CENELEC\_50128.security\_hyp\DTcomment{...}.
-.3 CENELEC\_50128.safety\_requirement\DTcomment{...}.
-.2 CENELEC\_50128.cenelec\_text\DTcomment{...}.
-.3 CENELEC\_50128.SWAS\DTcomment{...}.
-.3 [...].
-.2 scholarly\_paper.text\_section\DTcomment{...}.
-.3 scholarly\_paper.technical\DTcomment{...}.
-.4 scholarly\_paper.math\_content\DTcomment{...}.
-.5 CENELEC\_50128.semi\_formal\_content\DTcomment{...}.
-.1 ...
-}
-\end{minipage}
-\end{center}
-\<close>
-
-(* TODO : Rearrange ontology hierarchies. *)
-
-subsubsection\<open>Examples\<close>
-text\<open>
-The category ``exported constraint (EC)'' is, in the file 
-\<^file>\<open>../../ontologies/CENELEC_50128/CENELEC_50128.thy\<close> defined as follows:
-
-@{boxed_theory_text [display]\<open>
-doc_class requirement = text_element +
-   long_name    :: "string option"
-   is_concerned :: "role set"
-doc_class assumption = requirement +
-     assumption_kind :: ass_kind <= informal 
-doc_class AC = assumption +
-   is_concerned :: "role set" <= "UNIV"
-doc_class EC = AC  +
-     assumption_kind :: ass_kind <= (*default *) formal
-\<close>}
-
-We now define the document representations, in the file 
-\<^file>\<open>../../ontologies/CENELEC_50128/DOF-CENELEC_50128.sty\<close>. Let us assume that we want to 
-register the definition of EC's in a dedicated table of contents (\<^boxed_latex>\<open>tos\<close>) 
-and use an earlier defined environment \inlineltx|\begin{EC}...\end{EC}| for their graphical 
-representation. Note that the \inlineltx|\newisadof{}[]{}|-command requires the 
-full-qualified names, \<^eg>, \<^boxed_theory_text>\<open>text.CENELEC_50128.EC\<close> for the document class and 
-\<^boxed_theory_text>\<open>CENELEC_50128.requirement.long_name\<close> for the  attribute \<^const>\<open>long_name\<close>, 
-inherited from the document class \<^typ>\<open>requirement\<close>. The representation of \<^typ>\<open>EC\<close>'s
-can now be defined as follows:
-% TODO:
-% Explain the text qualifier of the long_name text.CENELEC_50128.EC
-
-\begin{ltx}
-\newisadof{text.CENELEC_50128.EC}%
-[label=,type=%
-,Isa_COL.text_element.level=%
-,Isa_COL.text_element.referentiable=%
-,Isa_COL.text_element.variants=%
-,CENELEC_50128.requirement.is_concerned=%
-,CENELEC_50128.requirement.long_name=%
-,CENELEC_50128.EC.assumption_kind=][1]{%
-\begin{isamarkuptext}%
-   \ifthenelse{\equal{\commandkey{CENELEC_50128.requirement.long_name}}{}}{%
-      % If long_name is not defined, we only create an entry in the table tos
-      % using the auto-generated number of the EC 
-      \begin{EC}%
-          \addxcontentsline{tos}{chapter}[]{\autoref{\commandkey{label}}}%
-    }{%
-      % If long_name is defined, we use the long_name as title in the 
-      % layout of the EC, in the table "tos" and as index entry. .
-      \begin{EC}[\commandkey{CENELEC_50128.requirement.long_name}]%
-        \addxcontentsline{toe}{chapter}[]{\autoref{\commandkey{label}}: %
-              \commandkey{CENELEC_50128.requirement.long_name}}%
-        \DOFindex{EC}{\commandkey{CENELEC_50128.requirement.long_name}}%
-    }%
-    \label{\commandkey{label}}% we use the label attribute as anchor 
-    #1% The main text of the EC
-  \end{EC}
-\end{isamarkuptext}%
-}
-\end{ltx}
-\<close>
 
 
 
@@ -1475,9 +1350,9 @@ text\<open>
   requires a solid understanding of \<^LaTeX>'s expansion mechanism. In this context, the recently 
   introduced \inlineltx|\expanded{}|-primitive 
   (see \<^url>\<open>https://www.texdev.net/2018/12/06/a-new-primitive-expanded\<close>) is particularly useful. 
-  Examples of its use can be found, \<^eg>, in the ontology-styles 
-  \<^file>\<open>../../ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close> or 
-  \<^file>\<open>../../ontologies/CENELEC_50128/DOF-CENELEC_50128.sty\<close>.  For details about the expansion mechanism 
+  Examples of its use can be found, \<^eg>, in the ontology-style 
+  \<^file>\<open>../../ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close>.
+  For details about the expansion mechanism
   in general, we refer the reader to the \<^LaTeX> literature (\<^eg>,~@{cite "knuth:texbook:1986"
   and "mittelbach.ea:latex:1999" and "eijkhout:latex-cs:2012"}).  
 \<close>

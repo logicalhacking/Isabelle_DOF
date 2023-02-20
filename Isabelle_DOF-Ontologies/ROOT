@@ -4,11 +4,13 @@ session "Isabelle_DOF-Ontologies" = "Isabelle_DOF" +
     "CC_v3_1_R5"
     "Conceptual"
     "small_math"
+    "CENELEC_50128"
   theories
     "document_setup"
     "CC_v3_1_R5/CC_v3_1_R5"
     "CC_v3_1_R5/CC_terminology"  
     "Conceptual/Conceptual"
     "small_math/small_math"
+    "CENELEC_50128/CENELEC_50128"
   document_files
     ".empty"
