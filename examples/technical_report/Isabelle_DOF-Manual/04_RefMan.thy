@@ -350,8 +350,7 @@ is currently only available in the SML API's of the kernel.
      | macro_command
   \<close>
 \<^item> \<^isadof> \<open>change_status_command\<close> :
-  \<^rail>\<open>  (@@{command "update_instance*"} '[' upd_meta_args ']')
-       |  (@@{command "declare_reference*"} (obj_id ('::' class_id)))\<close>
+  \<^rail>\<open>  (@@{command "update_instance*"} '[' upd_meta_args ']')\<close>
 \<^item> \<^isadof> \<open>inspection_command\<close> :
   \<^rail>\<open>    @@{command "print_doc_classes"}
         |  @@{command "print_doc_items"} 
@@ -1218,8 +1217,8 @@ text\<open>
 
   Low-level invariants checking can be set up to be triggered
   when opening a monitor, when closing a monitor, or both
-  by using the \<^ML>\<open>DOF_core.update_class_eager_invariant\<close>,
-  \<^ML>\<open>DOF_core.update_class_lazy_invariant\<close>, or \<^ML>\<open>DOF_core.update_class_invariant\<close> commands
+  by using the \<^ML>\<open>DOF_core.add_opening_ml_invariant\<close>,
+  \<^ML>\<open>DOF_core.add_closing_ml_invariant\<close>, or \<^ML>\<open>DOF_core.add_ml_invariant\<close> commands
   respectively, to add the invariants to the theory context
   (See \<^technical>\<open>sec:low_level_inv\<close> for an example).
 \<close>

@@ -157,10 +157,10 @@ which have the required safety integrity level.\<close>
 Definition*[entity]
 \<open>person, group or organisation who fulfils a role as defined in this European Standard.\<close>
 
-declare_reference*[fault]
+declare_reference*[fault::cenelec_term]
 Definition*[error]
 \<open>defect, mistake or inaccuracy which could result in failure or in a deviation 
-from the intended performance or behaviour (cf. @{cenelec_term (unchecked) \<open>fault\<close>})).\<close>
+from the intended performance or behaviour (cf. @{cenelec_term (unchecked) \<open>fault\<close>}).\<close>
 
 Definition*[fault]
 \<open>defect, mistake or inaccuracy which could result in failure or in a deviation 
@@ -1009,14 +1009,16 @@ ML\<open>
 fun check_sil oid _ ctxt =
   let
     val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
-    val monitor_record_value = #value (the (DOF_core.get_object_local oid ctxt'))
+    val DOF_core.Instance {value = monitor_record_value, ...} =
+                          DOF_core.get_instance_global oid (Context.theory_of ctxt)
     val Const _ $ _ $ monitor_sil $ _ = monitor_record_value
     val traces = AttributeAccess.compute_trace_ML ctxt oid NONE \<^here>
     fun check_sil'' [] = true
       | check_sil'' (x::xs) =
           let
             val (_, doc_oid) = x
-            val doc_record_value = #value (the (DOF_core.get_object_local doc_oid ctxt'))
+            val DOF_core.Instance {value = doc_record_value, ...} =
+                      DOF_core.get_instance_global doc_oid (Context.theory_of ctxt)
             val Const _ $ _ $ _ $ _ $ _ $ cenelec_document_ext = doc_record_value
             val Const _ $ _ $ _ $ doc_sil $ _ $ _ $ _ $ _ $ _ $ _ = cenelec_document_ext
           in 
@@ -1028,7 +1030,12 @@ fun check_sil oid _ ctxt =
   in check_sil'' traces end
 \<close>
 
-setup\<open>DOF_core.update_class_invariant "CENELEC_50128.monitor_SIL0" check_sil\<close>
+setup\<open>
+(fn thy =>
+let val ctxt = Proof_Context.init_global thy
+    val binding = DOF_core.binding_from_onto_class_pos "monitor_SIL0" thy
+in  DOF_core.add_ml_invariant binding check_sil thy end)
+\<close>
 
 text\<open>
 A more generic example of check_sil which can be generalized:
@@ -1038,8 +1045,10 @@ ML\<open>
 fun check_sil_slow oid _ ctxt =
   let 
     val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
-    val monitor_record_value = #value (the (DOF_core.get_object_local oid ctxt'))
-    val monitor_cid = #cid (the (DOF_core.get_object_local oid ctxt'))
+    val DOF_core.Instance {value = monitor_record_value, ...} =
+                          DOF_core.get_instance_global oid (Context.theory_of ctxt)
+    val DOF_core.Instance {cid = monitor_cid, ...} =
+                          DOF_core.get_instance_global oid (Context.theory_of ctxt)
     val monitor_sil_typ = (Syntax.read_typ ctxt' monitor_cid) --> @{typ "sil"}
     val monitor_sil = Value_Command.value ctxt'
                     (Const("CENELEC_50128.monitor_SIL.sil", monitor_sil_typ) $ monitor_record_value)
@@ -1048,7 +1057,8 @@ fun check_sil_slow oid _ ctxt =
       | check_sil' (x::xs) =
           let
             val (doc_cid, doc_oid) = x
-            val doc_record_value = #value (the (DOF_core.get_object_local doc_oid ctxt'))
+            val DOF_core.Instance {value = doc_record_value, ...} =
+                    DOF_core.get_instance_global doc_oid (Context.theory_of ctxt)
             val doc_sil_typ = (Syntax.read_typ ctxt' doc_cid) --> @{typ "sil"} 
             val doc_sil = Value_Command.value ctxt'
                     (Const ("CENELEC_50128.cenelec_document.sil", doc_sil_typ) $ doc_record_value)
@@ -1061,7 +1071,12 @@ fun check_sil_slow oid _ ctxt =
   in check_sil' traces end
 \<close>
 
-(*setup\<open>DOF_core.update_class_invariant "CENELEC_50128.monitor_SIL0" check_sil_slow\<close>*)
+(*setup\<open>
+(fn thy =>
+let val ctxt = Proof_Context.init_global thy
+    val binding = DOF_core.binding_from_onto_class_pos "monitor_SIL0" thy
+in  DOF_core.add_ml_invariant binding check_sil_slow thy end)
+\<close>*)
 
 (* As traces of monitor instances (docitems) are updated each time an instance is declared
   (with text*, section*, etc.), invariants checking functions which check the full list of traces
@@ -1072,8 +1087,8 @@ ML\<open>
 fun check_required_documents oid _ ctxt = 
   let
     val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
-    val {monitor_tab,...} = DOF_core.get_data ctxt'
-    val {accepted_cids, ...} = the (Symtab.lookup monitor_tab oid)
+    val DOF_core.Monitor_Info {accepted_cids, ...} =
+                      DOF_core.get_monitor_info_global oid (Context.theory_of ctxt)
     val traces = AttributeAccess.compute_trace_ML ctxt oid NONE \<^here>
     fun check_required_documents' [] = true
       | check_required_documents' (cid::cids) =
@@ -1082,7 +1097,8 @@ fun check_required_documents oid _ ctxt =
           else
             let
               val ctxt' = Proof_Context.init_global(Context.theory_of ctxt)
-              val monitor_record_value = #value (the (DOF_core.get_object_local oid ctxt'))
+              val DOF_core.Instance {value = monitor_record_value, ...} =
+                          DOF_core.get_instance_global oid (Context.theory_of ctxt)
               val Const _ $ _ $ monitor_sil $ _ = monitor_record_value
             in error ("A " ^ cid ^ " cenelec document is required with "
                       ^ Syntax.string_of_term ctxt' monitor_sil)
@@ -1090,7 +1106,12 @@ fun check_required_documents oid _ ctxt =
   in check_required_documents' accepted_cids end
 \<close>
 
-setup\<open>DOF_core.update_class_lazy_invariant "CENELEC_50128.monitor_SIL0" check_required_documents\<close>
+setup\<open>
+fn thy =>
+let val ctxt = Proof_Context.init_global thy
+    val binding = DOF_core.binding_from_onto_class_pos "monitor_SIL0" thy
+in  DOF_core.add_closing_ml_invariant binding check_required_documents thy end
+\<close>
 
 (* Test pattern matching for the records of the current CENELEC implementation classes,
    and used by checking functions.
@@ -1101,11 +1122,11 @@ text*[MonitorPatternMatchingTest::monitor_SIL0]\<open>\<close>
 text*[CenelecClassPatternMatchingTest::SQAP, sil = "SIL0"]\<open>\<close>
 ML\<open>
 val thy = @{theory}
-val monitor_record_value =
-      #value (the (DOF_core.get_object_global "MonitorPatternMatchingTest" thy))
+val DOF_core.Instance {value = monitor_record_value, ...} =
+                                        DOF_core.get_instance_global "MonitorPatternMatchingTest" thy
 val Const _ $ _ $ monitor_sil $ _ = monitor_record_value
-val doc_record_value = #value (the (DOF_core.get_object_global
-                                              "CenelecClassPatternMatchingTest" thy))
+val DOF_core.Instance {value = doc_record_value, ...} =
+                                    DOF_core.get_instance_global "CenelecClassPatternMatchingTest" thy
 val Const _ $ _ $ _ $ _ $ _ $ cenelec_document_ext = doc_record_value
 val Const _ $ _ $ _ $ doc_sil $ _ $ _ $ _ $ _ $ _ $ _ = cenelec_document_ext
 \<close>
@@ -1254,10 +1275,10 @@ section\<open> META : Testing and Validation \<close>
 text\<open>Test : @{semi_formal_content \<open>COTS\<close>}\<close>
 
 ML
-\<open> DOF_core.read_cid_global @{theory} "requirement";
-  DOF_core.read_cid_global @{theory} "SRAC";
-  DOF_core.is_defined_cid_global "SRAC" @{theory};
-  DOF_core.is_defined_cid_global "EC" @{theory}; \<close>
+\<open> DOF_core.get_onto_class_name_global "requirement" @{theory};
+  DOF_core.get_onto_class_name_global "SRAC" @{theory};
+  DOF_core.get_onto_class_global "SRAC" @{theory};
+  DOF_core.get_onto_class_global "EC" @{theory}; \<close>
 
 ML
 \<open> DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.EC";
@@ -1266,15 +1287,16 @@ ML
   DOF_core.is_subclass @{context} "CENELEC_50128.EC"   "CENELEC_50128.test_requirement"; \<close>
 
 ML
-\<open> val {docobj_tab={maxano, tab=ref_tab},docclass_tab=class_tab,...} = DOF_core.get_data @{context};
-  Symtab.dest ref_tab;
-  Symtab.dest class_tab; \<close>
+\<open> val ref_tab = DOF_core.get_instances \<^context> 
+  val docclass_tab = DOF_core.get_onto_classes @{context};
+  Name_Space.dest_table ref_tab;
+  Name_Space.dest_table docclass_tab; \<close>
 
 ML
 \<open> val internal_data_of_SRAC_definition = DOF_core.get_attributes_local "SRAC" @{context} \<close> 
 
 ML
-\<open> DOF_core.read_cid_global         @{theory}  "requirement";
+\<open> DOF_core.get_onto_class_name_global "requirement" @{theory};
   Syntax.parse_typ                 @{context} "requirement";
   val Type(t,_) = Syntax.parse_typ @{context} "requirement" handle ERROR _ => dummyT; 
   Syntax.read_typ                  @{context} "hypothesis"  handle  _ => dummyT;

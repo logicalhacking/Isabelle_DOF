@@ -34,23 +34,29 @@ The implementor of an ontology must know what he does ...
 \<close>
 
 text\<open>Setting a sample invariant, which simply produces some side-effect:\<close>
-setup\<open>DOF_core.update_class_invariant "Conceptual.A" (fn oid => 
-                                                       fn {is_monitor = b} =>
-                                                        fn ctxt => 
-                                                           (writeln ("sample echo : "^oid); true))\<close>
+setup\<open>
+fn thy =>
+let val ctxt = Proof_Context.init_global thy
+    val binding = DOF_core.binding_from_onto_class_pos "A" thy
+in DOF_core.add_ml_invariant binding (fn oid =>
+                                         fn {is_monitor = b} =>
+                                            fn ctxt => 
+                                               (writeln ("sample echo : "^oid); true)) thy end
+\<close>
 
 subsection*[b::A, x = "5"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 
 text\<open>Setting a sample invariant, referring to attribute value "x":\<close>
-ML\<open>fun check_A_invariant oid {is_monitor:bool} ctxt = 
+ML\<open>
+fn thy =>
+let fun check_A_invariant oid {is_monitor:bool} ctxt =
       let val term =  ISA_core.compute_attr_access ctxt "x" oid NONE @{here} 
           val (@{typ "int"},x_value) = HOLogic.dest_number term
-      in  if x_value > 5 then error("class A invariant violation") else true end
+    in  if x_value > 5 then error("class A invariant violation") else true end
+    val binding = DOF_core.binding_from_onto_class_pos "A" thy
+in DOF_core.add_ml_invariant binding check_A_invariant thy end
 \<close>
-
-setup\<open>DOF_core.update_class_invariant "Conceptual.A" check_A_invariant\<close>
-
 
 
 subsection*[d::A, x = "4"] \<open> Lorem ipsum dolor sit amet, ... \<close>
@@ -79,11 +85,13 @@ that instances of class C occur more often as those of class D; note that this i
 to take sub-classing into account:
 \<close>
 
-ML\<open>fun check_M_invariant oid {is_monitor} ctxt = 
+ML\<open>
+fn thy =>
+let fun check_M_invariant oid {is_monitor} ctxt =
       let val term =  ISA_core.compute_attr_access ctxt "trace" oid NONE @{here} 
           fun conv (\<^Const>\<open>Pair \<^typ>\<open>doc_class rexp\<close> \<^typ>\<open>string\<close>\<close>
                       $ (\<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close> $ (\<^Const>\<open>mk\<close> $ s)) $ S) =
-            let val s' =  DOF_core.read_cid (Context.proof_of ctxt) (HOLogic.dest_string s)
+            let val s' =  DOF_core.get_onto_class_name_global' (HOLogic.dest_string s) thy
             in (s', HOLogic.dest_string S) end
           val string_pair_list = map conv (HOLogic.dest_list term) 
           val cid_list = map fst string_pair_list
@@ -93,9 +101,9 @@ ML\<open>fun check_M_invariant oid {is_monitor} ctxt =
           val n = length (filter is_C cid_list)
           val m = length (filter is_D cid_list)
       in  if m > n then error("class M invariant violation") else true end
+    val binding = DOF_core.binding_from_onto_class_pos "M" thy
+in DOF_core.add_ml_invariant binding check_M_invariant thy end
 \<close>
-
-setup\<open>DOF_core.update_class_invariant "Conceptual.M" check_M_invariant\<close>
 
 
 section\<open>Example: Monitor Class Invariant\<close>
@@ -122,7 +130,8 @@ ML\<open>val ctxt = @{context}
    fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
    fun conv' (\<^Const>\<open>Pair \<^typ>\<open>doc_class rexp\<close> \<^typ>\<open>string\<close>\<close>
                       $ (\<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close> $ (\<^Const>\<open>mk\<close> $ s)) $ S) =
-     let val s' =  DOF_core.read_cid ctxt (HOLogic.dest_string s)
+     let val s' =  DOF_core.get_onto_class_name_global' (HOLogic.dest_string s)
+                                                                    (Proof_Context.theory_of ctxt)
      in (s', HOLogic.dest_string S) end
    val string_pair_list = map conv' (HOLogic.dest_list term)
   \<close>

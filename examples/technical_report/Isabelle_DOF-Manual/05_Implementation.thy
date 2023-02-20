@@ -46,40 +46,42 @@ text\<open>
   A plugin in Isabelle starts with defining the local data and registering it in the framework. As 
   mentioned before, contexts are structures with independent cells/compartments having three
   primitives \<^boxed_sml>\<open>init\<close>,  \<^boxed_sml>\<open>extend\<close> and  \<^boxed_sml>\<open>merge\<close>. Technically this is done by 
-  instantiating a functor  \<^boxed_sml>\<open>Generic_Data\<close>, and the following fairly typical code-fragment 
+  instantiating a functor  \<^boxed_sml>\<open>Theory_Data\<close>, and the following fairly typical code-fragment 
   is drawn from \<^isadof>:
 
 @{boxed_sml [display]
-\<open>structure Data = Generic_Data
-(  type T = docobj_tab * docclass_tab * ...
-   val empty  = (initial_docobj_tab, initial_docclass_tab, ...) 
-   fun merge((d1,c1,...),(d2,c2,...)) = (merge_docobj_tab  (d1,d2,...), 
-                                         merge_docclass_tab(c1,c2,...))
-);\<close>}
-  where the table  \<^boxed_sml>\<open>docobj_tab\<close> manages document class instances
-  and \<^boxed_sml>\<open>docclass_tab\<close> the environment for class definitions
-  (inducing the inheritance relation). Other tables capture, \eg, 
-  the class invariants, inner-syntax antiquotations. Operations follow the MVC-pattern, where 
+\<open>structure Onto_Classes = Theory_Data
+  (
+    type T =  onto_class Name_Space.table;
+    val empty : T = Name_Space.empty_table onto_classN;
+    fun merge data : T = Name_Space.merge_tables data;
+  );\<close>}
+  where the table  \<^boxed_sml>\<open>Name_Space.table\<close> manages
+  the environment for class definitions (\<^boxed_sml>\<open>onto_class\<close>), inducing the inheritance relation,
+  using a \<^boxed_sml>\<open>Name_Space\<close> table. Other tables capture, \eg, 
+  the class instances, class invariants, inner-syntax antiquotations.
+  Operations follow the MVC-pattern, where 
   Isabelle/Isar provides the controller part. A typical model operation has the type:
 
 @{boxed_sml [display]
-\<open>val opn :: <args_type> -> Context.generic -> Context.generic\<close>}
-  representing a transformation on system contexts. For example, the operation of declaring a local 
-  reference in the context is presented as follows:
+\<open>val opn :: <args_type> -> theory -> theory\<close>}
+  representing a transformation on system contexts. For example, the operation of defining a class
+  in the context is presented as follows:
 
 @{boxed_sml [display]
-\<open>fun declare_object_local oid ctxt  =
-let fun decl {tab,maxano} = {tab=Symtab.update_new(oid,NONE) tab,
-                             maxano=maxano}
-in  (Data.map(apfst decl)(ctxt)
-  handle Symtab.DUP _ =>
-              error("multiple declaration of document reference"))
-end\<close>}
-  where \<^boxed_sml>\<open>Data.map\<close> is the update function resulting from the instantiation of the 
-  functor  \<^boxed_sml>\<open>Generic_Data\<close>. This code fragment uses operations from a library structure 
-   \<^boxed_sml>\<open>Symtab\<close> that were used to update the appropriate table for document objects in
-  the plugin-local state. Possible exceptions to the update operation were mapped to a system-global 
-  error reporting function.
+\<open>fun add_onto_class name onto_class thy =
+    thy |> Onto_Classes.map
+      (Name_Space.define (Context.Theory thy) true (name, onto_class) #> #2);
+\<close>}
+  This code fragment uses operations from the library structure \<^boxed_sml>\<open>Name_Space\<close>
+  that were used to update the appropriate table for document objects in
+  the plugin-local state.
+  A name space manages a collection of long names, together with a mapping
+  between partially qualified external names and fully qualified internal names
+  (in both directions).
+  It can also keep track of the declarations and updates position of objects,
+  and then allows a simple markup-generation.
+  Possible exceptions to the update operation are automatically triggered.
 
   Finally, the view-aspects were handled by an API for parsing-combinators. The library structure 
    \<^boxed_sml>\<open>Scan\<close> provides the operators:
@@ -120,7 +122,7 @@ val attributes =(Parse.$$$ "[" |-- (reference
   new \emph{command}:
 
 @{boxed_theory_text [display]\<open>
-declare_reference [lal::requirement, alpha="main", beta=42]
+declare_reference* [lal::requirement, alpha="main", beta=42]
 \<close>}
 
   The construction also generates implicitly some markup information; for example, when hovering

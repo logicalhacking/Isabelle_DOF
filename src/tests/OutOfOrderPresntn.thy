@@ -28,11 +28,14 @@ print_doc_classes
 print_doc_items
 
 (* this corresponds to low-level accesses : *)
-ML\<open>  
-val {docobj_tab={tab = docitem_tab, ...},docclass_tab, ISA_transformer_tab, monitor_tab,...} 
-    = DOF_core.get_data @{context};
-Symtab.dest docitem_tab;
-Symtab.dest docclass_tab;
+ML\<open>
+val docitem_tab = DOF_core.get_instances \<^context>;
+val isa_transformer_tab = DOF_core.get_isa_transformers \<^context>;
+val docclass_tab = DOF_core.get_onto_classes \<^context>;
+
+Name_Space.dest_table docitem_tab;
+Name_Space.dest_table isa_transformer_tab;
+Name_Space.dest_table docclass_tab;
 app;
 \<close>
 
@@ -80,7 +83,7 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
        (* ... generating the level-attribute syntax *)
   in   
        (   Value_Command.Docitem_Parser.create_and_check_docitem 
-                              {is_monitor = false} {is_inline = false} 
+                              {is_monitor = false} {is_inline = false} {define = true}
                               oid pos (cid_transform cid_pos) (attr_transform doc_attrs)
         #> (fn thy => (app (check_n_tex_text thy) toks_list; thy))) 
   end;
