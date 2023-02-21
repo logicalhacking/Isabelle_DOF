@@ -5,9 +5,6 @@ requirements = \
   env:ISABELLE_SCALA_JAR
 sources = \
   scala/dof.scala \
-  scala/dof_document_build.scala \
-  scala/dof_mkroot.scala \
-  scala/dof_tools.scala
+  scala/dof_document_build.scala
 services = \
-  isabelle.dof.DOF_Tools \
   isabelle.dof.DOF_Document_Build$Engine

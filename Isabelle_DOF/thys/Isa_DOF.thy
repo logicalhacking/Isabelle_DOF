@@ -3177,18 +3177,14 @@ section \<open>Isabelle/Scala module within session context\<close>
 
 external_file "../etc/build.props"
 external_file "../scala/dof_document_build.scala"
-external_file "../scala/dof_mkroot.scala"
 external_file "../scala/dof.scala"
-external_file "../scala/dof_tools.scala"
 
 scala_build_generated_files
   external_files
     "build.props" (in "../etc")
   and
     "scala/dof_document_build.scala"
-    "scala/dof_mkroot.scala"
-    "scala/dof.scala"
-    "scala/dof_tools.scala" (in "../")
+    "scala/dof.scala" (in "../")
 
 (*
 ML\<open>
