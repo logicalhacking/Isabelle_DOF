@@ -20,7 +20,7 @@ imports
   "Physical_Quantities.SI" "Physical_Quantities.SI_Pretty"
 begin
 use_template "scrreprt-modern"
-use_ontology technical_report and CENELEC_50128
+use_ontology technical_report and "Isabelle_DOF-Ontologies.CENELEC_50128"
 declare[[strict_monitor_checking=true]]
 define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
                  isadof  \<rightleftharpoons> \<open>\isadof{}\<close>

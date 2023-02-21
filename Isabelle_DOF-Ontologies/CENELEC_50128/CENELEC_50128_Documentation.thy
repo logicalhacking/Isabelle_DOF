@@ -18,6 +18,7 @@ theory
   CENELEC_50128
            
 begin
+
 define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
                  isadof  \<rightleftharpoons> \<open>\isadof{}\<close>
 define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
