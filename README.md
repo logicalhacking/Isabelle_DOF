@@ -35,7 +35,7 @@ foo@bar:~$ isabelle components -u .
 The final step for the installation is:
 
 ```console
-foo@bar:~$ isabelle build -D . -X proofs
+foo@bar:~$ isabelle build -D . -x Isabelle_DOF-proofs
 ```
 
 This will compile Isabelle/DOF and run the example suite.
