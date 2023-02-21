@@ -3109,8 +3109,8 @@ fun use_template context arg =
 fun use_ontology context args =
   let
     val xml = args                                       
-     (* |> map (check_ontology context #> fst #> Long_Name.base_name) *)
-      |> map (check_ontology context #> fst )
+      (* |> map (check_ontology context #> fst #> Long_Name.base_name) *)
+      |> map (check_ontology context #> fst ) 
       |> cat_lines |> XML.string;
   in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/use_ontology\<close> xml end;
 
@@ -3152,7 +3152,7 @@ val _ =
       (fn (get_file, pos) => Toplevel.theory (fn thy =>
         let
           val (file, thy') = get_file thy;
-          val binding = Binding.make (strip_ontology (#src_path file, pos), pos);
+          val binding = Binding.qualify false (Long_Name.qualifier (Context.theory_long_name thy')) (Binding.make (strip_ontology (#src_path file, pos), pos));
           val text = cat_lines (#lines file);
         in #2 (define_ontology (binding, text) thy') end)));
 
