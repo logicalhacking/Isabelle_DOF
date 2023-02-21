@@ -14,7 +14,6 @@
 theory 
   ontologies
 imports
-  "CENELEC_50128/CENELEC_50128"
   "scholarly_paper/scholarly_paper"
   "technical_report/technical_report"
 begin

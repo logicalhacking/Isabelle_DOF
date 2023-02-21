@@ -36,8 +36,8 @@
 \title{<TITLE>}
 \author{<AUTHOR>}
 
-\renewcommand{\listofSRACs}{\relax}
-\renewcommand{\listofECs}{\relax}
+%\renewcommand{\listofSRACs}{\relax}
+%\renewcommand{\listofECs}{\relax}
 \pagestyle{headings}
 
 \uppertitleback{
@@ -116,5 +116,15 @@ France, and therefore granted with public funds of the Program ``Investissements
   \end{minipage}
 \end{minipage}
 }
+% Index setup
+\usepackage{index}
+\makeindex
+\AtEndDocument{\printindex}
+
+\newcommand{\DOFindex}[2]{%
+  \marginnote{\normalfont\textbf{#1}: #2}%
+  \expandafter\index\expandafter{\expanded{#2 (#1)}}%
+}%
+
 
 \AtBeginDocument{\isabellestyle{literal}\newcommand{\lstnumberautorefname}{Line}}

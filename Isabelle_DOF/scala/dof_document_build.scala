@@ -69,15 +69,17 @@ object DOF_Document_Build
 
       val isabelle_dof_dir = context.session_context.sessions_structure(DOF.session).dir
 
+       val ltx_ontologies = split_lines(the_document_entry(context, "dof/use_ontology").text)
+
       // LaTeX styles from Isabelle/DOF directory
-      List(Path.explode("latex/styles"), Path.explode("ontologies"))
+      (List(Path.explode("latex/styles"), Path.explode("ontologies")):::(ltx_ontologies.map(name => 
+              context.session_context.sessions_structure((Long_Name.qualifier(name)).mkString).dir)))
         .flatMap(dir => File.find_files((isabelle_dof_dir + dir).file, _.getName.endsWith(".sty")))
         .foreach(sty => Isabelle_System.copy_file(sty, directory.doc_dir.file))
 
       // ontologies.tex from session exports
       File.write(directory.doc_dir + Path.explode("ontologies.tex"),
-        split_lines(the_document_entry(context, "dof/use_ontology").text)
-          .map(name => "\\usepackage{DOF-" + name + "}\n").mkString)
+           ltx_ontologies.map(name => "\\usepackage{DOF-" + Long_Name.base_name(name) + "}\n").mkString)
 
       // root.tex from session exports
       File.write(directory.doc_dir + Path.explode("root.tex"),

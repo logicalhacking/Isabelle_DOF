@@ -24,8 +24,10 @@ identifies:
  \<close> 
 
 (*<<*)  
-theory CENELEC_50128
-  imports  "Isabelle_DOF.technical_report"
+theory 
+  CENELEC_50128
+  imports  
+  "document_setup"
 begin
 
 define_ontology "DOF-CENELEC_50128.sty"
@@ -523,9 +525,11 @@ text\<open>Figure 3 in Chapter 5: Illustrative Development Lifecycle 1\<close>
 
 text\<open>Global Overview\<close>
 
+(*
 figure*[fig3::figure, relative_width="100", 
  src="''examples/CENELEC_50128/mini_odo/document/figures/CENELEC-Fig.3-docStructure.png''"]
 \<open>Illustrative Development Lifecycle 1\<close>
+*)
 
 text\<open>Actually, the Figure 4 in Chapter 5: Illustrative Development Lifecycle 2 is more fidele
 to the remaining document: Software Architecture and Design phases are merged, like in 7.3.\<close>
@@ -616,9 +620,10 @@ doc_class cenelec_report = text_element +
    invariant must_be_chapter :: "text_element.level \<sigma> = Some(0)" 
    invariant three_eyes_prcpl:: "  written_by \<sigma> \<noteq> fst_check \<sigma> 
                                  \<and> written_by \<sigma> \<noteq> snd_check \<sigma>"
-   
+  
+(* 
 text\<open>see \<^figure>\<open>fig3\<close> and Fig 4 in Chapter 5: Illustrative Development Lifecycle 2\<close>
-
+*)
 doc_class external_specification =
   phase        :: "phase"  <= "SYSDEV_ext"
 
@@ -1038,7 +1043,7 @@ in  DOF_core.add_ml_invariant binding check_sil thy end)
 \<close>
 
 text\<open>
-A more generic example of check_sil which can be generalized:
+A more generic example of check\_sil which can be generalized:
 it is decoupled from the CENELEC current implementation
 but is much less efficient regarding time computation by relying on Isabelle evaluation mechanism.\<close>
 ML\<open>
@@ -1259,15 +1264,16 @@ doc_class test_documentation =    (* OUTDATED ? *)
 
 
 section\<open>Global Documentation Structure\<close>
-
+(*<<*)
 doc_class global_documentation_structure = text_element +
    level :: "int option" <= "Some(-1::int)"  \<comment> \<open>document must be a chapter\<close>
-   accepts "SYSREQS      ~~                  \<comment> \<open>system_requirements_specification\<close>
-            SYSSREQS     ~~                  \<comment> \<open>system_safety_requirements_specification\<close> 
-            SYSAD        ~~                  \<comment> \<open>system_architecture description\<close>
+   accepts "SYSREQS      ~~                  \<comment> \<open>system requiremens specification\<close>
+            SYSSREQS     ~~                  \<comment> \<open>system safety requirements specification\<close> 
+            SYSAD        ~~                  \<comment> \<open>system architecture description\<close>
             SYSS_pl      ~~                  \<comment> \<open>system safety plan\<close> 
             (SWRS || OSWTS)  "                \<comment> \<open>software requirements specification OR
                                                  overall software test specification\<close> 
+(*>>*)
 (* MORE TO COME : *)
 
 section\<open> META : Testing and Validation \<close>
