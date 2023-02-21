@@ -13,4 +13,4 @@ session "Isabelle_DOF-Ontologies" = "Isabelle_DOF" +
     "small_math/small_math"
     "CENELEC_50128/CENELEC_50128"
   document_files
-    ".empty"
+    "root.bib"
