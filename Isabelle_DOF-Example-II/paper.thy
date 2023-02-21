@@ -54,7 +54,7 @@ abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Alg
    If you consider citing this paper, please refer to @{cite "HOL-CSP-iFM2020"}.
 \<close>
 text\<open>\<close>
-section*[introheader::introduction,main_author="Some(@{docitem ''bu''}::author)"]\<open> Introduction \<close> 
+section*[introheader::introduction,main_author="Some(@{author ''bu''}::author)"]\<open> Introduction \<close> 
 text*[introtext::introduction, level="Some 1"]\<open>
 Communicating Sequential Processes (\<^csp>) is a language to specify and verify patterns of 
 interaction of concurrent systems. Together with CCS and LOTOS, it belongs to the family of 
@@ -126,10 +126,10 @@ attempt to formalize denotational \<^csp> semantics covering a part of Bill Rosc
     omitted.\<close>}. 
 \<close>
 
-section*["pre"::tc,main_author="Some(@{author \<open>bu\<close>}::author)"]
+section*["pre"::technical,main_author="Some(@{author \<open>bu\<close>}::author)"]
 \<open>Preliminaries\<close>
 
-subsection*[cspsemantics::tc, main_author="Some(@{author ''bu''})"]\<open>Denotational \<^csp> Semantics\<close>
+subsection*[cspsemantics::technical, main_author="Some(@{author ''bu''})"]\<open>Denotational \<^csp> Semantics\<close>
 
 text\<open> The denotational semantics (following @{cite "roscoe:csp:1998"}) comes in three layers: 
 the \<^emph>\<open>trace model\<close>, the \<^emph>\<open>(stable) failures model\<close> and the \<^emph>\<open>failure/divergence model\<close>.
@@ -189,7 +189,7 @@ of @{cite "IsobeRoggenbach2010"} is restricted to a variant of the failures mode
  
 \<close>
 
-subsection*["isabelleHol"::tc, main_author="Some(@{author ''bu''})"]\<open>Isabelle/HOL\<close>
+subsection*["isabelleHol"::technical, main_author="Some(@{author ''bu''})"]\<open>Isabelle/HOL\<close>
 text\<open> Nowadays, Isabelle/HOL is one of the major interactive theory development environments
 @{cite "nipkow.ea:isabelle:2002"}. HOL stands for Higher-Order Logic, a logic based on simply-typed
 \<open>\<lambda>\<close>-calculus extended by parametric polymorphism and Haskell-like type-classes.
@@ -218,10 +218,10 @@ domain theory for a particular type-class \<open>\<alpha>::pcpo\<close>, \<^ie> 
 fixed-point induction and other (automated) proof infrastructure. Isabelle's type-inference can 
 automatically infer, for example, that if \<open>\<alpha>::pcpo\<close>, then \<open>(\<beta> \<Rightarrow> \<alpha>)::pcpo\<close>. \<close>
   
-section*["csphol"::tc,main_author="Some(@{author ''bu''}::author)", level="Some 2"]
+section*["csphol"::technical,main_author="Some(@{author ''bu''}::author)", level="Some 2"]
 \<open>Formalising Denotational \<^csp> Semantics in HOL \<close>
 
-subsection*["processinv"::tc, main_author="Some(@{author ''bu''})"]
+subsection*["processinv"::technical, main_author="Some(@{author ''bu''})"]
 \<open>Process Invariant and Process Type\<close>
 text\<open> First, we need a slight revision of the concept
 of \<^emph>\<open>trace\<close>: if \<open>\<Sigma>\<close> is the type of the atomic events (represented by a type variable), then
@@ -272,7 +272,7 @@ but this can be constructed in a straight-forward manner. Suitable definitions f
 \<open>\<T>\<close>, \<open>\<F>\<close> and \<open>\<D>\<close> lifting \<open>fst\<close> and \<open>snd\<close> on the new \<open>'\<alpha> process\<close>-type allows to derive
 the above properties for any \<open>P::'\<alpha> process\<close>. \<close>
 
-subsection*["operator"::tc, main_author="Some(@{author ''lina''})"]
+subsection*["operator"::technical, main_author="Some(@{author ''lina''})"]
 \<open>\<^csp> Operators over the Process Type\<close>
 text\<open> Now, the operators of \<^csp> \<open>Skip\<close>, \<open>Stop\<close>, \<open>_\<sqinter>_\<close>,  \<open>_\<box>_\<close>, \<open>_\<rightarrow>_\<close>,\<open>_\<lbrakk>_\<rbrakk>_\<close> etc. 
 for internal choice, external choice, prefix and parallel composition, can 
@@ -297,7 +297,7 @@ The definitional presentation of the \<^csp> process operators according to @{ci
 follows always this scheme. This part of the theory comprises around 2000 loc. 
 \<close>
 
-subsection*["orderings"::tc, main_author="Some(@{author ''bu''})"]
+subsection*["orderings"::technical, main_author="Some(@{author ''bu''})"]
 \<open>Refinement Orderings\<close>
 
 text\<open> \<^csp> is centered around the idea of process refinement; many critical properties, 
@@ -327,7 +327,7 @@ states, from which no internal progress is possible.
 \<close>
 
 
-subsection*["fixpoint"::tc, main_author="Some(@{author ''lina''})"]
+subsection*["fixpoint"::technical, main_author="Some(@{author ''lina''})"]
 \<open>Process Ordering and HOLCF\<close>
 text\<open> For any denotational semantics, the fixed point theory giving semantics to systems
 of recursive equations is considered as keystone. Its prerequisite is a complete partial ordering
@@ -394,7 +394,7 @@ Fixed-point inductions are the main proof weapon in verifications, together with
 and the \<^csp> laws. Denotational arguments can be hidden as they are not needed in practical 
 verifications. \<close>
 
-subsection*["law"::tc, main_author="Some(@{author ''lina''})"]
+subsection*["law"::technical, main_author="Some(@{author ''lina''})"]
 \<open>\<^csp> Rules: Improved Proofs and New Results\<close>
 
 
@@ -436,11 +436,11 @@ cases to be considered as well as their complexity makes pen and paper proofs
 practically infeasible.
 \<close>
 
-section*["newResults"::tc,main_author="Some(@{author ''safouan''}::author)",
+section*["newResults"::technical,main_author="Some(@{author ''safouan''}::author)",
                                  main_author="Some(@{author ''lina''}::author)", level= "Some 3"]
 \<open>Theoretical Results on Refinement\<close>
 text\<open>\<close>
-subsection*["adm"::tc,main_author="Some(@{author ''safouan''}::author)", 
+subsection*["adm"::technical,main_author="Some(@{author ''safouan''}::author)", 
                                   main_author="Some(@{author ''lina''}::author)"]
 \<open>Decomposition Rules\<close>
 text\<open>
@@ -476,7 +476,7 @@ The failure and divergence projections of this operator are also interdependent,
 sequence operator. Hence, this operator is not monotonic with \<open>\<sqsubseteq>\<^sub>\<F>\<close>, \<open>\<sqsubseteq>\<^sub>\<D>\<close> and \<open>\<sqsubseteq>\<^sub>\<T>\<close>, but monotonic 
 when their combinations are considered. \<close>
 
-subsection*["processes"::tc,main_author="Some(@{author ''safouan''}::author)", 
+subsection*["processes"::technical,main_author="Some(@{author ''safouan''}::author)", 
                             main_author="Some(@{author ''lina''}::author)"]
 \<open>Reference Processes and their Properties\<close>
 text\<open>
@@ -597,7 +597,7 @@ then it may still be livelock-free. % This makes sense since livelocks are worse
 
 \<close>
 
-section*["advanced"::tc,main_author="Some(@{author ''safouan''}::author)",level="Some 3"]
+section*["advanced"::technical,main_author="Some(@{author ''safouan''}::author)",level="Some 3"]
 \<open>Advanced Verification Techniques\<close>
 
 text\<open>
@@ -612,7 +612,7 @@ verification. In the latter case, we present an approach to a verification of a 
 architecture, in this case a ring-structure of arbitrary size.
 \<close>
 
-subsection*["illustration"::tc,main_author="Some(@{author ''safouan''}::author)", level="Some 3"]
+subsection*["illustration"::technical,main_author="Some(@{author ''safouan''}::author)", level="Some 3"]
 \<open>The General CopyBuffer Example\<close>
 text\<open>
 We consider the paradigmatic copy buffer example @{cite "Hoare:1985:CSP:3921" and "Roscoe:UCS:2010"} 
@@ -677,7 +677,7 @@ corollary deadlock_free COPY
 \<close>
 
 
-subsection*["inductions"::tc,main_author="Some(@{author ''safouan''}::author)"]
+subsection*["inductions"::technical,main_author="Some(@{author ''safouan''}::author)"]
 \<open>New Fixed-Point Inductions\<close>
 
 text\<open>
@@ -727,7 +727,7 @@ The astute reader may notice here that if the induction step is weakened (having
 the base steps require enforcement.  
 \<close>
 
-subsection*["norm"::tc,main_author="Some(@{author ''safouan''}::author)"]
+subsection*["norm"::technical,main_author="Some(@{author ''safouan''}::author)"]
 \<open>Normalization\<close>
 text\<open>
  Our framework can reason not only over infinite alphabets, but also over processes parameterized
@@ -787,7 +787,7 @@ Summing up, our method consists of four stages:
 
 \<close>
 
-subsection*["dining_philosophers"::tc,main_author="Some(@{author ''safouan''}::author)",level="Some 3"]
+subsection*["dining_philosophers"::technical,main_author="Some(@{author ''safouan''}::author)",level="Some 3"]
 \<open>Generalized Dining Philosophers\<close>
 
 text\<open>  The dining philosophers problem is another paradigmatic example in the \<^csp> literature
@@ -879,7 +879,7 @@ for a dozen of philosophers (on a usual machine) due to the exponential combinat
 Furthermore, our proof is fairly stable against modifications like adding non synchronized events like
 thinking or sitting down in contrast to model-checking techniques. \<close>
 
-section*["relatedwork"::tc,main_author="Some(@{author ''lina''}::author)",level="Some 3"]
+section*["relatedwork"::technical,main_author="Some(@{author ''lina''}::author)",level="Some 3"]
 \<open>Related work\<close>
 
 text\<open>

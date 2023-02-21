@@ -131,7 +131,7 @@ type_synonym XX = B
 
 section\<open>Examples of inheritance \<close>
 
-doc_class C = XX +                           
+doc_class C = B +                           
    z :: "A option"             <= None      (* A LINK, i.e. an attribute that has a type
                                                referring to a document class. Mathematical
                                                relations over document items can be modeled. *)

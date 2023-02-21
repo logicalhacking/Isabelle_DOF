@@ -23,6 +23,8 @@ keywords "text-" "text-latex"             :: document_body
     and  "update_instance-assert-error"   :: document_body
     and  "declare_reference-assert-error" :: document_body
     and  "value-assert-error"             :: document_body
+    and  "definition-assert-error"        :: document_body
+    and  "doc_class-assert-error"        :: document_body
 
 begin
 
@@ -152,20 +154,55 @@ val _ =
 
 
 val _ =
-  let fun pass_trans_to_value_cmd (args, (((name, modes), t),src)) trans  = 
-               (Value_Command.value_cmd {assert=false} args name modes t @{here} trans
-                handle ERROR msg => (if error_match src msg 
-                                     then (writeln ("Correct error: "^msg^": reported.");trans)
-                                     else error"Wrong error reported"))
+  let fun pass_trans_to_value_cmd (args, (((name, modes), t),src)) trans  =
+      let val pos = Toplevel.pos_of trans
+      in trans |> Toplevel.theory
+                  (fn thy => Value_Command.value_cmd {assert=false} args name modes t pos thy
+                   handle ERROR msg => (if error_match src msg 
+                                        then (writeln ("Correct error: "^msg^": reported."); thy)
+                                        else error"Wrong error reported"))
+      end
   in  Outer_Syntax.command \<^command_keyword>\<open>value-assert-error\<close> "evaluate and print term"
        (ODL_Meta_Args_Parser.opt_attributes -- 
           (Value_Command.opt_evaluator 
            -- Value_Command.opt_modes 
            -- Parse.term 
            -- Parse.document_source) 
-        >> (Toplevel.theory o pass_trans_to_value_cmd))
+        >> (pass_trans_to_value_cmd))
   end;
 
+val _ =
+  let fun definition_cmd' meta_args_opt decl params prems spec src bool ctxt =
+        Local_Theory.background_theory (Value_Command.meta_args_exec meta_args_opt) ctxt
+        |> (fn ctxt => Definition_Star_Command.definition_cmd decl params prems spec bool ctxt
+        handle ERROR msg => if error_match src msg 
+                             then (writeln ("Correct error: "^msg^": reported.")
+                                  ; pair "Bound 0" @{thm refl}
+                                    |> pair (Bound 0)
+                                    |> rpair ctxt)
+                             else error"Wrong error reported")
+  in
+  Outer_Syntax.local_theory' \<^command_keyword>\<open>definition-assert-error\<close> "constant definition"
+    (ODL_Meta_Args_Parser.opt_attributes --
+      (Scan.option Parse_Spec.constdecl -- (Parse_Spec.opt_thm_name ":" -- Parse.prop) --
+        Parse_Spec.if_assumes -- Parse.for_fixes -- Parse.document_source)
+     >> (fn (meta_args_opt, ((((decl, spec), prems), params), src)) => 
+                                    #2 oo definition_cmd' meta_args_opt decl params prems spec src))
+  end;
+
+
+val _ =
+  let fun add_doc_class_cmd' ((((overloaded, hdr), (parent, attrs)),((rejects,accept_rex),invars)), src) =
+        (fn thy => OntoParser.add_doc_class_cmd {overloaded = overloaded} hdr parent attrs rejects accept_rex invars thy
+         handle ERROR msg => (if error_match src msg 
+                                        then (writeln ("Correct error: "^msg^": reported."); thy)
+                                        else error"Wrong error reported"))
+  in
+  Outer_Syntax.command \<^command_keyword>\<open>doc_class-assert-error\<close> 
+                       "define document class"
+                        ((OntoParser.parse_doc_class -- Parse.document_source)
+                         >> (Toplevel.theory o add_doc_class_cmd'))
+  end
 
 val _ =
   Outer_Syntax.command ("text-latex", \<^here>) "formal comment (primary style)"

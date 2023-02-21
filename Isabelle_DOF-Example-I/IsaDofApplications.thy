@@ -184,7 +184,7 @@ scenarios from the point of view of the ontology modeling. In @{text_section (un
 we discuss the user-interaction generated from the ontological definitions.  Finally, we draw 
 conclusions and discuss related work in @{text_section (unchecked) \<open>conclusion\<close>}. \<close>  
 
-section*[bgrnd::text_section,main_author="Some(@{docitem ''bu''}::author)"]
+section*[bgrnd::text_section,main_author="Some(@{author ''bu''}::author)"]
         \<open> Background: The Isabelle System \<close>
 text*[background::introduction, level="Some 1"]\<open>
 While Isabelle is widely perceived as an interactive theorem prover for HOL 
@@ -246,7 +246,7 @@ can be type-checked before being displayed and can be used for calculations befo
 typeset. When editing, Isabelle's PIDE offers auto-completion and error-messages while typing the 
 above \<^emph>\<open>semi-formal\<close> content.\<close>
 
-section*[isadof::technical,main_author="Some(@{docitem ''adb''}::author)"]\<open> \<^isadof> \<close>
+section*[isadof::technical,main_author="Some(@{author ''adb''}::author)"]\<open> \<^isadof> \<close>
    
 text\<open> An \<^isadof> document consists of three components: 
 \<^item> the \<^emph>\<open>ontology definition\<close> which is an Isabelle theory file with definitions

@@ -187,7 +187,7 @@ to update the instance @{docitem \<open>xcv4\<close>}:
 \<close>
 
 update_instance-assert-error[xcv4::F, b+="{(@{A ''xcv3''},@{G ''xcv5''})}"]
-                  \<open>type of attribute: Conceptual.F.b does not fit to term\<close>
+                  \<open>Type unification failed: Clash of types\<close>
 
 
 section\<open>\<^theory_text>\<open>assert*\<close>-Annotated assertion-commands\<close>
@@ -225,11 +225,11 @@ text\<open>... and here we reference @{A \<open>assertionA\<close>}.\<close>
 (*>*)
 assert*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
 
-text\<open>The optional evaluator of \<open>value*\<close> and \<open>assert*\<close> must be specified after the meta arguments:\<close>
-value* [optional_test_A::A, x=6] [nbe] \<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A_instances}\<close>
+text\<open>The optional evaluator of \<open>value*\<close> and \<open>assert*\<close> must be specified before the meta arguments:\<close>
+value* [nbe] [optional_test_A::A, x=6] \<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A_instances}\<close>
 
-assert* [resultProof3::result, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"] [nbe]
-        \<open>evidence @{result \<open>resultProof3\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
+assert* [nbe] [resultProof3::result, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"]
+  \<open>evidence @{result \<open>resultProof3\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
 
 text\<open>
 The evaluation of @{command "assert*"} can be disabled

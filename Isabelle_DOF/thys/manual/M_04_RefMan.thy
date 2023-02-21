@@ -474,7 +474,7 @@ text\<open>
 \<^rail>\<open> 
     (@@{command "term*"} ('[' meta_args ']')? '\<open>' HOL_term  '\<close>'
      | (@@{command "value*"}
-        | @@{command "assert*"}) \<newline> ('[' meta_args ']')? ('[' evaluator ']')? '\<open>' HOL_term '\<close>'
+        | @@{command "assert*"}) \<newline> ('[' evaluator ']')? ('[' meta_args ']')? '\<open>' HOL_term '\<close>'
      | (@@{command "definition*"}) ('[' meta_args ']')?
         ('... see ref manual')
      | (@@{command "lemma*"} | @@{command "theorem*"} | @@{command "corollary*"}
