@@ -48,7 +48,7 @@ If you want to work with or extend one of the examples, e.g., you can open it
 similar to any standard Isabelle theory:
 
 ```console
-isabelle jedit -d . -l Isabelle_DOF examples/scholarly_paper/2018_cicm/IsaDofApplications.thy
+isabelle jedit -d . -l Isabelle_DOF Isabelle_DOF-Example-Scholarly_Paper/IsaDofApplications.thy
 ```
 
 This will open an example of a scientific paper using the pre-compiled session
@@ -57,7 +57,7 @@ If you want to edit the ontology definition, just open the theory file with the
 default HOL session:
 
 ```console
-isabelle jedit -d . -l HOL examples/scholarly_paper/2018_cicm/IsaDofApplications.thy
+isabelle jedit -d . -l HOL Isabelle_DOF-Example-Scholarly_Paper/IsaDofApplications.thy
 ```
 
 While this gives you more flexibility, it might "clutter" your editing
