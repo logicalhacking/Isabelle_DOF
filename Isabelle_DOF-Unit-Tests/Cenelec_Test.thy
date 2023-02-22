@@ -1,7 +1,8 @@
 theory 
   Cenelec_Test
 imports 
-  "Isabelle_DOF.CENELEC_50128"
+  "Isabelle_DOF-Unit-Tests_document"
+  "Isabelle_DOF-Ontologies.CENELEC_50128"
 begin
 
 declare[[strict_monitor_checking = true]]
@@ -66,3 +67,4 @@ declare[[strict_monitor_checking = true]]
 declare[[invariants_checking = true]]
 declare[[invariants_checking_with_tactics = true]]
 
+end 

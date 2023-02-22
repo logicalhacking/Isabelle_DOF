@@ -2,6 +2,8 @@ chapter\<open>Ontologys Mathing\<close>
 
 theory Ontology_Matching_Example
   imports "Isabelle_DOF.Isa_DOF"
+  "Isabelle_DOF-Unit-Tests_document"
+
 begin
 
 text\<open>Using HOL, we can define a mapping between two ontologies.

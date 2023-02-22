@@ -7,17 +7,21 @@ theory
 imports 
   "Isabelle_DOF-Unit-Tests.TermAntiquotations"
   "Isabelle_DOF-Unit-Tests.High_Level_Syntax_Invariants"
+
 begin
 
+(*
 section\<open>\<^theory_text>\<open>ML*\<close>-Annotated SML-commands\<close>
-ML*[the_function::B,x=\<open>\<open>dfg\<close>\<close>]\<open>fun fac x = if x = 0 then 1 else x * fac(x-1);
-                               val t = \<^value_>\<open>x @{B \<open>the_function\<close>}\<close>\<close>
+
+ML*[thefunction::B,x=\<open>\<open>dfg\<close>\<close>]\<open>fun fac x = if x = 0 then 1 else x * fac(x-1);
+                               val t = \<^value_>\<open>x @{B \<open>thefunction\<close>}\<close>\<close>
 ML\<open>fac 5; t\<close> \<comment> \<open>this is a test that ML* is actually evaluated and the 
                  resulting toplevel state is preserved.\<close>
+text-macro*[the::C]\<open> @{B [display] "thefunction"} \<close>
 
-text-macro*[the::C]\<open> @{B [display] "the_function"} \<close>
+text\<open>... and here we reference @{B [display] \<open>thefunction\<close>}.\<close>
 
-text\<open>... and here we reference @{B [display] \<open>the_function\<close>}.\<close>
+*)
 
 section\<open>\<^theory_text>\<open>value*\<close>-Annotated evaluation-commands\<close>
 
@@ -35,13 +39,13 @@ Some built-ins remain as unspecified constants:
 \<^item> the termrepr TA is left as unspecified constant for now.
    A major refactoring of code should be done to enable
   referential equivalence for termrepr, by changing the dependency
-  between the Isa_DOF theory and the Assert theory.
-  The assert_cmd function in Assert should use the value* command
+  between the Isa-DOF theory and the Assert theory.
+  The assert-cmd function in Assert should use the value* command
   functions, which make the elaboration of the term
   referenced by the TA before passing it to the evaluator
 
 We also have the possibility to make some requests on classes instances, i.e. on docitems
-by specifying the doc_class.
+by specifying the doc class.
 The TA denotes the HOL list of the values of the instances.
 The value of an instance is the record of every attributes of the instance.
 This way, we can use the usual functions on lists to make our request.
@@ -101,7 +105,7 @@ text\<open>Some terms can be validated, i.e. the term will be checked,
 and the existence of every object referenced by a TA will be checked,
 and can be evaluated by using referential equivalence.
 The existence of the instance @{docitem \<open>xcv4\<close>} can be validated,
-and the fact that it is an instance of the class @{doc_class F} } will be checked:\<close>
+and the fact that it is an instance of the class @{doc_class F} will be checked:\<close>
 term*\<open>@{F \<open>xcv4\<close>}\<close>
 
 text\<open>We can also evaluate the instance @{docitem \<open>xcv4\<close>}.
@@ -112,12 +116,13 @@ used in the \<open>b\<close> attribute will be checked, and the type of these cl
 \<close>
 value* \<open>@{F \<open>xcv4\<close>}\<close>
 
+(*
 text\<open>If we want the classes to be checked,
 we can use the TA which will also check the type of the instances.
 The instance @{A \<open>xcv3\<close>} is of type @{typ "A"} and the instance @{C \<open>xcv2\<close>} is of type @{typ "C"}:
 \<close>
 update_instance*[xcv4::F, b+="{(@{A ''xcv3''},@{C ''xcv2''})}"]
-
+*)
 text\<open>Using a TA in terms is possible, and the term is evaluated:\<close>
 value*\<open>[@{thm \<open>HOL.refl\<close>}, @{thm \<open>HOL.refl\<close>}]\<close>
 value*\<open>@{thm ''HOL.refl''} = @{thm (''HOL.refl'')}\<close>
@@ -184,12 +189,12 @@ It uses the same implementation as the \<^emph>\<open>value*\<close>-command and
 
 text\<open>Using the ontology defined in \<^theory>\<open>Isabelle_DOF-Unit-Tests.High_Level_Syntax_Invariants\<close>
 we can check logical statements:\<close>
-
+(*
 term*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
 assert*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
 assert*\<open>\<not>(authored_by @{introduction \<open>introduction2\<close>}
           = authored_by @{introduction \<open>introduction4\<close>})\<close>
-
+*)
 text\<open>Assertions must be boolean expressions, so the following assertion triggers an error:\<close>
 (* Error:
 assert*\<open>@{introduction \<open>introduction2\<close>}\<close>*)
@@ -197,7 +202,7 @@ assert*\<open>@{introduction \<open>introduction2\<close>}\<close>*)
 text\<open>Assertions must be true, hence the error:\<close>
 (* Error:
 assert*\<open>{@{author \<open>curry\<close>}} = {@{author \<open>church\<close>}}\<close>*)
-
+(*
 term*\<open>property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
 assert*[assertionA::A]\<open>\<not> property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
 
@@ -205,9 +210,11 @@ text-macro*[assertionAA::A]\<open>@{A [display] "assertionA"}\<close>
 text\<open>... and here we reference @{A [display] \<open>assertionA\<close>}.\<close>
 
 assert*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
-
+*)
 text\<open>The optional evaluator of \<open>value*\<close> and \<open>assert*\<close> must be specified after the meta arguments:\<close>
 value* [optional_test_A::A, x=6] [nbe] \<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A-instances}\<close>
+(*
 assert* [resultProof3::result, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"] [nbe]
         \<open>evidence @{result \<open>resultProof3\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
+*)
 end

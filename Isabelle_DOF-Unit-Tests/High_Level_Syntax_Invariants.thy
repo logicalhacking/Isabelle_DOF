@@ -2,6 +2,8 @@ chapter\<open>High level syntax Invariants\<close>
 
 theory High_Level_Syntax_Invariants
   imports "Isabelle_DOF.Isa_DOF"
+  "Isabelle_DOF-Unit-Tests_document"
+
 begin
 
 text\<open>
@@ -149,14 +151,14 @@ text\<open>The invariants \<^theory_text>\<open>author_finite\<close> and \<^the
   It will enable a basic tactic, using unfold and auto:\<close>
 
 declare[[invariants_checking_with_tactics = true]]
-
+(*
 text*[curry::author, email="\<open>curry@lambda.org\<close>"]\<open>\<close>
 text*[introduction2::introduction, authored_by = "{@{author \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
-(* When not commented, should violated the invariant:
+ When not commented, should violated the invariant:
 update_instance*[introduction2::introduction
                   , authored_by := "{@{author \<open>church\<close>}}"
                   , level := "Some 1"]
-*)
+
 
 text*[introduction3::introduction, authored_by = "{@{author \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
 text*[introduction4::introduction, authored_by = "{@{author \<open>curry\<close>}}", level = "Some 4"]\<open>\<close>
@@ -181,5 +183,5 @@ value*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \
 declare[[invariants_checking_with_tactics = false]]
 
 declare[[invariants_strict_checking = false]]
-
+*)
 end

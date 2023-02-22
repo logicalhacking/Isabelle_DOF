@@ -13,7 +13,8 @@
 
 theory 
   Attributes
-imports 
+  imports 
+  "Isabelle_DOF-Unit-Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual"
 begin
 
@@ -210,7 +211,7 @@ open_monitor*[figs4::figure_group,
               caption="''Sample ''"]
 ML\<open>val monitor_infos = DOF_core.get_monitor_infos \<^context>\<close>
 
-text*[testRejected1::figure_group, caption="''figures/A.png''"]
+text*[testRejected1::figure_group, caption="''document/figures/A.png''"]
        \<open> The A train \ldots \<close>
 
 figure*[fig_E::figure,
@@ -219,7 +220,7 @@ figure*[fig_E::figure,
        \<open> The E train \ldots \<close>
 close_monitor*[figs4]
 close_monitor*[figs2]
-text*[testRejected2::figure_group, caption="''figures/A.png''"]
+text*[testRejected2::figure_group, caption="''document/figures/A.png''"]
        \<open> The A train \ldots \<close>
 
 close_monitor*[figs1]  
@@ -231,7 +232,7 @@ ML  \<open>@{trace_attribute figs1}\<close>
 text\<open>Resulting trace of figs as text antiquotation:\<close>
 text\<open>@{trace_attribute figs1}\<close>
 
-text\<open>Test trace_attribute term antiquotation:\<close>
+text\<open>Test trace\_attribute term antiquotation:\<close>
 
 term*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
 value*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>

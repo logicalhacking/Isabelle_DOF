@@ -15,7 +15,8 @@ chapter\<open>Setting and modifying attributes of doc-items\<close>
 
 theory 
   Concept_Example
-imports 
+  imports 
+  "Isabelle_DOF-Unit-Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual" (* we use the generic "Conceptual" ontology *)
 begin
 
@@ -42,7 +43,7 @@ text\<open>Note that both the notations @{term "''beta''"} and @{term "\<open>be
 the former is a more ancient format only supporting pure ascii, while the latter also supports
 fancy unicode such as: @{term "\<open>\<beta>\<^sub>i''\<close>"} \<close>
 
-text*[f::F] \<open> Lectus accumsan velit ultrices, ... }\<close>
+text*[f::F] \<open> Lectus accumsan velit ultrices, ... \<close>
   
 theorem some_proof : "True" by simp
 
