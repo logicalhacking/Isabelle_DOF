@@ -50,7 +50,7 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
                                      xstring_opt:(xstring * Position.T) option),
                                     toks_list:Input.source list) 
                                   : theory -> theory =
-  let  val toplvl = Toplevel.theory_toplevel
+  let  fun toplvl thy = Toplevel.make_state (SOME thy)
 
        (* as side-effect, generates markup *)
        fun check_n_tex_text thy toks = let val ctxt = Toplevel.presentation_context (toplvl thy);
