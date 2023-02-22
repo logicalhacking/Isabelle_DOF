@@ -1,5 +1,5 @@
 session "Isabelle_DOF-Example-Scholarly_Paper" (AFP) = "Isabelle_DOF" + 
-  options [document = pdf, document_output = "output", document_build = dof, quick_and_dirty = true]
+  options [document = pdf, document_output = "output", document_build = dof]
   theories
     IsaDofApplications
   document_files

@@ -1,5 +1,5 @@
 session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" + 
-  options [document = false]
+  options [document = pdf, document_output = "output", document_build = dof]
   theories
     "AssnsLemmaThmEtc" 
     "Concept_Example_Low_Level_Invariant"
@@ -9,7 +9,9 @@ session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" +
     "Evaluation"
     "High_Level_Syntax_Invariants"
     "Ontology_Matching_Example"
-  theories [condition = ISABELLE_DOF_HOME]
-    "Isabelle2022"
+    "Cenelec_Test"
+    "OutOfOrderPresntn"
   document_files
     "root.bib"
+    "figures/A.png"
+    "figures/B.png"

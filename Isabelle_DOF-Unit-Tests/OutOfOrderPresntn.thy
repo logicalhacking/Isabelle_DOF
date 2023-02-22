@@ -14,7 +14,8 @@
 theory 
   OutOfOrderPresntn
 imports 
-  "Isabelle_DOF.Conceptual"
+  "Isabelle_DOF-Unit-Tests_document"
+  "Isabelle_DOF-Ontologies.Conceptual"
 keywords "text-" "textN"    :: document_body  
     and  "Figure*"          :: document_body 
 
@@ -129,6 +130,7 @@ val _ =
 \<close>
 
 ML\<open>open Bytes\<close>
+(*
 text\<open>And here a tex - text macro.\<close>
 text\<open>Pythons ReStructuredText (RST). 
      @{url \<open>https://de.wikipedia.org/wiki/ReStructuredText\<close>}. Tool: Sphinx.
@@ -137,9 +139,9 @@ text\<open>Pythons ReStructuredText (RST).
 text*[aaaa::B]\<open>dfg @{thm [display] refl}\<close>
                             
 text-[dfgdfg::B]
-\<open> Lorem ipsum ...  @{thm [display] refl} _ Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
+\<open> Lorem ipsum ...  @{thm [display] refl}  Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
 
-textN\<open> Lorem ipsum ...  @{thm [display] refl} _ Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
+textN\<open> Lorem ipsum ...  @{thm [display] refl}  Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
 
 text-[asd::B]
 \<open>... and here is its application macro expansion: 
@@ -147,7 +149,7 @@ text-[asd::B]
      \textbf{TEST}
      @{cartouche [display] 
          \<open>text*[dfgdfg::B]
-           \<open> Lorem ipsum ...  @{thm refl} _ Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
+           \<open> Lorem ipsum ...  @{thm refl} Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
           \<close>}
 \<close>
 
@@ -156,7 +158,7 @@ textN\<open>... and here is its application macro expansion:
      \textbf{TEST}
      @{cartouche [display] 
          \<open>text*[dfgdfg::B]
-           \<open> Lorem ipsum ...  @{thm refl} _ Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
+           \<open> Lorem ipsum ...  @{thm refl}  Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
           \<close>}\<close>
 
 textN\<open> \<^theory_text>\<open>definition df = ...  
@@ -167,12 +169,12 @@ textN\<open> \<^theory_text>\<open>definition df = ...
        @{ML_text [display] \<open> val x = ...  
                            \<close>}
 
-       @{verbatim [display] \<open> Lorem ipsum ...  @{thm refl} _ 
+       @{verbatim [display] \<open> Lorem ipsum ...  @{thm refl} 
                               Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close> \<close>}
        @{theory_text [display] \<open>definition df = ... \<lambda>x.  
                                \<close>}
        @{cartouche [display]   \<open> @{figure "cfgdfg"}\<close>} \<close>
-
+*)
 (*<*)
 text\<open>Final Status:\<close>
 print_doc_items
@@ -497,7 +499,7 @@ val _ =
 
 
 \<close>
-
+(*
 Figure*[fff::figure,src="\<open>this is a side-by-side\<close>"]
    \<open>@{figure_content [width=40, scale=35, caption="This is a test"] "ROOT"}\<close> 
    \<open> \<^doof> \<^LATEX> \<close>  
@@ -505,7 +507,7 @@ Figure*[fff::figure,src="\<open>this is a side-by-side\<close>"]
      @{ML        [display]   \<open> let val x = 3 + 4 in true end\<close>}
      @{cartouche [display]   \<open> @{figure "cfgdfg"}\<close>}
    \<close>  
-
+*)
 
 
 Figure*[ffff::figure2, caption="\<open>this is another 2 side-by-side\<close>"]

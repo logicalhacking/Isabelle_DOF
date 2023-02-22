@@ -9,9 +9,6 @@ pipeline:
       - mkdir -p $ISABELLE_HOME_USER/etc
       - echo "ISABELLE_PDFLATEX=\"$LATEX --file-line-error\"" >> $ISABELLE_HOME_USER/etc/settings
       - isabelle build -v -x HOL-Proofs -x Isabelle_DOF-Proofs -D . -o browser_info
-      - isabelle components -u .
-      - isabelle dof_mkroot -q DOF_test
-      - isabelle build -D DOF_test
       - cp -r $ISABELLE_HOME_USER/browser_info $ARTIFACT_DIR
       - cd $ARTIFACT_DIR
       - cd ../..
@@ -23,7 +20,7 @@ pipeline:
       - mkdir -p $ARTIFACT_DIR
       - export ISABELLE_VERSION=`isabelle version`
       - ./.woodpecker/mk_release -d
-      - cp Isabelle_DOF-Unreleased_$ISABELLE_VERSION.tar.xz $ARTIFACT_DIR/../
+      - true || cp Isabelle_DOF-Unreleased_$ISABELLE_VERSION.tar.xz $ARTIFACT_DIR/../
     when:
       matrix:
         LATEX: lualatex

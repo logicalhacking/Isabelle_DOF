@@ -15,7 +15,8 @@ chapter\<open>Setting and modifying attributes of doc-items\<close>
 
 theory 
   Concept_Example_Low_Level_Invariant
-imports 
+  imports 
+  "Isabelle_DOF-Unit-Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual" (* we use the generic "Conceptual" ontology *)
 begin
 
@@ -118,10 +119,10 @@ text*[d1::E, a1 = "X3"]          \<open> ... phasellus amet id massa nunc, pede 
     
 text*[c2:: C, x = "''delta''"]   \<open> ... in ut tortor eleifend augue pretium consectetuer...  \<close>
 
-subsection*[f::E]                \<open> Lectus accumsan velit ultrices, ... }\<close>
+subsection*[f::E]                \<open> Lectus accumsan velit ultrices, ... \<close>
 
 (*
-section*[f2::E]                  \<open> Lectus accumsan velit ultrices, ... }\<close>
+section*[f2::E]                  \<open> Lectus accumsan velit ultrices, ... \<close>
 *)
 
 ML\<open>val ctxt = @{context}

@@ -16,6 +16,7 @@ theory
 imports 
   "Isabelle_DOF-Ontologies.Conceptual"  
   "Isabelle_DOF.scholarly_paper"
+  "Isabelle_DOF-Unit-Tests_document"
 begin
 
 section\<open>Elementary Creation of Doc-items and Access of their Attibutes\<close>

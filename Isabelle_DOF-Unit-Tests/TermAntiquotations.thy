@@ -20,6 +20,7 @@ For historical reasons, \<^emph>\<open>term antiquotations\<close> are called th
 theory 
   TermAntiquotations
 imports 
+  "Isabelle_DOF-Unit-Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual"
 begin
 
@@ -40,7 +41,7 @@ ODL on a paradigmatical example.
 \<close>
 
 
-text\<open>Voila the content of the Isabelle_DOF environment so far:\<close>
+text\<open>Voila the content of the Isabelle/DOF environment so far:\<close>
 ML\<open>
 val x = DOF_core.get_instances \<^context>
 val isa_transformer_tab = DOF_core.get_isa_transformers \<^context>
@@ -61,7 +62,7 @@ text*[xcv1::A, x=5]\<open>Lorem ipsum ...\<close>
 text*[xcv3::A, x=7]\<open>Lorem ipsum ...\<close>
 
 text\<open>Example for a meta-attribute of ODL-type @{typ "typ"} with an appropriate ISA for the
-     theorem @{thm "refl"}}\<close>
+     theorem @{thm "refl"}\<close>
 text*[xcv2::C, g="@{thm ''HOL.refl''}"]\<open>Lorem ipsum ...\<close>
 
 text\<open>A warning about the usage of the \<open>docitem\<close> TA:
@@ -107,12 +108,12 @@ text\<open>We can also reference an attribute of the instance.
 Here we reference the attribute r of the class F which has the type @{typ \<open>thm list\<close>}.\<close>
 term*\<open>r @{F \<open>xcv4\<close>}\<close>
 
-text\<open>We declare a new text element. Note that the class name contains an underscore "_".\<close>
+text\<open>We declare a new text element. Note that the class name contains an underscore "\_".\<close>
 text*[te::text_element]\<open>Lorem ipsum...\<close>
 
 text\<open>Unfortunately due to different lexical conventions for constant symbols and mixfix symbols
      this term antiquotation has to be denoted like this: @{term_ \<open>@{text-element \<open>te\<close>}\<close>}.
-     We need to substitute an hyphen "-" for the underscore "_".\<close>
+     We need to substitute an hyphen "-" for the underscore "\_".\<close>
 term*\<open>@{text-element \<open>te\<close>}\<close>
 
 text\<open>Terms containing term antiquotations can be checked and evaluated

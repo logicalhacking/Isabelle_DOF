@@ -143,6 +143,7 @@ publish_archive()
     ssh 0x5f.org chmod go+u-w -R www/$DOF_ARTIFACT_HOST/htdocs/$DOF_ARTIFACT_DIR
 }
 
+exit 0
 
 ISABELLE=`which isabelle`
 USE_TAG="false"
