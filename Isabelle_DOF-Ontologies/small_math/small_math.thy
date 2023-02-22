@@ -15,7 +15,6 @@ chapter\<open>An example ontology for a math paper\<close>
 
 theory small_math
    imports 
-"document_setup"
 "Isabelle_DOF.Isa_COL"
 begin
 

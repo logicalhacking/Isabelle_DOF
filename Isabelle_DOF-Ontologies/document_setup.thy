@@ -1,12 +1,12 @@
 (*<*)
 theory "document_setup"
   imports
-    "Isabelle_DOF.technical_report"
+  "Isabelle_DOF.technical_report"
+  "Isabelle_DOF-Ontologies.CENELEC_50128"
 begin
 
 use_template "scrreprt-modern"
-(* use_ontology "technical_report" *)
-use_ontology_unchecked "Isabelle_DOF.technical_report" and "Isabelle_DOF-Ontologies.CENELEC_50128"
+use_ontology "Isabelle_DOF.technical_report" and "Isabelle_DOF-Ontologies.CENELEC_50128"
 
 (*>*)
 

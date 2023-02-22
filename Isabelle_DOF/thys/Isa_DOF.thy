@@ -43,7 +43,7 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   and      "text*"              "text-macro*"            :: document_body
   and      "term*"   "value*"   "assert*"                :: document_body
 
-  and      "use_template" "use_ontology" "use_ontology_unchecked"                :: thy_decl
+  and      "use_template" "use_ontology"         :: thy_decl
   and      "define_template" "define_ontology"           :: thy_load
   and      "print_doc_classes"        "print_doc_items" 
            "print_doc_class_template" "check_doc_global" :: diag
@@ -3038,7 +3038,7 @@ sig
   val define_template: binding * string -> theory -> string * theory
   val define_ontology: binding * string -> theory -> string * theory
   val use_template: Context.generic -> xstring * Position.T -> unit
-  val use_ontology: bool -> Context.generic -> (xstring * Position.T) list -> unit
+  val use_ontology: Context.generic -> (xstring * Position.T) list -> unit
 end;
 
 structure Document_Context: DOCUMENT_CONTEXT =
@@ -3106,10 +3106,10 @@ fun use_template context arg =
   let val xml = arg |> check_template context |> snd |> XML.string
   in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/use_template\<close> xml end;
 
-fun use_ontology check context args =
+fun use_ontology context args =
   let
     val xml = args                                       
-      |> map (if check then check_ontology context #> fst else fst)
+      |> map (check_ontology context #> fst)
       |> cat_lines |> XML.string;
   in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/use_ontology\<close> xml end;
 
@@ -3131,13 +3131,7 @@ val _ =
   Outer_Syntax.command \<^command_keyword>\<open>use_ontology\<close>
     "use DOF document ontologies (as defined within theory context)"
     (Parse.and_list1 (Parse.position Parse.name) >> (fn args =>
-      Toplevel.theory (fn thy => (use_ontology true (Context.Theory thy) args; thy))));
-
-val _ =
-  Outer_Syntax.command \<^command_keyword>\<open>use_ontology_unchecked\<close>
-    "use DOF document ontologies (as defined within theory context). Unchecked version for internal use. All Isabelle/DOF documents shoul duse\"use_ontolog\""
-    (Parse.and_list1 (Parse.position Parse.name) >> (fn args =>
-      Toplevel.theory (fn thy => (use_ontology false (Context.Theory thy) args; thy))));
+      Toplevel.theory (fn thy => (use_ontology (Context.Theory thy) args; thy))));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>define_template\<close>

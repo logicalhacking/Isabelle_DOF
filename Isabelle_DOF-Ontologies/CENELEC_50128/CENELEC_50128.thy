@@ -27,7 +27,7 @@ identifies:
 theory 
   CENELEC_50128
   imports  
-  "document_setup"
+  "Isabelle_DOF.technical_report" 
 begin
 
 define_ontology "DOF-CENELEC_50128.sty"
