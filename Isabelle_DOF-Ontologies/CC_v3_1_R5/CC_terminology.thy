@@ -17,7 +17,6 @@ section\<open>Terminology\<close>
 theory CC_terminology
 
 imports  
-"document_setup"
 "Isabelle_DOF.technical_report" 
 
 begin

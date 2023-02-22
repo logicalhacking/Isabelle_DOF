@@ -16,7 +16,6 @@ chapter\<open>A conceptual introduction into DOF and its features:\<close>
 theory 
   Conceptual
 imports 
-"document_setup"
   "Isabelle_DOF.Isa_DOF" 
   "Isabelle_DOF.Isa_COL"
 begin
