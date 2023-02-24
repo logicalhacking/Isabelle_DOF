@@ -1,6 +1,6 @@
 theory PikeOS_ST (*Security Target *)
 
-imports "Isabelle_DOF-ontologies.CC_v3_1_R5'
+imports "Isabelle_DOF-Ontologies.CC_v3_1_R5"
 
 begin 
 
