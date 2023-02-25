@@ -3155,13 +3155,10 @@ val _ =
 end;
 \<close>
 
-define_template "../latex/document-templates/root-eptcs-UNSUPPORTED.tex"
-define_template "../latex/document-templates/root-lipics-v2021-UNSUPPORTED.tex"
 define_template "../latex/document-templates/root-lncs.tex"
 define_template "../latex/document-templates/root-scrartcl.tex"
 define_template "../latex/document-templates/root-scrreprt-modern.tex"
 define_template "../latex/document-templates/root-scrreprt.tex"
-define_template "../latex/document-templates/root-svjour3-UNSUPPORTED.tex"
 
 
 section \<open>Isabelle/Scala module within session context\<close>

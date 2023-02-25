@@ -7,6 +7,7 @@ session "Isabelle_DOF-Ontologies" = "Isabelle_DOF" +
     "CENELEC_50128"
   theories
     "document_setup"
+    "document-templates"
     "CC_v3_1_R5/CC_v3_1_R5"
     "CC_v3_1_R5/CC_terminology"  
     "Conceptual/Conceptual"
