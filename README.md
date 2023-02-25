@@ -24,18 +24,11 @@ Isabelle/DOF has three major prerequisites:
 
 Isabelle/DOF is provided as an Isabelle component. After installing the
 prerequisites, change into the directory containing Isabelle/DOF (this should be
-the directory containing this `README.md` file) and execute (if you executed
-this command already during the installation of the prerequisites, you can skip
-it now):
+the directory containing this `README.md` file) and execute the following 
+command for building the standard sessions of Isabelle/DOF:
 
 ```console
-foo@bar:~$ isabelle components -u .
-```
-
-The final step for the installation is:
-
-```console
-foo@bar:~$ isabelle build -D .
+foo@bar:~$ isabelle build -D . -x Isabelle_DOF-Proofs -x HOL-Proofs
 ```
 
 This will compile Isabelle/DOF and run the example suite.
@@ -52,88 +45,57 @@ isabelle jedit -d . -l Isabelle_DOF Isabelle_DOF-Example-Scholarly_Paper/IsaDofA
 ```
 
 This will open an example of a scientific paper using the pre-compiled session
-``Isabelle_DOF``, i.e., you will not be able to edit the ontology definitions.
-If you want to edit the ontology definition, just open the theory file with the
-default HOL session:
+``Isabelle_DOF``, i.e., you will not be able to edit the default ontologies
+defined in the ``Isabelle_DOF`` session.  If you want to edit the ontology definition, 
+just open the theory file with the session ``Functional-Automata``:
 
 ```console
-isabelle jedit -d . -l HOL Isabelle_DOF-Example-Scholarly_Paper/IsaDofApplications.thy
+isabelle jedit -d . -l Functional-Automata Isabelle_DOF-Example-Scholarly_Paper/IsaDofApplications.thy
 ```
 
 While this gives you more flexibility, it might "clutter" your editing
 experience, as a lot of internal theories are loaded into Isabelle's editor.
 
-### Creating a New Project
-
-The DOF-plugin provides an alternative to Isabelle's ``mkroot`` command.
-Isabelle projects that use DOF need to be created using
-
-```console
-foo@bar:~$ isabelle dof_mkroot
-```
-
-The ``dof_mkroot`` command takes the same parameter as the standard ``mkroot``
-command of Isabelle. Thereafter, the normal Isabelle command for building
-documents can be used.
-
-Using the ``-o`` option, different ontology setups can be selected and using the
-``-t`` option, different LaTeX setups can be selected. For example,
-
-```console
-foo@bar:~$ isabelle dof_mkroot -o scholarly_paper -t scrartcl
-```
-
-creates a setup using the scholarly_paper ontology and the article class from
-the KOMA-Script bundle.
-
-The help (option ``-h``) show a list of all supported ontologies and document
-templates:
-
-```console
-foo@bar:~$ isabelle dof_mkroot -h
-
-Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
-
-  Options are:
-    -I           init Mercurial repository and add generated files
-    -h           print help
-    -n NAME      alternative session name (default: directory base name)
-    -o NAMES     list of ontologies, separated by blanks
-                 (default: "technical_report scholarly_paper")
-    -q           quiet mode: less verbosity
-    -t NAME      template (default: "scrreprt-modern")
-
-  Create session root directory for Isabelle/DOF (default: current directory).
-```
-
 ## Releases
 
 For releases, signed archives including a PDF version of the Isabelle/DOF manual
-are available:
+are available. The latest release is **Isabelle/DOF 1.3.0/Isabelle2021-1**:
 
-* Isabelle/DOF 1.3.0/Isabelle2021-1
-  * [Isabelle_DOF-1.3.0_Isabelle2021-1.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.pdf)
-  * [Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz)
-  * [Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz.asc](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz.asc)
+* [Isabelle_DOF-1.3.0_Isabelle2021-1.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.pdf)
+* [Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz)
+* [Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz.asc](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz.asc)
 
-### Older Releases
+Older releases are available [here.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/)
 
-* Isabelle/DOF 1.2.0/Isabelle2021
-  * [Isabelle_DOF-1.2.0_Isabelle2021.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.2.0_Isabelle2021.pdf)
-  * [Isabelle_DOF-1.2.0_Isabelle2021.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.2.0_Isabelle2021.tar.xz)
-  * [Isabelle_DOF-1.2.0_Isabelle2021.tar.xz.asc](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.2.0_Isabelle2021.tar.xz.asc)
-* Isabelle/DOF 1.1.0/Isabelle2021
-  * [Isabelle_DOF-1.1.0_Isabelle2021.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2021.pdf)
-  * [Isabelle_DOF-1.1.0_Isabelle2021.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2021.tar.xz)
-  * [Isabelle_DOF-1.1.0_Isabelle2021.tar.xz.asc](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2021.tar.xz.asc)
-* Isabelle/DOF 1.1.0/Isabelle2020
-  * [Isabelle_DOF-1.1.0_Isabelle2020.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2020.pdf)
-  * [Isabelle_DOF-1.1.0_Isabelle2020.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2020.tar.xz)
-  * [Isabelle_DOF-1.1.0_Isabelle2020.tar.xz.asc](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.1.0_Isabelle2020.tar.xz.asc)
-* Isabelle/DOF 1.0.0/Isabelle2019
-  * [Isabelle_DOF-1.0.0_Isabelle2019.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.0.0_Isabelle2019.pdf)
-  * [Isabelle_DOF-1.0.0_Isabelle2019.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.0.0_Isabelle2019.tar.xz)
-  * [Isabelle_DOF-1.0.0_Isabelle2019.tar.xz.asc](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.0.0_Isabelle2019.tar.xz.asc)
+## Repository Structure
+
+The ``main`` branch of this Repository is developed using the latest official
+release of Isabelle (which is, at point of writing, Isabelle 2022). This is also
+the main development branch. In addition, he ``Isabelle_dev`` branch is used for
+testing Isabelle/DOF with the latest development version of Isabelle.
+
+This repository is structured into several Isabelle sessions, each of which is stored
+in a subdirectory:
+
+* [Isabelle_DOF](./Isabelle_DOF/): This is the main session, providing the
+  Isabelle/DOF system. Furthermore, this session is currently under
+  consideration for a submission to the AFP.
+* [Isabelle_DOF-Example-Scholarly_Paper](./Isabelle_DOF-Example-Scholarly_Paper/):
+  This session provides an example document written Isabelle/DOF. It only
+  requires the core ontologies provided by the ``Isabelle_DOF`` session.
+  Furthermore, this session is currently under consideration for a submission to
+  the AFP.
+* [Isabelle_DOF-Ontologies](./Isabelle_DOF-Ontologies/): This session provided
+  additional ontologies and document templates.
+* [Isabelle_DOF-Unit-Tests](./Isabelle_DOF-Unit-Tests/): This session includes
+  various tests for the Isabelle/DOF system, partly depending on the ontologies
+  provided by the ``Isabelle_DOF-Ontologies`` session.
+* [Isabelle_DOF-Example-Extra](./Isabelle_DOF-Examples-Extra/): This directory
+  contains additional example documents written using the Isabelle/DOF systems,
+  each of which is defined in an own subdirectory.
+* [Isabelle_DOF-Proofs](./Isabelle_DOF-Proofs/): This session provides the
+  Isabelle/DOF systems with proof objects. This is required for the deep
+  ontology embedding.
 
 ## Team
 
