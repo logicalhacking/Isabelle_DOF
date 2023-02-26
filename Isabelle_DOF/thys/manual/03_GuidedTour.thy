@@ -72,10 +72,6 @@ text\<open>
 @{boxed_bash [display]\<open>ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë\<close>}
 This will create a directory \texttt{\isadofdirn} containing \<^isadof> distribution.
 
-Next, we need to register \<^isadof> as an Isabelle component:
-
-@{boxed_bash [display]\<open>ë\prompt{}ë isabelle components -u ë\mbox{\isadofdirn}ë\<close>}
-
 Moreover, \<^isadof> depends on the the AFP (\<^url>\<open>https://www.isa-afp.org\<close>), namely the AFP  
 entries ``Functional Automata''~@{cite "nipkow.ea:functional-Automata-afp:2004"} and 
 ``Regular Sets and Expressions''~@{cite "kraus.ea:regular-sets-afp:2010"}. You can either
