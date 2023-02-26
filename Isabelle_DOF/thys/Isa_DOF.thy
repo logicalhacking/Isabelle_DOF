@@ -3173,6 +3173,7 @@ scala_build_generated_files
   external_files
     "build.props" (in "../etc")
   and
+    "scala/dof.scala"
     "scala/dof_document_build.scala" (in "../")
 
 (*
