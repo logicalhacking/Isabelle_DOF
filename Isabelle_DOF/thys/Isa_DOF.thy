@@ -3163,19 +3163,17 @@ define_template "../latex/document-templates/root-scrartcl.tex"
 define_template "../latex/document-templates/root-scrreprt-modern.tex"
 define_template "../latex/document-templates/root-scrreprt.tex"
 
-
 section \<open>Isabelle/Scala module within session context\<close>
 
 external_file "../etc/build.props"
 external_file "../scala/dof_document_build.scala"
-external_file "../scala/dof.scala"
+
 
 scala_build_generated_files
   external_files
     "build.props" (in "../etc")
   and
-    "scala/dof_document_build.scala"
-    "scala/dof.scala" (in "../")
+    "scala/dof_document_build.scala" (in "../")
 
 (*
 ML\<open>
