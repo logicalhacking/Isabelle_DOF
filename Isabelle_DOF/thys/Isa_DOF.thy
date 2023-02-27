@@ -3121,18 +3121,18 @@ val strip_template = strip "root-" ".tex";
 val strip_ontology = strip "DOF-" ".sty";
 
 
-fun list cmdN which context = 
+fun list cmdN sel which getName context = 
     let 
-       fun get arg  =  check fst context arg |> snd |> snd;
+       fun get arg  =  check sel context arg |> snd |> snd;
 
-       val full_names = map Long_Name.base_name ((Name_Space.get_names o which) context)
+       val full_names = map getName ((Name_Space.get_names o which) context)
        val descriptions = map get (map (fn n => (n, Position.none)) full_names) 
        val _ = map (fn (n,d) => writeln ((Active.sendback_markup_command (cmdN^" \""^n^"\""))^": "^d)) 
                    (ListPair.zip (full_names, descriptions))
     in ()  end
 
-fun list_ontologies context = list "use_ontology" ontology_space context
-fun list_templates context = list "use_template" template_space context
+fun list_ontologies context = list "use_ontology" snd ontology_space  (fn n => ((Long_Name.base_name o Long_Name.qualifier) n )^"."^(Long_Name.base_name n)) context
+fun list_templates context = list "use_template" fst template_space  Long_Name.base_name context
 
 end;
 
