@@ -46,7 +46,8 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
   and      "use_template" "use_ontology"         :: thy_decl
   and      "define_template" "define_ontology"           :: thy_load
   and      "print_doc_classes"        "print_doc_items" 
-           "print_doc_class_template" "check_doc_global" :: diag
+           "print_doc_class_template" "check_doc_global"
+           "list_ontologies" "list_templates"  :: diag
 
       
 
@@ -3039,6 +3040,8 @@ sig
   val define_ontology: binding * string -> theory -> string * theory
   val use_template: Context.generic -> xstring * Position.T -> unit
   val use_ontology: Context.generic -> (xstring * Position.T) list -> unit
+  val list_ontologies: Context.generic -> unit
+  val list_templates: Context.generic -> unit
 end;
 
 structure Document_Context: DOCUMENT_CONTEXT =
@@ -3090,6 +3093,7 @@ fun strip prfx sffx (path, pos) =
 
 in
 
+
 val template_space = get_space fst;
 val ontology_space = get_space snd;
 
@@ -3115,6 +3119,20 @@ fun use_ontology context args =
 
 val strip_template = strip "root-" ".tex";
 val strip_ontology = strip "DOF-" ".sty";
+
+
+fun list_ontologies context = 
+    let 
+       val names = ((Name_Space.get_names o ontology_space) context)
+       val fq_names = map (fn n => ((Long_Name.base_name o Long_Name.qualifier) n)^"."^(Long_Name.base_name n)) names
+       val _ = map writeln fq_names
+    in () end
+
+fun list_templates context = 
+    let 
+       val full_names = ((Name_Space.get_names o template_space) context)
+       val _ = map (writeln o  Long_Name.base_name) full_names
+    in ()  end
 
 end;
 
@@ -3154,6 +3172,17 @@ val _ =
           val binding = Binding.qualify false (Long_Name.qualifier (Context.theory_long_name thy')) (Binding.make (strip_ontology (#src_path file, pos), pos));
           val text = cat_lines (#lines file);
         in #2 (define_ontology (binding, text) thy') end)));
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>list_templates\<close>
+    "list available DOF document templates (as defined within theory context)"
+    (Scan.succeed (Toplevel.theory (fn thy => (list_templates (Context.Theory thy); thy))));
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>list_ontologies\<close>
+    "list available DOF document ontologies (as defined within theory context)"
+    (Scan.succeed (Toplevel.theory (fn thy => (list_ontologies (Context.Theory thy); thy))));
+
 
 end;
 \<close>
