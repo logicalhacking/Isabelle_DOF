@@ -83,22 +83,22 @@ build_and_install_manuals()
     if [ "$DIRTY" = "true" ]; then
         if [ -z ${ARTIFACT_DIR+x} ]; then
             echo "  * Quick and Dirty Mode (local build)"
-            $ISABELLE build -d . Isabelle_DOF-Manual 2018-cicm-isabelle_dof-applications
-            mkdir -p $ISADOF_WORK_DIR/examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/
-            cp examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/document.pdf \
-               $ISADOF_WORK_DIR/examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/
-            mkdir -p $ISADOF_WORK_DIR/examples/technical_report/Isabelle_DOF-Manual/output/
-            cp examples/technical_report/Isabelle_DOF-Manual/output/document.pdf \
-               $ISADOF_WORK_DIR/examples/technical_report/Isabelle_DOF-Manual/output/;
+            $ISABELLE build -d . Isabelle_DOF Isabelle_DOF-Example-Scholarly_Paper
+            mkdir -p $ISADOF_WORK_DIR/Isabelle_DOF-Example-Scholarly_Paper/output/
+            cp Isabelle_DOF-Example-Scholarly_Paper/output/document.pdf \
+               $ISADOF_WORK_DIR/Isabelle_DOF-Example-Scholarly_Paper/output/
+            mkdir -p $ISADOF_WORK_DIR/Isabelle_DOF/output/
+            cp Isabelle_DOF/output/document.pdf \
+               $ISADOF_WORK_DIR/Isabelle_DOF/output/;
         else
             echo "  * Quick and Dirty Mode (running on CI)"
-            mkdir -p $ISADOF_WORK_DIR/examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/
-            cp $ARTIFACT_DIR/browser_info/Unsorted/2018-cicm-isabelle_dof-applications/document.pdf \
-               $ISADOF_WORK_DIR/examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/
+            mkdir -p $ISADOF_WORK_DIR/Isabelle_DOF-Example-Scholarly_Paper/output/
+            cp $ARTIFACT_DIR/browser_info/Unsorted/Isabelle_DOF-Example-Scholarly_Paper/document.pdf \
+               $ISADOF_WORK_DIR/Isabelle_DOF-Example-Scholarly_Paper/output/
  
-            mkdir -p $ISADOF_WORK_DIR/examples/technical_report/Isabelle_DOF-Manual/output/
-            cp $ARTIFACT_DIR/browser_info/Unsorted/Isabelle_DOF-Manual/document.pdf \
-               $ISADOF_WORK_DIR/examples/technical_report/Isabelle_DOF-Manual/output/;
+            mkdir -p $ISADOF_WORK_DIR/Isabelle_DOF/output/
+            cp $ARTIFACT_DIR/browser_info/Unsorted/Isabelle_DOF/document.pdf \
+               $ISADOF_WORK_DIR/Isabelle_DOF/output/;
         fi
     else
         (cd $ISADOF_WORK_DIR && $ISABELLE env ./install-afp)
@@ -107,13 +107,13 @@ build_and_install_manuals()
     mkdir -p $ISADOF_WORK_DIR/doc
     echo "Isabelle/DOF Manuals!" > $ISADOF_WORK_DIR/doc/Contents
     
-    cp $ISADOF_WORK_DIR/examples/technical_report/Isabelle_DOF-Manual/output/document.pdf \
+    cp $ISADOF_WORK_DIR/Isabelle_DOF/output/document.pdf \
         $ISADOF_WORK_DIR/doc/Isabelle_DOF-Manual.pdf
     echo "  Isabelle_DOF-Manual                       User and Implementation Manual for Isabelle/DOF" >> $ISADOF_WORK_DIR/doc/Contents
 
-    cp $ISADOF_WORK_DIR/examples/scholarly_paper/2018-cicm-isabelle_dof-applications/output/document.pdf \
-        $ISADOF_WORK_DIR/doc/2018-cicm-isabelle_dof-applications.pdf
-    echo "  2018-cicm-isabelle_dof-applications       Example academic paper" >> $ISADOF_WORK_DIR/doc/Contents
+    cp $ISADOF_WORK_DIR/Isabelle_DOF-Example-Scholarly_Paper/output/document.pdf \
+        $ISADOF_WORK_DIR/doc/Isabelle_DOF-Example-Scholarly_Paper.pdf
+    echo "  Isabelle_DOF-Example-Scholarly_Paper       Example academic paper" >> $ISADOF_WORK_DIR/doc/Contents
 
     find $ISADOF_WORK_DIR -type d -name "output" -exec rm -rf {} \; &> /dev/null || true
     rm -rf $ISADOF_WORK_DIR/.git* $ISADOF_WORK_DIR/.woodpecker $ISADOF_WORK_DIR/.afp 
@@ -142,8 +142,6 @@ publish_archive()
     scp $ISADOF_TAR.* 0x5f.org:www/$DOF_ARTIFACT_HOST/htdocs/$DOF_ARTIFACT_DIR/
     ssh 0x5f.org chmod go+u-w -R www/$DOF_ARTIFACT_HOST/htdocs/$DOF_ARTIFACT_DIR
 }
-
-exit 0
 
 ISABELLE=`which isabelle`
 USE_TAG="false"
@@ -222,4 +220,3 @@ fi
 
 rm -rf $BUILD_DIR
 
-exit 0 

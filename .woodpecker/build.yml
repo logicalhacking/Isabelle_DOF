@@ -23,7 +23,7 @@ pipeline:
       - mkdir -p $ARTIFACT_DIR
       - export ISABELLE_VERSION=`isabelle version`
       - ./.woodpecker/mk_release -d
-      - true || cp Isabelle_DOF-Unreleased_$ISABELLE_VERSION.tar.xz $ARTIFACT_DIR/../
+      - cp Isabelle_DOF-Unreleased_$ISABELLE_VERSION.tar.xz $ARTIFACT_DIR/../
     when:
       matrix:
         LATEX: lualatex
