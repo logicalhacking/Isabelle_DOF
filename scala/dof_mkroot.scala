@@ -90,7 +90,9 @@ object DOF_Mkroot
       "\nimports\n  " + ontologies.map("Isabelle_DOF." + _).mkString("\n  ") +  """
 begin
 
+list_templates
 use_template """ + quote(template) + """
+list_ontologies
 use_ontology """ + ontologies.map(quote).mkString(" and ") + """
 
 end

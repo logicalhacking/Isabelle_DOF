@@ -17,7 +17,7 @@ theory technical_report
    imports "Isabelle_DOF.scholarly_paper"
 begin              
 
-define_ontology "DOF-technical_report.sty"
+define_ontology "DOF-technical_report.sty" "Writing technical reports."
 
 (* for reports paper: invariant: level \<ge> -1 *)
 

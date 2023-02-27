@@ -53,7 +53,7 @@ object DOF_Document_Build
             quote(context.session))
         case dups =>
           error("Multiple exports " + quote(name) + " for theories " +
-            commas_quote(dups.map(_.theory_name).sorted.distinct))
+            commas_quote(dups.map(_.theory_name).sorted.distinct))                   
       }
     }
 
@@ -69,7 +69,7 @@ object DOF_Document_Build
 
       val isabelle_dof_dir = context.session_context.sessions_structure(DOF.session).dir
 
-      val ltx_ontologies = split_lines(the_document_entry(context, "dof/use_ontology").text)
+      val ltx_ontologies = split_lines((the_document_entry(context, "dof/use_ontology")).text)
 
       // LaTeX styles from Isabelle/DOF directory
       (List(Path.explode("latex/styles"), Path.explode("ontologies")) :::(ltx_ontologies.map(name => 
@@ -83,7 +83,7 @@ object DOF_Document_Build
 
       // root.tex from session exports
       File.write(directory.doc_dir + Path.explode("root.tex"),
-        the_document_entry(context, "dof/use_template").text)
+        (the_document_entry(context, "dof/use_template")).text)
 
       // dof-config.sty
       File.write(directory.doc_dir + Path.explode("dof-config.sty"), """
