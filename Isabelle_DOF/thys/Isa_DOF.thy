@@ -3034,10 +3034,10 @@ sig
   val ontology_space: Context.generic -> Name_Space.T
   val print_template: Context.generic -> string -> string
   val print_ontology: Context.generic -> string -> string
-  val check_template: Context.generic -> xstring * Position.T -> string * string
-  val check_ontology: Context.generic -> xstring * Position.T -> string * string
-  val define_template: binding * string -> theory -> string * theory
-  val define_ontology: binding * string -> theory -> string * theory
+  val check_template: Context.generic -> xstring * Position.T -> string * (string * string)
+  val check_ontology: Context.generic -> xstring * Position.T -> string * (string * string)
+  val define_template: binding * (string * string) -> theory -> string * theory
+  val define_ontology: binding * (string * string) -> theory -> string * theory
   val use_template: Context.generic -> xstring * Position.T -> unit
   val use_ontology: Context.generic -> (xstring * Position.T) list -> unit
   val list_ontologies: Context.generic -> unit
@@ -3053,7 +3053,7 @@ local
 
 structure Data = Theory_Data
 (
-  type T = string Name_Space.table * string Name_Space.table;
+  type T = (string * string) Name_Space.table * (string * string) Name_Space.table;
   val empty : T =
    (Name_Space.empty_table "document_template",
     Name_Space.empty_table "document_ontology");
@@ -3100,20 +3100,20 @@ val ontology_space = get_space snd;
 val print_template = print fst;
 val print_ontology = print snd;
 
-val check_template = check fst;
-val check_ontology = check snd;
+fun check_template context arg = check fst context arg ;
+fun check_ontology context arg = check snd context arg ;
 
 val define_template = define (fst, apfst);
 val define_ontology = define (snd, apsnd);
 
 fun use_template context arg =
-  let val xml = arg |> check_template context |> snd |> XML.string
+  let val xml = arg |> check_template context |> snd |> fst  |> XML.string
   in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/use_template\<close> xml end;
 
 fun use_ontology context args =
   let
     val xml = args                                       
-      |> map (check_ontology context #> fst)
+      |> map (fn a => check_ontology context a |> fst  )
       |> cat_lines |> XML.string;
   in Export.export (Context.theory_of context) \<^path_binding>\<open>dof/use_ontology\<close> xml end;
 
@@ -3121,18 +3121,18 @@ val strip_template = strip "root-" ".tex";
 val strip_ontology = strip "DOF-" ".sty";
 
 
-fun list_ontologies context = 
+fun list cmdN which context = 
     let 
-       val names = ((Name_Space.get_names o ontology_space) context)
-       val fq_names = map (fn n => ((Long_Name.base_name o Long_Name.qualifier) n)^"."^(Long_Name.base_name n)) names
-       val _ = map writeln fq_names
-    in () end
+       fun get arg  =  check fst context arg |> snd |> snd;
 
-fun list_templates context = 
-    let 
-       val full_names = ((Name_Space.get_names o template_space) context)
-       val _ = map (writeln o  Long_Name.base_name) full_names
+       val full_names = map Long_Name.base_name ((Name_Space.get_names o which) context)
+       val descriptions = map get (map (fn n => (n, Position.none)) full_names) 
+       val _ = map (fn (n,d) => writeln ((Active.sendback_markup_command (cmdN^" \""^n^"\""))^": "^d)) 
+                   (ListPair.zip (full_names, descriptions))
     in ()  end
+
+fun list_ontologies context = list "use_ontology" ontology_space context
+fun list_templates context = list "use_template" template_space context
 
 end;
 
@@ -3154,24 +3154,24 @@ val _ =
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>define_template\<close>
     "define DOF document template (via LaTeX root file)"
-    (Parse.position Resources.provide_parse_file >>
-      (fn (get_file, pos) => Toplevel.theory (fn thy =>
+    (Parse.position (Resources.provide_parse_file -- Parse.name) >>
+      (fn ((get_file, desc), pos) => Toplevel.theory (fn thy =>
         let
           val (file, thy') = get_file thy;
           val binding = Binding.make (strip_template (#src_path file, pos), pos);
           val text = cat_lines (#lines file);
-        in #2 (define_template (binding, text) thy') end)));
+        in #2 (define_template (binding, (text, desc)) thy') end)));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>define_ontology\<close>
     "define DOF document ontology (via LaTeX style file)"
-    (Parse.position Resources.provide_parse_file >>
-      (fn (get_file, pos) => Toplevel.theory (fn thy =>
+    (Parse.position (Resources.provide_parse_file -- Parse.name) >>
+      (fn ((get_file, desc), pos) => Toplevel.theory (fn thy =>
         let
           val (file, thy') = get_file thy;
           val binding = Binding.qualify false (Long_Name.qualifier (Context.theory_long_name thy')) (Binding.make (strip_ontology (#src_path file, pos), pos));
           val text = cat_lines (#lines file);
-        in #2 (define_ontology (binding, text) thy') end)));
+        in #2 (define_ontology (binding, (text, desc)) thy') end)));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>list_templates\<close>
@@ -3187,10 +3187,14 @@ val _ =
 end;
 \<close>
 
-define_template "../latex/document-templates/root-lncs.tex"
-define_template "../latex/document-templates/root-scrartcl.tex"
-define_template "../latex/document-templates/root-scrreprt-modern.tex"
-define_template "../latex/document-templates/root-scrreprt.tex"
+define_template "../latex/document-templates/root-lncs.tex" 
+                "Documents using Springer's LNCS class."
+define_template "../latex/document-templates/root-scrartcl.tex" 
+                "A simple article layout."
+define_template "../latex/document-templates/root-scrreprt-modern.tex" 
+                "A 'modern' looking report layout."
+define_template "../latex/document-templates/root-scrreprt.tex" 
+                "A simple report layout."
 
 section \<open>Isabelle/Scala module within session context\<close>
 
@@ -3204,31 +3208,5 @@ scala_build_generated_files
   and
     "scala/dof.scala"
     "scala/dof_document_build.scala" (in "../")
-
-(*
-ML\<open>
-   Pretty.text;
-   Pretty.str;
-   Pretty.block_enclose;
-   theory_text_antiquotation in Document_Antiquotations (not exported)
-\<close>
-
-ML\<open>Pretty.text_fold; Pretty.unformatted_string_of\<close>
-ML\<open> (String.concatWith ","); Token.content_of\<close>
-
-
-ML\<open>
- Document.state;
-Session.get_keywords();
- Parse.command;
- Parse.tags;
-\<close>
-ML\<open>
- Outer_Syntax.print_commands @{theory};
- Outer_Syntax.parse_spans;
- Parse.!!!;
-
-\<close>
-*)
 
 end

@@ -30,7 +30,7 @@ theory
   "Isabelle_DOF.technical_report" 
 begin
 
-define_ontology "DOF-CENELEC_50128.sty"
+define_ontology "DOF-CENELEC_50128.sty" "CENELEC 50128"
 
 (* this is a hack and should go into an own ontology, providing thingsd like:
   - Assumption*

@@ -19,8 +19,8 @@ theory scholarly_paper
            "Definition*" "Lemma*" "Theorem*"  :: document_body
 begin
 
-define_ontology "DOF-scholarly_paper.sty"
-define_ontology "DOF-scholarly_paper-thm.sty"
+define_ontology "DOF-scholarly_paper.sty" "Writing academic publications."
+(* define_ontology "DOF-scholarly_paper-thm.sty" "" *)
 
 text\<open>Scholarly Paper provides a number of standard text - elements for scientific papers.
 They were introduced in the following.\<close>
