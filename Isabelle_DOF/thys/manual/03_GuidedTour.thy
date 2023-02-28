@@ -32,29 +32,32 @@ subsection*[installation::technical]\<open>Installation\<close>
 text\<open>
   In this section, we will show how to install \<^isadof> and its pre-requisites: Isabelle and 
   \<^LaTeX>. We assume a basic familiarity with a Linux/Unix-like command line (i.e., a shell). 
+  Furthermore, we focus on the installation of the latest official release of  \<^isadof> as 
+  available in the Archive of Formal Proofs (AFP).\<^footnote>\<open>If you want to work with the development version 
+  of Isabelle/DOF, please obtain its source code from the Isabelle/DOF Git repostitory 
+  (\<^url>\<open>https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF\<close> and follow the instructions
+  in provided \<^verbatim>\<open>README.MD\<close> file.\<close>
 
-  \<^isadof> requires Isabelle\<^bindex>\<open>Isabelle\<close> (\isabellefullversion) with a recent \<^LaTeX>-distribution
+  \<^isadof> requires Isabelle\<^bindex>\<open>Isabelle\<close> with a recent \<^LaTeX>-distribution
   (e.g., Tex Live 2022 or later).    
-  \<^isadof> uses a two-part version system (e.g., 1.2.0/Isabelle2021),  where the first part is the version
-  of \<^isadof> (using semantic versioning) and the second part is the supported version of Isabelle. 
-  Thus, the same version of \<^isadof> might be available for different versions of Isabelle. 
 \<close>
 
-paragraph\<open>Installing Isabelle.\<close>
+paragraph\<open>Installing Isabelle and the AFP.\<close>
 text\<open>
-  Please download and install Isabelle (version: \isabelleversion) from the 
-  \href{\isabelleurl}{Isabelle website} (\url{\isabelleurl}). After the 
-  successful installation of Isabelle, you should be able to call the \<^boxed_bash>\<open>isabelle\<close> 
-  tool on the command line:
-@{boxed_bash [display]\<open>ë\prompt{}ë isabelle version
-ë\isabellefullversionë\<close>}
+  Please download and install the latest official Isabelle release from the Isabelle Website 
+  (\<^url>\<open>https://isabelle.in.tum.de\<close>). After the successful installation of Isabelle, you should be 
+  able to call the \<^boxed_bash>\<open>isabelle\<close> tool on the command line:
+@{boxed_bash [display]\<open>ë\prompt{}ë isabelle version\<close>}
 
 Depending on your operating system and depending if you put Isabelle's  \<^boxed_bash>\<open>bin\<close> directory
 in your  \<^boxed_bash>\<open>PATH\<close>, you will need to invoke  \<^boxed_bash>\<open>isabelle\<close> using its
-full qualified path, \<^eg>:
-@{boxed_bash [display]\<open>ë\prompt{}ë /usr/local/Isabelleë\isabelleversion/bin/isabelleë version
-ë\isabellefullversionë\<close>}
+full qualified path.
 \<close>
+
+text\<open>
+Furthermore, download the latest version of the AFP from \<^url>\<open>https://www.isa-afp.org/download/\<close> and 
+follow the instructions given at \<^url>\<open>https://www.isa-afp.org/help/\<close> for installing the AFP as an 
+Isabelle component.\<close>
 
 paragraph\<open>Installing \<^TeXLive>.\<close>
 text\<open>
@@ -66,128 +69,58 @@ text\<open>
 
 subsubsection*[isadof::technical]\<open>Installing \<^isadof>\<close>
 text\<open>
-  In the following, we assume that you already downloaded the \<^isadof> distribution 
-  (\href{\isadofarchiveurl}{\isadofarchiven}) from the \<^isadof> web site. 
-  We start by extracting the \<^isadof> archive:
-@{boxed_bash [display]\<open>ë\prompt{}ë tar xf ë\href{\isadofarchiveurl}{\isadofarchiven}ë\<close>}
-This will create a directory \texttt{\isadofdirn} containing \<^isadof> distribution.
+By installing the AFP in the previous steps, you already installed \<^isadof>. In fact, \<^isadof> 
+is currently consisting out of two AFP entries:
 
-Moreover, \<^isadof> depends on the the AFP (\<^url>\<open>https://www.isa-afp.org\<close>), namely the AFP  
-entries ``Functional Automata''~@{cite "nipkow.ea:functional-Automata-afp:2004"} and 
-``Regular Sets and Expressions''~@{cite "kraus.ea:regular-sets-afp:2010"}. You can either
-install the complete AFP, following the instructions given at \<^url>\<open>https://www.isa-afp.org/using.html\<close>), 
-or use the provided \<^boxed_bash>\<open>install\<close> script to install a minimal AFP 
-setup into the local \<^isadof> directory. The script needs to be prefixed with the 
-\<^boxed_bash>\<open>isabelle eëënv\<close> command:
+\<^item> Isabelle\_DOF: This entry
+  contains the Isabelle/DOF system itself, including the Isabelle/DOF manual.
+\<^item> Isabelle\_DOF-Example-Scholarly\_Paper: This entry contains an example of 
+  an academic paper written using the Isabelle/DOF system.
+ \<close>
 
-@{boxed_bash [display]\<open>ë\prompt{}ë cd ë\isadofdirnë
-ë\prompt{\isadofdirn}ë isabelle eëënv ë\mbox{./install-afp}ë
+section*[writing_doc::technical]\<open>Writing Documents\<close>
 
-Isabelle/DOF Installer
-======================
-* Checking Isabelle version:
-  Success: found supported Isabelle version ë(\isabellefullversion)ë
-* Checking availability of AFP entries:\<close>}
+subsection*[document::example]\<open>Document Generation\<close>
 
-@{boxed_bash [display]
-\<open>ëë     Warning: could not find AFP entry Regular-Sets.
-      Warning: could not find AFP entry Functional-Automata.
-           Trying to install AFP (this might take a few *minutes*) ....
-           Registering Regular-Sets iëën 
-                 /home/achim/.isabelle/Isabelleë\isabelleversion/ROOTSë
-           Registering Functional-Automata iëën 
-                 /home/achim/.isabelle/Isabelleë\isabelleversion/ROOTSë
-           AFP installation successful.
-* Installation successful. Enjoy Isabelle/DOF, you can build the session
-  Isabelle/DOF and all example documents by executing:
-  /usr/local/Isabelleë\isabelleversion/bin/isabelleë build -D . \<close>}
+text\<open>\<^isadof> provides an enhanced setup for generating PDF document. In particular, it does 
+not make use of a file called \<^verbatim>\<open>document/root.tex\<close>. Instead, the use of document templates and 
+ontology represenations is done within theory files. To make use of this feature, one needs
+to add the option \<^verbatim>\<open>document_build = dof\<close> to the \<^verbatim>\<open>ROOT\<close> file. An example \<^verbatim>\<open>ROOT\<close> file looks
+as follows:
+\begin{config}{ROOT}
+session example = HOL +
+  options [document = pdf, document_output = "output", document_build = dof]
+(*theories [document = false]
+    A
+    B
+  theories
+    C
+    D*)
+\end{config}
 
-After the successful installation, you can explore the examples (in the sub-directory 
-\<^boxed_bash>\<open>examples\<close>) or create your own project. On the first start, the session 
-\<^boxed_bash>\<open>Isabelle_DOF\<close> will be built automatically. If you want to pre-build this 
-session and all example documents, execute:
-@{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë isabelle build -D . \<close>} 
+The document template and ontology can be selected as follows:
+@{boxed_theory_text [display]
+\<open>
+use_template "scrreprt-modern" 
+use_ontology "technical_report" and "scholarly_paper"
+\<close>}
+
+The commands @{boxed_theory_text 
+\<open>
+list_templates
+\<close>} and 
+@{boxed_theory_text 
+\<open>
+list_ontologies
+\<close>}
+can be used for inspecting (and selecting) the available ontologies and templates: 
+@{boxed_theory_text [display]
+\<open>
+list_templates
+list_ontologies
+\<close>}
 \<close>
 
-subsection*[first_project::technical]\<open>Creating an \<^isadof> Project\<close>
-text\<open>
-  \<^isadof> provides its own variant of Isabelle's 
-  \<^boxed_bash>\<open>mkroot\<close> tool, called \<^boxed_bash>\<open>dof_mkroot\<close>\index{mkroot\_DOF}:
-@{boxed_bash [display]\<open>ë\prompt{}ë isabelle dof_mkroot myproject
-
-Preparing session "myproject" iëën "myproject"
-  creating "myproject/ROOT"
-  creating "myproject/myproject.thy"
-  creating "myproject/document/preamble.tex"
-
-Now use the following commanëëd line to build the session:
-
-  isabelle build -D myproject\<close>}
-  The created project uses the default configuration (the ontology for writing academic papers 
-  (scholarly\_paper) using a report layout based on the article class (\<^boxed_latex>\<open>scrartcl\<close>) of 
-  the KOMA-Script bundle~@{cite "kohm:koma-script:2019"}). The directory \<^boxed_bash>\<open>myproject\<close> 
-  contains the \<^isadof>-setup for your  new document. To check the document formally, including the 
-  generation of the document in \<^pdf>, you only need to execute
-
-@{boxed_bash [display]\<open>ë\prompt{myproject}ë  isabelle build -d . myproject \<close>}
-
-The directory  \<^boxed_bash>\<open>myproject\<close> contains the following files and directories: 
-\begin{center}
-\begin{minipage}{.9\textwidth}
-\dirtree{%
-.1 .
-.2 myproject.
-.3 document.
-.4 preamble.tex\DTcomment{Manual \<^LaTeX>-configuration}.
-.3 myproject.thy\DTcomment{Example theory file}.
-.3 ROOT\DTcomment{Isabelle build-configuration}.
-}
-\end{minipage}
-\end{center}
-
-The main two configuration files\<^footnote>\<open>Isabelle power users will recognize that
-\<^isadof>'s document setup does not make use of a file \<^boxed_bash>\<open>root.tex\<close>: this file is 
-replaced by built-in document templates.\<close>  for users are: 
-\<^item> The file \<^boxed_bash>\<open>ROOT\<close>\<^index>\<open>ROOT\<close>, which defines the Isabelle session. New theory files as well as new 
-  files required by the document generation (\<^eg>, images, bibliography database using \<^BibTeX>, local
-  \<^LaTeX>-styles) need to be registered in this file. For details of Isabelle's build system, please 
-  consult the Isabelle System Manual~@{cite "wenzel:system-manual:2020"}. In addition to the 
-  standard features of, this file also contains \<^isadof> specific configurations:
-  \<^item>  \<^boxed_bash>\<open>document_build=dof\<close> needs to be present, to tell Isabelle, to use the 
-  Isabelle/DOF backend for the document generation.
-\<^item> The file \<^boxed_bash>\<open>preamble.tex\<close>\<^index>\<open>preamble.tex\<close>, which allows users to add additional 
-  \<^LaTeX>-packages or to add/modify \<^LaTeX>-commands. 
-\<close>
-
-text\<open>
-  Creating a new document setup requires two decisions:
-  \<^item> which ontologies (\<^eg>, scholarly\_paper) are required, and 
-  \<^item> which document template (layout)\index{document template} should be used 
-    (\<^eg>, scrartcl\index{scrartcl}). Some templates require that the users manually 
-    obtains and adds the necessary \<^LaTeX> class file. 
-    This is due to licensing restrictions).\<close>
-text\<open> 
-  This can be configured by using the command-line options of \<^boxed_bash>\<open>dof_mkroot\<close>. In 
-  Particular, \<^boxed_bash>\<open>-o\<close> allows selecting the ontology and \<^boxed_bash>\<open>-t\<close> allows selecting 
-  the document template. The built-in help (using  \<^boxed_bash>\<open>-h\<close>) shows all available options: 
-
-  @{boxed_bash [display]\<open>ë\prompt{}ë isabelle dof_mkroot -h
-
-Usage: isabelle dof_mkroot [OPTIONS] [DIRECTORY]
-
-  Options are:
-    -I           init Mercurial repository and add generated files
-    -h           print help
-    -n NAME      alternative session name (default: directory base name)
-    -o NAMES     list of ontologies, separated by blanks
-                 (default: "technical_report scholarly_paper")
-    -q           quiet mode: less verbosity
-    -t NAME      template (default: "scrreprt-modern")
-
-  Create session root directory for Isabelle/DOF (default: current directory).\<close>}
-\<close>
-
-section*[writing_doc::technical]\<open>Writing Documents: General Remarks\<close>
 
 subsection*[naming::example]\<open>Name-Spaces, Long- and Short-Names\<close>
 text\<open>\<^isadof> is built upon the name space and lexical conventions of Isabelle. Long-names were 

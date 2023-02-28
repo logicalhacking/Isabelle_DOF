@@ -1163,17 +1163,6 @@ value*\<open>filter (\<lambda>\<sigma>. the (text_section.level \<sigma>) > 1)
 
 section*[infrastructure::technical]\<open>Technical Infrastructure\<close>
 
-text\<open>
-  %FIXME update story concerning "list"
-  The list of fully supported (\<^ie>, supporting both interactive ontological modeling and 
-  document generation) ontologies and the list of supported document templates can be 
-  obtained by calling \<^boxed_bash>\<open>isabelle dof_mkroot -h\<close> (see \<^technical>\<open>first_project\<close>).
-  Note that the postfix \<^boxed_bash>\<open>-UNSUPPORTED\<close> denotes experimental ontologies or templates 
-  for which further manual setup steps might be required or that are not fully tested. Also note 
-  that the \<^LaTeX>-class files required by the templates need to be already installed on your 
-  system. This is mostly a problem for publisher specific templates, which cannot be re-distributed due to copyright restrictions.
-\<close>
-
 subsection\<open>Developing Ontologies and their Representation Mappings\<close>
 text\<open>
   The document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not use Isabelle definitions or proofs for checking the 
@@ -1252,10 +1241,6 @@ text\<open>
   Developing a new document template ``\<^boxed_bash>\<open>bar\<close>'' requires the following steps:
   \<^item> develop a new \<^LaTeX>-template \<^boxed_bash>\<open>src/document-templates/root-bar.tex\<close>
   \<^item> add a suitable \<^theory_text>\<open>define_template\<close> command to theory \<^theory>\<open>Isabelle_DOF.Isa_DOF\<close>.
-  \<^item> activation of the new document template  by executing the \<^boxed_bash>\<open>install\<close> script. You can skip the lengthy 
-    checks for the AFP entries and the installation of the Isabelle patch by using the 
-    \<^boxed_bash>\<open>--skip-afp\<close> option:
-    @{boxed_bash [display] \<open>ë\prompt{\isadofdirn}ë ./install --skip-afp\<close>}
 \<close>
 
 
@@ -1464,14 +1449,6 @@ text\<open>
   for the \<^boxed_latex>\<open>scrrept\<close>-class which is not supported by the \<^LaTeX> support for 
   \<^boxed_theory_text>\<open>scholarly_paper\<close>.
 \<close>
-
-subsubsection\<open>Outdated Version of \<^path>\<open>comment.sty\<close>\<close>
-text\<open>
-  Isabelle's \<^LaTeX>-setup relies on an ancient version of \<^path>\<open>comment.sty\<close> that, moreover,
-  is used in plain\<^TeX>-mode. This is known to cause issues with some modern \<^LaTeX>-classes
-  such as LPICS. Such a conflict might require the help of an Isabelle wizard.
-\<close>
-
 
 (*<*)
 end

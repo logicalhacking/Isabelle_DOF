@@ -296,3 +296,34 @@
   }%
 %% </bash>
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%% <config>
+\providecolor{config}{named}{gray}
+\newtcblisting{config}[2][]{%
+      listing only%
+     ,boxrule=0pt
+     ,boxsep=0pt
+     ,colback=white!90!config
+     ,enhanced jigsaw
+     ,borderline west={2pt}{0pt}{config!60!black}
+     ,sharp corners
+     % ,before skip=10pt
+     % ,after skip=10pt
+     ,enlarge top by=0mm
+     ,enhanced
+     ,overlay={\node[draw,fill=config!60!black,xshift=0pt,anchor=north
+       east,font=\bfseries\footnotesize\color{white}]
+                at (frame.north east) {#2};}
+        ,listing options={
+           breakatwhitespace=true
+          ,columns=flexible%
+          ,basicstyle=\small\ttfamily
+          ,mathescape
+          ,#1
+      }
+  }%
+%% </config>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+
