@@ -502,10 +502,9 @@ text\<open>
 section\<open>The Standard Ontology Libraries\<close>
 text\<open> We will describe the backbone of the Standard Library with the
 already mentioned hierarchy \<^verbatim>\<open>COL\<close> (the common ontology library),
- \<^verbatim>\<open>scholarly_paper\<close> (for MINT-oriented scientific papers), 
- \<^verbatim>\<open>technical_report\<close> (for MINT-oriented technical reports), and
-the example for a domain-specific ontology 
-\<^verbatim>\<open>CENELEC_50128\<close>.\<close>
+ \<^verbatim>\<open>scholarly_paper\<close> (for MINT-oriented scientific papers) or 
+ \<^verbatim>\<open>technical_report\<close> (for MINT-oriented technical reports).
+\<close>
 
 subsection\<open>Common Ontology Library (COL)\<close>
 (*<*)
@@ -1163,17 +1162,6 @@ value*\<open>filter (\<lambda>\<sigma>. the (text_section.level \<sigma>) > 1)
 
 section*[infrastructure::technical]\<open>Technical Infrastructure\<close>
 
-text\<open>
-  %FIXME update story concerning "list"
-  The list of fully supported (\<^ie>, supporting both interactive ontological modeling and 
-  document generation) ontologies and the list of supported document templates can be 
-  obtained by calling \<^boxed_bash>\<open>isabelle dof_mkroot -h\<close> (see \<^technical>\<open>first_project\<close>).
-  Note that the postfix \<^boxed_bash>\<open>-UNSUPPORTED\<close> denotes experimental ontologies or templates 
-  for which further manual setup steps might be required or that are not fully tested. Also note 
-  that the \<^LaTeX>-class files required by the templates need to be already installed on your 
-  system. This is mostly a problem for publisher specific templates, which cannot be re-distributed due to copyright restrictions.
-\<close>
-
 subsection\<open>Developing Ontologies and their Representation Mappings\<close>
 text\<open>
   The document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not use Isabelle definitions or proofs for checking the 
@@ -1195,19 +1183,14 @@ text\<open>
 \begin{minipage}{.9\textwidth}\footnotesize
 \dirtree{%
 .1 .
-.2 src.
-.3 ontologies\DTcomment{Ontologies}.
-.4 ontologies.thy\DTcomment{Ontology Registration}.
-.4 scholarly\_paper\DTcomment{scholarly\_paper}.
-.5 scholarly\_paper.thy.
-.5 DOF-scholarly\_paper.sty.
-.4 technical\_report\DTcomment{technical\_paper}.
-.5 technical\_report.thy.
-.5 DOF-technical\_report.sty.
-.4 CENELEC\_50128\DTcomment{CENELEC\_50128}.
-.5 CENELEC\_50128.thy.
-.5 DOF-CENELEC\_50128.sty.
-.4 \ldots.
+.2 ontologies\DTcomment{Ontologies}.
+.3 ontologies.thy\DTcomment{Ontology Registration}.
+.3 scholarly\_paper\DTcomment{scholarly\_paper}.
+.4 scholarly\_paper.thy.
+.4 DOF-scholarly\_paper.sty.
+.3 technical\_report\DTcomment{technical\_paper}.
+.4 technical\_report.thy.
+.4 DOF-technical\_report.sty.
 }
 \end{minipage}
 \end{center}
@@ -1215,16 +1198,13 @@ text\<open>
 text\<open>
   Developing a new ontology ``\<^boxed_bash>\<open>foo\<close>'' requires the 
   following steps:
-  \<^item> create a new sub-directory \<^boxed_bash>\<open>foo\<close> in the directory \<^boxed_bash>\<open>ontologies\<close>
   \<^item> definition of the ontological concepts, using \<^isadof>'s Ontology Definition Language (ODL), in 
     a new theory file \<^path>\<open>ontologies/foo/foo.thy\<close>.  
   \<^item> definition of the document representation for the ontological concepts in a \LaTeX-style 
-    file \<^path>\<open>ontologies/foo/DOF-foo.sty\<close>
-  \<^item> registration (as import) of the new ontology in the file \<^path>\<open>ontologies/ontologies.thy\<close>. 
-  \<^item> activation of the new document setup by executing the install script. You can skip the lengthy 
-    checks for the AFP entries and the installation of the Isabelle patch by using the 
-    \<^boxed_bash>\<open>--skip-afp\<close> option:
-    @{boxed_bash [display] \<open>ë\prompt{\isadofdirn}ë ./install --skip-afp\<close>}
+    stored in the same directory as the theory file containing the ODL definitions. The file name should 
+    start with the prefix ``DOF-``. For instance: \<^path>\<open>DOF-foo.sty\<close>
+  \<^item> registration of the \LaTeX-style by adding a suitable \<^theory_text>\<open>define_ontology\<close> 
+    command to the theory containing the ODL definitions.
 \<close>
 
 subsection\<open>Document Templates\<close>
@@ -1237,12 +1217,11 @@ text\<open>
 \begin{minipage}{.9\textwidth}\footnotesize
 \dirtree{%
 .1 .
-.2 src.
-.3 document-templates\DTcomment{Document templates}.
-.4 root-lncs.tex.
-.4 root-scrartcl.tex.
-.4 root-scrreprt-modern.tex.
-.4 root-scrreprt.tex.
+.2 document-templates\DTcomment{Document templates}.
+.3 root-lncs.tex.
+.3 root-scrartcl.tex.
+.3 root-scrreprt-modern.tex.
+.3 root-scrreprt.tex.
 }
 \end{minipage}
 \end{center}
@@ -1251,11 +1230,8 @@ text\<open>
 text\<open>
   Developing a new document template ``\<^boxed_bash>\<open>bar\<close>'' requires the following steps:
   \<^item> develop a new \<^LaTeX>-template \<^boxed_bash>\<open>src/document-templates/root-bar.tex\<close>
-  \<^item> add a suitable \<^theory_text>\<open>define_template\<close> command to theory \<^theory>\<open>Isabelle_DOF.Isa_DOF\<close>.
-  \<^item> activation of the new document template  by executing the \<^boxed_bash>\<open>install\<close> script. You can skip the lengthy 
-    checks for the AFP entries and the installation of the Isabelle patch by using the 
-    \<^boxed_bash>\<open>--skip-afp\<close> option:
-    @{boxed_bash [display] \<open>ë\prompt{\isadofdirn}ë ./install --skip-afp\<close>}
+  \<^item> add a suitable \<^theory_text>\<open>define_template\<close> command to a theory that is 
+   imported by the project that shall use the new document template. 
 \<close>
 
 
@@ -1347,10 +1323,8 @@ text\<open>
   requires that information is written into an auxiliary file during the first run of \<^LaTeX>
   so that the information is available at further runs of \<^LaTeX>. While, on the one hand, 
   this is a standard process (\<^eg>, used for updating references), implementing it correctly
-  requires a solid understanding of \<^LaTeX>'s expansion mechanism. In this context, the recently 
-  introduced \inlineltx|\expanded{}|-primitive 
-  (see \<^url>\<open>https://www.texdev.net/2018/12/06/a-new-primitive-expanded\<close>) is particularly useful. 
-  Examples of its use can be found, \<^eg>, in the ontology-style 
+  requires a solid understanding of \<^LaTeX>'s expansion mechanism. 
+  Examples of this can be found, \<^eg>, in the ontology-style 
   \<^file>\<open>../../ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close>.
   For details about the expansion mechanism
   in general, we refer the reader to the \<^LaTeX> literature (\<^eg>,~@{cite "knuth:texbook:1986"
@@ -1464,14 +1438,6 @@ text\<open>
   for the \<^boxed_latex>\<open>scrrept\<close>-class which is not supported by the \<^LaTeX> support for 
   \<^boxed_theory_text>\<open>scholarly_paper\<close>.
 \<close>
-
-subsubsection\<open>Outdated Version of \<^path>\<open>comment.sty\<close>\<close>
-text\<open>
-  Isabelle's \<^LaTeX>-setup relies on an ancient version of \<^path>\<open>comment.sty\<close> that, moreover,
-  is used in plain\<^TeX>-mode. This is known to cause issues with some modern \<^LaTeX>-classes
-  such as LPICS. Such a conflict might require the help of an Isabelle wizard.
-\<close>
-
 
 (*<*)
 end
