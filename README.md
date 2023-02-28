@@ -7,25 +7,54 @@ online.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF
 
 ## Pre-requisites
 
-Isabelle/DOF has three major prerequisites:
+Isabelle/DOF has two major prerequisites:
 
-* **Isabelle:** Isabelle/DOF requires [Isabelle
-  2022](https://isabelle.in.tum.de/website-Isabelle2022/). Please download the
-  Isabelle 2022 distribution for your operating system from the [Isabelle
-  website](https://isabelle.in.tum.de/website-Isabelle2022/).
-* **AFP:** Isabelle/DOF requires several entries from the [Archive of Formal Proofs
-  (AFP)](https://www.isa-afp.org/).  Please install the AFP following the
-  instructions given at <https://www.isa-afp.org/using.html>.
+* **Isabelle:** Isabelle/DOF requires [Isabelle](https://isabelle.in.tum.de/)
+  and several entries from the [Archive of Formal Proofs
+  (AFP)](https://www.isa-afp.org/).
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least
   [TeX Live 2022](https://www.tug.org/texlive/) with all available updates
   applied.
   
 ## Installation
 
-Isabelle/DOF is provided as an Isabelle component. After installing the
-prerequisites, change into the directory containing Isabelle/DOF (this should be
-the directory containing this `README.md` file) and execute the following 
-command for building the standard sessions of Isabelle/DOF:
+<!--
+Isabelle/DOF is available as part of the [Archive of Formal Proofs
+(AFP)](https://www.isa-afp.org/). This is the most convenient way to install
+Isabelle/DOF for the latest official release of Isabelle.
+
+### Installation from the Archive of Formal Proofs (AFP)
+
+Isabelle/DOF is available in the AFP. Hence, for using Isabelle/DOF with the
+latest official released version of Isabelle, please download the Isabelle
+distribution for your operating system from the [Isabelle
+website](https://isabelle.in.tum.de/). Furthermore, please install the AFP
+following the instructions given at <https://www.isa-afp.org/help.html>.
+
+Isabelle/DOF is currently consisting out of two AFP entries:
+
+* [Isabelle_DOF:](https://www.isa-afp.org/entries/Isabelle_DOF.html) This entry
+  contains the Isabelle/DOF system itself, including the Isabelle/DOF manual.
+* [Isabelle_DOF-Example-Scholarly_Paper:](https://www.isa-afp.org/entries/Isabelle_DOF-Example-Scholarly_Paper.html)
+  This entry contains an example of an academic paper written using the
+  Isabelle/DOF system.
+
+-->
+
+### Installation of the Development Version (Git Repository)
+
+The development version of Isabelle/DOF that is available in this Git repository
+provides, over the AFP version, additional ontologies, document templates, and
+examples that might not yet "ready for general use". Furthermore, as it is
+provided as an Isabelle component, it can also provide additional tools that
+cannot be distributed via the AFP. For more details on installing the
+development version, please consult the
+[README_DEVELOPMENT.md](./README_DEVELOPMENT.md) file.
+
+After installing the prerequisites, change into the directory containing
+Isabelle/DOF (this should be the directory containing this ``README.md`` file)
+and execute the following command for building the standard sessions of
+Isabelle/DOF:
 
 ```console
 foo@bar:~$ isabelle build -D . -x Isabelle_DOF-Proofs -x HOL-Proofs
@@ -35,13 +64,17 @@ This will compile Isabelle/DOF and run the example suite.
 
 ## Usage
 
-### Opening an Example
+In the following, we assume that you installed Isabelle/DOF either from the AFP
+(adding the AFP as a component to your Isabelle system) or from the GIT
+repository of Isabelle/DOF (installing Isabelle/DOF as a component to your
+Isabelle system).
 
-If you want to work with or extend one of the examples, e.g., you can open it
-similar to any standard Isabelle theory:
+Assuming that your current directory contains the example academic paper in the
+subdirectory ``Isabelle_DOF-Example-Scholarly_Paper/``, you can open it similar
+to any standard Isabelle theory:
 
 ```console
-isabelle jedit -d . -l Isabelle_DOF Isabelle_DOF-Example-Scholarly_Paper/IsaDofApplications.thy
+isabelle jedit -l Isabelle_DOF Isabelle_DOF-Example-Scholarly_Paper/IsaDofApplications.thy
 ```
 
 This will open an example of a scientific paper using the pre-compiled session
@@ -50,29 +83,18 @@ defined in the ``Isabelle_DOF`` session.  If you want to edit the ontology defin
 just open the theory file with the session ``Functional-Automata``:
 
 ```console
-isabelle jedit -d . -l Functional-Automata Isabelle_DOF-Example-Scholarly_Paper/IsaDofApplications.thy
+isabelle jedit -l Functional-Automata Isabelle_DOF-Example-Scholarly_Paper/IsaDofApplications.thy
 ```
 
 While this gives you more flexibility, it might "clutter" your editing
 experience, as a lot of internal theories are loaded into Isabelle's editor.
 
-## Releases
-
-For releases, signed archives including a PDF version of the Isabelle/DOF manual
-are available. The latest release is **Isabelle/DOF 1.3.0/Isabelle2021-1**:
-
-* [Isabelle_DOF-1.3.0_Isabelle2021-1.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.pdf)
-* [Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz)
-* [Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz.asc](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz.asc)
-
-Older releases are available [here.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/)
-
 ## Repository Structure
 
 The ``main`` branch of this Repository is developed using the latest official
-release of Isabelle (which is, at point of writing, Isabelle 2022). This is also
-the main development branch. In addition, he ``Isabelle_dev`` branch is used for
-testing Isabelle/DOF with the latest development version of Isabelle.
+release of Isabelle. This is also the main development branch. In addition, he
+``Isabelle_dev`` branch is used for testing Isabelle/DOF with the latest
+development version of Isabelle.
 
 This repository is structured into several Isabelle sessions, each of which is stored
 in a subdirectory:
@@ -96,6 +118,17 @@ in a subdirectory:
 * [Isabelle_DOF-Proofs](./Isabelle_DOF-Proofs/): This session provides the
   Isabelle/DOF systems with proof objects. This is required for the deep
   ontology embedding.
+
+## Releases
+
+For releases, signed archives including a PDF version of the Isabelle/DOF manual
+are available. The latest release is **Isabelle/DOF 1.3.0/Isabelle2021-1**:
+
+* [Isabelle_DOF-1.3.0_Isabelle2021-1.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.pdf)
+* [Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz)
+* [Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz.asc](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz.asc)
+
+Older releases are available [here.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/)
 
 ## Team
 
