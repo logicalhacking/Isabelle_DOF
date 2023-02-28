@@ -85,8 +85,9 @@ subsection*[document::example]\<open>Document Generation\<close>
 text\<open>\<^isadof> provides an enhanced setup for generating PDF document. In particular, it does 
 not make use of a file called \<^verbatim>\<open>document/root.tex\<close>. Instead, the use of document templates and 
 ontology represenations is done within theory files. To make use of this feature, one needs
-to add the option \<^verbatim>\<open>document_build = dof\<close> to the \<^verbatim>\<open>ROOT\<close> file. An example \<^verbatim>\<open>ROOT\<close> file looks
-as follows:
+to add the option \<^verbatim>\<open>document_build = dof\<close> to the \<^verbatim>\<open>ROOT\<close> file. 
+An example \<^verbatim>\<open>ROOT\<close> file looks as follows:
+
 \begin{config}{ROOT}
 session example = HOL +
   options [document = pdf, document_output = "output", document_build = dof]
