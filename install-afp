@@ -71,6 +71,14 @@ confirm_usage() {
 }
 check_isabelle_version() {
     echo "* Checking Isabelle version:"
+    if [ "Isabelle" == "$ACTUAL_ISABELLE_VERSION" ]; then
+        echo "  ERROR:"
+        echo "    This script does not support the development version of Isabelle."
+        echo "    The recommended way for installing the AFP for the development"
+        echo "    version of Isabelle is to clone the AFP repository:"
+        echo "    https://foss.heptapod.net/isa-afp/afp-devel/"
+        exit_error
+    fi
     if [ "$ISABELLE_VERSION" != "$ACTUAL_ISABELLE_VERSION" ]; then
         echo "  WARNING:"
         echo "    The version of Isabelle (i.e., $ACTUAL_ISABELLE_VERSION) you are using"

@@ -19,8 +19,8 @@ Isabelle/DOF has three major prerequisites:
 ### Note on Installing the AFP
 
 Depending on your personal preference, there are two alternative approaches to
-providing the necessary AFP entries. Both have their own advantages and
-disadvantages.
+providing the necessary AFP entries for the latest official release of Isabelle. 
+Both have their own advantages and disadvantages.
 
 #### Variant 1: Installing the Complete AFP
 
@@ -33,6 +33,10 @@ you will need to edit the file ``$AFP/thys/ROOTS`` (where ``$AFP`` refers to the
 directory in which you installed the AFP) and delete the two entries
 ``Isabelle_DOF`` and ``Isabelle_DOF-Example-Scholarly_Paper``.
 
+For the development version of Isabelle, installing the complete AFP 
+by cloning the [afp-devel](https://foss.heptapod.net/isa-afp/afp-devel/)
+repository is the only supported installation method. 
+
 #### Variant 2: Installing Only the Required AFP Entries
 
 The provided script ``install-afp`` tries to install the AFP entries that are
@@ -40,9 +44,11 @@ required by Isabelle/DOF. Note that this script will only work, if the AFP is
 not registered as an Isabelle component. It can be executed as follows:
 
 ```console
-foo@bar:~$ ./install-afp
+foo@bar:~$ isabelle env install-afp
 ```
 
+Note that this option is not supported for the development version of 
+Isabelle. 
 -->
 
 ## Installation
