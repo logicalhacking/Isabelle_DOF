@@ -3,7 +3,7 @@ session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" +
   theories
     "TestKit"
     "Latex_Tests"
-    "Concept_Example"
+    "Concept_OntoReferencing"
     "Concept_Example_Low_Level_Invariant"
     "TermAntiquotations"
     "Attributes"
