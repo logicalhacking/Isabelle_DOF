@@ -14,7 +14,7 @@
 chapter\<open>Setting and modifying attributes of doc-items\<close>
 
 theory 
-  Concept_Example
+  Concept_OntoReferencing
   imports 
   "Isabelle_DOF-Unit-Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual" 
