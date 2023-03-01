@@ -1,0 +1,8 @@
+#!/bin/bash
+PWD=`pwd`
+TMPDIR=`mktemp -d`
+isabelle build  -D . -l -n | grep $PWD | sed -e "s| *${PWD}/||" | sort -u | grep thy$ > ${TMPDIR}/sessions-thy-files.txt
+find * -type f | sort -u | grep thy$ > ${TMPDIR}/actual-thy-files.txt
+echo "Theories that are not part of a Isabelle session:"
+echo "================================================="
+comm -13 ${TMPDIR}/sessions-thy-files.txt ${TMPDIR}/actual-thy-files.txt 
