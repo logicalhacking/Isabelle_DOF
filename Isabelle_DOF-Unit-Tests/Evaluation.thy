@@ -81,9 +81,9 @@ term*\<open>@{A \<open>xcv1\<close>}\<close>
 
 text\<open>The instance class @{docitem \<open>xcv1\<close>} is not an instance of the class @{doc_class B}:
 \<close>
-(* Error:
-term*\<open>@{B \<open>xcv1\<close>}\<close>*)
-
+(* Error: 
+term*\<open>@{B \<open>xcv1\<close>}\<close>
+*)
 text\<open>We can evaluate the instance class. The current implementation returns
 the value of the instance, i.e. a collection of every attribute of the instance: 
 \<close>

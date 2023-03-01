@@ -1,6 +1,8 @@
 session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" + 
   options [document = pdf, document_output = "output", document_build = dof]
   theories
+    "TestKit"
+    "Latex_Tests"
     "AssnsLemmaThmEtc" 
     "Concept_Example_Low_Level_Invariant"
     "Concept_Example"

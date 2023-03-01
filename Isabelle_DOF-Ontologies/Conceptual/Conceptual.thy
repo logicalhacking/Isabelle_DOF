@@ -20,12 +20,14 @@ imports
   "Isabelle_DOF.Isa_COL"
 begin
 
+section\<open>Excursion: On the semantic consequences of this definition: \<close>
+
+text\<open>Consider the following document class definition and its consequences:\<close>
 
 doc_class A =
    level :: "int option"
    x :: int
 
-section\<open>Excursion: On the semantic consequences of this definition: \<close>
 
 text\<open>This class definition leads an implicit Isabelle/HOL  \<^theory_text>\<open>record\<close>  definition 
 (cf. \<^url>\<open>https://isabelle.in.tum.de/doc/isar-ref.pdf\<close>, chapter 11.6.).
@@ -49,23 +51,61 @@ Consequently, \<^theory_text>\<open>doc_class\<close>'es inherit the entire theo
     \<^enum> @{thm [display] A.simps(6)}
     \<^enum> ...
 \<close>
-(* the generated theory of the \<^theory_text>\<open>doc_class\<close> A can be inspected, of course, by *)
+
+text\<open>The generated theory of the \<^theory_text>\<open>doc_class\<close> A can be inspected, of course, by:\<close>  
 find_theorems (60) name:Conceptual name:A
 
+text\<open>A more abstract view on the state of the DOF machine can be found here:\<close>
+
+print_doc_classes
+
+print_doc_items
+
+text\<open>... and an ML-level output:\<close>
+
+ML\<open>
+val docitem_tab = DOF_core.get_instances \<^context>;
+val isa_transformer_tab = DOF_core.get_isa_transformers \<^context>;
+val docclass_tab = DOF_core.get_onto_classes \<^context>;
+
+\<close>
+
+ML\<open>
+Name_Space.dest_table docitem_tab;
+Name_Space.dest_table isa_transformer_tab;
+Name_Space.dest_table docclass_tab;
+\<close>
+text\<open>... or as ML assertion: \<close>
+ML\<open> 
+@{assert} (Name_Space.dest_table docitem_tab = []);
+fun match ("Conceptual.A", (* the long-name *)
+            DOF_core.Onto_Class {params, name, virtual,inherits_from=NONE, 
+                                 attribute_decl, rejectS=[],rex=[], invs=[]}) 
+            = (Binding.name_of name = "A")
+  | match _ = false;
+
+@{assert} (exists match (Name_Space.dest_table docclass_tab))
+\<close>
 
 text\<open>As a consequence of the theory of the \<^theory_text>\<open>doc_class\<close> \<open>A\<close>, the code-generator setup lets us 
 evaluate statements such as: \<close>
 
 value\<open> the(A.level (A.make 3 (Some 4) 5)) = 4\<close>
 
-text\<open>And finally, as a consequence of the above semantic construction of \<^theory_text>\<open>doc_class\<close>'es, the internal
+text\<open>And further, as a consequence of the above semantic construction of \<^theory_text>\<open>doc_class\<close>'es, the internal
 \<open>\<lambda>\<close>-calculus representation of class instances looks as follows:\<close>
 
 ML\<open>
-val tt = @{term \<open>the(A.level (A.make 3 (Some 4) 5))\<close>}
+@{term \<open>the(A.level (A.make 3 (Some 4) 5))\<close>};
+fun match (Const("Option.option.the",_) $ 
+      (Const ("Conceptual.A.level",_) $  
+         (Const ("Conceptual.A.make", _) $ u $ v $ w))) = true
+   |match _ = false;
+@{assert} (match @{term \<open>the(A.level (A.make 3 (Some 4) 5))\<close>})
 \<close>
 
-text\<open>For the code-generation, we have the following access to values representing class instances:\<close>
+text\<open>And finally, via the code-generation, we have the following programmable 
+     access to values representing class instances:\<close>
 ML\<open>
 val A_make = @{code A.make};
 val zero   = @{code "0::int"};
@@ -75,9 +115,9 @@ val add    = @{code "(+) :: int \<Rightarrow> int \<Rightarrow> int"};
 A_make zero (SOME one) (add one one)
 \<close>
 
+section\<open>Building up a conceptual class hierarchy:\<close>
 
-section\<open>An independent class-tree root: \<close>
-
+text\<open>An independent class-tree root: \<close>
 
 doc_class B =
    level :: "int option"
@@ -125,7 +165,7 @@ doc_class F  =
         and  br':: "r \<sigma> \<noteq> [] \<and> length(b' \<sigma>) \<ge> 3"
         and  cr :: "properties \<sigma> \<noteq> []"
 
-text\<open>The effect of the invariant declaration is to provide intern definitions for validation 
+text\<open>The effect of the invariant declaration is to provide intern HOL definitions for validation 
 functions of this invariant. They can be referenced as follows:\<close>
 thm br_inv_def
 thm br'_inv_def
@@ -133,7 +173,7 @@ thm cr_inv_def
 
 term "\<lparr>F.tag_attribute = 5, properties = [], r = [], u = undefined, s = [], b = {}, b' = []\<rparr>"
 
-term "br' (\<lparr>F.tag_attribute = 5, properties = [], r = [], u = undefined, s = [], b = {}, b' = []\<rparr>) "
+term "br'_inv (\<lparr>F.tag_attribute = 5, properties = [], r = [], u = undefined, s = [], b = {}, b' = []\<rparr>) "
 
 text\<open>Now, we can use these definitions in order to generate code for these validation functions.
 Note, however, that not everything that we can write in an invariant (basically: HOL) is executable,
@@ -141,7 +181,7 @@ or even compilable by the code generator setup:\<close>
 
 ML\<open> val cr_inv_code = @{code "cr_inv"} \<close> \<comment> \<open>works albeit thm is abstract ...\<close>
 text\<open>while in :\<close>
-(* ML\<open> val br_inv_code = @{code "br_inv"} \<close> \<comment>\<open>this does not work ...\<close> *)
+ML\<open> val br_inv_code = @{code "br_inv"} \<close> \<comment>\<open>this does not work ...\<close> 
 
 text\<open>... the compilation fails due to the fact that nothing prevents the user 
      to define an infinite relation between \<^typ>\<open>A\<close> and  \<^typ>\<open>C\<close>. However, the alternative
@@ -151,21 +191,27 @@ ML\<open> val br'_inv_code = @{code "br'_inv"} \<close> \<comment> \<open>does w
 
 text\<open>... is compilable ...\<close>
 
-
-
 doc_class G = C +
-   g :: "thm"  <= "@{thm \<open>HOL.refl\<close>}"
+   g :: "thm"  <= "@{thm \<open>HOL.refl\<close>}"  (* warning overriding attribute expected*)
 
 doc_class M = 
    ok :: "unit"
    accepts "A ~~ \<lbrace>C || D\<rbrace>\<^sup>* ~~ \<lbrakk>F\<rbrakk>"
 
+text\<open>The final class and item tables look like this:\<close>
+print_doc_classes
+print_doc_items
 
-(*
-ML\<open> Document.state();\<close>
-ML\<open> Outer_Syntax.command; \<close>
-ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>
-*)
+ML\<open>
+let  val class_ids_so_far = ["Conceptual.A", "Conceptual.B", "Conceptual.C", "Conceptual.D", 
+                             "Conceptual.E", "Conceptual.F", "Conceptual.G", "Conceptual.M", 
+                             "Isa_COL.figure", "Isa_COL.chapter", "Isa_COL.figure2", "Isa_COL.section", 
+                             "Isa_COL.subsection", "Isa_COL.figure_group", "Isa_COL.text_element", 
+                             "Isa_COL.subsubsection", "Isa_COL.side_by_side_figure"]
+     val docclass_tab = map fst (Name_Space.dest_table (DOF_core.get_onto_classes \<^context>));
+in @{assert} (class_ids_so_far = docclass_tab) end\<close>
+
+
 
 open_monitor*[aaa::M]
 section*[test::A]\<open>Test and Validation\<close>
