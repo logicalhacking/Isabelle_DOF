@@ -21,8 +21,9 @@ done
 
 
 if [ "$failed" -ne 0 ] ; then
-    echo "Error: Forbidden reference to files outside of session directory!" 
+    echo "Error: Forbidden reference to files outside of their session directory!" 
     exit 1
 fi
 
-
+echo "  * Success: No relative references to files outside of their session directory found."
+exit 0
