@@ -7,7 +7,6 @@ session "Isabelle_DOF-Example-Scholarly_Paper" (AFP) = "Isabelle_DOF" +
     "authorarchive.sty"
     "preamble.tex"
     "lstisadof.sty"
-    "vector_iD_icon.pdf"
     "figures/isabelle-architecture.pdf"
     "figures/Dogfood-Intro.png"
     "figures/InteractiveMathSheet.png"
