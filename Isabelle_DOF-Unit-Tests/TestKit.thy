@@ -131,11 +131,12 @@ fun gen_enriched_document_command3 assert name body cid_transform attr_transform
  = (gen_enriched_document_command2 name body cid_transform attr_transform markdown 
                                   (((((oid,pos),cid_pos), doc_attrs), xstring_opt), src_list) 
                                   thy)
-   handle ERROR str => (if assert src_list str then (writeln ("Correct error:"^str^":reported.");thy)
+   handle ERROR msg => (if assert src_list msg then (writeln ("Correct error:"^msg^":reported.");thy)
                                                else error"Wrong error reported")
 
-fun  error_match [_, src] str = (String.isPrefix (Input.string_of src) str)
-   | error_match _ _ = error "Wrong assertion format: <arg><match> required"
+fun  error_match [_, src] msg = (writeln((Input.string_of src));
+                                 String.isPrefix (Input.string_of src) msg )
+   | error_match _ _ = error "Wrong text-assertion-error. Argument format <arg><match> required."
 
 
 val _ =
@@ -154,10 +155,11 @@ val _ =
 \<close>
 
 (* auto-tests *)
-text-latex\<open>  dfg\<close>
+text-latex\<open>dfg\<close>
 
 text-assert-error[aaaa::A]\<open> @{A \<open>sdf\<close>}\<close>\<open>reference ontologically inconsistent\<close>
 
+ML\<open>String.isPrefix "ab" "abc"\<close>
 
 end
 (*>*)
