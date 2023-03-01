@@ -1,0 +1,4 @@
+session "Cytology" = "Isabelle_DOF" +
+  options [document = false]
+  theories
+    "Cytology"
