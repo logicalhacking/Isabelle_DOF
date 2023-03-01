@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DIRREGEXP="\\.\\.\\/"
+DIRREGEXP="\\.\\./"
 
 REGEXP=$DIRREGEXP
 DIR=$DIRMATCH
