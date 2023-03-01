@@ -68,7 +68,7 @@ onto_class procaryotic_cells = cell +
 
 onto_class eucaryotic_cells = cell + 
     organelles :: "organelles' list"
-    invariant has_nucleus :: "\<lambda>\<sigma>::eucaryotic_cells. \<exists> org \<in> set (organelles \<sigma>). is\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s org"
+    invariant has_nucleus :: "\<exists> org \<in> set (organelles \<sigma>). is\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s org"
     \<comment> \<open>Cells must have at least one nucleus. However, this should be executable.\<close>
 
 find_theorems (70)name:"eucaryotic_cells"
@@ -78,13 +78,10 @@ value "is\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s (mk\<^sub>n\<^
 
 term \<open>eucaryotic_cells.organelles\<close>
 
-value \<open>(eucaryotic_cells.organelles(eucaryotic_cells.make X Y Z Z Z [] 3 []))\<close>
+value \<open>(eucaryotic_cells.organelles(eucaryotic_cells.make X Y Z Z Z [] []))\<close>
 
-value \<open>has_nucleus_inv(eucaryotic_cells.make X Y Z Z Z [] 3 [])\<close>
+value \<open>has_nucleus_inv(eucaryotic_cells.make X Y Z Z Z [] [])\<close>
 
-value \<open>has_nucleus_inv(eucaryotic_cells.make X Y Z Z Z [] 3 
-                         [upcast\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s (nucleus.make a b c d [])])\<close>
-
-
+value \<open>has_nucleus_inv(eucaryotic_cells.make X Y Z Z Z [] [upcast\<^sub>n\<^sub>u\<^sub>c\<^sub>l\<^sub>e\<^sub>u\<^sub>s (nucleus.make a b c )])\<close>
 
 end
