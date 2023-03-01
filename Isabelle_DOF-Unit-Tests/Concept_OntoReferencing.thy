@@ -33,6 +33,7 @@ section\<open>Defining Text Elements and Referring to them... \<close>
 text\<open> This uses elements of two ontologies, notably 
       \<^theory>\<open>Isabelle_DOF-Ontologies.Conceptual\<close> and \<^theory>\<open>Isabelle_DOF.Isa_COL\<close>.\<close>
 
+(*<*)
 title*[abbb::title, short_title="Some\<open>ooups.\<close>"]\<open>Lorem ipsum dolor sit amet ...\<close>
 subtitle*[abbbb::subtitle, abbrev = "Some\<open>ooups-oups.\<close>"]\<open>Lorem ipsum dolor sit amet ...\<close>
 chapter*[abbbbbb::A, x = "3"]   \<open> Lorem ipsum dolor sit amet ... \<close>
@@ -41,15 +42,19 @@ subsection*[ab::A, x = "3"]     \<open> Lorem ipsum dolor sit amet, ...
                                   As mentioned in the @{title \<open>abbb\<close>}... \<close> \<comment> \<open>old-style and ...\<close>
 subsubsection*[abb::A, x = "3"] \<open> Lorem ipsum dolor sit amet, ... 
                                   As mentioned in the \<^title>\<open>abbb\<close>\<close>    \<comment> \<open>new-style references to
-                                                                          ontologically qualified
-                                                                          text elements ...\<close>
+                                                                          ontological instances 
+                                                                          assigned to text 
+                                                                          elements ...\<close>
+(*>*)
+
+
 
 text\<open>Meta-Objects are typed, and references have to respect this : \<close>
+(*<*)
 text-assert-error[ac]\<open> \<^title>\<open>a\<close> \<close>    \<open>reference ontologically inconsistent\<close>
 text-assert-error[ad]\<open> \<^title>\<open>abbbb\<close> \<close>\<open>reference ontologically inconsistent\<close> 
-                       \<comment> \<open>consider class hierarchy!\<close>
-
-
+                       \<comment> \<open>erroneous reference: please consider class hierarchy!\<close>
+(*>*)
 
 text\<open>References to Meta-Objects can be forward-declared:\<close>
 
