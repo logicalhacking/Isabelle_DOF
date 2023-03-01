@@ -1,6 +1,8 @@
 #!/bin/sh
-
 DIRREGEXP="\\.\\./"
+
+echo "Checking for references pointing outside of session directory:"
+echo "=============================================================="
 
 REGEXP=$DIRREGEXP
 DIR=$DIRMATCH
