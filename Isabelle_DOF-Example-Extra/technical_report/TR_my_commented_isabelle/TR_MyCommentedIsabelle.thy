@@ -1637,7 +1637,7 @@ val data = \<comment> \<open>Derived from Yakoub's example ;-)\<close>
   , (\<open>Frédéric II\<close>,   \<open>King of Sicily\<close>)
   , (\<open>Frédéric III\<close>,  \<open>the Handsome\<close>)
   , (\<open>Frédéric IV\<close>,   \<open>of the Empty Pockets\<close>)
-  , (\<open>Frédéric V\<close>,    \<open>King of Denmark–Norway\<close>)
+  , (\<open>Frédéric V\<close>,    \<open>King of Denmark-Norway\<close>)
   , (\<open>Frédéric VI\<close>,   \<open>the Knight\<close>)
   , (\<open>Frédéric VII\<close>,  \<open>Count of Toggenburg\<close>)
   , (\<open>Frédéric VIII\<close>, \<open>Count of Zollern\<close>)
