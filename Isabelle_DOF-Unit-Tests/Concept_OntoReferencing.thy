@@ -30,7 +30,7 @@ open_monitor*[struct::M]
 
 section\<open>Defining Text Elements and Referring to them... \<close>
 
-text\<open>This uses elements of two ontologies, notably 
+text\<open> This uses elements of two ontologies, notably 
       \<^theory>\<open>Isabelle_DOF-Ontologies.Conceptual\<close> and \<^theory>\<open>Isabelle_DOF.Isa_COL\<close>.\<close>
 
 title*[abbb::title, short_title="Some\<open>ooups.\<close>"]\<open>Lorem ipsum dolor sit amet ...\<close>
@@ -44,24 +44,48 @@ subsubsection*[abb::A, x = "3"] \<open> Lorem ipsum dolor sit amet, ...
                                                                           ontologically qualified
                                                                           text elements ...\<close>
 
-text-assert-error[ac]\<open> \<^title>\<open>a\<close> \<close>\<open>reference ontologically inconsistent\<close>
+text\<open>Meta-Objects are typed, and references have to respect this : \<close>
+text-assert-error[ac]\<open> \<^title>\<open>a\<close> \<close>    \<open>reference ontologically inconsistent\<close>
 text-assert-error[ad]\<open> \<^title>\<open>abbbb\<close> \<close>\<open>reference ontologically inconsistent\<close> 
                        \<comment> \<open>consider class hierarchy!\<close>
 
+
+
+text\<open>References to Meta-Objects can be forward-declared:\<close>
+
+text-assert-error[ae1]\<open>@{C \<open>c1\<close>} \<close>\<open>Undefined instance:\<close>
+
+declare_reference*[c1::C] \<comment> \<open>forward declaration\<close>
+
+text\<open>@{C \<open>c1\<close>} \<close>   \<comment> \<open>THIS IS A  BUG !!! OVERLY SIMPLISTIC BEHAVIOUR. THIS SHOULD FAIL! \<close>
+
+text\<open>@{C (unchecked) \<open>c1\<close>} \<close>   \<comment> \<open>THIS SHOULD BE THE CORRECT BEHAVIOUR! \<close>
+
+
 text*[c1::C, x = "''beta''"] \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
+
+text-assert-error[c1::C, x = "''gamma''"] 
+                             \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
+                             \<open>Duplicate instance declaration\<close>
 
 text*[d::D, a1 = "X3"] \<open> ... phasellus amet id massa nunc, pede suscipit repellendus, 
                          ... @{C "c1"} or @{C \<open>c1\<close>} or \<^C>\<open>c1\<close>
-                             similar to @{thm "refl"} and \<^thm>"refl"\<close>
+                             similar to @{thm "refl"} and \<^thm>"refl"\<close>  \<comment> \<open>ontological and built-in
+                                                                          references\<close>
 
-ML*[ddddd2::E]\<open>fun fac x = if x = 0 then 1 else x * (fac(x-1))\<close>
+text\<open>Not only text-elements are "ontology-aware", proofs and code can this be too !\<close>
+
+ML*[ddddd2::E]\<open>fun fac x = if x = 0 then 1 else x * (fac(x-1))\<close> (* TODO : BUG *)
+(* TODO BUG : lemma*[ddddd3::E] asd: "True" *)
+
+text\<open>Ontological information ("class instances") is mutable: \<close>
 
 update_instance*[d::D, a1 := X2]
 
 text\<open> ... in ut tortor ... @{docitem \<open>a\<close>} ... @{A \<open>a\<close>} ... \<close> \<comment> \<open>untyped or typed referencing \<close>
 
 (* THIS IS A BUG \<And>\<And>! *)
-text-assert-error[ae]\<open>the function @{E "ddddd2"} \<close>\<open>referred text-element is macro!\<close>
+text-assert-error[ae::text_element]\<open>the function @{E "ddddd2"} \<close>\<open>referred text-element is macro!\<close>
 
 text*[c2::C, x = "\<open>delta\<close>"]  \<open> ... in ut tortor eleifend augue pretium consectetuer.  \<close>
 
@@ -74,7 +98,7 @@ text*[f::F] \<open> Lectus accumsan velit ultrices, ... \<close>
 theorem some_proof : "True" by simp
 
 text\<open>This is an example where we add a theorem into a kind of "result-list" of the doc-item f.\<close>
-update_instance*[f::F,r:="[@{thm ''Concept_Example.some_proof''}]"]
+update_instance*[f::F,r:="[@{thm ''Concept_OntoReferencing.some_proof''}]"]
 
 text\<open> ..., mauris amet, id elit aliquam aptent id,  ... @{docitem \<open>a\<close>} \<close>
 
@@ -87,8 +111,15 @@ close_monitor*[struct]
 text\<open>And the trace of the monitor is:\<close>
 ML\<open>val trace = @{trace_attribute struct}\<close>
 ML\<open>@{assert} (trace = [("Conceptual.A", "abbbbbb"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"), 
+                       ("Conceptual.A", "abb"),("Conceptual.C", "c1"),("Conceptual.C", "c1"), ("Conceptual.D", "d"), 
+                       ("Conceptual.E", "ddddd2"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
+(* SHOULD BE:
+ML\<open>@{assert} (trace = [("Conceptual.A", "abbbbbb"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"), 
                        ("Conceptual.A", "abb"),("Conceptual.C", "c1"), ("Conceptual.D", "d"), 
                        ("Conceptual.E", "ddddd2"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
+
+   FAILURE DUE TO DUPLICATE DEFINITION BUG 
+*)
 
 text\<open>Note that the monitor \<^typ>\<open>M\<close> of the ontology \<^theory>\<open>Isabelle_DOF-Ontologies.Conceptual\<close> does
      not observe the common entities of \<^theory>\<open>Isabelle_DOF.Isa_COL\<close>, but just those defined in the 
