@@ -90,7 +90,7 @@ text\<open>Now assume the following ontology:\<close>
 doc_class title =
   short_title :: "string option" <= "None"
 
-doc_class author =
+doc_class Author =
   email :: "string" <= "''''"
 
 datatype classification = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
@@ -100,18 +100,18 @@ doc_class abstract =
   safety_level :: "classification" <= "SIL3"
 
 doc_class text_section =
-  authored_by :: "author set" <= "{}"
+  authored_by :: "Author set" <= "{}"
   level :: "int option" <= "None"
 
 type_synonym notion = string
 
-doc_class introduction = text_section +
-  authored_by :: "author set"  <= "UNIV" 
+doc_class Introduction = text_section +
+  authored_by :: "Author set"  <= "UNIV" 
   uses :: "notion set"
   invariant author_finite :: "finite (authored_by \<sigma>)"
-  and force_level :: "the (level \<sigma>) > 1"
+  and force_level :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 1"
 
-doc_class claim = introduction +
+doc_class claim = Introduction +
   based_on :: "notion list"
 
 doc_class technical = text_section +
@@ -140,7 +140,7 @@ text\<open>Next we define some instances (docitems): \<close>
 
 declare[[invariants_checking_with_tactics = true]]
 
-text*[church::author, email="\<open>church@lambda.org\<close>"]\<open>\<close>
+text*[church::Author, email="\<open>church@lambda.org\<close>"]\<open>\<close>
 
 text*[resultProof::result, evidence = "proof", property="[@{thm \<open>HOL.refl\<close>}]"]\<open>\<close>
 text*[resultArgument::result, evidence = "argument"]\<open>\<close>
@@ -151,29 +151,30 @@ text\<open>The invariants \<^theory_text>\<open>author_finite\<close> and \<^the
   It will enable a basic tactic, using unfold and auto:\<close>
 
 declare[[invariants_checking_with_tactics = true]]
-(*
-text*[curry::author, email="\<open>curry@lambda.org\<close>"]\<open>\<close>
-text*[introduction2::introduction, authored_by = "{@{author \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
- When not commented, should violated the invariant:
-update_instance*[introduction2::introduction
-                  , authored_by := "{@{author \<open>church\<close>}}"
+
+text*[curry::Author, email="\<open>curry@lambda.org\<close>"]\<open>\<close>
+text*[introduction2::Introduction, authored_by = "{@{Author \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
+(* When not commented, should violated the invariant:
+update_instance*[introduction2::Introduction
+                  , authored_by := "{@{Author \<open>church\<close>}}"
                   , level := "Some 1"]
+*)
 
 
-text*[introduction3::introduction, authored_by = "{@{author \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
-text*[introduction4::introduction, authored_by = "{@{author \<open>curry\<close>}}", level = "Some 4"]\<open>\<close>
+text*[introduction3::Introduction, authored_by = "{@{Author \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
+text*[introduction4::Introduction, authored_by = "{@{Author \<open>curry\<close>}}", level = "Some 4"]\<open>\<close>
 
 text*[resultProof2::result, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"]\<open>\<close>
 
 text\<open>Then we can evaluate expressions with instances:\<close>
 
-term*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
-value*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
-value*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction4\<close>}\<close>
+term*\<open>authored_by @{Introduction \<open>introduction2\<close>} = authored_by @{Introduction \<open>introduction3\<close>}\<close>
+value*\<open>authored_by @{Introduction \<open>introduction2\<close>} = authored_by @{Introduction \<open>introduction3\<close>}\<close>
+value*\<open>authored_by @{Introduction \<open>introduction2\<close>} = authored_by @{Introduction \<open>introduction4\<close>}\<close>
 
-value*\<open>@{introduction \<open>introduction2\<close>}\<close>
+value*\<open>@{Introduction \<open>introduction2\<close>}\<close>
 
-value*\<open>{@{author \<open>curry\<close>}} = {@{author \<open>church\<close>}}\<close>
+value*\<open>{@{Author \<open>curry\<close>}} = {@{Author \<open>church\<close>}}\<close>
 
 term*\<open>property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
 value*\<open>property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
@@ -183,5 +184,5 @@ value*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \
 declare[[invariants_checking_with_tactics = false]]
 
 declare[[invariants_strict_checking = false]]
-*)
+
 end
