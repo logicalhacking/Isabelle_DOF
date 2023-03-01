@@ -13,5 +13,11 @@ session "Isabelle_DOF-Ontologies" = "Isabelle_DOF" +
     "Conceptual/Conceptual"
     "small_math/small_math"
     "CENELEC_50128/CENELEC_50128"
+    "CENELEC_50128/CENELEC_50128_Documentation"
   document_files
     "root.bib"
+    "lstisadof-manual.sty"
+    "preamble.tex"
+    "figures/antiquotations-PIDE.png"
+    "figures/srac-as-es-application.png"
+    "figures/srac-definition.png"
