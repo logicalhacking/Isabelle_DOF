@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019      The University of Exeter 
- *               2018-2019 The University of Paris-Saclay
+ *               2019-2023 The University of Exeter 
+ *               2018-2023 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -12,17 +12,20 @@
  *************************************************************************)
 
 theory 
-  OutOfOrderPresntn
+  Latex_Tests
 imports 
   "Isabelle_DOF-Unit-Tests_document"
   "TestKit"
-  "Isabelle_DOF-Ontologies.Conceptual"
-keywords  "Figure*"          :: document_body 
+keywords   "Figure*"          :: document_body  (* still experimental feature *)
 
 begin
 
 section\<open>Elementary Creation of Doc-items and Access of their Attibutes\<close>
 
+
+text\<open>Output status:\<close>
+print_doc_classes
+print_doc_items
 
 
 text\<open>And here a tex - text macro.\<close>
@@ -31,8 +34,6 @@ text\<open>Pythons ReStructuredText (RST).
     \<close>
 
 text*[aaaa::B]\<open>dfg @{thm [display] refl}\<close>
-
-(*<*)
                             
 text-[dfgdfg::B]
 \<open> Lorem ipsum ...  @{thm [display] refl}  Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
@@ -57,6 +58,7 @@ text-latex\<open>... and here is its application macro expansion:
            \<open> Lorem ipsum ...  @{thm refl}  Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
           \<close>}\<close>
 
+(*<*)
 text-latex\<open> \<^theory_text>\<open>definition df = ...  
         \<close>
        @{ML      [display] \<open> let val x = 3 + 4 in true end 
@@ -71,7 +73,7 @@ text-latex\<open> \<^theory_text>\<open>definition df = ...
                                \<close>}
        @{cartouche [display]   \<open> @{figure "cfgdfg"}\<close>} \<close>
 
-
+(*>*)
 text\<open>Final Status:\<close>
 print_doc_items
 print_doc_classes 
@@ -100,8 +102,10 @@ setup \<open>DOF_lib.define_shortcut (Binding.make("bla",\<^here>)) "\\blabla"\<
    target document, for example, in the tex prelude. Note that the "Binding.make" can be avoided
    using the alternative \<^binding> notation (see above).*)
 
+
 setup\<open>DOF_lib.define_macro (Binding.make("blong",\<^here>)) "\\blong{" "}" (K(K()))\<close>
 
+(*<*)
 text-latex\<open> \<^blong>\<open>asd\<close> outer  \<^blong>\<open>syntax| ! see {syntax, outer}\<close> \<close>
 (*>*)
 
@@ -225,7 +229,6 @@ val _ = Theory.setup
     boxed_theory_text_antiquotation \<^binding>\<open>boxed_theory_text\<close>); (* is overriding possible ?*)
 
 \<close>
-
 (*<*)
 text-latex\<open> 
       @{boxed_cartouche   [display] \<open>definition dfg = \<lambda>x. x\<close>}
@@ -233,9 +236,9 @@ text-latex\<open>
 (*>*)
 
 
+
 section\<open>Section Experiments of picture-content\<close>
 
-(*<*)
 
 ML\<open>
 
@@ -375,10 +378,11 @@ val _ = Theory.setup
  );
 \<close>
 
+(*<*)
 text-latex\<open>
 @{figure_content [width=40, scale=35, caption="This is a test"] "ROOT"}
 \<close>
-
+(*>*)
 ML\<open>
 
 fun gen_enriched_document_command3 name {body} cid_transform attr_transform markdown
@@ -407,14 +411,12 @@ Figure*[fff::figure,src="\<open>this is a side-by-side\<close>"]
    \<close>  
 *)
 
-
+(*<*)
 Figure*[ffff::figure2, caption="\<open>this is another 2 side-by-side\<close>"]
    \<open>@{figure_content [width=40, scale=35, caption="This is a left test"] "ROOT"}\<close> 
    \<open>@{figure_content [width=40, scale=35, caption="This is a right test"] "ROOT"}\<close>  
 
-(* proposed syntax for sub-figure labels :
-text\<open> @{figure "ffff(2)"}\<close>
- *)
+(* proposed syntax for sub-figure labels : text\<open> @{figure "ffff(2)"}\<close> *)
 
 Figure*[figxxx::figure2,caption="\<open>Proofs establishing an Invariant Preservation.\<close>"]
 \<open>@{boxed_theory_text [display]
