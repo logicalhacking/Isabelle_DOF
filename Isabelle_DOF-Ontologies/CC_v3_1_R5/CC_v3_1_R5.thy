@@ -47,7 +47,7 @@ doc_class toe_ref_cls = CC_text_element +
     toe_version:: "(int \<times> int \<times> int)"
     prod_name::"string option" <= None
 
-(*
+
 doc_class toe_ovrw_cls = CC_text_element +
     toe_type     :: string
     software_req :: "CC_text_element list" <= "[]"
@@ -55,26 +55,25 @@ doc_class toe_ovrw_cls = CC_text_element +
     firmeware_req:: "CC_text_element list" <= "[]"
     features_req :: "CC_text_element list" <= "[]"
     invariant  eal_consistency:: 
-                 "\<lambda> X::toe_ovrw_cls . 
-                        (case eval_level X  of 
-                           EAL1 \<Rightarrow> software_req  X \<noteq> [] 
-                      |    EAL2 \<Rightarrow> software_req  X \<noteq> [] 
-                      |    EAL3 \<Rightarrow> software_req  X \<noteq> [] 
-                      |    EAL4 \<Rightarrow> software_req  X \<noteq> [] 
+                 "(case eval_level \<sigma>  of 
+                           EAL1 \<Rightarrow> software_req  \<sigma> \<noteq> [] 
+                      |    EAL2 \<Rightarrow> software_req  \<sigma> \<noteq> [] 
+                      |    EAL3 \<Rightarrow> software_req  \<sigma> \<noteq> [] 
+                      |    EAL4 \<Rightarrow> software_req  \<sigma> \<noteq> [] 
                       |    _ \<Rightarrow>  undefined)"
 
 thm eal_consistency_inv_def
-*)
+
 doc_class toe_desc_cls = CC_text_element +
     software_list    :: "CC_text_element list" <= "[]"
     hardware_list    :: "CC_text_element list" <= "[]" 
     firmeware_list   :: "CC_text_element list" <= "[]"
     sec_features_list:: "CC_text_element list" <= "[]"
-(*  
+  
 doc_class ST_INTRO_MNT = CC_structure_element +
     tag_id:: string
     accepts "\<lbrace>st_ref_cls\<rbrace>\<^sup>* ~~ \<lbrace>toe_ref_cls\<rbrace>\<^sup>* ~~ \<lbrace>toe_ovrw_cls\<rbrace>\<^sup>* ~~ \<lbrace>toe_desc_cls\<rbrace>\<^sup>*"
-*)
+
 doc_class cc_conf_claim_cls = CC_text_element +
     cc_version:: string
     ext_srs_list::"CC_text_element list option"
@@ -162,7 +161,7 @@ doc_class sars_ratio_cls = CC_text_element +
 doc_class SEC_REQ_MNT =
   spd_id:: string
   accepts "(\<lbrace>sfrs_cls\<rbrace>\<^sup>+ ~~ \<lbrace>sfrs_ratio_cls\<rbrace>\<^sup>+ ~~ \<lbrace>sars_cls\<rbrace>\<^sup>+ ~~ \<lbrace>sars_ratio_cls\<rbrace>\<^sup>+)"
-(*
+
 doc_class ST_MNT = CC_structure_element +
    tag_id :: string
    level :: EALs
@@ -171,6 +170,6 @@ doc_class ST_MNT = CC_structure_element +
              SEC_PROB_DEF_MNT ~~
              SEC_OBJ_MNT ~~
              SEC_REQ_MNT)"
-*)
+
 
 end
