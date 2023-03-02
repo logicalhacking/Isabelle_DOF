@@ -2,6 +2,19 @@
 
 set -e
 
+failuremsg="Error"
+failurecode=1
+
+while [ $# -gt 0 ]
+do
+    case "$1" in
+        --warning|-w)
+            failuremsg="Warning"
+            failurecode=0;;
+    esac
+    shift
+done
+
 echo "Checking for theories that are not part of an Isabelle session:"
 echo "==============================================================="
 
@@ -15,9 +28,6 @@ if [ -z "$thylist" ] ; then
     exit 0
 else
     echo -e "$thylist"
-    echo "Error: Dangling theories found (see list above)!" 
-    exit 1
+    echo "$failuremsg: Dangling theories found (see list above)!" 
+    exit $failurecode 
 fi
-
-
-
