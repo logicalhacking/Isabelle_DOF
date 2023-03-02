@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+echo "Checking for theories that are not part of an Isabelle session:"
+echo "==============================================================="
+
+PWD=`pwd`
+TMPDIR=`mktemp -d`
+isabelle build  -D . -l -n | grep $PWD | sed -e "s| *${PWD}/||" | sort -u | grep thy$ > ${TMPDIR}/sessions-thy-files.txt
+find * -type f | sort -u | grep thy$ > ${TMPDIR}/actual-thy-files.txt
+thylist=`comm -13 ${TMPDIR}/sessions-thy-files.txt ${TMPDIR}/actual-thy-files.txt`
+if [ -z "$thylist" ] ; then
+    echo "  * Success: No dangling theories found."
+    exit 0
+else
+    echo -e "$thylist"
+    echo "Error: Dangling theories found (see list above)!" 
+    exit 1
+fi
+
+
+
