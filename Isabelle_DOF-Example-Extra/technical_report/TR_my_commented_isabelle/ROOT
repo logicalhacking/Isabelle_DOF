@@ -1,5 +1,5 @@
 session "TR_MyCommentedIsabelle" = "Isabelle_DOF" +
-  options [document = pdf, document_output = "output", document_build = dof, quick_and_dirty = true]
+  options [document = pdf, document_output = "output", document_build = dof]
   theories
     "TR_MyCommentedIsabelle"
   document_files
