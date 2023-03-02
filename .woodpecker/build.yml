@@ -4,6 +4,7 @@ pipeline:
     commands:
       - ./.woodpecker/check_dangling_theories
       - ./.woodpecker/check_external_file_refs
+      - ./.woodpecker/check_quick_and_dirty -w
       - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO/$CI_BRANCH/$CI_BUILD_NUMBER/$LATEX
       - mkdir -p $ARTIFACT_DIR
       - export `isabelle getenv ISABELLE_HOME_USER`
