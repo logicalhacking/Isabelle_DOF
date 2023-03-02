@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019      The University of Exeter 
- *               2018-2019 The University of Paris-Saclay
+ *               2019-2023 The University of Exeter 
+ *               2018-2023 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -18,11 +18,12 @@ theory
   imports 
   "Isabelle_DOF-Unit-Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual" (* we use the generic "Conceptual" ontology *)
+  TestKit
 begin
 
 section\<open>Example: Standard Class Invariant\<close>
 
-text\<open>Status:\<close>
+text\<open>Consult the status of the DOF engine:\<close>
 print_doc_classes
 print_doc_items
 
@@ -38,15 +39,14 @@ text\<open>Setting a sample invariant, which simply produces some side-effect:\<
 setup\<open>
 fn thy =>
 let val ctxt = Proof_Context.init_global thy
-    val binding = DOF_core.binding_from_onto_class_pos "A" thy
-in DOF_core.add_ml_invariant binding (fn oid =>
-                                         fn {is_monitor = b} =>
-                                            fn ctxt => 
-                                               (writeln ("sample echo : "^oid); true)) thy end
+    val bind = DOF_core.binding_from_onto_class_pos "A" thy
+    val exec = (fn oid =>  fn {is_monitor = b} => fn ctxt => 
+                  (writeln ("sample echo : "^oid); true))
+in DOF_core.add_ml_invariant bind exec thy end
 \<close>
 
-subsection*[b::A, x = "5"] \<open> Lorem ipsum dolor sit amet, ... \<close>
-
+ML\<open>DOF_core.binding_from_onto_class_pos "A" @{theory} \<close>
+text*[b::A, x = "5"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 text\<open>Setting a sample invariant, referring to attribute value "x":\<close>
 ML\<open>
@@ -60,14 +60,16 @@ in DOF_core.add_ml_invariant binding check_A_invariant thy end
 \<close>
 
 
+text*[d0::A, x = "5"]\<open>Lorem ipsum dolor sit amet, ...\<close>
+
 subsection*[d::A, x = "4"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 (* test : update should not fail, invariant still valid *)
 update_instance*[d::A, x += "1"]
 
-(* test : with the next step it should fail : 
+(* test : with the next step it should fail : *)
 update_instance*[d::A, x += "1"]
-*)
+
 
 section\<open>Example: Monitor Class Invariant\<close>
 

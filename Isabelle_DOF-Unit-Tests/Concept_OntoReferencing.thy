@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019      The University of Exeter 
- *               2018-2019 The University of Paris-Saclay
+ *               2019-2023 The University of Exeter 
+ *               2018-2023 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -11,7 +11,7 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-chapter\<open>Setting and modifying attributes of doc-items\<close>
+chapter\<open>Creating and Referencing Ontological Instances\<close>
 
 theory 
   Concept_OntoReferencing
@@ -20,6 +20,11 @@ theory
   "Isabelle_DOF-Ontologies.Conceptual" 
   "TestKit"
 begin
+
+section\<open>Test Purpose.\<close>
+text\<open> Creation of ontological instances along the \<^theory>\<open>Isabelle_DOF-Ontologies.Conceptual\<close> 
+Ontology. Emphasis is put on type-safe (ontologically consistent) referencing of text, code and
+proof elements. Some tests cover also the critical cases concerning name spaces of oid's. \<close>
 
 section\<open>Setting up a monitor.\<close>
 text\<open>\<^theory>\<open>Isabelle_DOF-Ontologies.Conceptual\<close> provides a monitor \<^typ>\<open>M\<close>  enforcing a 
@@ -58,13 +63,13 @@ text-assert-error[ad]\<open> \<^title>\<open>abbbb\<close> \<close>\<open>refere
 
 text\<open>References to Meta-Objects can be forward-declared:\<close>
 
-text-assert-error[ae1]\<open>@{C \<open>c1\<close>} \<close>\<open>Undefined instance:\<close>
+text-assert-error[ae1]\<open>@{C \<open>c1\<close>}\<close>\<open>Undefined instance:\<close>
 
-declare_reference*[c1::C] \<comment> \<open>forward declaration\<close>
+declare_reference*[c1::C]     \<comment> \<open>forward declaration\<close>
 
-text\<open>@{C \<open>c1\<close>} \<close>   \<comment> \<open>THIS IS A  BUG !!! OVERLY SIMPLISTIC BEHAVIOUR. THIS SHOULD FAIL! \<close>
+text\<open>@{C \<open>c1\<close>} \<close>              \<comment> \<open>THIS IS A  BUG !!! OVERLY SIMPLISTIC BEHAVIOUR. THIS SHOULD FAIL! \<close>
 
-text\<open>@{C (unchecked) \<open>c1\<close>} \<close>   \<comment> \<open>THIS SHOULD BE THE CORRECT BEHAVIOUR! \<close>
+text\<open>@{C (unchecked) \<open>c1\<close>} \<close>  \<comment> \<open>THIS SHOULD BE THE CORRECT BEHAVIOUR! \<close>
 
 
 text*[c1::C, x = "''beta''"] \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
@@ -80,8 +85,19 @@ text*[d::D, a1 = "X3"] \<open> ... phasellus amet id massa nunc, pede suscipit r
 
 text\<open>Not only text-elements are "ontology-aware", proofs and code can this be too !\<close>
 
-ML*[ddddd2::E]\<open>fun fac x = if x = 0 then 1 else x * (fac(x-1))\<close> (* TODO : BUG *)
-(* TODO BUG : lemma*[ddddd3::E] asd: "True" *)
+ML*[ddddd2::C]\<open>fun fac x = if x = 0 then 1 else x * (fac(x-1))\<close> (* TODO : BUG *)
+
+lemma*[ddddd3::E] asd: "True" by simp
+
+(* BUG This does not work yet:
+definition*[dddddd3::E] facu : "nat \<Rightarrow> nat" where "facu x = undefined"
+*)
+
+(* BUG 
+text\<open>As shown in @{E \<open>ddddd3\<close>}\<close>
+text\<open>As shown in @{C \<open>ddddd2\<close>}\<close>
+*)
+
 
 text\<open>Ontological information ("class instances") is mutable: \<close>
 
@@ -89,8 +105,8 @@ update_instance*[d::D, a1 := X2]
 
 text\<open> ... in ut tortor ... @{docitem \<open>a\<close>} ... @{A \<open>a\<close>} ... \<close> \<comment> \<open>untyped or typed referencing \<close>
 
-(* THIS IS A BUG \<And>\<And>! *)
-text-assert-error[ae::text_element]\<open>the function @{E "ddddd2"} \<close>\<open>referred text-element is macro!\<close>
+(* THIS IS A BUG : this should work rather than fail. \<And>\<And>! *)
+text-assert-error[ae::text_element]\<open>the function @{C "ddddd2"} \<close>\<open>referred text-element is macro!\<close>
 
 text*[c2::C, x = "\<open>delta\<close>"]  \<open> ... in ut tortor eleifend augue pretium consectetuer.  \<close>
 
@@ -116,12 +132,12 @@ close_monitor*[struct]
 text\<open>And the trace of the monitor is:\<close>
 ML\<open>val trace = @{trace_attribute struct}\<close>
 ML\<open>@{assert} (trace = [("Conceptual.A", "abbbbbb"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"), 
-                       ("Conceptual.A", "abb"),("Conceptual.C", "c1"),("Conceptual.C", "c1"), ("Conceptual.D", "d"), 
-                       ("Conceptual.E", "ddddd2"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
-(* SHOULD BE:
-ML\<open>@{assert} (trace = [("Conceptual.A", "abbbbbb"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"), 
-                       ("Conceptual.A", "abb"),("Conceptual.C", "c1"), ("Conceptual.D", "d"), 
-                       ("Conceptual.E", "ddddd2"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
+    ("Conceptual.A", "abb"), ("Conceptual.C", "c1"), ("Conceptual.C", "c1"), ("Conceptual.D", "d"), 
+    ("Conceptual.C", "ddddd2"),("Conceptual.E", "ddddd3"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
+(* BUG : SHOULD BE:
+ML\<open>@{assert} (trace = [("Conceptual.A", "abbbbbb"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"), ("Conceptual.A", "abb"),
+    ("Conceptual.C", "c1"), ("Conceptual.D", "d"), ("Conceptual.C", "ddddd2"),
+    ("Conceptual.E", "ddddd3"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
 
    FAILURE DUE TO DUPLICATE DEFINITION BUG 
 *)

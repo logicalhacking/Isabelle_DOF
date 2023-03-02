@@ -132,7 +132,6 @@ DOF_core.get_attribute_info  "Conceptual.C" "z" @{theory};
 ML\<open>
 DOF_core.get_value_local "sdf"   @{context};
 DOF_core.get_value_local "sdfg"  @{context};
-DOF_core.get_value_local "xxxy"  @{context};
 DOF_core.get_value_local "dfgdfg" @{context};
 DOF_core.get_value_local "omega" @{context};
 \<close>
@@ -242,8 +241,6 @@ term*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
 value*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
 term*\<open>map fst @{trace-attribute \<open>aaa\<close>}\<close>
 value*\<open>map fst @{trace-attribute \<open>aaa\<close>}\<close>
-term*\<open>map fst @{trace-attribute \<open>test_monitor_M\<close>}\<close>
-value*\<open>map fst @{trace-attribute \<open>test_monitor_M\<close>}\<close>
 
 definition example_expression where "example_expression \<equiv> \<lbrace>\<lfloor>''Conceptual.A''\<rfloor> || \<lfloor>''Conceptual.F''\<rfloor>\<rbrace>\<^sup>*"
 value* \<open> DA.accepts (na2da (rexp2na example_expression)) (map fst @{trace-attribute \<open>aaa\<close>}) \<close>

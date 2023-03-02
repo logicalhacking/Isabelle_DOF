@@ -5,6 +5,7 @@ session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" +
     "Latex_Tests"
     "Concept_OntoReferencing"
     "Concept_Example_Low_Level_Invariant"
+    "Concept_MonitorTest1"
     "TermAntiquotations"
     "Attributes"
     "Evaluation"
