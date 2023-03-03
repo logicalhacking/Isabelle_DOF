@@ -89,9 +89,7 @@ ML*[ddddd2::C]\<open>fun fac x = if x = 0 then 1 else x * (fac(x-1))\<close> (* 
 
 lemma*[ddddd3::E] asd: "True" by simp
 
-(* BUG This does not work yet:
-definition*[dddddd3::E] facu : "nat \<Rightarrow> nat" where "facu x = undefined"
-*)
+definition*[dddddd3::E] facu :: "nat \<Rightarrow> nat" where "facu xxxx = undefined"
 
 (* BUG 
 text\<open>As shown in @{E \<open>ddddd3\<close>}\<close>
