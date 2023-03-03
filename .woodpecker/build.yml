@@ -41,7 +41,7 @@ pipeline:
         from_secret: artifacts_ssh
       user: artifacts
   notify:
-    image: drillster/drone-email
+    image: docker.io/drillster/drone-email
     settings:
       host: smtp.0x5f.org
       username: woodpecker
