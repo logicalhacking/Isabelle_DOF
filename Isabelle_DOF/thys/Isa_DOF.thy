@@ -142,6 +142,9 @@ fun map_snd f (x,y) = (x,f y)
 
 fun map_eq_fst_triple f (x,_,_) (y,_,_) = equal (f x) (f y)
 
+fun lst_and_fun _ [] = true
+  | lst_and_fun x (f::fs) =  (f x) andalso (lst_and_fun x fs)
+
 \<close>
 
 section\<open> A HomeGrown Document Type Management (the ''Model'') \<close>
@@ -351,7 +354,12 @@ struct
     | NONE => raise TYPE ("Unknown isa_transformer: " ^ quote i, [], []));
 
 
-  type ml_invariant = string -> {is_monitor:bool} -> Context.generic -> bool
+  datatype ml_invariant = ML_Invariant of
+    {check : string -> {is_monitor:bool} -> Context.generic -> bool
+     , class : string}
+
+  fun make_ml_invariant (check, class) =
+    ML_Invariant {check = check, class = class}
 
   structure ML_Invariants = Theory_Data
   (
@@ -486,8 +494,8 @@ struct
 
   fun make_monitor_info (accepted_cids, rejected_cids, automatas) =
     Monitor_Info {accepted_cids = accepted_cids,
-                      rejected_cids = rejected_cids,
-                      automatas = automatas}
+                  rejected_cids = rejected_cids,
+                  automatas = automatas}
 
   structure Monitor_Info = Theory_Data
   (
@@ -1605,11 +1613,17 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
       val _ = if null enabled_monitors then () else writeln "registrating in monitors ..." 
       val _ = app (fn (n, _) => writeln(oid^" : "^cid_long^" ==> "^n)) enabled_monitors;
        (* check that any transition is possible : *)
-      fun inst_class_inv x = let val invs = DOF_core.get_ml_invariants ctxt
-                                 val check_option = Name_Space.lookup invs (cid_of x)
-                             in case check_option of
-                                   NONE => (K true)
-                                 | SOME check => (check x {is_monitor=false}) end
+      fun inst_class_inv x ctxt = 
+         let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
+                        |> Name_Space.dest_table
+             val check_list = invs |> filter (fn (_, inv) =>
+                          let val DOF_core.ML_Invariant {class, ...} = inv
+                          in class |> equal x end)
+                                   |>  map (fn (_, inv) =>
+                          let val DOF_core.ML_Invariant {check, ...} = inv
+                          in check end)
+             val check_list' = check_list |> map (fn check => check x {is_monitor=false})
+         in (lst_and_fun ctxt check_list') end
       fun class_inv_checks ctxt = map (fn (x, _) => inst_class_inv x ctxt) enabled_monitors
       val delta_autoS = map is_enabled_for_cid  enabled_monitors; 
       fun update_info (n, aS, monitor_info) =  
@@ -1737,12 +1751,18 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} oi
                                                                         thy cid_long assns' defaults
                                   in (input_term, value_term') end
                              else (\<^term>\<open>()\<close>, value_term') end
-    val check_inv = Context.Theory
-                    #> (let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
-                            val check_option = Name_Space.lookup invs cid_long
-                        in case check_option of
-                              NONE => (K true)
-                            | SOME check => (check oid is_monitor) end)
+    fun check_inv thy =
+      thy |> Context.Theory
+          |> (fn ctxt => let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
+                                       |> Name_Space.dest_table
+                             val check_list = invs |> filter (fn (_, inv) =>
+                                              let val DOF_core.ML_Invariant {class, ...} = inv
+                                              in class |> equal cid_long end)
+                                                   |>  map (fn (_, inv) =>
+                                              let val DOF_core.ML_Invariant {check, ...} = inv
+                                              in check end)
+                             val check_list' = check_list |> map (fn check => check oid is_monitor)
+                         in (lst_and_fun ctxt check_list') end)
   in thy |> DOF_core.define_object_global
               {define = define} ((oid, pos), DOF_core.make_instance
                                                (false, fst value_terms,
@@ -1752,13 +1772,18 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} oi
          |> register_oid_cid_in_open_monitors oid pos cid_pos'
          |> (fn thy => if #is_monitor(is_monitor)
                        then ((Context.Theory
-                              #> (let val invs = DOF_core.get_opening_ml_invariants (Proof_Context.init_global thy)
-                                      val check_option = Name_Space.lookup invs cid_long
-                                  in case check_option of
-                                         NONE => (K true)
-                                       | SOME check => (check oid is_monitor) end)) thy; thy)
+                              #> (fn ctxt => let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
+                                                            |> Name_Space.dest_table
+                                                 val check_list = invs |> filter (fn (_, inv) =>
+                                              let val DOF_core.ML_Invariant {class, ...} = inv
+                                              in class |> equal cid_long end)
+                                                                       |>  map (fn (_, inv) =>
+                                              let val DOF_core.ML_Invariant {check, ...} = inv
+                                              in check end)
+                                                 val check_list' = check_list |> map (fn check => check oid is_monitor)
+                                              in (lst_and_fun ctxt check_list') end)) thy; thy)
                         else thy)
-         |> (fn thy => (check_inv thy; thy))
+         |> tap check_inv
          (* Bypass checking of high-level invariants when the class default_cid = "text",
             the top (default) document class.
             We want the class default_cid to stay abstract
@@ -1953,12 +1978,17 @@ fun update_instance_command  (((oid, pos), cid_pos),
                                                                                 thy cid_long assns')
                   #> Value_Command.value (Proof_Context.init_global thy)
                 fun check_inv thy =
-                      ((Context.Theory
-                        #> (let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
-                                val check_option = Name_Space.lookup invs cid_long
-                            in case check_option of
-                                  NONE => (K true)
-                                | SOME check => (check oid {is_monitor=false}) end) ) thy ; thy)
+                        ((Context.Theory
+                        #> (fn ctxt => let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
+                                                      |> Name_Space.dest_table
+                                           val check_list = invs |> filter (fn (_, inv) =>
+                                              let val DOF_core.ML_Invariant {class, ...} = inv
+                                              in class |> equal cid_long end)
+                                                                 |>  map (fn (_, inv) =>
+                                              let val DOF_core.ML_Invariant {check, ...} = inv
+                                              in check end)
+                                           val check_list' = check_list |> map (fn check => check oid {is_monitor=false})
+                                       in (lst_and_fun ctxt check_list') end) ) thy ; thy)
             in     
                 thy |> (if Config.get_global thy DOF_core.object_value_debug 
                         then DOF_core.update_value_input_term_global oid
@@ -2023,22 +2053,32 @@ fun close_monitor_command (args as (((oid, pos), cid_pos),
                       |> Name_Space.markup (Name_Space.space_of_table instances)
         val _ = Context_Position.report ctxt pos markup;
         val check_inv =
-                  Context.Theory
-                  #> (let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
-                          val check_option = Name_Space.lookup invs cid_long
-                       in case check_option of
-                             NONE => (K true)
-                           | SOME check => (check oid {is_monitor=true}) end)
+                    Context.Theory
+                  #> (fn ctxt => let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
+                                                |> Name_Space.dest_table
+                                     val check_list = invs |> filter (fn (_, inv) =>
+                                              let val DOF_core.ML_Invariant {class, ...} = inv
+                                              in class |> equal cid_long end)
+                                                           |>  map (fn (_, inv) =>
+                                              let val DOF_core.ML_Invariant {check, ...} = inv
+                                              in check end)
+                                     val check_list' = check_list |> map (fn check => check oid {is_monitor=true})
+                                 in (lst_and_fun ctxt check_list') end)
         val check_closing_inv =
-                     Context.Theory
-                     #> (let val invs = DOF_core.get_closing_ml_invariants (Proof_Context.init_global thy)
-                              val check_option = Name_Space.lookup invs cid_long
-                         in case check_option of
-                                NONE => (K true)
-                              | SOME check => (check oid {is_monitor=true}) end) 
+                      Context.Theory
+                     #> (fn ctxt => let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
+                                                   |> Name_Space.dest_table
+                                        val check_list = invs |> filter (fn (_, inv) =>
+                                              let val DOF_core.ML_Invariant {class, ...} = inv
+                                              in class |> equal cid_long end)
+                                                              |>  map (fn (_, inv) =>
+                                              let val DOF_core.ML_Invariant {check, ...} = inv
+                                              in check end)
+                                        val check_list' = check_list |> map (fn check => check oid {is_monitor=true})
+                                    in (lst_and_fun ctxt check_list') end) 
     in  thy |> (fn thy => (check_closing_inv thy; thy))
             |> update_instance_command args
-            |> (fn thy => (check_inv thy; thy))
+            |> tap check_inv
             |> (fn thy => if Config.get_global thy DOF_core.invariants_checking
                           then Value_Command.Docitem_Parser.check_invariants thy (oid, pos)
                           else thy)

@@ -36,29 +36,31 @@ The implementor of an ontology must know what he does ...
 \<close>
 
 text\<open>Setting a sample invariant, which simply produces some side-effect:\<close>
+
 setup\<open>
 fn thy =>
 let val ctxt = Proof_Context.init_global thy
-    val bind = DOF_core.binding_from_onto_class_pos "A" thy
+    val cid_long = DOF_core.get_onto_class_name_global "A" thy
+    val bind = Binding.name "Sample_Echo"
     val exec = (fn oid =>  fn {is_monitor = b} => fn ctxt => 
                   (writeln ("sample echo : "^oid); true))
-in DOF_core.add_ml_invariant bind exec thy end
+in DOF_core.add_ml_invariant bind (DOF_core.make_ml_invariant (exec, cid_long)) thy end
 \<close>
 
 ML\<open>DOF_core.binding_from_onto_class_pos "A" @{theory} \<close>
 text*[b::A, x = "5"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 text\<open>Setting a sample invariant, referring to attribute value "x":\<close>
-ML\<open>
+setup\<open>
 fn thy =>
 let fun check_A_invariant oid {is_monitor:bool} ctxt =
       let val term =  ISA_core.compute_attr_access ctxt "x" oid NONE @{here} 
           val (@{typ "int"},x_value) = HOLogic.dest_number term
-    in  if x_value > 5 then error("class A invariant violation") else true end
-    val binding = DOF_core.binding_from_onto_class_pos "A" thy
-in DOF_core.add_ml_invariant binding check_A_invariant thy end
+      in  if x_value > 5 then error("class A invariant violation") else true end
+    val cid_long = DOF_core.get_onto_class_name_global "A" thy    
+    val bind = Binding.name "Check_A_Invariant"
+in DOF_core.add_ml_invariant bind (DOF_core.make_ml_invariant (check_A_invariant, cid_long)) thy end
 \<close>
-
 
 text*[d0::A, x = "5"]\<open>Lorem ipsum dolor sit amet, ...\<close>
 
@@ -88,7 +90,7 @@ that instances of class C occur more often as those of class D; note that this i
 to take sub-classing into account:
 \<close>
 
-ML\<open>
+setup\<open>
 fn thy =>
 let fun check_M_invariant oid {is_monitor} ctxt =
       let val term =  ISA_core.compute_attr_access ctxt "trace" oid NONE @{here} 
@@ -104,8 +106,9 @@ let fun check_M_invariant oid {is_monitor} ctxt =
           val n = length (filter is_C cid_list)
           val m = length (filter is_D cid_list)
       in  if m > n then error("class M invariant violation") else true end
-    val binding = DOF_core.binding_from_onto_class_pos "M" thy
-in DOF_core.add_ml_invariant binding check_M_invariant thy end
+    val cid_long = DOF_core.get_onto_class_name_global "M" thy
+    val binding = Binding.name "Check_M_Invariant"
+in DOF_core.add_ml_invariant binding (DOF_core.make_ml_invariant (check_M_invariant, cid_long)) thy end
 \<close>
 
 

@@ -495,8 +495,10 @@ let val cidS = ["scholarly_paper.introduction","scholarly_paper.technical",
                        "scholarly_paper.example", "scholarly_paper.conclusion"];
     fun body moni_oid _ ctxt = (Scholarly_paper_trace_invariant.check ctxt cidS moni_oid NONE; true)
     val ctxt = Proof_Context.init_global thy
-    val binding = DOF_core.binding_from_onto_class_pos "article" thy
-in  DOF_core.add_ml_invariant binding body thy end)
+    val cid = "article"
+    val binding = DOF_core.binding_from_onto_class_pos cid thy
+    val cid_long = DOF_core.get_onto_class_name_global cid thy
+in  DOF_core.add_ml_invariant binding (DOF_core.make_ml_invariant (body, cid_long)) thy end)
 \<close>
 
 section\<open>Miscelleous\<close>
