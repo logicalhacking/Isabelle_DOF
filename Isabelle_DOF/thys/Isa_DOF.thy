@@ -1613,12 +1613,15 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
       val _ = if null enabled_monitors then () else writeln "registrating in monitors ..." 
       val _ = app (fn (n, _) => writeln(oid^" : "^cid_long^" ==> "^n)) enabled_monitors;
        (* check that any transition is possible : *)
-      fun inst_class_inv x ctxt = 
-         let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
+      fun inst_class_inv x ctxt =
+         let val cid_long = let val DOF_core.Instance cid =
+                                           DOF_core.get_instance_global x (Context.theory_of ctxt)
+                            in cid |> #cid end
+             val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
                         |> Name_Space.dest_table
              val check_list = invs |> filter (fn (_, inv) =>
                           let val DOF_core.ML_Invariant {class, ...} = inv
-                          in class |> equal x end)
+                          in class |> equal cid_long end)
                                    |>  map (fn (_, inv) =>
                           let val DOF_core.ML_Invariant {check, ...} = inv
                           in check end)
