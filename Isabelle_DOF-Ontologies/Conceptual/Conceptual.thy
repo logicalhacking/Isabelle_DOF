@@ -212,16 +212,11 @@ let  val class_ids_so_far = ["Conceptual.A", "Conceptual.B", "Conceptual.C", "Co
 in @{assert} (class_ids_so_far = docclass_tab) end\<close>
 
 
+section\<open>For Test and Validation\<close>
 
-section*[test::A]\<open>For Test and Validation\<close>
-
-open_monitor*[aaa::M]
-text\<open>Defining some document elements to be referenced in later on in another theory: \<close>
 text*[sdf]         \<open> Lorem ipsum ... \<close>         \<comment> \<open>anonymous reference\<close>
-text*[sdfg :: F]   \<open> Lorem ipsum ...\<close>          \<comment> \<open>causes just warnings for invariant violations  
-                                                   due to non-strict checking mode\<close>
-close_monitor*[aaa]                            \<comment> \<open>causes warning: accept clause 1 
-                                                   not in final state .\<close>
+text*[sdfg :: F]   \<open> Lorem ipsum ...\<close>          \<comment> \<open>some F instance \<close>  
+
 
 
 

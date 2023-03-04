@@ -21,6 +21,8 @@ theory
   TestKit
 begin
 
+section\<open>Test Purpose.\<close>
+text\<open> Creation of document parts that are controlled by (nested, locally defined) monitors. \<close>
 
 open_monitor*[aaa::Conceptual.M]  
 text*[test::A]\<open>For Test and Validation\<close>
@@ -54,7 +56,7 @@ doc_class monitor_M =
   rejects "test_monitor_A"
   accepts "test_monitor_head ~~ test_monitor_B ~~ test_monitor_C"
 
-section\<open>Example: Standard Class Invariant\<close>
+section\<open>A more Complex Monitoring Example \<close>
 
 text\<open>Consult the status of the DOF engine:\<close>
 print_doc_classes

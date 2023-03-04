@@ -85,16 +85,26 @@ text*[d::D, a1 = "X3"] \<open> ... phasellus amet id massa nunc, pede suscipit r
 
 text\<open>Not only text-elements are "ontology-aware", proofs and code can this be too !\<close>
 
-ML*[ddddd2::C]\<open>fun fac x = if x = 0 then 1 else x * (fac(x-1))\<close> (* TODO : BUG *)
+ML*[c4::C]\<open>fun fac x = if x = 0 then 1 else x * (fac(x-1))\<close> (* TODO : BUG *)
 
-lemma*[ddddd3::E] asd: "True" by simp
+lemma*[e5::E] asd: "True" by simp
 
-definition*[dddddd3::E] facu :: "nat \<Rightarrow> nat" where "facu xxxx = undefined"
-
-(* BUG 
-text\<open>As shown in @{E \<open>ddddd3\<close>}\<close>
-text\<open>As shown in @{C \<open>ddddd2\<close>}\<close>
+(* Correct report: "Duplicate instance declaration.. " 
+declare_reference*[c1::C]     \<comment> \<open>forward declaration\<close>
 *)
+
+declare_reference*[e6::E] 
+
+text\<open>This is the answer to the "OutOfOrder Presentation Problem": @{E (unchecked) \<open>e6\<close>} \<close>
+
+definition*[e6::E] facu :: "nat \<Rightarrow> nat" where "facu arg = undefined"
+
+
+text\<open>As shown in @{E [display]\<open>e5\<close>} following from  @{E [display]\<open>e6\<close>}\<close> 
+(* BUG: why is option [display] necessary ? *)
+
+text\<open>As shown in @{C [display]\<open>c4\<close>}\<close>
+
 
 
 text\<open>Ontological information ("class instances") is mutable: \<close>
@@ -103,8 +113,8 @@ update_instance*[d::D, a1 := X2]
 
 text\<open> ... in ut tortor ... @{docitem \<open>a\<close>} ... @{A \<open>a\<close>} ... \<close> \<comment> \<open>untyped or typed referencing \<close>
 
-(* THIS IS A BUG : this should work rather than fail. \<And>\<And>! *)
-text-assert-error[ae::text_element]\<open>the function @{C "ddddd2"} \<close>\<open>referred text-element is macro!\<close>
+(* THIS IS A BUG : this weird option is necessary *)
+text-assert-error[ae::text_element]\<open>the function @{C [display] "c4"} \<close>\<open>referred text-element is macro!\<close>
 
 text*[c2::C, x = "\<open>delta\<close>"]  \<open> ... in ut tortor eleifend augue pretium consectetuer.  \<close>
 
@@ -125,19 +135,21 @@ text\<open>Here we add and maintain a link that is actually modeled as m-to-n re
 update_instance*[f::F,b:="{(@{docitem  \<open>a\<close>}::A,@{docitem  \<open>c1\<close>}::C), 
                            (@{docitem  \<open>a\<close>},   @{docitem  \<open>c2\<close>})}"] 
 
+section\<open>Closing the Monitor and testing the Results.\<close>
+
 close_monitor*[struct]
 
 text\<open>And the trace of the monitor is:\<close>
 ML\<open>val trace = @{trace_attribute struct}\<close>
+ML\<open>@{assert} (trace = 
+   [("Conceptual.A", "abbbbbb"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"), ("Conceptual.A", "abb"),
+    ("Conceptual.C", "c1"), ("Conceptual.C", "c1"), ("Conceptual.D", "d"), ("Conceptual.C", "c4"),
+    ("Conceptual.E", "e5"), ("Conceptual.E", "e6"), ("Conceptual.E", "e6"), ("Conceptual.C", "c2"),
+    ("Conceptual.F", "f")]) \<close>
+(* BUG : DECLARATIONS SHOULD NOT BE TRACED, JUST DEFINITIONS.
 ML\<open>@{assert} (trace = [("Conceptual.A", "abbbbbb"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"), 
-    ("Conceptual.A", "abb"), ("Conceptual.C", "c1"), ("Conceptual.C", "c1"), ("Conceptual.D", "d"), 
-    ("Conceptual.C", "ddddd2"),("Conceptual.E", "ddddd3"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
-(* BUG : SHOULD BE:
-ML\<open>@{assert} (trace = [("Conceptual.A", "abbbbbb"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"), ("Conceptual.A", "abb"),
-    ("Conceptual.C", "c1"), ("Conceptual.D", "d"), ("Conceptual.C", "ddddd2"),
-    ("Conceptual.E", "ddddd3"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
-
-   FAILURE DUE TO DUPLICATE DEFINITION BUG 
+    ("Conceptual.A", "abb"), ("Conceptual.C", "c1"), ("Conceptual.D", "d"), ("Conceptual.C", "c4"),
+    ("Conceptual.E", "e5"), ("Conceptual.E", "e6"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
 *)
 
 text\<open>Note that the monitor \<^typ>\<open>M\<close> of the ontology \<^theory>\<open>Isabelle_DOF-Ontologies.Conceptual\<close> does

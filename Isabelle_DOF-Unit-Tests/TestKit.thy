@@ -16,8 +16,9 @@ theory
 imports 
   "Isabelle_DOF-Unit-Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual"
-keywords "text-" "text-latex"    :: document_body
-    and  "text-assert-error":: document_body
+keywords "text-" "text-latex"           :: document_body
+    and  "text-assert-error"            :: document_body
+    and  "update_instance-assert-error" :: document_body
 
 begin
 
@@ -117,35 +118,38 @@ fun document_command2 markdown (loc, txt) =
                     | SOME (_, pos) =>(ISA_core.err 
                                            "Illegal target specification -- not a theory context" 
                                            pos))) 
- o 
-  Toplevel.present_local_theory loc                           
-                (fn state =>  (output_document2 state markdown txt));
+  o 
+  Toplevel.present_local_theory loc (fn state => (output_document2 state markdown txt));
 
-fun document_command3 markdown (loc, txt) trns = (document_command2 markdown (loc, txt) trns
-                                                  handle exn => ((writeln "AAA"); trns))
 
-fun gen_enriched_document_command3 assert name body cid_transform attr_transform markdown
-                                  (((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t,
-                                     xstring_opt:(xstring * Position.T) option),
-                                    src_list:Input.source list) thy
- = (gen_enriched_document_command2 name body cid_transform attr_transform markdown 
-                                  (((((oid,pos),cid_pos), doc_attrs), xstring_opt), src_list) 
-                                  thy)
+fun gen_enriched_document_command3 assert name body trans at md (margs, src_list) thy
+ = (gen_enriched_document_command2 name body trans at md  (margs, src_list)  thy)
    handle ERROR msg => (if assert src_list msg then (writeln ("Correct error:"^msg^":reported.");thy)
                                                else error"Wrong error reported")
 
-fun  error_match [_, src] msg = (writeln((Input.string_of src));
-                                 String.isPrefix (Input.string_of src) msg )
-   | error_match _ _ = error "Wrong text-assertion-error. Argument format <arg><match> required."
+fun error_match src msg = (writeln((Input.string_of src)); String.isPrefix (Input.string_of src) msg)
+
+fun  error_match2 [_, src] msg = error_match src msg
+   | error_match2 _ _ = error "Wrong text-assertion-error. Argument format <arg><match> required."
 
 
 val _ =
   Outer_Syntax.command ("text-assert-error", @{here}) "formal comment macro"
     (ODL_Meta_Args_Parser.attributes -- Parse.opt_target -- Scan.repeat1 Parse.document_source 
-      >> (Toplevel.theory o (gen_enriched_document_command3 error_match "TTT" {body=true}
+      >> (Toplevel.theory o (gen_enriched_document_command3 error_match2 "TTT" {body=true}
                                                             I I {markdown = true}) 
                             ));
 
+fun update_instance_command (args,src) thy = 
+    (Monitor_Command_Parser.update_instance_command args thy
+     handle ERROR msg => (if error_match src msg 
+                          then (writeln ("Correct error:"^msg^":reported.");thy)
+                          else error"Wrong error reported"))
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>update_instance-assert-error\<close>
+                       "update meta-attributes of an instance of a document class"
+                        (ODL_Meta_Args_Parser.attributes_upd -- Parse.document_source
+                         >> (Toplevel.theory o update_instance_command)); 
 
 val _ =
   Outer_Syntax.command ("text-latex", \<^here>) "formal comment (primary style)"

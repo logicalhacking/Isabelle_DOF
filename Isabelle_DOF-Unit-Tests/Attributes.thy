@@ -16,6 +16,7 @@ theory
   imports 
   "Isabelle_DOF-Unit-Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual"
+  Concept_MonitorTest1
 begin
 ML\<open>@{assert} (1 = 1)\<close>
 section\<open>Elementar Creation of Doc-items and Access of their Attibutes\<close>
@@ -36,10 +37,7 @@ Name_Space.dest_table docclass_tab;
 
 \<close>
 
-ML\<open>
-val (oid, DOF_core.Instance {value, ...}) =
-    Name_Space.check (Context.Proof \<^context>) (DOF_core.get_instances \<^context>) ("aaa", Position.none)
-\<close>
+
 
 find_theorems (60) name:"Conceptual.M." 
 
@@ -235,12 +233,13 @@ ML  \<open>@{trace_attribute figs1}\<close>
 text\<open>Resulting trace of figs as text antiquotation:\<close>
 text\<open>@{trace_attribute figs1}\<close>
 
+
+section\<open>A Complex Evaluation involving Automatas\<close>
+
 text\<open>Test trace\_attribute term antiquotation:\<close>
 
 term*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
 value*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
-term*\<open>map fst @{trace-attribute \<open>aaa\<close>}\<close>
-value*\<open>map fst @{trace-attribute \<open>aaa\<close>}\<close>
 
 definition example_expression where "example_expression \<equiv> \<lbrace>\<lfloor>''Conceptual.A''\<rfloor> || \<lfloor>''Conceptual.F''\<rfloor>\<rbrace>\<^sup>*"
 value* \<open> DA.accepts (na2da (rexp2na example_expression)) (map fst @{trace-attribute \<open>aaa\<close>}) \<close>

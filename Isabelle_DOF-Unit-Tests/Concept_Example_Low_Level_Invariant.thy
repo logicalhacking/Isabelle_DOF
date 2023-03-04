@@ -11,21 +11,26 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-chapter\<open>Setting and modifying attributes of doc-items\<close>
+chapter\<open>Testing hand-programmed (low-level) Invariants\<close>
 
-theory 
-  Concept_Example_Low_Level_Invariant
+theory   Concept_Example_Low_Level_Invariant
   imports 
   "Isabelle_DOF-Unit-Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual" (* we use the generic "Conceptual" ontology *)
   TestKit
 begin
 
-section\<open>Example: Standard Class Invariant\<close>
+section\<open>Test Purpose.\<close>
+text\<open> Via @{ML "DOF_core.add_ml_invariant"} it is possible to attach user-defined
+      ML-code to classes which is executed at each creation or modification of 
+      class instances. We test exection  of creation  and updates. \<close>
 
 text\<open>Consult the status of the DOF engine:\<close>
 print_doc_classes
 print_doc_items
+
+
+section\<open>Example: Standard Class Invariant\<close>
 
 
 text\<open>Watch out: The current programming interface to document class invariants is pretty low-level:
@@ -47,7 +52,7 @@ let val ctxt = Proof_Context.init_global thy
 in DOF_core.add_ml_invariant bind (DOF_core.make_ml_invariant (exec, cid_long)) thy end
 \<close>
 
-ML\<open>DOF_core.binding_from_onto_class_pos "A" @{theory} \<close>
+text\<open>The checker \<open>exec\<close> above is set. Just used to provoke output: "sample echo : b"\<close>
 text*[b::A, x = "5"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 text\<open>Setting a sample invariant, referring to attribute value "x":\<close>
@@ -62,15 +67,16 @@ let fun check_A_invariant oid {is_monitor:bool} ctxt =
 in DOF_core.add_ml_invariant bind (DOF_core.make_ml_invariant (check_A_invariant, cid_long)) thy end
 \<close>
 
-text*[d0::A, x = "5"]\<open>Lorem ipsum dolor sit amet, ...\<close>
+text*[d0::A, x = "5"]            \<open>Lorem ipsum dolor sit amet, ...\<close>
+text-assert-error[d1::A, x = "6"]\<open>Lorem ipsum dolor sit amet, ...\<close>\<open>class A invariant violation\<close>
 
 subsection*[d::A, x = "4"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
-(* test : update should not fail, invariant still valid *)
+(* invariant still valid *)
 update_instance*[d::A, x += "1"]
 
-(* test : with the next step it should fail : *)
-update_instance*[d::A, x += "1"]
+(* invariant no longer *)
+update_instance-assert-error[d::A, x += "1"]\<open>class A invariant violation\<close>
 
 
 section\<open>Example: Monitor Class Invariant\<close>
@@ -126,9 +132,9 @@ text*[c2:: C, x = "''delta''"]   \<open> ... in ut tortor eleifend augue pretium
 
 subsection*[f::E]                \<open> Lectus accumsan velit ultrices, ... \<close>
 
-(*
-section*[f2::E]                  \<open> Lectus accumsan velit ultrices, ... \<close>
-*)
+
+text-assert-error[f2::E]         \<open> Lectus accumsan velit ultrices, ... \<close>\<open>class M invariant violation\<close>
+
 
 ML\<open>val ctxt = @{context}
    val term = ISA_core.compute_attr_access 
