@@ -67,6 +67,7 @@ let fun check_A_invariant oid {is_monitor:bool} ctxt =
 in DOF_core.add_ml_invariant bind (DOF_core.make_ml_invariant (check_A_invariant, cid_long)) thy end
 \<close>
 
+(* borderline test *)
 text*[d0::A, x = "5"]            \<open>Lorem ipsum dolor sit amet, ...\<close>
 text-assert-error[d1::A, x = "6"]\<open>Lorem ipsum dolor sit amet, ...\<close>\<open>class A invariant violation\<close>
 
@@ -75,7 +76,7 @@ subsection*[d::A, x = "4"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 (* invariant still valid *)
 update_instance*[d::A, x += "1"]
 
-(* invariant no longer *)
+(* invariant no longer holds*)
 update_instance-assert-error[d::A, x += "1"]\<open>class A invariant violation\<close>
 
 

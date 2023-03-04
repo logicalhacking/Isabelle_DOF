@@ -11,21 +11,23 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-theory 
-  Latex_Tests
-imports 
-  "Isabelle_DOF-Unit-Tests_document"
-  "TestKit"
-keywords   "Figure*"          :: document_body  (* still experimental feature *)
+theory   Latex_Tests
+  imports    "TestKit"
+             "Isabelle_DOF-Unit-Tests_document"  
+  keywords   "Figure*"          :: document_body  (* still experimental feature *)
 
 begin
 
-section\<open>Elementary Creation of Doc-items and Access of their Attibutes\<close>
 
+section\<open>Test Purpose.\<close>
+text\<open> Testing the generation of LaTeX code. Serves in particular during development. \<close>
 
 text\<open>Output status:\<close>
 print_doc_classes
 print_doc_items
+
+
+section\<open>Elementary Creation of Doc-items and Access of their Attibutes\<close>
 
 
 text\<open>And here a tex - text macro.\<close>
@@ -108,6 +110,8 @@ setup\<open>DOF_lib.define_macro (Binding.make("blong",\<^here>)) "\\blong{" "}"
 (*<*)
 text-latex\<open> \<^blong>\<open>asd\<close> outer  \<^blong>\<open>syntax| ! see {syntax, outer}\<close> \<close>
 (*>*)
+
+section\<open>Experimental Code and Test of advanced LaTeX for free-form text units\<close>
 
 ML\<open>
 
@@ -237,8 +241,7 @@ text-latex\<open>
 
 
 
-section\<open>Section Experiments of picture-content\<close>
-
+section\<open>Experimental Section for Multiple Figure Content\<close>
 
 ML\<open>
 

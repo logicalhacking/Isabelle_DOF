@@ -13,12 +13,10 @@
 
 chapter\<open>Creating and Referencing Ontological Instances\<close>
 
-theory 
-  Concept_OntoReferencing
-  imports 
-  "Isabelle_DOF-Unit-Tests_document"
-  "Isabelle_DOF-Ontologies.Conceptual" 
-  "TestKit"
+theory   Concept_OntoReferencing
+  imports   "TestKit"
+            "Isabelle_DOF-Unit-Tests_document"
+            "Isabelle_DOF-Ontologies.Conceptual" 
 begin
 
 section\<open>Test Purpose.\<close>
@@ -89,9 +87,7 @@ ML*[c4::C]\<open>fun fac x = if x = 0 then 1 else x * (fac(x-1))\<close> (* TODO
 
 lemma*[e5::E] asd: "True" by simp
 
-(* Correct report: "Duplicate instance declaration.. " 
-declare_reference*[c1::C]     \<comment> \<open>forward declaration\<close>
-*)
+declare_reference-assert-error[c1::C]\<open>Duplicate instance declaration\<close>     \<comment> \<open>forward declaration\<close>
 
 declare_reference*[e6::E] 
 
@@ -101,7 +97,7 @@ definition*[e6::E] facu :: "nat \<Rightarrow> nat" where "facu arg = undefined"
 
 
 text\<open>As shown in @{E [display]\<open>e5\<close>} following from  @{E [display]\<open>e6\<close>}\<close> 
-(* BUG: why is option [display] necessary ? *)
+(* BUG ?: why is option [display] necessary ? *)
 
 text\<open>As shown in @{C [display]\<open>c4\<close>}\<close>
 
