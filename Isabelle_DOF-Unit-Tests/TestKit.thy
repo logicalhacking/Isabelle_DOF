@@ -16,35 +16,17 @@ theory
 imports 
   "Isabelle_DOF-Unit-Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual"
-keywords "text-" "text-latex"           :: document_body
-    and  "text-assert-error"            :: document_body
-    and  "update_instance-assert-error" :: document_body
+keywords "text-" "text-latex"             :: document_body
+    and  "text-assert-error"              :: document_body
+    and  "update_instance-assert-error"   :: document_body
+    and  "declare_reference-assert-error" :: document_body
 
 begin
 
-section\<open>Elementary Creation of Doc-items and Access of their Attibutes\<close>
-
-
-text\<open>Current status:\<close>
-print_doc_classes
-print_doc_items
-
-(* this corresponds to low-level accesses : *)
-ML\<open>
-val docitem_tab = DOF_core.get_instances \<^context>;
-val isa_transformer_tab = DOF_core.get_isa_transformers \<^context>;
-val docclass_tab = DOF_core.get_onto_classes \<^context>;
-
-Name_Space.dest_table docitem_tab;
-Name_Space.dest_table isa_transformer_tab;
-Name_Space.dest_table docclass_tab;
-app;
-\<close>
+section\<open>Testing Commands (exec-catch-verify - versions of std commands)\<close>
 
 
 ML\<open> 
-
-val _ = Document_Output.document_output
 
 fun gen_enriched_document_command2 name {body} cid_transform attr_transform markdown
                                   (((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t,
@@ -151,10 +133,25 @@ val _ =
                         (ODL_Meta_Args_Parser.attributes_upd -- Parse.document_source
                          >> (Toplevel.theory o update_instance_command)); 
 
+val _ = 
+  let fun create_and_check_docitem ((((oid, pos),cid_pos),doc_attrs),src) thy=
+                  (Value_Command.Docitem_Parser.create_and_check_docitem
+                          {is_monitor = false} {is_inline=true}
+                          {define = false} oid pos (cid_pos) (doc_attrs) thy)
+                   handle ERROR msg => (if error_match src msg 
+                          then (writeln ("Correct error:"^msg^":reported.");thy)
+                          else error"Wrong error reported")
+  in  Outer_Syntax.command \<^command_keyword>\<open>declare_reference-assert-error\<close>
+                       "declare document reference"
+                       (ODL_Meta_Args_Parser.attributes -- Parse.document_source
+                        >> (Toplevel.theory o create_and_check_docitem))
+  end;
+
+
+
 val _ =
   Outer_Syntax.command ("text-latex", \<^here>) "formal comment (primary style)"
     (Parse.opt_target -- Parse.document_source >> document_command2 {markdown = true});
-
 
 \<close>
 
@@ -162,8 +159,6 @@ val _ =
 text-latex\<open>dfg\<close>
 
 text-assert-error[aaaa::A]\<open> @{A \<open>sdf\<close>}\<close>\<open>reference ontologically inconsistent\<close>
-
-ML\<open>String.isPrefix "ab" "abc"\<close>
 
 end
 (*>*)
