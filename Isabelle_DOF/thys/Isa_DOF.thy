@@ -2228,13 +2228,18 @@ val _ =
     {markdown = true, body = true}
     (gen_enriched_document_cmd {inline=false} (* declare as macro *) I I);
 
-val _ =
-  Outer_Syntax.command \<^command_keyword>\<open>declare_reference*\<close>
+ 
+
+val _ = 
+  let fun create_and_check_docitem (((oid, pos),cid_pos),doc_attrs) 
+                 = (Value_Command.Docitem_Parser.create_and_check_docitem
+                          {is_monitor = false} {is_inline=true}
+                          {define = false} oid pos (cid_pos) (doc_attrs))
+  in  Outer_Syntax.command \<^command_keyword>\<open>declare_reference*\<close>
                        "declare document reference"
-                       (ODL_Meta_Args_Parser.attributes >> (fn (((oid, pos),cid_pos),doc_attrs) =>  
-                  (Toplevel.theory (Value_Command.Docitem_Parser.create_and_check_docitem
-                                                  {is_monitor = false} {is_inline=true}
-                                                  {define = false} oid pos (cid_pos) (doc_attrs)))));
+                       (ODL_Meta_Args_Parser.attributes 
+                        >> (Toplevel.theory o create_and_check_docitem))
+  end;
 
 end (* structure Monitor_Command_Parser *)
 \<close>
