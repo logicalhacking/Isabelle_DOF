@@ -95,7 +95,6 @@ text\<open>And here is the results of some ML-term antiquotations:\<close>
 ML\<open> @{docitem_attribute b::xcv4} \<close>
 ML\<open> @{docitem xcv4}              \<close>
 ML\<open> @{docitem_name xcv4}         \<close>
-ML\<open> @{trace_attribute aaa}       \<close>
 
 text\<open>Now we might need to reference a class instance in a term command and we would like
 Isabelle to check that this instance is indeed an instance of this class.

@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019      The University of Exeter 
- *               2018-2019 The University of Paris-Saclay
+ *               2019-2023 The University of Exeter 
+ *               2018-2023 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -11,20 +11,26 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-chapter\<open>Setting and modifying attributes of doc-items\<close>
+chapter\<open>Testing hand-programmed (low-level) Invariants\<close>
 
-theory 
-  Concept_Example_Low_Level_Invariant
+theory   Concept_Example_Low_Level_Invariant
   imports 
   "Isabelle_DOF-Unit-Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual" (* we use the generic "Conceptual" ontology *)
+  TestKit
 begin
 
-section\<open>Example: Standard Class Invariant\<close>
+section\<open>Test Purpose.\<close>
+text\<open> Via @{ML "DOF_core.add_ml_invariant"} it is possible to attach user-defined
+      ML-code to classes which is executed at each creation or modification of 
+      class instances. We test exection  of creation  and updates. \<close>
 
-text\<open>Status:\<close>
+text\<open>Consult the status of the DOF engine:\<close>
 print_doc_classes
 print_doc_items
+
+
+section\<open>Example: Standard Class Invariant\<close>
 
 
 text\<open>Watch out: The current programming interface to document class invariants is pretty low-level:
@@ -35,39 +41,44 @@ The implementor of an ontology must know what he does ...
 \<close>
 
 text\<open>Setting a sample invariant, which simply produces some side-effect:\<close>
+
 setup\<open>
 fn thy =>
 let val ctxt = Proof_Context.init_global thy
-    val binding = DOF_core.binding_from_onto_class_pos "A" thy
-in DOF_core.add_ml_invariant binding (fn oid =>
-                                         fn {is_monitor = b} =>
-                                            fn ctxt => 
-                                               (writeln ("sample echo : "^oid); true)) thy end
+    val cid_long = DOF_core.get_onto_class_name_global "A" thy
+    val bind = Binding.name "Sample_Echo"
+    val exec = (fn oid =>  fn {is_monitor = b} => fn ctxt => 
+                  (writeln ("sample echo : "^oid); true))
+in DOF_core.add_ml_invariant bind (DOF_core.make_ml_invariant (exec, cid_long)) thy end
 \<close>
 
-subsection*[b::A, x = "5"] \<open> Lorem ipsum dolor sit amet, ... \<close>
-
+text\<open>The checker \<open>exec\<close> above is set. Just used to provoke output: "sample echo : b"\<close>
+text*[b::A, x = "5"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 text\<open>Setting a sample invariant, referring to attribute value "x":\<close>
-ML\<open>
+setup\<open>
 fn thy =>
 let fun check_A_invariant oid {is_monitor:bool} ctxt =
       let val term =  ISA_core.compute_attr_access ctxt "x" oid NONE @{here} 
           val (@{typ "int"},x_value) = HOLogic.dest_number term
-    in  if x_value > 5 then error("class A invariant violation") else true end
-    val binding = DOF_core.binding_from_onto_class_pos "A" thy
-in DOF_core.add_ml_invariant binding check_A_invariant thy end
+      in  if x_value > 5 then error("class A invariant violation") else true end
+    val cid_long = DOF_core.get_onto_class_name_global "A" thy    
+    val bind = Binding.name "Check_A_Invariant"
+in DOF_core.add_ml_invariant bind (DOF_core.make_ml_invariant (check_A_invariant, cid_long)) thy end
 \<close>
 
+(* borderline test *)
+text*[d0::A, x = "5"]            \<open>Lorem ipsum dolor sit amet, ...\<close>
+text-assert-error[d1::A, x = "6"]\<open>Lorem ipsum dolor sit amet, ...\<close>\<open>class A invariant violation\<close>
 
 subsection*[d::A, x = "4"] \<open> Lorem ipsum dolor sit amet, ... \<close>
 
-(* test : update should not fail, invariant still valid *)
+(* invariant still valid *)
 update_instance*[d::A, x += "1"]
 
-(* test : with the next step it should fail : 
-update_instance*[d::A, x += "1"]
-*)
+(* invariant no longer holds*)
+update_instance-assert-error[d::A, x += "1"]\<open>class A invariant violation\<close>
+
 
 section\<open>Example: Monitor Class Invariant\<close>
 
@@ -86,7 +97,7 @@ that instances of class C occur more often as those of class D; note that this i
 to take sub-classing into account:
 \<close>
 
-ML\<open>
+setup\<open>
 fn thy =>
 let fun check_M_invariant oid {is_monitor} ctxt =
       let val term =  ISA_core.compute_attr_access ctxt "trace" oid NONE @{here} 
@@ -102,8 +113,9 @@ let fun check_M_invariant oid {is_monitor} ctxt =
           val n = length (filter is_C cid_list)
           val m = length (filter is_D cid_list)
       in  if m > n then error("class M invariant violation") else true end
-    val binding = DOF_core.binding_from_onto_class_pos "M" thy
-in DOF_core.add_ml_invariant binding check_M_invariant thy end
+    val cid_long = DOF_core.get_onto_class_name_global "M" thy
+    val binding = Binding.name "Check_M_Invariant"
+in DOF_core.add_ml_invariant binding (DOF_core.make_ml_invariant (check_M_invariant, cid_long)) thy end
 \<close>
 
 
@@ -121,9 +133,9 @@ text*[c2:: C, x = "''delta''"]   \<open> ... in ut tortor eleifend augue pretium
 
 subsection*[f::E]                \<open> Lectus accumsan velit ultrices, ... \<close>
 
-(*
-section*[f2::E]                  \<open> Lectus accumsan velit ultrices, ... \<close>
-*)
+
+text-assert-error[f2::E]         \<open> Lectus accumsan velit ultrices, ... \<close>\<open>class M invariant violation\<close>
+
 
 ML\<open>val ctxt = @{context}
    val term = ISA_core.compute_attr_access 

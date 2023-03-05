@@ -2,14 +2,16 @@ pipeline:
   build:
     image: docker.io/logicalhacking/isabelle-dev
     commands:
-      - ./.woodpecker/check_dangeling_theories
+      - ./.woodpecker/check_dangling_theories
       - ./.woodpecker/check_external_file_refs
+      - ./.woodpecker/check_quick_and_dirty
       - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO/$CI_BRANCH/$CI_BUILD_NUMBER/$LATEX
       - mkdir -p $ARTIFACT_DIR
       - export `isabelle getenv ISABELLE_HOME_USER`
       - mkdir -p $ISABELLE_HOME_USER/etc
       - echo "ISABELLE_PDFLATEX=\"$LATEX --file-line-error\"" >> $ISABELLE_HOME_USER/etc/settings
-      - isabelle build -v -x HOL-Proofs -x Isabelle_DOF-Proofs -D . -o browser_info
+      - isabelle build -x HOL-Proofs -x Isabelle_DOF-Proofs -D . -o browser_info
+      - if [ "$LATEX" = "lualatex" ]; then isabelle build -o 'timeout_scale=2' -D . -o browser_info; else echo "Skipping Isabelle_DOF-Proofs for pdflatex build."; fi
       - isabelle components -u .
       - isabelle dof_mkroot -q DOF_test
       - isabelle build -D DOF_test
@@ -40,7 +42,7 @@ pipeline:
         from_secret: artifacts_ssh
       user: artifacts
   notify:
-    image: drillster/drone-email
+    image: docker.io/drillster/drone-email
     settings:
       host: smtp.0x5f.org
       username: woodpecker

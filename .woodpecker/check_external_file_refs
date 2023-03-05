@@ -1,4 +1,20 @@
 #!/bin/sh
+
+
+
+failuremsg="Error"
+failurecode=1
+
+while [ $# -gt 0 ]
+do
+    case "$1" in
+        --warning|-w)
+            failuremsg="Warning"
+            failurecode=0;;
+    esac
+    shift
+done
+
 DIRREGEXP="\\.\\./"
 
 echo "Checking for references pointing outside of session directory:"
@@ -21,8 +37,8 @@ done
 
 
 if [ "$failed" -ne 0 ] ; then
-    echo "Error: Forbidden reference to files outside of their session directory!" 
-    exit 1
+    echo "$failuremsg: Forbidden reference to files outside of their session directory!" 
+    exit $failurecode 
 fi
 
 echo "  * Success: No relative references to files outside of their session directory found."

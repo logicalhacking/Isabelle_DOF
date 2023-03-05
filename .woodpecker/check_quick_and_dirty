@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -e
+
+failuremsg="Error"
+failurecode=1
+
+while [ $# -gt 0 ]
+do
+    case "$1" in
+        --warning|-w)
+            failuremsg="Warning"
+            failurecode=0;;
+    esac
+    shift
+done
+
+echo "Checking for sessions with quick_and_dirty mode enabled:"
+echo "========================================================"
+
+rootlist=`find -name 'ROOT' -exec grep -l 'quick_and_dirty *= *true' {} \;`
+
+if [ -z "$rootlist" ] ; then
+    echo "  * Success: No sessions with quick_and_dirty mode enabled found."
+    exit 0
+else
+    echo -e "$rootlist"
+    echo "$failuremsg: Sessions with quick_and_dirty mode enabled found (see list above)!" 
+    exit $failurecode 
+fi

@@ -1038,8 +1038,10 @@ fun check_sil oid _ ctxt =
 setup\<open>
 (fn thy =>
 let val ctxt = Proof_Context.init_global thy
-    val binding = DOF_core.binding_from_onto_class_pos "monitor_SIL0" thy
-in  DOF_core.add_ml_invariant binding check_sil thy end)
+    val cid = "monitor_SIL0"
+    val binding = DOF_core.binding_from_onto_class_pos cid thy
+    val cid_long = DOF_core.get_onto_class_name_global cid thy
+in  DOF_core.add_ml_invariant binding (DOF_core.make_ml_invariant (check_sil, cid_long)) thy end)
 \<close>
 
 text\<open>
@@ -1114,8 +1116,11 @@ fun check_required_documents oid _ ctxt =
 setup\<open>
 fn thy =>
 let val ctxt = Proof_Context.init_global thy
-    val binding = DOF_core.binding_from_onto_class_pos "monitor_SIL0" thy
-in  DOF_core.add_closing_ml_invariant binding check_required_documents thy end
+    val cid = "monitor_SIL0"
+    val binding = DOF_core.binding_from_onto_class_pos cid thy
+    val cid_long = DOF_core.get_onto_class_name_global cid thy
+in  DOF_core.add_closing_ml_invariant binding 
+      (DOF_core.make_ml_invariant (check_required_documents, cid_long)) thy end
 \<close>
 
 (* Test pattern matching for the records of the current CENELEC implementation classes,
