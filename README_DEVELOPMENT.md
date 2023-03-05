@@ -14,18 +14,17 @@ Isabelle/DOF has three major prerequisites:
   [TeX Live 2022](https://www.tug.org/texlive/) with all available updates
   applied.
 
-
 ### Note on Installing the AFP
 
 Depending on your personal preference, there are two alternative approaches to
-providing the necessary AFP entries for the latest official release of Isabelle. 
+providing the necessary AFP entries for the latest official release of Isabelle.
 Both have their own advantages and disadvantages.
 
 #### Variant 1: Installing the Complete AFP
 
 If you use the AFP with other Isabelle projects, you might want to install the
 complete AFP. For this, please follow the instructions given at
-<https://www.isa-afp.org/using.html>. 
+<https://www.isa-afp.org/using.html>.
 <!--
 As Isabelle session names need to be
 unique, you will need to disable the entries ``Isabelle_DOF`` and
@@ -35,9 +34,9 @@ directory in which you installed the AFP) and delete the two entries
 ``Isabelle_DOF`` and ``Isabelle_DOF-Example-Scholarly_Paper``.
 -->
 
-For the development version of Isabelle, installing the complete AFP 
+For the development version of Isabelle, installing the complete AFP
 by cloning the [afp-devel](https://foss.heptapod.net/isa-afp/afp-devel/)
-repository is the only supported installation method. 
+repository is the only supported installation method.
 
 #### Variant 2: Installing Only the Required AFP Entries
 
@@ -49,8 +48,7 @@ not registered as an Isabelle component. It can be executed as follows:
 foo@bar:~$ isabelle env install-afp
 ```
 
-Note that this option is not supported for the development version of 
-Isabelle. 
+Note that this option is not supported for the development version of Isabelle.
 
 ## Installation
 
