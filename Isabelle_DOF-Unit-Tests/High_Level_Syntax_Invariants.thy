@@ -1,10 +1,51 @@
+(*************************************************************************
+ * Copyright (C) 
+ *               2019-2023 The University of Exeter 
+ *               2018-2023 The University of Paris-Saclay
+ *               2018      The University of Sheffield
+ *
+ * License:
+ *   This program can be redistributed and/or modified under the terms
+ *   of the 2-clause BSD-style license.
+ *
+ *   SPDX-License-Identifier: BSD-2-Clause
+ *************************************************************************)
+
 chapter\<open>High level syntax Invariants\<close>
 
 theory High_Level_Syntax_Invariants
   imports "Isabelle_DOF.Isa_DOF"
-  "Isabelle_DOF-Unit-Tests_document"
-
+          "Isabelle_DOF-Unit-Tests_document"
+          TestKit
 begin
+
+section\<open>Test Purpose.\<close>
+text\<open>
+  Without invariants, ontological classes as such are too liberal in many situations.
+  Similarly to UML constraints, invariants or hand-programmed checking functions
+  can be added in ODL ontologies in order to constrain class instances or
+  (via monitor traces) impose structural constraints over an entire document.
+
+  While hand-programmed checking functions were tested in test-case 
+  \<^verbatim>\<open>Concept_Example_Low_Level_Invariant\<close>, in this text case, we test 
+  high-level invariants, i.e. data-constraints speicified as executable 
+  HOL-predicates in the @{theory_text \<open>invariant\<close>} clause of ODL definitions.
+
+  To enable the checking of the invariants, the \<open>invariants_checking\<close>
+  theory attribute must be set:\<close>
+
+
+section\<open>The Scenario.\<close>
+
+text\<open> This is merely an example that shows that the generated invariants
+      fit nicely together; i.e. allow for sensible consistency and invariant
+      preservation proofs related to ontological matchings. \<close>
+
+
+text\<open>Using HOL, we can define a mapping between two ontologies.
+  It is called ontology matching or ontology alignment.
+  Here is an example which show how to map two classes.
+  HOL also allows us to map the invariants (ontological rules) of the classes!\<close>
 
 text\<open>
   Ontological classes as described so far are too liberal in many situations.
