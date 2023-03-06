@@ -143,18 +143,11 @@ text\<open>And the trace of the monitor is:\<close>
 ML\<open>val trace = @{trace_attribute struct}\<close>
 ML\<open>@{assert} (trace = 
    [("Conceptual.A", "a0"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"),
-    ("Conceptual.A", "ac"), ("Conceptual.C", "c1"), ("Conceptual.A", "a1"),
-    ("Conceptual.C", "c1"), ("Conceptual.D", "d"), ("Conceptual.C", "c4"),
-    ("Conceptual.A", "a2"), ("Conceptual.E", "e5"), ("Conceptual.E", "e6"),
-    ("Conceptual.E", "e6"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
-(* BUG : DECLARATIONS SHOULD NOT BE TRACED, JUST DEFINITIONS.
-ML\<open>@{assert} (trace = 
-   [("Conceptual.A", "a0"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"),
     ("Conceptual.A", "ac"), ("Conceptual.A", "a1"),
     ("Conceptual.C", "c1"), ("Conceptual.D", "d"), ("Conceptual.C", "c4"),
     ("Conceptual.A", "a2"), ("Conceptual.E", "e5"), 
     ("Conceptual.E", "e6"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
-*)
+
 
 text\<open>Note that the monitor \<^typ>\<open>M\<close> of the ontology \<^theory>\<open>Isabelle_DOF-Ontologies.Conceptual\<close> does
      not observe the common entities of \<^theory>\<open>Isabelle_DOF.Isa_COL\<close>, but just those defined in the 
