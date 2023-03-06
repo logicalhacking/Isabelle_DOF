@@ -29,12 +29,15 @@ section\<open>Testing Commands (exec-catch-verify - versions of std commands)\<c
 ML\<open> 
 
 fun gen_enriched_document_command2 name {body} cid_transform attr_transform markdown
-                                  (((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t,
+                                  ((meta_args,
                                      xstring_opt:(xstring * Position.T) option),
                                     toks_list:Input.source list) 
                                   : theory -> theory =
   let  val toplvl = Toplevel.theory_toplevel
-
+       val (((oid,pos),cid_pos), doc_attrs) = meta_args
+       val oid' = if meta_args = ODL_Meta_Args_Parser.empty_meta_args
+                  then "output"
+                  else oid
        (* as side-effect, generates markup *)
        fun check_n_tex_text thy toks = let val ctxt = Toplevel.presentation_context (toplvl thy);
                                       val pos = Input.pos_of toks;
@@ -52,7 +55,7 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
 (*   type file = {path: Path.T, pos: Position.T, content: string} *) 
 
                                       val strg = XML.string_of (hd (Latex.output text))
-                                      val file = {path = Path.make [oid ^ "_snippet.tex"],
+                                      val file = {path = Path.make [oid' ^ "_snippet.tex"],
                                                   pos = @{here}, 
                                                   content = Bytes.string strg}
                                       
@@ -66,10 +69,13 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
        
        (* ... generating the level-attribute syntax *)
   in   
-       (   Value_Command.Docitem_Parser.create_and_check_docitem 
+      (if meta_args = ODL_Meta_Args_Parser.empty_meta_args
+              then I
+              else
+          Value_Command.Docitem_Parser.create_and_check_docitem 
                               {is_monitor = false} {is_inline = false} {define = true}
-                              oid pos (cid_transform cid_pos) (attr_transform doc_attrs)
-        #> (fn thy => (app (check_n_tex_text thy) toks_list; thy))) 
+                              oid pos (cid_transform cid_pos) (attr_transform doc_attrs))
+        #> (fn thy => (app (check_n_tex_text thy) toks_list; thy))
   end;
 
 val _ =
@@ -117,10 +123,11 @@ fun  error_match2 [_, src] msg = error_match src msg
 
 val _ =
   Outer_Syntax.command ("text-assert-error", @{here}) "formal comment macro"
-    (ODL_Meta_Args_Parser.attributes -- Parse.opt_target -- Scan.repeat1 Parse.document_source 
-      >> (Toplevel.theory o (gen_enriched_document_command3 error_match2 "TTT" {body=true}
-                                                            I I {markdown = true}) 
-                            ));
+    (ODL_Meta_Args_Parser.opt_attributes -- Parse.opt_target -- Scan.repeat1 Parse.document_source 
+      >> (Toplevel.theory o
+          (fn ((meta_args, xstring_opt), source) =>
+              (gen_enriched_document_command3 error_match2 "TTT" {body=true}
+                                        I I {markdown = true} ((meta_args, xstring_opt), source)))));
 
 fun update_instance_command (args,src) thy = 
     (Monitor_Command_Parser.update_instance_command args thy

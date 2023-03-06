@@ -1791,10 +1791,9 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} oi
 
 end (* structure Docitem_Parser *)
 
-val empty_meta_args = ((("", Position.none), NONE), [])
 
 fun meta_args_exec (meta_args as (((oid, pos), cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) thy = 
-         thy |> (if meta_args = empty_meta_args
+         thy |> (if meta_args = ODL_Meta_Args_Parser.empty_meta_args
                  then (K thy)
                  else Docitem_Parser.create_and_check_docitem 
                                     {is_monitor = false} {is_inline = false} {define = true}
@@ -2297,9 +2296,9 @@ ML\<open>
 structure ML_star_Command =
 struct
 
-fun meta_args_exec (meta_args as (((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) thy = 
-         thy |> (if meta_args = Value_Command.empty_meta_args
-                 then (K thy)                               
+fun meta_args_exec (meta_args as (((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) ctxt = 
+         ctxt |> (if meta_args = ODL_Meta_Args_Parser.empty_meta_args
+                 then (K ctxt)                               
                  else Context.map_theory (Value_Command.Docitem_Parser.create_and_check_docitem 
                                     {is_monitor = false} {is_inline = false} 
                                     {define = true} oid pos (I cid_pos) (I doc_attrs))
@@ -2661,10 +2660,17 @@ struct
 val basic_entity = Document_Output.antiquotation_pretty_source
     : binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
 
-fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) {inline=inline_req} pos name  =
+fun check_and_mark ctxt cid_decl ({strict_checking = strict}) {inline=inline_req} pos name  =
   let
     val thy = Proof_Context.theory_of ctxt;
-    val DOF_core.Instance {cid,inline,...} = DOF_core.get_instance_global name thy
+    val DOF_core.Instance {cid,inline, defined, ...} = DOF_core.get_instance_global name thy
+    val _ = if not strict
+            then if defined
+                 then ISA_core.warn ("Instance defined, unchecked option useless") pos
+                 else ()
+           else if defined
+                then ()
+                else ISA_core.err ("Instance declared but not defined, try option unchecked") pos
     val _ = if not inline_req 
             then if inline then () else error("referred text-element is macro! (try option display)")
             else if not inline then () else error("referred text-element is no macro!")

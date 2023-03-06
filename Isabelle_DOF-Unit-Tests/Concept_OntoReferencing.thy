@@ -64,9 +64,9 @@ text-assert-error[ae1]\<open>@{C \<open>c1\<close>}\<close>\<open>Undefined inst
 
 declare_reference*[c1::C]     \<comment> \<open>forward declaration\<close>
 
-text\<open>@{C \<open>c1\<close>} \<close>              \<comment> \<open>THIS IS A  BUG !!! OVERLY SIMPLISTIC BEHAVIOUR. THIS SHOULD FAIL! \<close>
+text-assert-error\<open>@{C \<open>c1\<close>} \<close>\<open>Instance declared but not defined, try option unchecked\<close>
 
-text\<open>@{C (unchecked) \<open>c1\<close>} \<close>  \<comment> \<open>THIS SHOULD BE THE CORRECT BEHAVIOUR! \<close>
+text\<open>@{C (unchecked) \<open>c1\<close>} \<close>
 
 text*[a1::A, level="Some 0", x = 3]\<open>... phasellus amet id massa nunc, ...\<close>
 text*[c1::C, x = "''beta''"] \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
