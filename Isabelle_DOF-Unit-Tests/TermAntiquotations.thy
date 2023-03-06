@@ -22,6 +22,7 @@ theory
 imports 
   "Isabelle_DOF-Unit-Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual"
+   TestKit
 begin
 
 text\<open>Since the syntax chosen for values of doc-class attributes is HOL-syntax --- requiring
