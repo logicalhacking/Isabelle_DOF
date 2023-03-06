@@ -1796,7 +1796,7 @@ fun meta_args_exec (meta_args as (((oid, pos), cid_pos), doc_attrs) : ODL_Meta_A
          thy |> (if meta_args = ODL_Meta_Args_Parser.empty_meta_args
                  then (K thy)
                  else Docitem_Parser.create_and_check_docitem 
-                                    {is_monitor = false} {is_inline = false} {define = true}
+                                    {is_monitor = false} {is_inline = true} {define = true}
                                     oid pos (I cid_pos) (I doc_attrs))
 
 fun value_cmd {assert=assert} meta_args_opt raw_name modes raw_t pos thy  =
@@ -2300,7 +2300,7 @@ fun meta_args_exec (meta_args as (((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Ar
          ctxt |> (if meta_args = ODL_Meta_Args_Parser.empty_meta_args
                  then (K ctxt)                               
                  else Context.map_theory (Value_Command.Docitem_Parser.create_and_check_docitem 
-                                    {is_monitor = false} {is_inline = false} 
+                                    {is_monitor = false} {is_inline = true} 
                                     {define = true} oid pos (I cid_pos) (I doc_attrs))
 )
 
@@ -2668,9 +2668,9 @@ fun check_and_mark ctxt cid_decl ({strict_checking = strict}) {inline=inline_req
             then if defined
                  then ISA_core.warn ("Instance defined, unchecked option useless") pos
                  else ()
-           else if defined
-                then ()
-                else ISA_core.err ("Instance declared but not defined, try option unchecked") pos
+            else if defined
+                 then ()
+                 else ISA_core.err ("Instance declared but not defined, try option unchecked") pos
     val _ = if not inline_req 
             then if inline then () else error("referred text-element is macro! (try option display)")
             else if not inline then () else error("referred text-element is no macro!")

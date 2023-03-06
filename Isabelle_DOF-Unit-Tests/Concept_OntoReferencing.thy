@@ -79,10 +79,10 @@ text-assert-error[c1::C, x = "''gamma''"]
 text*[d::D, a1 = "X3"] \<open> ... phasellus amet id massa nunc, pede suscipit repellendus, 
                          ... @{C "c1"} or @{C \<open>c1\<close>} or \<^C>\<open>c1\<close>
                              similar to @{thm "refl"} and \<^thm>"refl"\<close>  \<comment> \<open>ontological and built-in
-
+                                                                          references\<close>
 
 text\<open>Not only text-elements are "ontology-aware", proofs and code can this be too !\<close>
-                                                                          references\<close>
+
 \<comment> \<open>Referencing from and to a ML-code context:\<close>
 (*<*)
 ML*[c4::C, z = "Some @{A \<open>a1\<close>}"]\<open>
@@ -102,11 +102,9 @@ text\<open>This is the answer to the "OutOfOrder Presentation Problem": @{E (unc
 
 definition*[e6::E] facu :: "nat \<Rightarrow> nat" where "facu arg = undefined"
 
+text\<open>As shown in @{E \<open>e5\<close>} following from  @{E \<open>e6\<close>}\<close> 
 
-text\<open>As shown in @{E [display]\<open>e5\<close>} following from  @{E [display]\<open>e6\<close>}\<close> 
-(* BUG ?: why is option [display] necessary ? *)
-
-text\<open>As shown in @{C [display]\<open>c4\<close>}\<close>
+text\<open>As shown in @{C \<open>c4\<close>}\<close>
 
 
 
@@ -116,8 +114,7 @@ update_instance*[d::D, a1 := X2]
 
 text\<open> ... in ut tortor ... @{docitem \<open>a\<close>} ... @{A \<open>a\<close>} ... \<close> \<comment> \<open>untyped or typed referencing \<close>
 
-(* THIS IS A BUG : this weird option is necessary *)
-text-assert-error[ae::text_element]\<open>the function @{C [display] "c4"} \<close>\<open>referred text-element is macro!\<close>
+text-assert-error[ae::text_element]\<open>the function @{C [display] "c4"} \<close>\<open>referred text-element is no macro!\<close>
 
 text*[c2::C, x = "\<open>delta\<close>"]  \<open> ... in ut tortor eleifend augue pretium consectetuer.  \<close>
 
