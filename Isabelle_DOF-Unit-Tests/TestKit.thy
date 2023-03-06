@@ -106,7 +106,7 @@ fun document_command2 markdown (loc, txt) =
 
 fun gen_enriched_document_command3 assert name body trans at md (margs, src_list) thy
  = (gen_enriched_document_command2 name body trans at md  (margs, src_list)  thy)
-   handle ERROR msg => (if assert src_list msg then (writeln ("Correct error:"^msg^":reported.");thy)
+   handle ERROR msg => (if assert src_list msg then (writeln ("Correct error: "^msg^": reported.");thy)
                                                else error"Wrong error reported")
 
 fun error_match src msg = (writeln((Input.string_of src)); String.isPrefix (Input.string_of src) msg)
@@ -125,7 +125,7 @@ val _ =
 fun update_instance_command (args,src) thy = 
     (Monitor_Command_Parser.update_instance_command args thy
      handle ERROR msg => (if error_match src msg 
-                          then (writeln ("Correct error:"^msg^":reported.");thy)
+                          then (writeln ("Correct error: "^msg^": reported.");thy)
                           else error"Wrong error reported"))
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>update_instance-assert-error\<close>
@@ -139,7 +139,7 @@ val _ =
                           {is_monitor = false} {is_inline=true}
                           {define = false} oid pos (cid_pos) (doc_attrs) thy)
                    handle ERROR msg => (if error_match src msg 
-                          then (writeln ("Correct error:"^msg^":reported.");thy)
+                          then (writeln ("Correct error: "^msg^": reported.");thy)
                           else error"Wrong error reported")
   in  Outer_Syntax.command \<^command_keyword>\<open>declare_reference-assert-error\<close>
                        "declare document reference"
