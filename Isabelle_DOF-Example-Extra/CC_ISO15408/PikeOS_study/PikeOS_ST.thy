@@ -23,14 +23,14 @@ subsection*[pkossttoerefsubsec::st_ref_cls]\<open>TOE Reference\<close>
 
 text*[pkostoeref::toe_ref_cls, dev_name="''''", toe_name="''PikeOS''",
       toe_version= "(0,3,4)", prod_name="Some ''S3725''"]
-\<open>The @{docitem toeDef} is the operating system PikeOS version 3.4 
+\<open>The @{docitem (unchecked) toeDef} is the operating system PikeOS version 3.4 
    running on the microprocessor family x86 hosting different applications. 
-   The @{docitem toeDef} is referenced as PikeOS 3.4 base
+   The @{docitem (unchecked) toeDef} is referenced as PikeOS 3.4 base
    product build S3725 for Linux and Windows development host with PikeOS 3.4
    Certification Kit build S4250 and PikeOS 3.4 Common Criteria Kit build S4388.\<close>
 
 subsection*[pkossttoeovrvwsubsec::st_ref_cls]\<open> TOE Overview \<close>
-text*[pkosovrw1::toe_ovrw_cls]\<open>The @{docitem \<open>toeDef\<close> } is a special kind of operating 
+text*[pkosovrw1::toe_ovrw_cls]\<open>The @{docitem (unchecked) \<open>toeDef\<close> } is a special kind of operating 
 system, that allows to effectively separate
 different applications running on the same platform from each other. The TOE can host
 user applications that can also be operating systems. User applications can also be

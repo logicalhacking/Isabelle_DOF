@@ -1011,10 +1011,11 @@ text\<open>
   declare[[invariants_checking_with_tactics = true]]\<close>}
   There are still some limitations with this high-level syntax.
   For now, the high-level syntax does not support the checking of
-  specific monitor behaviors (see \<^technical>\<open>sec:monitors\<close>).
+  specific monitor behaviors (see @{technical (unchecked) "sec:monitors"}).
   For example, one would like to delay a final error message till the
   closing of a monitor.
-  For this use-case you can use low-level class invariants (see \<^technical>\<open>sec:low_level_inv\<close>).
+  For this use-case you can use low-level class invariants
+  (see @{technical (unchecked) "sec:low_level_inv"}).
 \<close>
 
 subsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
@@ -1086,14 +1087,14 @@ text\<open>
   sections.
   For now, the high-level syntax of invariants does not support the checking of
   specific monitor behaviors like the one just described and you must use 
-  the low-level class invariants (see \<^technical>\<open>sec:low_level_inv\<close>).
+  the low-level class invariants (see @{technical (unchecked) "sec:low_level_inv"}).
 
   Low-level invariants checking can be set up to be triggered
   when opening a monitor, when closing a monitor, or both
   by using the \<^ML>\<open>DOF_core.add_opening_ml_invariant\<close>,
   \<^ML>\<open>DOF_core.add_closing_ml_invariant\<close>, or \<^ML>\<open>DOF_core.add_ml_invariant\<close> commands
   respectively, to add the invariants to the theory context
-  (See \<^technical>\<open>sec:low_level_inv\<close> for an example).
+  (See @{technical (unchecked) "sec:low_level_inv"} for an example).
 \<close>
 
 
