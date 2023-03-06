@@ -84,12 +84,12 @@ text*[d::D, a1 = "X3"] \<open> ... phasellus amet id massa nunc, pede suscipit r
 text\<open>Not only text-elements are "ontology-aware", proofs and code can this be too !\<close>
 
 \<comment> \<open>Referencing from and to a ML-code context:\<close>
-(*<*)
+
 ML*[c4::C, z = "Some @{A \<open>a1\<close>}"]\<open>
 fun fac x = if x  = 0  then 1 else x * (fac(x-1))
 val v = \<^value_>\<open>A.x (the (z @{C \<open>c4\<close>}))\<close> |> HOLogic.dest_number |> snd |> fac
 \<close>
-(*>*)
+
 definition*[a2::A, x=5, level="Some 1"] xx' where "xx' \<equiv> A.x @{A \<open>a1\<close>}" if "A.x @{A \<open>a1\<close>} = 5"
 
 lemma*[e5::E] testtest : "xx + A.x @{A \<open>a1\<close>} = yy + A.x @{A \<open>a1\<close>} \<Longrightarrow> xx = yy" by simp
