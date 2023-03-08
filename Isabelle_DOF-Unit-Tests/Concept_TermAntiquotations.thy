@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019      The University of Exeter 
- *               2018-2019 The University of Paris-Saclay
+ *               2019-2023 The University of Exeter 
+ *               2018-2023 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -18,46 +18,71 @@ For historical reasons, \<^emph>\<open>term antiquotations\<close> are called th
 "Inner Syntax Antiquotations". \<close>
 
 theory 
-  TermAntiquotations
+  Concept_TermAntiquotations
 imports 
   "Isabelle_DOF-Unit-Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual"
    TestKit
 begin
 
+section\<open>Context\<close>
+
 text\<open>Since the syntax chosen for values of doc-class attributes is HOL-syntax --- requiring
-a fast read on the ``What's in Main''-documentation, but not additional knowledge on, say, SML --- 
-an own syntax for references to types, terms, theorems, etc. are necessary. These are the
-``Inner Syntax Antiquotations'' since they make only sense \emph{inside} the Inner-Syntax
-of Isabelle/Isar, so inside the \verb+" ... "+ parenthesis.
+a fast read on the ``What's in Main''-documentation, but not additional knowledge on, say, 
+SML --- an own syntax for references to types, terms, theorems, etc. are necessary. These are 
+the ``Term Antiquotations'' (in earlier papers also called: ``Inner Syntax Antiquotations'').
 
 They are the key-mechanism to denote 
 \<^item> Ontological Links, i.e. attributes refering to document classes defined by the ontology
 \<^item> Ontological F-Links, i.e. attributes referring to formal entities inside Isabelle (such as thm's)
 
 This file contains a number of examples resulting from the 
-% @ {theory "Isabelle_DOF-Unit-Tests.Conceptual"} does not work here --- why ?
-\<^theory_text>\<open>Conceptual\<close> - ontology; the emphasis of this presentation is to present the expressivity of 
-ODL on a paradigmatical example.
+@{theory "Isabelle_DOF-Ontologies.Conceptual"} - ontology; the emphasis of this presentation is to 
+present the expressivity of ODL on a paradigmatical example.
 \<close>
 
 
-text\<open>Voila the content of the Isabelle/DOF environment so far:\<close>
-ML\<open>
-val x = DOF_core.get_instances \<^context>
-val isa_transformer_tab = DOF_core.get_isa_transformers \<^context>
-val docclass_tab = DOF_core.get_onto_classes \<^context>; 
-Name_Space.dest_table isa_transformer_tab; 
-\<close>
+section\<open>Test Purpose.\<close>
+
+text\<open>Testing Standard Term-Antiquotations and Code-Term-Antiquotations. \<close>
+
+text\<open>Just a check of the status DOF core: observe that no new classes have been defined.\<close>
+
+print_doc_classes
+print_doc_items
+
+
+section\<open>Term-Antiquotations Referring to \<^verbatim>\<open>thm\<close>‘s\<close>
 
 text\<open>Some sample lemma:\<close>
-lemma murks : "Example=Example" by simp
+lemma*[l::E] murks : "Example = @{thm ''HOL.refl''}" oops
 
-text\<open>Example for a meta-attribute of ODL-type @{typ "file"} with an appropriate ISA for the
-     file @{file "TermAntiquotations.thy"}\<close>
-(* not working: 
-text*[xcv::F, u="@{file ''InnerSyntaxAntiquotations.thy''}"]\<open>Lorem ipsum ...\<close>
+text-assert-error\<open>... @{E "l"}\<close>\<open>Undefined instance:\<close>   \<comment> \<open>oops retracts the ENTIRE system state,
+                                                          thus also the creation of an instance of E\<close>
+
+lemma*[l::E] local_sample_lemma : 
+       "@{thm \<open>HOL.refl\<close>} = @{thm ''HOL.refl''}" by simp
+                                                       \<comment> \<open>un-evaluated references are similar to
+                                                           uninterpreted constants. Not much is known
+                                                           about them, but that doesn't mean that we
+                                                           can't prove some basics over them...\<close>
+
+
+(* BUG: Why does this not work ? Shortnames are apparently not recognized !*)
+(* SHOULD WORK :
+lemma*[l2::E] local_sample_lemma : 
+      "@{thm ''local_sample_lemma''} = @{thm ''local_sample_lemma''}" by simp
 *)
+
+value*\<open>@{thm ''Concept_TermAntiquotations.local_sample_lemma''}\<close>
+value-assert-error\<open> @{thm ''Conept_TermAntiquotations.local_sample_lemma''}\<close>\<open>No Theorem\<close>
+
+section\<open>Testing the Standard ("Built-in") Term-Antiquotations\<close>
+
+text\<open>Example for a meta-attribute of ODL-type @{typ "file"} with an 
+     appropriate ISA for the file @{file "Concept_TermAntiquotations.thy"}\<close>
+
+
 
 text*[xcv1::A, x=5]\<open>Lorem ipsum ...\<close>
 text*[xcv3::A, x=7]\<open>Lorem ipsum ...\<close>
@@ -75,10 +100,28 @@ But it may give rise to unwanted behaviors, due to its polymorphic type.
 It must not be used for certification.
 \<close>
 
+section\<open>Other Built-In Term Antiquotations\<close>
+text-assert-error[ae::text_element]\<open>@{file "non-existing.thy"}\<close>\<open>No such file: \<close>
+text\<open>A text-antiquotation from Main: @{file "TestKit.thy"}\<close>
+
+(* BUG : This shoulöd work rather than throw an exception *)
+value-assert-error\<open>@{file \<open>TestKit.thy\<close>}\<close>\<open>No such file: \<close>
+text-assert-error\<open>A text-antiquotation from Main: @{file "TestKit.thy"}\<close>
+
+(* BUG. Again: Long-name Short Name on Files ?
+text*[xcv::F, u="@{file ''TestKit.thy''}"]\<open>Lorem ipsum ...\<close>
+*)
+
+value*\<open>@{term \<open>aa + bb\<close>}\<close>
+value*\<open>@{typ \<open>'a list\<close>}\<close>
+
+
+section\<open>Putting everything together\<close>
+
 text\<open>Major sample: test-item of doc-class \<open>F\<close> with a relational link between class instances, 
      and links to formal Isabelle items like \<open>typ\<close>, \<open>term\<close> and \<open>thm\<close>. \<close>
 text*[xcv4::F, r="[@{thm ''HOL.refl''}, 
-                   @{thm \<open>TermAntiquotations.murks\<close>}]", (* long names required *)
+                   @{thm \<open>Concept_TermAntiquotations.local_sample_lemma\<close>}]", (* long names required *)
                b="{(@{docitem ''xcv1''},@{docitem \<open>xcv2\<close>})}",  (* notations \<open>...\<close> vs. ''...'' *)
                s="[@{typ \<open>int list\<close>}]",                        
                properties = "[@{term \<open>H \<longrightarrow> H\<close>}]"              (* notation \<open>...\<close> required for UTF8*)

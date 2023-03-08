@@ -116,7 +116,7 @@ fun gen_enriched_document_command3 assert name body trans at md (margs, src_list
    handle ERROR msg => (if assert src_list msg then (writeln ("Correct error: "^msg^": reported.");thy)
                                                else error"Wrong error reported")
 
-fun error_match src msg = (writeln((Input.string_of src)); String.isPrefix (Input.string_of src) msg)
+fun error_match src msg = (String.isPrefix (Input.string_of src) msg)
 
 fun  error_match2 [_, src] msg = error_match src msg
    | error_match2 _ _ = error "Wrong text-assertion-error. Argument format <arg><match> required."
@@ -142,7 +142,7 @@ val _ =
                          >> (Toplevel.theory o update_instance_command)); 
 
 val _ = 
-  let fun create_and_check_docitem ((((oid, pos),cid_pos),doc_attrs),src) thy=
+  let fun create_and_check_docitem ((((oid, pos),cid_pos),doc_attrs),src) thy =
                   (Value_Command.Docitem_Parser.create_and_check_docitem
                           {is_monitor = false} {is_inline=true}
                           {define = false} oid pos (cid_pos) (doc_attrs) thy)
@@ -156,23 +156,34 @@ val _ =
   end;
 
 
+(* fun pass_trans_to_value_cmd  args ((name, modes), t) trans =
+let val pos = Toplevel.pos_of trans
+in
+   trans |> Toplevel.theory (value_cmd {assert=false} args name modes t @{here})
+end
+ *)
+
+val _ =
+  let fun pass_trans_to_value_cmd (args, (((name, modes), t),src)) trans  = 
+               (Value_Command.value_cmd {assert=false} args name modes t @{here} trans
+                handle ERROR msg => (if error_match src msg 
+                                     then (writeln ("Correct error: "^msg^": reported.");trans)
+                                     else error"Wrong error reported"))
+  in  Outer_Syntax.command \<^command_keyword>\<open>value-assert-error\<close> "evaluate and print term"
+       (ODL_Meta_Args_Parser.opt_attributes -- 
+          (Value_Command.opt_evaluator 
+           -- Value_Command.opt_modes 
+           -- Parse.term 
+           -- Parse.document_source) 
+        >> (Toplevel.theory o pass_trans_to_value_cmd))
+  end;
+
 
 val _ =
   Outer_Syntax.command ("text-latex", \<^here>) "formal comment (primary style)"
     (Parse.opt_target -- Parse.document_source >> document_command2 {markdown = true});
 
 
-val _ =
-  let fun pass_trans_to_value_cmd(args, (parms, src)) state  = 
-               (Value_Command.pass_trans_to_value_cmd args parms state
-                handle ERROR msg => (if error_match src msg 
-                          then (writeln ("Correct error: "^msg^": reported.");state)
-                          else error"Wrong error reported"))
-  in  Outer_Syntax.command \<^command_keyword>\<open>value-assert-error\<close> "evaluate and print term"
-       (ODL_Meta_Args_Parser.opt_attributes -- 
-          (Value_Command.opt_evaluator -- Value_Command.opt_modes -- Parse.term -- Parse.document_source) 
-        >> (pass_trans_to_value_cmd))
-  end;
 
 
 \<close>
