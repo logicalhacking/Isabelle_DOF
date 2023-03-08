@@ -20,6 +20,7 @@ keywords "text-" "text-latex"             :: document_body
     and  "text-assert-error"              :: document_body
     and  "update_instance-assert-error"   :: document_body
     and  "declare_reference-assert-error" :: document_body
+    and  "value-assert-error"             :: document_body
 
 begin
 
@@ -159,6 +160,20 @@ val _ =
 val _ =
   Outer_Syntax.command ("text-latex", \<^here>) "formal comment (primary style)"
     (Parse.opt_target -- Parse.document_source >> document_command2 {markdown = true});
+
+
+val _ =
+  let fun pass_trans_to_value_cmd(args, (parms, src)) state  = 
+               (Value_Command.pass_trans_to_value_cmd args parms state
+                handle ERROR msg => (if error_match src msg 
+                          then (writeln ("Correct error: "^msg^": reported.");state)
+                          else error"Wrong error reported"))
+  in  Outer_Syntax.command \<^command_keyword>\<open>value-assert-error\<close> "evaluate and print term"
+       (ODL_Meta_Args_Parser.opt_attributes -- 
+          (Value_Command.opt_evaluator -- Value_Command.opt_modes -- Parse.term -- Parse.document_source) 
+        >> (pass_trans_to_value_cmd))
+  end;
+
 
 \<close>
 
