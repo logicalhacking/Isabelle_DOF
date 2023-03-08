@@ -1890,18 +1890,18 @@ val _ = Toplevel.theory_toplevel
 (* setup ontology aware commands *)
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>term*\<close> "read and print term"
-    (ODL_Meta_Args_Parser.opt_attributes -- (opt_modes -- Parse.term) 
-     >> (fn (meta_args_opt, eval_args ) => print_term meta_args_opt eval_args));
+     (ODL_Meta_Args_Parser.opt_attributes -- (opt_modes -- Parse.term) 
+     >> (uncurry print_term));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>value*\<close> "evaluate and print term"
     (ODL_Meta_Args_Parser.opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
-     >> (fn (meta_args_opt, eval_args ) => pass_trans_to_value_cmd meta_args_opt eval_args));
+     >> (uncurry pass_trans_to_value_cmd));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>assert*\<close> "evaluate and assert term"
     (ODL_Meta_Args_Parser.opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
-     >> (fn (meta_args_opt, eval_args ) => pass_trans_to_assert_value_cmd meta_args_opt eval_args));
+     >> (uncurry pass_trans_to_assert_value_cmd));
 
 
 (* setup ontology - aware text and ML antiquotations. Due to lexical restrictions, we can not
@@ -1930,7 +1930,7 @@ end
 (* setup evaluators  *)
 val _ = Theory.setup(
      add_evaluator (\<^binding>\<open>simp\<close>, Code_Simp.dynamic_value) #> snd
-  #> add_evaluator (\<^binding>\<open>nbe\<close>, Nbe.dynamic_value) #> snd
+  #> add_evaluator (\<^binding>\<open>nbe\<close>,  Nbe.dynamic_value) #> snd
   #> add_evaluator (\<^binding>\<open>code\<close>, Code_Evaluation.dynamic_value_strict) #> snd);
 
 
