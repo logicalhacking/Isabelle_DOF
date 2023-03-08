@@ -59,9 +59,8 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
                                       val file = {path = Path.make [oid' ^ "_snippet.tex"],
                                                   pos = @{here}, 
                                                   content = Bytes.string strg}
-                                      
-                                      val _ = Generated_Files.write_file (Path.make ["latex_test"]) 
-                                                                         file
+                                      val dir = Path.append (Resources.master_directory thy) (Path.make ["latex_test"]) 
+                                      val _ = Generated_Files.write_file dir file
                                       val _ = writeln (strg)
                                   in  () end \<comment> \<open>important observation: thy is not modified.
                                                   This implies that several text block can be 

@@ -84,12 +84,12 @@ text*[d::D, a1 = "X3"] \<open> ... phasellus amet id massa nunc, pede suscipit r
 text\<open>Not only text-elements are "ontology-aware", proofs and code can this be too !\<close>
 
 \<comment> \<open>Referencing from and to a ML-code context:\<close>
-(*<*)
+
 ML*[c4::C, z = "Some @{A \<open>a1\<close>}"]\<open>
 fun fac x = if x  = 0  then 1 else x * (fac(x-1))
 val v = \<^value_>\<open>A.x (the (z @{C \<open>c4\<close>}))\<close> |> HOLogic.dest_number |> snd |> fac
 \<close>
-(*>*)
+
 definition*[a2::A, x=5, level="Some 1"] xx' where "xx' \<equiv> A.x @{A \<open>a1\<close>}" if "A.x @{A \<open>a1\<close>} = 5"
 
 lemma*[e5::E] testtest : "xx + A.x @{A \<open>a1\<close>} = yy + A.x @{A \<open>a1\<close>} \<Longrightarrow> xx = yy" by simp
@@ -143,18 +143,11 @@ text\<open>And the trace of the monitor is:\<close>
 ML\<open>val trace = @{trace_attribute struct}\<close>
 ML\<open>@{assert} (trace = 
    [("Conceptual.A", "a0"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"),
-    ("Conceptual.A", "ac"), ("Conceptual.C", "c1"), ("Conceptual.A", "a1"),
-    ("Conceptual.C", "c1"), ("Conceptual.D", "d"), ("Conceptual.C", "c4"),
-    ("Conceptual.A", "a2"), ("Conceptual.E", "e5"), ("Conceptual.E", "e6"),
-    ("Conceptual.E", "e6"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
-(* BUG : DECLARATIONS SHOULD NOT BE TRACED, JUST DEFINITIONS.
-ML\<open>@{assert} (trace = 
-   [("Conceptual.A", "a0"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"),
     ("Conceptual.A", "ac"), ("Conceptual.A", "a1"),
     ("Conceptual.C", "c1"), ("Conceptual.D", "d"), ("Conceptual.C", "c4"),
     ("Conceptual.A", "a2"), ("Conceptual.E", "e5"), 
     ("Conceptual.E", "e6"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
-*)
+
 
 text\<open>Note that the monitor \<^typ>\<open>M\<close> of the ontology \<^theory>\<open>Isabelle_DOF-Ontologies.Conceptual\<close> does
      not observe the common entities of \<^theory>\<open>Isabelle_DOF.Isa_COL\<close>, but just those defined in the 

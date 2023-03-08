@@ -699,6 +699,13 @@ fun get_value_local oid ctxt  =
   let val Instance v = get_instance_global oid (Proof_Context.theory_of ctxt)
   in v |> #value end
 
+fun get_defined_global oid thy  = let val Instance d = get_instance_global oid thy
+                                       in d |> #defined end
+
+fun get_defined_local oid ctxt  =
+  let val Instance d = get_instance_global oid (Proof_Context.theory_of ctxt)
+  in d |> #defined end
+
 (* missing : setting terms to ground (no type-schema vars, no schema vars. )*)
 
 fun binding_from_pos get_objects get_object_name name thy  =
@@ -1621,7 +1628,10 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
                       (Name_Space.dest_table (DOF_core.get_monitor_infos (Proof_Context.init_global thy)))
       fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
                                                  Syntax.read_term_global thy rhs)
-      val trace_attr = [((("trace", @{here}), "+="), "[("^cid_long^", ''"^oid^"'')]")]
+      val defined = DOF_core.get_defined_global oid thy
+      val trace_attr = if defined
+                       then [((("trace", @{here}), "+="), "[("^cid_long^", ''"^oid^"'')]")]
+                       else []
       val assns' = map conv_attrs trace_attr
       fun cid_of oid = let val DOF_core.Instance params = DOF_core.get_instance_global oid thy
                         in #cid params end
@@ -1631,8 +1641,12 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
       fun def_trans_value oid =
         (#1 o (calc_update_term {mk_elaboration=true} thy (cid_of oid) assns'))
         #> value ctxt
-      val _ = if null enabled_monitors then () else writeln "registrating in monitors ..." 
-      val _ = app (fn (n, _) => writeln(oid^" : "^cid_long^" ==> "^n)) enabled_monitors;
+      val _ = if null enabled_monitors
+              then ()
+              else if defined
+                   then (tracing "registrating in monitors ..." ;
+                         app (fn (n, _) => tracing (oid^" : "^cid_long^" ==> "^n)) enabled_monitors)
+                   else ()
       (* check that any transition is possible: *)
       fun class_inv_checks thy =
         enabled_monitors
