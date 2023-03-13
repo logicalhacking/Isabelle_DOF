@@ -487,8 +487,8 @@ struct
 
 
   datatype monitor_info = Monitor_Info of 
-    {accepted_cids : string list,
-     rejected_cids : string list,
+    {accepted_cids : RegExpInterface.env,
+     rejected_cids : RegExpInterface.env,
      automatas     : RegExpInterface.automaton list}
 
 
@@ -753,14 +753,11 @@ fun check_invs get_ml_invs cid_long oid is_monitor thy =
                                   |> map (fn check => check oid is_monitor ctxt)
             in (fold_and checks) end)
 
-fun check_ml_invs cid_long oid is_monitor thy =
-  check_invs get_ml_invariants cid_long oid is_monitor thy
+val check_ml_invs = check_invs get_ml_invariants 
 
-fun check_opening_ml_invs cid_long oid is_monitor thy =
-  check_invs get_opening_ml_invariants cid_long oid is_monitor thy
+val check_opening_ml_invs = check_invs get_opening_ml_invariants 
 
-fun check_closing_ml_invs cid_long oid is_monitor thy =
-  check_invs get_closing_ml_invariants cid_long oid is_monitor thy
+val check_closing_ml_invs = check_invs get_closing_ml_invariants
 
 val ISA_prefix = "Isabelle_DOF_"
 
@@ -1028,18 +1025,13 @@ fun ML_isa_check_term thy (term, _, pos) _ =
 
 
 fun ML_isa_check_thm thy (term, _, pos) _ =
-  (* this works for long-names only *)
-  let fun check thy (name, _) = case Proof_Context.lookup_fact (Proof_Context.init_global thy) name of
-                                  NONE => err ("No Theorem:" ^name) pos
-                                | SOME X => X
+  let fun check thy (name, _) = Global_Theory.check_fact thy (name, Position.none)
   in   ML_isa_check_generic check thy (term, pos) end
 
 
 fun ML_isa_check_file thy (term, _, pos) _ =
-  let fun check thy (name, pos) = check_path (SOME File.check_file) 
-                                             (Proof_Context.init_global thy) 
-                                             (Path.current) 
-                                             (name, pos);
+  let fun check thy (name, pos) = name |> Syntax.read_input
+                                       |> Resources.check_file (Proof_Context.init_global thy) NONE 
   in  ML_isa_check_generic check thy (term, pos) end;
 
 fun check_instance thy (term, _, pos) s =
@@ -1788,19 +1780,24 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} oi
                                                 |> value (Proof_Context.init_global thy),
                                                  is_inline, cid_long, vcid))
          |> register_oid_cid_in_open_monitors oid pos cid_pos'
-         |> tap (DOF_core.check_opening_ml_invs cid_long oid is_monitor)
-         |> tap (DOF_core.check_ml_invs cid_long oid is_monitor)
-         (* Bypass checking of high-level invariants when the class default_cid = "text",
-            the top (default) document class.
-            We want the class default_cid to stay abstract
-            and not have the capability to be defined with attribute, invariants, etc.
-            Hence this bypass handles docitem without a class associated,
-            for example when you just want a document element to be referenceable
-            without using the burden of ontology classes.
-            ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
-         |> (fn thy => if default_cid then thy
-                       else if Config.get_global thy DOF_core.invariants_checking
-                            then check_invariants thy (oid, pos) else thy)
+         |> (fn thy =>
+            if (* declare_reference* without arguments is not checked against invariants *)
+               thy |> DOF_core.get_defined_global oid |> not
+               andalso null doc_attrs
+            then thy
+            else thy |> tap (DOF_core.check_opening_ml_invs cid_long oid is_monitor)
+                     |> tap (DOF_core.check_ml_invs cid_long oid is_monitor)
+                     (* Bypass checking of high-level invariants when the class default_cid = "text",
+                        the top (default) document class.
+                        We want the class default_cid to stay abstract
+                        and not have the capability to be defined with attribute, invariants, etc.
+                        Hence this bypass handles docitem without a class associated,
+                        for example when you just want a document element to be referenceable
+                        without using the burden of ontology classes.
+                        ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
+                     |> (fn thy => if default_cid then thy
+                                   else if Config.get_global thy DOF_core.invariants_checking
+                                        then check_invariants thy (oid, pos) else thy))
   end
 
 end (* structure Docitem_Parser *)
@@ -1904,18 +1901,18 @@ val _ = Toplevel.theory_toplevel
 (* setup ontology aware commands *)
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>term*\<close> "read and print term"
-    (ODL_Meta_Args_Parser.opt_attributes -- (opt_modes -- Parse.term) 
-     >> (fn (meta_args_opt, eval_args ) => print_term meta_args_opt eval_args));
+     (ODL_Meta_Args_Parser.opt_attributes -- (opt_modes -- Parse.term) 
+     >> (uncurry print_term));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>value*\<close> "evaluate and print term"
     (ODL_Meta_Args_Parser.opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
-     >> (fn (meta_args_opt, eval_args ) => pass_trans_to_value_cmd meta_args_opt eval_args));
+     >> (uncurry pass_trans_to_value_cmd));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>assert*\<close> "evaluate and assert term"
     (ODL_Meta_Args_Parser.opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
-     >> (fn (meta_args_opt, eval_args ) => pass_trans_to_assert_value_cmd meta_args_opt eval_args));
+     >> (uncurry pass_trans_to_assert_value_cmd));
 
 
 (* setup ontology - aware text and ML antiquotations. Due to lexical restrictions, we can not
@@ -1944,7 +1941,7 @@ end
 (* setup evaluators  *)
 val _ = Theory.setup(
      add_evaluator (\<^binding>\<open>simp\<close>, Code_Simp.dynamic_value) #> snd
-  #> add_evaluator (\<^binding>\<open>nbe\<close>, Nbe.dynamic_value) #> snd
+  #> add_evaluator (\<^binding>\<open>nbe\<close>,  Nbe.dynamic_value) #> snd
   #> add_evaluator (\<^binding>\<open>code\<close>, Code_Evaluation.dynamic_value_strict) #> snd);
 
 
@@ -2015,8 +2012,8 @@ fun open_monitor_command  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Par
                               NONE => ISA_core.err ("You must specified a monitor class.") pos
                             | SOME (cid, _) => cid
                 val (accS, rejectS, aS) = compute_enabled_set cid thy
-                val info = {accepted_cids = accS, rejected_cids = rejectS, automatas  = aS }
-            in DOF_core.add_monitor_info (Binding.make (oid, pos)) (DOF_core.Monitor_Info info) thy
+            in DOF_core.add_monitor_info (Binding.make (oid, pos))
+                                         (DOF_core.make_monitor_info (accS, rejectS, aS)) thy
             end
     in
       o_m_c oid pos cid_pos doc_attrs #> create_monitor_entry oid

@@ -143,10 +143,15 @@ ML\<open>val ctxt = @{context}
    fun conv (Const(@{const_name "Pair"},_) $ Const(s,_) $ S) = (s, HOLogic.dest_string S)
    fun conv' (\<^Const>\<open>Pair \<^typ>\<open>doc_class rexp\<close> \<^typ>\<open>string\<close>\<close>
                       $ (\<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close> $ (\<^Const>\<open>mk\<close> $ s)) $ S) =
-     let val s' =  DOF_core.get_onto_class_name_global' (HOLogic.dest_string s)
-                                                                    (Proof_Context.theory_of ctxt)
+     let val s' =  DOF_core.get_onto_class_name_global' 
+                                     (HOLogic.dest_string s)
+                                     (Proof_Context.theory_of ctxt)
      in (s', HOLogic.dest_string S) end
-   val string_pair_list = map conv' (HOLogic.dest_list term)
+   val string_pair_list = map conv' (HOLogic.dest_list term);
+   @{assert} (string_pair_list = 
+                     [("Conceptual.A", "a"), ("Conceptual.C", "c1"), 
+                      ("Conceptual.E", "d1"), ("Conceptual.C", "c2"),
+                      ("Conceptual.E", "f")])
   \<close>
 
 

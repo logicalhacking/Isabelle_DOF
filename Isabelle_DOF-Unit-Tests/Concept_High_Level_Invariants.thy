@@ -11,9 +11,9 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-chapter\<open>High level syntax Invariants\<close>
+chapter\<open>High-level Class Invariants\<close>
 
-theory High_Level_Syntax_Invariants
+theory Concept_High_Level_Invariants
   imports "Isabelle_DOF.Isa_DOF"
           "Isabelle_DOF-Unit-Tests_document"
           TestKit
