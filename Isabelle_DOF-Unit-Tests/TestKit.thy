@@ -124,10 +124,8 @@ fun  error_match2 [_, src] msg = error_match src msg
 val _ =
   Outer_Syntax.command ("text-assert-error", @{here}) "formal comment macro"
     (ODL_Meta_Args_Parser.opt_attributes -- Parse.opt_target -- Scan.repeat1 Parse.document_source 
-      >> (Toplevel.theory o
-          (fn ((meta_args, xstring_opt), source) =>
-              (gen_enriched_document_command3 error_match2 "TTT" {body=true}
-                                        I I {markdown = true} ((meta_args, xstring_opt), source)))));
+      >> (Toplevel.theory o (gen_enriched_document_command3 error_match2 "TTT" {body=true}
+                                                            I I {markdown = true} )));
 
 fun update_instance_command (args,src) thy = 
     (Monitor_Command_Parser.update_instance_command args thy

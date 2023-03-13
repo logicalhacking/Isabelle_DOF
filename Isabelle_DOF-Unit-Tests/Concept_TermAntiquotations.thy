@@ -55,27 +55,25 @@ print_doc_items
 section\<open>Term-Antiquotations Referring to \<^verbatim>\<open>thm\<close>‘s\<close>
 
 text\<open>Some sample lemma:\<close>
-lemma*[l::E] murks : "Example = @{thm ''HOL.refl''}" oops
+lemma*[l::E] murks : "Example = @{thm ''refl''}" oops
 
 text-assert-error\<open>... @{E "l"}\<close>\<open>Undefined instance:\<close>   \<comment> \<open>oops retracts the ENTIRE system state,
                                                           thus also the creation of an instance of E\<close>
 
 lemma*[l::E] local_sample_lemma : 
-       "@{thm \<open>HOL.refl\<close>} = @{thm ''HOL.refl''}" by simp
+       "@{thm \<open>refl\<close>} = @{thm ''refl''}" by simp
                                                        \<comment> \<open>un-evaluated references are similar to
                                                            uninterpreted constants. Not much is known
                                                            about them, but that doesn't mean that we
                                                            can't prove some basics over them...\<close>
 
 
-(* BUG: Why does this not work ? Shortnames are apparently not recognized !*)
-(* SHOULD WORK :
-lemma*[l2::E] local_sample_lemma : 
+lemma*[l2::E] local_sample_lemma2 :
       "@{thm ''local_sample_lemma''} = @{thm ''local_sample_lemma''}" by simp
-*)
 
-value*\<open>@{thm ''Concept_TermAntiquotations.local_sample_lemma''}\<close>
-value-assert-error\<open> @{thm ''Conept_TermAntiquotations.local_sample_lemma''}\<close>\<open>No Theorem\<close>
+
+value*\<open>@{thm ''local_sample_lemma''}\<close>
+value-assert-error\<open> @{thm \<open>Conxept_TermAntiquotations.local_sample_lemma\<close>}\<close>\<open>Undefined fact\<close>
 
 section\<open>Testing the Standard ("Built-in") Term-Antiquotations\<close>
 
@@ -104,13 +102,11 @@ section\<open>Other Built-In Term Antiquotations\<close>
 text-assert-error[ae::text_element]\<open>@{file "non-existing.thy"}\<close>\<open>No such file: \<close>
 text\<open>A text-antiquotation from Main: @{file "TestKit.thy"}\<close>
 
-(* BUG : This shoulöd work rather than throw an exception *)
-value-assert-error\<open>@{file \<open>TestKit.thy\<close>}\<close>\<open>No such file: \<close>
-text-assert-error\<open>A text-antiquotation from Main: @{file "TestKit.thy"}\<close>
+value-assert-error\<open>@{file \<open>non-existing.thy\<close>}\<close>\<open>No such file: \<close>
+value*\<open>@{file \<open>TestKit.thy\<close>}\<close>
 
-(* BUG. Again: Long-name Short Name on Files ?
 text*[xcv::F, u="@{file ''TestKit.thy''}"]\<open>Lorem ipsum ...\<close>
-*)
+
 
 value*\<open>@{term \<open>aa + bb\<close>}\<close>
 value*\<open>@{typ \<open>'a list\<close>}\<close>

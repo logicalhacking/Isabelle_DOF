@@ -487,8 +487,8 @@ struct
 
 
   datatype monitor_info = Monitor_Info of 
-    {accepted_cids : string list,
-     rejected_cids : string list,
+    {accepted_cids : RegExpInterface.env,
+     rejected_cids : RegExpInterface.env,
      automatas     : RegExpInterface.automaton list}
 
 
@@ -753,14 +753,11 @@ fun check_invs get_ml_invs cid_long oid is_monitor thy =
                                   |> map (fn check => check oid is_monitor ctxt)
             in (fold_and checks) end)
 
-fun check_ml_invs cid_long oid is_monitor thy =
-  check_invs get_ml_invariants cid_long oid is_monitor thy
+val check_ml_invs = check_invs get_ml_invariants 
 
-fun check_opening_ml_invs cid_long oid is_monitor thy =
-  check_invs get_opening_ml_invariants cid_long oid is_monitor thy
+val check_opening_ml_invs = check_invs get_opening_ml_invariants 
 
-fun check_closing_ml_invs cid_long oid is_monitor thy =
-  check_invs get_closing_ml_invariants cid_long oid is_monitor thy
+val check_closing_ml_invs = check_invs get_closing_ml_invariants
 
 val ISA_prefix = "Isabelle_DOF_"
 
@@ -1028,18 +1025,13 @@ fun ML_isa_check_term thy (term, _, pos) _ =
 
 
 fun ML_isa_check_thm thy (term, _, pos) _ =
-  (* this works for long-names only *)
-  let fun check thy (name, _) = case Proof_Context.lookup_fact (Proof_Context.init_global thy) name of
-                                  NONE => err ("No Theorem:" ^name) pos
-                                | SOME X => X
+  let fun check thy (name, _) = Global_Theory.check_fact thy (name, Position.none)
   in   ML_isa_check_generic check thy (term, pos) end
 
 
 fun ML_isa_check_file thy (term, _, pos) _ =
-  let fun check thy (name, pos) = check_path (SOME File.check_file) 
-                                             (Proof_Context.init_global thy) 
-                                             (Path.current) 
-                                             (name, pos);
+  let fun check thy (name, pos) = name |> Syntax.read_input
+                                       |> Resources.check_file (Proof_Context.init_global thy) NONE 
   in  ML_isa_check_generic check thy (term, pos) end;
 
 fun check_instance thy (term, _, pos) s =
@@ -2015,8 +2007,8 @@ fun open_monitor_command  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Par
                               NONE => ISA_core.err ("You must specified a monitor class.") pos
                             | SOME (cid, _) => cid
                 val (accS, rejectS, aS) = compute_enabled_set cid thy
-                val info = {accepted_cids = accS, rejected_cids = rejectS, automatas  = aS }
-            in DOF_core.add_monitor_info (Binding.make (oid, pos)) (DOF_core.Monitor_Info info) thy
+            in DOF_core.add_monitor_info (Binding.make (oid, pos))
+                                         (DOF_core.make_monitor_info (accS, rejectS, aS)) thy
             end
     in
       o_m_c oid pos cid_pos doc_attrs #> create_monitor_entry oid

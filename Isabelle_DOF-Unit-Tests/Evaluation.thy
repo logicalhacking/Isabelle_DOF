@@ -5,7 +5,7 @@ text\<open>Term Annotation Antiquotations (TA) can be evaluated with the help of
 theory 
   Evaluation
 imports 
-  "Isabelle_DOF-Unit-Tests.TermAntiquotations"
+  "Isabelle_DOF-Unit-Tests.Concept_TermAntiquotations"
   "Isabelle_DOF-Unit-Tests.Concept_High_Level_Invariants"
   TestKit
 begin
