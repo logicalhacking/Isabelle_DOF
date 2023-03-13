@@ -20,6 +20,7 @@ keywords "text-" "text-latex"             :: document_body
     and  "text-assert-error"              :: document_body
     and  "update_instance-assert-error"   :: document_body
     and  "declare_reference-assert-error" :: document_body
+    and  "value-assert-error"             :: document_body
 
 begin
 
@@ -29,12 +30,14 @@ section\<open>Testing Commands (exec-catch-verify - versions of std commands)\<c
 ML\<open> 
 
 fun gen_enriched_document_command2 name {body} cid_transform attr_transform markdown
-                                  (((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t,
+                                  ((meta_args,
                                      xstring_opt:(xstring * Position.T) option),
                                     toks_list:Input.source list) 
                                   : theory -> theory =
-  let  
-
+  let  val (((oid,pos),cid_pos), doc_attrs) = meta_args
+       val oid' = if meta_args = ODL_Meta_Args_Parser.empty_meta_args
+                  then "output"
+                  else oid
        (* as side-effect, generates markup *)
        fun check_n_tex_text thy toks = let val ctxt = Toplevel.presentation_context (Toplevel.make_state (SOME thy))
                                       val pos = Input.pos_of toks;
@@ -52,12 +55,11 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
 (*   type file = {path: Path.T, pos: Position.T, content: string} *) 
 
                                       val strg = XML.string_of (hd (Latex.output text))
-                                      val file = {path = Path.make [oid ^ "_snippet.tex"],
+                                      val file = {path = Path.make [oid' ^ "_snippet.tex"],
                                                   pos = @{here}, 
                                                   content = Bytes.string strg}
-                                      
-                                      val _ = Generated_Files.write_file (Path.make ["latex_test"]) 
-                                                                         file
+                                      val dir = Path.append (Resources.master_directory thy) (Path.make ["latex_test"]) 
+                                      val _ = Generated_Files.write_file dir file
                                       val _ = writeln (strg)
                                   in  () end \<comment> \<open>important observation: thy is not modified.
                                                   This implies that several text block can be 
@@ -66,10 +68,13 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
        
        (* ... generating the level-attribute syntax *)
   in   
-       (   Value_Command.Docitem_Parser.create_and_check_docitem 
+      (if meta_args = ODL_Meta_Args_Parser.empty_meta_args
+              then I
+              else
+          Value_Command.Docitem_Parser.create_and_check_docitem 
                               {is_monitor = false} {is_inline = false} {define = true}
-                              oid pos (cid_transform cid_pos) (attr_transform doc_attrs)
-        #> (fn thy => (app (check_n_tex_text thy) toks_list; thy))) 
+                              oid pos (cid_transform cid_pos) (attr_transform doc_attrs))
+        #> (fn thy => (app (check_n_tex_text thy) toks_list; thy))
   end;
 
 val _ =
@@ -106,10 +111,10 @@ fun document_command2 markdown (loc, txt) =
 
 fun gen_enriched_document_command3 assert name body trans at md (margs, src_list) thy
  = (gen_enriched_document_command2 name body trans at md  (margs, src_list)  thy)
-   handle ERROR msg => (if assert src_list msg then (writeln ("Correct error:"^msg^":reported.");thy)
+   handle ERROR msg => (if assert src_list msg then (writeln ("Correct error: "^msg^": reported.");thy)
                                                else error"Wrong error reported")
 
-fun error_match src msg = (writeln((Input.string_of src)); String.isPrefix (Input.string_of src) msg)
+fun error_match src msg = (String.isPrefix (Input.string_of src) msg)
 
 fun  error_match2 [_, src] msg = error_match src msg
    | error_match2 _ _ = error "Wrong text-assertion-error. Argument format <arg><match> required."
@@ -117,15 +122,14 @@ fun  error_match2 [_, src] msg = error_match src msg
 
 val _ =
   Outer_Syntax.command ("text-assert-error", @{here}) "formal comment macro"
-    (ODL_Meta_Args_Parser.attributes -- Parse.opt_target -- Scan.repeat1 Parse.document_source 
+    (ODL_Meta_Args_Parser.opt_attributes -- Parse.opt_target -- Scan.repeat1 Parse.document_source 
       >> (Toplevel.theory o (gen_enriched_document_command3 error_match2 "TTT" {body=true}
-                                                            I I {markdown = true}) 
-                            ));
+                                                            I I {markdown = true} )));
 
 fun update_instance_command (args,src) thy = 
     (Monitor_Command_Parser.update_instance_command args thy
      handle ERROR msg => (if error_match src msg 
-                          then (writeln ("Correct error:"^msg^":reported.");thy)
+                          then (writeln ("Correct error: "^msg^": reported.");thy)
                           else error"Wrong error reported"))
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>update_instance-assert-error\<close>
@@ -134,12 +138,12 @@ val _ =
                          >> (Toplevel.theory o update_instance_command)); 
 
 val _ = 
-  let fun create_and_check_docitem ((((oid, pos),cid_pos),doc_attrs),src) thy=
+  let fun create_and_check_docitem ((((oid, pos),cid_pos),doc_attrs),src) thy =
                   (Value_Command.Docitem_Parser.create_and_check_docitem
                           {is_monitor = false} {is_inline=true}
                           {define = false} oid pos (cid_pos) (doc_attrs) thy)
                    handle ERROR msg => (if error_match src msg 
-                          then (writeln ("Correct error:"^msg^":reported.");thy)
+                          then (writeln ("Correct error: "^msg^": reported.");thy)
                           else error"Wrong error reported")
   in  Outer_Syntax.command \<^command_keyword>\<open>declare_reference-assert-error\<close>
                        "declare document reference"
@@ -148,10 +152,35 @@ val _ =
   end;
 
 
+(* fun pass_trans_to_value_cmd  args ((name, modes), t) trans =
+let val pos = Toplevel.pos_of trans
+in
+   trans |> Toplevel.theory (value_cmd {assert=false} args name modes t @{here})
+end
+ *)
+
+val _ =
+  let fun pass_trans_to_value_cmd (args, (((name, modes), t),src)) trans  = 
+               (Value_Command.value_cmd {assert=false} args name modes t @{here} trans
+                handle ERROR msg => (if error_match src msg 
+                                     then (writeln ("Correct error: "^msg^": reported.");trans)
+                                     else error"Wrong error reported"))
+  in  Outer_Syntax.command \<^command_keyword>\<open>value-assert-error\<close> "evaluate and print term"
+       (ODL_Meta_Args_Parser.opt_attributes -- 
+          (Value_Command.opt_evaluator 
+           -- Value_Command.opt_modes 
+           -- Parse.term 
+           -- Parse.document_source) 
+        >> (Toplevel.theory o pass_trans_to_value_cmd))
+  end;
+
 
 val _ =
   Outer_Syntax.command ("text-latex", \<^here>) "formal comment (primary style)"
     (Parse.opt_target -- Parse.document_source >> document_command2 {markdown = true});
+
+
+
 
 \<close>
 

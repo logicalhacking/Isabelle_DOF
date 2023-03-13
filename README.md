@@ -62,6 +62,13 @@ foo@bar:~$ isabelle build -D . -x Isabelle_DOF-Proofs -x HOL-Proofs
 
 This will compile Isabelle/DOF and run the example suite.
 
+For building the session ``Isabelle_DOF-Proofs``, the timeout might need to 
+increased to avoid timeouts during building the dependencies:
+
+```console
+foo@bar:~$ isabelle build -d . -o 'timeout_scale=2' Isabelle_DOF-Proofs
+```
+
 ## Usage
 
 In the following, we assume that you installed Isabelle/DOF either from the AFP

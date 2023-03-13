@@ -142,8 +142,8 @@ fun map_snd f (x,y) = (x,f y)
 
 fun map_eq_fst_triple f (x,_,_) (y,_,_) = equal (f x) (f y)
 
-fun lst_and_fun _ [] = true
-  | lst_and_fun x (f::fs) =  (f x) andalso (lst_and_fun x fs)
+fun fold_and [] = true
+  | fold_and (x::xs) = x andalso (fold_and xs)
 
 \<close>
 
@@ -487,8 +487,8 @@ struct
 
 
   datatype monitor_info = Monitor_Info of 
-    {accepted_cids : string list,
-     rejected_cids : string list,
+    {accepted_cids : RegExpInterface.env,
+     rejected_cids : RegExpInterface.env,
      automatas     : RegExpInterface.automaton list}
 
 
@@ -699,6 +699,13 @@ fun get_value_local oid ctxt  =
   let val Instance v = get_instance_global oid (Proof_Context.theory_of ctxt)
   in v |> #value end
 
+fun get_defined_global oid thy  = let val Instance d = get_instance_global oid thy
+                                       in d |> #defined end
+
+fun get_defined_local oid ctxt  =
+  let val Instance d = get_instance_global oid (Proof_Context.theory_of ctxt)
+  in d |> #defined end
+
 (* missing : setting terms to ground (no type-schema vars, no schema vars. )*)
 
 fun binding_from_pos get_objects get_object_name name thy  =
@@ -733,6 +740,24 @@ fun update_input_term_global name upd_input_term thy  =
 fun update_value_input_term_global name upd_input_term upd_value thy  = 
   update_value_global name upd_value thy |> update_input_term_global name upd_input_term
 
+fun check_invs get_ml_invs cid_long oid is_monitor thy =
+  thy |> Context.Theory
+      |> (fn ctxt =>
+            let val invs = get_ml_invs (Proof_Context.init_global thy)
+                                              |> Name_Space.dest_table
+                val checks = invs |> filter (fn (_, inv) => let val ML_Invariant class = inv
+                                                            in class |> #class |> equal cid_long
+                                                            end)
+                                  |>  map (fn (_, inv) => let val ML_Invariant check = inv
+                                                          in check |> #check end)
+                                  |> map (fn check => check oid is_monitor ctxt)
+            in (fold_and checks) end)
+
+val check_ml_invs = check_invs get_ml_invariants 
+
+val check_opening_ml_invs = check_invs get_opening_ml_invariants 
+
+val check_closing_ml_invs = check_invs get_closing_ml_invariants
 
 val ISA_prefix = "Isabelle_DOF_"
 
@@ -1000,18 +1025,13 @@ fun ML_isa_check_term thy (term, _, pos) _ =
 
 
 fun ML_isa_check_thm thy (term, _, pos) _ =
-  (* this works for long-names only *)
-  let fun check thy (name, _) = case Proof_Context.lookup_fact (Proof_Context.init_global thy) name of
-                                  NONE => err ("No Theorem:" ^name) pos
-                                | SOME X => X
+  let fun check thy (name, _) = Global_Theory.check_fact thy (name, Position.none)
   in   ML_isa_check_generic check thy (term, pos) end
 
 
 fun ML_isa_check_file thy (term, _, pos) _ =
-  let fun check thy (name, pos) = check_path (SOME File.check_file) 
-                                             (Proof_Context.init_global thy) 
-                                             (Path.current) 
-                                             (name, pos);
+  let fun check thy (name, pos) = name |> Syntax.read_input
+                                       |> Resources.check_file (Proof_Context.init_global thy) NONE 
   in  ML_isa_check_generic check thy (term, pos) end;
 
 fun check_instance thy (term, _, pos) s =
@@ -1600,7 +1620,10 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
                       (Name_Space.dest_table (DOF_core.get_monitor_infos (Proof_Context.init_global thy)))
       fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
                                                  Syntax.read_term_global thy rhs)
-      val trace_attr = [((("trace", @{here}), "+="), "[("^cid_long^", ''"^oid^"'')]")]
+      val defined = DOF_core.get_defined_global oid thy
+      val trace_attr = if defined
+                       then [((("trace", @{here}), "+="), "[("^cid_long^", ''"^oid^"'')]")]
+                       else []
       val assns' = map conv_attrs trace_attr
       fun cid_of oid = let val DOF_core.Instance params = DOF_core.get_instance_global oid thy
                         in #cid params end
@@ -1610,25 +1633,21 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
       fun def_trans_value oid =
         (#1 o (calc_update_term {mk_elaboration=true} thy (cid_of oid) assns'))
         #> value ctxt
-      val _ = if null enabled_monitors then () else writeln "registrating in monitors ..." 
-      val _ = app (fn (n, _) => writeln(oid^" : "^cid_long^" ==> "^n)) enabled_monitors;
-       (* check that any transition is possible : *)
-      fun inst_class_inv x ctxt =
-         let val cid_long = let val DOF_core.Instance cid =
-                                           DOF_core.get_instance_global x (Context.theory_of ctxt)
+      val _ = if null enabled_monitors
+              then ()
+              else if defined
+                   then (tracing "registrating in monitors ..." ;
+                         app (fn (n, _) => tracing (oid^" : "^cid_long^" ==> "^n)) enabled_monitors)
+                   else ()
+      (* check that any transition is possible: *)
+      fun class_inv_checks thy =
+        enabled_monitors
+        |> map (fn (x, _) =>
+                  let val cid_long =
+                            let val DOF_core.Instance cid = DOF_core.get_instance_global x thy
                             in cid |> #cid end
-             val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
-                        |> Name_Space.dest_table
-             val check_list = invs |> filter (fn (_, inv) =>
-                          let val DOF_core.ML_Invariant {class, ...} = inv
-                          in class |> equal cid_long end)
-                                   |>  map (fn (_, inv) =>
-                          let val DOF_core.ML_Invariant {check, ...} = inv
-                          in check end)
-             val check_list' = check_list |> map (fn check => check x {is_monitor=false})
-         in (lst_and_fun ctxt check_list') end
-      fun class_inv_checks ctxt = map (fn (x, _) => inst_class_inv x ctxt) enabled_monitors
-      val delta_autoS = map is_enabled_for_cid  enabled_monitors; 
+                  in DOF_core.check_ml_invs cid_long x {is_monitor=false} thy end)
+      val delta_autoS = map is_enabled_for_cid  enabled_monitors;
       fun update_info (n, aS, monitor_info) =  
         let val DOF_core.Monitor_Info {accepted_cids,rejected_cids,...} = monitor_info
         in Name_Space.map_table_entry n (K ((accepted_cids, rejected_cids, aS)
@@ -1642,7 +1661,7 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
   in  thy |> (* update traces of all enabled monitors *)
              fold update_trace (map #1 enabled_monitors)
           |> (* check class invariants of enabled monitors *)
-             (fn thy => (class_inv_checks (Context.Theory thy); thy))
+             tap class_inv_checks
           |> (* update the automata of enabled monitors *)
               DOF_core.Monitor_Info.map (fold update_info delta_autoS)
   end
@@ -1754,18 +1773,6 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} oi
                                                                         thy cid_long assns' defaults
                                   in (input_term, value_term') end
                              else (\<^term>\<open>()\<close>, value_term') end
-    fun check_inv thy =
-      thy |> Context.Theory
-          |> (fn ctxt => let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
-                                       |> Name_Space.dest_table
-                             val check_list = invs |> filter (fn (_, inv) =>
-                                              let val DOF_core.ML_Invariant {class, ...} = inv
-                                              in class |> equal cid_long end)
-                                                   |>  map (fn (_, inv) =>
-                                              let val DOF_core.ML_Invariant {check, ...} = inv
-                                              in check end)
-                             val check_list' = check_list |> map (fn check => check oid is_monitor)
-                         in (lst_and_fun ctxt check_list') end)
   in thy |> DOF_core.define_object_global
               {define = define} ((oid, pos), DOF_core.make_instance
                                                (false, fst value_terms,
@@ -1773,42 +1780,34 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} oi
                                                 |> value (Proof_Context.init_global thy),
                                                  is_inline, cid_long, vcid))
          |> register_oid_cid_in_open_monitors oid pos cid_pos'
-         |> (fn thy => if #is_monitor(is_monitor)
-                       then ((Context.Theory
-                              #> (fn ctxt => let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
-                                                            |> Name_Space.dest_table
-                                                 val check_list = invs |> filter (fn (_, inv) =>
-                                              let val DOF_core.ML_Invariant {class, ...} = inv
-                                              in class |> equal cid_long end)
-                                                                       |>  map (fn (_, inv) =>
-                                              let val DOF_core.ML_Invariant {check, ...} = inv
-                                              in check end)
-                                                 val check_list' = check_list |> map (fn check => check oid is_monitor)
-                                              in (lst_and_fun ctxt check_list') end)) thy; thy)
-                        else thy)
-         |> tap check_inv
-         (* Bypass checking of high-level invariants when the class default_cid = "text",
-            the top (default) document class.
-            We want the class default_cid to stay abstract
-            and not have the capability to be defined with attribute, invariants, etc.
-            Hence this bypass handles docitem without a class associated,
-            for example when you just want a document element to be referenceable
-            without using the burden of ontology classes.
-            ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
-         |> (fn thy => if default_cid then thy
-                       else if Config.get_global thy DOF_core.invariants_checking
-                            then check_invariants thy (oid, pos) else thy)
+         |> (fn thy =>
+            if (* declare_reference* without arguments is not checked against invariants *)
+               thy |> DOF_core.get_defined_global oid |> not
+               andalso null doc_attrs
+            then thy
+            else thy |> tap (DOF_core.check_opening_ml_invs cid_long oid is_monitor)
+                     |> tap (DOF_core.check_ml_invs cid_long oid is_monitor)
+                     (* Bypass checking of high-level invariants when the class default_cid = "text",
+                        the top (default) document class.
+                        We want the class default_cid to stay abstract
+                        and not have the capability to be defined with attribute, invariants, etc.
+                        Hence this bypass handles docitem without a class associated,
+                        for example when you just want a document element to be referenceable
+                        without using the burden of ontology classes.
+                        ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
+                     |> (fn thy => if default_cid then thy
+                                   else if Config.get_global thy DOF_core.invariants_checking
+                                        then check_invariants thy (oid, pos) else thy))
   end
 
 end (* structure Docitem_Parser *)
 
-val empty_meta_args = ((("", Position.none), NONE), [])
 
 fun meta_args_exec (meta_args as (((oid, pos), cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) thy = 
-         thy |> (if meta_args = empty_meta_args
+         thy |> (if meta_args = ODL_Meta_Args_Parser.empty_meta_args
                  then (K thy)
                  else Docitem_Parser.create_and_check_docitem 
-                                    {is_monitor = false} {is_inline = false} {define = true}
+                                    {is_monitor = false} {is_inline = true} {define = true}
                                     oid pos (I cid_pos) (I doc_attrs))
 
 fun value_cmd {assert=assert} meta_args_opt raw_name modes raw_t pos thy  =
@@ -1899,18 +1898,18 @@ end
 (* setup ontology aware commands *)
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>term*\<close> "read and print term"
-    (ODL_Meta_Args_Parser.opt_attributes -- (opt_modes -- Parse.term) 
-     >> (fn (meta_args_opt, eval_args ) => print_term meta_args_opt eval_args));
+     (ODL_Meta_Args_Parser.opt_attributes -- (opt_modes -- Parse.term) 
+     >> (uncurry print_term));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>value*\<close> "evaluate and print term"
     (ODL_Meta_Args_Parser.opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
-     >> (fn (meta_args_opt, eval_args ) => pass_trans_to_value_cmd meta_args_opt eval_args));
+     >> (uncurry pass_trans_to_value_cmd));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>assert*\<close> "evaluate and assert term"
     (ODL_Meta_Args_Parser.opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
-     >> (fn (meta_args_opt, eval_args ) => pass_trans_to_assert_value_cmd meta_args_opt eval_args));
+     >> (uncurry pass_trans_to_assert_value_cmd));
 
 
 (* setup ontology - aware text and ML antiquotations. Due to lexical restrictions, we can not
@@ -1939,7 +1938,7 @@ end
 (* setup evaluators  *)
 val _ = Theory.setup(
      add_evaluator (\<^binding>\<open>simp\<close>, Code_Simp.dynamic_value) #> snd
-  #> add_evaluator (\<^binding>\<open>nbe\<close>, Nbe.dynamic_value) #> snd
+  #> add_evaluator (\<^binding>\<open>nbe\<close>,  Nbe.dynamic_value) #> snd
   #> add_evaluator (\<^binding>\<open>code\<close>, Code_Evaluation.dynamic_value_strict) #> snd);
 
 
@@ -1977,24 +1976,12 @@ fun update_instance_command  (((oid, pos), cid_pos),
                   #1 o (Value_Command.Docitem_Parser.calc_update_term {mk_elaboration=true}
                                                                                 thy cid_long assns')
                   #> Value_Command.value (Proof_Context.init_global thy)
-                fun check_inv thy =
-                        ((Context.Theory
-                        #> (fn ctxt => let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
-                                                      |> Name_Space.dest_table
-                                           val check_list = invs |> filter (fn (_, inv) =>
-                                              let val DOF_core.ML_Invariant {class, ...} = inv
-                                              in class |> equal cid_long end)
-                                                                 |>  map (fn (_, inv) =>
-                                              let val DOF_core.ML_Invariant {check, ...} = inv
-                                              in check end)
-                                           val check_list' = check_list |> map (fn check => check oid {is_monitor=false})
-                                       in (lst_and_fun ctxt check_list') end) ) thy ; thy)
             in     
                 thy |> (if Config.get_global thy DOF_core.object_value_debug 
                         then DOF_core.update_value_input_term_global oid
                                    def_trans_input_term def_trans_value
                         else DOF_core.update_value_global oid def_trans_value)
-                    |> check_inv
+                    |> tap (DOF_core.check_ml_invs cid_long oid {is_monitor=false})
                     |> (fn thy => if Config.get_global thy DOF_core.invariants_checking
                                   then Value_Command.Docitem_Parser.check_invariants thy (oid, pos)
                                   else thy)
@@ -2022,8 +2009,8 @@ fun open_monitor_command  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Par
                               NONE => ISA_core.err ("You must specified a monitor class.") pos
                             | SOME (cid, _) => cid
                 val (accS, rejectS, aS) = compute_enabled_set cid thy
-                val info = {accepted_cids = accS, rejected_cids = rejectS, automatas  = aS }
-            in DOF_core.add_monitor_info (Binding.make (oid, pos)) (DOF_core.Monitor_Info info) thy
+            in DOF_core.add_monitor_info (Binding.make (oid, pos))
+                                         (DOF_core.make_monitor_info (accS, rejectS, aS)) thy
             end
     in
       o_m_c oid pos cid_pos doc_attrs #> create_monitor_entry oid
@@ -2052,33 +2039,9 @@ fun close_monitor_command (args as (((oid, pos), cid_pos),
         val markup = DOF_core.get_instance_name_global oid thy
                       |> Name_Space.markup (Name_Space.space_of_table instances)
         val _ = Context_Position.report ctxt pos markup;
-        val check_inv =
-                    Context.Theory
-                  #> (fn ctxt => let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
-                                                |> Name_Space.dest_table
-                                     val check_list = invs |> filter (fn (_, inv) =>
-                                              let val DOF_core.ML_Invariant {class, ...} = inv
-                                              in class |> equal cid_long end)
-                                                           |>  map (fn (_, inv) =>
-                                              let val DOF_core.ML_Invariant {check, ...} = inv
-                                              in check end)
-                                     val check_list' = check_list |> map (fn check => check oid {is_monitor=true})
-                                 in (lst_and_fun ctxt check_list') end)
-        val check_closing_inv =
-                      Context.Theory
-                     #> (fn ctxt => let val invs = DOF_core.get_ml_invariants (Proof_Context.init_global thy)
-                                                   |> Name_Space.dest_table
-                                        val check_list = invs |> filter (fn (_, inv) =>
-                                              let val DOF_core.ML_Invariant {class, ...} = inv
-                                              in class |> equal cid_long end)
-                                                              |>  map (fn (_, inv) =>
-                                              let val DOF_core.ML_Invariant {check, ...} = inv
-                                              in check end)
-                                        val check_list' = check_list |> map (fn check => check oid {is_monitor=true})
-                                    in (lst_and_fun ctxt check_list') end) 
-    in  thy |> (fn thy => (check_closing_inv thy; thy))
+    in  thy |> tap (DOF_core.check_closing_ml_invs cid_long oid {is_monitor=true})
             |> update_instance_command args
-            |> tap check_inv
+            |> tap (DOF_core.check_ml_invs cid_long oid {is_monitor=true})
             |> (fn thy => if Config.get_global thy DOF_core.invariants_checking
                           then Value_Command.Docitem_Parser.check_invariants thy (oid, pos)
                           else thy)
@@ -2341,11 +2304,11 @@ ML\<open>
 structure ML_star_Command =
 struct
 
-fun meta_args_exec (meta_args as (((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) thy = 
-         thy |> (if meta_args = Value_Command.empty_meta_args
-                 then (K thy)                               
+fun meta_args_exec (meta_args as (((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) ctxt = 
+         ctxt |> (if meta_args = ODL_Meta_Args_Parser.empty_meta_args
+                 then (K ctxt)                               
                  else Context.map_theory (Value_Command.Docitem_Parser.create_and_check_docitem 
-                                    {is_monitor = false} {is_inline = false} 
+                                    {is_monitor = false} {is_inline = true} 
                                     {define = true} oid pos (I cid_pos) (I doc_attrs))
 )
 
@@ -2705,10 +2668,17 @@ struct
 val basic_entity = Document_Output.antiquotation_pretty_source
     : binding -> 'a context_parser -> (Proof.context -> 'a -> Pretty.T) -> theory -> theory;
 
-fun check_and_mark ctxt cid_decl (str:{strict_checking: bool}) {inline=inline_req} pos name  =
+fun check_and_mark ctxt cid_decl ({strict_checking = strict}) {inline=inline_req} pos name  =
   let
     val thy = Proof_Context.theory_of ctxt;
-    val DOF_core.Instance {cid,inline,...} = DOF_core.get_instance_global name thy
+    val DOF_core.Instance {cid,inline, defined, ...} = DOF_core.get_instance_global name thy
+    val _ = if not strict
+            then if defined
+                 then ISA_core.warn ("Instance defined, unchecked option useless") pos
+                 else ()
+            else if defined
+                 then ()
+                 else ISA_core.err ("Instance declared but not defined, try option unchecked") pos
     val _ = if not inline_req 
             then if inline then () else error("referred text-element is macro! (try option display)")
             else if not inline then () else error("referred text-element is no macro!")

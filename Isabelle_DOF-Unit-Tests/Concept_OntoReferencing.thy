@@ -37,25 +37,24 @@ text\<open> This uses elements of two ontologies, notably
       \<^theory>\<open>Isabelle_DOF-Ontologies.Conceptual\<close> and \<^theory>\<open>Isabelle_DOF.Isa_COL\<close>.\<close>
 
 (*<*)
-title*[abbb::title, short_title="Some\<open>ooups.\<close>"]\<open>Lorem ipsum dolor sit amet ...\<close>
-subtitle*[abbbb::subtitle, abbrev = "Some\<open>ooups-oups.\<close>"]\<open>Lorem ipsum dolor sit amet ...\<close>
-chapter*[abbbbbb::A, x = "3"]   \<open> Lorem ipsum dolor sit amet ... \<close>
+title*[ag::title, short_title="Some\<open>ooups.\<close>"]\<open>Lorem ipsum dolor sit amet ...\<close>
+subtitle*[af::subtitle, abbrev = "Some\<open>ooups-oups.\<close>"]\<open>Lorem ipsum dolor sit amet ...\<close>
+chapter*[a0::A, x = "3"]   \<open> Lorem ipsum dolor sit amet ... \<close>
 section*[a::A, x = "3"]         \<open> Lorem ipsum dolor sit amet, ... \<close>
 subsection*[ab::A, x = "3"]     \<open> Lorem ipsum dolor sit amet, ... 
-                                  As mentioned in the @{title \<open>abbb\<close>}... \<close> \<comment> \<open>old-style and ...\<close>
-subsubsection*[abb::A, x = "3"] \<open> Lorem ipsum dolor sit amet, ... 
-                                  As mentioned in the \<^title>\<open>abbb\<close>\<close>    \<comment> \<open>new-style references to
+                                  As mentioned in the @{title \<open>ag\<close>}... \<close> \<comment> \<open>old-style and ...\<close>
+subsubsection*[ac::A, x = "3"]  \<open> Lorem ipsum dolor sit amet, ... 
+                                  As mentioned in the \<^title>\<open>ag\<close>\<close>    \<comment> \<open>new-style references to
                                                                           ontological instances 
                                                                           assigned to text 
                                                                           elements ...\<close>
 (*>*)
 
 
-
 text\<open>Meta-Objects are typed, and references have to respect this : \<close>
 (*<*)
-text-assert-error[ac]\<open> \<^title>\<open>a\<close> \<close>    \<open>reference ontologically inconsistent\<close>
-text-assert-error[ad]\<open> \<^title>\<open>abbbb\<close> \<close>\<open>reference ontologically inconsistent\<close> 
+text-assert-error[ad]\<open> \<^title>\<open>a\<close> \<close>    \<open>reference ontologically inconsistent\<close>
+text-assert-error[ae]\<open> \<^title>\<open>af\<close> \<close>\<open>reference ontologically inconsistent\<close> 
                        \<comment> \<open>erroneous reference: please consider class hierarchy!\<close>
 (*>*)
 
@@ -65,17 +64,18 @@ text-assert-error[ae1]\<open>@{C \<open>c1\<close>}\<close>\<open>Undefined inst
 
 declare_reference*[c1::C]     \<comment> \<open>forward declaration\<close>
 
-text\<open>@{C \<open>c1\<close>} \<close>              \<comment> \<open>THIS IS A  BUG !!! OVERLY SIMPLISTIC BEHAVIOUR. THIS SHOULD FAIL! \<close>
+text-assert-error\<open>@{C \<open>c1\<close>} \<close>\<open>Instance declared but not defined, try option unchecked\<close>
 
-text\<open>@{C (unchecked) \<open>c1\<close>} \<close>  \<comment> \<open>THIS SHOULD BE THE CORRECT BEHAVIOUR! \<close>
+text\<open>@{C (unchecked) \<open>c1\<close>} \<close>
 
-
+text*[a1::A, level="Some 0", x = 3]\<open>... phasellus amet id massa nunc, ...\<close>
 text*[c1::C, x = "''beta''"] \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
 
 text-assert-error[c1::C, x = "''gamma''"] 
                              \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>
                              \<open>Duplicate instance declaration\<close>
 
+\<comment> \<open>Referencing from a text context:\<close>
 text*[d::D, a1 = "X3"] \<open> ... phasellus amet id massa nunc, pede suscipit repellendus, 
                          ... @{C "c1"} or @{C \<open>c1\<close>} or \<^C>\<open>c1\<close>
                              similar to @{thm "refl"} and \<^thm>"refl"\<close>  \<comment> \<open>ontological and built-in
@@ -83,9 +83,16 @@ text*[d::D, a1 = "X3"] \<open> ... phasellus amet id massa nunc, pede suscipit r
 
 text\<open>Not only text-elements are "ontology-aware", proofs and code can this be too !\<close>
 
-ML*[c4::C]\<open>fun fac x = if x = 0 then 1 else x * (fac(x-1))\<close> (* TODO : BUG *)
+\<comment> \<open>Referencing from and to a ML-code context:\<close>
 
-lemma*[e5::E] asd: "True" by simp
+ML*[c4::C, z = "Some @{A \<open>a1\<close>}"]\<open>
+fun fac x = if x  = 0  then 1 else x * (fac(x-1))
+val v = \<^value_>\<open>A.x (the (z @{C \<open>c4\<close>}))\<close> |> HOLogic.dest_number |> snd |> fac
+\<close>
+
+definition*[a2::A, x=5, level="Some 1"] xx' where "xx' \<equiv> A.x @{A \<open>a1\<close>}" if "A.x @{A \<open>a1\<close>} = 5"
+
+lemma*[e5::E] testtest : "xx + A.x @{A \<open>a1\<close>} = yy + A.x @{A \<open>a1\<close>} \<Longrightarrow> xx = yy" by simp
 
 declare_reference-assert-error[c1::C]\<open>Duplicate instance declaration\<close>     \<comment> \<open>forward declaration\<close>
 
@@ -95,11 +102,9 @@ text\<open>This is the answer to the "OutOfOrder Presentation Problem": @{E (unc
 
 definition*[e6::E] facu :: "nat \<Rightarrow> nat" where "facu arg = undefined"
 
+text\<open>As shown in @{E \<open>e5\<close>} following from  @{E \<open>e6\<close>}\<close> 
 
-text\<open>As shown in @{E [display]\<open>e5\<close>} following from  @{E [display]\<open>e6\<close>}\<close> 
-(* BUG ?: why is option [display] necessary ? *)
-
-text\<open>As shown in @{C [display]\<open>c4\<close>}\<close>
+text\<open>As shown in @{C \<open>c4\<close>}\<close>
 
 
 
@@ -109,8 +114,7 @@ update_instance*[d::D, a1 := X2]
 
 text\<open> ... in ut tortor ... @{docitem \<open>a\<close>} ... @{A \<open>a\<close>} ... \<close> \<comment> \<open>untyped or typed referencing \<close>
 
-(* THIS IS A BUG : this weird option is necessary *)
-text-assert-error[ae::text_element]\<open>the function @{C [display] "c4"} \<close>\<open>referred text-element is macro!\<close>
+text-assert-error[ae::text_element]\<open>the function @{C [display] "c4"} \<close>\<open>referred text-element is no macro!\<close>
 
 text*[c2::C, x = "\<open>delta\<close>"]  \<open> ... in ut tortor eleifend augue pretium consectetuer.  \<close>
 
@@ -138,15 +142,12 @@ close_monitor*[struct]
 text\<open>And the trace of the monitor is:\<close>
 ML\<open>val trace = @{trace_attribute struct}\<close>
 ML\<open>@{assert} (trace = 
-   [("Conceptual.A", "abbbbbb"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"), ("Conceptual.A", "abb"),
-    ("Conceptual.C", "c1"), ("Conceptual.C", "c1"), ("Conceptual.D", "d"), ("Conceptual.C", "c4"),
-    ("Conceptual.E", "e5"), ("Conceptual.E", "e6"), ("Conceptual.E", "e6"), ("Conceptual.C", "c2"),
-    ("Conceptual.F", "f")]) \<close>
-(* BUG : DECLARATIONS SHOULD NOT BE TRACED, JUST DEFINITIONS.
-ML\<open>@{assert} (trace = [("Conceptual.A", "abbbbbb"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"), 
-    ("Conceptual.A", "abb"), ("Conceptual.C", "c1"), ("Conceptual.D", "d"), ("Conceptual.C", "c4"),
-    ("Conceptual.E", "e5"), ("Conceptual.E", "e6"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
-*)
+   [("Conceptual.A", "a0"), ("Conceptual.A", "a"), ("Conceptual.A", "ab"),
+    ("Conceptual.A", "ac"), ("Conceptual.A", "a1"),
+    ("Conceptual.C", "c1"), ("Conceptual.D", "d"), ("Conceptual.C", "c4"),
+    ("Conceptual.A", "a2"), ("Conceptual.E", "e5"), 
+    ("Conceptual.E", "e6"), ("Conceptual.C", "c2"), ("Conceptual.F", "f")]) \<close>
+
 
 text\<open>Note that the monitor \<^typ>\<open>M\<close> of the ontology \<^theory>\<open>Isabelle_DOF-Ontologies.Conceptual\<close> does
      not observe the common entities of \<^theory>\<open>Isabelle_DOF.Isa_COL\<close>, but just those defined in the 

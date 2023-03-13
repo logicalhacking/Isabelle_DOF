@@ -49,7 +49,7 @@ Definition* [aas_def, tag= "''adverse actions''"]
 declare_reference*[toeDef]
 
 Definition* [assts_def, tag="''assets''"]
- \<open>entities that the owner of the @{docitem toeDef} presumably places value upon \<close>
+ \<open>entities that the owner of the @{docitem (unchecked) toeDef} presumably places value upon \<close>
 
 Definition* [asgn_def, tag="''assignment''"]
 \<open>the specification of an identified parameter in a component (of the CC) or requirement.\<close>
@@ -57,7 +57,8 @@ Definition* [asgn_def, tag="''assignment''"]
 declare_reference*[sfrs_def]
 
 Definition* [assrc_def, tag="''assurance''"]
-  \<open>grounds for confidence that a @{docitem toeDef} meets the @{docitem sfrs_def}\<close>
+  \<open>grounds for confidence that a @{docitem (unchecked) toeDef}
+   meets the @{docitem (unchecked) sfrs_def}\<close>
 
 Definition* [attptl_def, tag="''attack potential''"] 
   \<open>measure of the effort to be expended in attacking a TOE, expressed in terms of 
@@ -70,7 +71,8 @@ Definition* [authdata_def, tag="''authentication data''"]
   \<open>information used to verify the claimed identity of a user\<close>
 
 Definition* [authusr_def, tag = "''authorised user''"] 
-\<open>@{docitem toeDef} user who may, in accordance with the @{docitem sfrs_def}, perform an operation\<close>
+\<open>@{docitem (unchecked) toeDef} user who may,
+ in accordance with the @{docitem (unchecked) sfrs_def}, perform an operation\<close>
 
 Definition* [bppDef, tag="''Base Protection Profile''"] 
 \<open>Protection Profile used as a basis to build a Protection Profile Configuration\<close>
@@ -105,8 +107,8 @@ Definition* [cfrm_def,tag="''confirm''"]
  term is only applied to evaluator actions.\<close>
 
 Definition* [cnnctvty_def, tag="''connectivity''"]
-\<open>property of the @{docitem toeDef} allowing interaction with IT entities external to the 
- @{docitem toeDef}
+\<open>property of the @{docitem (unchecked) toeDef} allowing interaction with IT entities external to the 
+ @{docitem (unchecked) toeDef}
 
  This includes exchange of data by wire or by wireless means, over any
  distance in any environment or configuration.\<close>
@@ -123,13 +125,16 @@ declare_reference*[stDef]
 declare_reference*[ppDef]
 
 Definition* [dmnst_conf_def, tag="''demonstrable conformance''"] 
-\<open>relation between an @{docitem stDef} and a @{docitem ppDef}, where the @{docitem stDef} 
+\<open>relation between an @{docitem (unchecked) stDef} and a @{docitem (unchecked) ppDef},
+ where the @{docitem (unchecked) stDef} 
  provides a solution which solves the generic security problem in the PP
 
-The @{docitem ppDef} and the @{docitem stDef} may contain entirely different statements that discuss
+The @{docitem (unchecked) ppDef} and the @{docitem (unchecked) stDef} may contain
+entirely different statements that discuss
 different entities, use different concepts etc. Demonstrable conformance is
-also suitable for a @{docitem toeDef} type where several similar @{docitem ppDef}s already exist, thus
-allowing the ST author to claim conformance to these @{docitem ppDef}s simultaneously,
+also suitable for a @{docitem (unchecked) toeDef} type
+where several similar @{docitem (unchecked) ppDef}s already exist, thus
+allowing the ST author to claim conformance to these @{docitem (unchecked) ppDef}s simultaneously,
 thereby saving work.\<close>
 
 Definition* [dmstrt_def, tag="''demonstrate''"] 
@@ -137,9 +142,10 @@ Definition* [dmstrt_def, tag="''demonstrate''"]
 
 Definition* [dpndcy, tag="''dependency''"] 
 \<open>relationship between components such that if a requirement based on the depending 
- component is included in a @{docitem ppDef}, ST or package, a requirement based on 
- the component that is depended upon must normally also be included in the @{docitem ppDef}, 
- @{docitem stDef} or package\<close>
+ component is included in a @{docitem (unchecked) ppDef}, ST or package, a requirement based on 
+ the component that is depended upon must normally also be included
+ in the @{docitem (unchecked) ppDef}, 
+ @{docitem (unchecked) stDef} or package\<close>
 
 Definition* [dscrb_def, tag="''describe''"] 
 \<open>provide specific details of an entity\<close>
@@ -154,7 +160,7 @@ Definition* [dtrmn_def, tag="''determine''"]
  performed which needs to be reviewed\<close>
 
 Definition* [devenv_def, tag="''development environment''"] 
-\<open>environment in which the @{docitem toeDef} is developed\<close>
+\<open>environment in which the @{docitem (unchecked) toeDef} is developed\<close>
 
 Definition* [elmnt_def, tag="''element''"] 
 \<open>indivisible statement of a security need\<close>
@@ -166,8 +172,8 @@ Definition* [ensr_def, tag="''ensure''"]
  consequence is not fully certain, on the basis of that action alone.\<close>
 
 Definition* [eval_def, tag="''evaluation''"] 
-\<open>assessment of a @{docitem ppDef}, an @{docitem stDef} or a @{docitem toeDef}, 
- against defined criteria.\<close>
+\<open>assessment of a @{docitem (unchecked) ppDef}, an @{docitem (unchecked) stDef}
+ or a @{docitem (unchecked) toeDef}, against defined criteria.\<close>
 
 Definition* [eal_def, tag= "''evaluation assurance level''"] 
 \<open>set of assurance requirements drawn from CC Part 3, representing a point on the 
@@ -292,36 +298,37 @@ declare_reference*[tsf_def]
 Definition* [prv_def, tag="''prove''"] 
 \<open>show correspondence by formal analysis in its mathematical sense
  It is completely rigorous in all ways. Typically, “prove” is used when there is
- a desire to show correspondence between two @{docitem tsf_def} representations at a high
- level of rigour.\<close>
+ a desire to show correspondence between two @{docitem (unchecked) tsf_def}
+ representations at a high level of rigour.\<close>
 
 Definition* [ref_def, tag="''refinement''"] 
 \<open>addition of details to a component\<close>
 
 Definition* [role_def, tag="''role''"] 
 \<open>predefined set of rules establishing the allowed interactions between
- a user and the @{docitem toeDef}\<close>
+ a user and the @{docitem (unchecked) toeDef}\<close>
 
 declare_reference*[sfp_def]
 
 Definition* [scrt_def, tag="''secret''"]
 \<open>information that must be known only to authorised users and/or the
- @{docitem tsf_def} in order to enforce a specific @{docitem sfp_def}\<close>
+ @{docitem (unchecked) tsf_def} in order to enforce a specific @{docitem (unchecked) sfp_def}\<close>
 
 declare_reference*[sfr_def]
 
 Definition* [sec_stDef, tag="''secure state''"] 
-\<open>state in which the @{docitem tsf_def} data are consistent and the  @{docitem tsf_def} 
- continues correct enforcement of the  @{docitem sfr_def}s\<close>
+\<open>state in which the @{docitem (unchecked) tsf_def} data are consistent
+  and the  @{docitem (unchecked) tsf_def} 
+ continues correct enforcement of the  @{docitem (unchecked) sfr_def}s\<close>
 
 Definition* [sec_att_def, tag="''security attribute''"] 
 \<open>property of subjects, users (including external IT products), objects, 
- information, sessions and/or resources that is used in defining the @{docitem sfr_def}s 
- and whose values are used in enforcing the @{docitem sfr_def}s\<close>
+ information, sessions and/or resources that is used in defining the @{docitem (unchecked) sfr_def}s 
+ and whose values are used in enforcing the @{docitem (unchecked) sfr_def}s\<close>
 
 Definition* [sec_def, tag="''security''"]
 \<open>function policy set of rules describing specific security behaviour enforced 
- by the @{docitem tsf_def} and expressible as a set of @{docitem sfr_def}s\<close>
+ by the @{docitem (unchecked) tsf_def} and expressible as a set of @{docitem (unchecked) sfr_def}s\<close>
 
 Definition* [sec_obj_def, tag="''security objective''"] 
 \<open>statement of an intent to counter identified threats and/or satisfy identified 
@@ -340,10 +347,11 @@ Definition* [sr_def, tag="''security requirement''", short_tag="Some(''SR'')"]
 \<open>requirement, stated in a standardised language, which is meant to contribute 
  to achieving the security objectives for a TOE\<close>
 (*<*)
-text \<open>@{docitem toeDef}\<close>
+text \<open>@{docitem  (unchecked) toeDef}\<close>
 (*>*)
 Definition* [st, tag="''Security Target''", short_tag="Some(''ST'')"]
-\<open>implementation-dependent statement of security needs for a specific identified @{docitem toeDef}\<close>
+\<open>implementation-dependent statement of security needs for a specific identified
+ @{docitem (unchecked) toeDef}\<close>
 
 Definition* [slct_def, tag="''selection''"] 
 \<open>specification of one or more items from a list in a component\<close>
@@ -383,7 +391,7 @@ Definition* [toe_res_def, tag="''TOE resource''"]
 
 Definition* [toe_sf_def, tag="''TOE security functionality''", short_tag= "Some(''TSF'')"] 
 \<open>combined functionality of all hardware, software, and firmware of a TOE that must be relied upon 
- for the correct enforcement of the @{docitem sfr_def}s\<close>
+ for the correct enforcement of the @{docitem  (unchecked) sfr_def}s\<close>
 
 Definition* [tr_vrb_def, tag="''trace, verb''"] 
 \<open>perform an informal correspondence analysis between two entities with only a 
@@ -434,13 +442,14 @@ effort is required of the evaluator.\<close>
 
 Definition* [dev_def, tag="''Developer''"]
 \<open>who respond to actual or perceived consumer security requirements in 
- constructing a @{docitem toeDef}, reference this  CC\_Part\_3 
+ constructing a @{docitem  (unchecked) toeDef}, reference this  CC\_Part\_3 
  when interpreting statements of assurance requirements and determining
  assurance approaches of @{docitem toe}s.\<close>
 
 Definition*[evalu_def, tag="'' Evaluator''"]
 \<open>who use the assurance requirements defined in CC\_Part\_3 
  as mandatory statement of evaluation criteria when determining the assurance 
- of @{docitem toeDef}s and when evaluating @{docitem ppDef}s and @{docitem stDef}s.\<close>
+ of @{docitem  (unchecked) toeDef}s and when evaluating @{docitem ppDef}s
+ and @{docitem  (unchecked) stDef}s.\<close>
 
 end

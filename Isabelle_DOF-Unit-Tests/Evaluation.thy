@@ -5,9 +5,9 @@ text\<open>Term Annotation Antiquotations (TA) can be evaluated with the help of
 theory 
   Evaluation
 imports 
-  "Isabelle_DOF-Unit-Tests.TermAntiquotations"
-  "Isabelle_DOF-Unit-Tests.High_Level_Syntax_Invariants"
-
+  "Isabelle_DOF-Unit-Tests.Concept_TermAntiquotations"
+  "Isabelle_DOF-Unit-Tests.Concept_High_Level_Invariants"
+  TestKit
 begin
 
 (*
@@ -59,7 +59,7 @@ section\<open>Term Annotation evaluation\<close>
 text\<open>We can validate a term with TA:\<close>
 term*[axx::A]\<open>@{thm \<open>HOL.refl\<close>}\<close>
 
-text\<open>check : @{A [display] "axx"}\<close>
+text\<open>check : @{A "axx"}\<close>
 
 text\<open>Now we can evaluate a term with TA:
 the current implementation return the term which references the object referenced by the TA.
@@ -69,7 +69,7 @@ value*\<open>@{thm \<open>HOL.refl\<close>}\<close> \<comment> \<open>syntax che
 
 value*[axxx::A]\<open>@{thm \<open>HOL.refl\<close>}\<close> \<comment> \<open>defining a reference of class A\<close> 
 
-text\<open>check : @{A [display] "axxx"}\<close> \<comment> \<open>using it\<close> 
+text\<open>check : @{A "axxx"}\<close> \<comment> \<open>using it\<close> 
 
 text\<open>An instance class is an object which allows us to define the concepts we want in an ontology.
 It is a concept which will be used to implement an ontology. It has roughly the same meaning as
@@ -187,7 +187,7 @@ text\<open>The \<^emph>\<open>assert*\<close>-command allows for logical stateme
 It uses the same implementation as the \<^emph>\<open>value*\<close>-command and has the same limitations.
 \<close>
 
-text\<open>Using the ontology defined in \<^theory>\<open>Isabelle_DOF-Unit-Tests.High_Level_Syntax_Invariants\<close>
+text\<open>Using the ontology defined in \<^theory>\<open>Isabelle_DOF-Unit-Tests.Concept_High_Level_Invariants\<close>
 we can check logical statements:\<close>
 (*
 term*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
