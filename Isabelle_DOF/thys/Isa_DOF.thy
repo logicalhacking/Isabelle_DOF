@@ -1780,19 +1780,24 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} oi
                                                 |> value (Proof_Context.init_global thy),
                                                  is_inline, cid_long, vcid))
          |> register_oid_cid_in_open_monitors oid pos cid_pos'
-         |> tap (DOF_core.check_opening_ml_invs cid_long oid is_monitor)
-         |> tap (DOF_core.check_ml_invs cid_long oid is_monitor)
-         (* Bypass checking of high-level invariants when the class default_cid = "text",
-            the top (default) document class.
-            We want the class default_cid to stay abstract
-            and not have the capability to be defined with attribute, invariants, etc.
-            Hence this bypass handles docitem without a class associated,
-            for example when you just want a document element to be referenceable
-            without using the burden of ontology classes.
-            ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
-         |> (fn thy => if default_cid then thy
-                       else if Config.get_global thy DOF_core.invariants_checking
-                            then check_invariants thy (oid, pos) else thy)
+         |> (fn thy =>
+            if (* declare_reference* without arguments is not checked against invariants *)
+               thy |> DOF_core.get_defined_global oid |> not
+               andalso null doc_attrs
+            then thy
+            else thy |> tap (DOF_core.check_opening_ml_invs cid_long oid is_monitor)
+                     |> tap (DOF_core.check_ml_invs cid_long oid is_monitor)
+                     (* Bypass checking of high-level invariants when the class default_cid = "text",
+                        the top (default) document class.
+                        We want the class default_cid to stay abstract
+                        and not have the capability to be defined with attribute, invariants, etc.
+                        Hence this bypass handles docitem without a class associated,
+                        for example when you just want a document element to be referenceable
+                        without using the burden of ontology classes.
+                        ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
+                     |> (fn thy => if default_cid then thy
+                                   else if Config.get_global thy DOF_core.invariants_checking
+                                        then check_invariants thy (oid, pos) else thy))
   end
 
 end (* structure Docitem_Parser *)
