@@ -262,6 +262,8 @@ struct
      cid: string,
      vcid: string option}
 
+  val undefined_instance = "undefined_instance"
+
   val empty_instance = Instance {defined = false,
      input_term = \<^term>\<open>()\<close>,
      value = \<^term>\<open>()\<close>,
@@ -626,20 +628,26 @@ fun define_object_global {define = define} ((oid, pos), instance) thy  =
     val binding = if Long_Name.is_qualified oid
                   then Binding.make (Long_Name.base_name oid, pos)
                   else Binding.make (oid, pos)
-    val undefined_instance = "undefined_instance"
+    val _ = if oid = undefined_instance
+            then error (oid ^ ": This name is reserved by the implementation" ^ Position.here pos)
+            else ()
     val (oid', instance') = Name_Space.check (Context.Theory thy)
                                 (get_instances (Proof_Context.init_global thy)) (oid, Position.none)
                                 handle ERROR _ => (undefined_instance, empty_instance)
     val Instance {input_term, value, inline, cid, vcid, ...} = instance
     val instance'' = make_instance (define, input_term, value, inline, cid, vcid)
   in if oid' = undefined_instance andalso instance' = empty_instance
-     then add_instance binding instance'' thy
-     else if define 
+     then (* declare instance using declare_reference* or else define instance *)
+          add_instance binding instance'' thy
+     else if define
           then let val Instance {defined, ...} = instance'
                in  if defined
-                   then add_instance binding instance'' thy
-                   else update_instance_entry oid' instance'' thy end
-          else add_instance binding instance thy
+                   then (* trigger error when adding already defined instance *)
+                        add_instance binding instance'' thy
+                   else (* define already declared instance *)
+                        update_instance_entry oid' instance'' thy end
+          else (* trigger error with declare_reference* when declaring already declared instance *)
+               add_instance binding instance thy
   end
 
 
@@ -725,17 +733,17 @@ fun binding_from_instance_pos name thy  =
 
 fun update_value_global name upd_value thy  =
   let
-    val binding = binding_from_instance_pos name thy
+    val name' = get_instance_name_global name thy
     val Instance {defined, input_term, value, inline, cid, vcid} = get_instance_global name thy 
     val instance' = make_instance (defined, input_term, upd_value value, inline, cid, vcid)
-  in update_instance binding instance' thy end
+  in update_instance_entry name' instance' thy end
 
 fun update_input_term_global name upd_input_term thy  = 
   let
-    val binding = binding_from_instance_pos name thy
+    val name' = get_instance_name_global name thy
     val Instance {defined, input_term, value, inline, cid, vcid} = get_instance_global name thy 
     val instance' = make_instance (defined, upd_input_term input_term, value, inline, cid, vcid)
-  in update_instance binding instance' thy end
+  in update_instance_entry name' instance' thy end
 
 fun update_value_input_term_global name upd_input_term upd_value thy  = 
   update_value_global name upd_value thy |> update_input_term_global name upd_input_term

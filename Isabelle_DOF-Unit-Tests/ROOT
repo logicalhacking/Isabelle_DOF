@@ -7,6 +7,7 @@ session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" +
     "Concept_Example_Low_Level_Invariant"
     "Concept_High_Level_Invariants"
     "Concept_MonitorTest1"
+    "Concept_MonitorTest2"
     "Concept_TermAntiquotations"
     "Attributes"
     "Evaluation"
