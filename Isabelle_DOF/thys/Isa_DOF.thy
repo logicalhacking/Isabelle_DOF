@@ -131,17 +131,6 @@ fun holstring_to_bstring ctxt (x:string) : bstring  =
         val t = String.concat (map collapse (chopper (fn x => x = #"@") x));
     in  t |>  Syntax.string_of_term ctxt o Syntax.parse_term ctxt end;
 
-fun map_option _ NONE = NONE 
-   |map_option f (SOME x) = SOME (f x);
-
-fun map_optional _ s NONE = s 
-   |map_optional f _ (SOME x) = f x;
-
-fun map_fst f (x,y) = (f x,y)
-fun map_snd f (x,y) = (x,f y)
-
-fun map_eq_fst_triple f (x,_,_) (y,_,_) = equal (f x) (f y)
-
 fun fold_and [] = true
   | fold_and (x::xs) = x andalso (fold_and xs)
 
@@ -568,10 +557,6 @@ fun typ_to_cid (Type(s,[\<^Type>\<open>unit\<close>])) = Long_Name.qualifier s
    |typ_to_cid _ = error("type is not an ontological type.")
 
 
-fun get_onto_class_name_super_class_global _ "text" = default_cid
-  | get_onto_class_name_super_class_global thy cid = get_onto_class_name_global' cid thy
-
-
 fun is_virtual cid thy =
   let val Onto_Class {virtual, ...} = get_onto_class_global' cid thy
   in virtual |> #virtual end
@@ -608,7 +593,7 @@ fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms i
                   then error("redefinition of document class:"^cid )
                   else ()*)
         (* takes class synonyms into account *)
-        val parent' = map_option (map_snd (fn x => get_onto_class_name_global' x thy)) parent
+        val parent' = Option.map (apsnd (fn x => get_onto_class_name_global' x thy)) parent
         val rejectS = map (Syntax.read_term_global thy) reject_Atoms;
         val _ = map (check_reject_atom) rejectS; 
         val reg_exps = map (Syntax.read_term_global thy) rexp;
@@ -618,7 +603,7 @@ fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms i
         val _ = if has_duplicates (op =) (map (fst o fst) invs) 
                 then error("invariant labels must be unique"^  Position.here (snd(fst(hd invs)))) 
                 else ()
-        val invs' = map (map_snd(Syntax.read_term_global thy)) invs 
+        val invs' = map (apsnd(Syntax.read_term_global thy)) invs 
     in  thy |> add_onto_class binding (make_onto_class (params', binding, virtual, parent', fields
                                                         , rejectS, reg_exps, invs'))
     end
@@ -1458,7 +1443,8 @@ fun create_default_object thy class_name =
               fun is_duplicated _ [] = false
                 | is_duplicated y (x::xs) =
                     let val (_, ys) = x
-                    in if exists (map_eq_fst_triple Binding.name_of y) ys
+                    in if ys |> exists (fn x => (x,y) |> apply2 (#1 #> Binding.name_of)
+                                                      |> uncurry equal)
                        then true
                        else is_duplicated y xs end
           in (cid, filter_out (fn y => is_duplicated y xs) ys)::attrs_filter xs end
@@ -2927,7 +2913,7 @@ fun read_parent NONE ctxt = (NONE, ctxt)
 fun read_fields raw_fields ctxt =
     let
       val Ts = Syntax.read_typs ctxt (map (fn ((_, raw_T, _),_) => raw_T) raw_fields);
-      val terms = map ((map_option (Syntax.read_term ctxt)) o snd) raw_fields
+      val terms = map ((Option.map (Syntax.read_term ctxt)) o snd) raw_fields
       fun test t1 t2 = Sign.typ_instance (Proof_Context.theory_of ctxt)
                                          (t1, Value_Command.Docitem_Parser.generalize_typ 0 t2) 
       fun check_default (ty,SOME trm) = 
@@ -3016,12 +3002,11 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
       fun cid thy = (* takes class synonyms into account *)
                     DOF_core.get_onto_class_name_global' (Binding.name_of binding) thy
       val (parent, ctxt2) = read_parent raw_parent ctxt1;
-      val parent_cid_long =  map_optional snd DOF_core.default_cid parent;
       (* takes class synonyms into account *)
-      val parent' = map_option
-                      (map_snd (K (DOF_core.get_onto_class_name_super_class_global thy parent_cid_long)))
-                      parent
-      val parent'_cid_long =  map_optional snd DOF_core.default_cid parent';
+      val parent' = parent |> Option.map (fn (x, y) => (x, DOF_core.get_onto_class_name_global' y thy))
+      val parent_cid_long = if is_some parent'
+                            then parent' |> the |> snd
+                            else DOF_core.default_cid
       val raw_fieldsNdefaults' = filter (fn((bi,_,_),_) => Binding.name_of bi <> "trace") 
                                         raw_fieldsNdefaults
       val _ = if length raw_fieldsNdefaults' <> length raw_fieldsNdefaults 
@@ -3035,7 +3020,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
       val fieldsNterms' = map (fn ((x,y),z) => (x,y,z)) fieldsNterms
       val params' = map (Proof_Context.check_tfree ctxt3) params;
       fun check_n_filter thy (bind,ty,mf) = 
-                     case DOF_core.get_attribute_info parent'_cid_long (Binding.name_of bind) thy of
+                     case DOF_core.get_attribute_info parent_cid_long (Binding.name_of bind) thy of
                       NONE => SOME(bind,ty,mf)
                       | SOME{def_occurrence,long_name,typ,...}
                           => if ty = typ 
