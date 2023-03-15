@@ -1636,8 +1636,6 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
       fun cid_of oid = let val DOF_core.Instance params = DOF_core.get_instance_global oid thy
                         in #cid params end
       val ctxt = Proof_Context.init_global thy
-      fun def_trans_input_term  oid =
-        #1 o (calc_update_term {mk_elaboration=false} thy (cid_of oid) assns')
       fun def_trans_value oid =
         (#1 o (calc_update_term {mk_elaboration=true} thy (cid_of oid) assns'))
         #> value ctxt
@@ -1663,8 +1661,10 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
         end
       fun update_trace mon_oid =
         if Config.get_global thy DOF_core.object_value_debug
-        then DOF_core.update_value_input_term_global mon_oid
-                                   (def_trans_input_term mon_oid) (def_trans_value mon_oid)
+        then let fun def_trans_input_term  oid =
+                   #1 o (calc_update_term {mk_elaboration=false} thy (cid_of oid) assns')
+             in DOF_core.update_value_input_term_global mon_oid
+                                   (def_trans_input_term mon_oid) (def_trans_value mon_oid) end
         else DOF_core.update_value_global mon_oid (def_trans_value mon_oid)
   in  thy |> (* update traces of all enabled monitors *)
              fold update_trace (map #1 enabled_monitors)
@@ -1980,17 +1980,17 @@ fun update_instance_command  (((oid, pos), cid_pos),
                 fun conv_attrs (((lhs, pos), opn), rhs) = ((markup2string lhs),pos,opn, 
                                                            Syntax.read_term_global thy rhs)
                 val assns' = map conv_attrs doc_attrs
-                val def_trans_input_term  =
-                  #1 o (Value_Command.Docitem_Parser.calc_update_term {mk_elaboration=false}
-                                                                                thy cid_long assns')
                 val def_trans_value  =
                   #1 o (Value_Command.Docitem_Parser.calc_update_term {mk_elaboration=true}
                                                                                 thy cid_long assns')
                   #> Value_Command.value (Proof_Context.init_global thy)
             in     
                 thy |> (if Config.get_global thy DOF_core.object_value_debug 
-                        then DOF_core.update_value_input_term_global oid
-                                   def_trans_input_term def_trans_value
+                        then let val def_trans_input_term  =
+                                   #1 o (Value_Command.Docitem_Parser.calc_update_term
+                                             {mk_elaboration=false} thy cid_long assns')
+                        in DOF_core.update_value_input_term_global oid
+                                   def_trans_input_term def_trans_value end
                         else DOF_core.update_value_global oid def_trans_value)
                     |> tap (DOF_core.check_ml_invs cid_long oid {is_monitor=false})
                     |> (fn thy => if Config.get_global thy DOF_core.invariants_checking
