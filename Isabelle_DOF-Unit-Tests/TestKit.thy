@@ -191,4 +191,3 @@ text-latex\<open>dfg\<close>
 text-assert-error[aaaa::A]\<open> @{A \<open>sdf\<close>}\<close>\<open>reference ontologically inconsistent\<close>
 
 end
-(*>*)
