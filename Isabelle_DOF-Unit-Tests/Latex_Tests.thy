@@ -48,7 +48,7 @@ text-[asd::B]
      \textbf{TEST}
      @{cartouche [display] 
          \<open>text*[dfgdfg::B]
-           \<open> Lorem ipsum ...  @{thm refl} Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
+           \<open> Lorem ipsum ...  @{thm refl} Frederic \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
           \<close>}
 \<close>
 
@@ -57,10 +57,9 @@ text-latex\<open>... and here is its application macro expansion:
      \textbf{TEST}
      @{cartouche [display] 
          \<open>text*[dfgdfg::B]
-           \<open> Lorem ipsum ...  @{thm refl}  Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
+           \<open> Lorem ipsum ...  @{thm refl}  Fr\'ed\'eric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
           \<close>}\<close>
 
-(*<*)
 text-latex\<open> \<^theory_text>\<open>definition df = ...  
         \<close>
        @{ML      [display] \<open> let val x = 3 + 4 in true end 
@@ -70,12 +69,11 @@ text-latex\<open> \<^theory_text>\<open>definition df = ...
                            \<close>}
 
        @{verbatim [display] \<open> Lorem ipsum ...  @{thm refl} 
-                              Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close> \<close>}
+                              Fr\'ed\'eric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close> \<close>}
        @{theory_text [display] \<open>definition df = ... \<lambda>x.  
                                \<close>}
        @{cartouche [display]   \<open> @{figure "cfgdfg"}\<close>} \<close>
 
-(*>*)
 text\<open>Final Status:\<close>
 print_doc_items
 print_doc_classes 
