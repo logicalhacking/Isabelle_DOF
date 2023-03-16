@@ -2373,9 +2373,7 @@ fun prep_spec_open prep_var parse_prop raw_vars raw_params raw_prems raw_concl c
       |> singleton (dummy_frees params_ctxt (xs @ ys));
     val concl :: prems = Syntax.check_props params_ctxt props;
     val spec = Logic.list_implies (prems, concl);
-    val spec' = DOF_core.transduce_term_global {mk_elaboration=true}
-                                               (spec , Position.none)
-                                               (Proof_Context.theory_of ctxt)
+    val spec' = DOF_core.elaborate_term ctxt spec
     val spec_ctxt = Variable.declare_term spec' params_ctxt;
 
     fun get_pos x = maps (get_positions spec_ctxt x) props;
@@ -2477,16 +2475,11 @@ fun prep_statement prep_att prep_stmt raw_elems raw_stmt ctxt =
             ||> Proof_Context.restore_stmt asms_ctxt;
 
           val stmt' = [(Binding.empty_atts, [(#2 (#1 (Obtain.obtain_thesis ctxt)), [])])];
-          val stmt'' = map (fn (b, ts) =>
-                         (b, map (fn (t', t's) =>
-                         (DOF_core.transduce_term_global {mk_elaboration=true}
-                                                         (t' , Position.none)
-                                                         (Proof_Context.theory_of ctxt),
-                         map (fn t'' => 
-                         DOF_core.transduce_term_global {mk_elaboration=true}
-                                                        (t'' , Position.none)
-                                                        (Proof_Context.theory_of ctxt))
-                         t's)) ts)) stmt'
+          val stmt'' = stmt' |> map (fn (b, ts) =>
+                                (b, ts |> map (fn (t', t's) =>
+                                          (DOF_core.elaborate_term ctxt t',
+                                          t's |> map (fn t'' => 
+                                                 DOF_core.elaborate_term ctxt t'')))))
         in ((Obtain.obtains_attribs raw_obtains, prems, stmt'', SOME that'), that_ctxt) end)
   end;
 
