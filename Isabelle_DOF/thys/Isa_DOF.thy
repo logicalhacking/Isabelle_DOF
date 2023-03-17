@@ -566,7 +566,7 @@ struct
   fun map_invariant_class (get, ap) name f =
     map_invariant_entry (get, ap) name (fn (check, class) => (check, f class))
 
-  val map_ml_invariant_cclass = map_invariant_class (fst o fst, apfst o apfst)
+  val map_ml_invariant_class = map_invariant_class (fst o fst, apfst o apfst)
 
   val map_opening_ml_invariant_class = map_invariant_class (snd o fst , apfst o apsnd)
 
@@ -586,7 +586,7 @@ struct
 
   val opening_ml_invariant_check_of = invariant_check_of (snd o fst)
 
-  val opening_ml_invariant_check_of = invariant_check_of snd
+  val closing_ml_invariant_check_of = invariant_check_of snd
 
   fun invariant_class_of which id = #class o rep_invariant which id
 
@@ -594,7 +594,7 @@ struct
 
   val opening_ml_invariant_class_of = invariant_class_of (snd o fst)
 
-  val opening_ml_invariant_class_of = invariant_class_of snd
+  val closing_ml_invariant_class_of = invariant_class_of snd
 
   fun print_invariants which verbose ctxt =
     Pretty.big_list "Isabelle.DOF ML_Invariants:"
