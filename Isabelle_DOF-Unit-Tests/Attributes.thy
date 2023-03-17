@@ -128,10 +128,10 @@ DOF_core.get_attribute_info  "Conceptual.C" "z" @{theory};
 
 
 ML\<open>
-DOF_core.get_value_local "sdf"   @{context};
-DOF_core.get_value_local "sdfg"  @{context};
-DOF_core.get_value_local "dfgdfg" @{context};
-DOF_core.get_value_local "omega" @{context};
+DOF_core.value_of "sdf" \<^theory>;
+DOF_core.value_of "sdfg" \<^theory>;
+DOF_core.value_of "dfgdfg" \<^theory>;
+DOF_core.value_of "omega" \<^theory>;
 \<close>
 
 text\<open>A not too trivial test: default y -> [].
