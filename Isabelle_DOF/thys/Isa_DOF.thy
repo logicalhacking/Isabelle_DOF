@@ -469,169 +469,154 @@ struct
 
   structure ML_Invariants = Theory_Data
   (
-    type T = ml_invariant Name_Space.table;
-    val empty : T = Name_Space.empty_table ml_invariantN;
-    fun merge data : T = Name_Space.merge_tables data;
+    type T = (ml_invariant Name_Space.table * ml_invariant Name_Space.table)
+             * ml_invariant Name_Space.table;
+    val empty : T = ((Name_Space.empty_table ml_invariantN
+                      , Name_Space.empty_table ("opening_" ^ ml_invariantN))
+                      , Name_Space.empty_table ("closing_" ^ ml_invariantN));
+    fun merge (((ml_invariants1, opening_ml_invariants1), closing_ml_invariants1)
+                , ((ml_invariants2, opening_ml_invariants2), closing_ml_invariants2)) =
+        ((Name_Space.merge_tables (ml_invariants1, ml_invariants2)
+        , Name_Space.merge_tables (opening_ml_invariants1, opening_ml_invariants2))
+        , Name_Space.merge_tables (closing_ml_invariants1, closing_ml_invariants2));
   );
 
-  val get_ml_invariants = ML_Invariants.get o Proof_Context.theory_of
+  fun get_invariants which = which o ML_Invariants.get o Proof_Context.theory_of
 
-  fun get_ml_invariant_global cid thy  =
+  val get_ml_invariants = get_invariants (fst o fst)
+
+  val get_opening_ml_invariants = get_invariants (snd o fst)
+
+  val get_closing_ml_invariants = get_invariants snd
+
+  fun get_invariant_global which cid thy  =
     Name_Space.check (Context.Theory thy)
-                      (get_ml_invariants (Proof_Context.init_global thy)) (cid, Position.none) |> #2
+                  (get_invariants which (Proof_Context.init_global thy)) (cid, Position.none) |> #2
 
-  fun get_ml_invariant_name_global cid thy  =
+  val get_ml_invariant_global = get_invariant_global (fst o fst)
+
+  val get_opening_ml_invariant_global = get_invariant_global (snd o fst)
+
+  val get_closing_ml_invariant_global = get_invariant_global snd
+
+  fun get_invariant_name_global which cid thy  =
     Name_Space.check (Context.Theory thy)
-                      (get_ml_invariants (Proof_Context.init_global thy)) (cid, Position.none) |> #1
+                  (get_invariants which (Proof_Context.init_global thy)) (cid, Position.none) |> #1
 
-  fun check_ml_invariant ctxt =
-    #1 o Name_Space.check (Context.Proof ctxt) (get_ml_invariants ctxt);
+  val get_ml_invariant_name_global = get_invariant_name_global (fst o fst)
 
-  fun add_ml_invariant name ml_invariant thy =
-    thy |> ML_Invariants.map
-      (Name_Space.define (Context.Theory thy) true (name, ml_invariant) #> #2);
+  val get_opening_ml_invariant_name_global = get_invariant_name_global (snd o fst)
 
-  fun update_ml_invariant name ml_invariant thy =
-    thy |> ML_Invariants.map
-      (Name_Space.define (Context.Theory thy) false (name, ml_invariant) #> #2);
+  val get_closing_ml_invariant_name_global = get_invariant_name_global snd
 
-  fun map_ml_invariant_entry name f thy =
-    thy |> ML_Invariants.map (Name_Space.map_table_entry (get_ml_invariant_name_global name thy)
+  fun check_invariant which ctxt =
+    #1 o Name_Space.check (Context.Proof ctxt) (get_invariants which ctxt);
+
+  val check_ml_invariant = check_invariant (fst o fst)
+
+  val check_opening_ml_invariant = check_invariant (snd o fst)
+
+  val check_closing_ml_invariant = check_invariant snd
+
+  fun add_invariant (get, ap) name invariant thy =
+    let
+      val (name, table) =
+        ML_Invariants.get thy |> get
+                              |> (Name_Space.define (Context.Theory thy) true (name, invariant));
+    in (ML_Invariants.map o ap) (K table) thy end
+
+  val add_ml_invariant = add_invariant (fst o fst, apfst o apfst)
+
+  val add_opening_ml_invariant = add_invariant (snd o fst, apfst o apsnd)
+
+  val add_closing_ml_invariant = add_invariant (snd, apsnd)
+
+  fun update_invariant (get, ap) name invariant thy =
+    let
+      val (name, table) =
+        ML_Invariants.get thy |> get
+                              |> (Name_Space.define (Context.Theory thy) false (name, invariant));
+    in (ML_Invariants.map o ap) (K table) thy end
+
+  val update_ml_invariant = update_invariant (fst o fst, apfst o apfst)
+
+  val update_opening_ml_invariant = update_invariant (snd o fst, apfst o apsnd)
+
+  val update_closing_ml_invariant = update_invariant (snd, apsnd)
+
+  fun map_invariant_entry (get, ap) name f thy =
+    thy |> (ML_Invariants.map o ap) (Name_Space.map_table_entry (get_invariant_name_global get name thy)
             (fn ML_Invariant {check, class} => make_ml_invariant (f (check, class))));
 
-  fun map_ml_invariant_check name f =
-    map_ml_invariant_entry name (fn (check, class) => (f check, class))
+  val map_ml_invariant_entry = map_invariant_entry (fst o fst, apfst o apfst)
 
-  fun map_ml_invariant_class name f =
-    map_ml_invariant_entry name (fn (check, class) => (check, f class))
+  val map_opening_ml_invariant_entry = map_invariant_entry (snd o fst , apfst o apsnd)
 
-  fun rep_ml_invariant id thy = get_ml_invariant_global id thy |> (fn ML_Invariant rep => rep)
+  val map_closing_ml_invariant_entry = map_invariant_entry (snd, apsnd)
 
-  fun ml_invariant_check_of id = #check o rep_ml_invariant id
-  fun ml_invariant_class_of id = #class o rep_ml_invariant id
+  fun map_invariant_check (get, ap) name f =
+    map_invariant_entry (get, ap) name (fn (check, class) => (f check, class))
 
-  fun print_ml_invariants verbose ctxt =
+  val map_ml_invariant_check = map_invariant_check (fst o fst, apfst o apfst)
+
+  val map_opening_ml_invariant_check = map_invariant_check (snd o fst, apfst o apsnd)
+
+  val map_closing_ml_invariant_check = map_invariant_check (snd, apsnd)
+
+  fun map_invariant_class (get, ap) name f =
+    map_invariant_entry (get, ap) name (fn (check, class) => (check, f class))
+
+  val map_ml_invariant_cclass = map_invariant_class (fst o fst, apfst o apfst)
+
+  val map_opening_ml_invariant_class = map_invariant_class (snd o fst , apfst o apsnd)
+
+  val map_closing_ml_invariant_class = map_invariant_class (snd, apsnd)
+
+  fun rep_invariant which id thy = get_invariant_global which id thy |> (fn ML_Invariant rep => rep)
+
+  val rep_ml_invariant = rep_invariant (fst o fst)
+
+  val rep_opening_ml_invariant = rep_invariant (snd o fst)
+
+  val rep_closing_ml_invariant = rep_invariant snd
+
+  fun invariant_check_of which id = #check o rep_invariant which id
+
+  val ml_invariant_check_of = invariant_check_of (fst o fst)
+
+  val opening_ml_invariant_check_of = invariant_check_of (snd o fst)
+
+  val opening_ml_invariant_check_of = invariant_check_of snd
+
+  fun invariant_class_of which id = #class o rep_invariant which id
+
+  val ml_invariant_class_of = invariant_class_of (fst o fst)
+
+  val opening_ml_invariant_class_of = invariant_class_of (snd o fst)
+
+  val opening_ml_invariant_class_of = invariant_class_of snd
+
+  fun print_invariants which verbose ctxt =
     Pretty.big_list "Isabelle.DOF ML_Invariants:"
-      (map (Pretty.mark_str o #1) (Name_Space.markup_table verbose ctxt (get_ml_invariants ctxt)))
+      (map (Pretty.mark_str o #1) (Name_Space.markup_table verbose ctxt (get_invariants which ctxt)))
     |> Pretty.writeln;
 
-  fun the_ml_invariant T i =
-    (case Name_Space.lookup_key T i of
+  val print_ml_invariants = print_invariants (fst o fst)
+
+  val print_opening_ml_invariants = print_invariants (snd o fst)
+
+  val print_closing_ml_invariants = print_invariants snd
+
+  fun the_invariant which thy i =
+    (case (ML_Invariants.get thy |> which |> Name_Space.lookup_key) i of
       SOME entry => entry
     | NONE => raise TYPE ("Unknown ml_invariant: " ^ quote i, [], []));
 
+  val the_ml_invariant = the_invariant (fst o fst)
 
-  structure Opening_ML_Invariants = Theory_Data
-  (
-    type T = ml_invariant Name_Space.table;
-    val empty : T = Name_Space.empty_table ml_invariantN;
-    fun merge data : T = Name_Space.merge_tables data;
-  );
+  val the_opening_ml_invariant = the_invariant (snd o fst)
 
-  val get_opening_ml_invariants = Opening_ML_Invariants.get o Proof_Context.theory_of
-
-  fun get_opening_ml_invariant_global cid thy  =
-    Name_Space.check (Context.Theory thy)
-              (get_opening_ml_invariants (Proof_Context.init_global thy)) (cid, Position.none) |> #2
-
-  fun get_opening_ml_invariant_name_global cid thy  =
-    Name_Space.check (Context.Theory thy)
-              (get_opening_ml_invariants (Proof_Context.init_global thy)) (cid, Position.none) |> #1
-
-  fun check_opening_ml_invariant ctxt =
-    #1 o Name_Space.check (Context.Proof ctxt) (get_opening_ml_invariants ctxt);
-
-  fun add_opening_ml_invariant name opening_ml_invariant thy =
-    thy |> Opening_ML_Invariants.map
-      (Name_Space.define (Context.Theory thy) true (name, opening_ml_invariant) #> #2);
-
-  fun update_opening_ml_invariant name opening_ml_invariant thy =
-    thy |> Opening_ML_Invariants.map
-      (Name_Space.define (Context.Theory thy) false (name, opening_ml_invariant) #> #2);
-
-  fun map_opening_ml_invariant_entry name f thy =
-    thy |> Opening_ML_Invariants.map
-            (Name_Space.map_table_entry (get_opening_ml_invariant_name_global name thy)
-            (fn ML_Invariant {check, class} => make_ml_invariant (f (check, class))));
-
-  fun map_opening_ml_invariant_check name f =
-    map_opening_ml_invariant_entry name (fn (check, class) => (f check, class))
-
-  fun map_opening_ml_invariant_class name f =
-    map_opening_ml_invariant_entry name (fn (check, class) => (check, f class))
-
-  fun rep_opening_ml_invariant id thy = get_opening_ml_invariant_global id thy
-                                        |> (fn ML_Invariant rep => rep)
-
-  fun opening_ml_invariant_check_of id = #check o rep_opening_ml_invariant id
-  fun opening_ml_invariant_class_of id = #class o rep_opening_ml_invariant id
-
-  fun print_opening_ml_invariants verbose ctxt =
-    Pretty.big_list "Isabelle.DOF Opening_ML_Invariants:"
-      (map (Pretty.mark_str o #1)
-           (Name_Space.markup_table verbose ctxt (get_opening_ml_invariants ctxt)))
-    |> Pretty.writeln;
-
-  fun the_opening_ml_invariant T i =
-    (case Name_Space.lookup_key T i of
-      SOME entry => entry
-    | NONE => raise TYPE ("Unknown opening_ml_invariant: " ^ quote i, [], []));
-
-  structure Closing_ML_Invariants = Theory_Data
-  (
-    type T = ml_invariant Name_Space.table;
-    val empty : T = Name_Space.empty_table ml_invariantN;
-    fun merge data : T = Name_Space.merge_tables data;
-  );
-
-  val get_closing_ml_invariants = Closing_ML_Invariants.get o Proof_Context.theory_of
-
-  fun get_closing_ml_invariant_global cid thy  =
-    Name_Space.check (Context.Theory thy)
-              (get_closing_ml_invariants (Proof_Context.init_global thy)) (cid, Position.none) |> #2
-
-  fun get_closing_ml_invariant_name_global cid thy  =
-    Name_Space.check (Context.Theory thy)
-              (get_closing_ml_invariants (Proof_Context.init_global thy)) (cid, Position.none) |> #1
-
-  fun check_closing_ml_invariant ctxt =
-    #1 o Name_Space.check (Context.Proof ctxt) (get_closing_ml_invariants ctxt);
-
-  fun add_closing_ml_invariant name closing_ml_invariant thy =
-    thy |> Closing_ML_Invariants.map
-      (Name_Space.define (Context.Theory thy) true (name, closing_ml_invariant) #> #2);
-
-  fun update_closing_ml_invariant name closing_ml_invariant thy =
-    thy |> Closing_ML_Invariants.map
-      (Name_Space.define (Context.Theory thy) false (name, closing_ml_invariant) #> #2);
-
-  fun map_closing_ml_invariant_entry name f thy =
-    thy |> Closing_ML_Invariants.map
-            (Name_Space.map_table_entry (get_closing_ml_invariant_name_global name thy)
-            (fn ML_Invariant {check, class} => make_ml_invariant (f (check, class))));
-
-  fun map_closing_ml_invariant_check name f =
-    map_closing_ml_invariant_entry name (fn (check, class) => (f check, class))
-
-  fun map_closing_ml_invariant_class name f =
-    map_closing_ml_invariant_entry name (fn (check, class) => (check, f class))
-
-  fun rep_closing_ml_invariant id thy = get_closing_ml_invariant_global id thy
-                                        |> (fn ML_Invariant rep => rep)
-
-  fun closing_ml_invariant_check_of id = #check o rep_closing_ml_invariant id
-  fun closing_ml_invariant_class_of id = #class o rep_closing_ml_invariant id
-
-  fun print_closing_ml_invariants verbose ctxt =
-    Pretty.big_list "Isabelle.DOF Closing_ML_Invariants:"
-      (map (Pretty.mark_str o #1)
-           (Name_Space.markup_table verbose ctxt (get_closing_ml_invariants ctxt)))
-    |> Pretty.writeln;
-
-  fun the_closing_ml_invariant T i =
-    (case Name_Space.lookup_key T i of
-      SOME entry => entry
-    | NONE => raise TYPE ("Unknown closing_ml_invariant: " ^ quote i, [], []));
+  val the_closing_ml_invariant = the_invariant snd
 
 
   datatype monitor_info = Monitor_Info of 
