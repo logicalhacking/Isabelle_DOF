@@ -21,7 +21,6 @@ no_notation "Isabelle_DOF_trace_attribute" ("@{trace-attribute _}")
 
 consts Isabelle_DOF_typ :: "string \<Rightarrow> typ" ("@{typ _}")
 consts Isabelle_DOF_term :: "string \<Rightarrow> term" ("@{term _}")
-consts Isabelle_DOF_term_repr    :: "string \<Rightarrow> term"              ("@{termrepr _}")
 datatype "thm" = Isabelle_DOF_thm string ("@{thm _}") | Thm_content ("proof":proofterm)
 datatype "thms_of" = Isabelle_DOF_thms_of string ("@{thms-of _}")
 datatype "file" = Isabelle_DOF_file string  ("@{file _}")
@@ -269,13 +268,6 @@ case term_option of
         val traces' = map conv (HOLogic.dest_list traces)
       in HOLogic.mk_list \<^Type>\<open>prod \<^typ>\<open>string\<close> \<^typ>\<open>string\<close>\<close> traces' end
 
-(* utilities *)
-
-fun property_list_dest ctxt X =
-  map (fn \<^Const_>\<open>Isabelle_DOF_term for s\<close> => HOLogic.dest_string s
-         |\<^Const_>\<open>Isabelle_DOF_term_repr for s\<close> => holstring_to_bstring ctxt (HOLogic.dest_string s))
-    (HOLogic.dest_list X)
-
 end; (* struct *)
 
 \<close>
@@ -314,7 +306,6 @@ end)
 #>
 ([(\<^const_name>\<open>Isabelle_DOF_typ\<close>, ISA_core.ML_isa_check_typ, ISA_core.ML_isa_elaborate_typ)
   ,(\<^const_name>\<open>Isabelle_DOF_term\<close>, ISA_core.ML_isa_check_term, ISA_core.ML_isa_elaborate_term)
-  ,(\<^const_name>\<open>Isabelle_DOF_term_repr\<close>, ISA_core.check_identity, ISA_core.ML_isa_elaborate_generic)
   ,(\<^const_name>\<open>Isabelle_DOF_docitem\<close>,
       ISA_core.ML_isa_check_docitem, ISA_core.ML_isa_elaborate_generic)
   ,(\<^const_name>\<open>Isabelle_DOF_trace_attribute\<close>,

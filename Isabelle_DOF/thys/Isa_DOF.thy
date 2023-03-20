@@ -93,49 +93,6 @@ val docclass_markup = docref_markup_gen docclassN
 
 \<close>
 
-section\<open> Utilities\<close>
-
-ML\<open>
-fun spy x y = (writeln (x ^ y); y)
-
-fun markup2string x = XML.content_of (YXML.parse_body x)
-
-(* a hacky, but save encoding of unicode comming from the interface to the string format
-   that can be parsed by the inner-syntax string parser ''dfdf''. *)
-fun bstring_to_holstring ctxt x (* (x:bstring) *) : string =
-    let val term = Syntax.parse_term ctxt (markup2string x)
-        fun hpp x = if x = #"\\" then "@" else 
-                    if x = #"@"  then "@@" else String.implode [x] 
-    in  term |>  Sledgehammer_Util.hackish_string_of_term ctxt
-             |>  map hpp o String.explode |> String.concat
-    end;
-
-
-fun chopper p (x:string) = 
-    let fun hss buff [] = rev buff
-           |hss buff (S as a::R) = if p a then let val (front,rest) = chop_prefix p S
-                                               in hss (String.implode front :: buff) rest end
-                                   else        let val (front,rest) = chop_prefix (not o p) S
-                                               in hss (String.implode front ::buff) rest end
-    in hss [] (String.explode x) end;
-
-
-fun holstring_to_bstring ctxt (x:string) : bstring  =
-    let fun collapse "" = ""
-           |collapse S = if String.sub(S,0) = #"@" 
-                         then let val n = String.size S
-                                  val front = replicate (n div 2) #"@" 
-                                  val back  = if (n mod 2)=1 then [#"\\"] else []
-                              in String.implode (front @ back) end 
-                         else S;
-        val t = String.concat (map collapse (chopper (fn x => x = #"@") x));
-    in  t |>  Syntax.string_of_term ctxt o Syntax.parse_term ctxt end;
-
-fun fold_and [] = true
-  | fold_and (x::xs) = x andalso (fold_and xs)
-
-\<close>
-
 section\<open> A HomeGrown Document Type Management (the ''Model'') \<close>
 
 
@@ -618,7 +575,14 @@ struct
 
   val the_closing_ml_invariant = the_invariant snd
 
-
+  (* Monitor infos are not integrated to an instance datatype
+     to avoid issues when comparing objects.
+     Indeed automatas do not have an equality type and then,
+     should two instances with monitor infos be compared, an error will be triggered.
+     So monitor infos are defined in their own name space.
+     They are declared when opening a monitor and have the same
+     reference (the key of the name space table) as their related monitor instance:
+     the name of the instance prefixed by the theory. *)
   datatype monitor_info = Monitor_Info of 
     {accepted_cids : RegExpInterface.env,
      rejected_cids : RegExpInterface.env,
@@ -868,7 +832,7 @@ fun check_invs get_ml_invs cid_long oid is_monitor thy =
                                   |>  map (fn (_, inv) => let val ML_Invariant check = inv
                                                           in check |> #check end)
                                   |> map (fn check => check oid is_monitor ctxt)
-            in (fold_and checks) end)
+            in (List.all I checks) end)
 
 val check_ml_invs = check_invs get_ml_invariants 
 
@@ -995,7 +959,6 @@ datatype "doc_class" = mk string
 
 datatype "typ" = Isabelle_DOF_typ string  ("@{typ _}")
 datatype "term" = Isabelle_DOF_term string  ("@{term _}")
-consts Isabelle_DOF_term_repr    :: "string \<Rightarrow> term"              ("@{termrepr _}")
 datatype "thm" = Isabelle_DOF_thm string  ("@{thm _}")
 datatype "file" = Isabelle_DOF_file string  ("@{file _}")
 datatype "thy" = Isabelle_DOF_thy string  ("@{thy _}")
@@ -1325,13 +1288,6 @@ case term_option of
         val traces' = map conv (HOLogic.dest_list traces)
       in HOLogic.mk_list \<^Type>\<open>prod \<^typ>\<open>string\<close> \<^typ>\<open>string\<close>\<close> traces' end
 
-(* utilities *)
-
-fun property_list_dest ctxt X =
-  map (fn \<^Const_>\<open>Isabelle_DOF_term for s\<close> => HOLogic.dest_string s
-         |\<^Const_>\<open>Isabelle_DOF_term_repr for s\<close> => holstring_to_bstring ctxt (HOLogic.dest_string s))
-    (HOLogic.dest_list X)
-
 end; (* struct *)
                                                             
 \<close>
@@ -1357,11 +1313,9 @@ let val ns = Sign.tsig_of thy |> Type.type_space
 in  DOF_core.add_isa_transformer binding ((check, elaborate) |> DOF_core.make_isa_transformer) thy
 end)
 #>
-([(\<^const_name>\<open>Isabelle_DOF_term_repr\<close>,
-    ISA_core.check_identity, ISA_core.ML_isa_elaborate_generic)
-  ,(\<^const_name>\<open>Isabelle_DOF_docitem\<close>,
-      ISA_core.ML_isa_check_docitem, ISA_core.ML_isa_elaborate_generic)
-  ,(\<^const_name>\<open>Isabelle_DOF_trace_attribute\<close>,
+([(\<^const_name>\<open>Isabelle_DOF_docitem\<close>,
+    ISA_core.ML_isa_check_docitem, ISA_core.ML_isa_elaborate_generic)
+  , (\<^const_name>\<open>Isabelle_DOF_trace_attribute\<close>,
       ISA_core.ML_isa_check_trace_attribute, ISA_core.ML_isa_elaborate_trace_attribute)]
 |> fold (fn (n, check, elaborate) => fn thy =>
 let val ns = Sign.consts_of thy |> Consts.space_of
@@ -1736,7 +1690,7 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
          in (moid,map check_for_cid indexed_autoS, monitor_info)  end  
       val enabled_monitors = List.mapPartial is_enabled
                       (Name_Space.dest_table (DOF_core.get_monitor_infos (Proof_Context.init_global thy)))
-      fun conv_attrs (((lhs, pos), opn), rhs) = (markup2string lhs,pos,opn, 
+      fun conv_attrs (((lhs, pos), opn), rhs) = (YXML.content_of lhs,pos,opn, 
                                                  Syntax.read_term_global thy rhs)
       val defined = DOF_core.defined_of oid thy
       val trace_attr = if defined
@@ -1881,7 +1835,7 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} oi
                             val S = map conv (DOF_core.get_attribute_defaults cid_long thy);
                             val (defaults, _(*ty*), _) = calc_update_term {mk_elaboration=false}
                                                                       thy cid_long S defaults_init;
-                            fun conv_attrs ((lhs, pos), rhs) = (markup2string lhs,pos,"=", Syntax.read_term_global thy rhs)
+                            fun conv_attrs ((lhs, pos), rhs) = (YXML.content_of lhs,pos,"=", Syntax.read_term_global thy rhs)
                             val assns' = map conv_attrs doc_attrs
                             val (value_term', _(*ty*), _) = calc_update_term {mk_elaboration=true}
                                                                         thy cid_long assns' defaults
@@ -2087,7 +2041,7 @@ fun update_instance_command  (((oid, pos), cid_pos),
                         then () 
                         else error("incompatible classes:"^cid^":"^cid_long)
          
-                fun conv_attrs (((lhs, pos), opn), rhs) = ((markup2string lhs),pos,opn, 
+                fun conv_attrs (((lhs, pos), opn), rhs) = ((YXML.content_of lhs),pos,opn, 
                                                            Syntax.read_term_global thy rhs)
                 val assns' = map conv_attrs doc_attrs
                 val def_trans_value  =
@@ -2575,16 +2529,11 @@ fun prep_statement prep_att prep_stmt raw_elems raw_stmt ctxt =
     (case raw_stmt of
       Element.Shows _ =>
         let val stmt' = Attrib.map_specs (map prep_att) stmt
-            val stmt'' = map (fn (b, ts) =>
-                         (b, map (fn (t', t's) =>
-                         (DOF_core.transduce_term_global {mk_elaboration=true}
-                                                         (t' , Position.none)
-                                                         (Proof_Context.theory_of ctxt),
-                         map (fn t'' => 
-                         DOF_core.transduce_term_global {mk_elaboration=true}
-                                                        (t'' , Position.none)
-                                                        (Proof_Context.theory_of ctxt))
-                         t's)) ts)) stmt'
+            val stmt'' = stmt' |> map (fn (b, ts) =>
+                                (b, ts |> map (fn (t', t's) =>
+                                          (DOF_core.elaborate_term ctxt t',
+                                          t's |> map (fn t'' => 
+                                                 DOF_core.elaborate_term ctxt t'')))))
         in (([], prems, stmt'', NONE), stmt_ctxt) end
     | Element.Obtains raw_obtains =>
         let
