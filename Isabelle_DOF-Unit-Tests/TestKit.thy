@@ -11,6 +11,8 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
+chapter\<open>The Isabelle/DOF TestKit\<close>
+
 theory 
   TestKit
 imports 

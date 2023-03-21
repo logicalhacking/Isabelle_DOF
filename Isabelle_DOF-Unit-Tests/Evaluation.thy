@@ -1,14 +1,30 @@
-chapter\<open>Evaluation\<close>
+(*************************************************************************
+ * Copyright (C) 
+ *               2019-2023 The University of Exeter 
+ *               2018-2023 The University of Paris-Saclay
+ *               2018      The University of Sheffield
+ *
+ * License:
+ *   This program can be redistributed and/or modified under the terms
+ *   of the 2-clause BSD-style license.
+ *
+ *   SPDX-License-Identifier: BSD-2-Clause
+ *************************************************************************)
 
-text\<open>Term Annotation Antiquotations (TA) can be evaluated with the help of the value* command.\<close>
+chapter\<open>Term-Antiquotation Expansions and Evaluation\<close>
 
 theory 
   Evaluation
 imports 
-  "Isabelle_DOF-Unit-Tests.TermAntiquotations"
+  "Isabelle_DOF-Unit-Tests.Concept_TermAntiquotations"
   "Isabelle_DOF-Unit-Tests.Concept_High_Level_Invariants"
   TestKit
-begin
+begin 
+
+section\<open>Test Purpose.\<close>
+text\<open> Creation of ontological instances along the \<^theory>\<open>Isabelle_DOF-Ontologies.Conceptual\<close> 
+Ontology. Emphasis is put on type-safe (ontologically consistent) referencing of text, code and
+proof elements. Some tests cover also the critical cases concerning name spaces of oid's. \<close>
 
 (*
 section\<open>\<^theory_text>\<open>ML*\<close>-Annotated SML-commands\<close>
@@ -24,6 +40,8 @@ text\<open>... and here we reference @{B [display] \<open>thefunction\<close>}.\
 *)
 
 section\<open>\<^theory_text>\<open>value*\<close>-Annotated evaluation-commands\<close>
+
+text\<open>Term Annotation Antiquotations (TA) can be evaluated with the help of the value* command.\<close>
 
 
 text\<open>The value* command uses the same code as the value command

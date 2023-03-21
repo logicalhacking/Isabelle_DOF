@@ -11,6 +11,9 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
+chapter\<open>LaTeX Generation Tests\<close>
+
+
 theory   Latex_Tests
   imports    "TestKit"
              "Isabelle_DOF-Unit-Tests_document"  
