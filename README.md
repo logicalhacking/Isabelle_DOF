@@ -72,7 +72,7 @@ foo@bar:~$ isabelle build -d . -o 'timeout_scale=2' Isabelle_DOF-Proofs
 ## Usage
 
 In the following, we assume that you installed Isabelle/DOF either from the AFP
-(adding the AFP as a component to your Isabelle system) or from the GIT
+(adding the AFP as a component to your Isabelle system) or from the Git
 repository of Isabelle/DOF (installing Isabelle/DOF as a component to your
 Isabelle system).
 

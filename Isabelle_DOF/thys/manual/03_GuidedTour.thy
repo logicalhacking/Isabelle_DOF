@@ -87,9 +87,10 @@ not make use of a file called \<^verbatim>\<open>document/root.tex\<close>. Inst
 ontology represenations is done within theory files. To make use of this feature, one needs
 to add the option \<^verbatim>\<open>document_build = dof\<close> to the \<^verbatim>\<open>ROOT\<close> file. 
 An example \<^verbatim>\<open>ROOT\<close> file looks as follows:
-
+\<close>
+text\<open>
 \begin{config}{ROOT}
-session example = HOL +
+session example = Isabelle_DOF +
   options [document = pdf, document_output = "output", document_build = dof]
 (*theories [document = false]
     A
@@ -102,8 +103,19 @@ session example = HOL +
 The document template and ontology can be selected as follows:
 @{boxed_theory_text [display]
 \<open>
-use_template "scrreprt-modern" 
+theory
+  C
+imports
+  Isabelle_DOF.technical_report
+  Isabelle_DOF.scholarly_paper
+begin
+
+list_templates
+use_template "scrreprt-modern"
+list_ontologies
 use_ontology "technical_report" and "scholarly_paper"
+
+end
 \<close>}
 
 The commands @{boxed_theory_text 
@@ -120,8 +132,37 @@ can be used for inspecting (and selecting) the available ontologies and template
 list_templates
 list_ontologies
 \<close>}
+
+Note that you need to import the theories that define the ontologies that you 
+want to use. Otherwise, they will not be available.
 \<close>
 
+paragraph\<open>Warning.\<close>
+text\<open>
+Note that the session @{session "Isabelle_DOF"} needs to be part of the ``main'' session 
+hierarchy. Loading the Isabelle/DOF theories as part of a session section, e.g., 
+\<close>
+text\<open>
+\begin{config}{ROOT}
+session example = HOL +
+  options [document = pdf, document_output = "output", document_build = dof]
+  session 
+    Isabelle_DOF.scholarly_paper
+    Isabelle_DOF.technical_report
+  theories
+    C
+\end{config}
+\<close>
+text\<open>
+will not work. Trying to build a document using such a setup will result in the 
+following error message:
+
+@{boxed_bash [display]\<open>ë\prompt{}ë
+  isabelle build -D . 
+  Running example ... 
+  Bad document_build engine "dof"
+  example FAILED\<close>}
+\<close> 
 
 subsection*[naming::example]\<open>Name-Spaces, Long- and Short-Names\<close>
 text\<open>\<^isadof> is built upon the name space and lexical conventions of Isabelle. Long-names were 
