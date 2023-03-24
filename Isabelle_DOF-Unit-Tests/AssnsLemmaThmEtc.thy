@@ -40,8 +40,11 @@ in the assertion.
 \<close>
 
 ML\<open>
-@{term "[@{term '' True @<longrightarrow> True ''}]"}; (* with isa-check *) 
+@{term "[@{term \<open>True \<longrightarrow> True \<close>}]"}; (* with isa-check *) 
 \<close>
+
+Definition*[ertert]\<open>dfgdfg\<close>
+Theorem*[dgdfgddfg]\<open>dfgdfg\<close>
 
 lemma "All (\<lambda>x. X \<and> Y \<longrightarrow> True)" oops
 
