@@ -11,12 +11,15 @@
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
 
-section\<open>An example ontology for scientific, MINT-oriented papers.\<close>
+chapter\<open>An example ontology for scientific, MINT-oriented papers.\<close>
 
 theory scholarly_paper
   imports "Isabelle_DOF.Isa_COL"
-  keywords "author*" "abstract*"
-           "Definition*" "Lemma*" "Theorem*"  :: document_body
+  keywords "author*" "abstract*"                     :: document_body
+    and    "Definition*" "Lemma*" "Theorem*"         :: document_body 
+    and    "Premise*" "Corollary*" "Consequence*"    :: document_body
+    and    "Assumption*" "Hypothesis*" "Assertion*"  :: document_body
+    and    "Proof*" "Example*"                       :: document_body
 begin
 
 define_ontology "DOF-scholarly_paper.sty" "Writing academic publications."
@@ -25,7 +28,7 @@ define_ontology "DOF-scholarly_paper.sty" "Writing academic publications."
 text\<open>Scholarly Paper provides a number of standard text - elements for scientific papers.
 They were introduced in the following.\<close>
 
-subsection\<open>General Paper Structuring Elements\<close>
+section\<open>General Paper Structuring Elements\<close>
 doc_class title =
    short_title :: "string option"  <=  "None"
     
@@ -102,8 +105,6 @@ datatype sc_dom = math | info | natsc | eng
 *)
 
 
-subsection\<open>Introductions\<close>
-
 doc_class introduction = text_section +
    comment :: string
    claims  :: "thm list"
@@ -125,7 +126,7 @@ doc_class background = text_section +
    invariant L\<^sub>b\<^sub>a\<^sub>c\<^sub>k    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
 
-subsection\<open>Technical Content and its Formats\<close>
+section\<open>Technical Content and Free-form Semi-formal Formats\<close>
 
 datatype status = formal | semiformal | description
 
@@ -164,24 +165,31 @@ subsection\<open>Freeform Mathematical Content\<close>
 text\<open>We follow in our enumeration referentiable mathematical content class the AMS style and its
 provided \<^emph>\<open>theorem environments\<close> (see \<^verbatim>\<open>texdoc amslatex\<close>). We add, however, the concepts 
 \<^verbatim>\<open>axiom\<close>, \<^verbatim>\<open>rule\<close> and \<^verbatim>\<open>assertion\<close> to the list. A particular advantage of \<^verbatim>\<open>texdoc amslatex\<close> is 
-that it is well-established and compatible with many LaTeX - styles.\<close>
+that it is well-established and compatible with many LaTeX - styles.
 
-datatype math_content_class = "defn"   | "axm"  | "thm"  | "lem" | "cor" | "prop" 
-                            | "expl"   | "rule" | "assn" | "assm"
-                            | rem      | "notation" | "terminology"
+The names for thhe following key's are deliberate non-standard abbreviations in order to avoid
+future name clashes.\<close>
 
-(*
-thm Theorem Italic 
-cor Corollary Italic 
-lem Lemma Italic
-prop Proposition 
-defn Definition
-expl Example 
+datatype math_content_class = 
+    "defn"   \<comment>\<open>definition\<close> 
+  | "axm"    \<comment>\<open>axiom\<close>
+  | "theom"  \<comment>\<open>theorem\<close> 
+  | "lemm"   \<comment>\<open>lemma\<close>
+  | "corr"   \<comment>\<open>corollary\<close>
+  | "prpo"   \<comment>\<open>proposition\<close>
+  | "rulE"   \<comment>\<open>rule\<close>
+  | "assn"   \<comment>\<open>assertion\<close>    
+  | "hypth"  \<comment>\<open>hypothesis\<close>    
+  | "assm"   \<comment>\<open>assumption\<close>
+  | "prms"   \<comment>\<open>premise\<close>  
+  | "cons"   \<comment>\<open>consequence\<close>
+  | "mprf"   \<comment>\<open>math. proof\<close>
+  | "mexl"   \<comment>\<open>math. example\<close> 
+  | "rmrk"   \<comment>\<open>remark\<close>  
+  | "notn"   \<comment>\<open>notation\<close>  
+  | "tmgy"   \<comment>\<open>terminology\<close>
 
-rem Remark
-notation
-terminology
-*)
+
 text\<open>Instances of the \<open>doc_class\<close> \<^verbatim>\<open>math_content\<close> are by definition @{term "semiformal"}; they may
 be non-referential, but in this case they will not have a @{term "short_name"}.\<close>
 
@@ -233,38 +241,70 @@ doc_class math_semiformal  = math_content +
    referentiable :: bool <= True
 type_synonym math_sfc = math_semiformal
 
-subsection\<open>Instances of the abstract classes Definition / Class / Lemma etc.\<close>
 
-text\<open>The key class definitions are motivated by the AMS style.\<close>   
+text\<open>Instances of the Free-form Content are Definition, Lemma, Assumption, Hypothesis, etc.
+     The key class definitions are inspired by the AMS style, to which some target LaTeX's compile.\<close>   
+
+(* Future : same syntaxx as command macros ... so: Definition ... *)
 
 doc_class "definition"  = math_content +
    referentiable :: bool <= True
    mcc           :: "math_content_class" <= "defn" 
    invariant d1  :: "mcc \<sigma> = defn" (* can not be changed anymore. *)
 
+doc_class "lemma"       = math_content +
+   referentiable :: bool <= "True"
+   mcc           :: "math_content_class" <= "lemm" 
+   invariant d2  :: "mcc \<sigma> = lemm"
 
 doc_class "theorem"     = math_content +
    referentiable :: bool <= True
-   mcc           :: "math_content_class" <= "thm" 
-    invariant d2  :: "mcc \<sigma> = thm"
+   mcc           :: "math_content_class" <= "theom" 
+   invariant d3  :: "mcc \<sigma> = theom"
 
-doc_class "lemma"     = math_content +
+doc_class "corollary"   = math_content +
    referentiable :: bool <= "True"
-   mcc           :: "math_content_class" <= "lem" 
-   invariant d3  :: "mcc \<sigma> = lem"
+   mcc           :: "math_content_class" <= "corr" 
+   invariant d4  :: "mcc \<sigma> = corr"
 
-doc_class "corollary"     = math_content +
+doc_class "premise"     = math_content +
    referentiable :: bool <= "True"
-   mcc           :: "math_content_class" <= "cor" 
-    invariant d4  :: "mcc \<sigma> = thm"
+   mcc           :: "math_content_class" <= "prms" 
+   invariant d5  :: "mcc \<sigma> = prms"
 
-doc_class "math_example"     = math_content +
+doc_class "consequence" = math_content +
    referentiable :: bool <= "True"
-   mcc           :: "math_content_class" <= "expl" 
-   invariant d5  :: "mcc \<sigma> = expl"
+   mcc           :: "math_content_class" <= "cons" 
+   invariant d6  :: "mcc \<sigma> = cons"
+
+doc_class "assumption"  = math_content +
+   referentiable :: bool <= "True"
+   mcc           :: "math_content_class" <= "assm" 
+   invariant d7  :: "mcc \<sigma> = assm"
+
+doc_class "hypothesis"  = math_content +
+   referentiable :: bool <= "True"
+   mcc           :: "math_content_class" <= "hypth" 
+   invariant d8  :: "mcc \<sigma> = hypth"
+
+doc_class "assertion"   = math_content +
+   referentiable :: bool <= "True"
+   mcc           :: "math_content_class" <= "assn" 
+   invariant d9  :: "mcc \<sigma> = assn"
+
+doc_class "math_proof"  = math_content +
+   referentiable :: bool <= "True"
+   mcc           :: "math_content_class" <= "mprf" 
+   invariant d10  :: "mcc \<sigma> = mprf"
+
+doc_class "math_example"= math_content +
+   referentiable :: bool <= "True"
+   mcc           :: "math_content_class" <= "mexl" 
+   invariant d11  :: "mcc \<sigma> = mexl"
 
 
-subsubsection\<open>Ontological Macros \<^verbatim>\<open>Definition*\<close> , \<^verbatim>\<open>Lemma**\<close>, \<^verbatim>\<open>Theorem*\<close> ... \<close>
+
+subsection\<open>Support of Ontological Macros \<^verbatim>\<open>Definition*\<close> , \<^verbatim>\<open>Lemma**\<close>, \<^verbatim>\<open>Theorem*\<close> ... \<close>
 
 text\<open>These ontological macros allow notations are defined for the class 
   \<^typ>\<open>math_content\<close> in order to allow for a variety of free-form formats;
@@ -279,9 +319,23 @@ text\<open>These ontological macros allow notations are defined for the class
   supports subsequent abbreviations:
 
     \<^theory_text>\<open>Definition*[l]\<open>...\<close>\<close>.
+
+  Via the default classes, it is also possible to specify the precise concept
+  that are not necessarily in the same inheritance hierarchy: for example:
+  \<^item> mathematical definition vs terminological definition
+  \<^item> mathematical example vs. technical example. 
+
 \<close>
 
 ML\<open>
+
+val s = [\<^const_name>\<open>defn\<close>,\<^const_name>\<open>axm\<close>,  \<^const_name>\<open>theom\<close>, \<^const_name>\<open>lemm\<close>, \<^const_name>\<open>corr\<close>, \<^const_name>\<open>prpo\<close>, 
+         \<^const_name>\<open>rulE\<close>,\<^const_name>\<open>assn\<close>, \<^const_name>\<open>hypth\<close>, \<^const_name>\<open>assm\<close>, \<^const_name>\<open>prms\<close>, \<^const_name>\<open>cons\<close>,
+         \<^const_name>\<open>mprf\<close>,\<^const_name>\<open>mexl\<close>, \<^const_name>\<open>rmrk\<close>,  \<^const_name>\<open>notn\<close>, \<^const_name>\<open>tmgy\<close>];
+
+
+val (Definition_default_class, Example_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Example_default_class\<close> (K "");
 val (Definition_default_class, Definition_default_class_setup) 
      = Attrib.config_string \<^binding>\<open>Definition_default_class\<close> (K "");
 val (Lemma_default_class, Lemma_default_class_setup) 
@@ -291,6 +345,7 @@ val (Theorem_default_class, Theorem_default_class_setup)
 
 
 \<close>
+setup\<open>Example_default_class_setup\<close>
 setup\<open>Definition_default_class_setup\<close>
 setup\<open>Lemma_default_class_setup\<close>
 setup\<open>Theorem_default_class_setup\<close>
@@ -318,11 +373,11 @@ val _ =
         val use_Lemma_default = SOME(((ddc = "") ? (K "math_content")) ddc)
       in
         Onto_Macros.enriched_formal_statement_command
-          use_Lemma_default [("mcc","lem")] meta_args thy
+          use_Lemma_default [("mcc","lemm")] meta_args thy
       end);
 
 val _ =
-  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Theorem*\<close> "Freeform Theorem Description"
+  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Theorem*\<close> "Freeform Theorem"
     {markdown = true, body = true}
     (fn meta_args => fn thy =>
       let
@@ -330,8 +385,49 @@ val _ =
         val use_Theorem_default = SOME(((ddc = "") ? (K "math_content")) ddc)
       in
         Onto_Macros.enriched_formal_statement_command 
-          use_Theorem_default [("mcc","thm")] meta_args thy
+          use_Theorem_default [("mcc","theom")] meta_args thy
       end);
+
+(* cut and paste to make it runnable, but nonsensical : *)
+val _ = 
+  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Premise*\<close> "Freeform Premise"
+    {markdown = true, body = true}
+    (fn meta_args => fn thy => thy);
+
+val _ = 
+  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Corollary*\<close> "Freeform Corollary"
+    {markdown = true, body = true}
+    (fn meta_args => fn thy => thy);
+
+val _ = 
+  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Consequence*\<close> "Freeform Consequence"
+    {markdown = true, body = true}
+    (fn meta_args => fn thy => thy);
+
+val _ = 
+  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Assumption*\<close> "Freeform Assumption"
+    {markdown = true, body = true}
+    (fn meta_args => fn thy => thy);
+
+val _ = 
+  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Hypothesis*\<close> "Freeform Hypothesis"
+    {markdown = true, body = true}
+    (fn meta_args => fn thy => thy);
+
+val _ = 
+  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Assertion*\<close> "Freeform Assertion"
+    {markdown = true, body = true}
+    (fn meta_args => fn thy => thy);
+
+val _ = 
+  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Proof*\<close> "Freeform Proof"
+    {markdown = true, body = true}
+    (fn meta_args => fn thy => thy);
+
+val _ = 
+  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Example*\<close> "Freeform Example"
+    {markdown = true, body = true}
+    (fn meta_args => fn thy => thy);
 
 end 
 \<close>
@@ -348,12 +444,6 @@ doc_class math_formal  = math_content +
    properties    :: "term list"
 type_synonym math_fc = math_formal
 
-doc_class  assertion = math_formal +
-   referentiable :: bool <= True (* No support in Backend yet. *)
-   status        :: status <= "formal"
-   properties    :: "term list"
-
-
 
 
 subsubsection*[ex_ass::example]\<open>Example\<close>
@@ -365,7 +455,7 @@ subsection\<open>Example Statements\<close>
 text\<open> \<^verbatim>\<open>examples\<close> are currently considered \<^verbatim>\<open>technical\<close>. Is a main category to be refined
       via inheritance. \<close> 
 
-doc_class tech_example       = technical +
+doc_class tech_example       = tc +
    referentiable :: bool <= True
    tag :: "string" <=  "''''"
 
@@ -379,15 +469,15 @@ text\<open>This section is currently experimental and not supported by the docum
 doc_class engineering_content = tc +
    short_name :: string <= "''''"
    status     :: status
-type_synonym eng_c = engineering_content
+type_synonym eng_content = engineering_content
 
-doc_class "experiment"  = eng_c +
+doc_class "experiment"  = eng_content +
    tag :: "string" <=  "''''"
 
-doc_class "evaluation"  = eng_c +
+doc_class "evaluation"  = eng_content +
    tag :: "string" <=  "''''"
 
-doc_class "data"  = eng_c +
+doc_class "data"  = eng_content +
    tag :: "string" <=  "''''"
 
 subsection\<open>Some Summary\<close>
