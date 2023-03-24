@@ -67,16 +67,14 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
                                                   This implies that several text block can be 
                                                   processed in parallel in a future, as long
                                                   as they are associated to one meta arg.\<close>
-       
-       (* ... generating the level-attribute syntax *)
-  in   
-      (if meta_args = ODL_Meta_Args_Parser.empty_meta_args
+       val handle_margs_opt = (if meta_args = ODL_Meta_Args_Parser.empty_meta_args
               then I
               else
           Value_Command.Docitem_Parser.create_and_check_docitem 
                               {is_monitor = false} {is_inline = false} {define = true}
                               oid pos (cid_transform cid_pos) (attr_transform doc_attrs))
-        #> (fn thy => (app (check_n_tex_text thy) toks_list; thy))
+       (* ... generating the level-attribute syntax *)
+  in   handle_margs_opt  #> (fn thy => (app (check_n_tex_text thy) toks_list; thy))
   end;
 
 val _ =
@@ -172,8 +170,6 @@ val _ =
 val _ =
   Outer_Syntax.command ("text-latex", \<^here>) "formal comment (primary style)"
     (Parse.opt_target -- Parse.document_source >> document_command2 {markdown = true});
-
-
 
 \<close>
 
