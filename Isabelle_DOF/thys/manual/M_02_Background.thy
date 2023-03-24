@@ -12,8 +12,8 @@
  *************************************************************************)
 
 (*<*)
-theory "02_Background"
-  imports "01_Introduction"
+theory "M_02_Background"
+  imports "M_01_Introduction"
 begin
 (*>*)
 
