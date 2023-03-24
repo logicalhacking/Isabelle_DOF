@@ -39,10 +39,9 @@ text\<open>... and here we reference @{B \<open>thefunction\<close>}.\<close>
 
 
 
-section\<open>\<^theory_text>\<open>value*\<close>-Annotated evaluation-commands\<close>
+section\<open>Term-Annotation and its Evaluation\<close>
 
 text\<open>Term Annotation Antiquotations (TA) can be evaluated with the help of the value* command.\<close>
-
 
 text\<open>The value* command uses the same code as the value command
 and adds the possibility to evaluate Term Annotation Antiquotations (TA).
@@ -90,14 +89,11 @@ an instance of the class @{doc_class A}:
 \<close>
 term*\<open>@{A \<open>xcv1\<close>}\<close>
 
-text\<open>The instance class @{docitem \<open>xcv1\<close>} is not an instance of the class @{doc_class B}:
-\<close>
-(* Error: 
-term*\<open>@{B \<open>xcv1\<close>}\<close>
-*)
+text\<open>The instance class @{docitem \<open>xcv1\<close>} is not an instance of the class @{doc_class B}:\<close>
+value-assert-error\<open>@{B \<open>xcv1\<close>}\<close>\<open>xcv1 is not an instance of Conceptual.B\<close>
+
 text\<open>We can evaluate the instance class. The current implementation returns
-the value of the instance, i.e. a collection of every attribute of the instance: 
-\<close>
+the value of the instance, i.e. a collection of every attribute of the instance: \<close>
 value*\<open>@{A \<open>xcv1\<close>}\<close>
 
 text\<open>We can also get the value of an attribute of the instance:\<close>
@@ -123,24 +119,20 @@ text\<open>We can also evaluate the instance @{docitem \<open>xcv4\<close>}.
 The attribute \<open>b\<close> of the instance @{docitem \<open>xcv4\<close>} is of type @{typ "(A \<times> C) set"}
 but the instance @{docitem \<open>xcv4\<close>} initializes the attribute by using the \<open>docitem\<close> TA.
 Then the instance can be evaluate but only the references of the classes of the set
-used in the \<open>b\<close> attribute will be checked, and the type of these classes will not:
-\<close>
+used in the \<open>b\<close> attribute will be checked, and the type of these classes will not:\<close>
 value* \<open>@{F \<open>xcv4\<close>}\<close>
 
 
 text\<open>If we want the classes to be checked,
 we can use the TA which will also check the type of the instances.
-The instance @{A \<open>xcv3\<close>} is of type @{typ "A"} and the instance @{C \<open>xcv2\<close>} is of type @{typ "C"}:
-\<close>
+The instance @{A \<open>xcv3\<close>} is of type @{typ "A"} and the instance @{C \<open>xcv2\<close>} is of type @{typ "C"}:\<close>
 update_instance*[xcv4::F, b+="{(@{A ''xcv3''},@{C ''xcv2''})}"]
 
 text\<open>Using a TA in terms is possible, and the term is evaluated:\<close>
 value*\<open>[@{thm \<open>HOL.refl\<close>}, @{thm \<open>HOL.refl\<close>}]\<close>
 value*\<open>@{thm ''HOL.refl''} = @{thm (''HOL.refl'')}\<close>
 
-ML\<open>
-@{thm "refl"}
-\<close>
+ML\<open>@{thm "refl"}\<close>
 
 section\<open>Request on instances\<close>
 
@@ -178,24 +170,31 @@ value*\<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A-instances}\<close>
 section\<open>Limitations\<close>
 
 text\<open>There are still some limitations.
-The terms passed as arguments to the TA are not simplified and their evaluation fails:
+The terms passed as arguments to a TA are not simplified \<open>before\<close> expansion
+and their evaluation therefore fails:
 \<close>
-(* Error:
-value*\<open>@{thm (''HOL.re'' @ ''fl'')}\<close>
-value*\<open>@{thm ''HOL.refl''} = @{thm (''HOL.re'' @ ''fl'')}\<close>*)
+
+value\<open>@{thm (''HOL.re'' @ ''fl'')}\<close>
+value-assert-error\<open>@{thm (''HOL.re'' @ ''fl'')}\<close>
+                  \<open>wrong term format: must be string constant\<close>
+value-assert-error\<open>@{thm ''HOL.refl''} = @{thm (''HOL.re'' @ ''fl'')}\<close>
+                  \<open>wrong term format: must be string constant\<close>
 
 text\<open>The type checking is unaware that a class is subclass of another one.
 The @{doc_class "G"} is a subclass of the class @{doc_class "C"}, but one can not use it
 to update the instance @{docitem \<open>xcv4\<close>}:
 \<close>
-(* Error:
-update_instance*[xcv4::F, b+="{(@{A ''xcv3''},@{G ''xcv5''})}"]*)
+
+update_instance-assert-error[xcv4::F, b+="{(@{A ''xcv3''},@{G ''xcv5''})}"]
+                  \<open>type of attribute: Conceptual.F.b does not fit to term\<close>
 
 
 section\<open>\<^theory_text>\<open>assert*\<close>-Annotated assertion-commands\<close>
 
 text\<open>The \<^emph>\<open>assert*\<close>-command allows for logical statements to be checked in the global context.
-It uses the same implementation as the \<^emph>\<open>value*\<close>-command and has the same limitations.
+Recall that it uses the same mechanism as the \<^emph>\<open>value*\<close>-command but requires that the evaluation 
+reduces the argument term to true.
+Consequently, it has the same limitations as \<^emph>\<open>value*\<close>.
 \<close>
 
 text\<open>Using the ontology defined in \<^theory>\<open>Isabelle_DOF-Unit-Tests.Concept_High_Level_Invariants\<close>
