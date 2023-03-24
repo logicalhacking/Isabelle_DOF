@@ -14,7 +14,7 @@
 chapter\<open>Term-Antiquotation Expansions and Evaluation\<close>
 
 theory 
-  Evaluation
+  Concept_TermEvaluation
 imports 
   "Isabelle_DOF-Unit-Tests.Concept_TermAntiquotations"
   "Isabelle_DOF-Unit-Tests.Concept_High_Level_Invariants"
