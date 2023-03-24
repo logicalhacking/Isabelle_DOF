@@ -16,12 +16,12 @@ session "Isabelle_DOF" (AFP) = "Functional-Automata" +
     "thys/Isa_DOF"
     "thys/Isa_COL"
   theories [document = true]
-    "thys/manual/01_Introduction"
-    "thys/manual/00_Frontmatter"
-    "thys/manual/02_Background"
-    "thys/manual/05_Implementation"
-    "thys/manual/03_GuidedTour"
-    "thys/manual/04_RefMan"
+    "thys/manual/M_00_Frontmatter"
+    "thys/manual/M_01_Introduction"
+    "thys/manual/M_02_Background"
+    "thys/manual/M_03_GuidedTour"
+    "thys/manual/M_04_RefMan"
+    "thys/manual/M_05_Implementation"
     "thys/manual/Isabelle_DOF-Manual"
   document_files
     "root.bib"

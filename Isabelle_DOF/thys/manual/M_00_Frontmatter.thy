@@ -12,15 +12,13 @@
  *************************************************************************)
 
 (*<*)
-theory "00_Frontmatter"
+theory "M_00_Frontmatter"
   imports 
     "Isabelle_DOF.technical_report"
 begin
  
 use_template "scrreprt-modern"
 use_ontology "technical_report"
-
-
 
 section\<open>Local Document Setup.\<close>
 text\<open>Introducing document specific abbreviations and macros:\<close>

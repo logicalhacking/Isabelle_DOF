@@ -12,8 +12,8 @@
  *************************************************************************)
 
 (*<*)
-theory "05_Implementation"
-  imports "04_RefMan"
+theory "M_05_Implementation"
+  imports "M_04_RefMan"
 begin
 (*>*)
 
@@ -108,15 +108,21 @@ val attributes =(Parse.$$$ "[" |-- (reference
                    |--(Parse.enum ","attribute)))[]))--| Parse.$$$ "]"              
 \end{sml}                                            
 
-  The ``model'' \<^boxed_sml>\<open>declare_reference_opn\<close> and ``new'' \<^boxed_sml>\<open>attributes\<close> parts were 
+  The ``model'' \<^boxed_sml>\<open>create_and_check_docitem\<close> and ``new''
+  \<^boxed_sml>\<open>ODL_Meta_Args_Parser.attributes\<close> parts were 
   combined via the piping operator and registered in the Isar toplevel:
 
 @{boxed_sml [display]
-\<open>fun declare_reference_opn (((oid,_),_),_) =
-                 (Toplevel.theory (DOF_core.declare_object_global oid))
-  val _ = Outer_Syntax.command <@>{command_keyword "declare_reference"}
-          "declare document reference"
-          (attributes >> declare_reference_opn);\<close>}
+\<open>val _ = 
+  let fun create_and_check_docitem (((oid, pos),cid_pos),doc_attrs) 
+                 = (Value_Command.Docitem_Parser.create_and_check_docitem
+                          {is_monitor = false} {is_inline=true}
+                          {define = false} oid pos (cid_pos) (doc_attrs))
+  in  Outer_Syntax.command @{command_keyword "declare_reference*"}
+                       "declare document reference"
+                       (ODL_Meta_Args_Parser.attributes 
+                        >> (Toplevel.theory o create_and_check_docitem))
+  end;\<close>}
 
   Altogether, this gives the extension of Isabelle/HOL with Isar syntax and semantics for the 
   new \emph{command}:
@@ -126,7 +132,7 @@ declare_reference* [lal::requirement, alpha="main", beta=42]
 \<close>}
 
   The construction also generates implicitly some markup information; for example, when hovering
-  over the \<^boxed_theory_text>\<open>declare_reference\<close> command in the IDE, a popup window with the text: 
+  over the \<^boxed_theory_text>\<open>declare_reference*\<close> command in the IDE, a popup window with the text: 
   ``declare document reference'' will appear.
 \<close>
 
@@ -137,12 +143,10 @@ text\<open>
   can be added to the system that works on the internal plugin-data freely. For example, in
 
 @{boxed_sml [display]
-\<open>val _ = Theory.setup(
-          Thy_Output.antiquotation <@>{binding docitem} 
-                                   docitem_antiq_parser 
-                                   (docitem_antiq_gen default_cid) #>
-          ML_Antiquotation.inline  <@>{binding docitem_value} 
-                                   ML_antiq_docitem_value)\<close>}
+\<open>val _ = Theory.setup
+           (docitem_antiquotation  @{binding "docitem"}  DOF_core.default_cid #>
+            
+            ML_Antiquotation.inline @{binding "docitem_value"} ML_antiquotation_docitem_value)\<close>}
   the text antiquotation \<^boxed_sml>\<open>docitem\<close> is declared and bounded to a parser for the argument 
   syntax and the overall semantics. This code defines a generic antiquotation to be used in text 
   elements such as

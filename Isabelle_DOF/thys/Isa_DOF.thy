@@ -1161,6 +1161,13 @@ fun ML_isa_check_trace_attribute thy (term, _, pos) s =
     val _ = DOF_core.get_instance_global oid thy
   in SOME term end
 
+fun translate f = Symbol.explode #> map f #> implode;
+
+(* convert excluded mixfix symbols *)
+val clean_string = translate
+  (fn "_" => "-"
+    | "'" => "-"
+    | c => c);
 
 fun ML_isa_elaborate_generic (_:theory) isa_name ty term_option _ =
   case term_option of
@@ -1187,9 +1194,7 @@ fun declare_ISA_class_accessor_and_check_instance doc_class_name =
     (* Unfortunately due to different lexical conventions for constant symbols and mixfix symbols
        we can not use "_" for classes names in term antiquotation.
        We chose to convert "_" to "-".*)
-    val conv_class_name = String.translate (fn #"_" => "-"
-                                            | x => String.implode [x] )
-                                                (Binding.name_of doc_class_name)
+    val conv_class_name = clean_string (Binding.name_of doc_class_name)
     val mixfix_string = "@{" ^ conv_class_name ^ " _}"
   in
     Sign.add_consts_cmd [(bind, typestring, Mixfix.mixfix(mixfix_string))]
@@ -1225,8 +1230,7 @@ fun declare_class_instances_annotation thy doc_class_name =
     (* Unfortunately due to different lexical conventions for constant symbols and mixfix symbols
        we can not use "_" for classes names in term antiquotation.
        We chose to convert "_" to "-".*)
-    val conv_class_name' = String.translate (fn #"_" => "-" | x=> String.implode [x])
-                                        ((Binding.name_of doc_class_name) ^ instances_of_suffixN)
+    val conv_class_name' = clean_string ((Binding.name_of doc_class_name) ^ instances_of_suffixN)
     val mixfix_string = "@{" ^ conv_class_name' ^ "}"
   in
     Sign.add_consts [(bind, class_list_typ, Mixfix.mixfix(mixfix_string))]
@@ -1716,7 +1720,7 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
                   let val cid_long =
                             let val DOF_core.Instance cid = DOF_core.get_instance_global x thy
                             in cid |> #cid end
-                  in DOF_core.check_ml_invs cid_long x {is_monitor=false} thy end)
+                  in DOF_core.check_ml_invs cid_long x {is_monitor=true} thy end)
       val delta_autoS = map is_enabled_for_cid  enabled_monitors;
       fun update_info (n, aS, monitor_info) =  
         let val DOF_core.Monitor_Info {accepted_cids,rejected_cids,...} = monitor_info
@@ -2195,6 +2199,11 @@ fun gen_enriched_document_cmd {inline} cid_transform attr_transform
   Value_Command.Docitem_Parser.create_and_check_docitem {is_monitor = false} {is_inline = inline}
    {define = true} oid pos (cid_transform cid_pos) (attr_transform doc_attrs);
 
+fun gen_enriched_document_cmd' {inline} cid_transform attr_transform
+    ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) : theory -> theory =
+  Value_Command.Docitem_Parser.create_and_check_docitem {is_monitor = false} {is_inline = inline}
+   {define = false} oid pos (cid_transform cid_pos) (attr_transform doc_attrs);
+
 
 (* markup reports and document output *)
 
@@ -2264,16 +2273,32 @@ val _ =
     (gen_enriched_document_cmd {inline=false} (* declare as macro *) I I);
 
  
+val (declare_reference_default_class, declare_reference_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>declare_reference_default_class\<close> (K "");
+
+val _ = Theory.setup declare_reference_default_class_setup
 
 val _ = 
-  let fun create_and_check_docitem (((oid, pos),cid_pos),doc_attrs) 
-                 = (Value_Command.Docitem_Parser.create_and_check_docitem
-                          {is_monitor = false} {is_inline=true}
-                          {define = false} oid pos (cid_pos) (doc_attrs))
+  let fun default_cid meta_args thy =
+        let
+          fun default_cid' _ NONE cid_pos = cid_pos
+            | default_cid' thy (SOME ncid) NONE =
+                let val name = DOF_core.get_onto_class_name_global' ncid thy
+                    val ns = DOF_core.get_onto_classes (Proof_Context.init_global thy)
+                             |> Name_Space.space_of_table
+                    val {pos, ...} = Name_Space.the_entry ns name
+                in SOME (name,pos) end
+            | default_cid' _ (SOME _) cid_pos = cid_pos
+          val ncid =  Config.get_global thy declare_reference_default_class
+          val ncid' = if ncid = ""
+                      then NONE
+                      else SOME ncid
+        in gen_enriched_document_cmd' {inline=true} (default_cid' thy ncid') I meta_args thy
+        end
   in  Outer_Syntax.command \<^command_keyword>\<open>declare_reference*\<close>
                        "declare document reference"
                        (ODL_Meta_Args_Parser.attributes 
-                        >> (Toplevel.theory o create_and_check_docitem))
+                        >> (Toplevel.theory o default_cid))
   end;
 
 end (* structure Monitor_Command_Parser *)
@@ -2753,8 +2778,10 @@ fun check_and_mark ctxt cid_decl ({strict_checking = strict}) {inline=inline_req
     val {pos=pos', ...} = Name_Space.the_entry ns name'
     (* this sends a report for a ref application to the PIDE interface ... *) 
     val _ = if not(DOF_core.is_subclass ctxt cid cid_decl)
-            then error("reference ontologically inconsistent: "^cid
-                       ^" must be subclass of "^cid_decl^ Position.here pos')
+            then error("reference ontologically inconsistent: "
+                       ^ name ^ " is an instance of " ^ cid
+                       ^ " and " ^ cid
+                       ^ " is not a subclass of " ^ cid_decl ^ Position.here pos)
             else ()
   in () end
 
@@ -2801,15 +2828,14 @@ fun docitem_antiquotation bind cid =
 
 fun check_and_mark_term ctxt oid  =
   let
-    val thy = Context.theory_of ctxt;
     val ctxt' = Context.proof_of ctxt
-    val DOF_core.Instance {cid,value,...} =
-                                              DOF_core.get_instance_global oid thy
+    val thy = Proof_Context.theory_of ctxt';
+    val oid' = DOF_core.get_instance_name_global oid thy
+    val DOF_core.Instance {cid,value,...} = DOF_core.get_instance_global oid' thy
     val instances = DOF_core.get_instances ctxt'
     val ns = instances |> Name_Space.space_of_table 
-    val {pos, ...} = Name_Space.the_entry ns oid
-    val markup = DOF_core.get_instance_name_global oid thy
-                 |> Name_Space.markup (Name_Space.space_of_table instances)
+    val {pos, ...} = Name_Space.the_entry ns oid'
+    val markup = oid' |> Name_Space.markup (Name_Space.space_of_table instances)
     val _ = Context_Position.report ctxt' pos markup;
     (* this sends a report for a ref application to the PIDE interface ... *) 
     val _ = if cid = DOF_core.default_cid
