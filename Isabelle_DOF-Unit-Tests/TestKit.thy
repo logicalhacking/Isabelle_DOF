@@ -26,8 +26,7 @@ keywords "text-" "text-latex"             :: document_body
 
 begin
 
-section\<open>Testing Commands (exec-catch-verify - versions of std commands)\<close>
-
+section\<open>Testing Commands (exec-catch-verify - versions of DOF commands)\<close>
 
 ML\<open> 
 
@@ -102,15 +101,14 @@ fun output_document2 state markdown txt =
   in Document_Output.output_document ctxt markdown txt end;
 
 fun document_command2 markdown (loc, txt) =
-  Toplevel.keep (fn state =>
-                    (case loc of
+  let fun doc2 state = (case loc of
                       NONE => ignore (output_document2 state markdown txt)
                     | SOME (_, pos) =>(ISA_core.err 
                                            "Illegal target specification -- not a theory context" 
-                                           pos))) 
-  o 
-  Toplevel.present_local_theory loc (fn state => (output_document2 state markdown txt));
-
+                                           pos))
+      fun out2 state = output_document2 state markdown txt
+  in  Toplevel.keep doc2  o  Toplevel.present_local_theory loc out2
+  end
 
 fun gen_enriched_document_command3 assert name body trans at md (margs, src_list) thy
  = (gen_enriched_document_command2 name body trans at md  (margs, src_list)  thy)
@@ -149,18 +147,11 @@ val _ =
                           then (writeln ("Correct error: "^msg^": reported.");thy)
                           else error"Wrong error reported")
   in  Outer_Syntax.command \<^command_keyword>\<open>declare_reference-assert-error\<close>
-                       "declare document reference"
-                       (ODL_Meta_Args_Parser.attributes -- Parse.document_source
-                        >> (Toplevel.theory o create_and_check_docitem))
+                           "declare document reference"
+                           (ODL_Meta_Args_Parser.attributes -- Parse.document_source
+                            >> (Toplevel.theory o create_and_check_docitem))
   end;
 
-
-(* fun pass_trans_to_value_cmd  args ((name, modes), t) trans =
-let val pos = Toplevel.pos_of trans
-in
-   trans |> Toplevel.theory (value_cmd {assert=false} args name modes t @{here})
-end
- *)
 
 val _ =
   let fun pass_trans_to_value_cmd (args, (((name, modes), t),src)) trans  = 
@@ -184,10 +175,9 @@ val _ =
 
 
 
-
 \<close>
 
-(* auto-tests *)
+(* a little auto-test *)
 text-latex\<open>dfg\<close>
 
 text-assert-error[aaaa::A]\<open> @{A \<open>sdf\<close>}\<close>\<open>reference ontologically inconsistent\<close>
