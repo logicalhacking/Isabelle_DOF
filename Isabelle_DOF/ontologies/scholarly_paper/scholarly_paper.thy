@@ -298,7 +298,7 @@ setup\<open>Theorem_default_class_setup\<close>
 ML\<open> local open ODL_Meta_Args_Parser in
 
 val _ = 
-  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Definition*\<close> "Textual Definition"
+  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Definition*\<close> "Freeform Definition"
     {markdown = true, body = true}
     (fn meta_args => fn thy =>
       let
@@ -310,7 +310,7 @@ val _ =
       end);
 
 val _ =
-  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Lemma*\<close> "Textual Lemma Outline"
+  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Lemma*\<close> "Freeform Lemma Description"
     {markdown = true, body = true}
     (fn meta_args => fn thy =>
       let
@@ -322,7 +322,7 @@ val _ =
       end);
 
 val _ =
-  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Theorem*\<close> "Textual Theorem Outline"
+  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Theorem*\<close> "Freeform Theorem Description"
     {markdown = true, body = true}
     (fn meta_args => fn thy =>
       let
