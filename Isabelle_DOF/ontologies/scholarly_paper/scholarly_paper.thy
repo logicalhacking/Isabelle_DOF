@@ -15,11 +15,11 @@ chapter\<open>An example ontology for scientific, MINT-oriented papers.\<close>
 
 theory scholarly_paper
   imports "Isabelle_DOF.Isa_COL"
-  keywords "author*" "abstract*"                     :: document_body
-    and    "Definition*" "Lemma*" "Theorem*"         :: document_body 
-    and    "Premise*" "Corollary*" "Consequence*"    :: document_body
-    and    "Assumption*" "Hypothesis*" "Assertion*"  :: document_body
-    and    "Proof*" "Example*"                       :: document_body
+  keywords "author*" "abstract*"                              :: document_body
+    and    "Proposition*" "Definition*" "Lemma*" "Theorem*"   :: document_body 
+    and    "Premise*" "Corollary*" "Consequence*"             :: document_body
+    and    "Assumption*" "Hypothesis*" "Assertion*"           :: document_body
+    and    "Proof*" "Example*"                                :: document_body
 begin
 
 define_ontology "DOF-scholarly_paper.sty" "Writing academic publications."
@@ -159,6 +159,19 @@ doc_class example  = text_section +
    short_name      :: string <= "''''"
    invariant L\<^sub>e\<^sub>x\<^sub>a    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
+text\<open>The intended use for the \<open>doc_class\<close>es \<^verbatim>\<open>math_motivation\<close> (or \<^verbatim>\<open>math_mtv\<close> for short),
+     \<^verbatim>\<open>math_explanation\<close> (or \<^verbatim>\<open>math_exp\<close> for short) and 
+     \<^verbatim>\<open>math_example\<close> (or \<^verbatim>\<open>math_ex\<close> for short)
+     are \<^emph>\<open>informal\<close> descriptions of semi-formal definitions (by inheritance).
+     Math-Examples can be made referentiable triggering explicit, numbered presentations.\<close>
+doc_class math_motivation  = tc +  
+   referentiable :: bool <= False
+type_synonym math_mtv = math_motivation
+
+doc_class math_explanation  = tc +
+   referentiable :: bool <= False
+type_synonym math_exp = math_explanation
+
 
 subsection\<open>Freeform Mathematical Content\<close>
 
@@ -197,7 +210,7 @@ doc_class math_content = tc +
    referentiable :: bool <= True
    short_name    :: string <= "''''"
    status        :: status <= "semiformal"
-   mcc           :: "math_content_class" <= "thm" 
+   mcc           :: "math_content_class" <= "theom" 
    invariant s1  :: "\<not>referentiable \<sigma> \<longrightarrow> short_name \<sigma> = ''''"
    invariant s2  :: "technical.status \<sigma> = semiformal"
 type_synonym math_tc = math_content
@@ -213,94 +226,106 @@ Sub-classes can englobe instances such as:
    2) ...
    \<close>\<close>
 \<^item> semi-formal descriptions, which are free-form mathematical definitions on which finally
-  an attribute with a formal Isabelle definition is attached. 
-
-\<close>
-
-
-(* type qualification is a work around *)
-
-text\<open>The intended use for the \<open>doc_class\<close>es \<^verbatim>\<open>math_motivation\<close> (or \<^verbatim>\<open>math_mtv\<close> for short),
-     \<^verbatim>\<open>math_explanation\<close> (or \<^verbatim>\<open>math_exp\<close> for short) and 
-     \<^verbatim>\<open>math_example\<close> (or \<^verbatim>\<open>math_ex\<close> for short)
-     are \<^emph>\<open>informal\<close> descriptions of semi-formal definitions (by inheritance).
-     Math-Examples can be made referentiable triggering explicit, numbered presentations.\<close>
-doc_class math_motivation  = tc +  
-   referentiable :: bool <= False
-type_synonym math_mtv = math_motivation
-
-doc_class math_explanation  = tc +
-   referentiable :: bool <= False
-type_synonym math_exp = math_explanation
-
-
-text\<open>The intended use for the \<open>doc_class\<close> \<^verbatim>\<open>math_semiformal_statement\<close> (or \<^verbatim>\<open>math_sfs\<close> for short) 
-     are semi-formal mathematical content (definition, lemma, etc.). They are referentiable entities.
-     They are NOT formal, i.e. Isabelle-checked formal content, but can be in close link to these.\<close>
-doc_class math_semiformal  = math_content +
-   referentiable :: bool <= True
-type_synonym math_sfc = math_semiformal
+  an attribute with a formal Isabelle definition is attached. \<close>
 
 
 text\<open>Instances of the Free-form Content are Definition, Lemma, Assumption, Hypothesis, etc.
      The key class definitions are inspired by the AMS style, to which some target LaTeX's compile.\<close>   
 
-(* Future : same syntaxx as command macros ... so: Definition ... *)
+text\<open>A proposition (or: "sentence") is a central concept in philosophy of language and related 
+fields, often characterized as the primary bearer of truth or falsity. Propositions are also often 
+characterized as being the kind of thing that declarative sentences denote. \<close>
 
+doc_class "proposition"  = math_content +
+   referentiable :: bool <= True
+   mcc           :: "math_content_class" <= "prpo" 
+   invariant d0  :: "mcc \<sigma> = prpo" (* can not be changed anymore. *)
+
+text\<open>A definition is used to give a precise meaning to a new term, by describing a 
+condition which unambiguously qualifies what a mathematical term is and is not. Definitions and 
+axioms form the basis on which all of modern mathematics is to be constructed.\<close>
 doc_class "definition"  = math_content +
    referentiable :: bool <= True
    mcc           :: "math_content_class" <= "defn" 
    invariant d1  :: "mcc \<sigma> = defn" (* can not be changed anymore. *)
 
+doc_class "axiom"  = math_content +
+   referentiable :: bool <= True
+   mcc           :: "math_content_class" <= "axm" 
+   invariant d2  :: "mcc \<sigma> = axm" (* can not be changed anymore. *)
+
+text\<open>A lemma (plural lemmas or lemmata) is a generally minor, proven proposition which is used as 
+a stepping stone to a larger result. For that reason, it is also known as a "helping theorem" or an 
+"auxiliary theorem". In many cases, a lemma derives its importance from the theorem it aims to prove.\<close>
 doc_class "lemma"       = math_content +
    referentiable :: bool <= "True"
    mcc           :: "math_content_class" <= "lemm" 
-   invariant d2  :: "mcc \<sigma> = lemm"
+   invariant d3  :: "mcc \<sigma> = lemm"
 
 doc_class "theorem"     = math_content +
    referentiable :: bool <= True
    mcc           :: "math_content_class" <= "theom" 
-   invariant d3  :: "mcc \<sigma> = theom"
+   invariant d4  :: "mcc \<sigma> = theom"
 
+text\<open>A corollary is a theorem of less importance which can be readily deduced from a previous, 
+more notable lemma or theorem. A corollary could, for instance, be a proposition which is incidentally 
+proved while proving another proposition.\<close>
 doc_class "corollary"   = math_content +
    referentiable :: bool <= "True"
    mcc           :: "math_content_class" <= "corr" 
-   invariant d4  :: "mcc \<sigma> = corr"
+   invariant d5  :: "mcc \<sigma> = corr"
 
+
+text\<open>A premise or premiss[a] is a proposition — a true or false declarative statement—
+     used in an argument to prove the truth of another proposition called the conclusion.\<close>
 doc_class "premise"     = math_content +
    referentiable :: bool <= "True"
    mcc           :: "math_content_class" <= "prms" 
-   invariant d5  :: "mcc \<sigma> = prms"
+   invariant d6  :: "mcc \<sigma> = prms"
 
+text\<open>A consequence describes the relationship between statements that hold true when one statement 
+logically follows from one or more statements. A valid logical argument is one in which the 
+conclusion is entailed by the premises, because the conclusion is the consequence of the premises. 
+The philosophical analysis of logical consequence involves the questions: In what sense does a 
+conclusion follow from its premises?\<close>
 doc_class "consequence" = math_content +
    referentiable :: bool <= "True"
    mcc           :: "math_content_class" <= "cons" 
-   invariant d6  :: "mcc \<sigma> = cons"
+   invariant d7  :: "mcc \<sigma> = cons"
 
-doc_class "assumption"  = math_content +
-   referentiable :: bool <= "True"
-   mcc           :: "math_content_class" <= "assm" 
-   invariant d7  :: "mcc \<sigma> = assm"
-
-doc_class "hypothesis"  = math_content +
-   referentiable :: bool <= "True"
-   mcc           :: "math_content_class" <= "hypth" 
-   invariant d8  :: "mcc \<sigma> = hypth"
-
+text\<open>An assertion is a statement that asserts that a certain premise is true.\<close>
 doc_class "assertion"   = math_content +
    referentiable :: bool <= "True"
    mcc           :: "math_content_class" <= "assn" 
-   invariant d9  :: "mcc \<sigma> = assn"
+   invariant d8  :: "mcc \<sigma> = assn"
+
+text\<open>An assumption is an explicit or a tacit proposition about the world or a background belief 
+relating to an proposition.\<close>
+doc_class "assumption"  = math_content +
+   referentiable :: bool <= "True"
+   mcc           :: "math_content_class" <= "assm" 
+   invariant d9  :: "mcc \<sigma> = assm"
+
+text\<open> A working hypothesis is a provisionally accepted hypothesis proposed for further research
+ in a process beginning with an educated guess or thought.
+
+ A different meaning of the term hypothesis is used in formal logic, to denote the antecedent of a 
+ proposition; thus in the proposition "If \<open>P\<close>, then \<open>Q\<close>", \<open>P\<close> denotes the hypothesis (or antecedent); 
+ \<open>Q\<close> can be called a consequent. \<open>P\<close> is the assumption in a (possibly counterfactual) What If question.\<close>
+doc_class "hypothesis"  = math_content +
+   referentiable :: bool <= "True"
+   mcc           :: "math_content_class" <= "hypth" 
+   invariant d10 :: "mcc \<sigma> = hypth"
 
 doc_class "math_proof"  = math_content +
    referentiable :: bool <= "True"
    mcc           :: "math_content_class" <= "mprf" 
-   invariant d10  :: "mcc \<sigma> = mprf"
+   invariant d11 :: "mcc \<sigma> = mprf"
 
 doc_class "math_example"= math_content +
    referentiable :: bool <= "True"
    mcc           :: "math_content_class" <= "mexl" 
-   invariant d11  :: "mcc \<sigma> = mexl"
+   invariant d12 :: "mcc \<sigma> = mexl"
 
 
 
@@ -324,72 +349,99 @@ text\<open>These ontological macros allow notations are defined for the class
   that are not necessarily in the same inheritance hierarchy: for example:
   \<^item> mathematical definition vs terminological definition
   \<^item> mathematical example vs. technical example. 
+  \<^item> mathematical proof vs. some structured argument
+  \<^item> mathematical hypothesis vs. philosophical/metaphysical assumption
+  \<^item> ... 
+
+By setting the default classes, it is possible to reuse these syntactic support and give them
+different interpretations in an underlying ontological class-tree.
 
 \<close>
 
 ML\<open>
 
-val s = [\<^const_name>\<open>defn\<close>,\<^const_name>\<open>axm\<close>,  \<^const_name>\<open>theom\<close>, \<^const_name>\<open>lemm\<close>, \<^const_name>\<open>corr\<close>, \<^const_name>\<open>prpo\<close>, 
-         \<^const_name>\<open>rulE\<close>,\<^const_name>\<open>assn\<close>, \<^const_name>\<open>hypth\<close>, \<^const_name>\<open>assm\<close>, \<^const_name>\<open>prms\<close>, \<^const_name>\<open>cons\<close>,
-         \<^const_name>\<open>mprf\<close>,\<^const_name>\<open>mexl\<close>, \<^const_name>\<open>rmrk\<close>,  \<^const_name>\<open>notn\<close>, \<^const_name>\<open>tmgy\<close>];
+val s = [\<^const_name>\<open>defn\<close>, \<^const_name>\<open>axm\<close>,  \<^const_name>\<open>theom\<close>,
+         \<^const_name>\<open>lemm\<close>, \<^const_name>\<open>corr\<close>, \<^const_name>\<open>prpo\<close>, 
+         \<^const_name>\<open>rulE\<close>, \<^const_name>\<open>assn\<close>, \<^const_name>\<open>hypth\<close>,
+         \<^const_name>\<open>assm\<close>, \<^const_name>\<open>prms\<close>, \<^const_name>\<open>cons\<close>,
+         \<^const_name>\<open>mprf\<close>, \<^const_name>\<open>mexl\<close>, \<^const_name>\<open>rmrk\<close>, 
+         \<^const_name>\<open>notn\<close>, \<^const_name>\<open>tmgy\<close>];
 
 
-val (Definition_default_class, Example_default_class_setup) 
-     = Attrib.config_string \<^binding>\<open>Example_default_class\<close> (K "");
+val (Proposition_default_class, Proposition_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Proposition_default_class\<close> (K "");
 val (Definition_default_class, Definition_default_class_setup) 
      = Attrib.config_string \<^binding>\<open>Definition_default_class\<close> (K "");
+val (Axiom_default_class, Axiom_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Axiom_default_class\<close> (K "");
 val (Lemma_default_class, Lemma_default_class_setup) 
      = Attrib.config_string \<^binding>\<open>Lemma_default_class\<close> (K "");
 val (Theorem_default_class, Theorem_default_class_setup) 
      = Attrib.config_string \<^binding>\<open>Theorem_default_class\<close> (K "");
-
+val (Corollary_default_class, Corollary_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Corollary_default_class\<close> (K "");
+val (Assumption_default_class, Assumption_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Assumption_default_class\<close> (K "");
+val (Assertion_default_class, Assertion_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Assertion_default_class\<close> (K "");
+val (Consequence_default_class, Consequence_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Consequence_default_class\<close> (K "");
+val (Proof_default_class, Proof_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Proof_default_class\<close> (K "");
+val (Example_default_class, Example_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Example_default_class\<close> (K "");
+val (Remark_default_class, Remark_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Remark_default_class\<close> (K "");
+val (Notation_default_class, Notation_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>Notation_default_class\<close> (K "");
 
 \<close>
-setup\<open>Example_default_class_setup\<close>
-setup\<open>Definition_default_class_setup\<close>
-setup\<open>Lemma_default_class_setup\<close>
-setup\<open>Theorem_default_class_setup\<close>
 
-ML\<open> local open ODL_Meta_Args_Parser in
+setup\<open>   Proposition_default_class_setup 
+      #> Definition_default_class_setup 
+      #> Axiom_default_class_setup 
+      #> Lemma_default_class_setup 
+      #> Theorem_default_class_setup 
+      #> Corollary_default_class_setup 
+      #> Assertion_default_class_setup 
+      #> Assumption_default_class_setup 
+      #> Consequence_default_class_setup 
+      #> Proof_default_class_setup 
+      #> Remark_default_class_setup 
+      #> Example_default_class_setup\<close>
 
-val _ = 
-  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Definition*\<close> "Freeform Definition"
-    {markdown = true, body = true}
+ML\<open> 
+local open ODL_Meta_Args_Parser in
+
+local 
+fun doc_cmd kwd txt flag key = 
+    Monitor_Command_Parser.document_command kwd txt {markdown = true, body = true}
     (fn meta_args => fn thy =>
       let
-        val ddc = Config.get_global thy Definition_default_class
-        val use_Definition_default = SOME(((ddc = "") ? (K "math_content")) ddc)
+        val ddc = Config.get_global thy flag 
+        val default = SOME(((ddc = "") ? (K \<^const_name>\<open>math_content\<close>)) ddc)
       in
-        Onto_Macros.enriched_formal_statement_command 
-         use_Definition_default [("mcc","defn")] meta_args thy
-      end);
+        Onto_Macros.enriched_formal_statement_command  default [("mcc",key)] meta_args thy
+      end)
 
-val _ =
-  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Lemma*\<close> "Freeform Lemma Description"
-    {markdown = true, body = true}
-    (fn meta_args => fn thy =>
-      let
-        val ddc = Config.get_global thy Lemma_default_class
-        val use_Lemma_default = SOME(((ddc = "") ? (K "math_content")) ddc)
-      in
-        Onto_Macros.enriched_formal_statement_command
-          use_Lemma_default [("mcc","lemm")] meta_args thy
-      end);
+in
 
-val _ =
-  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Theorem*\<close> "Freeform Theorem"
-    {markdown = true, body = true}
-    (fn meta_args => fn thy =>
-      let
-        val ddc = Config.get_global thy Theorem_default_class
-        val use_Theorem_default = SOME(((ddc = "") ? (K "math_content")) ddc)
-      in
-        Onto_Macros.enriched_formal_statement_command 
-          use_Theorem_default [("mcc","theom")] meta_args thy
-      end);
+val _ = doc_cmd \<^command_keyword>\<open>Definition*\<close> "Freeform Definition" 
+                Definition_default_class \<^const_name>\<open>defn\<close>;
+
+val _ = doc_cmd \<^command_keyword>\<open>Lemma*\<close>      "Freeform Lemma Description" 
+                 Lemma_default_class \<^const_name>\<open>lemm\<close>;
+
+val _ = doc_cmd \<^command_keyword>\<open>Theorem*\<close>    "Freeform Theorem" 
+                 Theorem_default_class \<^const_name>\<open>theom\<close>;
 
 (* cut and paste to make it runnable, but nonsensical : *)
 val _ = 
+  Monitor_Command_Parser.document_command \<^command_keyword>\<open>Proposition*\<close> "Freeform Proposition"
+    {markdown = true, body = true}
+    (fn meta_args => fn thy => thy);
+
+val _ =
   Monitor_Command_Parser.document_command \<^command_keyword>\<open>Premise*\<close> "Freeform Premise"
     {markdown = true, body = true}
     (fn meta_args => fn thy => thy);
@@ -428,7 +480,7 @@ val _ =
   Monitor_Command_Parser.document_command \<^command_keyword>\<open>Example*\<close> "Freeform Example"
     {markdown = true, body = true}
     (fn meta_args => fn thy => thy);
-
+end
 end 
 \<close>
 
@@ -446,20 +498,11 @@ type_synonym math_fc = math_formal
 
 
 
-subsubsection*[ex_ass::example]\<open>Example\<close>
-text\<open>Assertions allow for logical statements to be checked in the global context). \<close>
+subsubsection*[ex_ass::example]\<open>Logical Assertions\<close>
+
+text\<open>Logical assertions allow for logical statements to be checked in the global context). \<close>
+
 assert*[ass1::assertion, short_name = "\<open>This is an assertion\<close>"] \<open>(3::int) < 4\<close>
-
-subsection\<open>Example Statements\<close>
-
-text\<open> \<^verbatim>\<open>examples\<close> are currently considered \<^verbatim>\<open>technical\<close>. Is a main category to be refined
-      via inheritance. \<close> 
-
-doc_class tech_example       = tc +
-   referentiable :: bool <= True
-   tag :: "string" <=  "''''"
-
-
 
 
 subsection\<open>Content in Engineering/Tech Papers \<close>
@@ -471,6 +514,7 @@ doc_class engineering_content = tc +
    status     :: status
 type_synonym eng_content = engineering_content
 
+
 doc_class "experiment"  = eng_content +
    tag :: "string" <=  "''''"
 
@@ -480,11 +524,27 @@ doc_class "evaluation"  = eng_content +
 doc_class "data"  = eng_content +
    tag :: "string" <=  "''''"
 
+doc_class tech_definition = eng_content +
+   referentiable :: bool <= True
+   tag :: "string" <=  "''''"
+
+doc_class tech_code = eng_content +
+   referentiable :: bool <= True
+   tag :: "string" <=  "''''"
+
+doc_class tech_example = eng_content +
+   referentiable :: bool <= True
+   tag :: "string" <=  "''''"
+
+
+
 subsection\<open>Some Summary\<close>
 
 print_doc_classes
 
 print_doc_class_template "definition" (* just a sample *)
+print_doc_class_template "lemma" (* just a sample *)
+print_doc_class_template "theorem" (* just a sample *)
 
 
 subsection\<open>Structuring Enforcement in Engineering/Math Papers \<close>

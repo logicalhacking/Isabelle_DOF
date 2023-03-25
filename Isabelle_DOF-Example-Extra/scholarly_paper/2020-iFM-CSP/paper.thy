@@ -356,7 +356,7 @@ is based on the concept \<^emph>\<open>refusals after\<close> a trace \<open>s\<
 
 Definition*[process_ordering, level= "Some 2", short_name="''process ordering''"]\<open>
 We define \<open>P \<sqsubseteq> Q \<equiv> \<psi>\<^sub>\<D> \<and> \<psi>\<^sub>\<R> \<and> \<psi>\<^sub>\<M> \<close>,  where 
-\<^enum>  \<open>\<psi>\<^sub>\<D> = \<D> P \<supseteq> \<D> Q \<close>
+\<^enum> \<open>\<psi>\<^sub>\<D> = \<D> P \<supseteq> \<D> Q \<close>
 \<^enum> \<open>\<psi>\<^sub>\<R> = s \<notin> \<D> P \<Rightarrow> \<R> P s = \<R> Q s\<close>  
 \<^enum> \<open>\<psi>\<^sub>\<M> = Mins(\<D> P) \<subseteq> \<T> Q \<close> 
 \<close>

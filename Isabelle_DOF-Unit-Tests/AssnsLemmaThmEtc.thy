@@ -39,14 +39,19 @@ text\<open>For now, as the term annotation is not bound to a meta logic which wi
 in the assertion.
 \<close>
 
-ML\<open>
-@{term "[@{term \<open>True \<longrightarrow> True \<close>}]"}; (* with isa-check *) 
-\<close>
+ML\<open> @{term "[@{term \<open>True \<longrightarrow> True \<close>}]"}; (* with isa-check *)  \<close>
 
-Definition*[ertert]\<open>dfgdfg\<close>
-Theorem*[dgdfgddfg]\<open>dfgdfg\<close>
+Definition*[e1]\<open>dfgdfg\<close>
 
-lemma "All (\<lambda>x. X \<and> Y \<longrightarrow> True)" oops
+definition*[e1bis] e :: int where "e = 1"
+
+Theorem*[e2]\<open>dfgdfg\<close>
+
+theorem*[e2bis] f : "e = 1+0" unfolding e_def by simp
+
+Lemma*[e3]\<open> \<close>
+
+lemma*[dfgd] q: "All (\<lambda>x. X \<and> Y \<longrightarrow> True)" oops
 
 
 text\<open>An example for the ontology specification character of the short-cuts such as 
