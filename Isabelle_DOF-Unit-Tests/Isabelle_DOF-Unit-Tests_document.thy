@@ -14,12 +14,12 @@
 theory "Isabelle_DOF-Unit-Tests_document"
   imports
     "Isabelle_DOF.technical_report"
-    "Isabelle_DOF-Ontologies.CENELEC_50128"
+    (* "Isabelle_DOF-Ontologies.CENELEC_50128"  where do we use this - bu *)
   
 begin
 
 use_template "scrreprt-modern"
-use_ontology "technical_report" and "Isabelle_DOF-Ontologies.CENELEC_50128"
+use_ontology "technical_report" (* and "Isabelle_DOF-Ontologies.CENELEC_50128" *)
 (*>*)
 
 title*[title::title]         \<open>The Isabelle/DOF Implementation\<close>
