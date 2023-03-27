@@ -1647,6 +1647,11 @@ fun msg thy txt pos = if Config.get_global thy DOF_core.strict_monitor_checking
                   then ISA_core.err txt pos
                   else ISA_core.warn txt pos
 
+fun msg_intro get n oid cid = ("accepts clause " ^ Int.toString n 
+                               ^ " of monitor " ^ oid
+                               ^ get (" not enabled for", " rejected")
+                               ^ " doc_class: " ^ cid)
+
 fun register_oid_cid_in_open_monitors oid pos cid_pos thy = 
   let val cid_long= fst cid_pos
       val pos' = snd cid_pos
@@ -1685,27 +1690,18 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
                 case first_accepted of
                     NONE => (case first_rejected of
                                  NONE =>
-                                   let val msg_intro = ("accepts clause " ^ Int.toString n 
-                                                        ^ " of monitor " ^ moid
-                                                        ^ " not enabled for doc_class: " ^ cid_long)
-                                   in
-                                     if Config.get_global thy DOF_core.free_class_in_monitor_strict_checking
-                                     then ISA_core.err msg_intro pos'
-                                     else if Config.get_global thy DOF_core.free_class_in_monitor_checking
-                                          then (ISA_core.warn msg_intro pos';A)
-                                          else A
-                                   end
-                               | SOME _ => (msg thy ("accepts clause " ^ Int.toString n 
-                                                     ^ " of monitor " ^ moid
-                                                     ^ " rejected doc_class: " ^ cid_long) pos';A))
+                                   if Config.get_global thy DOF_core.free_class_in_monitor_strict_checking
+                                   then ISA_core.err (msg_intro fst n moid cid_long) pos'
+                                   else if Config.get_global thy DOF_core.free_class_in_monitor_checking
+                                        then (ISA_core.warn (msg_intro fst n moid cid_long) pos';A)
+                                        else A
+                               | SOME _ => (msg thy (msg_intro snd n moid cid_long) pos';A))
                   | SOME accepted => (case first_rejected of
                                           NONE => RegExpInterface.next A accepted_cids (accepted)
                                         | SOME rejected =>
                                             if DOF_core.is_subclass_global thy accepted rejected
                                             then RegExpInterface.next A accepted_cids (accepted)
-                                            else (msg thy ("accepts clause " ^ Int.toString n 
-                                                           ^ " of monitor " ^ moid
-                                                           ^ " rejected doc_class: " ^ cid_long) pos';A))
+                                            else (msg thy (msg_intro snd n moid cid_long) pos';A))
               end
          in (moid,map check_for_cid indexed_autoS, monitor_info)  end  
       val enabled_monitors = List.mapPartial is_enabled
@@ -3137,24 +3133,16 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
                             |> mk_meta_eq
       val args = (SOME(binding,NONE,NoSyn)
                   , (Binding.empty_atts, Binding.name_of binding |> mk_eq_pair), [], [])
+      fun add record_fields virtual =
+        Record.add_record overloaded (params', binding) parent' record_fields
+        #> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms' regexps 
+                                            reject_Atoms invariants virtual
     in thy |> Named_Target.theory_map (def_cmd args)
-           |> ( case parent' of
-                     NONE => Record.add_record
-                          overloaded (params', binding) parent' (DOF_core.tag_attr::record_fields)
-                             #> DOF_core.define_doc_class_global
-                                                    (params', binding) parent fieldsNterms' regexps 
-                                                    reject_Atoms invariants {virtual=false}
-                   | SOME _  =>
-                       if (not o null) record_fields
-                       then Record.add_record overloaded (params', binding) parent' (record_fields)
-                            #> DOF_core.define_doc_class_global
-                                                    (params', binding) parent fieldsNterms' regexps 
-                                                    reject_Atoms invariants {virtual=false}
-                       else Record.add_record
-                                        overloaded (params', binding) parent' ([DOF_core.tag_attr])
-                             #> DOF_core.define_doc_class_global
-                                                    (params', binding) parent fieldsNterms' regexps 
-                                                    reject_Atoms invariants {virtual=true} )
+           |> (case parent' of
+                   NONE => add (DOF_core.tag_attr::record_fields) {virtual=false}
+                 | SOME _  => if (not o null) record_fields
+                                then add record_fields {virtual=false}
+                                else add [DOF_core.tag_attr] {virtual=true})
            |> (fn thy => OntoLinkParser.docitem_antiquotation binding (cid thy) thy)
               (* defines the ontology-checked text antiquotation to this document class *)
            |> (fn thy => fold(define_inv (cid thy)) (invariants) thy)
