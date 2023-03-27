@@ -81,6 +81,7 @@ val instanceN = "instance"
 val monitor_infoN = "monitor_info"
 val isa_transformerN = "isa_transformer"
 val ml_invariantN = "ml_invariant"
+val traceN = "trace"
 
 (* derived from: theory_markup *) 
 fun docref_markup_gen refN def name id pos =
@@ -955,6 +956,21 @@ subsection\<open> Syntax \<close>
 
 datatype "doc_class" = mk string
 
+ML\<open>
+val doc_class_rexp_T = \<^typ>\<open>doc_class rexp\<close>
+val doc_class_rexp_Ts = "doc_class rexp"
+fun doc_class_rexp_t cid = \<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close> $ (\<^Const>\<open>mk\<close> $ HOLogic.mk_string cid)
+
+val trace_attr_Ts = "(" ^ doc_class_rexp_Ts ^ " \<times> string) list"
+val trace_attr_ts = ((\<^binding>\<open>trace\<close>, trace_attr_Ts , Mixfix.NoSyn), SOME "[]")
+fun trace_attr_t cid oid =
+  let val t = [\<^Const>\<open>Pair doc_class_rexp_T \<^typ>\<open>string\<close>\<close>
+               $ doc_class_rexp_t cid
+               $ HOLogic.mk_string oid]
+              |> HOLogic.mk_list \<^Type>\<open>prod doc_class_rexp_T \<^typ>\<open>string\<close>\<close>
+  in [(traceN, \<^here>, "+=", t)] end
+\<close>
+
 \<comment> \<open>and others in the future : file, http, thy, ...\<close> 
 
 datatype "typ" = Isabelle_DOF_typ string  ("@{typ _}")
@@ -1284,7 +1300,7 @@ case term_option of
   | SOME term => 
       let
         val oid = HOLogic.dest_string term
-        val traces = compute_attr_access (Context.Theory thy) "trace" oid NONE pos
+        val traces = compute_attr_access (Context.Theory thy) traceN oid NONE pos
         fun conv (\<^Const>\<open>Pair \<^typ>\<open>doc_class rexp\<close> \<^typ>\<open>string\<close>\<close>
                     $ (\<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close> $ (\<^Const>\<open>mk\<close> $ s)) $ S) =
           let val s' =  DOF_core.get_onto_class_name_global (HOLogic.dest_string s) thy 
@@ -1694,18 +1710,15 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
          in (moid,map check_for_cid indexed_autoS, monitor_info)  end  
       val enabled_monitors = List.mapPartial is_enabled
                       (Name_Space.dest_table (DOF_core.get_monitor_infos (Proof_Context.init_global thy)))
-      fun conv_attrs (((lhs, pos), opn), rhs) = (YXML.content_of lhs,pos,opn, 
-                                                 Syntax.read_term_global thy rhs)
       val defined = DOF_core.defined_of oid thy
       val trace_attr = if defined
-                       then [((("trace", @{here}), "+="), "[("^cid_long^", ''"^oid^"'')]")]
+                       then trace_attr_t cid_long oid 
                        else []
-      val assns' = map conv_attrs trace_attr
       fun cid_of oid = let val DOF_core.Instance params = DOF_core.get_instance_global oid thy
                         in #cid params end
       val ctxt = Proof_Context.init_global thy
       fun def_trans_value oid =
-        (#1 o (calc_update_term {mk_elaboration=true} thy (cid_of oid) assns'))
+        (#1 o (calc_update_term {mk_elaboration=true} thy (cid_of oid) trace_attr))
         #> value ctxt
       val _ = if null enabled_monitors
               then ()
@@ -1730,7 +1743,7 @@ fun register_oid_cid_in_open_monitors oid pos cid_pos thy =
       fun update_trace mon_oid =
         if Config.get_global thy DOF_core.object_value_debug
         then let fun def_trans_input_term  oid =
-                   #1 o (calc_update_term {mk_elaboration=false} thy (cid_of oid) assns')
+                   #1 o (calc_update_term {mk_elaboration=false} thy (cid_of oid) trace_attr)
               in DOF_core.map_input_term_value mon_oid
                                    (def_trans_input_term mon_oid) (def_trans_value mon_oid) end
         else DOF_core.map_value mon_oid (def_trans_value mon_oid)
@@ -2773,10 +2786,8 @@ fun check_and_mark ctxt cid_decl ({strict_checking = strict}) {inline=inline_req
     val instances = DOF_core.get_instances ctxt
     val name' = DOF_core.get_instance_name_global name thy
     val markup = name' |> Name_Space.markup (Name_Space.space_of_table instances)
+    (* this sends a report for a ref application to the PIDE interface ... *)
     val _ = Context_Position.report ctxt pos markup;
-    val ns = instances |> Name_Space.space_of_table 
-    val {pos=pos', ...} = Name_Space.the_entry ns name'
-    (* this sends a report for a ref application to the PIDE interface ... *) 
     val _ = if not(DOF_core.is_subclass ctxt cid cid_decl)
             then error("reference ontologically inconsistent: "
                        ^ name ^ " is an instance of " ^ cid
@@ -2868,7 +2879,7 @@ val basic_entity = Document_Output.antiquotation_pretty_source
 
 fun compute_trace_ML ctxt oid pos_opt pos' =
     (* grabs attribute, and converts its HOL-term into (textual) ML representation *)
-  let val term = ISA_core.compute_attr_access ctxt "trace" oid pos_opt pos'
+  let val term = ISA_core.compute_attr_access ctxt traceN oid pos_opt pos'
       fun conv (\<^Const>\<open>Pair \<^typ>\<open>doc_class rexp\<close> \<^typ>\<open>string\<close>\<close>
                   $ (\<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close> $ (\<^Const>\<open>mk\<close> $ s)) $ S) =
         let val s' =  DOF_core.get_onto_class_name_global (HOLogic.dest_string s) (Context.theory_of ctxt)
@@ -2937,7 +2948,7 @@ fun pretty_attr_access_style ctxt (style, ((attr,pos),(oid,pos'))) =
                                                                     attr oid (SOME pos) pos'));
 fun pretty_trace_style ctxt (style, (oid,pos)) = 
           Document_Output.pretty_term ctxt (style (ISA_core.compute_attr_access  (Context.Proof ctxt) 
-                                                                   "trace" oid NONE pos));
+                                                                   traceN oid NONE pos));
 
 fun pretty_name_style ctxt (style, (oid,pos)) =
           Document_Output.pretty_term ctxt (style (compute_name_repr  ctxt oid pos))
@@ -3024,9 +3035,6 @@ fun read_fields raw_fields ctxt =
       val ctxt' = fold Variable.declare_typ Ts ctxt;
     in (fields, terms, ctxt') end;
 
-val trace_attr = ((\<^binding>\<open>trace\<close>, "(doc_class rexp \<times> string) list",Mixfix.NoSyn),
-                  SOME "[]"): ((binding * string * mixfix) * string option)
-
 fun def_cmd (decl, spec, prems, params) lthy =
   let
     val ((lhs as Free (x, T), _), lthy') = Specification.definition decl params prems spec lthy;
@@ -3100,14 +3108,14 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
       val parent_cid_long = if is_some parent'
                             then parent' |> the |> snd
                             else DOF_core.default_cid
-      val raw_fieldsNdefaults' = filter (fn((bi,_,_),_) => Binding.name_of bi <> "trace") 
+      val raw_fieldsNdefaults' = filter (fn((bi,_,_),_) => Binding.name_of bi <> traceN) 
                                         raw_fieldsNdefaults
       val _ = if length raw_fieldsNdefaults' <> length raw_fieldsNdefaults 
               then warning("re-declaration of trace attribute in monitor --- ignored")
               else ()
       val raw_fieldsNdefaults'' = if  null regexps  
                                   then raw_fieldsNdefaults' 
-                                  else trace_attr::raw_fieldsNdefaults' 
+                                  else trace_attr_ts::raw_fieldsNdefaults' 
       val (fields, terms, ctxt3) = read_fields raw_fieldsNdefaults'' ctxt2;
       val fieldsNterms = (map (fn (a,b,_) => (a,b)) fields) ~~ terms
       val fieldsNterms' = map (fn ((x,y),z) => (x,y,z)) fieldsNterms
@@ -3125,12 +3133,10 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
                              else error("no overloading allowed.")
       val record_fields = map_filter (check_n_filter thy) fields
       (* adding const symbol representing doc-class for Monitor-RegExps.*)
-      val constant_typ = \<^typ>\<open>doc_class rexp\<close>
-      val constant_term = \<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close>
-                         $ (\<^Const>\<open>mk\<close>
-                         $ HOLogic.mk_string (Binding.name_of binding))
-      val eq =  mk_meta_eq(Free(Binding.name_of binding, constant_typ), constant_term)
-      val args = (SOME(binding,NONE,NoSyn), (Binding.empty_atts,eq),[],[])
+      fun mk_eq_pair name = (Free (name, doc_class_rexp_T), doc_class_rexp_t name)
+                            |> mk_meta_eq
+      val args = (SOME(binding,NONE,NoSyn)
+                  , (Binding.empty_atts, Binding.name_of binding |> mk_eq_pair), [], [])
     in thy |> Named_Target.theory_map (def_cmd args)
            |> ( case parent' of
                      NONE => Record.add_record
