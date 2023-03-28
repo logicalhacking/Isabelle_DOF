@@ -38,19 +38,19 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            "declare_reference*" "update_instance*"
            "doc_class"          "onto_class" (* a syntactic alternative *)   
            "ML*"
-           "define_shortcut*"   "define_macro*"          :: thy_decl
-  and      "definition*" :: thy_defn
+           "define_shortcut*"   "define_macro*"            :: thy_decl
+  and      "definition*"                                   :: thy_defn
   and      "theorem*" "lemma*" "corollary*" "proposition*" :: thy_goal_stmt
   and      "schematic_goal*" :: thy_goal_stmt
 
-  and      "text*"              "text-macro*"            :: document_body
-  and      "term*"   "value*"   "assert*"                :: document_body
+  and      "text*"              "text-macro*"              :: document_body
+  and      "term*"   "value*"   "assert*"                  :: document_body
 
-  and      "use_template" "use_ontology"         :: thy_decl
-  and      "define_template" "define_ontology"           :: thy_load
+  and      "use_template" "use_ontology"                   :: thy_decl
+  and      "define_template" "define_ontology"             :: thy_load
   and      "print_doc_classes"        "print_doc_items" 
            "print_doc_class_template" "check_doc_global"
-           "list_ontologies" "list_templates"  :: diag
+           "list_ontologies" "list_templates"              :: diag
 
       
 

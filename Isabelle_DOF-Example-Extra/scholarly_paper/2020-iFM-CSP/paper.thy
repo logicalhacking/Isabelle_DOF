@@ -123,18 +123,6 @@ attempt to formalize denotational \<^csp> semantics covering a part of Bill Rosc
     \<^url>\<open>https://gitlri.lri.fr/burkhart.wolff/hol-csp2.0\<close>. In this paper, all Isabelle proofs are 
     omitted.\<close>}. 
 \<close>
-(*
-% Moreover, decomposition rules of the form:
-% \begin{center}
-% \begin{minipage}[c]{10cm}
-%    @{cartouche [display] \<open>C \<Longrightarrow> A \<sqsubseteq>\<^sub>F\<^sub>D A' \<Longrightarrow> B \<sqsubseteq>\<^sub>F\<^sub>D B' \<Longrightarrow> A \<lbrakk>S\<rbrakk> B \<sqsubseteq>\<^sub>F\<^sub>D A' \<lbrakk>S\<rbrakk> B'\<close>}
-% \end{minipage}
-% \end{center} 
-% are of particular interest since they allow to avoid the costly automata-product construction 
-% of model-checkers and to separate infinite sub-systems from finite (model-checkable) ones; however,
-% their side-conditions \<open>C\<close> are particularly tricky to work out. Decomposition rules  may pave the 
-% way for future tool combinations for model-checkers such as FDR4~@{cite "fdr4"} or 
-% PAT~@{cite "SunLDP09"} based on proof certifications.*)
 
 section*["pre"::tc,main_author="Some(@{docitem \<open>bu\<close>}::author)"]
 \<open>Preliminaries\<close>
@@ -183,7 +171,6 @@ The following process \<open>P\<^sub>i\<^sub>n\<^sub>f\<close> is an infinite pr
 many times. However, using the \<^csp> hiding operator \<open>_\_\<close>, this activity is concealed: 
 
   \<^enum>  \<open>P\<^sub>i\<^sub>n\<^sub>f = (\<mu> X. a \<rightarrow> X) \ {a}\<close>
-
 \<close>
 
 text\<open>where \<open>P\<^sub>i\<^sub>n\<^sub>f\<close> will be equivalent to \<open>\<bottom>\<close> in the process cpo ordering. 
@@ -214,7 +201,6 @@ in the plethora of work done and has been a key factor for the success of the Ar
 For the work presented here, one relevant construction is :
 
    \<^item> \<^theory_text>\<open>typedef  (\<alpha>\<^sub>1,...,\<alpha>\<^sub>n)t = E\<close>
-
  
 It creates a fresh type that is isomorphic to a set \<open>E\<close> involving \<open>\<alpha>\<^sub>1,...,\<alpha>\<^sub>n\<close> types.
 Isabelle/HOL performs a number of syntactic checks for these constructions that guarantee the logical
@@ -263,7 +249,6 @@ Informally, these are:
 
 More formally, a process \<open>P\<close> of the type \<open>\<Sigma> process\<close> should have the following properties:
 
-
 @{cartouche [display] \<open>([],{}) \<in> \<F> P \<and>
 (\<forall> s X.  (s,X) \<in> \<F> P \<longrightarrow> front_tickFree s) \<and>
 (\<forall> s t . (s@t,{}) \<in> \<F> P \<longrightarrow> (s,{}) \<in> \<F> P) \<and>
@@ -281,8 +266,8 @@ Forth, we turn our wishlist of "axioms" above into the definition of a predicate
 of type \<open>\<Sigma> process\<^sub>0 \<Rightarrow> bool\<close> deciding if its conditions are fulfilled. Since \<open>P\<close> is a pre-process,
 we replace \<open>\<F>\<close> by \<open>fst\<close> and  \<open>\<D>\<close> by \<open>snd\<close> (the HOL projections into a pair).
 And last not least fifth, we use the following type definition:
-  \<^item> \<^theory_text>\<open>typedef '\<alpha> process = "{P :: '\<alpha> process\<^sub>0 . is_process P}"\<close>
 
+  \<^item> \<^theory_text>\<open>typedef '\<alpha> process = "{P :: '\<alpha> process\<^sub>0 . is_process P}"\<close>
 
 Isabelle requires a proof for the existence of a witness for this set,
 but this can be constructed in a straight-forward manner. Suitable definitions for 
@@ -303,11 +288,12 @@ For example, we define \<open>_\<sqinter>_\<close> on the pre-process type as fo
 
   \<^item> \<^theory_text>\<open>definition "P \<sqinter> Q \<equiv> Abs_process(\<F> P \<union> \<F> Q , \<D> P \<union> \<D> Q)"\<close>
 
-where \<open>\<F> = fst \<circ> Rep_process\<close> and \<open>\<D> = snd \<circ> Rep_process\<close> and where \<open>Rep_process\<close> and
-\<open>Abs_process\<close> are the representation and abstraction morphisms resulting from the
-type definition linking \<open>'\<alpha> process\<close> isomorphically to \<open>'\<alpha> process\<^sub>0\<close>. Proving the above properties
-for  \<open>\<F> (P \<sqinter> Q)\<close> and \<open>\<D> (P \<sqinter> Q)\<close> requires a proof that \<open>(\<F> P \<union> \<F> Q , \<D> P \<union> \<D> Q)\<close>
-satisfies the 9 "axioms", which is fairly simple in this case.
+where \<open>Rep_process\<close> and \<open>Abs_process\<close> are the representation and abstraction morphisms resulting 
+from the type definition linking the type \<open>'\<alpha> process\<close> isomorphically to the set \<open>'\<alpha> process\<^sub>0\<close>. 
+The projection into \<^emph>\<open>failures\<close> is defined by \<open>\<F> = fst \<circ> Rep_process\<close>, whereas the 
+\<^emph>\<open>divergences\<close> are defined bz \<open>\<D> = snd \<circ> Rep_process\<close>. Proving the above properties for  
+\<open>\<F> (P \<sqinter> Q)\<close> and \<open>\<D> (P \<sqinter> Q)\<close> requires a proof that \<open>(\<F> P \<union> \<F> Q , \<D> P \<union> \<D> Q)\<close>
+satisfies the well-formedness conditions of \<open>is_process\<close>, which is fairly simple in this case.
 
 The definitional presentation of the \<^csp> process operators according to @{cite "roscoe:csp:1998"} 
 follows always this scheme. This part of the theory comprises around 2000 loc. 
@@ -322,15 +308,16 @@ a conversion of processes in terms of (finite) labelled transition systems leads
 model-checking techniques based on graph-exploration. Essentially,  a process \<open>P\<close> \<^emph>\<open>refines\<close> 
 another process \<open>Q\<close> if and only if it is more deterministic and more defined (has less divergences).
 Consequently, each of the three semantics models (trace, failure and failure/divergence) 
-has its corresponding refinement orderings. 
+has its corresponding refinement orderings.\<close>
+Theorem*[th1::"theorem", short_name="\<open>Refinement properties\<close>"]\<open>
 What we are interested in this paper is the following refinement orderings for the 
 failure/divergence model.
 
    \<^enum> \<open>P \<sqsubseteq>\<^sub>\<F>\<^sub>\<D> Q \<equiv> \<F> P \<supseteq> \<F> Q \<and> \<D> P \<supseteq> \<D> Q\<close> 
    \<^enum> \<open>P \<sqsubseteq>\<^sub>\<T>\<^sub>\<D> Q \<equiv> \<T> P \<supseteq> \<T> Q \<and> \<D> P \<supseteq> \<D> Q\<close>
-   \<^enum> \<open>P \<sqsubseteq>\<^sub>\<FF> Q \<equiv>  \<FF> P \<supseteq> \<FF> Q, \<FF>\<in>{\<T>,\<F>,\<D>}\<close> 
+   \<^enum> \<open>P \<sqsubseteq>\<^sub>\<FF> Q \<equiv>  \<FF> P \<supseteq> \<FF> Q, \<FF>\<in>{\<T>,\<F>,\<D>}\<close>  \<close>
 
- Notice that in the \<^csp> literature, only \<open>\<sqsubseteq>\<^sub>\<F>\<^sub>\<D>\<close> is well studied for failure/divergence model. 
+text\<open> Notice that in the \<^csp> literature, only \<open>\<sqsubseteq>\<^sub>\<F>\<^sub>\<D>\<close> is well studied for failure/divergence model. 
 Our formal analysis of different granularities on the refinement orderings   
 allows deeper understanding of the same semantics model. For example, \<open>\<sqsubseteq>\<^sub>\<T>\<^sub>\<D>\<close> turns
 out to have in some cases better monotonicity properties and therefore allow for stronger proof
@@ -358,8 +345,7 @@ Definition*[process_ordering, level= "Some 2", short_name="''process ordering''"
 We define \<open>P \<sqsubseteq> Q \<equiv> \<psi>\<^sub>\<D> \<and> \<psi>\<^sub>\<R> \<and> \<psi>\<^sub>\<M> \<close>,  where 
 \<^enum> \<open>\<psi>\<^sub>\<D> = \<D> P \<supseteq> \<D> Q \<close>
 \<^enum> \<open>\<psi>\<^sub>\<R> = s \<notin> \<D> P \<Rightarrow> \<R> P s = \<R> Q s\<close>  
-\<^enum> \<open>\<psi>\<^sub>\<M> = Mins(\<D> P) \<subseteq> \<T> Q \<close> 
-\<close>
+\<^enum> \<open>\<psi>\<^sub>\<M> = Mins(\<D> P) \<subseteq> \<T> Q \<close> \<close>
 
 text\<open>The third condition \<open>\<psi>\<^sub>\<M>\<close> implies that the set of minimal divergent traces 
 (ones with no proper prefix that is also a divergence) in  \<open>P\<close>,  denoted by \<open>Mins(\<D> P)\<close>, 
@@ -395,44 +381,45 @@ For most \<^csp> operators \<open>\<otimes>\<close> we derived rules of the form
 
 These rules allow to automatically infer for any process term if it is continuous or not.  
 The port of HOL-CSP 2 on HOLCF implied that the derivation of the entire continuity rules 
-had to be completely re-done (3000 loc).
+had to be completely re-done (3000 loc).\<close>
 
- 
-HOL-CSP provides an important proof principle, the fixed-point induction:
-
+Theorem*[th2,short_name="\<open>Fixpoint Induction\<close>"]
+\<open>HOL-CSP provides an important proof principle, the fixed-point induction:
 @{cartouche [display, indent=5] \<open>cont f \<Longrightarrow> adm P \<Longrightarrow> P \<bottom> \<Longrightarrow> (\<And>X. P X \<Longrightarrow> P(f X)) \<Longrightarrow> P(\<mu>X. f X)\<close>}
+\<close>
 
-Fixed-point induction requires a small side-calculus for establishing the admissibility
+text\<open>Fixed-point induction of @{theorem th2} requires a small side-calculus for establishing the admissibility
 of a predicate; basically, predicates are admissible if they are valid for any least upper bound 
 of a chain \<open>x\<^sub>1 \<sqsubseteq> x\<^sub>2 \<sqsubseteq> x\<^sub>3 ... \<close> provided that \<open>\<forall>i. P(x\<^sub>i)\<close>. It turns out that \<open>_\<sqsubseteq>_\<close> and \<open>_\<sqsubseteq>\<^sub>F\<^sub>D_\<close> as
 well as all other refinement orderings that we introduce in this paper are  admissible.
-Fixed-point inductions are the main proof weapon in verifications, 
-together with monotonicities and the \<^csp> laws. Denotational arguments can be hidden as they are not 
-needed in practical verifications. \<close>
+Fixed-point inductions are the main proof weapon in verifications, together with monotonicities 
+and the \<^csp> laws. Denotational arguments can be hidden as they are not needed in practical 
+verifications. \<close>
 
 subsection*["law"::tc, main_author="Some(@{docitem ''lina''})"]
 \<open>\<^csp> Rules: Improved Proofs and New Results\<close>
 
 
-text\<open> The \<^csp> operators enjoy a number of algebraic properties: commutativity, 
+text\<open>The \<^csp> operators enjoy a number of algebraic properties: commutativity, 
 associativities, and idempotence in some cases. Moreover, there is a rich body of distribution
 laws between these operators. Our new version HOL-CSP 2 not only shortens and restructures the 
-proofs of @{cite "tej.ea:corrected:1997"}; the code reduces  
-to 8000 loc from 25000 loc. Some illustrative examples of new established rules are:
+proofs of @{cite "tej.ea:corrected:1997"}; the code reduces to 8000 loc from 25000 loc. \<close>
 
+Theorem*[th3, short_name="\<open>Examples of Derived Rules.\<close>"]\<open> 
   \<^item> \<open>\<box>x\<in>A\<union>B\<rightarrow>P(x) = (\<box>x\<in>A\<rightarrow>P x) \<box> (\<box>x\<in>B\<rightarrow>P x)\<close>
   \<^item> \<open>A\<union>B\<subseteq>C \<Longrightarrow> (\<box>x\<in>A\<rightarrow>P x \<lbrakk>C\<rbrakk> \<box>x\<in>B\<rightarrow>Q x) = \<box>x\<in>A\<inter>B\<rightarrow>(P x \<lbrakk>C\<rbrakk> Q x)\<close>
   \<^item> @{cartouche [display]\<open>A\<subseteq>C \<Longrightarrow> B\<inter>C={} \<Longrightarrow> 
                (\<box>x\<in>A\<rightarrow>P x \<lbrakk>C\<rbrakk> \<box>x\<in>B\<rightarrow>Q x) = \<box>x\<in>B\<rightarrow>(\<box>x\<in>A\<rightarrow>P x \<lbrakk>C\<rbrakk> Q x)\<close>}
-  \<^item> \<open>finite A \<Longrightarrow> A\<inter>C = {} \<Longrightarrow> ((P \<lbrakk>C\<rbrakk> Q) \ A) = ((P \ A) \<lbrakk>C\<rbrakk> (Q \ A)) ...\<close>
+  \<^item> \<open>finite A \<Longrightarrow> A\<inter>C = {} \<Longrightarrow> ((P \<lbrakk>C\<rbrakk> Q) \ A) = ((P \ A) \<lbrakk>C\<rbrakk> (Q \ A)) ...\<close>\<close>
 
- The continuity proof of the hiding operator is notorious. The proof is known
-to involve the classical König's lemma stating that every infinite tree with finite branching 
-has an infinite path. We adapt this lemma to our context as follows:
 
- @{cartouche [display, indent=5] 
+text\<open>The continuity proof of the hiding operator is notorious. The proof is known to involve the 
+classical König's lemma stating that every infinite tree with finite branching has an infinite path. 
+We adapt this lemma to our context as follows:
+
+@{cartouche [display, indent=5] 
  \<open>infinite tr \<Longrightarrow> \<forall>i. finite{t. \<exists>t'\<in>tr. t = take i t'} 
-             \<Longrightarrow> \<exists> f. strict_mono f \<and> range f \<subseteq> {t. \<exists>t'\<in>tr. t \<le> t'}\<close>}
+              \<Longrightarrow> \<exists> f. strict_mono f \<and> range f \<subseteq> {t. \<exists>t'\<in>tr. t \<le> t'}\<close>}
 
 in order to come up with the continuity rule: \<open>finite S \<Longrightarrow> cont P \<Longrightarrow> cont(\<lambda>X. P X \ S)\<close>.
 The original proof had been drastically shortened by a factor 10 and important immediate steps
@@ -476,44 +463,20 @@ under all refinement orderings, while others are not.
 \<^item> Sequence operator is not monotonic under \<open>\<sqsubseteq>\<^sub>\<F>\<close>, \<open>\<sqsubseteq>\<^sub>\<D>\<close> or \<open>\<sqsubseteq>\<^sub>\<T>\<close>:
   @{cartouche [display,indent=5] 
     \<open>P \<sqsubseteq>\<^sub>\<FF> P'\<Longrightarrow> Q \<sqsubseteq>\<^sub>\<FF> Q' \<Longrightarrow> (P ; Q) \<sqsubseteq>\<^sub>\<FF> (P' ; Q') where \<FF>\<in>{\<T>\<D>,\<F>\<D>}\<close>}
-%All refinements are right-side monotonic but \<open>\<sqsubseteq>\<^sub>\<F>\<close>, \<open>\<sqsubseteq>\<^sub>\<D>\<close> and \<open>\<sqsubseteq>\<^sub>\<T>\<close> are not left-side monotonic,
-%which can be explained by 
-%the interdependence relationship of failure and divergence projections for the first component. 
-%We thus proved:
+
+All refinements are right-side monotonic but \<open>\<sqsubseteq>\<^sub>\<F>\<close>, \<open>\<sqsubseteq>\<^sub>\<D>\<close> and \<open>\<sqsubseteq>\<^sub>\<T>\<close> are not left-side monotonic,
+which can be explained by the interdependence relationship of failure and divergence projections 
+for the first component. We thus proved:
 \<^item> Hiding operator is not monotonic under \<open>\<sqsubseteq>\<^sub>\<D>\<close>:
   @{cartouche [display,indent=5] \<open>P \<sqsubseteq>\<^sub>\<FF> Q \<Longrightarrow> P \ A  \<sqsubseteq>\<^sub>\<FF> Q \ A where \<FF>\<in>{\<T>,\<F>,\<T>\<D>,\<F>\<D>}\<close>}
-%Intuitively, for the divergence refinement of the hiding operator, there may be
-%some trace \<open>s\<in>\<T> Q\<close> and \<open>s\<notin>\<T> P\<close> such that it becomes divergent in \<open>Q \ A\<close>  but 
-%not in \<open>P \ A\<close>.
-%when the condition in the corresponding projection laws is satisfied, which makes it is not monotonic.
+Intuitively, for the divergence refinement of the hiding operator, there may be
+some trace \<open>s\<in>\<T> Q\<close> and \<open>s\<notin>\<T> P\<close> such that it becomes divergent in \<open>Q \ A\<close>  but 
+not in \<open>P \ A\<close>. 
 \<^item> Parallel composition is not monotonic under \<open>\<sqsubseteq>\<^sub>\<F>\<close>, \<open>\<sqsubseteq>\<^sub>\<D>\<close> or \<open>\<sqsubseteq>\<^sub>\<T>\<close>:
   @{cartouche [display,indent=5] \<open>P \<sqsubseteq>\<^sub>\<FF> P' \<Longrightarrow> Q \<sqsubseteq>\<^sub>\<FF> Q' \<Longrightarrow> (P \<lbrakk>A\<rbrakk> Q) \<sqsubseteq>\<^sub>\<FF> (P' \<lbrakk>A\<rbrakk> Q') where \<FF>\<in>{\<T>\<D>,\<F>\<D>}\<close>}
-%The failure and divergence projections of this operator are also interdependent, similar to the 
-%sequence operator. 
-%Hence, this operator is not monotonic with \<open>\<sqsubseteq>\<^sub>\<F>\<close>, \<open>\<sqsubseteq>\<^sub>\<D>\<close> and \<open>\<sqsubseteq>\<^sub>\<T>\<close>, but monotonic when their 
-%combinations are considered. 
-
-\<close>
-
-(* Besides the monotonicity results on the above \<^csp> operators, 
-we have also proved that for other \<^csp> operators, such as multi-prefix and non-deterministic choice, 
-they are all monotonic with these five refinement orderings. Such theoretical results provide significant indicators 
-for semantics choices when considering specification decomposition. 
-We want to emphasize that this is the first work on such substantial 
-analysis in a formal way, as far as we know. 
-
-%In the literature, these processes are defined in a way that does not distinguish the special event \<open>tick\<close>. To be consistent with the idea that ticks should be distinguished on the semantic level, besides the above
-three processes,
-
-one can directly prove 3 since for both \<open>CHAOS\<close> and \<open>DF\<close>,
-the version with \<open>SKIP\<close> is constructed exactly in the same way from that without \<open>SKIP\<close>. 
-And 4 is obtained based on the projection laws of internal choice \<open>\<sqinter>\<close>.
-Finally, for 5, the difference between \<open>DF\<close> and \<open>RUN\<close> is that the former applies internal choice 
-while the latter with external choice. From the projection laws of both operators, 
-the failure set of \<open>RUN\<close> has more constraints, thus being a subset of that of \<open>DF\<close>, 
-when the divergence set is empty, which is true for both processes. 
-
-*)
+The failure and divergence projections of this operator are also interdependent, similar to the 
+sequence operator. Hence, this operator is not monotonic with \<open>\<sqsubseteq>\<^sub>\<F>\<close>, \<open>\<sqsubseteq>\<^sub>\<D>\<close> and \<open>\<sqsubseteq>\<^sub>\<T>\<close>, but monotonic 
+when their combinations are considered. \<close>
 
 subsection*["processes"::tc,main_author="Some(@{docitem ''safouan''}::author)", 
                             main_author="Some(@{docitem ''lina''}::author)"]
@@ -549,34 +512,33 @@ Definition*[X6, level="Some 2"]\<open>\<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P 
 
 text\<open>In the following, we denote \<open> \<R>\<P> = {DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P, DF, RUN, CHAOS, CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P}\<close>. 
 All five  reference processes are divergence-free.
-%which was done by using a particular lemma \<open>\<D> (\<mu> x. f x) = \<Inter>\<^sub>i\<^sub>\<in>\<^sub>\<nat> \<D> (f\<^sup>i \<bottom>)\<close>.  
+which was proven by using a particular lemma \<open>\<D> (\<mu> x. f x) = \<Inter>\<^sub>i\<^sub>\<in>\<^sub>\<nat> \<D> (f\<^sup>i \<bottom>)\<close>.  
 @{cartouche 
   [display,indent=8] \<open> D (\<PP> UNIV) = {} where \<PP> \<in> \<R>\<P> and UNIV is the set of all events\<close>
 }
 Regarding the failure refinement ordering, the set of failures \<open>\<F> P\<close> for any process \<open>P\<close> is
-a subset of  \<open>\<F> (CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV)\<close>.% and the following lemma was proved: 
-% This proof is performed by induction, based on the failure projection of \<open>STOP\<close> and that of 
-% internal choice.
-
+a subset of  \<open>\<F> (CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV)\<close>.
 
    @{cartouche [display, indent=25] \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close>}
 
-
-\<^noindent> Furthermore, the following 5 relationships were demonstrated from monotonicity results and 
-a denotational proof.  
-%among which 1 and 2 are immediate corollaries, 
-%4 and 5 are directly obtained from our monotonicity results while 3 requires a denotational proof.
-and thanks to transitivity, we can derive other relationships.
+Furthermore, the following 5 relationships were demonstrated from monotonicity results and
+a denotational proof.
+\<close>
 
 
+Corollary*[co1::"corollary", short_name="\<open>Corollaries on \<open>{DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P, DF, RUN, CHAOS, CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P}\<close>\<close>",level="Some 2"]
+\<open>
   \<^enum> \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<sqsubseteq>\<^sub>\<F> CHAOS A\<close>
   \<^enum> \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<sqsubseteq>\<^sub>\<F> DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A\<close>  
   \<^enum> \<open>CHAOS A \<sqsubseteq>\<^sub>\<F> DF A\<close>
   \<^enum> \<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<sqsubseteq>\<^sub>\<F> DF A\<close>  
   \<^enum> \<open>DF A \<sqsubseteq>\<^sub>\<F> RUN A\<close>  
 
+where 1 and 2 are immediate, and where 4 and 5 are directly obtained from our monotonicity 
+results while 3 requires an argument over the denotational space.
+Thanks to transitivity, we can derive other relationships.\<close>          
 
-Last, regarding trace refinement, for any process P, 
+text\<open> Lastly, regarding trace refinement, for any process P, 
 its set of traces \<open>\<T> P\<close> is a subset of  \<open>\<T> (CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV)\<close> and of  \<open>\<T> (DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV)\<close> as well.
 %As we already proved that \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> covers all failures, 
 %we can immediately infer that it also covers all traces. 
@@ -598,16 +560,12 @@ verification. For example, if one wants to establish that a protocol implementat
 a non-deterministic specification \<open>SPEC\<close> it suffices to ask if \<open>IMPL || SPEC\<close> is deadlock-free.
 In this setting, \<open>SPEC\<close> becomes a kind of observer that signals non-conformance of \<open>IMPL\<close> by 
 deadlock.
-% A livelocked system looks similar to a deadlocked one from an external point of view. 
-% However, livelock is sometimes considered as worse since the user may be able to observe the internal 
-% activities and so hope that some output will happen eventually. 
 
 In the literature, deadlock and lifelock are phenomena that are often 
 handled separately. One contribution of our work is establish their precise relationship inside
 the Failure/Divergence Semantics of \<^csp>.\<close>
 
-(* bizarre: Definition* does not work for this single case *)
-text*[X10::"definition", level="Some 2"]\<open> \<open>deadlock\<^sub>-free P \<equiv>  DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close>  \<close>
+Definition*[X10::"definition", level="Some 2"]\<open> \<open>deadlock\<^sub>-free P \<equiv>  DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close>  \<close>
 
 text\<open>\<^noindent> A process \<open>P\<close> is deadlock-free if and only if after any trace \<open>s\<close> without \<open>\<surd>\<close>, the union of \<open>\<surd>\<close> 
 and all events of \<open>P\<close> can never be a refusal set associated to \<open>s\<close>, which means that \<open>P\<close> cannot 

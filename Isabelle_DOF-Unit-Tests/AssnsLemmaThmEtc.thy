@@ -103,9 +103,10 @@ declare [[Theorem_default_class     = "theorem",
 
 Theorem*[e2]\<open>... suspendisse non arcu malesuada mollis, nibh morbi, ... \<close>
 
-theorem*[e2bis, status=formal] f : "e = 1+1" unfolding e_def by simp
+theorem*[e2bis::"theorem", status=formal] f : "e = 1+1" unfolding e_def by simp
 
-Lemma*[e3,level="Some 2"]\<open>... phasellus amet id massa nunc, pede suscipit repellendus, ... \<close>
+Lemma*[e3,level="Some 2"]
+\<open>... phasellus amet id massa nunc, pede suscipit repellendus, ... @{theorem "e2bis"} \<close>
 (*<*)(*LATEX FAILS *)
 Proof*[d10, short_name="\<open>Induction over Tinea pedis.\<close>"]\<open>Freeform Proof\<close>
 
