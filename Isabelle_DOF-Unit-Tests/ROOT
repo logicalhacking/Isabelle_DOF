@@ -1,5 +1,5 @@
 session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" + 
-  options [document = pdf, document_output = "output", document_build = dof]
+  options [document = pdf, document_output = "output", document_build = dof, document_variants = "document:overview=-proof,-ML,-unimportant"]
   theories
     "TestKit"
     "Latex_Tests"
