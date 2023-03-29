@@ -542,6 +542,9 @@ doc_class tech_example = eng_content +
    referentiable :: bool <= True
    tag :: "string" <=  "''''"
 
+doc_class eng_example = eng_content +
+   referentiable :: bool <= True
+   tag :: "string" <=  "''''"
 
 
 subsection\<open>Some Summary\<close>
@@ -665,6 +668,7 @@ define_shortcut* eg  \<rightleftharpoons> \<open>\eg\<close>  (* Latin: „exemp
                  ie  \<rightleftharpoons> \<open>\ie\<close>  (* Latin: „id est“  meaning „that is to say“. *)
                  etc \<rightleftharpoons> \<open>\etc\<close> (* Latin : „et cetera“ meaning „et cetera“ *)
 
+print_doc_classes
 
 end
 

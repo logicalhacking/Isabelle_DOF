@@ -139,12 +139,58 @@ Hypothesis*[d9]\<open>"Freeform Hypothesis"\<close>
 
 Example*[d11::math_example]\<open>"Freeform Example"\<close> 
 
-
-
 text\<open>An example for the ontology specification character of the short-cuts such as 
 @{command  "assert*"}: in the following, we use the same notation referring to a completely
 different class. "F" and "assertion" have only in common that they posses the attribute
 @{const [names_short] \<open>properties\<close>}: \<close>
+
+section\<open>Exhaustive Scholarly\_paper Test\<close>
+
+subsection\<open>Global Structural Elements\<close>
+(* maybe it is neither necessary nor possible to test these here... title is unique in
+   a document, for example. To be commented out of needed. *)
+text*[tt1::scholarly_paper.title]\<open>Lectus accumsan velit ultrices, ...\<close> 
+text*[tt2::scholarly_paper.author]\<open>Lectus accumsan velit ultrices, ...\<close>  
+text*[tt3::scholarly_paper.article]\<open>Lectus accumsan velit ultrices, ...\<close> 
+text*[tt4::scholarly_paper.annex]\<open>Lectus accumsan velit ultrices, ...\<close>  
+text*[tt5::scholarly_paper.abstract]\<open>Lectus accumsan velit ultrices, ...\<close>  
+text*[tt6::scholarly_paper.subtitle]\<open>Lectus accumsan velit ultrices, ...\<close> 
+text*[tt7::scholarly_paper.bibliography]\<open>Lectus accumsan velit ultrices, ...\<close>        
+text*[tt8::scholarly_paper.introduction]\<open>Lectus accumsan velit ultrices, ...\<close> 
+text*[tt9::scholarly_paper.related_work]\<open>Lectus accumsan velit ultrices, ...\<close>        
+text*[tt11::scholarly_paper.text_section]\<open>Lectus accumsan velit ultrices, ...\<close>        
+text*[tt12::scholarly_paper.background ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tt13::scholarly_paper.conclusion ]\<open>Lectus accumsan velit ultrices, ...\<close>
+
+subsection\<open>Technical Content Specific Elements\<close>
+
+text*[tu1::scholarly_paper.axiom    ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu2::scholarly_paper.lemma    ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu3::scholarly_paper.example  ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu4::scholarly_paper.premise  ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu5::scholarly_paper.theorem  ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu6::scholarly_paper.assertion]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu7::scholarly_paper.corollary]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu9::scholarly_paper.technical]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu10::scholarly_paper.assumption ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu13::scholarly_paper.definition ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu15::scholarly_paper.experiment ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu16::scholarly_paper.hypothesis ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu17::scholarly_paper.math_proof ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu18::scholarly_paper.consequence]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu26::scholarly_paper.math_explanation]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu19::scholarly_paper.math_formal]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu20::scholarly_paper.proposition]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu21::scholarly_paper.math_content    ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu22::scholarly_paper.math_example    ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu23::scholarly_paper.conclusion_stmt ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu24::scholarly_paper.math_motivation ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu25::scholarly_paper.tech_definition ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu28::scholarly_paper.eng_example     ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tt10::scholarly_paper.tech_example]\<open>Lectus accumsan velit ultrices, ...\<close>        
+text*[tu8::scholarly_paper.tech_code]        \<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu27::scholarly_paper.engineering_content]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu14::scholarly_paper.evaluation ]\<open>Lectus accumsan velit ultrices, ...\<close>
 (*>*)
 
 end

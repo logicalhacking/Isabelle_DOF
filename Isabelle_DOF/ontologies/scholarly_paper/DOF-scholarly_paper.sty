@@ -171,12 +171,16 @@
 
 % \newcommand{\formalMathStmt[label, mcc, ]
 % end: scholarly_paper.abstract
-% | "rule" | "assn" | "assm" | "expl" | rem      | "notation" | "terminology"
+% "defn" | "axm" | "theom" | "lemm" | "corr" | "prpo" | "rulE" | "assn" | "hypt" | "assm" | "prms" | "cons" |      
+% "conc_stmt" |"prf_stmt"  | "expl_stmt" |"rmrk" | "notn" | "tmgy" |      
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 \newisadof{text.scholarly_paper.math_content}%
 [label=,type=%
  , scholarly_paper.math_content.short_name ={} % {} or \relax
- , scholarly_paper.math_content.mcc     = % "def" | "axm" | "thm" | "lem" | "prop" | "rule" | "assn" | "assm"
+ , scholarly_paper.math_content.mcc     = % "defn" | "axm" | "thm" | "lem" | "prop" | "rule" | "assn" | "assm"
  , Isa_COL.text_element.level         =%
  , Isa_COL.text_element.referentiable =%
  , Isa_COL.text_element.variants      =%
@@ -207,7 +211,7 @@
                           \end{axiom}}
                     }%
                    }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{thm}}    
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{theom}}    
                    {%
                     {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{theorem} \label{\commandkey{label}} #1 \end{theorem} }
@@ -216,7 +220,7 @@
                           \end{theorem}}
                     }%
                    }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{lem}}    
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{lemm}}    
                    {%
                     {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{lemma} \label{\commandkey{label}} #1 \end{lemma} }
@@ -225,7 +229,7 @@
                           \end{lemma}}
                     }%
                    }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{expl}}    
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{expl_stmt}}    
                    {%
                     {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{example} \label{\commandkey{label}} #1 \end{example} }
@@ -234,7 +238,7 @@
                           \end{example}}
                     }%
                    }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{cor}}    
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{corr}}    
                    {%
                     {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{corrollary} \label{\commandkey{label}} #1 \end{corrollary} }
@@ -243,7 +247,7 @@
                           \end{corrollary}}
                     }%
                    }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{prop}}    
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{prpo}}    
                    {%
                     {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{property} \label{\commandkey{label}} #1 \end{property} }
@@ -252,7 +256,7 @@
                           \end{property}}
                     }%
                    }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{rule}}    
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{rulE}}    
                    {%
                     {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{ruleX} \label{\commandkey{label}} #1 \end{ruleX} }
@@ -261,7 +265,7 @@
                           \end{ruleX}}
                     }%
                    }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{rem}}    
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{rmrk}}    
                    {%
                     {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{remark}  \label{\commandkey{label}} #1 \end{remark} }
@@ -288,7 +292,7 @@
                           \end{assumption}}
                     }%
                    }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{notation}}    
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{notn}}    
                    {%
                     {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{notation} \label{\commandkey{label}} #1 \end{notation} }
@@ -297,7 +301,7 @@
                           \end{notation}}
                     }%
                    }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{terminology}}    
+        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{tmgy}}    
                    {%
                     {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
                          {\begin{terminology} \label{\commandkey{label}} #1 \end{terminology} }
