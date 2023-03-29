@@ -81,11 +81,9 @@ text\<open>... which makes it possible to refer in a freeform definition to its 
 which will appear textually later. With this pragmatics, an "out-of-order-presentation" 
 can be achieved within \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close> for the most common cases.\<close>
 
-(*<*)  (*LATEX FAILS *)
 Definition*[e1bis::"definition", short_name="\<open>Nice lemma.\<close>"]
    \<open>Lorem ipsum dolor sit amet, ... 
     This is formally defined as follows in @{definition (unchecked) "e1bisbis"}\<close>
-(*>*)
 definition*[e1bisbis, status=formal] e :: int where "e = 2"
 
 section\<open>Tests for Theorems, Assertions, Assumptions, Hypothesis, etc.\<close>
@@ -105,9 +103,10 @@ Theorem*[e2]\<open>... suspendisse non arcu malesuada mollis, nibh morbi, ... \<
 
 theorem*[e2bis::"theorem", status=formal] f : "e = 1+1" unfolding e_def by simp
 
+(*<*) (* @{theorem "e2bis"} breaks LaTeX generation ... *)
 Lemma*[e3,level="Some 2"]
 \<open>... phasellus amet id massa nunc, pede suscipit repellendus, ... @{theorem "e2bis"} \<close>
-(*<*)(*LATEX FAILS *)
+(*>*)
 Proof*[d10, short_name="\<open>Induction over Tinea pedis.\<close>"]\<open>Freeform Proof\<close>
 
 lemma*[dfgd::"lemma"] q: "All (\<lambda>x. X \<and> Y \<longrightarrow> True)" oops
@@ -191,7 +190,5 @@ text*[tt10::scholarly_paper.tech_example]\<open>Lectus accumsan velit ultrices, 
 text*[tu8::scholarly_paper.tech_code]        \<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu27::scholarly_paper.engineering_content]\<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu14::scholarly_paper.evaluation ]\<open>Lectus accumsan velit ultrices, ...\<close>
-(*>*)
 
 end
-(*>*)
