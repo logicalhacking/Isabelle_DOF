@@ -533,7 +533,6 @@ We still mention a few of these document antiquotations here:
   verifies its existance in the (Isabelle-virtual) file-system.
 \<close>
 
-lemma \<open>x = x\<close> by auto
 text\<open>There are options to display sub-parts of formulas etc., but it is a consequence
 of tight-checking that the information must be given complete and exactly in the syntax of
 Isabelle. This may be over-precise and a burden to readers not familiar with Isabelle, which may
