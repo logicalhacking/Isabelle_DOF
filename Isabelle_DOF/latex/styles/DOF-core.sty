@@ -65,7 +65,7 @@
   \ifcsname isaDof.\commandkey{type}\endcsname%
       \csname isaDof.\commandkey{type}\endcsname%
               [label=\commandkey{label},\commandkey{args}]{#1}%
-  \else\relax\fi%
+  \else%
   \ifcsname isaDof.\commandkey{env}.\commandkey{type}\endcsname%
       \csname isaDof.\commandkey{env}.\commandkey{type}\endcsname%
               [label=\commandkey{label},\commandkey{args}]{#1}%
@@ -81,6 +81,7 @@
         definition for "\commandkey{env}" available either.}%
       \fi%
   \fi%
+\fi%
 }
 % end: generic dispatcher
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
