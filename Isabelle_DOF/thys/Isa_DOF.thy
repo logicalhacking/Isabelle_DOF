@@ -2140,7 +2140,8 @@ fun close_monitor_command (args as (((oid, pos), cid_pos),
 fun meta_args_2_latex thy ((((lab, pos), cid_opt), attr_list) : ODL_Meta_Args_Parser.meta_args_t) =
     (* for the moment naive, i.e. without textual normalization of 
        attribute names and adapted term printing *)
-    let val l   = "label = "^ (enclose "{" "}" lab)
+    let val l   = DOF_core.get_instance_name_global lab thy |> enclose "{" "}"
+                                                            |> prefix "label = "
       (*  val _   = writeln("meta_args_2_string lab:"^ lab ^":"^ (@{make_string } cid_opt) ) *)
         val cid_long = case cid_opt of
                                 NONE => let val DOF_core.Instance cid =
@@ -2690,7 +2691,8 @@ struct
 fun meta_args_2_string thy ((((lab, pos), cid_opt), attr_list) : ODL_Meta_Args_Parser.meta_args_t) = 
     (* for the moment naive, i.e. without textual normalization of 
        attribute names and adapted term printing *)
-    let val l   = "label = "^ (enclose "{" "}" lab)
+    let val l   = DOF_core.get_instance_name_global lab thy |> enclose "{" "}"
+                                                            |> prefix "label = "
       (*  val _   = writeln("meta_args_2_string lab:"^ lab ^":"^ (@{make_string } cid_opt) ) *)
         val cid_long = case cid_opt of
                                 NONE => let val DOF_core.Instance cid =
@@ -2814,6 +2816,8 @@ val docitem_antiquotation_parser = (Scan.lift (docitem_modes -- Parse.embedded_i
 
 fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked, define}, src ) = 
     let val (str,pos) = Input.source_content src
+                        |> apfst (fn str => (Proof_Context.theory_of ctxt)
+                                            |> DOF_core.get_instance_name_global str)
         val inline = Config.get ctxt Document_Antiquotation.thy_output_display
         val _ = check_and_mark ctxt cid_decl {strict_checking = not unchecked} 
                                              {inline = inline} pos str
@@ -2824,7 +2828,7 @@ fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked, define}, src
            |(true,true)  => XML.enclose("\\csname isaDof.macroDef\\endcsname[type={"^cid_decl^"}]{")"}" 
            |(false,true) => XML.enclose("\\csname isaDof.macroExp\\endcsname[type={"^cid_decl^"}]{")"}"
         )
-        (Latex.text (Input.source_content src))
+        (Latex.text (str, pos))
     end      
 
 
