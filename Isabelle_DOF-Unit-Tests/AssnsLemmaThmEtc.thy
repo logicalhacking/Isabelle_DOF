@@ -64,7 +64,7 @@ ML\<open>
 \<close>
 
 
-Definition*[e1]\<open>Lorem ipsum dolor sit amet, ... \<close>
+Definition*[e1::"definition"]\<open>Lorem ipsum dolor sit amet, ... \<close>
 text\<open>Note that this should yield a warning since \<^theory_text>\<open>Definition*\<close>  uses as "implicit default" the class
     \<^doc_class>\<open>math_content\<close> which has no \<^term>\<open>text_element.level\<close> set, however in this context,
     it is required to be a positive number since it is \<^term>\<open>text_element.referentiable\<close> . 
@@ -80,6 +80,8 @@ declare_reference*[e1bisbis::"definition"]
 text\<open>... which makes it possible to refer in a freeform definition to its formal counterpart
 which will appear textually later. With this pragmatics, an "out-of-order-presentation" 
 can be achieved within \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close> for the most common cases.\<close>
+
+
 
 Definition*[e1bis::"definition", short_name="\<open>Nice lemma.\<close>"]
    \<open>Lorem ipsum dolor sit amet, ... 
@@ -106,7 +108,7 @@ theorem*[e2bis::"theorem", status=formal] f : "e = 1+1" unfolding e_def by simp
 (*<*) (* @{theorem "e2bis"} breaks LaTeX generation ... *)
 Lemma*[e3,level="Some 2"]
 \<open>... phasellus amet id massa nunc, pede suscipit repellendus, ... @{theorem "e2bis"} \<close>
-(*>*)
+(*>*) 
 Proof*[d10, short_name="\<open>Induction over Tinea pedis.\<close>"]\<open>Freeform Proof\<close>
 
 lemma*[dfgd::"lemma"] q: "All (\<lambda>x. X \<and> Y \<longrightarrow> True)" oops
@@ -164,6 +166,7 @@ text*[tt13::scholarly_paper.conclusion ]\<open>Lectus accumsan velit ultrices, .
 subsection\<open>Technical Content Specific Elements\<close>
 
 text*[tu1::scholarly_paper.axiom    ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu1bis::scholarly_paper.math_content, mcc="axm"   ]\<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu2::scholarly_paper.lemma    ]\<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu3::scholarly_paper.example  ]\<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu4::scholarly_paper.premise  ]\<open>Lectus accumsan velit ultrices, ...\<close>
