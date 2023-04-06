@@ -573,7 +573,7 @@ be deadlocked after any non-terminating trace.
 \<close>
 
 Theorem*[T1, short_name="\<open>DF definition captures deadlock-freeness\<close>", level="Some 2"]
-\<open> \<^hfill> \<^break> \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<surd>}\<union>events_of P) \<notin> \<F> P)\<close> \<close>   
+\<open> \<^hfill> \<^br> \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<surd>}\<union>events_of P) \<notin> \<F> P)\<close> \<close>   
 Definition*[X11, level="Some 2"]\<open>  \<open>livelock\<^sub>-free P \<equiv> \<D> P = {} \<close>   \<close>
 
 text\<open> Recall that all five reference processes are livelock-free. 
