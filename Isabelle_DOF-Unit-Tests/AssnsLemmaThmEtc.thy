@@ -43,7 +43,7 @@ text\<open>For now, as the term annotation is not bound to a meta logic which wi
 \<^term>\<open>[@{term ''True''}]\<close> to \<^term>\<open>[True]\<close>, we can not use the HOL \<^const>\<open>True\<close> constant
 in the assertion.\<close>
 
-ML\<open> @{term "[@{term \<open>True \<longrightarrow> True \<close>}]"}; (* with isa-check *)  \<close>
+ML\<open> @{term_ "[@{term \<open>True \<longrightarrow> True \<close>}]"}; (* with isa-check *)  \<close>
 
 ML\<open> 
     (* Checking the default classes which should be in a neutral(unset) state. *)
@@ -64,7 +64,7 @@ ML\<open>
 \<close>
 
 
-Definition*[e1::"definition"]\<open>Lorem ipsum dolor sit amet, ... \<close>
+Definition*[e1]\<open>Lorem ipsum dolor sit amet, ... \<close>
 text\<open>Note that this should yield a warning since \<^theory_text>\<open>Definition*\<close>  uses as "implicit default" the class
     \<^doc_class>\<open>math_content\<close> which has no \<^term>\<open>text_element.level\<close> set, however in this context,
     it is required to be a positive number since it is \<^term>\<open>text_element.referentiable\<close> . 

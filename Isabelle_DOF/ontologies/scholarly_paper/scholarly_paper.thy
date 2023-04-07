@@ -53,12 +53,12 @@ ML\<open>
 val _ =
   Monitor_Command_Parser.document_command \<^command_keyword>\<open>abstract*\<close> "Textual Definition"
     {markdown = true, body = true}
-    (Onto_Macros.enriched_document_cmd_exp (SOME "abstract") []);
+    (Onto_Macros.enriched_document_cmd_exp (SOME "abstract") []) (K(K I));
 
 val _ =
   Monitor_Command_Parser.document_command \<^command_keyword>\<open>author*\<close> "Textual Definition"
     {markdown = true, body = true}
-    (Onto_Macros.enriched_document_cmd_exp (SOME "author") []);
+    (Onto_Macros.enriched_document_cmd_exp (SOME "author") []) (K(K I));
 \<close>
 
 text\<open>Scholarly Paper is oriented towards the classical domains in science:
@@ -444,48 +444,49 @@ fun doc_cmd kwd txt flag key =
       in
         Onto_Macros.enriched_formal_statement_command  default [("mcc",key)] meta_args thy
       end)
+      (Onto_Macros.transform_attr [("mcc",key)])
 
 in
 
 val _ = doc_cmd \<^command_keyword>\<open>Definition*\<close> "Freeform Definition" 
-                Definition_default_class \<^const_name>\<open>defn\<close>;
+                Definition_default_class "defn";
 
 val _ = doc_cmd \<^command_keyword>\<open>Lemma*\<close>      "Freeform Lemma Description" 
-                 Lemma_default_class \<^const_name>\<open>lemm\<close>;
+                 Lemma_default_class "lemm";
 
 val _ = doc_cmd \<^command_keyword>\<open>Theorem*\<close>    "Freeform Theorem" 
-                 Theorem_default_class \<^const_name>\<open>theom\<close>;
+                 Theorem_default_class "theom";
 
 (* cut and paste to make it runnable, but nonsensical so far: *)
 val _ = doc_cmd \<^command_keyword>\<open>Proposition*\<close> "Freeform Proposition"
-                  Proposition_default_class \<^const_name>\<open>prpo\<close>;
+                  Proposition_default_class "prpo";
 
 val _ = doc_cmd \<^command_keyword>\<open>Premise*\<close> "Freeform Premise"
-                  Premise_default_class \<^const_name>\<open>prms\<close>;
+                  Premise_default_class "prms";
 
 val _ = doc_cmd \<^command_keyword>\<open>Corollary*\<close> "Freeform Corollary"
-                  Corollary_default_class \<^const_name>\<open>corr\<close>;
+                  Corollary_default_class "corr";
 
 val _ = doc_cmd \<^command_keyword>\<open>Consequence*\<close> "Freeform Consequence"
-                  Consequence_default_class \<^const_name>\<open>cons\<close>;
+                  Consequence_default_class "cons";
                       
 val _ = doc_cmd \<^command_keyword>\<open>Conclusion*\<close> "Freeform Conclusion"
-                  Conclusion_default_class \<^const_name>\<open>conc_stmt\<close>;
+                  Conclusion_default_class "conc_stmt";
                            
 val _ = doc_cmd \<^command_keyword>\<open>Assumption*\<close> "Freeform Assumption"
-                  Assumption_default_class \<^const_name>\<open>assm\<close>;
+                  Assumption_default_class "assm";
 
 val _ = doc_cmd \<^command_keyword>\<open>Hypothesis*\<close> "Freeform Hypothesis"
-                  Hypothesis_default_class \<^const_name>\<open>prpo\<close>;
+                  Hypothesis_default_class "prpo";
 
 val _ = doc_cmd \<^command_keyword>\<open>Assertion*\<close> "Freeform Assertion"
-                  Assertion_default_class \<^const_name>\<open>assn\<close>;
+                  Assertion_default_class "assn";
 
 val _ = doc_cmd \<^command_keyword>\<open>Proof*\<close> "Freeform Proof"
-                  Proof_default_class \<^const_name>\<open>prf_stmt\<close>;
+                  Proof_default_class "prf_stmt";
 
 val _ = doc_cmd \<^command_keyword>\<open>Example*\<close> "Freeform Example"
-                  Example_default_class \<^const_name>\<open>expl_stmt\<close>;
+                  Example_default_class "expl_stmt";
 end
 end 
 \<close>
