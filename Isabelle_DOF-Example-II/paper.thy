@@ -16,6 +16,8 @@ declare[[ Theorem_default_class    = "theorem"]]
 define_shortcut* csp      \<rightleftharpoons> \<open>CSP\<close>
                  holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>
                  isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
+                 hfill    \<rightleftharpoons> \<open>\hfill\<close>
+                 br    \<rightleftharpoons> \<open>\break\<close>
 
 (*>*)
 
@@ -27,7 +29,7 @@ author*[lina,email="\<open>lina.ye@lri.fr\<close>",affiliation="\<open>LRI, Inri
                
 abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Algebra\<close>,
                              \<open>Concurrency\<close>,\<open>Computational Models\<close>]"]
-\<open>  The theory of Communicating Sequential Processes going back to Hoare and Roscoe is still today 
+\<open>  The theory of Communicating Sequential Processes going back to Hoare and Roscoe is still today  
    one of the reference theories for concurrent specification and computing. In 1997, a first 
    formalization in \<^isabelle> of the denotational semantics of the  Failure/Divergence Model of
    \<^csp> was undertaken; in particular, this model can cope with infinite alphabets, in contrast 
@@ -126,8 +128,6 @@ attempt to formalize denotational \<^csp> semantics covering a part of Bill Rosc
 
 section*["pre"::tc,main_author="Some(@{docitem \<open>bu\<close>}::author)"]
 \<open>Preliminaries\<close>
-
-text\<open>\<close>
 
 subsection*[cspsemantics::tc, main_author="Some(@{docitem ''bu''})"]\<open>Denotational \<^csp> Semantics\<close>
 
@@ -573,7 +573,7 @@ be deadlocked after any non-terminating trace.
 \<close>
 
 Theorem*[T1, short_name="\<open>DF definition captures deadlock-freeness\<close>", level="Some 2"]
-\<open> \hfill \break \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<surd>}\<union>events_of P) \<notin> \<F> P)\<close> \<close>   
+\<open> \<^hfill> \<^br> \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<surd>}\<union>events_of P) \<notin> \<F> P)\<close> \<close>   
 Definition*[X11, level="Some 2"]\<open>  \<open>livelock\<^sub>-free P \<equiv> \<D> P = {} \<close>   \<close>
 
 text\<open> Recall that all five reference processes are livelock-free. 
@@ -984,10 +984,6 @@ over finite sub-systems with globally infinite systems in a logically safe way.
 subsection*[bib::bibliography]\<open>References\<close>
 
 close_monitor*[this]
-(*
-term\<open>\<longrightarrow>\<close>
-term\<open> demon \<sigma>\<^sub>g\<^sub>l\<^sub>o\<^sub>b\<^sub>a\<^sub>l := \<Sqinter> \<Delta>t \<in> \<real>\<^sub>>\<^sub>0.     ||| i\<in>A. ACTOR i \<sigma>\<^sub>g\<^sub>l\<^sub>o\<^sub>b\<^sub>a\<^sub>l 
-                                   \<lbrakk>S\<rbrakk> sync!\<sigma>\<^sub>g\<^sub>l\<^sub>o\<^sub>b\<^sub>a\<^sub>l\<^sub>' \<longrightarrow> demon \<sigma>\<^sub>g\<^sub>l\<^sub>o\<^sub>b\<^sub>a\<^sub>l\<^sub>'   \<close>
-*)
+
 end
 (*>*) 

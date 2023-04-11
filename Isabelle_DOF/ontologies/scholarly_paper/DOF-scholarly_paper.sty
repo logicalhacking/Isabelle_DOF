@@ -31,13 +31,13 @@
 \@ifclassloaded{llncs}%
   {}%
   {%
+    \RequirePackage{amsthm}
     \@ifclassloaded{scrartcl}%
     {%
       \newcommand{\institute}[1]{}%
       \newcommand{\inst}[1]{}%
       \newcommand{\orcidID}[1]{}%
       \newcommand{\email}[1]{}%
-      \RequirePackage{DOF-scholarly_paper-thm}%
     }%
     {%
       \@ifclassloaded{lipics-v2021}%
@@ -165,22 +165,47 @@
   \end{isamarkuptext}%
 }
 
-\newtheorem{axiom}{Axiom}
-\newtheorem{ruleX}{Rule} % apparent name-clash with s th from libraries...
-\newtheorem{assertion}{Assertion} 
-
-% \newcommand{\formalMathStmt[label, mcc, ]
-% end: scholarly_paper.abstract
-% "defn" | "axm" | "theom" | "lemm" | "corr" | "prpo" | "rulE" | "assn" | "hypt" | "assm" | "prms" | "cons" |      
-% "conc_stmt" |"prf_stmt"  | "expl_stmt" |"rmrk" | "notn" | "tmgy" |      
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+%\RequirePackage{amsthm}
+%\newtheorem{example}{Example}
+%\newtheorem{assumption}{Assumption}
+%\newtheorem{definition}{Definition}
+%\newtheorem{theorem}{Theorem} 
+\newtheorem{defn}{Definition} 
+\NewEnviron{isamarkupDefinition*}[1][]{\isaDof[env={text},#1]{\BODY}}
+\newtheorem{axm}{Axiom}
+\newtheorem{theom}{Theorem}
+\NewEnviron{isamarkupTheorem*}[1][]{\isaDof[env={text},#1]{\BODY}}
+\newtheorem{lemm}{Lemma}
+\NewEnviron{isamarkupLemma*}[1][]{\isaDof[env={text},#1]{\BODY}}
+\newtheorem{corr}{Corollary}
+\NewEnviron{isamarkupCorollary*}[1][]{\isaDof[env={text},#1]{\BODY}}
+\newtheorem{prpo}{Proposition}
+\NewEnviron{isamarkupProposition*}[1][]{\isaDof[env={text},#1]{\BODY}}
+\newtheorem{rulE}{Rule}
+\newtheorem{assn}{Assertion}    
+\NewEnviron{isamarkupAssertion*}[1][]{\isaDof[env={text},#1]{\BODY}}
+\newtheorem{hypt}{Hypothesis}
+\NewEnviron{isamarkupHypothesis*}[1][]{\isaDof[env={text},#1]{\BODY}}
+\newtheorem{assm}{Assumption}
+\NewEnviron{isamarkupAssumption*}[1][]{\isaDof[env={text},#1]{\BODY}}
+\newtheorem{prms}{Premise}
+\NewEnviron{isamarkupPremise*}[1][]{\isaDof[env={text},#1]{\BODY}}
+\newtheorem{cons}{Consequence}
+\NewEnviron{isamarkupConsequence*}[1][]{\isaDof[env={text},#1]{\BODY}}
+\newtheorem{conc_stmt}{Conclusion}
+\NewEnviron{isamarkupConclusion*}[1][]{\isaDof[env={text},#1]{\BODY}}
+\newtheorem{prf_stmt}{Proof}
+\NewEnviron{isamarkupProof*}[1][]{\isaDof[env={text},#1]{\BODY}}
+\newtheorem{expl_stmt}{Example}
+\NewEnviron{isamarkupExample*}[1][]{\isaDof[env={text},#1]{\BODY}}
+\newtheorem{rmrk}{Remark}
+\newtheorem{notn}{Notation}
+\newtheorem{tmgy}{Terminology}
 
 \newisadof{text.scholarly_paper.math_content}%
 [label=,type=%
- , scholarly_paper.math_content.short_name ={} % {} or \relax
- , scholarly_paper.math_content.mcc     = % "defn" | "axm" | "thm" | "lem" | "prop" | "rule" | "assn" | "assm"
+ , scholarly_paper.math_content.short_name ={}%
+ , scholarly_paper.math_content.mcc     = % 
  , Isa_COL.text_element.level         =%
  , Isa_COL.text_element.referentiable =%
  , Isa_COL.text_element.variants      =%
@@ -193,321 +218,25 @@
  [1]
  {%
     \begin{isamarkuptext}%
-        \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{defn}}
-                   {%
-                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{definition} \label{\commandkey{label}} #1 \end{definition} }
-                         {\begin{definition} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                             \label{\commandkey{label}} #1 
-                          \end{definition}}
-                    }%
-                   }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{axm}}    
-                   {%
-                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{axiom} \label{\commandkey{label}} #1 \end{axiom} }
-                         {\begin{axiom} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                        \label{\commandkey{label}} #1 
-                          \end{axiom}}
-                    }%
-                   }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{theom}}    
-                   {%
-                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{theorem} \label{\commandkey{label}} #1 \end{theorem} }
-                         {\begin{theorem} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                          \label{\commandkey{label}} #1 
-                          \end{theorem}}
-                    }%
-                   }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{lemm}}    
-                   {%
-                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{lemma} \label{\commandkey{label}} #1 \end{lemma} }
-                         {\begin{lemma} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                        \label{\commandkey{label}} #1 
-                          \end{lemma}}
-                    }%
-                   }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{expl_stmt}}    
-                   {%
-                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{example} \label{\commandkey{label}} #1 \end{example} }
-                         {\begin{example} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                          \label{\commandkey{label}} #1 
-                          \end{example}}
-                    }%
-                   }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{corr}}    
-                   {%
-                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{corrollary} \label{\commandkey{label}} #1 \end{corrollary} }
-                         {\begin{corrollary} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                             \label{\commandkey{label}} #1 
-                          \end{corrollary}}
-                    }%
-                   }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{prpo}}    
-                   {%
-                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{property} \label{\commandkey{label}} #1 \end{property} }
-                         {\begin{property} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                           \label{\commandkey{label}} #1 
-                          \end{property}}
-                    }%
-                   }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{rulE}}    
-                   {%
-                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{ruleX} \label{\commandkey{label}} #1 \end{ruleX} }
-                         {\begin{ruleX} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                        \label{\commandkey{label}} #1 
-                          \end{ruleX}}
-                    }%
-                   }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{rmrk}}    
-                   {%
-                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{remark}  \label{\commandkey{label}} #1 \end{remark} }
-                         {\begin{remark} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                          \label{\commandkey{label}} #1 
-                          \end{remark}}
-                    }%
-                   }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{assn}}    
-                   {%
-                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{assertion} \label{\commandkey{label}} #1 \end{assertion} }
-                         {\begin{assertion} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                             \label{\commandkey{label}} #1 
-                          \end{assertion}}
-                    }%
-                   }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{assm}}    
-                   {%
-                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{assumption} \label{\commandkey{label}} #1 \end{assumption} }
-                         {\begin{assumption} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                             \label{\commandkey{label}} #1 
-                          \end{assumption}}
-                    }%
-                   }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{notn}}    
-                   {%
-                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{notation} \label{\commandkey{label}} #1 \end{notation} }
-                         {\begin{notation} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                           \label{\commandkey{label}} #1 
-                          \end{notation}}
-                    }%
-                   }%
-        {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{tmgy}}    
-                   {%
-                    {\ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{terminology} \label{\commandkey{label}} #1 \end{terminology} }
-                         {\begin{terminology} [\commandkey{scholarly_paper.math_content.short_name}] 
-                                              \label{\commandkey{label}} #1 
-                          \end{terminology}}
-                    }%
-                   }%
-        {%     
-           \typeout{Internal error: enumeration out of sync with ontology scholarly-paper.} 
-        }%
-        }%
-        }%
-        }%
-        }%
-        }%
-        }%
-        }%
-        }%
-        }%
-        }%
-        }%
-        }%      
+      \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+        {%
+         \begin{\commandkey{scholarly_paper.math_content.mcc}}\label{\commandkey{label}}
+           #1
+         \end{\commandkey{scholarly_paper.math_content.mcc}}
+        }{%
+         \begin{\commandkey{scholarly_paper.math_content.mcc}}[\commandkey{scholarly_paper.math_content.short_name}]\label{\commandkey{label}} 
+           #1 
+         \end{\commandkey{scholarly_paper.math_content.mcc}}
+        }
     \end{isamarkuptext}%
  } 
 
-
-
-% end: scholarly_paper.math_content
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Besser: Einfach durchreichen wg Vererbung !
-\newisadof{text.scholarly_paper.math_example}%
-[label=,type=%
- , scholarly_paper.math_content.short_name =%
- , scholarly_paper.math_content.mcc =%
- , Isa_COL.text_element.level         =%
- , Isa_COL.text_element.referentiable =%
- , Isa_COL.text_element.variants      =%
- , scholarly_paper.text_section.main_author  =%
- , scholarly_paper.text_section.fixme_list   =%
- , scholarly_paper.technical.definition_list =%
- , scholarly_paper.technical.status          =%
- ]
- [1]
- {%
-    \begin{isamarkuptext}%
-        \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{expl}}{
-              \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{example} \label{\commandkey{label}} #1 \end{example} }
-                         {\begin{example} [\commandkey{scholarly_paper.math_content.short_name}]
-                                          \label{\commandkey{label}} #1  
-                          \end{example}}
-          }{%     
-          #1%
-        }%
-    \end{isamarkuptext}%
- }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\NewEnviron{isamarkupDefinition*}[1][]{\isaDof[env={text},#1]{\BODY}}
-\newisadof{text.scholarly_paper.definition}%
-[label=,type=%
- , scholarly_paper.math_content.short_name =%
- , scholarly_paper.math_content.mcc =%
- , Isa_COL.text_element.level         =%
- , Isa_COL.text_element.referentiable =%
- , Isa_COL.text_element.variants      =%
- , scholarly_paper.text_section.main_author  =%
- , scholarly_paper.text_section.fixme_list   =%
- , Isa_COL.text_element.level                =%
- , scholarly_paper.technical.definition_list =%
- , scholarly_paper.technical.status          =%
- ]
- [1]
- {%
-    \begin{isamarkuptext}%
-        \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{defn}}{
-              \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{definition} \label{\commandkey{label}} #1 \end{definition} }
-                         {\begin{definition} [\commandkey{scholarly_paper.math_content.short_name}] \label{\commandkey{label}} #1 \end{definition}}
-          }{%     
-          #1%
-        }%
-    \end{isamarkuptext}%
- }
-
-% An experiment in inheritance of the default behaviour.
-% \newisadof{text.scholarly_paper.definition}%
-% [label=,type=%
-%  , scholarly_paper.math_content.short_name =%
-%  , scholarly_paper.math_content.mcc =%
-%  , Isa_COL.text_element.level         =%
-%  , Isa_COL.text_element.referentiable =%
-%  , Isa_COL.text_element.variants      =%
-%  , scholarly_paper.text_section.main_author  =%
-%  , scholarly_paper.text_section.fixme_list   =%
-%  , scholarly_paper.technical.definition_list =%
-%  , scholarly_paper.technical.status          =%
-%  ]
-%  [1]
-%  {%
-%     \cscommand{text.scholarly_paper.math_content}%
-%     [label=\commandkey{label},type=\commandkey{type}%
-%     , scholarly_paper.math_content.short_name   =\commandkey{scholarly_paper.math_content.short_name}%
-%     , scholarly_paper.math_content.mcc          =\commandkey{scholarly_paper.math_content.mcc}%
-%     , Isa_COL.text_element.level                =\commandkey{Isa_COL.text_element.level}%
-%     , Isa_COL.text_element.referentiable        =\commandkey{Isa_COL.text_element.referentiable}%
-%     , Isa_COL.text_element.variants             =\commandkey{Isa_COL.text_element.variants}%
-%     , scholarly_paper.text_section.main_author  =\commandkey{scholarly_paper.text_section.main_author}%
-%     , scholarly_paper.text_section.fixme_list   =\commandkey{scholarly_paper.text_section.fixme_list}%
-%     , scholarly_paper.technical.definition_list =\commandkey{scholarly_paper.technical.definition_list}%
-%     , scholarly_paper.technical.status          =\commandkey{scholarly_paper.technical.status}%
-%     ]
-%     {#1}%
-%  }
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Besser: Einfach durchreichen wg Vererbung !
-\NewEnviron{isamarkupLemma*}[1][]{\isaDof[env={text.scholarly_paper.lemma},#1]{\BODY}}
-\newisadof{text.scholarly_paper.lemma}%
-[label=,type=%
- , scholarly_paper.math_content.short_name =%
- , scholarly_paper.math_content.mcc =%
- , Isa_COL.text_element.level         =%
- , Isa_COL.text_element.referentiable =%
- , Isa_COL.text_element.variants      =%
- , scholarly_paper.text_section.main_author  =%
- , scholarly_paper.text_section.fixme_list   =%
- , Isa_COL.text_element.level                =%
- , scholarly_paper.technical.definition_list =%
- , scholarly_paper.technical.status          =%
- ]
- [1]
- {%
-    \begin{isamarkuptext}%
-        \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{lem}}{
-              \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{lemma} \label{\commandkey{label}} #1 \end{lemma} }
-                         {\begin{lemma} [\commandkey{scholarly_paper.math_content.short_name}] \label{\commandkey{label}} #1 \end{lemma}}
-          }{%     
-          #1%
-        }%
-    \end{isamarkuptext}%
- } 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Besser: Einfach durchreichen wg Vererbung !
-\NewEnviron{isamarkupTheorem*}[1][]{\isaDof[env={text.scholarly_paper.theorem},#1]{\BODY}}
-\newisadof{text.scholarly_paper.theorem}%
-[label=,type=%
- , scholarly_paper.math_content.short_name =%
- , scholarly_paper.math_content.mcc =%
- , Isa_COL.text_element.level         =%
- , Isa_COL.text_element.referentiable =%
- , Isa_COL.text_element.variants      =%
- , scholarly_paper.text_section.main_author  =%
- , scholarly_paper.text_section.fixme_list   =%
- , Isa_COL.text_element.level                =%
- , scholarly_paper.technical.definition_list =%
- , scholarly_paper.technical.status          =%
- ]
- [1]
- {%
-    \begin{isamarkuptext}%
-        \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.mcc}}{thm}}{
-              \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
-                         {\begin{theorem} \label{\commandkey{label}} #1 \end{theorem} }
-                         {\begin{theorem} [\commandkey{scholarly_paper.math_content.short_name}] \label{\commandkey{label}} #1 \end{theorem}}
-          }{%     
-          #1%
-        }%
-    \end{isamarkuptext}%
- } 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Generic Example. Different inheritance hierachy.
-\newisadof{text.scholarly_paper.example}%
-[label=,type=%
- , Isa_COL.text_element.level         =%
- , Isa_COL.text_element.referentiable =%
- , Isa_COL.text_element.variants      =%
- , scholarly_paper.text_section.main_author  =%
- , scholarly_paper.text_section.fixme_list   =%
- , scholarly_paper.technical.definition_list =%
- , scholarly_paper.example.status     =%
- , scholarly_paper.example.short_name =%
- ]
- [1]
- {%
-    \begin{isamarkuptext}%
-        \ifthenelse{\equal{\commandkey{scholarly_paper.example.status}}{semiformal}}{
-              \ifthenelse{\equal{\commandkey{scholarly_paper.example.short_name}} {} }  
-                         {\begin{example} \label{\commandkey{label}} #1 \end{example} }
-                         {\begin{example} [\commandkey{scholarly_paper.example.short_name}] %
-                                          \label{\commandkey{label}} #1 %
-                          \end{example}} %
-                         }%
-        {%     
-          #1%
-        }%
-    \end{isamarkuptext}%
- }
-
 
 %% Miscellaneous
 \usepackage{xspace}
 \newcommand{\ie}{i.\,e.\xspace}
 \newcommand{\eg}{e.\,g.\xspace}
 \newcommand{\etc}{etc}
+
 

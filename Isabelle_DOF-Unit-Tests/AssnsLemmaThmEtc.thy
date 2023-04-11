@@ -43,7 +43,7 @@ text\<open>For now, as the term annotation is not bound to a meta logic which wi
 \<^term>\<open>[@{term ''True''}]\<close> to \<^term>\<open>[True]\<close>, we can not use the HOL \<^const>\<open>True\<close> constant
 in the assertion.\<close>
 
-ML\<open> @{term "[@{term \<open>True \<longrightarrow> True \<close>}]"}; (* with isa-check *)  \<close>
+ML\<open> @{term_ "[@{term \<open>True \<longrightarrow> True \<close>}]"}; (* with isa-check *)  \<close>
 
 ML\<open> 
     (* Checking the default classes which should be in a neutral(unset) state. *)
@@ -81,11 +81,11 @@ text\<open>... which makes it possible to refer in a freeform definition to its 
 which will appear textually later. With this pragmatics, an "out-of-order-presentation" 
 can be achieved within \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close> for the most common cases.\<close>
 
-(*<*)  (*LATEX FAILS *)
+
+
 Definition*[e1bis::"definition", short_name="\<open>Nice lemma.\<close>"]
    \<open>Lorem ipsum dolor sit amet, ... 
     This is formally defined as follows in @{definition (unchecked) "e1bisbis"}\<close>
-(*>*)
 definition*[e1bisbis, status=formal] e :: int where "e = 2"
 
 section\<open>Tests for Theorems, Assertions, Assumptions, Hypothesis, etc.\<close>
@@ -105,9 +105,10 @@ Theorem*[e2]\<open>... suspendisse non arcu malesuada mollis, nibh morbi, ... \<
 
 theorem*[e2bis::"theorem", status=formal] f : "e = 1+1" unfolding e_def by simp
 
+(*<*) (* @{theorem "e2bis"} breaks LaTeX generation ... *)
 Lemma*[e3,level="Some 2"]
 \<open>... phasellus amet id massa nunc, pede suscipit repellendus, ... @{theorem "e2bis"} \<close>
-(*<*)(*LATEX FAILS *)
+(*>*) 
 Proof*[d10, short_name="\<open>Induction over Tinea pedis.\<close>"]\<open>Freeform Proof\<close>
 
 lemma*[dfgd::"lemma"] q: "All (\<lambda>x. X \<and> Y \<longrightarrow> True)" oops
@@ -165,6 +166,7 @@ text*[tt13::scholarly_paper.conclusion ]\<open>Lectus accumsan velit ultrices, .
 subsection\<open>Technical Content Specific Elements\<close>
 
 text*[tu1::scholarly_paper.axiom    ]\<open>Lectus accumsan velit ultrices, ...\<close>
+text*[tu1bis::scholarly_paper.math_content, mcc="axm"   ]\<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu2::scholarly_paper.lemma    ]\<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu3::scholarly_paper.example  ]\<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu4::scholarly_paper.premise  ]\<open>Lectus accumsan velit ultrices, ...\<close>
@@ -191,7 +193,5 @@ text*[tt10::scholarly_paper.tech_example]\<open>Lectus accumsan velit ultrices, 
 text*[tu8::scholarly_paper.tech_code]        \<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu27::scholarly_paper.engineering_content]\<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu14::scholarly_paper.evaluation ]\<open>Lectus accumsan velit ultrices, ...\<close>
-(*>*)
 
 end
-(*>*)

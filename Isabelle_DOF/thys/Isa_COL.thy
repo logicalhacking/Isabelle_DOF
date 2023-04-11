@@ -103,13 +103,44 @@ fun transform_cid thy NONE X = X
                              end  
 in
 
-fun enriched_formal_statement_command ncid (S: (string * string) list) =
-   let fun transform_attr doc_attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ 
-                                      (("formal_results",@{here}),"([]::thm list)")::doc_attrs
-   in  fn margs => fn thy =>
+fun transform_attr S cid_long thy doc_attrs =
+  let
+    fun transform_attr' [] doc_attrs = doc_attrs
+      | transform_attr' (s::S) (doc_attrs) =
+          let fun markup2string s = s |> YXML.content_of
+                                      |> Symbol.explode 
+                                      |> List.filter (fn c => c <> Symbol.DEL)
+                                      |> String.concat
+              fun toLong n = DOF_core.get_attribute_info cid_long (markup2string n) thy
+                             |> the |> #long_name
+              val (name', value) = s |> (fn (n, v) => (toLong n, v))
+              val doc_attrs' = doc_attrs
+                               |> map (fn (name, term) => if name = name'
+                                                          then (name, value)
+                                                          else (name, term))
+          in if doc_attrs' = doc_attrs
+             then transform_attr' S doc_attrs' |> cons (name', value) 
+             else transform_attr' S doc_attrs' 
+          end
+  in transform_attr' S doc_attrs end
+
+(*fun update_meta_args_attrs S
+      ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) =
+  (((oid, pos),cid_pos), transform_attr S doc_attrs)
+*)
+(*fun enriched_formal_statement_command ncid (S: (string * string) list) =
+   fn margs => fn thy =>
           Monitor_Command_Parser.gen_enriched_document_cmd {inline=true} 
-                                    (transform_cid thy ncid) transform_attr margs thy 
-   end;
+                                    (transform_cid thy ncid) (transform_attr S) margs thy
+*)
+
+fun enriched_formal_statement_command ncid (S: (string * string) list) =
+  let fun transform_attr doc_attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ 
+                                      (("formal_results",@{here}),"([]::thm list)")::doc_attrs
+  in  fn margs => fn thy =>
+          Monitor_Command_Parser.gen_enriched_document_cmd {inline=true} 
+                                    (transform_cid thy ncid) transform_attr margs thy
+  end;
 
 fun enriched_document_cmd_exp ncid (S: (string * string) list) =
    (* expands ncid into supertype-check. *)
@@ -123,7 +154,7 @@ end (* local *)
 
 fun heading_command (name, pos) descr level =
   Monitor_Command_Parser.document_command (name, pos) descr
-    {markdown = false, body = true} (enriched_text_element_cmd level);
+    {markdown = false, body = true} (enriched_text_element_cmd level) (K(K I));
 
 val _ = heading_command \<^command_keyword>\<open>title*\<close> "section heading" NONE;
 val _ = heading_command \<^command_keyword>\<open>subtitle*\<close> "section heading" NONE;
