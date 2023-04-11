@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019-2022 The University of Exeter 
- *               2018-2022 The University of Paris-Saclay
+ *               2019-2023 The University of Exeter 
+ *               2018-2023 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -30,8 +30,8 @@ While Isabelle is widely perceived as an interactive theorem
 prover for HOL (Higher-order Logic)~@{cite "nipkow.ea:isabelle:2002"}, we would like to emphasize
 the view that Isabelle is far more than that: it is the \<^emph>\<open>Eclipse of Formal Methods Tools\<close>.  This 
 refers to the ``\<^emph>\<open>generic system framework of Isabelle/Isar underlying recent versions of Isabelle.  
-Among other things, Isar provides an infrastructure for Isabelle plug-ins, comprising extensible 
-state components and extensible syntax that can be bound to ML programs. Thus, the Isabelle/Isar 
+Among other things, Isabelle provides an infrastructure for Isabelle plug-ins, comprising extensible 
+state components and extensible syntax that can be bound to SML programs. Thus, the Isabelle 
 architecture may be understood as an extension and refinement of the traditional `LCF approach', 
 with explicit infrastructure for building derivative systems.\<close>''~@{cite "wenzel.ea:building:2007"} 
 
@@ -49,9 +49,13 @@ The Isabelle system architecture shown in @{docitem \<open>architecture\<close>}
 with Standard ML (SML) at the bottom layer as implementation  language. The architecture actually 
 foresees a \<^emph>\<open>Nano-Kernel\<close> (our terminology) which resides in the SML structure \<^boxed_sml>\<open>Context\<close>. 
 This structure provides a kind of container called \<^emph>\<open>context\<close> providing an identity, an 
-ancestor-list as well as typed, user-defined state for components (plugins) such as \<^isadof>. 
+ancestor-list as well as typed, user-defined state for plugins such as \<^isadof>. 
 On top of the latter, the LCF-Kernel, tactics, automated proof procedures as well as specific 
-support for higher specification constructs were built.\<close>
+support for higher specification constructs were built.
+\<^footnote>\<open>We use the term \<^emph>\<open>plugin\<close> for a collection of HOL-definitions, SML and Scala code in order
+to distinguish it from the official Isabelle term \<^emph>\<open>component\<close> which implies a particular 
+format and support by the Isabelle build system.\<close>
+\<close>
 
 section*[dof::introduction]\<open>The Document Model Required by \<^dof>\<close>
 text\<open>
@@ -72,13 +76,13 @@ declare_reference*["fig:dependency"::figure]
 text\<open>
   The Isabelle Framework is based on a \<^emph>\<open>document-centric view\<close>\<^bindex>\<open>document-centric view\<close> of 
   a document, treating the input in its integrality as set of (user-programmable) \<^emph>\<open>document element\<close> 
-  that may mutually depend on and link to each other; A \<^emph>\<open>document\<close> in our sense is what is configured in a set of 
-  \<^verbatim>\<open>ROOT\<close>- and \<^verbatim>\<open>ROOTS\<close>-files.
+  that may mutually depend on and link to each other; A \<^emph>\<open>document\<close> in our sense is what is configured 
+  in a set of  \<^verbatim>\<open>ROOT\<close>- and \<^verbatim>\<open>ROOTS\<close>-files.
 
   Isabelle assumes a hierarchical document model\<^index>\<open>document model\<close>, \<^ie>, an \<^emph>\<open>integrated\<close> document 
   consist of a hierarchy of \<^emph>\<open>sub-documents\<close>  (files); dependencies are restricted to be
   acyclic at this level. 
-  Sub-documents can have different document types in order to capture documentations consisting of 
+  Document parts can have different document types in order to capture documentations consisting of 
   documentation, models, proofs, code of various forms and other technical artifacts.  We call the 
   main sub-document type, for historical reasons, \<^emph>\<open>theory\<close>-files.  A theory file\<^bindex>\<open>theory!file\<close>
   consists of a \<^emph>\<open>header\<close>\<^bindex>\<open>header\<close>, a \<^emph>\<open>context definition\<close>\<^index>\<open>context\<close>, and a body 
@@ -108,9 +112,9 @@ contains characters and a special notation for semantic macros \<^bindex>\<open>
 (here \<^theory_text>\<open>@{term "fac 5"}).\<close>
 \<close>
 
-text\<open>While we concentrate in this manual on \<^theory_text>\<open>text\<close>-document elements --- this is the main
-use of \<^dof> in its current stage --- it is important to note that there are actually three
-families of ``ontology aware'' document elements with analogous 
+text\<open>While \<^theory_text>\<open>text\<close>- elements play a major role in this manual on
+--- this is the main use of \<^dof> in its current stage --- it is important to note that there 
+are actually three families of ``ontology aware'' document elements with analogous 
 syntax to standard ones. The difference is a bracket with meta-data of the form:
 @{theory_text [display,indent=5, margin=70] 
 \<open>
@@ -123,7 +127,8 @@ Depending on the family, we will speak about \<^emph>\<open>(formal) text-contex
 \<^emph>\<open>(ML) code-contexts\<close>\<^index>\<open>code-contexts\<close> and \<^emph>\<open>term-contexts\<close>\<^index>\<open>term-contexts\<close> if we refer 
 to sub-elements inside the \<open>\<open>...\<close>\<close> cartouches of these command families. Note that the Isabelle
 framework allows for nesting cartouches that permits to support switching into a different
-context. In general, this has also the effect that the evaluation of antiquotations changes.
+context, albeit not all combinations are actually supported. 
+In general, nesting contexts has the effect that the evaluation of antiquotations changes.
 \<^footnote>\<open>In the literature, this concept has been referred to \<open>Cascade-Syntax\<close> and was used in the 
 Centaur-system and is existing in some limited form in some Emacs-implementations these days. \<close>  
 \<close>

@@ -448,7 +448,7 @@ fun doc_cmd kwd txt flag key =
 in
 
 val _ = doc_cmd \<^command_keyword>\<open>Definition*\<close> "Freeform Definition" 
-                Definition_default_class \<^const_name>\<open>defn\<close>;
+                 Definition_default_class \<^const_name>\<open>defn\<close>;
 
 val _ = doc_cmd \<^command_keyword>\<open>Lemma*\<close>      "Freeform Lemma Description" 
                  Lemma_default_class \<^const_name>\<open>lemm\<close>;
@@ -554,6 +554,7 @@ print_doc_classes
 print_doc_class_template "definition" (* just a sample *)
 print_doc_class_template "lemma" (* just a sample *)
 print_doc_class_template "theorem" (* just a sample *)
+print_doc_class_template "premise" (* just a sample *)
 
 
 subsection\<open>Structuring Enforcement in Engineering/Math Papers \<close>

@@ -30,6 +30,7 @@ define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
                  BibTeX  \<rightleftharpoons> \<open>\BibTeX{}\<close> 
                  LaTeX   \<rightleftharpoons> \<open>\LaTeX{}\<close>
                  TeX     \<rightleftharpoons> \<open>\TeX{}\<close>
+                 dofurl  \<rightleftharpoons> \<open>\dofurl\<close>
                  pdf     \<rightleftharpoons> \<open>PDF\<close>
 
 text\<open>Note that these setups assume that the associated \<^LaTeX> macros 
