@@ -74,9 +74,13 @@ is currently consisting out of two AFP entries:
 
 \<^item> Isabelle\_DOF: This entry
   contains the Isabelle/DOF system itself, including the Isabelle/DOF manual.
-\<^item> Isabelle\_DOF-Example-Scholarly\_Paper: This entry contains an example of 
-  an academic paper written using the Isabelle/DOF system.
- \<close>
+\<^item> Isabelle\_DOF-Example-I: This entry contains an example of 
+  an academic paper written using the Isabelle/DOF system oriented towards 
+\<^item> Isabelle\_DOF-Example-II: This entry contains another example of 
+  a mathematics-oriented academic paper.
+
+It is recommended to follow structure one of these papers.\<close>
+
 
 section*[writing_doc::technical]\<open>Writing Documents\<close>
 
