@@ -108,12 +108,12 @@ author*[  adb,
           orcid       ="\<open>0000-0002-6355-1200\<close>",
           http_site   ="\<open>https://www.brucker.ch/\<close>",
           affiliation ="\<open>University of Exeter, Exeter, UK\<close>"]\<open>Achim D. Brucker\<close>
-author*[  bu,
-          email       = "\<open>wolff@lri.fr\<close>",
-          affiliation = "\<open>Université Paris-Saclay, LRI, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
 author*[  nico,
           email       = "\<open>nicolas.meric@lri.fr\<close>",
           affiliation = "\<open>Université Paris-Saclay, LRI, Paris, France\<close>"]\<open>Nicolas Méric\<close>
+author*[  bu,
+          email       = "\<open>wolff@lri.fr\<close>",
+          affiliation = "\<open>Université Paris-Saclay, LRI, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
  
 abstract*[abs, keywordlist="[\<open>Ontology\<close>, \<open>Ontological Modeling\<close>, \<open>Document Management\<close>, 
                              \<open>Formal Document Development\<close>,\<open>Isabelle/DOF\<close>]"]
