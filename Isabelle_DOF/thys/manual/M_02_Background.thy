@@ -63,15 +63,15 @@ text\<open>
   (\<^dof>) in general. In particular we discuss the concepts 
    \<^emph>\<open>integrated document\<close>\<^bindex>\<open>integrated document\<close>, \<^emph>\<open>sub-document\<close>\<^bindex>\<open>sub-document\<close>,  
   \<^emph>\<open>text-element\<close>\<^bindex>\<open>text-element\<close>, and \<^emph>\<open>semantic macros\<close>\<^bindex>\<open>semantic macros\<close> occurring 
-  inside text-elements. Furthermore, we assume two different levels of parsers 
-  (for \<^emph>\<open>outer\<close> and \<^emph>\<open>inner syntax\<close>) where the inner-syntax is basically a typed \<open>\<lambda>\<close>-calculus 
-  and some Higher-order Logic (HOL)\<^bindex>\<open>HOL\<close>.
-\<close>
+  inside text-elements. Furthermore, we assume a bracketing mechanism that unambiguously 
+  allows to separate different syntactic fragments and that can be nested. 
+  In the case of Isabelle, these are the guillemot symbols \<open>\<open>...\<close>\<close>, which represent the begin and end
+  of a \<^emph>\<open>cartouche\<close>\<^bindex>\<open>cartouche\<close>.\<close>
+
 
 (*<*)
 declare_reference*["fig:dependency"::figure]
 (*>*)
-
 
 text\<open>
   The Isabelle Framework is based on a \<^emph>\<open>document-centric view\<close>\<^bindex>\<open>document-centric view\<close> of 
@@ -102,18 +102,19 @@ text\<open>
   \<^boxed_theory_text>\<open>keywords\<close> are used to separate commands from each other.
 \<close>
 
-text\<open> A text-element \<^index>\<open>text-element\<close> may look like this:
+text\<open>The body of a theory file consists of a sequence of \<^emph>\<open>commands\<close> that must be introduced
+by a command keyword such as \<^boxed_theory_text>\<open>requirement\<close> above. Command keywords may mark 
+the the begin of a text that is parsed by a command-specific parser;  the end of the 
+command-span is defined by the next keyword. Commands were used to define definitions, lemmas, 
+code and text-elements \<close>
+
+text\<open> A simple text-element \<^index>\<open>text-element\<close> may look like this:
 
   @{boxed_theory_text [display]\<open>
-text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, 
-   we obtain in \<Gamma> for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
+text\<open> This is a simple text.\<close>\<close>}
 ... so it is a command \<^theory_text>\<open>text\<close> followed by an argument (here in  \<open>\<open> ... \<close>\<close> parenthesis) which 
-contains characters and a special notation for semantic macros \<^bindex>\<open>semantic macros\<close> 
-(here \<^theory_text>\<open>@{term "fac 5"}).\<close>
-\<close>
-
-text\<open>While \<^theory_text>\<open>text\<close>- elements play a major role in this manual on
---- this is the main use of \<^dof> in its current stage --- it is important to note that there 
+contains characters. While \<^theory_text>\<open>text\<close>- elements play a major role in this manual on
+--- document generation is the main use-case of \<^dof> in its current stage --- it is important to note that there 
 are actually three families of ``ontology aware'' document elements with analogous 
 syntax to standard ones. The difference is a bracket with meta-data of the form:
 @{theory_text [display,indent=5, margin=70] 
@@ -123,43 +124,50 @@ ML*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> s
 value*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some annotated \<lambda>-term \<close>
 \<close>}
 
-Depending on the family, we will speak about \<^emph>\<open>(formal) text-contexts\<close>,\<^index>\<open>formal text-contexts\<close> 
-\<^emph>\<open>(ML) code-contexts\<close>\<^index>\<open>code-contexts\<close> and \<^emph>\<open>term-contexts\<close>\<^index>\<open>term-contexts\<close> if we refer 
-to sub-elements inside the \<open>\<open>...\<close>\<close> cartouches of these command families. Note that the Isabelle
-framework allows for nesting cartouches that permits to support switching into a different
-context, albeit not all combinations are actually supported. 
-In general, nesting contexts has the effect that the evaluation of antiquotations changes.
+Depending on the family, we will speak about \<^emph>\<open>(formal) text-contexts\<close>,\<^bindex>\<open>formal text-contexts\<close> 
+\<^emph>\<open>(ML) code-contexts\<close>\<^bindex>\<open>code-contexts\<close> and \<^emph>\<open>term-contexts\<close>\<^bindex>\<open>term-contexts\<close> if we refer 
+to sub-elements inside the \<open>\<open>...\<close>\<close> cartouches of these command families. 
+
+Text- code- or term contexts may contain a special form comment, that may be considered as a
+"semantic macro" or a machine-checked annotation: the so-called antiquotations\<^bindex>\<open>antiquotation\<close>. 
+Its Its general syntactic format reads as follows:
+
+@{boxed_theory_text [display]\<open> @{antiquotation_name (args) [more_args] \<open>sub-context\<close> }\<close>}
+
+The sub-context may be different from the surrounding one; therefore, it is possible
+to switch from a text-context to a term-context, for example. Therefore, antiquotations allow
+ the nesting of cartouches, albeit not all combinations are actually supported.
 \<^footnote>\<open>In the literature, this concept has been referred to \<open>Cascade-Syntax\<close> and was used in the 
-Centaur-system and is existing in some limited form in some Emacs-implementations these days. \<close>  
-\<close>
-text\<open>
-  On the semantic level, we assume a validation process for an integrated document, where the 
-  semantics of a command is a transformation \<open>\<theta> \<rightarrow> \<theta>\<close> for some system state \<open>\<theta>\<close>.
-  This document model can be instantiated depending on  the text-code-, or term-contexts.
-  For common text elements, \<^eg>, \<^theory_text>\<open>section\<open>...\<close>\<close> or \<^theory_text>\<open>text\<open>...\<close>\<close>, 
-  users can add informal text to a sub-document using a text command:
-  @{boxed_theory_text [display] \<open>text\<open>This is a description.\<close>\<close> }
-  This will type-set the corresponding text in, for example, a PDF document.  However, this 
-  translation is not necessarily one-to-one: text elements can be enriched by formal, \<^ie>, 
-  machine-checked content via \<^emph>\<open>semantic macros\<close>, called antiquotations\<^bindex>\<open>antiquotation\<close>:
-  @{boxed_theory_text [display]
-  \<open>text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm "refl"}, we obtain in \<Gamma> 
-         for @{term \<open>fac 5\<close>} the result @{value \<open>fac 5\<close>}.\<close>\<close>
-  }
-which is represented in the final document (\<^eg>, a PDF) by:
+Centaur-system and is existing in some limited form in some Emacs-implementations these days. \<close> 
+Isabelle comes with a number of built-in antiquotations for text- and code-contexts;
+a detailed overview can be found in @{cite "wenzel:isabelle-isar:2020"}. \<^dof> reuses this general
+infrastructure but \<^emph>\<open>generates\<close> its own families of antiquotations from ontologies.\<close>
+
+text\<open> An example for a text-element \<^index>\<open>text-element\<close> using built-in antoquotations 
+may look like this:
+
+  @{boxed_theory_text [display]\<open>
+text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, 
+   we obtain in \<Gamma> for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
+... so it is a command \<^theory_text>\<open>text\<close> followed by an argument (here in  \<open>\<open> ... \<close>\<close> parenthesis) which 
+contains characters and a special notation for semantic macros \<^bindex>\<open>semantic macros\<close> 
+(here \<^theory_text>\<open>@{term "fac 5"}\<close>).
+
+The above text element is represented in the final document (\<^eg>, a PDF) by:
 @{boxed_pdf [display]
 \<open>According to the $\emph{reflexivity}$ axiom $\mathrm{x = x}$, we obtain in $\Gamma$ 
 for $\operatorname{fac} \text{\textrm{5}}$ the result $\text{\textrm{120}}$.\<close>
- }
+ }\<close>
 
-  Semantic macros are partial functions of type \<open>\<theta> \<rightarrow> text\<close>; since they can use the
+text\<open>Antiquotations seen as
+  semantic macros are partial functions of type \<open>\<theta> \<rightarrow> text\<close>; since they can use the
   system state, they can perform all sorts of specific checks or evaluations (type-checks, 
   executions of code-elements, references to text-elements or proven theorems such as 
   \<open>refl\<close>, which is the reference to the axiom of reflexivity).
 
-  Semantic macros establish \<^emph>\<open>formal content\<close> inside informal content; they can be 
+  Therefore, semantic macros can establish \<^emph>\<open>formal content\<close> inside informal content; they can be 
   type-checked before being displayed and can be used for calculations before being 
-  typeset. They represent the device for linking the formal with the informal. 
+  typeset. They represent the device for linking formal with the informal content. 
 \<close>
 
 
@@ -176,9 +184,7 @@ text\<open>
   to benefit from this experience, only Isabelle and Coq have the necessary infrastructure of 
   asynchronous proof-processing and support by a PIDE~@{cite "wenzel:asynchronous:2014" and 
   "wenzel:system:2014" and "barras.ea:pervasive:2013" and "faithfull.ea:coqoon:2018"} which 
-  in many features over-accomplishes the required  features of \<^dof>. For example, current Isabelle 
-  versions offer cascade-syntaxes (different syntaxes and even parser-technologies which can be 
-  nested along the \<open>\<open>...\<close>\<close> barriers), while \<^dof> actually only requires a two-level syntax model.
+  in many features over-accomplishes the required  features of \<^dof>. 
 \<close>
 
 figure*["fig:dof-ide"::figure,relative_width="95",src="''figures/cicm2018-combined''"]\<open> 
