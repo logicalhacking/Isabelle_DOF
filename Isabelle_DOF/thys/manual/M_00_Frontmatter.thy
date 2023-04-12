@@ -110,9 +110,12 @@ author*[  adb,
 author*[  bu,
           email       = "\<open>wolff@lri.fr\<close>",
           affiliation = "\<open>Université Paris-Saclay, LRI, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
+author*[  nico,
+          email       = "\<open>nicolas.meric@lri.fr\<close>",
+          affiliation = "\<open>Université Paris-Saclay, LRI, Paris, France\<close>"]\<open>Nicolas Méric\<close>
  
 abstract*[abs, keywordlist="[\<open>Ontology\<close>, \<open>Ontological Modeling\<close>, \<open>Document Management\<close>, 
-                             \<open>Formal Document Development\<close>,\<open>Document Authoring\<close>,\<open>Isabelle/DOF\<close>]"]
+                             \<open>Formal Document Development\<close>,\<open>Isabelle/DOF\<close>]"]
 \<open>   \<^isadof> provides an implementation of \<^dof> on top of Isabelle/HOL. 
     \<^dof> itself is a novel framework for \<^emph>\<open>defining\<close> ontologies
     and \<^emph>\<open>enforcing\<close> them during document development and document
