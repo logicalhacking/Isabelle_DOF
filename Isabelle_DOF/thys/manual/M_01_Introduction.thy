@@ -26,11 +26,10 @@ text processing.  A key role in structuring this linking play \<^emph>\<open>doc
 \<^emph>\<open>vocabulary\<close> in the semantic web community~@{cite "w3c:ontologies:2015"}), \<^ie>, a machine-readable
 form of the structure of documents as well as the document discourse.
 
-Such ontologies can be used for the scientific discourse entific discourse within scholarly articles, mathematical 
-libraries, and in the engineering discowithin scholarly articles, mathematical 
+Such ontologies can be used for the scientific discourse within scholarly articles, mathematical 
 libraries, and in the engineering discourse of standardized software certification 
-documents~@{cite "boulanger:cenelec-50128:2015" and "cc:cc-part3:2006"}: certification documents 
-have to follow a structure.  In practice, large groups of developers have to produce a substantial
+documents~@{cite "boulanger:cenelec-50128:2015" and "cc:cc-part3:2006"}. All these
+documents contain formal content and have to follow a given structure.  In practice, large groups of developers have to produce a substantial
 set of documents where the consistency is notoriously difficult to maintain. In particular, 
 certifications are centered around the \<^emph>\<open>traceability\<close> of requirements throughout the entire 
 set of documents. While technical solutions for the traceability problem exists (most notably:
