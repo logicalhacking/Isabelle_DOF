@@ -62,8 +62,8 @@ text\<open>
   In this section, we explain the assumed document model underlying our Document Ontology Framework 
   (\<^dof>) in general. In particular we discuss the concepts 
    \<^emph>\<open>integrated document\<close>\<^bindex>\<open>integrated document\<close>, \<^emph>\<open>sub-document\<close>\<^bindex>\<open>sub-document\<close>,  
-  \<^emph>\<open>text-element\<close>\<^bindex>\<open>text-element\<close>, and \<^emph>\<open>semantic macros\<close>\<^bindex>\<open>semantic macros\<close> occurring 
-  inside text-elements. Furthermore, we assume a bracketing mechanism that unambiguously 
+  \<^emph>\<open>document-element\<close>\<^bindex>\<open>document-element\<close>, and \<^emph>\<open>semantic macros\<close>\<^bindex>\<open>semantic macros\<close> occurring 
+  inside document-elements. Furthermore, we assume a bracketing mechanism that unambiguously 
   allows to separate different syntactic fragments and that can be nested. 
   In the case of Isabelle, these are the guillemot symbols \<open>\<open>...\<close>\<close>, which represent the begin and end
   of a \<^emph>\<open>cartouche\<close>\<^bindex>\<open>cartouche\<close>.\<close>
@@ -113,8 +113,8 @@ text\<open> A simple text-element \<^index>\<open>text-element\<close> may look 
   @{boxed_theory_text [display]\<open>
 text\<open> This is a simple text.\<close>\<close>}
 ... so it is a command \<^theory_text>\<open>text\<close> followed by an argument (here in  \<open>\<open> ... \<close>\<close> parenthesis) which 
-contains characters. While \<^theory_text>\<open>text\<close>- elements play a major role in this manual on
---- document generation is the main use-case of \<^dof> in its current stage --- it is important to note that there 
+contains characters. While \<^theory_text>\<open>text\<close>- elements play a major role in this manual --- document 
+generation is the main use-case of \<^dof> in its current stage --- it is important to note that there 
 are actually three families of ``ontology aware'' document elements with analogous 
 syntax to standard ones. The difference is a bracket with meta-data of the form:
 @{theory_text [display,indent=5, margin=70] 
@@ -123,6 +123,11 @@ text*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open>
 ML*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some SML code \<close>
 value*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some annotated \<lambda>-term \<close>
 \<close>}
+
+Other instances of commands belonging to these families are, for example, the freeform
+\<^theory_text>\<open>Definition*\<close> and \<^theory_text>\<open>Lemma*\<close> as well as their formal counterparts \<^theory_text>\<open>definition*\<close> and \<^theory_text>\<open>lemma*\<close>,
+which allow in addition to their standard Isabelle functionality the creation and management of
+ontology-generated meta-data associated to them.
 
 Depending on the family, we will speak about \<^emph>\<open>(formal) text-contexts\<close>,\<^bindex>\<open>formal text-contexts\<close> 
 \<^emph>\<open>(ML) code-contexts\<close>\<^bindex>\<open>code-contexts\<close> and \<^emph>\<open>term-contexts\<close>\<^bindex>\<open>term-contexts\<close> if we refer 
