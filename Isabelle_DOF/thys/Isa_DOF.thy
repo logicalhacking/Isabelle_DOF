@@ -2137,17 +2137,15 @@ fun close_monitor_command (args as (((oid, pos), cid_pos),
     end 
 
 
-fun meta_args_2_latex thy ((((lab, pos), cid_opt), attr_list) : ODL_Meta_Args_Parser.meta_args_t) =
+fun meta_args_2_latex thy transform_attr
+      ((((lab, pos), cid_opt), attr_list) : ODL_Meta_Args_Parser.meta_args_t) =
     (* for the moment naive, i.e. without textual normalization of 
        attribute names and adapted term printing *)
     let val l   = DOF_core.get_instance_name_global lab thy |> enclose "{" "}"
                                                             |> prefix "label = "
       (*  val _   = writeln("meta_args_2_string lab:"^ lab ^":"^ (@{make_string } cid_opt) ) *)
         val cid_long = case cid_opt of
-                                NONE => let val DOF_core.Instance cid =
-                                               DOF_core.get_instance_global lab thy
-                                        in cid |> #cid end
-                                  
+                                NONE => DOF_core.cid_of lab thy
                               | SOME(cid,_) => DOF_core.get_onto_class_name_global' cid thy        
         (* val _   = writeln("meta_args_2_string cid_long:"^ cid_long ) *)
         val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
@@ -2195,8 +2193,11 @@ fun meta_args_2_latex thy ((((lab, pos), cid_opt), attr_list) : ODL_Meta_Args_Pa
 
         val default_args_filtered = filter (fn (a,_) => not (exists (fn b => b = a) 
                                     (map (fn (c,_) => c) actual_args))) default_args
-        val str_args = map (fn (lhs,rhs) => lhs^" = "^(enclose "{" "}" rhs)) 
-                      (actual_args@default_args_filtered)
+        val transformed_args = (actual_args@default_args_filtered)
+                               |> transform_attr cid_long thy
+        val str_args = transformed_args
+                       |> map (fn (lhs,rhs) => lhs^" = "^(enclose "{" "}" rhs)) 
+                      
         val label_and_type = String.concat [ l, ",", cid_txt]
         val str_args = label_and_type::str_args
     in
@@ -2220,15 +2221,15 @@ fun gen_enriched_document_cmd' {inline} cid_transform attr_transform
 (* {markdown = true} sets the parsing process such that in the text-core
    markdown elements are accepted. *)
 
-fun document_output {markdown: bool, markup: Latex.text -> Latex.text} meta_args text ctxt =
+fun document_output {markdown: bool, markup: Latex.text -> Latex.text} transform_attr meta_args text ctxt =
   let
     val thy = Proof_Context.theory_of ctxt;
     val _ = Context_Position.reports ctxt (Document_Output.document_reports text);
-    val output_meta = meta_args_2_latex thy meta_args;
+    val output_meta = meta_args_2_latex thy transform_attr meta_args;
     val output_text = Document_Output.output_document ctxt {markdown = markdown} text;
   in markup (output_meta @ output_text) end;
 
-fun document_output_reports name {markdown, body} meta_args text ctxt =
+fun document_output_reports name {markdown, body} transform_attr meta_args text ctxt =
   let
     (*val pos = Input.pos_of text;
     val _ =
@@ -2238,16 +2239,16 @@ fun document_output_reports name {markdown, body} meta_args text ctxt =
     fun markup xml =
       let val m = if body then Markup.latex_body else Markup.latex_heading
       in [XML.Elem (m (Latex.output_name name), xml)] end;
-  in document_output {markdown = markdown, markup = markup} meta_args text ctxt end;
+  in document_output {markdown = markdown, markup = markup} transform_attr meta_args text ctxt end;
 
 
 (* document output commands *)
 
-fun document_command (name, pos) descr mark cmd =
+fun document_command (name, pos) descr mark cmd transform_attr =
   Outer_Syntax.command (name, pos) descr
     (ODL_Meta_Args_Parser.attributes -- Parse.document_source >> (fn (meta_args, text) =>
       Toplevel.theory' (fn _ => cmd meta_args)
-      (Toplevel.presentation_context #> document_output_reports name mark meta_args text #> SOME)));
+      (Toplevel.presentation_context #> document_output_reports name mark transform_attr meta_args text #> SOME)));
 
 
 (* Core Command Definitions *)
@@ -2273,14 +2274,14 @@ val _ =
 
 val _ =
   document_command \<^command_keyword>\<open>text*\<close> "formal comment (primary style)"
-    {markdown = true, body = true} (gen_enriched_document_cmd {inline=true} I I);
+    {markdown = true, body = true} (gen_enriched_document_cmd {inline=true} I I) (K(K I));
 
 
 (* This is just a stub at present *)
 val _ =
   document_command \<^command_keyword>\<open>text-macro*\<close> "formal comment macro"
     {markdown = true, body = true}
-    (gen_enriched_document_cmd {inline=false} (* declare as macro *) I I);
+    (gen_enriched_document_cmd {inline=false} (* declare as macro *) I I) (K(K I));
 
  
 val (declare_reference_default_class, declare_reference_default_class_setup) 

@@ -38,26 +38,34 @@ and their logical contexts).
 
 Further applications are the domain-specific discourse in juridical texts or medical reports.  
 In general, an ontology is a formal explicit description of \<^emph>\<open>concepts\<close> in a domain of discourse
-(called \<^emph>\<open>classes\<close>), properties of each concept describing \<^emph>\<open>attributes\<close> of the concept, as well 
-as \<^emph>\<open>links\<close> between them. A particular link between concepts is the \<^emph>\<open>is-a\<close> relation declaring 
+(called \<^emph>\<open>classes\<close>), components (called \<^emph>\<open>attributes\<close>) of the concept, and properties (called 
+\<^emph>\<open>invariants\<close>) on concepts. Logically, classes are represented by a type (the class type) and
+particular terms representing \<^emph>\<open>instances\<close> of them. Since components are typed, it is therefore
+possible to express \<^emph>\<open>links\<close> like \<open>m\<close>-to-\<open>n\<close> relations between classes. 
+Another form of link between concepts is the \<^emph>\<open>is-a\<close> relation declaring 
 the instances of a subclass to be instances of the super-class.
 
-To address this challenge, we present the Document Ontology Framework (\<^dof>) and an 
-implementation of \<^dof> called \<^isadof>. \<^dof> is designed for building scalable and user-friendly 
-tools on top of interactive theorem provers. \<^isadof> is an instance of this novel framework, 
-implemented as extension of Isabelle/HOL, to \<^emph>\<open>model\<close> typed ontologies and to \<^emph>\<open>enforce\<close> them 
-during document evolution. Based on Isabelle's infrastructures, ontologies may refer to types, 
-terms, proven theorems, code, or established assertions. Based on a novel adaption of the Isabelle 
-IDE (called PIDE, @{cite "wenzel:asynchronous:2014"}), a document is checked to be 
-\<^emph>\<open>conform\<close> to a particular ontology---\<^isadof> is designed to give fast user-feedback \<^emph>\<open>during the 
-capture of content\<close>. This is particularly valuable in case of document evolution, where the 
-\<^emph>\<open>coherence\<close> between the formal and the informal parts of the content can be mechanically checked.
+Engineering an ontological language for documents that contain both formal and informal elements
+as occuring in formal theories is a particular challenge. To address this latter, we present 
+the Document Ontology Framework (\<^dof>) and an implementation of \<^dof> called \<^isadof>.
+ \<^dof> is designed for building scalable and user-friendly  tools on top of interactive theorem 
+provers. \<^isadof> is an instance of this novel framework,  implemented as extension of Isabelle/HOL, 
+to \<^emph>\<open>model\<close> typed ontologies and to \<^emph>\<open>enforce\<close> them  during document evolution. Based on Isabelle's 
+infrastructures, ontologies may refer to types, terms, proven theorems, code, or established 
+assertions. Based on a novel adaption of the Isabelle IDE (called PIDE, @{cite "wenzel:asynchronous:2014"}), 
+a document is checked to be \<^emph>\<open>conform\<close> to a particular ontology---\<^isadof> is designed to give fast 
+user-feedback \<^emph>\<open>during the capture of content\<close>. This is particularly valuable in case of document 
+evolution, where the \<^emph>\<open>coherence\<close> between the formal and the informal parts of the content can 
+be mechanically checked.
 
 To avoid any misunderstanding: \<^isadof>  is \<^emph>\<open>not a theory in HOL\<close> on ontologies and operations to 
 track and trace links in texts, it is an \<^emph>\<open>environment to write structured text\<close> which 
 \<^emph>\<open>may contain\<close> Isabelle/HOL definitions and proofs like mathematical articles, tech-reports and
 scientific papers---as the present one, which is written in \<^isadof> itself. \<^isadof> is a plugin 
-into the Isabelle/Isar framework in the style of~@{cite "wenzel.ea:building:2007"}.\<close>
+into the Isabelle/Isar framework in the style of~@{cite "wenzel.ea:building:2007"}. However,
+ \<^isadof> will generate from ontologies a theory infrastructure consisting of types, terms, theorems
+and code that allows both interactive checking as well as formal reasoning over meta-data
+related to annotated documents.\<close>
 
 subsubsection\<open>How to Read This Manual\<close>
 (*<*)
@@ -91,9 +99,9 @@ text\<open>
   by simp\<close>}
   \<^item> a green background for examples of generated document fragments (\<^ie>, PDF output):
     @{boxed_pdf [display] \<open>The axiom refl\<close>}
-  \<^item> a red background for (S)ML-code:
+  \<^item> a red background for SML-code:
     @{boxed_sml [display] \<open>fun id x = x\<close>}
-  \<^item> a yellow background for \LaTeX-code:
+  \<^item> a yellow background for \<^LaTeX>-code:
     @{boxed_latex [display] \<open>\newcommand{\refl}{$x = x$}\<close>}
   \<^item> a grey background for shell scripts and interactive shell sessions:
     @{boxed_bash [display]\<open>ë\prompt{}ë ls
@@ -104,6 +112,15 @@ subsubsection\<open>How to Cite \<^isadof>\<close>
 text\<open>
   If you use or extend \<^isadof> in your publications, please use 
   \<^item> for the \<^isadof> system~@{cite "brucker.ea:isabelle-ontologies:2018"}:
+    \begin{quote}\small
+      A.~D. Brucker, I.~Ait-Sadoune, N. Méric, and B.~Wolff. Using Deep Ontologies in Formal 
+      Software Engineering. In \<^emph>\<open>International Conference on Rigorous State-Based Methods (ABZ 2023)\<close>, 
+      To appear in Lecture Notes in Computer Science. Springer-Verlag,
+      Heidelberg, 2023. \href{https://doi.org/???} {10.1007/????????}.
+    \end{quote}
+    A \<^BibTeX>-entry is available at: 
+    \<^url>\<open>https://www.lri.fr/~wolff/bibtex/wolff.html\<close>. 
+  \<^item> an older description of the system~@{cite "brucker.ea:isabelle-ontologies:2018"}:
     \begin{quote}\small
       A.~D. Brucker, I.~Ait-Sadoune, P.~Crisafulli, and B.~Wolff. Using the {Isabelle} ontology 
       framework: Linking the formal with the informal. In \<^emph>\<open>Conference on Intelligent Computer 
@@ -128,13 +145,13 @@ text\<open>
      Using Ontologies in Formal Developments Targeting Certification. 
      In W. Ahrendt and S. Tarifa, editors. \<^emph>\<open>Integrated Formal Methods (IFM)\<close>, number 11918.
      Lecture Notes in Computer Science. Springer-Verlag, Heidelberg, 2019.
-     \href{https://doi.org/10.1007/978-3-030-34968-4\_4}.
+     \<^url>\<open>https://doi.org/10.1007/978-3-030-34968-4_4\<close>.
     \end{quote}
 \<close>
 subsubsection\<open>Availability\<close>
 text\<open>
   The implementation of the framework is available at 
-  \url{\dofurl}. The website also provides links to the latest releases. \<^isadof> is licensed 
+  \url{\<^dofurl>}. The website also provides links to the latest releases. \<^isadof> is licensed 
   under a 2-clause BSD license (SPDX-License-Identifier: BSD-2-Clause).
 \<close>
 
