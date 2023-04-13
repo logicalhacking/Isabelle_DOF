@@ -72,6 +72,7 @@ subsubsection\<open>How to Read This Manual\<close>
 declare_reference*[background::text_section]
 declare_reference*[isadof_tour::text_section]
 declare_reference*[isadof_ontologies::text_section]
+declare_reference*[writing_doc::text_section]
 declare_reference*[isadof_developers::text_section]
 (*>*)
 text\<open>

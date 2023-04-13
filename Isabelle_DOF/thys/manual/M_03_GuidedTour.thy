@@ -465,6 +465,9 @@ defined by \<^typ>\<open>article\<close>.
 \<close>
 
 
+figure*[doc_termAq::figure,relative_width="80",src="''figures/doc-mod-term-aq.png''"]
+                      \<open>Term-Antiquotations Referencing to Annotated Elements\<close>
+
 side_by_side_figure*[exploring::side_by_side_figure,anchor="''fig-Dogfood-II-bgnd1''",
                       caption="''Exploring a reference of a text-element.''",relative_width="48",
                       src="''figures/Dogfood-II-bgnd1''",anchor2="''fig-bgnd-text_section''",

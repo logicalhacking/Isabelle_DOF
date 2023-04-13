@@ -57,6 +57,12 @@ to distinguish it from the official Isabelle term \<^emph>\<open>component\<clos
 format and support by the Isabelle build system.\<close>
 \<close>
 
+side_by_side_figure*[docModGenConcr::side_by_side_figure,anchor="''docModGen''",
+                      caption="''Schematic Representation.''",relative_width="45",
+                      src="''figures/doc-mod-generic.png''",anchor2="''docModIsar''",
+                      caption2="''The Isar Instance.''",relative_width2="45",
+                      src2="''figures/doc-mod-isar.png''"]\<open>The Isabelle Document Model.\<close>
+
 section*[dof::introduction]\<open>The Document Model Required by \<^dof>\<close>
 text\<open>
   In this section, we explain the assumed document model underlying our Document Ontology Framework 
@@ -81,13 +87,15 @@ text\<open>
 
   Isabelle assumes a hierarchical document model\<^index>\<open>document model\<close>, \<^ie>, an \<^emph>\<open>integrated\<close> document 
   consist of a hierarchy of \<^emph>\<open>sub-documents\<close>  (files); dependencies are restricted to be
-  acyclic at this level. 
+  acyclic at this level (c.f. @{figure "docModGenConcr"}). 
   Document parts can have different document types in order to capture documentations consisting of 
   documentation, models, proofs, code of various forms and other technical artifacts.  We call the 
   main sub-document type, for historical reasons, \<^emph>\<open>theory\<close>-files.  A theory file\<^bindex>\<open>theory!file\<close>
   consists of a \<^emph>\<open>header\<close>\<^bindex>\<open>header\<close>, a \<^emph>\<open>context definition\<close>\<^index>\<open>context\<close>, and a body 
   consisting of a sequence of document elements called
-  \<^emph>\<open>command\<close>s (see @{figure (unchecked) "fig:dependency"}). Even
+  \<^emph>\<open>command\<close>s (see @{figure "docModGenConcr"}(left)
+% @{figure (unchecked) "fig:dependency"}
+). Even
   the header consists of a sequence of commands used for introductory text elements not depending on 
   any context. The context-definition contains an \<^boxed_theory_text>\<open>import\<close> and a 
   \<^boxed_theory_text>\<open>keyword\<close> section, for example:
@@ -106,7 +114,7 @@ text\<open>The body of a theory file consists of a sequence of \<^emph>\<open>co
 by a command keyword such as \<^boxed_theory_text>\<open>requirement\<close> above. Command keywords may mark 
 the the begin of a text that is parsed by a command-specific parser;  the end of the 
 command-span is defined by the next keyword. Commands were used to define definitions, lemmas, 
-code and text-elements \<close>
+code and text-elements (see @{figure "docModGenConcr"}(right)).  \<close>
 
 text\<open> A simple text-element \<^index>\<open>text-element\<close> may look like this:
 
@@ -124,10 +132,10 @@ ML*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> s
 value*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some annotated \<lambda>-term \<close>
 \<close>}
 
-Other instances of commands belonging to these families are, for example, the freeform
+Other instances of document elements belonging to these families are, for example, the freeform
 \<^theory_text>\<open>Definition*\<close> and \<^theory_text>\<open>Lemma*\<close> as well as their formal counterparts \<^theory_text>\<open>definition*\<close> and \<^theory_text>\<open>lemma*\<close>,
 which allow in addition to their standard Isabelle functionality the creation and management of
-ontology-generated meta-data associated to them.
+ontology-generated meta-data associated to them (cf. -@{text_section (unchecked) "writing_doc"}).
 
 Depending on the family, we will speak about \<^emph>\<open>(formal) text-contexts\<close>,\<^bindex>\<open>formal text-contexts\<close> 
 \<^emph>\<open>(ML) code-contexts\<close>\<^bindex>\<open>code-contexts\<close> and \<^emph>\<open>term-contexts\<close>\<^bindex>\<open>term-contexts\<close> if we refer 
@@ -175,6 +183,17 @@ text\<open>Antiquotations seen as
   typeset. They represent the device for linking formal with the informal content. 
 \<close>
 
+side_by_side_figure*[docModOnto::side_by_side_figure,anchor="''docModGen''",
+                      caption="''A Document with Ontological Annotations.''",relative_width="47",
+                      src="''figures/doc-mod-DOF.png''",anchor2="''docModDOF''",
+                      caption2="''Ontological References.''",relative_width2="47",
+                      src2="''figures/doc-mod-onto-docinst.png''"]\<open>Documents conform to Ontologies.\<close>
+
+text\<open>Now, the ``raisod d'etre'' of \<^dof> is that it provides an own ontology definition language
+that \<^emph>\<open>generates\<close> anti-quotations and the infrastructure to check and evaluate them. This allows for
+checking an annotated document with respect to a given ontology, which may be specific for 
+a given domain-specific universe of discourse (see @{figure "docModOnto"}). ODL will be described in 
+@{text_section (unchecked) "isadof_tour"} in more detail.\<close>
 
 
 figure*["fig:dependency"::figure,relative_width="70",src="''figures/document-hierarchy''"]
