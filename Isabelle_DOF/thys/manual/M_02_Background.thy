@@ -57,28 +57,24 @@ to distinguish it from the official Isabelle term \<^emph>\<open>component\<clos
 format and support by the Isabelle build system.\<close>
 \<close>
 
-side_by_side_figure*[docModGenConcr::side_by_side_figure,anchor="''docModGen''",
-                      caption="''Schematic Representation.''",relative_width="45",
-                      src="''figures/doc-mod-generic.png''",anchor2="''docModIsar''",
-                      caption2="''The Isar Instance.''",relative_width2="45",
-                      src2="''figures/doc-mod-isar.png''"]\<open>The Isabelle Document Model.\<close>
-
 section*[dof::introduction]\<open>The Document Model Required by \<^dof>\<close>
 text\<open>
   In this section, we explain the assumed document model underlying our Document Ontology Framework 
   (\<^dof>) in general. In particular we discuss the concepts 
    \<^emph>\<open>integrated document\<close>\<^bindex>\<open>integrated document\<close>, \<^emph>\<open>sub-document\<close>\<^bindex>\<open>sub-document\<close>,  
   \<^emph>\<open>document-element\<close>\<^bindex>\<open>document-element\<close>, and \<^emph>\<open>semantic macros\<close>\<^bindex>\<open>semantic macros\<close> occurring 
-  inside document-elements. Furthermore, we assume a bracketing mechanism that unambiguously 
-  allows to separate different syntactic fragments and that can be nested. 
-  In the case of Isabelle, these are the guillemot symbols \<open>\<open>...\<close>\<close>, which represent the begin and end
-  of a \<^emph>\<open>cartouche\<close>\<^bindex>\<open>cartouche\<close>.\<close>
+  inside document-elements. This type of document structure is quite common for scripts interactively
+  evaluated in an incremental fashion. 
+  Furthermore, we assume a bracketing mechanism that unambiguously allows to separate different 
+  syntactic fragments and that can be nested. In the case of Isabelle, these are the guillemot 
+  symbols \<open>\<open>...\<close>\<close>, which represent the begin and end of a \<^emph>\<open>cartouche\<close>\<^bindex>\<open>cartouche\<close>.\<close>
 
 
 (*<*)
-declare_reference*["fig:dependency"::figure]
+(* declare_reference*["fig:dependency"::figure]
+   @{figure (unchecked) "fig:dependency"}  *)
+declare_reference*[docModGenConcr::figure]
 (*>*)
-
 text\<open>
   The Isabelle Framework is based on a \<^emph>\<open>document-centric view\<close>\<^bindex>\<open>document-centric view\<close> of 
   a document, treating the input in its integrality as set of (user-programmable) \<^emph>\<open>document element\<close> 
@@ -87,15 +83,13 @@ text\<open>
 
   Isabelle assumes a hierarchical document model\<^index>\<open>document model\<close>, \<^ie>, an \<^emph>\<open>integrated\<close> document 
   consist of a hierarchy of \<^emph>\<open>sub-documents\<close>  (files); dependencies are restricted to be
-  acyclic at this level (c.f. @{figure "docModGenConcr"}). 
+  acyclic at this level (c.f. @{figure (unchecked) "docModGenConcr"}). 
   Document parts can have different document types in order to capture documentations consisting of 
   documentation, models, proofs, code of various forms and other technical artifacts.  We call the 
   main sub-document type, for historical reasons, \<^emph>\<open>theory\<close>-files.  A theory file\<^bindex>\<open>theory!file\<close>
   consists of a \<^emph>\<open>header\<close>\<^bindex>\<open>header\<close>, a \<^emph>\<open>context definition\<close>\<^index>\<open>context\<close>, and a body 
   consisting of a sequence of document elements called
-  \<^emph>\<open>command\<close>s (see @{figure "docModGenConcr"}(left)
-% @{figure (unchecked) "fig:dependency"}
-). Even
+  \<^emph>\<open>command\<close>s (see @{figure (unchecked) "docModGenConcr"}(left)). Even
   the header consists of a sequence of commands used for introductory text elements not depending on 
   any context. The context-definition contains an \<^boxed_theory_text>\<open>import\<close> and a 
   \<^boxed_theory_text>\<open>keyword\<close> section, for example:
@@ -109,6 +103,12 @@ text\<open>
   refers to an imported theory (recall that the import relation must be acyclic) and 
   \<^boxed_theory_text>\<open>keywords\<close> are used to separate commands from each other.
 \<close>
+
+side_by_side_figure*[docModGenConcr::side_by_side_figure,anchor="''docModGen''",
+                      caption="''Schematic Representation.''",relative_width="45",
+                      src="''figures/doc-mod-generic.png''",anchor2="''docModIsar''",
+                      caption2="''The Isar Instance.''",relative_width2="45",
+                      src2="''figures/doc-mod-isar.png''"]\<open>A Representation of a Document Model.\<close>
 
 text\<open>The body of a theory file consists of a sequence of \<^emph>\<open>commands\<close> that must be introduced
 by a command keyword such as \<^boxed_theory_text>\<open>requirement\<close> above. Command keywords may mark 
@@ -159,7 +159,7 @@ infrastructure but \<^emph>\<open>generates\<close> its own families of antiquot
 text\<open> An example for a text-element \<^index>\<open>text-element\<close> using built-in antoquotations 
 may look like this:
 
-  @{boxed_theory_text [display]\<open>
+@{boxed_theory_text [display]\<open>
 text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, 
    we obtain in \<Gamma> for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
 ... so it is a command \<^theory_text>\<open>text\<close> followed by an argument (here in  \<open>\<open> ... \<close>\<close> parenthesis) which 
@@ -172,10 +172,9 @@ The above text element is represented in the final document (\<^eg>, a PDF) by:
 for $\operatorname{fac} \text{\textrm{5}}$ the result $\text{\textrm{120}}$.\<close>
  }\<close>
 
-text\<open>Antiquotations seen as
-  semantic macros are partial functions of type \<open>\<theta> \<rightarrow> text\<close>; since they can use the
-  system state, they can perform all sorts of specific checks or evaluations (type-checks, 
-  executions of code-elements, references to text-elements or proven theorems such as 
+text\<open>Antiquotations seen as semantic macros are partial functions of type \<open>logical_context \<rightarrow> text\<close>; 
+  since they can use the system state, they can perform all sorts of specific checks or evaluations 
+  (type-checks, executions of code-elements, references to text-elements or proven theorems such as 
   \<open>refl\<close>, which is the reference to the axiom of reflexivity).
 
   Therefore, semantic macros can establish \<^emph>\<open>formal content\<close> inside informal content; they can be 
@@ -189,16 +188,17 @@ side_by_side_figure*[docModOnto::side_by_side_figure,anchor="''docModGen''",
                       caption2="''Ontological References.''",relative_width2="47",
                       src2="''figures/doc-mod-onto-docinst.png''"]\<open>Documents conform to Ontologies.\<close>
 
-text\<open>Now, the ``raisod d'etre'' of \<^dof> is that it provides an own ontology definition language
-that \<^emph>\<open>generates\<close> anti-quotations and the infrastructure to check and evaluate them. This allows for
-checking an annotated document with respect to a given ontology, which may be specific for 
-a given domain-specific universe of discourse (see @{figure "docModOnto"}). ODL will be described in 
-@{text_section (unchecked) "isadof_tour"} in more detail.\<close>
+text\<open>Since Isabelle's commands are freely programmable, it is possible to implement  \<^dof> as an 
+extension of the system. In particular, the ontology language of \<^dof> provides an  ontology 
+definition language ODL that \<^emph>\<open>generates\<close> anti-quotations and the infrastructure to check and evaluate 
+them. This allows for checking an annotated document with respect to a given ontology, which may be 
+specific for  a given domain-specific universe of discourse (see @{figure "docModOnto"}). ODL will 
+be described in  @{text_section (unchecked) "isadof_tour"} in more detail.\<close>
 
-
+(*
 figure*["fig:dependency"::figure,relative_width="70",src="''figures/document-hierarchy''"]
        \<open>A Theory-Graph in the Document Model. \<close>
-
+*)
 section*[bgrnd21::introduction]\<open>Implementability of the Document Model in other ITP's\<close>
 text\<open> 
   Batch-mode checkers for \<^dof> can be implemented in all systems of the LCF-style prover family, 
