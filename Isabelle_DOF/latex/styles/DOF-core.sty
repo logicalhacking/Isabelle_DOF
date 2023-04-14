@@ -155,10 +155,14 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: label and ref
-\newisadof{label}[label=,type=][1]{\label{#1}}
-\newisadof{ref}[label=,type=][1]{\autoref{#1}}
-\newisadof{macroDef}[label=,type=][1]{MMM \label{#1}}        %% place_holder
-\newisadof{macroExp}[label=,type=][1]{MMM \autoref{#1}}   %% place_holder
+\newkeycommand\iisaDoflabel[label=,type=][1]{\label{#1}}
+\def\isaDoflabel{\iisaDoflabel}
+\newkeycommand\iisaDofref[label=,type=][1]{\autoref{#1}}
+\def\isaDofref{\iisaDofref}
+\newkeycommand\iisaDofmacroDef[label=,type=][1]{MMM \label{#1}}        %% place_holder
+\def\isaDofmacroDef{\iisaDofmacroDef}
+\newkeycommand\iisaDofmacroExp[label=,type=][1]{MMM \autoref{#1}}   %% place_holder
+\def\isaDofmacroExp{\iisaDofmacroExp}
 % end: label and ref
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

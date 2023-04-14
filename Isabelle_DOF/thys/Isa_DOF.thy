@@ -2824,10 +2824,10 @@ fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked, define}, src
                                              {inline = inline} pos str
     in  
         (case (define,inline) of
-            (true,false) => XML.enclose("\\csname isaDof.label\\endcsname[type={"^cid_decl^"}]   {")"}" 
-           |(false,false)=> XML.enclose("\\csname isaDof.ref\\endcsname[type={"^cid_decl^"}]     {")"}"
-           |(true,true)  => XML.enclose("\\csname isaDof.macroDef\\endcsname[type={"^cid_decl^"}]{")"}" 
-           |(false,true) => XML.enclose("\\csname isaDof.macroExp\\endcsname[type={"^cid_decl^"}]{")"}"
+            (true,false) => XML.enclose("{\\isaDoflabel[type={"^cid_decl^"}]   {")"}}" 
+           |(false,false)=> XML.enclose("{\\isaDofref[type={"^cid_decl^"}]     {")"}}"
+           |(true,true)  => XML.enclose("{\\isaDofmacroDef[type={"^cid_decl^"}]{")"}}" 
+           |(false,true) => XML.enclose("{\\isaDofmacroExp[type={"^cid_decl^"}]{")"}}"
         )
         (Latex.text (str, pos))
     end      
