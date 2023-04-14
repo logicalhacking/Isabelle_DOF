@@ -78,7 +78,7 @@ text\<open>Now, define a forward reference to the formal content: \<close>
 declare_reference*[e1bisbis::"definition"]
 
 text\<open>... which makes it possible to refer in a freeform definition to its formal counterpart
-which will appear textually later. With this pragmatics, an "out-of-order-presentation" 
+which will appear textually later. With this pragmatics, an "out-of-    order-presentation" 
 can be achieved within \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close> for the most common cases.\<close>
 
 
