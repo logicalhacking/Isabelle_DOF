@@ -28,10 +28,10 @@ complete AFP. For this, please follow the instructions given at
 <!--
 As Isabelle session names need to be
 unique, you will need to disable the entries ``Isabelle_DOF`` and
-``Isabelle_DOF-Example-Scholarly_Paper`` provided as part of the AFP. For this,
+``Isabelle_DOF-Example-I`` provided as part of the AFP. For this,
 you will need to edit the file ``$AFP/thys/ROOTS`` (where ``$AFP`` refers to the
 directory in which you installed the AFP) and delete the two entries
-``Isabelle_DOF`` and ``Isabelle_DOF-Example-Scholarly_Paper``.
+``Isabelle_DOF`` and ``Isabelle_DOF-Example-I``.
 -->
 
 For the development version of Isabelle, installing the complete AFP
