@@ -1,4 +1,4 @@
-session "2020-iFM-csp" = "Isabelle_DOF" +
+session "Isabelle_DOF-Example-II" = "Isabelle_DOF" +
   options [document = pdf, document_output = "output", document_build = dof]
   theories
     "paper"
