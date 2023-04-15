@@ -12,6 +12,7 @@ declare[[ strict_monitor_checking  = false]]
 declare[[ Definition_default_class = "definition"]]
 declare[[ Lemma_default_class      = "lemma"]]
 declare[[ Theorem_default_class    = "theorem"]]
+declare[[ Corollary_default_class  = "corollary"]]
 
 define_shortcut* csp      \<rightleftharpoons> \<open>CSP\<close>
                  holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>
@@ -526,13 +527,13 @@ a denotational proof.
 \<close>
 
 
-Corollary*[co1::"corollary", short_name="\<open>Corollaries on \<open>{DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P, DF, RUN, CHAOS, CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P}\<close>\<close>",level="Some 2"]
-\<open>
+Corollary*[co1::"corollary", short_name="\<open>Corollaries on reference processes.\<close>",level="Some 2"]
+\<open> \<^hfill> \<^br>  \<^vs>\<open>-0.3cm\<close>
   \<^enum> \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<sqsubseteq>\<^sub>\<F> CHAOS A\<close>
   \<^enum> \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<sqsubseteq>\<^sub>\<F> DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A\<close>  
   \<^enum> \<open>CHAOS A \<sqsubseteq>\<^sub>\<F> DF A\<close>
   \<^enum> \<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P A \<sqsubseteq>\<^sub>\<F> DF A\<close>  
-  \<^enum> \<open>DF A \<sqsubseteq>\<^sub>\<F> RUN A\<close>  
+  \<^enum> \<open>DF A \<sqsubseteq>\<^sub>\<F> RUN A\<close> \<^vs>\<open>0.3cm\<close>
 
 where 1 and 2 are immediate, and where 4 and 5 are directly obtained from our monotonicity 
 results while 3 requires an argument over the denotational space.
@@ -544,10 +545,8 @@ its set of traces \<open>\<T> P\<close> is a subset of  \<open>\<T> (CHAOS\<^sub
 %we can immediately infer that it also covers all traces. 
 %The \<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P\<close> case requires a longer denotational proof.
 
-
   \<^enum> \<open>CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<T> P\<close>
   \<^enum> \<open>DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<T> P\<close>
-
 \<close>
 
 text\<open> 
@@ -580,8 +579,7 @@ text\<open> Recall that all five reference processes are livelock-free.
 We also have the following lemmas about the 
 livelock-freeness of processes: 
   \<^enum> \<open>livelock\<^sub>-free P \<longleftrightarrow> \<PP> UNIV \<sqsubseteq>\<^sub>\<D> P where \<PP> \<in> \<R>\<P>\<close> 
-  \<^enum> @{cartouche [display]\<open>livelock\<^sub>-free P \<longleftrightarrow> DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<T>\<^sub>\<D> P 
-                    \<longleftrightarrow> CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<T>\<^sub>\<D> P\<close>}
+  \<^enum> \<open>livelock\<^sub>-free P \<longleftrightarrow> DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<T>\<^sub>\<D> P  \<longleftrightarrow> CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<T>\<^sub>\<D> P\<close>
   \<^enum> \<open>livelock\<^sub>-free P \<longleftrightarrow> CHAOS\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F>\<^sub>\<D> P\<close> 
 \<close>
 text\<open>
@@ -700,8 +698,7 @@ in the HOLCF library), which are also relevant for our final Dining Philophers e
 These are essentially adaptions of k-induction schemes applied to domain-theoretic
 setting (so: requiring \<open>f\<close> continuous and \<open>P\<close> admissible; these preconditions are
 skipped here): 
-  \<^item> @{cartouche [display]\<open>... \<Longrightarrow> \<forall>i<k. P (f\<^sup>i \<bottom>) \<Longrightarrow> (\<forall>X. (\<forall>i<k. P (f\<^sup>i X)) \<longrightarrow> P (f\<^sup>k X)) 
-      \<Longrightarrow> P (\<mu>X. f X)\<close>}
+  \<^item> \<open>... \<Longrightarrow> \<forall>i<k. P (f\<^sup>i \<bottom>) \<Longrightarrow> (\<forall>X. (\<forall>i<k. P (f\<^sup>i X)) \<longrightarrow> P (f\<^sup>k X)) \<Longrightarrow> P (\<mu>X. f X)\<close>
   \<^item> \<open>... \<Longrightarrow> \<forall>i<k. P (f\<^sup>i \<bottom>) \<Longrightarrow> (\<forall>X. P X \<longrightarrow> P (f\<^sup>k X)) \<Longrightarrow> P (\<mu>X. f X)\<close>
 
 
@@ -711,8 +708,7 @@ it reduces the goal size.
 Another problem occasionally occurring in refinement proofs happens when the right side term 
 involves more than one  fixed-point  process (\<^eg> \<open>P \<lbrakk>{A}\<rbrakk> Q \<sqsubseteq> S\<close>). In this situation,
 we need parallel fixed-point inductions. The HOLCF library offers only a basic one:
-  \<^item> @{cartouche [display]\<open>... \<Longrightarrow> P \<bottom> \<bottom> \<Longrightarrow> (\<forall>X Y. P X Y \<Longrightarrow> P (f X) (g Y)) 
-        \<Longrightarrow> P (\<mu>X. f X) (\<mu>X. g X)\<close>}
+  \<^item> \<open>... \<Longrightarrow> P \<bottom> \<bottom> \<Longrightarrow> (\<forall>X Y. P X Y \<Longrightarrow> P (f X) (g Y)) \<Longrightarrow> P (\<mu>X. f X) (\<mu>X. g X)\<close>
 
 
 \<^noindent> This form does not help in cases like in \<open>P \<lbrakk>\<emptyset>\<rbrakk> Q \<sqsubseteq> S\<close> with the interleaving operator on the 
