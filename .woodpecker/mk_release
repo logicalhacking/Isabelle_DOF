@@ -83,18 +83,18 @@ build_and_install_manuals()
     if [ "$DIRTY" = "true" ]; then
         if [ -z ${ARTIFACT_DIR+x} ]; then
             echo "  * Quick and Dirty Mode (local build)"
-            $ISABELLE build -d . Isabelle_DOF Isabelle_DOF-Example-Scholarly_Paper
-            mkdir -p $ISADOF_WORK_DIR/Isabelle_DOF-Example-Scholarly_Paper/output/
-            cp Isabelle_DOF-Example-Scholarly_Paper/output/document.pdf \
-               $ISADOF_WORK_DIR/Isabelle_DOF-Example-Scholarly_Paper/output/
+            $ISABELLE build -d . Isabelle_DOF Isabelle_DOF-Example-I
+            mkdir -p $ISADOF_WORK_DIR/Isabelle_DOF-Example-I/output/
+            cp Isabelle_DOF-Example-I/output/document.pdf \
+               $ISADOF_WORK_DIR/Isabelle_DOF-Example-I/output/
             mkdir -p $ISADOF_WORK_DIR/Isabelle_DOF/output/
             cp Isabelle_DOF/output/document.pdf \
                $ISADOF_WORK_DIR/Isabelle_DOF/output/;
         else
             echo "  * Quick and Dirty Mode (running on CI)"
-            mkdir -p $ISADOF_WORK_DIR/Isabelle_DOF-Example-Scholarly_Paper/output/
-            cp $ARTIFACT_DIR/browser_info/Unsorted/Isabelle_DOF-Example-Scholarly_Paper/document.pdf \
-               $ISADOF_WORK_DIR/Isabelle_DOF-Example-Scholarly_Paper/output/
+            mkdir -p $ISADOF_WORK_DIR/Isabelle_DOF-Example-I/output/
+            cp $ARTIFACT_DIR/browser_info/Unsorted/Isabelle_DOF-Example-I/document.pdf \
+               $ISADOF_WORK_DIR/Isabelle_DOF-Example-I/output/
  
             mkdir -p $ISADOF_WORK_DIR/Isabelle_DOF/output/
             cp $ARTIFACT_DIR/browser_info/Unsorted/Isabelle_DOF/document.pdf \
@@ -111,9 +111,9 @@ build_and_install_manuals()
         $ISADOF_WORK_DIR/doc/Isabelle_DOF-Manual.pdf
     echo "  Isabelle_DOF-Manual                       User and Implementation Manual for Isabelle/DOF" >> $ISADOF_WORK_DIR/doc/Contents
 
-    cp $ISADOF_WORK_DIR/Isabelle_DOF-Example-Scholarly_Paper/output/document.pdf \
-        $ISADOF_WORK_DIR/doc/Isabelle_DOF-Example-Scholarly_Paper.pdf
-    echo "  Isabelle_DOF-Example-Scholarly_Paper       Example academic paper" >> $ISADOF_WORK_DIR/doc/Contents
+    cp $ISADOF_WORK_DIR/Isabelle_DOF-Example-I/output/document.pdf \
+        $ISADOF_WORK_DIR/doc/Isabelle_DOF-Example-I.pdf
+    echo "  Isabelle_DOF-Example-I       Example academic paper" >> $ISADOF_WORK_DIR/doc/Contents
 
     find $ISADOF_WORK_DIR -type d -name "output" -exec rm -rf {} \; &> /dev/null || true
     rm -rf $ISADOF_WORK_DIR/.git* $ISADOF_WORK_DIR/.woodpecker $ISADOF_WORK_DIR/.afp 

@@ -1,5 +1,5 @@
 session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" + 
-  options [document = pdf, document_output = "output", document_build = dof]
+  options [document = pdf, document_output = "output", document_build = dof, document_variants = "document:overview=-proof,-ML,-unimportant"]
   theories
     "TestKit"
     "Latex_Tests"
@@ -7,9 +7,10 @@ session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" +
     "Concept_Example_Low_Level_Invariant"
     "Concept_High_Level_Invariants"
     "Concept_MonitorTest1"
+    "Concept_MonitorTest2"
     "Concept_TermAntiquotations"
+    "Concept_TermEvaluation"
     "Attributes"
-    "Evaluation"
     "AssnsLemmaThmEtc" 
     "Ontology_Matching_Example"
     "Cenelec_Test"

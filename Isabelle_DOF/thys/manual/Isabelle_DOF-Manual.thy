@@ -1,7 +1,7 @@
 (*************************************************************************
  * Copyright (C) 
- *               2019      The University of Exeter 
- *               2018-2019 The University of Paris-Saclay
+ *               2019-2023      The University of Exeter 
+ *               2018-2023 The University of Paris-Saclay
  *               2018      The University of Sheffield
  *
  * License:
@@ -13,7 +13,7 @@
 
 (*<*)
 theory "Isabelle_DOF-Manual"
-  imports "05_Implementation"
+  imports "M_05_Implementation"
 begin
 close_monitor*[this]
 check_doc_global

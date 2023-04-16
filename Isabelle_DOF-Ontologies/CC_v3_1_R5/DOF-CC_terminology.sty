@@ -1,0 +1,57 @@
+%% Copyright (C) University of Exeter
+%%               University of Paris-Saclay
+%%
+%% License:
+%%   This program can be redistributed and/or modified under the terms
+%%   of the LaTeX Project Public License Distributed from CTAN
+%%   archives in directory macros/latex/base/lppl.txt; either
+%%   version 1.3c of the License, or (at your option) any later version.
+%%   OR
+%%   The 2-clause BSD-style license.
+%%
+%%   SPDX-License-Identifier: LPPL-1.3c+ OR BSD-2-Clause
+
+\NeedsTeXFormat{LaTeX2e}\relax
+\ProvidesPackage{DOF-CC_terminology}
+  [00/00/0000 Document-Type Support Framework for Isabelle (CC).]
+
+\RequirePackage{DOF-COL}
+\usepackage{etex}
+\ifdef{\reserveinserts}{\reserveinserts{28}}{}
+
+
+
+
+\newkeycommand*{\mathcc}[label=,type=%
+ , scholarly_paper.math_content.short_name ={}%
+ , scholarly_paper.math_content.mcc     = % 
+ , Isa_COL.text_element.level         =%
+ , Isa_COL.text_element.referentiable =%
+ , Isa_COL.text_element.variants      =%
+ , scholarly_paper.text_section.main_author  =%
+ , scholarly_paper.text_section.fixme_list   =%
+ , Isa_COL.text_element.level                =%
+ , scholarly_paper.technical.definition_list =%
+ , scholarly_paper.technical.status          =%
+ , CC_terminology.concept_definition.tag=%
+ , CC_terminology.concept_definition.short_tag=%
+ ]
+ [1]
+ {%
+    \begin{isamarkuptext}%
+      \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+        {%
+         \begin{\commandkey{scholarly_paper.math_content.mcc}}\label{\commandkey{label}}
+           #1
+         \end{\commandkey{scholarly_paper.math_content.mcc}}
+        }{%
+         \begin{\commandkey{scholarly_paper.math_content.mcc}}[\commandkey{scholarly_paper.math_content.short_name}]\label{\commandkey{label}} 
+           #1 
+         \end{\commandkey{scholarly_paper.math_content.mcc}}
+        }
+    \end{isamarkuptext}%
+ } 
+
+\expandafter\def\csname isaDof.text.scholarly_paper.math_content\endcsname{\mathcc}
+
+

@@ -20,6 +20,9 @@ imports
 "Isabelle_DOF.technical_report" 
 
 begin
+
+define_ontology "DOF-CC_terminology.sty" "CC"
+
 (*>>*)
 text\<open>We re-use the class @\<open>typ math_content\<close>, which provides also a framework for
 semi-formal terminology, which we re-use by this definition.\<close>

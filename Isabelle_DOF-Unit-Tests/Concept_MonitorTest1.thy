@@ -77,8 +77,10 @@ text-assert-error[test_monitor_A1::test_monitor_A]\<open>\<close>
                   \<open>accepts clause 1 of monitor Concept_MonitorTest1.test_monitor_M rejected\<close>
 declare[[strict_monitor_checking=false]]
 text*[test_monitor_A1::test_monitor_A]\<open>\<close> \<comment> \<open>the same in non-strict monitor checking.\<close>
-
-text*[testFree2::test_monitor_free]\<open>\<close>
+declare[[free_class_in_monitor_strict_checking]]
+text-assert-error[testFree2::test_monitor_free]\<open>\<close>
+                  \<open>accepts clause 1 of monitor Concept_MonitorTest1.test_monitor_M not enabled\<close>
+declare[[free_class_in_monitor_strict_checking=false]]
 text*[test_monitor_head1::test_monitor_head]\<open>\<close>
 text*[testFree3::test_monitor_free]\<open>\<close>
 text*[test_monitor_B1::test_monitor_B]\<open>\<close>
@@ -106,6 +108,20 @@ term*\<open>map fst @{trace-attribute \<open>test_monitor_M\<close>}\<close>
 value*\<open>map fst @{trace-attribute \<open>test_monitor_M\<close>}\<close>
 
 ML\<open>@{assert} ([("Conceptual.A", "test"), ("Conceptual.F", "sdfg")] =  @{trace_attribute aaa})       \<close>
+
+
+open_monitor*[test_monitor_M3::monitor_M]
+
+declare[[strict_monitor_checking]]
+text-assert-error[test_monitor_A2::test_monitor_A]\<open>\<close> 
+                  \<open>accepts clause 1 of monitor Concept_MonitorTest1.test_monitor_M3 rejected\<close>
+declare[[strict_monitor_checking=false]]
+text*[test_monitor_A3::test_monitor_A]\<open>\<close> \<comment> \<open>the same in non-strict monitor checking.\<close>
+declare[[free_class_in_monitor_strict_checking]]
+text-assert-error[testFree7::test_monitor_free]\<open>\<close>
+                  \<open>accepts clause 1 of monitor Concept_MonitorTest1.test_monitor_M3 not enabled\<close>
+declare[[free_class_in_monitor_strict_checking=false]]
+
 
 end 
   

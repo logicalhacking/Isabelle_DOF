@@ -13,9 +13,9 @@
 
 (*<*)
 theory 
-  "04_RefMan"
+  "M_04_RefMan"
   imports 
-    "03_GuidedTour" 
+    "M_03_GuidedTour" 
 begin
 
 declare_reference*[infrastructure::technical]
@@ -310,13 +310,24 @@ text\<open>
 section\<open>Fundamental Commands of the \<^isadof> Core\<close>
 text\<open>Besides the core-commands to define an ontology as presented in the previous section, 
 the \<^isadof> core provides a number of mechanisms to \<^emph>\<open>use\<close> the resulting data to annotate
-text-elements and, in some cases, terms. 
+text-elements and, in some cases, terms.
+In the following, we formally introduce the syntax of the core commands as 
+supported on the Isabelle/Isar level. Some more advanced functionality of the core 
+is currently only available in the SML API's of the kernel. 
+
 \<close>
 
 subsection\<open>Syntax\<close>
-text\<open>In the following, we formally introduce the syntax of the core commands as 
-supported on the Isabelle/Isar level. Some more advanced functionality of the core 
-is currently only available in the SML API's of the kernel. 
+text\<open>
+
+
+\<close>
+text\<open>Recall that except \<^theory_text>\<open>text*[]\<open>...\<close>\<close>, all \<^isadof> commands were mapped to visible
+layout; these commands have to be wrapped into 
+ \<^verbatim>\<open>(*<*) ... (*>*)\<close> if this is undesired. \<close>
+
+subsection\<open>Ontological Text-Contexts and their Management\<close>
+text\<open>
 
 \<^item> \<open>obj_id\<close>:\<^index>\<open>obj\_id@\<open>obj_id\<close>\<close> (or \<^emph>\<open>oid\<close>\<^index>\<open>oid!oid@\<open>see obj_id\<close>\<close> for short) a \<^emph>\<open>name\<close>
   as specified in @{technical \<open>odl-manual0\<close>}.
@@ -329,15 +340,10 @@ is currently only available in the SML API's of the kernel.
   symbolic evaluation using the simplifier, \<open>nbe\<close> for \<^emph>\<open>normalization by
   evaluation\<close> and \<^emph>\<open>code\<close> for code generation in SML.
 \<^item> \<open>upd_meta_args\<close> :
-   \<^rail>\<open> (obj_id ('::' class_id) ((',' attribute (':=' | '+=') HOL_term) * ))\<close>
+   \<^rail>\<open> (obj_id ('::' class_id) ((',' attribute (':=' | '+=') HOL_term ) * ))\<close>
+
 \<^item> \<open>annotated_text_element\<close> :
-\<^rail>\<open> 
-    (  @@{command "text*"} '[' meta_args ']' '\<open>' formal_text '\<close>'
-        | @@{command "ML*"}   '[' meta_args ']' '\<open>' SML_code '\<close>'
-        | @@{command "term*"} ('[' meta_args ']')? '\<open>' HOL_term  '\<close>'
-        | (@@{command "value*"} 
-          | @@{command "assert*"}) \<newline> ('[' meta_args ']')? ('[' evaluator ']')? '\<open>' HOL_term '\<close>'
-    )
+\<^rail>\<open>( @@{command "text*"} '[' meta_args ']' '\<open>' formal_text '\<close>' )
   \<close>
 \<^rail>\<open>  
      (  @@{command "open_monitor*"}  
@@ -350,21 +356,10 @@ is currently only available in the SML API's of the kernel.
   \<close>
 \<^item> \<^isadof> \<open>change_status_command\<close> :
   \<^rail>\<open>  (@@{command "update_instance*"} '[' upd_meta_args ']')\<close>
-\<^item> \<^isadof> \<open>inspection_command\<close> :
-  \<^rail>\<open>    @@{command "print_doc_classes"}
-        |  @@{command "print_doc_items"} 
-        |  @@{command "check_doc_global"}\<close>
-\<^item> \<^isadof> \<open>macro_command\<close> :
-  \<^rail>\<open>   @@{command "define_shortcut*"} name ('\<rightleftharpoons>' | '==') '\<open>' string '\<close>' 
-        |  @@{command "define_macro*"}  name ('\<rightleftharpoons>' | '==') 
-           \<newline> '\<open>' string '\<close>' '_' '\<open>' string '\<close>' \<close>
-\<close>
-text\<open>Recall that except \<^theory_text>\<open>text*[]\<open>...\<close>\<close>, all \<^isadof> commands were mapped to visible
-layout; these commands have to be wrapped into 
- \<^verbatim>\<open>(*<*) ... (*>*)\<close> if this is undesired. \<close>
 
-subsection\<open>Ontological Text-Contexts and their Management\<close>
-text\<open> With respect to the family of text elements,
+
+
+With respect to the family of text elements,
 \<^theory_text>\<open>text*[oid::cid, ...] \<open> \<dots> text \<dots> \<close> \<close> is the core-command of \<^isadof>: it permits to create
 an object of meta-data belonging to the class \<^theory_text>\<open>cid\<close>\<^index>\<open>cid!cid@\<open>see class_id\<close>\<close>.
 This is viewed as the \<^emph>\<open>definition\<close> of an instance of a document class.
@@ -391,11 +386,22 @@ For a declared class \<^theory_text>\<open>cid\<close>, there exists a text anti
 The precise presentation is decided in the \<^emph>\<open>layout definitions\<close>, for example by suitable
 \<^LaTeX>-template code. Declared but not yet defined instances must be referenced with a particular
 pragma in order to enforce a relaxed checking \<^theory_text>\<open> @{cid (unchecked) \<open>oid\<close>} \<close>.
+The choice of the default class in a @{command "declare_reference*"}-command
+can be influenced by setting globally an attribute:
+@{boxed_theory_text [display]
+\<open>declare[[declare_reference_default_class = "definition"]]\<close>}
+Then in this example:
+@{boxed_theory_text [display]\<open>declare_reference*[def1]\<close>}
+\<open>def1\<close> will be a declared instance of the class \<open>definition\<close>. 
 \<close>
 
 subsection\<open>Ontological Code-Contexts and their Management\<close>
 
-text\<open>The \<^theory_text>\<open>ML*[oid::cid, ...] \<open> \<dots> SML-code \<dots> \<close>\<close>-document elements proceed similarly: 
+text\<open>
+\<^item> \<open>annotated_code_element\<close>:
+\<^rail>\<open>(@@{command "ML*"}   '[' meta_args ']' '\<open>' SML_code '\<close>')\<close>
+
+The \<^theory_text>\<open>ML*[oid::cid, ...] \<open> \<dots> SML-code \<dots> \<close>\<close>-document elements proceed similarly:
 a referentiable meta-object of class \<^theory_text>\<open>cid\<close> is created, initialized with the optional 
  attributes and bound to \<^theory_text>\<open>oid\<close>. In fact, the entire the meta-argument list is optional.
 The SML-code is type-checked and executed 
@@ -403,38 +409,138 @@ in the context of the SML toplevel of the Isabelle system as in the correspondin
 \<^theory_text>\<open>ML\<open> \<dots> SML-code \<dots> \<close>\<close>-command.
 Additionally, ML antiquotations were added to check and evaluate terms with
 term antiquotations:
+\<^item> \<^theory_text>\<open>@{term_ \<open>term\<close> }\<close> parses and type-checks \<open>term\<close> with term antiquotations,
+  for instance \<^theory_text>\<open>@{term_ \<open>@{technical \<open>odl-manual1\<close>}\<close>}\<close> will parse and check
+  that \<open>odl-manual1\<close> is indeed an instance of the class \<^typ>\<open>technical\<close>,
 \<^item> \<^theory_text>\<open>@{value_ \<open>term\<close> }\<close> performs the evaluation of \<open>term\<close> with term antiquotations,
-  for instance \<^theory_text>\<open>@{value_ \<open>mcc @{cenelec-term \<open>FT\<close>}\<close>}\<close>
-  will print the value of the \<^const>\<open>mcc\<close> attribute of the instance \<open>FT\<close>.
+  for instance \<^theory_text>\<open>@{value_ \<open>definition_list @{technical \<open>odl-manual1\<close>}\<close>}\<close>
+  will get the value of the \<^const>\<open>definition_list\<close> attribute of the instance \<open>odl-manual1\<close>.
   \<^theory_text>\<open>value_\<close> may have an optional argument between square brackets to specify the evaluator:
-  \<open>@{value_ [nbe] \<open>mcc @{cenelec-term \<open>FT\<close>}\<close>}\<close> forces \<open>value_\<close> to evaluate
+  \<^theory_text>\<open>@{value_ [nbe] \<open>definition_list @{technical \<open>odl-manual1\<close>}\<close>}\<close> forces \<open>value_\<close> to evaluate
   the term using normalization by evaluation (see @{cite "wenzel:isabelle-isar:2020"}).
 \<close>
 
 (*<*)
+doc_class A =
+   level :: "int option"
+   x :: int
+definition*[a1::A, x=5, level="Some 1"] xx' where "xx' \<equiv> A.x @{A \<open>a1\<close>}" if "A.x @{A \<open>a1\<close>} = 5"
+
+doc_class E =
+   x :: "string"              <= "''qed''"
+
+doc_class cc_assumption_test =
+a :: int
+text*[cc_assumption_test_ref::cc_assumption_test]\<open>\<close>
+
+definition tag_l :: "'a \<Rightarrow> 'b \<Rightarrow> 'b" where "tag_l \<equiv> \<lambda>x y. y"
+
+lemma* tagged : "tag_l @{cc-assumption-test \<open>cc_assumption_test_ref\<close>} AA \<Longrightarrow> AA"
+  by (simp add: tag_l_def)
+
+find_theorems name:tagged "(_::cc_assumption_test \<Rightarrow> _ \<Rightarrow> _) _ _ \<Longrightarrow>_"
+
+lemma*[e5::E] testtest : "xx + A.x @{A \<open>a1\<close>} = yy + A.x @{A \<open>a1\<close>} \<Longrightarrow> xx = yy" by simp
+
+doc_class B'_test' =
+b::int
+
+text*[b::B'_test']\<open>\<close>
+
+term*\<open>@{B--test- \<open>b\<close>}\<close>
+
 declare_reference*["text-elements-expls"::technical]
 (*>*)
+ML\<open>
 
+\<close>
 subsection*["subsec:onto-term-ctxt"::technical]\<open>Ontological Term-Contexts and their Management\<close>
-text\<open>The major commands providing term-contexts are 
+text\<open> 
+\<^item> \<open>annotated_term_element\<close>
+\<^rail>\<open> 
+    (@@{command "term*"} ('[' meta_args ']')? '\<open>' HOL_term  '\<close>'
+     | (@@{command "value*"}
+        | @@{command "assert*"}) \<newline> ('[' meta_args ']')? ('[' evaluator ']')? '\<open>' HOL_term '\<close>'
+     | (@@{command "definition*"}) ('[' meta_args ']')?
+        ('... see ref manual')
+     | (@@{command "lemma*"} | @@{command "theorem*"} | @@{command "corollary*"}
+       | @@{command "proposition*"} | @@{command "schematic_goal*"}) ('[' meta_args ']')?
+         ('... see ref manual')
+    )
+  \<close>
+
+For a declared class \<^theory_text>\<open>cid\<close>, there exists a term-antiquotation of the form \<^theory_text>\<open>@{cid \<open>oid\<close>}\<close>.
+Due to implementation of term-antiquotation using mixfix annotation
+(see @{cite "wenzel:isabelle-isar:2020"}),
+should a class \<open>cid\<close> contains an underscore or a single quote,
+they will be converted to hyphens in the term-antiquotation.
+For example:
+@{boxed_theory_text [display]
+\<open>doc_class B'_test' =
+b::int
+
+text*[b::B'_test']\<open>\<close>
+
+term*\<open>@{B--test- \<open>b\<close>}\<close>\<close>}
+
+The major commands providing term-contexts are
 \<^theory_text>\<open>term*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>,
 \<^theory_text>\<open>value*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close> and
 \<^theory_text>\<open>assert*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>\<^footnote>\<open>The meta-argument list is optional.\<close>.
-Wrt. creation, track-ability and checking they are analogous to the ontological text and 
+Wrt. creation, track-ability and checking these commands are analogous to the ontological text and 
 code-commands. However the argument terms may contain term-antiquotations stemming from an
-ontology definition. Both term-contexts were type-checked and \<^emph>\<open>validated\<close> against
-the global context (so: in the term @{term_ \<open>@{author \<open>bu\<close>}\<close>}, \<open>bu\<close>
+ontology definition. Term-contexts were type-checked and \<^emph>\<open>validated\<close> against
+the global context (so: in the term @{term_ [source] \<open>@{author \<open>bu\<close>}\<close>}, \<open>bu\<close>
 is indeed a string which refers to a meta-object belonging
 to the document class \<^typ>\<open>author\<close>, for example).
-The term-context in the \<open>value*\<close>-command and \<^emph>\<open>assert*\<close>-command is additionally expanded
+Putting aside @{command "term*"}-command,
+the term-context in the other commands is additionally expanded
 (\<^eg> replaced) by a term denoting the meta-object.
 This expansion happens \<^emph>\<open>before\<close> evaluation of the term, thus permitting
 executable HOL-functions to interact with meta-objects.
-The \<^emph>\<open>assert*\<close>-command allows for logical statements to be checked in the global context
+The @{command "assert*"}-command allows for logical statements to be checked in the global context
 (see @{technical (unchecked) \<open>text-elements-expls\<close>}).
 % TODO:
 % Section reference @{docitem (unchecked) \<open>text-elements-expls\<close>} has not the right number
 This is particularly useful to explore formal definitions wrt. their border cases.
+
+The @{command "definition*"}-command allows \<open>prop\<close>, \<open>spec_prems\<close>, and \<open>for_fixes\<close>
+(see the @{command "definition"} command in @{cite "wenzel:isabelle-isar:2020"}) to contain
+term-antiquotations. For example:
+@{boxed_theory_text [display]
+\<open>doc_class A =
+   level :: "int option"
+   x :: int
+definition*[a1::A, x=5, level="Some 1"] xx' where "xx' \<equiv> A.x @{A \<open>a1\<close>}" if "A.x @{A \<open>a1\<close>} = 5"\<close>}
+
+The @{term_ [source] \<open>@{A \<open>a1\<close>}\<close>} term-antiquotation is used both in \<open>prop\<close> and in \<open>spec_prems\<close>.
+
+@{command "lemma*"}, @{command "theorem*"}, etc., are extended versions of the goal commands
+defined in @{cite "wenzel:isabelle-isar:2020"}. Term-antiquotations can be used either in
+a \<open>long_statement\<close> or in a \<open>short_statement\<close>.
+For instance:
+@{boxed_theory_text [display]
+\<open>lemma*[e5::E] testtest : "xx + A.x @{A \<open>a1\<close>} = yy + A.x @{A \<open>a1\<close>} \<Longrightarrow> xx = yy"
+ by simp\<close>}
+
+This @{command "lemma*"}-command is defined using the @{term_ [source] \<open>@{A \<open>a1\<close>}\<close>}
+term-antiquotation and attaches the @{docitem_name "e5"} instance meta-data to the \<open>testtest\<close>-lemma.
+
+@{boxed_theory_text [display]
+\<open>doc_class cc_assumption_test =
+a :: int
+text*[cc_assumption_test_ref::cc_assumption_test]\<open>\<close>
+
+definition tag_l :: "'a \<Rightarrow> 'b \<Rightarrow> 'b" where "tag_l \<equiv> \<lambda>x y. y"
+
+lemma* tagged : "tag_l @{cc-assumption-test \<open>cc_assumption_test_ref\<close>} AA \<Longrightarrow> AA"
+  by (simp add: tag_l_def)
+
+find_theorems name:tagged "(_::cc_assumption_test \<Rightarrow> _ \<Rightarrow> _) _ _ \<Longrightarrow>_"\<close>}
+
+In this example, the definition \<^const>\<open>tag_l\<close> adds a tag to the \<open>tagged\<close> lemma using
+the term-antiquotation @{term_ [source] \<open>@{cc-assumption-test \<open>cc_assumption_test_ref\<close>}\<close>}
+inside the \<open>prop\<close> declaration.
 
 Note unspecified attribute values were represented by free fresh variables which constrains \<^dof>
 to choose either the normalization-by-evaluation strategy \<^theory_text>\<open>nbe\<close> or a proof attempt via
@@ -447,7 +553,13 @@ declare_reference*["sec:advanced"::technical]
 (*>*)
 
 subsection\<open>Status and Query Commands\<close>
-text\<open>\<^isadof> provides a number of inspection commands.
+
+text\<open>
+\<^item> \<^isadof> \<open>inspection_command\<close> :
+  \<^rail>\<open>    @@{command "print_doc_classes"}
+        |  @@{command "print_doc_items"} 
+        |  @@{command "check_doc_global"}\<close>
+\<^isadof> provides a number of inspection commands.
 \<^item> \<^theory_text>\<open>print_doc_classes\<close> allows to view the status of the internal
   class-table resulting from ODL definitions,
 \<^item> \<^ML>\<open>DOF_core.print_doc_class_tree\<close> allows for presenting (fragments) of
@@ -469,7 +581,13 @@ text\<open>\<^isadof> provides a number of inspection commands.
 \<close>
 
 subsection\<open>Macros\<close>
-text\<open>There is a mechanism to define document-local macros which
+text\<open>
+\<^item> \<^isadof> \<open>macro_command\<close> :
+  \<^rail>\<open>   @@{command "define_shortcut*"} name ('\<rightleftharpoons>' | '==') '\<open>' string '\<close>' 
+        |  @@{command "define_macro*"}  name ('\<rightleftharpoons>' | '==') 
+           \<newline> '\<open>' string '\<close>' '_' '\<open>' string '\<close>' \<close>
+
+There is a mechanism to define document-local macros which
 were PIDE-supported but lead to an expansion in the integrated source; this feature
 can be used to define 
 \<^item> \<^theory_text>\<open>shortcuts\<close>, \<^ie>, short names that were expanded to, for example,
@@ -1016,6 +1134,7 @@ text\<open>
   closing of a monitor.
   For this use-case you can use low-level class invariants
   (see @{technical (unchecked) "sec:low_level_inv"}).
+  Also, for now, term-antiquotations can not be used in an invariant formula.
 \<close>
 
 subsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
@@ -1108,27 +1227,28 @@ text\<open>
   (note the long name of the class),
   is straight-forward:
 
-\begin{sml}
-fun check_result_inv oid {is_monitor:bool} ctxt =
+@{boxed_sml [display]
+\<open>fun check_result_inv oid {is_monitor:bool} ctxt =
   let
     val kind =
-      ISA_core.compute_attr_access ctxt "evidence" oid NONE <@>{here}
+      ISA_core.compute_attr_access ctxt "evidence" oid NONE @{here}
     val prop =
-      ISA_core.compute_attr_access ctxt "property" oid NONE <@>{here}
+      ISA_core.compute_attr_access ctxt "property" oid NONE @{here}
     val tS = HOLogic.dest_list prop
   in  case kind of
-       <@>{term "proof"} => if not(null tS) then true
+       @{term "proof"} => if not(null tS) then true
                           else error("class result invariant violation")
-      | _ => false
+      | _ => true
   end
- val _ = Theory.setup (DOF_core.update_class_invariant
-                         "Low_Level_Syntax_Invariants.result" check_result_inv)
-\end{sml}
+val cid_long = DOF_core.get_onto_class_name_global "result" @{theory}
+val bind = Binding.name "Check_Result"
+val _ = Theory.setup (DOF_core.make_ml_invariant (check_result_inv, cid_long)
+                     |> DOF_core.add_ml_invariant bind)\<close>}
 
   The \<^ML>\<open>Theory.setup\<close>-command (last line) registers the \<^boxed_theory_text>\<open>check_result_inv\<close> function 
   into the \<^isadof> kernel, which activates any creation or modification of an instance of 
   \<^boxed_theory_text>\<open>result\<close>. We cannot replace \<^boxed_theory_text>\<open>compute_attr_access\<close> by the 
-  corresponding antiquotation \<^boxed_theory_text>\<open>@{docitem_value kind::oid}\<close>, since
+  corresponding antiquotation \<^boxed_theory_text>\<open>\<^value_>\<open>evidence @{result \<open>oid\<close>}\<close>\<close>, since
   \<^boxed_theory_text>\<open>oid\<close> is bound to a  variable here and can therefore not be statically expanded.
 \<close>
 

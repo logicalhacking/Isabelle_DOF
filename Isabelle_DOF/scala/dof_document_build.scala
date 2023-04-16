@@ -98,6 +98,17 @@ object DOF_Document_Build
 \newcommand{\isadofgenericdoi}{""" + DOF.generic_doi + """}
 \newcommand{\isabellelatestversion}{""" + DOF.latest_isabelle + """}
 """)
+
+
+      val texinputs: Path = Path.explode("~~/lib/texinputs")
+      val comment_latex = options.bool("document_comment_latex")
+      if (!comment_latex) { 
+        Isabelle_System.copy_file(texinputs + Path.basic("comment.sty"), directory.doc_dir)
+      }
+
+      doc.tags.sty(comment_latex).write(directory.doc_dir)
+
+
       directory
     }
   }

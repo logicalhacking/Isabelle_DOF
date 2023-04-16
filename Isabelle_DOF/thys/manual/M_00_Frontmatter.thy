@@ -12,15 +12,13 @@
  *************************************************************************)
 
 (*<*)
-theory "00_Frontmatter"
+theory "M_00_Frontmatter"
   imports 
     "Isabelle_DOF.technical_report"
 begin
  
 use_template "scrreprt-modern"
 use_ontology "technical_report"
-
-
 
 section\<open>Local Document Setup.\<close>
 text\<open>Introducing document specific abbreviations and macros:\<close>
@@ -32,6 +30,7 @@ define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
                  BibTeX  \<rightleftharpoons> \<open>\BibTeX{}\<close> 
                  LaTeX   \<rightleftharpoons> \<open>\LaTeX{}\<close>
                  TeX     \<rightleftharpoons> \<open>\TeX{}\<close>
+                 dofurl  \<rightleftharpoons> \<open>\dofurl\<close>
                  pdf     \<rightleftharpoons> \<open>PDF\<close>
 
 text\<open>Note that these setups assume that the associated \<^LaTeX> macros 
@@ -109,12 +108,15 @@ author*[  adb,
           orcid       ="\<open>0000-0002-6355-1200\<close>",
           http_site   ="\<open>https://www.brucker.ch/\<close>",
           affiliation ="\<open>University of Exeter, Exeter, UK\<close>"]\<open>Achim D. Brucker\<close>
+author*[  nico,
+          email       = "\<open>nicolas.meric@lri.fr\<close>",
+          affiliation = "\<open>Université Paris-Saclay, LRI, Paris, France\<close>"]\<open>Nicolas Méric\<close>
 author*[  bu,
           email       = "\<open>wolff@lri.fr\<close>",
           affiliation = "\<open>Université Paris-Saclay, LRI, Paris, France\<close>"]\<open>Burkhart Wolff\<close>
  
 abstract*[abs, keywordlist="[\<open>Ontology\<close>, \<open>Ontological Modeling\<close>, \<open>Document Management\<close>, 
-                             \<open>Formal Document Development\<close>,\<open>Document Authoring\<close>,\<open>Isabelle/DOF\<close>]"]
+                             \<open>Formal Document Development\<close>,\<open>Isabelle/DOF\<close>]"]
 \<open>   \<^isadof> provides an implementation of \<^dof> on top of Isabelle/HOL. 
     \<^dof> itself is a novel framework for \<^emph>\<open>defining\<close> ontologies
     and \<^emph>\<open>enforcing\<close> them during document development and document

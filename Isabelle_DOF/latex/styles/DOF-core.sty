@@ -65,7 +65,7 @@
   \ifcsname isaDof.\commandkey{type}\endcsname%
       \csname isaDof.\commandkey{type}\endcsname%
               [label=\commandkey{label},\commandkey{args}]{#1}%
-  \else\relax\fi%
+  \else%
   \ifcsname isaDof.\commandkey{env}.\commandkey{type}\endcsname%
       \csname isaDof.\commandkey{env}.\commandkey{type}\endcsname%
               [label=\commandkey{label},\commandkey{args}]{#1}%
@@ -81,6 +81,7 @@
         definition for "\commandkey{env}" available either.}%
       \fi%
   \fi%
+\fi%
 }
 % end: generic dispatcher
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,10 +155,14 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: label and ref
-\newisadof{label}[label=,type=][1]{\label{#1}}
-\newisadof{ref}[label=,type=][1]{\autoref{#1}}
-\newisadof{macroDef}[label=,type=][1]{MMM \label{#1}}        %% place_holder
-\newisadof{macroExp}[label=,type=][1]{MMM \autoref{#1}}   %% place_holder
+\newkeycommand\iisaDoflabel[label=,type=][1]{\label{#1}}
+\def\isaDoflabel{\iisaDoflabel}
+\newkeycommand\iisaDofref[label=,type=][1]{\autoref{#1}}
+\def\isaDofref{\iisaDofref}
+\newkeycommand\iisaDofmacroDef[label=,type=][1]{MMM \label{#1}}        %% place_holder
+\def\isaDofmacroDef{\iisaDofmacroDef}
+\newkeycommand\iisaDofmacroExp[label=,type=][1]{MMM \autoref{#1}}   %% place_holder
+\def\isaDofmacroExp{\iisaDofmacroExp}
 % end: label and ref
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -169,3 +174,5 @@
 % notation
 \newcommand{\isactrltermUNDERSCORE}{\isakeywordcontrol{term{\isacharunderscore}}}
 \newcommand{\isactrlvalueUNDERSCORE}{\isakeywordcontrol{value{\isacharunderscore}}}
+\newcommand{\isasymdoublequote}{\texttt{\upshape"}}
+\newcommand{\isasymquote}{\texttt{\upshape'}}

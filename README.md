@@ -35,7 +35,7 @@ Isabelle/DOF is currently consisting out of two AFP entries:
 
 * [Isabelle_DOF:](https://www.isa-afp.org/entries/Isabelle_DOF.html) This entry
   contains the Isabelle/DOF system itself, including the Isabelle/DOF manual.
-* [Isabelle_DOF-Example-Scholarly_Paper:](https://www.isa-afp.org/entries/Isabelle_DOF-Example-Scholarly_Paper.html)
+* [Isabelle_DOF-Example-I:](https://www.isa-afp.org/entries/Isabelle_DOF-Example-I.html)
   This entry contains an example of an academic paper written using the
   Isabelle/DOF system.
 
@@ -72,16 +72,16 @@ foo@bar:~$ isabelle build -d . -o 'timeout_scale=2' Isabelle_DOF-Proofs
 ## Usage
 
 In the following, we assume that you installed Isabelle/DOF either from the AFP
-(adding the AFP as a component to your Isabelle system) or from the GIT
+(adding the AFP as a component to your Isabelle system) or from the Git
 repository of Isabelle/DOF (installing Isabelle/DOF as a component to your
 Isabelle system).
 
 Assuming that your current directory contains the example academic paper in the
-subdirectory ``Isabelle_DOF-Example-Scholarly_Paper/``, you can open it similar
+subdirectory ``Isabelle_DOF-Example-I/``, you can open it similar
 to any standard Isabelle theory:
 
 ```console
-isabelle jedit -l Isabelle_DOF Isabelle_DOF-Example-Scholarly_Paper/IsaDofApplications.thy
+isabelle jedit -l Isabelle_DOF Isabelle_DOF-Example-I/IsaDofApplications.thy
 ```
 
 This will open an example of a scientific paper using the pre-compiled session
@@ -90,7 +90,7 @@ defined in the ``Isabelle_DOF`` session.  If you want to edit the ontology defin
 just open the theory file with the session ``Functional-Automata``:
 
 ```console
-isabelle jedit -l Functional-Automata Isabelle_DOF-Example-Scholarly_Paper/IsaDofApplications.thy
+isabelle jedit -l Functional-Automata Isabelle_DOF-Example-I/IsaDofApplications.thy
 ```
 
 While this gives you more flexibility, it might "clutter" your editing
@@ -109,7 +109,7 @@ in a subdirectory:
 * [Isabelle_DOF](./Isabelle_DOF/): This is the main session, providing the
   Isabelle/DOF system. Furthermore, this session is currently under
   consideration for a submission to the AFP.
-* [Isabelle_DOF-Example-Scholarly_Paper](./Isabelle_DOF-Example-Scholarly_Paper/):
+* [Isabelle_DOF-Example-I](./Isabelle_DOF-Example-I/):
   This session provides an example document written Isabelle/DOF. It only
   requires the core ontologies provided by the ``Isabelle_DOF`` session.
   Furthermore, this session is currently under consideration for a submission to

@@ -1,30 +1,47 @@
-chapter\<open>Evaluation\<close>
+(*************************************************************************
+ * Copyright (C) 
+ *               2019-2023 The University of Exeter 
+ *               2018-2023 The University of Paris-Saclay
+ *               2018      The University of Sheffield
+ *
+ * License:
+ *   This program can be redistributed and/or modified under the terms
+ *   of the 2-clause BSD-style license.
+ *
+ *   SPDX-License-Identifier: BSD-2-Clause
+ *************************************************************************)
 
-text\<open>Term Annotation Antiquotations (TA) can be evaluated with the help of the value* command.\<close>
+chapter\<open>Term-Antiquotation Expansions and Evaluation\<close>
 
 theory 
-  Evaluation
+  Concept_TermEvaluation
 imports 
   "Isabelle_DOF-Unit-Tests.Concept_TermAntiquotations"
   "Isabelle_DOF-Unit-Tests.Concept_High_Level_Invariants"
   TestKit
-begin
+begin 
 
-(*
+section\<open>Test Purpose.\<close>
+text\<open> Creation of ontological instances along the \<^theory>\<open>Isabelle_DOF-Ontologies.Conceptual\<close> 
+Ontology. Emphasis is put on type-safe (ontologically consistent) referencing of text, code and
+proof elements. Some tests cover also the critical cases concerning name spaces of oid's. \<close>
+
+
 section\<open>\<^theory_text>\<open>ML*\<close>-Annotated SML-commands\<close>
 
 ML*[thefunction::B,x=\<open>\<open>dfg\<close>\<close>]\<open>fun fac x = if x = 0 then 1 else x * fac(x-1);
                                val t = \<^value_>\<open>x @{B \<open>thefunction\<close>}\<close>\<close>
 ML\<open>fac 5; t\<close> \<comment> \<open>this is a test that ML* is actually evaluated and the 
                  resulting toplevel state is preserved.\<close>
-text-macro*[the::C]\<open> @{B [display] "thefunction"} \<close>
+text*[the::C]\<open> @{B "thefunction"} \<close>
 
-text\<open>... and here we reference @{B [display] \<open>thefunction\<close>}.\<close>
+text\<open>... and here we reference @{B \<open>thefunction\<close>}.\<close>
 
-*)
 
-section\<open>\<^theory_text>\<open>value*\<close>-Annotated evaluation-commands\<close>
 
+section\<open>Term-Annotation and its Evaluation\<close>
+
+text\<open>Term Annotation Antiquotations (TA) can be evaluated with the help of the value* command.\<close>
 
 text\<open>The value* command uses the same code as the value command
 and adds the possibility to evaluate Term Annotation Antiquotations (TA).
@@ -36,13 +53,6 @@ Some built-ins remain as unspecified constants:
 \<^item> the docitem TA offers a way to check the reference of class instances
   without checking the instances type.
   It must be avoided for certification
-\<^item> the termrepr TA is left as unspecified constant for now.
-   A major refactoring of code should be done to enable
-  referential equivalence for termrepr, by changing the dependency
-  between the Isa-DOF theory and the Assert theory.
-  The assert-cmd function in Assert should use the value* command
-  functions, which make the elaboration of the term
-  referenced by the TA before passing it to the evaluator
 
 We also have the possibility to make some requests on classes instances, i.e. on docitems
 by specifying the doc class.
@@ -79,14 +89,11 @@ an instance of the class @{doc_class A}:
 \<close>
 term*\<open>@{A \<open>xcv1\<close>}\<close>
 
-text\<open>The instance class @{docitem \<open>xcv1\<close>} is not an instance of the class @{doc_class B}:
-\<close>
-(* Error: 
-term*\<open>@{B \<open>xcv1\<close>}\<close>
-*)
+text\<open>The instance class @{docitem \<open>xcv1\<close>} is not an instance of the class @{doc_class B}:\<close>
+value-assert-error\<open>@{B \<open>xcv1\<close>}\<close>\<open>xcv1 is not an instance of Conceptual.B\<close>
+
 text\<open>We can evaluate the instance class. The current implementation returns
-the value of the instance, i.e. a collection of every attribute of the instance: 
-\<close>
+the value of the instance, i.e. a collection of every attribute of the instance: \<close>
 value*\<open>@{A \<open>xcv1\<close>}\<close>
 
 text\<open>We can also get the value of an attribute of the instance:\<close>
@@ -112,24 +119,20 @@ text\<open>We can also evaluate the instance @{docitem \<open>xcv4\<close>}.
 The attribute \<open>b\<close> of the instance @{docitem \<open>xcv4\<close>} is of type @{typ "(A \<times> C) set"}
 but the instance @{docitem \<open>xcv4\<close>} initializes the attribute by using the \<open>docitem\<close> TA.
 Then the instance can be evaluate but only the references of the classes of the set
-used in the \<open>b\<close> attribute will be checked, and the type of these classes will not:
-\<close>
+used in the \<open>b\<close> attribute will be checked, and the type of these classes will not:\<close>
 value* \<open>@{F \<open>xcv4\<close>}\<close>
 
-(*
+
 text\<open>If we want the classes to be checked,
 we can use the TA which will also check the type of the instances.
-The instance @{A \<open>xcv3\<close>} is of type @{typ "A"} and the instance @{C \<open>xcv2\<close>} is of type @{typ "C"}:
-\<close>
+The instance @{A \<open>xcv3\<close>} is of type @{typ "A"} and the instance @{C \<open>xcv2\<close>} is of type @{typ "C"}:\<close>
 update_instance*[xcv4::F, b+="{(@{A ''xcv3''},@{C ''xcv2''})}"]
-*)
+
 text\<open>Using a TA in terms is possible, and the term is evaluated:\<close>
 value*\<open>[@{thm \<open>HOL.refl\<close>}, @{thm \<open>HOL.refl\<close>}]\<close>
 value*\<open>@{thm ''HOL.refl''} = @{thm (''HOL.refl'')}\<close>
 
-ML\<open>
-@{thm "refl"}
-\<close>
+ML\<open>@{thm "refl"}\<close>
 
 section\<open>Request on instances\<close>
 
@@ -167,34 +170,41 @@ value*\<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A-instances}\<close>
 section\<open>Limitations\<close>
 
 text\<open>There are still some limitations.
-The terms passed as arguments to the TA are not simplified and their evaluation fails:
+The terms passed as arguments to a TA are not simplified \<open>before\<close> expansion
+and their evaluation therefore fails:
 \<close>
-(* Error:
-value*\<open>@{thm (''HOL.re'' @ ''fl'')}\<close>
-value*\<open>@{thm ''HOL.refl''} = @{thm (''HOL.re'' @ ''fl'')}\<close>*)
+
+value\<open>@{thm (''HOL.re'' @ ''fl'')}\<close>
+value-assert-error\<open>@{thm (''HOL.re'' @ ''fl'')}\<close>
+                  \<open>wrong term format: must be string constant\<close>
+value-assert-error\<open>@{thm ''HOL.refl''} = @{thm (''HOL.re'' @ ''fl'')}\<close>
+                  \<open>wrong term format: must be string constant\<close>
 
 text\<open>The type checking is unaware that a class is subclass of another one.
 The @{doc_class "G"} is a subclass of the class @{doc_class "C"}, but one can not use it
 to update the instance @{docitem \<open>xcv4\<close>}:
 \<close>
-(* Error:
-update_instance*[xcv4::F, b+="{(@{A ''xcv3''},@{G ''xcv5''})}"]*)
+
+update_instance-assert-error[xcv4::F, b+="{(@{A ''xcv3''},@{G ''xcv5''})}"]
+                  \<open>type of attribute: Conceptual.F.b does not fit to term\<close>
 
 
 section\<open>\<^theory_text>\<open>assert*\<close>-Annotated assertion-commands\<close>
 
 text\<open>The \<^emph>\<open>assert*\<close>-command allows for logical statements to be checked in the global context.
-It uses the same implementation as the \<^emph>\<open>value*\<close>-command and has the same limitations.
+Recall that it uses the same mechanism as the \<^emph>\<open>value*\<close>-command but requires that the evaluation 
+reduces the argument term to true.
+Consequently, it has the same limitations as \<^emph>\<open>value*\<close>.
 \<close>
 
 text\<open>Using the ontology defined in \<^theory>\<open>Isabelle_DOF-Unit-Tests.Concept_High_Level_Invariants\<close>
 we can check logical statements:\<close>
-(*
-term*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
-assert*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
-assert*\<open>\<not>(authored_by @{introduction \<open>introduction2\<close>}
-          = authored_by @{introduction \<open>introduction4\<close>})\<close>
-*)
+
+term*\<open>authored_by @{Introduction \<open>introduction2\<close>} = authored_by @{Introduction \<open>introduction3\<close>}\<close>
+assert*\<open>authored_by @{Introduction \<open>introduction2\<close>} = authored_by @{Introduction \<open>introduction3\<close>}\<close>
+assert*\<open>\<not>(authored_by @{Introduction \<open>introduction2\<close>}
+          = authored_by @{Introduction \<open>introduction4\<close>})\<close>
+
 text\<open>Assertions must be boolean expressions, so the following assertion triggers an error:\<close>
 (* Error:
 assert*\<open>@{introduction \<open>introduction2\<close>}\<close>*)
@@ -202,19 +212,19 @@ assert*\<open>@{introduction \<open>introduction2\<close>}\<close>*)
 text\<open>Assertions must be true, hence the error:\<close>
 (* Error:
 assert*\<open>{@{author \<open>curry\<close>}} = {@{author \<open>church\<close>}}\<close>*)
-(*
+
 term*\<open>property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
 assert*[assertionA::A]\<open>\<not> property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
 
-text-macro*[assertionAA::A]\<open>@{A [display] "assertionA"}\<close> 
-text\<open>... and here we reference @{A [display] \<open>assertionA\<close>}.\<close>
+text*[assertionAA::A]\<open>@{A "assertionA"}\<close> 
+text\<open>... and here we reference @{A \<open>assertionA\<close>}.\<close>
 
 assert*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
-*)
+
 text\<open>The optional evaluator of \<open>value*\<close> and \<open>assert*\<close> must be specified after the meta arguments:\<close>
 value* [optional_test_A::A, x=6] [nbe] \<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A-instances}\<close>
-(*
+
 assert* [resultProof3::result, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"] [nbe]
         \<open>evidence @{result \<open>resultProof3\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
-*)
+
 end

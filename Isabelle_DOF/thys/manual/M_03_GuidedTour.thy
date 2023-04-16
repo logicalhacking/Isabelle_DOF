@@ -13,9 +13,9 @@
 
 (*<*)
 theory 
-    "03_GuidedTour" 
+    "M_03_GuidedTour" 
   imports 
-    "02_Background"
+    "M_02_Background"
 begin
 (*>*)
 
@@ -74,9 +74,13 @@ is currently consisting out of two AFP entries:
 
 \<^item> Isabelle\_DOF: This entry
   contains the Isabelle/DOF system itself, including the Isabelle/DOF manual.
-\<^item> Isabelle\_DOF-Example-Scholarly\_Paper: This entry contains an example of 
-  an academic paper written using the Isabelle/DOF system.
- \<close>
+\<^item> Isabelle\_DOF-Example-I: This entry contains an example of 
+  an academic paper written using the Isabelle/DOF system oriented towards 
+\<^item> Isabelle\_DOF-Example-II: This entry contains another example of 
+  a mathematics-oriented academic paper.
+
+It is recommended to follow structure one of these papers.\<close>
+
 
 section*[writing_doc::technical]\<open>Writing Documents\<close>
 
@@ -87,9 +91,10 @@ not make use of a file called \<^verbatim>\<open>document/root.tex\<close>. Inst
 ontology represenations is done within theory files. To make use of this feature, one needs
 to add the option \<^verbatim>\<open>document_build = dof\<close> to the \<^verbatim>\<open>ROOT\<close> file. 
 An example \<^verbatim>\<open>ROOT\<close> file looks as follows:
-
+\<close>
+text\<open>
 \begin{config}{ROOT}
-session example = HOL +
+session example = Isabelle_DOF +
   options [document = pdf, document_output = "output", document_build = dof]
 (*theories [document = false]
     A
@@ -102,8 +107,19 @@ session example = HOL +
 The document template and ontology can be selected as follows:
 @{boxed_theory_text [display]
 \<open>
-use_template "scrreprt-modern" 
+theory
+  C
+imports
+  Isabelle_DOF.technical_report
+  Isabelle_DOF.scholarly_paper
+begin
+
+list_templates
+use_template "scrreprt-modern"
+list_ontologies
 use_ontology "technical_report" and "scholarly_paper"
+
+end
 \<close>}
 
 The commands @{boxed_theory_text 
@@ -120,8 +136,37 @@ can be used for inspecting (and selecting) the available ontologies and template
 list_templates
 list_ontologies
 \<close>}
+
+Note that you need to import the theories that define the ontologies that you 
+want to use. Otherwise, they will not be available.
 \<close>
 
+paragraph\<open>Warning.\<close>
+text\<open>
+Note that the session @{session "Isabelle_DOF"} needs to be part of the ``main'' session 
+hierarchy. Loading the Isabelle/DOF theories as part of a session section, e.g., 
+\<close>
+text\<open>
+\begin{config}{ROOT}
+session example = HOL +
+  options [document = pdf, document_output = "output", document_build = dof]
+  session 
+    Isabelle_DOF.scholarly_paper
+    Isabelle_DOF.technical_report
+  theories
+    C
+\end{config}
+\<close>
+text\<open>
+will not work. Trying to build a document using such a setup will result in the 
+following error message:
+
+@{boxed_bash [display]\<open>ë\prompt{}ë
+  isabelle build -D . 
+  Running example ... 
+  Bad document_build engine "dof"
+  example FAILED\<close>}
+\<close> 
 
 subsection*[naming::example]\<open>Name-Spaces, Long- and Short-Names\<close>
 text\<open>\<^isadof> is built upon the name space and lexical conventions of Isabelle. Long-names were 
@@ -135,7 +180,11 @@ By lexical conventions, theory-names must be unique inside a session
 (and session names must be unique too), such that long-names are unique by construction.
 There are actually different name categories that form a proper name space, \<^eg>, the name space for
 constant symbols and type symbols are distinguished.
-
+Additionally, \<^isadof> objects also come with a proper name space: classes (and monitors), instances,
+low-level class invariants (SML-defined invariants) all follow the lexical conventions of
+Isabelle. For instance, a class can be referenced outside of its theory using
+its short-name or its long-name if another class with the same name is defined
+in the current theory.
 Isabelle identifies names already with the shortest suffix that is unique in the global 
 context and in the appropriate name category. This also holds for pretty-printing, which can
 at times be confusing since names stemming from the same specification construct may
@@ -152,19 +201,15 @@ over decades.
 
 text\<open>At times, this causes idiosyncrasies like the ones cited in the following incomplete list: 
 \<^item> text-antiquotations
-  \<^theory_text>\<open>text\<close>\<^latex>\<open>\isasymopen\textbf{thm} "normally\_behaved\_def"\isasymclose\ \<close>  
-  versus \<^theory_text>\<open>text\<close>\<^latex>\<open>\isasymopen @\{\textbf{thm} "srac$_1$\_def"\}\isasymclose\ \<close>  
-  (while
-  \<^theory_text>\<open>text\<close>\<^latex>\<open>\isasymopen @\{\textbf{thm} \isasymopen srac$_1$\_def \isasymclose\}\isasymclose\ \<close>
-  fails)
+  \<^theory_text>\<open>text\<open>@{thm \<doublequote>srac\<^sub>1_def\<doublequote>}\<close>\<close>  
+  while \<^theory_text>\<open>text\<open>@{thm \<open>srac\<^sub>1_def\<close>}\<close>\<close> fails
 \<^item> commands \<^theory_text>\<open>thm fundamental_theorem_of_calculus\<close> and
-  \<^theory_text>\<open>thm\<close>\<^latex>\<open> "fundamental\_theorem\_of\_calculus"\<close>
-  or \<^theory_text>\<open>lemma\<close> \<^latex>\<open>"H"\<close> and \<^theory_text>\<open>lemma \<open>H\<close>\<close> and  \<^theory_text>\<open>lemma H\<close> 
-\<^item> string expressions  \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen ''abc'' @ ''cd''\isasymclose\ \<close> and equivalent
-  \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen \isasymopen abc\isasymclose\ @ \isasymopen cd\isasymclose\isasymclose\<close>;
-  but 
-  \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen\isasymopen A \isasymlongrightarrow\ B\isasymclose\isasymclose\ \<close>   
-  not equivalent to \<^theory_text>\<open>term\<close>\<^latex>\<open>\isasymopen''A \isasymlongrightarrow\ B''\isasymclose\ \<close>
+  \<^theory_text>\<open>thm \<doublequote>fundamental_theorem_of_calculus\<doublequote>\<close> 
+  or \<^theory_text>\<open>lemma \<doublequote>H\<doublequote>\<close> and \<^theory_text>\<open>lemma \<open>H\<close>\<close> and  \<^theory_text>\<open>lemma H\<close>
+\<^item> string expressions
+  \<^theory_text>\<open>term\<open>\<quote>\<quote>abc\<quote>\<quote> @ \<quote>\<quote>cd\<quote>\<quote>\<close>\<close> and equivalent
+  \<^theory_text>\<open>term \<open>\<open>abc\<close> @ \<open>cd\<close>\<close>\<close>;
+  but \<^theory_text>\<open>term\<open>\<open>A \<longrightarrow> B\<close>\<close>\<close> not equivalent to \<^theory_text>\<open>term\<open>\<quote>\<quote>A \<longrightarrow> B\<quote>\<quote>\<close>\<close>
   which fails. 
 \<close>
 
@@ -420,6 +465,9 @@ defined by \<^typ>\<open>article\<close>.
 \<close>
 
 
+figure*[doc_termAq::figure,relative_width="80",src="''figures/doc-mod-term-aq.png''"]
+                      \<open>Term-Antiquotations Referencing to Annotated Elements\<close>
+
 side_by_side_figure*[exploring::side_by_side_figure,anchor="''fig-Dogfood-II-bgnd1''",
                       caption="''Exploring a reference of a text-element.''",relative_width="48",
                       src="''figures/Dogfood-II-bgnd1''",anchor2="''fig-bgnd-text_section''",
@@ -479,17 +527,19 @@ underlying logical context, which turns the arguments into \<^emph>\<open>formal
 source, in contrast to the free-form antiquotations which basically influence the presentation.
 
 We still mention a few of these document antiquotations here:
-\<^item> \<^theory_text>\<open>@{thm \<open>refl\<close>}\<close> or \<^theory_text>\<open>@{thm [display] \<open>refl\<close>}\<close> check that \<^theory_text>\<open>refl\<close> is indeed a reference
+\<^item> \<^theory_text>\<open>@{thm \<doublequote>refl\<doublequote>}\<close> or \<^theory_text>\<open>@{thm [display] \<doublequote>refl\<doublequote>}\<close>
+  check that \<^theory_text>\<open>refl\<close> is indeed a reference
   to a theorem; the additional ``style" argument changes the presentation by printing the 
   formula into the output instead of the reference itself,
-\<^item> \<^theory_text>\<open>@{lemma \<open>prop\<close> } by \<open>method\<close>\<close> allows deriving \<open>prop\<close> on the fly, thus guarantee 
-  that it is a corrollary of the current context,
+\<^item> \<^theory_text>\<open>@{lemma \<open>prop\<close> by method} \<close> allows deriving \<open>prop\<close> on the fly, thus guarantee 
+  that it is a corollary of the current context,
 \<^item> \<^theory_text>\<open>@{term \<open>term\<close> }\<close> parses and type-checks \<open>term\<close>,
 \<^item> \<^theory_text>\<open>@{value \<open>term\<close> }\<close> performs the evaluation of \<open>term\<close>,
 \<^item> \<^theory_text>\<open>@{ML \<open>ml-term\<close> }\<close> parses and type-checks \<open>ml-term\<close>,
 \<^item> \<^theory_text>\<open>@{ML_file \<open>ml-file\<close> }\<close> parses the path for \<open>ml-file\<close> and
   verifies its existance in the (Isabelle-virtual) file-system.
 \<close>
+
 text\<open>There are options to display sub-parts of formulas etc., but it is a consequence
 of tight-checking that the information must be given complete and exactly in the syntax of
 Isabelle. This may be over-precise and a burden to readers not familiar with Isabelle, which may
@@ -497,14 +547,17 @@ motivate authors to choose the aforementioned freeform-style.
 
 Additionally, documents antiquotations were added to check and evaluate terms with
 term antiquotations:
+\<^item> \<^theory_text>\<open>@{term_ \<open>term\<close> }\<close> parses and type-checks \<open>term\<close> with term antiquotations,
+  for instance \<^theory_text>\<open>\<^term_> \<open>@{technical \<open>isadof\<close>}\<close>\<close> will parse and check
+  that \<open>isadof\<close> is indeed an instance of the class \<^typ>\<open>technical\<close>,
 \<^item> \<^theory_text>\<open>@{value_ \<open>term\<close> }\<close> performs the evaluation of \<open>term\<close> with term antiquotations,
-  for instance \<^theory_text>\<open>@{value_ \<open>mcc @{cenelec-term \<open>FT\<close>}\<close>}\<close>
-  will print the value of the \<^const>\<open>mcc\<close> attribute of the instance \<open>FT\<close>.
+  for instance \<^theory_text>\<open>@{value_ \<open>definition_list @{technical \<open>isadof\<close>}\<close>}\<close>
+  will print the value of the \<^const>\<open>definition_list\<close> attribute of the instance \<open>isadof\<close>.
   \<^theory_text>\<open>value_\<close> may have an optional argument between square brackets to specify the evaluator but this
   argument must be specified after a default optional argument already defined
   by the text antiquotation implementation.
   So one must use the following syntax if he does not want to specify the first optional argument:
-  \<open>@{value_ [] [nbe] \<open>r @{F \<open>xcv4\<close>}\<close>}\<close>. Note the empty brackets.
+  \<^theory_text>\<open>@{value_ [] [nbe] \<open>definition_list @{technical \<open>isadof\<close>}\<close>}\<close>. Note the empty brackets.
 \<close>
 
 (*<*)

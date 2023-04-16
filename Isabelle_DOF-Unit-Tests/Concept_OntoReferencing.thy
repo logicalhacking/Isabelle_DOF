@@ -94,6 +94,17 @@ definition*[a2::A, x=5, level="Some 1"] xx' where "xx' \<equiv> A.x @{A \<open>a
 
 lemma*[e5::E] testtest : "xx + A.x @{A \<open>a1\<close>} = yy + A.x @{A \<open>a1\<close>} \<Longrightarrow> xx = yy" by simp
 
+doc_class cc_assumption_test =
+a :: int
+text*[cc_assumption_test_ref::cc_assumption_test]\<open>\<close>
+
+definition tag_l :: "'a \<Rightarrow> 'b \<Rightarrow> 'b" where "tag_l \<equiv> \<lambda>x y. y"
+
+lemma* tagged : "tag_l @{cc-assumption-test \<open>cc_assumption_test_ref\<close>} AA \<Longrightarrow> AA"
+  by (simp add: tag_l_def)
+
+find_theorems name:tagged "(_::cc_assumption_test \<Rightarrow> _ \<Rightarrow> _) _ _ \<Longrightarrow>_"
+
 declare_reference-assert-error[c1::C]\<open>Duplicate instance declaration\<close>     \<comment> \<open>forward declaration\<close>
 
 declare_reference*[e6::E] 

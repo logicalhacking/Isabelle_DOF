@@ -13,7 +13,7 @@
 
 chapter\<open>Testing hand-programmed (low-level) Invariants\<close>
 
-theory   Concept_Example_Low_Level_Invariant
+theory Concept_Example_Low_Level_Invariant
   imports 
   "Isabelle_DOF-Unit-Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual" (* we use the generic "Conceptual" ontology *)
@@ -122,7 +122,7 @@ in DOF_core.add_ml_invariant binding (DOF_core.make_ml_invariant (check_M_invari
 section\<open>Example: Monitor Class Invariant\<close>
 
 open_monitor*[struct::M]
-
+                                   
 subsection*[a::A, x = "3"]       \<open> Lorem ipsum dolor sit amet, ... \<close>
 
 text*[c1::C, x = "''beta''"]     \<open> ... suspendisse non arcu malesuada mollis, nibh morbi, ...  \<close>

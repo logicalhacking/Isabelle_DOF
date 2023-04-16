@@ -1,4 +1,4 @@
-session "Isabelle_DOF-Example-Scholarly_Paper" (AFP) = "Isabelle_DOF" + 
+session "Isabelle_DOF-Example-I" (AFP) = "Isabelle_DOF" + 
   options [document = pdf, document_output = "output", document_build = dof]
   theories
     IsaDofApplications
