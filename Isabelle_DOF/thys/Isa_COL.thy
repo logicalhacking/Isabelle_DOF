@@ -103,17 +103,11 @@ fun transform_cid thy NONE X = X
                              end  
 in
 
-fun transform_attr S cid_long thy doc_attrs =
+fun transform_attr S doc_attrs =
   let
     fun transform_attr' [] doc_attrs = doc_attrs
       | transform_attr' (s::S) (doc_attrs) =
-          let fun markup2string s = s |> YXML.content_of
-                                      |> Symbol.explode 
-                                      |> List.filter (fn c => c <> Symbol.DEL)
-                                      |> String.concat
-              fun toLong n = DOF_core.get_attribute_info cid_long (markup2string n) thy
-                             |> the |> #long_name
-              val (name', value) = s |> (fn (n, v) => (toLong n, v))
+          let val (name', value) = s
               val doc_attrs' = doc_attrs
                                |> map (fn (name, term) => if name = name'
                                                           then (name, value)
@@ -154,7 +148,7 @@ end (* local *)
 
 fun heading_command (name, pos) descr level =
   Monitor_Command_Parser.document_command (name, pos) descr
-    {markdown = false, body = true} (enriched_text_element_cmd level) (K(K I));
+    {markdown = false, body = true} (enriched_text_element_cmd level) [] I;
 
 val _ = heading_command \<^command_keyword>\<open>title*\<close> "section heading" NONE;
 val _ = heading_command \<^command_keyword>\<open>subtitle*\<close> "section heading" NONE;

@@ -73,9 +73,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: title*
 \NewEnviron{isamarkuptitle*}[1][]{\isaDof[env={title},#1]{\BODY}}
-\newisadof{title.scholarly_paper.title}%
+\newisadof{titleDOTscholarlyUNDERSCOREpaperDOTtitle}%
 [label=,type=%
-,scholarly_paper.title.short_title=%
+,scholarlyUNDERSCOREpaperDOTtitleDOTshortUNDERSCOREtitle=%
 ][1]{%
   \immediate\write\@auxout{\noexpand\title{#1}}%
 }
@@ -85,9 +85,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: subtitle*
 \NewEnviron{isamarkupsubtitle*}[1][]{\isaDof[env={subtitle},#1]{\BODY}}
-\newisadof{subtitle.scholarly_paper.subtitle}%
+\newisadof{subtitleDOTscholarlyUNDERSCOREpaperDOTsubtitle}%
 [label=,type=%
-,scholarly_paper.subtitle.abbrev=%
+,scholarlyUNDERSCOREpaperDOTsubtitleDOTabbrev=%
 ][1]{%
   \immediate\write\@auxout{\noexpand\subtitle{#1}}%
 }
@@ -128,21 +128,21 @@
 }
 
 \NewEnviron{isamarkupauthor*}[1][]{\isaDof[env={text},#1]{\BODY}}
-\provideisadof{text.scholarly_paper.author}%
+\provideisadof{textDOTscholarlyUNDERSCOREpaperDOTauthor}%
 [label=,type=%
-,scholarly_paper.author.email=%
-,scholarly_paper.author.affiliation=%
-,scholarly_paper.author.orcid=%
-,scholarly_paper.author.http_site=%
+,scholarlyUNDERSCOREpaperDOTauthorDOTemail=%
+,scholarlyUNDERSCOREpaperDOTauthorDOTaffiliation=%
+,scholarlyUNDERSCOREpaperDOTauthorDOTorcid=%
+,scholarlyUNDERSCOREpaperDOTauthorDOThttpUNDERSCOREsite=%
 ][1]{%
   \stepcounter{dof@cnt@author}
-  \def\dof@a{\commandkey{scholarly_paper.author.affiliation}}
-  \ifthenelse{\equal{\commandkey{scholarly_paper.author.orcid}}{}}{%
+  \def\dof@a{\commandkey{scholarlyUNDERSCOREpaperDOTauthorDOTaffiliation}}
+  \ifthenelse{\equal{\commandkey{scholarlyUNDERSCOREpaperDOTauthorDOTorcid}}{}}{%
     \protected@write\@auxout{}{\string\addauthor{#1\string\inst{\thedof@cnt@author}}}%
   }{%
-    \protected@write\@auxout{}{\string\addauthor{#1\string\inst{\thedof@cnt@author}\string\orcidID{\commandkey{scholarly_paper.author.orcid}}}}%
+    \protected@write\@auxout{}{\string\addauthor{#1\string\inst{\thedof@cnt@author}\string\orcidID{\commandkey{scholarlyUNDERSCOREpaperDOTauthorDOTorcid}}}}%
   }
-  \protected@write\@auxout{}{\string\addaffiliation{\dof@a\\\string\email{\commandkey{scholarly_paper.author.email}}}}%
+  \protected@write\@auxout{}{\string\addaffiliation{\dof@a\\\string\email{\commandkey{scholarlyUNDERSCOREpaperDOTauthorDOTemail}}}}%
 }
 % end: scholarly_paper.author
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,15 +151,15 @@
 % begin: scholarly_paper.abstract
 \providecommand{\keywords}[1]{\mbox{}\\[2ex]\mbox{}\noindent{\textbf{Keywords:}} #1}
 \NewEnviron{isamarkupabstract*}[1][]{\isaDof[env={text},#1]{\BODY}}
-\newisadof{text.scholarly_paper.abstract}%
+\newisadof{text.scholarlyUNDERSCOREpaperDOTabstract}%
 [label=,type=%
-,scholarly_paper.abstract.keywordlist=%
+,scholarlyUNDERSCOREpaperDOTabstractDOTkeywordlist=%
 ][1]{%
   \begin{isamarkuptext}%
     \begin{abstract}%
       #1%
-      \ifthenelse{\equal{\commandkey{scholarly_paper.abstract.keywordlist}}{}}{}{%     
-        \keywords{\commandkey{scholarly_paper.abstract.keywordlist}}%
+      \ifthenelse{\equal{\commandkey{scholarlyUNDERSCOREpaperDOTabstractDOTkeywordlist}}{}}{}{%     
+        \keywords{\commandkey{scholarlyUNDERSCOREpaperDOTabstractDOTkeywordlist}}%
       }%
     \end{abstract}%
   \end{isamarkuptext}%
@@ -172,84 +172,84 @@
 %\newtheorem{theorem}{Theorem} 
 \newtheorem{defn}{Definition} 
 \newcommand{\defnautorefname}{Definition} 
-\NewEnviron{isamarkupDefinition*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupDefinition*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{axm}{Axiom}
 \newcommand{\axmautorefname}{Axiom}
-\NewEnviron{isamarkupAxiom*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupAxiom*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{theom}{Theorem}
 \newcommand{\theomautorefname}{Theorem}
-\NewEnviron{isamarkupTheorem*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupTheorem*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{lemm}{Lemma}
 \newcommand{\lemmautorefname}{Lemma}
-\NewEnviron{isamarkupLemma*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupLemma*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{corr}{Corollary}
 \newcommand{\corrautorefname}{Corollary}
-\NewEnviron{isamarkupCorollary*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupCorollary*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{prpo}{Proposition}
 \newcommand{\prpoautorefname}{Proposition}
-\NewEnviron{isamarkupProposition*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupProposition*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{rulE}{Rule}
 \newcommand{\rulEautorefname}{Rule}
-\NewEnviron{isamarkupRule*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupRule*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{assn}{Assertion}    
 \newcommand{\assnautorefname}{Assertion}    
-\NewEnviron{isamarkupAssertion*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupAssertion*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{hypt}{Hypothesis}
 \newcommand{\hyptautorefname}{Hypothesis}
-\NewEnviron{isamarkupHypothesis*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupHypothesis*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{assm}{Assumption}
 \newcommand{\assmautorefname}{Assumption}
-\NewEnviron{isamarkupAssumption*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupAssumption*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{prms}{Premise}
 \newcommand{\prmsautorefname}{Premise}
-\NewEnviron{isamarkupPremise*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupPremise*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{cons}{Consequence}
 \newcommand{\consautorefname}{Consequence}
-\NewEnviron{isamarkupConsequence*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
-\newtheorem{conc_stmt}{Conclusion}
-\newcommand{\concstmtautorefname}{Conclusion}
-\NewEnviron{isamarkupConclusion*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
-\newtheorem{prf_stmt}{Proof}
-\newcommand{\prfstmtautorefname}{Proof}
-\NewEnviron{isamarkupProof*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
-\newtheorem{expl_stmt}{Example}
-\newcommand{\explstmtautorefname}{Example}
-\NewEnviron{isamarkupExample*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupConsequence*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
+\newtheorem{concUNDERSCOREstmt}{Conclusion}
+\newcommand{\concUNDERSCOREstmtautorefname}{Conclusion}
+\NewEnviron{isamarkupConclusion*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
+\newtheorem{prfUNDERSCOREstmt}{Proof}
+\newcommand{\prfUNDERSCOREstmtautorefname}{Proof}
+\NewEnviron{isamarkupProof*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
+\newtheorem{explUNDERSCOREstmt}{Example}
+\newcommand{\explUNDERSCOREstmtautorefname}{Example}
+\NewEnviron{isamarkupExample*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{rmrk}{Remark}
 \newcommand{\rmrkautorefname}{Remark}
-\NewEnviron{isamarkupRemark*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupRemark*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{notn}{Notation}
 \newcommand{\notnautorefname}{Notation}
-\NewEnviron{isamarkupNotation*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupNotation*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{tmgy}{Terminology}
 \newcommand{\tmgyautorefname}{Terminology}
-\NewEnviron{isamarkupTerminology*}[1][]{\isaDof[env={text},#1,type={scholarly_paper.math_content}]{\BODY}}
+\NewEnviron{isamarkupTerminology*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 
-\newisadof{text.scholarly_paper.math_content}%
+\newisadof{textDOTscholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}%
 [label=,type=%
- , scholarly_paper.math_content.short_name ={}%
- , scholarly_paper.math_content.mcc     = % 
- , Isa_COL.text_element.level         =%
- , Isa_COL.text_element.referentiable =%
- , Isa_COL.text_element.variants      =%
- , scholarly_paper.text_section.main_author  =%
- , scholarly_paper.text_section.fixme_list   =%
- , Isa_COL.text_element.level                =%
- , scholarly_paper.technical.definition_list =%
- , scholarly_paper.technical.status          =%
+ , scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTshortUNDERSCOREname ={}%
+ , scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTmcc     = % 
+ , IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel         =%
+ , IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable =%
+ , IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants      =%
+ , scholarlyUNDERSCOREpaperDOTtextUNDERSCOREsectionDOTmainUNDERSCOREauthor  =%
+ , scholarlyUNDERSCOREpaperDOTtextUNDERSCOREsectionDOTfixmeUNDERSCORElist   =%
+ , IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel                =%
+ , scholarlyUNDERSCOREpaperDOTtechnicalDOTdefinitionUNDERSCORElist =%
+ , scholarlyUNDERSCOREpaperDOTtechnicalDOTstatus          =%
  ]
  [1]
  {%
     \begin{isamarkuptext}%
-      \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+      \ifthenelse{\equal{\commandkey{scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTshortUNDERSCOREname}} {} }  
         {%
-         \begin{\commandkey{scholarly_paper.math_content.mcc}}\label{\commandkey{label}}
+         \begin{\commandkey{scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTmcc}}\label{\commandkey{label}}
            #1
-         \end{\commandkey{scholarly_paper.math_content.mcc}}
+         \end{\commandkey{scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTmcc}}
         }{%
-         \begin{\commandkey{scholarly_paper.math_content.mcc}}[\commandkey{scholarly_paper.math_content.short_name}]\label{\commandkey{label}} 
+         \begin{\commandkey{scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTmcc}}[\commandkey{scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTshortUNDERSCOREname}]\label{\commandkey{label}} 
            #1 
-         \end{\commandkey{scholarly_paper.math_content.mcc}}
+         \end{\commandkey{scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTmcc}}
         }
     \end{isamarkuptext}%
  } 

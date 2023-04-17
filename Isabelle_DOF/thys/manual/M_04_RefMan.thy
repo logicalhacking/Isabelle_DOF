@@ -453,9 +453,7 @@ term*\<open>@{B--test- \<open>b\<close>}\<close>
 
 declare_reference*["text-elements-expls"::technical]
 (*>*)
-ML\<open>
 
-\<close>
 subsection*["subsec:onto-term-ctxt"::technical]\<open>Ontological Term-Contexts and their Management\<close>
 text\<open> 
 \<^item> \<open>annotated_term_element\<close>

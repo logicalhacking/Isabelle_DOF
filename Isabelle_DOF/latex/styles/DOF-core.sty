@@ -53,27 +53,27 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: newcommand wrapper
-\newcommand\newisadof[1]{\expandafter\newkeycommand\csname isaDof.#1\endcsname}%
-\newcommand\renewisadof[1]{\expandafter\renewkeycommand\csname isaDof.#1\endcsname}%
-\newcommand\provideisadof[1]{\expandafter\providekeycommand\csname isaDof.#1\endcsname}%
+\newcommand\newisadof[1]{\expandafter\newkeycommand\csname isaDofDOT#1\endcsname}%
+\newcommand\renewisadof[1]{\expandafter\renewkeycommand\csname isaDofDOT#1\endcsname}%
+\newcommand\provideisadof[1]{\expandafter\providekeycommand\csname isaDofDOT#1\endcsname}%
 % end: newcommand wrapper
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: generic dispatcher
 \newkeycommand+[\|]\isaDof[env={UNKNOWN},label=,type={dummyT},args={}][1]{%
-  \ifcsname isaDof.\commandkey{type}\endcsname%
-      \csname isaDof.\commandkey{type}\endcsname%
+  \ifcsname isaDofDOT\commandkey{type}\endcsname%
+      \csname isaDofDOT\commandkey{type}\endcsname%
               [label=\commandkey{label},\commandkey{args}]{#1}%
   \else%
-  \ifcsname isaDof.\commandkey{env}.\commandkey{type}\endcsname%
-      \csname isaDof.\commandkey{env}.\commandkey{type}\endcsname%
+  \ifcsname isaDofDOT\commandkey{env}DOT\commandkey{type}\endcsname%
+      \csname isaDofDOT\commandkey{env}DOT\commandkey{type}\endcsname%
               [label=\commandkey{label},\commandkey{args}]{#1}%
   \else%
       \message{Isabelle/DOF: Using default LaTeX representation for concept %
         "\commandkey{env}.\commandkey{type}".}%
-      \ifcsname isaDof.\commandkey{env}\endcsname%
-         \csname isaDof.\commandkey{env}\endcsname%
+      \ifcsname isaDofDOT\commandkey{env}\endcsname%
+         \csname isaDofDOT\commandkey{env}\endcsname%
                 [label=\commandkey{label}]{#1}%
       \else%
       \errmessage{Isabelle/DOF: No LaTeX representation for concept %
