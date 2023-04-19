@@ -23,7 +23,7 @@ chapter*[isadof_tour::text_section]\<open>\<^isadof>: A Guided Tour\<close>
 
 text\<open>
   In this chapter, we will give an introduction into using \<^isadof> for users that want to create and 
-  maintain documents following an existing document ontology.
+  maintain documents following an existing document ontology\<^bindex>\<open>ontology\<close> in ODL\<^bindex>\<open>ODL\<close>.
 \<close>
 
 section*[getting_started::technical]\<open>Getting Started\<close>
@@ -34,7 +34,7 @@ text\<open>
   \<^LaTeX>. We assume a basic familiarity with a Linux/Unix-like command line (i.e., a shell). 
   Furthermore, we focus on the installation of the latest official release of  \<^isadof> as 
   available in the Archive of Formal Proofs (AFP).\<^footnote>\<open>If you want to work with the development version 
-  of Isabelle/DOF, please obtain its source code from the Isabelle/DOF Git repostitory 
+  of \<^isadof>, please obtain its source code from the \<^isadof> Git repostitory 
   (\<^url>\<open>https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF\<close> and follow the instructions
   in provided \<^verbatim>\<open>README.MD\<close> file.\<close>
 
@@ -65,6 +65,7 @@ text\<open>
   managers. On a modern Debian system or a Debian derivative (\<^eg>, Ubuntu), the following command 
   should install all required \<^LaTeX> packages:
 @{boxed_bash [display]\<open>ë\prompt{}ë sudo aptitude install texlive-full\<close>}
+\<^dof>
 \<close>
 
 subsubsection*[isadof::technical]\<open>Installing \<^isadof>\<close>
@@ -72,11 +73,12 @@ text\<open>
 By installing the AFP in the previous steps, you already installed \<^isadof>. In fact, \<^isadof> 
 is currently consisting out of two AFP entries:
 
-\<^item> Isabelle\_DOF: This entry
-  contains the Isabelle/DOF system itself, including the Isabelle/DOF manual.
-\<^item> Isabelle\_DOF-Example-I: This entry contains an example of 
-  an academic paper written using the Isabelle/DOF system oriented towards 
-\<^item> Isabelle\_DOF-Example-II: This entry contains another example of 
+\<^item> \<^verbatim>\<open>Isabelle_DOF\<close>: This entry
+  contains the \<^isadof> system itself, including the \<^isadof> manual.
+\<^item> \<^verbatim>\<open>Isabelle_DOF-Example-I\<close>: This entry contains an example of 
+  an academic paper written using the \<^isadof> system oriented towards an 
+  introductory paper.
+\<^item> \<^verbatim>\<open>Isabelle_DOF-Example-II\<close>: This entry contains another example of 
   a mathematics-oriented academic paper.
 
 It is recommended to follow structure one of these papers.\<close>
@@ -143,10 +145,10 @@ want to use. Otherwise, they will not be available.
 
 paragraph\<open>Warning.\<close>
 text\<open>
-Note that the session @{session "Isabelle_DOF"} needs to be part of the ``main'' session 
-hierarchy. Loading the Isabelle/DOF theories as part of a session section, e.g., 
+Note that the session \<^session>\<open>Isabelle_DOF\<close> needs to be part of the ``main'' session 
+hierarchy. Loading the \<^isadof> theories as part of a session section, e.g., 
 \<close>
-text\<open>
+text\<open>\<^latex>\<open>
 \begin{config}{ROOT}
 session example = HOL +
   options [document = pdf, document_output = "output", document_build = dof]
@@ -156,7 +158,7 @@ session example = HOL +
   theories
     C
 \end{config}
-\<close>
+\<close>\<close>
 text\<open>
 will not work. Trying to build a document using such a setup will result in the 
 following error message:
@@ -464,10 +466,6 @@ in which the text-elements instances are expected to appear in the textual order
 defined by \<^typ>\<open>article\<close>.
 \<close>
 
-
-figure*[doc_termAq::figure,relative_width="80",src="''figures/doc-mod-term-aq.png''"]
-                      \<open>Term-Antiquotations Referencing to Annotated Elements\<close>
-
 side_by_side_figure*[exploring::side_by_side_figure,anchor="''fig-Dogfood-II-bgnd1''",
                       caption="''Exploring a reference of a text-element.''",relative_width="48",
                       src="''figures/Dogfood-II-bgnd1''",anchor2="''fig-bgnd-text_section''",
@@ -594,8 +592,13 @@ In the \<^pdf> output, these text-fragments were displayed verbatim.
 \<close>
 
 
+section\<open>Using Term-Antiquotations\<close>
 
-section\<open>Style Guide\<close>
+figure*[doc_termAq::figure,relative_width="50",src="''figures/doc-mod-term-aq.png''"]
+                      \<open>Term-Antiquotations Referencing to Annotated Elements\<close>
+
+
+section\<open>Some Recommendations: A little Style Guide\<close>
 text\<open>
   The document generation of \<^isadof> is based on Isabelle's document generation framework, 
   using \<^LaTeX>{} as the underlying back-end. As Isabelle's document generation framework, it is 
@@ -613,11 +616,18 @@ text\<open> This is \emph{emphasized} and this is a
 text\<open> This is *\<open>emphasized\<close> and this is a 
         citation @{cite "brucker.ea:isabelle-ontologies:2018"}.\<close>
 \<close>}
+The list of standard Isabelle document antiquotations, as well as their options and styles,
+can be found in the Isabelle reference manual @{cite "wenzel:isabelle-isar:2020"}, also be found
+under \<^url>\<open>https://www.cl.cam.ac.uk/research/hvg/Isabelle/dist/Isabelle2022/doc/isar-ref.pdf\<close>, 
+section 4.2.
 
-Clearly, this is not always possible and, in fact, often \<^isadof> documents will contain 
+In practice,  \<^isadof> documents with ambitious layout will contain a certain number of
 \<^LaTeX>-commands, but this should be restricted to layout improvements that otherwise are (currently)
-not possible. As far as possible, the use of \<^LaTeX>-commands should be restricted to the definition 
-of ontologies and document templates (see @{docitem (unchecked) \<open>isadof_ontologies\<close>}).
+not possible. As far as possible, raw \<^LaTeX> should be restricted to the definition 
+of ontologies and  macros (see @{docitem (unchecked) \<open>isadof_ontologies\<close>}). If raw 
+ \<^LaTeX> commands can not be avoided, it is recommended to use the Isabelle document comment
+\<^latex>\<open>\verb+\+\verb+<^latex>+\<close>\<open>\<open>argument\<close>\<close> to isolate these parts
+(cf. \<^url>\<open>https://www.cl.cam.ac.uk/research/hvg/Isabelle/dist/Isabelle2022/doc/isar-ref.pdf\<close>). 
 
 Restricting the use of \<^LaTeX> has two advantages: first, \<^LaTeX> commands can circumvent the 
 consistency checks of \<^isadof> and, hence, only if no \<^LaTeX> commands are used, \<^isadof> can 

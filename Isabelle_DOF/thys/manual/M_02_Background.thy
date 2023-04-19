@@ -190,7 +190,7 @@ side_by_side_figure*[docModOnto::side_by_side_figure,anchor="''docModGen''",
 
 text\<open>Since Isabelle's commands are freely programmable, it is possible to implement  \<^dof> as an 
 extension of the system. In particular, the ontology language of \<^dof> provides an  ontology 
-definition language ODL that \<^emph>\<open>generates\<close> anti-quotations and the infrastructure to check and evaluate 
+definition language ODL\<^bindex>\<open>ODL\<close> that \<^emph>\<open>generates\<close> anti-quotations and the infrastructure to check and evaluate 
 them. This allows for checking an annotated document with respect to a given ontology, which may be 
 specific for  a given domain-specific universe of discourse (see @{figure "docModOnto"}). ODL will 
 be described in  @{text_section (unchecked) "isadof_tour"} in more detail.\<close>
