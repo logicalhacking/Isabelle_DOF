@@ -218,11 +218,10 @@ text\<open>At times, this causes idiosyncrasies like the ones cited in the follo
 section*[scholar_onto::example]\<open>Writing Academic Publications in \<^boxed_theory_text>\<open>scholarly_paper\<close>\<close>  
 subsection\<open>Writing Academic Papers\<close>
 text\<open> 
-  The ontology \<^verbatim>\<open>scholarly_paper\<close>
-  \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
-  academic/scientific papers, with a slight bias towards texts in the domain of mathematics and engineering. 
-  We explain first the principles of its underlying ontology, and then we present two ``real'' 
-  examples from our own publication practice.
+  The ontology \<^verbatim>\<open>scholarly_paper\<close>  \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
+  academic/scientific papers, with a slight bias towards texts in the domain of mathematics and
+  engineering. We explain first the principles of its underlying ontology, and then we present two 
+  ``real'' examples from our own publication practice.
 \<close>
 text\<open>
   \<^enum> The iFM 2020 paper~@{cite "taha.ea:philosophers:2020"} is a typical mathematical text,
@@ -237,13 +236,13 @@ text\<open>
     possible \<^LaTeX> notation.
 
   The \<^isadof> distribution contains both examples using the ontology \<^verbatim>\<open>scholarly_paper\<close> in 
-  the directory \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/} or
-  \nolinkurl{examples/scholarly_paper/2020-iFM-CSP}.
+  the directory \<^nolinkurl>\<open>examples/scholarly_paper/2018-cicm-isabelle_dof-applications/\<close> or
+   \<^nolinkurl>\<open>examples/scholarly_paper/2020-iFM-CSP\<close>.
 
   You can inspect/edit the example in Isabelle's IDE, by either 
   \<^item> starting Isabelle/jEdit using your graphical user interface (\<^eg>, by clicking on the 
     Isabelle-Icon provided by the Isabelle installation) and loading the file 
-    \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy},
+    \<^nolinkurl>\<open>examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy"\<close>
   \<^item> starting Isabelle/jEdit from the command line by, \<^eg>, calling:
 
 @{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë 
@@ -314,7 +313,7 @@ as follows:
 Additional means assure that the following invariant is maintained in a document 
 conforming to \<^verbatim>\<open>scholarly_paper\<close>:
 
-\center {\<open>level > 0\<close>}
+\<^center>\<open>\<open>level > 0\<close>\<close>
 \<close>
 
 text\<open>\<^vs>\<open>1.0cm\<close>\<close>
@@ -483,12 +482,21 @@ side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-
 
 text\<open> 
   From these class definitions, \<^isadof> also automatically generated editing 
-  support for Isabelle/jEdit. In \autoref{fig-Dogfood-II-bgnd1} and 
-  \autoref{fig-bgnd-text_section} we show how hovering over links permits to explore its 
+  support for Isabelle/jEdit. In 
+  @{figure "exploring"}(left)
+  % \autoref{fig-Dogfood-II-bgnd1} 
+  and
+  @{figure "exploring"}(right)
+  % \autoref{fig-bgnd-text_section} 
+  we show how hovering over links permits to explore its 
   meta-information. Clicking on a document class identifier permits to hyperlink into the 
-  corresponding class definition (\autoref{fig:Dogfood-IV-jumpInDocCLass}); hovering over an 
-  attribute-definition (which is qualified in order to disambiguate; 
-  \autoref{fig:Dogfood-V-attribute}) shows its type.
+  corresponding class definition (
+  @{figure "hyperlinks"}(left)
+  %\autoref{fig:Dogfood-IV-jumpInDocCLass})
+  ; hovering over an attribute-definition (which is qualified in order to disambiguate; cf.
+  @{figure "hyperlinks"}(right)
+  %\autoref{fig:Dogfood-V-attribute}
+  ) shows its type.
 \<close>
 
 figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-VI-linkappl.png''"]
@@ -505,9 +513,61 @@ Isabelle/jEdit will respond with an error.\<close>
 text\<open>We advise users to experiment with different notation variants.
 Note, further, that the Isabelle \<^latex>\<open>@\{cite ...\}\<close>-text-anti-quotation makes its checking
 on the level of generated \<^verbatim>\<open>.aux\<close>-files, which are not necessarily up-to-date. Ignoring the PIDE
-error-message and compiling a with a consistent bibtex usually makes disappear this behavior. 
+error-message and compiling it with a consistent bibtex usually makes disappear this behavior. 
 \<close>
 
+subsection*["using-term-aq"::technical, main_author = "Some @{author ''bu''}"]
+   \<open>Using Term-Antiquotations\<close>
+
+text\<open>The present version of \<^isadof> is the first version that supports the novel feature of
+\<^dof>-generated term-antiquotations\<^bindex>\<open>term-antiquotations\<close>, \<^ie>, antiquotations embedded
+in HOL-\<open>\<lambda>\<close>-terms possessing arguments that were validated in the ontological context.
+These HOL-\<open>\<lambda>\<close>-terms may occur in definitions, lemmas, or in values to define attributes 
+in class instances. They have the format:\<close>
+
+text\<open>\<^center>\<open>\<open>@{name arg\<^sub>1 ... arg\<^sub>n\<^sub>-\<^sub>1} arg\<^sub>n\<close>\<close>\<close>
+
+text\<open>Logically, they are defined as an identity in the last argument \<open>arg\<^sub>n\<close>; thus,
+ontologically checked prior arguments \<open>arg\<^sub>1 ... arg\<^sub>n\<^sub>-\<^sub>1\<close> can be ignored during a proof
+process; ontologically, they can be used to assure the traceability of, \<^eg>, semi-formal 
+assumptions throughout their way to formalisation and use in lemmas and proofs. \<close> 
+
+figure*[doc_termAq::figure,relative_width="50",src="''figures/doc-mod-term-aq.png''"]
+                      \<open>Term-Antiquotations Referencing to Annotated Elements\<close>
+text\<open>As shown in @{figure \<open>doc_termAq\<close>}, this feature of  \<^isadof> substantially increases
+the expressibility of links between the formal and the informal in \<^dof> documents.\<close>
+
+text\<open> In the following, we describe a common scenario linking semi-formal assumptions and
+formal ones:
+
+@{boxed_theory_text [display]
+\<open>
+declare_reference*[e2::"definition"]
+
+Assumption*[a1::"assumption", short_name="\<open>safe environment.\<close>"]
+\<open>The system shall only be used in the temperature range from 0 to 60 degrees Celsius.
+ Formally, this is stated as follows in @{definition (unchecked) \<open>e2\<close>}.\<close>
+
+definition*[e2, status=formal] safe_env :: "state \<Rightarrow> bool" 
+   where "safe_env \<sigma> \<equiv> (temp \<sigma> \<in> {0 .. 60})"
+
+theorem*[e3::"theorem"] safety_preservation::" @{assumption \<open>a1\<close>} (safe_env \<sigma>) \<Longrightarrow> ...  "
+\<close>}
+\<close>
+text\<open>Note that Isabelle procedes in a strict ``declaration-before-use''-manner, \<^ie> assumes
+linear visibility on all references. This also holds for the declaration of ontological 
+references. In order to represent cyclic dependencies, it is therefore necessary to 
+start with the forward declaration \<^theory_text>\<open>declare_reference*\<close>. From there on, this reference
+can be used in text, term, and code-contexts, albeit its definition appears textually later.
+The corresponding freeform-formulation of this assumption can be explicitly referred in the
+assumption of a theorem establishing the link. The \<^theory_text>\<open>theorem*\<close>-variant of the common 
+Isabelle/Isar  \<^theory_text>\<open>theorem\<close>-command will in contrast to the latter not ignore \<open>\<open>a1\<close>\<close>,
+ \<^ie> parse just as string, but also validate it in the previous context.
+
+Note that the \<^theory_text>\<open>declare_reference*\<close> command will appear in the \<^LaTeX> generated from this 
+document fragment. In order to avoid this, one has to enclose this command into the 
+document comments :\<close>
+text\<open>\<^center>\<open>\<open>(*<*) ... (*>*)\<close>\<close>\<close>
 
 
 section*[tech_onto::example]\<open>Writing Technical Reports in \<^boxed_theory_text>\<open>technical_report\<close>\<close>  
@@ -591,11 +651,6 @@ SML-type really corresponds to the type of the operations in the underlying SML 
 In the \<^pdf> output, these text-fragments were displayed verbatim.
 \<close>
 
-
-section\<open>Using Term-Antiquotations\<close>
-
-figure*[doc_termAq::figure,relative_width="50",src="''figures/doc-mod-term-aq.png''"]
-                      \<open>Term-Antiquotations Referencing to Annotated Elements\<close>
 
 
 section\<open>Some Recommendations: A little Style Guide\<close>
