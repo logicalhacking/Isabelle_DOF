@@ -53,12 +53,12 @@ ML\<open>
 val _ =
   Monitor_Command_Parser.document_command \<^command_keyword>\<open>abstract*\<close> "Textual Definition"
     {markdown = true, body = true}
-    (Onto_Macros.enriched_document_cmd_exp (SOME "abstract") []) (K(K I));
+    (Onto_Macros.enriched_document_cmd_exp (SOME "abstract") []) [] I;
 
 val _ =
   Monitor_Command_Parser.document_command \<^command_keyword>\<open>author*\<close> "Textual Definition"
     {markdown = true, body = true}
-    (Onto_Macros.enriched_document_cmd_exp (SOME "author") []) (K(K I));
+    (Onto_Macros.enriched_document_cmd_exp (SOME "author") []) [] I;
 \<close>
 
 text\<open>Scholarly Paper is oriented towards the classical domains in science:
@@ -202,7 +202,6 @@ datatype math_content_class =
   | "rmrk"       \<comment>\<open>remark\<close>  
   | "notn"       \<comment>\<open>notation\<close>  
   | "tmgy"       \<comment>\<open>terminology\<close>
-
 
 text\<open>Instances of the \<open>doc_class\<close> \<^verbatim>\<open>math_content\<close> are by definition @{term "semiformal"}; they may
 be non-referential, but in this case they will not have a @{term "short_name"}.\<close>
@@ -444,49 +443,50 @@ fun doc_cmd kwd txt flag key =
       in
         Onto_Macros.enriched_formal_statement_command  default [("mcc",key)] meta_args thy
       end)
-      (Onto_Macros.transform_attr [("mcc",key)])
+      [\<^const_name>\<open>mcc\<close>]
+      (Onto_Macros.transform_attr [(\<^const_name>\<open>mcc\<close>,key)])
 
 in
 
 val _ = doc_cmd \<^command_keyword>\<open>Definition*\<close> "Freeform Definition" 
-                Definition_default_class "defn";
+                Definition_default_class \<^const_name>\<open>defn\<close>;
 
 val _ = doc_cmd \<^command_keyword>\<open>Lemma*\<close>      "Freeform Lemma Description" 
-                 Lemma_default_class "lemm";
+                 Lemma_default_class \<^const_name>\<open>lemm\<close>;
 
 val _ = doc_cmd \<^command_keyword>\<open>Theorem*\<close>    "Freeform Theorem" 
-                 Theorem_default_class "theom";
+                 Theorem_default_class \<^const_name>\<open>theom\<close>;
 
 (* cut and paste to make it runnable, but nonsensical so far: *)
 val _ = doc_cmd \<^command_keyword>\<open>Proposition*\<close> "Freeform Proposition"
-                  Proposition_default_class "prpo";
+                  Proposition_default_class \<^const_name>\<open>prpo\<close>;
 
 val _ = doc_cmd \<^command_keyword>\<open>Premise*\<close> "Freeform Premise"
-                  Premise_default_class "prms";
+                  Premise_default_class \<^const_name>\<open>prms\<close>;
 
 val _ = doc_cmd \<^command_keyword>\<open>Corollary*\<close> "Freeform Corollary"
-                  Corollary_default_class "corr";
+                  Corollary_default_class \<^const_name>\<open>corr\<close>;
 
 val _ = doc_cmd \<^command_keyword>\<open>Consequence*\<close> "Freeform Consequence"
-                  Consequence_default_class "cons";
+                  Consequence_default_class \<^const_name>\<open>cons\<close>;
                       
 val _ = doc_cmd \<^command_keyword>\<open>Conclusion*\<close> "Freeform Conclusion"
-                  Conclusion_default_class "conc_stmt";
+                  Conclusion_default_class \<^const_name>\<open>conc_stmt\<close>;
                            
 val _ = doc_cmd \<^command_keyword>\<open>Assumption*\<close> "Freeform Assumption"
-                  Assumption_default_class "assm";
+                  Assumption_default_class \<^const_name>\<open>assm\<close>;
 
 val _ = doc_cmd \<^command_keyword>\<open>Hypothesis*\<close> "Freeform Hypothesis"
-                  Hypothesis_default_class "prpo";
+                  Hypothesis_default_class \<^const_name>\<open>prpo\<close>;
 
 val _ = doc_cmd \<^command_keyword>\<open>Assertion*\<close> "Freeform Assertion"
-                  Assertion_default_class "assn";
+                  Assertion_default_class \<^const_name>\<open>assn\<close>;
 
 val _ = doc_cmd \<^command_keyword>\<open>Proof*\<close> "Freeform Proof"
-                  Proof_default_class "prf_stmt";
+                  Proof_default_class \<^const_name>\<open>prf_stmt\<close>;
 
 val _ = doc_cmd \<^command_keyword>\<open>Example*\<close> "Freeform Example"
-                  Example_default_class "expl_stmt";
+                  Example_default_class \<^const_name>\<open>expl_stmt\<close>;
 end
 end 
 \<close>

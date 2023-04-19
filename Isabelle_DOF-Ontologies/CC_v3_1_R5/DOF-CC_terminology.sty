@@ -23,35 +23,35 @@
 
 
 \newkeycommand*{\mathcc}[label=,type=%
- , scholarly_paper.math_content.short_name ={}%
- , scholarly_paper.math_content.mcc     = % 
- , Isa_COL.text_element.level         =%
- , Isa_COL.text_element.referentiable =%
- , Isa_COL.text_element.variants      =%
- , scholarly_paper.text_section.main_author  =%
- , scholarly_paper.text_section.fixme_list   =%
- , Isa_COL.text_element.level                =%
- , scholarly_paper.technical.definition_list =%
- , scholarly_paper.technical.status          =%
- , CC_terminology.concept_definition.tag=%
- , CC_terminology.concept_definition.short_tag=%
+ , scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTshortUNDERSCOREname ={}%
+ , scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTmcc     = % 
+ , IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel         =%
+ , IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable =%
+ , IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants      =%
+ , scholarlyUNDERSCOREpaperDOTtextUNDERSCOREsectionDOTmainUNDERSCOREauthor  =%
+ , scholarlyUNDERSCOREpaperDOTtextUNDERSCOREsectionDOTfixmeUNDERSCORElist   =%
+ , IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel                =%
+ , scholarlyUNDERSCOREpaperDOTtechnicalDOTdefinitionUNDERSCORElist =%
+ , scholarlyUNDERSCOREpaperDOTtechnicalDOTstatus          =%
+ , CCUNDERSCOREterminologyDOTconceptUNDERSCOREdefinitionDOTtag=%
+ , CCUNDERSCOREterminologyDOTconceptUNDERSCOREdefinitionDOTshortUNDERSCOREtag=%
  ]
  [1]
  {%
     \begin{isamarkuptext}%
-      \ifthenelse{\equal{\commandkey{scholarly_paper.math_content.short_name}} {} }  
+      \ifthenelse{\equal{\commandkey{scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTshortUNDERSCOREname}} {} }  
         {%
-         \begin{\commandkey{scholarly_paper.math_content.mcc}}\label{\commandkey{label}}
+         \begin{\commandkey{scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTmcc}}\label{\commandkey{label}}
            #1
-         \end{\commandkey{scholarly_paper.math_content.mcc}}
+         \end{\commandkey{scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTmcc}}
         }{%
-         \begin{\commandkey{scholarly_paper.math_content.mcc}}[\commandkey{scholarly_paper.math_content.short_name}]\label{\commandkey{label}} 
+         \begin{\commandkey{scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTmcc}}[\commandkey{scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTshortUNDERSCOREname}]\label{\commandkey{label}} 
            #1 
-         \end{\commandkey{scholarly_paper.math_content.mcc}}
+         \end{\commandkey{scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontentDOTmcc}}
         }
     \end{isamarkuptext}%
  } 
 
-\expandafter\def\csname isaDof.text.scholarly_paper.math_content\endcsname{\mathcc}
+\expandafter\def\csname isaDofDOTtextDOTscholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent\endcsname{\mathcc}
 
 
