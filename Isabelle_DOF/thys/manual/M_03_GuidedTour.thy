@@ -65,7 +65,6 @@ text\<open>
   managers. On a modern Debian system or a Debian derivative (\<^eg>, Ubuntu), the following command 
   should install all required \<^LaTeX> packages:
 @{boxed_bash [display]\<open>ë\prompt{}ë sudo aptitude install texlive-full\<close>}
-\<^dof>
 \<close>
 
 subsubsection*[isadof::technical]\<open>Installing \<^isadof>\<close>
@@ -216,34 +215,31 @@ text\<open>At times, this causes idiosyncrasies like the ones cited in the follo
 \<close>
 
 section*[scholar_onto::example]\<open>Writing Academic Publications in \<^boxed_theory_text>\<open>scholarly_paper\<close>\<close>  
-subsection\<open>Writing Academic Papers\<close>
+subsection\<open>A Selection of major Examples\<close>
 text\<open> 
   The ontology \<^verbatim>\<open>scholarly_paper\<close>  \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
   academic/scientific papers, with a slight bias towards texts in the domain of mathematics and
   engineering. We explain first the principles of its underlying ontology, and then we present two 
   ``real'' examples from our own publication practice.
-\<close>
-text\<open>
-  \<^enum> The iFM 2020 paper~@{cite "taha.ea:philosophers:2020"} is a typical mathematical text,
-    heavy in definitions with complex  mathematical notation and a lot of non-trivial cross-referencing
-    between statements, definitions and proofs which are ontologically tracked. However, wrt.
-    the possible linking between the underlying formal theory and this mathematical presentation,
-    it follows a pragmatic path without any ``deep'' linking to types, terms and theorems, 
-    deliberately not exploiting \<^isadof> 's full potential with this regard.
-  \<^enum> In the CICM 2018 paper~@{cite "brucker.ea:isabelle-ontologies:2018"}, we deliberately
-    refrain from integrating references to formal content in order to demonstrate that \<^isadof> is not 
-    a  framework from Isabelle users to Isabelle users only, but people just avoiding as much as
-    possible \<^LaTeX> notation.
+     \<^enum> The iFM 2020 paper~@{cite "taha.ea:philosophers:2020"} is a typical mathematical text,
+       heavy in definitions with complex  mathematical notation and a lot of non-trivial cross-referencing
+       between statements, definitions and proofs which are ontologically tracked. However, wrt.
+       the possible linking between the underlying formal theory and this mathematical presentation,        it follows a pragmatic path without any ``deep'' linking to types, terms and theorems, 
+       deliberately not exploiting \<^isadof> 's full potential with this regard.
+     \<^enum> In the CICM 2018 paper~@{cite "brucker.ea:isabelle-ontologies:2018"}, we deliberately
+       refrain from integrating references to formal content in order to demonstrate that \<^isadof> is not 
+       a framework from Isabelle users to Isabelle users only, but people just avoiding as much as
+       possible \<^LaTeX> notation.
 
   The \<^isadof> distribution contains both examples using the ontology \<^verbatim>\<open>scholarly_paper\<close> in 
   the directory \<^nolinkurl>\<open>examples/scholarly_paper/2018-cicm-isabelle_dof-applications/\<close> or
    \<^nolinkurl>\<open>examples/scholarly_paper/2020-iFM-CSP\<close>.
 
   You can inspect/edit the example in Isabelle's IDE, by either 
-  \<^item> starting Isabelle/jEdit using your graphical user interface (\<^eg>, by clicking on the 
-    Isabelle-Icon provided by the Isabelle installation) and loading the file 
-    \<^nolinkurl>\<open>examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy"\<close>
-  \<^item> starting Isabelle/jEdit from the command line by, \<^eg>, calling:
+     \<^item> starting Isabelle/jEdit using your graphical user interface (\<^eg>, by clicking on the 
+       Isabelle-Icon provided by the Isabelle installation) and loading the file 
+       \<^nolinkurl>\<open>examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy"\<close>
+     \<^item> starting Isabelle/jEdit from the command line by, \<^eg>, calling:
 
 @{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë 
   isabelle jedit -d . examples/scholarly_paper/2020-iFM-CSP/paper.thy \<close>}
@@ -505,10 +501,9 @@ figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-
 text\<open> 
 An ontological reference application in @{figure "figDogfoodVIlinkappl"}: the 
 ontology-dependant antiquotation \<^boxed_theory_text>\<open>@{example \<open>ex1\<close>}\<close> refers to the corresponding 
-text-element \<^boxed_theory_text>\<open>ex1\<close>.
-Hovering allows for inspection, clicking for jumping to the definition.
-If the  link does not exist or  has a non-compatible type, the text is not validated, \<^ie>,
-Isabelle/jEdit will respond with an error.\<close>
+text-element \<^boxed_theory_text>\<open>ex1\<close>. Hovering allows for inspection, clicking for jumping to the 
+definition. If the  link does not exist or  has a non-compatible type, the text is not validated,
+ \<^ie>, Isabelle/jEdit will respond with an error.\<close>
 
 text\<open>We advise users to experiment with different notation variants.
 Note, further, that the Isabelle \<^latex>\<open>@\{cite ...\}\<close>-text-anti-quotation makes its checking
@@ -522,7 +517,7 @@ subsection*["using-term-aq"::technical, main_author = "Some @{author ''bu''}"]
 text\<open>The present version of \<^isadof> is the first version that supports the novel feature of
 \<^dof>-generated term-antiquotations\<^bindex>\<open>term-antiquotations\<close>, \<^ie>, antiquotations embedded
 in HOL-\<open>\<lambda>\<close>-terms possessing arguments that were validated in the ontological context.
-These HOL-\<open>\<lambda>\<close>-terms may occur in definitions, lemmas, or in values to define attributes 
+These \<open>\<lambda>\<close>-terms may occur in definitions, lemmas, or in values to define attributes 
 in class instances. They have the format:\<close>
 
 text\<open>\<^center>\<open>\<open>@{name arg\<^sub>1 ... arg\<^sub>n\<^sub>-\<^sub>1} arg\<^sub>n\<close>\<close>\<close>
