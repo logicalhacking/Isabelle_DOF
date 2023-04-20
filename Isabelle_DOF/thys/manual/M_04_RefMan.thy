@@ -1544,7 +1544,7 @@ subsubsection\<open>Restricting the Use of Ontologies to Specific Templates\<clo
 text\<open>
   As ontology representations might rely on features only provided by certain templates 
   (\<^LaTeX>-classes), authors of ontology representations might restrict their use to 
-  specific classes. This can, \<^eg>, be done using the \inlineltx|\@ifclassloaded{}| command:
+  specific classes. This can, \<^eg>, be done using the \<^ltxinline>\<open>\@ifclassloaded{}\<close> command:
 \<^latex>\<open>
 \begin{ltx}
 \@ifclassloaded{llncs}{}%
