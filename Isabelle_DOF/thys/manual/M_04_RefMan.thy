@@ -97,27 +97,25 @@ text\<open>
 
 section\<open>The Ontology Definition Language (ODL)\<close>
 text\<open>
-  ODL shares some similarities with meta-modeling languages such as UML class 
-  models: It builds upon concepts like class, inheritance, class-instances, attributes, references 
-  to instances, and class-invariants. Some concepts like  advanced type-checking, referencing to 
-  formal entities of Isabelle, and monitors are due to its specific application in the 
-  Isabelle context. Conceptually, ontologies specified in ODL consist of:
-  \<^item> \<^emph>\<open>document classes\<close> (\<^boxed_theory_text>\<open>doc_class\<close>) \<^index>\<open>doc\_class\<close> that describe concepts,
-    the keyword (\<^boxed_theory_text>\<open>onto_class\<close>) \<^index>\<open>onto\_class\<close> is accepted equally,
-  \<^item> an optional document base class expressing single inheritance
-  class extensions,
-  \<^item> \<^emph>\<open>attributes\<close> specific to document classes, where
-    \<^item> attributes are HOL-typed,
-    \<^item> attributes of instances of document elements are mutable,
-    \<^item> attributes can refer to other document classes, thus, document
-      classes must also be HOL-types (such attributes are called
-      \<^emph>\<open>links\<close>),
-    \<^item> attribute values were denoted by HOL-terms,
-  \<^item> a special link, the reference to a super-class, establishes an
-  \<^emph>\<open>is-a\<close> relation between classes,
-  \<^item> classes may refer to other classes via a regular expression in an
-    \<^emph>\<open>accepts\<close> clause, or via a list in a \<^emph>\<open>rejects\<close> clause,
-  \<^item> attributes may have default values in order to facilitate notation.
+ ODL shares some similarities with meta-modeling languages such as UML class 
+ models: It builds upon concepts like class, inheritance, class-instances, attributes, references 
+ to instances, and class-invariants. Some concepts like  advanced type-checking, referencing to 
+ formal entities of Isabelle, and monitors are due to its specific application in the 
+ Isabelle context. Conceptually, ontologies specified in ODL consist of:
+    \<^item> \<^emph>\<open>document classes\<close> (\<^boxed_theory_text>\<open>doc_class\<close>) \<^index>\<open>doc\_class\<close> that describe concepts,
+      the keyword (\<^boxed_theory_text>\<open>onto_class\<close>) \<^index>\<open>onto\_class\<close> is accepted equally,
+    \<^item> an optional document base class expressing single inheritance  class extensions,
+    \<^item> \<^emph>\<open>attributes\<close> specific to document classes, where
+      \<^item> attributes are HOL-typed,
+      \<^item> attributes of instances of document elements are mutable,
+      \<^item> attributes can refer to other document classes, thus, document
+        classes must also be HOL-types (such attributes are called  \<^emph>\<open>links\<close>),
+      \<^item> attribute values were denoted by HOL-terms,
+    \<^item> a special link, the reference to a super-class, establishes an
+      \<^emph>\<open>is-a\<close> relation between classes,
+    \<^item> classes may refer to other classes via a regular expression in an
+      \<^emph>\<open>accepts\<close> clause, or via a list in a \<^emph>\<open>rejects\<close> clause,
+    \<^item> attributes may have default values in order to facilitate notation.
 \<close>
 
 text\<open>
@@ -264,13 +262,14 @@ A document class\<^bindex>\<open>document class\<close> can be defined using the
 text\<open>
   \<^isadof> provides a default document representation (\<^ie>, content and layout of the generated 
   \<^pdf>) that only prints the main text, omitting all attributes. \<^isadof> provides the 
-  \inlineltx|\newisadof[]{}|\<^index>\<open>newisadof@\<^boxed_latex>\<open>\newisadof\<close>\<close>\<^index>\<open>document class!PDF\<close>
+  \<^ltxinline>\<open>\newisadof[]{}\<close>\<^index>\<open>newisadof@\<^boxed_latex>\<open>\newisadof\<close>\<close>\<^index>\<open>document class!PDF\<close>
   command for defining a dedicated layout for a document class in \<^LaTeX>. Such a document 
   class-specific \<^LaTeX>-definition can not only provide a specific layout (\<^eg>, a specific 
   highlighting, printing of certain attributes), it can also generate entries in the table of 
-  contents or an index. Overall, the \inlineltx|\newisadof[]{}| command follows the structure
+  contents or an index. Overall, the  \<^ltxinline>\<open>\newisadof[]{}\<close> command follows the structure
   of the \<^boxed_theory_text>\<open>doc_class\<close>-command:
 
+% bu: not embeddable macro: too many guillemots ...
 \begin{ltx}[escapechar=ë]
 \newisadof{ë\<open>class_id\<close>ë}[label=,type=, ë\<open>attribute_decl\<close>ë][1]{%
   % ë\LaTeXë-definition of the document class representation
@@ -284,17 +283,17 @@ text\<open>
   needs to declare all attributes of the document class. Within the \<^LaTeX>-definition of the document
   class representation, the identifier \<^boxed_latex>\<open>#1\<close> refers to the content of the main text of the 
   document class (written in \<^boxed_theory_text>\<open>\<open> ... \<close>\<close>) and the attributes can be referenced
-  by their name using the \inlineltx|\commandkey{...}|-command (see the documentation of the 
+  by their name using the  \<^ltxinline>\<open>\commandkey{...}\<close>-command (see the documentation of the 
   \<^LaTeX>-package ``keycommand''~@{cite "chervet:keycommand:2010"} for details). Usually, the 
   representations definition needs to be wrapped in a 
-  \inlineltx|\begin{isarmarkup}...\end{isamarkup}|-environment, to ensure the correct context 
+  \<^ltxinline>\<open>\begin{isarmarkup}...\end{isamarkup}\<close>-environment, to ensure the correct context 
   within Isabelle's \<^LaTeX>-setup. 
   % TODO:
   % Clarify \newisadof signature: \newisadof[]{} vs \newisadof{}[]{}.
   Moreover, \<^isadof> also provides the following two variants of \inlineltx|\newisadof{}[]{}|:
-  \<^item>  \inlineltx|\renewisadof{}[]{}|\<^index>\<open>renewisadof@\<^boxed_latex>\<open>\renewisadof\<close>\<close> for re-defining 
+  \<^item>  \<^ltxinline>\<open>\renewisadof{}[]{}\<close>\<^index>\<open>renewisadof@\<^boxed_latex>\<open>\renewisadof\<close>\<close> for re-defining 
      (over-writing) an already defined command, and  
-  \<^item>  \inlineltx|\provideisadof{}[]{}|\<^index>\<open>provideisadof@\<^boxed_latex>\<open>\provideisadof\<close>\<close> for providing 
+  \<^item>  \<^ltxinline>\<open>\provideisadof{}[]{}\<close>\<^index>\<open>provideisadof@\<^boxed_latex>\<open>\provideisadof\<close>\<close> for providing 
      a definition if it is not yet defined. 
 \<close>
 text\<open>
@@ -1501,6 +1500,7 @@ job's aux-file. The intermediate step of writing this information into the job's
 as the author and affiliation information is required right at the beginning of the document 
 while  \<^isadof> allows defining  authors at  any place within a document:
 
+\<^latex>\<open>
 \begin{ltx}
 \provideisadof{text.scholarly_paper.author}%
 [label=,type=%
@@ -1524,7 +1524,7 @@ while  \<^isadof> allows defining  authors at  any place within a document:
                \string\addaffiliation{\dof@a\\\string\email{%
                     \commandkey{scholarly_paper.author.email}}}}%
 }
-\end{ltx}
+\end{ltx}\<close>
 
 Finally, the collected information is used in the  \<^boxed_latex>\<open>\author\<close> command using the 
 \<^boxed_latex>\<open>AtBeginDocument\<close>-hook:

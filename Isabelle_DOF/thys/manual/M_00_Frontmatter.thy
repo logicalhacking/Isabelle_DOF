@@ -40,6 +40,7 @@ define_macro* index  \<rightleftharpoons> \<open>\index{\<close> _ \<open>}\<clo
 define_macro* bindex \<rightleftharpoons> \<open>\bindex{\<close> _ \<open>}\<close>
 define_macro* nolinkurl \<rightleftharpoons> \<open>\nolinkurl{\<close> _ \<open>}\<close>
 define_macro* center \<rightleftharpoons> \<open>\center{\<close> _ \<open>}\<close>
+define_macro* ltxinline \<rightleftharpoons> \<open>\inlineltx|\<close> _ \<open>|\<close>
 
 
 ML\<open>
