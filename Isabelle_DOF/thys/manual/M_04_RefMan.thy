@@ -790,9 +790,12 @@ of the \<^isadof> language:
 
 \<^item> \<open>derived_text_elements \<close> :
 \<^rail>\<open>
-    (  ( @@{command "author*"} 
-       | @@{command "abstract*"} 
-       | @@{command "Definition*"}  | @@{command "Lemma*"} | @@{command "Theorem*"} 
+    (  ( @@{command "author*"}     | @@{command "abstract*"} 
+       | @@{command "Definition*"} | @@{command "Lemma*"}      | @@{command "Theorem*"} 
+       | @@{command "Proposition*"}| @@{command "Proof*"}      | @@{command "Example*"}  
+       | @@{command "Premise*"}    | @@{command "Assumption*"} | @@{command "Hypothesis*"}
+       | @@{command "Corollary*"}  | @@{command "Consequence*"}| @@{command "Assertion*"}
+       | @@{command "Conclusion*"} 
        ) 
        \<newline>
        '[' meta_args ']' '\<open>' text '\<close>'
@@ -800,6 +803,9 @@ of the \<^isadof> language:
      
   \<close>
 \<close>
+
+
+
 
 text\<open>Usually, command macros for text elements will assign the generated instance
 to the default class corresponding for this class.
