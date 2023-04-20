@@ -2578,6 +2578,9 @@ ML\<open>
 
 local
 
+fun elaborate stmt ctxt = stmt |> map (apsnd (map (apfst (DOF_core.elaborate_term ctxt)
+                                              #> apsnd (map (DOF_core.elaborate_term ctxt)))))
+
 fun prep_statement prep_att prep_stmt raw_elems raw_stmt ctxt =
   let
     val (stmt, elems_ctxt) = prep_stmt raw_elems raw_stmt ctxt;
@@ -2587,11 +2590,7 @@ fun prep_statement prep_att prep_stmt raw_elems raw_stmt ctxt =
     (case raw_stmt of
       Element.Shows _ =>
         let val stmt' = Attrib.map_specs (map prep_att) stmt
-            val stmt'' = stmt' |> map (fn (b, ts) =>
-                                (b, ts |> map (fn (t', t's) =>
-                                          (DOF_core.elaborate_term ctxt t',
-                                          t's |> map (fn t'' => 
-                                                 DOF_core.elaborate_term ctxt t'')))))
+            val stmt'' = elaborate stmt' ctxt
         in (([], prems, stmt'', NONE), stmt_ctxt) end
     | Element.Obtains raw_obtains =>
         let
@@ -2606,11 +2605,7 @@ fun prep_statement prep_att prep_stmt raw_elems raw_stmt ctxt =
             ||> Proof_Context.restore_stmt asms_ctxt;
 
           val stmt' = [(Binding.empty_atts, [(#2 (#1 (Obtain.obtain_thesis ctxt)), [])])];
-          val stmt'' = stmt' |> map (fn (b, ts) =>
-                                (b, ts |> map (fn (t', t's) =>
-                                          (DOF_core.elaborate_term ctxt t',
-                                          t's |> map (fn t'' => 
-                                                 DOF_core.elaborate_term ctxt t'')))))
+          val stmt'' = elaborate stmt' ctxt
         in ((Obtain.obtains_attribs raw_obtains, prems, stmt'', SOME that'), that_ctxt) end)
   end;
 
