@@ -180,7 +180,6 @@ text*[tu15::scholarly_paper.experiment ]\<open>Lectus accumsan velit ultrices, .
 text*[tu16::scholarly_paper.hypothesis ]\<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu17::scholarly_paper.math_proof ]\<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu18::scholarly_paper.consequence]\<open>Lectus accumsan velit ultrices, ...\<close>
-text*[tu26::scholarly_paper.math_explanation]\<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu19::scholarly_paper.math_formal]\<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu20::scholarly_paper.proposition]\<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu21::scholarly_paper.math_content    ]\<open>Lectus accumsan velit ultrices, ...\<close>
@@ -193,5 +192,45 @@ text*[tt10::scholarly_paper.tech_example]\<open>Lectus accumsan velit ultrices, 
 text*[tu8::scholarly_paper.tech_code]        \<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu27::scholarly_paper.engineering_content]\<open>Lectus accumsan velit ultrices, ...\<close>
 text*[tu14::scholarly_paper.evaluation ]\<open>Lectus accumsan velit ultrices, ...\<close>
+
+text\<open> @{axiom tu1} @{lemma tu2} @{example tu3} @{premise tu4} @{theorem tu5} @{assertion tu6} 
+      @{technical tu9} @{assumption             tu10 }  @{definition             tu13 }
+      @{experiment      tu15 } @{hypothesis      tu16 } @{math_proof      tu17 }
+      @{consequence     tu18 } @{math_formal     tu19 } @{proposition     tu20 }
+      @{math_content    tu21 } @{math_example    tu22 } @{conclusion_stmt tu23 }
+      @{math_motivation tu24 } @{tech_definition tu25 } @{eng_example     tu28 }
+      @{tech_example    tt10 } @{tech_code       tu8 }  @{engineering_content tu27 }
+      @{evaluation      tu14 }
+    \<close>
+
+subsection\<open>The Use in Macros\<close>
+
+Lemma*[ttu2::scholarly_paper.lemma    ]\<open>Lectus accumsan velit ultrices, ...\<close>
+Example*[ttu3::scholarly_paper.math_example  ]\<open>Lectus accumsan velit ultrices, ...\<close>
+Premise*[ttu4::scholarly_paper.premise  ]\<open>Lectus accumsan velit ultrices, ...\<close>
+Theorem*[ttu5::scholarly_paper.theorem  ]\<open>Lectus accumsan velit ultrices, ...\<close>
+Assertion*[ttu6::scholarly_paper.assertion]\<open>Lectus accumsan velit ultrices, ...\<close>
+Corollary*[ttu7::scholarly_paper.corollary]\<open>Lectus accumsan velit ultrices, ...\<close>
+Assumption*[ttu10::scholarly_paper.assumption ]\<open>Lectus accumsan velit ultrices, ...\<close>
+Definition*[ttu13::scholarly_paper.definition ]\<open>Lectus accumsan velit ultrices, ...\<close>
+Hypothesis*[ttu16::scholarly_paper.hypothesis ]\<open>Lectus accumsan velit ultrices, ...\<close>
+Proof*[ttu17::scholarly_paper.math_proof ]\<open>Lectus accumsan velit ultrices, ...\<close>
+Consequence*[ttu18::scholarly_paper.consequence]\<open>Lectus accumsan velit ultrices, ...\<close>
+Proposition*[ttu20::scholarly_paper.proposition]\<open>Lectus accumsan velit ultrices, ...\<close>
+Conclusion*[ttu23::scholarly_paper.conclusion_stmt ]\<open>Lectus accumsan velit ultrices, ...\<close>
+(* Definition*[ttu25::scholarly_paper.tech_definition ]\<open>Lectus accumsan velit ultrices, ...\<close> 
+   interesting modeling bug.
+*)
+(*Example*[ttu28::scholarly_paper.eng_example     ]\<open>Lectus accumsan velit ultrices, ...\<close>
+   interesting modeling bug.
+*)  
+text\<open> @{lemma ttu2} @{math_example ttu3} @{premise ttu4} @{theorem ttu5} @{assertion ttu6} 
+      @{assumption ttu10 }  @{definition ttu13 }
+      @{hypothesis      ttu16 } @{math_proof      ttu17 }
+      @{consequence     ttu18 } @{proposition     ttu20 }
+      @{math_content    tu21 }  @{conclusion_stmt ttu23 }
+      @ \<open>{eng_example     ttu28 }\<close>
+      @ \<open>{tech_example    tt10 }\<close>  
+    \<close>
 
 end

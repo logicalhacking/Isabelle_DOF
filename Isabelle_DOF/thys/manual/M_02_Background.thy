@@ -106,9 +106,9 @@ text\<open>
 
 side_by_side_figure*[docModGenConcr::side_by_side_figure,anchor="''docModGen''",
                       caption="''Schematic Representation.''",relative_width="45",
-                      src="''figures/doc-mod-generic.png''",anchor2="''docModIsar''",
+                      src="''figures/doc-mod-generic.pdf''",anchor2="''docModIsar''",
                       caption2="''The Isar Instance.''",relative_width2="45",
-                      src2="''figures/doc-mod-isar.png''"]\<open>A Representation of a Document Model.\<close>
+                      src2="''figures/doc-mod-isar.pdf''"]\<open>A Representation of a Document Model.\<close>
 
 text\<open>The body of a theory file consists of a sequence of \<^emph>\<open>commands\<close> that must be introduced
 by a command keyword such as \<^boxed_theory_text>\<open>requirement\<close> above. Command keywords may mark 
@@ -184,13 +184,13 @@ text\<open>Antiquotations seen as semantic macros are partial functions of type 
 
 side_by_side_figure*[docModOnto::side_by_side_figure,anchor="''docModGen''",
                       caption="''A Document with Ontological Annotations.''",relative_width="47",
-                      src="''figures/doc-mod-DOF.png''",anchor2="''docModDOF''",
+                      src="''figures/doc-mod-DOF.pdf''",anchor2="''docModDOF''",
                       caption2="''Ontological References.''",relative_width2="47",
-                      src2="''figures/doc-mod-onto-docinst.png''"]\<open>Documents conform to Ontologies.\<close>
+                      src2="''figures/doc-mod-onto-docinst.pdf''"]\<open>Documents conform to Ontologies.\<close>
 
 text\<open>Since Isabelle's commands are freely programmable, it is possible to implement  \<^dof> as an 
 extension of the system. In particular, the ontology language of \<^dof> provides an  ontology 
-definition language ODL that \<^emph>\<open>generates\<close> anti-quotations and the infrastructure to check and evaluate 
+definition language ODL\<^bindex>\<open>ODL\<close> that \<^emph>\<open>generates\<close> anti-quotations and the infrastructure to check and evaluate 
 them. This allows for checking an annotated document with respect to a given ontology, which may be 
 specific for  a given domain-specific universe of discourse (see @{figure "docModOnto"}). ODL will 
 be described in  @{text_section (unchecked) "isadof_tour"} in more detail.\<close>

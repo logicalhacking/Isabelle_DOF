@@ -841,6 +841,10 @@ val check_opening_ml_invs = check_invs get_opening_ml_invariants
 
 val check_closing_ml_invs = check_invs get_closing_ml_invariants
 
+(* Output name for LaTeX macros.
+   Also rewrite "." to allow macros with objects long names *)
+val output_name = Latex.output_name o translate_string (fn "." => "DOT" | s => s)
+
 val ISA_prefix = "Isabelle_DOF_"
 
 val doc_class_prefix = ISA_prefix ^ "doc_class_"
@@ -2134,19 +2138,21 @@ fun close_monitor_command (args as (((oid, pos), cid_pos),
     end 
 
 
-fun meta_args_2_latex thy transform_attr
+fun meta_args_2_latex thy sem_attrs transform_attr
       ((((lab, pos), cid_opt), attr_list) : ODL_Meta_Args_Parser.meta_args_t) =
     (* for the moment naive, i.e. without textual normalization of 
        attribute names and adapted term printing *)
-    let val l   = DOF_core.get_instance_name_global lab thy |> enclose "{" "}"
+    let val l   = DOF_core.get_instance_name_global lab thy |> DOF_core.output_name
+                                                            |> enclose "{" "}"
                                                             |> prefix "label = "
       (*  val _   = writeln("meta_args_2_string lab:"^ lab ^":"^ (@{make_string } cid_opt) ) *)
         val cid_long = case cid_opt of
                                 NONE => DOF_core.cid_of lab thy
                               | SOME(cid,_) => DOF_core.get_onto_class_name_global' cid thy        
         (* val _   = writeln("meta_args_2_string cid_long:"^ cid_long ) *)
-        val cid_txt  = "type = " ^ (enclose "{" "}" cid_long);
-
+        val cid_txt  = cid_long |> DOF_core.output_name
+                                |> enclose "{" "}"
+                                |> prefix "type = "
         fun ltx_of_term _ _ (c as \<^Const_>\<open>Cons \<^Type>\<open>char\<close> for _ _\<close>) = HOLogic.dest_string c
           | ltx_of_term _ _ \<^Const_>\<open>Nil _\<close> = ""
           | ltx_of_term _ _ \<^Const_>\<open>numeral _ for t\<close> = Int.toString(HOLogic.dest_numeral t)
@@ -2191,8 +2197,24 @@ fun meta_args_2_latex thy transform_attr
         val default_args_filtered = filter (fn (a,_) => not (exists (fn b => b = a) 
                                     (map (fn (c,_) => c) actual_args))) default_args
         val transformed_args = (actual_args@default_args_filtered)
-                               |> transform_attr cid_long thy
-        val str_args = transformed_args
+                               |> transform_attr
+        fun update_sem_std_attrs [] attrs = attrs
+          | update_sem_std_attrs (attr::attrs) attrs' =
+              let val attrs'' = attrs' |> map (fn (name, value) =>
+                                let val value' = value |> Long_Name.base_name
+                                in 
+                                  if name = attr
+                                  then if value' (*|> Symbol_Pos.is_identifier*)
+                                                  |>  Symbol.is_ascii_identifier
+                                        then (name, DOF_core.output_name value')
+                                        else ISA_core.err ("Bad name of semantic attribute"
+                                                           ^ name ^ ": " ^ value
+                                                           ^ ". Name must be ASCII") pos
+                                else (name, value') end)
+              in update_sem_std_attrs attrs attrs'' end
+        val updated_sem_std_attrs = update_sem_std_attrs sem_attrs transformed_args
+        val updated_sem_std_attrs' = updated_sem_std_attrs |> map (apfst DOF_core.output_name)
+        val str_args = updated_sem_std_attrs'
                        |> map (fn (lhs,rhs) => lhs^" = "^(enclose "{" "}" rhs)) 
                       
         val label_and_type = String.concat [ l, ",", cid_txt]
@@ -2218,15 +2240,15 @@ fun gen_enriched_document_cmd' {inline} cid_transform attr_transform
 (* {markdown = true} sets the parsing process such that in the text-core
    markdown elements are accepted. *)
 
-fun document_output {markdown: bool, markup: Latex.text -> Latex.text} transform_attr meta_args text ctxt =
+fun document_output {markdown: bool, markup: Latex.text -> Latex.text} sem_attrs transform_attr meta_args text ctxt =
   let
     val thy = Proof_Context.theory_of ctxt;
     val _ = Context_Position.reports ctxt (Document_Output.document_reports text);
-    val output_meta = meta_args_2_latex thy transform_attr meta_args;
+    val output_meta = meta_args_2_latex thy sem_attrs transform_attr meta_args;
     val output_text = Document_Output.output_document ctxt {markdown = markdown} text;
   in markup (output_meta @ output_text) end;
 
-fun document_output_reports name {markdown, body} transform_attr meta_args text ctxt =
+fun document_output_reports name {markdown, body} sem_attrs transform_attr meta_args text ctxt =
   let
     (*val pos = Input.pos_of text;
     val _ =
@@ -2236,16 +2258,16 @@ fun document_output_reports name {markdown, body} transform_attr meta_args text 
     fun markup xml =
       let val m = if body then Markup.latex_body else Markup.latex_heading
       in [XML.Elem (m (Latex.output_name name), xml)] end;
-  in document_output {markdown = markdown, markup = markup} transform_attr meta_args text ctxt end;
+  in document_output {markdown = markdown, markup = markup} sem_attrs transform_attr meta_args text ctxt end;
 
 
 (* document output commands *)
 
-fun document_command (name, pos) descr mark cmd transform_attr =
+fun document_command (name, pos) descr mark cmd sem_attrs transform_attr =
   Outer_Syntax.command (name, pos) descr
     (ODL_Meta_Args_Parser.attributes -- Parse.document_source >> (fn (meta_args, text) =>
       Toplevel.theory' (fn _ => cmd meta_args)
-          (SOME (Toplevel.presentation_context #> document_output_reports name mark transform_attr meta_args text)))); 
+          (SOME (Toplevel.presentation_context #> document_output_reports name mark sem_attrs transform_attr meta_args text)))); 
 
 
 (* Core Command Definitions *)
@@ -2271,14 +2293,14 @@ val _ =
 
 val _ =
   document_command \<^command_keyword>\<open>text*\<close> "formal comment (primary style)"
-    {markdown = true, body = true} (gen_enriched_document_cmd {inline=true} I I) (K(K I));
+    {markdown = true, body = true} (gen_enriched_document_cmd {inline=true} I I) [] I;
 
 
 (* This is just a stub at present *)
 val _ =
   document_command \<^command_keyword>\<open>text-macro*\<close> "formal comment macro"
     {markdown = true, body = true}
-    (gen_enriched_document_cmd {inline=false} (* declare as macro *) I I) (K(K I));
+    (gen_enriched_document_cmd {inline=false} (* declare as macro *) I I) [] I;
 
  
 val (declare_reference_default_class, declare_reference_default_class_setup) 
@@ -2553,6 +2575,9 @@ ML\<open>
 
 local
 
+fun elaborate stmt ctxt = stmt |> map (apsnd (map (apfst (DOF_core.elaborate_term ctxt)
+                                              #> apsnd (map (DOF_core.elaborate_term ctxt)))))
+
 fun prep_statement prep_att prep_stmt raw_elems raw_stmt ctxt =
   let
     val (stmt, elems_ctxt) = prep_stmt raw_elems raw_stmt ctxt;
@@ -2562,11 +2587,7 @@ fun prep_statement prep_att prep_stmt raw_elems raw_stmt ctxt =
     (case raw_stmt of
       Element.Shows _ =>
         let val stmt' = Attrib.map_specs (map prep_att) stmt
-            val stmt'' = stmt' |> map (fn (b, ts) =>
-                                (b, ts |> map (fn (t', t's) =>
-                                          (DOF_core.elaborate_term ctxt t',
-                                          t's |> map (fn t'' => 
-                                                 DOF_core.elaborate_term ctxt t'')))))
+            val stmt'' = elaborate stmt' ctxt
         in (([], prems, stmt'', NONE), stmt_ctxt) end
     | Element.Obtains raw_obtains =>
         let
@@ -2581,11 +2602,7 @@ fun prep_statement prep_att prep_stmt raw_elems raw_stmt ctxt =
             ||> Proof_Context.restore_stmt asms_ctxt;
 
           val stmt' = [(Binding.empty_atts, [(#2 (#1 (Obtain.obtain_thesis ctxt)), [])])];
-          val stmt'' = stmt' |> map (fn (b, ts) =>
-                                (b, ts |> map (fn (t', t's) =>
-                                          (DOF_core.elaborate_term ctxt t',
-                                          t's |> map (fn t'' => 
-                                                 DOF_core.elaborate_term ctxt t'')))))
+          val stmt'' = elaborate stmt' ctxt
         in ((Obtain.obtains_attribs raw_obtains, prems, stmt'', SOME that'), that_ctxt) end)
   end;
 
@@ -2826,7 +2843,7 @@ fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked, define}, src
            |(true,true)  => XML.enclose("{\\isaDofmacroDef[type={"^cid_decl^"}]{")"}}" 
            |(false,true) => XML.enclose("{\\isaDofmacroExp[type={"^cid_decl^"}]{")"}}"
         )
-        (Latex.text (str, pos))
+        (Latex.text (DOF_core.output_name str, pos))
     end      
 
 

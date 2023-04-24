@@ -23,7 +23,7 @@ chapter*[isadof_tour::text_section]\<open>\<^isadof>: A Guided Tour\<close>
 
 text\<open>
   In this chapter, we will give an introduction into using \<^isadof> for users that want to create and 
-  maintain documents following an existing document ontology.
+  maintain documents following an existing document ontology\<^bindex>\<open>ontology\<close> in ODL\<^bindex>\<open>ODL\<close>.
 \<close>
 
 section*[getting_started::technical]\<open>Getting Started\<close>
@@ -34,7 +34,7 @@ text\<open>
   \<^LaTeX>. We assume a basic familiarity with a Linux/Unix-like command line (i.e., a shell). 
   Furthermore, we focus on the installation of the latest official release of  \<^isadof> as 
   available in the Archive of Formal Proofs (AFP).\<^footnote>\<open>If you want to work with the development version 
-  of Isabelle/DOF, please obtain its source code from the Isabelle/DOF Git repostitory 
+  of \<^isadof>, please obtain its source code from the \<^isadof> Git repostitory 
   (\<^url>\<open>https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF\<close> and follow the instructions
   in provided \<^verbatim>\<open>README.MD\<close> file.\<close>
 
@@ -72,11 +72,12 @@ text\<open>
 By installing the AFP in the previous steps, you already installed \<^isadof>. In fact, \<^isadof> 
 is currently consisting out of two AFP entries:
 
-\<^item> Isabelle\_DOF: This entry
-  contains the Isabelle/DOF system itself, including the Isabelle/DOF manual.
-\<^item> Isabelle\_DOF-Example-I: This entry contains an example of 
-  an academic paper written using the Isabelle/DOF system oriented towards 
-\<^item> Isabelle\_DOF-Example-II: This entry contains another example of 
+\<^item> \<^verbatim>\<open>Isabelle_DOF\<close>: This entry
+  contains the \<^isadof> system itself, including the \<^isadof> manual.
+\<^item> \<^verbatim>\<open>Isabelle_DOF-Example-I\<close>: This entry contains an example of 
+  an academic paper written using the \<^isadof> system oriented towards an 
+  introductory paper.
+\<^item> \<^verbatim>\<open>Isabelle_DOF-Example-II\<close>: This entry contains another example of 
   a mathematics-oriented academic paper.
 
 It is recommended to follow structure one of these papers.\<close>
@@ -143,10 +144,10 @@ want to use. Otherwise, they will not be available.
 
 paragraph\<open>Warning.\<close>
 text\<open>
-Note that the session @{session "Isabelle_DOF"} needs to be part of the ``main'' session 
-hierarchy. Loading the Isabelle/DOF theories as part of a session section, e.g., 
+Note that the session \<^session>\<open>Isabelle_DOF\<close> needs to be part of the ``main'' session 
+hierarchy. Loading the \<^isadof> theories as part of a session section, e.g., 
 \<close>
-text\<open>
+text\<open>\<^latex>\<open>
 \begin{config}{ROOT}
 session example = HOL +
   options [document = pdf, document_output = "output", document_build = dof]
@@ -156,7 +157,7 @@ session example = HOL +
   theories
     C
 \end{config}
-\<close>
+\<close>\<close>
 text\<open>
 will not work. Trying to build a document using such a setup will result in the 
 following error message:
@@ -214,35 +215,31 @@ text\<open>At times, this causes idiosyncrasies like the ones cited in the follo
 \<close>
 
 section*[scholar_onto::example]\<open>Writing Academic Publications in \<^boxed_theory_text>\<open>scholarly_paper\<close>\<close>  
-subsection\<open>Writing Academic Papers\<close>
+subsection\<open>A Selection of major Examples\<close>
 text\<open> 
-  The ontology \<^verbatim>\<open>scholarly_paper\<close>
-  \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
-  academic/scientific papers, with a slight bias towards texts in the domain of mathematics and engineering. 
-  We explain first the principles of its underlying ontology, and then we present two ``real'' 
-  examples from our own publication practice.
-\<close>
-text\<open>
-  \<^enum> The iFM 2020 paper~@{cite "taha.ea:philosophers:2020"} is a typical mathematical text,
-    heavy in definitions with complex  mathematical notation and a lot of non-trivial cross-referencing
-    between statements, definitions and proofs which are ontologically tracked. However, wrt.
-    the possible linking between the underlying formal theory and this mathematical presentation,
-    it follows a pragmatic path without any ``deep'' linking to types, terms and theorems, 
-    deliberately not exploiting \<^isadof> 's full potential with this regard.
-  \<^enum> In the CICM 2018 paper~@{cite "brucker.ea:isabelle-ontologies:2018"}, we deliberately
-    refrain from integrating references to formal content in order to demonstrate that \<^isadof> is not 
-    a  framework from Isabelle users to Isabelle users only, but people just avoiding as much as
-    possible \<^LaTeX> notation.
+  The ontology \<^verbatim>\<open>scholarly_paper\<close>  \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
+  academic/scientific papers, with a slight bias towards texts in the domain of mathematics and
+  engineering. We explain first the principles of its underlying ontology, and then we present two 
+  ``real'' examples from our own publication practice.
+     \<^enum> The iFM 2020 paper~@{cite "taha.ea:philosophers:2020"} is a typical mathematical text,
+       heavy in definitions with complex  mathematical notation and a lot of non-trivial cross-referencing
+       between statements, definitions and proofs which are ontologically tracked. However, wrt.
+       the possible linking between the underlying formal theory and this mathematical presentation,        it follows a pragmatic path without any ``deep'' linking to types, terms and theorems, 
+       deliberately not exploiting \<^isadof> 's full potential with this regard.
+     \<^enum> In the CICM 2018 paper~@{cite "brucker.ea:isabelle-ontologies:2018"}, we deliberately
+       refrain from integrating references to formal content in order to demonstrate that \<^isadof> is not 
+       a framework from Isabelle users to Isabelle users only, but people just avoiding as much as
+       possible \<^LaTeX> notation.
 
   The \<^isadof> distribution contains both examples using the ontology \<^verbatim>\<open>scholarly_paper\<close> in 
-  the directory \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/} or
-  \nolinkurl{examples/scholarly_paper/2020-iFM-CSP}.
+  the directory \<^nolinkurl>\<open>examples/scholarly_paper/2018-cicm-isabelle_dof-applications/\<close> or
+   \<^nolinkurl>\<open>examples/scholarly_paper/2020-iFM-CSP\<close>.
 
   You can inspect/edit the example in Isabelle's IDE, by either 
-  \<^item> starting Isabelle/jEdit using your graphical user interface (\<^eg>, by clicking on the 
-    Isabelle-Icon provided by the Isabelle installation) and loading the file 
-    \nolinkurl{examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy},
-  \<^item> starting Isabelle/jEdit from the command line by, \<^eg>, calling:
+     \<^item> starting Isabelle/jEdit using your graphical user interface (\<^eg>, by clicking on the 
+       Isabelle-Icon provided by the Isabelle installation) and loading the file 
+       \<^nolinkurl>\<open>examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy"\<close>
+     \<^item> starting Isabelle/jEdit from the command line by, \<^eg>, calling:
 
 @{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë 
   isabelle jedit -d . examples/scholarly_paper/2020-iFM-CSP/paper.thy \<close>}
@@ -312,7 +309,7 @@ as follows:
 Additional means assure that the following invariant is maintained in a document 
 conforming to \<^verbatim>\<open>scholarly_paper\<close>:
 
-\center {\<open>level > 0\<close>}
+\<^center>\<open>\<open>level > 0\<close>\<close>
 \<close>
 
 text\<open>\<^vs>\<open>1.0cm\<close>\<close>
@@ -464,10 +461,6 @@ in which the text-elements instances are expected to appear in the textual order
 defined by \<^typ>\<open>article\<close>.
 \<close>
 
-
-figure*[doc_termAq::figure,relative_width="80",src="''figures/doc-mod-term-aq.png''"]
-                      \<open>Term-Antiquotations Referencing to Annotated Elements\<close>
-
 side_by_side_figure*[exploring::side_by_side_figure,anchor="''fig-Dogfood-II-bgnd1''",
                       caption="''Exploring a reference of a text-element.''",relative_width="48",
                       src="''figures/Dogfood-II-bgnd1''",anchor2="''fig-bgnd-text_section''",
@@ -485,12 +478,21 @@ side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-
 
 text\<open> 
   From these class definitions, \<^isadof> also automatically generated editing 
-  support for Isabelle/jEdit. In \autoref{fig-Dogfood-II-bgnd1} and 
-  \autoref{fig-bgnd-text_section} we show how hovering over links permits to explore its 
+  support for Isabelle/jEdit. In 
+  @{figure "exploring"}(left)
+  % \autoref{fig-Dogfood-II-bgnd1} 
+  and
+  @{figure "exploring"}(right)
+  % \autoref{fig-bgnd-text_section} 
+  we show how hovering over links permits to explore its 
   meta-information. Clicking on a document class identifier permits to hyperlink into the 
-  corresponding class definition (\autoref{fig:Dogfood-IV-jumpInDocCLass}); hovering over an 
-  attribute-definition (which is qualified in order to disambiguate; 
-  \autoref{fig:Dogfood-V-attribute}) shows its type.
+  corresponding class definition (
+  @{figure "hyperlinks"}(left)
+  %\autoref{fig:Dogfood-IV-jumpInDocCLass})
+  ; hovering over an attribute-definition (which is qualified in order to disambiguate; cf.
+  @{figure "hyperlinks"}(right)
+  %\autoref{fig:Dogfood-V-attribute}
+  ) shows its type.
 \<close>
 
 figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-VI-linkappl.png''"]
@@ -499,17 +501,68 @@ figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-
 text\<open> 
 An ontological reference application in @{figure "figDogfoodVIlinkappl"}: the 
 ontology-dependant antiquotation \<^boxed_theory_text>\<open>@{example \<open>ex1\<close>}\<close> refers to the corresponding 
-text-element \<^boxed_theory_text>\<open>ex1\<close>.
-Hovering allows for inspection, clicking for jumping to the definition.
-If the  link does not exist or  has a non-compatible type, the text is not validated, \<^ie>,
-Isabelle/jEdit will respond with an error.\<close>
+text-element \<^boxed_theory_text>\<open>ex1\<close>. Hovering allows for inspection, clicking for jumping to the 
+definition. If the  link does not exist or  has a non-compatible type, the text is not validated,
+ \<^ie>, Isabelle/jEdit will respond with an error.\<close>
 
 text\<open>We advise users to experiment with different notation variants.
 Note, further, that the Isabelle \<^latex>\<open>@\{cite ...\}\<close>-text-anti-quotation makes its checking
 on the level of generated \<^verbatim>\<open>.aux\<close>-files, which are not necessarily up-to-date. Ignoring the PIDE
-error-message and compiling a with a consistent bibtex usually makes disappear this behavior. 
+error-message and compiling it with a consistent bibtex usually makes disappear this behavior. 
 \<close>
 
+subsection*["using-term-aq"::technical, main_author = "Some @{author ''bu''}"]
+   \<open>Using Term-Antiquotations\<close>
+
+text\<open>The present version of \<^isadof> is the first version that supports the novel feature of
+\<^dof>-generated term-antiquotations\<^bindex>\<open>term-antiquotations\<close>, \<^ie>, antiquotations embedded
+in HOL-\<open>\<lambda>\<close>-terms possessing arguments that were validated in the ontological context.
+These \<open>\<lambda>\<close>-terms may occur in definitions, lemmas, or in values to define attributes 
+in class instances. They have the format:\<close>
+
+text\<open>\<^center>\<open>\<open>@{name arg\<^sub>1 ... arg\<^sub>n\<^sub>-\<^sub>1} arg\<^sub>n\<close>\<close>\<close>
+
+text\<open>Logically, they are defined as an identity in the last argument \<open>arg\<^sub>n\<close>; thus,
+ontologically checked prior arguments \<open>arg\<^sub>1 ... arg\<^sub>n\<^sub>-\<^sub>1\<close> can be ignored during a proof
+process; ontologically, they can be used to assure the traceability of, \<^eg>, semi-formal 
+assumptions throughout their way to formalisation and use in lemmas and proofs. \<close> 
+
+figure*[doc_termAq::figure,relative_width="50",src="''figures/doc-mod-term-aq.pdf''"]
+                      \<open>Term-Antiquotations Referencing to Annotated Elements\<close>
+text\<open>As shown in @{figure \<open>doc_termAq\<close>}, this feature of  \<^isadof> substantially increases
+the expressibility of links between the formal and the informal in \<^dof> documents.\<close>
+
+text\<open> In the following, we describe a common scenario linking semi-formal assumptions and
+formal ones:
+
+@{boxed_theory_text [display]
+\<open>
+declare_reference*[e2::"definition"]
+
+Assumption*[a1::"assumption", short_name="\<open>safe environment.\<close>"]
+\<open>The system shall only be used in the temperature range from 0 to 60 degrees Celsius.
+ Formally, this is stated as follows in @{definition (unchecked) \<open>e2\<close>}.\<close>
+
+definition*[e2, status=formal] safe_env :: "state \<Rightarrow> bool" 
+   where "safe_env \<sigma> \<equiv> (temp \<sigma> \<in> {0 .. 60})"
+
+theorem*[e3::"theorem"] safety_preservation::" @{assumption \<open>a1\<close>} (safe_env \<sigma>) \<Longrightarrow> ...  "
+\<close>}
+\<close>
+text\<open>Note that Isabelle procedes in a strict ``declaration-before-use''-manner, \<^ie> assumes
+linear visibility on all references. This also holds for the declaration of ontological 
+references. In order to represent cyclic dependencies, it is therefore necessary to 
+start with the forward declaration \<^theory_text>\<open>declare_reference*\<close>. From there on, this reference
+can be used in text, term, and code-contexts, albeit its definition appears textually later.
+The corresponding freeform-formulation of this assumption can be explicitly referred in the
+assumption of a theorem establishing the link. The \<^theory_text>\<open>theorem*\<close>-variant of the common 
+Isabelle/Isar  \<^theory_text>\<open>theorem\<close>-command will in contrast to the latter not ignore \<open>\<open>a1\<close>\<close>,
+ \<^ie> parse just as string, but also validate it in the previous context.
+
+Note that the \<^theory_text>\<open>declare_reference*\<close> command will appear in the \<^LaTeX> generated from this 
+document fragment. In order to avoid this, one has to enclose this command into the 
+document comments :\<close>
+text\<open>\<^center>\<open>\<open>(*<*) ... (*>*)\<close>\<close>\<close>
 
 
 section*[tech_onto::example]\<open>Writing Technical Reports in \<^boxed_theory_text>\<open>technical_report\<close>\<close>  
@@ -595,7 +648,7 @@ In the \<^pdf> output, these text-fragments were displayed verbatim.
 
 
 
-section\<open>Style Guide\<close>
+section\<open>Some Recommendations: A little Style Guide\<close>
 text\<open>
   The document generation of \<^isadof> is based on Isabelle's document generation framework, 
   using \<^LaTeX>{} as the underlying back-end. As Isabelle's document generation framework, it is 
@@ -613,11 +666,18 @@ text\<open> This is \emph{emphasized} and this is a
 text\<open> This is *\<open>emphasized\<close> and this is a 
         citation @{cite "brucker.ea:isabelle-ontologies:2018"}.\<close>
 \<close>}
+The list of standard Isabelle document antiquotations, as well as their options and styles,
+can be found in the Isabelle reference manual @{cite "wenzel:isabelle-isar:2020"}, also be found
+under \<^url>\<open>https://www.cl.cam.ac.uk/research/hvg/Isabelle/dist/Isabelle2022/doc/isar-ref.pdf\<close>, 
+section 4.2.
 
-Clearly, this is not always possible and, in fact, often \<^isadof> documents will contain 
+In practice,  \<^isadof> documents with ambitious layout will contain a certain number of
 \<^LaTeX>-commands, but this should be restricted to layout improvements that otherwise are (currently)
-not possible. As far as possible, the use of \<^LaTeX>-commands should be restricted to the definition 
-of ontologies and document templates (see @{docitem (unchecked) \<open>isadof_ontologies\<close>}).
+not possible. As far as possible, raw \<^LaTeX> should be restricted to the definition 
+of ontologies and  macros (see @{docitem (unchecked) \<open>isadof_ontologies\<close>}). If raw 
+ \<^LaTeX> commands can not be avoided, it is recommended to use the Isabelle document comment
+\<^latex>\<open>\verb+\+\verb+<^latex>+\<close>\<open>\<open>argument\<close>\<close> to isolate these parts
+(cf. \<^url>\<open>https://www.cl.cam.ac.uk/research/hvg/Isabelle/dist/Isabelle2022/doc/isar-ref.pdf\<close>). 
 
 Restricting the use of \<^LaTeX> has two advantages: first, \<^LaTeX> commands can circumvent the 
 consistency checks of \<^isadof> and, hence, only if no \<^LaTeX> commands are used, \<^isadof> can 

@@ -36,8 +36,11 @@ define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
 text\<open>Note that these setups assume that the associated \<^LaTeX> macros 
      are defined, \<^eg>, in the document prelude. \<close>
 
-define_macro* index  \<rightleftharpoons> \<open>\index{\<close> _ \<open>}\<close>
-define_macro* bindex \<rightleftharpoons> \<open>\bindex{\<close> _ \<open>}\<close>
+define_macro* index     \<rightleftharpoons> \<open>\index{\<close> _ \<open>}\<close>
+define_macro* bindex    \<rightleftharpoons> \<open>\bindex{\<close> _ \<open>}\<close>
+define_macro* nolinkurl \<rightleftharpoons> \<open>\nolinkurl{\<close> _ \<open>}\<close>
+define_macro* center    \<rightleftharpoons> \<open>\center{\<close> _ \<open>}\<close>
+define_macro* ltxinline \<rightleftharpoons> \<open>\inlineltx|\<close> _ \<open>|\<close>
 
 
 ML\<open>

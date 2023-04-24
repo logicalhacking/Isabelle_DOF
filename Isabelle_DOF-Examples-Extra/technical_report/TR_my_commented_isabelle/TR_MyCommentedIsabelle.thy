@@ -347,7 +347,7 @@ text\<open>
 \<^item> \<^ML>\<open>Context.proper_subthy : theory * theory -> bool\<close> subcontext test
 \<^item> \<^ML>\<open>Context.Proof: Proof.context -> Context.generic \<close> A constructor embedding local contexts
 \<^item> \<^ML>\<open>Context.proof_of : Context.generic -> Proof.context\<close> the inverse
-\<^item> \<^ML>\<open>Context.theory_name : theory -> string\<close>
+\<^item> \<^ML>\<open>Context.theory_name : {long:bool} -> theory -> string\<close>
 \<^item> \<^ML>\<open>Context.map_theory: (theory -> theory) -> Context.generic -> Context.generic\<close>
 \<close>
 
@@ -358,7 +358,7 @@ text\<open>The structure \<^ML_structure>\<open>Proof_Context\<close> provides a
 \<^item> \<^ML>\<open>  Context.Proof: Proof.context -> Context.generic \<close>
   the path to a generic Context, i.e. a sum-type of global and local contexts
   in order to simplify system interfaces
-\<^item> \<^ML>\<open> Proof_Context.get_global: theory -> string -> Proof.context\<close>
+\<^item> \<^ML>\<open> Proof_Context.get_global: {long:bool} -> theory -> string -> Proof.context\<close>
 \<close>
 
 
@@ -891,7 +891,6 @@ datatype thy = Thy of
 \<^item>  \<^ML>\<open>Theory.axiom_space: theory -> Name_Space.T\<close>
 \<^item>  \<^ML>\<open>Theory.all_axioms_of: theory -> (string * term) list\<close>
 \<^item>  \<^ML>\<open>Theory.defs_of: theory -> Defs.T\<close>
-\<^item>  \<^ML>\<open>Theory.join_theory: theory list -> theory\<close>
 \<^item>  \<^ML>\<open>Theory.at_begin: (theory -> theory option) -> theory -> theory\<close>
 \<^item>  \<^ML>\<open>Theory.at_end: (theory -> theory option) -> theory -> theory\<close>
 \<^item>  \<^ML>\<open>Theory.begin_theory: string * Position.T -> theory list -> theory\<close>

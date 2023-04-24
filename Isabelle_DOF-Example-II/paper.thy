@@ -751,7 +751,7 @@ This normal form is closed under deterministic and  communication operators.
 The advantage of this format is that we can mimick the well-known product automata construction
 for an arbitrary number of synchronized processes under normal form.
 We only show the case of the synchronous product of two processes: \<close>
-text*[T3::"theorem", short_name="\<open>Product Construction\<close>", level="Some 2"]\<open>
+Theorem*[T3, short_name="\<open>Product Construction\<close>", level="Some 2"]\<open>
 Parallel composition translates to normal form:
 @{cartouche [display,indent=5]\<open>(P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<tau>\<^sub>1,\<upsilon>\<^sub>1\<rbrakk> \<sigma>\<^sub>1) || (P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<tau>\<^sub>2,\<upsilon>\<^sub>2\<rbrakk> \<sigma>\<^sub>2) = 
     P\<^sub>n\<^sub>o\<^sub>r\<^sub>m\<lbrakk>\<lambda>(\<sigma>\<^sub>1,\<sigma>\<^sub>2). \<tau>\<^sub>1 \<sigma>\<^sub>1 \<inter> \<tau>\<^sub>2 \<sigma>\<^sub>2 , \<lambda>(\<sigma>\<^sub>1,\<sigma>\<^sub>2).\<lambda>e.(\<upsilon>\<^sub>1 \<sigma>\<^sub>1 e, \<upsilon>\<^sub>2 \<sigma>\<^sub>2 e)\<rbrakk> (\<sigma>\<^sub>1,\<sigma>\<^sub>2)\<close>}

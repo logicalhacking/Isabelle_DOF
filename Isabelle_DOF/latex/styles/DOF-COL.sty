@@ -21,23 +21,23 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: figure*
 \NewEnviron{isamarkupfigure*}[1][]{\isaDof[env={figure},#1]{\BODY}}
-\newisadof{figure.Isa_COL.figure}%
+\newisadof{figureDOTIsaUNDERSCORECOLDOTfigure}%
 [label=,type=%
-,Isa_COL.figure.relative_width=%
-,Isa_COL.figure.placement=%
-,Isa_COL.figure.src=%
-,Isa_COL.figure.spawn_columns=enum False True%
+,IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth=%
+,IsaUNDERSCORECOLDOTfigureDOTplacement=%
+,IsaUNDERSCORECOLDOTfigureDOTsrc=%
+,IsaUNDERSCORECOLDOTfigureDOTspawnUNDERSCOREcolumns=enum False True%
 ][1]{%
   \begin{figure}[]
     \centering
-    \ifcommandkey{Isa_COL.figure.relative_width}
+    \ifcommandkey{IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth}
     {%
-      \gdef\dof@width{\commandkey{Isa_COL.figure.relative_width}}
-      \gdef\dof@src{\commandkey{Isa_COL.figure.src}}
+      \gdef\dof@width{\commandkey{IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth}}
+      \gdef\dof@src{\commandkey{IsaUNDERSCORECOLDOTfigureDOTsrc}}
       \FPdiv\scale{\dof@width}{100}%
       \includegraphics[width=\scale\textwidth]{\dof@src}%
     }{%
-      \gdef\dof@src{\commandkey{Isa_COL.figure.src}}
+      \gdef\dof@src{\commandkey{IsaUNDERSCORECOLDOTfigureDOTsrc}}
       \includegraphics[]{\dof@src}%
     } 
     \caption{#1}\label{\commandkey{label}}%
@@ -50,44 +50,44 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: side_by_side_figure*
-\NewEnviron{isamarkupsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure*}[1][]{\isaDof[env={side_by_side_figure},#1]{\BODY}}
-\newisadof{side_by_side_figure.Isa_COL.side_by_side_figure}%
+\NewEnviron{isamarkupsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure*}[1][]{\isaDof[env={sideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure},#1]{\BODY}}
+\newisadof{sideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTIsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure}%
 [label=,type=%
-,Isa_COL.figure.relative_width=%
-,Isa_COL.figure.placement=%
-,Isa_COL.figure.src=%
-,Isa_COL.side_by_side_figure.anchor=%
-,Isa_COL.side_by_side_figure.caption=%
-,Isa_COL.side_by_side_figure.relative_width2=%
-,Isa_COL.side_by_side_figure.src2=%
-,Isa_COL.side_by_side_figure.anchor2=%
-,Isa_COL.side_by_side_figure.caption2=%
-,Isa_COL.side_by_side_figure.placement=%
-,Isa_COL.figure.spawn_columns=enum False True%
+,IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth=%
+,IsaUNDERSCORECOLDOTfigureDOTplacement=%
+,IsaUNDERSCORECOLDOTfigureDOTsrc=%
+,IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTanchor=%
+,IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTcaption=%
+,IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTrelativeUNDERSCOREwidthTWO=%
+,IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTsrcTWO=%
+,IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTanchorTWO=%
+,IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTcaptionTWO=%
+,IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTplacement=%
+,IsaUNDERSCORECOLDOTfigureDOTspawnUNDERSCOREcolumns=enum False True%
 ][1]{%
   \begin{figure}[]
-    \subfloat[\label{\commandkey{Isa_COL.side_by_side_figure.anchor}}\commandkey{Isa_COL.side_by_side_figure.caption}]%
-      {\ifcommandkey{Isa_COL.figure.relative_width}%
+    \subfloat[\label{\commandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTanchor}}\commandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTcaption}]%
+      {\ifcommandkey{IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth}%
        {%
-          \gdef\dof@width{\commandkey{Isa_COL.figure.relative_width}}
-          \gdef\dof@src{\commandkey{Isa_COL.figure.src}}
+          \gdef\dof@width{\commandkey{IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth}}
+          \gdef\dof@src{\commandkey{IsaUNDERSCORECOLDOTfigureDOTsrc}}
           \FPdiv\scale{\dof@width}{100}%
           \includegraphics[width=\scale\textwidth]{\dof@src}%
         }{%
-          \gdef\dof@src{\commandkey{Isa_COL.figure.src}}
+          \gdef\dof@src{\commandkey{IsaUNDERSCORECOLDOTfigureDOTsrc}}
           \includegraphics[]{\dof@src}%
         }% 
       }%
       \hfill%
-      \subfloat[\label{\commandkey{Isa_COL.side_by_side_figure.anchor2}}\commandkey{Isa_COL.side_by_side_figure.caption2}]%
-      {\ifcommandkey{Isa_COL.side_by_side_figure.relative_width2}%
+      \subfloat[\label{\commandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTanchorTWO}}\commandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTcaptionTWO}]%
+      {\ifcommandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTrelativeUNDERSCOREwidthTWO}%
         {%
-          \gdef\dof@width{\commandkey{Isa_COL.side_by_side_figure.relative_width2}}
-          \gdef\dof@src{\commandkey{Isa_COL.side_by_side_figure.src2}}
+          \gdef\dof@width{\commandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTrelativeUNDERSCOREwidthTWO}}
+          \gdef\dof@src{\commandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTsrcTWO}}
           \FPdiv\scale{\dof@width}{100}%
           \includegraphics[width=\scale\textwidth]{\dof@src}%
         }{%
-          \gdef\dof@src{\commandkey{Isa_COL.side_by_side_figure.src2}}
+          \gdef\dof@src{\commandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTsrcTWO}}
           \includegraphics[]{\dof@src}%
         }% 
       }%
