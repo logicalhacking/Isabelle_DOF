@@ -478,7 +478,7 @@ text\<open>
      | (@@{command "definition*"}) ('[' meta_args ']')?
         ('... see ref manual')
      | (@@{command "lemma*"} | @@{command "theorem*"} | @@{command "corollary*"}
-       | @@{command "proposition*"} | @@{command "schematic_goal*"}) ('[' meta_args ']')?
+       | @@{command "proposition*"} ) ('[' meta_args ']')?
          ('... see ref manual')
     )
   \<close>
@@ -499,17 +499,18 @@ term*\<open>@{B--test- \<open>b\<close>}\<close>\<close>}
 
 The major commands providing term-contexts are
 \<^theory_text>\<open>term*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>,
-\<^theory_text>\<open>value*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close> and
-\<^theory_text>\<open>assert*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>\<^footnote>\<open>The meta-argument list is optional.\<close>.
-Wrt. creation, track-ability and checking these commands are analogous to the ontological text and 
+\<^theory_text>\<open>value*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>, and
+\<^theory_text>\<open>assert*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>\<^footnote>\<open>The meta-argument list is optional.\<close>
+\<^theory_text>\<open>definition*[oid::cid, ...] const_name where \<open> \<dots> HOL-term \<dots> \<close>\<close>, and
+\<^theory_text>\<open>lemma*[oid::cid, ...] name :: \<open> \<dots> HOL-term \<dots> \<close>\<close>.
+Wrt. creation, checking and traceability, these commands are analogous to the ontological text and
 code-commands. However the argument terms may contain term-antiquotations stemming from an
 ontology definition. Term-contexts were type-checked and \<^emph>\<open>validated\<close> against
 the global context (so: in the term @{term_ [source] \<open>@{author \<open>bu\<close>}\<close>}, \<open>bu\<close>
-is indeed a string which refers to a meta-object belonging
-to the document class \<^typ>\<open>author\<close>, for example).
-Putting aside @{command "term*"}-command,
-the term-context in the other commands is additionally expanded
-(\<^eg> replaced) by a term denoting the meta-object.
+is indeed a string which refers to a meta-object belonging to the document class \<^typ>\<open>author\<close>, 
+for example). With the exception of the @{command "term*"}-command, the term-antiquotations 
+ in the other term-contexts are additionally expanded (\<^eg> replaced) by the instance of the class,
+\<^eg>, the HOL-term denoting this meta-object.
 This expansion happens \<^emph>\<open>before\<close> evaluation of the term, thus permitting
 executable HOL-functions to interact with meta-objects.
 The @{command "assert*"}-command allows for logical statements to be checked in the global context
