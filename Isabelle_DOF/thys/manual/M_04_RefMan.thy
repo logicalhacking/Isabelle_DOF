@@ -1070,7 +1070,6 @@ declare_reference*["sec:low_level_inv"::technical]
 
 subsection*["sec:class_inv"::technical]\<open>ODL Class Invariants\<close>
 
-
 text\<open>
   Ontological classes as described so far are too liberal in many situations.
   There is a first high-level syntax implementation for class invariants.
@@ -1162,6 +1161,42 @@ text\<open>
   Also, for now, term-antiquotations can not be used in an invariant formula.
 \<close>
 
+
+subsection*["sec:low_level_inv"::technical]\<open>ODL Low-level Class Invariants\<close>
+
+text\<open>
+  If one want to go over the limitations of the actual high-level syntax of the invariant,
+  one can define a function using SML.
+  A formulation, in SML, of the class-invariant \<^boxed_theory_text>\<open>has_property\<close>
+  in \<^technical>\<open>sec:class_inv\<close>, defined in the supposedly \<open>Low_Level_Syntax_Invariants\<close> theory
+  (note the long name of the class),
+  is straight-forward:
+
+@{boxed_sml [display]
+\<open>fun check_result_inv oid {is_monitor:bool} ctxt =
+  let
+    val kind =
+      ISA_core.compute_attr_access ctxt "evidence" oid NONE @{here}
+    val prop =
+      ISA_core.compute_attr_access ctxt "property" oid NONE @{here}
+    val tS = HOLogic.dest_list prop
+  in  case kind of
+       @{term "proof"} => if not(null tS) then true
+                          else error("class result invariant violation")
+      | _ => true
+  end
+val cid_long = DOF_core.get_onto_class_name_global "result" @{theory}
+val bind = Binding.name "Check_Result"
+val _ = Theory.setup (DOF_core.make_ml_invariant (check_result_inv, cid_long)
+                     |> DOF_core.add_ml_invariant bind)\<close>}
+
+  The \<^ML>\<open>Theory.setup\<close>-command (last line) registers the \<^boxed_theory_text>\<open>check_result_inv\<close> function 
+  into the \<^isadof> kernel, which activates any creation or modification of an instance of 
+  \<^boxed_theory_text>\<open>result\<close>. We cannot replace \<^boxed_theory_text>\<open>compute_attr_access\<close> by the 
+  corresponding antiquotation \<^boxed_theory_text>\<open>\<^value_>\<open>evidence @{result \<open>oid\<close>}\<close>\<close>, since
+  \<^boxed_theory_text>\<open>oid\<close> is bound to a  variable here and can therefore not be statically expanded.
+\<close>
+
 subsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
 text\<open>
   We call a document class with an \<open>accepts_clause\<close> a \<^emph>\<open>monitor\<close>.\<^bindex>\<open>monitor\<close>  Syntactically, an 
@@ -1241,41 +1276,6 @@ text\<open>
   (See @{technical (unchecked) "sec:low_level_inv"} for an example).
 \<close>
 
-
-subsection*["sec:low_level_inv"::technical]\<open>ODL Low-level Class Invariants\<close>
-
-text\<open>
-  If one want to go over the limitations of the actual high-level syntax of the invariant,
-  one can define a function using SML.
-  A formulation, in SML, of the class-invariant \<^boxed_theory_text>\<open>has_property\<close>
-  in \<^technical>\<open>sec:class_inv\<close>, defined in the supposedly \<open>Low_Level_Syntax_Invariants\<close> theory
-  (note the long name of the class),
-  is straight-forward:
-
-@{boxed_sml [display]
-\<open>fun check_result_inv oid {is_monitor:bool} ctxt =
-  let
-    val kind =
-      ISA_core.compute_attr_access ctxt "evidence" oid NONE @{here}
-    val prop =
-      ISA_core.compute_attr_access ctxt "property" oid NONE @{here}
-    val tS = HOLogic.dest_list prop
-  in  case kind of
-       @{term "proof"} => if not(null tS) then true
-                          else error("class result invariant violation")
-      | _ => true
-  end
-val cid_long = DOF_core.get_onto_class_name_global "result" @{theory}
-val bind = Binding.name "Check_Result"
-val _ = Theory.setup (DOF_core.make_ml_invariant (check_result_inv, cid_long)
-                     |> DOF_core.add_ml_invariant bind)\<close>}
-
-  The \<^ML>\<open>Theory.setup\<close>-command (last line) registers the \<^boxed_theory_text>\<open>check_result_inv\<close> function 
-  into the \<^isadof> kernel, which activates any creation or modification of an instance of 
-  \<^boxed_theory_text>\<open>result\<close>. We cannot replace \<^boxed_theory_text>\<open>compute_attr_access\<close> by the 
-  corresponding antiquotation \<^boxed_theory_text>\<open>\<^value_>\<open>evidence @{result \<open>oid\<close>}\<close>\<close>, since
-  \<^boxed_theory_text>\<open>oid\<close> is bound to a  variable here and can therefore not be statically expanded.
-\<close>
 
 subsection*["sec:queries_on_instances"::technical]\<open>Queries On Instances\<close>
 
