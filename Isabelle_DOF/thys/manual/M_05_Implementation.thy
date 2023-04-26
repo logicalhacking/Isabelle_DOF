@@ -22,10 +22,10 @@ chapter*[isadof_developers::text_section]\<open>Extending \<^isadof>\<close>
 text\<open>
   In this chapter, we describe the basic implementation aspects of \<^isadof>, which is based on 
   the following design-decisions:
-  \<^item> the entire \<^isadof> is a ``pure add-on,'' \<^ie>, we deliberately resign the possibility to 
+  \<^item> the entire \<^isadof> is a ``pure add-on,'' \<^ie>, we deliberately resign to the possibility to 
     modify Isabelle itself,
-  \<^item> we made a small exception to this rule: the \<^isadof> package modifies in its installation 
-    about 10 lines in the \LaTeX-generator (\path{src/patches/thy_output.ML}),
+  \<^item> \<^isadof> has been organized as an AFP entry and a form of an Isabelle component that is
+    compatible with this goal,
   \<^item> we decided to make the markup-generation by itself to adapt it as well as possible to the 
     needs of tracking the linking in documents,
   \<^item> \<^isadof> is deeply integrated into the Isabelle's IDE (PIDE) to give immediate feedback during 
@@ -95,10 +95,10 @@ op repeat : ('a -> 'b * 'a) -> 'a -> 'b list * 'a \<close>}
   for alternative, sequence, and piping, as well as combinators for option and repeat. Parsing 
   combinators have the advantage that they can be integrated into standard programs, 
   and they enable the dynamic extension of the grammar. There is a more high-level structure 
-  \inlinesml{Parse} providing specific combinators for the command-language Isar:
+  \<^boxed_sml>\<open>Parse\<close> providing specific combinators for the command-language Isar:
 
-\begin{sml}[mathescape=false]
-val attribute = Parse.position Parse.name 
+@{boxed_sml [display]
+\<open>val attribute = Parse.position Parse.name 
               -- Scan.optional(Parse.$$$ "=" |-- Parse.!!! Parse.name)"";
 val reference = Parse.position Parse.name 
               -- Scan.option (Parse.$$$ "::" |-- Parse.!!!
@@ -106,7 +106,7 @@ val reference = Parse.position Parse.name
 val attributes =(Parse.$$$ "[" |-- (reference 
                -- (Scan.optional(Parse.$$$ ","
                    |--(Parse.enum ","attribute)))[]))--| Parse.$$$ "]"              
-\end{sml}                                            
+\<close>}                                          
 
   The ``model'' \<^boxed_sml>\<open>create_and_check_docitem\<close> and ``new''
   \<^boxed_sml>\<open>ODL_Meta_Args_Parser.attributes\<close> parts were 
@@ -171,7 +171,7 @@ section\<open>Implementing Second-level Type-Checking\<close>
 text\<open>
   On expressions for attribute values, for which we chose to use HOL syntax to avoid that users 
   need to learn another syntax, we implemented an own pass over type-checked terms. Stored in the 
-  late-binding table \<^boxed_sml>\<open>ISA_transformer_tab\<close>, we register for each inner-syntax-annotation 
+  late-binding table \<^boxed_sml>\<open>ISA_transformer_tab\<close>, we register for each term-annotation 
   (ISA's), a function of type
 
 @{boxed_sml [display]
@@ -205,11 +205,11 @@ text\<open>
   iff it either occurs in its accept-set or its reject-set (see @{docitem "sec:monitors"}). During 
   top-down document validation, whenever a text-element is encountered, it is checked if a monitor 
   is \emph{enabled} for this class; in this case, the \<^boxed_sml>\<open>next\<close>-operation is executed. The 
-  transformed automaton recognizing the rest-language is stored in \<^boxed_sml>\<open>docobj_tab\<close> if
+  transformed automaton recognizing the suffix is stored in \<^boxed_sml>\<open>docobj_tab\<close> if
   possible;
-  % TODO: clarify the notion of rest-language
   otherwise, if \<^boxed_sml>\<open>next\<close> fails, an error is reported. The automata implementation
-  is, in large parts, generated from a formalization of functional automata~\cite{nipkow.ea:functional-Automata-afp:2004}.
+  is, in large parts, generated from a formalization of functional automata
+  @{cite "nipkow.ea:functional-Automata-afp:2004"}.
 \<close>
 
 section\<open>The \<^LaTeX>-Core of \<^isadof>\<close>
