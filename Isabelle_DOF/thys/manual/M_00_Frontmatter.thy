@@ -36,12 +36,13 @@ define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
 text\<open>Note that these setups assume that the associated \<^LaTeX> macros 
      are defined, \<^eg>, in the document prelude. \<close>
 
-define_macro* index  \<rightleftharpoons> \<open>\index{\<close> _ \<open>}\<close>
-define_macro* bindex \<rightleftharpoons> \<open>\bindex{\<close> _ \<open>}\<close>
+define_macro* index     \<rightleftharpoons> \<open>\index{\<close> _ \<open>}\<close>
+define_macro* bindex    \<rightleftharpoons> \<open>\bindex{\<close> _ \<open>}\<close>
 define_macro* nolinkurl \<rightleftharpoons> \<open>\nolinkurl{\<close> _ \<open>}\<close>
-define_macro* center \<rightleftharpoons> \<open>\center{\<close> _ \<open>}\<close>
+define_macro* center    \<rightleftharpoons> \<open>\center{\<close> _ \<open>}\<close>
+define_macro* ltxinline \<rightleftharpoons> \<open>\inlineltx|\<close> _ \<open>|\<close>
 
-
+ML\<open>curry (op ^) "[mathescape=false]" \<close>
 ML\<open>
 
 fun boxed_text_antiquotation name (* redefined in these more abstract terms *) =
@@ -60,9 +61,10 @@ fun boxed_theory_text_antiquotation name (* redefined in these more abstract ter
 fun boxed_sml_text_antiquotation name  =
     DOF_lib.gen_text_antiquotation name (K(K())) 
                            (fn ctxt => Input.source_content 
+                                        #> apfst (curry (op ^) "[mathescape=false]")
                                         #> Latex.text 
                                         #> DOF_lib.enclose_env true ctxt "sml") 
-                           (* the simplest conversion possible *)
+                           (* the simplest conversion possible, preseving $ symbols *)
 
 fun boxed_pdf_antiquotation name =
     DOF_lib.gen_text_antiquotation name (K(K())) 

@@ -527,7 +527,7 @@ ontologically checked prior arguments \<open>arg\<^sub>1 ... arg\<^sub>n\<^sub>-
 process; ontologically, they can be used to assure the traceability of, \<^eg>, semi-formal 
 assumptions throughout their way to formalisation and use in lemmas and proofs. \<close> 
 
-figure*[doc_termAq::figure,relative_width="50",src="''figures/doc-mod-term-aq.png''"]
+figure*[doc_termAq::figure,relative_width="50",src="''figures/doc-mod-term-aq.pdf''"]
                       \<open>Term-Antiquotations Referencing to Annotated Elements\<close>
 text\<open>As shown in @{figure \<open>doc_termAq\<close>}, this feature of  \<^isadof> substantially increases
 the expressibility of links between the formal and the informal in \<^dof> documents.\<close>

@@ -46,11 +46,11 @@ session "Isabelle_DOF" (AFP) = "Functional-Automata" +
     "figures/definition-use-CSP-pdf.png"
     "figures/definition-use-CSP.png"
     "figures/MyCommentedIsabelle.png"
-    "figures/doc-mod-generic.png"
-    "figures/doc-mod-isar.png"
-    "figures/doc-mod-onto-docinst.png"
-    "figures/doc-mod-DOF.png"
-    "figures/doc-mod-term-aq.png"
+    "figures/doc-mod-generic.pdf"
+    "figures/doc-mod-isar.pdf"
+    "figures/doc-mod-onto-docinst.pdf"
+    "figures/doc-mod-DOF.pdf"
+    "figures/doc-mod-term-aq.pdf"
   export_classpath
 
 
