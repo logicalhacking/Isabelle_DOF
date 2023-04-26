@@ -64,7 +64,7 @@ fun boxed_sml_text_antiquotation name  =
                                         #> apfst (curry (op ^) "[mathescape=false]")
                                         #> Latex.text 
                                         #> DOF_lib.enclose_env true ctxt "sml") 
-                           (* the simplest conversion possible *)
+                           (* the simplest conversion possible, preseving $ symbols *)
 
 fun boxed_pdf_antiquotation name =
     DOF_lib.gen_text_antiquotation name (K(K())) 

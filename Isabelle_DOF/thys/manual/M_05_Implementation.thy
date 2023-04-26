@@ -97,7 +97,6 @@ op repeat : ('a -> 'b * 'a) -> 'a -> 'b list * 'a \<close>}
   and they enable the dynamic extension of the grammar. There is a more high-level structure 
   \<^boxed_sml>\<open>Parse\<close> providing specific combinators for the command-language Isar:
 
-% boxed_sml does not work here due to the dollar symbols. Repair: mathescape option in sty ?
 @{boxed_sml [display]
 \<open>val attribute = Parse.position Parse.name 
               -- Scan.optional(Parse.$$$ "=" |-- Parse.!!! Parse.name)"";
@@ -206,11 +205,11 @@ text\<open>
   iff it either occurs in its accept-set or its reject-set (see @{docitem "sec:monitors"}). During 
   top-down document validation, whenever a text-element is encountered, it is checked if a monitor 
   is \emph{enabled} for this class; in this case, the \<^boxed_sml>\<open>next\<close>-operation is executed. The 
-  transformed automaton recognizing the rest-language is stored in \<^boxed_sml>\<open>docobj_tab\<close> if
+  transformed automaton recognizing the suffix is stored in \<^boxed_sml>\<open>docobj_tab\<close> if
   possible;
-  % TODO: clarify the notion of rest-language
   otherwise, if \<^boxed_sml>\<open>next\<close> fails, an error is reported. The automata implementation
-  is, in large parts, generated from a formalization of functional automata~\cite{nipkow.ea:functional-Automata-afp:2004}.
+  is, in large parts, generated from a formalization of functional automata
+  @{cite "nipkow.ea:functional-Automata-afp:2004"}.
 \<close>
 
 section\<open>The \<^LaTeX>-Core of \<^isadof>\<close>
