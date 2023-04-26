@@ -155,14 +155,14 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: label and ref
-\newkeycommand\iisaDoflabel[label=,type=][1]{\label{#1}}
-\def\isaDoflabel{\iisaDoflabel}
-\newkeycommand\iisaDofref[label=,type=][1]{\autoref{#1}}
-\def\isaDofref{\iisaDofref}
-\newkeycommand\iisaDofmacroDef[label=,type=][1]{MMM \label{#1}}        %% place_holder
-\def\isaDofmacroDef{\iisaDofmacroDef}
-\newkeycommand\iisaDofmacroExp[label=,type=][1]{MMM \autoref{#1}}   %% place_holder
-\def\isaDofmacroExp{\iisaDofmacroExp}
+\newkeycommand\isaDof@label[label=,type=][1]{\label{#1}}
+\def\isaDofDOTlabel{\isaDof@label}
+\newkeycommand\isaDof@ref[label=,type=][1]{\autoref{#1}}
+\def\isaDofDOTref{\isaDof@ref}
+\newkeycommand\isaDof@macro[label=,type=][1]{MMM \label{#1}}        %% place_holder
+\def\isaDofDOTmacroDef{\iisaDof@macro}
+\newkeycommand\isaDof@macroExp[label=,type=][1]{MMM \autoref{#1}}   %% place_holder
+\def\isaDofDOTmacroExp{\isaDof@macroExp}
 % end: label and ref
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
