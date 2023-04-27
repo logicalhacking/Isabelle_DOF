@@ -23,7 +23,6 @@ theory scholarly_paper
 begin
 
 define_ontology "DOF-scholarly_paper.sty" "Writing academic publications."
-(* define_ontology "DOF-scholarly_paper-thm.sty" "" *)
 
 text\<open>Scholarly Paper provides a number of standard text - elements for scientific papers.
 They were introduced in the following.\<close>
@@ -457,7 +456,6 @@ val _ = doc_cmd \<^command_keyword>\<open>Lemma*\<close>      "Freeform Lemma De
 val _ = doc_cmd \<^command_keyword>\<open>Theorem*\<close>    "Freeform Theorem" 
                  Theorem_default_class \<^const_name>\<open>theom\<close>;
 
-(* cut and paste to make it runnable, but nonsensical so far: *)
 val _ = doc_cmd \<^command_keyword>\<open>Proposition*\<close> "Freeform Proposition"
                   Proposition_default_class \<^const_name>\<open>prpo\<close>;
 
@@ -607,7 +605,7 @@ structure Scholarly_paper_trace_invariant =
 struct 
 local
 
-fun group f g cidS [] = []
+fun group _ _ _ [] = []
    |group f g cidS (a::S) = case find_first (f a) cidS of
                             NONE => [a] :: group f g cidS S
                           | SOME cid => let val (pref,suff) =  chop_prefix  (g cid) S

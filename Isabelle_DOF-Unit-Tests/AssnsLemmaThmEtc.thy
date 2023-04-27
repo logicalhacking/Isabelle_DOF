@@ -18,7 +18,7 @@ theory
 imports 
   "Isabelle_DOF-Ontologies.Conceptual"  
   "Isabelle_DOF.scholarly_paper"
-  "Isabelle_DOF-Unit-Tests_document"
+  "Isabelle_DOF_Unit_Tests_document"
   TestKit
 begin
 

@@ -1,7 +1,7 @@
 theory 
   Cenelec_Test
 imports 
-  "Isabelle_DOF-Unit-Tests_document"
+  "Isabelle_DOF_Unit_Tests_document"
   "Isabelle_DOF-Ontologies.CENELEC_50128"
 begin
 

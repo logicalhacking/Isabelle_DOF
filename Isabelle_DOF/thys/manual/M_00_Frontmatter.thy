@@ -42,7 +42,6 @@ define_macro* nolinkurl \<rightleftharpoons> \<open>\nolinkurl{\<close> _ \<open
 define_macro* center    \<rightleftharpoons> \<open>\center{\<close> _ \<open>}\<close>
 define_macro* ltxinline \<rightleftharpoons> \<open>\inlineltx|\<close> _ \<open>|\<close>
 
-ML\<open>curry (op ^) "[mathescape=false]" \<close>
 ML\<open>
 
 fun boxed_text_antiquotation name (* redefined in these more abstract terms *) =
@@ -61,10 +60,9 @@ fun boxed_theory_text_antiquotation name (* redefined in these more abstract ter
 fun boxed_sml_text_antiquotation name  =
     DOF_lib.gen_text_antiquotation name (K(K())) 
                            (fn ctxt => Input.source_content 
-                                        #> apfst (curry (op ^) "[mathescape=false]")
                                         #> Latex.text 
                                         #> DOF_lib.enclose_env true ctxt "sml") 
-                           (* the simplest conversion possible, preseving $ symbols *)
+                           (* the simplest conversion possible *)
 
 fun boxed_pdf_antiquotation name =
     DOF_lib.gen_text_antiquotation name (K(K())) 
@@ -88,11 +86,8 @@ fun boxed_bash_antiquotation name =
                            (* the simplest conversion possible *)
 \<close>
 
-setup\<open>(* std_text_antiquotation        \<^binding>\<open>my_text\<close> #> *)
-      boxed_text_antiquotation         \<^binding>\<open>boxed_text\<close> #>
-      (* std_text_antiquotation        \<^binding>\<open>my_cartouche\<close> #> *)
+setup\<open>boxed_text_antiquotation         \<^binding>\<open>boxed_text\<close> #>
       boxed_text_antiquotation         \<^binding>\<open>boxed_cartouche\<close> #>
-      (* std_theory_text_antiquotation \<^binding>\<open>my_theory_text\<close>#> *)
       boxed_theory_text_antiquotation  \<^binding>\<open>boxed_theory_text\<close> #>
 
       boxed_sml_text_antiquotation     \<^binding>\<open>boxed_sml\<close> #>

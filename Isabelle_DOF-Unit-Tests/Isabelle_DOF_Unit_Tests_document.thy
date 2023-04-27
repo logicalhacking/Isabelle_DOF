@@ -11,7 +11,7 @@
  *
  *   SPDX-License-Identifier: BSD-2-Clause
  *************************************************************************)
-theory "Isabelle_DOF-Unit-Tests_document"
+theory "Isabelle_DOF_Unit_Tests_document"
   imports
     "Isabelle_DOF.technical_report"
     (* "Isabelle_DOF-Ontologies.CENELEC_50128"  where do we use this - bu *)

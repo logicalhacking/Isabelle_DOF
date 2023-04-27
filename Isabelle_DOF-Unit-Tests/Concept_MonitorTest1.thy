@@ -16,7 +16,7 @@ chapter\<open>Testing Nested Monitors\<close>
 theory 
   Concept_MonitorTest1
   imports 
-  "Isabelle_DOF-Unit-Tests_document"
+  "Isabelle_DOF_Unit_Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual" (* we use the generic "Conceptual" ontology *)
   TestKit
 begin

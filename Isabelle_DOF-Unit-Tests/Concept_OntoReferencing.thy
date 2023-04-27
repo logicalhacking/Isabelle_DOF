@@ -15,7 +15,7 @@ chapter\<open>Creating and Referencing Ontological Instances\<close>
 
 theory   Concept_OntoReferencing
   imports   "TestKit"
-            "Isabelle_DOF-Unit-Tests_document"
+            "Isabelle_DOF_Unit_Tests_document"
             "Isabelle_DOF-Ontologies.Conceptual" 
 begin
 

@@ -12,7 +12,7 @@
  *************************************************************************)
 
 theory 
-  "document-templates"
+  "document_templates"
 imports
   "Isabelle_DOF.Isa_DOF"
 begin

@@ -81,23 +81,15 @@ fun enriched_text_element_cmd level =
                 | SOME(SOME x) => (("level",@{here}),"Some("^ Int.toString x ^"::int)")::doc_attrs
    in Monitor_Command_Parser.gen_enriched_document_cmd {inline=true} I transform end; 
 
-(*
-val enriched_document_command_macro = 
-    let fun transform_cid X = (writeln (@{make_string} X); X)
-    in  gen_enriched_document_command {inline=true} transform_cid I end;
-*)
-
-
 local 
-fun transform_cid thy NONE X = X
-   |transform_cid thy (SOME ncid) NONE =  (SOME(ncid,@{here}))
+fun transform_cid _ NONE X = X
+   |transform_cid _ (SOME ncid) NONE =  (SOME(ncid,@{here}))
    |transform_cid thy (SOME cid) (SOME (sub_cid,pos)) =
                              let val cid_long  = DOF_core.get_onto_class_name_global' cid thy
                                  val sub_cid_long =  DOF_core.get_onto_class_name_global' sub_cid thy
                              in  if DOF_core.is_subclass_global thy  sub_cid_long cid_long
                                  then (SOME (sub_cid,pos))
-                                 else (* (SOME (sub_cid,pos)) *)
-                                      (*  BUG : check reveals problem of Definition* misuse.  *)
+                                 else (*  BUG : check reveals problem of Definition* misuse.  *)
                                         error("class "^sub_cid_long^
                                               " must be sub-class of "^cid_long) 
                              end  
@@ -117,16 +109,6 @@ fun transform_attr S doc_attrs =
              else transform_attr' S doc_attrs' 
           end
   in transform_attr' S doc_attrs end
-
-(*fun update_meta_args_attrs S
-      ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) =
-  (((oid, pos),cid_pos), transform_attr S doc_attrs)
-*)
-(*fun enriched_formal_statement_command ncid (S: (string * string) list) =
-   fn margs => fn thy =>
-          Monitor_Command_Parser.gen_enriched_document_cmd {inline=true} 
-                                    (transform_cid thy ncid) (transform_attr S) margs thy
-*)
 
 fun enriched_formal_statement_command ncid (S: (string * string) list) =
   let fun transform_attr doc_attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ 
@@ -269,15 +251,14 @@ val _ = Onto_Macros.heading_command \<^command_keyword>\<open>side_by_side_figur
 \<close>
 
 (*<*)
-(*
-ML\<open>ML_Context.expression\<close>
+
+ML\<open>
 fun setup source =
   ML_Context.expression (Input.pos_of source)
     (ML_Lex.read "Theory.setup (" @ ML_Lex.read_source source @ ML_Lex.read ")")
   |> Context.theory_map;
-setup\<open>\<close>
+\<close>
 
-*)
 (*>*)
 
 subsubsection\<open>Figure Content\<close>
@@ -409,7 +390,7 @@ LaTeX tradition. It is based of the following principles:
 ML\<open>
 local
 
-fun mk_line st1 st2 [a] =  [a @ Latex.string st2]
+fun mk_line _ st2 [a] =  [a @ Latex.string st2]
    |mk_line st1 st2 (a::S) = [a @ Latex.string st1] @ mk_line st1 st2 S;
 
 (* tab attributes for global setup *)
@@ -428,7 +409,6 @@ val mt_cell_config = {cell_placing   = [],
                       cell_line_color= [], 
                       cell_line_width= [] }: cell_config
 
-(* doof wie 100 m feldweg. *)
 fun upd_cell_placing key 
             {cell_placing,cell_height,cell_width, cell_bgnd_color,   
              cell_line_color,cell_line_width} : cell_config = 
@@ -477,7 +457,7 @@ fun upd_cell_line_width num
              cell_line_color = cell_line_color, cell_line_width = cell_line_width@[num] } 
             : cell_config
 
-(*global default configs *)
+(* global default configs *)
 val (tab_cell_placing, tab_cell_placing_setup)
      = Attrib.config_string \<^binding>\<open>tab_cell_placing\<close> (K "center");
 val (tab_cell_height, tab_cell_height_setup)
@@ -522,15 +502,11 @@ val placing_scan = Args.$$$ "left" || Args.$$$ "center" || Args.$$$ "right"
 val color_scan   =   Args.$$$ "none" || Args.$$$ "red" || Args.$$$ "green"                   
                   || Args.$$$ "blue" || Args.$$$ "black"
 
-(*
-
-val _ = Scan.lift 
 
 fun lift scan (st, xs) =
   let val (y, xs') = scan xs
   in (y, (st, xs')) end;
 
-*)
 
 fun tabitem_modes (ctxt, toks) = 
        let val (y, toks') = ((((Scan.optional 
@@ -650,9 +626,9 @@ declare[[tab_cell_placing="left",tab_cell_height="18.0cm"]]
 
 section\<open>Tests\<close>
 (*<*)
-(*
+
 text\<open> @{fig_content   [display] (scale = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
-                      \<open>examples/scholarly_paper/2018-cicm-isabelle_dof-applications/document/figures/isabelle-architecture.pdf\<close>}\<close>
+                      \<open>../document/figures/isabelle-architecture.pdf\<close>}\<close>
 text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open>12.0cm\<close>,
                                  cell_height =\<open>13pt\<close>,  cell_width = \<open>12.0cm\<close>,
                                  cell_bgnd_color=black,cell_line_color=red,cell_line_width=\<open>12.0cm\<close>)
@@ -660,7 +636,7 @@ text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open
            \<open>\<open>1\<close>  \<open>2\<close>  \<open>3\<sigma>\<close>\<close>
           \<close>}
       \<^cell>\<open>dfg\<close>  @{row \<open>is technical\<close> \<open> \<open>\<sigma> * a\<^sub>4\<close> \<close>}\<close>
-*)
+
 (*>*)
 
 ML\<open>@{term "side_by_side_figure"};

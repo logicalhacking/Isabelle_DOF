@@ -16,7 +16,7 @@ chapter\<open>LaTeX Generation Tests\<close>
 
 theory   Latex_Tests
   imports    "TestKit"
-             "Isabelle_DOF-Unit-Tests_document"  
+             "Isabelle_DOF_Unit_Tests_document"  
   keywords   "Figure*"          :: document_body  (* still experimental feature *)
 
 begin

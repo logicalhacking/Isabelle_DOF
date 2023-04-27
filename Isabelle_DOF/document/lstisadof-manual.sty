@@ -136,11 +136,12 @@
 \lstloadlanguages{ML}
 \providecolor{sml}{named}{red}
 \lstdefinestyle{sml}{
-   basicstyle=\ttfamily,%
-   commentstyle=\itshape,%
-   keywordstyle=\bfseries\color{CornflowerBlue},%
-   ndkeywordstyle=\color{green},%
-   language=ML
+   ,escapechar=ë%
+   ,basicstyle=\ttfamily%
+   ,commentstyle=\itshape%
+   ,keywordstyle=\bfseries\color{CornflowerBlue}%
+   ,ndkeywordstyle=\color{green}%
+   ,language=ML
 %  ,literate={%
 %     {<@>}{@}1%
 %    }
@@ -150,7 +151,7 @@
    ,tagstyle=\color{CornflowerBlue}%
    ,markfirstintag=true%
 }%
-\def\inlinesml{\lstinline[style=sml,breaklines=true,mathescape,breakatwhitespace=true]}
+\def\inlinesml{\lstinline[style=sml,breaklines=true,breakatwhitespace=true]}
 \newtcblisting{sml}[1][]{%
       listing only%
      ,boxrule=0pt
@@ -170,7 +171,6 @@
           style=sml
           ,columns=flexible%
           ,basicstyle=\small\ttfamily
-          ,mathescape
           ,#1
       }
   }%

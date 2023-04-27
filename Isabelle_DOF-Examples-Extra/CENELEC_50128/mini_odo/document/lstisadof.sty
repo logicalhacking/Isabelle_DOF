@@ -179,7 +179,8 @@
 %%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%
 \lstloadlanguages{ML}
-\lstdefinestyle{sml}{basicstyle=\ttfamily,%
+\lstdefinestyle{sml}{escapechar=ë,%
+                     basicstyle=\ttfamily,%
                      commentstyle=\itshape,%
                      keywordstyle=\bfseries\color{CornflowerBlue},%
                      ndkeywordstyle=\color{red},%
@@ -193,4 +194,4 @@
     frame=lines,
     basicstyle=\footnotesize\ttfamily,#1}}{}
 %%% 
-\def\inlinesml{\lstinline[style=sml,breaklines=true,mathescape,breakatwhitespace=true]}
+\def\inlinesml{\lstinline[style=sml,breaklines=true,breakatwhitespace=true]}
