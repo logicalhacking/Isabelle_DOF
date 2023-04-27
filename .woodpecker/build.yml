@@ -1,6 +1,6 @@
 pipeline:
   build:
-    image: docker.io/logicalhacking/isabelle_nightly:latest
+    image: git.logicalhacking.com/lh-docker/lh-docker-isabelle/isabelle_nightly:latest
     commands:
       - ./.woodpecker/check_dangling_theories
       - ./.woodpecker/check_external_file_refs
@@ -20,7 +20,7 @@ pipeline:
       - cd ../..
       - ln -s * latest
   archive:
-    image: docker.io/logicalhacking/isabelle-dev
+    image: git.logicalhacking.com/lh-docker/lh-docker-isabelle/isabelle_nightly:latest
     commands:
       - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO/$CI_BRANCH/$CI_BUILD_NUMBER/$LATEX
       - mkdir -p $ARTIFACT_DIR
