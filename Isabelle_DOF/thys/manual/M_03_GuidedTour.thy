@@ -76,11 +76,28 @@ is currently consisting out of two AFP entries:
   contains the \<^isadof> system itself, including the \<^isadof> manual.
 \<^item> \<^verbatim>\<open>Isabelle_DOF-Example-I\<close>: This entry contains an example of 
   an academic paper written using the \<^isadof> system oriented towards an 
-  introductory paper.
+  introductory paper. The text is based on the CICM 2018 paper~@{cite "brucker.ea:isabelle-ontologies:2018"};
+  in the document, we deliberately  refrain from integrating references to formal content in order 
+  to demonstrate that \<^isadof> is not a framework from Isabelle users to Isabelle users only, but 
+  people just avoiding as much as possible \<^LaTeX> notation.
 \<^item> \<^verbatim>\<open>Isabelle_DOF-Example-II\<close>: This entry contains another example of 
-  a mathematics-oriented academic paper.
+  a mathematics-oriented academic paper. It is based on the iFM 2020 paper~@{cite "taha.ea:philosophers:2020"}.
+  It represents a typical mathematical text, heavy in definitions with complex  mathematical notation 
+  and a lot of non-trivial cross-referencing  between statements, definitions and proofs which 
+  are ontologically tracked. However, wrt. the possible linking between the underlying formal theory 
+  and this mathematical presentation, it follows a pragmatic path without any ``deep'' linking to 
+  types, terms and theorems, and therefore does deliberately not exploit \<^isadof> 's full potential.
+\<^item> \<^verbatim>\<open>Isabelle_DOF-Examples-Extra\<close>: This sessen contains a collection of other examples;
+  but is only accessible at the developer git 
+  \<^url>\<open>https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/src/branch/main/Isabelle_DOF-Examples-Extra\<close>.
 
-It is recommended to follow structure one of these papers.\<close>
+
+%  The \<^isadof> distribution contains both examples using the ontology \<^verbatim>\<open>scholarly_paper\<close> in 
+%  the directory \<^nolinkurl>\<open>examples/scholarly_paper/2018-cicm-isabelle_dof-applications/\<close> or
+%   \<^nolinkurl>\<open>examples/scholarly_paper/2020-iFM-CSP\<close>.
+
+
+It is recommended to follow the structure these examples.\<close>
 
 
 section*[writing_doc::technical]\<open>Writing Documents\<close>
@@ -215,39 +232,28 @@ text\<open>At times, this causes idiosyncrasies like the ones cited in the follo
 \<close>
 
 section*[scholar_onto::example]\<open>Writing Academic Publications in \<^boxed_theory_text>\<open>scholarly_paper\<close>\<close>  
-subsection\<open>A Selection of major Examples\<close>
+subsection\<open>Editing Major Examples\<close>
 text\<open> 
   The ontology \<^verbatim>\<open>scholarly_paper\<close>  \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
   academic/scientific papers, with a slight bias towards texts in the domain of mathematics and
-  engineering. We explain first the principles of its underlying ontology, and then we present two 
-  ``real'' examples from our own publication practice.
-     \<^enum> The iFM 2020 paper~@{cite "taha.ea:philosophers:2020"} is a typical mathematical text,
-       heavy in definitions with complex  mathematical notation and a lot of non-trivial cross-referencing
-       between statements, definitions and proofs which are ontologically tracked. However, wrt.
-       the possible linking between the underlying formal theory and this mathematical presentation,        it follows a pragmatic path without any ``deep'' linking to types, terms and theorems, 
-       deliberately not exploiting \<^isadof> 's full potential with this regard.
-     \<^enum> In the CICM 2018 paper~@{cite "brucker.ea:isabelle-ontologies:2018"}, we deliberately
-       refrain from integrating references to formal content in order to demonstrate that \<^isadof> is not 
-       a framework from Isabelle users to Isabelle users only, but people just avoiding as much as
-       possible \<^LaTeX> notation.
-
-  The \<^isadof> distribution contains both examples using the ontology \<^verbatim>\<open>scholarly_paper\<close> in 
-  the directory \<^nolinkurl>\<open>examples/scholarly_paper/2018-cicm-isabelle_dof-applications/\<close> or
-   \<^nolinkurl>\<open>examples/scholarly_paper/2020-iFM-CSP\<close>.
+  engineering. We explain first the principles of its underlying ontology, for examples
+  using these ontologies we refer to the example sessions described in \<^technical>\<open>isadof\<close>.
 
   You can inspect/edit the example in Isabelle's IDE, by either 
      \<^item> starting Isabelle/jEdit using your graphical user interface (\<^eg>, by clicking on the 
        Isabelle-Icon provided by the Isabelle installation) and loading the file 
-       \<^nolinkurl>\<open>examples/scholarly_paper/2018-cicm-isabelle_dof-applications/IsaDofApplications.thy"\<close>
+       \<^nolinkurl>\<open>Isabelle_DOF-Example-I/IsaDofApplications.thy"\<close>
      \<^item> starting Isabelle/jEdit from the command line by, \<^eg>, calling:
 
 @{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë 
-  isabelle jedit -d . examples/scholarly_paper/2020-iFM-CSP/paper.thy \<close>}
+  isabelle jedit -d . Isabelle_DOF-Example-II/paper.thy \<close>}
+
+% bu assumes a particular organisation of Isabelle_DOF, Isabelle_DOF-Example-I, ... and an according ROOTS here ...
 \<close> 
 
 
 text\<open>    You can build the \<^pdf>-document at the command line by calling:
-@{boxed_bash [display] \<open>ë\prompt{}ë isabelle build -d . 2020-iFM-csp \<close>}
+@{boxed_bash [display] \<open>ë\prompt{}ë isabelle build -d . IsaDofApplications \<close>}
 \<close>
 
 subsection*[sss::technical]\<open>A Bluffers Guide to the \<^verbatim>\<open>scholarly_paper\<close> Ontology\<close>
