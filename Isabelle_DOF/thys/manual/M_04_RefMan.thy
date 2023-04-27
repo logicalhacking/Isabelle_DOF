@@ -641,7 +641,7 @@ already mentioned hierarchy \<^verbatim>\<open>COL\<close> (the common ontology 
 
 subsection\<open>Common Ontology Library (COL)\<close>
 (*<*)
-ML\<open>writeln (DOF_core.print_doc_class_tree @{context} (fn (n,l) => String.isPrefix "Isa_COL" l) I)\<close>
+ML\<open>writeln (DOF_core.print_doc_class_tree @{context} (fn (_,l) => String.isPrefix "Isa_COL" l) I)\<close>
 (*>*)
 text\<open> 
 
@@ -717,7 +717,7 @@ subsection*["text-elements"::technical]\<open>The Ontology \<^verbatim>\<open>sc
 (*<*)
 ML\<open>val toLaTeX = String.translate (fn c => if c = #"_" then "\\_" else String.implode[c])\<close>     
 ML\<open>writeln (DOF_core.print_doc_class_tree 
-                 @{context} (fn (n,l) =>        String.isPrefix "scholarly_paper" l 
+                 @{context} (fn (_,l) =>        String.isPrefix "scholarly_paper" l 
                                          orelse String.isPrefix "Isa_COL" l) 
                  toLaTeX)\<close>
 (*>*)
@@ -895,7 +895,7 @@ subsection\<open>The Ontology \<^verbatim>\<open>technical_report\<close>\<close
 (*<*)
 ML\<open>val toLaTeX = String.translate (fn c => if c = #"_" then "\\_" else String.implode[c])\<close>     
 ML\<open>writeln (DOF_core.print_doc_class_tree 
-                 @{context} (fn (n,l) =>  true (*     String.isPrefix "technical_report" l 
+                 @{context} (fn (_,_) =>  true (*     String.isPrefix "technical_report" l 
                                          orelse String.isPrefix "Isa_COL" l *)) 
                  toLaTeX)\<close>
 (*>*)
@@ -1266,14 +1266,14 @@ text\<open>
   sections.
   For now, the high-level syntax of invariants does not support the checking of
   specific monitor behaviors like the one just described and you must use 
-  the low-level class invariants (see @{technical (unchecked) "sec:low_level_inv"}).
+  the low-level class invariants (see @{technical "sec:low_level_inv"}).
 
   Low-level invariants checking can be set up to be triggered
   when opening a monitor, when closing a monitor, or both
   by using the \<^ML>\<open>DOF_core.add_opening_ml_invariant\<close>,
   \<^ML>\<open>DOF_core.add_closing_ml_invariant\<close>, or \<^ML>\<open>DOF_core.add_ml_invariant\<close> commands
   respectively, to add the invariants to the theory context
-  (See @{technical (unchecked) "sec:low_level_inv"} for an example).
+  (See @{technical "sec:low_level_inv"} for an example).
 \<close>
 
 

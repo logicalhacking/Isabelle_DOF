@@ -71,8 +71,6 @@ text\<open>
 
 
 (*<*)
-(* declare_reference*["fig:dependency"::figure]
-   @{figure (unchecked) "fig:dependency"}  *)
 declare_reference*[docModGenConcr::figure]
 (*>*)
 text\<open>
@@ -195,10 +193,6 @@ them. This allows for checking an annotated document with respect to a given ont
 specific for  a given domain-specific universe of discourse (see @{figure "docModOnto"}). ODL will 
 be described in  @{text_section (unchecked) "isadof_tour"} in more detail.\<close>
 
-(*
-figure*["fig:dependency"::figure,relative_width="70",src="''figures/document-hierarchy''"]
-       \<open>A Theory-Graph in the Document Model. \<close>
-*)
 section*[bgrnd21::introduction]\<open>Implementability of the Document Model in other ITP's\<close>
 text\<open> 
   Batch-mode checkers for \<^dof> can be implemented in all systems of the LCF-style prover family, 

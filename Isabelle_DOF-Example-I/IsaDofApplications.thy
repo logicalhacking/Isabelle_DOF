@@ -668,7 +668,7 @@ figure*[figfig5::figure, relative_width="80", src="''figures/srac-definition''"]
 figure*[figfig7::figure, relative_width="80", src="''figures/srac-as-es-application''"]
         \<open> Using a SRAC as EC document reference. \<close>
        
-text\<open> Now we reference in @{figure (unchecked) \<open>figfig7\<close>} this safety-related condition; 
+text\<open> Now we reference in @{figure \<open>figfig7\<close>} this safety-related condition; 
 however, this happens in a context where general \<^emph>\<open>exported constraints\<close> are listed. 
 \<^isadof>'s checks establish that this is legal in the given ontology. 
 
