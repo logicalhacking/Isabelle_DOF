@@ -297,7 +297,6 @@ val mt_fig_content = {relative_width  = 100,
                       scale           = 100,    
                       caption         = Input.empty }: fig_content
 
-(* doof wie 100 m feldweg. *)
 fun upd_relative_width key {relative_width,scale,caption } : fig_content = 
             {relative_width = key,scale = scale,caption = caption}: fig_content
 

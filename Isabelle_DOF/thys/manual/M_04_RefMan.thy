@@ -40,8 +40,8 @@ text\<open>
     (ODL) which allow for the definitions of document-classes
     and necessary datatypes,
   \<^item> the \<^emph>\<open>core\<close> also provides an own \<^emph>\<open>family of commands\<close> such as 
-    \<^boxed_theory_text>\<open>text*\<close>, \<^boxed_theory_text>\<open>declare_reference*\<close>, \<^etc>.;
-    They allow for the annotation of text-elements with meta-information defined in ODL,
+    \<^boxed_theory_text>\<open>text*\<close>, \<^boxed_theory_text>\<open>ML*\<close>, \<^boxed_theory_text>\<open>value*\<close> , \<^etc>.;
+    They allow for the annotation of document-elements with meta-information defined in ODL,
   \<^item> the \<^isadof> library \<^theory>\<open>Isabelle_DOF.Isa_COL\<close> providing
     ontological basic (documents) concepts \<^bindex>\<open>ontology\<close> as well as supporting infrastructure, 
   \<^item> an infrastructure for ontology-specific \<^emph>\<open>layout definitions\<close>, exploiting this meta-information, 
@@ -103,8 +103,9 @@ text\<open>
  formal entities of Isabelle, and monitors are due to its specific application in the 
  Isabelle context. Conceptually, ontologies specified in ODL consist of:
     \<^item> \<^emph>\<open>document classes\<close> (\<^boxed_theory_text>\<open>doc_class\<close>) \<^index>\<open>doc\_class\<close> that describe concepts,
-      the keyword (\<^boxed_theory_text>\<open>onto_class\<close>) \<^index>\<open>onto\_class\<close> is accepted equally,
+      the keyword (\<^boxed_theory_text>\<open>onto_class\<close>) \<^index>\<open>onto\_class\<close> is syntactically equivalent,
     \<^item> an optional document base class expressing single inheritance  class extensions,
+      restricting the class-hierarchy basically to a tree,
     \<^item> \<^emph>\<open>attributes\<close> specific to document classes, where
       \<^item> attributes are HOL-typed,
       \<^item> attributes of instances of document elements are mutable,
@@ -116,6 +117,10 @@ text\<open>
     \<^item> classes may refer to other classes via a regular expression in an
       \<^emph>\<open>accepts\<close> clause, or via a list in a \<^emph>\<open>rejects\<close> clause,
     \<^item> attributes may have default values in order to facilitate notation.
+
+\<^boxed_theory_text>\<open>doc_class\<close>'es and \<^boxed_theory_text>\<open>onto_class\<close>'es respectively, have a semantics,
+\<^ie>, a logical representation as extensible records in HOL (@{cite "wenzel:isabelle-isar:2020"}, 
+pp. 11.6); there are therefore amenable to logical reasoning.
 \<close>
 
 text\<open>
@@ -137,7 +142,7 @@ text\<open>
   document specification language support built-in types for Isabelle/HOL \<^boxed_theory_text>\<open>typ\<close>'s,  
   \<^boxed_theory_text>\<open>term\<close>'s, and \<^boxed_theory_text>\<open>thm\<close>'s reflecting internal Isabelle's  internal 
   types for these entities; when denoted in HOL-terms to instantiate an attribute, for example, 
-  there is a  specific syntax (called \<^emph>\<open>inner syntax antiquotations\<close>) that is checked by 
+  there is a  specific syntax (called \<^emph>\<open>term antiquotations\<close>) that is checked by 
   \<^isadof> for consistency.
 
   Document classes\<^bindex>\<open>document class\<close>\<^index>\<open>class!document@see document class\<close> support 
@@ -164,7 +169,7 @@ text\<open>
   As ODL is an extension of Isabelle/HOL, document class definitions can therefore be arbitrarily 
   mixed with standard HOL specification constructs. To make this manual self-contained, we present 
   syntax and semantics of the specification constructs that are most likely relevant for the 
-  developer of ontologies (for more details, see~@{cite "wenzel:isabelle-isar:2020"}.  Our 
+  developer of ontologies (for more details, see~@{cite "wenzel:isabelle-isar:2020"}).  Our 
   presentation is a simplification of the original sources following the needs of ontology developers 
   in \<^isadof>:
   \<^item> \<open>name\<close>:\<^index>\<open>name@\<open>name\<close>\<close>
@@ -200,13 +205,14 @@ text\<open>
   \<^item> \<open>constant_definition\<close> :\<^index>\<open>constant\_definition@\<open>constant_definition\<close>\<close>
      \<^rail>\<open> @@{command "definition"} name '::' type 'where' '"' name '=' \<newline> expr '"'\<close>
   \<^item> \<open>expr\<close>:\<^index>\<open>expr@\<open>expr\<close>\<close>
-     the syntactic category \<open>expr\<close> here denotes the very rich ``inner-syntax'' language of 
-     mathematical  notations for $\lambda$-terms in Isabelle/HOL. Example expressions are:
+     the syntactic category \<open>expr\<close> here denotes the very rich language of 
+     mathematical  notations encoded in \<open>\<lambda>\<close>-terms in Isabelle/HOL. Example expressions are:
      \<^boxed_theory_text>\<open>1+2\<close> (arithmetics), \<^boxed_theory_text>\<open>[1,2,3]\<close> (lists), \<^boxed_theory_text>\<open>ab c\<close> (strings),
      % TODO
      % Show string in the document output for  \<^boxed_theory_text>\<open>ab c\<close> (strings) 
      \<^boxed_theory_text>\<open>{1,2,3}\<close> (sets), \<^boxed_theory_text>\<open>(1,2,3)\<close> (tuples), 
-     \<^boxed_theory_text>\<open>\<forall> x. P(x) \<and> Q x = C\<close> (formulas). For details, see~@{cite "nipkow:whats:2020"}.
+     \<^boxed_theory_text>\<open>\<forall> x. P(x) \<and> Q x = C\<close> (formulas). For comprehensive overview, 
+     see~@{cite "nipkow:whats:2020"}.
 \<close>
 
 text\<open>
@@ -308,26 +314,39 @@ text\<open>
   special characters in definitions that need to make use of a entries in an aux-file. 
 \<close>
 
-section\<open>Fundamental Commands of the \<^isadof> Core\<close>
+section\<open>The main Ontology-aware Document Elements\<close>
 text\<open>Besides the core-commands to define an ontology as presented in the previous section, 
 the \<^isadof> core provides a number of mechanisms to \<^emph>\<open>use\<close> the resulting data to annotate
-text-elements and, in some cases, terms.
-In the following, we formally introduce the syntax of the core commands as 
-supported on the Isabelle/Isar level. Some more advanced functionality of the core 
-is currently only available in the SML API's of the kernel. 
+texts, code, and terms. As mentioned already in the introduction, this boils down two three major
+groups of commands used to annotate text-. code-, and term contexts with instances of ontological
+classes, \<^ie>, meta-information specified in an ontology. Representatives of these three groups,
+which refer by name to equivalent standard Isabelle commands by their name suffixed with a \<open>*\<close>, 
+are presented as follows in a railroad diagram:
+
+   \<^item> \<open>annotated_text_element\<close> :
+   \<^rail>\<open>( @@{command "text*"} '[' meta_args ']' '\<open>' text context '\<close>' )
+     \<close>
+   \<^item> \<open>annotated_code_element\<close> :
+   \<^rail>\<open>( @@{command "ML*"} '[' meta_args ']' '\<open>' code context '\<close>' )
+     \<close>
+   \<^item> \<open>annotated_term_element\<close> :
+   \<^rail>\<open>( @@{command "value*"} '[' meta_args ']' '\<open>' term context '\<close>' )
+     \<close>
+
+In the following, we will formally introduce the syntax of the core commands as 
+supported on the Isabelle/Isar level. On this basis, concepts such as the freeform 
+\<^theory_text>\<open>Definition*\<close> and \<^theory_text>\<open>Lemma*\<close> elements were derived from \<^theory_text>\<open>text*\<close>. Similarly,the
+corresponding formal \<^theory_text>\<open>definition*\<close> and \<^theory_text>\<open>lemma*\<close> elements were built on top of 
+functionality of the  \<^theory_text>\<open>value*\<close>-family.
 
 \<close>
 
-subsection\<open>Syntax\<close>
-text\<open>
+subsection\<open>General Syntactic Elements for Document Management\<close>
 
-
-\<close>
 text\<open>Recall that except \<^theory_text>\<open>text*[]\<open>...\<close>\<close>, all \<^isadof> commands were mapped to visible
 layout; these commands have to be wrapped into 
  \<^verbatim>\<open>(*<*) ... (*>*)\<close> if this is undesired. \<close>
 
-subsection\<open>Ontological Text-Contexts and their Management\<close>
 text\<open>
 
 \<^item> \<open>obj_id\<close>:\<^index>\<open>obj\_id@\<open>obj_id\<close>\<close> (or \<^emph>\<open>oid\<close>\<^index>\<open>oid!oid@\<open>see obj_id\<close>\<close> for short) a \<^emph>\<open>name\<close>
@@ -344,8 +363,6 @@ text\<open>
    \<^rail>\<open> (obj_id ('::' class_id) ((',' attribute (':=' | '+=') HOL_term ) * ))\<close>
 
 \<^item> \<open>annotated_text_element\<close> :
-\<^rail>\<open>( @@{command "text*"} '[' meta_args ']' '\<open>' formal_text '\<close>' )
-  \<close>
 \<^rail>\<open>  
      (  @@{command "open_monitor*"}  
         | @@{command "close_monitor*"} 
@@ -357,8 +374,6 @@ text\<open>
   \<close>
 \<^item> \<^isadof> \<open>change_status_command\<close> :
   \<^rail>\<open>  (@@{command "update_instance*"} '[' upd_meta_args ']')\<close>
-
-
 
 With respect to the family of text elements,
 \<^theory_text>\<open>text*[oid::cid, ...] \<open> \<dots> text \<dots> \<close> \<close> is the core-command of \<^isadof>: it permits to create
@@ -463,7 +478,7 @@ text\<open>
      | (@@{command "definition*"}) ('[' meta_args ']')?
         ('... see ref manual')
      | (@@{command "lemma*"} | @@{command "theorem*"} | @@{command "corollary*"}
-       | @@{command "proposition*"} | @@{command "schematic_goal*"}) ('[' meta_args ']')?
+       | @@{command "proposition*"} ) ('[' meta_args ']')?
          ('... see ref manual')
     )
   \<close>
@@ -484,17 +499,18 @@ term*\<open>@{B--test- \<open>b\<close>}\<close>\<close>}
 
 The major commands providing term-contexts are
 \<^theory_text>\<open>term*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>,
-\<^theory_text>\<open>value*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close> and
-\<^theory_text>\<open>assert*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>\<^footnote>\<open>The meta-argument list is optional.\<close>.
-Wrt. creation, track-ability and checking these commands are analogous to the ontological text and 
+\<^theory_text>\<open>value*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>, and
+\<^theory_text>\<open>assert*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>\<^footnote>\<open>The meta-argument list is optional.\<close>
+\<^theory_text>\<open>definition*[oid::cid, ...] const_name where \<open> \<dots> HOL-term \<dots> \<close>\<close>, and
+\<^theory_text>\<open>lemma*[oid::cid, ...] name :: \<open> \<dots> HOL-term \<dots> \<close>\<close>.
+Wrt. creation, checking and traceability, these commands are analogous to the ontological text and
 code-commands. However the argument terms may contain term-antiquotations stemming from an
 ontology definition. Term-contexts were type-checked and \<^emph>\<open>validated\<close> against
 the global context (so: in the term @{term_ [source] \<open>@{author \<open>bu\<close>}\<close>}, \<open>bu\<close>
-is indeed a string which refers to a meta-object belonging
-to the document class \<^typ>\<open>author\<close>, for example).
-Putting aside @{command "term*"}-command,
-the term-context in the other commands is additionally expanded
-(\<^eg> replaced) by a term denoting the meta-object.
+is indeed a string which refers to a meta-object belonging to the document class \<^typ>\<open>author\<close>, 
+for example). With the exception of the @{command "term*"}-command, the term-antiquotations 
+ in the other term-contexts are additionally expanded (\<^eg> replaced) by the instance of the class,
+\<^eg>, the HOL-term denoting this meta-object.
 This expansion happens \<^emph>\<open>before\<close> evaluation of the term, thus permitting
 executable HOL-functions to interact with meta-objects.
 The @{command "assert*"}-command allows for logical statements to be checked in the global context
@@ -1054,7 +1070,6 @@ declare_reference*["sec:low_level_inv"::technical]
 
 subsection*["sec:class_inv"::technical]\<open>ODL Class Invariants\<close>
 
-
 text\<open>
   Ontological classes as described so far are too liberal in many situations.
   There is a first high-level syntax implementation for class invariants.
@@ -1146,6 +1161,42 @@ text\<open>
   Also, for now, term-antiquotations can not be used in an invariant formula.
 \<close>
 
+
+subsection*["sec:low_level_inv"::technical]\<open>ODL Low-level Class Invariants\<close>
+
+text\<open>
+  If one want to go over the limitations of the actual high-level syntax of the invariant,
+  one can define a function using SML.
+  A formulation, in SML, of the class-invariant \<^boxed_theory_text>\<open>has_property\<close>
+  in \<^technical>\<open>sec:class_inv\<close>, defined in the supposedly \<open>Low_Level_Syntax_Invariants\<close> theory
+  (note the long name of the class),
+  is straight-forward:
+
+@{boxed_sml [display]
+\<open>fun check_result_inv oid {is_monitor:bool} ctxt =
+  let
+    val kind =
+      ISA_core.compute_attr_access ctxt "evidence" oid NONE @{here}
+    val prop =
+      ISA_core.compute_attr_access ctxt "property" oid NONE @{here}
+    val tS = HOLogic.dest_list prop
+  in  case kind of
+       @{term "proof"} => if not(null tS) then true
+                          else error("class result invariant violation")
+      | _ => true
+  end
+val cid_long = DOF_core.get_onto_class_name_global "result" @{theory}
+val bind = Binding.name "Check_Result"
+val _ = Theory.setup (DOF_core.make_ml_invariant (check_result_inv, cid_long)
+                     |> DOF_core.add_ml_invariant bind)\<close>}
+
+  The \<^ML>\<open>Theory.setup\<close>-command (last line) registers the \<^boxed_theory_text>\<open>check_result_inv\<close> function 
+  into the \<^isadof> kernel, which activates any creation or modification of an instance of 
+  \<^boxed_theory_text>\<open>result\<close>. We cannot replace \<^boxed_theory_text>\<open>compute_attr_access\<close> by the 
+  corresponding antiquotation \<^boxed_theory_text>\<open>\<^value_>\<open>evidence @{result \<open>oid\<close>}\<close>\<close>, since
+  \<^boxed_theory_text>\<open>oid\<close> is bound to a  variable here and can therefore not be statically expanded.
+\<close>
+
 subsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
 text\<open>
   We call a document class with an \<open>accepts_clause\<close> a \<^emph>\<open>monitor\<close>.\<^bindex>\<open>monitor\<close>  Syntactically, an 
@@ -1225,41 +1276,6 @@ text\<open>
   (See @{technical (unchecked) "sec:low_level_inv"} for an example).
 \<close>
 
-
-subsection*["sec:low_level_inv"::technical]\<open>ODL Low-level Class Invariants\<close>
-
-text\<open>
-  If one want to go over the limitations of the actual high-level syntax of the invariant,
-  one can define a function using SML.
-  A formulation, in SML, of the class-invariant \<^boxed_theory_text>\<open>has_property\<close>
-  in \<^technical>\<open>sec:class_inv\<close>, defined in the supposedly \<open>Low_Level_Syntax_Invariants\<close> theory
-  (note the long name of the class),
-  is straight-forward:
-
-@{boxed_sml [display]
-\<open>fun check_result_inv oid {is_monitor:bool} ctxt =
-  let
-    val kind =
-      ISA_core.compute_attr_access ctxt "evidence" oid NONE @{here}
-    val prop =
-      ISA_core.compute_attr_access ctxt "property" oid NONE @{here}
-    val tS = HOLogic.dest_list prop
-  in  case kind of
-       @{term "proof"} => if not(null tS) then true
-                          else error("class result invariant violation")
-      | _ => true
-  end
-val cid_long = DOF_core.get_onto_class_name_global "result" @{theory}
-val bind = Binding.name "Check_Result"
-val _ = Theory.setup (DOF_core.make_ml_invariant (check_result_inv, cid_long)
-                     |> DOF_core.add_ml_invariant bind)\<close>}
-
-  The \<^ML>\<open>Theory.setup\<close>-command (last line) registers the \<^boxed_theory_text>\<open>check_result_inv\<close> function 
-  into the \<^isadof> kernel, which activates any creation or modification of an instance of 
-  \<^boxed_theory_text>\<open>result\<close>. We cannot replace \<^boxed_theory_text>\<open>compute_attr_access\<close> by the 
-  corresponding antiquotation \<^boxed_theory_text>\<open>\<^value_>\<open>evidence @{result \<open>oid\<close>}\<close>\<close>, since
-  \<^boxed_theory_text>\<open>oid\<close> is bound to a  variable here and can therefore not be statically expanded.
-\<close>
 
 subsection*["sec:queries_on_instances"::technical]\<open>Queries On Instances\<close>
 
