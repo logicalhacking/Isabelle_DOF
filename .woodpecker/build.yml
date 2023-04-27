@@ -1,6 +1,6 @@
 pipeline:
   build:
-    image: docker.io/logicalhacking/isabelle-dev
+    image: docker.io/logicalhacking/isabelle_nightly:latest
     commands:
       - ./.woodpecker/check_dangling_theories
       - ./.woodpecker/check_external_file_refs
