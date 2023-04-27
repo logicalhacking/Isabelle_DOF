@@ -12,7 +12,7 @@
  *************************************************************************)
 
 (*<*)
-theory "Isabelle_DOF-Manual"
+theory "Isabelle_DOF_Manual"
   imports "M_05_Implementation"
 begin
 close_monitor*[this]

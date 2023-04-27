@@ -20,7 +20,7 @@ For historical reasons, \<^emph>\<open>term antiquotations\<close> are called th
 theory 
   Concept_TermAntiquotations
 imports 
-  "Isabelle_DOF-Unit-Tests_document"
+  "Isabelle_DOF_Unit_Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual"
    TestKit
 begin

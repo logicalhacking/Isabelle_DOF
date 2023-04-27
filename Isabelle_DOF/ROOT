@@ -22,7 +22,7 @@ session "Isabelle_DOF" (AFP) = "Functional-Automata" +
     "thys/manual/M_03_GuidedTour"
     "thys/manual/M_04_RefMan"
     "thys/manual/M_05_Implementation"
-    "thys/manual/Isabelle_DOF-Manual"
+    "thys/manual/Isabelle_DOF_Manual"
   document_files
     "root.bib"
     "dof_session.tex"

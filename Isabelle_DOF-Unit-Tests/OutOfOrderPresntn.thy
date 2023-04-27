@@ -14,7 +14,7 @@
 theory 
   OutOfOrderPresntn
 imports 
-  "Isabelle_DOF-Unit-Tests_document"
+  "Isabelle_DOF_Unit_Tests_document"
   "TestKit"
   "Isabelle_DOF-Ontologies.Conceptual"
 keywords  "Figure*"          :: document_body 

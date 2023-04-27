@@ -16,7 +16,7 @@ chapter\<open>Ontologys Matching\<close>
 theory Ontology_Matching_Example
   imports TestKit
           "Isabelle_DOF.Isa_DOF"
-          "Isabelle_DOF-Unit-Tests_document"
+          "Isabelle_DOF_Unit_Tests_document"
 
 begin
 

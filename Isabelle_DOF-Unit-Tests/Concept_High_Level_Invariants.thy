@@ -15,7 +15,7 @@ chapter\<open>High-level Class Invariants\<close>
 
 theory Concept_High_Level_Invariants
   imports "Isabelle_DOF.Isa_DOF"
-          "Isabelle_DOF-Unit-Tests_document"
+          "Isabelle_DOF_Unit_Tests_document"
           TestKit
 begin
 

@@ -16,7 +16,7 @@ chapter\<open>The Isabelle/DOF TestKit\<close>
 theory 
   TestKit
 imports 
-  "Isabelle_DOF-Unit-Tests_document"
+  "Isabelle_DOF_Unit_Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual"
 keywords "text-" "text-latex"             :: document_body
     and  "text-assert-error"              :: document_body

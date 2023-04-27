@@ -15,7 +15,7 @@ chapter\<open>Testing hand-programmed (low-level) Invariants\<close>
 
 theory Concept_Example_Low_Level_Invariant
   imports 
-  "Isabelle_DOF-Unit-Tests_document"
+  "Isabelle_DOF_Unit_Tests_document"
   "Isabelle_DOF-Ontologies.Conceptual" (* we use the generic "Conceptual" ontology *)
   TestKit
 begin
