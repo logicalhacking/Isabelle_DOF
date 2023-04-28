@@ -1,6 +1,7 @@
 pipeline:
   build:
     image: git.logicalhacking.com/lh-docker/lh-docker-isabelle/isabelle_nightly:latest
+    pull: true
     commands:
       - hg log --limit 2 /root/isabelle
       - ./.woodpecker/check_dangling_theories
@@ -22,7 +23,6 @@ pipeline:
       - ln -s * latest
   archive:
     image: git.logicalhacking.com/lh-docker/lh-docker-isabelle/isabelle_nightly:latest
-    pull: true
     commands:
       - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO/$CI_BRANCH/$CI_BUILD_NUMBER/$LATEX
       - mkdir -p $ARTIFACT_DIR
