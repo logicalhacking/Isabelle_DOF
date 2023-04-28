@@ -2,7 +2,7 @@ pipeline:
   build:
     image: git.logicalhacking.com/lh-docker/lh-docker-isabelle/isabelle_nightly:latest
     commands:
-      - hg log --limit 2 /home/root/isabelle
+      - hg log --limit 2 /root/isabelle
       - ./.woodpecker/check_dangling_theories
       - ./.woodpecker/check_external_file_refs
       - ./.woodpecker/check_quick_and_dirty
