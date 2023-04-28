@@ -43,7 +43,7 @@ fun check_path check_file ctxt dir (name, pos) =
 
     val path = Path.append dir (Path.explode name) handle ERROR msg => ISA_core.err msg pos;
     val _ = Path.expand path handle ERROR msg => ISA_core.err msg pos;
-    val _ = Context_Position.report ctxt pos (Markup.path (Path.implode_symbolic path));
+    val _ = Context_Position.report ctxt pos (Markup.path (File.symbolic_path path));
     val _ =
       (case check_file of
         NONE => path
