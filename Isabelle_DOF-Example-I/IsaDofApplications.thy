@@ -102,7 +102,7 @@ document evolution. Based on Isabelle infrastructures, ontologies may refer to
 types, terms, proven theorems, code, or established assertions.
 Based on a novel adaption of the Isabelle IDE, a document is checked to be 
 \<^emph>\<open>conform\<close> to a particular ontology---\<^isadof> is designed to give fast user-feedback 
-\<^emph>\<open>during the capture of content\<close>. This is particularly valuable in case of document 
+\<^emph>\<open>during the capture of content\<close>. This is particularly valuable for document 
 changes, where the \<^emph>\<open>coherence\<close> between the formal and the informal parts of the
 content can be mechanically checked.
 
@@ -123,7 +123,7 @@ declare_reference*[ontomod::text_section]
 declare_reference*[ontopide::text_section]
 declare_reference*[conclusion::text_section]
 (*>*)
-text*[plan::introduction, level="Some 1"]\<open> The plan of the paper is follows: we start by introducing  
+text*[plan::introduction, level="Some 1"]\<open> The plan of the paper is as follows: we start by introducing  
 the underlying Isabelle system (@{text_section (unchecked) \<open>bgrnd\<close>}) followed by presenting the 
 essentials of  \<^isadof> and its ontology language (@{text_section (unchecked) \<open>isadof\<close>}). 
 It follows @{text_section (unchecked) \<open>ontomod\<close>}, where we present three application 
