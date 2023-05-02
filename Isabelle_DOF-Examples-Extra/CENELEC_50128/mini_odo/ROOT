@@ -8,7 +8,6 @@ session "mini_odo" = "Isabelle_DOF-Ontologies" +
     "preamble.tex"
     "root.bib"
     "root.mst"
-    "lstisadof.sty"
     "figures/df-numerics-encshaft.png"
     "figures/odometer.jpeg"
     "figures/three-phase-odo.pdf"
