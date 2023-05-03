@@ -31,6 +31,60 @@ define_shortcut* isadof   \<rightleftharpoons> \<open>\isadof\<close>
 (* slanted text in contrast to italics *)
 define_macro* slanted_text \<rightleftharpoons> \<open>\textsl{\<close> _ \<open>}\<close>
 
+ML\<open>
+
+fun boxed_text_antiquotation name (* redefined in these more abstract terms *) =
+    DOF_lib.gen_text_antiquotation name DOF_lib.report_text 
+                           (fn ctxt => DOF_lib.string_2_text_antiquotation ctxt
+                                       #> DOF_lib.enclose_env false ctxt "isarbox")
+
+val neant = K(Latex.text("",\<^here>))
+
+fun boxed_theory_text_antiquotation name (* redefined in these more abstract terms *) =
+    DOF_lib.gen_text_antiquotation name DOF_lib.report_theory_text 
+                           (fn ctxt => DOF_lib.string_2_theory_text_antiquotation ctxt 
+                                        #> DOF_lib.enclose_env false ctxt "isar"
+                                        (* #> neant *)) (*debugging *)
+
+fun boxed_sml_text_antiquotation name  =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env true ctxt "sml") 
+                           (* the simplest conversion possible *)
+
+fun boxed_pdf_antiquotation name =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env true ctxt "out") 
+                           (* the simplest conversion possible *)
+
+fun boxed_latex_antiquotation name =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env true ctxt "ltx") 
+                           (* the simplest conversion possible *)
+
+fun boxed_bash_antiquotation name =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env true ctxt "bash") 
+                           (* the simplest conversion possible *)
+\<close>
+
+setup\<open>boxed_text_antiquotation         \<^binding>\<open>boxed_text\<close> #>
+      boxed_text_antiquotation         \<^binding>\<open>boxed_cartouche\<close> #>
+      boxed_theory_text_antiquotation  \<^binding>\<open>boxed_theory_text\<close> #>
+
+      boxed_sml_text_antiquotation     \<^binding>\<open>boxed_sml\<close> #>
+      boxed_pdf_antiquotation          \<^binding>\<open>boxed_pdf\<close> #>
+      boxed_latex_antiquotation        \<^binding>\<open>boxed_latex\<close>#>
+      boxed_bash_antiquotation         \<^binding>\<open>boxed_bash\<close> 
+     \<close>
+
 (*>*)
 
 title*[tit::title]       \<open>Using the Isabelle Ontology Framework\<close> 
@@ -175,20 +229,27 @@ text\<open> We would like to detail the documentation generation of the architec
 which is based on literate specification commands such as \<^theory_text>\<open>section\<close> \<^dots>, 
 \<^theory_text>\<open>subsection\<close> \<^dots>, \<^theory_text>\<open>text\<close> \<^dots>, etc.
 Thus, a user can add a simple text:
-\begin{isar}
-  text\<Open>This is a description.\<Close>
-\end{isar}
+  @{boxed_theory_text [display]\<open>
+text\<open> This is a description.\<close>\<close>}
 These text-commands can be arbitrarily mixed with other commands stating definitions, proofs, code, etc.,
 and will result in the corresponding output in generated \<^LaTeX> or HTML documents. 
 Now, \<^emph>\<open>inside\<close> the textual content, it is possible to embed a \<^emph>\<open>text-antiquotation\<close>:
+@{boxed_theory_text [display]\<open>
+   text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, 
+        we obtain in \<Gamma> for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
 \begin{isar}
   text\<Open>According to the reflexivity axiom \at{thm refl}, we obtain in \<Gamma> 
            for \at{term "fac 5"} the result \at{value "fac 5"}.\<Close>
 \end{isar}
 which is represented in the generated output by:
+@{boxed_pdf [display]
+\<open>According to the $\emph{reflexivity}$ axiom $\mathrm{x = x}$, we obtain in $\Gamma$ 
+for $\operatorname{fac} \text{\textrm{5}}$ the result $\text{\textrm{120}}$.\<close>
+ }
 \begin{out}
   According to the reflexivity axiom $x = x$, we obtain in $\Gamma$ for $\operatorname{fac} 5$ the result $120$.
 \end{out}
+
 where \<^theory_text>\<open>refl\<close> is actually the reference to the axiom of reflexivity in HOL. 
 For the antiquotation \<^theory_text>\<open>@{value "''fac 5''"}\<close>  we assume the usual definition for 
 \<^theory_text>\<open>fac\<close> in HOL.
