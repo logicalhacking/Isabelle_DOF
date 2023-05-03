@@ -102,7 +102,7 @@ document evolution. Based on Isabelle infrastructures, ontologies may refer to
 types, terms, proven theorems, code, or established assertions.
 Based on a novel adaption of the Isabelle IDE, a document is checked to be 
 \<^emph>\<open>conform\<close> to a particular ontology---\<^isadof> is designed to give fast user-feedback 
-\<^emph>\<open>during the capture of content\<close>. This is particularly valuable in case of document 
+\<^emph>\<open>during the capture of content\<close>. This is particularly valuable for document 
 changes, where the \<^emph>\<open>coherence\<close> between the formal and the informal parts of the
 content can be mechanically checked.
 
@@ -123,8 +123,8 @@ declare_reference*[ontomod::text_section]
 declare_reference*[ontopide::text_section]
 declare_reference*[conclusion::text_section]
 (*>*)
-text*[plan::introduction, level="Some 1"]\<open> The plan of the paper is follows: we start by introducing  the underlying 
-Isabelle system (@{text_section (unchecked) \<open>bgrnd\<close>}) followed by presenting the 
+text*[plan::introduction, level="Some 1"]\<open> The plan of the paper is as follows: we start by introducing  
+the underlying Isabelle system (@{text_section (unchecked) \<open>bgrnd\<close>}) followed by presenting the 
 essentials of  \<^isadof> and its ontology language (@{text_section (unchecked) \<open>isadof\<close>}). 
 It follows @{text_section (unchecked) \<open>ontomod\<close>}, where we present three application 
 scenarios from the point of view of the ontology modeling. In @{text_section (unchecked) \<open>ontopide\<close>}
@@ -172,8 +172,8 @@ automated proof procedures as well as specific support for higher specification 
 were built. \<close>
     
 text\<open> We would like to detail the documentation generation of the architecture,
-which is based on literate specification commands such as \inlineisar+section+ \<^dots>, 
-\inlineisar+subsection+ \<^dots>, \inlineisar+text+ \<^dots>, etc.
+which is based on literate specification commands such as \<^theory_text>\<open>section\<close> \<^dots>, 
+\<^theory_text>\<open>subsection\<close> \<^dots>, \<^theory_text>\<open>text\<close> \<^dots>, etc.
 Thus, a user can add a simple text:
 \begin{isar}
   text\<Open>This is a description.\<Close>
@@ -189,15 +189,15 @@ which is represented in the generated output by:
 \begin{out}
   According to the reflexivity axiom $x = x$, we obtain in $\Gamma$ for $\operatorname{fac} 5$ the result $120$.
 \end{out}
-where \inlineisar+refl+ is actually the reference to the axiom of reflexivity in HOL. 
-For the antiquotation \inlineisar+\at{value "fac 5"}+  we assume the usual definition for 
-\inlineisar+fac+ in HOL.
+where \<^theory_text>\<open>refl\<close> is actually the reference to the axiom of reflexivity in HOL. 
+For the antiquotation \<^theory_text>\<open>@{value "''fac 5''"}\<close>  we assume the usual definition for 
+\<^theory_text>\<open>fac\<close> in HOL.
 \<close>
 
-text*[anti::introduction, level = "Some 1"]\<open> Thus, antiquotations can refer to formal content, can be type-checked before being 
-displayed and can be used for calculations before actually being typeset. When editing, 
-Isabelle's PIDE offers auto-completion and error-messages while typing the above 
-\<^emph>\<open>semi-formal\<close> content.  \<close>
+text*[anti::introduction, level = "Some 1"]\<open> Thus, antiquotations can refer to formal content, 
+can be type-checked before being displayed and can be used for calculations before actually being 
+typeset. When editing, Isabelle's PIDE offers auto-completion and error-messages while typing the 
+above \<^emph>\<open>semi-formal\<close> content.\<close>
 
 section*[isadof::technical,main_author="Some(@{docitem ''adb''}::author)"]\<open> \<^isadof> \<close>
    
@@ -206,7 +206,7 @@ text\<open> An \<^isadof> document consists of three components:
   for document-classes and all auxiliary datatypes.  
 \<^item> the \<^emph>\<open>core\<close> of the document itself which is an Isabelle theory
   importing the ontology definition. \<^isadof> provides an own family of text-element
-  commands such as \inlineisar+title*+, \inlineisar+section*+,  \inlineisar+text*+, etc., 
+  commands such as \<^theory_text>\<open>title*\<close>, \<^theory_text>\<open>section*\<close>, \<^theory_text>\<open>text*\<close>, etc., 
   which can be annotated with meta-information defined in the underlying  ontology definition.
 \<^item> the \<^emph>\<open>layout definition\<close> for the given ontology exploiting this meta-information.
 \<close>
@@ -215,7 +215,7 @@ three parts. Note that the document core \<^emph>\<open>may\<close>, but \<^emph
 use Isabelle definitions or proofs for checking the formal content---the 
 present paper is actually an example of a document not containing any proof.
 
- The document generation process of \<^isadof> is currently restricted to \LaTeX, which means
+ The document generation process of \<^isadof> is currently restricted to \<^LaTeX> , which means
 that the layout is defined by a set of \<^LaTeX> style files. Several layout 
 definitions for one ontology are possible and pave the way that different \<^emph>\<open>views\<close> for
 the same central document were generated, addressing the needs of different purposes `
@@ -244,13 +244,13 @@ as enumerations. In particular, document class definitions provide:
 text\<open>
 Attributes referring to other ontological concepts are called \<^emph>\<open>links\<close>.
 The HOL-types inside the document specification language support built-in types for Isabelle/HOL 
-\inlineisar+typ+'s,  \inlineisar+term+'s, and \inlineisar+thm+'s reflecting internal Isabelle's 
+\<^theory_text>\<open>typ\<close>'s, \<^theory_text>\<open>term\<close>'s, and \<^theory_text>\<open>thm\<close>'s reflecting internal Isabelle's 
 internal types  for these entities; when denoted in HOL-terms to instantiate an attribute, for 
 example, there is a  specific syntax (called \<^emph>\<open>inner syntax antiquotations\<close>) that is checked by 
 \<^isadof> for consistency.
 
-Document classes can have a \inlineisar+where+ clause containing a regular 
-expression over class names. Classes with such a \inlineisar+where+ were called \<^emph>\<open>monitor classes\<close>.
+Document classes can have a \<^theory_text>\<open>where\<close> clause containing a regular 
+expression over class names. Classes with such a \<^theory_text>\<open>where\<close>  were called \<^emph>\<open>monitor classes\<close>.
 While document classes and their inheritance relation structure meta-data of text-elements
 in an object-oriented manner, monitor classes enforce structural organization
 of documents via the language specified by the regular expression 
@@ -262,7 +262,7 @@ To start using \<^isadof>, one creates an Isabelle project (with the name
   isabelle dof_mkroot -o scholarly_paper -t lncs IsaDofApplications
 \end{bash}
 where the \inlinebash{-o scholarly_paper} specifies the ontology for writing scientific articles and 
-\inlinebash{-t lncs} specifies the use of Springer's \LaTeX-configuration for the Lecture Notes in 
+\inlinebash{-t lncs} specifies the use of Springer's \<^LaTeX>-configuration for the Lecture Notes in 
 Computer Science series. The project can be formally checked, including the generation of the 
 article in PDF using the  following command:
 \begin{bash}
@@ -307,15 +307,15 @@ doc_class text_section =
 \caption{The core of the ontology definition for writing scholarly papers.}
 \label{fig:paper-onto-core}
 \end{figure}
-The first part of the ontology \inlineisar+scholarly_paper+ (see \autoref{fig:paper-onto-core})
+The first part of the ontology \<^theory_text>\<open>scholarly_paper\<close> (see \autoref{fig:paper-onto-core})
 contains the document class definitions
-with the usual text-elements of a scientific paper. The attributes \inlineisar+short_title+, 
-\inlineisar+abbrev+ etc are introduced with their types as well as their default values.
-Our model prescribes an optional \inlineisar+main_author+ and a todo-list attached to an arbitrary 
+with the usual text-elements of a scientific paper. The attributes \<^theory_text>\<open>short_title\<close>, 
+\<^theory_text>\<open>abbrev\<close> etc are introduced with their types as well as their default values.
+Our model prescribes an optional \<^theory_text>\<open>main_author\<close> and a todo-list attached to an arbitrary 
 text section; since instances of this class are mutable (meta)-objects of text-elements, they
 can be modified arbitrarily through subsequent text and of course globally during text evolution.
-Since \inlineisar+author+ is a HOL-type internally generated by \<^isadof> framework and can therefore
-appear in the \inlineisar+main_author+ attribute of the \inlineisar+text_section+ class; 
+Since \<^theory_text>\<open>author\<close> is a HOL-type internally generated by \<^isadof> framework and can therefore
+appear in the \<^theory_text>\<open>main_author\<close> attribute of the \<^theory_text>\<open>text_section\<close> class; 
 semantic links between concepts can be modeled this way.
 
 The translation of its content to, \<^eg>, Springer's \<^LaTeX> setup for the Lecture Notes in Computer 
@@ -324,29 +324,29 @@ Science Series, as required by many scientific conferences, is mostly straight-f
 figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogfood-Intro''"]
        \<open> Ouroboros I: This paper from inside \<^dots> \<close>  
 
-text\<open> @{figure \<open>fig1\<close>} shows the corresponding view in the Isabelle/PIDE of thqqe present paper.
+text\<open> @{figure \<open>fig1\<close>} shows the corresponding view in the Isabelle/PIDE of the present paper.
 Note that the text uses \<^isadof>'s own text-commands containing the meta-information provided by
 the underlying ontology.
-We proceed by a definition of \inlineisar+introduction+'s, which we define as the extension of
-\inlineisar+text_section+ which is intended to capture common infrastructure:
+We proceed by a definition of \<^theory_text>\<open>introduction\<close>'s, which we define as the extension of
+\<^theory_text>\<open>text_section\<close> which is intended to capture common infrastructure:
 \begin{isar}
 doc_class introduction = text_section +
    comment :: string
 \end{isar}
-As a consequence of the definition as extension, the \inlineisar+introduction+ class
-inherits the attributes \inlineisar+main_author+ and \inlineisar+todo_list+ together with 
+As a consequence of the definition as extension, the \<^theory_text>\<open>introduction\<close> class
+inherits the attributes \<^theory_text>\<open>main_author\<close> and \<^theory_text>\<open>todo_list\<close> together with 
 the corresponding default values.
 
 As a variant of the introduction, we could add here an attribute that contains the formal 
 claims of the article --- either here, or, for example, in the keyword list of the abstract. 
-As type, one could use either the built-in type \inlineisar+term+ (for syntactically correct, 
-but not necessarily proven entity) or \inlineisar+thm+ (for formally proven entities). It suffices 
+As type, one could use either the built-in type \<^theory_text>\<open>term\<close> (for syntactically correct, 
+but not necessarily proven entity) or \<^theory_text>\<open>thm\<close> (for formally proven entities). It suffices 
 to add the line:
 \begin{isar}
    claims  :: "thm list"
 \end{isar}
-and to extent the \LaTeX-style accordingly to handle the additional field. 
-Note that \inlineisar+term+ and \inlineisar+thm+ are types reflecting the core-types of the
+and to extent the \<^LaTeX>-style accordingly to handle the additional field. 
+Note that \<^theory_text>\<open>term\<close> and \<^theory_text>\<open>thm\<close> are types reflecting the core-types of the
 Isabelle kernel. In a corresponding conclusion section, one could model analogously an 
 achievement section; by programming a specific compliance check in SML, the implementation 
 of automated forms of validation check for specific categories of papers is envisageable. 
@@ -394,7 +394,7 @@ doc_class article =
 text\<open> We might wish to add a component into our ontology that models figures to be included into 
 the document. This boils down to the exercise of modeling structured data in the style of a 
 functional programming language in HOL and to reuse the implicit HOL-type inside a suitable document 
-class \inlineisar+figure+:
+class \<^theory_text>\<open>figure\<close>:
 \begin{isar}
 datatype placement = h | t | b | ht | hb   
 doc_class figure   = text_section +
@@ -413,8 +413,8 @@ attribute evaluation could be substantially more complicated.\<close>
 figure*[fig_figures::figure,spawn_columns=False,relative_width="85",src="''figures/Dogfood-figures''"]
        \<open> Ouroboros II: figures \<^dots> \<close>
 
-text\<open> The document class \inlineisar+figure+ --- supported by the \<^isadof> text command 
-\inlineisar+figure*+ --- makes it possible to express the pictures and diagrams in this paper 
+text\<open> The document class \<^theory_text>\<open>figure\<close> --- supported by the \<^isadof> text command 
+\<^theory_text>\<open>figure*\<close> --- makes it possible to express the pictures and diagrams in this paper 
 such as @{figure \<open>fig_figures\<close>}.
 \<close>
          
@@ -469,7 +469,7 @@ type_synonym SubQuestion = string
 The heart of this ontology (see \autoref{fig:onto-exam}) is an alternation of questions and answers, 
 where the answers can consist of simple yes-no answers (QCM style check-boxes) or lists of formulas. 
 Since we do not
-assume familiarity of the students with Isabelle (\inlineisar+term+ would assume that this is a 
+assume familiarity of the students with Isabelle (\<^theory_text>\<open>term\<close> would assume that this is a 
 parse-able and type-checkable entity), we basically model a derivation as a sequence of strings
 (see \autoref{fig:onto-questions}).
 \begin{figure}
@@ -530,7 +530,7 @@ doc_class MathExam=
 \<close>
 
   
-declare_reference*["fig_qcm"::figure]
+(*<*)declare_reference*["fig_qcm"::figure](*>*)
 
 text\<open> Using the \<^LaTeX> package hyperref, it is possible to conceive an interactive 
 exam-sheets with multiple-choice and/or free-response elements 
@@ -638,9 +638,9 @@ side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-
                       src2="''figures/Dogfood-III-bgnd-text_section''"]\<open> Hyperlinks.\<close>
 
 
-declare_reference*["figDogfoodVIlinkappl"::figure]
+(*<*)declare_reference*["figDogfoodVIlinkappl"::figure](*>*)
 text\<open> An ontological reference application in \autoref{figDogfoodVIlinkappl}: the ontology-dependant 
-antiquotation \inlineisar|@ {example ...}| refers to the corresponding text-elements. Hovering allows 
+antiquotation \<^theory_text>\<open>@{example ...}\<close> refers to the corresponding text-elements. Hovering allows 
 for inspection, clicking for jumping to the definition.  If the link does not exist or has a 
 non-compatible type, the text is not validated.  \<close>
 
@@ -656,7 +656,7 @@ of a document get ``formal content'' and become more robust under change.\<close
 figure*[figfig3::figure,relative_width="80",src="''figures/antiquotations-PIDE''"]
 \<open> Standard antiquotations referring to theory elements.\<close>
 
-declare_reference*[figfig5::figure]  
+(*<*)declare_reference*[figfig5::figure]  (*>*)
 text\<open> The subsequent sample in @{figure (unchecked) \<open>figfig5\<close>} shows the definition of an 
 \<^emph>\<open>safety-related application condition\<close>, a side-condition of a theorem which 
 has the consequence that a certain calculation must be executed sufficiently fast on an embedded 
@@ -689,8 +689,8 @@ in which instances of monitored classes may occur. \<close>
 
 text\<open>
 The control of monitors is done by the commands:
-\<^item> \inlineisar+open_monitor* +  <doc-class>
-\<^item> \inlineisar+close_monitor* + <doc-class> 
+\<^item> \<^theory_text>\<open>open_monitor*\<close> \<^emph>\<open><doc-class>\<close>  
+\<^item> \<^theory_text>\<open>close_monitor*\<close> \<^emph>\<open><doc-class>\<close> 
 \<close>
 text\<open>
 where the automaton of the monitor class is expected to be in a final state. In the final state, 
