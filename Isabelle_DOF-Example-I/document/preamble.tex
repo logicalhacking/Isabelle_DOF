@@ -20,39 +20,12 @@
 \usepackage{xcolor}
 \usepackage{paralist}
 \usepackage{listings}
-\usepackage{lstisadof}
-\usepackage{xspace}
-
-\lstloadlanguages{bash}
-\lstdefinestyle{bash}{language=bash,
-  ,basicstyle=\ttfamily%
-  ,showspaces=false%
-  ,showlines=false%
-  ,columns=flexible%
- %  ,keywordstyle=\bfseries%
-   % Defining 2-keywords
-   ,keywordstyle=[1]{\color{BrickRed!60}\bfseries}%
-   % Defining 3-keywords
-   ,keywordstyle=[2]{\color{OliveGreen!60}\bfseries}%
-   % Defining 4-keywords
-   ,keywordstyle=[3]{\color{black!60}\bfseries}%
-   % Defining 5-keywords
-   ,keywordstyle=[4]{\color{Blue!70}\bfseries}%
-   % Defining 6-keywords
-   ,keywordstyle=[5]{\itshape}%
-  % 
-}
-\lstdefinestyle{displaybash}{style=bash,
-                basicstyle=\ttfamily\footnotesize,
-                backgroundcolor=\color{black!2}, frame=lines}%
-
-\lstnewenvironment{bash}[1][]{\lstset{style=displaybash, #1}}{}
-\def\inlinebash{\lstinline[style=bash, breaklines=true,columns=fullflexible]}
+\usepackage{lstisadof-manual}
 
 \usepackage[caption]{subfig}
 \usepackage[size=footnotesize]{caption}
 
-
+\providecommand{\isactrlemph}[1]{\emph{#1}}
 \usepackage[LNCS,
    orcidicon,
    key=brucker.ea-isabelle-ontologies-2018,
