@@ -310,15 +310,6 @@ While document classes and their inheritance relation structure meta-data of tex
 in an object-oriented manner, monitor classes enforce structural organization
 of documents via the language specified by the regular expression 
 enforcing a sequence of text-elements that must belong to the corresponding classes. 
-
-To start using \<^isadof>, one creates an Isabelle project (with the name 
-@{boxed_bash \<open>IsaDofApplications\<close>}):
-@{boxed_pdf [display]\<open>isabelle dof_mkroot -o scholarly_paper -t lncs IsaDofApplications\<close>}
-where the @{boxed_bash \<open>-o scholarly_paper\<close>} specifies the ontology for writing scientific articles and 
-@{boxed_bash \<open>-t lncs\<close>} specifies the use of Springer's \<^LaTeX>-configuration for the Lecture Notes in 
-Computer Science series. The project can be formally checked, including the generation of the 
-article in PDF using the  following command:
-@{boxed_pdf [display]\<open>isabelle build -d . IsaDofApplications\<close>}
 \<close>
 
 section*[ontomod::text_section]\<open> Modeling Ontologies in \<^isadof> \<close> 
