@@ -6,7 +6,7 @@ session "Isabelle_DOF-Example-I" (AFP) = "Isabelle_DOF" +
     "root.bib"
     "authorarchive.sty"
     "preamble.tex"
-    "lstisadof.sty"
+    "lstisadof-manual.sty"
     "figures/isabelle-architecture.pdf"
     "figures/Dogfood-Intro.png"
     "figures/InteractiveMathSheet.png"

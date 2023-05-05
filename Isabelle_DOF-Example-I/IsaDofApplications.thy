@@ -31,6 +31,60 @@ define_shortcut* isadof   \<rightleftharpoons> \<open>\isadof\<close>
 (* slanted text in contrast to italics *)
 define_macro* slanted_text \<rightleftharpoons> \<open>\textsl{\<close> _ \<open>}\<close>
 
+ML\<open>
+
+fun boxed_text_antiquotation name (* redefined in these more abstract terms *) =
+    DOF_lib.gen_text_antiquotation name DOF_lib.report_text 
+                           (fn ctxt => DOF_lib.string_2_text_antiquotation ctxt
+                                       #> DOF_lib.enclose_env false ctxt "isarbox")
+
+val neant = K(Latex.text("",\<^here>))
+
+fun boxed_theory_text_antiquotation name (* redefined in these more abstract terms *) =
+    DOF_lib.gen_text_antiquotation name DOF_lib.report_theory_text 
+                           (fn ctxt => DOF_lib.string_2_theory_text_antiquotation ctxt 
+                                        #> DOF_lib.enclose_env false ctxt "isarbox"
+                                        (* #> neant *)) (*debugging *)
+
+fun boxed_sml_text_antiquotation name  =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env true ctxt "sml") 
+                           (* the simplest conversion possible *)
+
+fun boxed_pdf_antiquotation name =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env true ctxt "out") 
+                           (* the simplest conversion possible *)
+
+fun boxed_latex_antiquotation name =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env true ctxt "ltx") 
+                           (* the simplest conversion possible *)
+
+fun boxed_bash_antiquotation name =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env true ctxt "bash") 
+                           (* the simplest conversion possible *)
+\<close>
+
+setup\<open>boxed_text_antiquotation         \<^binding>\<open>boxed_text\<close> #>
+      boxed_text_antiquotation         \<^binding>\<open>boxed_cartouche\<close> #>
+      boxed_theory_text_antiquotation  \<^binding>\<open>boxed_theory_text\<close> #>
+
+      boxed_sml_text_antiquotation     \<^binding>\<open>boxed_sml\<close> #>
+      boxed_pdf_antiquotation          \<^binding>\<open>boxed_pdf\<close> #>
+      boxed_latex_antiquotation        \<^binding>\<open>boxed_latex\<close>#>
+      boxed_bash_antiquotation         \<^binding>\<open>boxed_bash\<close> 
+     \<close>
+
 (*>*)
 
 title*[tit::title]       \<open>Using the Isabelle Ontology Framework\<close> 
@@ -175,20 +229,21 @@ text\<open> We would like to detail the documentation generation of the architec
 which is based on literate specification commands such as \<^theory_text>\<open>section\<close> \<^dots>, 
 \<^theory_text>\<open>subsection\<close> \<^dots>, \<^theory_text>\<open>text\<close> \<^dots>, etc.
 Thus, a user can add a simple text:
-\begin{isar}
-  text\<Open>This is a description.\<Close>
-\end{isar}
+  @{boxed_theory_text [display]\<open>
+text\<open> This is a description.\<close>\<close>}
 These text-commands can be arbitrarily mixed with other commands stating definitions, proofs, code, etc.,
 and will result in the corresponding output in generated \<^LaTeX> or HTML documents. 
 Now, \<^emph>\<open>inside\<close> the textual content, it is possible to embed a \<^emph>\<open>text-antiquotation\<close>:
-\begin{isar}
-  text\<Open>According to the reflexivity axiom \at{thm refl}, we obtain in \<Gamma> 
-           for \at{term "fac 5"} the result \at{value "fac 5"}.\<Close>
-\end{isar}
+@{boxed_theory_text [display]\<open>
+   text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, 
+        we obtain in \<Gamma> for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
+@{boxed_theory_text [display]\<open>
+  text\<open>According to the reflexivity axiom @{thm refl}, we obtain in \<Gamma> 
+           for @{term "fac 5"} the result \at{value "fac 5"}.\<close>
+\<close>}
 which is represented in the generated output by:
-\begin{out}
-  According to the reflexivity axiom $x = x$, we obtain in $\Gamma$ for $\operatorname{fac} 5$ the result $120$.
-\end{out}
+@{boxed_pdf [display]\<open>According to the reflexivity axiom $x = x$, we obtain in $\Gamma$ for $\operatorname{fac} 5$ the result $120$.\<close>}
+
 where \<^theory_text>\<open>refl\<close> is actually the reference to the axiom of reflexivity in HOL. 
 For the antiquotation \<^theory_text>\<open>@{value "''fac 5''"}\<close>  we assume the usual definition for 
 \<^theory_text>\<open>fac\<close> in HOL.
@@ -255,19 +310,6 @@ While document classes and their inheritance relation structure meta-data of tex
 in an object-oriented manner, monitor classes enforce structural organization
 of documents via the language specified by the regular expression 
 enforcing a sequence of text-elements that must belong to the corresponding classes. 
-
-To start using \<^isadof>, one creates an Isabelle project (with the name 
-\inlinebash{IsaDofApplications}):
-\begin{bash}
-  isabelle dof_mkroot -o scholarly_paper -t lncs IsaDofApplications
-\end{bash}
-where the \inlinebash{-o scholarly_paper} specifies the ontology for writing scientific articles and 
-\inlinebash{-t lncs} specifies the use of Springer's \<^LaTeX>-configuration for the Lecture Notes in 
-Computer Science series. The project can be formally checked, including the generation of the 
-article in PDF using the  following command:
-\begin{bash}
-  isabelle build -d . IsaDofApplications
-\end{bash}
 \<close>
 
 section*[ontomod::text_section]\<open> Modeling Ontologies in \<^isadof> \<close> 
@@ -287,7 +329,7 @@ of \<^isadof>.
 
 
 \begin{figure}
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class title =
    short_title :: "string option"  <=  None
      
@@ -303,7 +345,7 @@ doc_class abstract =
 doc_class text_section = 
    main_author :: "author option"  <=  None
    todo_list   :: "string list"    <=  "[]"
-\end{isar}
+\<close>}
 \caption{The core of the ontology definition for writing scholarly papers.}
 \label{fig:paper-onto-core}
 \end{figure}
@@ -329,10 +371,10 @@ Note that the text uses \<^isadof>'s own text-commands containing the meta-infor
 the underlying ontology.
 We proceed by a definition of \<^theory_text>\<open>introduction\<close>'s, which we define as the extension of
 \<^theory_text>\<open>text_section\<close> which is intended to capture common infrastructure:
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class introduction = text_section +
    comment :: string
-\end{isar}
+\<close>}
 As a consequence of the definition as extension, the \<^theory_text>\<open>introduction\<close> class
 inherits the attributes \<^theory_text>\<open>main_author\<close> and \<^theory_text>\<open>todo_list\<close> together with 
 the corresponding default values.
@@ -342,9 +384,9 @@ claims of the article --- either here, or, for example, in the keyword list of t
 As type, one could use either the built-in type \<^theory_text>\<open>term\<close> (for syntactically correct, 
 but not necessarily proven entity) or \<^theory_text>\<open>thm\<close> (for formally proven entities). It suffices 
 to add the line:
-\begin{isar}
+@{boxed_theory_text [display]\<open>
    claims  :: "thm list"
-\end{isar}
+\<close>}
 and to extent the \<^LaTeX>-style accordingly to handle the additional field. 
 Note that \<^theory_text>\<open>term\<close> and \<^theory_text>\<open>thm\<close> are types reflecting the core-types of the
 Isabelle kernel. In a corresponding conclusion section, one could model analogously an 
@@ -356,7 +398,7 @@ of the scope of this paper.
 
 We proceed more or less conventionally by the subsequent sections (\autoref{fig:paper-onto-sections})
 \begin{figure}
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
 
@@ -371,14 +413,14 @@ doc_class related_work = conclusion +
 
 doc_class bibliography =
    style :: "string option"  <=  "''LNCS''"
-\end{isar}
+\<close>}
 \caption{Various types of sections of a scholarly papers.}
 \label{fig:paper-onto-sections}
 \end{figure}
  and finish with a monitor class definition that enforces a textual ordering
 in the document core by a regular expression (\autoref{fig:paper-onto-monitor}).
 \begin{figure}
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class article = 
    trace :: "(title + subtitle + author+ abstract +
               introduction + technical + example +
@@ -386,7 +428,7 @@ doc_class article =
    where "(title       ~~ \<lbrakk>subtitle\<rbrakk>   ~~ \<lbrace>author\<rbrace>$^+$+  ~~  abstract    ~~
              introduction ~~  \<lbrace>technical || example\<rbrace>$^+$  ~~  conclusion ~~  
              bibliography)"
-\end{isar}
+\<close>}
 \caption{A monitor for the scholarly paper ontology.}
 \label{fig:paper-onto-monitor}
 \end{figure}
@@ -395,14 +437,14 @@ text\<open> We might wish to add a component into our ontology that models figur
 the document. This boils down to the exercise of modeling structured data in the style of a 
 functional programming language in HOL and to reuse the implicit HOL-type inside a suitable document 
 class \<^theory_text>\<open>figure\<close>:
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 datatype placement = h | t | b | ht | hb   
 doc_class figure   = text_section +
    relative_width   :: "int" (* percent of textwidth *)    
    src     :: "string"
    placement :: placement 
    spawn_columns :: bool <= True 
-\end{isar}
+\<close>}
 \<close>
 
 text\<open> Alternatively, by including the HOL-libraries for rationals, it is possible to 
@@ -440,7 +482,7 @@ where the author of the exam is not expected to be physically present.
 Furthermore, we assume a simple grade system (thus, some calculation is required). 
 
 \begin{figure}
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class Author = ...
 datatype Subject =  algebra | geometry | statistical
 datatype Grade =  A1 | A2 | A3
@@ -462,7 +504,7 @@ doc_class Exam_item =
   concerns :: "ContentClass set"  
 
 type_synonym SubQuestion = string
-\end{isar}
+\<close>}
 \caption{The core of the ontology modeling math exams.}
 \label{fig:onto-exam}
 \end{figure}
@@ -473,7 +515,7 @@ assume familiarity of the students with Isabelle (\<^theory_text>\<open>term\<cl
 parse-able and type-checkable entity), we basically model a derivation as a sequence of strings
 (see \autoref{fig:onto-questions}).
 \begin{figure}
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class Answer_Formal_Step =  Exam_item +
   justification :: string
   "term"        :: "string" 
@@ -497,7 +539,7 @@ doc_class Exercise = Exam_item +
   content  :: "(Task) list"
   concerns :: "ContentClass set" <= "UNIV" 
   mark     :: int
-\end{isar}
+\<close>}
 \caption{An exam can contain different types of questions.}
 \label{fig:onto-questions}
 \end{figure}
@@ -509,7 +551,7 @@ question by a sample proof validated by Isabelle (see \autoref{fig:onto-exam-mon
 In our scenario this sample proofs are completely \<^emph>\<open>intern\<close>, \<^ie>, not exposed to the 
 students but just additional material for the internal review process of the exam.
 \begin{figure}
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class Validation = 
    tests  :: "term list"  <="[]"
    proofs :: "thm list"   <="[]"
@@ -523,7 +565,7 @@ doc_class MathExam=
   content :: "(Header + Author + Exercise) list"
   global_grade :: Grade 
   where "\<lbrace>Author\<rbrace>$^+$  ~~  Header ~~  \<lbrace>Exercise ~~ Solution\<rbrace>$^+$ "
-\end{isar}
+\<close>}
 \caption{Validating exams.}
 \label{fig:onto-exam-monitor}
 \end{figure}
@@ -565,7 +607,7 @@ text\<open> In the sequel, we present a simplified version of an ontological mod
 case-study~ @{cite "bezzecchi.ea:making:2018"}. We start with an introduction of the concept of requirement 
 (see \autoref{fig:conceptual}). 
 \begin{figure}
-\begin{isar}
+@{boxed_theory_text [display]\<open>
 doc_class requirement = long_name :: "string option"
 
 doc_class requirement_analysis = no :: "nat"
@@ -578,7 +620,7 @@ datatype ass_kind = informal | semiformal | formal
   
 doc_class assumption = requirement +
      assumption_kind :: ass_kind <= informal 
-\end{isar}
+\<close>}
 \caption{Modeling requirements.}
 \label{fig:conceptual}
 \end{figure}
@@ -604,13 +646,13 @@ is the category \<^emph>\<open>safety related application condition\<close> (or 
 for short) which is used for \<^emph>\<open>ec\<close>'s that establish safety properties
 of the evaluation target. Their track-ability throughout the certification
 is therefore particularly critical. This is naturally modeled as follows:
-\begin{isar}  
+@{boxed_theory_text [display]\<open>  
 doc_class ec = assumption  +
      assumption_kind :: ass_kind <= (*default *) formal
                         
 doc_class srac = ec  +
      assumption_kind :: ass_kind <= (*default *) formal
-\end{isar}
+\<close>}
 \<close>
    
 section*[ontopide::technical]\<open> Ontology-based IDE support \<close>  
@@ -680,7 +722,7 @@ informal parts. \<close>
 section*[onto_future::technical]\<open> Monitor Classes \<close>  
 text\<open> Besides sub-typing, there is another relation between
 document classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
-which is expressed by the occurrence of a \inlineisar+where+ clause
+which is expressed by the occurrence of a @{boxed_theory_text [display]\<open>where\<close>} clause
 in the document class definition containing a regular
 expression (see @{example \<open>scholar_onto\<close>}).
 While class-extension refers to data-inheritance of attributes,
