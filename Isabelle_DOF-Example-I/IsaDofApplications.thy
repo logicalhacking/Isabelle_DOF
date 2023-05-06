@@ -712,7 +712,7 @@ informal parts. \<close>
 section*[onto_future::technical]\<open> Monitor Classes \<close>  
 text\<open> Besides sub-typing, there is another relation between
 document classes: a class can be a \<^emph>\<open>monitor\<close> to other ones,
-which is expressed by the occurrence of a @{boxed_theory_text [display]\<open>where\<close>} clause
+which is expressed by the occurrence of a @{theory_text \<open>where\<close>} clause
 in the document class definition containing a regular
 expression (see @{example \<open>scholar_onto\<close>}).
 While class-extension refers to data-inheritance of attributes,
