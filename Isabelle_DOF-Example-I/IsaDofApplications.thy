@@ -160,16 +160,14 @@ Based on a novel adaption of the Isabelle IDE, a document is checked to be
 changes, where the \<^emph>\<open>coherence\<close> between the formal and the informal parts of the
 content can be mechanically checked.
 
-To avoid any misunderstanding: \<^isadof>  is \<^emph>\<open>not a theory in HOL\<close>   
-on ontologies and operations to track and trace links in texts,
-it is an \<^emph>\<open>environment to write structured text\<close> which \<^emph>\<open>may contain\<close>  
-\<^isabelle> definitions and proofs like mathematical articles, tech-reports and
-scientific papers---as the present one, which is written in \<^isadof> 
-itself. \<^isadof> is a plugin into the Isabelle/Isar
-framework in the style of~@{cite "wenzel.ea:building:2007"}.
+To avoid any misunderstanding: \<^isadof>  is \<^emph>\<open>not a theory in HOL\<close> on ontologies and operations 
+to track and trace links in texts, it is an \<^emph>\<open>environment to write structured text\<close> which 
+\<^emph>\<open>may contain\<close> \<^isabelle> definitions and proofs like mathematical articles, tech-reports and
+scientific papers---as the present one, which is written in \<^isadof> itself. \<^isadof> is a plugin 
+into the Isabelle/Isar framework in the style of~@{cite "wenzel.ea:building:2007"}.
 \<close>
 
-(* declaring the forward references used in the subsequent section *)  
+(* declaring the forward references used in the subsequent sections *)  
 (*<*)
 declare_reference*[bgrnd::text_section]
 declare_reference*[isadof::text_section]
@@ -177,9 +175,9 @@ declare_reference*[ontomod::text_section]
 declare_reference*[ontopide::text_section]
 declare_reference*[conclusion::text_section]
 (*>*)
-text*[plan::introduction, level="Some 1"]\<open> The plan of the paper is as follows: we start by introducing  
-the underlying Isabelle system (@{text_section (unchecked) \<open>bgrnd\<close>}) followed by presenting the 
-essentials of  \<^isadof> and its ontology language (@{text_section (unchecked) \<open>isadof\<close>}). 
+text*[plan::introduction, level="Some 1"]\<open> The plan of the paper is as follows: we start by 
+introducing the underlying Isabelle system (@{text_section (unchecked) \<open>bgrnd\<close>}) followed by 
+presenting the essentials of  \<^isadof> and its ontology language (@{text_section (unchecked) \<open>isadof\<close>}). 
 It follows @{text_section (unchecked) \<open>ontomod\<close>}, where we present three application 
 scenarios from the point of view of the ontology modeling. In @{text_section (unchecked) \<open>ontopide\<close>}
 we discuss the user-interaction generated from the ontological definitions.  Finally, we draw 
@@ -188,18 +186,14 @@ conclusions and discuss related work in @{text_section (unchecked) \<open>conclu
 section*[bgrnd::text_section,main_author="Some(@{docitem ''bu''}::author)"]
         \<open> Background: The Isabelle System \<close>
 text*[background::introduction, level="Some 1"]\<open>
-While Isabelle is widely perceived as an interactive theorem prover
-for HOL (Higher-order Logic)~@{cite "nipkow.ea:isabelle:2002"}, we
-would like to emphasize the view that Isabelle is far more than that:
-it is the \<^emph>\<open>Eclipse of Formal Methods Tools\<close>.  This refers to the
-``\<^slanted_text>\<open>generic system framework of Isabelle/Isar underlying recent
-  versions of Isabelle.  Among other things, Isar provides an
-  infrastructure for Isabelle plug-ins, comprising extensible state
-  components and extensible syntax that can be bound to ML
-  programs. Thus, the Isabelle/Isar architecture may be understood as
-  an extension and refinement of the traditional `LCF approach', with
-  explicit infrastructure for building derivative
-  \<^emph>\<open>systems\<close>.\<close>''~@{cite "wenzel.ea:building:2007"} 
+While Isabelle is widely perceived as an interactive theorem prover for HOL 
+(Higher-order Logic)~@{cite "nipkow.ea:isabelle:2002"}, we would like to emphasize the view that 
+Isabelle is far more than that: it is the \<^emph>\<open>Eclipse of Formal Methods Tools\<close>.  This refers to the
+``\<^slanted_text>\<open>generic system framework of Isabelle/Isar underlying recent versions of Isabelle.  
+  Among other things, Isar provides an infrastructure for Isabelle plug-ins, comprising extensible 
+  state components and extensible syntax that can be bound to ML programs. Thus, the Isabelle/Isar 
+  architecture may be understood as an extension and refinement of the traditional `LCF approach', 
+  with explicit infrastructure for building derivative \<^emph>\<open>systems\<close>.\<close>''~@{cite "wenzel.ea:building:2007"} 
 
 The current system framework offers moreover the following features:
 
@@ -236,11 +230,8 @@ and will result in the corresponding output in generated \<^LaTeX> or HTML docum
 Now, \<^emph>\<open>inside\<close> the textual content, it is possible to embed a \<^emph>\<open>text-antiquotation\<close>:
 @{boxed_theory_text [display]\<open>
    text\<open> According to the \<^emph>\<open>reflexivity\<close> axiom @{thm refl}, 
-        we obtain in \<Gamma> for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
-@{boxed_theory_text [display]\<open>
-  text\<open>According to the reflexivity axiom @{thm refl}, we obtain in \<Gamma> 
-           for @{term "fac 5"} the result \at{value "fac 5"}.\<close>
-\<close>}
+         we obtain in \<Gamma> for @{term "fac 5"} the result @{value "fac 5"}.\<close>\<close>}
+
 which is represented in the generated output by:
 @{boxed_pdf [display]\<open>According to the reflexivity axiom $x = x$, we obtain in $\Gamma$ for $\operatorname{fac} 5$ the result $120$.\<close>}
 
@@ -270,7 +261,7 @@ three parts. Note that the document core \<^emph>\<open>may\<close>, but \<^emph
 use Isabelle definitions or proofs for checking the formal content---the 
 present paper is actually an example of a document not containing any proof.
 
- The document generation process of \<^isadof> is currently restricted to \<^LaTeX> , which means
+ The document generation process of \<^isadof> is currently restricted to \<^LaTeX>, which means
 that the layout is defined by a set of \<^LaTeX> style files. Several layout 
 definitions for one ontology are possible and pave the way that different \<^emph>\<open>views\<close> for
 the same central document were generated, addressing the needs of different purposes `
@@ -284,51 +275,45 @@ style-files (\<^verbatim>\<open>.sty\<close>-files). In the document core author
 their source, but this limits the possibility of using different representation technologies, 
 \<^eg>, HTML, and increases the risk of arcane error-messages in generated \<^LaTeX>. 
 
- The \<^isadof> ontology specification language consists basically on a notation for
-document classes, where the attributes were typed with HOL-types and can be instantiated 
-by terms HOL-terms, \<^ie>, the actual parsers and type-checkers of the Isabelle system were reused.
-This has the particular advantage that \<^isadof> commands can be arbitrarily mixed with 
-Isabelle/HOL commands providing the machinery for type declarations and term specifications such
-as enumerations. In particular, document class definitions provide:
+The \<^isadof> ontology specification language consists basically on a notation for document classes, 
+where the attributes were typed with HOL-types and can be instantiated by terms HOL-terms, \<^ie>, 
+the actual parsers and type-checkers of the Isabelle system were reused. This has the particular 
+advantage that \<^isadof> commands can be arbitrarily mixed with Isabelle/HOL commands providing the 
+machinery for type declarations and term specifications such as enumerations. In particular, 
+document class definitions provide:
 \<^item>  a HOL-type for each document class as well as inheritance, 
 \<^item>  support for attributes with HOL-types and optional default values,
 \<^item>  support for overriding of attribute defaults but not overloading, and
 \<^item>  text-elements annotated with document classes; they are mutable 
-   instances of document classes.
-\<close>
-text\<open>
-Attributes referring to other ontological concepts are called \<^emph>\<open>links\<close>.
-The HOL-types inside the document specification language support built-in types for Isabelle/HOL 
-\<^theory_text>\<open>typ\<close>'s, \<^theory_text>\<open>term\<close>'s, and \<^theory_text>\<open>thm\<close>'s reflecting internal Isabelle's 
-internal types  for these entities; when denoted in HOL-terms to instantiate an attribute, for 
-example, there is a  specific syntax (called \<^emph>\<open>inner syntax antiquotations\<close>) that is checked by 
-\<^isadof> for consistency.
+   instances of document classes.\<close>
 
-Document classes can have a \<^theory_text>\<open>where\<close> clause containing a regular 
-expression over class names. Classes with such a \<^theory_text>\<open>where\<close>  were called \<^emph>\<open>monitor classes\<close>.
-While document classes and their inheritance relation structure meta-data of text-elements
-in an object-oriented manner, monitor classes enforce structural organization
-of documents via the language specified by the regular expression 
-enforcing a sequence of text-elements that must belong to the corresponding classes. 
-\<close>
+text\<open>
+Attributes referring to other ontological concepts are called \<^emph>\<open>links\<close>. The HOL-types inside the 
+document specification language support built-in types for Isabelle/HOL \<^theory_text>\<open>typ\<close>'s, \<^theory_text>\<open>term\<close>'s, and
+\<^theory_text>\<open>thm\<close>'s reflecting internal Isabelle's internal types  for these entities; when denoted in 
+HOL-terms  to instantiate an attribute, for example, there is a  specific syntax 
+(called \<^emph>\<open>inner syntax antiquotations\<close>) that is checked by \<^isadof> for consistency.
+
+Document classes can have a \<^theory_text>\<open>where\<close> clause containing a regular expression over class names. 
+Classes with such a \<^theory_text>\<open>where\<close>  were called \<^emph>\<open>monitor classes\<close>. While document classes and their 
+inheritance relation structure meta-data of text-elements in an object-oriented manner, monitor 
+classes enforce structural organization of documents via the language specified by the regular 
+expression enforcing a sequence of text-elements that belong to the corresponding classes.  \<^vs>\<open>-0.4cm\<close>\<close>
 
 section*[ontomod::text_section]\<open> Modeling Ontologies in \<^isadof> \<close> 
-text\<open> In this section, we will use the \<^isadof> document ontology language
-for three different application scenarios: for scholarly papers, for mathematical 
-exam sheets as well as standardization documents where the concepts of the
-standard are captured in the ontology. For space reasons, we will concentrate in all three
-cases on aspects of the modeling due to space limitations.\<close>
+text\<open> In this section, we will use the \<^isadof> document ontology language for three different 
+application scenarios: for scholarly papers, for mathematical exam sheets as well as standardization 
+documents where the concepts of the standard are captured in the ontology. For space reasons, we 
+will concentrate in all three cases on aspects of the modeling due to space limitations.\<close>
 
 subsection*[scholar_onto::example]\<open> The Scholar Paper Scenario: Eating One's Own Dog Food. \<close>  
 text\<open> The following ontology is a simple ontology modeling scientific papers. In this 
 \<^isadof> application scenario, we deliberately refrain from integrating references to
 (Isabelle) formal content in order  demonstrate that \<^isadof> is not a framework from 
-Isabelle users to Isabelle users only.
-Of course, such references can be added easily and represent a particular strength  
-of \<^isadof>.
+Isabelle users to Isabelle users only. Of course, such references can be added easily and 
+represent a particular strength of \<^isadof>.\<close>
 
-
-\begin{figure}
+text\<open>\begin{figure}
 @{boxed_theory_text [display]\<open>
 doc_class title =
    short_title :: "string option"  <=  None
@@ -348,8 +333,8 @@ doc_class text_section =
 \<close>}
 \caption{The core of the ontology definition for writing scholarly papers.}
 \label{fig:paper-onto-core}
-\end{figure}
-The first part of the ontology \<^theory_text>\<open>scholarly_paper\<close> (see \autoref{fig:paper-onto-core})
+\end{figure}\<close>  
+text\<open> The first part of the ontology \<^theory_text>\<open>scholarly_paper\<close> (see \autoref{fig:paper-onto-core})
 contains the document class definitions
 with the usual text-elements of a scientific paper. The attributes \<^theory_text>\<open>short_title\<close>, 
 \<^theory_text>\<open>abbrev\<close> etc are introduced with their types as well as their default values.
@@ -361,12 +346,13 @@ appear in the \<^theory_text>\<open>main_author\<close> attribute of the \<^theo
 semantic links between concepts can be modeled this way.
 
 The translation of its content to, \<^eg>, Springer's \<^LaTeX> setup for the Lecture Notes in Computer 
-Science Series, as required by many scientific conferences, is mostly straight-forward. \<close>
+Science Series, as required by many scientific conferences, is mostly straight-forward. 
+\<^vs>\<open>-0.8cm\<close>\<close>
 
 figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogfood-Intro''"]
        \<open> Ouroboros I: This paper from inside \<^dots> \<close>  
 
-text\<open> @{figure \<open>fig1\<close>} shows the corresponding view in the Isabelle/PIDE of the present paper.
+text\<open>\<^vs>\<open>-0.8cm\<close> @{figure \<open>fig1\<close>} shows the corresponding view in the Isabelle/PIDE of the present paper.
 Note that the text uses \<^isadof>'s own text-commands containing the meta-information provided by
 the underlying ontology.
 We proceed by a definition of \<^theory_text>\<open>introduction\<close>'s, which we define as the extension of
@@ -395,8 +381,8 @@ of automated forms of validation check for specific categories of papers is envi
 Since this requires deeper knowledge in Isabelle programming, however, we consider this out 
 of the scope of this paper.
 
-
-We proceed more or less conventionally by the subsequent sections (\autoref{fig:paper-onto-sections})
+We proceed more or less conventionally by the subsequent sections (\autoref{fig:paper-onto-sections})\<close>  
+text\<open>
 \begin{figure}
 @{boxed_theory_text [display]\<open>
 doc_class technical = text_section +
@@ -416,9 +402,10 @@ doc_class bibliography =
 \<close>}
 \caption{Various types of sections of a scholarly papers.}
 \label{fig:paper-onto-sections}
-\end{figure}
- and finish with a monitor class definition that enforces a textual ordering
-in the document core by a regular expression (\autoref{fig:paper-onto-monitor}).
+\end{figure}\<close>  
+text\<open>... and finish with a monitor class definition that enforces a textual ordering
+in the document core by a regular expression (\autoref{fig:paper-onto-monitor}).\<close>  
+text\<open>
 \begin{figure}
 @{boxed_theory_text [display]\<open>
 doc_class article = 
@@ -479,8 +466,8 @@ We assume that the content has four different types of addressees, which have a 
 text\<open> The latter quality assurance mechanism is used in many universities,
 where for organizational reasons the execution of an exam takes place in facilities
 where the author of the exam is not expected to be physically present.
-Furthermore, we assume a simple grade system (thus, some calculation is required). 
-
+Furthermore, we assume a simple grade system (thus, some calculation is required). \<close>  
+text\<open>
 \begin{figure}
 @{boxed_theory_text [display]\<open>
 doc_class Author = ...
@@ -507,13 +494,14 @@ type_synonym SubQuestion = string
 \<close>}
 \caption{The core of the ontology modeling math exams.}
 \label{fig:onto-exam}
-\end{figure}
-The heart of this ontology (see \autoref{fig:onto-exam}) is an alternation of questions and answers, 
+\end{figure}\<close>  
+text\<open>The heart of this ontology (see \autoref{fig:onto-exam}) is an alternation of questions and answers, 
 where the answers can consist of simple yes-no answers (QCM style check-boxes) or lists of formulas. 
 Since we do not
 assume familiarity of the students with Isabelle (\<^theory_text>\<open>term\<close> would assume that this is a 
 parse-able and type-checkable entity), we basically model a derivation as a sequence of strings
-(see \autoref{fig:onto-questions}).
+(see \autoref{fig:onto-questions}).\<close>  
+text\<open>
 \begin{figure}
 @{boxed_theory_text [display]\<open>
 doc_class Answer_Formal_Step =  Exam_item +
@@ -542,14 +530,15 @@ doc_class Exercise = Exam_item +
 \<close>}
 \caption{An exam can contain different types of questions.}
 \label{fig:onto-questions}
-\end{figure}
-
+\end{figure}\<close>
+text\<open>
 In many institutions, it makes sense to have a rigorous process of validation
 for exam subjects: is the initial question correct? Is a proof in the sense of the
 question possible? We model the possibility that the @{term examiner} validates a 
 question by a sample proof validated by Isabelle (see \autoref{fig:onto-exam-monitor}). 
 In our scenario this sample proofs are completely \<^emph>\<open>intern\<close>, \<^ie>, not exposed to the 
-students but just additional material for the internal review process of the exam.
+students but just additional material for the internal review process of the exam.\<close>  
+text\<open>
 \begin{figure}
 @{boxed_theory_text [display]\<open>
 doc_class Validation = 
@@ -570,7 +559,6 @@ doc_class MathExam=
 \label{fig:onto-exam-monitor}
 \end{figure}
 \<close>
-
   
 (*<*)declare_reference*["fig_qcm"::figure](*>*)
 
@@ -586,8 +574,8 @@ figure*[fig_qcm::figure,spawn_columns=False,
 
 subsection*[cenelec_onto::example]\<open> The Certification Scenario following CENELEC \<close>
 text\<open> Documents to be provided in formal certifications (such as CENELEC
-50126/50128, the DO-178B/C, or Common Criteria) can much profit from the control of ontological consistency: 
-a lot of an evaluators work consists in tracing down the links from requirements over 
+50126/50128, the DO-178B/C, or Common Criteria) can much profit from the control of ontological 
+consistency: a lot of an evaluators work consists in tracing down the links from requirements over 
 assumptions down to elements of evidence, be it in the models, the code, or the tests. 
 In a certification process, traceability becomes a major concern; and providing
 mechanisms to ensure complete traceability already at the development of the
@@ -599,13 +587,14 @@ of developments targeting certifications. Continuously checking the links betwee
 and the semi-formal parts of such documents is particularly valuable during the (usually
 collaborative) development effort. 
 
-As in many other cases, formal certification documents come with an own terminology and
-pragmatics of what has to be demonstrated and where, and how the trace-ability of requirements through
+As in many other cases, formal certification documents come with an own terminology and pragmatics 
+of what has to be demonstrated and where, and how the trace-ability of requirements through
 design-models over code to system environment assumptions has to be assured.  
 \<close>
 text\<open> In the sequel, we present a simplified version of an ontological model used in a 
 case-study~ @{cite "bezzecchi.ea:making:2018"}. We start with an introduction of the concept of requirement 
-(see \autoref{fig:conceptual}). 
+(see \autoref{fig:conceptual}). \<close>  
+text\<open>
 \begin{figure}
 @{boxed_theory_text [display]\<open>
 doc_class requirement = long_name :: "string option"
@@ -623,8 +612,9 @@ doc_class assumption = requirement +
 \<close>}
 \caption{Modeling requirements.}
 \label{fig:conceptual}
-\end{figure}
-Such ontologies can be enriched by larger explanations and examples, which may help
+\end{figure}\<close>
+
+text\<open>Such ontologies can be enriched by larger explanations and examples, which may help
 the team of engineers substantially when developing the central document for a certification, 
 like an explication what is precisely the difference between an \<^emph>\<open>hypothesis\<close> and an 
 \<^emph>\<open>assumption\<close> in the context of the evaluation standard. Since the PIDE makes for each 
@@ -689,7 +679,7 @@ non-compatible type, the text is not validated.  \<close>
 figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-V-attribute''"]
        \<open> Exploring an attribute (hyperlinked to the class). \<close> 
 subsection*[cenelec_pide::example]\<open> CENELEC  \<close>
-declare_reference*[figfig3::figure]  
+(*<*)declare_reference*[figfig3::figure](*>*)  
 text\<open> The corresponding view in @{docitem (unchecked) \<open>figfig3\<close>} shows core part of a document,  
 coherent to the @{example \<open>cenelec_onto\<close>}. The first sample shows standard Isabelle antiquotations 
 @{cite "wenzel:isabelle-isar:2017"} into formal entities of a theory. This way, the informal parts 
@@ -780,8 +770,7 @@ work in this area we are aware of is rOntorium~@{cite "rontorium"}, a plugin
 for \<^Protege> that integrates R~@{cite "adler:r:2010"} into an
 ontology environment. Here, the main motivation behind this
 integration is to allow for statistically analyze ontological
-documents. Thus, this is complementary to our work.
-\<close>
+documents. Thus, this is complementary to our work.\<close>
 
 text\<open> \<^isadof> in its present form has a number of technical short-comings as well 
   as potentials not yet explored. On the long list of the short-comings is the 
