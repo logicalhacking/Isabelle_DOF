@@ -56,30 +56,30 @@ abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Alg
 text\<open>\<close>
 section*[introheader::introduction,main_author="Some(@{docitem ''bu''}::author)"]\<open> Introduction \<close> 
 text*[introtext::introduction, level="Some 1"]\<open>
-Communicating Sequential Processes (\<^csp>) is a language 
-to specify and verify patterns of interaction of concurrent systems.
-Together with CCS and LOTOS, it belongs to the family of \<^emph>\<open>process algebras\<close>. 
-\<^csp>'s rich theory comprises denotational, operational and algebraic semantic facets 
-and has influenced programming languages such as Limbo, Crystal, Clojure and
-most notably Golang @{cite "donovan2015go"}. \<^csp> has been applied in 
-industry as a tool for specifying and verifying the concurrent aspects of hardware 
-systems, such as the T9000 transansputer @{cite "Barret95"}. 
+Communicating Sequential Processes (\<^csp>) is a language to specify and verify patterns of 
+interaction of concurrent systems. Together with CCS and LOTOS, it belongs to the family of 
+\<^emph>\<open>process algebras\<close>. \<^csp>'s rich theory comprises denotational, operational and algebraic semantic 
+facets and has influenced programming languages such as Limbo, Crystal, Clojure and most notably 
+Golang @{cite "donovan2015go"}. \<^csp> has been applied in industry as a tool for specifying and 
+verifying the concurrent aspects of hardware systems, such as the T9000 transansputer 
+@{cite "Barret95"}. 
 
 The theory of \<^csp> was first described in 1978 in a book by Tony Hoare @{cite "Hoare:1985:CSP:3921"}, 
 but has since evolved substantially @{cite "BrookesHR84" and "brookes-roscoe85" and "roscoe:csp:1998"}.
-\<^csp> describes the most common communication and synchronization mechanisms
-with one single language primitive: synchronous communication written \<open>_\<lbrakk>_\<rbrakk>_\<close>. \<^csp> semantics is 
-described by a fully abstract model of behaviour designed to be \<^emph>\<open>compositional\<close>: the denotational
-semantics of a process \<open>P\<close> encompasses all possible behaviours of this process in the context of all 
-possible environments \<open>P \<lbrakk>S\<rbrakk> Env\<close> (where \<open>S\<close> is the set of \<open>atomic events\<close> both \<open>P\<close> and \<open>Env\<close> must
-synchronize). This design objective has the consequence that two kinds of choice have to 
-be distinguished: 
-  \<^enum> the \<^emph>\<open>external choice\<close>, written \<open>_\<box>_\<close>, which forces a process "to follow" whatever
-    the environment offers, and
-  \<^enum> the \<^emph>\<open>internal choice\<close>, written \<open>_\<sqinter>_\<close>, which imposes on the environment of a process 
-    "to follow" the non-deterministic choices made.\<close>
+\<^csp> describes the most common communication and synchronization mechanisms with one single language 
+primitive: synchronous communication written \<open>_\<lbrakk>_\<rbrakk>_\<close>. \<^csp> semantics is described by a fully abstract 
+model of behaviour designed to be \<^emph>\<open>compositional\<close>: the denotational semantics of a process \<open>P\<close> 
+encompasses all possible behaviours of this process in the context of all possible environments 
+\<open>P \<lbrakk>S\<rbrakk> Env\<close> (where \<open>S\<close> is the set of \<open>atomic events\<close> both \<open>P\<close> and \<open>Env\<close> must synchronize). This 
+design objective has the consequence that two kinds of choice have to be distinguished: \<^vs>\<open>0.1cm\<close>
 
-text\<open>
+  \<^enum> the \<^emph>\<open>external choice\<close>, written \<open>_\<box>_\<close>, which forces a process "to follow" whatever
+    the environment offers, and \<^vs>\<open>-0.4cm\<close>
+  \<^enum> the \<^emph>\<open>internal choice\<close>, written \<open>_\<sqinter>_\<close>, which imposes on the environment of a process 
+    "to follow" the non-deterministic choices made.\<^vs>\<open>0.3cm\<close>
+\<close>
+
+text\<open> \<^vs>\<open>-0.6cm\<close>
 Generalizations of these two operators \<open>\<box>x\<in>A. P(x)\<close> and \<open>\<Sqinter>x\<in>A. P(x)\<close> allow for modeling the concepts 
 of \<^emph>\<open>input\<close> and \<^emph>\<open>output\<close>: Based on the prefix operator \<open>a\<rightarrow>P\<close> (event \<open>a\<close> happens, then the process 
 proceeds with \<open>P\<close>), receiving input is modeled by \<open>\<box>x\<in>A. x\<rightarrow>P(x)\<close> while sending output is represented 
@@ -143,7 +143,7 @@ processes \<open>Skip\<close> (successful termination) and \<open>Stop\<close> (
 Note that the trace sets, representing all \<^emph>\<open>partial\<close> history, is in general prefix closed.\<close>
 
 text*[ex1::math_example, status=semiformal, level="Some 1"] \<open>
-Let two processes be defined as follows:
+Let two processes be defined as follows:\<^vs>\<open>0.2cm\<close>
 
   \<^enum> \<open>P\<^sub>d\<^sub>e\<^sub>t = (a \<rightarrow> Stop) \<box> (b \<rightarrow> Stop)\<close>
   \<^enum> \<open>P\<^sub>n\<^sub>d\<^sub>e\<^sub>t = (a \<rightarrow> Stop) \<sqinter> (b \<rightarrow> Stop)\<close> 
@@ -694,7 +694,7 @@ For this reason, we derived a number of alternative induction schemes (which are
 in the HOLCF library), which are also relevant for our final Dining Philophers example.
 These are essentially adaptions of k-induction schemes applied to domain-theoretic
 setting (so: requiring \<open>f\<close> continuous and \<open>P\<close> admissible; these preconditions are
-skipped here): 
+skipped here):\<^vs>\<open>0.2cm\<close> 
   \<^item> \<open>... \<Longrightarrow> \<forall>i<k. P (f\<^sup>i \<bottom>) \<Longrightarrow> (\<forall>X. (\<forall>i<k. P (f\<^sup>i X)) \<longrightarrow> P (f\<^sup>k X)) \<Longrightarrow> P (\<mu>X. f X)\<close>
   \<^item> \<open>... \<Longrightarrow> \<forall>i<k. P (f\<^sup>i \<bottom>) \<Longrightarrow> (\<forall>X. P X \<longrightarrow> P (f\<^sup>k X)) \<Longrightarrow> P (\<mu>X. f X)\<close>
 
@@ -703,7 +703,7 @@ skipped here):
 it reduces the goal size.
 
 Another problem occasionally occurring in refinement proofs happens when the right side term 
-involves more than one  fixed-point  process (\<^eg> \<open>P \<lbrakk>{A}\<rbrakk> Q \<sqsubseteq> S\<close>). In this situation,
+involves more than one  fixed-point  process (\<^eg> \<open>P \<lbrakk>A\<rbrakk> Q \<sqsubseteq> S\<close>). In this situation,
 we need parallel fixed-point inductions. The HOLCF library offers only a basic one:
   \<^item> \<open>... \<Longrightarrow> P \<bottom> \<bottom> \<Longrightarrow> (\<forall>X Y. P X Y \<Longrightarrow> P (f X) (g Y)) \<Longrightarrow> P (\<mu>X. f X) (\<mu>X. g X)\<close>
 
