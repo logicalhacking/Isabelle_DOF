@@ -313,6 +313,7 @@ text\<open> The following ontology is a simple ontology modeling scientific pape
 Isabelle users to Isabelle users only. Of course, such references can be added easily and 
 represent a particular strength of \<^isadof>.\<close>
 
+(*
 text\<open>\begin{figure}
 @{boxed_theory_text [display]\<open>
 doc_class title =
@@ -334,7 +335,7 @@ doc_class text_section =
 \caption{The core of the ontology definition for writing scholarly papers.}
 \label{fig:paper-onto-core}
 \end{figure}\<close>
-  
+*) 
 text*["paper_onto_core"::figure2, 
       caption="''The core of the ontology definition for writing scholarly papers.''"]
 \<open>@{boxed_theory_text [display]\<open>
