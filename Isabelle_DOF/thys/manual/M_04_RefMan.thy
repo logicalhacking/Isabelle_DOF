@@ -701,7 +701,7 @@ abbreviations:
 \<^rail>\<open>
     (  ( @@{command "chapter*"} 
        | @@{command "section*"}   | @@{command "subsection*"} | @@{command "subsubsection*"} 
-       | @@{command "paragraph*"} | @@{command "subparagraph*"} 
+       | @@{command "paragraph*"} 
        | @@{command "figure*"}    | @@{command "side_by_side_figure*"} 
        ) 
        \<newline>

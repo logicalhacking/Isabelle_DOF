@@ -337,7 +337,7 @@ doc_class text_section =
 \end{figure}\<close>
 *) 
 text*["paper_onto_core"::figure2, 
-      caption="''The core of the ontology definition for writing scholarly papers.''"]
+      caption="\<open>The core of the ontology definition for writing scholarly papers.\<close>"]
 \<open>@{boxed_theory_text [display]\<open>
 doc_class title =
    short_title :: "string option"  <=  None
@@ -357,7 +357,6 @@ doc_class text_section =
 \<close>}\<close>
 
 text\<open> The first part of the ontology \<^theory_text>\<open>scholarly_paper\<close> 
-(see \autoref{fig:paper-onto-core})
 (see @{figure2 "paper_onto_core"})
 contains the document class definitions
 with the usual text-elements of a scientific paper. The attributes \<^theory_text>\<open>short_title\<close>, 
@@ -376,6 +375,7 @@ Science Series, as required by many scientific conferences, is mostly straight-f
 figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogfood-Intro''"]
        \<open> Ouroboros I: This paper from inside \<^dots> \<close>  
 
+(*<*)declare_reference*[paper_onto_sections::figure2](*>*)
 text\<open>\<^vs>\<open>-0.8cm\<close> @{figure \<open>fig1\<close>} shows the corresponding view in the Isabelle/PIDE of the present paper.
 Note that the text uses \<^isadof>'s own text-commands containing the meta-information provided by
 the underlying ontology.
@@ -405,13 +405,10 @@ of automated forms of validation check for specific categories of papers is envi
 Since this requires deeper knowledge in Isabelle programming, however, we consider this out 
 of the scope of this paper.
 
-We proceed more or less conventionally by the subsequent sections (\autoref{fig:paper-onto-sections})\<close>  
-text\<open>
-\begin{figure}
+We proceed more or less conventionally by the subsequent sections (@{figure2 (unchecked)\<open>paper_onto_sections\<close>})\<close>  
+text*["paper_onto_sections"::figure2, 
+      caption = "''Various types of sections of a scholarly papers.''"]\<open>
 @{boxed_theory_text [display]\<open>
-doc_class technical = text_section +
-   definition_list :: "string list" <=  "[]"
-
 doc_class example   = text_section +
    comment :: string
 
@@ -423,14 +420,12 @@ doc_class related_work = conclusion +
 
 doc_class bibliography =
    style :: "string option"  <=  "''LNCS''"
-\<close>}
-\caption{Various types of sections of a scholarly papers.}
-\label{fig:paper-onto-sections}
-\end{figure}\<close>  
+\<close>}\<close>
+(*<*)declare_reference*[paper_onto_monitor::figure2](*>*)
 text\<open>... and finish with a monitor class definition that enforces a textual ordering
-in the document core by a regular expression (\autoref{fig:paper-onto-monitor}).\<close>  
-text\<open>
-\begin{figure}
+in the document core by a regular expression (@{figure2 (unchecked) "paper_onto_monitor"}).\<close>  
+text*["paper_onto_monitor"::figure2, 
+      caption = "''A monitor for the scholarly paper ontology.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class article = 
    trace :: "(title + subtitle + author+ abstract +
@@ -440,9 +435,6 @@ doc_class article =
              introduction ~~  \<lbrace>technical || example\<rbrace>$^+$  ~~  conclusion ~~  
              bibliography)"
 \<close>}
-\caption{A monitor for the scholarly paper ontology.}
-\label{fig:paper-onto-monitor}
-\end{figure}
 \<close>
 text\<open> We might wish to add a component into our ontology that models figures to be included into 
 the document. This boils down to the exercise of modeling structured data in the style of a 
@@ -491,8 +483,8 @@ text\<open> The latter quality assurance mechanism is used in many universities,
 where for organizational reasons the execution of an exam takes place in facilities
 where the author of the exam is not expected to be physically present.
 Furthermore, we assume a simple grade system (thus, some calculation is required). \<close>  
-text\<open>
-\begin{figure}
+text*["onto_exam"::figure2, 
+      caption = "''The core of the ontology modeling math exams.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class Author = ...
 datatype Subject =  algebra | geometry | statistical
@@ -515,18 +507,17 @@ doc_class Exam_item =
   concerns :: "ContentClass set"  
 
 type_synonym SubQuestion = string
-\<close>}
-\caption{The core of the ontology modeling math exams.}
-\label{fig:onto-exam}
-\end{figure}\<close>  
-text\<open>The heart of this ontology (see \autoref{fig:onto-exam}) is an alternation of questions and answers, 
+\<close>}\<close>
+
+(*<*)declare_reference*[onto_questions::figure2](*>*)
+text\<open>The heart of this ontology (see @{figure2 "onto_exam"}) is an alternation of questions and answers, 
 where the answers can consist of simple yes-no answers (QCM style check-boxes) or lists of formulas. 
 Since we do not
 assume familiarity of the students with Isabelle (\<^theory_text>\<open>term\<close> would assume that this is a 
 parse-able and type-checkable entity), we basically model a derivation as a sequence of strings
-(see \autoref{fig:onto-questions}).\<close>  
-text\<open>
-\begin{figure}
+(see @{figure2 (unchecked)"onto_questions"}).\<close>  
+text*["onto_questions"::figure2, 
+      caption = "''An exam can contain different types of questions.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class Answer_Formal_Step =  Exam_item +
   justification :: string
@@ -551,19 +542,17 @@ doc_class Exercise = Exam_item +
   content  :: "(Task) list"
   concerns :: "ContentClass set" <= "UNIV" 
   mark     :: int
-\<close>}
-\caption{An exam can contain different types of questions.}
-\label{fig:onto-questions}
-\end{figure}\<close>
+\<close>}\<close>
+(*<*)declare_reference*[onto_exam_monitor::figure2](*>*)
 text\<open>
 In many institutions, it makes sense to have a rigorous process of validation
 for exam subjects: is the initial question correct? Is a proof in the sense of the
 question possible? We model the possibility that the @{term examiner} validates a 
-question by a sample proof validated by Isabelle (see \autoref{fig:onto-exam-monitor}). 
+question by a sample proof validated by Isabelle (see @{figure2 (unchecked) "onto_exam_monitor"}). 
 In our scenario this sample proofs are completely \<^emph>\<open>intern\<close>, \<^ie>, not exposed to the 
 students but just additional material for the internal review process of the exam.\<close>  
-text\<open>
-\begin{figure}
+text*["onto_exam_monitor"::figure2, 
+      caption = "''Validating exams.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class Validation = 
    tests  :: "term list"  <="[]"
@@ -578,11 +567,7 @@ doc_class MathExam=
   content :: "(Header + Author + Exercise) list"
   global_grade :: Grade 
   where "\<lbrace>Author\<rbrace>$^+$  ~~  Header ~~  \<lbrace>Exercise ~~ Solution\<rbrace>$^+$ "
-\<close>}
-\caption{Validating exams.}
-\label{fig:onto-exam-monitor}
-\end{figure}
-\<close>
+\<close>}\<close>
   
 (*<*)declare_reference*["fig_qcm"::figure](*>*)
 
@@ -615,11 +600,12 @@ As in many other cases, formal certification documents come with an own terminol
 of what has to be demonstrated and where, and how the trace-ability of requirements through
 design-models over code to system environment assumptions has to be assured.  
 \<close>
+(*<*)declare_reference*["conceptual"::figure2](*>*)
 text\<open> In the sequel, we present a simplified version of an ontological model used in a 
 case-study~ @{cite "bezzecchi.ea:making:2018"}. We start with an introduction of the concept of requirement 
-(see \autoref{fig:conceptual}). \<close>  
-text\<open>
-\begin{figure}
+(see @{figure2 (unchecked) "conceptual"}). \<close>  
+text*["conceptual"::figure2, 
+      caption = "''Modeling requirements.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class requirement = long_name :: "string option"
 
@@ -633,10 +619,7 @@ datatype ass_kind = informal | semiformal | formal
   
 doc_class assumption = requirement +
      assumption_kind :: ass_kind <= informal 
-\<close>}
-\caption{Modeling requirements.}
-\label{fig:conceptual}
-\end{figure}\<close>
+\<close>}\<close>
 
 text\<open>Such ontologies can be enriched by larger explanations and examples, which may help
 the team of engineers substantially when developing the central document for a certification, 

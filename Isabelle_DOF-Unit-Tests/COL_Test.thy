@@ -8,6 +8,25 @@ begin
 print_doc_items
 print_doc_classes
 
+section\<open>General Heading COL Elements\<close> 
+
+chapter*[S1::"chapter"]\<open>Chapter\<close>
+text*[S1'::"chapter"]\<open>Chapter\<close>
+
+section*[S2::"section"]\<open>Section\<close>
+text*[S2'::"section"]\<open>Section\<close>
+
+subsection*[S3::"subsection"]\<open>Subsection\<close>
+text*[S3'::"subsection"]\<open>Subsection\<close>
+
+subsubsection*[S4::"subsubsection"]\<open>Subsection\<close>
+text*[S4'::"subsubsection"]\<open>Subsubsection\<close>
+
+paragraph*[S5::"paragraph"]\<open>Paragraph\<close>
+text*[S5'::"paragraph"]\<open>Paragraph\<close>
+
+
+section\<open>General Figure COL Elements\<close> 
 
 figure*[fig1_test::figure,spawn_columns=False,relative_width="95",src="''figures/A''"]
        \<open> This is the label text \<close>  
@@ -36,12 +55,19 @@ text*["sbsfig2"::side_by_side_figure,
       anchor2="''fig:Asub2''",
       caption2="''Second caption.''",
       relative_width2="47",
-      src2="''figures/B''"]\<open>The final caption\<close>
+      src2="''figures/B''"]\<open>The global caption\<close>
 
 text\<open>check @{side_by_side_figure sbsfig1} cmp to @{side_by_side_figure sbsfig2}
      \autoref{Asub1} vs. \autoref{Asub2}
      \autoref{fig:Asub1} vs. \autoref{fig:Asub2}
     \<close>
+
+(* And a side-chick ... *)
+
+text*[inlinefig::figure2, 
+      caption="\<open>The Caption.\<close>"]
+\<open>@{theory_text [display, margin = 5] \<open>lemma A :: "a \<longrightarrow> b"\<close>}\<close>
+
 
 (*<*)
 end
