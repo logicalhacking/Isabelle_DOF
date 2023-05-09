@@ -70,7 +70,7 @@ text*[inlinefig::figure2,
 
 (*<*)
 text*[inlinegraph::figure2, 
-      caption="\<open>Another \<^term>\<open>\<sigma>\<^sub>i+2\<close> Caption.\<close>"]
+      caption="\<open>Another \<sigma>\<^sub>i+2 Caption.\<close>"]
      \<open>@{fig_content [display] (scale = 80, width=80, caption=\<open>This is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
                \<open>document/figures/A.png\<close>}\<close>
 (*>*)
