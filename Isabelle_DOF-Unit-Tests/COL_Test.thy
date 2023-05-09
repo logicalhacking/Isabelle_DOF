@@ -68,6 +68,14 @@ text*[inlinefig::figure2,
       caption="\<open>The Caption.\<close>"]
 \<open>@{theory_text [display, margin = 5] \<open>lemma A :: "a \<longrightarrow> b"\<close>}\<close>
 
+(*<*)
+text*[inlinegraph::figure2, 
+      caption="\<open>Another \<^term>\<open>\<sigma>\<^sub>i+2\<close> Caption.\<close>"]
+     \<open>@{fig_content [display] (scale = 80, width=80, caption=\<open>This is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
+               \<open>document/figures/A.png\<close>}\<close>
+(*>*)
+
+
 
 (*<*)
 end
