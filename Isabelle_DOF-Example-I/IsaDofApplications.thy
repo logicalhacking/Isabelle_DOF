@@ -328,13 +328,36 @@ doc_class abstract =
    keyword_list :: "string list"  <= None
 
 doc_class text_section = 
-   main_author :: "author option"  <=  None
-   todo_list   :: "string list"    <=  "[]"
+   main_author :: "author option"  <=  None 
+   todo_list   :: "string list"    <=  "[]"  
 \<close>}
 \caption{The core of the ontology definition for writing scholarly papers.}
 \label{fig:paper-onto-core}
-\end{figure}\<close>  
-text\<open> The first part of the ontology \<^theory_text>\<open>scholarly_paper\<close> (see \autoref{fig:paper-onto-core})
+\end{figure}\<close>   
+
+text*["paper_onto_core"::figure2, 
+      caption="''The core of the ontology definition for writing scholarly papers.''"]
+\<open>@{boxed_theory_text [display]\<open>
+doc_class title =
+   short_title :: "string option"  <=  None
+     
+doc_class subtitle =
+   abbrev :: "string option"       <=  None
+
+doc_class author =
+   affiliation :: "string"
+
+doc_class abstract =
+   keyword_list :: "string list"  <= None
+
+doc_class text_section = 
+   main_author :: "author option"  <=  None
+   todo_list   :: "string list"    <=  "[]" 
+\<close>}\<close>
+
+text\<open> The first part of the ontology \<^theory_text>\<open>scholarly_paper\<close> 
+(see \autoref{fig:paper-onto-core})
+(see @{figure2 "paper_onto_core"})
 contains the document class definitions
 with the usual text-elements of a scientific paper. The attributes \<^theory_text>\<open>short_title\<close>, 
 \<^theory_text>\<open>abbrev\<close> etc are introduced with their types as well as their default values.

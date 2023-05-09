@@ -154,7 +154,7 @@ datatype placement = pl_h  | (*here*)
                      pl_hb   (*here ->  bottom*)
 
 ML\<open> "side_by_side_figure"  |> Name_Space.declared (DOF_core.get_onto_classes \<^context>
-                                                    |> Name_Space.space_of_table)\<close>
+                           |> Name_Space.space_of_table)\<close>
 
 print_doc_classes
 

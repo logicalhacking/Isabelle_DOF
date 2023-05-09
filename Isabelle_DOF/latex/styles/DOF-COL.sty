@@ -46,6 +46,25 @@
 % end: figure*
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: figure2*
+\NewEnviron{isamarkupfigureTWO*}[1][]{\isaDof[env={figureTWO},#1]{\BODY}}
+\newisadof{figureDOTIsaUNDERSCORECOLDOTfigureTWO}%
+[label=,type=%
+,IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth=%
+,IsaUNDERSCORECOLDOTfigureDOTplacement=%
+,IsaUNDERSCORECOLDOTfigureDOTsrc=%
+,IsaUNDERSCORECOLDOTfigureTWODOTcaption=%
+,IsaUNDERSCORECOLDOTfigureDOTspawnUNDERSCOREcolumns=enum False True%
+][1]{%
+  \begin{figure}[]
+    #1
+    \caption{XXX\commandkey{IsaUNDERSCORECOLDOTfigureTWODOTcaption}}
+    \label{\commandkey{label}}%
+  \end{figure}
+}
+% end: figure2*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
