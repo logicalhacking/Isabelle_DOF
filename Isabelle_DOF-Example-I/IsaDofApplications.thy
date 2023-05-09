@@ -329,12 +329,12 @@ doc_class abstract =
 
 doc_class text_section = 
    main_author :: "author option"  <=  None 
-   todo_list   :: "string list"    <=  "[]"  
+   todo_list   :: "string list"    <=  "[]"
 \<close>}
 \caption{The core of the ontology definition for writing scholarly papers.}
 \label{fig:paper-onto-core}
-\end{figure}\<close>   
-
+\end{figure}\<close>
+  
 text*["paper_onto_core"::figure2, 
       caption="''The core of the ontology definition for writing scholarly papers.''"]
 \<open>@{boxed_theory_text [display]\<open>
