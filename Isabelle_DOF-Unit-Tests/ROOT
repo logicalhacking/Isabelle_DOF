@@ -15,6 +15,7 @@ session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" +
     "Ontology_Matching_Example"
     "Cenelec_Test"
     "OutOfOrderPresntn"
+    "COL_Test"
   document_files
     "root.bib"
     "figures/A.png"
