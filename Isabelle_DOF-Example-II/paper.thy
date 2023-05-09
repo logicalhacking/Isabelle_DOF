@@ -146,7 +146,7 @@ Note that the trace sets, representing all \<^emph>\<open>partial\<close> histor
 text*[ex1::math_example, status=semiformal, level="Some 1"] \<open>
 Let two processes be defined as follows:
 
-  \<^enum>  \<open>P\<^sub>d\<^sub>e\<^sub>t = (a \<rightarrow> Stop) \<box> (b \<rightarrow> Stop)\<close>
+  \<^enum> \<open>P\<^sub>d\<^sub>e\<^sub>t = (a \<rightarrow> Stop) \<box> (b \<rightarrow> Stop)\<close>
   \<^enum> \<open>P\<^sub>n\<^sub>d\<^sub>e\<^sub>t = (a \<rightarrow> Stop) \<sqinter> (b \<rightarrow> Stop)\<close> 
 \<close> 
 
@@ -212,7 +212,7 @@ distribution comes with rich libraries comprising Sets, Numbers, Lists, etc. whi
 For this work, a particular library called \<^theory_text>\<open>HOLCF\<close> is intensively used. It provides classical 
 domain theory for a particular type-class \<open>\<alpha>::pcpo\<close>, \<^ie> the class of types  \<open>\<alpha>\<close> for which 
 
-   \<^enum>  a least element \<open>\<bottom>\<close> is defined, and
+   \<^enum> a least element \<open>\<bottom>\<close> is defined, and
    \<^enum> a complete partial order \<open>_\<sqsubseteq>_\<close> is defined.
 
  For these types, \<^theory_text>\<open>HOLCF\<close> provides a fixed-point operator \<open>\<mu>X. f X\<close> as well as the 
@@ -222,15 +222,13 @@ automatically infer, for example, that if \<open>\<alpha>::pcpo\<close>, then \<
 section*["csphol"::tc,main_author="Some(@{docitem ''bu''}::author)", level="Some 2"]
 \<open>Formalising Denotational \<^csp> Semantics in HOL \<close>
 
-text\<open>\<close>
-
 subsection*["processinv"::tc, main_author="Some(@{docitem ''bu''})"]
 \<open>Process Invariant and Process Type\<close>
 text\<open> First, we need a slight revision of the concept
 of \<^emph>\<open>trace\<close>: if \<open>\<Sigma>\<close> is the type of the atomic events (represented by a type variable), then
-we need to extend this type by a special event \<open>\<surd>\<close> (called "tick") signaling termination.
-Thus, traces have the type \<open>(\<Sigma>+\<surd>)\<^sup>*\<close>, written \<open>\<Sigma>\<^sup>\<surd>\<^sup>*\<close>; since \<open>\<surd>\<close> may only occur at the end of a trace, 
-we need to define a predicate \<open>front\<^sub>-tickFree t\<close> that requires from traces that \<open>\<surd>\<close> can only occur 
+we need to extend this type by a special event \<open>\<checkmark>\<close> (called "tick") signaling termination.
+Thus, traces have the type \<open>(\<Sigma>\<uplus>\<checkmark>)\<^sup>*\<close>, written \<open>\<Sigma>\<^sup>\<checkmark>\<^sup>*\<close>; since \<open>\<checkmark>\<close> may only occur at the end of a trace, 
+we need to define a predicate \<open>front\<^sub>-tickFree t\<close> that requires from traces that \<open>\<checkmark>\<close> can only occur 
 at the end.
 
 Second, in the traditional literature, the semantic domain is implicitly described by 9 "axioms" 
@@ -245,24 +243,24 @@ Informally, these are:
    \<^item> the tick accepted after a trace \<open>s\<close> implies that all other events are refused; 
    \<^item> a divergence trace with any suffix is itself a divergence one
    \<^item> once a process has diverged, it can engage in or refuse any sequence of events.
-   \<^item> a trace ending with \<open>\<surd>\<close> belonging to divergence set implies that its 
-     maximum prefix without \<open>\<surd>\<close> is also a divergent trace.
+   \<^item> a trace ending with \<open>\<checkmark>\<close> belonging to divergence set implies that its 
+     maximum prefix without \<open>\<checkmark>\<close> is also a divergent trace.
 
 More formally, a process \<open>P\<close> of the type \<open>\<Sigma> process\<close> should have the following properties:
 
-@{cartouche [display] \<open>([],{}) \<in> \<F> P \<and>
+@{cartouche [display, indent=10] \<open>([],{}) \<in> \<F> P \<and>
 (\<forall> s X.  (s,X) \<in> \<F> P \<longrightarrow> front_tickFree s) \<and>
 (\<forall> s t . (s@t,{}) \<in> \<F> P \<longrightarrow> (s,{}) \<in> \<F> P) \<and>
 (\<forall> s X Y. (s,Y) \<in> \<F> P \<and> X\<subseteq>Y \<longrightarrow> (s,X) \<in> \<F> P) \<and> 
 (\<forall> s X Y. (s,X) \<in> \<F> P \<and> (\<forall>c \<in> Y. ((s@[c],{}) \<notin> \<F> P)) \<longrightarrow> (s,X \<union> Y) \<in> \<F> P) \<and>
-(\<forall> s X.  (s@[\<surd>],{}) \<in> \<F> P \<longrightarrow> (s,X-{\<surd>}) \<in> \<F> P) \<and>
+(\<forall> s X.  (s@[\<checkmark>],{}) \<in> \<F> P \<longrightarrow> (s,X-{\<checkmark>}) \<in> \<F> P) \<and>
 (\<forall> s t. s \<in> \<D> P \<and> tickFree s \<and> front_tickFree t \<longrightarrow> s@t \<in> \<D> P)  \<and>
 (\<forall> s X. s \<in> \<D> P \<longrightarrow> (s,X) \<in> \<F> P) \<and>
-(\<forall> s. s@[\<surd>] \<in> \<D> P \<longrightarrow> s \<in> \<D> P)\<close>}
+(\<forall> s. s@[\<checkmark>] \<in> \<D> P \<longrightarrow> s \<in> \<D> P)\<close>}
 
 Our objective is to encapsulate this wishlist into a type constructed as a conservative
 theory extension in our theory \<^holcsp>.
-Therefore third, we define a pre-type for processes \<open>\<Sigma> process\<^sub>0\<close> by \<open> \<P>(\<Sigma>\<^sup>\<surd>\<^sup>* \<times> \<P>(\<Sigma>\<^sup>\<surd>)) \<times> \<P>(\<Sigma>\<^sup>\<surd>)\<close>.
+Therefore third, we define a pre-type for processes \<open>\<Sigma> process\<^sub>0\<close> by \<open> \<P>(\<Sigma>\<^sup>\<checkmark>\<^sup>* \<times> \<P>(\<Sigma>\<^sup>\<checkmark>)) \<times> \<P>(\<Sigma>\<^sup>\<checkmark>)\<close>.
 Forth, we turn our wishlist of "axioms" above into the definition of a predicate \<open>is_process P\<close> 
 of type \<open>\<Sigma> process\<^sub>0 \<Rightarrow> bool\<close> deciding if its conditions are fulfilled. Since \<open>P\<close> is a pre-process,
 we replace \<open>\<F>\<close> by \<open>fst\<close> and  \<open>\<D>\<close> by \<open>snd\<close> (the HOL projections into a pair).
@@ -351,7 +349,7 @@ We define \<open>P \<sqsubseteq> Q \<equiv> \<psi>\<^sub>\<D> \<and> \<psi>\<^su
 text\<open>The third condition \<open>\<psi>\<^sub>\<M>\<close> implies that the set of minimal divergent traces 
 (ones with no proper prefix that is also a divergence) in  \<open>P\<close>,  denoted by \<open>Mins(\<D> P)\<close>, 
 should be a subset of the trace set of \<open>Q\<close>. 
-%One may note that each element in \<open>Mins(\<D> P)\<close> do actually not contain the \<open>\<surd>\<close>, 
+%One may note that each element in \<open>Mins(\<D> P)\<close> do actually not contain the \<open>\<checkmark>\<close>, 
 %which can be deduced from the process invariants described 
 %in the precedent @{technical "processinv"}. This can be explained by the fact that we are not 
 %really concerned with what a process does after it terminates. 
@@ -566,13 +564,13 @@ the Failure/Divergence Semantics of \<^csp>.\<close>
 
 Definition*[X10::"definition", level="Some 2"]\<open> \<open>deadlock\<^sub>-free P \<equiv>  DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close>  \<close>
 
-text\<open>\<^noindent> A process \<open>P\<close> is deadlock-free if and only if after any trace \<open>s\<close> without \<open>\<surd>\<close>, the union of \<open>\<surd>\<close> 
+text\<open>\<^noindent> A process \<open>P\<close> is deadlock-free if and only if after any trace \<open>s\<close> without \<open>\<checkmark>\<close>, the union of \<open>\<checkmark>\<close> 
 and all events of \<open>P\<close> can never be a refusal set associated to \<open>s\<close>, which means that \<open>P\<close> cannot 
 be deadlocked after any non-terminating trace.   
 \<close>
 
 Theorem*[T1, short_name="\<open>DF definition captures deadlock-freeness\<close>", level="Some 2"]
-\<open> \<^hfill> \<^br> \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<surd>}\<union>events_of P) \<notin> \<F> P)\<close> \<close>   
+\<open> \<^hfill> \<^br> \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<checkmark>}\<union>events_of P) \<notin> \<F> P)\<close> \<close>   
 Definition*[X11, level="Some 2"]\<open>  \<open>livelock\<^sub>-free P \<equiv> \<D> P = {} \<close>   \<close>
 
 text\<open> Recall that all five reference processes are livelock-free. 
