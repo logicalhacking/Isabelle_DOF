@@ -416,13 +416,13 @@ Figure*[fff::figure,src="\<open>this is a side-by-side\<close>"]
 *)
 
 (*<*)
-Figure*[ffff::figure2, caption="\<open>this is another 2 side-by-side\<close>"]
+Figure*[ffff::float, caption="\<open>this is another 2 side-by-side\<close>"]
    \<open>@{figure_content [width=40, scale=35, caption="This is a left test"] "ROOT"}\<close> 
    \<open>@{figure_content [width=40, scale=35, caption="This is a right test"] "ROOT"}\<close>  
 
 (* proposed syntax for sub-figure labels : text\<open> @{figure "ffff(2)"}\<close> *)
 
-Figure*[figxxx::figure2,caption="\<open>Proofs establishing an Invariant Preservation.\<close>"]
+Figure*[figxxx::float,caption="\<open>Proofs establishing an Invariant Preservation.\<close>"]
 \<open>@{boxed_theory_text [display]
 \<open>lemma inv_c2_preserved :  "c2_inv \<sigma> \<Longrightarrow> c1_inv (\<sigma> \<langle>Hardware\<rangle>\<^sub>C\<^sub>o\<^sub>m\<^sub>p\<^sub>u\<^sub>t\<^sub>e\<^sub>r\<^sub>H\<^sub>a\<^sub>r\<^sub>d\<^sub>w\<^sub>a\<^sub>r\<^sub>e)"
   unfolding c1_inv_def c2_inv_def 

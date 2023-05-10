@@ -48,18 +48,18 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: figure2*
-\NewEnviron{isamarkupfigureTWO*}[1][]{\isaDof[env={figureTWO},#1]{\BODY}}
-\newisadof{IsaUNDERSCORECOLDOTfigureTWO}%
+\NewEnviron{isamarkupfloat*}[1][]{\isaDof[env={float},#1]{\BODY}}
+\newisadof{IsaUNDERSCORECOLDOTfloat}%
 [label=,type=%
 ,IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth=%
 ,IsaUNDERSCORECOLDOTfigureDOTplacement=%
 ,IsaUNDERSCORECOLDOTfigureDOTsrc=%
-,IsaUNDERSCORECOLDOTfigureTWODOTcaption=%
+,IsaUNDERSCORECOLDOTfloatDOTcaption=%
 ,IsaUNDERSCORECOLDOTfigureDOTspawnUNDERSCOREcolumns=enum False True%
 ][1]{%
   \begin{figure}[]
     #1
-    \caption{\commandkey{IsaUNDERSCORECOLDOTfigureTWODOTcaption}}
+    \caption{\commandkey{IsaUNDERSCORECOLDOTfloatDOTcaption}}
     \label{\commandkey{label}}%
   \end{figure}
 }

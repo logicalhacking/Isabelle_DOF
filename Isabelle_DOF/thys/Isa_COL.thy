@@ -158,14 +158,13 @@ ML\<open> "side_by_side_figure"  |> Name_Space.declared (DOF_core.get_onto_class
 
 print_doc_classes
 
-
 doc_class figure   = 
    relative_width   :: "int"  (* percent of textwidth *)    
    src              :: "string"
    placement        :: placement  
    spawn_columns    :: bool <= True 
 
-doc_class figure2   =  figure +
+doc_class float     =  figure +
    caption          :: string
 
 

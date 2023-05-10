@@ -30,6 +30,7 @@ define_shortcut* isadof   \<rightleftharpoons> \<open>\isadof\<close>
 
 (* slanted text in contrast to italics *)
 define_macro* slanted_text \<rightleftharpoons> \<open>\textsl{\<close> _ \<open>}\<close>
+define_macro* unchecked_label \<rightleftharpoons> \<open>\autoref{\<close> _ \<open>}\<close>
 
 ML\<open>
 
@@ -313,30 +314,7 @@ text\<open> The following ontology is a simple ontology modeling scientific pape
 Isabelle users to Isabelle users only. Of course, such references can be added easily and 
 represent a particular strength of \<^isadof>.\<close>
 
-(*
-text\<open>\begin{figure}
-@{boxed_theory_text [display]\<open>
-doc_class title =
-   short_title :: "string option"  <=  None
-     
-doc_class subtitle =
-   abbrev :: "string option"       <=  None
-
-doc_class author =
-   affiliation :: "string"
-
-doc_class abstract =
-   keyword_list :: "string list"  <= None
-
-doc_class text_section = 
-   main_author :: "author option"  <=  None 
-   todo_list   :: "string list"    <=  "[]"
-\<close>}
-\caption{The core of the ontology definition for writing scholarly papers.}
-\label{fig:paper-onto-core}
-\end{figure}\<close>
-*) 
-text*["paper_onto_core"::figure2, 
+text*["paper_onto_core"::float, 
       caption="\<open>The core of the ontology definition for writing scholarly papers.\<close>"]
 \<open>@{boxed_theory_text [display]\<open>
 doc_class title =
@@ -357,7 +335,7 @@ doc_class text_section =
 \<close>}\<close>
 
 text\<open> The first part of the ontology \<^theory_text>\<open>scholarly_paper\<close> 
-(see @{figure2 "paper_onto_core"})
+(see @{float "paper_onto_core"})
 contains the document class definitions
 with the usual text-elements of a scientific paper. The attributes \<^theory_text>\<open>short_title\<close>, 
 \<^theory_text>\<open>abbrev\<close> etc are introduced with their types as well as their default values.
@@ -375,7 +353,7 @@ Science Series, as required by many scientific conferences, is mostly straight-f
 figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogfood-Intro''"]
        \<open> Ouroboros I: This paper from inside \<^dots> \<close>  
 
-(*<*)declare_reference*[paper_onto_sections::figure2](*>*)
+(*<*)declare_reference*[paper_onto_sections::float](*>*)
 text\<open>\<^vs>\<open>-0.8cm\<close> @{figure \<open>fig1\<close>} shows the corresponding view in the Isabelle/PIDE of the present paper.
 Note that the text uses \<^isadof>'s own text-commands containing the meta-information provided by
 the underlying ontology.
@@ -405,8 +383,8 @@ of automated forms of validation check for specific categories of papers is envi
 Since this requires deeper knowledge in Isabelle programming, however, we consider this out 
 of the scope of this paper.
 
-We proceed more or less conventionally by the subsequent sections (@{figure2 (unchecked)\<open>paper_onto_sections\<close>})\<close>  
-text*["paper_onto_sections"::figure2, 
+We proceed more or less conventionally by the subsequent sections (@{float (unchecked)\<open>paper_onto_sections\<close>})\<close>  
+text*["paper_onto_sections"::float, 
       caption = "''Various types of sections of a scholarly papers.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class example   = text_section +
@@ -421,10 +399,10 @@ doc_class related_work = conclusion +
 doc_class bibliography =
    style :: "string option"  <=  "''LNCS''"
 \<close>}\<close>
-(*<*)declare_reference*[paper_onto_monitor::figure2](*>*)
+(*<*)declare_reference*[paper_onto_monitor::float](*>*)
 text\<open>... and finish with a monitor class definition that enforces a textual ordering
-in the document core by a regular expression (@{figure2 (unchecked) "paper_onto_monitor"}).\<close>  
-text*["paper_onto_monitor"::figure2, 
+in the document core by a regular expression (@{float (unchecked) "paper_onto_monitor"}).\<close>  
+text*["paper_onto_monitor"::float, 
       caption = "''A monitor for the scholarly paper ontology.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class article = 
@@ -483,7 +461,7 @@ text\<open> The latter quality assurance mechanism is used in many universities,
 where for organizational reasons the execution of an exam takes place in facilities
 where the author of the exam is not expected to be physically present.
 Furthermore, we assume a simple grade system (thus, some calculation is required). \<close>  
-text*["onto_exam"::figure2, 
+text*["onto_exam"::float, 
       caption = "''The core of the ontology modeling math exams.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class Author = ...
@@ -509,14 +487,14 @@ doc_class Exam_item =
 type_synonym SubQuestion = string
 \<close>}\<close>
 
-(*<*)declare_reference*[onto_questions::figure2](*>*)
-text\<open>The heart of this ontology (see @{figure2 "onto_exam"}) is an alternation of questions and answers, 
+(*<*)declare_reference*[onto_questions::float](*>*)
+text\<open>The heart of this ontology (see @{float "onto_exam"}) is an alternation of questions and answers, 
 where the answers can consist of simple yes-no answers (QCM style check-boxes) or lists of formulas. 
 Since we do not
 assume familiarity of the students with Isabelle (\<^theory_text>\<open>term\<close> would assume that this is a 
 parse-able and type-checkable entity), we basically model a derivation as a sequence of strings
-(see @{figure2 (unchecked)"onto_questions"}).\<close>  
-text*["onto_questions"::figure2, 
+(see @{float (unchecked)"onto_questions"}).\<close>  
+text*["onto_questions"::float, 
       caption = "''An exam can contain different types of questions.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class Answer_Formal_Step =  Exam_item +
@@ -543,15 +521,15 @@ doc_class Exercise = Exam_item +
   concerns :: "ContentClass set" <= "UNIV" 
   mark     :: int
 \<close>}\<close>
-(*<*)declare_reference*[onto_exam_monitor::figure2](*>*)
+(*<*)declare_reference*[onto_exam_monitor::float](*>*)
 text\<open>
 In many institutions, it makes sense to have a rigorous process of validation
 for exam subjects: is the initial question correct? Is a proof in the sense of the
 question possible? We model the possibility that the @{term examiner} validates a 
-question by a sample proof validated by Isabelle (see @{figure2 (unchecked) "onto_exam_monitor"}). 
+question by a sample proof validated by Isabelle (see @{float (unchecked) "onto_exam_monitor"}). 
 In our scenario this sample proofs are completely \<^emph>\<open>intern\<close>, \<^ie>, not exposed to the 
 students but just additional material for the internal review process of the exam.\<close>  
-text*["onto_exam_monitor"::figure2, 
+text*["onto_exam_monitor"::float, 
       caption = "''Validating exams.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class Validation = 
@@ -600,11 +578,11 @@ As in many other cases, formal certification documents come with an own terminol
 of what has to be demonstrated and where, and how the trace-ability of requirements through
 design-models over code to system environment assumptions has to be assured.  
 \<close>
-(*<*)declare_reference*["conceptual"::figure2](*>*)
+(*<*)declare_reference*["conceptual"::float](*>*)
 text\<open> In the sequel, we present a simplified version of an ontological model used in a 
 case-study~ @{cite "bezzecchi.ea:making:2018"}. We start with an introduction of the concept of requirement 
-(see @{figure2 (unchecked) "conceptual"}). \<close>  
-text*["conceptual"::figure2, 
+(see @{float (unchecked) "conceptual"}). \<close>  
+text*["conceptual"::float, 
       caption = "''Modeling requirements.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class requirement = long_name :: "string option"
@@ -657,11 +635,11 @@ text\<open> We present a selection of interaction scenarios  @{example \<open>sc
 and @{example \<open>cenelec_onto\<close>} with Isabelle/PIDE instrumented by \<^isadof>. \<close>
 
 subsection*[scholar_pide::example]\<open> A Scholarly Paper \<close>  
-text\<open> In \autoref{fig-Dogfood-II-bgnd1} and \autoref{fig-bgnd-text_section} we show how
+text\<open> In \<^unchecked_label>\<open>fig-Dogfood-II-bgnd1\<close> and \<^unchecked_label>\<open>fig-bgnd-text_section\<close> we show how
 hovering over links permits to explore its meta-information. 
 Clicking on a document class identifier permits to hyperlink into the corresponding
-class definition (\autoref{fig:Dogfood-IV-jumpInDocCLass}); hovering over an attribute-definition
-(which is qualified in order to disambiguate; \autoref{fig:Dogfood-V-attribute}).
+class definition (\<^unchecked_label>\<open>fig:Dogfood-IV-jumpInDocCLass\<close>; hovering over an attribute-definition
+(which is qualified in order to disambiguate; \<^unchecked_label>\<open>fig:Dogfood-V-attribute\<close>).
 \<close>
      
 side_by_side_figure*["text-elements"::side_by_side_figure,anchor="''fig-Dogfood-II-bgnd1''",
@@ -678,7 +656,7 @@ side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-
 
 
 (*<*)declare_reference*["figDogfoodVIlinkappl"::figure](*>*)
-text\<open> An ontological reference application in \autoref{figDogfoodVIlinkappl}: the ontology-dependant 
+text\<open> An ontological reference application in \<^unchecked_label>\<open>figDogfoodVIlinkappl\<close>: the ontology-dependant 
 antiquotation \<^theory_text>\<open>@{example ...}\<close> refers to the corresponding text-elements. Hovering allows 
 for inspection, clicking for jumping to the definition.  If the link does not exist or has a 
 non-compatible type, the text is not validated.  \<close>
@@ -687,7 +665,7 @@ figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-
        \<open> Exploring an attribute (hyperlinked to the class). \<close> 
 subsection*[cenelec_pide::example]\<open> CENELEC  \<close>
 (*<*)declare_reference*[figfig3::figure](*>*)  
-text\<open> The corresponding view in @{docitem (unchecked) \<open>figfig3\<close>} shows core part of a document,  
+text\<open> The corresponding view in @{figure (unchecked) \<open>figfig3\<close>} shows core part of a document,  
 coherent to the @{example \<open>cenelec_onto\<close>}. The first sample shows standard Isabelle antiquotations 
 @{cite "wenzel:isabelle-isar:2017"} into formal entities of a theory. This way, the informal parts 
 of a document get ``formal content'' and become more robust under change.\<close>
