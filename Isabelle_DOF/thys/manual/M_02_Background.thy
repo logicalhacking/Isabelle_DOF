@@ -165,10 +165,12 @@ contains characters and a special notation for semantic macros \<^bindex>\<open>
 (here \<^theory_text>\<open>@{term "fac 5"}\<close>).
 
 The above text element is represented in the final document (\<^eg>, a PDF) by:
+
 @{boxed_pdf [display]
 \<open>According to the $\emph{reflexivity}$ axiom $\mathrm{x = x}$, we obtain in $\Gamma$ 
 for $\operatorname{fac} \text{\textrm{5}}$ the result $\text{\textrm{120}}$.\<close>
  }\<close>
+
 
 text\<open>Antiquotations seen as semantic macros are partial functions of type \<open>logical_context \<rightarrow> text\<close>; 
   since they can use the system state, they can perform all sorts of specific checks or evaluations 

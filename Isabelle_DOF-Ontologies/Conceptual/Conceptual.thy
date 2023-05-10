@@ -214,13 +214,9 @@ let  val class_ids_so_far = ["Conceptual.A", "Conceptual.B", "Conceptual.C", "Co
      val docclass_tab = map fst (Name_Space.dest_table (DOF_core.get_onto_classes \<^context>));
 in @{assert} (class_ids_so_far = docclass_tab) end\<close>
 
-
 section\<open>For Test and Validation\<close>
 
 text*[sdf]         \<open> Lorem ipsum ... \<close>         \<comment> \<open>anonymous reference\<close>
 text*[sdfg :: F]   \<open> Lorem ipsum ...\<close>          \<comment> \<open>some F instance \<close>  
-
-
-
 
 end

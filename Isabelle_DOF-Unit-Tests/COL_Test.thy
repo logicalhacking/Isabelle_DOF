@@ -22,7 +22,7 @@ text*[S3'::"subsection"]\<open>Subsection\<close>
 subsubsection*[S4::"subsubsection"]\<open>Subsection\<close>
 text*[S4'::"subsubsection"]\<open>Subsubsection\<close>
 
-paragraph*[S5::"paragraph"]\<open>Paragraph\<close>
+paragraph*[S5::"paragraph"]\<open>PAragraph\<close>
 text*[S5'::"paragraph"]\<open>Paragraph\<close>
 
 
