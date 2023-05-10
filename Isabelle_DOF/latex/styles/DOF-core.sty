@@ -94,7 +94,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: chapter*-dispatcher
-\NewEnviron{isamarkupchapter*}[1][]{\isaDof[env={chapter},#1]{\BODY}}
+\NewEnviron{isamarkupchapter*}[1][]{\isaDof[env={IsaUNDERSCORECOLDOTchapter},#1]{\BODY}}
 % end: chapter*-dispatcher
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -106,19 +106,19 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: subsection*-dispatcher
-\NewEnviron{isamarkupsubsection*}[1][]{\isaDof[env={subsection},#1]{\BODY}}
+\NewEnviron{isamarkupsubsection*}[1][]{\isaDof[env={IsaUNDERSCORECOLDOTsubsection},#1]{\BODY}}
 % end: subsection*-dispatcher
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: subsubsection*-dispatcher
-\NewEnviron{isamarkupsubsubsection*}[1][]{\isaDof[env={subsubsection},#1]{\BODY}}
+\NewEnviron{isamarkupsubsubsection*}[1][]{\isaDof[env={IsaUNDERSCORECOLDOTsubsubsection},#1]{\BODY}}
 % end: subsubsection*-dispatcher
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: paragraph*-dispatcher
-\NewEnviron{isamarkupparagraph*}[1][]{\isaDof[env={paragraph},#1]{\BODY}}
+\NewEnviron{isamarkupparagraph*}[1][]{\isaDof[env={IsaUNDERSCORECOLDOTparagraph},#1]{\BODY}}
 % end: paragraph*-dispatcher
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -135,19 +135,19 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: chapter/section default implementations
-\newisadof{chapter}[label=,type=][1]{%
+\newisadof{IsaUNDERSCORECOLDOTchapter}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
   \isamarkupfalse\isamarkupchapter{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 \newisadof{IsaUNDERSCORECOLDOTsection}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
   \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
-\newisadof{subsection}[label=,type=][1]{%
+\newisadof{IsaUNDERSCORECOLDOTsubsection}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
   \isamarkupfalse\isamarkupsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
-\newisadof{subsubsection}[label=,type=][1]{%
+\newisadof{IsaUNDERSCORECOLDOTsubsubsection}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
   \isamarkupfalse\isamarkupsubsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
-\newisadof{paragraph}[label=,type=][1]{%
+\newisadof{IsaUNDERSCORECOLDOTparagraph}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
   \isamarkupfalse\isamarkupparagraph{#1}\label{\commandkey{label}}\isamarkuptrue%
 }
 % end: chapter/section default implementations

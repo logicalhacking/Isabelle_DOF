@@ -13,7 +13,7 @@ session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" +
     "Attributes"
     "AssnsLemmaThmEtc" 
     "Ontology_Matching_Example"
-    "Cenelec_Test"
+    "Cenelec_Test" 
     "OutOfOrderPresntn"
     "COL_Test"
   document_files

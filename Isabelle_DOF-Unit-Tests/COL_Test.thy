@@ -19,7 +19,7 @@ text*[S2'::"section"]\<open>Section\<close>
 subsection*[S3::"subsection"]\<open>Subsection\<close>
 text*[S3'::"subsection"]\<open>Subsection\<close>
 
-subsubsection*[S4::"subsubsection"]\<open>Subsection\<close>
+subsubsection*[S4::"subsubsection"]\<open>Subsubsection\<close>
 text*[S4'::"subsubsection"]\<open>Subsubsection\<close>
 
 paragraph*[S5::"paragraph"]\<open>PAragraph\<close>
@@ -29,7 +29,7 @@ text*[S5'::"paragraph"]\<open>Paragraph\<close>
 section\<open>General Figure COL Elements\<close> 
 
 figure*[fig1_test::figure,spawn_columns=False,relative_width="95",src="''figures/A''"]
-       \<open> This is the label text \<close>  
+       \<open> This is the label text  \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<close>  
 
 text*[fig2_test::figure, spawn_columns=False, relative_width="95",src="''figures/A''"
 ]\<open> This is the label text\<close>
@@ -67,6 +67,9 @@ text\<open>check @{side_by_side_figure sbsfig1} cmp to @{side_by_side_figure sbs
 text*[inlinefig::float, 
       caption="\<open>The Caption.\<close>"]
 \<open>@{theory_text [display, margin = 5] \<open>lemma A :: "a \<longrightarrow> b"\<close>}\<close>
+
+text*[fffff::float]\<open> @{fig_content   [display] (scale = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<close>) 
+                      \<open>document/figures/A.png\<close>}\<close>
 
 (*<*)
 text*[inlinegraph::float, 

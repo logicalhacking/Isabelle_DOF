@@ -325,7 +325,7 @@ fun fig_content_antiquotation name scan =
                                                                 else ()
               val wdth_s = if relative_width = 100 then ""
                            else "width="^Real.toString((Real.fromInt relative_width) 
-                                              / (Real.fromInt 100))^"\textwidth" 
+                                              / (Real.fromInt 100))^"\\textwidth" 
               val scale_s= if scale = 100 then ""
                            else "scale="^Real.toString((Real.fromInt scale) / (Real.fromInt 100))
               val arg    = enclose "[" "]" (commas [wdth_s,scale_s])
@@ -333,10 +333,11 @@ fun fig_content_antiquotation name scan =
               val path   = Resources.check_file ctxt NONE file
               val _      = writeln("file "^Path.file_name path)  
                   (* ToDo: must be declared source of type png or jpeg or pdf, ... *)
+           
           in  file 
-              |> (Latex.string o Input.string_of)
+              |> (Latex.string o Input.string_of) 
               |> (XML.enclose ("\\includegraphics"^arg^"{") "}")
-              |> (fn X => X @ Latex.macro "capture" lab)
+              |> (fn X => X @ Latex.macro "caption" lab)
           end
       )
     ));

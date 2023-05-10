@@ -420,6 +420,10 @@ Figure*[ffff::float, caption="\<open>this is another 2 side-by-side\<close>"]
    \<open>@{figure_content [width=40, scale=35, caption="This is a left test"] "ROOT"}\<close> 
    \<open>@{figure_content [width=40, scale=35, caption="This is a right test"] "ROOT"}\<close>  
 
+
+text*[fffff::float]\<open> @{fig_content   [display] (scale = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
+                      \<open>document/figures/A.png\<close>}\<close>
+
 (* proposed syntax for sub-figure labels : text\<open> @{figure "ffff(2)"}\<close> *)
 
 Figure*[figxxx::float,caption="\<open>Proofs establishing an Invariant Preservation.\<close>"]
