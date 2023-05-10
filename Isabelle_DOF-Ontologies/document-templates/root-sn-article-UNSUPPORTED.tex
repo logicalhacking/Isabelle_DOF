@@ -20,8 +20,13 @@
 %% preamble.tex.
 
 \documentclass[iicol]{sn-jnl}
+\PassOptionsToPackage{force}{DOF-scholarly_paper}
+\usepackage{DOF-core}
+\bibliographystyle{sn-basic}
 \let\proof\relax
 \let\endproof\relax
+\newcommand{\institute}[1]{}
+\usepackage{manyfoot}
 \usepackage{DOF-core}
 \setcounter{tocdepth}{3} 
 \hypersetup{%
@@ -35,7 +40,7 @@
 \allowdisplaybreaks[4]
 \usepackage[caption]{subfig}
 \usepackage[size=footnotesize]{caption}
-
+\let\DOFauthor\relax
 \begin{document}
 \selectlanguage{USenglish}%
 \renewcommand{\bibname}{References}%
