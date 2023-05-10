@@ -23,5 +23,6 @@ define_template "./document-templates/root-lipics-v2021-UNSUPPORTED.tex"
                 "Unsupported template for LIPICS (v2021). Not for general use."
 define_template "./document-templates/root-svjour3-UNSUPPORTED.tex" 
                 "Unsupported template for SVJOUR. Not for general use."
-
+define_template "./document-templates/root-sn-article-UNSUPPORTED.tex" 
+                "Unsupported template for Springer Nature's template. Not for general use."
 end
