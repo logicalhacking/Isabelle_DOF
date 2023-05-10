@@ -64,12 +64,12 @@ text\<open>check @{side_by_side_figure sbsfig1} cmp to @{side_by_side_figure sbs
 
 (* And a side-chick ... *)
 
-text*[inlinefig::figure2, 
+text*[inlinefig::float, 
       caption="\<open>The Caption.\<close>"]
 \<open>@{theory_text [display, margin = 5] \<open>lemma A :: "a \<longrightarrow> b"\<close>}\<close>
 
 (*<*)
-text*[inlinegraph::figure2, 
+text*[inlinegraph::float, 
       caption="\<open>Another \<sigma>\<^sub>i+2 Caption.\<close>"]
      \<open>@{fig_content [display] (scale = 80, width=80, caption=\<open>This is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
                \<open>document/figures/A.png\<close>}\<close>
