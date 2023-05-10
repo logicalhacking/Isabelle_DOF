@@ -203,11 +203,14 @@ print_doc_classes
 print_doc_items
 
 ML\<open>
+map fst (Name_Space.dest_table (DOF_core.get_onto_classes \<^context>));
+
 let  val class_ids_so_far = ["Conceptual.A", "Conceptual.B", "Conceptual.C", "Conceptual.D", 
                              "Conceptual.E", "Conceptual.F", "Conceptual.G", "Conceptual.M", 
                              "Isa_COL.figure", "Isa_COL.chapter", "Isa_COL.figure2", "Isa_COL.section", 
-                             "Isa_COL.subsection", "Isa_COL.figure_group", "Isa_COL.text_element", 
-                             "Isa_COL.subsubsection", "Isa_COL.side_by_side_figure"]
+                             "Isa_COL.paragraph", "Isa_COL.subsection", "Isa_COL.figure_group", 
+                             "Isa_COL.text_element", "Isa_COL.subsubsection", 
+                             "Isa_COL.side_by_side_figure"]
      val docclass_tab = map fst (Name_Space.dest_table (DOF_core.get_onto_classes \<^context>));
 in @{assert} (class_ids_so_far = docclass_tab) end\<close>
 

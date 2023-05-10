@@ -21,7 +21,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: figure*
 \NewEnviron{isamarkupfigure*}[1][]{\isaDof[env={figure},#1]{\BODY}}
-\newisadof{figureDOTIsaUNDERSCORECOLDOTfigure}%
+\newisadof{IsaUNDERSCORECOLDOTfigure}%
 [label=,type=%
 ,IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth=%
 ,IsaUNDERSCORECOLDOTfigureDOTplacement=%
@@ -46,12 +46,31 @@
 % end: figure*
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin: figure2*
+\NewEnviron{isamarkupfigureTWO*}[1][]{\isaDof[env={figureTWO},#1]{\BODY}}
+\newisadof{IsaUNDERSCORECOLDOTfigureTWO}%
+[label=,type=%
+,IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth=%
+,IsaUNDERSCORECOLDOTfigureDOTplacement=%
+,IsaUNDERSCORECOLDOTfigureDOTsrc=%
+,IsaUNDERSCORECOLDOTfigureTWODOTcaption=%
+,IsaUNDERSCORECOLDOTfigureDOTspawnUNDERSCOREcolumns=enum False True%
+][1]{%
+  \begin{figure}[]
+    #1
+    \caption{\commandkey{IsaUNDERSCORECOLDOTfigureTWODOTcaption}}
+    \label{\commandkey{label}}%
+  \end{figure}
+}
+% end: figure2*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: side_by_side_figure*
 \NewEnviron{isamarkupsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure*}[1][]{\isaDof[env={sideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure},#1]{\BODY}}
-\newisadof{sideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTIsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure}%
+\newisadof{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure}%
 [label=,type=%
 ,IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth=%
 ,IsaUNDERSCORECOLDOTfigureDOTplacement=%

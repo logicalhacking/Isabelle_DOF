@@ -24,9 +24,8 @@ text\<open> Building a fundamental infrastructure for common document elements s
 theory Isa_COL   
   imports  Isa_DOF  
   keywords "title*"        "subtitle*"      
-           "chapter*"      "section*"   
+           "chapter*"      "section*"    "paragraph*"
            "subsection*"   "subsubsection*" 
-           "paragraph*"    "subparagraph*"         
            "figure*"       "side_by_side_figure*" :: document_body 
 
 begin
@@ -57,6 +56,8 @@ doc_class "subsection" = text_element +
    level         :: "int  option"    <=  "Some 2" 
 doc_class "subsubsection" = text_element +
    level         :: "int  option"    <=  "Some 3" 
+doc_class "paragraph" = text_element +
+   level         :: "int  option"    <=  "Some 4" 
 
 
 subsection\<open>Ontological Macros\<close>
@@ -138,8 +139,7 @@ val _ = heading_command \<^command_keyword>\<open>chapter*\<close> "section head
 val _ = heading_command \<^command_keyword>\<open>section*\<close> "section heading" (SOME (SOME 1));
 val _ = heading_command \<^command_keyword>\<open>subsection*\<close> "subsection heading" (SOME (SOME 2));
 val _ = heading_command \<^command_keyword>\<open>subsubsection*\<close> "subsubsection heading" (SOME (SOME 3));
-val _ = heading_command \<^command_keyword>\<open>paragraph*\<close> "paragraph heading" (SOME (SOME 4));
-val _ = heading_command \<^command_keyword>\<open>subparagraph*\<close> "subparagraph heading" (SOME (SOME 5));
+val _ = heading_command \<^command_keyword>\<open>paragraph*\<close> "paragraph" (SOME (SOME 4));
 
 end 
 end
@@ -154,7 +154,7 @@ datatype placement = pl_h  | (*here*)
                      pl_hb   (*here ->  bottom*)
 
 ML\<open> "side_by_side_figure"  |> Name_Space.declared (DOF_core.get_onto_classes \<^context>
-                                                    |> Name_Space.space_of_table)\<close>
+                           |> Name_Space.space_of_table)\<close>
 
 print_doc_classes
 
