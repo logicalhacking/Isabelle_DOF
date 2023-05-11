@@ -147,25 +147,24 @@ end
 
 section\<open> Library of Standard Text Ontology \<close>
 
-datatype placement = pl_h  | (*here*) 
-                     pl_t  | (*top*)
-                     pl_b  | (*bottom*)
-                     pl_ht | (*here ->  top*) 
-                     pl_hb   (*here ->  bottom*)
+datatype placement = here  |  top  |  bottom  
 
 ML\<open> "side_by_side_figure"  |> Name_Space.declared (DOF_core.get_onto_classes \<^context>
                            |> Name_Space.space_of_table)\<close>
 
-print_doc_classes
+datatype float_kind = listing | table | graphics
 
-doc_class figure   = 
-   relative_width   :: "int"  (* percent of textwidth *)    
-   src              :: "string"
-   placement        :: placement  
+doc_class float   = 
+   placement        :: "placement list"
+   kind             :: float_kind
    spawn_columns    :: bool <= True 
+   main_caption     :: string
 
-doc_class float     =  figure +
-   caption          :: string
+doc_class figure     =  float +
+   kind             :: float_kind
+   src              :: string
+   relative_width   :: int  (* to be deleted *)
+   invariant fig_kind :: "kind \<sigma> = graphics"
 
 
 doc_class side_by_side_figure = figure +
@@ -225,7 +224,7 @@ end\<close>
 
 setup\<open> DOF_lib.define_macro \<^binding>\<open>vs\<close>  "\\vspace{" "}" (check_latex_measure) \<close> 
 setup\<open> DOF_lib.define_macro \<^binding>\<open>hs\<close>  "\\hspace{" "}" (check_latex_measure) \<close> 
-
+define_shortcut* hfill \<rightleftharpoons> \<open>\hfill\<close>
 (*<*)
 
 text\<open>Tests: \<^vs>\<open>-0.14cm\<close>\<close>
@@ -266,29 +265,29 @@ text\<open>The intermediate development goal is to separate the ontological, top
 \<^emph>\<open>import\<close> of a figure. The hope is that this opens the way for more orthogonality and
 abstraction from the LaTeX engine.
 \<close>
-
-ML\<open>
+ML\<open>XML.enclose\<close>
+ML\<open>    
 
 type fig_content =   {relative_width  : int, (* percent of textwidth, default 100 *)
-                      scale           : int, (* percent, default 100 *)
+                      relative_height : int, (* percent, default 100 *)
                       caption         : Input.source (* default empty *)}
 
 val mt_fig_content = {relative_width  = 100,
-                      scale           = 100,    
+                      relative_height = 100,    
                       caption         = Input.empty }: fig_content
 
-fun upd_relative_width key {relative_width,scale,caption } : fig_content = 
-            {relative_width = key,scale = scale,caption = caption}: fig_content
+fun upd_relative_width key {relative_width,relative_height,caption } : fig_content = 
+            {relative_width = key,relative_height = relative_height,caption = caption}: fig_content
 
-fun upd_scale key  {relative_width,scale,caption } : fig_content = 
-            {relative_width = relative_width,scale = key,caption = caption}: fig_content
+fun upd_scale key  {relative_width,relative_height,caption } : fig_content = 
+            {relative_width = relative_width,relative_height = key,caption = caption}: fig_content
 
-fun upd_caption key {relative_width,scale,caption} : fig_content = 
-            {relative_width = relative_width,scale = scale,caption= key}: fig_content
+fun upd_caption key {relative_width,relative_height,caption} : fig_content = 
+            {relative_width = relative_width,relative_height = relative_height,caption= key}: fig_content
 
 
 val widthN     = "width"
-val scaleN     = "scale" 
+val heightN    = "height" 
 val captionN   = "caption";
 
 fun fig_content_modes (ctxt, toks) = 
@@ -297,7 +296,7 @@ fun fig_content_modes (ctxt, toks) =
                          (Parse.list1
                            (   (Args.$$$ widthN |-- Args.$$$ "=" -- Parse.int
                                 >> (fn (_, k) => upd_relative_width k))   
-                            || (Args.$$$ scaleN |-- Args.$$$ "=" -- Parse.int
+                            || (Args.$$$ heightN |-- Args.$$$ "=" -- Parse.int
                                 >> (fn (_, k) => upd_scale k))    
                             || (Args.$$$ captionN |-- Args.$$$ "=" -- Parse.document_source
                                 >> (fn (_, k) => upd_caption k))    
@@ -335,31 +334,41 @@ fun fig_content_antiquotation name scan =
     (scan : ((fig_content -> fig_content) * Input.source) context_parser)
     (fn ctxt => 
       (fn (cfg_trans,file:Input.source) =>
-          let val {relative_width,scale,caption} = cfg_trans mt_fig_content
-              val _      = if relative_width < 0 orelse scale<0 then error("negative parameter.") 
+          let val {relative_width,relative_height,caption} = cfg_trans mt_fig_content
+              val _      = if relative_width < 0 orelse relative_height <0 then error("negative parameter.") 
                                                                 else ()
-              val wdth_s = if relative_width = 100 then ""
-                           else "width="^Real.toString((Real.fromInt relative_width) 
+              val wdth_val_s = Real.toString((Real.fromInt relative_width)
                                               / (Real.fromInt 100))^"\\textwidth" 
-              val scale_s= if scale = 100 then ""
-                           else "scale="^Real.toString((Real.fromInt scale) / (Real.fromInt 100))
-              val arg    = enclose "[" "]" (commas [wdth_s,scale_s])
+              val ht_s= if relative_height = 100 then ""
+                           else "height="^Real.toString((Real.fromInt relative_height) 
+                                              / (Real.fromInt 100)) ^"\\textheight"
+              val arg    = enclose "[" "]" (commas ["keepaspectratio","width=\\textwidth",ht_s])
               val cap_txt= Document_Output.output_document ctxt {markdown = false} caption
               fun drop_latex_macro (XML.Elem (("latex_environment", [("name", "isabelle")]),xmlt)) = xmlt
                  |drop_latex_macro X = [X];
               val drop_latex_macros = List.concat o map drop_latex_macro;
-              val cap_txt = drop_latex_macros cap_txt                                       
+              val cap_txt' = drop_latex_macros cap_txt                                       
               val path   = Resources.check_file ctxt (SOME (get_document_dir ctxt)) file
                   (* ToDo: must be declared source of type png or jpeg or pdf, ... *)
            
-          in  file 
-              |> (Latex.string o Input.string_of) 
-              |> (XML.enclose ("\\includegraphics"^arg^"{") "}")
-              |> (fn X => X @ Latex.macro "caption" cap_txt)
+          in  if Input.string_of(caption) = ""  then 
+                   file 
+                   |> (Latex.string o Input.string_of) 
+                   |> (XML.enclose ("\\includegraphics"^arg^"{") "}")
+              else
+                   file 
+                   |> (Latex.string o Input.string_of) 
+                   |> (fn X => (Latex.string ("{"^wdth_val_s^"}")) 
+                                @ (Latex.string "\\centering")
+                                @ (XML.enclose ("\\includegraphics"^arg^"{") "}" X)
+                                @ (Latex.macro "caption" cap_txt'))
+                   |> (Latex.environment ("subcaptionblock") )
+(* BUG: newline at the end of subcaptionlbock, making side-by-side a figure-below-figure setup *)
           end
       )
     ));
-
+          
+val t = Latex.macro
 val _ = fig_content_antiquotation 
         : binding 
          -> ((fig_content -> fig_content) * Input.source) context_parser 
@@ -371,7 +380,7 @@ val _ = Theory.setup
 
 \<close>
 
-
+ML\<open>\<close>
 ML\<open>
 val _ = Path.parent
 val mdir = Resources.master_directory @{theory}
@@ -673,7 +682,7 @@ declare[[tab_cell_placing="left",tab_cell_height="18.0cm"]]
 section\<open>Tests\<close>
 (*<*)
 
-text\<open> @{fig_content   [display] (scale = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
+text\<open> @{fig_content   [display] (height = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
                       \<open>figures/isabelle-architecture.pdf\<close>}\<close>
 text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open>12.0cm\<close>,
                                  cell_height =\<open>13pt\<close>,  cell_width = \<open>12.0cm\<close>,
@@ -685,11 +694,6 @@ text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open
 
 (*>*)
 
-ML\<open>@{term "side_by_side_figure"};
-   @{typ "doc_class rexp"}; 
-   DOF_core.SPY;
-
-\<close>
 
 text\<open>@{term_ \<open>3 + 4::int\<close>} @{value_ \<open>3 + 4::int\<close>} \<close>
 end

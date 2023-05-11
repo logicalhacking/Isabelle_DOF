@@ -28,7 +28,7 @@ text*[S5'::"paragraph"]\<open>Paragraph\<close>
 
 section\<open>General Figure COL Elements\<close> 
 
-figure*[fig1_test::figure,spawn_columns=False,relative_width="95",src="''figures/A''"]
+figure*[fig1_test::figure,relative_width="95",src="''figures/A''"]
        \<open> This is the label text  \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<close>  
 
 text*[fig2_test::figure, spawn_columns=False, relative_width="95",src="''figures/A''"
@@ -65,22 +65,15 @@ text\<open>check @{side_by_side_figure sbsfig1} cmp to @{side_by_side_figure sbs
 (* And a side-chick ... *)
 
 text*[inlinefig::float, 
-      caption="\<open>The Caption.\<close>"]
-\<open>@{theory_text [display, margin = 5] \<open>lemma A :: "a \<longrightarrow> b"\<close>}\<close>
+      main_caption="\<open>The Caption.\<close>"]
+     \<open>@{theory_text [display, margin = 5] \<open>lemma A :: "a \<longrightarrow> b"\<close>}\<close>
 
-text*[fffff::float]\<open> @{fig_content   [display] (scale = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<close>) 
-                      \<open>figures/A.png\<close>}\<close>
-
-
-(*<*)
-text*[inlinegraph::float, 
-      caption="\<open>Another \<sigma>\<^sub>i+2 Caption.\<close>"]
-     \<open>@{fig_content [display] (scale = 80, width=80, caption=\<open>This is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<close>) 
-               \<open>figures/A.png\<close>}\<close>
-(*>*)
+text*[dupl_graphics::float, 
+      main_caption="\<open>The Caption.\<close>"]\<open>
+      @{fig_content (width=40, height=35, caption="This is a right test") "figures/A.png"}  
+      @{fig_content (width=40, height=35, caption="This is a left \<^term>\<open>\<sigma>\<^sub>i + 1\<close> test") "figures/B.png"} 
+\<close>
 
 
-
-(*<*)
 end
 (*>*)

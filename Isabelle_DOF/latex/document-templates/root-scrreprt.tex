@@ -26,7 +26,7 @@
 
 \usepackage{textcomp}
 \bibliographystyle{abbrvnat}
-\RequirePackage[caption]{subfig}
+\RequirePackage{subcaption}
 
 
 \usepackage[numbers, sort&compress, sectionbib]{natbib}
@@ -48,8 +48,6 @@
 \renewcommand{\sectionautorefname}{Section}
 \renewcommand{\subsectionautorefname}{Section}
 \renewcommand{\subsubsectionautorefname}{Section}
-\newcommand{\subtableautorefname}{\tableautorefname}
-\newcommand{\subfigureautorefname}{\figureautorefname}
 \maketitle
 \tableofcontents
 \IfFileExists{dof_session.tex}{\input{dof_session}}{\input{session}}

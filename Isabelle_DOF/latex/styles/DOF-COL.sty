@@ -51,15 +51,14 @@
 \NewEnviron{isamarkupfloat*}[1][]{\isaDof[env={float},#1]{\BODY}}
 \newisadof{IsaUNDERSCORECOLDOTfloat}%
 [label=,type=%
-,IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth=%
-,IsaUNDERSCORECOLDOTfigureDOTplacement=%
-,IsaUNDERSCORECOLDOTfigureDOTsrc=%
-,IsaUNDERSCORECOLDOTfloatDOTcaption=%
-,IsaUNDERSCORECOLDOTfigureDOTspawnUNDERSCOREcolumns=enum False True%
+,IsaUNDERSCORECOLDOTfloatDOTplacement=%
+,IsaUNDERSCORECOLDOTfloatDOTfloatUNDERSCOREkind=%
+,IsaUNDERSCORECOLDOTfloatDOTmainUNDERSCOREcaption=%
+,IsaUNDERSCORECOLDOTfloatDOTspawnUNDERSCOREcolumns=enum False True%
 ][1]{%
   \begin{figure}[]
     #1
-    \caption{\commandkey{IsaUNDERSCORECOLDOTfloatDOTcaption}}
+    \caption{\commandkey{IsaUNDERSCORECOLDOTfloatDOTmainUNDERSCOREcaption}}
     \label{\commandkey{label}}%
   \end{figure}
 }
