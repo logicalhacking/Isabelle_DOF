@@ -22,7 +22,7 @@ text*[introtext::introduction]\<open>
 The linking of the \<^emph>\<open>formal\<close> to the \<^emph>\<open>informal\<close> is perhaps the most pervasive challenge in the
 digitization of knowledge and its propagation. This challenge incites numerous research efforts
 summarized under the labels ``semantic web,'' ``data mining,'' or any form of advanced ``semantic''
-text processing.  A key role in structuring this linking play \<^emph>\<open>document ontologies\<close> (also called
+text processing.  A key role in structuring this linking plays is \<^emph>\<open>document ontologies\<close> (also called
 \<^emph>\<open>vocabulary\<close> in the semantic web community~@{cite "w3c:ontologies:2015"}), \<^ie>, a machine-readable
 form of the structure of documents as well as the document discourse.
 
@@ -30,9 +30,9 @@ Such ontologies can be used for the scientific discourse within scholarly articl
 libraries, and in the engineering discourse of standardized software certification 
 documents~@{cite "boulanger:cenelec-50128:2015" and "cc:cc-part3:2006"}. All these
 documents contain formal content and have to follow a given structure.  In practice, large groups of developers have to produce a substantial
-set of documents where the consistency is notoriously difficult to maintain. In particular, 
-certifications are centered around the \<^emph>\<open>traceability\<close> of requirements throughout the entire 
-set of documents. While technical solutions for the traceability problem exists (most notably:
+set of documents where  consistency is notoriously difficult to maintain. In particular, 
+certifications are centred around the \<^emph>\<open>traceability\<close> of requirements throughout the entire 
+set of documents. While technical solutions for the traceability problem exist (most notably:
 DOORS~@{cite "ibm:doors:2019"}), they are weak in the treatment of formal entities (such as formulas 
 and their logical contexts).
 
@@ -46,20 +46,20 @@ Another form of link between concepts is the \<^emph>\<open>is-a\<close> relatio
 the instances of a subclass to be instances of the super-class.
 
 Engineering an ontological language for documents that contain both formal and informal elements
-as occuring in formal theories is a particular challenge. To address this latter, we present 
+as occurring in formal theories is a particular challenge. To address this latter, we present 
 the Document Ontology Framework (\<^dof>) and an implementation of \<^dof> called \<^isadof>.
  \<^dof> is designed for building scalable and user-friendly  tools on top of interactive theorem 
-provers. \<^isadof> is an instance of this novel framework,  implemented as extension of Isabelle/HOL, 
+provers. \<^isadof> is an instance of this novel framework,  implemented as an extension of Isabelle/HOL, 
 to \<^emph>\<open>model\<close> typed ontologies and to \<^emph>\<open>enforce\<close> them  during document evolution. Based on Isabelle's 
 infrastructures, ontologies may refer to types, terms, proven theorems, code, or established 
 assertions. Based on a novel adaption of the Isabelle IDE (called PIDE, @{cite "wenzel:asynchronous:2014"}), 
 a document is checked to be \<^emph>\<open>conform\<close> to a particular ontology---\<^isadof> is designed to give fast 
-user-feedback \<^emph>\<open>during the capture of content\<close>. This is particularly valuable in case of document 
+user-feedback \<^emph>\<open>during the capture of content\<close>. This is particularly valuable in the case of document 
 evolution, where the \<^emph>\<open>coherence\<close> between the formal and the informal parts of the content can 
 be mechanically checked.
 
 To avoid any misunderstanding: \<^isadof>  is \<^emph>\<open>not a theory in HOL\<close> on ontologies and operations to 
-track and trace links in texts, it is an \<^emph>\<open>environment to write structured text\<close> which 
+track and trace links in texts. It is an \<^emph>\<open>environment to write structured text\<close> which 
 \<^emph>\<open>may contain\<close> Isabelle/HOL definitions and proofs like mathematical articles, tech-reports and
 scientific papers---as the present one, which is written in \<^isadof> itself. \<^isadof> is a plugin 
 into the Isabelle/Isar framework in the style of~@{cite "wenzel.ea:building:2007"}. However,
@@ -80,13 +80,13 @@ This manual can be read in different ways, depending on what you want to accompl
 different main user groups: 
 \<^enum> \<^emph>\<open>\<^isadof> users\<close>, \<^ie>, users that just want to edit a core document, be it for a paper or a 
   technical report, using a given ontology. These users should focus on 
-  @{docitem (unchecked) \<open>isadof_tour\<close>} and, depending on their knowledge of Isabelle/HOL, also
+  @{docitem (unchecked) \<open>isadof_tour\<close>} and, depending on their knowledge of Isabelle/HOL, also on
   @{docitem (unchecked) \<open>background\<close>}. 
 \<^enum> \<^emph>\<open>Ontology developers\<close>, \<^ie>,  users that want to develop new ontologies or modify existing 
   document ontologies. These users should, after having gained acquaintance as a user, focus 
   on @{docitem (unchecked) \<open>isadof_ontologies\<close>}. 
 \<^enum> \<^emph>\<open>\<^isadof> developers\<close>, \<^ie>, users that want to extend or modify \<^isadof>, \<^eg>, by adding new 
-  text-elements. These users should read @{docitem (unchecked) \<open>isadof_developers\<close>}
+  text-elements. These users should read @{docitem (unchecked) \<open>isadof_developers\<close>}.
 \<close>
 
 subsubsection\<open>Typographical Conventions\<close>
