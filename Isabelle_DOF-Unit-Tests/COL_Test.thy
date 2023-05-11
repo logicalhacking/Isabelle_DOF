@@ -69,13 +69,14 @@ text*[inlinefig::float,
 \<open>@{theory_text [display, margin = 5] \<open>lemma A :: "a \<longrightarrow> b"\<close>}\<close>
 
 text*[fffff::float]\<open> @{fig_content   [display] (scale = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<close>) 
-                      \<open>document/figures/A.png\<close>}\<close>
+                      \<open>figures/A.png\<close>}\<close>
+
 
 (*<*)
 text*[inlinegraph::float, 
       caption="\<open>Another \<sigma>\<^sub>i+2 Caption.\<close>"]
-     \<open>@{fig_content [display] (scale = 80, width=80, caption=\<open>This is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
-               \<open>document/figures/A.png\<close>}\<close>
+     \<open>@{fig_content [display] (scale = 80, width=80, caption=\<open>This is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<close>) 
+               \<open>figures/A.png\<close>}\<close>
 (*>*)
 
 

@@ -314,6 +314,21 @@ fun document_antiq (check: Proof.context -> Path.T option -> Input.source -> Pat
     Latex.string (Latex.output_ascii_breakable "/" (Input.string_of source))
     |> Latex.macro "isatt"));
 
+val SPY = Unsynchronized.ref([XML.Text ""])
+
+fun get_session_dir ctxt path = 
+         Resources.check_session_dir ctxt 
+                                     (SOME (path))  
+                                     (Syntax.read_input ".")
+          handle ERROR s => (if String.isPrefix "Bad session root directory (missing ROOT or ROOTS): " s 
+                             then get_session_dir ctxt (Path.dir path)
+                             else error s)
+
+fun get_document_dir ctxt =
+      let val thy = Proof_Context.theory_of ctxt
+          val sess_dir = get_session_dir ctxt  (Resources.master_directory thy)
+      in  Path.append sess_dir  (Path.explode "document") end;
+
 
 fun fig_content_antiquotation name scan =
   (Document_Output.antiquotation_raw_embedded name 
@@ -329,15 +344,18 @@ fun fig_content_antiquotation name scan =
               val scale_s= if scale = 100 then ""
                            else "scale="^Real.toString((Real.fromInt scale) / (Real.fromInt 100))
               val arg    = enclose "[" "]" (commas [wdth_s,scale_s])
-              val lab    = Document_Output.output_document ctxt {markdown = false} caption
-              val path   = Resources.check_file ctxt NONE file
-              val _      = writeln("file "^Path.file_name path)  
+              val cap_txt= Document_Output.output_document ctxt {markdown = false} caption
+              fun drop_latex_macro (XML.Elem (("latex_environment", [("name", "isabelle")]),xmlt)) = xmlt
+                 |drop_latex_macro X = [X];
+              val drop_latex_macros = List.concat o map drop_latex_macro;
+              val cap_txt = drop_latex_macros cap_txt                                       
+              val path   = Resources.check_file ctxt (SOME (get_document_dir ctxt)) file
                   (* ToDo: must be declared source of type png or jpeg or pdf, ... *)
            
           in  file 
               |> (Latex.string o Input.string_of) 
               |> (XML.enclose ("\\includegraphics"^arg^"{") "}")
-              |> (fn X => X @ Latex.macro "caption" lab)
+              |> (fn X => X @ Latex.macro "caption" cap_txt)
           end
       )
     ));
@@ -353,6 +371,34 @@ val _ = Theory.setup
 
 \<close>
 
+
+ML\<open>
+val _ = Path.parent
+val mdir = Resources.master_directory @{theory}
+val pp =  Resources.check_session_dir @{context} 
+          (SOME (Path.dir mdir ))  (Syntax.read_input ".nnn")
+          handle ERROR s => (if String.isPrefix "No such directory:" s then 
+                                (writeln ("MMM"^s); mdir)
+                             else error s)
+
+
+val ppp = (Path.explode "document") 
+
+fun get_session_dir ctxt path = 
+         Resources.check_session_dir ctxt 
+                                     (SOME (path))  
+                                     (Syntax.read_input ".")
+          handle ERROR s => (if String.isPrefix "Bad session root directory (missing ROOT or ROOTS): " s 
+                             then get_session_dir ctxt (Path.dir path)
+                             else error s)
+
+fun get_document_dir ctxt =
+      let val thy = Proof_Context.theory_of ctxt
+          val sess_dir = get_session_dir ctxt  (Resources.master_directory thy)
+      in  Path.append sess_dir  (Path.explode "document") end;
+
+get_document_dir @{context}
+\<close>
 subsection\<open>Tables\<close>
 (* TODO ! ! ! *)
 (* dito the future monitor: table - block *)
@@ -628,7 +674,7 @@ section\<open>Tests\<close>
 (*<*)
 
 text\<open> @{fig_content   [display] (scale = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
-                      \<open>../document/figures/isabelle-architecture.pdf\<close>}\<close>
+                      \<open>figures/isabelle-architecture.pdf\<close>}\<close>
 text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open>12.0cm\<close>,
                                  cell_height =\<open>13pt\<close>,  cell_width = \<open>12.0cm\<close>,
                                  cell_bgnd_color=black,cell_line_color=red,cell_line_width=\<open>12.0cm\<close>)

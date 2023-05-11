@@ -415,14 +415,15 @@ Figure*[fff::figure,src="\<open>this is a side-by-side\<close>"]
    \<close>  
 *)
 
+
 (*<*)
-Figure*[ffff::float, caption="\<open>this is another 2 side-by-side\<close>"]
-   \<open>@{figure_content [width=40, scale=35, caption="This is a left test"] "ROOT"}\<close> 
-   \<open>@{figure_content [width=40, scale=35, caption="This is a right test"] "ROOT"}\<close>  
+
+text-latex\<open>
+   @{fig_content (width=40, scale=35, caption="This is a right test") "figures/A.png"}  
+   @{fig_content (width=40, scale=35, caption="This is a left \<^term>\<open>\<sigma>\<^sub>i + 1\<close> test") "figures/A.png"} 
+\<close>
 
 
-text*[fffff::float]\<open> @{fig_content   [display] (scale = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
-                      \<open>document/figures/A.png\<close>}\<close>
 
 (* proposed syntax for sub-figure labels : text\<open> @{figure "ffff(2)"}\<close> *)
 
