@@ -138,11 +138,11 @@ abstract*[abs, keywordlist="[\<open>Ontology\<close>, \<open>Ontological Modelin
     comprehensively its major commands. Many examples show typical best-practice
     applications of the system.
   
-    It is an unique feature of  \<^isadof>  that ontologies may be used to control
-    the link between formal and informal content in documents in a machine
-    checked way. These links can connect both text elements and formal
+    It is a unique feature of  \<^isadof>  that ontologies may be used to control
+    the link between formal and informal content in documents inan automatic-checked way. 
+    These links can connect both text elements and formal
     modeling elements such as terms, definitions, code  and logical formulas,
-    altogether \<^emph>\<open>integrated\<close> in a state-of-the-art interactive theorem prover.
+    altogether \<^emph>\<open>integrated\<close> into a state-of-the-art interactive theorem prover.
 
 \<close>
 
