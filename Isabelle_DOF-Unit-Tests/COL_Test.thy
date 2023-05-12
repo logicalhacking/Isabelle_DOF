@@ -34,7 +34,7 @@ figure*[fig1_test::figure,relative_width="95",file_src="''figures/A.png''"]
 text*[fig2_test::figure, spawn_columns=False, relative_width="95",file_src="''figures/A.png''"
 ]\<open> This is the label text\<close>
 
-text\<open>check @{figure [display] fig1_test} cmp to @{figure fig2_test}\<close>
+text\<open>check @{figure fig1_test} cmp to @{figure fig2_test}\<close>
 
 
 

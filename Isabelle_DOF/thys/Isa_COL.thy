@@ -325,6 +325,15 @@ fun get_document_dir ctxt =
           val sess_dir = get_session_dir ctxt  (Resources.master_directory thy)
       in  Path.append sess_dir  (Path.explode "document") end;
 
+fun generate_caption ctxt caption = 
+    let 
+              val cap_txt= Document_Output.output_document ctxt {markdown = false} caption
+              fun drop_latex_macro (XML.Elem (("latex_environment", [("name", "isabelle")]),xmlt)) = xmlt
+                 |drop_latex_macro X = [X]
+              val drop_latex_macros = List.concat o map drop_latex_macro;
+    in
+      drop_latex_macros cap_txt
+    end
 fun fig_content ctxt (cfg_trans,file:Input.source) = 
        let val {relative_width,relative_height,caption} = cfg_trans mt_fig_content
               val _      = if relative_width < 0 orelse relative_height <0 then error("negative parameter.") 
@@ -335,12 +344,7 @@ fun fig_content ctxt (cfg_trans,file:Input.source) =
                            else "height="^Real.toString((Real.fromInt relative_height) 
                                               / (Real.fromInt 100)) ^"\\textheight"
               val arg    = enclose "[" "]" (commas ["keepaspectratio","width=\\textwidth",ht_s])
-              val cap_txt= Document_Output.output_document ctxt {markdown = false} caption
-              fun drop_latex_macro (XML.Elem (("latex_environment", [("name", "isabelle")]),xmlt)) = xmlt
-                 |drop_latex_macro X = [X];
-              val drop_latex_macros = List.concat o map drop_latex_macro;
-              val cap_txt' = drop_latex_macros cap_txt                                       
-              val path   = Resources.check_file ctxt (SOME (get_document_dir ctxt)) file
+              val _   = Resources.check_file ctxt (SOME (get_document_dir ctxt)) file
                   (* ToDo: must be declared source of type png or jpeg or pdf, ... *)
            
           in  if Input.string_of(caption) = ""  then 
@@ -353,7 +357,7 @@ fun fig_content ctxt (cfg_trans,file:Input.source) =
                    |> (fn X => (Latex.string ("{"^wdth_val_s^"}")) 
                                 @ (Latex.string "\\centering")
                                 @ (XML.enclose ("\\includegraphics"^arg^"{") "}" X)
-                                @ (Latex.macro "caption" cap_txt'))
+                                @ (Latex.macro "caption" (generate_caption ctxt caption)))
                    |> (Latex.environment ("subcaptionblock") )
 (* BUG: newline at the end of subcaptionlbock, making side-by-side a figure-below-figure setup *)
           end
@@ -412,9 +416,13 @@ fun float_command (name, pos) descr cid  =
                {is_inline = true}
                {define = true} oid pos (set_default_class cid_pos) doc_attrs
       val opts = {markdown = false, body = true}
-      fun parse_and_tex opts (margs, text) ctxt  = fig_content ctxt 
-                                                       (convert_meta_args margs o upd_caption text, 
-                                                        convert_src_from_margs margs)
+      fun parse_and_tex opts (margs, text) ctxt  = (fig_content ctxt 
+                                                       (convert_meta_args margs o upd_caption Input.empty, 
+                                                        convert_src_from_margs margs))
+                                                   |> (fn X => (Latex.macro0 "centering" 
+                                                                 @ X 
+                                                                 @ Latex.macro "caption"  (generate_caption ctxt text))) 
+                                                   |> (Latex.environment ("figure") )
   in  Monitor_Command_Parser.float_command (name, pos) descr opts create_instance parse_and_tex
   end
 
