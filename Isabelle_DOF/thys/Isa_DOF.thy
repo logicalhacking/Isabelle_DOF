@@ -670,8 +670,6 @@ fun typ_to_cid (Type(s,[\<^Type>\<open>unit\<close>])) = Long_Name.qualifier s
    |typ_to_cid _ = error("type is not an ontological type.")
 
 
-val SPY = Unsynchronized.ref(Bound 0)
-
 fun check_regexps term = 
     let val _ = case fold_aterms  Term.add_free_names term [] of
                    n::_ => error("No free variables allowed in monitor regexp:" ^ n)
@@ -806,24 +804,24 @@ fun binding_from_onto_class_pos name thy  =
 fun binding_from_instance_pos name thy  =
   binding_from_pos get_instances get_instance_name_global name thy
 
-fun check_invs get_ml_invs cid_long oid is_monitor thy =
+fun check_invs get_ml_invs invariant_class_of invariant_check_of cid_long oid is_monitor thy =
   thy |> Context.Theory
       |> (fn ctxt =>
             let val invs = get_ml_invs (Proof_Context.init_global thy)
                                               |> Name_Space.dest_table
-                val checks = invs |> filter (fn (_, inv) => let val ML_Invariant class = inv
-                                                            in class |> #class |> equal cid_long
-                                                            end)
-                                  |>  map (fn (_, inv) => let val ML_Invariant check = inv
-                                                          in check |> #check end)
+                val checks = invs |> filter (fn (name, _) => 
+                                                equal (invariant_class_of name thy) cid_long)
+                                  |> map (fn (name, _) => invariant_check_of name thy)
                                   |> map (fn check => check oid is_monitor ctxt)
-            in (List.all I checks) end)
+            in (forall I checks) end)
 
-val check_ml_invs = check_invs get_ml_invariants 
+val check_ml_invs = check_invs get_ml_invariants ml_invariant_class_of ml_invariant_check_of
 
-val check_opening_ml_invs = check_invs get_opening_ml_invariants 
+val check_opening_ml_invs =
+  check_invs get_opening_ml_invariants opening_ml_invariant_class_of opening_ml_invariant_check_of
 
-val check_closing_ml_invs = check_invs get_closing_ml_invariants
+val check_closing_ml_invs =
+  check_invs get_closing_ml_invariants closing_ml_invariant_class_of closing_ml_invariant_check_of
 
 (* Output name for LaTeX macros.
    Also rewrite "." to allow macros with objects long names *)
@@ -833,11 +831,9 @@ val ISA_prefix = "Isabelle_DOF_"
 
 val doc_class_prefix = ISA_prefix ^ "doc_class_"
 
+val long_doc_class_prefix = ISA_prefix ^ "long_doc_class_"
+
 fun is_ISA s = String.isPrefix ISA_prefix (Long_Name.base_name s)
-
-fun get_class_name_without_prefix s = String.extract (s, String.size(doc_class_prefix), NONE)
-
-fun get_doc_class_name_without_ISA_prefix s = String.extract (s, String.size(ISA_prefix), NONE)
 
 
 fun transduce_term_global {mk_elaboration=mk_elaboration} (term,pos) thy =
@@ -1066,27 +1062,6 @@ struct
 fun err msg pos = error (msg ^ Position.here pos);
 fun warn msg pos = warning (msg ^ Position.here pos);
 
-fun check_path check_file ctxt dir (name, pos) =
-  let
-    val _ = Context_Position.report ctxt pos (Markup.language_path true); (* TODO: pos should be 
-                                                                                   "lifted" to 
-                                                                                   type source *)
-
-    val path = Path.append dir (Path.explode name) handle ERROR msg => err msg pos;
-    val _ = Path.expand path handle ERROR msg => err msg pos;
-    val _ = Context_Position.report ctxt pos (Markup.path (File.symbolic_path path));
-    val _ =
-      (case check_file of
-        NONE => path
-      | SOME check => (check path handle ERROR msg => err msg pos));
-  in path end;
-
-
-fun ML_isa_antiq check_file thy (name, _, pos) =
-  let val path = check_path check_file (Proof_Context.init_global thy) Path.current (name, pos);
-  in "Path.explode " ^ ML_Syntax.print_string (Path.implode path) end;
-
-
 fun ML_isa_check_generic check thy (term, pos) =
   let val name = (HOLogic.dest_string term
                   handle TERM(_,[t]) => error ("wrong term format: must be string constant: " 
@@ -1115,19 +1090,20 @@ fun ML_isa_check_thm thy (term, _, pos) _ =
 
 fun ML_isa_check_file thy (term, _, pos) _ =
   let fun check thy (name, _) = name |> Syntax.read_input
-                                       |> Resources.check_file (Proof_Context.init_global thy) NONE 
+                                     |> Resources.check_file (Proof_Context.init_global thy) NONE 
   in  ML_isa_check_generic check thy (term, pos) end;
 
 fun check_instance thy (term, _, pos) s =
   let
     val bname = Long_Name.base_name s;
     val qual = Long_Name.qualifier s;
-    val class_name =
-        Long_Name.qualify qual (String.extract(bname , String.size(DOF_core.doc_class_prefix), NONE));
+    val class_name = (case try (unprefix DOF_core.doc_class_prefix) bname of
+                        NONE => unprefix DOF_core.long_doc_class_prefix bname
+                      | SOME name => name)
+                     |> Long_Name.qualify qual
     fun check thy (name, _)  =
       let
-        val object_cid = let val DOF_core.Instance cid = DOF_core.get_instance_global name thy
-                         in cid |> #cid end
+        val object_cid = DOF_core.cid_of name thy
         fun check' (class_name, object_cid) =
           if class_name = object_cid then
              DOF_core.value_of name thy
@@ -1150,6 +1126,11 @@ fun ML_isa_check_trace_attribute thy (term, _, _) _ =
     val _ = DOF_core.get_instance_global oid thy
   in SOME term end
 
+fun ML_isa_elaborate_generic (_:theory) isa_name ty term_option _ =
+  case term_option of
+      NONE => error("Wrong term option. You must use a defined term")
+    | SOME term => Const (isa_name, ty) $ term
+
 (* Convert excluded mixfix symbols.
    Unfortunately due to different lexical conventions for constant symbols and mixfix symbols
    we can not use "_" or "'" for classes names in term antiquotation.
@@ -1159,10 +1140,19 @@ val clean_string = translate_string
     | "'" => "-"
     | c => c);
 
-fun ML_isa_elaborate_generic (_:theory) isa_name ty term_option _ =
-  case term_option of
-      NONE => error("Wrong term option. You must use a defined term")
-    | SOME term => Const (isa_name, ty) $ term
+fun rm_mixfix name mixfix thy =
+  let
+    val old_constants =
+      Consts.dest (Sign.consts_of thy) |> #constants
+      |> map fst
+      |> filter (Long_Name.base_name #> equal name)
+      |> map (pair mixfix)
+      |> map swap
+      |> map (apfst (Syntax.read_term_global thy))
+      |> map (apsnd Mixfix.mixfix)
+  in thy |> (Local_Theory.notation false Syntax.mode_default old_constants
+             |> Named_Target.theory_map)
+  end
 
 fun elaborate_instance thy _ _ term_option pos =
   case term_option of
@@ -1177,49 +1167,64 @@ fun elaborate_instance thy _ _ term_option pos =
   because the class name is already bound to "doc_class Regular_Exp.rexp" constant
   by add_doc_class_cmd function
 *)
-fun declare_ISA_class_accessor_and_check_instance doc_class_name =
+fun declare_ISA_class_accessor_and_check_instance (doc_class_name, bind_pos) thy =
   let
-    val bind = Binding.prefix_name DOF_core.doc_class_prefix doc_class_name
-    val typestring = "string => " ^ (Binding.name_of doc_class_name)
-    val conv_class_name = clean_string (Binding.name_of doc_class_name)
-    val mixfix_string = "@{" ^ conv_class_name ^ " _}"
+    val bname = Long_Name.base_name doc_class_name
+    val bname' = prefix DOF_core.doc_class_prefix bname
+    val bind = bname' |> pair bind_pos |> swap |> Binding.make
+    val bind' = prefix DOF_core.long_doc_class_prefix bname
+                |> pair bind_pos |> swap |> Binding.make
+    val const_typ = \<^typ>\<open>string\<close> --> Syntax.read_typ (Proof_Context.init_global thy) doc_class_name 
+    fun mixfix_enclose name = name |> enclose "@{"  " _}"
+    val mixfix = clean_string bname |> mixfix_enclose
+    val mixfix' = clean_string doc_class_name |> mixfix_enclose
   in
-    Sign.add_consts_cmd [(bind, typestring, Mixfix.mixfix(mixfix_string))]
-    #> DOF_core.add_isa_transformer bind ((check_instance, elaborate_instance)
-                                          |> DOF_core.make_isa_transformer)
+    thy |> rm_mixfix bname' mixfix
+        |> Sign.add_consts [(bind, const_typ, Mixfix.mixfix mixfix)]
+        |> DOF_core.add_isa_transformer bind ((check_instance, elaborate_instance)
+                                               |> DOF_core.make_isa_transformer)
+        |> Sign.add_consts [(bind', const_typ, Mixfix.mixfix mixfix')]
+        |> DOF_core.add_isa_transformer bind' ((check_instance, elaborate_instance)
+                                                |> DOF_core.make_isa_transformer)
   end
 
 fun elaborate_instances_list thy isa_name _ _ _ =
   let
     val base_name = Long_Name.base_name isa_name
-    fun get_isa_name_without_intances_suffix s =
-      String.extract (s, 0, SOME (String.size(s) - String.size(instances_of_suffixN)))
-    val base_name_without_suffix = get_isa_name_without_intances_suffix base_name
-    val base_name' = DOF_core.get_class_name_without_prefix (base_name_without_suffix)
-    val class_typ = Proof_Context.read_typ (Proof_Context.init_global thy)
-                                                (base_name')
-    val long_class_name = DOF_core.get_onto_class_name_global base_name' thy 
+    val qualifier = Long_Name.qualifier isa_name
+    val isa_name' = (case try (unprefix DOF_core.doc_class_prefix) base_name of
+                        NONE => unprefix DOF_core.long_doc_class_prefix base_name
+                      | SOME name => name)
+                    |> unsuffix instances_of_suffixN
+                    |> Long_Name.qualify qualifier
+    val class_typ = isa_name' |> Proof_Context.read_typ (Proof_Context.init_global thy)
+    val long_class_name = DOF_core.get_onto_class_name_global isa_name' thy 
     val values = thy |> Proof_Context.init_global |> DOF_core.get_instances
                  |> Name_Space.dest_table 
-                 |> filter (fn (_, instance) =>
-                              let val DOF_core.Instance cid = instance
-                              in (cid |> #cid) = long_class_name end)
+                 |> filter (fn (name, _) => equal (DOF_core.cid_of name thy) long_class_name)
                  |> map (fn (oid, _) => DOF_core.value_of oid thy)
   in HOLogic.mk_list class_typ values end
 
 
-fun declare_class_instances_annotation thy doc_class_name =
+fun declare_class_instances_annotation (doc_class_name, bind_pos) thy =
   let
-    val bind = Binding.prefix_name DOF_core.doc_class_prefix doc_class_name
-               |> Binding.suffix_name instances_of_suffixN
-    val class_list_typ = Proof_Context.read_typ (Proof_Context.init_global thy)
-                                                ((Binding.name_of doc_class_name) ^ " List.list")
-    val conv_class_name' = clean_string ((Binding.name_of doc_class_name) ^ instances_of_suffixN)
-    val mixfix_string = "@{" ^ conv_class_name' ^ "}"
+    val bname = Long_Name.base_name doc_class_name
+    val bname' = prefix DOF_core.doc_class_prefix bname |> suffix instances_of_suffixN
+    val bind = bname' |> pair bind_pos |> swap |> Binding.make
+    val bind' = prefix DOF_core.long_doc_class_prefix bname
+                |> suffix instances_of_suffixN |> pair bind_pos |> swap |> Binding.make
+    val class_typ = doc_class_name |> Proof_Context.read_typ (Proof_Context.init_global thy)
+    fun mixfix_enclose name = name |> enclose "@{"  "}"
+    val mixfix = clean_string (bname ^ instances_of_suffixN) |> mixfix_enclose
+    val mixfix' = clean_string (doc_class_name ^ instances_of_suffixN) |> mixfix_enclose
   in
-    Sign.add_consts [(bind, class_list_typ, Mixfix.mixfix(mixfix_string))]
-    #>  DOF_core.add_isa_transformer bind ((check_identity, elaborate_instances_list)
-                                            |> DOF_core.make_isa_transformer)
+    thy |> rm_mixfix bname' mixfix
+        |> Sign.add_consts [(bind, \<^Type>\<open>list class_typ\<close>, Mixfix.mixfix mixfix)]
+        |> DOF_core.add_isa_transformer bind ((check_identity, elaborate_instances_list)
+                                               |> DOF_core.make_isa_transformer)
+        |> Sign.add_consts [(bind', \<^Type>\<open>list class_typ\<close>, Mixfix.mixfix mixfix')]
+        |> DOF_core.add_isa_transformer bind' ((check_identity, elaborate_instances_list)
+                                                |> DOF_core.make_isa_transformer)
   end                            
 
 fun symbex_attr_access0 ctxt proj_term term =
@@ -2169,7 +2174,9 @@ fun document_output_reports name {markdown, body} sem_attrs transform_attr meta_
     fun markup xml =
       let val m = if body then Markup.latex_body else Markup.latex_heading
       in [XML.Elem (m (Latex.output_name name), xml)] end;
-  in document_output {markdown = markdown, markup = markup} sem_attrs transform_attr meta_args text ctxt end;
+    val config = {markdown = markdown, markup = markup}
+  in document_output config sem_attrs transform_attr meta_args text ctxt 
+  end;
 
 
 (* document output commands *)
@@ -2180,6 +2187,15 @@ fun document_command (name, pos) descr mark cmd sem_attrs transform_attr =
       Toplevel.theory' (fn _ => cmd meta_args)
           (SOME (Toplevel.presentation_context #> document_output_reports name mark sem_attrs transform_attr meta_args text)))); 
 
+fun float_command (name, pos) descr (mark: {body: bool, markdown: bool})
+                   cmd  output_figure = 
+  Outer_Syntax.command (name, pos) descr 
+  (ODL_Meta_Args_Parser.attributes -- Parse.document_source >>  
+     (fn (meta_args, text) =>
+          Toplevel.theory' (fn _ => cmd meta_args)
+             (SOME (Toplevel.presentation_context
+              #> (fn ctxt => (output_figure mark (meta_args, text)) ctxt)
+              )))) 
 
 (* Core Command Definitions *)
 
@@ -2949,6 +2965,7 @@ fun define_inv cid_long ((lbl, pos), inv) thy =
 fun add_doc_class_cmd overloaded (raw_params, binding)
                       raw_parent raw_fieldsNdefaults reject_Atoms regexps invariants thy =
     let 
+      val bind_pos = Binding.pos_of binding
       val ctxt = Proof_Context.init_global thy;
       val params = map (apsnd (Typedecl.read_constraint ctxt)) raw_params;
       val ctxt1 = fold (Variable.declare_typ o TFree) params ctxt;
@@ -3005,8 +3022,8 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
            (* The function declare_ISA_class_accessor_and_check_instance uses a prefix
               because the class name is already bound to "doc_class Regular_Exp.rexp" constant
               by add_doc_class_cmd function *)
-           |> ISA_core.declare_ISA_class_accessor_and_check_instance binding
-           |> (fn thy => (ISA_core.declare_class_instances_annotation thy binding) thy)
+           |> (fn thy => ISA_core.declare_ISA_class_accessor_and_check_instance (cid thy, bind_pos) thy)
+           |> (fn thy => ISA_core.declare_class_instances_annotation (cid thy, bind_pos) thy)
     end;
            
 

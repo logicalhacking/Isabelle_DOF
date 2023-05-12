@@ -200,10 +200,10 @@ Consequently, it has the same limitations as \<^emph>\<open>value*\<close>.
 text\<open>Using the ontology defined in \<^theory>\<open>Isabelle_DOF-Unit-Tests.Concept_High_Level_Invariants\<close>
 we can check logical statements:\<close>
 
-term*\<open>authored_by @{Introduction \<open>introduction2\<close>} = authored_by @{Introduction \<open>introduction3\<close>}\<close>
-assert*\<open>authored_by @{Introduction \<open>introduction2\<close>} = authored_by @{Introduction \<open>introduction3\<close>}\<close>
-assert*\<open>\<not>(authored_by @{Introduction \<open>introduction2\<close>}
-          = authored_by @{Introduction \<open>introduction4\<close>})\<close>
+term*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
+assert*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
+assert*\<open>\<not>(authored_by @{introduction \<open>introduction2\<close>}
+          = authored_by @{introduction \<open>introduction4\<close>})\<close>
 
 text\<open>Assertions must be boolean expressions, so the following assertion triggers an error:\<close>
 (* Error:

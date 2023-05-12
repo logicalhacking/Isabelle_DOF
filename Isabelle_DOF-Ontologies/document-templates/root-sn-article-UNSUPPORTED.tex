@@ -19,19 +19,15 @@
 %% All customization and/or additional packages should be added to the file
 %% preamble.tex.
 
-\RequirePackage{ifvtex}
-\documentclass[abstract=true,fontsize=11pt,DIV=12,paper=a4]{scrartcl}
-
+\documentclass[iicol]{sn-jnl}
+\PassOptionsToPackage{force}{DOF-scholarly_paper}
 \usepackage{DOF-core}
-
-\usepackage{textcomp}
-\bibliographystyle{abbrvnat}
-\RequirePackage{subcaption}
-
-
-\usepackage[numbers, sort&compress, sectionbib]{natbib}
-
-\usepackage{hyperref}
+\bibliographystyle{sn-basic}
+\let\proof\relax
+\let\endproof\relax
+\newcommand{\institute}[1]{}
+\usepackage{manyfoot}
+\usepackage{DOF-core}
 \setcounter{tocdepth}{3} 
 \hypersetup{%
    bookmarksdepth=3
@@ -42,13 +38,19 @@
 } % more detailed digital TOC (aka bookmarks)
 \sloppy
 \allowdisplaybreaks[4]
-
-\newenvironment{frontmatter}{}{}
-
+\let\DOFauthor\relax
 \begin{document}
-\begin{frontmatter}
-  \maketitle
-\end{frontmatter}
+\selectlanguage{USenglish}%
+\renewcommand{\bibname}{References}%
+\renewcommand{\figurename}{Fig.}
+\renewcommand{\abstractname}{Abstract.}
+\renewcommand{\subsubsectionautorefname}{Sect.}
+\renewcommand{\subsectionautorefname}{Sect.}
+\renewcommand{\sectionautorefname}{Sect.}
+\renewcommand{\figureautorefname}{Fig.}
+\newcommand{\lstnumberautorefname}{Line}
+
+\maketitle
 \IfFileExists{dof_session.tex}{\input{dof_session}}{\input{session}}
 % optional bibliography
 \IfFileExists{root.bib}{{\bibliography{root}}}{}

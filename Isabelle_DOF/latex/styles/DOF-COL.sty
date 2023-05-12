@@ -19,80 +19,20 @@
 \RequirePackage{DOF-core}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% begin: figure*
-\NewEnviron{isamarkupfigure*}[1][]{\isaDof[env={figure},#1]{\BODY}}
-\newisadof{figureDOTIsaUNDERSCORECOLDOTfigure}%
+% begin: float*
+\NewEnviron{isamarkupfloat*}[1][]{\isaDof[env={float},#1]{\BODY}}
+\newisadof{IsaUNDERSCORECOLDOTfloat}%
 [label=,type=%
-,IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth=%
-,IsaUNDERSCORECOLDOTfigureDOTplacement=%
-,IsaUNDERSCORECOLDOTfigureDOTsrc=%
-,IsaUNDERSCORECOLDOTfigureDOTspawnUNDERSCOREcolumns=enum False True%
+,IsaUNDERSCORECOLDOTfloatDOTplacement=%
+,IsaUNDERSCORECOLDOTfloatDOTfloatUNDERSCOREkind=%
+,IsaUNDERSCORECOLDOTfloatDOTmainUNDERSCOREcaption=%
+,IsaUNDERSCORECOLDOTfloatDOTspawnUNDERSCOREcolumns=enum False True%
 ][1]{%
-  \begin{figure}[]
-    \centering
-    \ifcommandkey{IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth}
-    {%
-      \gdef\dof@width{\commandkey{IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth}}
-      \gdef\dof@src{\commandkey{IsaUNDERSCORECOLDOTfigureDOTsrc}}
-      \FPdiv\scale{\dof@width}{100}%
-      \includegraphics[width=\scale\textwidth]{\dof@src}%
-    }{%
-      \gdef\dof@src{\commandkey{IsaUNDERSCORECOLDOTfigureDOTsrc}}
-      \includegraphics[]{\dof@src}%
-    } 
-    \caption{#1}\label{\commandkey{label}}%
+  \begin{figure}
+    #1
+    \caption{\commandkey{IsaUNDERSCORECOLDOTfloatDOTmainUNDERSCOREcaption}}
+    \label{\commandkey{label}}%
   \end{figure}
 }
-% end: figure*
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% begin: side_by_side_figure*
-\NewEnviron{isamarkupsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure*}[1][]{\isaDof[env={sideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure},#1]{\BODY}}
-\newisadof{sideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTIsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigure}%
-[label=,type=%
-,IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth=%
-,IsaUNDERSCORECOLDOTfigureDOTplacement=%
-,IsaUNDERSCORECOLDOTfigureDOTsrc=%
-,IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTanchor=%
-,IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTcaption=%
-,IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTrelativeUNDERSCOREwidthTWO=%
-,IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTsrcTWO=%
-,IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTanchorTWO=%
-,IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTcaptionTWO=%
-,IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTplacement=%
-,IsaUNDERSCORECOLDOTfigureDOTspawnUNDERSCOREcolumns=enum False True%
-][1]{%
-  \begin{figure}[]
-    \subfloat[\label{\commandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTanchor}}\commandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTcaption}]%
-      {\ifcommandkey{IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth}%
-       {%
-          \gdef\dof@width{\commandkey{IsaUNDERSCORECOLDOTfigureDOTrelativeUNDERSCOREwidth}}
-          \gdef\dof@src{\commandkey{IsaUNDERSCORECOLDOTfigureDOTsrc}}
-          \FPdiv\scale{\dof@width}{100}%
-          \includegraphics[width=\scale\textwidth]{\dof@src}%
-        }{%
-          \gdef\dof@src{\commandkey{IsaUNDERSCORECOLDOTfigureDOTsrc}}
-          \includegraphics[]{\dof@src}%
-        }% 
-      }%
-      \hfill%
-      \subfloat[\label{\commandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTanchorTWO}}\commandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTcaptionTWO}]%
-      {\ifcommandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTrelativeUNDERSCOREwidthTWO}%
-        {%
-          \gdef\dof@width{\commandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTrelativeUNDERSCOREwidthTWO}}
-          \gdef\dof@src{\commandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTsrcTWO}}
-          \FPdiv\scale{\dof@width}{100}%
-          \includegraphics[width=\scale\textwidth]{\dof@src}%
-        }{%
-          \gdef\dof@src{\commandkey{IsaUNDERSCORECOLDOTsideUNDERSCOREbyUNDERSCOREsideUNDERSCOREfigureDOTsrcTWO}}
-          \includegraphics[]{\dof@src}%
-        }% 
-      }%
-    \caption{#1}\label{\commandkey{label}}%
-  \end{figure}
-}
-% end: side_by_side_figure*
+% end: float*
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

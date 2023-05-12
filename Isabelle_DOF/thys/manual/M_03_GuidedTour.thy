@@ -332,10 +332,10 @@ which is written in the so-called free-form style: Formulas are superficially pa
 type-set, but no deeper type-checking and checking with the underlying logical context
 is undertaken. \<close>
 
-figure*[fig0::figure,spawn_columns=False,relative_width="90",src="''figures/header_CSP_source.png''"]
+figure*[fig0::figure,relative_width="90",file_src="''figures/header_CSP_source.png''"]
        \<open> A mathematics paper as integrated document source ... \<close>  
 
-figure*[fig0B::figure,spawn_columns=False,relative_width="90",src="''figures/header_CSP_pdf.png''"]
+figure*[fig0B::figure,relative_width="90",file_src="''figures/header_CSP_pdf.png''"]
        \<open> ... and as corresponding \<^pdf>-output. \<close>  
 
 text\<open>The integrated source of this paper-excerpt is shown in \<^figure>\<open>fig0\<close>, while the
@@ -382,7 +382,7 @@ standard inductive \<^theory_text>\<open>datatype\<close> definition mechanism i
 for attribute declarations. Vice-versa, document class definitions imply a corresponding HOL type 
 definition. \<close>
 
-figure*[fig01::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP.png''"]
+figure*[fig01::figure,relative_width="95",file_src="''figures/definition-use-CSP.png''"]
        \<open> A screenshot of the integrated source with definitions ...\<close>  
 text\<open>An example for a sequence of (Isabelle-formula-)texts, their ontological declarations as 
 \<^typ>\<open>definition\<close>s in terms of the \<^verbatim>\<open>scholarly_paper\<close>-ontology and their type-conform referencing 
@@ -406,7 +406,7 @@ We refrain ourselves here to briefly describe three freeform antiquotations used
 \<^item>  the freeform antiquotations for verbatim, emphasized, bold, or footnote text elements.
 \<close>
 
-figure*[fig02::figure,spawn_columns=False,relative_width="95",src="''figures/definition-use-CSP-pdf.png''"]
+figure*[fig02::figure,relative_width="95",file_src="''figures/definition-use-CSP-pdf.png''"]
        \<open> ... and the corresponding \<^pdf>-output.\<close>  
 
 text\<open>
@@ -431,7 +431,7 @@ doc_class figure   = text_section +
    spawn_columns   :: bool <= True 
 \<close>}
 \<close>
-figure*[fig_figures::figure,spawn_columns=False,relative_width="85",src="''figures/Dogfood-figures''"]
+figure*[fig_figures::figure,relative_width="85",file_src="''figures/Dogfood-figures.png''"]
        \<open> Declaring figures in the integrated source.\<close>
 
 text\<open> 
@@ -466,42 +466,40 @@ which signals to \<^isadof> begin and end of the part of the integrated source
 in which the text-elements instances are expected to appear in the textual ordering 
 defined by \<^typ>\<open>article\<close>.
 \<close>
+text*[exploring::float, 
+      main_caption="\<open>Exploring text elements.\<close>"]
+\<open>
+@{fig_content (width=48, caption="Exploring a reference of a text-element.") "figures/Dogfood-II-bgnd1.png"
+}\<^hfill>@{fig_content (width=47, caption="Exploring the class of a text element.") "figures/Dogfood-III-bgnd-text_section.png"} 
+\<close>
 
-side_by_side_figure*[exploring::side_by_side_figure,anchor="''fig-Dogfood-II-bgnd1''",
-                      caption="''Exploring a reference of a text-element.''",relative_width="48",
-                      src="''figures/Dogfood-II-bgnd1''",anchor2="''fig-bgnd-text_section''",
-                      caption2="''Exploring the class of a text element.''",relative_width2="47",
-                      src2="''figures/Dogfood-III-bgnd-text_section''"]\<open>Exploring text elements.\<close>
-
-
-side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-jumpInDocCLass''",
-                      caption="''Hyperlink to class-definition.''",relative_width="48",
-                      src="''figures/Dogfood-IV-jumpInDocCLass''",
-                      anchor2="''fig:Dogfood-V-attribute''",
-                      caption2="''Exploring an attribute (hyperlinked to the class).''",
-                      relative_width2="47",
-                      src2="''figures/Dogfood-V-attribute''"]\<open>Navigation via generated hyperlinks.\<close>
+text*[hyperlinks::float, 
+      main_caption="\<open>Navigation via generated hyperlinks.\<close>"]
+\<open>
+@{fig_content (width=48, caption="Hyperlink to class-definition.") "figures/Dogfood-IV-jumpInDocCLass.png"
+}\<^hfill>@{fig_content (width=47, caption="Exploring an attribute (hyperlinked to the class).") "figures/Dogfood-V-attribute.png"} 
+\<close>
 
 text\<open> 
   From these class definitions, \<^isadof> also automatically generated editing 
   support for Isabelle/jEdit. In 
-  @{figure "exploring"}(left)
+  @{float "exploring"}(left)
   % \autoref{fig-Dogfood-II-bgnd1} 
   and
-  @{figure "exploring"}(right)
+  @{float "exploring"}(right)
   % \autoref{fig-bgnd-text_section} 
   we show how hovering over links permits to explore its 
   meta-information. Clicking on a document class identifier permits to hyperlink into the 
   corresponding class definition (
-  @{figure "hyperlinks"}(left)
+  @{float "hyperlinks"}(left)
   %\autoref{fig:Dogfood-IV-jumpInDocCLass})
   ; hovering over an attribute-definition (which is qualified in order to disambiguate; cf.
-  @{figure "hyperlinks"}(right)
+  @{float "hyperlinks"}(right)
   %\autoref{fig:Dogfood-V-attribute}
   ) shows its type.
 \<close>
 
-figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-VI-linkappl.png''"]
+figure*[figDogfoodVIlinkappl::figure,relative_width="80",file_src="''figures/Dogfood-VI-linkappl.png''"]
        \<open>Exploring an ontological reference.\<close> 
 
 text\<open> 
@@ -533,7 +531,7 @@ ontologically checked prior arguments \<open>arg\<^sub>1 ... arg\<^sub>n\<^sub>-
 process; ontologically, they can be used to assure the traceability of, \<^eg>, semi-formal 
 assumptions throughout their way to formalisation and use in lemmas and proofs. \<close> 
 
-figure*[doc_termAq::figure,relative_width="50",src="''figures/doc-mod-term-aq.pdf''"]
+figure*[doc_termAq::figure,relative_width="50",file_src="''figures/doc-mod-term-aq.pdf''"]
                       \<open>Term-Antiquotations Referencing to Annotated Elements\<close>
 text\<open>As shown in @{figure \<open>doc_termAq\<close>}, this feature of  \<^isadof> substantially increases
 the expressibility of links between the formal and the informal in \<^dof> documents.\<close>
@@ -639,7 +637,7 @@ So its value is that readers can just reuse some of these snippets and adapt the
 purposes.
 \<close>
 
-figure*[strict_SS::figure, relative_width="95", src="''figures/MyCommentedIsabelle.png''"] 
+figure*[strict_SS::figure, relative_width="95", file_src="''figures/MyCommentedIsabelle.png''"] 
 \<open>A table with a number of SML functions, together with their type.\<close>
 
 text\<open>

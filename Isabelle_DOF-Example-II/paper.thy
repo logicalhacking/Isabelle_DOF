@@ -56,31 +56,30 @@ abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Alg
 text\<open>\<close>
 section*[introheader::introduction,main_author="Some(@{docitem ''bu''}::author)"]\<open> Introduction \<close> 
 text*[introtext::introduction, level="Some 1"]\<open>
-Communicating Sequential Processes (\<^csp>) is a language 
-to specify and verify patterns of interaction of concurrent systems.
-Together with CCS and LOTOS, it belongs to the family of \<^emph>\<open>process algebras\<close>. 
-\<^csp>'s rich theory comprises denotational, operational and algebraic semantic facets 
-and has influenced programming languages such as Limbo, Crystal, Clojure and
-most notably Golang @{cite "donovan2015go"}. \<^csp> has been applied in 
-industry as a tool for specifying and verifying the concurrent aspects of hardware 
-systems, such as the T9000 transansputer @{cite "Barret95"}. 
+Communicating Sequential Processes (\<^csp>) is a language to specify and verify patterns of 
+interaction of concurrent systems. Together with CCS and LOTOS, it belongs to the family of 
+\<^emph>\<open>process algebras\<close>. \<^csp>'s rich theory comprises denotational, operational and algebraic semantic 
+facets and has influenced programming languages such as Limbo, Crystal, Clojure and most notably 
+Golang @{cite "donovan2015go"}. \<^csp> has been applied in industry as a tool for specifying and 
+verifying the concurrent aspects of hardware systems, such as the T9000 transansputer 
+@{cite "Barret95"}. 
 
 The theory of \<^csp> was first described in 1978 in a book by Tony Hoare @{cite "Hoare:1985:CSP:3921"}, 
 but has since evolved substantially @{cite "BrookesHR84" and "brookes-roscoe85" and "roscoe:csp:1998"}.
-\<^csp> describes the most common communication and synchronization mechanisms
-with one single language primitive: synchronous communication written \<open>_\<lbrakk>_\<rbrakk>_\<close>. \<^csp> semantics is 
-described by a fully abstract model of behaviour designed to be \<^emph>\<open>compositional\<close>: the denotational
-semantics of a process \<open>P\<close> encompasses all possible behaviours of this process in the context of all 
-possible environments \<open>P \<lbrakk>S\<rbrakk> Env\<close> (where \<open>S\<close> is the set of \<open>atomic events\<close> both \<open>P\<close> and \<open>Env\<close> must
-synchronize). This design objective has the consequence that two kinds of choice have to 
-be distinguished: 
-  \<^enum> the \<^emph>\<open>external choice\<close>, written \<open>_\<box>_\<close>, which forces a process "to follow" whatever
-    the environment offers, and
-  \<^enum> the \<^emph>\<open>internal choice\<close>, written \<open>_\<sqinter>_\<close>, which imposes on the environment of a process 
-    "to follow" the non-deterministic choices made.
+\<^csp> describes the most common communication and synchronization mechanisms with one single language 
+primitive: synchronous communication written \<open>_\<lbrakk>_\<rbrakk>_\<close>. \<^csp> semantics is described by a fully abstract 
+model of behaviour designed to be \<^emph>\<open>compositional\<close>: the denotational semantics of a process \<open>P\<close> 
+encompasses all possible behaviours of this process in the context of all possible environments 
+\<open>P \<lbrakk>S\<rbrakk> Env\<close> (where \<open>S\<close> is the set of \<open>atomic events\<close> both \<open>P\<close> and \<open>Env\<close> must synchronize). This 
+design objective has the consequence that two kinds of choice have to be distinguished: \<^vs>\<open>0.1cm\<close>
 
+  \<^enum> the \<^emph>\<open>external choice\<close>, written \<open>_\<box>_\<close>, which forces a process "to follow" whatever
+    the environment offers, and \<^vs>\<open>-0.4cm\<close>
+  \<^enum> the \<^emph>\<open>internal choice\<close>, written \<open>_\<sqinter>_\<close>, which imposes on the environment of a process 
+    "to follow" the non-deterministic choices made.\<^vs>\<open>0.3cm\<close>
 \<close>
-text\<open>
+
+text\<open> \<^vs>\<open>-0.6cm\<close>
 Generalizations of these two operators \<open>\<box>x\<in>A. P(x)\<close> and \<open>\<Sqinter>x\<in>A. P(x)\<close> allow for modeling the concepts 
 of \<^emph>\<open>input\<close> and \<^emph>\<open>output\<close>: Based on the prefix operator \<open>a\<rightarrow>P\<close> (event \<open>a\<close> happens, then the process 
 proceeds with \<open>P\<close>), receiving input is modeled by \<open>\<box>x\<in>A. x\<rightarrow>P(x)\<close> while sending output is represented 
@@ -127,10 +126,10 @@ attempt to formalize denotational \<^csp> semantics covering a part of Bill Rosc
     omitted.\<close>}. 
 \<close>
 
-section*["pre"::tc,main_author="Some(@{docitem \<open>bu\<close>}::author)"]
+section*["pre"::tc,main_author="Some(@{author \<open>bu\<close>}::author)"]
 \<open>Preliminaries\<close>
 
-subsection*[cspsemantics::tc, main_author="Some(@{docitem ''bu''})"]\<open>Denotational \<^csp> Semantics\<close>
+subsection*[cspsemantics::tc, main_author="Some(@{author ''bu''})"]\<open>Denotational \<^csp> Semantics\<close>
 
 text\<open> The denotational semantics (following @{cite "roscoe:csp:1998"}) comes in three layers: 
 the \<^emph>\<open>trace model\<close>, the \<^emph>\<open>(stable) failures model\<close> and the \<^emph>\<open>failure/divergence model\<close>.
@@ -144,9 +143,9 @@ processes \<open>Skip\<close> (successful termination) and \<open>Stop\<close> (
 Note that the trace sets, representing all \<^emph>\<open>partial\<close> history, is in general prefix closed.\<close>
 
 text*[ex1::math_example, status=semiformal, level="Some 1"] \<open>
-Let two processes be defined as follows:
+Let two processes be defined as follows:\<^vs>\<open>0.2cm\<close>
 
-  \<^enum>  \<open>P\<^sub>d\<^sub>e\<^sub>t = (a \<rightarrow> Stop) \<box> (b \<rightarrow> Stop)\<close>
+  \<^enum> \<open>P\<^sub>d\<^sub>e\<^sub>t = (a \<rightarrow> Stop) \<box> (b \<rightarrow> Stop)\<close>
   \<^enum> \<open>P\<^sub>n\<^sub>d\<^sub>e\<^sub>t = (a \<rightarrow> Stop) \<sqinter> (b \<rightarrow> Stop)\<close> 
 \<close> 
 
@@ -190,7 +189,7 @@ of @{cite "IsobeRoggenbach2010"} is restricted to a variant of the failures mode
  
 \<close>
 
-subsection*["isabelleHol"::tc, main_author="Some(@{docitem ''bu''})"]\<open>Isabelle/HOL\<close>
+subsection*["isabelleHol"::tc, main_author="Some(@{author ''bu''})"]\<open>Isabelle/HOL\<close>
 text\<open> Nowadays, Isabelle/HOL is one of the major interactive theory development environments
 @{cite "nipkow.ea:isabelle:2002"}. HOL stands for Higher-Order Logic, a logic based on simply-typed
 \<open>\<lambda>\<close>-calculus extended by parametric polymorphism and Haskell-like type-classes.
@@ -212,25 +211,23 @@ distribution comes with rich libraries comprising Sets, Numbers, Lists, etc. whi
 For this work, a particular library called \<^theory_text>\<open>HOLCF\<close> is intensively used. It provides classical 
 domain theory for a particular type-class \<open>\<alpha>::pcpo\<close>, \<^ie> the class of types  \<open>\<alpha>\<close> for which 
 
-   \<^enum>  a least element \<open>\<bottom>\<close> is defined, and
+   \<^enum> a least element \<open>\<bottom>\<close> is defined, and
    \<^enum> a complete partial order \<open>_\<sqsubseteq>_\<close> is defined.
 
  For these types, \<^theory_text>\<open>HOLCF\<close> provides a fixed-point operator \<open>\<mu>X. f X\<close> as well as the 
 fixed-point induction and other (automated) proof infrastructure. Isabelle's type-inference can 
 automatically infer, for example, that if \<open>\<alpha>::pcpo\<close>, then \<open>(\<beta> \<Rightarrow> \<alpha>)::pcpo\<close>. \<close>
   
-section*["csphol"::tc,main_author="Some(@{docitem ''bu''}::author)", level="Some 2"]
+section*["csphol"::tc,main_author="Some(@{author ''bu''}::author)", level="Some 2"]
 \<open>Formalising Denotational \<^csp> Semantics in HOL \<close>
 
-text\<open>\<close>
-
-subsection*["processinv"::tc, main_author="Some(@{docitem ''bu''})"]
+subsection*["processinv"::tc, main_author="Some(@{author ''bu''})"]
 \<open>Process Invariant and Process Type\<close>
 text\<open> First, we need a slight revision of the concept
 of \<^emph>\<open>trace\<close>: if \<open>\<Sigma>\<close> is the type of the atomic events (represented by a type variable), then
-we need to extend this type by a special event \<open>\<surd>\<close> (called "tick") signaling termination.
-Thus, traces have the type \<open>(\<Sigma>+\<surd>)\<^sup>*\<close>, written \<open>\<Sigma>\<^sup>\<surd>\<^sup>*\<close>; since \<open>\<surd>\<close> may only occur at the end of a trace, 
-we need to define a predicate \<open>front\<^sub>-tickFree t\<close> that requires from traces that \<open>\<surd>\<close> can only occur 
+we need to extend this type by a special event \<open>\<checkmark>\<close> (called "tick") signaling termination.
+Thus, traces have the type \<open>(\<Sigma>\<uplus>\<checkmark>)\<^sup>*\<close>, written \<open>\<Sigma>\<^sup>\<checkmark>\<^sup>*\<close>; since \<open>\<checkmark>\<close> may only occur at the end of a trace, 
+we need to define a predicate \<open>front\<^sub>-tickFree t\<close> that requires from traces that \<open>\<checkmark>\<close> can only occur 
 at the end.
 
 Second, in the traditional literature, the semantic domain is implicitly described by 9 "axioms" 
@@ -245,24 +242,24 @@ Informally, these are:
    \<^item> the tick accepted after a trace \<open>s\<close> implies that all other events are refused; 
    \<^item> a divergence trace with any suffix is itself a divergence one
    \<^item> once a process has diverged, it can engage in or refuse any sequence of events.
-   \<^item> a trace ending with \<open>\<surd>\<close> belonging to divergence set implies that its 
-     maximum prefix without \<open>\<surd>\<close> is also a divergent trace.
+   \<^item> a trace ending with \<open>\<checkmark>\<close> belonging to divergence set implies that its 
+     maximum prefix without \<open>\<checkmark>\<close> is also a divergent trace.
 
 More formally, a process \<open>P\<close> of the type \<open>\<Sigma> process\<close> should have the following properties:
 
-@{cartouche [display] \<open>([],{}) \<in> \<F> P \<and>
+@{cartouche [display, indent=10] \<open>([],{}) \<in> \<F> P \<and>
 (\<forall> s X.  (s,X) \<in> \<F> P \<longrightarrow> front_tickFree s) \<and>
 (\<forall> s t . (s@t,{}) \<in> \<F> P \<longrightarrow> (s,{}) \<in> \<F> P) \<and>
 (\<forall> s X Y. (s,Y) \<in> \<F> P \<and> X\<subseteq>Y \<longrightarrow> (s,X) \<in> \<F> P) \<and> 
 (\<forall> s X Y. (s,X) \<in> \<F> P \<and> (\<forall>c \<in> Y. ((s@[c],{}) \<notin> \<F> P)) \<longrightarrow> (s,X \<union> Y) \<in> \<F> P) \<and>
-(\<forall> s X.  (s@[\<surd>],{}) \<in> \<F> P \<longrightarrow> (s,X-{\<surd>}) \<in> \<F> P) \<and>
+(\<forall> s X.  (s@[\<checkmark>],{}) \<in> \<F> P \<longrightarrow> (s,X-{\<checkmark>}) \<in> \<F> P) \<and>
 (\<forall> s t. s \<in> \<D> P \<and> tickFree s \<and> front_tickFree t \<longrightarrow> s@t \<in> \<D> P)  \<and>
 (\<forall> s X. s \<in> \<D> P \<longrightarrow> (s,X) \<in> \<F> P) \<and>
-(\<forall> s. s@[\<surd>] \<in> \<D> P \<longrightarrow> s \<in> \<D> P)\<close>}
+(\<forall> s. s@[\<checkmark>] \<in> \<D> P \<longrightarrow> s \<in> \<D> P)\<close>}
 
 Our objective is to encapsulate this wishlist into a type constructed as a conservative
 theory extension in our theory \<^holcsp>.
-Therefore third, we define a pre-type for processes \<open>\<Sigma> process\<^sub>0\<close> by \<open> \<P>(\<Sigma>\<^sup>\<surd>\<^sup>* \<times> \<P>(\<Sigma>\<^sup>\<surd>)) \<times> \<P>(\<Sigma>\<^sup>\<surd>)\<close>.
+Therefore third, we define a pre-type for processes \<open>\<Sigma> process\<^sub>0\<close> by \<open> \<P>(\<Sigma>\<^sup>\<checkmark>\<^sup>* \<times> \<P>(\<Sigma>\<^sup>\<checkmark>)) \<times> \<P>(\<Sigma>\<^sup>\<checkmark>)\<close>.
 Forth, we turn our wishlist of "axioms" above into the definition of a predicate \<open>is_process P\<close> 
 of type \<open>\<Sigma> process\<^sub>0 \<Rightarrow> bool\<close> deciding if its conditions are fulfilled. Since \<open>P\<close> is a pre-process,
 we replace \<open>\<F>\<close> by \<open>fst\<close> and  \<open>\<D>\<close> by \<open>snd\<close> (the HOL projections into a pair).
@@ -275,7 +272,7 @@ but this can be constructed in a straight-forward manner. Suitable definitions f
 \<open>\<T>\<close>, \<open>\<F>\<close> and \<open>\<D>\<close> lifting \<open>fst\<close> and \<open>snd\<close> on the new \<open>'\<alpha> process\<close>-type allows to derive
 the above properties for any \<open>P::'\<alpha> process\<close>. \<close>
 
-subsection*["operator"::tc, main_author="Some(@{docitem ''lina''})"]
+subsection*["operator"::tc, main_author="Some(@{author ''lina''})"]
 \<open>\<^csp> Operators over the Process Type\<close>
 text\<open> Now, the operators of \<^csp> \<open>Skip\<close>, \<open>Stop\<close>, \<open>_\<sqinter>_\<close>,  \<open>_\<box>_\<close>, \<open>_\<rightarrow>_\<close>,\<open>_\<lbrakk>_\<rbrakk>_\<close> etc. 
 for internal choice, external choice, prefix and parallel composition, can 
@@ -300,7 +297,7 @@ The definitional presentation of the \<^csp> process operators according to @{ci
 follows always this scheme. This part of the theory comprises around 2000 loc. 
 \<close>
 
-subsection*["orderings"::tc, main_author="Some(@{docitem ''bu''})"]
+subsection*["orderings"::tc, main_author="Some(@{author ''bu''})"]
 \<open>Refinement Orderings\<close>
 
 text\<open> \<^csp> is centered around the idea of process refinement; many critical properties, 
@@ -330,7 +327,7 @@ states, from which no internal progress is possible.
 \<close>
 
 
-subsection*["fixpoint"::tc, main_author="Some(@{docitem ''lina''})"]
+subsection*["fixpoint"::tc, main_author="Some(@{author ''lina''})"]
 \<open>Process Ordering and HOLCF\<close>
 text\<open> For any denotational semantics, the fixed point theory giving semantics to systems
 of recursive equations is considered as keystone. Its prerequisite is a complete partial ordering
@@ -351,7 +348,7 @@ We define \<open>P \<sqsubseteq> Q \<equiv> \<psi>\<^sub>\<D> \<and> \<psi>\<^su
 text\<open>The third condition \<open>\<psi>\<^sub>\<M>\<close> implies that the set of minimal divergent traces 
 (ones with no proper prefix that is also a divergence) in  \<open>P\<close>,  denoted by \<open>Mins(\<D> P)\<close>, 
 should be a subset of the trace set of \<open>Q\<close>. 
-%One may note that each element in \<open>Mins(\<D> P)\<close> do actually not contain the \<open>\<surd>\<close>, 
+%One may note that each element in \<open>Mins(\<D> P)\<close> do actually not contain the \<open>\<checkmark>\<close>, 
 %which can be deduced from the process invariants described 
 %in the precedent @{technical "processinv"}. This can be explained by the fact that we are not 
 %really concerned with what a process does after it terminates. 
@@ -397,7 +394,7 @@ Fixed-point inductions are the main proof weapon in verifications, together with
 and the \<^csp> laws. Denotational arguments can be hidden as they are not needed in practical 
 verifications. \<close>
 
-subsection*["law"::tc, main_author="Some(@{docitem ''lina''})"]
+subsection*["law"::tc, main_author="Some(@{author ''lina''})"]
 \<open>\<^csp> Rules: Improved Proofs and New Results\<close>
 
 
@@ -439,12 +436,12 @@ cases to be considered as well as their complexity makes pen and paper proofs
 practically infeasible.
 \<close>
 
-section*["newResults"::tc,main_author="Some(@{docitem ''safouan''}::author)",
-                                 main_author="Some(@{docitem ''lina''}::author)", level= "Some 3"]
+section*["newResults"::tc,main_author="Some(@{author ''safouan''}::author)",
+                                 main_author="Some(@{author ''lina''}::author)", level= "Some 3"]
 \<open>Theoretical Results on Refinement\<close>
 text\<open>\<close>
-subsection*["adm"::tc,main_author="Some(@{docitem ''safouan''}::author)", 
-                                  main_author="Some(@{docitem ''lina''}::author)"]
+subsection*["adm"::tc,main_author="Some(@{author ''safouan''}::author)", 
+                                  main_author="Some(@{author ''lina''}::author)"]
 \<open>Decomposition Rules\<close>
 text\<open>
 In our framework, we implemented the pcpo process refinement together with the five refinement 
@@ -479,8 +476,8 @@ The failure and divergence projections of this operator are also interdependent,
 sequence operator. Hence, this operator is not monotonic with \<open>\<sqsubseteq>\<^sub>\<F>\<close>, \<open>\<sqsubseteq>\<^sub>\<D>\<close> and \<open>\<sqsubseteq>\<^sub>\<T>\<close>, but monotonic 
 when their combinations are considered. \<close>
 
-subsection*["processes"::tc,main_author="Some(@{docitem ''safouan''}::author)", 
-                            main_author="Some(@{docitem ''lina''}::author)"]
+subsection*["processes"::tc,main_author="Some(@{author ''safouan''}::author)", 
+                            main_author="Some(@{author ''lina''}::author)"]
 \<open>Reference Processes and their Properties\<close>
 text\<open>
 We now present reference processes that exhibit basic behaviors, introduced in  
@@ -566,13 +563,13 @@ the Failure/Divergence Semantics of \<^csp>.\<close>
 
 Definition*[X10::"definition", level="Some 2"]\<open> \<open>deadlock\<^sub>-free P \<equiv>  DF\<^sub>S\<^sub>K\<^sub>I\<^sub>P UNIV \<sqsubseteq>\<^sub>\<F> P\<close>  \<close>
 
-text\<open>\<^noindent> A process \<open>P\<close> is deadlock-free if and only if after any trace \<open>s\<close> without \<open>\<surd>\<close>, the union of \<open>\<surd>\<close> 
+text\<open>\<^noindent> A process \<open>P\<close> is deadlock-free if and only if after any trace \<open>s\<close> without \<open>\<checkmark>\<close>, the union of \<open>\<checkmark>\<close> 
 and all events of \<open>P\<close> can never be a refusal set associated to \<open>s\<close>, which means that \<open>P\<close> cannot 
 be deadlocked after any non-terminating trace.   
 \<close>
 
 Theorem*[T1, short_name="\<open>DF definition captures deadlock-freeness\<close>", level="Some 2"]
-\<open> \<^hfill> \<^br> \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<surd>}\<union>events_of P) \<notin> \<F> P)\<close> \<close>   
+\<open> \<^hfill> \<^br> \<open>deadlock_free P \<longleftrightarrow> (\<forall>s\<in>\<T> P. tickFree s \<longrightarrow> (s, {\<checkmark>}\<union>events_of P) \<notin> \<F> P)\<close> \<close>   
 Definition*[X11, level="Some 2"]\<open>  \<open>livelock\<^sub>-free P \<equiv> \<D> P = {} \<close>   \<close>
 
 text\<open> Recall that all five reference processes are livelock-free. 
@@ -600,11 +597,11 @@ then it may still be livelock-free. % This makes sense since livelocks are worse
 
 \<close>
 
-section*["advanced"::tc,main_author="Some(@{docitem ''safouan''}::author)",level="Some 3"]
+section*["advanced"::tc,main_author="Some(@{author ''safouan''}::author)",level="Some 3"]
 \<open>Advanced Verification Techniques\<close>
 
 text\<open>
- Based on the refinement framework discussed in @{docitem "newResults"}, we will now
+ Based on the refinement framework discussed in @{technical "newResults"}, we will now
 turn to some more advanced proof principles, tactics and verification techniques. 
 We will demonstrate them on two paradigmatic examples well-known in the \<^csp> literature: 
 The CopyBuffer and Dijkstra's Dining Philosophers. In both cases, we will exploit 
@@ -615,7 +612,7 @@ verification. In the latter case, we present an approach to a verification of a 
 architecture, in this case a ring-structure of arbitrary size.
 \<close>
 
-subsection*["illustration"::tc,main_author="Some(@{docitem ''safouan''}::author)", level="Some 3"]
+subsection*["illustration"::tc,main_author="Some(@{author ''safouan''}::author)", level="Some 3"]
 \<open>The General CopyBuffer Example\<close>
 text\<open>
 We consider the paradigmatic copy buffer example @{cite "Hoare:1985:CSP:3921" and "Roscoe:UCS:2010"} 
@@ -663,7 +660,7 @@ of 2 lines proof-script involving the derived algebraic laws of \<^csp>.
 
 After proving that \<open>SYSTEM\<close> implements \<open>COPY\<close> for arbitrary alphabets, we aim to profit from this 
 first established result to check which relations \<open>SYSTEM\<close> has wrt. to the reference processes of 
-@{docitem "processes"}. Thus, we prove that \<open>COPY\<close> is deadlock-free which implies livelock-free, 
+@{technical "processes"}. Thus, we prove that \<open>COPY\<close> is deadlock-free which implies livelock-free, 
 (proof by fixed-induction  similar to \<open>lemma: COPY \<sqsubseteq> SYSTEM\<close>), from which we can immediately infer 
 from transitivity that \<open>SYSTEM\<close> is. Using refinement relations, we killed four birds with one stone 
 as we proved the deadlock-freeness and  the livelock-freeness for both \<open>COPY\<close> and \<open>SYSTEM\<close> processes. 
@@ -680,7 +677,7 @@ corollary deadlock_free COPY
 \<close>
 
 
-subsection*["inductions"::tc,main_author="Some(@{docitem ''safouan''}::author)"]
+subsection*["inductions"::tc,main_author="Some(@{author ''safouan''}::author)"]
 \<open>New Fixed-Point Inductions\<close>
 
 text\<open>
@@ -697,7 +694,7 @@ For this reason, we derived a number of alternative induction schemes (which are
 in the HOLCF library), which are also relevant for our final Dining Philophers example.
 These are essentially adaptions of k-induction schemes applied to domain-theoretic
 setting (so: requiring \<open>f\<close> continuous and \<open>P\<close> admissible; these preconditions are
-skipped here): 
+skipped here):\<^vs>\<open>0.2cm\<close> 
   \<^item> \<open>... \<Longrightarrow> \<forall>i<k. P (f\<^sup>i \<bottom>) \<Longrightarrow> (\<forall>X. (\<forall>i<k. P (f\<^sup>i X)) \<longrightarrow> P (f\<^sup>k X)) \<Longrightarrow> P (\<mu>X. f X)\<close>
   \<^item> \<open>... \<Longrightarrow> \<forall>i<k. P (f\<^sup>i \<bottom>) \<Longrightarrow> (\<forall>X. P X \<longrightarrow> P (f\<^sup>k X)) \<Longrightarrow> P (\<mu>X. f X)\<close>
 
@@ -706,7 +703,7 @@ skipped here):
 it reduces the goal size.
 
 Another problem occasionally occurring in refinement proofs happens when the right side term 
-involves more than one  fixed-point  process (\<^eg> \<open>P \<lbrakk>{A}\<rbrakk> Q \<sqsubseteq> S\<close>). In this situation,
+involves more than one  fixed-point  process (\<^eg> \<open>P \<lbrakk>A\<rbrakk> Q \<sqsubseteq> S\<close>). In this situation,
 we need parallel fixed-point inductions. The HOLCF library offers only a basic one:
   \<^item> \<open>... \<Longrightarrow> P \<bottom> \<bottom> \<Longrightarrow> (\<forall>X Y. P X Y \<Longrightarrow> P (f X) (g Y)) \<Longrightarrow> P (\<mu>X. f X) (\<mu>X. g X)\<close>
 
@@ -730,7 +727,7 @@ The astute reader may notice here that if the induction step is weakened (having
 the base steps require enforcement.  
 \<close>
 
-subsection*["norm"::tc,main_author="Some(@{docitem ''safouan''}::author)"]
+subsection*["norm"::tc,main_author="Some(@{author ''safouan''}::author)"]
 \<open>Normalization\<close>
 text\<open>
  Our framework can reason not only over infinite alphabets, but also over processes parameterized
@@ -790,7 +787,7 @@ Summing up, our method consists of four stages:
 
 \<close>
 
-subsection*["dining_philosophers"::tc,main_author="Some(@{docitem ''safouan''}::author)",level="Some 3"]
+subsection*["dining_philosophers"::tc,main_author="Some(@{author ''safouan''}::author)",level="Some 3"]
 \<open>Generalized Dining Philosophers\<close>
 
 text\<open>  The dining philosophers problem is another paradigmatic example in the \<^csp> literature
@@ -882,7 +879,7 @@ for a dozen of philosophers (on a usual machine) due to the exponential combinat
 Furthermore, our proof is fairly stable against modifications like adding non synchronized events like
 thinking or sitting down in contrast to model-checking techniques. \<close>
 
-section*["relatedwork"::tc,main_author="Some(@{docitem ''lina''}::author)",level="Some 3"]
+section*["relatedwork"::tc,main_author="Some(@{author ''lina''}::author)",level="Some 3"]
 \<open>Related work\<close>
 
 text\<open>
@@ -949,7 +946,7 @@ restrictions on the structure of components. None of our paradigmatic examples c
 be automatically proven with any of the discussed SMT techniques without restrictions.
 \<close>
 
-section*["conclusion"::conclusion,main_author="Some(@{docitem ''bu''}::author)"]\<open>Conclusion\<close>
+section*["conclusion"::conclusion,main_author="Some(@{author ''bu''}::author)"]\<open>Conclusion\<close>
 text\<open>We presented a formalisation of the most comprehensive semantic model for \<^csp>, a 'classical' 
 language for the specification and analysis of concurrent systems studied in a rich body of 
 literature. For this purpose, we ported @{cite "tej.ea:corrected:1997"} to a modern version

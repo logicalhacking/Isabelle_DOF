@@ -126,7 +126,7 @@ text\<open>
 
 subsection\<open>Capturing ``System Architecture.''\<close>
 
-figure*["three-phase"::figure,relative_width="70",src="''figures/three-phase-odo''"]
+figure*["three-phase"::figure,relative_width="70",file_src="''figures/three-phase-odo.pdf''"]
 \<open>An odometer with three sensors \<open>C1\<close>, \<open>C2\<close>, and \<open>C3\<close>.\<close>
 
 text\<open>
@@ -162,7 +162,7 @@ text\<open>
   of the measuring device, and the required format and precision of the measurements of the odometry
   function as represented (see @{figure (unchecked) "df-numerics-encshaft"}).\<close>
 
-figure*["df-numerics-encshaft"::figure,relative_width="76",src="''figures/df-numerics-encshaft''"]
+figure*["df-numerics-encshaft"::figure,relative_width="76",file_src="''figures/df-numerics-encshaft.png''"]
 \<open>Real distance vs. discrete distance vs. shaft-encoder sequence\<close>
 
 
