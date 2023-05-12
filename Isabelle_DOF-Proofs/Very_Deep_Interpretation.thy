@@ -32,88 +32,8 @@ consts Isabelle_DOF_trace_attribute :: "string \<Rightarrow> (string * string) l
 subsection\<open> Semantics \<close>
 
 ML\<open>
-structure ISA_core = 
+structure Meta_ISA_core = 
 struct
-
-fun check_path check_file ctxt dir (name, pos) =
-  let
-    val _ = Context_Position.report ctxt pos (Markup.language_path true); (* TODO: pos should be 
-                                                                                   "lifted" to 
-                                                                                   type source *)
-
-    val path = Path.append dir (Path.explode name) handle ERROR msg => ISA_core.err msg pos;
-    val _ = Path.expand path handle ERROR msg => ISA_core.err msg pos;
-    val _ = Context_Position.report ctxt pos (Markup.path (Path.implode_symbolic path));
-    val _ =
-      (case check_file of
-        NONE => path
-      | SOME check => (check path handle ERROR msg => ISA_core.err msg pos));
-  in path end;
-
-
-fun ML_isa_antiq check_file thy (name, _, pos) =
-  let val path = check_path check_file (Proof_Context.init_global thy) Path.current (name, pos);
-  in "Path.explode " ^ ML_Syntax.print_string (Path.implode path) end;
-
-
-fun ML_isa_check_generic check thy (term, pos) =
-  let val name = (HOLogic.dest_string term
-                  handle TERM(_,[t]) => error ("wrong term format: must be string constant: " 
-                                               ^ Syntax.string_of_term_global thy t ))
-      val _ = check thy (name,pos)
-  in  SOME term end;  
-
-fun check_identity _ (term, _, _) _ = SOME term
-
-fun ML_isa_check_typ thy (term, _, pos) _ =
-  let fun check thy (name, _) = let val ctxt = (Proof_Context.init_global thy)
-                                in (Syntax.check_typ ctxt o Syntax.parse_typ ctxt) name end
-  in  ML_isa_check_generic check thy (term, pos) end
-
-
-fun ML_isa_check_term thy (term, _, pos) _ =
-  let fun check thy (name, _) = let val ctxt = (Proof_Context.init_global thy)
-                                in (Syntax.check_term ctxt o Syntax.parse_term ctxt) name end 
-  in  ML_isa_check_generic check thy (term, pos) end
-
-
-fun ML_isa_check_thm thy (term, _, pos) _ =
-  (* this works for long-names only *)
-  let fun check thy (name, _) = case Proof_Context.lookup_fact (Proof_Context.init_global thy) name of
-                                  NONE => ISA_core.err ("No Theorem:" ^name) pos
-                                | SOME X => X
-  in   ML_isa_check_generic check thy (term, pos) end
-
-
-fun ML_isa_check_file thy (term, _, pos) _ =
-  let fun check thy (name, pos) = check_path (SOME File.check_file) 
-                                             (Proof_Context.init_global thy) 
-                                             (Path.current) 
-                                             (name, pos);
-  in  ML_isa_check_generic check thy (term, pos) end;
-
-fun ML_isa_id thy (term,pos) = SOME term
-
-
-fun ML_isa_check_docitem thy (term, req_ty, pos) _ =
-  let fun check thy (name, _) s =
-            let val DOF_core.Instance {cid,...} =
-                                              DOF_core.get_instance_global name thy
-                val ns = DOF_core.get_instances (Proof_Context.init_global thy)
-                               |> Name_Space.space_of_table 
-                val {pos=pos', ...} = Name_Space.the_entry ns name
-                val ctxt = (Proof_Context.init_global thy)
-                val req_class = case req_ty of 
-                                    \<^Type>\<open>fun _ T\<close> => DOF_core.typ_to_cid T
-                                  | _ => error("can not infer type for: "^ name)
-            in if cid <> DOF_core.default_cid 
-                  andalso not(DOF_core.is_subclass ctxt cid req_class)
-               then error("reference ontologically inconsistent: "
-                          ^cid^" vs. "^req_class^ Position.here pos')
-               else ()
-            end
-  in  ML_isa_check_generic check thy (term, pos) end
-
 
 fun ML_isa_check_trace_attribute thy (term, _, pos) s =
   let
@@ -122,11 +42,6 @@ fun ML_isa_check_trace_attribute thy (term, _, pos) s =
                                                ^ Syntax.string_of_term_global thy t ))
     val _ = DOF_core.get_instance_global oid thy
   in SOME term end
-
-fun ML_isa_elaborate_generic (_:theory) isa_name ty term_option _ =
-  case term_option of
-      NONE => error("Wrong term option. You must use a defined term")
-    | SOME term => Const (isa_name, ty) $ term
 
 fun reify_typ (Type (s, typ_list)) =
       \<^Const>\<open>Ty\<close> $ HOLogic.mk_literal s $ HOLogic.mk_list \<^Type>\<open>typ\<close> (map reify_typ typ_list)
@@ -273,16 +188,16 @@ end; (* struct *)
 \<close>
 
 ML\<open>
-val ty1 = ISA_core.reify_typ @{typ "int"}
-val ty2 = ISA_core.reify_typ @{typ "int \<Rightarrow> bool"}
-val ty3 = ISA_core.reify_typ @{typ "prop"}
-val ty4 = ISA_core.reify_typ @{typ "'a list"}
+val ty1 = Meta_ISA_core.reify_typ @{typ "int"}
+val ty2 = Meta_ISA_core.reify_typ @{typ "int \<Rightarrow> bool"}
+val ty3 = Meta_ISA_core.reify_typ @{typ "prop"}
+val ty4 = Meta_ISA_core.reify_typ @{typ "'a list"}
 \<close>
 
 ML\<open>
-val t1 = ISA_core.reify_term @{term "1::int"}
-val t2 = ISA_core.reify_term @{term "\<lambda>x. x = 1"}
-val t3 = ISA_core.reify_term @{term "[2, 3::int]"}
+val t1 = Meta_ISA_core.reify_term @{term "1::int"}
+val t2 = Meta_ISA_core.reify_term @{term "\<lambda>x. x = 1"}
+val t3 = Meta_ISA_core.reify_term @{term "[2, 3::int]"}
 \<close>
 
 subsection\<open> Isar - Setup\<close>
@@ -290,8 +205,8 @@ subsection\<open> Isar - Setup\<close>
    They must be declared in the same theory file as the one of the declaration
    of Isabelle_DOF term anti-quotations !!! *)
 setup\<open>
-[(\<^type_name>\<open>thm\<close>, ISA_core.ML_isa_check_thm, ISA_core.ML_isa_elaborate_thm)
- , (\<^type_name>\<open>thms_of\<close>, ISA_core.ML_isa_check_thm, ISA_core.ML_isa_elaborate_thms_of)
+[(\<^type_name>\<open>thm\<close>, ISA_core.ML_isa_check_thm, Meta_ISA_core.ML_isa_elaborate_thm)
+ , (\<^type_name>\<open>thms_of\<close>, ISA_core.ML_isa_check_thm, Meta_ISA_core.ML_isa_elaborate_thms_of)
  , (\<^type_name>\<open>file\<close>, ISA_core.ML_isa_check_file, ISA_core.ML_isa_elaborate_generic)]
 |> fold (fn (n, check, elaborate) => fn thy =>
 let val ns = Sign.tsig_of thy |> Type.type_space
@@ -304,8 +219,8 @@ let val ns = Sign.tsig_of thy |> Type.type_space
 in  DOF_core.add_isa_transformer binding ((check, elaborate) |> DOF_core.make_isa_transformer) thy
 end)
 #>
-([(\<^const_name>\<open>Isabelle_DOF_typ\<close>, ISA_core.ML_isa_check_typ, ISA_core.ML_isa_elaborate_typ)
-  ,(\<^const_name>\<open>Isabelle_DOF_term\<close>, ISA_core.ML_isa_check_term, ISA_core.ML_isa_elaborate_term)
+([(\<^const_name>\<open>Isabelle_DOF_typ\<close>, ISA_core.ML_isa_check_typ, Meta_ISA_core.ML_isa_elaborate_typ)
+  ,(\<^const_name>\<open>Isabelle_DOF_term\<close>, ISA_core.ML_isa_check_term, Meta_ISA_core.ML_isa_elaborate_term)
   ,(\<^const_name>\<open>Isabelle_DOF_docitem\<close>,
       ISA_core.ML_isa_check_docitem, ISA_core.ML_isa_elaborate_generic)
   ,(\<^const_name>\<open>Isabelle_DOF_trace_attribute\<close>,

@@ -670,8 +670,6 @@ fun typ_to_cid (Type(s,[\<^Type>\<open>unit\<close>])) = Long_Name.qualifier s
    |typ_to_cid _ = error("type is not an ontological type.")
 
 
-val SPY = Unsynchronized.ref(Bound 0)
-
 fun check_regexps term = 
     let val _ = case fold_aterms  Term.add_free_names term [] of
                    n::_ => error("No free variables allowed in monitor regexp:" ^ n)
@@ -1063,27 +1061,6 @@ struct
 
 fun err msg pos = error (msg ^ Position.here pos);
 fun warn msg pos = warning (msg ^ Position.here pos);
-
-fun check_path check_file ctxt dir (name, pos) =
-  let
-    val _ = Context_Position.report ctxt pos (Markup.language_path true); (* TODO: pos should be 
-                                                                                   "lifted" to 
-                                                                                   type source *)
-
-    val path = Path.append dir (Path.explode name) handle ERROR msg => err msg pos;
-    val _ = Path.expand path handle ERROR msg => err msg pos;
-    val _ = Context_Position.report ctxt pos (Markup.path (Path.implode_symbolic path));
-    val _ =
-      (case check_file of
-        NONE => path
-      | SOME check => (check path handle ERROR msg => err msg pos));
-  in path end;
-
-
-fun ML_isa_antiq check_file thy (name, _, pos) =
-  let val path = check_path check_file (Proof_Context.init_global thy) Path.current (name, pos);
-  in "Path.explode " ^ ML_Syntax.print_string (Path.implode path) end;
-
 
 fun ML_isa_check_generic check thy (term, pos) =
   let val name = (HOLogic.dest_string term
