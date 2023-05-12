@@ -328,13 +328,8 @@ fun get_document_dir ctxt =
           val sess_dir = get_session_dir ctxt  (Resources.master_directory thy)
       in  Path.append sess_dir  (Path.explode "document") end;
 
-
-fun fig_content_antiquotation name scan =
-  (Document_Output.antiquotation_raw_embedded name 
-    (scan : ((fig_content -> fig_content) * Input.source) context_parser)
-    (fn ctxt => 
-      (fn (cfg_trans,file:Input.source) =>
-          let val {relative_width,relative_height,caption} = cfg_trans mt_fig_content
+fun fig_content ctxt (cfg_trans,file:Input.source) = 
+       let val {relative_width,relative_height,caption} = cfg_trans mt_fig_content
               val _      = if relative_width < 0 orelse relative_height <0 then error("negative parameter.") 
                                                                 else ()
               val wdth_val_s = Real.toString((Real.fromInt relative_width)
@@ -365,14 +360,12 @@ fun fig_content_antiquotation name scan =
                    |> (Latex.environment ("subcaptionblock") )
 (* BUG: newline at the end of subcaptionlbock, making side-by-side a figure-below-figure setup *)
           end
-      )
-    ));
+
+fun fig_content_antiquotation name scan =
+  (Document_Output.antiquotation_raw_embedded name 
+    (scan : ((fig_content -> fig_content) * Input.source) context_parser)
+    (fig_content : Proof.context -> (fig_content -> fig_content) * Input.source -> Latex.text));
           
-val t = Latex.macro
-val _ = fig_content_antiquotation 
-        : binding 
-         -> ((fig_content -> fig_content) * Input.source) context_parser 
-         -> theory -> theory
 
 val _ = Theory.setup 
            (   fig_content_antiquotation \<^binding>\<open>fig_content\<close> 
@@ -380,18 +373,7 @@ val _ = Theory.setup
 
 \<close>
 
-ML\<open>\<close>
 ML\<open>
-val _ = Path.parent
-val mdir = Resources.master_directory @{theory}
-val pp =  Resources.check_session_dir @{context} 
-          (SOME (Path.dir mdir ))  (Syntax.read_input ".nnn")
-          handle ERROR s => (if String.isPrefix "No such directory:" s then 
-                                (writeln ("MMM"^s); mdir)
-                             else error s)
-
-
-val ppp = (Path.explode "document") 
 
 fun get_session_dir ctxt path = 
          Resources.check_session_dir ctxt 
@@ -406,7 +388,6 @@ fun get_document_dir ctxt =
           val sess_dir = get_session_dir ctxt  (Resources.master_directory thy)
       in  Path.append sess_dir  (Path.explode "document") end;
 
-get_document_dir @{context}
 \<close>
 subsection\<open>Tables\<close>
 (* TODO ! ! ! *)
