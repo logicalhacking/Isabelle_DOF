@@ -194,17 +194,17 @@ result communication times \ldots \<close>
 text\<open>Note that this \<^pdf>-output is the result of a specific setup for \<^typ>\<open>SRAC\<close>s.\<close>
 
 subsection*[ontopide::technical]\<open>Editing Support for CENELEC 50128\<close>  
-figure*[figfig3::figure,relative_width="95",src="''figures/antiquotations-PIDE''"]
+figure*[figfig3::figure,relative_width="95",file_src="''figures/antiquotations-PIDE.png''"]
 \<open> Standard antiquotations referring to theory elements.\<close>
 text\<open> The corresponding view in @{docitem  \<open>figfig3\<close>} shows core part of a document 
 conforming to the \<^verbatim>\<open>CENELEC_50128\<close> ontology. The first sample shows standard Isabelle antiquotations 
 @{cite "wenzel:isabelle-isar:2020"} into formal entities of a theory. This way, the informal parts 
 of a document get ``formal content'' and become more robust under change.\<close>
 
-figure*[figfig5::figure, relative_width="95", src="''figures/srac-definition''"]
+figure*[figfig5::figure, relative_width="95", file_src="''figures/srac-definition.png''"]
         \<open> Defining a \<^typ>\<open>SRAC\<close> in the integrated source ... \<close>
 
-figure*[figfig7::figure, relative_width="95", src="''figures/srac-as-es-application''"]
+figure*[figfig7::figure, relative_width="95", file_src="''figures/srac-as-es-application.png''"]
         \<open> Using a \<^typ>\<open>SRAC\<close> as \<^typ>\<open>EC\<close> document element. \<close>
 text\<open> The subsequent sample in @{figure \<open>figfig5\<close>} shows the definition of a
 \<^emph>\<open>safety-related application condition\<close>, a side-condition of a theorem which 

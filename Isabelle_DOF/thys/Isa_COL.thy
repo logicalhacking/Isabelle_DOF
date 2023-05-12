@@ -159,7 +159,7 @@ datatype float_kind = listing | table | graphics
 doc_class float        = 
    placement           :: "placement list"
    kind                :: float_kind
-   spawn_columns       :: bool <= True 
+   spawn_columns       :: bool <= False 
    main_caption        :: string <= "''''" 
 
 doc_class figure       =  float +
