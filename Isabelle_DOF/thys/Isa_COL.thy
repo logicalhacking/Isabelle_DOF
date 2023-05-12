@@ -141,9 +141,11 @@ val _ = heading_command \<^command_keyword>\<open>subsection*\<close> "subsectio
 val _ = heading_command \<^command_keyword>\<open>subsubsection*\<close> "subsubsection heading" (SOME (SOME 3));
 val _ = heading_command \<^command_keyword>\<open>paragraph*\<close> "paragraph" (SOME (SOME 4));
 
+
 end 
 end
 \<close>
+
 
 section\<open> Library of Standard Text Ontology \<close>
 
@@ -154,19 +156,26 @@ ML\<open> "side_by_side_figure"  |> Name_Space.declared (DOF_core.get_onto_class
 
 datatype float_kind = listing | table | graphics
 
-doc_class float   = 
-   placement        :: "placement list"
-   kind             :: float_kind
-   spawn_columns    :: bool <= True 
-   main_caption     :: string
+doc_class float        = 
+   placement           :: "placement list"
+   kind                :: float_kind
+   spawn_columns       :: bool <= True 
+   main_caption        :: string <= "''''" 
 
-doc_class figure     =  float +
-   kind             :: float_kind
-   src              :: string
-   relative_width   :: int  (* to be deleted *)
-   invariant fig_kind :: "kind \<sigma> = graphics"
+doc_class figure       =  float +
+   kind                :: float_kind <= graphics 
+   file_src            :: string
+   relative_width      :: int 
+   relative_height     :: int 
+   invariant fig_kind  :: "kind \<sigma> = graphics"
 
 
+doc_class listing      =  float +
+   kind                :: float_kind
+   invariant fig_kind' :: "kind \<sigma> = float_kind.listing"
+
+
+(* obsolete *)
 doc_class side_by_side_figure = figure +
    anchor           :: "string"
    caption          :: "string"
@@ -237,17 +246,6 @@ define_macro* hs2 \<rightleftharpoons> \<open>\hspace{\<close> _ \<open>}\<close
 
 subsection\<open>Figures\<close>
 
-ML\<open>open Args\<close>
-
-ML\<open>
-(* *********************************************************************** *)
-(* Ontological Macro Command Support                                       *)
-(* *********************************************************************** *)
-
-val _ = Onto_Macros.heading_command \<^command_keyword>\<open>figure*\<close> "figure" NONE;
-val _ = Onto_Macros.heading_command \<^command_keyword>\<open>side_by_side_figure*\<close> "multiple figures" NONE;
-\<close>
-
 (*<*)
 
 ML\<open>
@@ -265,7 +263,6 @@ text\<open>The intermediate development goal is to separate the ontological, top
 \<^emph>\<open>import\<close> of a figure. The hope is that this opens the way for more orthogonality and
 abstraction from the LaTeX engine.
 \<close>
-ML\<open>XML.enclose\<close>
 ML\<open>    
 
 type fig_content =   {relative_width  : int, (* percent of textwidth, default 100 *)
@@ -279,7 +276,7 @@ val mt_fig_content = {relative_width  = 100,
 fun upd_relative_width key {relative_width,relative_height,caption } : fig_content = 
             {relative_width = key,relative_height = relative_height,caption = caption}: fig_content
 
-fun upd_scale key  {relative_width,relative_height,caption } : fig_content = 
+fun upd_relative_height key  {relative_width,relative_height,caption } : fig_content = 
             {relative_width = relative_width,relative_height = key,caption = caption}: fig_content
 
 fun upd_caption key {relative_width,relative_height,caption} : fig_content = 
@@ -297,7 +294,7 @@ fun fig_content_modes (ctxt, toks) =
                            (   (Args.$$$ widthN |-- Args.$$$ "=" -- Parse.int
                                 >> (fn (_, k) => upd_relative_width k))   
                             || (Args.$$$ heightN |-- Args.$$$ "=" -- Parse.int
-                                >> (fn (_, k) => upd_scale k))    
+                                >> (fn (_, k) => upd_relative_height k))    
                             || (Args.$$$ captionN |-- Args.$$$ "=" -- Parse.document_source
                                 >> (fn (_, k) => upd_caption k))    
                       ))) [K mt_fig_content]) 
@@ -373,22 +370,66 @@ val _ = Theory.setup
 
 \<close>
 
+
 ML\<open>
 
-fun get_session_dir ctxt path = 
-         Resources.check_session_dir ctxt 
-                                     (SOME (path))  
-                                     (Syntax.read_input ".")
-          handle ERROR s => (if String.isPrefix "Bad session root directory (missing ROOT or ROOTS): " s 
-                             then get_session_dir ctxt (Path.dir path)
-                             else error s)
+(*
+type fig_content =   {relative_width  : int, (* percent of textwidth, default 100 *)
+                      relative_height : int, (* percent, default 100 *)
+                      caption         : Input.source (* default empty *)}
 
-fun get_document_dir ctxt =
-      let val thy = Proof_Context.theory_of ctxt
-          val sess_dir = get_session_dir ctxt  (Resources.master_directory thy)
-      in  Path.append sess_dir  (Path.explode "document") end;
+*)
+val SPY = Unsynchronized.ref("")
+
+(* ML\<open>snd(HOLogic.dest_number(Syntax.read_term @{context} (!SPY)))\<close>
+ *)
+fun convert_meta_args (X, (((str,_),value) :: R)) =
+     let fun conv_int x = snd(HOLogic.dest_number(Syntax.read_term @{context} x))
+                          handle TERM x =>  error "Illegal int format."
+     in
+         (case YXML.content_of str of 
+             "relative_width" =>  upd_relative_width (conv_int value)
+                                  o  convert_meta_args (X, R)
+          |  "relative_height" => upd_relative_height (conv_int value) 
+                                  o  convert_meta_args (X, R )
+          |  "file_src"        => convert_meta_args (X, R)
+          |  s => error("!undefined attribute:"^s))
+     end
+   |convert_meta_args (X,[]) = I
+
+fun convert_src_from_margs (X, (((str,_),value)::R)) = 
+          (case YXML.content_of str of 
+             "file_src" => Input.string (HOLogic.dest_string (Syntax.read_term @{context} value))
+           | _          => convert_src_from_margs(X,R))
+   |convert_src_from_margs (X, [])     = error("No file_src provided.")
+
+fun float_command (name, pos) descr cid  =
+  let fun set_default_class NONE = SOME(cid,pos)
+         |set_default_class (SOME X) = SOME X 
+      fun create_instance  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t)  =
+                Value_Command.Docitem_Parser.create_and_check_docitem 
+               {is_monitor = false} 
+               {is_inline = true}
+               {define = true} oid pos (set_default_class cid_pos) doc_attrs
+      val opts = {markdown = false, body = true}
+      fun parse_and_tex opts (margs, text) ctxt  = fig_content ctxt 
+                                                       (convert_meta_args margs o upd_caption text, 
+                                                        convert_src_from_margs margs)
+  in  Monitor_Command_Parser.float_command (name, pos) descr opts create_instance parse_and_tex
+  end
 
 \<close>
+
+
+ML\<open>
+(* *********************************************************************** *)
+(* Ontological Macro Command Support                                       *)
+(* *********************************************************************** *)
+
+float_command \<^command_keyword>\<open>figure*\<close> "figure" "Isa_COL.figure" ;
+val _ = Onto_Macros.heading_command \<^command_keyword>\<open>side_by_side_figure*\<close> "multiple figures" NONE;
+\<close>
+
 subsection\<open>Tables\<close>
 (* TODO ! ! ! *)
 (* dito the future monitor: table - block *)

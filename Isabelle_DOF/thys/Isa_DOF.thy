@@ -2172,16 +2172,32 @@ fun document_output_reports name {markdown, body} sem_attrs transform_attr meta_
     fun markup xml =
       let val m = if body then Markup.latex_body else Markup.latex_heading
       in [XML.Elem (m (Latex.output_name name), xml)] end;
-  in document_output {markdown = markdown, markup = markup} sem_attrs transform_attr meta_args text ctxt end;
+    val config = {markdown = markdown, markup = markup}
+  in document_output config sem_attrs transform_attr meta_args text ctxt 
+  end;
 
 
 (* document output commands *)
 
 fun document_command (name, pos) descr mark cmd sem_attrs transform_attr =
   Outer_Syntax.command (name, pos) descr
-    (ODL_Meta_Args_Parser.attributes -- Parse.document_source >> (fn (meta_args, text) =>
-      Toplevel.theory' (fn _ => cmd meta_args)
-      (Toplevel.presentation_context #> document_output_reports name mark sem_attrs transform_attr meta_args text #> SOME)));
+     (ODL_Meta_Args_Parser.attributes -- Parse.document_source >> 
+     (fn (meta_args, text) =>
+          Toplevel.theory' (fn _ => cmd meta_args)
+              ((Toplevel.presentation_context 
+               #> document_output_reports name mark sem_attrs transform_attr meta_args text 
+               #> SOME): Toplevel.state -> Latex.text option)) );
+
+
+fun float_command (name, pos) descr (mark: {body: bool, markdown: bool})
+                   cmd  output_figure = 
+  Outer_Syntax.command (name, pos) descr 
+  (ODL_Meta_Args_Parser.attributes -- Parse.document_source >>  
+     (fn (meta_args, text) =>
+          Toplevel.theory' (fn _ => cmd meta_args)
+             (Toplevel.presentation_context
+              #> (fn ctxt => (output_figure mark (meta_args, text)) ctxt)
+              #> SOME))) 
 
 
 (* Core Command Definitions *)

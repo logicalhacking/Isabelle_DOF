@@ -28,39 +28,15 @@ text*[S5'::"paragraph"]\<open>Paragraph\<close>
 
 section\<open>General Figure COL Elements\<close> 
 
-figure*[fig1_test::figure,relative_width="95",src="''figures/A''"]
+figure*[fig1_test::figure,relative_width="95",file_src="''figures/A.png''"]
        \<open> This is the label text  \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<close>  
 
-text*[fig2_test::figure, spawn_columns=False, relative_width="95",src="''figures/A''"
+text*[fig2_test::figure, spawn_columns=False, relative_width="95",file_src="''figures/A.png''"
 ]\<open> This is the label text\<close>
 
-text\<open>check @{figure fig1_test} cmp to @{figure fig2_test}\<close>
-
-side_by_side_figure*["sbsfig1"::side_by_side_figure,
-                      anchor="''Asub1''",
-                      caption="''First caption.''",
-                      relative_width="48",
-                      src="''figures/A''",
-                      anchor2="''Asub2''",
-                      caption2="''Second caption.''",
-                      relative_width2="47",
-                      src2="''figures/B''"]\<open> Exploring text elements. \<close>
+text\<open>check @{figure [display] fig1_test} cmp to @{figure fig2_test}\<close>
 
 
-text*["sbsfig2"::side_by_side_figure,
-      anchor="''fig:Asub1''",
-      caption="''First caption.''",
-      relative_width="48",
-      src="''figures/A''",
-      anchor2="''fig:Asub2''",
-      caption2="''Second caption.''",
-      relative_width2="47",
-      src2="''figures/B''"]\<open>The global caption\<close>
-
-text\<open>check @{side_by_side_figure sbsfig1} cmp to @{side_by_side_figure sbsfig2}
-     \autoref{Asub1} vs. \autoref{Asub2}
-     \autoref{fig:Asub1} vs. \autoref{fig:Asub2}
-    \<close>
 
 (* And a side-chick ... *)
 
@@ -69,10 +45,12 @@ text*[inlinefig::float,
      \<open>@{theory_text [display, margin = 5] \<open>lemma A :: "a \<longrightarrow> b"\<close>}\<close>
 
 text*[dupl_graphics::float, 
-      main_caption="\<open>The Caption.\<close>"]\<open>
-      @{fig_content (width=40, height=35, caption="This is a right test") "figures/A.png"}  
-      @{fig_content (width=40, height=35, caption="This is a left \<^term>\<open>\<sigma>\<^sub>i + 1\<close> test") "figures/B.png"} 
+      main_caption="\<open>The Caption.\<close>"]
+\<open>
+@{fig_content (width=40, height=35, caption="This is a left test") "figures/A.png"
+}\<^hfill>@{fig_content (width=40, height=35, caption="This is a right \<^term>\<open>\<sigma>\<^sub>i + 1\<close> test") "figures/B.png"} 
 \<close>
+
 
 
 end
