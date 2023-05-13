@@ -182,29 +182,29 @@ open_monitor*[figs1::figure_group,
               caption="''Sample ''"]  
 ML\<open>val monitor_infos = DOF_core.get_monitor_infos \<^context>\<close>
 text*[testFreeA::A]\<open>\<close>
-figure*[fig_A::figure, spawn_columns=False,
+figure*[fig_A::figure,
         relative_width="90",
-        src="''figures/A.png''"]
+        file_src="''figures/A.png''"]
        \<open> The A train \ldots \<close>
 
 figure*[fig_B::figure, 
-        spawn_columns=False,relative_width="90",
-        src="''figures/B.png''"]
+        relative_width="90",
+        file_src="''figures/B.png''"]
        \<open> The B train \ldots \<close>  
 open_monitor*[figs2::figure_group, 
               caption="''Sample ''"]
 ML\<open>val monitor_infos = DOF_core.get_monitor_infos \<^context>\<close>
-figure*[fig_C::figure, spawn_columns=False,
+figure*[fig_C::figure, 
         relative_width="90",
-        src="''figures/A.png''"]
+        file_src="''figures/A.png''"]
        \<open> The C train \ldots \<close>
 open_monitor*[figs3::figure_group, 
               caption="''Sample ''"]
 ML\<open>val monitor_infos = DOF_core.get_monitor_infos \<^context>\<close>
 
 figure*[fig_D::figure, 
-        spawn_columns=False,relative_width="90",
-        src="''figures/B.png''"]
+        relative_width="90",
+        file_src="''figures/B.png''"]
        \<open> The D train \ldots \<close>
 close_monitor*[figs3]
 
@@ -216,8 +216,8 @@ text*[testRejected1::figure_group, caption="''document/figures/A.png''"]
        \<open> The A train \ldots \<close>
 
 figure*[fig_E::figure,
-        spawn_columns=False,relative_width="90",
-        src="''figures/B.png''"]
+        relative_width="90",
+        file_src="''figures/B.png''"]
        \<open> The E train \ldots \<close>
 close_monitor*[figs4]
 close_monitor*[figs2]

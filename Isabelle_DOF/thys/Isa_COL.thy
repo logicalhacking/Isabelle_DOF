@@ -141,33 +141,41 @@ val _ = heading_command \<^command_keyword>\<open>subsection*\<close> "subsectio
 val _ = heading_command \<^command_keyword>\<open>subsubsection*\<close> "subsubsection heading" (SOME (SOME 3));
 val _ = heading_command \<^command_keyword>\<open>paragraph*\<close> "paragraph" (SOME (SOME 4));
 
+
 end 
 end
 \<close>
 
+
 section\<open> Library of Standard Text Ontology \<close>
 
-datatype placement = pl_h  | (*here*) 
-                     pl_t  | (*top*)
-                     pl_b  | (*bottom*)
-                     pl_ht | (*here ->  top*) 
-                     pl_hb   (*here ->  bottom*)
+datatype placement = here  |  top  |  bottom  
 
 ML\<open> "side_by_side_figure"  |> Name_Space.declared (DOF_core.get_onto_classes \<^context>
                            |> Name_Space.space_of_table)\<close>
 
-print_doc_classes
+datatype float_kind = listing | table | graphics
 
-doc_class figure   = 
-   relative_width   :: "int"  (* percent of textwidth *)    
-   src              :: "string"
-   placement        :: placement  
-   spawn_columns    :: bool <= True 
+doc_class float        = 
+   placement           :: "placement list"
+   kind                :: float_kind
+   spawn_columns       :: bool <= False 
+   main_caption        :: string <= "''''" 
 
-doc_class float     =  figure +
-   caption          :: string
+doc_class figure       =  float +
+   kind                :: float_kind <= graphics 
+   file_src            :: string
+   relative_width      :: int 
+   relative_height     :: int 
+   invariant fig_kind  :: "kind \<sigma> = graphics"
 
 
+doc_class listing      =  float +
+   kind                :: float_kind
+   invariant fig_kind' :: "kind \<sigma> = float_kind.listing"
+
+
+(* obsolete *)
 doc_class side_by_side_figure = figure +
    anchor           :: "string"
    caption          :: "string"
@@ -225,7 +233,7 @@ end\<close>
 
 setup\<open> DOF_lib.define_macro \<^binding>\<open>vs\<close>  "\\vspace{" "}" (check_latex_measure) \<close> 
 setup\<open> DOF_lib.define_macro \<^binding>\<open>hs\<close>  "\\hspace{" "}" (check_latex_measure) \<close> 
-
+define_shortcut* hfill \<rightleftharpoons> \<open>\hfill\<close>
 (*<*)
 
 text\<open>Tests: \<^vs>\<open>-0.14cm\<close>\<close>
@@ -237,17 +245,6 @@ define_macro* hs2 \<rightleftharpoons> \<open>\hspace{\<close> _ \<open>}\<close
 (*>*)
 
 subsection\<open>Figures\<close>
-
-ML\<open>open Args\<close>
-
-ML\<open>
-(* *********************************************************************** *)
-(* Ontological Macro Command Support                                       *)
-(* *********************************************************************** *)
-
-val _ = Onto_Macros.heading_command \<^command_keyword>\<open>figure*\<close> "figure" NONE;
-val _ = Onto_Macros.heading_command \<^command_keyword>\<open>side_by_side_figure*\<close> "multiple figures" NONE;
-\<close>
 
 (*<*)
 
@@ -266,29 +263,28 @@ text\<open>The intermediate development goal is to separate the ontological, top
 \<^emph>\<open>import\<close> of a figure. The hope is that this opens the way for more orthogonality and
 abstraction from the LaTeX engine.
 \<close>
-
-ML\<open>
+ML\<open>    
 
 type fig_content =   {relative_width  : int, (* percent of textwidth, default 100 *)
-                      scale           : int, (* percent, default 100 *)
+                      relative_height : int, (* percent, default 100 *)
                       caption         : Input.source (* default empty *)}
 
 val mt_fig_content = {relative_width  = 100,
-                      scale           = 100,    
+                      relative_height = 100,    
                       caption         = Input.empty }: fig_content
 
-fun upd_relative_width key {relative_width,scale,caption } : fig_content = 
-            {relative_width = key,scale = scale,caption = caption}: fig_content
+fun upd_relative_width key {relative_width,relative_height,caption } : fig_content = 
+            {relative_width = key,relative_height = relative_height,caption = caption}: fig_content
 
-fun upd_scale key  {relative_width,scale,caption } : fig_content = 
-            {relative_width = relative_width,scale = key,caption = caption}: fig_content
+fun upd_relative_height key  {relative_width,relative_height,caption } : fig_content = 
+            {relative_width = relative_width,relative_height = key,caption = caption}: fig_content
 
-fun upd_caption key {relative_width,scale,caption} : fig_content = 
-            {relative_width = relative_width,scale = scale,caption= key}: fig_content
+fun upd_caption key {relative_width,relative_height,caption} : fig_content = 
+            {relative_width = relative_width,relative_height = relative_height,caption= key}: fig_content
 
 
 val widthN     = "width"
-val scaleN     = "scale" 
+val heightN    = "height" 
 val captionN   = "caption";
 
 fun fig_content_modes (ctxt, toks) = 
@@ -297,8 +293,8 @@ fun fig_content_modes (ctxt, toks) =
                          (Parse.list1
                            (   (Args.$$$ widthN |-- Args.$$$ "=" -- Parse.int
                                 >> (fn (_, k) => upd_relative_width k))   
-                            || (Args.$$$ scaleN |-- Args.$$$ "=" -- Parse.int
-                                >> (fn (_, k) => upd_scale k))    
+                            || (Args.$$$ heightN |-- Args.$$$ "=" -- Parse.int
+                                >> (fn (_, k) => upd_relative_height k))    
                             || (Args.$$$ captionN |-- Args.$$$ "=" -- Parse.document_source
                                 >> (fn (_, k) => upd_caption k))    
                       ))) [K mt_fig_content]) 
@@ -329,41 +325,48 @@ fun get_document_dir ctxt =
           val sess_dir = get_session_dir ctxt  (Resources.master_directory thy)
       in  Path.append sess_dir  (Path.explode "document") end;
 
+fun generate_caption ctxt caption = 
+    let 
+              val cap_txt= Document_Output.output_document ctxt {markdown = false} caption
+              fun drop_latex_macro (XML.Elem (("latex_environment", [("name", "isabelle")]),xmlt)) = xmlt
+                 |drop_latex_macro X = [X]
+              val drop_latex_macros = List.concat o map drop_latex_macro;
+    in
+      drop_latex_macros cap_txt
+    end
+fun fig_content ctxt (cfg_trans,file:Input.source) = 
+       let val {relative_width,relative_height,caption} = cfg_trans mt_fig_content
+              val _      = if relative_width < 0 orelse relative_height <0 then error("negative parameter.") 
+                                                                else ()
+              val wdth_val_s = Real.toString((Real.fromInt relative_width)
+                                              / (Real.fromInt 100))^"\\textwidth" 
+              val ht_s= if relative_height = 100 then ""
+                           else "height="^Real.toString((Real.fromInt relative_height) 
+                                              / (Real.fromInt 100)) ^"\\textheight"
+              val arg    = enclose "[" "]" (commas ["keepaspectratio","width=\\textwidth",ht_s])
+              val _   = Resources.check_file ctxt (SOME (get_document_dir ctxt)) file
+                  (* ToDo: must be declared source of type png or jpeg or pdf, ... *)
+           
+          in  if Input.string_of(caption) = ""  then 
+                   file 
+                   |> (Latex.string o Input.string_of) 
+                   |> (XML.enclose ("\\includegraphics"^arg^"{") "}")
+              else
+                   file 
+                   |> (Latex.string o Input.string_of) 
+                   |> (fn X => (Latex.string ("{"^wdth_val_s^"}")) 
+                                @ (Latex.string "\\centering")
+                                @ (XML.enclose ("\\includegraphics"^arg^"{") "}" X)
+                                @ (Latex.macro "caption" (generate_caption ctxt caption)))
+                   |> (Latex.environment ("subcaptionblock") )
+(* BUG: newline at the end of subcaptionlbock, making side-by-side a figure-below-figure setup *)
+          end
 
 fun fig_content_antiquotation name scan =
   (Document_Output.antiquotation_raw_embedded name 
     (scan : ((fig_content -> fig_content) * Input.source) context_parser)
-    (fn ctxt => 
-      (fn (cfg_trans,file:Input.source) =>
-          let val {relative_width,scale,caption} = cfg_trans mt_fig_content
-              val _      = if relative_width < 0 orelse scale<0 then error("negative parameter.") 
-                                                                else ()
-              val wdth_s = if relative_width = 100 then ""
-                           else "width="^Real.toString((Real.fromInt relative_width) 
-                                              / (Real.fromInt 100))^"\\textwidth" 
-              val scale_s= if scale = 100 then ""
-                           else "scale="^Real.toString((Real.fromInt scale) / (Real.fromInt 100))
-              val arg    = enclose "[" "]" (commas [wdth_s,scale_s])
-              val cap_txt= Document_Output.output_document ctxt {markdown = false} caption
-              fun drop_latex_macro (XML.Elem (("latex_environment", [("name", "isabelle")]),xmlt)) = xmlt
-                 |drop_latex_macro X = [X];
-              val drop_latex_macros = List.concat o map drop_latex_macro;
-              val cap_txt = drop_latex_macros cap_txt                                       
-              val path   = Resources.check_file ctxt (SOME (get_document_dir ctxt)) file
-                  (* ToDo: must be declared source of type png or jpeg or pdf, ... *)
-           
-          in  file 
-              |> (Latex.string o Input.string_of) 
-              |> (XML.enclose ("\\includegraphics"^arg^"{") "}")
-              |> (fn X => X @ Latex.macro "caption" cap_txt)
-          end
-      )
-    ));
-
-val _ = fig_content_antiquotation 
-        : binding 
-         -> ((fig_content -> fig_content) * Input.source) context_parser 
-         -> theory -> theory
+    (fig_content : Proof.context -> (fig_content -> fig_content) * Input.source -> Latex.text));
+          
 
 val _ = Theory.setup 
            (   fig_content_antiquotation \<^binding>\<open>fig_content\<close> 
@@ -373,32 +376,68 @@ val _ = Theory.setup
 
 
 ML\<open>
-val _ = Path.parent
-val mdir = Resources.master_directory @{theory}
-val pp =  Resources.check_session_dir @{context} 
-          (SOME (Path.dir mdir ))  (Syntax.read_input ".nnn")
-          handle ERROR s => (if String.isPrefix "No such directory:" s then 
-                                (writeln ("MMM"^s); mdir)
-                             else error s)
 
+(*
+type fig_content =   {relative_width  : int, (* percent of textwidth, default 100 *)
+                      relative_height : int, (* percent, default 100 *)
+                      caption         : Input.source (* default empty *)}
 
-val ppp = (Path.explode "document") 
+*)
+val SPY = Unsynchronized.ref("")
 
-fun get_session_dir ctxt path = 
-         Resources.check_session_dir ctxt 
-                                     (SOME (path))  
-                                     (Syntax.read_input ".")
-          handle ERROR s => (if String.isPrefix "Bad session root directory (missing ROOT or ROOTS): " s 
-                             then get_session_dir ctxt (Path.dir path)
-                             else error s)
+(* ML\<open>snd(HOLogic.dest_number(Syntax.read_term @{context} (!SPY)))\<close>
+ *)
+fun convert_meta_args (X, (((str,_),value) :: R)) =
+     let fun conv_int x = snd(HOLogic.dest_number(Syntax.read_term @{context} x))
+                          handle TERM x =>  error "Illegal int format."
+     in
+         (case YXML.content_of str of 
+             "relative_width" =>  upd_relative_width (conv_int value)
+                                  o  convert_meta_args (X, R)
+          |  "relative_height" => upd_relative_height (conv_int value) 
+                                  o  convert_meta_args (X, R )
+          |  "file_src"        => convert_meta_args (X, R)
+          |  s => error("!undefined attribute:"^s))
+     end
+   |convert_meta_args (X,[]) = I
 
-fun get_document_dir ctxt =
-      let val thy = Proof_Context.theory_of ctxt
-          val sess_dir = get_session_dir ctxt  (Resources.master_directory thy)
-      in  Path.append sess_dir  (Path.explode "document") end;
+fun convert_src_from_margs (X, (((str,_),value)::R)) = 
+          (case YXML.content_of str of 
+             "file_src" => Input.string (HOLogic.dest_string (Syntax.read_term @{context} value))
+           | _          => convert_src_from_margs(X,R))
+   |convert_src_from_margs (X, [])     = error("No file_src provided.")
 
-get_document_dir @{context}
+fun float_command (name, pos) descr cid  =
+  let fun set_default_class NONE = SOME(cid,pos)
+         |set_default_class (SOME X) = SOME X 
+      fun create_instance  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t)  =
+                Value_Command.Docitem_Parser.create_and_check_docitem 
+               {is_monitor = false} 
+               {is_inline = true}
+               {define = true} oid pos (set_default_class cid_pos) doc_attrs
+      val opts = {markdown = false, body = true}
+      fun parse_and_tex opts (margs, text) ctxt  = (fig_content ctxt 
+                                                       (convert_meta_args margs o upd_caption Input.empty, 
+                                                        convert_src_from_margs margs))
+                                                   |> (fn X => (Latex.macro0 "centering" 
+                                                                 @ X 
+                                                                 @ Latex.macro "caption"  (generate_caption ctxt text))) 
+                                                   |> (Latex.environment ("figure") )
+  in  Monitor_Command_Parser.float_command (name, pos) descr opts create_instance parse_and_tex
+  end
+
 \<close>
+
+
+ML\<open>
+(* *********************************************************************** *)
+(* Ontological Macro Command Support                                       *)
+(* *********************************************************************** *)
+
+float_command \<^command_keyword>\<open>figure*\<close> "figure" "Isa_COL.figure" ;
+val _ = Onto_Macros.heading_command \<^command_keyword>\<open>side_by_side_figure*\<close> "multiple figures" NONE;
+\<close>
+
 subsection\<open>Tables\<close>
 (* TODO ! ! ! *)
 (* dito the future monitor: table - block *)
@@ -673,7 +712,7 @@ declare[[tab_cell_placing="left",tab_cell_height="18.0cm"]]
 section\<open>Tests\<close>
 (*<*)
 
-text\<open> @{fig_content   [display] (scale = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
+text\<open> @{fig_content   [display] (height = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
                       \<open>figures/isabelle-architecture.pdf\<close>}\<close>
 text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open>12.0cm\<close>,
                                  cell_height =\<open>13pt\<close>,  cell_width = \<open>12.0cm\<close>,
@@ -685,11 +724,6 @@ text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open
 
 (*>*)
 
-ML\<open>@{term "side_by_side_figure"};
-   @{typ "doc_class rexp"}; 
-   DOF_core.SPY;
-
-\<close>
 
 text\<open>@{term_ \<open>3 + 4::int\<close>} @{value_ \<open>3 + 4::int\<close>} \<close>
 end

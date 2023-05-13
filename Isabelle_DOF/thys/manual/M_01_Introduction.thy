@@ -17,6 +17,7 @@ theory "M_01_Introduction"
 begin
 (*>*)
 
+
 chapter*[intro::introduction]\<open> Introduction \<close>  
 text*[introtext::introduction]\<open> 
 The linking of the \<^emph>\<open>formal\<close> to the \<^emph>\<open>informal\<close> is perhaps the most pervasive challenge in the

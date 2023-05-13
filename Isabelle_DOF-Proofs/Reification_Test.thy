@@ -4,10 +4,10 @@ theory Reification_Test
 begin
 
 ML\<open>
-val ty1 = ISA_core.reify_typ @{typ "int"}
-val ty2 = ISA_core.reify_typ @{typ "int \<Rightarrow> bool"}
-val ty3 = ISA_core.reify_typ @{typ "prop"}
-val ty4 = ISA_core.reify_typ @{typ "'a list"}
+val ty1 = Meta_ISA_core.reify_typ @{typ "int"}
+val ty2 = Meta_ISA_core.reify_typ @{typ "int \<Rightarrow> bool"}
+val ty3 = Meta_ISA_core.reify_typ @{typ "prop"}
+val ty4 = Meta_ISA_core.reify_typ @{typ "'a list"}
 \<close>
 
 term*\<open>@{typ \<open>int\<close>}\<close>
@@ -19,9 +19,9 @@ term*\<open>@{typ \<open>'a list\<close>}\<close>
 value*\<open>@{typ \<open>'a list\<close>}\<close>
 
 ML\<open>
-val t1 = ISA_core.reify_term @{term "1::int"}
-val t2 = ISA_core.reify_term @{term "\<lambda>x. x = 1"}
-val t3 = ISA_core.reify_term @{term "[2, 3::int]"}
+val t1 = Meta_ISA_core.reify_term @{term "1::int"}
+val t2 = Meta_ISA_core.reify_term @{term "\<lambda>x. x = 1"}
+val t3 = Meta_ISA_core.reify_term @{term "[2, 3::int]"}
 \<close>
 term*\<open>@{term \<open>1::int\<close>}\<close>
 value*\<open>@{term \<open>1::int\<close>}\<close>
@@ -45,7 +45,7 @@ value*\<open>@{thms-of \<open>HOL.refl\<close>}\<close>
 ML\<open>
 val t_schematic = TVar(("'a",0), [])
 val t = @{term "Tv (Var (STR '''a'', 0)) {}"}
-val rt_schematic = ISA_core.reify_typ t_schematic
+val rt_schematic = Meta_ISA_core.reify_typ t_schematic
 val true = rt_schematic = t
 \<close>
 
