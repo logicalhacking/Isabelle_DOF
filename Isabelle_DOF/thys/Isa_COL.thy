@@ -26,7 +26,7 @@ theory Isa_COL
   keywords "title*"        "subtitle*"      
            "chapter*"      "section*"    "paragraph*"
            "subsection*"   "subsubsection*" 
-           "figure*"       "side_by_side_figure*" :: document_body 
+           "figure*"       "listing*"   :: document_body 
 
 begin
 
@@ -147,56 +147,6 @@ end
 \<close>
 
 
-section\<open> Library of Standard Text Ontology \<close>
-
-datatype placement = here  |  top  |  bottom  
-
-ML\<open> "side_by_side_figure"  |> Name_Space.declared (DOF_core.get_onto_classes \<^context>
-                           |> Name_Space.space_of_table)\<close>
-
-datatype float_kind = listing | table | graphics
-
-doc_class float        = 
-   placement           :: "placement list"
-   kind                :: float_kind
-   spawn_columns       :: bool <= False 
-   main_caption        :: string <= "''''" 
-
-doc_class figure       =  float +
-   kind                :: float_kind <= graphics 
-   file_src            :: string
-   relative_width      :: int 
-   relative_height     :: int 
-   invariant fig_kind  :: "kind \<sigma> = graphics"
-
-
-doc_class listing      =  float +
-   kind                :: float_kind
-   invariant fig_kind' :: "kind \<sigma> = float_kind.listing"
-
-
-(* obsolete *)
-doc_class side_by_side_figure = figure +
-   anchor           :: "string"
-   caption          :: "string"
-   relative_width2  :: "int"  (* percent of textwidth *)    
-   src2             :: "string"
-   anchor2          :: "string"
-   caption2         :: "string"
-
-print_doc_classes
-
-doc_class figure_group = 
-   (*  trace :: "doc_class rexp list" <= "[]" automatically generated since monitor clause *)
-   caption          :: "string"
-   rejects             figure_group   (* this forbids recursive figure-groups not supported
-                                        by the current LaTeX style-file. *)
-   accepts             "\<lbrace>figure\<rbrace>\<^sup>+"
-
-print_doc_classes
-
-
-
 section\<open>Layout Trimming Commands (with syntactic checks)\<close>
 
 ML\<open> 
@@ -244,6 +194,52 @@ define_macro* hs2 \<rightleftharpoons> \<open>\hspace{\<close> _ \<open>}\<close
 
 (*>*)
 
+define_shortcut* clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
+                 hf \<rightleftharpoons> \<open>\hfill\<close> 
+                 br \<rightleftharpoons> \<open>\break\<close> 
+
+
+section\<open> Library of Standard Figure Ontology \<close>
+
+datatype placement = here  |  top  |  bottom  
+
+(*
+ML\<open> "side_by_side_figure"  |> Name_Space.declared (DOF_core.get_onto_classes \<^context>
+                           |> Name_Space.space_of_table)\<close>
+*)
+
+datatype float_kind = listing | table | graphics
+
+doc_class float        = 
+   placement           :: "placement list"
+   kind                :: float_kind
+   spawn_columns       :: bool <= False 
+   main_caption        :: string <= "''''" 
+
+doc_class figure       =  float +
+   kind                :: float_kind <= graphics 
+   file_src            :: string
+   relative_width      :: int 
+   relative_height     :: int 
+   invariant fig_kind  :: "kind \<sigma> = graphics"
+
+
+doc_class listing      =  float +
+   kind                :: float_kind
+   invariant fig_kind' :: "kind \<sigma> = float_kind.listing"
+
+
+(* obsolete 
+doc_class side_by_side_figure = figure +
+   anchor           :: "string"
+   caption          :: "string"
+   relative_width2  :: "int"  (* percent of textwidth *)    
+   src2             :: "string"
+   anchor2          :: "string"
+   caption2         :: "string"
+*)
+
+
 subsection\<open>Figures\<close>
 
 (*<*)
@@ -257,11 +253,11 @@ fun setup source =
 
 (*>*)
 
-subsubsection\<open>Figure Content\<close>
+subsubsection\<open>The Figure Content Antiquotation\<close>
 text\<open>The intermediate development goal is to separate the ontological, top-level construct 
 \<open>figure*\<close>, which will remain a referentiable, ontological document unit, from the more versatile
-\<^emph>\<open>import\<close> of a figure. The hope is that this opens the way for more orthogonality and
-abstraction from the LaTeX engine.
+\<^emph>\<open>import\<close> of a figure. This opens the way for more orthogonality and abstraction from the LaTeX 
+engine.
 \<close>
 ML\<open>    
 
@@ -309,8 +305,6 @@ fun document_antiq (check: Proof.context -> Path.T option -> Input.source -> Pat
    (check ctxt NONE source;
     Latex.string (Latex.output_ascii_breakable "/" (Input.string_of source))
     |> Latex.macro "isatt"));
-
-val SPY = Unsynchronized.ref([XML.Text ""])
 
 fun get_session_dir ctxt path = 
          Resources.check_session_dir ctxt 
@@ -377,16 +371,7 @@ val _ = Theory.setup
 
 ML\<open>
 
-(*
-type fig_content =   {relative_width  : int, (* percent of textwidth, default 100 *)
-                      relative_height : int, (* percent, default 100 *)
-                      caption         : Input.source (* default empty *)}
 
-*)
-val SPY = Unsynchronized.ref("")
-
-(* ML\<open>snd(HOLogic.dest_number(Syntax.read_term @{context} (!SPY)))\<close>
- *)
 fun convert_meta_args (X, (((str,_),value) :: R)) =
      let fun conv_int x = snd(HOLogic.dest_number(Syntax.read_term @{context} x))
                           handle TERM x =>  error "Illegal int format."
@@ -426,22 +411,18 @@ fun float_command (name, pos) descr cid  =
   in  Monitor_Command_Parser.float_command (name, pos) descr opts create_instance parse_and_tex
   end
 
-\<close>
 
-
-ML\<open>
 (* *********************************************************************** *)
 (* Ontological Macro Command Support                                       *)
 (* *********************************************************************** *)
 
-float_command \<^command_keyword>\<open>figure*\<close> "figure" "Isa_COL.figure" ;
-val _ = Onto_Macros.heading_command \<^command_keyword>\<open>side_by_side_figure*\<close> "multiple figures" NONE;
+val _ = float_command \<^command_keyword>\<open>figure*\<close> "figure" "Isa_COL.figure" ;
+val _ = float_command \<^command_keyword>\<open>listing*\<close> "figure" "Isa_COL.listing" ;  (* Hack ! *)
 \<close>
 
+
 subsection\<open>Tables\<close>
-(* TODO ! ! ! *)
-(* dito the future monitor: table - block *)
-(* some studies *)
+(* Under development *)
 
 text\<open>Tables are (sub) document-elements represented inside the documentation antiquotation
 language. The used technology is similar to the existing railroad-diagram support 
@@ -701,16 +682,13 @@ val _ = Theory.setup
 end
 \<close>
 
-text\<open> @{file "../ROOT"} \<close>
-define_shortcut* clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
-                 hf \<rightleftharpoons> \<open>\hfill\<close> 
-                 br \<rightleftharpoons> \<open>\break\<close> 
 
+
+(*<*)
 
 declare[[tab_cell_placing="left",tab_cell_height="18.0cm"]]
 
-section\<open>Tests\<close>
-(*<*)
+section\<open>Some Rudimentary Tests\<close>
 
 text\<open> @{fig_content   [display] (height = 80, width=80, caption=\<open>this is \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<dots>\<close>) 
                       \<open>figures/isabelle-architecture.pdf\<close>}\<close>
@@ -725,5 +703,4 @@ text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open
 (*>*)
 
 
-text\<open>@{term_ \<open>3 + 4::int\<close>} @{value_ \<open>3 + 4::int\<close>} \<close>
 end

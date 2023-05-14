@@ -659,9 +659,9 @@ text\<open>
 .2 Isa\_COL.section.
 .2 Isa\_COL.subsection.
 .2 Isa\_COL.subsubsection.
-.1 Isa\_COL.figure.
-.2 Isa\_COL.side\_by\_side\_figure.
-.1 Isa\_COL.figure\_group.
+.1 Isa\_COL.float{...}.
+.2 Isa\_COL.figure{...}.
+.2 Isa\_COL.listing{...}.
 .1 \ldots.
 }
 \end{minipage}
@@ -692,9 +692,40 @@ elements such as, \<^ie>, paragraphs (this mirrors restrictions of the target \<
 The attribute  \<^const>\<open>variants\<close> refers to an Isabelle-configuration attribute that permits
 to steer the different versions of a \<^LaTeX>-presentation of the integrated source.
 
-For further information of the root classes such as \<^typ>\<open>figure\<close>'s, please consult the ontology in
- \<^theory>\<open>Isabelle_DOF.Isa_COL\<close> directly. \<^verbatim>\<open>COL\<close> finally provides macros that extend the command-language 
-of the DOF core by the following
+For further information of the root classes such as \<^bindex>\<open>float\<close> \<^typ>\<open>float\<close>'s, please consult 
+the ontology in \<^theory>\<open>Isabelle_DOF.Isa_COL\<close> directly and consult the Example I and II for 
+their pragmatics. The  \<^theory>\<open>Isabelle_DOF.Isa_COL\<close> also provides  the subclasses
+\<^typ>\<open>figure\<close> \<^bindex>\<open>figure\<close> and \<^bindex>\<open>listing\<close> \<^typ>\<open>listing\<close> which together with specific 
+text-antiquotations like:
+   \<^enum> \<open>@{theory_text [options] "path"}\<close>  (Isabelle)
+   \<^enum> \<open>@{fig_content (width=\<dots>, height=\<dots>, caption=\<dots>) "path"}\<close> (COL)
+   \<^enum> \<open>@{boxed_theory_text [display] \<open> ... \<close> }\<close> (local, e.g. manual)
+   \<^enum> \<open>@{boxed_sml [display] \<open> ... \<close> }\<close> (local, e.g. manual)
+   \<^enum> \<open>@{boxed_pdf [display] \<open> ... \<close> }\<close> (local, e.g. manual)
+   \<^enum> \<open>@{boxed_latex [display] \<open> ... \<close> }\<close> (local, e.g. manual)
+   \<^enum> \<open>@{boxed_bash [display] \<open> ... \<close> }\<close> (local, e.g. manual)\<close>
+
+(*<*)
+text\<open>With these primitives, it is possible to compose listing-like text-elements or 
+side-by-side-figures as shown in the subsequent example:
+  
+@{boxed_theory_text [display]\<open>
+text*[inlinefig::float, 
+      main_caption="\<open>The Caption.\<close>"]
+     \<open>@{theory_text [display, margin = 5] \<open>lemma A :: "a \<longrightarrow> b"\<close>}\<close>
+
+text*[dupl_graphics::float, 
+      main_caption="\<open>The Caption.\<close>"]
+\<open>
+@{fig_content (width=40, height=35, caption="This is a left test") "figures/A.png"
+}\<^hfill>@{fig_content (width=40, height=35, caption="This is a right \<^term>\<open>\<sigma>\<^sub>i + 1\<close> test") "figures/B.png"} 
+\<close>\<close>}\<close>
+(*>*)
+
+text\<open>Note that the \<^theory_text>\<open>side_by_side_figure*\<close>-command  \<^bindex>\<open>side\_by\_side\_figure\<close> used in earlier 
+versions of \<^dof> thus became obsolete.
+
+\<^verbatim>\<open>COL\<close> finally provides macros that extend the command-language of the DOF core by the following
 abbreviations:
 
 \<^item> \<open>derived_text_element\<close> :
@@ -702,7 +733,7 @@ abbreviations:
     (  ( @@{command "chapter*"} 
        | @@{command "section*"}   | @@{command "subsection*"} | @@{command "subsubsection*"} 
        | @@{command "paragraph*"} 
-       | @@{command "figure*"}    | @@{command "side_by_side_figure*"} 
+       | @@{command "figure*"}    | @@{command "listing*"} 
        ) 
        \<newline>
        '[' meta_args ']' '\<open>' text '\<close>'
