@@ -337,6 +337,7 @@ fun fig_content ctxt (cfg_trans,file:Input.source) =
               val ht_s= if relative_height = 100 then ""
                            else "height="^Real.toString((Real.fromInt relative_height) 
                                               / (Real.fromInt 100)) ^"\\textheight"
+              val arg_single  = enclose "[" "]" (commas ["keepaspectratio","width="^wdth_val_s,ht_s])
               val arg    = enclose "[" "]" (commas ["keepaspectratio","width=\\textwidth",ht_s])
               val _   = Resources.check_file ctxt (SOME (get_document_dir ctxt)) file
                   (* ToDo: must be declared source of type png or jpeg or pdf, ... *)
@@ -344,7 +345,7 @@ fun fig_content ctxt (cfg_trans,file:Input.source) =
           in  if Input.string_of(caption) = ""  then 
                    file 
                    |> (Latex.string o Input.string_of) 
-                   |> (XML.enclose ("\\includegraphics"^arg^"{") "}")
+                   |> (XML.enclose ("\\includegraphics"^arg_single^"{") "}")
               else
                    file 
                    |> (Latex.string o Input.string_of) 
@@ -401,12 +402,13 @@ fun float_command (name, pos) descr cid  =
                {is_inline = true}
                {define = true} oid pos (set_default_class cid_pos) doc_attrs
       val opts = {markdown = false, body = true}
-      fun parse_and_tex opts (margs, text) ctxt  = (fig_content ctxt 
+      fun parse_and_tex _ (margs, text) ctxt  = (fig_content ctxt 
                                                        (convert_meta_args margs o upd_caption Input.empty, 
                                                         convert_src_from_margs margs))
                                                    |> (fn X => (Latex.macro0 "centering" 
                                                                  @ X 
                                                                  @ Latex.macro "caption"  (generate_caption ctxt text))) 
+                                                   (* TODO: add label *)
                                                    |> (Latex.environment ("figure") )
   in  Monitor_Command_Parser.float_command (name, pos) descr opts create_instance parse_and_tex
   end

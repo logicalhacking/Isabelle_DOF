@@ -150,12 +150,6 @@ text\<open>
      \<^url>\<open>https://doi.org/10.1007/978-3-030-34968-4_4\<close>.
     \end{quote}
 \<close>
-subsubsection\<open>Availability\<close>
-text\<open>
-  The implementation of the framework is available at 
-  \url{\<^dofurl>}. The website also provides links to the latest releases. \<^isadof> is licensed 
-  under a 2-clause BSD license (SPDX-License-Identifier: BSD-2-Clause).
-\<close>
 
 (*<*) 
 end

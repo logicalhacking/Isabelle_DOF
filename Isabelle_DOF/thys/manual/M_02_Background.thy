@@ -51,10 +51,9 @@ foresees a \<^emph>\<open>Nano-Kernel\<close> (our terminology) which resides in
 This structure provides a kind of container called \<^emph>\<open>context\<close> providing an identity, an 
 ancestor-list as well as typed, user-defined state for plugins such as \<^isadof>. 
 On top of the latter, the LCF-Kernel, tactics, automated proof procedures as well as specific 
-support for higher specification constructs were built.
-\<^footnote>\<open>We use the term \<^emph>\<open>plugin\<close> for a collection of HOL-definitions, SML and Scala code in order
-to distinguish it from the official Isabelle term \<^emph>\<open>component\<close> which implies a particular 
-format and support by the Isabelle build system.\<close>
+support for higher specification constructs were built.\<^footnote>\<open>We use the term \<^emph>\<open>plugin\<close> for a collection 
+of HOL-definitions, SML and Scala code in order to distinguish it from the official Isabelle 
+term \<^emph>\<open>component\<close> which implies a particular format and support by the Isabelle build system.\<close>
 \<close>
 
 section*[dof::introduction]\<open>The Document Model Required by \<^dof>\<close>
@@ -87,7 +86,7 @@ text\<open>
   main sub-document type, for historical reasons, \<^emph>\<open>theory\<close>-files.  A theory file\<^bindex>\<open>theory!file\<close>
   consists of a \<^emph>\<open>header\<close>\<^bindex>\<open>header\<close>, a \<^emph>\<open>context definition\<close>\<^index>\<open>context\<close>, and a body 
   consisting of a sequence of document elements called
-  \<^emph>\<open>command\<close>s (see @{figure (unchecked) "docModGenConcr"}(left)). Even
+  \<^emph>\<open>command\<close>s (see @{figure (unchecked) "docModGenConcr"} (left-hand side)). Even
   the header consists of a sequence of commands used for introductory text elements not depending on 
   any context. The context-definition contains an \<^boxed_theory_text>\<open>import\<close> and a 
   \<^boxed_theory_text>\<open>keyword\<close> section, for example:
@@ -113,7 +112,7 @@ text\<open>The body of a theory file consists of a sequence of \<^emph>\<open>co
 by a command keyword such as \<^boxed_theory_text>\<open>requirement\<close> above. Command keywords may mark 
 the the begin of a text that is parsed by a command-specific parser;  the end of the 
 command-span is defined by the next keyword. Commands were used to define definitions, lemmas, 
-code and text-elements (see @{float "docModGenConcr"}(right)).  \<close>
+code and text-elements (see @{float "docModGenConcr"} (right-hand side)).  \<close>
 
 text\<open> A simple text-element \<^index>\<open>text-element\<close> may look like this:
 
@@ -148,8 +147,8 @@ Its Its general syntactic format reads as follows:
 
 The sub-context may be different from the surrounding one; therefore, it is possible
 to switch from a text-context to a term-context, for example. Therefore, antiquotations allow
- the nesting of cartouches, albeit not all combinations are actually supported.
-\<^footnote>\<open>In the literature, this concept has been referred to \<open>Cascade-Syntax\<close> and was used in the 
+ the nesting of cartouches, albeit not all combinations are actually supported.\<^footnote>\<open>In the 
+literature, this concept has been referred to \<open>Cascade-Syntax\<close> and was used in the 
 Centaur-system and is existing in some limited form in some Emacs-implementations these days. \<close> 
 Isabelle comes with a number of built-in antiquotations for text- and code-contexts;
 a detailed overview can be found in @{cite "wenzel:isabelle-isar:2020"}. \<^dof> reuses this general

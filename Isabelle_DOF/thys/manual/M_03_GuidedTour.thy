@@ -70,7 +70,7 @@ text\<open>
 subsubsection*[isadof::technical]\<open>Installing \<^isadof>\<close>
 text\<open>
 By installing the AFP in the previous steps, you already installed \<^isadof>. In fact, \<^isadof> 
-is currently consisting out of two AFP entries:
+is currently consisting out of three AFP entries:
 
 \<^item> \<^verbatim>\<open>Isabelle_DOF\<close>: This entry
   contains the \<^isadof> system itself, including the \<^isadof> manual.
@@ -87,15 +87,6 @@ is currently consisting out of two AFP entries:
   are ontologically tracked. However, wrt. the possible linking between the underlying formal theory 
   and this mathematical presentation, it follows a pragmatic path without any ``deep'' linking to 
   types, terms and theorems, and therefore does deliberately not exploit \<^isadof> 's full potential.
-\<^item> \<^verbatim>\<open>Isabelle_DOF-Examples-Extra\<close>: This sessen contains a collection of other examples;
-  but is only accessible at the developer git 
-  \<^url>\<open>https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/src/branch/main/Isabelle_DOF-Examples-Extra\<close>.
-
-
-%  The \<^isadof> distribution contains both examples using the ontology \<^verbatim>\<open>scholarly_paper\<close> in 
-%  the directory \<^nolinkurl>\<open>examples/scholarly_paper/2018-cicm-isabelle_dof-applications/\<close> or
-%   \<^nolinkurl>\<open>examples/scholarly_paper/2020-iFM-CSP\<close>.
-
 
 It is recommended to follow the structure these examples.\<close>
 
@@ -236,32 +227,21 @@ subsection\<open>Editing Major Examples\<close>
 text\<open> 
   The ontology \<^verbatim>\<open>scholarly_paper\<close>  \<^index>\<open>ontology!scholarly\_paper\<close> is an ontology modeling 
   academic/scientific papers, with a slight bias towards texts in the domain of mathematics and
-  engineering. We explain first the principles of its underlying ontology, for examples
-  using these ontologies we refer to the example sessions described in \<^technical>\<open>isadof\<close>.
+  engineering. 
 
   You can inspect/edit the example in Isabelle's IDE, by either 
      \<^item> starting Isabelle/jEdit using your graphical user interface (\<^eg>, by clicking on the 
        Isabelle-Icon provided by the Isabelle installation) and loading the file 
        \<^nolinkurl>\<open>Isabelle_DOF-Example-I/IsaDofApplications.thy"\<close>
-     \<^item> starting Isabelle/jEdit from the command line by, \<^eg>, calling:
-
-@{boxed_bash [display]\<open>ë\prompt{\isadofdirn}ë 
-  isabelle jedit -d . Isabelle_DOF-Example-II/paper.thy \<close>}
-
-% bu assumes a particular organisation of Isabelle_DOF, Isabelle_DOF-Example-I, ... and an according ROOTS here ...
-\<close> 
-
-
-text\<open>    You can build the \<^pdf>-document at the command line by calling:
-@{boxed_bash [display] \<open>ë\prompt{}ë isabelle build -d . IsaDofApplications \<close>}
+\<close>
+text\<open> You can build the \<^pdf>-document at the command line by calling:
+@{boxed_bash [display] \<open>ë\prompt{}ë isabelle build Isabelle_DOF-Example-I\<close>}
 \<close>
 
 subsection*[sss::technical]\<open>A Bluffers Guide to the \<^verbatim>\<open>scholarly_paper\<close> Ontology\<close>
-text\<open> In this section we give a minimal overview of the ontology formalized in
-      \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close>.\<close>
-
-text\<open>  We start by modeling the usual text-elements of an academic paper: the title and author 
-  information, abstract, and text section: 
+text\<open> In this section we give a minimal overview of the ontology formalized in 
+ \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close>. We start by modeling the usual text-elements of an 
+ academic paper: the title and author information, abstract, and text section: 
 @{boxed_theory_text [display]
 \<open>doc_class title =
    short_title :: "string option"  <=  "None"
@@ -313,12 +293,8 @@ as follows:
    \<^item> subsubsection \<^index>\<open>subsubsection\<close> \<open>Some 3\<close>  \<^vs>\<open>-0.3cm\<close>
 
 Additional means assure that the following invariant is maintained in a document 
-conforming to \<^verbatim>\<open>scholarly_paper\<close>:
-
-\<^center>\<open>\<open>level > 0\<close>\<close>
+conforming to \<^verbatim>\<open>scholarly_paper\<close>: \<open>level > 0\<close>.
 \<close>
-
-text\<open>\<^vs>\<open>1.0cm\<close>\<close>
 
 text\<open> The rest of the ontology introduces concepts for \<^typ>\<open>introduction\<close>, \<^typ>\<open>conclusion\<close>,
 \<^typ>\<open>related_work\<close>, \<^typ>\<open>bibliography\<close> etc. More details can be found in \<^verbatim>\<open>scholarly_paper\<close>
