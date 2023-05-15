@@ -634,37 +634,33 @@ section*[ontopide::technical]\<open> Ontology-based IDE support \<close>
 text\<open> We present a selection of interaction scenarios  @{example \<open>scholar_onto\<close>}
 and @{example \<open>cenelec_onto\<close>} with Isabelle/PIDE instrumented by \<^isadof>. \<close>
 
+(*<*)
+declare_reference*["text-elements"::float]
+declare_reference*["hyperlinks"::float]
+(*>*)
+
 subsection*[scholar_pide::example]\<open> A Scholarly Paper \<close>  
-text\<open> In \<^unchecked_label>\<open>fig-Dogfood-II-bgnd1\<close> and \<^unchecked_label>\<open>fig-bgnd-text_section\<close> we show how
+text\<open> In @{float (unchecked) "text-elements"}~(a)
+and @{float (unchecked) "text-elements"}~(b)we show how
 hovering over links permits to explore its meta-information. 
 Clicking on a document class identifier permits to hyperlink into the corresponding
-class definition (\<^unchecked_label>\<open>fig:Dogfood-IV-jumpInDocCLass\<close>; hovering over an attribute-definition
-(which is qualified in order to disambiguate; \<^unchecked_label>\<open>fig:Dogfood-V-attribute\<close>).
+class definition (@{float (unchecked) "hyperlinks"}~(a)); hovering over an attribute-definition
+(which is qualified in order to disambiguate; @{float (unchecked) "hyperlinks"}~(b)).
 \<close>
 
 text*["text-elements"::float, 
       main_caption="\<open>Exploring text elements.\<close>"]
 \<open>
-@{fig_content (width=48, caption="Exploring a Reference of a Text-Element.") "figures/Dogfood-II-bgnd1.png"
-}\<^hfill>@{fig_content (width=47, caption="Exploring the class of a text element.") "figures/Dogfood-III-bgnd-text_section.png"} 
+@{fig_content (width=53, height=5, caption="Exploring a reference of a text element.") "figures/Dogfood-II-bgnd1.png"
+}\<^hfill>@{fig_content (width=47, height=5, caption="Exploring the class of a text element.") "figures/Dogfood-III-bgnd-text_section.png"} 
 \<close>
 
 text*["hyperlinks"::float, 
       main_caption="\<open>Hyperlinks.\<close>"]
 \<open>
 @{fig_content (width=48, caption="Hyperlink to Class-Definition.") "figures/Dogfood-IV-jumpInDocCLass.png"
-}\<^hfill>@{fig_content (width=47, caption="Exploring an attribute.") "figures/Dogfood-III-bgnd-text_section.png"} 
+}\<^hfill>@{fig_content (width=47, caption="Exploring an attribute.") "figures/Dogfood-V-attribute.png"} 
 \<close>
-
-
-(*<*)declare_reference*["figDogfoodVIlinkappl"::figure](*>*)
-text\<open> An ontological reference application in \<^unchecked_label>\<open>figDogfoodVIlinkappl\<close>: the ontology-dependant 
-antiquotation \<^theory_text>\<open>@{example ...}\<close> refers to the corresponding text-elements. Hovering allows 
-for inspection, clicking for jumping to the definition.  If the link does not exist or has a 
-non-compatible type, the text is not validated.  \<close>
-
-figure*[figDogfoodVIlinkappl::figure,relative_width="80",file_src="''figures/Dogfood-V-attribute.png''"]
-       \<open> Exploring an attribute (hyperlinked to the class). \<close> 
 
 subsection*[cenelec_pide::example]\<open> CENELEC  \<close>
 (*<*)declare_reference*[figfig3::figure](*>*)  
