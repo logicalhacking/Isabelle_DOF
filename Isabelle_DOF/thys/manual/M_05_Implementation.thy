@@ -144,9 +144,10 @@ text\<open>
 
 @{boxed_sml [display]
 \<open>val _ = Theory.setup
-           (docitem_antiquotation  @{binding "docitem"}  DOF_core.default_cid #>
+         (docitem_antiquotation  @{binding "docitem"}  DOF_core.default_cid #>
             
-            ML_Antiquotation.inline @{binding "docitem_value"} ML_antiquotation_docitem_value)\<close>}
+        ML_Antiquotation.inline @{binding "docitem_value"} 
+              ML_antiquotation_docitem_value)\<close>}
   the text antiquotation \<^boxed_sml>\<open>docitem\<close> is declared and bounded to a parser for the argument 
   syntax and the overall semantics. This code defines a generic antiquotation to be used in text 
   elements such as

@@ -75,7 +75,7 @@ doc_class report =
            abstract                ~~
            \<lbrakk>table_of_contents\<rbrakk>     ~~
            \<lbrace>introduction\<rbrace>\<^sup>+         ~~ 
-           \<lbrace>technical || figure || side_by_side_figure\<rbrace>\<^sup>+ ~~ 
+           \<lbrace>technical || figure \<rbrace>\<^sup>+ ~~ 
            \<lbrace>conclusion\<rbrace>\<^sup>+           ~~  
            \<lbrace>index\<rbrace>\<^sup>*  ~~  
            bibliography)"

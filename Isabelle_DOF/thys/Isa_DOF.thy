@@ -2004,7 +2004,7 @@ fun update_instance_command  (((oid, pos), cid_pos),
 (* General criticism : attributes like "level" were treated here in the kernel instead of dragging
    them out into the COL -- bu *)
 
-fun open_monitor_command  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) =
+fun open_monitor_command  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) thy =
     let fun o_m_c oid pos cid_pos doc_attrs thy =
           Value_Command.Docitem_Parser.create_and_check_docitem 
             {is_monitor=true}  (* this is a monitor *)
@@ -2016,7 +2016,7 @@ fun open_monitor_command  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Par
             val DOF_core.Onto_Class X = DOF_core.get_onto_class_global' cid thy
             val ralph = RegExpInterface.alphabet (#rejectS X)
             val aalph = RegExpInterface.alphabet (#rex X)
-          in  (aalph, ralph, map (RegExpInterface.rexp_term2da aalph)(#rex X)) end 
+          in  (aalph, ralph, map (RegExpInterface.rexp_term2da thy aalph)(#rex X)) end 
         fun create_monitor_entry oid thy =  
             let val cid = case cid_pos of
                               NONE => ISA_core.err ("You must specified a monitor class.") pos
@@ -2026,7 +2026,7 @@ fun open_monitor_command  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Par
                                          (DOF_core.make_monitor_info (accS, rejectS, aS)) thy
             end
     in
-      o_m_c oid pos cid_pos doc_attrs #> create_monitor_entry oid
+     thy |> o_m_c oid pos cid_pos doc_attrs |> create_monitor_entry oid
     end;
 
 
@@ -2187,15 +2187,16 @@ fun document_command (name, pos) descr mark cmd sem_attrs transform_attr =
       Toplevel.theory' (fn _ => cmd meta_args)
           (SOME (Toplevel.presentation_context #> document_output_reports name mark sem_attrs transform_attr meta_args text)))); 
 
-fun float_command (name, pos) descr (mark: {body: bool, markdown: bool})
+fun float_command (name, pos) descr
                    cmd  output_figure = 
   Outer_Syntax.command (name, pos) descr 
   (ODL_Meta_Args_Parser.attributes -- Parse.document_source >>  
      (fn (meta_args, text) =>
           Toplevel.theory' (fn _ => cmd meta_args)
              (SOME (Toplevel.presentation_context
-              #> (fn ctxt => (output_figure mark (meta_args, text)) ctxt)
-              )))) 
+              #> output_figure (meta_args, text)
+              ))))
+
 
 (* Core Command Definitions *)
 
