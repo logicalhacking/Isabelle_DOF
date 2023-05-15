@@ -659,8 +659,7 @@ text*[t10::test_result]
 text \<open> Finally some examples of references to doc-items, i.e. text-elements 
        with declared  meta-information and status. \<close> 
 
-text \<open> As established by @{test_result (unchecked) \<open>t10\<close>}, 
-                         @{test_result (define) \<open>t10\<close>} \<close>
+text \<open> As established by @{test_result \<open>t10\<close>}\<close>
 text \<open> the               @{test_result \<open>t10\<close>}                      
        as well as the    @{SRAC \<open>ass122\<close>}\<close>  
 text \<open> represent a justification of the safety related applicability 
@@ -670,7 +669,6 @@ text \<open> due to notational conventions for antiquotations, one may even writ
 
        "represent a justification of the safety related applicability
         condition \<^SRAC>\<open>ass122\<close> aka exported constraint \<^EC>\<open>ass122\<close>."\<close> 
-
 
 (*<*)   
 end
