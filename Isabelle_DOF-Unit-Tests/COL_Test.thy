@@ -31,12 +31,12 @@ section\<open>General Figure COL Elements\<close>
 figure*[fig1_test,relative_width="95",file_src="''figures/A.png''"]
        \<open> This is the label text  \<^term>\<open>\<sigma>\<^sub>i+2\<close> \<close>  
 
-(*<*)
+(*<*) (* text* with type figure not supported *)
 text*[fig2_test::figure, relative_width="95",file_src="''figures/A.png''"
 ]\<open> This is the label text\<close>
-(*>*)
-text\<open>check @{figure fig1_test} cmp to @{figure fig2_test}\<close>
 
+text\<open>check @{figure fig1_test} cmp to @{figure fig2_test}\<close>
+(*>*)
 
 
 (* And a side-chick ... *)

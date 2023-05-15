@@ -39,12 +39,11 @@ text\<open>Pythons ReStructuredText (RST).
     \<close>
 
 text*[aaaa::B]\<open>dfg @{thm [display] refl}\<close>
-                            
+(*<*)                            
 text-[dfgdfg::B]
 \<open> Lorem ipsum ...  @{thm [display] refl}  Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
 
 text-latex\<open> Lorem ipsum ...  @{thm [display] refl}  Frédéric \textbf{TEST} \verb+sdf+ \<open>dfgdfg\<close>  \<close>
-
 text-[asd::B]
 \<open>... and here is its application macro expansion: 
      @{B [display] "dfgdfg"} 
@@ -76,6 +75,7 @@ text-latex\<open> \<^theory_text>\<open>definition df = ...
        @{theory_text [display] \<open>definition df = ... \<lambda>x.  
                                \<close>}
        @{cartouche [display]   \<open> @{figure "cfgdfg"}\<close>} \<close>
+(*>*)
 
 text\<open>Final Status:\<close>
 print_doc_items

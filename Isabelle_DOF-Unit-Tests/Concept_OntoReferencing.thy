@@ -37,6 +37,7 @@ text\<open> This uses elements of two ontologies, notably
       \<^theory>\<open>Isabelle_DOF-Ontologies.Conceptual\<close> and \<^theory>\<open>Isabelle_DOF.Isa_COL\<close>.\<close>
 
 (*<*)
+
 title*[ag::title, short_title="Some\<open>ooups.\<close>"]\<open>Lorem ipsum dolor sit amet ...\<close>
 subtitle*[af::subtitle, abbrev = "Some\<open>ooups-oups.\<close>"]\<open>Lorem ipsum dolor sit amet ...\<close>
 chapter*[a0::A, x = "3"]   \<open> Lorem ipsum dolor sit amet ... \<close>
@@ -48,11 +49,9 @@ subsubsection*[ac::A, x = "3"]  \<open> Lorem ipsum dolor sit amet, ...
                                                                           ontological instances 
                                                                           assigned to text 
                                                                           elements ...\<close>
-(*>*)
 
 
 text\<open>Meta-Objects are typed, and references have to respect this : \<close>
-(*<*)
 text-assert-error[ad]\<open> \<^title>\<open>a\<close> \<close>    \<open>reference ontologically inconsistent\<close>
 text-assert-error[ae]\<open> \<^title>\<open>af\<close> \<close>\<open>reference ontologically inconsistent\<close> 
                        \<comment> \<open>erroneous reference: please consider class hierarchy!\<close>
@@ -116,17 +115,17 @@ definition*[e6::E] facu :: "nat \<Rightarrow> nat" where "facu arg = undefined"
 text\<open>As shown in @{E \<open>e5\<close>} following from  @{E \<open>e6\<close>}\<close> 
 
 
-(*>*)
 text\<open>As shown in @{C \<open>c4\<close>}\<close>
+(*>*)
 
 
 
 text\<open>Ontological information ("class instances") is mutable: \<close>
 
 update_instance*[d::D, a1 := X2]
-
+(*<*)
 text\<open> ... in ut tortor ... @{docitem \<open>a\<close>} ... @{A \<open>a\<close>} ... \<close> \<comment> \<open>untyped or typed referencing \<close>
-
+(*>*)
 text-assert-error[ae::text_element]\<open>the function @{C [display] "c4"} \<close>\<open>referred text-element is no macro!\<close>
 
 text*[c2::C, x = "\<open>delta\<close>"]  \<open> ... in ut tortor eleifend augue pretium consectetuer.  \<close>
@@ -141,9 +140,9 @@ theorem some_proof : "True" by simp
 
 text\<open>This is an example where we add a theorem into a kind of "result-list" of the doc-item f.\<close>
 update_instance*[f::F,r:="[@{thm ''Concept_OntoReferencing.some_proof''}]"]
-
+(*<*)
 text\<open> ..., mauris amet, id elit aliquam aptent id,  ... @{docitem \<open>a\<close>} \<close>
-
+(*>*)
 text\<open>Here we add and maintain a link that is actually modeled as m-to-n relation ...\<close>
 update_instance*[f::F,b:="{(@{docitem  \<open>a\<close>}::A,@{docitem  \<open>c1\<close>}::C), 
                            (@{docitem  \<open>a\<close>},   @{docitem  \<open>c2\<close>})}"] 
