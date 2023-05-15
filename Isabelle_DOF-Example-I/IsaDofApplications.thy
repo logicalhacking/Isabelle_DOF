@@ -206,7 +206,7 @@ The current system framework offers moreover the following features:
   the most prominent and deeply integrated system component.
 \<close>  
 
-figure*[architecture::figure,relative_width="100",src="''figures/isabelle-architecture''"]\<open> 
+figure*[architecture::figure,relative_width="100",file_src="''figures/isabelle-architecture.pdf''"]\<open> 
      The system architecture of Isabelle (left-hand side) and the 
      asynchronous communication between the Isabelle system and 
      the IDE (right-hand side). \<close>
@@ -315,7 +315,7 @@ Isabelle users to Isabelle users only. Of course, such references can be added e
 represent a particular strength of \<^isadof>.\<close>
 
 text*["paper_onto_core"::float, 
-      caption="\<open>The core of the ontology definition for writing scholarly papers.\<close>"]
+      main_caption="\<open>The core of the ontology definition for writing scholarly papers.\<close>"]
 \<open>@{boxed_theory_text [display]\<open>
 doc_class title =
    short_title :: "string option"  <=  None
@@ -350,7 +350,7 @@ The translation of its content to, \<^eg>, Springer's \<^LaTeX> setup for the Le
 Science Series, as required by many scientific conferences, is mostly straight-forward. 
 \<^vs>\<open>-0.8cm\<close>\<close>
 
-figure*[fig1::figure,spawn_columns=False,relative_width="95",src="''figures/Dogfood-Intro''"]
+figure*[fig1::figure,relative_width="95",file_src="''figures/Dogfood-Intro.png''"]
        \<open> Ouroboros I: This paper from inside \<^dots> \<close>  
 
 (*<*)declare_reference*[paper_onto_sections::float](*>*)
@@ -385,7 +385,7 @@ of the scope of this paper.
 
 We proceed more or less conventionally by the subsequent sections (@{float (unchecked)\<open>paper_onto_sections\<close>})\<close>  
 text*["paper_onto_sections"::float, 
-      caption = "''Various types of sections of a scholarly papers.''"]\<open>
+      main_caption = "''Various types of sections of a scholarly papers.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class example   = text_section +
    comment :: string
@@ -403,7 +403,7 @@ doc_class bibliography =
 text\<open>... and finish with a monitor class definition that enforces a textual ordering
 in the document core by a regular expression (@{float (unchecked) "paper_onto_monitor"}).\<close>  
 text*["paper_onto_monitor"::float, 
-      caption = "''A monitor for the scholarly paper ontology.''"]\<open>
+      main_caption = "''A monitor for the scholarly paper ontology.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class article = 
    trace :: "(title + subtitle + author+ abstract +
@@ -433,7 +433,7 @@ use fractions or even mathematical reals. This must be counterbalanced by syntac
 and semantic convenience. Choosing the mathematical reals, \<^eg>, would have the drawback that 
 attribute evaluation could be substantially more complicated.\<close>
 
-figure*[fig_figures::figure,spawn_columns=False,relative_width="85",src="''figures/Dogfood-figures''"]
+figure*[fig_figures::figure,relative_width="85",file_src="''figures/Dogfood-figures.png''"]
        \<open> Ouroboros II: figures \<^dots> \<close>
 
 text\<open> The document class \<^theory_text>\<open>figure\<close> --- supported by the \<^isadof> text command 
@@ -462,7 +462,7 @@ where for organizational reasons the execution of an exam takes place in facilit
 where the author of the exam is not expected to be physically present.
 Furthermore, we assume a simple grade system (thus, some calculation is required). \<close>  
 text*["onto_exam"::float, 
-      caption = "''The core of the ontology modeling math exams.''"]\<open>
+      main_caption = "''The core of the ontology modeling math exams.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class Author = ...
 datatype Subject =  algebra | geometry | statistical
@@ -495,7 +495,7 @@ assume familiarity of the students with Isabelle (\<^theory_text>\<open>term\<cl
 parse-able and type-checkable entity), we basically model a derivation as a sequence of strings
 (see @{float (unchecked)"onto_questions"}).\<close>  
 text*["onto_questions"::float, 
-      caption = "''An exam can contain different types of questions.''"]\<open>
+      main_caption = "''An exam can contain different types of questions.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class Answer_Formal_Step =  Exam_item +
   justification :: string
@@ -530,7 +530,7 @@ question by a sample proof validated by Isabelle (see @{float (unchecked) "onto_
 In our scenario this sample proofs are completely \<^emph>\<open>intern\<close>, \<^ie>, not exposed to the 
 students but just additional material for the internal review process of the exam.\<close>  
 text*["onto_exam_monitor"::float, 
-      caption = "''Validating exams.''"]\<open>
+      main_caption = "''Validating exams.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class Validation = 
    tests  :: "term list"  <="[]"
@@ -555,9 +555,9 @@ exam-sheets with multiple-choice and/or free-response elements
 help of the latter, it is possible that students write in a browser a formal mathematical 
 derivation---as part of an algebra exercise, for example---which is submitted to the examiners 
 electronically. \<close>
-figure*[fig_qcm::figure,spawn_columns=False,
-        relative_width="90",src="''figures/InteractiveMathSheet''"]
-        \<open> A Generated QCM Fragment \<^dots> \<close>  
+figure*[fig_qcm::figure,
+        relative_width="90",file_src="''figures/InteractiveMathSheet.png''"]
+        \<open>A Generated QCM Fragment \<^dots> \<close>  
 
 subsection*[cenelec_onto::example]\<open> The Certification Scenario following CENELEC \<close>
 text\<open> Documents to be provided in formal certifications (such as CENELEC
@@ -583,7 +583,7 @@ text\<open> In the sequel, we present a simplified version of an ontological mod
 case-study~ @{cite "bezzecchi.ea:making:2018"}. We start with an introduction of the concept of requirement 
 (see @{float (unchecked) "conceptual"}). \<close>  
 text*["conceptual"::float, 
-      caption = "''Modeling requirements.''"]\<open>
+      main_caption = "''Modeling requirements.''"]\<open>
 @{boxed_theory_text [display]\<open>
 doc_class requirement = long_name :: "string option"
 
@@ -641,18 +641,20 @@ Clicking on a document class identifier permits to hyperlink into the correspond
 class definition (\<^unchecked_label>\<open>fig:Dogfood-IV-jumpInDocCLass\<close>; hovering over an attribute-definition
 (which is qualified in order to disambiguate; \<^unchecked_label>\<open>fig:Dogfood-V-attribute\<close>).
 \<close>
-     
-side_by_side_figure*["text-elements"::side_by_side_figure,anchor="''fig-Dogfood-II-bgnd1''",
-                      caption="''Exploring a Reference of a Text-Element.''",relative_width="48",
-                      src="''figures/Dogfood-II-bgnd1''",anchor2="''fig-bgnd-text_section''",
-                      caption2="''Exploring the class of a text element.''",relative_width2="47",
-                      src2="''figures/Dogfood-III-bgnd-text_section''"]\<open> Exploring text elements. \<close>
 
-side_by_side_figure*["hyperlinks"::side_by_side_figure,anchor="''fig:Dogfood-IV-jumpInDocCLass''",
-                      caption="''Hyperlink to Class-Definition.''",relative_width="48",
-                      src="''figures/Dogfood-IV-jumpInDocCLass''",anchor2="''fig:Dogfood-V-attribute''",
-                      caption2="''Exploring an attribute.''",relative_width2="47",
-                      src2="''figures/Dogfood-III-bgnd-text_section''"]\<open> Hyperlinks.\<close>
+text*["text-elements"::float, 
+      main_caption="\<open>Exploring text elements.\<close>"]
+\<open>
+@{fig_content (width=48, caption="Exploring a Reference of a Text-Element.") "figures/Dogfood-II-bgnd1.png"
+}\<^hfill>@{fig_content (width=47, caption="Exploring the class of a text element.") "figures/Dogfood-III-bgnd-text_section.png"} 
+\<close>
+
+text*["hyperlinks"::float, 
+      main_caption="\<open>Hyperlinks.\<close>"]
+\<open>
+@{fig_content (width=48, caption="Hyperlink to Class-Definition.") "figures/Dogfood-IV-jumpInDocCLass.png"
+}\<^hfill>@{fig_content (width=47, caption="Exploring an attribute.") "figures/Dogfood-III-bgnd-text_section.png"} 
+\<close>
 
 
 (*<*)declare_reference*["figDogfoodVIlinkappl"::figure](*>*)
@@ -661,8 +663,9 @@ antiquotation \<^theory_text>\<open>@{example ...}\<close> refers to the corresp
 for inspection, clicking for jumping to the definition.  If the link does not exist or has a 
 non-compatible type, the text is not validated.  \<close>
 
-figure*[figDogfoodVIlinkappl::figure,relative_width="80",src="''figures/Dogfood-V-attribute''"]
+figure*[figDogfoodVIlinkappl::figure,relative_width="80",file_src="''figures/Dogfood-V-attribute.png''"]
        \<open> Exploring an attribute (hyperlinked to the class). \<close> 
+
 subsection*[cenelec_pide::example]\<open> CENELEC  \<close>
 (*<*)declare_reference*[figfig3::figure](*>*)  
 text\<open> The corresponding view in @{figure (unchecked) \<open>figfig3\<close>} shows core part of a document,  
@@ -670,7 +673,7 @@ coherent to the @{example \<open>cenelec_onto\<close>}. The first sample shows s
 @{cite "wenzel:isabelle-isar:2017"} into formal entities of a theory. This way, the informal parts 
 of a document get ``formal content'' and become more robust under change.\<close>
 
-figure*[figfig3::figure,relative_width="80",src="''figures/antiquotations-PIDE''"]
+figure*[figfig3::figure,relative_width="80",file_src="''figures/antiquotations-PIDE.png''"]
 \<open> Standard antiquotations referring to theory elements.\<close>
 
 (*<*)declare_reference*[figfig5::figure]  (*>*)
@@ -680,9 +683,9 @@ has the consequence that a certain calculation must be executed sufficiently fas
 device. This condition can not be established inside the formal theory but has to be 
 checked by system integration tests.\<close>
   
-figure*[figfig5::figure, relative_width="80", src="''figures/srac-definition''"]
+figure*[figfig5::figure, relative_width="80", file_src="''figures/srac-definition.png''"]
         \<open> Defining a SRAC reference \<^dots> \<close>
-figure*[figfig7::figure, relative_width="80", src="''figures/srac-as-es-application''"]
+figure*[figfig7::figure, relative_width="80", file_src="''figures/srac-as-es-application.png''"]
         \<open> Using a SRAC as EC document reference. \<close>
        
 text\<open> Now we reference in @{figure \<open>figfig7\<close>} this safety-related condition; 

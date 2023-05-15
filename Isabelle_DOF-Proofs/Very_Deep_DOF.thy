@@ -15,6 +15,5 @@ term "@{term \<open>\<forall>x. P x \<longrightarrow> Q\<close>}"
 term "@{thm  \<open>refl\<close>}"  
 term "@{docitem  \<open>doc_ref\<close>}"
 ML\<open>   @{term "@{docitem  \<open>doc_ref\<close>}"}\<close>
-(**)
 
 end

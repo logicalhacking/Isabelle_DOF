@@ -79,7 +79,7 @@ text\<open> \<^vs>\<open>-0.5cm\<close>
   maximum of formal content which makes this text re-checkable at each load and easier 
   maintainable. \<close>
 
-figure*[architecture::figure,relative_width="70",src="''figures/isabelle-architecture''"]\<open> 
+figure*[architecture::figure,relative_width="70",file_src="''figures/isabelle-architecture.pdf''"]\<open> 
      The system architecture of Isabelle (left-hand side) and the  asynchronous communication 
      between the Isabelle system and the IDE (right-hand side). \<close>
 
@@ -148,7 +148,7 @@ text\<open> \<open>*\<open>This is a text.\<close>\<close>\<close>
 
 text\<open>and displayed in the Isabelle/jEdit front-end at the sceen by:\<close>
 
-figure*[fig2::figure, relative_width="60", placement="pl_h", src="''figures/text-element''"]
+figure*[fig2::figure, relative_width="60", file_src="''figures/text-element.pdf''"]
         \<open>A text-element as presented in Isabelle/jEdit.\<close>
 
 text\<open>The text-commands, ML-commands (and in principle any other command) can be seen as 
@@ -807,18 +807,13 @@ text\<open>  They reflect the Pure logic depicted in a number of presentations s
   Notated as logical inference rules, these operations were presented as follows:
 \<close>
 
-side_by_side_figure*["text-elements"::side_by_side_figure,anchor="''fig-kernel1''",
-                      caption="''Pure Kernel Inference Rules I ''",relative_width="48",
-                      src="''figures/pure-inferences-I''",anchor2="''fig-kernel2''",
-                      caption2="''Pure Kernel Inference Rules II''",relative_width2="47",
-                      src2="''figures/pure-inferences-II''"]\<open>  \<close>
+text*["text-elements"::float, 
+      main_caption="\<open>Kernel Inference Rules.\<close>"]
+\<open>
+@{fig_content (width=48, caption="Pure Kernel Inference Rules I.") "figures/pure-inferences-I.pdf"
+}\<^hfill>@{fig_content (width=47, caption="Pure Kernel Inference Rules II.") "figures/pure-inferences-II.pdf"} 
+\<close>
 
-(*
-figure*[kir1::figure,relative_width="100",src="''figures/pure-inferences-I''"]
-       \<open> Pure Kernel Inference Rules I.\<close>
-figure*[kir2::figure,relative_width="100",src="''figures/pure-inferences-II''"]
-       \<open> Pure Kernel Inference Rules II. \<close>
- *)
 
 text\<open>Note that the transfer rule:
 \[
@@ -1440,7 +1435,7 @@ text\<open>The document model forsees a number of text files, which are organize
   secondary formats can be \<^verbatim>\<open>.sty\<close>,\<^verbatim>\<open>.tex\<close>, \<^verbatim>\<open>.png\<close>, \<^verbatim>\<open>.pdf\<close>, or other files processed 
   by Isabelle and listed in a configuration processed by the build system.\<close>
 
-figure*[fig3::figure, relative_width="100",src="''figures/document-model''"]
+figure*[fig3::figure, relative_width="100",file_src="''figures/document-model.pdf''"]
         \<open>A Theory-Graph in the Document Model\<close>
 
 text\<open>A \<^verbatim>\<open>.thy\<close> file consists of a \<^emph>\<open>header\<close>, a \<^emph>\<open>context-definition\<close> and
@@ -1535,7 +1530,7 @@ text\<open> ... uses the antiquotation @{ML "@{here}"} to infer from the system 
   of itself in the global document, converts it to markup (a string-representation of it) and sends
   it via the usual @{ML "writeln"} to the interface. \<close>
 
-figure*[hyplinkout::figure,relative_width="40",src="''figures/markup-demo''"]
+figure*[hyplinkout::figure,relative_width="40",file_src="''figures/markup-demo.png''"]
 \<open>Output with hyperlinked position.\<close>
 
 text\<open>@{figure \<open>hyplinkout\<close>} shows the produced output where the little house-like symbol in the 

@@ -20,7 +20,7 @@ begin
 chapter*[background::text_section]\<open> Background\<close>
 section*[bgrnd1::introduction]\<open>The Isabelle System Architecture\<close>
 
-figure*[architecture::figure,relative_width="95",src="''figures/isabelle-architecture''"]\<open> 
+figure*[architecture::figure,relative_width="95",file_src="''figures/isabelle-architecture.pdf''"]\<open> 
      The system architecture of Isabelle (left-hand side) and the 
      asynchronous communication between the Isabelle system and 
      the IDE (right-hand side). \<close>
@@ -45,16 +45,15 @@ The current system framework offers moreover the following features:
   the most prominent and deeply integrated system component.
 \<close>
 text\<open>
-The Isabelle system architecture shown in @{docitem \<open>architecture\<close>} comes with many layers, 
+The Isabelle system architecture shown in @{figure \<open>architecture\<close>} comes with many layers, 
 with Standard ML (SML) at the bottom layer as implementation  language. The architecture actually 
 foresees a \<^emph>\<open>Nano-Kernel\<close> (our terminology) which resides in the SML structure \<^boxed_sml>\<open>Context\<close>. 
 This structure provides a kind of container called \<^emph>\<open>context\<close> providing an identity, an 
 ancestor-list as well as typed, user-defined state for plugins such as \<^isadof>. 
 On top of the latter, the LCF-Kernel, tactics, automated proof procedures as well as specific 
-support for higher specification constructs were built.
-\<^footnote>\<open>We use the term \<^emph>\<open>plugin\<close> for a collection of HOL-definitions, SML and Scala code in order
-to distinguish it from the official Isabelle term \<^emph>\<open>component\<close> which implies a particular 
-format and support by the Isabelle build system.\<close>
+support for higher specification constructs were built.\<^footnote>\<open>We use the term \<^emph>\<open>plugin\<close> for a collection 
+of HOL-definitions, SML and Scala code in order to distinguish it from the official Isabelle 
+term \<^emph>\<open>component\<close> which implies a particular format and support by the Isabelle build system.\<close>
 \<close>
 
 section*[dof::introduction]\<open>The Document Model Required by \<^dof>\<close>
@@ -87,7 +86,7 @@ text\<open>
   main sub-document type, for historical reasons, \<^emph>\<open>theory\<close>-files.  A theory file\<^bindex>\<open>theory!file\<close>
   consists of a \<^emph>\<open>header\<close>\<^bindex>\<open>header\<close>, a \<^emph>\<open>context definition\<close>\<^index>\<open>context\<close>, and a body 
   consisting of a sequence of document elements called
-  \<^emph>\<open>command\<close>s (see @{figure (unchecked) "docModGenConcr"}(left)). Even
+  \<^emph>\<open>command\<close>s (see @{figure (unchecked) "docModGenConcr"} (left-hand side)). Even
   the header consists of a sequence of commands used for introductory text elements not depending on 
   any context. The context-definition contains an \<^boxed_theory_text>\<open>import\<close> and a 
   \<^boxed_theory_text>\<open>keyword\<close> section, for example:
@@ -102,17 +101,18 @@ text\<open>
   \<^boxed_theory_text>\<open>keywords\<close> are used to separate commands from each other.
 \<close>
 
-side_by_side_figure*[docModGenConcr::side_by_side_figure,anchor="''docModGen''",
-                      caption="''Schematic Representation.''",relative_width="45",
-                      src="''figures/doc-mod-generic.pdf''",anchor2="''docModIsar''",
-                      caption2="''The Isar Instance.''",relative_width2="45",
-                      src2="''figures/doc-mod-isar.pdf''"]\<open>A Representation of a Document Model.\<close>
+text*[docModGenConcr::float, 
+      main_caption="\<open>A Representation of a Document Model.\<close>"]
+\<open>
+@{fig_content (width=45, caption="Schematic Representation.") "figures/doc-mod-generic.pdf"
+}\<^hfill>@{fig_content (width=45, caption="The Isar Instance.") "figures/doc-mod-isar.pdf"} 
+\<close>
 
 text\<open>The body of a theory file consists of a sequence of \<^emph>\<open>commands\<close> that must be introduced
 by a command keyword such as \<^boxed_theory_text>\<open>requirement\<close> above. Command keywords may mark 
 the the begin of a text that is parsed by a command-specific parser;  the end of the 
 command-span is defined by the next keyword. Commands were used to define definitions, lemmas, 
-code and text-elements (see @{figure "docModGenConcr"}(right)).  \<close>
+code and text-elements (see @{float "docModGenConcr"} (right-hand side)).  \<close>
 
 text\<open> A simple text-element \<^index>\<open>text-element\<close> may look like this:
 
@@ -147,8 +147,8 @@ Its Its general syntactic format reads as follows:
 
 The sub-context may be different from the surrounding one; therefore, it is possible
 to switch from a text-context to a term-context, for example. Therefore, antiquotations allow
- the nesting of cartouches, albeit not all combinations are actually supported.
-\<^footnote>\<open>In the literature, this concept has been referred to \<open>Cascade-Syntax\<close> and was used in the 
+ the nesting of cartouches, albeit not all combinations are actually supported.\<^footnote>\<open>In the 
+literature, this concept has been referred to \<open>Cascade-Syntax\<close> and was used in the 
 Centaur-system and is existing in some limited form in some Emacs-implementations these days. \<close> 
 Isabelle comes with a number of built-in antiquotations for text- and code-contexts;
 a detailed overview can be found in @{cite "wenzel:isabelle-isar:2020"}. \<^dof> reuses this general
@@ -182,17 +182,18 @@ text\<open>Antiquotations seen as semantic macros are partial functions of type 
   typeset. They represent the device for linking formal with the informal content. 
 \<close>
 
-side_by_side_figure*[docModOnto::side_by_side_figure,anchor="''docModGen''",
-                      caption="''A Document with Ontological Annotations.''",relative_width="47",
-                      src="''figures/doc-mod-DOF.pdf''",anchor2="''docModDOF''",
-                      caption2="''Ontological References.''",relative_width2="47",
-                      src2="''figures/doc-mod-onto-docinst.pdf''"]\<open>Documents conform to Ontologies.\<close>
+text*[docModOnto::float, 
+      main_caption="\<open>Documents conform to Ontologies.\<close>"]
+\<open>
+@{fig_content (width=47, caption="A Document with Ontological Annotations.") "figures/doc-mod-DOF.pdf"
+}\<^hfill>@{fig_content (width=47, caption="Ontological References.") "figures/doc-mod-onto-docinst.pdf"} 
+\<close>
 
 text\<open>Since Isabelle's commands are freely programmable, it is possible to implement  \<^dof> as an 
 extension of the system. In particular, the ontology language of \<^dof> provides an  ontology 
 definition language ODL\<^bindex>\<open>ODL\<close> that \<^emph>\<open>generates\<close> anti-quotations and the infrastructure to check and evaluate 
 them. This allows for checking an annotated document with respect to a given ontology, which may be 
-specific for  a given domain-specific universe of discourse (see @{figure "docModOnto"}). ODL will 
+specific for  a given domain-specific universe of discourse (see @{float "docModOnto"}). ODL will 
 be described in  @{text_section (unchecked) "isadof_tour"} in more detail.\<close>
 
 section*[bgrnd21::introduction]\<open>Implementability of the Document Model in other ITP's\<close>
@@ -207,13 +208,13 @@ text\<open>
   in many features over-accomplishes the required  features of \<^dof>. 
 \<close>
 
-figure*["fig:dof-ide"::figure,relative_width="95",src="''figures/cicm2018-combined''"]\<open> 
+figure*["fig:dof-ide",relative_width="95",file_src="''figures/cicm2018-combined.png''"]\<open> 
      The \<^isadof> IDE (left) and the corresponding PDF (right), showing the first page
       of~@{cite "brucker.ea:isabelle-ontologies:2018"}.\<close>
 
 text\<open> 
   We call the present implementation of \<^dof> on the Isabelle platform  \<^isadof> . 
-  @{docitem "fig:dof-ide"} shows  a screen-shot of an introductory paper on 
+  @{figure  "fig:dof-ide"} shows  a screen-shot of an introductory paper on 
   \<^isadof>~@{cite "brucker.ea:isabelle-ontologies:2018"}: the \<^isadof> PIDE can be seen on the left, 
   while the generated presentation in PDF is shown on the right.
 

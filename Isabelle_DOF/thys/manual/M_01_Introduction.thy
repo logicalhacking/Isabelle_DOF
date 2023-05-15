@@ -17,6 +17,7 @@ theory "M_01_Introduction"
 begin
 (*>*)
 
+
 chapter*[intro::introduction]\<open> Introduction \<close>  
 text*[introtext::introduction]\<open> 
 The linking of the \<^emph>\<open>formal\<close> to the \<^emph>\<open>informal\<close> is perhaps the most pervasive challenge in the
@@ -148,12 +149,6 @@ text\<open>
      Lecture Notes in Computer Science. Springer-Verlag, Heidelberg, 2019.
      \<^url>\<open>https://doi.org/10.1007/978-3-030-34968-4_4\<close>.
     \end{quote}
-\<close>
-subsubsection\<open>Availability\<close>
-text\<open>
-  The implementation of the framework is available at 
-  \url{\<^dofurl>}. The website also provides links to the latest releases. \<^isadof> is licensed 
-  under a 2-clause BSD license (SPDX-License-Identifier: BSD-2-Clause).
 \<close>
 
 (*<*) 

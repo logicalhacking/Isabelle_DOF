@@ -22,9 +22,12 @@ begin
 section\<open>Test Purpose.\<close>
 text\<open> Creation of document parts that are controlled by (nested, locally defined) monitors. \<close>
 
+doc_class test_monitor_B =
+  tmB :: int
+
 doc_class monitor_M =
   tmM :: int
-  rejects "test_monitor_B"
+  rejects "Concept_MonitorTest1.test_monitor_B"
   accepts "test_monitor_E ~~ test_monitor_C"
 
 doc_class test_monitor_head =

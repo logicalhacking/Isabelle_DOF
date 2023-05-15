@@ -12,6 +12,7 @@ pipeline:
       - echo "ISABELLE_PDFLATEX=\"$LATEX --file-line-error\"" >> $ISABELLE_HOME_USER/etc/settings
       - isabelle build -x HOL-Proofs -x Isabelle_DOF-Proofs -D . -o browser_info
       - if [ "$LATEX" = "lualatex" ]; then isabelle build -o 'timeout_scale=2' -D . -o browser_info; else echo "Skipping Isabelle_DOF-Proofs for pdflatex build."; fi
+      - find . -name 'root.tex' -prune -o -name 'output' -type f | xargs latexmk -$LATEX -cd  -quiet -Werror
       - isabelle components -u .
       - isabelle dof_mkroot -q DOF_test
       - isabelle build -D DOF_test
