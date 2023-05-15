@@ -82,12 +82,12 @@ which will appear textually later. With this pragmatics, an "out-of-    order-pr
 can be achieved within \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close> for the most common cases.\<close>
 
 
-
+(*<*) (* PDF references to definition* not implemented *)
 Definition*[e1bis::"definition", short_name="\<open>Nice lemma.\<close>"]
    \<open>Lorem ipsum dolor sit amet, ... 
     This is formally defined as follows in @{definition (unchecked) "e1bisbis"}\<close>
 definition*[e1bisbis, status=formal] e :: int where "e = 2"
-
+(*>*)
 section\<open>Tests for Theorems, Assertions, Assumptions, Hypothesis, etc.\<close>
 
 declare [[Theorem_default_class     = "theorem",
@@ -127,12 +127,13 @@ Corollary*[d5]\<open>"Freeform Corollary"\<close>
 
 Consequence*[d6::scholarly_paper.consequence]\<open>"Freeform Consequence"\<close> \<comment> \<open>longname just for test\<close>
 
+(*<*)
 declare_reference*[ababa::scholarly_paper.assertion]
 Assertion*[d7]\<open>Freeform Assumption with forward reference to the formal  
                @{assertion (unchecked) ababa}.\<close>  
 assert*[ababa::assertion] "3 < (4::int)"
 assert*[ababab::assertion] "0 < (4::int)"
-
+(*>*)
 
 Conclusion*[d8]\<open>"Freeform Conclusion"\<close>
 

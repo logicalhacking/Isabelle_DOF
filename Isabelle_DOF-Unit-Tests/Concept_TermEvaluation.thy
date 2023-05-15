@@ -28,14 +28,14 @@ proof elements. Some tests cover also the critical cases concerning name spaces 
 
 
 section\<open>\<^theory_text>\<open>ML*\<close>-Annotated SML-commands\<close>
-
+(*<*)
 ML*[thefunction::B,x=\<open>\<open>dfg\<close>\<close>]\<open>fun fac x = if x = 0 then 1 else x * fac(x-1);
                                val t = \<^value_>\<open>x @{B \<open>thefunction\<close>}\<close>\<close>
 ML\<open>fac 5; t\<close> \<comment> \<open>this is a test that ML* is actually evaluated and the 
                  resulting toplevel state is preserved.\<close>
 text*[the::C]\<open> @{B "thefunction"} \<close>
-
 text\<open>... and here we reference @{B \<open>thefunction\<close>}.\<close>
+(*>*)
 
 
 
@@ -65,7 +65,7 @@ of the current implementation.
 \<close>
 
 section\<open>Term Annotation evaluation\<close>
-
+(*<*)
 text\<open>We can validate a term with TA:\<close>
 term*[axx::A]\<open>@{thm \<open>HOL.refl\<close>}\<close>
 
@@ -80,7 +80,7 @@ value*\<open>@{thm \<open>HOL.refl\<close>}\<close> \<comment> \<open>syntax che
 value*[axxx::A]\<open>@{thm \<open>HOL.refl\<close>}\<close> \<comment> \<open>defining a reference of class A\<close> 
 
 text\<open>check : @{A "axxx"}\<close> \<comment> \<open>using it\<close> 
-
+(*>*)
 text\<open>An instance class is an object which allows us to define the concepts we want in an ontology.
 It is a concept which will be used to implement an ontology. It has roughly the same meaning as
 an individual in an OWL ontology.
@@ -158,6 +158,7 @@ value*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z-instances} = [@{Z 
 text\<open>Now, we want to get all the instances of the @{doc_class A}\<close>
 value*\<open>@{A-instances}\<close>
 
+(*<*)
 text\<open>Warning: If you make a request on attributes that are undefined in some instances,
 you will get a result which includes these unresolved cases.
 In the following example, we request the instances of the @{doc_class A}.
@@ -166,7 +167,7 @@ whose our theory inherits from, and this docitem instance does not initialize it
 So in the request result we get an unresolved case because the evaluator can not get
 the value of the \<^emph>\<open>x\<close> attribute of the instance @{docitem \<open>sdf\<close>}:\<close>
 value*\<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A-instances}\<close>
-
+(*>*)
 section\<open>Limitations\<close>
 
 text\<open>There are still some limitations.
@@ -216,9 +217,10 @@ assert*\<open>{@{author \<open>curry\<close>}} = {@{author \<open>church\<close>
 term*\<open>property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
 assert*[assertionA::A]\<open>\<not> property @{result \<open>resultProof\<close>} = property @{result \<open>resultProof2\<close>}\<close>
 
+(*<*)
 text*[assertionAA::A]\<open>@{A "assertionA"}\<close> 
 text\<open>... and here we reference @{A \<open>assertionA\<close>}.\<close>
-
+(*>*)
 assert*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
 
 text\<open>The optional evaluator of \<open>value*\<close> and \<open>assert*\<close> must be specified after the meta arguments:\<close>
