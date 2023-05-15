@@ -300,12 +300,6 @@ fun fig_content_modes (ctxt, toks) =
                       (toks)
         in (y, (ctxt, toks')) end
 
-fun document_antiq (check: Proof.context -> Path.T option -> Input.source -> Path.T) =
-  Args.context -- Scan.lift Parse.path_input >> (fn (ctxt, source) =>
-   (check ctxt NONE source;
-    Latex.string (Latex.output_ascii_breakable "/" (Input.string_of source))
-    |> Latex.macro "isatt"));
-
 fun get_session_dir ctxt path = 
          Resources.check_session_dir ctxt 
                                      (SOME (path))  
@@ -345,13 +339,13 @@ fun fig_content ctxt (cfg_trans,file:Input.source) =
           in  if Input.string_of(caption) = ""  then 
                    file 
                    |> (Latex.string o Input.string_of) 
-                   |> (XML.enclose ("\\includegraphics"^arg_single^"{") "}")
+                   |> Latex.macro ("includegraphics"^arg_single)
               else
                    file 
                    |> (Latex.string o Input.string_of) 
                    |> (fn X => (Latex.string ("{"^wdth_val_s^"}")) 
-                                @ (Latex.string "\\centering")
-                                @ (XML.enclose ("\\includegraphics"^arg^"{") "}" X)
+                                @ (Latex.macro0 "centering")
+                                @ (Latex.macro ("includegraphics"^arg) X)
                                 @ (Latex.macro "caption" (generate_caption ctxt caption)))
                    |> (Latex.environment ("subcaptionblock") )
 (* BUG: newline at the end of subcaptionlbock, making side-by-side a figure-below-figure setup *)
@@ -373,25 +367,25 @@ val _ = Theory.setup
 ML\<open>
 
 
-fun convert_meta_args (X, (((str,_),value) :: R)) =
-     let fun conv_int x = snd(HOLogic.dest_number(Syntax.read_term @{context} x))
-                          handle TERM x =>  error "Illegal int format."
+fun convert_meta_args ctxt (X, (((str,_),value) :: R)) =
+     let fun conv_int x = snd(HOLogic.dest_number(Syntax.read_term ctxt x))
+                          handle TERM _ =>  error "Illegal int format."
      in
          (case YXML.content_of str of 
              "relative_width" =>  upd_relative_width (conv_int value)
-                                  o  convert_meta_args (X, R)
+                                  o  convert_meta_args ctxt (X, R)
           |  "relative_height" => upd_relative_height (conv_int value) 
-                                  o  convert_meta_args (X, R )
-          |  "file_src"        => convert_meta_args (X, R)
+                                  o  convert_meta_args ctxt (X, R )
+          |  "file_src"        => convert_meta_args ctxt (X, R)
           |  s => error("!undefined attribute:"^s))
      end
-   |convert_meta_args (X,[]) = I
+   |convert_meta_args _ (_,[]) = I
 
-fun convert_src_from_margs (X, (((str,_),value)::R)) = 
+fun convert_src_from_margs ctxt (X, (((str,_),value)::R)) = 
           (case YXML.content_of str of 
-             "file_src" => Input.string (HOLogic.dest_string (Syntax.read_term @{context} value))
-           | _          => convert_src_from_margs(X,R))
-   |convert_src_from_margs (X, [])     = error("No file_src provided.")
+             "file_src" => Input.string (HOLogic.dest_string (Syntax.read_term ctxt value))
+           | _          => convert_src_from_margs ctxt (X,R))
+   |convert_src_from_margs _ (_, [])     = error("No file_src provided.")
 
 fun float_command (name, pos) descr cid  =
   let fun set_default_class NONE = SOME(cid,pos)
@@ -401,16 +395,15 @@ fun float_command (name, pos) descr cid  =
                {is_monitor = false} 
                {is_inline = true}
                {define = true} oid pos (set_default_class cid_pos) doc_attrs
-      val opts = {markdown = false, body = true}
-      fun parse_and_tex _ (margs, text) ctxt  = (fig_content ctxt 
-                                                       (convert_meta_args margs o upd_caption Input.empty, 
-                                                        convert_src_from_margs margs))
-                                                   |> (fn X => (Latex.macro0 "centering" 
-                                                                 @ X 
-                                                                 @ Latex.macro "caption"  (generate_caption ctxt text))) 
+      fun parse_and_tex (margs, text) ctxt = (convert_src_from_margs ctxt margs)
+                                             |> pair (upd_caption Input.empty #> convert_meta_args ctxt margs)
+                                             |> fig_content ctxt 
+                                             |> (fn X => (Latex.macro0 "centering" 
+                                                          @ X 
+                                                          @ Latex.macro "caption" (generate_caption ctxt text))) 
                                                    (* TODO: add label *)
-                                                   |> (Latex.environment ("figure") )
-  in  Monitor_Command_Parser.float_command (name, pos) descr opts create_instance parse_and_tex
+                                              |> (Latex.environment ("figure") )
+  in  Monitor_Command_Parser.float_command (name, pos) descr create_instance parse_and_tex
   end
 
 

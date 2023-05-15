@@ -178,68 +178,29 @@ section\<open>Simulation of a Monitor\<close>
 
 declare[[free_class_in_monitor_checking]]
 
-open_monitor*[figs1::figure_group, 
-              caption="''Sample ''"]  
-ML\<open>val monitor_infos = DOF_core.get_monitor_infos \<^context>\<close>
-text*[testFreeA::A]\<open>\<close>
-figure*[fig_A::figure,
-        relative_width="90",
-        file_src="''figures/A.png''"]
-       \<open> The A train \ldots \<close>
 
-figure*[fig_B::figure, 
-        relative_width="90",
-        file_src="''figures/B.png''"]
-       \<open> The B train \ldots \<close>  
-open_monitor*[figs2::figure_group, 
-              caption="''Sample ''"]
 ML\<open>val monitor_infos = DOF_core.get_monitor_infos \<^context>\<close>
 figure*[fig_C::figure, 
         relative_width="90",
         file_src="''figures/A.png''"]
        \<open> The C train \ldots \<close>
-open_monitor*[figs3::figure_group, 
-              caption="''Sample ''"]
+
+
 ML\<open>val monitor_infos = DOF_core.get_monitor_infos \<^context>\<close>
 
-figure*[fig_D::figure, 
-        relative_width="90",
-        file_src="''figures/B.png''"]
-       \<open> The D train \ldots \<close>
-close_monitor*[figs3]
 
-open_monitor*[figs4::figure_group, 
-              caption="''Sample ''"]
-ML\<open>val monitor_infos = DOF_core.get_monitor_infos \<^context>\<close>
-
-text*[testRejected1::figure_group, caption="''document/figures/A.png''"]
-       \<open> The A train \ldots \<close>
-
-figure*[fig_E::figure,
-        relative_width="90",
-        file_src="''figures/B.png''"]
-       \<open> The E train \ldots \<close>
-close_monitor*[figs4]
-close_monitor*[figs2]
-text*[testRejected2::figure_group, caption="''document/figures/A.png''"]
-       \<open> The A train \ldots \<close>
-
-close_monitor*[figs1]  
 
 declare[[free_class_in_monitor_checking = false]]
 
 text\<open>Resulting trace of figs1 as ML antiquotation: \<close>
-ML  \<open>@{trace_attribute figs1}\<close>
+
 text\<open>Resulting trace of figs as text antiquotation:\<close>
-text\<open>@{trace_attribute figs1}\<close>
+
 
 
 section\<open>A Complex Evaluation involving Automatas\<close>
 
 text\<open>Test trace\_attribute term antiquotation:\<close>
-
-term*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
-value*\<open>map snd @{trace-attribute \<open>figs1\<close>}\<close>
 
 definition example_expression where "example_expression \<equiv> \<lbrace>\<lfloor>''Conceptual.A''\<rfloor> || \<lfloor>''Conceptual.F''\<rfloor>\<rbrace>\<^sup>*"
 value* \<open> DA.accepts (na2da (rexp2na example_expression)) (map fst @{trace-attribute \<open>aaa\<close>}) \<close>

@@ -161,8 +161,8 @@ structure RegExpInterface : sig
     type cid
     val  alphabet    : term list -> env
     val  ext_alphabet: env -> term list -> env
-    val  conv        : term -> env -> int RegExpChecker.rexp (* for debugging *)
-    val  rexp_term2da: env -> term -> automaton
+    val  conv        : theory -> term -> env -> int RegExpChecker.rexp (* for debugging *)
+    val  rexp_term2da: theory -> env -> term -> automaton
     val  enabled     : automaton -> env -> cid list  
     val  next        : automaton -> env -> cid -> automaton
     val  final       : automaton -> bool
@@ -187,23 +187,23 @@ local open RegExpChecker in
                      else ()
          in res end;
 
-  fun conv \<^Const_>\<open>Regular_Exp.rexp.Zero _\<close> _ = Zero
-     |conv \<^Const_>\<open>Regular_Exp.rexp.One _\<close> _ = Onea 
-     |conv \<^Const_>\<open>Regular_Exp.rexp.Times _ for X Y\<close> env = Times(conv X env, conv Y env)
-     |conv \<^Const_>\<open>Regular_Exp.rexp.Plus _ for X Y\<close> env = Plus(conv X env, conv Y env)
-     |conv \<^Const_>\<open>Regular_Exp.rexp.Star _ for X\<close> env = Star(conv X env)
-     |conv \<^Const_>\<open>RegExpInterface.opt _ for X\<close> env = Plus(conv X env, Onea)
-     |conv \<^Const_>\<open>RegExpInterface.rep1 _ for X\<close> env = Times(conv X env, Star(conv X env))
-     |conv (Const (s, \<^Type>\<open>rexp _\<close>)) env =
+  fun conv _ \<^Const_>\<open>Regular_Exp.rexp.Zero _\<close> _ = Zero
+     |conv _ \<^Const_>\<open>Regular_Exp.rexp.One _\<close> _ = Onea 
+     |conv thy \<^Const_>\<open>Regular_Exp.rexp.Times _ for X Y\<close> env = Times(conv thy X env, conv thy Y env)
+     |conv thy \<^Const_>\<open>Regular_Exp.rexp.Plus _ for X Y\<close> env = Plus(conv thy X env, conv thy Y env)
+     |conv thy \<^Const_>\<open>Regular_Exp.rexp.Star _ for X\<close> env = Star(conv thy X env)
+     |conv thy \<^Const_>\<open>RegExpInterface.opt _ for X\<close> env = Plus(conv thy X env, Onea)
+     |conv thy \<^Const_>\<open>RegExpInterface.rep1 _ for X\<close> env = Times(conv thy X env, Star(conv thy X env))
+     |conv _ (Const (s, \<^Type>\<open>rexp _\<close>)) env =
                let val n = find_index (fn x => x = s) env 
                    val _ = if n<0 then error"conversion error of regexp."  else ()
                in  Atom(n) end
-     |conv S _ = error("conversion error of regexp:" ^ (Syntax.string_of_term (@{context})S))
+     |conv thy S _ = error("conversion error of regexp:" ^ (Syntax.string_of_term_global thy S))
 
    val eq_int = {equal = curry(op =) : Int.int -> Int.int -> bool};
    val eq_bool_list = {equal = curry(op =) : bool list  -> bool list  -> bool};
 
-   fun rexp_term2da env term = let val rexp = conv term env;
+   fun rexp_term2da thy env term = let val rexp = conv thy term env;
                                    val nda = RegExpChecker.rexp2na eq_int rexp;
                                    val da = RegExpChecker.na2da eq_bool_list nda;
                                in  da end;
