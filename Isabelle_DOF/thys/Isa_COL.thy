@@ -395,24 +395,42 @@ fun float_command (name, pos) descr cid  =
                {is_monitor = false} 
                {is_inline = true}
                {define = true} oid pos (set_default_class cid_pos) doc_attrs
-      fun parse_and_tex (margs, text) ctxt = (convert_src_from_margs ctxt margs)
-                                             |> pair (upd_caption Input.empty #> convert_meta_args ctxt margs)
-                                             |> fig_content ctxt 
-                                             |> (fn X => (Latex.macro0 "centering" 
-                                                          @ X 
-                                                          @ Latex.macro "caption" (generate_caption ctxt text))) 
-                                                   (* TODO: add label *)
-                                              |> (Latex.environment ("figure") )
+      fun generate_fig_ltx_ctxt ctxt cap_src oid body = 
+        Latex.macro0 "centering" 
+        @ body 
+        @ Latex.macro "caption" (generate_caption ctxt cap_src)
+        @ Latex.macro "label" (DOF_core.get_instance_name_global oid (Proof_Context.theory_of ctxt)
+                               |> DOF_core.output_name
+                               |> Latex.string)
+      fun parse_and_tex (margs as (((oid, _),_), _), cap_src) ctxt =
+        (convert_src_from_margs ctxt margs)
+        |> pair (upd_caption Input.empty #> convert_meta_args ctxt margs)
+        |> fig_content ctxt 
+        |> generate_fig_ltx_ctxt ctxt cap_src oid
+        |> (Latex.environment ("figure") )
   in  Monitor_Command_Parser.float_command (name, pos) descr create_instance parse_and_tex
   end
 
+fun listing_command (name, pos) descr cid  =
+  let fun set_default_class NONE = SOME(cid,pos)
+         |set_default_class (SOME X) = SOME X 
+      fun create_instance  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t)  =
+                Value_Command.Docitem_Parser.create_and_check_docitem 
+               {is_monitor = false} 
+               {is_inline = true}
+               {define = true} oid pos (set_default_class cid_pos) doc_attrs
+      fun parse_and_tex (margs as (((_, pos),_), _), _) _ =
+        ISA_core.err ("Not yet implemented.\n Please use text*[oid::listing]\<open>\<close> instead.") pos
+  in  Monitor_Command_Parser.float_command (name, pos) descr create_instance parse_and_tex
+  end
+  
 
 (* *********************************************************************** *)
 (* Ontological Macro Command Support                                       *)
 (* *********************************************************************** *)
 
 val _ = float_command \<^command_keyword>\<open>figure*\<close> "figure" "Isa_COL.figure" ;
-val _ = float_command \<^command_keyword>\<open>listing*\<close> "figure" "Isa_COL.listing" ;  (* Hack ! *)
+val _ = listing_command \<^command_keyword>\<open>listing*\<close> "listing" "Isa_COL.listing" ;  (* Hack ! *)
 \<close>
 
 
