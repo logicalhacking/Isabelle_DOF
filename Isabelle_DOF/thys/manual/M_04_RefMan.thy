@@ -497,12 +497,14 @@ text*[b::B'_test']\<open>\<close>
 
 term*\<open>@{B--test- \<open>b\<close>}\<close>\<close>}
 
-The major commands providing term-contexts are
-\<^theory_text>\<open>term*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>,
-\<^theory_text>\<open>value*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>, and
-\<^theory_text>\<open>assert*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>\<^footnote>\<open>The meta-argument list is optional.\<close>
-\<^theory_text>\<open>definition*[oid::cid, ...] const_name where \<open> \<dots> HOL-term \<dots> \<close>\<close>, and
-\<^theory_text>\<open>lemma*[oid::cid, ...] name :: \<open> \<dots> HOL-term \<dots> \<close>\<close>.
+The major commands providing term-contexts are\<^footnote>\<open>The meta-argument list is optional.\<close>
+  \<^item> \<^theory_text>\<open>term*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>,
+  \<^item> \<^theory_text>\<open>value*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>, and
+  \<^item> \<^theory_text>\<open>assert*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>
+  \<^item> \<^theory_text>\<open>definition*[oid::cid, ...] const_name where \<open> \<dots> HOL-term \<dots> \<close>\<close>, and
+  \<^item> \<^theory_text>\<open>lemma*[oid::cid, ...] name :: \<open> \<dots> HOL-term \<dots> \<close>\<close>.
+
+
 Wrt. creation, checking and traceability, these commands are analogous to the ontological text and
 code-commands. However the argument terms may contain term-antiquotations stemming from an
 ontology definition. Term-contexts were type-checked and \<^emph>\<open>validated\<close> against
