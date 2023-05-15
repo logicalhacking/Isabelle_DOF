@@ -120,7 +120,7 @@ in a subdirectory:
 * [Isabelle_DOF-Unit-Tests](./Isabelle_DOF-Unit-Tests/): This session includes
   various tests for the Isabelle/DOF system, partly depending on the ontologies
   provided by the ``Isabelle_DOF-Ontologies`` session.
-* [Isabelle_DOF-Example-Extra](./Isabelle_DOF-Examples-Extra/): This directory
+* [Isabelle_DOF-Examples-Extra](./Isabelle_DOF-Examples-Extra/): This directory
   contains additional example documents written using the Isabelle/DOF systems,
   each of which is defined in an own subdirectory.
 * [Isabelle_DOF-Proofs](./Isabelle_DOF-Proofs/): This session provides the

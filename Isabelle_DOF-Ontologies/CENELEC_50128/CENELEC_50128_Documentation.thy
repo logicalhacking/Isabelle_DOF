@@ -345,7 +345,7 @@ can now be defined as follows:
 \end{ltx}
 \<close>
 text\<open>
-  For example, the @{docitem "ass123"} from page \pageref{ass123} is mapped to
+  For example, the @{docitem "ass123"} is mapped to
 
 @{boxed_latex [display]
 \<open>\begin{isamarkuptext*}%

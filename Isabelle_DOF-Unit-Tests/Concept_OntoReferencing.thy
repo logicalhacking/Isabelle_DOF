@@ -108,13 +108,15 @@ find_theorems name:tagged "(_::cc_assumption_test \<Rightarrow> _ \<Rightarrow> 
 declare_reference-assert-error[c1::C]\<open>Duplicate instance declaration\<close>     \<comment> \<open>forward declaration\<close>
 
 declare_reference*[e6::E] 
-
+(*<*)  (* pdf GENERATION NEEDS TO BE IMPLEMENTED IN FRONT AND BACKEND *)
 text\<open>This is the answer to the "OutOfOrder Presentation Problem": @{E (unchecked) \<open>e6\<close>} \<close>
 
 definition*[e6::E] facu :: "nat \<Rightarrow> nat" where "facu arg = undefined"
 
 text\<open>As shown in @{E \<open>e5\<close>} following from  @{E \<open>e6\<close>}\<close> 
 
+
+(*>*)
 text\<open>As shown in @{C \<open>c4\<close>}\<close>
 
 

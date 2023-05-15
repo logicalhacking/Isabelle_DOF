@@ -455,4 +455,12 @@ Definition*[evalu_def, tag="'' Evaluator''"]
  of @{docitem  (unchecked) toeDef}s and when evaluating @{docitem ppDef}s
  and @{docitem  (unchecked) stDef}s.\<close>
 
+
+Definition*[toeDef] \<open>\<close>
+Definition*[sfrs_def] \<open>\<close>
+Definition*[sfr_def] \<open>\<close>
+Definition*[stDef] \<open>\<close>
+Definition*[sfp_def] \<open>\<close>
+Definition*[tsf_def] \<open>\<close>
+
 end

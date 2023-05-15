@@ -4,7 +4,10 @@ session "mini_odo" = "Isabelle_DOF-Ontologies" +
     "Physical_Quantities"
   theories
     "mini_odo"
+  document_theories
+    "Isabelle_DOF-Ontologies.CENELEC_50128" 
   document_files
+    "dof_session.tex"
     "preamble.tex"
     "root.bib"
     "root.mst"
