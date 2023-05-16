@@ -202,7 +202,18 @@ section\<open>A Complex Evaluation involving Automatas\<close>
 
 text\<open>Test trace\_attribute term antiquotation:\<close>
 
+notation Star  ("\<lbrace>(_)\<rbrace>\<^sup>*" [0]100)
+notation Plus  (infixr "||" 55)
+notation Times (infixr "~~" 60)
+notation Atom  ("\<lfloor>_\<rfloor>" 65)
+
 definition example_expression where "example_expression \<equiv> \<lbrace>\<lfloor>''Conceptual.A''\<rfloor> || \<lfloor>''Conceptual.F''\<rfloor>\<rbrace>\<^sup>*"
+
+no_notation Star  ("\<lbrace>(_)\<rbrace>\<^sup>*" [0]100)
+no_notation Plus  (infixr "||" 55)
+no_notation Times (infixr "~~" 60)
+no_notation Atom  ("\<lfloor>_\<rfloor>" 65)
+
 value* \<open> DA.accepts (na2da (rexp2na example_expression)) (map fst @{trace-attribute \<open>aaa\<close>}) \<close>
 
 definition word_test  :: "'a list \<Rightarrow> 'a rexp \<Rightarrow> bool" (infix "is-in" 60)

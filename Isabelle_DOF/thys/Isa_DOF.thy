@@ -3015,8 +3015,12 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
                   , (Binding.empty_atts, Binding.name_of binding |> mk_eq_pair), [], [])
       fun add record_fields virtual =
         Record.add_record overloaded (params', binding) parent' record_fields
+        #> (Local_Theory.notation true Syntax.mode_default RegExpInterface_Notations.notations
+            |> Named_Target.theory_map)
         #> DOF_core.define_doc_class_global (params', binding) parent fieldsNterms' regexps 
                                             reject_Atoms invariants virtual
+        #> (Local_Theory.notation false Syntax.mode_default RegExpInterface_Notations.notations
+            |> Named_Target.theory_map)
     in thy    (* adding const symbol representing doc-class for Monitor-RegExps.*)
            |> Named_Target.theory_map (def_cmd args)
            |> (case parent' of
