@@ -236,7 +236,21 @@ end; (* local *)
 end  (* struct *)
 \<close>
 
-no_notation Atom ("\<lfloor>_\<rfloor>")  
+no_notation Star  ("\<lbrace>(_)\<rbrace>\<^sup>*" [0]100)
+no_notation Plus  (infixr "||" 55)
+no_notation Times (infixr "~~" 60)
+no_notation Atom  ("\<lfloor>_\<rfloor>" 65)
+
+ML\<open>
+structure RegExpInterface_Notations =
+struct
+val Star = (\<^term>\<open>Regular_Exp.Star\<close>, Mixfix (Syntax.read_input "\<lbrace>(_)\<rbrace>\<^sup>*", [0], 100, Position.no_range))
+val Plus = (\<^term>\<open>Regular_Exp.Plus\<close>, Infixr (Syntax.read_input "||", 55, Position.no_range))
+val Times = (\<^term>\<open>Regular_Exp.Times\<close>, Infixr (Syntax.read_input "~~", 60, Position.no_range))
+val Atom = (\<^term>\<open>Regular_Exp.Atom\<close>, Mixfix (Syntax.read_input "\<lfloor>_\<rfloor>", [], 65, Position.no_range))
+val notations = [Star, Plus, Times, Atom]
+end
+\<close>
 
 end
   
