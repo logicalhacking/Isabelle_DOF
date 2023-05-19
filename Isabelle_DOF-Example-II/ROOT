@@ -1,5 +1,7 @@
-session "Isabelle_DOF-Example-II" = "Isabelle_DOF" +
-  options [document = pdf, document_output = "output", document_build = dof]
+chapter AFP 
+
+session "Isabelle_DOF-Example-II" (AFP) = "Isabelle_DOF" +
+  options [document = pdf, document_output = "output", document_build = dof, timeout = 300]
   theories
     "paper"
   document_files

@@ -1,5 +1,7 @@
+chapter AFP
+
 session "Isabelle_DOF" (AFP) = "Functional-Automata" + 
-  options [document = pdf, document_output = "output", document_build = dof]
+  options [document = pdf, document_output = "output", document_build = dof, timeout = 300]
   sessions
     "Regular-Sets"
   directories 
@@ -31,7 +33,6 @@ session "Isabelle_DOF" (AFP) = "Functional-Automata" +
     "lstisadof-manual.sty" 
     "figures/cicm2018-combined.png"
     "figures/document-hierarchy.pdf"
-    "figures/document-hierarchy.svg"
     "figures/Dogfood-figures.png"
     "figures/Dogfood-II-bgnd1.png"
     "figures/Dogfood-III-bgnd-text_section.png"
@@ -39,7 +40,6 @@ session "Isabelle_DOF" (AFP) = "Functional-Automata" +
     "figures/Dogfood-V-attribute.png"
     "figures/Dogfood-VI-linkappl.png"
     "figures/isabelle-architecture.pdf"
-    "figures/isabelle-architecture.svg"
     "figures/Isabelle_DOF-logo.pdf"
     "figures/header_CSP_pdf.png"
     "figures/header_CSP_source.png"
