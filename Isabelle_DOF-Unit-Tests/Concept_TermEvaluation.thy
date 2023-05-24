@@ -201,10 +201,12 @@ Consequently, it has the same limitations as \<^emph>\<open>value*\<close>.
 text\<open>Using the ontology defined in \<^theory>\<open>Isabelle_DOF-Unit-Tests.Concept_High_Level_Invariants\<close>
 we can check logical statements:\<close>
 
-term*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
-assert*\<open>authored_by @{introduction \<open>introduction2\<close>} = authored_by @{introduction \<open>introduction3\<close>}\<close>
-assert*\<open>\<not>(authored_by @{introduction \<open>introduction2\<close>}
-          = authored_by @{introduction \<open>introduction4\<close>})\<close>
+term*\<open>authored_by @{Concept-High-Level-Invariants.introduction \<open>introduction2\<close>}
+      = authored_by @{Concept-High-Level-Invariants.introduction \<open>introduction3\<close>}\<close>
+assert*\<open>authored_by @{Concept-High-Level-Invariants.introduction \<open>introduction2\<close>}
+        = authored_by @{Concept-High-Level-Invariants.introduction \<open>introduction3\<close>}\<close>
+assert*\<open>\<not>(authored_by @{Concept-High-Level-Invariants.introduction \<open>introduction2\<close>}
+          = authored_by @{Concept-High-Level-Invariants.introduction \<open>introduction4\<close>})\<close>
 
 text\<open>Assertions must be boolean expressions, so the following assertion triggers an error:\<close>
 (* Error:
@@ -228,5 +230,13 @@ value* [optional_test_A::A, x=6] [nbe] \<open>filter (\<lambda>\<sigma>. A.x \<s
 
 assert* [resultProof3::result, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"] [nbe]
         \<open>evidence @{result \<open>resultProof3\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
+
+text\<open>
+Evaluation of \<open>assert*\<close> can be disabled using the *\<open>disable_assert_evaluation\<close> theory attribute.
+Then only the checking of the term is done:
+\<close>
+declare[[disable_assert_evaluation]]
+assert*\<open>evidence @{result \<open>resultProof3\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
+declare[[disable_assert_evaluation = false]]
 
 end

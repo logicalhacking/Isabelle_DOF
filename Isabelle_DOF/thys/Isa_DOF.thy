@@ -1708,10 +1708,10 @@ fun check_invariants thy (oid, _) =
                         val pos = Binding.pos_of bind
                         val inv_def = inv_name
                                       |> Syntax.read_term_global thy
-                        in case inv_def of
-                              Const (s, Type (st, [_ (*ty*), ty'])) =>
+                      in case inv_def of
+                             Const (s, Type (st, [_ (*ty*), ty'])) =>
                                 ((inv_name, pos), Const (s, Type (st,[inv_def_typ, ty'])) $ value)
-                            | _ => ((inv_name, pos), inv_def $ value) end)
+                           | _ => ((inv_name, pos), inv_def $ value) end)
             end    
       in cids_invariants |> map (fn cid_invs => mk_inv_and_apply cid_invs docitem_value thy) 
                          |> flat
@@ -1875,11 +1875,6 @@ in
    trans |> Toplevel.theory (value_cmd {assert=false} meta_args_opt name modes t pos)
 end
 
-fun pass_trans_to_assert_value_cmd meta_args_opt ((name, modes), t) trans =
-let val pos = Toplevel.pos_of trans
-in
-  trans |> Toplevel.theory (value_cmd {assert=true} meta_args_opt name modes t pos) 
-end
 \<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/isar_cmd.ML\<close>\<close>
 
 (*
@@ -1903,21 +1898,32 @@ end;
 fun print_item string_of (modes, arg) state =  
     Print_Mode.with_modes modes (fn () => writeln (string_of state arg)) (); 
 
+fun prin t pos state _  = string_of_term t pos (Toplevel.context_of state)
+
 fun print_term meta_args_opt (string_list, string) trans =
 let
   val pos = Toplevel.pos_of trans
-  fun prin state _ = string_of_term string pos (Toplevel.context_of state) 
-in
-  Toplevel.theory(fn thy =>
-                     (print_item prin (string_list, string) (Toplevel.theory_toplevel thy); 
-                     thy |> meta_args_exec meta_args_opt ) 
-                 ) trans                    
+in meta_args_exec meta_args_opt
+   #> tap (fn thy => print_item (prin string pos) (string_list, string) (Toplevel.theory_toplevel thy))
+   |> (fn thy => Toplevel.theory thy trans)
 end
 
-val _ = Toplevel.theory
-val _ = Toplevel.theory_toplevel 
+val (disable_assert_evaluation, disable_assert_evaluation_setup)
+     = Attrib.config_bool \<^binding>\<open>disable_assert_evaluation\<close> (K false);
 
+val _ = Theory.setup disable_assert_evaluation_setup
 
+fun pass_trans_to_assert_value_cmd meta_args_opt ((name, modes), t) trans =
+let val pos = Toplevel.pos_of trans
+in trans
+   |> Toplevel.theory
+        (fn thy =>
+           if Config.get_global thy disable_assert_evaluation
+           then (meta_args_exec meta_args_opt
+                 #> tap (fn thy => print_item (prin t pos) (modes, t) (Toplevel.theory_toplevel thy)))
+                thy
+           else value_cmd {assert=true} meta_args_opt name modes t pos thy) 
+end
 
 (* setup ontology aware commands *)
 val _ =
@@ -1930,10 +1936,12 @@ val _ =
     (ODL_Meta_Args_Parser.opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
      >> (uncurry pass_trans_to_value_cmd));
 
+
+
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>assert*\<close> "evaluate and assert term"
     (ODL_Meta_Args_Parser.opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
-     >> (uncurry pass_trans_to_assert_value_cmd));
+     >> uncurry pass_trans_to_assert_value_cmd);
 
 
 (* setup ontology - aware text and ML antiquotations. Due to lexical restrictions, we can not
