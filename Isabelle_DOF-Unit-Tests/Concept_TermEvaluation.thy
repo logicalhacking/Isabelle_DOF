@@ -232,7 +232,8 @@ assert* [resultProof3::result, evidence = "proof", property="[@{thm \<open>HOL.s
         \<open>evidence @{result \<open>resultProof3\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
 
 text\<open>
-Evaluation of \<open>assert*\<close> can be disabled using the *\<open>disable_assert_evaluation\<close> theory attribute.
+The evaluation of @{command "assert*"} can be disabled
+using the *\<open>disable_assert_evaluation\<close> theory attribute.
 Then only the checking of the term is done:
 \<close>
 declare[[disable_assert_evaluation]]
