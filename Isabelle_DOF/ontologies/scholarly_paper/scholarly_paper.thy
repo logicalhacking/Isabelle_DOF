@@ -85,19 +85,21 @@ doc_class text_section = text_element +
 
 doc_class "conclusion" = text_section +
    main_author :: "author option"  <=  None
-   invariant L\<^sub>c\<^sub>o\<^sub>n\<^sub>c    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
+   invariant level    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
    
 doc_class related_work = "conclusion" +
    main_author :: "author option"  <=  None
-   invariant L\<^sub>r\<^sub>w    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
+   invariant level    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
 doc_class bibliography = text_section +
    style       :: "string option"  <=  "Some ''LNCS''"
-   invariant L\<^sub>b\<^sub>i\<^sub>b    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
+   invariant level    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
 doc_class annex = "text_section" +
    main_author :: "author option"  <=  None
-   invariant L\<^sub>a\<^sub>n\<^sub>n\<^sub>e\<^sub>x    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
+   invariant level    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
+
+find_consts name:"scholarly_paper.*Leeee"
 
 (*
 datatype sc_dom = math | info | natsc | eng 
@@ -107,7 +109,7 @@ datatype sc_dom = math | info | natsc | eng
 doc_class introduction = text_section +
    comment :: string
    claims  :: "thm list"
-   invariant L\<^sub>i\<^sub>n\<^sub>t\<^sub>r\<^sub>o    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
+   invariant level    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
 text\<open>Technical text-elements posses a status: they can be either an \<^emph>\<open>informal explanation\<close> /
 description or a kind of introductory text to definition etc. or a \<^emph>\<open>formal statement\<close> similar
@@ -122,7 +124,7 @@ A formal statement can, but must not have a reference to true formal Isabelle/Is
 doc_class background = text_section +
    comment :: string
    claims  :: "thm list"
-   invariant L\<^sub>b\<^sub>a\<^sub>c\<^sub>k    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
+   invariant level    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
 
 section\<open>Technical Content and Free-form Semi-formal Formats\<close>
@@ -140,7 +142,7 @@ doc_class technical = text_section +
    definition_list :: "string list" <=  "[]"
    status          :: status <= "description"
    formal_results  :: "thm list"
-   invariant L\<^sub>t\<^sub>e\<^sub>c\<^sub>h  :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
+   invariant level  :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
 type_synonym tc = technical (* technical content *)
 
@@ -156,7 +158,7 @@ doc_class example  = text_section +
    referentiable   :: bool <= True
    status          :: status <= "description"
    short_name      :: string <= "''''"
-   invariant L\<^sub>e\<^sub>x\<^sub>a    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
+   invariant level    :: "(level \<sigma>) \<noteq> None \<and> the (level \<sigma>) > 0"
 
 text\<open>The intended use for the \<open>doc_class\<close>es \<^verbatim>\<open>math_motivation\<close> (or \<^verbatim>\<open>math_mtv\<close> for short),
      \<^verbatim>\<open>math_explanation\<close> (or \<^verbatim>\<open>math_exp\<close> for short) and 
@@ -239,7 +241,7 @@ doc_class "proposition"  = math_content +
    referentiable :: bool <= True
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "prpo" 
-   invariant d0  :: "mcc \<sigma> = prpo" (* can not be changed anymore. *)
+   invariant d  :: "mcc \<sigma> = prpo" (* can not be changed anymore. *)
 
 text\<open>A definition is used to give a precise meaning to a new term, by describing a 
 condition which unambiguously qualifies what a mathematical term is and is not. Definitions and 
@@ -248,13 +250,13 @@ doc_class "definition"  = math_content +
    referentiable :: bool <= True
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "defn" 
-   invariant d1  :: "mcc \<sigma> = defn" (* can not be changed anymore. *)
+   invariant d  :: "mcc \<sigma> = defn" (* can not be changed anymore. *)
 
 doc_class "axiom"  = math_content +
    referentiable :: bool <= True
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "axm" 
-   invariant d2  :: "mcc \<sigma> = axm" (* can not be changed anymore. *)
+   invariant d  :: "mcc \<sigma> = axm" (* can not be changed anymore. *)
 
 text\<open>A lemma (plural lemmas or lemmata) is a generally minor, proven proposition which is used as 
 a stepping stone to a larger result. For that reason, it is also known as a "helping theorem" or an 
@@ -263,13 +265,13 @@ doc_class "lemma"       = math_content +
    referentiable :: bool <= "True"
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "lemm" 
-   invariant d3  :: "mcc \<sigma> = lemm"
+   invariant d  :: "mcc \<sigma> = lemm"
 
 doc_class "theorem"     = math_content +
    referentiable :: bool <= True
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "theom" 
-   invariant d4  :: "mcc \<sigma> = theom"
+   invariant d  :: "mcc \<sigma> = theom"
 
 text\<open>A corollary is a theorem of less importance which can be readily deduced from a previous, 
 more notable lemma or theorem. A corollary could, for instance, be a proposition which is incidentally 
@@ -278,7 +280,7 @@ doc_class "corollary"   = math_content +
    referentiable :: bool <= "True"
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "corr" 
-   invariant d5  :: "mcc \<sigma> = corr"
+   invariant d  :: "mcc \<sigma> = corr"
 
 
 text\<open>A premise or premiss[a] is a proposition — a true or false declarative statement—
@@ -287,7 +289,7 @@ doc_class "premise"     = math_content +
    referentiable :: bool <= "True"
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "prms" 
-   invariant d6  :: "mcc \<sigma> = prms"
+   invariant d  :: "mcc \<sigma> = prms"
 
 text\<open>A consequence describes the relationship between statements that hold true when one statement 
 logically follows from one or more statements. A valid logical argument is one in which the 
@@ -298,20 +300,20 @@ doc_class "consequence" = math_content +
    referentiable :: bool <= "True"
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "cons" 
-   invariant d7  :: "mcc \<sigma> = cons"
+   invariant d  :: "mcc \<sigma> = cons"
 
 doc_class "conclusion_stmt" = math_content +   \<comment> \<open>not to confuse with a section element: Conclusion\<close>
    referentiable :: bool <= "True"
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "conc_stmt" 
-   invariant d8  :: "mcc \<sigma> = conc_stmt"
+   invariant d  :: "mcc \<sigma> = conc_stmt"
 
 text\<open>An assertion is a statement that asserts that a certain premise is true.\<close>
 doc_class "assertion"   = math_content +
    referentiable :: bool <= "True"
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "assn" 
-   invariant d9  :: "mcc \<sigma> = assn"
+   invariant d  :: "mcc \<sigma> = assn"
 
 text\<open>An assumption is an explicit or a tacit proposition about the world or a background belief 
 relating to an proposition.\<close>
@@ -319,7 +321,7 @@ doc_class "assumption"  = math_content +
    referentiable :: bool <= "True"
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "assm" 
-   invariant d10  :: "mcc \<sigma> = assm"
+   invariant d  :: "mcc \<sigma> = assm"
 
 text\<open> A working hypothesis is a provisionally accepted hypothesis proposed for further research
  in a process beginning with an educated guess or thought.
@@ -331,19 +333,19 @@ doc_class "hypothesis"  = math_content +
    referentiable :: bool <= "True"
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "hypt" 
-   invariant d11 :: "mcc \<sigma> = hypt"
+   invariant d :: "mcc \<sigma> = hypt"
 
 doc_class "math_proof"  = math_content +
    referentiable :: bool <= "True"
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "prf_stmt" 
-   invariant d12 :: "mcc \<sigma> = prf_stmt"
+   invariant d :: "mcc \<sigma> = prf_stmt"
 
 doc_class "math_example"= math_content +
    referentiable :: bool <= "True"
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "expl_stmt" 
-   invariant d13 :: "mcc \<sigma> = expl_stmt"
+   invariant d :: "mcc \<sigma> = expl_stmt"
 
 
 

@@ -520,6 +520,11 @@ The @{command "assert*"}-command allows for logical statements to be checked in 
 % TODO:
 % Section reference @{docitem (unchecked) \<open>text-elements-expls\<close>} has not the right number
 This is particularly useful to explore formal definitions wrt. their border cases.
+For @{command "assert*"}, the evaluation of the term can be disabled
+with the \<^boxed_theory_text>\<open>disable_assert_evaluation\<close> theory attribute:
+  @{boxed_theory_text [display]\<open>
+  declare[[disable_assert_evaluation]]\<close>}
+Then @{command "assert*"} will act like @{command "term*"}.
 
 The @{command "definition*"}-command allows \<open>prop\<close>, \<open>spec_prems\<close>, and \<open>for_fixes\<close>
 (see the @{command "definition"} command in @{cite "wenzel:isabelle-isar:2020"}) to contain

@@ -100,7 +100,7 @@ struct
      attribute_decl : (binding*typ*term option)list, (* class local *)
      rejectS        : term list,
      rex            : term list,
-     invs           : ((string * Position.T) * term) list  } (* monitoring regexps --- product semantics*)
+     invs           : (binding * term) list  } (* monitoring regexps --- product semantics*)
 
   fun make_onto_class (params, name, virtual, inherits_from, attribute_decl , rejectS, rex, invs) =
     Onto_Class {params = params, name = name, virtual = virtual, inherits_from = inherits_from
@@ -702,8 +702,9 @@ fun define_doc_class_global (params', binding) parent fields rexp reject_Atoms i
         val _ = map check_regexps reg_exps
         val _ = if not(null rejectS) andalso (null reg_exps) 
                 then  error ("reject clause requires accept clause ! " ) else ();
-        val _ = if has_duplicates (op =) (map (fst o fst) invs) 
-                then error("invariant labels must be unique"^  Position.here (snd(fst(hd invs)))) 
+        val _ = if invs |> map (Binding.name_of o fst) |> has_duplicates (uncurry equal)
+                then invs |> hd |> fst |> Binding.pos_of
+                     |> (fn pos => error("invariant labels must be unique"^  Position.here pos)) 
                 else ()
         val invs' = map (apsnd(Syntax.read_term_global thy)) invs 
     in  thy |> add_onto_class binding (make_onto_class (params', binding, virtual, parent', fields
@@ -1688,25 +1689,32 @@ fun register_oid_cid_in_open_monitors oid _ cid_pos thy =
 fun check_invariants thy (oid, _) =
   let
     val docitem_value = DOF_core.value_of oid thy
-    val DOF_core.Instance params = DOF_core.get_instance_global oid thy
-    val cid = #cid params
+    val cid = DOF_core.cid_of oid thy
     fun get_all_invariants cid thy =
        case DOF_core.get_onto_class_global cid thy of
-           DOF_core.Onto_Class {inherits_from=NONE, invs, ...} => invs
+           DOF_core.Onto_Class {inherits_from=NONE, invs, ...} => single (cid, invs)
          | DOF_core.Onto_Class {inherits_from=SOME(_,father), invs, ...} =>
-                                                          (invs) @ (get_all_invariants father thy)
-    val invariants = get_all_invariants cid thy
+                                                      (cid, invs) :: (get_all_invariants father thy)
+    val cids_invariants = get_all_invariants cid thy
     val inv_and_apply_list = 
-      let fun mk_inv_and_apply inv value thy =
-            let val ((s, pos), _ (*term*)) = inv
-                val inv_def = Syntax.read_term_global thy (s ^ invariant_suffixN)
+      let fun mk_inv_and_apply cid_invs value thy =
+            let val (cid_long, invs) = cid_invs
                 val inv_def_typ = Term.type_of value
-            in case inv_def of
-                   Const (s, Type (st, [_ (*ty*), ty'])) =>
-                                        ((s, pos), Const (s, Type (st,[inv_def_typ, ty'])) $ value)
-                 | _ => ((s, pos), inv_def $ value)
+            in invs |> map
+                    (fn (bind, _) =>
+                      let
+                        val inv_name = Binding.name_of bind
+                                       |> Long_Name.qualify (Long_Name.base_name cid_long)
+                        val pos = Binding.pos_of bind
+                        val inv_def = inv_name
+                                      |> Syntax.read_term_global thy
+                      in case inv_def of
+                             Const (s, Type (st, [_ (*ty*), ty'])) =>
+                                ((inv_name, pos), Const (s, Type (st,[inv_def_typ, ty'])) $ value)
+                           | _ => ((inv_name, pos), inv_def $ value) end)
             end    
-      in map (fn inv => mk_inv_and_apply inv docitem_value thy) invariants
+      in cids_invariants |> map (fn cid_invs => mk_inv_and_apply cid_invs docitem_value thy) 
+                         |> flat
       end
     fun check_invariants' ((inv_name, pos), term) =
       let val ctxt = Proof_Context.init_global thy
@@ -1867,11 +1875,6 @@ in
    trans |> Toplevel.theory (value_cmd {assert=false} meta_args_opt name modes t pos)
 end
 
-fun pass_trans_to_assert_value_cmd meta_args_opt ((name, modes), t) trans =
-let val pos = Toplevel.pos_of trans
-in
-  trans |> Toplevel.theory (value_cmd {assert=true} meta_args_opt name modes t pos) 
-end
 \<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/isar_cmd.ML\<close>\<close>
 
 (*
@@ -1895,18 +1898,32 @@ end;
 fun print_item string_of (modes, arg) state =  
     Print_Mode.with_modes modes (fn () => writeln (string_of state arg)) (); 
 
+fun prin t pos state _  = string_of_term t pos (Toplevel.context_of state)
+
 fun print_term meta_args_opt (string_list, string) trans =
 let
   val pos = Toplevel.pos_of trans
-  fun prin state _ = string_of_term string pos (Toplevel.context_of state) 
-in
-  Toplevel.theory(fn thy =>
-                     (print_item prin (string_list, string) (Toplevel.make_state (SOME thy));
-                     thy |> meta_args_exec meta_args_opt ) 
-                 ) trans                    
+in meta_args_exec meta_args_opt
+   #> tap (fn thy => print_item (prin string pos) (string_list, string) (Toplevel.make_state (SOME thy)))
+   |> (fn thy => Toplevel.theory thy trans)
 end
 
+val (disable_assert_evaluation, disable_assert_evaluation_setup)
+     = Attrib.config_bool \<^binding>\<open>disable_assert_evaluation\<close> (K false);
 
+val _ = Theory.setup disable_assert_evaluation_setup
+
+fun pass_trans_to_assert_value_cmd meta_args_opt ((name, modes), t) trans =
+let val pos = Toplevel.pos_of trans
+in trans
+   |> Toplevel.theory
+        (fn thy =>
+           if Config.get_global thy disable_assert_evaluation
+           then (meta_args_exec meta_args_opt
+                 #> tap (fn thy => print_item (prin t pos) (modes, t) (Toplevel.make_state (SOME thy))))
+                thy
+           else value_cmd {assert=true} meta_args_opt name modes t pos thy) 
+end
 
 (* setup ontology aware commands *)
 val _ =
@@ -1919,10 +1936,12 @@ val _ =
     (ODL_Meta_Args_Parser.opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
      >> (uncurry pass_trans_to_value_cmd));
 
+
+
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>assert*\<close> "evaluate and assert term"
     (ODL_Meta_Args_Parser.opt_attributes -- (opt_evaluator -- opt_modes -- Parse.term) 
-     >> (uncurry pass_trans_to_assert_value_cmd));
+     >> uncurry pass_trans_to_assert_value_cmd);
 
 
 (* setup ontology - aware text and ML antiquotations. Due to lexical restrictions, we can not
@@ -2270,7 +2289,8 @@ fun print_doc_classes _ ctxt =
         val _ = writeln "=====================================";    
         fun print_attr (n, _, NONE) = (Binding.print n)
           | print_attr (n, _, SOME t)= (Binding.print n^"("^Syntax.string_of_term ctxt t^")")
-        fun print_inv ((lab,_),trm) = (lab ^"::"^Syntax.string_of_term ctxt trm)
+        fun print_inv (bind,trm) = ((Binding.name_of bind |> unsuffix invariant_suffixN)
+                                     ^"::"^Syntax.string_of_term ctxt trm)
         fun print_virtual {virtual} = Bool.toString virtual
         fun print_class (n, DOF_core.Onto_Class {attribute_decl, name, inherits_from, virtual
                                                  , invs, ...}) =
@@ -2915,15 +2935,13 @@ fun def_cmd (decl, spec, prems, params) lthy =
 
 fun mk_meta_eq (t, u) = \<^Const>\<open>Pure.eq \<open>fastype_of t\<close> for t u\<close>;
 
-fun define_cond binding f_sty   cond_suffix read_cond (ctxt:local_theory) = 
-       let val bdg = Binding.suffix_name cond_suffix binding
-           val eq =  mk_meta_eq(Free(Binding.name_of bdg, f_sty),read_cond)
-           val args = (SOME(bdg,NONE,NoSyn), (Binding.empty_atts,eq),[],[])
+fun define_cond bind f_sty read_cond (ctxt:local_theory) = 
+       let val eq =  mk_meta_eq(Free(Binding.name_of bind, f_sty),read_cond)
+           val args = (SOME(bind,NONE,NoSyn), (Binding.empty_atts,eq),[],[])
        in def_cmd args ctxt end
 
-fun define_inv cid_long ((lbl, pos), inv) thy = 
-    let val bdg = Binding.make (lbl,pos)
-        val inv_term = Syntax.read_term (Proof_Context.init_global thy) inv
+fun define_inv cid_long (bind, inv) thy = 
+    let val inv_term = Syntax.read_term (Proof_Context.init_global thy) inv
         (* Rewrite selectors types to allow invariants on attributes of the superclasses
            using the polymorphic type of the class *)
         fun update_attribute_type thy class_scheme_ty cid_long
@@ -2961,17 +2979,18 @@ fun define_inv cid_long ((lbl, pos), inv) thy =
         val inv_term' = update_attribute_type thy inv_ty cid_long inv_term
         val eq_inv_ty = inv_ty --> HOLogic.boolT
         val abs_term = Term.lambda (Free (instance_placeholderN, inv_ty)) inv_term'
-    in  thy |> Named_Target.theory_map (define_cond bdg eq_inv_ty invariant_suffixN abs_term) end
+    in  thy |> Named_Target.theory_map (define_cond bind eq_inv_ty abs_term) end
 
 fun add_doc_class_cmd overloaded (raw_params, binding)
                       raw_parent raw_fieldsNdefaults reject_Atoms regexps invariants thy =
     let 
       val bind_pos = Binding.pos_of binding
+      val name = Binding.name_of binding
       val ctxt = Proof_Context.init_global thy;
       val params = map (apsnd (Typedecl.read_constraint ctxt)) raw_params;
       val ctxt1 = fold (Variable.declare_typ o TFree) params ctxt;
       fun cid thy = (* takes class synonyms into account *)
-                    DOF_core.get_onto_class_name_global' (Binding.name_of binding) thy
+                    DOF_core.get_onto_class_name_global'  name thy
       val (parent, ctxt2) = read_parent raw_parent ctxt1;
       (* takes class synonyms into account *)
       val parent' = parent |> Option.map (fn (x, y) => (x, DOF_core.get_onto_class_name_global' y thy))
@@ -3006,7 +3025,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
                             |> mk_meta_eq
       val args = (SOME(binding,NONE,NoSyn)
                   , (Binding.empty_atts, Binding.name_of binding |> mk_eq_pair), [], [])
-      fun add record_fields virtual =
+      fun add record_fields invariants virtual =
         Record.add_record overloaded (params', binding) parent' record_fields
         #> (Local_Theory.notation true Syntax.mode_default RegExpInterface_Notations.notations
             |> Named_Target.theory_map)
@@ -3014,16 +3033,18 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
                                             reject_Atoms invariants virtual
         #> (Local_Theory.notation false Syntax.mode_default RegExpInterface_Notations.notations
             |> Named_Target.theory_map)
+       val invariants' = invariants |> map (apfst (Binding.qualify false name
+                                                   #> Binding.suffix_name invariant_suffixN))
     in thy    (* adding const symbol representing doc-class for Monitor-RegExps.*)
            |> Named_Target.theory_map (def_cmd args)
            |> (case parent' of
-                   NONE => add (DOF_core.tag_attr::record_fields) {virtual=false}
+                   NONE => add (DOF_core.tag_attr::record_fields) invariants' {virtual=false}
                  | SOME _  => if (not o null) record_fields
-                                then add record_fields {virtual=false}
-                                else add [DOF_core.tag_attr] {virtual=true})
+                                then add record_fields invariants' {virtual=false}
+                                else add [DOF_core.tag_attr] invariants' {virtual=true})
            |> (fn thy => OntoLinkParser.docitem_antiquotation binding (cid thy) thy)
               (* defines the ontology-checked text antiquotation to this document class *)
-           |> (fn thy => fold(define_inv (cid thy)) (invariants) thy)
+           |> (fn thy => fold(define_inv (cid thy)) (invariants') thy)
            (* The function declare_ISA_class_accessor_and_check_instance uses a prefix
               because the class name is already bound to "doc_class Regular_Exp.rexp" constant
               by add_doc_class_cmd function *)
@@ -3036,7 +3057,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
 fun add_doc_class_cmd' (((overloaded, hdr), (parent, attrs)),((rejects,accept_rex),invars)) =
     (add_doc_class_cmd {overloaded = overloaded} hdr parent attrs rejects accept_rex invars)
 
-val parse_invariants = Parse.and_list (Args.name_position --| Parse.$$$ "::" -- Parse.term)
+val parse_invariants = Parse.and_list (Parse.binding --| Parse.$$$ "::" -- Parse.term)
 
 val parse_doc_class = (Parse_Spec.overloaded 
       -- (Parse.type_args_constrained  -- Parse.binding) 
