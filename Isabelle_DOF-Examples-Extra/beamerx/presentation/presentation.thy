@@ -6,11 +6,11 @@ begin
 
 use_template "beamer-UNSUPPORTED"
 use_ontology "scholarly_paper"
+(*>*)
 
 title*[tit::title]\<open>Example Presentation\<close>
                                   
 author*[safouan,email="\<open>example@example.org\<close>",affiliation="\<open>Example Org\<close>"]\<open>Eliza Example\<close>
-(*>*)
 
 text\<open>
 \begin{frame}

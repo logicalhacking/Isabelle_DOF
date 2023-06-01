@@ -19,7 +19,7 @@
 %% preamble.tex.
 
 \RequirePackage{ifvtex}
-\documentclass[16x9,9pt]{beamer}
+\documentclass[]{beamer}
 \PassOptionsToPackage{force}{DOF-scholarly_paper}
 \usepackage{beamerposter}
 \usepackage{DOF-core}
@@ -27,6 +27,11 @@
 \usepackage{textcomp}
 \bibliographystyle{abbrvnat}
 \RequirePackage{subcaption}
+
+\providecommand{\institute}[1]{}%
+\providecommand{\inst}[1]{}%
+\providecommand{\orcidID}[1]{}%
+\providecommand{\email}[1]{}%
 
 
 \usepackage[numbers, sort&compress, sectionbib]{natbib}
@@ -46,12 +51,11 @@
 \newenvironment{frontmatter}{}{}
 \raggedbottom
 \begin{document}
-\begin{frame}
-  \maketitle
-\end{frame}
+\begin{frame}[fragile]
 \IfFileExists{dof_session.tex}{\input{dof_session}}{\input{session}}
 % optional bibliography
 \IfFileExists{root.bib}{{\bibliography{root}}}{}
+\end{frame}
 \end{document}
 
 %%% Local Variables:

@@ -6,17 +6,28 @@ begin
 
 use_template "beamerposter-UNSUPPORTED"
 use_ontology "scholarly_paper"
+(*>*)
 
 title*[tit::title]\<open>Example Presentation\<close>
                                   
 author*[safouan,email="\<open>example@example.org\<close>",affiliation="\<open>Example Org\<close>"]\<open>Eliza Example\<close>
-(*>*)
 
 text\<open>
-\begin{frame}
-\frametitle{Example Slide}
-\centering\huge This is an example!
-\end{frame}
+    \vfill
+    \begin{block}{\large Fontsizes}
+      \centering
+      {\tiny tiny}\par
+      {\scriptsize scriptsize}\par
+      {\footnotesize footnotesize}\par
+      {\normalsize normalsize}\par
+      {\large large}\par
+      {\Large Large}\par
+      {\LARGE LARGE}\par
+      {\veryHuge veryHuge}\par
+      {\VeryHuge VeryHuge}\par
+      {\VERYHuge VERYHuge}\par
+    \end{block}
+    \vfill
 \<close>
 
 (*<*)
