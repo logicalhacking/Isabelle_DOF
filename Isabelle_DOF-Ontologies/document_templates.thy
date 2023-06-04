@@ -25,4 +25,8 @@ define_template "./document-templates/root-svjour3-UNSUPPORTED.tex"
                 "Unsupported template for SVJOUR. Not for general use."
 define_template "./document-templates/root-sn-article-UNSUPPORTED.tex" 
                 "Unsupported template for Springer Nature's template. Not for general use."
+define_template "./document-templates/root-beamer-UNSUPPORTED.tex" 
+                "Unsupported template for presentations. Not for general use."
+define_template "./document-templates/root-beamerposter-UNSUPPORTED.tex" 
+                "Unsupported template for poster. Not for general use."
 end

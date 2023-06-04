@@ -1,0 +1,8 @@
+chapter AFP 
+
+session "presentation-example" (AFP) = "Isabelle_DOF-Ontologies" +
+  options [document = pdf, document_output = "output", document_build = dof, timeout = 300]
+  theories
+    "presentation"
+  document_files
+    "preamble.tex"
