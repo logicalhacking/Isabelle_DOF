@@ -1873,18 +1873,17 @@ Common Stuff related to Inner Syntax Parsing
 \<^item>\<^ML>\<open>Args.internal_typ : typ parser\<close>
 \<^item>\<^ML>\<open>Args.internal_term: term parser\<close>
 \<^item>\<^ML>\<open>Args.internal_fact: thm list parser\<close>
-\<^item>\<^ML>\<open>Args.internal_attribute: (morphism -> attribute) parser\<close>
-\<^item>\<^ML>\<open>Args.internal_declaration: declaration parser\<close>
+\<^item>\<^ML>\<open>Args.internal_attribute: attribute Morphism.entity parser\<close>
 \<^item>\<^ML>\<open>Args.alt_name    : string parser\<close>
 \<^item>\<^ML>\<open>Args.liberal_name: string parser\<close>
-
 
 
 Common Isar Syntax
 \<^item>\<^ML>\<open>Args.named_source: (Token.T -> Token.src) -> Token.src parser\<close>
 \<^item>\<^ML>\<open>Args.named_typ   : (string -> typ) -> typ parser\<close>
 \<^item>\<^ML>\<open>Args.named_term : (string -> term) -> term parser\<close>
-\<^item>\<^ML>\<open>Args.embedded_declaration: (Input.source -> declaration) -> declaration parser\<close>
+\<^item>\<^ML>\<open>Args.embedded_declaration: (Input.source -> Morphism.declaration_entity) ->
+    Morphism.declaration_entity parser\<close>
 \<^item>\<^ML>\<open>Args.typ_abbrev  : typ context_parser\<close>
 \<^item>\<^ML>\<open>Args.typ: typ context_parser\<close>
 \<^item>\<^ML>\<open>Args.term: term context_parser\<close>
