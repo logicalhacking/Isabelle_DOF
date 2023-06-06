@@ -99,7 +99,7 @@ text*[cc_assumption_test_ref::cc_assumption_test]\<open>\<close>
 
 definition tag_l :: "'a \<Rightarrow> 'b \<Rightarrow> 'b" where "tag_l \<equiv> \<lambda>x y. y"
 
-lemma* tagged : "tag_l @{cc-assumption-test \<open>cc_assumption_test_ref\<close>} AA \<Longrightarrow> AA"
+lemma* tagged : "tag_l @{cc_assumption_test \<open>cc_assumption_test_ref\<close>} AA \<Longrightarrow> AA"
   by (simp add: tag_l_def)
 
 find_theorems name:tagged "(_::cc_assumption_test \<Rightarrow> _ \<Rightarrow> _) _ _ \<Longrightarrow>_"

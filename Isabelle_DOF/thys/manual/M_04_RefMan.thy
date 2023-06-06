@@ -451,7 +451,7 @@ text*[cc_assumption_test_ref::cc_assumption_test]\<open>\<close>
 
 definition tag_l :: "'a \<Rightarrow> 'b \<Rightarrow> 'b" where "tag_l \<equiv> \<lambda>x y. y"
 
-lemma* tagged : "tag_l @{cc-assumption-test \<open>cc_assumption_test_ref\<close>} AA \<Longrightarrow> AA"
+lemma* tagged : "tag_l @{cc_assumption_test \<open>cc_assumption_test_ref\<close>} AA \<Longrightarrow> AA"
   by (simp add: tag_l_def)
 
 find_theorems name:tagged "(_::cc_assumption_test \<Rightarrow> _ \<Rightarrow> _) _ _ \<Longrightarrow>_"
@@ -463,7 +463,7 @@ b::int
 
 text*[b::B'_test']\<open>\<close>
 
-term*\<open>@{B--test- \<open>b\<close>}\<close>
+term*\<open>@{B'_test' \<open>b\<close>}\<close>
 
 declare_reference*["text-elements-expls"::technical]
 (*>*)
@@ -484,19 +484,6 @@ text\<open>
   \<close>
 
 For a declared class \<^theory_text>\<open>cid\<close>, there exists a term-antiquotation of the form \<^theory_text>\<open>@{cid \<open>oid\<close>}\<close>.
-Due to implementation of term-antiquotation using mixfix annotation
-(see @{cite "wenzel:isabelle-isar:2020"}),
-should a class \<open>cid\<close> contains an underscore or a single quote,
-they will be converted to hyphens in the term-antiquotation.
-For example:
-@{boxed_theory_text [display]
-\<open>doc_class B'_test' =
-b::int
-
-text*[b::B'_test']\<open>\<close>
-
-term*\<open>@{B--test- \<open>b\<close>}\<close>\<close>}
-
 The major commands providing term-contexts are\<^footnote>\<open>The meta-argument list is optional.\<close>
   \<^item> \<^theory_text>\<open>term*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>,
   \<^item> \<^theory_text>\<open>value*[oid::cid, ...] \<open> \<dots> HOL-term \<dots> \<close>\<close>, and
@@ -561,7 +548,7 @@ lemma* tagged : "tag_l @{cc-assumption-test \<open>cc_assumption_test_ref\<close
 find_theorems name:tagged "(_::cc_assumption_test \<Rightarrow> _ \<Rightarrow> _) _ _ \<Longrightarrow>_"\<close>}
 
 In this example, the definition \<^const>\<open>tag_l\<close> adds a tag to the \<open>tagged\<close> lemma using
-the term-antiquotation @{term_ [source] \<open>@{cc-assumption-test \<open>cc_assumption_test_ref\<close>}\<close>}
+the term-antiquotation @{term_ [source] \<open>@{cc_assumption_test \<open>cc_assumption_test_ref\<close>}\<close>}
 inside the \<open>prop\<close> declaration.
 
 Note unspecified attribute values were represented by free fresh variables which constrains \<^dof>

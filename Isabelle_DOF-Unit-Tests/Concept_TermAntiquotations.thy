@@ -150,10 +150,7 @@ term*\<open>r @{F \<open>xcv4\<close>}\<close>
 text\<open>We declare a new text element. Note that the class name contains an underscore "\_".\<close>
 text*[te::text_element]\<open>Lorem ipsum...\<close>
 
-text\<open>Unfortunately due to different lexical conventions for constant symbols and mixfix symbols
-     this term antiquotation has to be denoted like this: @{term_ \<open>@{text-element \<open>te\<close>}\<close>}.
-     We need to substitute an hyphen "-" for the underscore "\_".\<close>
-term*\<open>@{text-element \<open>te\<close>}\<close>
+term*\<open>@{text_element \<open>te\<close>}\<close>
 
 text\<open>Terms containing term antiquotations can be checked and evaluated
 using \<^theory_text>\<open>term_\<close> and \<^theory_text>\<open>value_\<close> text antiquotations respectively:

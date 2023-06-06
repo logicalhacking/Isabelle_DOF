@@ -1132,13 +1132,10 @@ fun ML_isa_elaborate_generic (_:theory) isa_name ty term_option _ =
       NONE => error("Wrong term option. You must use a defined term")
     | SOME term => Const (isa_name, ty) $ term
 
-(* Convert excluded mixfix symbols.
-   Unfortunately due to different lexical conventions for constant symbols and mixfix symbols
-   we can not use "_" or "'" for classes names in term antiquotation.
-   We chose to convert the excluded characters to "-". *)
-val clean_string = translate_string
-  (fn "_" => "-"
-    | "'" => "-"
+(* Convert some excluded mixfix symbols that can appear in an inner syntax name. *)
+val clean_mixfix = translate_string
+  (fn "_" => "'_"
+    | "'" => "''"
     | c => c);
 
 fun rm_mixfix name mixfix thy =
@@ -1177,8 +1174,8 @@ fun declare_ISA_class_accessor_and_check_instance (doc_class_name, bind_pos) thy
                 |> pair bind_pos |> swap |> Binding.make
     val const_typ = \<^typ>\<open>string\<close> --> Syntax.read_typ (Proof_Context.init_global thy) doc_class_name 
     fun mixfix_enclose name = name |> enclose "@{"  " _}"
-    val mixfix = clean_string bname |> mixfix_enclose
-    val mixfix' = clean_string doc_class_name |> mixfix_enclose
+    val mixfix = clean_mixfix bname |> mixfix_enclose
+    val mixfix' = clean_mixfix doc_class_name |> mixfix_enclose
   in
     thy |> rm_mixfix bname' mixfix
         |> Sign.add_consts [(bind, const_typ, Mixfix.mixfix mixfix)]
@@ -1216,8 +1213,8 @@ fun declare_class_instances_annotation (doc_class_name, bind_pos) thy =
                 |> suffix instances_of_suffixN |> pair bind_pos |> swap |> Binding.make
     val class_typ = doc_class_name |> Proof_Context.read_typ (Proof_Context.init_global thy)
     fun mixfix_enclose name = name |> enclose "@{"  "}"
-    val mixfix = clean_string (bname ^ instances_of_suffixN) |> mixfix_enclose
-    val mixfix' = clean_string (doc_class_name ^ instances_of_suffixN) |> mixfix_enclose
+    val mixfix = clean_mixfix (bname ^ instances_of_suffixN) |> mixfix_enclose
+    val mixfix' = clean_mixfix (doc_class_name ^ instances_of_suffixN) |> mixfix_enclose
   in
     thy |> rm_mixfix bname' mixfix
         |> Sign.add_consts [(bind, \<^Type>\<open>list class_typ\<close>, Mixfix.mixfix mixfix)]
