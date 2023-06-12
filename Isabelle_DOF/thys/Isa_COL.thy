@@ -26,7 +26,7 @@ theory Isa_COL
   keywords "title*"        "subtitle*"      
            "chapter*"      "section*"    "paragraph*"
            "subsection*"   "subsubsection*" 
-           "figure*"       "listing*"   :: document_body 
+           "figure*"       "listing*"    "frame*" :: document_body
 
 begin
 
@@ -269,15 +269,24 @@ val mt_fig_content = {relative_width  = 100,
                       relative_height = 100,    
                       caption         = Input.empty }: fig_content
 
-fun upd_relative_width key {relative_width,relative_height,caption } : fig_content = 
-            {relative_width = key,relative_height = relative_height,caption = caption}: fig_content
+fun make_fig_content (relative_width, relative_height, caption) =
+   {relative_width = relative_width, relative_height = relative_height, caption = caption}
 
-fun upd_relative_height key  {relative_width,relative_height,caption } : fig_content = 
-            {relative_width = relative_width,relative_height = key,caption = caption}: fig_content
+fun upd_fig_content f =
+  fn {relative_width, relative_height, caption} =>
+    make_fig_content (f (relative_width, relative_height, caption))
 
-fun upd_caption key {relative_width,relative_height,caption} : fig_content = 
-            {relative_width = relative_width,relative_height = relative_height,caption= key}: fig_content
+fun upd_relative_width f =
+  upd_fig_content (fn (relative_width, relative_height, caption) =>
+    (f relative_width, relative_height, caption))
 
+fun upd_relative_height f =
+  upd_fig_content (fn (relative_width, relative_height, caption) =>
+    (relative_width, f relative_height, caption))
+
+fun upd_caption f =
+  upd_fig_content (fn (relative_width, relative_height, caption) =>
+    (relative_width, relative_height, f caption))
 
 val widthN     = "width"
 val heightN    = "height" 
@@ -288,11 +297,11 @@ fun fig_content_modes (ctxt, toks) =
                       (Args.parens 
                          (Parse.list1
                            (   (Args.$$$ widthN |-- Args.$$$ "=" -- Parse.int
-                                >> (fn (_, k) => upd_relative_width k))   
+                                >> (fn (_, k) => upd_relative_width (K k)))
                             || (Args.$$$ heightN |-- Args.$$$ "=" -- Parse.int
-                                >> (fn (_, k) => upd_relative_height k))    
+                                >> (fn (_, k) => upd_relative_height (K k)))
                             || (Args.$$$ captionN |-- Args.$$$ "=" -- Parse.document_source
-                                >> (fn (_, k) => upd_caption k))    
+                                >> (fn (_, k) => upd_caption (K k)))
                       ))) [K mt_fig_content]) 
                       : (fig_content -> fig_content) list parser)
                       >> (foldl1 (op #>)))
@@ -372,9 +381,9 @@ fun convert_meta_args ctxt (X, (((str,_),value) :: R)) =
                           handle TERM _ =>  error "Illegal int format."
      in
          (case YXML.content_of str of 
-             "relative_width" =>  upd_relative_width (conv_int value)
+             "relative_width" =>  upd_relative_width (K (conv_int value))
                                   o  convert_meta_args ctxt (X, R)
-          |  "relative_height" => upd_relative_height (conv_int value) 
+          |  "relative_height" => upd_relative_height (K (conv_int value))
                                   o  convert_meta_args ctxt (X, R )
           |  "file_src"        => convert_meta_args ctxt (X, R)
           |  s => error("!undefined attribute:"^s))
@@ -404,11 +413,11 @@ fun float_command (name, pos) descr cid  =
                                |> Latex.string)
       fun parse_and_tex (margs as (((oid, _),_), _), cap_src) ctxt =
         (convert_src_from_margs ctxt margs)
-        |> pair (upd_caption Input.empty #> convert_meta_args ctxt margs)
+        |> pair (upd_caption (K Input.empty) #> convert_meta_args ctxt margs)
         |> fig_content ctxt 
         |> generate_fig_ltx_ctxt ctxt cap_src oid
         |> (Latex.environment ("figure") )
-  in  Monitor_Command_Parser.float_command (name, pos) descr create_instance parse_and_tex
+  in  Monitor_Command_Parser.onto_macro_cmd_command (name, pos) descr create_instance parse_and_tex
   end
 
 fun listing_command (name, pos) descr cid  =
@@ -421,7 +430,7 @@ fun listing_command (name, pos) descr cid  =
                {define = true} oid pos (set_default_class cid_pos) doc_attrs
       fun parse_and_tex (margs as (((_, pos),_), _), _) _ =
         ISA_core.err ("Not yet implemented.\n Please use text*[oid::listing]\<open>\<close> instead.") pos
-  in  Monitor_Command_Parser.float_command (name, pos) descr create_instance parse_and_tex
+  in  Monitor_Command_Parser.onto_macro_cmd_command (name, pos) descr create_instance parse_and_tex
   end
   
 
@@ -715,5 +724,75 @@ text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open
 
 (*>*)
 
+text\<open>beamer frame environment\<close>
+(* Under development *)
+
+doc_class frame =
+  frametitle :: string
+  framesubtitle :: string
+
+ML\<open>
+type frame = {frametitle: Input.source, framesubtitle: Input.source}
+
+val empty_frame = {frametitle = Input.empty, framesubtitle = Input.empty}: frame
+
+fun make_frame (frametitle, framesubtitle) =
+  {frametitle = frametitle, framesubtitle = framesubtitle}
+
+fun upd_frame f =
+  fn {frametitle, framesubtitle} => make_frame (f (frametitle, framesubtitle))
+
+fun upd_frametitle f =
+  upd_frame (fn (frametitle, framesubtitle) => (f frametitle, framesubtitle))
+
+fun upd_framesubtitle f =
+  upd_frame (fn (frametitle, framesubtitle) => (frametitle, f framesubtitle))
+
+val unenclose_end = unenclose
+val unenclose_string = unenclose o unenclose o unenclose_end
+
+fun read_string s =
+  let val symbols = unenclose_end s |> Symbol_Pos.explode0
+  in if hd symbols |> fst |> equal Symbol.open_
+     then Token.read_cartouche symbols |> Token.input_of
+     else unenclose_string s |> Syntax.read_input
+  end
+
+fun convert_meta_args ctxt (X, (((str,_),value) :: R)) =
+  (case YXML.content_of str of
+             "frametitle" =>  upd_frametitle (K(YXML.content_of value |> read_string))
+                                  o  convert_meta_args ctxt (X, R)
+          |  "framesubtitle" => upd_framesubtitle (K(YXML.content_of value |> read_string))
+                                  o  convert_meta_args ctxt (X, R )
+          |  s => error("!undefined attribute:"^s))
+  | convert_meta_args _ (_,[]) = I
+
+fun frame_command (name, pos) descr cid  =
+  let fun set_default_class NONE = SOME(cid,pos)
+         |set_default_class (SOME X) = SOME X
+      fun create_instance  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t)  =
+                Value_Command.Docitem_Parser.create_and_check_docitem
+               {is_monitor = false}
+               {is_inline = true}
+               {define = true} oid pos (set_default_class cid_pos) doc_attrs
+      fun generate_src_ltx_ctxt ctxt src cfg_trans =
+        let val {frametitle, framesubtitle} = cfg_trans empty_frame
+        in Latex.string "{"
+           @ Document_Output.output_document ctxt {markdown = false} frametitle
+           @ Latex.string "}"
+           @ Latex.string "{"
+           @ (Document_Output.output_document ctxt {markdown = false} framesubtitle)
+           @ Latex.string "}"
+           @ Document_Output.output_document ctxt {markdown = true} src
+       end
+      fun parse_and_tex (margs, src) ctxt =
+        convert_meta_args ctxt margs
+        |> generate_src_ltx_ctxt ctxt src
+        |> (Latex.environment ("frame") )
+  in  Monitor_Command_Parser.onto_macro_cmd_command (name, pos) descr create_instance parse_and_tex
+  end
+
+val _ = frame_command \<^command_keyword>\<open>frame*\<close> "frame environment" "Isa_COL.frame" ;
+\<close>
 
 end
