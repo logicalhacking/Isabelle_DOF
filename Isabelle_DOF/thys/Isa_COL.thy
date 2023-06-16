@@ -331,25 +331,34 @@ fun generate_caption ctxt caption =
     in
       drop_latex_macros cap_txt
     end
+
+fun process_args cfg_trans =
+  let val {relative_width,relative_height,caption} = cfg_trans mt_fig_content
+      val _ = if relative_width < 0 orelse relative_height <0
+              then error("negative parameter.")
+               else ()
+      val wdth_val_s = Real.toString((Real.fromInt relative_width)
+                         / (Real.fromInt 100))^"\\textwidth"
+      val ht_s= if relative_height = 100
+                then ""
+                else "height="
+                     ^ Real.toString((Real.fromInt relative_height)
+                         / (Real.fromInt 100))
+                     ^ "\\textheight"
+  in (wdth_val_s, ht_s, caption) end
+
 fun fig_content ctxt (cfg_trans,file:Input.source) = 
-       let val {relative_width,relative_height,caption} = cfg_trans mt_fig_content
-              val _      = if relative_width < 0 orelse relative_height <0 then error("negative parameter.") 
-                                                                else ()
-              val wdth_val_s = Real.toString((Real.fromInt relative_width)
-                                              / (Real.fromInt 100))^"\\textwidth" 
-              val ht_s= if relative_height = 100 then ""
-                           else "height="^Real.toString((Real.fromInt relative_height) 
-                                              / (Real.fromInt 100)) ^"\\textheight"
-              val arg_single  = enclose "[" "]" (commas ["keepaspectratio","width="^wdth_val_s,ht_s])
-              val arg    = enclose "[" "]" (commas ["keepaspectratio","width=\\textwidth",ht_s])
-              val _   = Resources.check_file ctxt (SOME (get_document_dir ctxt)) file
-                  (* ToDo: must be declared source of type png or jpeg or pdf, ... *)
+       let val (wdth_val_s, ht_s, caption) = process_args cfg_trans
+           val arg_single  = enclose "[" "]" (commas ["keepaspectratio","width="^wdth_val_s,ht_s])
+           val arg    = enclose "[" "]" (commas ["keepaspectratio","width=\\textwidth",ht_s])
+           val _   = Resources.check_file ctxt (SOME (get_document_dir ctxt)) file
+           (* ToDo: must be declared source of type png or jpeg or pdf, ... *)
            
-          in  if Input.string_of(caption) = ""  then 
+       in if Input.string_of(caption) = ""  then
                    file 
                    |> (Latex.string o Input.string_of) 
                    |> Latex.macro ("includegraphics"^arg_single)
-              else
+          else
                    file 
                    |> (Latex.string o Input.string_of) 
                    |> (fn X => (Latex.string ("{"^wdth_val_s^"}")) 
@@ -358,7 +367,7 @@ fun fig_content ctxt (cfg_trans,file:Input.source) =
                                 @ (Latex.macro "caption" (generate_caption ctxt caption)))
                    |> (Latex.environment ("subcaptionblock") )
 (* BUG: newline at the end of subcaptionlbock, making side-by-side a figure-below-figure setup *)
-          end
+       end
 
 fun fig_content_antiquotation name scan =
   (Document_Output.antiquotation_raw_embedded name 
@@ -366,8 +375,27 @@ fun fig_content_antiquotation name scan =
     (fig_content : Proof.context -> (fig_content -> fig_content) * Input.source -> Latex.text));
           
 
+fun figure_content ctxt (cfg_trans,file:Input.source) =
+  let val (wdth_val_s, ht_s, caption) = process_args cfg_trans
+      val args = ["keepaspectratio","width=" ^ wdth_val_s, ht_s]
+                 |> commas
+                 |> enclose "[" "]"
+  in file
+     |> (Latex.string o Input.string_of)
+     |> Latex.macro ("includegraphics" ^ args)
+     |> (fn X => X @ Latex.macro "caption" (generate_caption ctxt caption))
+     |> Latex.environment ("figure")
+  end
+
+fun figure_antiquotation name scan =
+  (Document_Output.antiquotation_raw_embedded name
+    (scan : ((fig_content -> fig_content) * Input.source) context_parser)
+    (figure_content : Proof.context -> (fig_content -> fig_content) * Input.source -> Latex.text));
+
 val _ = Theory.setup 
            (   fig_content_antiquotation \<^binding>\<open>fig_content\<close> 
+                                         (fig_content_modes -- Scan.lift(Parse.path_input))
+               #> figure_antiquotation \<^binding>\<open>figure_content\<close>
                                          (fig_content_modes -- Scan.lift(Parse.path_input)))
 
 \<close>
@@ -728,25 +756,33 @@ text\<open>beamer frame environment\<close>
 (* Under development *)
 
 doc_class frame =
+  options :: string
   frametitle :: string
   framesubtitle :: string
 
 ML\<open>
-type frame = {frametitle: Input.source, framesubtitle: Input.source}
+type frame = {options: Input.source
+              , frametitle: Input.source
+              , framesubtitle: Input.source}
 
-val empty_frame = {frametitle = Input.empty, framesubtitle = Input.empty}: frame
+val empty_frame = {options = Input.empty
+                   , frametitle = Input.empty
+                   , framesubtitle = Input.empty}: frame
 
-fun make_frame (frametitle, framesubtitle) =
-  {frametitle = frametitle, framesubtitle = framesubtitle}
+fun make_frame (options, frametitle, framesubtitle) =
+  {options = options, frametitle = frametitle, framesubtitle = framesubtitle}
 
 fun upd_frame f =
-  fn {frametitle, framesubtitle} => make_frame (f (frametitle, framesubtitle))
+  fn {options, frametitle, framesubtitle} => make_frame (f (options, frametitle, framesubtitle))
+
+fun upd_options f =
+  upd_frame (fn (options, frametitle, framesubtitle) => (f options, frametitle, framesubtitle))
 
 fun upd_frametitle f =
-  upd_frame (fn (frametitle, framesubtitle) => (f frametitle, framesubtitle))
+  upd_frame (fn (options, frametitle, framesubtitle) => (options, f frametitle, framesubtitle))
 
 fun upd_framesubtitle f =
-  upd_frame (fn (frametitle, framesubtitle) => (frametitle, f framesubtitle))
+  upd_frame (fn (options, frametitle, framesubtitle) => (options, frametitle, f framesubtitle))
 
 val unenclose_end = unenclose
 val unenclose_string = unenclose o unenclose o unenclose_end
@@ -759,12 +795,14 @@ fun read_string s =
   end
 
 fun convert_meta_args ctxt (X, (((str,_),value) :: R)) =
-  (case YXML.content_of str of
-             "frametitle" =>  upd_frametitle (K(YXML.content_of value |> read_string))
-                                  o  convert_meta_args ctxt (X, R)
-          |  "framesubtitle" => upd_framesubtitle (K(YXML.content_of value |> read_string))
-                                  o  convert_meta_args ctxt (X, R )
-          |  s => error("!undefined attribute:"^s))
+    (case YXML.content_of str of
+         "frametitle" =>  upd_frametitle (K(YXML.content_of value |> read_string))
+                            o convert_meta_args ctxt (X, R)
+       | "framesubtitle" => upd_framesubtitle (K(YXML.content_of value |> read_string))
+                              o convert_meta_args ctxt (X, R)
+       | "options" => upd_options (K(YXML.content_of value |> read_string))
+                        o convert_meta_args ctxt (X, R)
+       | s => error("!undefined attribute:"^s))
   | convert_meta_args _ (_,[]) = I
 
 fun frame_command (name, pos) descr cid  =
@@ -775,21 +813,31 @@ fun frame_command (name, pos) descr cid  =
                {is_monitor = false}
                {is_inline = true}
                {define = true} oid pos (set_default_class cid_pos) doc_attrs
-      fun generate_src_ltx_ctxt ctxt src cfg_trans =
-        let val {frametitle, framesubtitle} = cfg_trans empty_frame
-        in Latex.string "{"
+      fun titles_src ctxt frametitle framesubtitle src =  Latex.string "{"
            @ Document_Output.output_document ctxt {markdown = false} frametitle
            @ Latex.string "}"
            @ Latex.string "{"
            @ (Document_Output.output_document ctxt {markdown = false} framesubtitle)
            @ Latex.string "}"
            @ Document_Output.output_document ctxt {markdown = true} src
+      fun generate_src_ltx_ctxt ctxt src cfg_trans =
+        let val {options, frametitle, framesubtitle} = cfg_trans empty_frame
+        in
+          let val options_str = Input.string_of options
+          in if options_str = ""
+             then titles_src ctxt frametitle framesubtitle src
+             else (options_str
+                   |> enclose "[" "]"
+                   |> Latex.string)
+                   @ titles_src ctxt frametitle framesubtitle src
+          end
        end
       fun parse_and_tex (margs, src) ctxt =
         convert_meta_args ctxt margs
         |> generate_src_ltx_ctxt ctxt src
-        |> (Latex.environment ("frame") )
-  in  Monitor_Command_Parser.onto_macro_cmd_command (name, pos) descr create_instance parse_and_tex
+        |> Latex.environment ("frame")
+        |> Latex.environment ("isamarkuptext")
+  in Monitor_Command_Parser.onto_macro_cmd_command (name, pos) descr create_instance parse_and_tex
   end
 
 val _ = frame_command \<^command_keyword>\<open>frame*\<close> "frame environment" "Isa_COL.frame" ;

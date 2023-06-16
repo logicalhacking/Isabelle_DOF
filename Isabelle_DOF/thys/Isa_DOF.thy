@@ -2206,10 +2206,10 @@ fun document_command (name, pos) descr mark cmd sem_attrs transform_attr =
                #> document_output_reports name mark sem_attrs transform_attr meta_args text 
                #> SOME): Toplevel.state -> Latex.text option)) );
 
-fun onto_macro_cmd_output_reports output_figure (meta_args, text) ctxt =
+fun onto_macro_cmd_output_reports output_cmd (meta_args, text) ctxt =
  let
    val _ = Context_Position.reports ctxt (Document_Output.document_reports text);
- in output_figure (meta_args, text) ctxt end
+ in output_cmd (meta_args, text) ctxt end
 
 fun onto_macro_cmd_command (name, pos) descr cmd output_cmd = 
   Outer_Syntax.command (name, pos) descr 
