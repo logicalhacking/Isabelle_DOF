@@ -752,7 +752,7 @@ text\<open> @{table_inline  [display] (cell_placing = center,cell_height =\<open
 
 (*>*)
 
-text\<open>beamer frame environment\<close>
+text\<open>beamer support\<close>
 (* Under development *)
 
 doc_class frame =
@@ -784,6 +784,18 @@ fun upd_frametitle f =
 fun upd_framesubtitle f =
   upd_frame (fn (options, frametitle, framesubtitle) => (options, frametitle, f framesubtitle))
 
+type block = {title: Input.source}
+
+val empty_block = {title = Input.empty}
+
+fun make_block title = {title = title}
+
+fun upd_block f =
+  fn {title} => make_block (f title)
+
+fun upd_block_title f =
+  upd_block (fn title => f title)
+
 val unenclose_end = unenclose
 val unenclose_string = unenclose o unenclose o unenclose_end
 
@@ -793,6 +805,42 @@ fun read_string s =
      then Token.read_cartouche symbols |> Token.input_of
      else unenclose_string s |> Syntax.read_input
   end
+
+val block_titleN = "title"
+
+fun block_modes (ctxt, toks) =
+  let val (y, toks') = ((((Scan.optional
+                (Args.parens
+                   (Parse.list1
+                     ((Args.$$$ block_titleN |-- Args.$$$ "=" -- Parse.document_source
+                          >> (fn (_, k) => upd_block_title (K k)))
+                      ))) [K empty_block])
+                : (block -> block) list parser)
+                >> (foldl1 (op #>)))
+                : (block -> block) parser)
+                (toks)
+  in (y, (ctxt, toks')) end
+
+fun process_args cfg_trans =
+  let val {title} = cfg_trans empty_block
+  in title end
+
+fun block ctxt (cfg_trans,src) =
+  let val title = process_args cfg_trans
+  in Latex.string "{"
+     @ (title |> Document_Output.output_document ctxt {markdown = false})
+     @ Latex.string "}"
+     @ (src |> Document_Output.output_document ctxt {markdown = false})
+     |> (Latex.environment "block")
+  end
+
+fun block_antiquotation name scan =
+  (Document_Output.antiquotation_raw_embedded name
+    (scan : ((block -> block) * Input.source) context_parser)
+    (block: Proof.context -> (block -> block) * Input.source -> Latex.text));
+
+val _ = block_antiquotation \<^binding>\<open>block\<close> (block_modes -- Scan.lift Parse.document_source)
+        |> Theory.setup
 
 fun convert_meta_args ctxt (X, (((str,_),value) :: R)) =
     (case YXML.content_of str of
@@ -813,13 +861,14 @@ fun frame_command (name, pos) descr cid  =
                {is_monitor = false}
                {is_inline = true}
                {define = true} oid pos (set_default_class cid_pos) doc_attrs
-      fun titles_src ctxt frametitle framesubtitle src =  Latex.string "{"
-           @ Document_Output.output_document ctxt {markdown = false} frametitle
-           @ Latex.string "}"
-           @ Latex.string "{"
-           @ (Document_Output.output_document ctxt {markdown = false} framesubtitle)
-           @ Latex.string "}"
-           @ Document_Output.output_document ctxt {markdown = true} src
+      fun titles_src ctxt frametitle framesubtitle src =
+        Latex.string "{"
+        @ Document_Output.output_document ctxt {markdown = false} frametitle
+        @ Latex.string "}"
+        @ Latex.string "{"
+        @ (Document_Output.output_document ctxt {markdown = false} framesubtitle)
+        @ Latex.string "}"
+        @ Document_Output.output_document ctxt {markdown = true} src
       fun generate_src_ltx_ctxt ctxt src cfg_trans =
         let val {options, frametitle, framesubtitle} = cfg_trans empty_frame
         in
