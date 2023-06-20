@@ -376,7 +376,9 @@ fun fig_content_antiquotation name scan =
           
 
 fun figure_content ctxt (cfg_trans,file:Input.source) =
-  let val (wdth_val_s, ht_s, caption) = process_args cfg_trans
+  let val _   = Resources.check_file ctxt (SOME (get_document_dir ctxt)) file
+      (* ToDo: must be declared source of type png or jpeg or pdf, ... *)
+      val (wdth_val_s, ht_s, caption) = process_args cfg_trans
       val args = ["keepaspectratio","width=" ^ wdth_val_s, ht_s]
                  |> commas
                  |> enclose "[" "]"
