@@ -6,3 +6,4 @@ session "presentation-example" (AFP) = "Isabelle_DOF-Ontologies" +
     "presentation"
   document_files
     "preamble.tex"
+    "figures/A.png"

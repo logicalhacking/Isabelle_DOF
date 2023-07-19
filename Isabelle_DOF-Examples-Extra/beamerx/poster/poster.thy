@@ -30,6 +30,10 @@ text\<open>
     \vfill
 \<close>
 
+text\<open>
+@{block (title = "\<open>Title\<^sub>t\<^sub>e\<^sub>s\<^sub>t\<close>") "\<open>Block content\<^sub>t\<^sub>e\<^sub>s\<^sub>t\<close>"}
+\<close>
+
 (*<*)
 end 
 (*>*)
