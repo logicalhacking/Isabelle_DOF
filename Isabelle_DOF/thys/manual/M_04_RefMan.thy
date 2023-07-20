@@ -98,7 +98,7 @@ text\<open>
 section\<open>The Ontology Definition Language (ODL)\<close>
 text\<open>
  ODL shares some similarities with meta-modeling languages such as UML class 
- models: It builds upon concepts like class, inheritance, class_instances, attributes, references 
+ models: It builds upon concepts like class, inheritance, class-instances, attributes, references 
  to instances, and class-invariants. Some concepts like  advanced type-checking, referencing to 
  formal entities of Isabelle, and monitors are due to its specific application in the 
  Isabelle context. Conceptually, ontologies specified in ODL consist of:
