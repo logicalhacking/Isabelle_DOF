@@ -680,7 +680,7 @@ typ\<open>\<lparr>test_G.tag_attribute :: int\<rparr>\<close>
 text*[xcv6::"\<lparr>test_G.tag_attribute :: int\<rparr> test_F", b="{(@{test_A ''xcv3''},@{test_G ''xcv5''})}"]\<open>\<close>
 
 
-text\<open>\<open>lemma*\<close>, etc. do not support well polymorphic classes.
+text\<open>\<open>lemma*\<close>, etc. do not support well polymorphic classes term antiquotations.
 For now only embedded term-antiquotation in a definition could work:\<close>
 definition* testtest_level where "testtest_level \<equiv> the (text_section.level @{test2 \<open>testtest2''\<close>})"
 lemma*[e5::E] testtest : "xx + testtest_level = yy + testtest_level \<Longrightarrow> xx = yy" by simp
