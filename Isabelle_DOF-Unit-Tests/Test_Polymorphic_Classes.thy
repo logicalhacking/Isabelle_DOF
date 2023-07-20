@@ -138,7 +138,7 @@ value*\<open>(concat o concat) ((map o map) a (map c (elaborate3.d @{elaborate3 
 
 text\<open>
 The term antiquotation is considered a ground term.
-Then its type here is \<^typ>\<open>'a::one list\<close> whith \<open>'a\<close> a fixed-type variable.
+Then its type here is \<^typ>\<open>'a::one list\<close> with \<open>'a\<close> a fixed-type variable.
 So the following definition only works because the parameter of the class is also \<open>'a\<close>.\<close>
 declare[[ML_print_depth = 10000]]
 doc_class 'a elaborate4 = 
@@ -153,8 +153,8 @@ declare[[ML_print_depth = 20]]
 text\<open>Bug:
 As the term antiquotation is considered as a ground term,
 its type \<^typ>\<open>'a::one list\<close> conflicts with the type of the attribute \<^typ>\<open>int list\<close>.
-To support the instantiataion of the term antiquatation as an \<^typ>\<open>int list\<close>,
-the term antiquatation should have the same behavior as a constant definition,
+To support the instantiation of the term antiquotation as an \<^typ>\<open>int list\<close>,
+the term antiquotation should have the same behavior as a constant definition,
 which is not the case for now.\<close>
 declare[[ML_print_depth = 10000]]
 doc_class-assert-error elaborate4' = 
@@ -180,7 +180,7 @@ value*\<open>concat (map a (elaborate2.c @{elaborate2 \<open>test_elaborate2\<cl
 
 text\<open>
 The term antiquotation is considered a ground term.
-Then its type here is \<^typ>\<open>'a::one list\<close> whith \<open>'a\<close> a fixed-type variable.
+Then its type here is \<^typ>\<open>'a::one list\<close> with \<open>'a\<close> a fixed-type variable.
 So the following definition only works because the parameter of the class is also \<open>'a\<close>.\<close>
 declare[[ML_print_depth = 10000]]
 doc_class 'a elaborate5 =
@@ -196,7 +196,7 @@ declare[[ML_print_depth = 20]]
 
 text\<open>Bug:
 The term antiquotation is considered a ground term.
-Then its type here is \<^typ>\<open>'a::one list\<close> whith \<open>'a\<close> a fixed-type variable.
+Then its type here is \<^typ>\<open>'a::one list\<close> with \<open>'a\<close> a fixed-type variable.
 So it is not compatible with the type of the attribute \<^typ>\<open>'a::numeral list\<close>\<close>
 doc_class-assert-error 'a elaborate5' =
 d :: "'a::numeral list" <= "concat (map a (elaborate2.c @{elaborate2 \<open>test_elaborate2\<close>}))"
@@ -220,14 +220,14 @@ text*[test_elaborate3a::"('a::one, int) elaborate3", d = "[@{elaborate2 \<open>t
 
 text\<open>
 The term antiquotation is considered a ground term.
-Then its type here is \<^typ>\<open>'a::one list\<close> whith \<open>'a\<close> a fixed-type variable.
+Then its type here is \<^typ>\<open>'a::one list\<close> with \<open>'a\<close> a fixed-type variable.
 So the following definition only works because the parameter of the class is also \<open>'a\<close>.\<close>
 definition* test_elaborate3_embedding ::"'a::one list"
   where "test_elaborate3_embedding \<equiv> (concat o concat) ((map o map) elaborate1.a (map elaborate2.c (elaborate3.d @{elaborate3 \<open>test_elaborate3a\<close>})))"
 
 text\<open>Bug:
 The term antiquotation is considered a ground term.
-Then its type here is \<^typ>\<open>'a::one list\<close> whith \<open>'a\<close> a fixed-type variable.
+Then its type here is \<^typ>\<open>'a::one list\<close> with \<open>'a\<close> a fixed-type variable.
 So it is not compatible with the specified type of the definition \<^typ>\<open>int list\<close>:\<close>
 definition-assert-error test_elaborate3_embedding'::"int list"
   where "test_elaborate3_embedding' \<equiv> (concat o concat) ((map o map) elaborate1.a (map elaborate2.c (elaborate3.d @{elaborate3 \<open>test_elaborate3a\<close>})))"
@@ -258,7 +258,7 @@ term*\<open>a @{one \<open>test_one\<close>}\<close>
 
 text\<open>Bug:
 The term antiquotation is considered a ground term.
-Then its type here is \<^typ>\<open>'a::one list\<close> whith \<open>'a\<close> a fixed-type variable.
+Then its type here is \<^typ>\<open>'a::one list\<close> with \<open>'a\<close> a fixed-type variable.
 So it is not compatible with the specified type of the definition \<^typ>\<open>('b::one, 'a::numeral) elaborate1'\<close>
 because the term antiquotation can not be instantiate as a \<^typ>\<open>'b::one list\<close>
 and the \<open>'a\<close> is checked against the \<open>'a::numeral\<close> instance type parameter:\<close>
