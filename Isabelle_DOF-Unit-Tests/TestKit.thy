@@ -38,7 +38,8 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
                                     toks_list:Input.source list) 
                                   : theory -> theory =
   let  val toplvl = Toplevel.theory_toplevel
-       val (((oid,pos),cid_pos), doc_attrs) = meta_args
+       val ((binding,cid_pos), doc_attrs) = meta_args
+       val oid = Binding.name_of binding
        val oid' = if meta_args = ODL_Meta_Args_Parser.empty_meta_args
                   then "output"
                   else oid
@@ -74,7 +75,7 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
               else
           Value_Command.Docitem_Parser.create_and_check_docitem 
                               {is_monitor = false} {is_inline = false} {define = true}
-                              oid pos (cid_transform cid_pos) (attr_transform doc_attrs))
+                              binding (cid_transform cid_pos) (attr_transform doc_attrs))
        (* ... generating the level-attribute syntax *)
   in   handle_margs_opt  #> (fn thy => (app (check_n_tex_text thy) toks_list; thy))
   end;
@@ -139,10 +140,10 @@ val _ =
                          >> (Toplevel.theory o update_instance_command)); 
 
 val _ = 
-  let fun create_and_check_docitem ((((oid, pos),cid_pos),doc_attrs),src) thy =
+  let fun create_and_check_docitem (((binding,cid_pos),doc_attrs),src) thy =
                   (Value_Command.Docitem_Parser.create_and_check_docitem
                           {is_monitor = false} {is_inline=true}
-                          {define = false} oid pos (cid_pos) (doc_attrs) thy)
+                          {define = false} binding (cid_pos) (doc_attrs) thy)
                    handle ERROR msg => (if error_match src msg 
                           then (writeln ("Correct error: "^msg^": reported.");thy)
                           else error"Wrong error reported")

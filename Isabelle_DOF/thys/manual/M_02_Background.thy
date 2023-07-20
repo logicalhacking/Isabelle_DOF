@@ -208,13 +208,13 @@ text\<open>
   in many features over-accomplishes the required  features of \<^dof>. 
 \<close>
 
-figure*["fig:dof-ide",relative_width="95",file_src="''figures/cicm2018-combined.png''"]\<open> 
+figure*["fig_dof_ide",relative_width="95",file_src="''figures/cicm2018-combined.png''"]\<open> 
      The \<^isadof> IDE (left) and the corresponding PDF (right), showing the first page
       of~@{cite "brucker.ea:isabelle-ontologies:2018"}.\<close>
 
 text\<open> 
   We call the present implementation of \<^dof> on the Isabelle platform  \<^isadof> . 
-  @{figure  "fig:dof-ide"} shows  a screen-shot of an introductory paper on 
+  @{figure  "fig_dof_ide"} shows  a screen-shot of an introductory paper on 
   \<^isadof>~@{cite "brucker.ea:isabelle-ontologies:2018"}: the \<^isadof> PIDE can be seen on the left, 
   while the generated presentation in PDF is shown on the right.
 

@@ -635,20 +635,20 @@ text\<open> We present a selection of interaction scenarios  @{example \<open>sc
 and @{example \<open>cenelec_onto\<close>} with Isabelle/PIDE instrumented by \<^isadof>. \<close>
 
 (*<*)
-declare_reference*["text-elements"::float]
+declare_reference*["text_elements"::float]
 declare_reference*["hyperlinks"::float]
 (*>*)
 
 subsection*[scholar_pide::example]\<open> A Scholarly Paper \<close>  
-text\<open> In @{float (unchecked) "text-elements"}~(a)
-and @{float (unchecked) "text-elements"}~(b)we show how
+text\<open> In @{float (unchecked) "text_elements"}~(a)
+and @{float (unchecked) "text_elements"}~(b)we show how
 hovering over links permits to explore its meta-information. 
 Clicking on a document class identifier permits to hyperlink into the corresponding
 class definition (@{float (unchecked) "hyperlinks"}~(a)); hovering over an attribute-definition
 (which is qualified in order to disambiguate; @{float (unchecked) "hyperlinks"}~(b)).
 \<close>
 
-text*["text-elements"::float, 
+text*["text_elements"::float, 
       main_caption="\<open>Exploring text elements.\<close>"]
 \<open>
 @{fig_content (width=53, height=5, caption="Exploring a reference of a text element.") "figures/Dogfood-II-bgnd1.png"

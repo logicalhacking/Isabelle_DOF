@@ -102,13 +102,13 @@ text\<open>
   functioning of the system and for its integration into the system as a whole. In 
   particular, we need to make the following assumptions explicit: \<^vs>\<open>-0.3cm\<close>\<close>
 
-text*["perfect-wheel"::assumption]
+text*["perfect_wheel"::assumption]
 \<open>\<^item> the wheel is perfectly circular with a given, constant radius. \<^vs>\<open>-0.3cm\<close>\<close>
-text*["no-slip"::assumption]
+text*["no_slip"::assumption]
 \<open>\<^item> the slip between the trains wheel and the track negligible. \<^vs>\<open>-0.3cm\<close>\<close>
-text*["constant-teeth-dist"::assumption]
+text*["constant_teeth_dist"::assumption]
 \<open>\<^item>  the distance between all teeth of a wheel is the same and constant, and \<^vs>\<open>-0.3cm\<close>\<close>
-text*["constant-sampling-rate"::assumption]
+text*["constant_sampling_rate"::assumption]
 \<open>\<^item>  the sampling rate of positions is a given constant.\<close>
 
 text\<open>
@@ -126,13 +126,13 @@ text\<open>
 
 subsection\<open>Capturing ``System Architecture.''\<close>
 
-figure*["three-phase"::figure,relative_width="70",file_src="''figures/three-phase-odo.pdf''"]
+figure*["three_phase"::figure,relative_width="70",file_src="''figures/three-phase-odo.pdf''"]
 \<open>An odometer with three sensors \<open>C1\<close>, \<open>C2\<close>, and \<open>C3\<close>.\<close>
 
 text\<open>
   The requirements analysis also contains a document \<^doc_class>\<open>SYSAD\<close> 
   (\<^typ>\<open>system_architecture_description\<close>) that contains technical drawing of the odometer, 
-  a timing diagram  (see \<^figure>\<open>three-phase\<close>), and tables describing the encoding of the position 
+  a timing diagram  (see \<^figure>\<open>three_phase\<close>), and tables describing the encoding of the position 
   for the possible signal transitions of the sensors \<open>C1\<close>, \<open>C2\<close>, and \<open>C3\<close>. 
 \<close>
 
@@ -146,7 +146,7 @@ text\<open>
   sub-system configuration. \<close>
 
 (*<*)
-declare_reference*["df-numerics-encshaft"::figure] 
+declare_reference*["df_numerics_encshaft"::figure] 
 (*>*)
 subsection\<open>Capturing ``Required Performances.''\<close>
 text\<open>
@@ -160,9 +160,9 @@ text\<open>
 
   The requirement analysis document describes the physical environment, the architecture
   of the measuring device, and the required format and precision of the measurements of the odometry
-  function as represented (see @{figure (unchecked) "df-numerics-encshaft"}).\<close>
+  function as represented (see @{figure (unchecked) "df_numerics_encshaft"}).\<close>
 
-figure*["df-numerics-encshaft"::figure,relative_width="76",file_src="''figures/df-numerics-encshaft.png''"]
+figure*["df_numerics_encshaft"::figure,relative_width="76",file_src="''figures/df-numerics-encshaft.png''"]
 \<open>Real distance vs. discrete distance vs. shaft-encoder sequence\<close>
 
 
@@ -215,7 +215,7 @@ text\<open>
   concepts such as Cauchy Sequences, limits, differentiability, and a very substantial part of 
   classical Calculus. \<open>SOME\<close> is the Hilbert choice operator from HOL; the definitions of the 
   model parameters admit all possible positive values as uninterpreted constants. Our 
-  \<^assumption>\<open>perfect-wheel\<close> is translated into a calculation of the circumference of the
+  \<^assumption>\<open>perfect_wheel\<close> is translated into a calculation of the circumference of the
   wheel, while \<open>\<delta>s\<^sub>r\<^sub>e\<^sub>s\<close>, the resolution of the odometer, can be calculated 
   from the these parameters. HOL-Analysis permits to formalize the fundamental physical observables:
 \<close>
