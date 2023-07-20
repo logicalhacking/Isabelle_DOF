@@ -98,7 +98,7 @@ text\<open>
 section\<open>The Ontology Definition Language (ODL)\<close>
 text\<open>
  ODL shares some similarities with meta-modeling languages such as UML class 
- models: It builds upon concepts like class, inheritance, class-instances, attributes, references 
+ models: It builds upon concepts like class, inheritance, class_instances, attributes, references 
  to instances, and class-invariants. Some concepts like  advanced type-checking, referencing to 
  formal entities of Isabelle, and monitors are due to its specific application in the 
  Isabelle context. Conceptually, ontologies specified in ODL consist of:
@@ -1315,19 +1315,19 @@ text\<open>
   or to get the list of the authors of the instances of \<open>introduction\<close>,
   it suffices to treat this meta-data as usual:
   @{theory_text [display,indent=5, margin=70] \<open>
-value*\<open>map (result.property) @{result-instances}\<close>
-value*\<open>map (text_section.authored_by) @{introduction-instances}\<close>
+value*\<open>map (result.property) @{result_instances}\<close>
+value*\<open>map (text_section.authored_by) @{introduction_instances}\<close>
   \<close>}
   In order to get the list of the instances of the class \<open>myresult\<close>
   whose \<open>evidence\<close> is a \<open>proof\<close>, one can use the command:
   @{theory_text [display,indent=5, margin=70] \<open>
-value*\<open>filter (\<lambda>\<sigma>. result.evidence \<sigma> = proof) @{result-instances}\<close>
+value*\<open>filter (\<lambda>\<sigma>. result.evidence \<sigma> = proof) @{result_instances}\<close>
   \<close>}
   The list of the instances of the class \<open>introduction\<close> whose \<open>level\<close> > 1,
   can be filtered by:
   @{theory_text [display,indent=5, margin=70] \<open>
 value*\<open>filter (\<lambda>\<sigma>. the (text_section.level \<sigma>) > 1)
-       @{introduction-instances}\<close>
+       @{introduction_instances}\<close>
   \<close>}
 \<close>
 
