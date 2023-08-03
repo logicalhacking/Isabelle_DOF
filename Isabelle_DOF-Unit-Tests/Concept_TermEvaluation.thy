@@ -146,17 +146,17 @@ text*[test2Z::Z, z=4]\<open>lorem ipsum...\<close>
 text*[test3Z::Z, z=3]\<open>lorem ipsum...\<close>
 
 text\<open>We want to get all the instances of the @{doc_class Z}:\<close>
-value*\<open>@{Z-instances}\<close>
+value*\<open>@{Z_instances}\<close>
 
 text\<open>Now we want to get the instances of the @{doc_class Z} whose attribute z > 2:\<close>
-value*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z-instances}\<close>
+value*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z_instances}\<close>
 
 text\<open>We can check that we have the list of instances we wanted:\<close>
-value*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z-instances} = [@{Z \<open>test3Z\<close>}, @{Z \<open>test2Z\<close>}]
-       \<or> filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z-instances} = [@{Z \<open>test2Z\<close>}, @{Z \<open>test3Z\<close>}]\<close>
+value*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z_instances} = [@{Z \<open>test3Z\<close>}, @{Z \<open>test2Z\<close>}]
+       \<or> filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z_instances} = [@{Z \<open>test2Z\<close>}, @{Z \<open>test3Z\<close>}]\<close>
 
 text\<open>Now, we want to get all the instances of the @{doc_class A}\<close>
-value*\<open>@{A-instances}\<close>
+value*\<open>@{A_instances}\<close>
 
 (*<*)
 text\<open>Warning: If you make a request on attributes that are undefined in some instances,
@@ -166,7 +166,7 @@ But we have defined an instance @{docitem \<open>sdf\<close>} in theory @{theory
 whose our theory inherits from, and this docitem instance does not initialize its attribute \<^emph>\<open>x\<close>.
 So in the request result we get an unresolved case because the evaluator can not get
 the value of the \<^emph>\<open>x\<close> attribute of the instance @{docitem \<open>sdf\<close>}:\<close>
-value*\<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A-instances}\<close>
+value*\<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A_instances}\<close>
 (*>*)
 section\<open>Limitations\<close>
 
@@ -201,12 +201,12 @@ Consequently, it has the same limitations as \<^emph>\<open>value*\<close>.
 text\<open>Using the ontology defined in \<^theory>\<open>Isabelle_DOF-Unit-Tests.Concept_High_Level_Invariants\<close>
 we can check logical statements:\<close>
 
-term*\<open>authored_by @{Concept-High-Level-Invariants.introduction \<open>introduction2\<close>}
-      = authored_by @{Concept-High-Level-Invariants.introduction \<open>introduction3\<close>}\<close>
-assert*\<open>authored_by @{Concept-High-Level-Invariants.introduction \<open>introduction2\<close>}
-        = authored_by @{Concept-High-Level-Invariants.introduction \<open>introduction3\<close>}\<close>
-assert*\<open>\<not>(authored_by @{Concept-High-Level-Invariants.introduction \<open>introduction2\<close>}
-          = authored_by @{Concept-High-Level-Invariants.introduction \<open>introduction4\<close>})\<close>
+term*\<open>authored_by @{Concept_High_Level_Invariants.introduction \<open>introduction2\<close>}
+      = authored_by @{Concept_High_Level_Invariants.introduction \<open>introduction3\<close>}\<close>
+assert*\<open>authored_by @{Concept_High_Level_Invariants.introduction \<open>introduction2\<close>}
+        = authored_by @{Concept_High_Level_Invariants.introduction \<open>introduction3\<close>}\<close>
+assert*\<open>\<not>(authored_by @{Concept_High_Level_Invariants.introduction \<open>introduction2\<close>}
+          = authored_by @{Concept_High_Level_Invariants.introduction \<open>introduction4\<close>})\<close>
 
 text\<open>Assertions must be boolean expressions, so the following assertion triggers an error:\<close>
 (* Error:
@@ -226,7 +226,7 @@ text\<open>... and here we reference @{A \<open>assertionA\<close>}.\<close>
 assert*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
 
 text\<open>The optional evaluator of \<open>value*\<close> and \<open>assert*\<close> must be specified after the meta arguments:\<close>
-value* [optional_test_A::A, x=6] [nbe] \<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A-instances}\<close>
+value* [optional_test_A::A, x=6] [nbe] \<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A_instances}\<close>
 
 assert* [resultProof3::result, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"] [nbe]
         \<open>evidence @{result \<open>resultProof3\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>

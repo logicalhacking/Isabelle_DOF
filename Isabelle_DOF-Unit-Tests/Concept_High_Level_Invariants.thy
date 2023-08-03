@@ -113,9 +113,9 @@ doc_class inv_test4 = inv_test2 +
   invariant inv_test4' :: "a (d \<sigma>) = 2"
 
 text*[inv_test1_instance::inv_test1, a=2]\<open>\<close>
-text*[inv_test3_instance::inv_test3, a=2, b="@{inv-test1 \<open>inv_test1_instance\<close>}" ]\<open>\<close>
-text*[inv_test4_instance::inv_test4, b="@{inv-test1 \<open>inv_test1_instance\<close>}"
-                                   , c=1, d="@{inv-test3 \<open>inv_test3_instance\<close>}"]\<open>\<close>
+text*[inv_test3_instance::inv_test3, a=2, b="@{inv_test1 \<open>inv_test1_instance\<close>}" ]\<open>\<close>
+text*[inv_test4_instance::inv_test4, b="@{inv_test1 \<open>inv_test1_instance\<close>}"
+                                   , c=1, d="@{inv_test3 \<open>inv_test3_instance\<close>}"]\<open>\<close>
 
 text\<open>To support invariant on attributes in attributes
 and invariant on attributes of the superclasses,
@@ -207,15 +207,15 @@ update_instance*[introduction2::Introduction
 text\<open>Use of the instance @{docitem_name "church'"}
      to instantiate a \<^doc_class>\<open>scholarly_paper.introduction\<close> class:\<close>
 text*[introduction2'::scholarly_paper.introduction,
-      main_author = "Some @{scholarly-paper.author \<open>church'\<close>}", level = "Some 2"]\<open>\<close>
+      main_author = "Some @{scholarly_paper.author \<open>church'\<close>}", level = "Some 2"]\<open>\<close>
 
-value*\<open>@{scholarly-paper.author \<open>church'\<close>}\<close>
+value*\<open>@{scholarly_paper.author \<open>church'\<close>}\<close>
 value*\<open>@{author \<open>church\<close>}\<close>
-value*\<open>@{Concept-High-Level-Invariants.author \<open>church\<close>}\<close>
+value*\<open>@{Concept_High_Level_Invariants.author \<open>church\<close>}\<close>
 
-value*\<open>@{scholarly-paper.author-instances}\<close>
-value*\<open>@{author-instances}\<close>
-value*\<open>@{Concept-High-Level-Invariants.author-instances}\<close>
+value*\<open>@{scholarly_paper.author_instances}\<close>
+value*\<open>@{author_instances}\<close>
+value*\<open>@{Concept_High_Level_Invariants.author_instances}\<close>
 
 text*[introduction3::introduction, authored_by = "{@{author \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
 text*[introduction4::introduction, authored_by = "{@{author \<open>curry\<close>}}", level = "Some 4"]\<open>\<close>
