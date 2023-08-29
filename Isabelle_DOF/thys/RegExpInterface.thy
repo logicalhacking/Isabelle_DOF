@@ -51,7 +51,13 @@ definition rep1 :: "'a rexp \<Rightarrow> 'a rexp" ("\<lbrace>(_)\<rbrace>\<^sup
     
 definition opt :: "'a rexp \<Rightarrow> 'a rexp" ("\<lbrakk>(_)\<rbrakk>")
    where "\<lbrakk>A\<rbrakk> \<equiv>  A || One"
-                   
+
+find_consts name:"RegExpI*"
+
+ML\<open>
+val t = Sign.syn_of \<^theory>
+\<close>
+print_syntax
 value "Star (Conc(Alt (Atom(CHR ''a'')) (Atom(CHR ''b''))) (Atom(CHR ''c'')))"
 text\<open>or better equivalently:\<close>
 value "\<lbrace>(\<lfloor>CHR ''a''\<rfloor> || \<lfloor>CHR ''b''\<rfloor>) ~~ \<lfloor>CHR ''c''\<rfloor>\<rbrace>\<^sup>*"
@@ -240,6 +246,8 @@ no_notation Star  ("\<lbrace>(_)\<rbrace>\<^sup>*" [0]100)
 no_notation Plus  (infixr "||" 55)
 no_notation Times (infixr "~~" 60)
 no_notation Atom  ("\<lfloor>_\<rfloor>" 65)
+no_notation rep1 ("\<lbrace>(_)\<rbrace>\<^sup>+")
+no_notation opt  ("\<lbrakk>(_)\<rbrakk>")
 
 ML\<open>
 structure RegExpInterface_Notations =
@@ -248,7 +256,9 @@ val Star = (\<^term>\<open>Regular_Exp.Star\<close>, Mixfix (Syntax.read_input "
 val Plus = (\<^term>\<open>Regular_Exp.Plus\<close>, Infixr (Syntax.read_input "||", 55, Position.no_range))
 val Times = (\<^term>\<open>Regular_Exp.Times\<close>, Infixr (Syntax.read_input "~~", 60, Position.no_range))
 val Atom = (\<^term>\<open>Regular_Exp.Atom\<close>, Mixfix (Syntax.read_input "\<lfloor>_\<rfloor>", [], 65, Position.no_range))
-val notations = [Star, Plus, Times, Atom]
+val opt = (\<^term>\<open>RegExpInterface.opt\<close>, Mixfix (Syntax.read_input "\<lbrakk>(_)\<rbrakk>", [], 1000, Position.no_range))
+val rep1 = (\<^term>\<open>RegExpInterface.rep1\<close>, Mixfix (Syntax.read_input "\<lbrace>(_)\<rbrace>\<^sup>+", [], 1000, Position.no_range))
+val notations = [Star, Plus, Times, Atom, rep1, opt]
 end
 \<close>
 

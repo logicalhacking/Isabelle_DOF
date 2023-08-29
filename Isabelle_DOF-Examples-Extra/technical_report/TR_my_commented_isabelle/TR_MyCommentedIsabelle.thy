@@ -807,7 +807,7 @@ text\<open>  They reflect the Pure logic depicted in a number of presentations s
   Notated as logical inference rules, these operations were presented as follows:
 \<close>
 
-text*["text-elements"::float, 
+text*["text_elements"::float, 
       main_caption="\<open>Kernel Inference Rules.\<close>"]
 \<open>
 @{fig_content (width=48, caption="Pure Kernel Inference Rules I.") "figures/pure-inferences-I.pdf"

@@ -164,7 +164,7 @@ text\<open>
   to and between ontological concepts.
 \<close>
 
-subsection*["odl-manual0"::technical]\<open>Some Isabelle/HOL Specification Constructs Revisited\<close>
+subsection*["odl_manual0"::technical]\<open>Some Isabelle/HOL Specification Constructs Revisited\<close>
 text\<open>
   As ODL is an extension of Isabelle/HOL, document class definitions can therefore be arbitrarily 
   mixed with standard HOL specification constructs. To make this manual self-contained, we present 
@@ -231,7 +231,7 @@ corresponding type-name \<^boxed_theory_text>\<open>0.foo\<close> is not. For th
 definition of a \<^boxed_theory_text>\<open>doc_class\<close> reject problematic lexical overlaps.\<close>
 
 
-subsection*["odl-manual1"::technical]\<open>Defining Document Classes\<close>
+subsection*["odl_manual1"::technical]\<open>Defining Document Classes\<close>
 text\<open>
 A document class\<^bindex>\<open>document class\<close> can be defined using the @{command "doc_class"} keyword: 
 \<^item> \<open>class_id\<close>:\<^bindex>\<open>class\_id@\<open>class_id\<close>\<close> a type-\<open>name\<close> that has been introduced 
@@ -350,7 +350,7 @@ layout; these commands have to be wrapped into
 text\<open>
 
 \<^item> \<open>obj_id\<close>:\<^index>\<open>obj\_id@\<open>obj_id\<close>\<close> (or \<^emph>\<open>oid\<close>\<^index>\<open>oid!oid@\<open>see obj_id\<close>\<close> for short) a \<^emph>\<open>name\<close>
-  as specified in @{technical \<open>odl-manual0\<close>}.
+  as specified in @{technical \<open>odl_manual0\<close>}.
 \<^item> \<open>meta_args\<close> : 
    \<^rail>\<open>obj_id ('::' class_id) ((',' attribute '=' HOL_term) *) \<close>
 \<^item> \<^emph>\<open>evaluator\<close>: from @{cite "wenzel:isabelle-isar:2020"}, evaluation is tried first using ML,
@@ -465,16 +465,16 @@ text*[b::B'_test']\<open>\<close>
 
 term*\<open>@{B'_test' \<open>b\<close>}\<close>
 
-declare_reference*["text-elements-expls"::technical]
+declare_reference*["text_elements_expls"::technical]
 (*>*)
 
-subsection*["subsec:onto-term-ctxt"::technical]\<open>Ontological Term-Contexts and their Management\<close>
+subsection*["subsec_onto_term_ctxt"::technical]\<open>Ontological Term-Contexts and their Management\<close>
 text\<open> 
 \<^item> \<open>annotated_term_element\<close>
 \<^rail>\<open> 
     (@@{command "term*"} ('[' meta_args ']')? '\<open>' HOL_term  '\<close>'
      | (@@{command "value*"}
-        | @@{command "assert*"}) \<newline> ('[' meta_args ']')? ('[' evaluator ']')? '\<open>' HOL_term '\<close>'
+        | @@{command "assert*"}) \<newline> ('[' evaluator ']')? ('[' meta_args ']')? '\<open>' HOL_term '\<close>'
      | (@@{command "definition*"}) ('[' meta_args ']')?
         ('... see ref manual')
      | (@@{command "lemma*"} | @@{command "theorem*"} | @@{command "corollary*"}
@@ -503,9 +503,9 @@ for example). With the exception of the @{command "term*"}-command, the term-ant
 This expansion happens \<^emph>\<open>before\<close> evaluation of the term, thus permitting
 executable HOL-functions to interact with meta-objects.
 The @{command "assert*"}-command allows for logical statements to be checked in the global context
-(see @{technical (unchecked) \<open>text-elements-expls\<close>}).
+(see @{technical (unchecked) \<open>text_elements_expls\<close>}).
 % TODO:
-% Section reference @{docitem (unchecked) \<open>text-elements-expls\<close>} has not the right number
+% Section reference @{docitem (unchecked) \<open>text_elements_expls\<close>} has not the right number
 This is particularly useful to explore formal definitions wrt. their border cases.
 For @{command "assert*"}, the evaluation of the term can be disabled
 with the \<^boxed_theory_text>\<open>disable_assert_evaluation\<close> theory attribute:
@@ -558,7 +558,7 @@ of this meta-object. The latter leads to a failure of the entire command.
 \<close>
 
 (*<*)
-declare_reference*["sec:advanced"::technical]
+declare_reference*["sec_advanced"::technical]
 (*>*)
 
 subsection\<open>Status and Query Commands\<close>
@@ -586,7 +586,7 @@ text\<open>
   The raw term will be available in the \<open>input_term\<close> field of \<^theory_text>\<open>print_doc_items\<close> output and,
 \<^item> \<^theory_text>\<open>check_doc_global\<close> checks if all declared object references have been
   defined, all monitors are in a final state, and checks the final invariant  
-  on all objects (cf. @{technical (unchecked) \<open>sec:advanced\<close>})
+  on all objects (cf. @{technical (unchecked) \<open>sec_advanced\<close>})
 \<close>
 
 subsection\<open>Macros\<close>
@@ -738,7 +738,7 @@ text\<open>The command syntax follows the implicit convention to add a ``*''
 to distinguish them from the (similar) standard Isabelle text-commands
 which are not ontology-aware.\<close>
 
-subsection*["text-elements"::technical]\<open>The Ontology \<^verbatim>\<open>scholarly_paper\<close>\<close>
+subsection*["text_elements"::technical]\<open>The Ontology \<^verbatim>\<open>scholarly_paper\<close>\<close>
 (*<*)
 ML\<open>val toLaTeX = String.translate (fn c => if c = #"_" then "\\_" else String.implode[c])\<close>     
 ML\<open>writeln (DOF_core.print_doc_class_tree 
@@ -821,9 +821,9 @@ or
 \<open>text*[\<dots>::example, main_author = "Some(@{author \<open>bu\<close>})"] \<open> \<dots> \<close>\<close>}
 
 where \<^boxed_theory_text>\<open>"''bu''"\<close> is a string presentation of the reference to the author 
-text element (see below in @{docitem (unchecked) \<open>text-elements-expls\<close>}).
+text element (see below in @{docitem (unchecked) \<open>text_elements_expls\<close>}).
 % TODO:
-% Section reference @{docitem (unchecked) \<open>text-elements-expls\<close>} has not the right number
+% Section reference @{docitem (unchecked) \<open>text_elements_expls\<close>} has not the right number
 \<close>
 
 text\<open>Some of these concepts were supported as command-abbreviations leading to the extension
@@ -866,7 +866,7 @@ of Isabelle is its ability to handle both, and to establish links between both w
 Therefore, the formal assertion command has been integrated to capture some form of formal content.\<close>
 
 
-subsubsection*["text-elements-expls"::example]\<open>Examples\<close>
+subsubsection*["text_elements_expls"::example]\<open>Examples\<close>
 
 text\<open>
   While the default user interface for class definitions via the  
@@ -1018,9 +1018,9 @@ schemata:
 
 
 
-section*["sec:advanced"::technical]\<open>Advanced ODL Concepts\<close>
+section*["sec_advanced"::technical]\<open>Advanced ODL Concepts\<close>
 
-subsection*["sec:example"::technical]\<open>Example\<close>
+subsection*["sec_example"::technical]\<open>Example\<close>
 text\<open>We assume in this section the following local ontology: 
 
 @{boxed_theory_text [display]\<open>
@@ -1089,11 +1089,11 @@ text\<open>
 \<close>
 
 (*<*)
-declare_reference*["sec:monitors"::technical]
-declare_reference*["sec:low_level_inv"::technical]
+declare_reference*["sec_monitors"::technical]
+declare_reference*["sec_low_level_inv"::technical]
 (*>*)
 
-subsection*["sec:class_inv"::technical]\<open>ODL Class Invariants\<close>
+subsection*["sec_class_inv"::technical]\<open>ODL Class Invariants\<close>
 
 text\<open>
   Ontological classes as described so far are too liberal in many situations.
@@ -1144,7 +1144,7 @@ text\<open>
   Hence, the \<^boxed_theory_text>\<open>inv1\<close> invariant is checked
   when the instance \<^boxed_theory_text>\<open>testinv2\<close> is defined.
 
-  Now let's add some invariants to our example in \<^technical>\<open>sec:example\<close>.
+  Now let's add some invariants to our example in \<^technical>\<open>sec_example\<close>.
   For example, one
   would like to express that any instance of a \<^boxed_theory_text>\<open>result\<close> class finally has
   a non-empty  property list, if its \<^boxed_theory_text>\<open>kind\<close> is \<^boxed_theory_text>\<open>proof\<close>, or that 
@@ -1178,22 +1178,22 @@ text\<open>
   declare[[invariants_checking_with_tactics = true]]\<close>}
   There are still some limitations with this high-level syntax.
   For now, the high-level syntax does not support the checking of
-  specific monitor behaviors (see @{technical (unchecked) "sec:monitors"}).
+  specific monitor behaviors (see @{technical (unchecked) "sec_monitors"}).
   For example, one would like to delay a final error message till the
   closing of a monitor.
   For this use-case you can use low-level class invariants
-  (see @{technical (unchecked) "sec:low_level_inv"}).
+  (see @{technical (unchecked) "sec_low_level_inv"}).
   Also, for now, term-antiquotations can not be used in an invariant formula.
 \<close>
 
 
-subsection*["sec:low_level_inv"::technical]\<open>ODL Low-level Class Invariants\<close>
+subsection*["sec_low_level_inv"::technical]\<open>ODL Low-level Class Invariants\<close>
 
 text\<open>
   If one want to go over the limitations of the actual high-level syntax of the invariant,
   one can define a function using SML.
   A formulation, in SML, of the class-invariant \<^boxed_theory_text>\<open>has_property\<close>
-  in \<^technical>\<open>sec:class_inv\<close>, defined in the supposedly \<open>Low_Level_Syntax_Invariants\<close> theory
+  in \<^technical>\<open>sec_class_inv\<close>, defined in the supposedly \<open>Low_Level_Syntax_Invariants\<close> theory
   (note the long name of the class),
   is straight-forward:
 
@@ -1222,7 +1222,7 @@ val _ = Theory.setup (DOF_core.make_ml_invariant (check_result_inv, cid_long)
   \<^boxed_theory_text>\<open>oid\<close> is bound to a  variable here and can therefore not be statically expanded.
 \<close>
 
-subsection*["sec:monitors"::technical]\<open>ODL Monitors\<close>
+subsection*["sec_monitors"::technical]\<open>ODL Monitors\<close>
 text\<open>
   We call a document class with an \<open>accepts_clause\<close> a \<^emph>\<open>monitor\<close>.\<^bindex>\<open>monitor\<close>  Syntactically, an 
   \<open>accepts_clause\<close>\<^index>\<open>accepts\_clause@\<open>accepts_clause\<close>\<close> contains a regular expression over class identifiers. 
@@ -1291,18 +1291,18 @@ text\<open>
   sections.
   For now, the high-level syntax of invariants does not support the checking of
   specific monitor behaviors like the one just described and you must use 
-  the low-level class invariants (see @{technical "sec:low_level_inv"}).
+  the low-level class invariants (see @{technical "sec_low_level_inv"}).
 
   Low-level invariants checking can be set up to be triggered
   when opening a monitor, when closing a monitor, or both
   by using the \<^ML>\<open>DOF_core.add_opening_ml_invariant\<close>,
   \<^ML>\<open>DOF_core.add_closing_ml_invariant\<close>, or \<^ML>\<open>DOF_core.add_ml_invariant\<close> commands
   respectively, to add the invariants to the theory context
-  (See @{technical "sec:low_level_inv"} for an example).
+  (See @{technical "sec_low_level_inv"} for an example).
 \<close>
 
 
-subsection*["sec:queries_on_instances"::technical]\<open>Queries On Instances\<close>
+subsection*["sec_queries_on_instances"::technical]\<open>Queries On Instances\<close>
 
 text\<open>
   Any class definition generates term antiquotations checking a class instance or
@@ -1315,19 +1315,19 @@ text\<open>
   or to get the list of the authors of the instances of \<open>introduction\<close>,
   it suffices to treat this meta-data as usual:
   @{theory_text [display,indent=5, margin=70] \<open>
-value*\<open>map (result.property) @{result-instances}\<close>
-value*\<open>map (text_section.authored_by) @{introduction-instances}\<close>
+value*\<open>map (result.property) @{result_instances}\<close>
+value*\<open>map (text_section.authored_by) @{introduction_instances}\<close>
   \<close>}
   In order to get the list of the instances of the class \<open>myresult\<close>
   whose \<open>evidence\<close> is a \<open>proof\<close>, one can use the command:
   @{theory_text [display,indent=5, margin=70] \<open>
-value*\<open>filter (\<lambda>\<sigma>. result.evidence \<sigma> = proof) @{result-instances}\<close>
+value*\<open>filter (\<lambda>\<sigma>. result.evidence \<sigma> = proof) @{result_instances}\<close>
   \<close>}
   The list of the instances of the class \<open>introduction\<close> whose \<open>level\<close> > 1,
   can be filtered by:
   @{theory_text [display,indent=5, margin=70] \<open>
 value*\<open>filter (\<lambda>\<sigma>. the (text_section.level \<sigma>) > 1)
-       @{introduction-instances}\<close>
+       @{introduction_instances}\<close>
   \<close>}
 \<close>
 
@@ -1414,7 +1414,7 @@ text\<open>
 \<close>
 
 
-section*["document-templates"::technical]\<open>Defining Document Templates\<close>
+section*["document_templates"::technical]\<open>Defining Document Templates\<close>
 subsection\<open>The Core Template\<close>
 
 text\<open>
