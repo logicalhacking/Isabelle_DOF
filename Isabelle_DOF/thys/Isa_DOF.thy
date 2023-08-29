@@ -2199,18 +2199,22 @@ fun document_output_reports name {markdown, body} sem_attrs transform_attr meta_
 
 fun document_command (name, pos) descr mark cmd sem_attrs transform_attr =
   Outer_Syntax.command (name, pos) descr
-    (ODL_Meta_Args_Parser.attributes -- Parse.document_source >> (fn (meta_args, text) =>
+  (ODL_Meta_Args_Parser.attributes -- Parse.document_source >> (fn (meta_args, text) =>
       Toplevel.theory' (fn _ => cmd meta_args)
           (SOME (Toplevel.presentation_context #> document_output_reports name mark sem_attrs transform_attr meta_args text)))); 
 
-fun float_command (name, pos) descr
-                   cmd  output_figure = 
+fun onto_macro_cmd_output_reports output_figure (meta_args, text) ctxt =
+ let
+   val _ = Context_Position.reports ctxt (Document_Output.document_reports text);
+ in output_figure (meta_args, text) ctxt end
+
+fun onto_macro_cmd_command (name, pos) descr cmd output_cmd = 
   Outer_Syntax.command (name, pos) descr 
   (ODL_Meta_Args_Parser.attributes -- Parse.document_source >>  
      (fn (meta_args, text) =>
           Toplevel.theory' (fn _ => cmd meta_args)
              (SOME (Toplevel.presentation_context
-              #> output_figure (meta_args, text)
+              #> onto_macro_cmd_output_reports output_cmd  (meta_args, text)
               ))))
 
 
