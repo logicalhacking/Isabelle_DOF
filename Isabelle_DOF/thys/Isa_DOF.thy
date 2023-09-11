@@ -1050,7 +1050,8 @@ datatype "file" = Isabelle_DOF_file string ("@{file _}")
 datatype "thy" = Isabelle_DOF_thy string ("@{thy _}")
 consts Isabelle_DOF_docitem      :: "string \<Rightarrow> 'a" ("@{docitem _}")
 datatype "docitem_attr" = Isabelle_DOF_docitem_attr string  string ("@{docitemattr (_) :: (_)}")
-consts Isabelle_DOF_trace_attribute :: "string \<Rightarrow> (string * string) list" ("@{trace-attribute _}")
+consts Isabelle_DOF_trace_attribute :: "string \<Rightarrow> (string * string) list" ("@{trace'_attribute _}")
+consts Isabelle_DOF_instances_of :: "string \<Rightarrow> 'a list" ("@{instances'_of _}")
 
 \<comment> \<open>Dynamic setup of inner syntax cartouche\<close>
 
@@ -1192,10 +1193,25 @@ fun check_instance thy (term, _, pos) s =
         val name' = DOF_core.cid_of name thy
                    |> DOF_core.get_onto_class_cid thy |> (fst o fst)
         fun check' (class_name, object_cid) =
-          if class_name = object_cid then
-             DOF_core.value_of name thy
+          if class_name = object_cid
+          then ()
           else err (name ^ " is not an instance of " ^ class_name) pos
       in check' (class_name, name') end;
+  in ML_isa_check_generic check thy (term, pos) end
+
+fun check_instance_of thy (term, _, pos) _ =
+  let
+    fun check thy (name, _)  =
+      if equal name DOF_core.default_cid
+      then ()
+      else
+        let
+          val class_typ = name |> DOF_core.get_onto_class_cid thy |> snd
+          fun check' (class_name, typ) =
+            if equal (class_name |> Syntax.read_typ_global thy) typ
+            then ()
+            else err (name ^ " is not a class name") pos
+        in check' (name, class_typ) end;
   in ML_isa_check_generic check thy (term, pos) end
 
 fun ML_isa_id _ (term,_) = SOME term
@@ -1273,44 +1289,44 @@ fun declare_ISA_class_accessor_and_check_instance (params, doc_class_name, bind_
 
   end
 
-fun elaborate_instances_list thy isa_name _ _ _ =
+fun elaborate_instances_of thy _ _ term_option _ =
   let
-    val base_name = Long_Name.base_name isa_name
-    val qualifier = Long_Name.qualifier isa_name
-    val isa_name' = (case try (unprefix DOF_core.doc_class_prefix) base_name of
-                        NONE => unprefix DOF_core.long_doc_class_prefix base_name
-                      | SOME name => name)
-                    |> unsuffix instances_of_suffixN
-                    |> Long_Name.qualify qualifier
-    val class_typ = isa_name' |> Proof_Context.read_typ (Proof_Context.init_global thy)
-    val long_class_name = DOF_core.get_onto_class_name_global isa_name' thy 
-    val values = thy |> Proof_Context.init_global |> DOF_core.get_instances
-                 |> Name_Space.dest_table 
-                 |> filter (fn (name, _) => equal (DOF_core.cid_of name thy) long_class_name)
-                 |> map (fn (oid, _) => DOF_core.value_of oid thy)
-  in HOLogic.mk_list class_typ values end
-
-
-fun declare_class_instances_annotation (params, doc_class_name, bind_pos) thy =
-  let
-    val bname = Long_Name.base_name doc_class_name
-    val bname' = prefix DOF_core.doc_class_prefix bname |> suffix instances_of_suffixN
-    val bind = bname' |> pair bind_pos |> swap |> Binding.make
-    val bind' = prefix DOF_core.long_doc_class_prefix bname
-                |> suffix instances_of_suffixN |> pair bind_pos |> swap |> Binding.make
-    val typ = Type (doc_class_name, map TFree params)
-    fun mixfix_enclose name = name |> enclose "@{"  "}"
-    val mixfix = clean_mixfix (bname ^ instances_of_suffixN) |> mixfix_enclose
-    val mixfix' = clean_mixfix (doc_class_name ^ instances_of_suffixN) |> mixfix_enclose
-  in
-    thy |> rm_mixfix bname' mixfix
-        |> Sign.add_consts [(bind, \<^Type>\<open>list typ\<close>, Mixfix.mixfix mixfix)]
-        |> DOF_core.add_isa_transformer bind ((check_identity, elaborate_instances_list)
-                                               |> DOF_core.make_isa_transformer)
-        |> Sign.add_consts [(bind', \<^Type>\<open>list typ\<close>, Mixfix.mixfix mixfix')]
-        |> DOF_core.add_isa_transformer bind' ((check_identity, elaborate_instances_list)
-                                                |> DOF_core.make_isa_transformer)
-  end                            
+    val class_name = case term_option of
+                        NONE => error ("Malformed term annotation")
+                      | SOME term => HOLogic.dest_string term
+    fun mk_list class_typ f =
+      let
+          val values = thy |> Proof_Context.init_global |> DOF_core.get_instances
+                       |> Name_Space.dest_table
+                       |> map fst
+                       |> tap (fn is => writeln ("In elaborate_instances_list instances: " ^ \<^make_string> is))
+                       |> f
+                       |> tap (fn is => writeln ("In elaborate_instances_list instances after filter: " ^ \<^make_string> is))
+                       |> map (fn oid => DOF_core.value_of oid thy)
+        in HOLogic.mk_list class_typ values end
+  in if equal class_name DOF_core.default_cid
+     then
+       (* When the class name is default_cid = "text",
+          return the instances attached to this default class.
+          We want the class default_cid to stay abstract
+          and not have the capability to be defined with attribute, invariants, etc.
+          Hence this can handle docitem without a class associated,
+          for example when you just want a document element to be referentiable
+          without using the burden of ontology classes.
+          ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
+       (filter (fn name => DOF_core.cid_of name thy |> equal DOF_core.default_cid))
+       |> mk_list \<^typ>\<open>unit\<close>
+     else
+       let
+         val class_typ = class_name |> Syntax.read_typ_global thy
+       in
+         (filter_out (fn name => DOF_core.cid_of name thy |> equal DOF_core.default_cid)
+          #> filter (fn name => DOF_core.cid_of name thy
+                                |> Syntax.read_typ_global thy
+                                |> equal class_typ))
+         |> mk_list class_typ
+       end
+  end
 
 fun symbex_attr_access0 ctxt proj_term term =
 let
@@ -1393,7 +1409,9 @@ end)
 ([(\<^const_name>\<open>Isabelle_DOF_docitem\<close>,
     ISA_core.ML_isa_check_docitem, ISA_core.ML_isa_elaborate_generic)
   , (\<^const_name>\<open>Isabelle_DOF_trace_attribute\<close>,
-      ISA_core.ML_isa_check_trace_attribute, ISA_core.ML_isa_elaborate_trace_attribute)]
+      ISA_core.ML_isa_check_trace_attribute, ISA_core.ML_isa_elaborate_trace_attribute)
+  , (\<^const_name>\<open>Isabelle_DOF_instances_of\<close>,
+      ISA_core.check_instance_of, ISA_core.elaborate_instances_of)]
 |> fold (fn (n, check, elaborate) => fn thy =>
 let val ns = Sign.consts_of thy |> Consts.space_of
     val name = n
@@ -1877,7 +1895,7 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
                     else NONE
     val value_terms = if default_cid
                       then let
-                             val undefined_value = Free ("Undefined_Value", \<^Type>\<open>unit\<close>)
+                             val undefined_value = Free (oid ^ "_Undefined_Value", \<^Type>\<open>unit\<close>)
                            in (undefined_value, undefined_value) end
                             (* Handle initialization of docitem without a class associated,
                                for example when you just want a document element to be referentiable
@@ -3097,7 +3115,13 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
                       raw_parent raw_fieldsNdefaults reject_Atoms regexps invariants thy =
     let
       val bind_pos = Binding.pos_of binding
-      val name = Binding.name_of binding
+      val name =
+        let val name = Binding.name_of binding
+        in case name |> Option.filter (not o equal DOF_core.default_cid) of
+                NONE => bind_pos |> ISA_core.err (name
+                                                  ^ ": This name is reserved by the implementation")
+             | SOME name => name
+       end
       val ctxt = Proof_Context.init_global thy;
       val params = map (apsnd (Typedecl.read_constraint ctxt)) raw_params;
       val ctxt1 = fold (Variable.declare_typ o TFree) params ctxt;
@@ -3163,7 +3187,6 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
               because the class name is already bound to "doc_class Regular_Exp.rexp" constant
               by add_doc_class_cmd function *)
            |> (fn thy => ISA_core.declare_ISA_class_accessor_and_check_instance (params', cid thy, bind_pos) thy)
-           |> (fn thy => ISA_core.declare_class_instances_annotation (params', cid thy, bind_pos) thy)
     end;
            
 

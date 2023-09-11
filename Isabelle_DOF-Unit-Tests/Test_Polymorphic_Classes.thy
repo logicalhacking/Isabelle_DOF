@@ -3,6 +3,11 @@ theory Test_Polymorphic_Classes
           TestKit
 begin
 
+text\<open>The name \<open>text\<close> is reserved by the implementation and refers to the default super class:\<close>
+doc_class-assert-error "text" =
+a::int
+\<open>text: This name is reserved by the implementation\<close>
+
 doc_class title =
   short_title :: "string option" <= "None"
 

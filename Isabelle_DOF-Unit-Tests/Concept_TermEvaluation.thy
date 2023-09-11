@@ -136,6 +136,9 @@ ML\<open>@{thm "refl"}\<close>
 
 section\<open>Request on instances\<close>
 
+text\<open>The instances directly attached to the default super class \<open>text\<close>: \<close>
+value*\<open>@{instances_of \<open>text\<close>}\<close>
+
 text\<open>We define a new class Z:\<close>
 doc_class Z =
   z::"int"
@@ -146,28 +149,27 @@ text*[test2Z::Z, z=4]\<open>lorem ipsum...\<close>
 text*[test3Z::Z, z=3]\<open>lorem ipsum...\<close>
 
 text\<open>We want to get all the instances of the @{doc_class Z}:\<close>
-value*\<open>@{Z_instances}\<close>
+value*\<open>@{instances_of \<open>Z\<close>}\<close>
 
 text\<open>Now we want to get the instances of the @{doc_class Z} whose attribute z > 2:\<close>
-value*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z_instances}\<close>
+value*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{instances_of \<open>Z\<close>}\<close>
 
 text\<open>We can check that we have the list of instances we wanted:\<close>
-value*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z_instances} = [@{Z \<open>test3Z\<close>}, @{Z \<open>test2Z\<close>}]
-       \<or> filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{Z_instances} = [@{Z \<open>test2Z\<close>}, @{Z \<open>test3Z\<close>}]\<close>
+assert*\<open>filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{instances_of \<open>Z\<close>} = [@{Z \<open>test3Z\<close>}, @{Z \<open>test2Z\<close>}]
+       \<or> filter (\<lambda>\<sigma>. Z.z \<sigma> > 2) @{instances_of \<open>Z\<close>} = [@{Z \<open>test2Z\<close>}, @{Z \<open>test3Z\<close>}]\<close>
 
 text\<open>Now, we want to get all the instances of the @{doc_class A}\<close>
-value*\<open>@{A_instances}\<close>
+value*\<open>@{instances_of \<open>A\<close>}\<close>
 
-(*<*)
-text\<open>Warning: If you make a request on attributes that are undefined in some instances,
-you will get a result which includes these unresolved cases.
+
+text\<open>Warning: Requests on attributes that are undefined in some instances
+include all the instances.
 In the following example, we request the instances of the @{doc_class A}.
-But we have defined an instance @{docitem \<open>sdf\<close>} in theory @{theory "Isabelle_DOF-Ontologies.Conceptual"}
-whose our theory inherits from, and this docitem instance does not initialize its attribute \<^emph>\<open>x\<close>.
-So in the request result we get an unresolved case because the evaluator can not get
-the value of the \<^emph>\<open>x\<close> attribute of the instance @{docitem \<open>sdf\<close>}:\<close>
-value*\<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A_instances}\<close>
-(*>*)
+But we have defined instances @{A \<open>axx\<close>} and @{A \<open>axx\<close>} previously
+and these docitem instances do not initialize their \<^const>\<open>A.x\<close> attribute.
+So the request can not be evaluated:\<close>
+value*\<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{instances_of \<open>A\<close>}\<close>
+
 section\<open>Limitations\<close>
 
 text\<open>There are still some limitations.
@@ -226,7 +228,7 @@ text\<open>... and here we reference @{A \<open>assertionA\<close>}.\<close>
 assert*\<open>evidence @{result \<open>resultProof\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>
 
 text\<open>The optional evaluator of \<open>value*\<close> and \<open>assert*\<close> must be specified before the meta arguments:\<close>
-value* [nbe] [optional_test_A::A, x=6] \<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{A_instances}\<close>
+value* [nbe] [optional_test_A::A, x=6] \<open>filter (\<lambda>\<sigma>. A.x \<sigma> > 5) @{instances_of \<open>A\<close>}\<close>
 
 assert* [nbe] [resultProof3::result, evidence = "proof", property="[@{thm \<open>HOL.sym\<close>}]"]
   \<open>evidence @{result \<open>resultProof3\<close>} = evidence @{result \<open>resultProof2\<close>}\<close>

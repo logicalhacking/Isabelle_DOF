@@ -214,12 +214,12 @@ no_notation Plus  (infixr "||" 55)
 no_notation Times (infixr "~~" 60)
 no_notation Atom  ("\<lfloor>_\<rfloor>" 65)
 
-value* \<open> DA.accepts (na2da (rexp2na example_expression)) (map fst @{trace-attribute \<open>aaa\<close>}) \<close>
+value* \<open> DA.accepts (na2da (rexp2na example_expression)) (map fst @{trace_attribute \<open>aaa\<close>}) \<close>
 
 definition word_test  :: "'a list \<Rightarrow> 'a rexp \<Rightarrow> bool" (infix "is-in" 60)
   where " w is-in rexp \<equiv>  DA.accepts (na2da (rexp2na rexp)) (w)"
 
-value* \<open> (map fst @{trace-attribute \<open>aaa\<close>}) is-in example_expression \<close>
+value* \<open> (map fst @{trace_attribute \<open>aaa\<close>}) is-in example_expression \<close>
 
 
 (*<*)

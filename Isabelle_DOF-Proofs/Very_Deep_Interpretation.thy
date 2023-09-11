@@ -17,7 +17,7 @@ no_notation "Isabelle_DOF_file" ("@{file _}")
 no_notation "Isabelle_DOF_thy" ("@{thy _}")
 no_notation "Isabelle_DOF_docitem" ("@{docitem _}")
 no_notation "Isabelle_DOF_docitem_attr" ("@{docitemattr (_) :: (_)}")
-no_notation "Isabelle_DOF_trace_attribute" ("@{trace-attribute _}")
+no_notation "Isabelle_DOF_trace_attribute" ("@{trace'_-attribute _}")
 
 consts Isabelle_DOF_typ :: "string \<Rightarrow> typ" ("@{typ _}")
 consts Isabelle_DOF_term :: "string \<Rightarrow> term" ("@{term _}")
@@ -27,7 +27,7 @@ datatype "file" = Isabelle_DOF_file string  ("@{file _}")
 datatype "thy" = Isabelle_DOF_thy string  ("@{thy _}")
 consts Isabelle_DOF_docitem      :: "string \<Rightarrow> 'a"                ("@{docitem _}")
 datatype "docitem_attr" = Isabelle_DOF_docitem_attr string  string ("@{docitemattr (_) :: (_)}")
-consts Isabelle_DOF_trace_attribute :: "string \<Rightarrow> (string * string) list" ("@{trace-attribute _}")
+consts Isabelle_DOF_trace_attribute :: "string \<Rightarrow> (string * string) list" ("@{trace'_-attribute _}")
 
 subsection\<open> Semantics \<close>
 
