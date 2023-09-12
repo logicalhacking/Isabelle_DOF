@@ -1019,6 +1019,38 @@ schemata:
 
 
 section*["sec_advanced"::technical]\<open>Advanced ODL Concepts\<close>
+(*<*)
+doc_class title =
+  short_title :: "string option" <= "None"
+doc_class author =
+  email :: "string" <= "''''"
+datatype classification = SIL0 | SIL1 | SIL2 | SIL3 | SIL4
+doc_class abstract =
+  keywordlist :: "string list" <= "[]"
+  safety_level :: "classification" <= "SIL3"
+doc_class text_section =
+  authored_by :: "author set" <= "{}"
+  level :: "int option" <= "None"
+type_synonym notion = string
+doc_class introduction = text_section +
+  authored_by :: "author set"  <= "UNIV"
+  uses :: "notion set"
+doc_class claim = introduction +
+  based_on :: "notion list"
+doc_class technical = text_section +
+  formal_results :: "thm list"
+doc_class "definition" = technical +
+  is_formal :: "bool"
+  property  :: "term list" <= "[]"
+datatype kind = expert_opinion | argument | "proof"
+doc_class result = technical +
+  evidence :: kind
+  property :: "thm list" <= "[]"
+doc_class example = technical +
+  referring_to :: "(notion + definition) set" <= "{}"
+doc_class "conclusion" = text_section +
+  establish :: "(claim \<times> result) set"
+(*>*)
 
 subsection*["sec_example"::technical]\<open>Example\<close>
 text\<open>We assume in this section the following local ontology: 
@@ -1301,6 +1333,12 @@ text\<open>
   (See @{technical "sec_low_level_inv"} for an example).
 \<close>
 
+(*<*)
+value*\<open>map (result.property) @{instances_of \<open>result\<close>}\<close>
+value*\<open>map (text_section.authored_by) @{instances_of \<open>introduction\<close>}\<close>
+value*\<open>filter (\<lambda>\<sigma>. result.evidence \<sigma> = proof) @{instances_of \<open>result\<close>}\<close>
+value*\<open>filter (\<lambda>\<sigma>. the (text_section.level \<sigma>) > 1) @{instances_of \<open>introduction\<close>}\<close>
+(*>*)
 
 subsection*["sec_queries_on_instances"::technical]\<open>Queries On Instances\<close>
 
@@ -1315,19 +1353,18 @@ text\<open>
   or to get the list of the authors of the instances of \<open>introduction\<close>,
   it suffices to treat this meta-data as usual:
   @{theory_text [display,indent=5, margin=70] \<open>
-value*\<open>map (result.property) @{result_instances}\<close>
-value*\<open>map (text_section.authored_by) @{introduction_instances}\<close>
+value*\<open>map (result.property) @{instances_of \<open>result\<close>}\<close>
+value*\<open>map (text_section.authored_by) @{instances_of \<open>introduction\<close>}\<close>
   \<close>}
   In order to get the list of the instances of the class \<open>myresult\<close>
   whose \<open>evidence\<close> is a \<open>proof\<close>, one can use the command:
   @{theory_text [display,indent=5, margin=70] \<open>
-value*\<open>filter (\<lambda>\<sigma>. result.evidence \<sigma> = proof) @{result_instances}\<close>
+value*\<open>filter (\<lambda>\<sigma>. result.evidence \<sigma> = proof) @{instances_of \<open>result\<close>}\<close>
   \<close>}
   The list of the instances of the class \<open>introduction\<close> whose \<open>level\<close> > 1,
   can be filtered by:
   @{theory_text [display,indent=5, margin=70] \<open>
-value*\<open>filter (\<lambda>\<sigma>. the (text_section.level \<sigma>) > 1)
-       @{introduction_instances}\<close>
+value*\<open>filter (\<lambda>\<sigma>. the (text_section.level \<sigma>) > 1) @{instances_of \<open>introduction\<close>}\<close>
   \<close>}
 \<close>
 

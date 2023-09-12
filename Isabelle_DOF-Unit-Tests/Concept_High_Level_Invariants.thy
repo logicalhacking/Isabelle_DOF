@@ -213,9 +213,9 @@ value*\<open>@{scholarly_paper.author \<open>church'\<close>}\<close>
 value*\<open>@{author \<open>church\<close>}\<close>
 value*\<open>@{Concept_High_Level_Invariants.author \<open>church\<close>}\<close>
 
-value*\<open>@{scholarly_paper.author_instances}\<close>
-value*\<open>@{author_instances}\<close>
-value*\<open>@{Concept_High_Level_Invariants.author_instances}\<close>
+value*\<open>@{instances_of \<open>scholarly_paper.author\<close>}\<close>
+value*\<open>@{instances_of \<open>author\<close>}\<close>
+value*\<open>@{instances_of \<open>Concept_High_Level_Invariants.author\<close>}\<close>
 
 text*[introduction3::introduction, authored_by = "{@{author \<open>church\<close>}}", level = "Some 2"]\<open>\<close>
 text*[introduction4::introduction, authored_by = "{@{author \<open>curry\<close>}}", level = "Some 4"]\<open>\<close>
