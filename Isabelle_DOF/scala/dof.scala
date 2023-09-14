@@ -39,10 +39,10 @@ import isabelle._
 object DOF {
   /** parameters **/
 
-  val isabelle_version = "2023"
-  val isabelle_url = "https://isabelle.in.tum.de/website-Isabelle2023" 
+  val isabelle_version = ""
+  val isabelle_url = "https://isabelle.sketis.net/devel/release_snapshot/"
 
-  val afp_version = "afp-2023-09-13"
+  val afp_version = "afp-devel"
 
   // Isabelle/DOF version: "Unreleased" for development, semantic version for releases
   val version = "Unreleased"

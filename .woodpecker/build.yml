@@ -1,6 +1,6 @@
 pipeline:
   build:
-    image: git.logicalhacking.com/lh-docker/lh-docker-isabelle/isabelle2023:latest
+    image: git.logicalhacking.com/lh-docker/lh-docker-isabelle/isabelle_nightly:latest
     pull: true
     commands:
       - hg log --limit 2 /root/isabelle
@@ -23,7 +23,7 @@ pipeline:
       - cd ../..
       - ln -s * latest
   archive:
-    image: git.logicalhacking.com/lh-docker/lh-docker-isabelle/isabelle2023:latest
+    image: git.logicalhacking.com/lh-docker/lh-docker-isabelle/isabelle_nightly:latest
     commands:
       - export ARTIFACT_DIR=$CI_WORKSPACE/.artifacts/$CI_REPO/$CI_BRANCH/$CI_BUILD_NUMBER/$LATEX
       - mkdir -p $ARTIFACT_DIR
