@@ -7,7 +7,7 @@ Isabelle/DOF allows for both conventional typesetting and formal development.
 
 Isabelle/DOF has two major prerequisites:
 
-* **Isabelle:** Isabelle/DOF requires [Isabelle](https://isabelle.in.tum.de/)
+* **Isabelle 2023:** Isabelle/DOF requires [Isabelle](https://isabelle.in.tum.de/)
   and several entries from the [Archive of Formal Proofs
   (AFP)](https://www.isa-afp.org/).
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least
