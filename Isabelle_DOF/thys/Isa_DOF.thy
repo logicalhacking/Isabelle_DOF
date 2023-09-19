@@ -2847,12 +2847,13 @@ fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked, define}, src
         val inline = Config.get ctxt Document_Antiquotation.thy_output_display
         val _ = check_and_mark ctxt cid_decl {strict_checking = not unchecked} 
                                              {inline = inline} pos str
+        val cid_decl' = DOF_core.output_name cid_decl
     in  
         (case (define,inline) of
-            (true,false) => XML.enclose("{\\isaDofDOTlabel[type={"^cid_decl^"}]   {")"}}" 
-           |(false,false)=> XML.enclose("{\\isaDofDOTref[type={"^cid_decl^"}]     {")"}}"
-           |(true,true)  => XML.enclose("{\\isaDofDOTmacroDef[type={"^cid_decl^"}]{")"}}" 
-           |(false,true) => XML.enclose("{\\isaDofDOTmacroExp[type={"^cid_decl^"}]{")"}}"
+            (true,false) => XML.enclose("{\\isaDofDOTlabel[type={"^cid_decl'^"}]   {")"}}" 
+           |(false,false)=> XML.enclose("{\\isaDofDOTref[type={"^cid_decl'^"}]     {")"}}"
+           |(true,true)  => XML.enclose("{\\isaDofDOTmacroDef[type={"^cid_decl'^"}]{")"}}" 
+           |(false,true) => XML.enclose("{\\isaDofDOTmacroExp[type={"^cid_decl'^"}]{")"}}"
         )
         (Latex.text (DOF_core.output_name str, pos))
     end      
