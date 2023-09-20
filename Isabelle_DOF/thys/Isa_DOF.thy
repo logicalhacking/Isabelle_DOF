@@ -262,7 +262,9 @@ struct
            to be able to reference the class internally.
         *)
 
-   val  default_cid = "text"    (* the top (default) document class: everything is a text.*)
+   val default_cid = "text"    (* the top (default) document class: everything is a text.*)
+
+   val default_cid_typ = \<^typ>\<open>unit\<close> (* top document class type *)
 
 (* Due to the implementation, is_subclass0 is _NOT_ compatible with DOF classes type synonyms,
    so they must be resolved to full class names before use. *)
@@ -293,6 +295,8 @@ struct
      vcid: string option}
 
   val undefined_instance = "undefined_instance"
+
+  val undefined_value = Free ("Undefined_Value", default_cid_typ)
 
   val empty_instance = Instance {defined = false,
      input_term = \<^term>\<open>()\<close>,
@@ -701,12 +705,6 @@ struct
 fun is_subclass (ctxt) s t = is_subclass0 s t ctxt
 fun is_subclass_global thy s t = let val ctxt = Proof_Context.init_global thy
                                  in  is_subclass0  s t ctxt end
-
-
-fun typ_to_cid (Type(s,[\<^Type>\<open>unit\<close>])) = Long_Name.qualifier s
-   |typ_to_cid (Type(_,[T])) = typ_to_cid T
-   |typ_to_cid _ = error("type is not an ontological type.")
-
 
 fun check_regexps term = 
     let val _ = case fold_aterms  Term.add_free_names term [] of
@@ -1313,7 +1311,7 @@ fun elaborate_instances_of thy _ _ term_option _ =
           without using the burden of ontology classes.
           ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
        (filter (fn name => DOF_core.cid_of name thy |> equal DOF_core.default_cid))
-       |> mk_list \<^typ>\<open>unit\<close>
+       |> mk_list DOF_core.default_cid_typ
      else
        let
          val class_typ = class_name |> Syntax.read_typ_global thy
@@ -1557,16 +1555,6 @@ val value_without_elaboration = value_select ""
 structure Docitem_Parser = 
 struct
 
-fun cid_2_cidType cid_long thy =
-    if cid_long = DOF_core.default_cid then \<^Type>\<open>unit\<close>
-    else let fun ty_name cid = cid^"."^  Long_Name.base_name cid ^ Record.extN
-             fun fathers cid_long = case DOF_core.get_onto_class_global cid_long thy of
-                                        DOF_core.Onto_Class {inherits_from=NONE, ...} => [cid_long]
-                                      | DOF_core.Onto_Class {inherits_from=SOME(_,father), ...} => 
-                                                                        cid_long :: (fathers father) 
-         in fold (fn x => fn y => Type(ty_name x,[y])) (fathers cid_long) \<^Type>\<open>unit\<close>  
-         end
-
 fun create_default_object thy binding class_name typ = 
   let
     val purified_class_name = String.translate (fn #"." => "_" | x => String.implode [x]) class_name
@@ -1620,7 +1608,7 @@ fun check_classref {is_monitor=is_monitor} (SOME (cid, pos)) thy =
   in  (name_cid_typ, pos)
   end
   | check_classref _ NONE _ = pair DOF_core.default_cid DOF_core.default_cid
-                              |> rpair \<^typ>\<open>unit\<close>
+                              |> rpair DOF_core.default_cid_typ
                               |> rpair Position.none
 
 fun calc_update_term {mk_elaboration=mk_elaboration} thy (name, typ)
@@ -1893,7 +1881,9 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
                     else NONE
     val value_terms = if default_cid
                       then let
-                             val undefined_value = Free (oid ^ "_Undefined_Value", \<^Type>\<open>unit\<close>)
+                             val undefined_value = dest_Free DOF_core.undefined_value
+                                                   |> apfst (fn x => oid ^ "_" ^ x)
+                                                   |> Free
                            in (undefined_value, undefined_value) end
                             (* Handle initialization of docitem without a class associated,
                                for example when you just want a document element to be referentiable
@@ -2227,7 +2217,7 @@ fun meta_args_2_latex thy sem_attrs transform_attr
                                NONE => let val DOF_core.Instance cid =
                                              DOF_core.get_instance_global lab thy
                                         in pair (cid |> #cid) (cid |> #cid)
-                                           |> rpair \<^typ>\<open>unit\<close> end
+                                           |> rpair DOF_core.default_cid_typ end
                                   
                               | SOME(cid,_) => DOF_core.get_onto_class_cid thy cid        
 
