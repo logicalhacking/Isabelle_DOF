@@ -1299,9 +1299,7 @@ fun elaborate_instances_of thy _ _ term_option _ =
           val values = thy |> Proof_Context.init_global |> DOF_core.get_instances
                        |> Name_Space.dest_table
                        |> map fst
-                       |> tap (fn is => writeln ("In elaborate_instances_list instances: " ^ \<^make_string> is))
                        |> f
-                       |> tap (fn is => writeln ("In elaborate_instances_list instances after filter: " ^ \<^make_string> is))
                        |> map (fn oid => DOF_core.value_of oid thy)
         in HOLogic.mk_list class_typ values end
   in if equal class_name DOF_core.default_cid
