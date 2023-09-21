@@ -165,11 +165,11 @@ text\<open>The intended use for the \<open>doc_class\<close>es \<^verbatim>\<ope
      \<^verbatim>\<open>math_example\<close> (or \<^verbatim>\<open>math_ex\<close> for short)
      are \<^emph>\<open>informal\<close> descriptions of semi-formal definitions (by inheritance).
      Math-Examples can be made referentiable triggering explicit, numbered presentations.\<close>
-doc_class math_motivation  = tc +  
+doc_class math_motivation  = technical +  
    referentiable :: bool <= False
 type_synonym math_mtv = math_motivation
 
-doc_class math_explanation  = tc +
+doc_class math_explanation  = technical +
    referentiable :: bool <= False
 type_synonym math_exp = math_explanation
 
@@ -207,7 +207,7 @@ datatype math_content_class =
 text\<open>Instances of the \<open>doc_class\<close> \<^verbatim>\<open>math_content\<close> are by definition @{term "semiformal"}; they may
 be non-referential, but in this case they will not have a @{term "short_name"}.\<close>
 
-doc_class math_content = tc +
+doc_class math_content = technical +
    referentiable :: bool <= False
    short_name    :: string <= "''''"
    status        :: status <= "semiformal"
@@ -516,34 +516,34 @@ subsection\<open>Content in Engineering/Tech Papers \<close>
 text\<open>This section is currently experimental and not supported by the documentation 
      generation backend.\<close>
 
-doc_class engineering_content = tc +
+doc_class engineering_content = technical +
    short_name :: string <= "''''"
    status     :: status
 type_synonym eng_content = engineering_content
 
 
-doc_class "experiment"  = eng_content +
+doc_class "experiment"  = engineering_content +
    tag :: "string" <=  "''''"
 
-doc_class "evaluation"  = eng_content +
+doc_class "evaluation"  = engineering_content +
    tag :: "string" <=  "''''"
 
-doc_class "data"  = eng_content +
+doc_class "data"  = engineering_content +
    tag :: "string" <=  "''''"
 
-doc_class tech_definition = eng_content +
+doc_class tech_definition = engineering_content +
    referentiable :: bool <= True
    tag :: "string" <=  "''''"
 
-doc_class tech_code = eng_content +
+doc_class tech_code = engineering_content +
    referentiable :: bool <= True
    tag :: "string" <=  "''''"
 
-doc_class tech_example = eng_content +
+doc_class tech_example = engineering_content +
    referentiable :: bool <= True
    tag :: "string" <=  "''''"
 
-doc_class eng_example = eng_content +
+doc_class eng_example = engineering_content +
    referentiable :: bool <= True
    tag :: "string" <=  "''''"
 

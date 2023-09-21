@@ -42,7 +42,7 @@ object DOF_Document_Build
     def the_document_entry(context: Document_Build.Context, name: String): Export.Entry = {
       val entries =
         for {
-          node_name <- context.document_theories
+          node_name <- context.all_document_theories
           entry <- context.session_context.get(node_name.theory, name)
         } yield entry
 
@@ -60,11 +60,12 @@ object DOF_Document_Build
     override def prepare_directory(
       context: Document_Build.Context,
       dir: Path,
-      doc: Document_Build.Document_Variant): Document_Build.Directory =
+      doc: Document_Build.Document_Variant,
+      verbose: Boolean): Document_Build.Directory =
     {
       val options = DOF.options(context.options)
       val latex_output = new Latex_Output(options)
-      val directory = context.prepare_directory(dir, doc, latex_output)
+      val directory = context.prepare_directory(dir, doc, latex_output, verbose)
 
       val isabelle_dof_dir = context.session_context.sessions_structure(DOF.session).dir
 

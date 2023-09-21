@@ -16,6 +16,7 @@ session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" +
     "Cenelec_Test"  
     "OutOfOrderPresntn"
     "COL_Test"
+    "Test_Polymorphic_Classes"
   document_files
     "root.bib"
     "figures/A.png"

@@ -39,10 +39,10 @@ import isabelle._
 object DOF {
   /** parameters **/
 
-  val isabelle_version = "2022"
-  val isabelle_url = "https://isabelle.in.tum.de/website-Isabelle2022"
+  val isabelle_version = "2023"
+  val isabelle_url = "https://isabelle.in.tum.de/website-Isabelle2023" 
 
-  val afp_version = "afp-2022-10-27"
+  val afp_version = "afp-2023-09-13"
 
   // Isabelle/DOF version: "Unreleased" for development, semantic version for releases
   val version = "Unreleased"
@@ -55,7 +55,7 @@ object DOF {
   val generic_doi = "10.5281/zenodo.3370482"
 
   // Isabelle/DOF source repository
-  val url = "https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF"
+  val url = "https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/src/branch/Isabelle_dev"
 
   // Isabelle/DOF release artifacts
   val artifact_dir = "releases/Isabelle_DOF/Isabelle_DOF"

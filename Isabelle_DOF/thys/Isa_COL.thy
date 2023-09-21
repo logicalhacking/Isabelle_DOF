@@ -429,11 +429,11 @@ fun convert_src_from_margs ctxt (X, (((str,_),value)::R)) =
 fun float_command (name, pos) descr cid  =
   let fun set_default_class NONE = SOME(cid,pos)
          |set_default_class (SOME X) = SOME X 
-      fun create_instance  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t)  =
+      fun create_instance  (((binding,cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t)  =
                 Value_Command.Docitem_Parser.create_and_check_docitem 
                {is_monitor = false} 
                {is_inline = true}
-               {define = true} oid pos (set_default_class cid_pos) doc_attrs
+               {define = true} binding (set_default_class cid_pos) doc_attrs
       fun generate_fig_ltx_ctxt ctxt cap_src oid body = 
         Latex.macro0 "centering" 
         @ body 
@@ -441,25 +441,31 @@ fun float_command (name, pos) descr cid  =
         @ Latex.macro "label" (DOF_core.get_instance_name_global oid (Proof_Context.theory_of ctxt)
                                |> DOF_core.output_name
                                |> Latex.string)
-      fun parse_and_tex (margs as (((oid, _),_), _), cap_src) ctxt =
-        (convert_src_from_margs ctxt margs)
-        |> pair (upd_caption (K Input.empty) #> convert_meta_args ctxt margs)
-        |> fig_content ctxt 
-        |> generate_fig_ltx_ctxt ctxt cap_src oid
-        |> (Latex.environment ("figure") )
+      fun parse_and_tex (margs as ((binding,_), _), cap_src) ctxt =
+        let val oid = Binding.name_of binding
+        in
+          (convert_src_from_margs ctxt margs)
+          |> pair (upd_caption (K Input.empty) #> convert_meta_args ctxt margs)
+          |> fig_content ctxt 
+          |> generate_fig_ltx_ctxt ctxt cap_src oid
+          |> (Latex.environment ("figure") )
+        end
   in  Monitor_Command_Parser.onto_macro_cmd_command (name, pos) descr create_instance parse_and_tex
   end
 
 fun listing_command (name, pos) descr cid  =
   let fun set_default_class NONE = SOME(cid,pos)
          |set_default_class (SOME X) = SOME X 
-      fun create_instance  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t)  =
+      fun create_instance  (((binding,cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t)  =
                 Value_Command.Docitem_Parser.create_and_check_docitem 
                {is_monitor = false} 
                {is_inline = true}
-               {define = true} oid pos (set_default_class cid_pos) doc_attrs
-      fun parse_and_tex (margs as (((_, pos),_), _), _) _ =
-        ISA_core.err ("Not yet implemented.\n Please use text*[oid::listing]\<open>\<close> instead.") pos
+               {define = true} binding (set_default_class cid_pos) doc_attrs
+      fun parse_and_tex (margs as ((binding,_), _), _) _ =
+        let val pos = Binding.pos_of binding
+        in
+          ISA_core.err ("Not yet implemented.\n Please use text*[oid::listing]\<open>\<close> instead.") pos
+        end
   in  Monitor_Command_Parser.onto_macro_cmd_command (name, pos) descr create_instance parse_and_tex
   end
   
@@ -798,14 +804,14 @@ fun upd_block f =
 fun upd_block_title f =
   upd_block (fn title => f title)
 
-val unenclose_end = unenclose
-val unenclose_string = unenclose o unenclose o unenclose_end
+val unenclose_string = unenclose o unenclose
 
 fun read_string s =
-  let val symbols = unenclose_end s |> Symbol_Pos.explode0
+  let val s' = DOF_core.markup2string s
+      val symbols = s' |> Symbol_Pos.explode0
   in if hd symbols |> fst |> equal Symbol.open_
      then Token.read_cartouche symbols |> Token.input_of
-     else unenclose_string s |> Syntax.read_input
+     else unenclose_string s' |> Syntax.read_input
   end
 
 val block_titleN = "title"
@@ -858,11 +864,11 @@ fun convert_meta_args ctxt (X, (((str,_),value) :: R)) =
 fun frame_command (name, pos) descr cid  =
   let fun set_default_class NONE = SOME(cid,pos)
          |set_default_class (SOME X) = SOME X
-      fun create_instance  ((((oid, pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t)  =
+      fun create_instance  (((binding,cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t)  =
                 Value_Command.Docitem_Parser.create_and_check_docitem
                {is_monitor = false}
                {is_inline = true}
-               {define = true} oid pos (set_default_class cid_pos) doc_attrs
+               {define = true} binding (set_default_class cid_pos) doc_attrs
       fun titles_src ctxt frametitle framesubtitle src =
         Latex.string "{"
         @ Document_Output.output_document ctxt {markdown = false} frametitle
