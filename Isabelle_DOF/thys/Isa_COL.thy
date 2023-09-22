@@ -24,9 +24,9 @@ text\<open> Building a fundamental infrastructure for common document elements s
 theory Isa_COL   
   imports  Isa_DOF  
   keywords "title*"        "subtitle*"      
-           "chapter*"      "section*"    "paragraph*"
-           "subsection*"   "subsubsection*" 
            "figure*"       "listing*"    "frame*" :: document_body
+  and      "chapter*" "section*" "subsection*"
+           "subsubsection*" "paragraph*" "subparagraph*" :: document_heading
 
 begin
 
@@ -58,7 +58,8 @@ doc_class "subsubsection" = text_element +
    level         :: "int  option"    <=  "Some 3" 
 doc_class "paragraph" = text_element +
    level         :: "int  option"    <=  "Some 4" 
-
+doc_class "subparagraph" = text_element +
+   level         :: "int  option"    <=  "Some 5"
 
 subsection\<open>Ontological Macros\<close>
 
@@ -128,19 +129,22 @@ fun enriched_document_cmd_exp ncid (S: (string * string) list) =
    end;
 end (* local *)
 
-
 fun heading_command (name, pos) descr level =
   Monitor_Command_Parser.document_command (name, pos) descr
     {markdown = false, body = true} (enriched_text_element_cmd level) [] I;
 
-val _ = heading_command \<^command_keyword>\<open>title*\<close> "section heading" NONE;
-val _ = heading_command \<^command_keyword>\<open>subtitle*\<close> "section heading" NONE;
-val _ = heading_command \<^command_keyword>\<open>chapter*\<close> "section heading" (SOME (SOME 0));
-val _ = heading_command \<^command_keyword>\<open>section*\<close> "section heading" (SOME (SOME 1));
-val _ = heading_command \<^command_keyword>\<open>subsection*\<close> "subsection heading" (SOME (SOME 2));
-val _ = heading_command \<^command_keyword>\<open>subsubsection*\<close> "subsubsection heading" (SOME (SOME 3));
-val _ = heading_command \<^command_keyword>\<open>paragraph*\<close> "paragraph" (SOME (SOME 4));
+fun heading_command' (name, pos) descr level =
+  Monitor_Command_Parser.document_command (name, pos) descr
+    {markdown = false, body = false} (enriched_text_element_cmd level) [] I;
 
+val _ = heading_command \<^command_keyword>\<open>title*\<close> "title heading" NONE;
+val _ = heading_command \<^command_keyword>\<open>subtitle*\<close> "subtitle heading" NONE;
+val _ = heading_command' \<^command_keyword>\<open>chapter*\<close> "chapter heading" (SOME (SOME 0));
+val _ = heading_command' \<^command_keyword>\<open>section*\<close> "section heading" (SOME (SOME 1));
+val _ = heading_command' \<^command_keyword>\<open>subsection*\<close> "subsection heading" (SOME (SOME 2));
+val _ = heading_command' \<^command_keyword>\<open>subsubsection*\<close> "subsubsection heading" (SOME (SOME 3));
+val _ = heading_command' \<^command_keyword>\<open>paragraph*\<close> "paragraph heading" (SOME (SOME 4));
+val _ = heading_command' \<^command_keyword>\<open>subparagraph*\<close> "subparagraph heading" (SOME (SOME 5));
 
 end 
 end

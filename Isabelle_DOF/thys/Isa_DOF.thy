@@ -2309,24 +2309,60 @@ fun gen_enriched_document_cmd' {inline} cid_transform attr_transform
 
 (* markup reports and document output *)
 
+val headings =
+     ["chapter",
+    "section",
+    "subsection",
+    "subsubsection",
+    "paragraph",
+    "subparagraph"]
+
+val headings_star = headings |> map (suffix "*")
+
 (* {markdown = true} sets the parsing process such that in the text-core
    markdown elements are accepted. *)
 
-fun document_output {markdown: bool, markup: Latex.text -> Latex.text} sem_attrs transform_attr meta_args text ctxt =
+(*fun document_output body {markdown: bool, markup: Latex.text -> Latex.text} sem_attrs transform_attr meta_args text ctxt =
   let
     val thy = Proof_Context.theory_of ctxt;
     val _ = Context_Position.reports ctxt (Document_Output.document_reports text);
     val output_meta = meta_args_2_latex thy sem_attrs transform_attr meta_args;
     val output_text = Document_Output.output_document ctxt {markdown = markdown} text;
-  in markup (output_meta @ output_text) end;
+  in if body
+     then markup (output_meta @ output_text)
+     else markup output_text
+  end*)
 
 fun document_output_reports name {markdown, body} sem_attrs transform_attr meta_args text ctxt =
   let
-    fun markup xml =
-      let val m = if body then Markup.latex_body else Markup.latex_heading
-      in [XML.Elem (m (Latex.output_name name), xml)] end;
-    val config = {markdown = markdown, markup = markup}
-  in document_output config sem_attrs transform_attr meta_args text ctxt 
+    val thy = Proof_Context.theory_of ctxt;
+    val ((binding, cid_opt), _) = meta_args
+    fun headings_markup thy name binding m xml =
+      let val label = Binding.name_of binding
+              |> (fn n => DOF_core.get_instance_name_global n thy)
+              |> DOF_core.output_name
+              |> Latex.string
+              |> Latex.macro "label"
+      in [XML.Elem (m (Latex.output_name name), label @ xml)] end
+    val _ = Context_Position.reports ctxt (Document_Output.document_reports text);
+    val output_meta = meta_args_2_latex thy sem_attrs transform_attr meta_args;
+    val output_text = Document_Output.output_document ctxt {markdown = markdown} text;
+  in if body
+     then (case cid_opt of
+              NONE => let fun markup xml = [XML.Elem (Markup.latex_body name, xml)]
+                      in markup (output_meta @ output_text) end
+            | SOME x => let val cid = fst x
+                        in if headings |> map (Syntax.read_typ ctxt)
+                                       |> exists (Syntax.read_typ ctxt cid |> equal)
+                           then  headings_markup thy cid binding Markup.latex_heading output_text 
+                           else
+                             let fun markup xml = [XML.Elem (Markup.latex_body name, xml)]
+                             in markup (output_meta @ output_text) end
+                        end)
+     else if headings_star |> exists (equal name)
+     then headings_markup thy (name |> translate_string (fn "*" => "" | s => s)) binding
+                          Markup.latex_heading output_text
+     else headings_markup thy name binding Markup.latex_heading output_text
   end;
 
 

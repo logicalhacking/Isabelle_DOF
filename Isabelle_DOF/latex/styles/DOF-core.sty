@@ -94,31 +94,31 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: chapter*-dispatcher
-\NewEnviron{isamarkupchapter*}[1][]{\isaDof[env={IsaUNDERSCORECOLDOTchapter},#1]{\BODY}}
+%\NewEnviron{isamarkupchapter*}[1][]{\isaDof[env={IsaUNDERSCORECOLDOTchapter},#1]{\BODY}}
 % end: chapter*-dispatcher
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: section*-dispatcher
-\NewEnviron{isamarkupsection*}[1][]{\isaDof[env={IsaUNDERSCORECOLDOTsection},#1]{\BODY}}
+%\NewEnviron{isamarkupsection*}[1][]{\isaDof[env={IsaUNDERSCORECOLDOTsection},#1]{\BODY}}
 % end: section*-dispatcher
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: subsection*-dispatcher
-\NewEnviron{isamarkupsubsection*}[1][]{\isaDof[env={IsaUNDERSCORECOLDOTsubsection},#1]{\BODY}}
+%\NewEnviron{isamarkupsubsection*}[1][]{\isaDof[env={IsaUNDERSCORECOLDOTsubsection},#1]{\BODY}}
 % end: subsection*-dispatcher
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: subsubsection*-dispatcher
-\NewEnviron{isamarkupsubsubsection*}[1][]{\isaDof[env={IsaUNDERSCORECOLDOTsubsubsection},#1]{\BODY}}
+%\NewEnviron{isamarkupsubsubsection*}[1][]{\isaDof[env={IsaUNDERSCORECOLDOTsubsubsection},#1]{\BODY}}
 % end: subsubsection*-dispatcher
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: paragraph*-dispatcher
-\NewEnviron{isamarkupparagraph*}[1][]{\isaDof[env={IsaUNDERSCORECOLDOTparagraph},#1]{\BODY}}
+%\NewEnviron{isamarkupparagraph*}[1][]{\isaDof[env={IsaUNDERSCORECOLDOTparagraph},#1]{\BODY}}
 % end: paragraph*-dispatcher
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -135,21 +135,21 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: chapter/section default implementations
-\newisadof{IsaUNDERSCORECOLDOTchapter}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
-  \isamarkupfalse\isamarkupchapter{#1}\label{\commandkey{label}}\isamarkuptrue%
-}
-\newisadof{IsaUNDERSCORECOLDOTsection}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
-  \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
-}
-\newisadof{IsaUNDERSCORECOLDOTsubsection}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
-  \isamarkupfalse\isamarkupsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
-}
-\newisadof{IsaUNDERSCORECOLDOTsubsubsection}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
-  \isamarkupfalse\isamarkupsubsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
-}
-\newisadof{IsaUNDERSCORECOLDOTparagraph}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
-  \isamarkupfalse\isamarkupparagraph{#1}\label{\commandkey{label}}\isamarkuptrue%
-}
+%\newisadof{IsaUNDERSCORECOLDOTchapter}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
+%  \isamarkupfalse\isamarkupchapter{#1}\label{\commandkey{label}}\isamarkuptrue%
+%}
+%\newisadof{IsaUNDERSCORECOLDOTsection}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
+%  \isamarkupfalse\isamarkupsection{#1}\label{\commandkey{label}}\isamarkuptrue%
+%}
+%\newisadof{IsaUNDERSCORECOLDOTsubsection}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
+%  \isamarkupfalse\isamarkupsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
+%}
+%\newisadof{IsaUNDERSCORECOLDOTsubsubsection}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
+%  \isamarkupfalse\isamarkupsubsubsection{#1}\label{\commandkey{label}}\isamarkuptrue%
+%}
+%\newisadof{IsaUNDERSCORECOLDOTparagraph}[label=,type=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=][1]{%
+%  \isamarkupfalse\isamarkupparagraph{#1}\label{\commandkey{label}}\isamarkuptrue%
+%}
 % end: chapter/section default implementations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
