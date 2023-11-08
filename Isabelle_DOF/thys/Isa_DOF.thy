@@ -3054,49 +3054,18 @@ fun def_cmd (decl, spec, prems, params) lthy =
 
 fun mk_meta_eq (t, u) = \<^Const>\<open>Pure.eq \<open>fastype_of t\<close> for t u\<close>;
 
-fun define_cond bind f_sty read_cond (ctxt:local_theory) = 
-       let val eq =  mk_meta_eq(Free(Binding.name_of bind, f_sty),read_cond)
+fun define_cond bind eq (ctxt:local_theory) =
+       let
            val args = (SOME(bind,NONE,NoSyn), (Binding.empty_atts,eq),[],[])
        in def_cmd args ctxt end
 
-fun define_inv (params, cid_long) (bind, inv) thy = 
-    let val inv_term = Syntax.read_term (Proof_Context.init_global thy) inv
-        fun update_attribute_type thy class_scheme_ty cid_long
-            (Const (s, Type (st,[ty, ty'])) $ t) =
-              let
-                val cid = Long_Name.qualifier s
-              in case Name_Space.lookup
-                        (DOF_core.get_onto_classes (Proof_Context.init_global thy)) cid of
-                     NONE => Const (s, Type(st,[ty, ty']))
-                             $ (update_attribute_type thy class_scheme_ty cid_long t)
-                   | SOME _ => if DOF_core.is_subclass_global thy cid_long cid
-                               then let val Type(st', tys') = ty
-                                    in if tys' = [\<^typ>\<open>unit\<close>]
-                                       then Const (s, Type(st,[ty, ty']))
-                                            $ (update_attribute_type thy class_scheme_ty cid_long t)
-                                       else Const(s, Type(st,[class_scheme_ty, ty']))
-                                            $ (update_attribute_type thy class_scheme_ty cid_long t)
-                                    end
-                               else Const (s, Type(st,[ty, ty']))
-                                    $ (update_attribute_type thy class_scheme_ty cid_long t)
-              end
-          | update_attribute_type thy class_scheme_ty cid_long (t $ t') =
-              (update_attribute_type thy class_scheme_ty cid_long t)
-              $ (update_attribute_type thy class_scheme_ty cid_long t')
-          | update_attribute_type thy class_scheme_ty cid_long (Abs(s, ty, t)) =
-              Abs(s, ty, update_attribute_type thy class_scheme_ty cid_long t)
-          | update_attribute_type _ class_scheme_ty _ (Free(s, ty)) = if s = instance_placeholderN 
-                                                                     then Free (s, class_scheme_ty)
-                                                                     else Free (s, ty)
-          | update_attribute_type _ _ _ t = t
-        val zeta = (singleton (Name.variant_list (map #1 params)) "'z", \<^sort>\<open>type\<close>)
-        val typ = Type (cid_long ^ schemeN, map TFree (params @ [zeta]))
-        (* Update the type of each attribute update function to match the type of the
-           current class. *)
-        val inv_term' = update_attribute_type thy typ cid_long inv_term
-        val eq_inv_ty = typ --> HOLogic.boolT
-        val abs_term = Term.lambda (Free (instance_placeholderN, typ)) inv_term'
-    in  thy |> Named_Target.theory_map (define_cond bind eq_inv_ty abs_term) end
+fun define_inv (bind, inv) thy = 
+    let val inv_parsed_term = Syntax.parse_term (Proof_Context.init_global thy) inv
+        val abs_term = Term.lambda (Free (instance_placeholderN, dummyT)) inv_parsed_term
+        val eq = Logic.mk_equals (Free(Binding.name_of bind, dummyT), abs_term)
+                 |> Syntax.check_term (Proof_Context.init_global thy)
+    in  thy |> Named_Target.theory_map (define_cond bind eq) end
+
 
 fun add_doc_class_cmd overloaded (raw_params, binding)
                       raw_parent raw_fieldsNdefaults reject_Atoms regexps invariants thy =
@@ -3169,7 +3138,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
                                 else add [DOF_core.tag_attr] invariants' {virtual=true})
            |> (fn thy => OntoLinkParser.docitem_antiquotation binding (cid thy) thy)
               (* defines the ontology-checked text antiquotation to this document class *)
-           |> (fn thy => fold(define_inv (params', (cid thy))) (invariants') thy)
+           |> (fn thy => fold define_inv (invariants') thy)
            (* The function declare_ISA_class_accessor_and_check_instance uses a prefix
               because the class name is already bound to "doc_class Regular_Exp.rexp" constant
               by add_doc_class_cmd function *)
