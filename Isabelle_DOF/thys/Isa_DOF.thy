@@ -1798,20 +1798,16 @@ fun check_invariants thy binding =
     val cids_invariants = get_all_invariants name thy
     val inv_and_apply_list = 
       let fun mk_inv_and_apply cid_invs value thy =
-            let val (cid_long, invs) = cid_invs
-                val inv_def_typ = Term.type_of value
+            let val ctxt = Proof_Context.init_global thy 
+                val (cid_long, invs) = cid_invs
             in invs |> map
                     (fn (bind, _) =>
                       let
                         val inv_name = Binding.name_of bind
-                                       |> Long_Name.qualify (Long_Name.base_name cid_long)
+                                       |> Long_Name.qualify cid_long
                         val pos = Binding.pos_of bind
-                        val inv_def = inv_name
-                                      |> Syntax.read_term_global thy
-                      in case inv_def of
-                             Const (s, Type (st, [_ (*ty*), ty'])) =>
-                                ((inv_name, pos), Const (s, Type (st,[inv_def_typ, ty'])) $ value)
-                           | _ => ((inv_name, pos), inv_def $ value) end)
+                        val inv_def = inv_name |> Syntax.parse_term ctxt
+                        in ((inv_name, pos), Syntax.check_term ctxt (inv_def $ value)) end)
             end    
       in cids_invariants |> map (fn cid_invs => mk_inv_and_apply cid_invs docitem_value thy) 
                          |> flat
