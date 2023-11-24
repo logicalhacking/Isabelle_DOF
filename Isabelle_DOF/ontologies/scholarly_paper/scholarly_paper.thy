@@ -629,7 +629,7 @@ fun check ctxt cidS mon_id pos_opt =
         fun get_level_raw oid = ISA_core.compute_attr_access ctxt "level" oid NONE @{here};
         fun get_level oid = dest_option (snd o HOLogic.dest_number) (get_level_raw (oid));
         fun check_level_hd a = case (get_level (snd a)) of
-                                  NONE => error("Invariant violation: leading section" ^ snd a ^ 
+                                  NONE => error("Invariant violation: leading section " ^ snd a ^ 
                                                 " must have lowest level")
                                 | SOME X => X
         fun check_group_elem level_hd a = case (get_level (snd a)) of
