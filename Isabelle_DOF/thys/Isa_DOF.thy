@@ -2248,7 +2248,7 @@ fun meta_args_2_latex thy sem_attrs transform_attr
         fun ltx_of_markup ctxt s = let
   	                            val term = (Syntax.check_term ctxt o Syntax.parse_term ctxt) s
                                 val str_of_term = ltx_of_term  ctxt true term 
-                                    handle _ => "Exception in ltx_of_term"
+                                  (*  handle _ => "Exception in ltx_of_term" *)
                               in
                                 str_of_term
                               end 
