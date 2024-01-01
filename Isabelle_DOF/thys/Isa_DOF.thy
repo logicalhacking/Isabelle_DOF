@@ -262,7 +262,9 @@ struct
            to be able to reference the class internally.
         *)
 
-   val  default_cid = "text"    (* the top (default) document class: everything is a text.*)
+   val default_cid = "text"    (* the top (default) document class: everything is a text.*)
+
+   val default_cid_typ = \<^typ>\<open>unit\<close> (* top document class type *)
 
 (* Due to the implementation, is_subclass0 is _NOT_ compatible with DOF classes type synonyms,
    so they must be resolved to full class names before use. *)
@@ -293,6 +295,8 @@ struct
      vcid: string option}
 
   val undefined_instance = "undefined_instance"
+
+  val undefined_value = Free ("Undefined_Value", default_cid_typ)
 
   val empty_instance = Instance {defined = false,
      input_term = \<^term>\<open>()\<close>,
@@ -701,12 +705,6 @@ struct
 fun is_subclass (ctxt) s t = is_subclass0 s t ctxt
 fun is_subclass_global thy s t = let val ctxt = Proof_Context.init_global thy
                                  in  is_subclass0  s t ctxt end
-
-
-fun typ_to_cid (Type(s,[\<^Type>\<open>unit\<close>])) = Long_Name.qualifier s
-   |typ_to_cid (Type(_,[T])) = typ_to_cid T
-   |typ_to_cid _ = error("type is not an ontological type.")
-
 
 fun check_regexps term = 
     let val _ = case fold_aterms  Term.add_free_names term [] of
@@ -1299,9 +1297,7 @@ fun elaborate_instances_of thy _ _ term_option _ =
           val values = thy |> Proof_Context.init_global |> DOF_core.get_instances
                        |> Name_Space.dest_table
                        |> map fst
-                       |> tap (fn is => writeln ("In elaborate_instances_list instances: " ^ \<^make_string> is))
                        |> f
-                       |> tap (fn is => writeln ("In elaborate_instances_list instances after filter: " ^ \<^make_string> is))
                        |> map (fn oid => DOF_core.value_of oid thy)
         in HOLogic.mk_list class_typ values end
   in if equal class_name DOF_core.default_cid
@@ -1315,7 +1311,7 @@ fun elaborate_instances_of thy _ _ term_option _ =
           without using the burden of ontology classes.
           ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
        (filter (fn name => DOF_core.cid_of name thy |> equal DOF_core.default_cid))
-       |> mk_list \<^typ>\<open>unit\<close>
+       |> mk_list DOF_core.default_cid_typ
      else
        let
          val class_typ = class_name |> Syntax.read_typ_global thy
@@ -1559,16 +1555,6 @@ val value_without_elaboration = value_select ""
 structure Docitem_Parser = 
 struct
 
-fun cid_2_cidType cid_long thy =
-    if cid_long = DOF_core.default_cid then \<^Type>\<open>unit\<close>
-    else let fun ty_name cid = cid^"."^  Long_Name.base_name cid ^ Record.extN
-             fun fathers cid_long = case DOF_core.get_onto_class_global cid_long thy of
-                                        DOF_core.Onto_Class {inherits_from=NONE, ...} => [cid_long]
-                                      | DOF_core.Onto_Class {inherits_from=SOME(_,father), ...} => 
-                                                                        cid_long :: (fathers father) 
-         in fold (fn x => fn y => Type(ty_name x,[y])) (fathers cid_long) \<^Type>\<open>unit\<close>  
-         end
-
 fun create_default_object thy binding class_name typ = 
   let
     val purified_class_name = String.translate (fn #"." => "_" | x => String.implode [x]) class_name
@@ -1622,7 +1608,7 @@ fun check_classref {is_monitor=is_monitor} (SOME (cid, pos)) thy =
   in  (name_cid_typ, pos)
   end
   | check_classref _ NONE _ = pair DOF_core.default_cid DOF_core.default_cid
-                              |> rpair \<^typ>\<open>unit\<close>
+                              |> rpair DOF_core.default_cid_typ
                               |> rpair Position.none
 
 fun calc_update_term {mk_elaboration=mk_elaboration} thy (name, typ)
@@ -1812,20 +1798,16 @@ fun check_invariants thy binding =
     val cids_invariants = get_all_invariants name thy
     val inv_and_apply_list = 
       let fun mk_inv_and_apply cid_invs value thy =
-            let val (cid_long, invs) = cid_invs
-                val inv_def_typ = Term.type_of value
+            let val ctxt = Proof_Context.init_global thy 
+                val (cid_long, invs) = cid_invs
             in invs |> map
                     (fn (bind, _) =>
                       let
                         val inv_name = Binding.name_of bind
-                                       |> Long_Name.qualify (Long_Name.base_name cid_long)
+                                       |> Long_Name.qualify cid_long
                         val pos = Binding.pos_of bind
-                        val inv_def = inv_name
-                                      |> Syntax.read_term_global thy
-                      in case inv_def of
-                             Const (s, Type (st, [_ (*ty*), ty'])) =>
-                                ((inv_name, pos), Const (s, Type (st,[inv_def_typ, ty'])) $ value)
-                           | _ => ((inv_name, pos), inv_def $ value) end)
+                        val inv_def = inv_name |> Syntax.parse_term ctxt
+                        in ((inv_name, pos), Syntax.check_term ctxt (inv_def $ value)) end)
             end    
       in cids_invariants |> map (fn cid_invs => mk_inv_and_apply cid_invs docitem_value thy) 
                          |> flat
@@ -1895,7 +1877,9 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
                     else NONE
     val value_terms = if default_cid
                       then let
-                             val undefined_value = Free (oid ^ "_Undefined_Value", \<^Type>\<open>unit\<close>)
+                             val undefined_value = dest_Free DOF_core.undefined_value
+                                                   |> apfst (fn x => oid ^ "_" ^ x)
+                                                   |> Free
                            in (undefined_value, undefined_value) end
                             (* Handle initialization of docitem without a class associated,
                                for example when you just want a document element to be referentiable
@@ -2229,7 +2213,7 @@ fun meta_args_2_latex thy sem_attrs transform_attr
                                NONE => let val DOF_core.Instance cid =
                                              DOF_core.get_instance_global lab thy
                                         in pair (cid |> #cid) (cid |> #cid)
-                                           |> rpair \<^typ>\<open>unit\<close> end
+                                           |> rpair DOF_core.default_cid_typ end
                                   
                               | SOME(cid,_) => DOF_core.get_onto_class_cid thy cid        
 
@@ -2847,12 +2831,13 @@ fun pretty_docitem_antiquotation_generic cid_decl ctxt ({unchecked, define}, src
         val inline = Config.get ctxt Document_Antiquotation.thy_output_display
         val _ = check_and_mark ctxt cid_decl {strict_checking = not unchecked} 
                                              {inline = inline} pos str
+        val cid_decl' = DOF_core.output_name cid_decl
     in  
         (case (define,inline) of
-            (true,false) => XML.enclose("{\\isaDofDOTlabel[type={"^cid_decl^"}]   {")"}}" 
-           |(false,false)=> XML.enclose("{\\isaDofDOTref[type={"^cid_decl^"}]     {")"}}"
-           |(true,true)  => XML.enclose("{\\isaDofDOTmacroDef[type={"^cid_decl^"}]{")"}}" 
-           |(false,true) => XML.enclose("{\\isaDofDOTmacroExp[type={"^cid_decl^"}]{")"}}"
+            (true,false) => XML.enclose("{\\isaDofDOTlabel[type={"^cid_decl'^"}]   {")"}}" 
+           |(false,false)=> XML.enclose("{\\isaDofDOTref[type={"^cid_decl'^"}]     {")"}}"
+           |(true,true)  => XML.enclose("{\\isaDofDOTmacroDef[type={"^cid_decl'^"}]{")"}}" 
+           |(false,true) => XML.enclose("{\\isaDofDOTmacroExp[type={"^cid_decl'^"}]{")"}}"
         )
         (Latex.text (DOF_core.output_name str, pos))
     end      
@@ -3065,49 +3050,18 @@ fun def_cmd (decl, spec, prems, params) lthy =
 
 fun mk_meta_eq (t, u) = \<^Const>\<open>Pure.eq \<open>fastype_of t\<close> for t u\<close>;
 
-fun define_cond bind f_sty read_cond (ctxt:local_theory) = 
-       let val eq =  mk_meta_eq(Free(Binding.name_of bind, f_sty),read_cond)
+fun define_cond bind eq (ctxt:local_theory) =
+       let
            val args = (SOME(bind,NONE,NoSyn), (Binding.empty_atts,eq),[],[])
        in def_cmd args ctxt end
 
-fun define_inv (params, cid_long) (bind, inv) thy = 
-    let val inv_term = Syntax.read_term (Proof_Context.init_global thy) inv
-        fun update_attribute_type thy class_scheme_ty cid_long
-            (Const (s, Type (st,[ty, ty'])) $ t) =
-              let
-                val cid = Long_Name.qualifier s
-              in case Name_Space.lookup
-                        (DOF_core.get_onto_classes (Proof_Context.init_global thy)) cid of
-                     NONE => Const (s, Type(st,[ty, ty']))
-                             $ (update_attribute_type thy class_scheme_ty cid_long t)
-                   | SOME _ => if DOF_core.is_subclass_global thy cid_long cid
-                               then let val Type(st', tys') = ty
-                                    in if tys' = [\<^typ>\<open>unit\<close>]
-                                       then Const (s, Type(st,[ty, ty']))
-                                            $ (update_attribute_type thy class_scheme_ty cid_long t)
-                                       else Const(s, Type(st,[class_scheme_ty, ty']))
-                                            $ (update_attribute_type thy class_scheme_ty cid_long t)
-                                    end
-                               else Const (s, Type(st,[ty, ty']))
-                                    $ (update_attribute_type thy class_scheme_ty cid_long t)
-              end
-          | update_attribute_type thy class_scheme_ty cid_long (t $ t') =
-              (update_attribute_type thy class_scheme_ty cid_long t)
-              $ (update_attribute_type thy class_scheme_ty cid_long t')
-          | update_attribute_type thy class_scheme_ty cid_long (Abs(s, ty, t)) =
-              Abs(s, ty, update_attribute_type thy class_scheme_ty cid_long t)
-          | update_attribute_type _ class_scheme_ty _ (Free(s, ty)) = if s = instance_placeholderN 
-                                                                     then Free (s, class_scheme_ty)
-                                                                     else Free (s, ty)
-          | update_attribute_type _ _ _ t = t
-        val zeta = (singleton (Name.variant_list (map #1 params)) "'z", \<^sort>\<open>type\<close>)
-        val typ = Type (cid_long ^ schemeN, map TFree (params @ [zeta]))
-        (* Update the type of each attribute update function to match the type of the
-           current class. *)
-        val inv_term' = update_attribute_type thy typ cid_long inv_term
-        val eq_inv_ty = typ --> HOLogic.boolT
-        val abs_term = Term.lambda (Free (instance_placeholderN, typ)) inv_term'
-    in  thy |> Named_Target.theory_map (define_cond bind eq_inv_ty abs_term) end
+fun define_inv (bind, inv) thy = 
+    let val inv_parsed_term = Syntax.parse_term (Proof_Context.init_global thy) inv
+        val abs_term = Term.lambda (Free (instance_placeholderN, dummyT)) inv_parsed_term
+        val eq = Logic.mk_equals (Free(Binding.name_of bind, dummyT), abs_term)
+                 |> Syntax.check_term (Proof_Context.init_global thy)
+    in  thy |> Named_Target.theory_map (define_cond bind eq) end
+
 
 fun add_doc_class_cmd overloaded (raw_params, binding)
                       raw_parent raw_fieldsNdefaults reject_Atoms regexps invariants thy =
@@ -3180,7 +3134,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
                                 else add [DOF_core.tag_attr] invariants' {virtual=true})
            |> (fn thy => OntoLinkParser.docitem_antiquotation binding (cid thy) thy)
               (* defines the ontology-checked text antiquotation to this document class *)
-           |> (fn thy => fold(define_inv (params', (cid thy))) (invariants') thy)
+           |> (fn thy => fold define_inv (invariants') thy)
            (* The function declare_ISA_class_accessor_and_check_instance uses a prefix
               because the class name is already bound to "doc_class Regular_Exp.rexp" constant
               by add_doc_class_cmd function *)

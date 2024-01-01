@@ -804,14 +804,14 @@ fun upd_block f =
 fun upd_block_title f =
   upd_block (fn title => f title)
 
-val unenclose_end = unenclose
-val unenclose_string = unenclose o unenclose o unenclose_end
+val unenclose_string = unenclose o unenclose
 
 fun read_string s =
-  let val symbols = unenclose_end s |> Symbol_Pos.explode0
+  let val s' = DOF_core.markup2string s
+      val symbols = s' |> Symbol_Pos.explode0
   in if hd symbols |> fst |> equal Symbol.open_
      then Token.read_cartouche symbols |> Token.input_of
-     else unenclose_string s |> Syntax.read_input
+     else unenclose_string s' |> Syntax.read_input
   end
 
 val block_titleN = "title"
