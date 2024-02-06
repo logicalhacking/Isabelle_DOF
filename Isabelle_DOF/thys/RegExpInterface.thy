@@ -52,12 +52,6 @@ definition rep1 :: "'a rexp \<Rightarrow> 'a rexp" ("\<lbrace>(_)\<rbrace>\<^sup
 definition opt :: "'a rexp \<Rightarrow> 'a rexp" ("\<lbrakk>(_)\<rbrakk>")
    where "\<lbrakk>A\<rbrakk> \<equiv>  A || One"
 
-find_consts name:"RegExpI*"
-
-ML\<open>
-val t = Sign.syn_of \<^theory>
-\<close>
-print_syntax
 value "Star (Conc(Alt (Atom(CHR ''a'')) (Atom(CHR ''b''))) (Atom(CHR ''c'')))"
 text\<open>or better equivalently:\<close>
 value "\<lbrace>(\<lfloor>CHR ''a''\<rfloor> || \<lfloor>CHR ''b''\<rfloor>) ~~ \<lfloor>CHR ''c''\<rfloor>\<rbrace>\<^sup>*"
