@@ -241,4 +241,40 @@ declare[[invariants_checking_with_tactics = false]]
 
 declare[[invariants_strict_checking = false]]
 
+text\<open>Invariants can have term anti-quotations\<close>
+doc_class invA =
+a :: int
+
+text*[invA_inst::invA, a = 3]\<open>\<close>
+
+doc_class invB = invA +
+b :: int
+invariant a_pos :: "a \<sigma> \<ge> 0"
+
+text*[invB_inst::invB, a = 3]\<open>\<close>
+
+doc_class invC =
+c :: invB
+invariant a_invB_pos :: "a (c \<sigma>) \<ge> a @{invA \<open>invA_inst\<close>}"
+
+text*[invC_inst::invC, c = "@{invB \<open>invB_inst\<close>}"]\<open>\<close>
+
+text\<open>Bug:
+With the polymorphic class implementation, invariants type inference is to permissive:
+\<close>
+doc_class invA' =
+a :: int
+
+doc_class invB' = invA' +
+b :: int
+invariant a_pos :: "a \<sigma> \<ge> 0"
+
+doc_class ('a, 'b) invC' =
+c :: invB'
+d :: "'a list"
+e :: "'b list"
+invariant a_pos :: "a \<sigma> \<ge> 0"
+text\<open>The \<^const>\<open>a\<close> selector in the \<^const>\<open>a_pos_inv\<close> invariant of the class \<^doc_class>\<open>('a, 'b) invC'\<close>
+should be rejected as the class does not have nor inherit an \<^const>\<open>a\<close> attribute
+\<close>
 end

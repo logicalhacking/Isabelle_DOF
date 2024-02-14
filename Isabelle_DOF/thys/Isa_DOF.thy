@@ -3056,7 +3056,8 @@ fun define_cond bind eq (ctxt:local_theory) =
        in def_cmd args ctxt end
 
 fun define_inv (bind, inv) thy = 
-    let val inv_parsed_term = Syntax.parse_term (Proof_Context.init_global thy) inv
+    let val ctxt = Proof_Context.init_global thy
+        val inv_parsed_term = Syntax.parse_term ctxt inv |> DOF_core.elaborate_term' ctxt
         val abs_term = Term.lambda (Free (instance_placeholderN, dummyT)) inv_parsed_term
         val eq = Logic.mk_equals (Free(Binding.name_of bind, dummyT), abs_term)
                  |> Syntax.check_term (Proof_Context.init_global thy)
