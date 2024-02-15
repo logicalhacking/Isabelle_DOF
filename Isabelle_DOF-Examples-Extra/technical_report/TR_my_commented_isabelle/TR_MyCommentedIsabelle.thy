@@ -544,7 +544,7 @@ text*[T4::technical]\<open>
 \<^enum>  \<^ML>\<open>Sign.typ_match: theory -> typ * typ -> Type.tyenv -> Type.tyenv\<close>
 \<^enum>  \<^ML>\<open>Sign.typ_unify: theory -> typ * typ -> Type.tyenv * int -> Type.tyenv * int\<close>
 \<^enum>  \<^ML>\<open>Sign.const_type: theory -> string -> typ option\<close>
-\<^enum>  \<^ML>\<open>Sign.certify_term: theory -> term -> term * typ * int\<close>, the function for CERTIFICATION of types
+\<^enum>  \<^ML>\<open>Sign.certify_term: theory -> term -> term * typ\<close>, the function for CERTIFICATION of types
 \<^enum>  \<^ML>\<open>Sign.cert_term: theory -> term -> term\<close>, short-cut for the latter
 \<^enum>  \<^ML>\<open>Sign.tsig_of: theory -> Type.tsig\<close>, projects from a theory the type signature 
 \<close>
@@ -610,8 +610,6 @@ text\<open>Now we turn to the crucial issue of type-instantiation and with a giv
 subsection\<open>More operations on types\<close>
 
 text\<open>
-\<^item> \<^ML>\<open>Term_Subst.map_types_same : (typ -> typ) -> term -> term\<close>
-\<^item> \<^ML>\<open>Term_Subst.map_aterms_same : (term -> term) -> term -> term\<close>
 \<^item> \<^ML>\<open>Term_Subst.instantiate: typ TVars.table * term Vars.table -> term -> term\<close>
 \<^item> \<^ML>\<open>Term_Subst.instantiateT: typ TVars.table -> typ -> typ\<close>
 \<^item> \<^ML>\<open>Term_Subst.generalizeT: Names.set -> int -> typ -> typ\<close>
@@ -639,16 +637,13 @@ val ty' = Term_Subst.instantiateT S'' t_schematic;
 (* Don't know how to build a typ TVars.table *)
 val t = (generalize_term @{term "[]"});
 
-val t' = Term_Subst.map_types_same (Term_Subst.instantiateT (TVars.make S')) (t)
-(* or alternatively : *)
-val t'' = Term.map_types (Term_Subst.instantiateT S'') (t)
+val t' = Term.map_types (Term_Subst.instantiateT S'') (t)
 \<close>
 
 text\<open>A more abstract env for variable management in tactic proofs. A bit difficult to use
   outside the very closed-up tracks of conventional use...\<close>
 
-ML\<open> Consts.the_const; (* T is a kind of signature ... *)
-    Variable.import_terms;
+ML\<open> Variable.import_terms;
     Vartab.update;\<close>
 
 subsection*[t232::technical]\<open> Type-Inference (= inferring consistent type information if possible) \<close>
@@ -903,7 +898,7 @@ With the exception of the \<^ML>\<open>Specification.axiomatization\<close> cons
 are all-together built as composition of conservative extensions.
 
 The components are a bit scattered in the architecture. A relatively recent and
-high-level component (more low-level components such as \<^ML>\<open>Global_Theory.add_defs\<close>
+high-level component (more low-level components such as \<^ML>\<open>Global_Theory.add_def\<close>
 exist) for definitions and axiomatizations is here:
 \<close>
 
