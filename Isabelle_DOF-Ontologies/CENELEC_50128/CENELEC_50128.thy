@@ -1310,7 +1310,7 @@ ML
 \<open> DOF_core.get_onto_class_name_global "requirement" @{theory};
   Syntax.parse_typ                 @{context} "requirement";
   val Type(t,_) = Syntax.parse_typ @{context} "requirement" handle ERROR _ => dummyT; 
-  Syntax.read_typ                  @{context} "hypothesis"  handle  _ => dummyT;
+  Syntax.read_typ                  @{context} "hypothesis"  handle  ERROR _ => dummyT;
   Proof_Context.init_global; \<close>
 
 end
