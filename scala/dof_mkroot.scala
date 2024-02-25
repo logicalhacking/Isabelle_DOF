@@ -72,7 +72,7 @@ object DOF_Mkroot
     progress.echo_if(!quiet, "  creating " + root_path)
 
     File.write(root_path,
-      "session " + Mkroot.root_name(name) + " = " + Mkroot.root_name(DOF.session) + """ +
+      "session " + Mkroot.root_name(name) + " = " + Mkroot.root_name(DOF.session_ontologies) + """ +
   options [document = pdf, document_output = "output", document_build = dof]
 (*theories [document = false]
     A
@@ -86,8 +86,10 @@ object DOF_Mkroot
     val thy = session_dir + Path.explode(name + ".thy")
     progress.echo_if(!quiet, "  creating " + thy)
     File.write(thy,
-      "theory\n  " + name +
-      "\nimports\n  " + ontologies.map("Isabelle_DOF." + _).mkString("\n  ") +  """
+      "theory\n  \"" + name + "\"" +
+      "\nimports\n  " +
+      "\"Isabelle_DOF-Ontologies.document_templates\"\n   " +
+      ontologies.map("Isabelle_DOF." + _).mkString("\n  ") +  """
 begin
 
 list_templates

@@ -1,0 +1,9 @@
+session "template-beamer-UNSUPPORTED" = "Isabelle_DOF-Ontologies" +
+  options [document = pdf, document_output = "output", document_build = dof]
+(*theories [document = false]
+    A
+    B*)
+  theories
+    "template-beamer-UNSUPPORTED"
+  document_files
+    "preamble.tex"

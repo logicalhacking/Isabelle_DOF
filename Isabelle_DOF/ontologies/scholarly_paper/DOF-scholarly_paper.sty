@@ -31,9 +31,9 @@
 \@ifclassloaded{llncs}%
   {}%
   {%
-    \RequirePackage{amsthm}
     \@ifclassloaded{scrartcl}%
     {%
+      \RequirePackage{amsthm}
       \newcommand{\institute}[1]{}%
       \newcommand{\inst}[1]{}%
       \newcommand{\orcidID}[1]{}%
@@ -42,6 +42,7 @@
     {%
       \@ifclassloaded{lipics-v2021}%
       {%
+        \RequirePackage{amsthm}
         \newcommand{\institute}[1]{}%
         \newcommand{\inst}[1]{}%
         \newcommand{\orcidID}[1]{}%
@@ -49,21 +50,14 @@
       }%
       {%
         {%
-          \@ifclassloaded{eptcs}%
+          \@ifclassloaded{svjour3}%
           {%
-            \newcommand{\inst}[1]{}%
-            \newcommand{\orcidID}[1]{}%
+              \newcommand{\inst}[1]{}%
           }%
           {%
-            \@ifclassloaded{svjour3}%
-            {%
-                \newcommand{\inst}[1]{}%
-            }%
-            {%
-              \PackageError{DOF-scholarly_paper}
-                          {Scholarly Paper only supports LNCS or scrartcl as document class.}
-                          {}\stop%
-            }%
+            \PackageError{DOF-scholarly_paper}
+                        {Scholarly Paper only supports LNCS or scrartcl as document class.}
+                        {}\stop%
           }%
         }%
       }%

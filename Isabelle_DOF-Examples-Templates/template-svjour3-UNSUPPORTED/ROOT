@@ -1,0 +1,10 @@
+session "template-svjour3-UNSUPPORTED" = "Isabelle_DOF-Ontologies" +
+  options [document = pdf, document_output = "output", document_build = dof]
+(*theories [document = false]
+    A
+    B*)
+  theories
+    "template-svjour3-UNSUPPORTED"
+  document_files
+    "preamble.tex"
+    "svjour3.cls"

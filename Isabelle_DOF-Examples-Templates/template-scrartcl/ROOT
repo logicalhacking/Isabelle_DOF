@@ -1,0 +1,9 @@
+session "template-scrartcl" = "Isabelle_DOF-Ontologies" +
+  options [document = pdf, document_output = "output", document_build = dof]
+(*theories [document = false]
+    A
+    B*)
+  theories
+    "template-scrartcl"
+  document_files
+    "preamble.tex"
