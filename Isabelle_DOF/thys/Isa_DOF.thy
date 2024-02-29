@@ -856,8 +856,13 @@ val check_closing_ml_invs =
   check_invs get_closing_ml_invariants closing_ml_invariant_class_of closing_ml_invariant_check_of
 
 (* Output name for LaTeX macros.
-   Also rewrite "." to allow macros with objects long names *)
-val output_name = Latex.output_name o translate_string (fn "." => "DOT" | s => s)
+   Also rewrite "." to allow macros with objects long names
+   and "\<^sub>" allowed in name bindings and then in instance names *)
+val output_name = Symbol.explode
+                  #> map (fn s => if equal s Symbol.sub then "SUB" else s)
+                  #> implode
+                  #> translate_string (fn "." => "DOT" | s => s)
+                  #> Latex.output_name
 
 val ISA_prefix = "Isabelle_DOF_"
 
