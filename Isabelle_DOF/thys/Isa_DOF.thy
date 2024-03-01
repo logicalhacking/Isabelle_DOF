@@ -1821,7 +1821,12 @@ fun check_invariants thy binding =
       let val ctxt = Proof_Context.init_global thy
           val trivial_true = \<^term>\<open>True\<close> |> HOLogic.mk_Trueprop |> Thm.cterm_of ctxt |> Thm.trivial
           val evaluated_term = value ctxt term
-                handle ERROR e =>
+                handle  Match => error ("exception Match raised when checking "
+                                       ^ inv_name ^ " invariant." ^ Position.here pos ^ "\n"
+                                       ^ "You might want to check the definition of the invariant\n"
+                                       ^ "against the value specified in the instance\n"
+                                       ^ "or the default value declared in the instance class.")
+                      | ERROR e =>
                   if (String.isSubstring "Wellsortedness error" e)
                       andalso (Config.get_global thy DOF_core.invariants_checking_with_tactics)
                   then (warning("Invariants checking uses proof tactics");
