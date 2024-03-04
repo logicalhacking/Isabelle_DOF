@@ -701,16 +701,16 @@ aaa::"'a list"
 doc_class 'a BBB_test =
 bbb::"'a list"
 
-declare_reference*[aaa_test::"'a::one AAA"]
-text\<open>@{AAA (unchecked) \<open>aaa_test\<close>}\<close>
+declare_reference*[aaa_test::"'a::one AAA_test"]
+text\<open>@{AAA_test (unchecked) \<open>aaa_test\<close>}\<close>
 
 text\<open>bbb_test should fails and trigger an error \<close>
-text*[bbb_test::"'a::one BBB"]\<open>\<close>
+text*[bbb_test::"'a::one BBB_test"]\<open>\<close>
 
-text*[aaa_test::"int AAA"]\<open>\<close>
+text*[aaa_test::"int AAA_test"]\<open>\<close>
 
 text\<open>bbb_test should fails and trigger an error \<close>
-text*[aaa_test'::"string AAA"]\<open>\<close>
+text*[aaa_test'::"string AAA_test"]\<open>\<close>
 
 
 end
