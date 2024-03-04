@@ -693,4 +693,24 @@ lemma*[e5::E] testtest : "xx + testtest_level = yy + testtest_level \<Longrighta
 text\<open>Indeed this fails:\<close>
 (*lemma*[e6::E] testtest : "xx + the (level @{test2 \<open>testtest2''\<close>}) = yy + the (level @{test2 \<open>testtest2''\<close>}) \<Longrightarrow> xx = yy" by simp*)
 
+text\<open>Bug: Checking of text* type against declare_reference is not done.
+Should be compatible with type unification mechanism. See the record package\<close>
+doc_class 'a AAA_test =
+aaa::"'a list"
+
+doc_class 'a BBB_test =
+bbb::"'a list"
+
+declare_reference*[aaa_test::"'a::one AAA"]
+text\<open>@{AAA (unchecked) \<open>aaa_test\<close>}\<close>
+
+text\<open>bbb_test should fails and trigger an error \<close>
+text*[bbb_test::"'a::one BBB"]\<open>\<close>
+
+text*[aaa_test::"int AAA"]\<open>\<close>
+
+text\<open>bbb_test should fails and trigger an error \<close>
+text*[aaa_test'::"string AAA"]\<open>\<close>
+
+
 end
