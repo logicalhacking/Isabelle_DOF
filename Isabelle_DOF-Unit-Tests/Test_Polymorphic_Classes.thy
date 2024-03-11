@@ -704,12 +704,15 @@ bbb::"'a list"
 declare_reference*[aaa_test::"'a::one AAA_test"]
 text\<open>@{AAA_test (unchecked) \<open>aaa_test\<close>}\<close>
 
-text\<open>bbb_test should fails and trigger an error \<close>
-text*[bbb_test::"'a::one BBB_test"]\<open>\<close>
+text\<open>aaa_test should fail and trigger an error because its type was \<^typ>\<open>'a::one AAA_test\<close>
+    in the \<^theory_text>\<open>declare_reference*\<close> command:\<close>
+(*text*[aaa_test::"'a::one BBB_test"]\<open>\<close>*)
 
 text*[aaa_test::"int AAA_test"]\<open>\<close>
 
-text\<open>bbb_test should fails and trigger an error \<close>
+text\<open>aaa_test' should fail and trigger an error because its type \<^typ>\<open>string AAA_test\<close>
+    is not compatible with its type  \<^typ>\<open>'a::one AAA_test\<close> declared in
+    the \<^theory_text>\<open>declare_reference*\<close> command:\<close>
 text*[aaa_test'::"string AAA_test"]\<open>\<close>
 
 
