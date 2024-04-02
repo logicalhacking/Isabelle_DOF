@@ -1821,7 +1821,12 @@ fun check_invariants thy binding =
       let val ctxt = Proof_Context.init_global thy
           val trivial_true = \<^term>\<open>True\<close> |> HOLogic.mk_Trueprop |> Thm.cterm_of ctxt |> Thm.trivial
           val evaluated_term = value ctxt term
-                handle ERROR e =>
+                handle  Match => error ("exception Match raised when checking "
+                                       ^ inv_name ^ " invariant." ^ Position.here pos ^ "\n"
+                                       ^ "You might want to check the definition of the invariant\n"
+                                       ^ "against the value specified in the instance\n"
+                                       ^ "or the default value declared in the instance class.")
+                      | ERROR e =>
                   if (String.isSubstring "Wellsortedness error" e)
                       andalso (Config.get_global thy DOF_core.invariants_checking_with_tactics)
                   then (warning("Invariants checking uses proof tactics");
@@ -2905,6 +2910,7 @@ fun compute_trace_ML ctxt oid pos_opt pos' =
 val parse_oid  = Scan.lift(Parse.position Args.name) 
 val parse_cid  = Scan.lift(Parse.position Args.name) 
 val parse_oid' = Term_Style.parse -- parse_oid
+val parse_oid'' = Scan.lift(Parse.embedded_position)
 val parse_cid' = Term_Style.parse -- parse_cid
 
 
@@ -2949,13 +2955,6 @@ fun compute_cid_repr ctxt cid _ =
   let val _ = DOF_core.get_onto_class_name_global cid (Proof_Context.theory_of ctxt)
   in Const(cid,dummyT) end
 
-fun compute_name_repr ctxt oid pos =
-  let val instances = DOF_core.get_instances ctxt
-      val markup = DOF_core.get_instance_name_global oid (Proof_Context.theory_of ctxt)
-                   |> Name_Space.markup (Name_Space.space_of_table instances)
-      val _ = Context_Position.report ctxt pos markup;
-  in HOLogic.mk_string oid end
-
 local
 
 fun pretty_attr_access_style ctxt (style, ((attr,pos),(oid,pos'))) = 
@@ -2965,8 +2964,15 @@ fun pretty_trace_style ctxt (style, (oid,pos)) =
           Document_Output.pretty_term ctxt (style (ISA_core.compute_attr_access  (Context.Proof ctxt) 
                                                                    traceN oid NONE pos));
 
-fun pretty_name_style ctxt (style, (oid,pos)) =
-          Document_Output.pretty_term ctxt (style (compute_name_repr  ctxt oid pos))
+fun pretty_name_style ctxt (oid,pos) =
+let
+  val instances = DOF_core.get_instances ctxt
+  val ns = Name_Space.space_of_table instances
+  val name  = DOF_core.get_instance_name_global oid (Proof_Context.theory_of ctxt)
+  val ctxt' = Config.put Name_Space.names_unique true ctxt
+  val _ = name |> Name_Space.markup ns
+               |> Context_Position.report ctxt pos
+in Name_Space.pretty ctxt' ns name end
 
 fun pretty_cid_style ctxt (style, (cid,pos)) = 
           Document_Output.pretty_term ctxt (style (compute_cid_repr ctxt cid pos));
@@ -3004,7 +3010,7 @@ val _ = Theory.setup
             basic_entity  \<^binding>\<open>doc_class\<close>  parse_cid'  pretty_cid_style #>
             basic_entity  \<^binding>\<open>onto_class\<close> parse_cid'  pretty_cid_style #>
             basic_entity  \<^binding>\<open>docitem_attribute\<close>  parse_attribute_access' pretty_attr_access_style #>
-            basic_entity  \<^binding>\<open>docitem_name\<close>  parse_oid' pretty_name_style
+            basic_entity  \<^binding>\<open>docitem_name\<close>  parse_oid'' pretty_name_style
            )
 end
 end

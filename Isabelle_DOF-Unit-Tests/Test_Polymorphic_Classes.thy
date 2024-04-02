@@ -693,4 +693,27 @@ lemma*[e5::E] testtest : "xx + testtest_level = yy + testtest_level \<Longrighta
 text\<open>Indeed this fails:\<close>
 (*lemma*[e6::E] testtest : "xx + the (level @{test2 \<open>testtest2''\<close>}) = yy + the (level @{test2 \<open>testtest2''\<close>}) \<Longrightarrow> xx = yy" by simp*)
 
+text\<open>Bug: Checking of \<^theory_text>\<open>text*\<close> type against \<^theory_text>\<open>declare_reference*\<close> is not done.
+Should be compatible with type unification mechanism. See the record package\<close>
+doc_class 'a AAA_test =
+aaa::"'a list"
+
+doc_class 'a BBB_test =
+bbb::"'a list"
+
+declare_reference*[aaa_test::"'a::one AAA_test"]
+text\<open>@{AAA_test (unchecked) \<open>aaa_test\<close>}\<close>
+
+text\<open>\<open>aaa_test\<close> should fail and trigger an error because its type was \<^typ>\<open>'a::one AAA_test\<close>
+    in the \<^theory_text>\<open>declare_reference*\<close> command:\<close>
+(*text*[aaa_test::"'a::one BBB_test"]\<open>\<close>*)
+
+text*[aaa_test::"int AAA_test"]\<open>\<close>
+
+text\<open>\<open>aaa_test'\<close> should fail and trigger an error because its type \<^typ>\<open>string AAA_test\<close>
+    is not compatible with its type  \<^typ>\<open>'a::one AAA_test\<close> declared in
+    the \<^theory_text>\<open>declare_reference*\<close> command:\<close>
+text*[aaa_test'::"string AAA_test"]\<open>\<close>
+
+
 end
