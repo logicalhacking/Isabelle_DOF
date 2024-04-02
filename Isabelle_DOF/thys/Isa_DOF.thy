@@ -2985,6 +2985,7 @@ fun context_position_parser parse_con (ctxt, toks) =
          val (res, (ctxt', toks')) = parse_con (ctxt, toks)
      in  ((res,pos),(ctxt', toks')) end
 
+val parse_cid0 = parse_cid
 val parse_cid = (context_position_parser Args.typ_abbrev)
           >> (fn (Type(ss,_),pos) =>  (pos,ss)
                 |( _,pos) => ISA_core.err "Undefined Class Id" pos);
@@ -2996,6 +2997,11 @@ fun pretty_cid_style ctxt (_,(pos,cid)) =
     (*reconversion to term in order to have access to term print options like: names_short etc...) *)
           Document_Output.pretty_term ctxt ((compute_cid_repr ctxt cid pos));
 
+fun get_class_2_ML ctxt (str,_) =
+        let val thy = Context.theory_of ctxt
+            val DOF_core.Onto_Class S = (DOF_core.get_onto_class_global' str thy) 
+         in @{make_string} S end
+
 in
 val _ = Theory.setup 
            (ML_Antiquotation.inline  \<^binding>\<open>docitem\<close> 
@@ -3006,6 +3012,8 @@ val _ = Theory.setup
                (fn (ctxt,toks) => (parse_oid >> trace_attr_2_ML ctxt) (ctxt, toks)) #>
             ML_Antiquotation.inline  \<^binding>\<open>docitem_name\<close>  
                (fn (ctxt,toks) => (parse_oid >> get_instance_name_2_ML ctxt) (ctxt, toks)) #>
+            ML_Antiquotation.inline  \<^binding>\<open>doc_class\<close>  
+               (fn (ctxt,toks) => (parse_cid0 >> get_class_2_ML ctxt) (ctxt, toks)) #>
             basic_entity  \<^binding>\<open>trace_attribute\<close>  parse_oid'  pretty_trace_style #>
             basic_entity  \<^binding>\<open>doc_class\<close>  parse_cid'  pretty_cid_style #>
             basic_entity  \<^binding>\<open>onto_class\<close> parse_cid'  pretty_cid_style #>
