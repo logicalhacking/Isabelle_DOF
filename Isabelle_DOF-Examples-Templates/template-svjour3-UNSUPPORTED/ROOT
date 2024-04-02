@@ -8,3 +8,4 @@ session "template-svjour3-UNSUPPORTED" = "Isabelle_DOF-Ontologies" +
   document_files
     "preamble.tex"
     "svjour3.cls"
+    "svglov3.clo"
