@@ -82,36 +82,31 @@ doc_class report =
            \<lbrakk>index\<rbrakk> ~~ \<lbrace>annex\<rbrace>\<^sup>*   )"
 
 
-(*
-ML\<open>@{doc_class "report"}\<close>
-*)
+
+
+
+
+
+section\<open>Experimental\<close>
+
 ML\<open> fun get_class_2_ML ctxt (str,_) =
         let val thy = Context.theory_of ctxt
             val DOF_core.Onto_Class S = (DOF_core.get_onto_class_global' str thy) 
-         in ML_Syntax.atomic(ML_Syntax.print_string(@{make_string} S)) end \<close>
+        in ML_Syntax.atomic(ML_Syntax.print_string(@{make_string} S)) end \<close>
 
 setup\<open>ML_Antiquotation.inline  \<^binding>\<open>doc_class2\<close>  
-               (fn (ctxt,toks) => (AttributeAccess.parse_cid >> get_class_2_ML ctxt) (ctxt, toks))\<close>
+        (fn (ctxt,toks) => (AttributeAccess.parse_cid >> get_class_2_ML ctxt) (ctxt, toks))\<close>
 
 ML\<open>@{term \<open>a + b\<close>}\<close>
 
 ML\<open>@{doc_class2 "report"}\<close>
 
-ML\<open>fun constant_def (decl, spec, prems, params) = #2 o Specification.definition decl params prems spec\<close>
-
-
-ML\<open> val DOF_core.Onto_Class S = (DOF_core.get_onto_class_global' "report" @{theory});
-    val regexp = #rex S 
-    val binding = #name S 
-    val doc_class_ty = @{typ doc_class}
-    val rexp_ty = @{typ "doc_class rexp"}
-    fun meta_eq_const T = Const (\<^const_name>\<open>Pure.eq\<close>, T --> T --> propT);
-    fun mk_meta_eq (t, u) = meta_eq_const (fastype_of t) $ t $ u;
-
-\<close>
-    
-
 ML\<open>
+   fun constant_def (decl, spec, prems, params) = #2 o Specification.definition decl params prems spec
+   fun meta_eq_const T = Const (\<^const_name>\<open>Pure.eq\<close>, T --> T --> propT);
+   fun mk_meta_eq (t, u) = meta_eq_const (fastype_of t) $ t $ u;
+   val rexp_ty = @{typ "doc_class rexp"}
+
    fun define (binding, rhs) (lthy)=  
             let val Const(cname, _) = Syntax.read_term lthy (Binding.name_of binding)
                 val lhs = Const(cname, rexp_ty)
@@ -121,37 +116,35 @@ ML\<open>
             in  constant_def args lthy end;
 \<close>
 
-setup\<open>Named_Target.theory_map(define (binding, hd regexp)) \<close>
-
-ML\<open>
-val DOF_core.Onto_Class S = (DOF_core.get_onto_class_global' "article" @{theory});
-    val regexp = #rex S 
-    val binding = #name S \<close>
-
-setup\<open>Named_Target.theory_map(define (binding, hd regexp)) \<close>
-
-find_theorems (500) name:report_rexp
-thm article_def report_def title_def subtitle_def introduction_def
 
 
+ML\<open> val DOF_core.Onto_Class S = (DOF_core.get_onto_class_global' "report" @{theory}) \<close>
+setup\<open>Named_Target.theory_map(define (#name S, hd (#rex S))) \<close>
+
+
+ML\<open> val DOF_core.Onto_Class S = (DOF_core.get_onto_class_global' "article" @{theory}) \<close>
+setup\<open>Named_Target.theory_map(define (#name S, hd (#rex S))) \<close>
+
+
+(* switch on regexp syntax *)
 notation Star  ("\<lbrace>(_)\<rbrace>\<^sup>*" [0]100)
 notation Plus  (infixr "||" 55)
 notation Times (infixr "~~" 60)
 notation Atom  ("\<lfloor>_\<rfloor>" 65)
 
-lemma regexp_seq_mono : 
-      "Lang(a) \<subseteq> Lang (a') \<Longrightarrow> Lang(b) \<subseteq> Lang (b') \<Longrightarrow> Lang(a ~~ b) \<subseteq> Lang(a' ~~ b')"
-  by auto
+lemma regexp_seq_mono:
+      "Lang(a) \<subseteq> Lang (a') \<Longrightarrow> Lang(b) \<subseteq> Lang (b') \<Longrightarrow> Lang(a ~~ b) \<subseteq> Lang(a' ~~ b')"  by auto
 
 lemma regexp_unit_right : "Lang (a) = Lang (a ~~ One) " by simp 
 lemma regexp_unit_left  : "Lang (a) = Lang (One ~~ a) " by simp 
 
 lemma opt_star_incl :"Lang (opt a) \<subseteq> Lang (Star a)"  by (simp add: opt_def subset_iff)
-lemma rep1_star_incl:"Lang (rep1 a) \<subseteq> Lang (Star a)" 
-  unfolding rep1_def by(subst L_Star, subst L_Conc)(force)
-lemma cancel_rep1 : "Lang (a) \<subseteq> Lang (rep1 a)"
-  unfolding rep1_def  by auto
 
+lemma rep1_star_incl:"Lang (rep1 a) \<subseteq> Lang (Star a)"
+  unfolding rep1_def by(subst L_Star, subst L_Conc)(force)
+
+lemma cancel_rep1 : "Lang (a) \<subseteq> Lang (rep1 a)"
+  unfolding rep1_def by auto
 
 lemma seq_cancel_opt : "Lang (a) \<subseteq> Lang (c) \<Longrightarrow> Lang (a) \<subseteq> Lang (opt b ~~ c)"
   by(subst regexp_unit_left, rule regexp_seq_mono)(simp_all add: opt_def)
@@ -168,6 +161,7 @@ theorem articles_sub_reports: \<open>(Lang article_monitor) \<subseteq> Lang rep
   unfolding article_monitor_def report_monitor_def
   apply(rule regexp_seq_mono[OF subset_refl] | rule seq_cancel_opt | rule subset_refl)+ 
   done
+
 
 
 end
