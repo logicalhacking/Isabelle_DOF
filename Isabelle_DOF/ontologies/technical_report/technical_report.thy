@@ -75,7 +75,8 @@ doc_class report =
            abstract                ~~
            \<lbrakk>table_of_contents\<rbrakk>     ~~
            \<lbrace>introduction\<rbrace>\<^sup>+         ~~ 
-           \<lbrace>technical || figure \<rbrace>\<^sup>+ ~~ 
+           \<lbrace>background\<rbrace>\<^sup>*           ~~ 
+           \<lbrace>technical || example \<rbrace>\<^sup>+ ~~ 
            \<lbrace>conclusion\<rbrace>\<^sup>+           ~~  
            \<lbrace>index\<rbrace>\<^sup>*  ~~  
            bibliography)"
@@ -138,12 +139,23 @@ notation Times (infixr "~~" 60)
 notation Atom  ("\<lfloor>_\<rfloor>" 65)
 
 
-lemma seq_cancel : "Lang (a ~~ b) \<subseteq> Lang (a ~~ c) = (Lang (b) \<subseteq> Lang (c))" sorry
+lemma seq_cancel : "Lang (a ~~ b) \<subseteq> Lang (a ~~ c) = (Lang (b) \<subseteq> Lang (c))"
+  apply auto
+  thm subsetCE
+  apply(drule_tac c=x in subsetCE)
+  prefer 3 apply assumption
+  find_theorems subset_eq elim
+  prefer 2
+  sledgehammer
+  
+  sorry
 lemma seq_d1 : "Lang (opt b ~~ a) \<subseteq> Lang ( c) = (Lang (a) \<subseteq> Lang (c))" sorry
-lemma seq_d2 : "Lang (a) \<subseteq> Lang (opt b ~~ c) = (Lang (a) \<subseteq> Lang (c))" sorry
+lemma seq_d2 : "Lang (rep1 b ~~ a) \<subseteq> Lang ( c) = (Lang (a) \<subseteq> Lang (c))" sorry
+lemma seq_d3 : "Lang (a) \<subseteq> Lang (opt b ~~ c) = (Lang (a) \<subseteq> Lang (c))" sorry
+lemma seq_d4 : "Lang (a) \<subseteq> Lang (Star b ~~ c) = (Lang (a) \<subseteq> Lang (c))" sorry
 lemma \<open>(Lang article_monitor)  \<subseteq> Lang report_monitor\<close>
   unfolding article_monitor_def report_monitor_def
-  apply(simp only: seq_cancel seq_d1 seq_d2)
+  apply(simp only: seq_cancel seq_d1 seq_d2 seq_d3)
   oops
 
 
