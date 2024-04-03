@@ -81,8 +81,7 @@ doc_class report =
            bibliography            ~~ 
            \<lbrakk>index\<rbrakk> ~~ \<lbrace>annex\<rbrace>\<^sup>*   )"
 
-ML\<open>ML_Syntax.print_string\<close>
-ML\<open>ML_Syntax.atomic\<close>
+
 (*
 ML\<open>@{doc_class "report"}\<close>
 *)
@@ -93,6 +92,8 @@ ML\<open> fun get_class_2_ML ctxt (str,_) =
 
 setup\<open>ML_Antiquotation.inline  \<^binding>\<open>doc_class2\<close>  
                (fn (ctxt,toks) => (AttributeAccess.parse_cid >> get_class_2_ML ctxt) (ctxt, toks))\<close>
+
+ML\<open>@{term \<open>a + b\<close>}\<close>
 
 ML\<open>@{doc_class2 "report"}\<close>
 
@@ -138,47 +139,34 @@ notation Plus  (infixr "||" 55)
 notation Times (infixr "~~" 60)
 notation Atom  ("\<lfloor>_\<rfloor>" 65)
 
-
-lemma seq_cancel : "Lang (a ~~ b) \<subseteq> Lang (a ~~ c) = (Lang (b) \<subseteq> Lang (c))"
-  apply auto
-  thm subsetCE
-  apply(drule_tac c=x in subsetCE)
-  prefer 3 apply assumption
-  find_theorems subset_eq elim
-  prefer 2
-  sledgehammer
-  
-  sorry
-
-
-lemma opt_star_incl:"Lang (opt a) \<subseteq> Lang (Star a)"  by (simp add: opt_def subset_iff)
-lemma rep1_star_incl:"Lang (rep1 a) \<subseteq> Lang (Star a)" 
-  unfolding rep1_def 
-  apply(subst L_Star)
-  apply(subst L_Conc)
-  by force
-
-
-lemma regexp_unit_right : "Lang (a) = Lang (a ~~ One) " by simp 
-lemma regexp_unit_left  : "Lang (a) = Lang (One ~~ a) " by simp 
-
 lemma regexp_seq_mono : 
       "Lang(a) \<subseteq> Lang (a') \<Longrightarrow> Lang(b) \<subseteq> Lang (b') \<Longrightarrow> Lang(a ~~ b) \<subseteq> Lang(a' ~~ b')"
   by auto
 
-lemma seq_d1 : "Lang (opt b ~~ a) \<subseteq> Lang ( c)  = (Lang (a) \<subseteq> Lang (c))" sorry
-lemma seq_d2 : "Lang (rep1 b ~~ a) \<subseteq> Lang ( c) = (Lang (a) \<subseteq> Lang (c))" sorry
-lemma seq_d3 : "Lang (a) \<subseteq> Lang (opt b ~~ c)   = (Lang (a) \<subseteq> Lang (c))" sorry
-lemma seq_d4 : "Lang (a) \<subseteq> Lang (Star b ~~ c)  = (Lang (a) \<subseteq> Lang (c))" sorry
+lemma regexp_unit_right : "Lang (a) = Lang (a ~~ One) " by simp 
+lemma regexp_unit_left  : "Lang (a) = Lang (One ~~ a) " by simp 
+
+lemma opt_star_incl :"Lang (opt a) \<subseteq> Lang (Star a)"  by (simp add: opt_def subset_iff)
+lemma rep1_star_incl:"Lang (rep1 a) \<subseteq> Lang (Star a)" 
+  unfolding rep1_def by(subst L_Star, subst L_Conc)(force)
+lemma cancel_rep1 : "Lang (a) \<subseteq> Lang (rep1 a)"
+  unfolding rep1_def  by auto
+
+
+lemma seq_cancel_opt : "Lang (a) \<subseteq> Lang (c) \<Longrightarrow> Lang (a) \<subseteq> Lang (opt b ~~ c)"
+  by(subst regexp_unit_left, rule regexp_seq_mono)(simp_all add: opt_def)
+  
+lemma seq_cancel_Star : "Lang (a) \<subseteq> Lang (c) \<Longrightarrow> Lang (a) \<subseteq> Lang (Star b ~~ c)" 
+  by auto
 
 text\<open>Not a terribly deep theorem, but an interesting property of consistency between
 ontologies - so, a lemma that shouldn't break if the involved ontologies were changed:
-the structural language of articles should be included in the structural language of reports,
-that is to say, reports should just have a richer structure than ordinary papers: \<close>
+the structural language of articles should be included in the structural language of 
+reports, that is to say, reports should just have a richer structure than ordinary papers. \<close>
 
-theorem articles_sub_reports: \<open>(Lang article_monitor)  \<subseteq> Lang report_monitor\<close>
+theorem articles_sub_reports: \<open>(Lang article_monitor) \<subseteq> Lang report_monitor\<close>
   unfolding article_monitor_def report_monitor_def
-  apply(simp only: seq_cancel seq_d1 seq_d2 seq_d3)
+  apply(rule regexp_seq_mono[OF subset_refl] | rule seq_cancel_opt | rule subset_refl)+ 
   done
 
 
