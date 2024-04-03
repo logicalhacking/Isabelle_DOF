@@ -2359,6 +2359,7 @@ fun onto_macro_cmd_command (name, pos) descr cmd output_cmd =
               ))))
 
 
+
 (* Core Command Definitions *)
 
 val _ =
@@ -2691,7 +2692,9 @@ fun gen_theorem schematic bundle_includes prep_att prep_stmt
       |> prep_statement (prep_att lthy) prep_stmt elems raw_concl;
     val atts = more_atts @ map (prep_att lthy) raw_atts;
 
-    val print_cfg = {interactive = int, pos = Position.thread_data (), proof_state= false} 
+    val pos = Position.thread_data ();
+    val print_results =
+      Proof_Display.print_results {interactive = int, pos = pos, proof_state = false};
 
     fun after_qed' results goal_ctxt' =
       let
@@ -2703,13 +2706,13 @@ fun gen_theorem schematic bundle_includes prep_att prep_stmt
             Local_Theory.notes_kind kind
               (map2 (fn (b, _) => fn ths => (b, [(ths, [])])) stmt results') lthy;
         val lthy'' =
-          if Binding.is_empty_atts (name, atts) then
-            (Proof_Display.print_results print_cfg lthy' ((kind, ""), res); lthy')
+          if Binding.is_empty_atts (name, atts)
+          then (print_results lthy' ((kind, ""), res); lthy')
           else
             let
               val ([(res_name, _)], lthy'') =
                 Local_Theory.notes_kind kind [((name, atts), [(maps #2 res, [])])] lthy';
-              val _ = Proof_Display.print_results print_cfg lthy' ((kind, res_name), res);
+              val _ = print_results lthy' ((kind, res_name), res);
             in lthy'' end;
       in after_qed results' lthy'' end;
 

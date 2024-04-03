@@ -37,13 +37,14 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
                                      xstring_opt:(xstring * Position.T) option),
                                     toks_list:Input.source list) 
                                   : theory -> theory =
-  let  val ((binding,cid_pos), doc_attrs) = meta_args
+  let  val toplvl = Toplevel.make_state o SOME
+       val ((binding,cid_pos), doc_attrs) = meta_args
        val oid = Binding.name_of binding
        val oid' = if meta_args = ODL_Meta_Args_Parser.empty_meta_args
                   then "output"
                   else oid
        (* as side-effect, generates markup *)
-       fun check_n_tex_text thy toks = let val ctxt = Toplevel.presentation_context (Toplevel.make_state (SOME thy))
+       fun check_n_tex_text thy toks = let val ctxt = Toplevel.presentation_context (toplvl thy)
                                       val pos = Input.pos_of toks;
                                       val _ =   Context_Position.reports ctxt
                                                 [(pos, Markup.language_document (Input.is_delimited toks)),

@@ -12,9 +12,9 @@
  *************************************************************************)
 
 (*<*)
-theory "M_05_Implementation"
-  imports "M_04_RefMan"
-begin
+theory "M_07_Implementation"
+  imports "M_06_RefMan"
+begin           
 (*>*)
 
 
