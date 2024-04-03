@@ -78,8 +78,8 @@ doc_class report =
            \<lbrace>background\<rbrace>\<^sup>*           ~~ 
            \<lbrace>technical || example \<rbrace>\<^sup>+ ~~ 
            \<lbrace>conclusion\<rbrace>\<^sup>+           ~~  
-           \<lbrace>index\<rbrace>\<^sup>*  ~~  
-           bibliography)"
+           bibliography            ~~ 
+           \<lbrakk>index\<rbrakk> ~~ \<lbrace>annex\<rbrace>\<^sup>*   )"
 
 ML\<open>ML_Syntax.print_string\<close>
 ML\<open>ML_Syntax.atomic\<close>
@@ -149,14 +149,37 @@ lemma seq_cancel : "Lang (a ~~ b) \<subseteq> Lang (a ~~ c) = (Lang (b) \<subset
   sledgehammer
   
   sorry
-lemma seq_d1 : "Lang (opt b ~~ a) \<subseteq> Lang ( c) = (Lang (a) \<subseteq> Lang (c))" sorry
+
+
+lemma opt_star_incl:"Lang (opt a) \<subseteq> Lang (Star a)"  by (simp add: opt_def subset_iff)
+lemma rep1_star_incl:"Lang (rep1 a) \<subseteq> Lang (Star a)" 
+  unfolding rep1_def 
+  apply(subst L_Star)
+  apply(subst L_Conc)
+  by force
+
+
+lemma regexp_unit_right : "Lang (a) = Lang (a ~~ One) " by simp 
+lemma regexp_unit_left  : "Lang (a) = Lang (One ~~ a) " by simp 
+
+lemma regexp_seq_mono : 
+      "Lang(a) \<subseteq> Lang (a') \<Longrightarrow> Lang(b) \<subseteq> Lang (b') \<Longrightarrow> Lang(a ~~ b) \<subseteq> Lang(a' ~~ b')"
+  by auto
+
+lemma seq_d1 : "Lang (opt b ~~ a) \<subseteq> Lang ( c)  = (Lang (a) \<subseteq> Lang (c))" sorry
 lemma seq_d2 : "Lang (rep1 b ~~ a) \<subseteq> Lang ( c) = (Lang (a) \<subseteq> Lang (c))" sorry
-lemma seq_d3 : "Lang (a) \<subseteq> Lang (opt b ~~ c) = (Lang (a) \<subseteq> Lang (c))" sorry
-lemma seq_d4 : "Lang (a) \<subseteq> Lang (Star b ~~ c) = (Lang (a) \<subseteq> Lang (c))" sorry
-lemma \<open>(Lang article_monitor)  \<subseteq> Lang report_monitor\<close>
+lemma seq_d3 : "Lang (a) \<subseteq> Lang (opt b ~~ c)   = (Lang (a) \<subseteq> Lang (c))" sorry
+lemma seq_d4 : "Lang (a) \<subseteq> Lang (Star b ~~ c)  = (Lang (a) \<subseteq> Lang (c))" sorry
+
+text\<open>Not a terribly deep theorem, but an interesting property of consistency between
+ontologies - so, a lemma that shouldn't break if the involved ontologies were changed:
+the structural language of articles should be included in the structural language of reports,
+that is to say, reports should just have a richer structure than ordinary papers: \<close>
+
+theorem articles_sub_reports: \<open>(Lang article_monitor)  \<subseteq> Lang report_monitor\<close>
   unfolding article_monitor_def report_monitor_def
   apply(simp only: seq_cancel seq_d1 seq_d2 seq_d3)
-  oops
+  done
 
 
 end
