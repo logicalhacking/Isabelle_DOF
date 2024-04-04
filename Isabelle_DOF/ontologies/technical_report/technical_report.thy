@@ -76,7 +76,7 @@ doc_class report =
            \<lbrakk>table_of_contents\<rbrakk>     ~~
            \<lbrace>introduction\<rbrace>\<^sup>+         ~~ 
            \<lbrace>background\<rbrace>\<^sup>*           ~~ 
-           \<lbrace>technical || example \<rbrace>\<^sup>+ ~~ 
+           \<lbrace>technical || example || float \<rbrace>\<^sup>+ ~~ 
            \<lbrace>conclusion\<rbrace>\<^sup>+           ~~  
            bibliography            ~~ 
            \<lbrakk>index\<rbrakk> ~~ \<lbrace>annex\<rbrace>\<^sup>*   )"
@@ -241,29 +241,65 @@ definition allClasses
 definition doc_class_rel
   where  \<open>doc_class_rel \<equiv> {(doc_class.mk ''proposition'',doc_class.mk ''math_content''),
                             (doc_class.mk ''listing'',doc_class.mk ''float''),
-                            (doc_class.mk ''figure'',doc_class.mk ''float'')} \<union> Id_on allClasses\<close>
-
+                            (doc_class.mk ''figure'',doc_class.mk ''float'')} \<close>
 
 instantiation "doc_class" :: ord
 begin
 
 definition
-  le_fun_def: "x \<le> y \<longleftrightarrow> (x,y) \<in> doc_class_rel\<^sup>*"
+  le_class_def: "x \<le> y \<longleftrightarrow> (x,y) \<in> doc_class_rel\<^sup>*"
 
 definition
-  "(x::doc_class) < y \<longleftrightarrow> x \<le> y \<and> \<not> (x \<le> y)"
+  less_class_def: "(x::doc_class) < y \<longleftrightarrow> (x \<le> y \<and> \<not> y \<le> x)"
 
 instance .. 
 
 end
 
-(* doesn't work yet:
-instantiation "doc_class" :: order 
+lemma drc_acyclic : "acyclic doc_class_rel"
+  proof -
+       let ?measure = "  (\<lambda>x.3::int)(doc_class.mk ''float''        := 0, 
+                                     doc_class.mk ''math_content'' := 0, 
+                                     doc_class.mk ''listing''      := 1, 
+                                     doc_class.mk ''figure''       := 1,
+                                     doc_class.mk ''proposition''  := 1)"
+  show ?thesis
+      unfolding doc_class_rel_def
+      apply(rule_tac f = "?measure" in acyclicI_order)
+      by auto
+  qed
+
+
+instantiation "doc_class" :: order
 begin
 instance 
-proof 
-
+   proof 
+     fix x::"doc_class"
+     show \<open>x \<le> x\<close>   
+       unfolding le_class_def by simp
+   next
+     fix x y z:: "doc_class"
+     show \<open>x \<le> y \<Longrightarrow> y \<le> z \<Longrightarrow> x \<le> z\<close>
+       unfolding le_class_def
+       by force
+   next
+     fix x y::"doc_class"
+     have * : "antisym (doc_class_rel\<^sup>*)" 
+       by (simp add: acyclic_impl_antisym_rtrancl drc_acyclic)    
+     show \<open>x \<le> y \<Longrightarrow> y \<le> x \<Longrightarrow> x = y\<close>
+       apply(insert antisymD[OF *])
+       unfolding le_class_def
+       by auto
+   next
+     fix x y::"doc_class"
+     show \<open>(x < y) = (x \<le> y \<and> \<not> y \<le> x)\<close> 
+       by(simp add: less_class_def )
+   qed
 end
-*)
+
+theorem articles_Lsub_reports: \<open>(L\<^sub>s\<^sub>u\<^sub>b article_monitor) \<subseteq> L\<^sub>s\<^sub>u\<^sub>b report_monitor\<close>
+  unfolding article_monitor_def report_monitor_def
+  by (meson order_refl regexp_seq_mono' seq_cancel_opt')
+
 
 end
