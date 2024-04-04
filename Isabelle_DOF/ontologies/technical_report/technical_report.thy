@@ -135,7 +135,12 @@ notation Atom  ("\<lfloor>_\<rfloor>" 65)
 lemma regexp_seq_mono:
       "Lang(a) \<subseteq> Lang (a') \<Longrightarrow> Lang(b) \<subseteq> Lang (b') \<Longrightarrow> Lang(a ~~ b) \<subseteq> Lang(a' ~~ b')"  by auto
 
+lemma regexp_alt_mono :"Lang(a) \<subseteq> Lang (a') \<Longrightarrow> Lang(a || b) \<subseteq> Lang(a' || b)"  by auto
+
+lemma regexp_alt_commute : "Lang(a || b) = Lang(b || a)"  by auto
+
 lemma regexp_unit_right : "Lang (a) = Lang (a ~~ One) " by simp 
+
 lemma regexp_unit_left  : "Lang (a) = Lang (One ~~ a) " by simp 
 
 lemma opt_star_incl :"Lang (opt a) \<subseteq> Lang (Star a)"  by (simp add: opt_def subset_iff)
@@ -151,6 +156,13 @@ lemma seq_cancel_opt : "Lang (a) \<subseteq> Lang (c) \<Longrightarrow> Lang (a)
   
 lemma seq_cancel_Star : "Lang (a) \<subseteq> Lang (c) \<Longrightarrow> Lang (a) \<subseteq> Lang (Star b ~~ c)" 
   by auto
+
+lemma mono_Star : "Lang (a) \<subseteq> Lang (b) \<Longrightarrow> Lang (Star a) \<subseteq> Lang (Star b)" 
+  by(auto)(metis in_star_iff_concat order.trans)
+
+lemma mono_rep1_star:"Lang (a) \<subseteq> Lang (b) \<Longrightarrow> Lang (rep1 a) \<subseteq> Lang (Star b)"
+  using mono_Star rep1_star_incl by blast
+
 
 text\<open>Not a terribly deep theorem, but an interesting property of consistency between
 ontologies - so, a lemma that shouldn't break if the involved ontologies were changed:
