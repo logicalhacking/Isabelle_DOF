@@ -89,43 +89,6 @@ doc_class report =
 
 section\<open>Experimental\<close>
 
-ML\<open> fun get_class_2_ML ctxt (str,_) =
-        let val thy = Context.theory_of ctxt
-            val DOF_core.Onto_Class S = (DOF_core.get_onto_class_global' str thy) 
-        in ML_Syntax.atomic(ML_Syntax.print_string(@{make_string} S)) end \<close>
-
-setup\<open>ML_Antiquotation.inline  \<^binding>\<open>doc_class2\<close>  
-        (fn (ctxt,toks) => (AttributeAccess.parse_cid >> get_class_2_ML ctxt) (ctxt, toks))\<close>
-
-ML\<open>@{term \<open>a + b\<close>}\<close>
-
-ML\<open>@{doc_class2 "report"}\<close>
-
-ML\<open>
-   fun constant_def (decl, spec, prems, params) = #2 o Specification.definition decl params prems spec
-   fun meta_eq_const T = Const (\<^const_name>\<open>Pure.eq\<close>, T --> T --> propT);
-   fun mk_meta_eq (t, u) = meta_eq_const (fastype_of t) $ t $ u;
-   val rexp_ty = @{typ "doc_class rexp"}
-
-   fun define (binding, rhs) (lthy)=  
-            let val Const(cname, _) = Syntax.read_term lthy (Binding.name_of binding)
-                val lhs = Const(cname, rexp_ty)
-                val bdg = Binding.suffix_name "_monitor" binding
-                val eq =  mk_meta_eq(Free(Binding.name_of bdg, rexp_ty),rhs)
-                val args = (SOME(bdg,NONE,NoSyn), (Binding.empty_atts,eq),[],[]) ;
-            in  constant_def args lthy end;
-\<close>
-
-
-
-ML\<open> val DOF_core.Onto_Class S = (DOF_core.get_onto_class_global' "report" @{theory}) \<close>
-setup\<open>Named_Target.theory_map(define (#name S, hd (#rex S))) \<close>
-
-
-ML\<open> val DOF_core.Onto_Class S = (DOF_core.get_onto_class_global' "article" @{theory}) \<close>
-setup\<open>Named_Target.theory_map(define (#name S, hd (#rex S))) \<close>
-
-
 (* switch on regexp syntax *)
 notation Star  ("\<lbrace>(_)\<rbrace>\<^sup>*" [0]100)
 notation Plus  (infixr "||" 55)

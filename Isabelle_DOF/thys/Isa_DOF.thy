@@ -74,6 +74,7 @@ val def_suffixN = "_" ^ defN
 val defsN = defN ^ "s"
 val instances_of_suffixN = "_instances"
 val invariant_suffixN = "_inv"
+val monitor_suffixN = "_monitor"
 val instance_placeholderN = "\<sigma>"
 val makeN = "make"
 val schemeN = "_scheme"
@@ -3085,6 +3086,18 @@ fun define_inv (bind, inv) thy =
                  |> Syntax.check_term (Proof_Context.init_global thy)
     in  thy |> Named_Target.theory_map (define_cond bind eq) end
 
+fun define_monitor_const doc_class_name bind thy = 
+  let val bname = Long_Name.base_name doc_class_name
+      val rex = DOF_core.rex_of doc_class_name thy
+      val monitor_binding = bind |> (Binding.qualify false bname
+                                     #> Binding.suffix_name monitor_suffixN)
+  in
+    if can hd rex
+    then
+      let val eq = Logic.mk_equals (Free(Binding.name_of monitor_binding, doc_class_rexp_T), hd rex) 
+      in thy |> Named_Target.theory_map (define_cond monitor_binding eq) end
+    else thy
+  end
 
 fun add_doc_class_cmd overloaded (raw_params, binding)
                       raw_parent raw_fieldsNdefaults reject_Atoms regexps invariants thy =
@@ -3155,9 +3168,10 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
                  | SOME _  => if (not o null) record_fields
                                 then add record_fields invariants' {virtual=false}
                                 else add [DOF_core.tag_attr] invariants' {virtual=true})
-           |> (fn thy => OntoLinkParser.docitem_antiquotation binding (cid thy) thy)
               (* defines the ontology-checked text antiquotation to this document class *)
+           |> (fn thy => OntoLinkParser.docitem_antiquotation binding (cid thy) thy)
            |> (fn thy => fold define_inv (invariants') thy)
+           |> (fn thy => define_monitor_const (cid thy) binding thy)
            (* The function declare_ISA_class_accessor_and_check_instance uses a prefix
               because the class name is already bound to "doc_class Regular_Exp.rexp" constant
               by add_doc_class_cmd function *)
