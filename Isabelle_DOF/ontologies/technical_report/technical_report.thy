@@ -218,56 +218,55 @@ print_doc_classes
 text\<open>All Class-Id's --- should be generated.\<close>
 
 lemmas class_ids =
-SML_def code_def annex_def  title_def figure_def chapter_def  article_def theorem_def 
-paragraph_def tech_code_def assumption_def   definition_def  hypothesis_def eng_example_def
-text_element_def math_content_def tech_example_def subsubsection_def tech_definition_def 
-engineering_content_def data_def float_def axiom_def LATEX_def author_def listing_def example_def
-abstract_def assertion_def technical_def background_def evaluation_def math_proof_def 
-math_formal_def bibliography_def math_example_def text_section_def conclusion_stmt_def
-math_explanation_def ISAR_def frame_def lemma_def index_def report_def section_def premise_def
-subtitle_def corollary_def subsection_def conclusion_def experiment_def consequence_def
-proposition_def introduction_def related_work_def front_matter_def math_motivation_def
-table_of_contents_def
+             SML_def code_def annex_def  title_def figure_def chapter_def  article_def theorem_def 
+             paragraph_def tech_code_def assumption_def   definition_def  hypothesis_def 
+             eng_example_def text_element_def math_content_def tech_example_def subsubsection_def  
+             engineering_content_def data_def float_def axiom_def LATEX_def author_def listing_def 
+             abstract_def assertion_def technical_def background_def evaluation_def math_proof_def 
+             math_formal_def bibliography_def math_example_def text_section_def conclusion_stmt_def
+             math_explanation_def ISAR_def frame_def lemma_def index_def report_def section_def 
+             subtitle_def corollary_def subsection_def conclusion_def experiment_def consequence_def
+             proposition_def introduction_def related_work_def front_matter_def math_motivation_def
+             example_def table_of_contents_def tech_definition_def premise_def
 
 
-term\<open>{
-SML,code,  annex, title ,figure,chapter,  article , theorem  ,paragraph,tech_code,
-assumption,  definition , hypothesis  ,eng_example ,text_element,math_content,tech_example,
-subsubsection,tech_definition,engineering_content,data,float,axiom,LATEX,author,listing,
-example,abstract,assertion,technical,background,evaluation,math_proof,math_formal,
-bibliography,math_example,text_section,conclusion_stmt,math_explanation,ISAR,frame,
-lemma,index,report,section,premise,subtitle,corollary,subsection,conclusion,experiment,
-consequence,proposition,introduction,related_work,front_matter,math_motivation,table_of_contents}
-\<close>
 
 
 definition allClasses 
-  where \<open>allClasses \<equiv> {SML, code, annex, title,figure,chapter, article, theorem, paragraph,
-                       tech_code, assumption, definition, hypothesis, eng_example, text_element,
-                       math_content,tech_example, subsubsection,tech_definition,
-                       engineering_content,data,float,axiom,LATEX,author,listing, example,abstract,
-                       assertion,technical,background,evaluation,math_proof,math_formal,bibliography,
-                       math_example,text_section,conclusion_stmt,math_explanation,ISAR,frame,
-                       lemma,index,report,section,premise,subtitle,corollary,subsection,conclusion,
-                       experiment, consequence,proposition,introduction,related_work,front_matter,
-                       math_motivation,table_of_contents}
-\<close>
+  where \<open>allClasses \<equiv> 
+             {SML, code, annex, title,figure,chapter, article, theorem, paragraph,
+              tech_code, assumption, definition, hypothesis, eng_example, text_element,
+              math_content,tech_example, subsubsection,tech_definition,
+              engineering_content,data,float,axiom,LATEX,author,listing, example,abstract,
+              assertion,technical,background,evaluation,math_proof,math_formal,bibliography,
+              math_example,text_section,conclusion_stmt,math_explanation,ISAR,frame,
+              lemma,index,report,section,premise,subtitle,corollary,subsection,conclusion,
+              experiment, consequence,proposition,introduction,related_work,front_matter,
+              math_motivation,table_of_contents}\<close>
 
 text\<open>A rudimentary fragment of the class hierarchy re-modeled on classid's :\<close>
 
+
+definition cid_of where \<open>cid_of = inv Regular_Exp.Atom\<close>
+
+lemma Atom_inverse[simp]:\<open>cid_of (Regular_Exp.Atom a) = a\<close>
+  unfolding cid_of_def by (meson UNIV_I f_inv_into_f image_eqI rexp.inject(1))
+
+
+
 definition doc_class_rel
-  where  \<open>doc_class_rel \<equiv> {(proposition,math_content),
-                            (listing,float),
-                            (figure,float)} \<close>
+  where  \<open>doc_class_rel \<equiv> {(cid_of proposition,cid_of math_content),
+                            (cid_of listing,cid_of float),
+                            (cid_of figure,cid_of float)} \<close>
 
 instantiation "doc_class" :: ord
 begin
 
 definition
-  le_class_def: "x \<le> y \<longleftrightarrow> (x,y) \<in> doc_class_rel\<^sup>*"
+  less_eq_doc_class: "x \<le> y \<longleftrightarrow> (x,y) \<in> doc_class_rel\<^sup>*"
 
 definition
-  less_class_def: "(x::doc_class) < y \<longleftrightarrow> (x \<le> y \<and> \<not> y \<le> x)"
+  less_doc_class: "(x::doc_class) < y \<longleftrightarrow> (x \<le> y \<and> \<not> y \<le> x)"
 
 instance .. 
 
@@ -275,13 +274,12 @@ end
 
 lemma drc_acyclic : "acyclic doc_class_rel"
   proof -
-       let ?measure = "  (\<lambda>x.3::int)(float := 0, math_content := 0, 
-                                     listing := 1, figure := 1,
-                                     proposition := 1)"
+        let ?measure = "(\<lambda>x.3::int)(cid_of float := 0, cid_of math_content := 0, 
+                                    cid_of listing := 1, cid_of figure := 1, cid_of proposition := 1)"
   show ?thesis
-      unfolding doc_class_rel_def
-      apply(rule_tac f = "?measure" in acyclicI_order)
-      by auto
+        unfolding doc_class_rel_def
+        apply(rule_tac f = "?measure" in acyclicI_order)
+        by(simp only: class_ids)(auto)
   qed
 
 
@@ -291,11 +289,11 @@ instance
    proof 
      fix x::"doc_class"
      show \<open>x \<le> x\<close>   
-       unfolding le_class_def by simp
+       unfolding less_eq_doc_class by simp
    next
      fix x y z:: "doc_class"
      show \<open>x \<le> y \<Longrightarrow> y \<le> z \<Longrightarrow> x \<le> z\<close>
-       unfolding le_class_def
+       unfolding less_eq_doc_class
        by force
    next
      fix x y::"doc_class"
@@ -303,12 +301,11 @@ instance
        by (simp add: acyclic_impl_antisym_rtrancl drc_acyclic)    
      show \<open>x \<le> y \<Longrightarrow> y \<le> x \<Longrightarrow> x = y\<close>
        apply(insert antisymD[OF *])
-       unfolding le_class_def
-       by auto
+       using less_eq_doc_class by auto
    next
      fix x y::"doc_class"
      show \<open>(x < y) = (x \<le> y \<and> \<not> y \<le> x)\<close> 
-       by(simp add: less_class_def )
+       by(simp add: less_doc_class)
    qed
 end
 
