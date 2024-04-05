@@ -216,32 +216,49 @@ text\<open>The proof proceeds by blindly applying the monotonicity rules
 
 print_doc_classes
 text\<open>All Class-Id's --- should be generated.\<close>
+
+lemmas class_ids =
+SML_def code_def annex_def  title_def figure_def chapter_def  article_def theorem_def 
+paragraph_def tech_code_def assumption_def   definition_def  hypothesis_def eng_example_def
+text_element_def math_content_def tech_example_def subsubsection_def tech_definition_def 
+engineering_content_def data_def float_def axiom_def LATEX_def author_def listing_def example_def
+abstract_def assertion_def technical_def background_def evaluation_def math_proof_def 
+math_formal_def bibliography_def math_example_def text_section_def conclusion_stmt_def
+math_explanation_def ISAR_def frame_def lemma_def index_def report_def section_def premise_def
+subtitle_def corollary_def subsection_def conclusion_def experiment_def consequence_def
+proposition_def introduction_def related_work_def front_matter_def math_motivation_def
+table_of_contents_def
+
+
+term\<open>{
+SML,code,  annex, title ,figure,chapter,  article , theorem  ,paragraph,tech_code,
+assumption,  definition , hypothesis  ,eng_example ,text_element,math_content,tech_example,
+subsubsection,tech_definition,engineering_content,data,float,axiom,LATEX,author,listing,
+example,abstract,assertion,technical,background,evaluation,math_proof,math_formal,
+bibliography,math_example,text_section,conclusion_stmt,math_explanation,ISAR,frame,
+lemma,index,report,section,premise,subtitle,corollary,subsection,conclusion,experiment,
+consequence,proposition,introduction,related_work,front_matter,math_motivation,table_of_contents}
+\<close>
+
+
 definition allClasses 
-  where \<open>allClasses \<equiv> {doc_class.mk ''SML'', doc_class.mk ''data'', doc_class.mk ''ISAR'',
-                       doc_class.mk ''code'',doc_class.mk ''float'',doc_class.mk ''frame'',
-                       doc_class.mk ''annex'',doc_class.mk ''axiom'',doc_class.mk ''lemma'',
-                       doc_class.mk ''title'',doc_class.mk ''LATEX'',doc_class.mk ''index'',
-                       doc_class.mk ''figure'',doc_class.mk ''author'',doc_class.mk ''report'',
-                       doc_class.mk ''chapter'',doc_class.mk ''listing'',doc_class.mk ''section'',
-                       doc_class.mk ''article'',doc_class.mk ''example'',doc_class.mk ''premise'',
-                       doc_class.mk ''theorem'',doc_class.mk ''abstract'', doc_class.mk ''subtitle'',
-                       doc_class.mk ''paragraph'',doc_class.mk ''assertion'',doc_class.mk ''corollary'',
-                       doc_class.mk ''tech_code'',doc_class.mk ''technical'',doc_class.mk ''subsection'',
-                       doc_class.mk ''assumption'',doc_class.mk ''background'',doc_class.mk ''conclusion'',
-                       doc_class.mk ''definition'',doc_class.mk ''evaluation'',doc_class.mk ''experiment'',
-                       doc_class.mk ''hypothesis'',doc_class.mk ''math_proof'', doc_class.mk ''consequence'',
-                       doc_class.mk ''eng_example'',doc_class.mk ''math_formal'',doc_class.mk ''proposition'',
-                       doc_class.mk ''text_element'',doc_class.mk ''bibliography'',doc_class.mk ''introduction'',
-                       doc_class.mk ''math_content'',doc_class.mk ''math_example'',doc_class.mk ''related_work'',
-                       doc_class.mk ''tech_example'',doc_class.mk ''text_section'',doc_class.mk ''front_matter'',
-                       doc_class.mk ''subsubsection'',doc_class.mk ''conclusion_stmt'',doc_class.mk ''math_motivation'',
-                       doc_class.mk ''tech_definition'',doc_class.mk ''math_explanation'',doc_class.mk ''table_of_contents'',
-                       doc_class.mk ''engineering_content''}\<close>
+  where \<open>allClasses \<equiv> {SML, code, annex, title,figure,chapter, article, theorem, paragraph,
+                       tech_code, assumption, definition, hypothesis, eng_example, text_element,
+                       math_content,tech_example, subsubsection,tech_definition,
+                       engineering_content,data,float,axiom,LATEX,author,listing, example,abstract,
+                       assertion,technical,background,evaluation,math_proof,math_formal,bibliography,
+                       math_example,text_section,conclusion_stmt,math_explanation,ISAR,frame,
+                       lemma,index,report,section,premise,subtitle,corollary,subsection,conclusion,
+                       experiment, consequence,proposition,introduction,related_work,front_matter,
+                       math_motivation,table_of_contents}
+\<close>
+
+text\<open>A rudimentary fragment of the class hierarchy re-modeled on classid's :\<close>
 
 definition doc_class_rel
-  where  \<open>doc_class_rel \<equiv> {(doc_class.mk ''proposition'',doc_class.mk ''math_content''),
-                            (doc_class.mk ''listing'',doc_class.mk ''float''),
-                            (doc_class.mk ''figure'',doc_class.mk ''float'')} \<close>
+  where  \<open>doc_class_rel \<equiv> {(proposition,math_content),
+                            (listing,float),
+                            (figure,float)} \<close>
 
 instantiation "doc_class" :: ord
 begin
@@ -258,11 +275,9 @@ end
 
 lemma drc_acyclic : "acyclic doc_class_rel"
   proof -
-       let ?measure = "  (\<lambda>x.3::int)(doc_class.mk ''float''        := 0, 
-                                     doc_class.mk ''math_content'' := 0, 
-                                     doc_class.mk ''listing''      := 1, 
-                                     doc_class.mk ''figure''       := 1,
-                                     doc_class.mk ''proposition''  := 1)"
+       let ?measure = "  (\<lambda>x.3::int)(float := 0, math_content := 0, 
+                                     listing := 1, figure := 1,
+                                     proposition := 1)"
   show ?thesis
       unfolding doc_class_rel_def
       apply(rule_tac f = "?measure" in acyclicI_order)
