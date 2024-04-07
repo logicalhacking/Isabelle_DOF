@@ -106,7 +106,6 @@ theorem articles_sub_reports: \<open>(Lang article_monitor) \<subseteq> Lang rep
 text\<open>The proof proceeds by blindly applying the monotonicity rules 
      on the language of regular expressions.\<close>
 
-print_doc_classes
 text\<open>All Class-Id's --- should be generated.\<close>
 
 lemmas class_ids =
