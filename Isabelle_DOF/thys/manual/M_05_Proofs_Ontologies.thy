@@ -33,7 +33,7 @@ needs to be explored, we present in the following sections two applications:
 
   \<^enum> Verified ontological morphisms, also called \<^emph>\<open>ontological mappings\<close> in the literature
     \<^cite>\<open>"books/daglib/0032976" and "atl" and "BGPP95"\<close>, \<^ie> proofs of invariant preservation
-    along translations of \<^verbatim>\<open>doc_class\<close>-instances.
+    along translation-functions of all instances of \<^verbatim>\<open>doc_class\<close>-es.
   \<^enum> Verified refinement relations between the structural descriptions of theory documents,
     \<^ie> proofs of language inclusions of monitors of global ontology classes.   
 \<close>
