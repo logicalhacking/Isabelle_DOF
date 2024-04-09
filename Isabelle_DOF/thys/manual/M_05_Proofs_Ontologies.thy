@@ -58,7 +58,10 @@ to more specialized ones such as concrete journals and/or the  \<^theory>\<open>
 ontology which we mostly used for our own publications. 
 \<close>
 
-doc_class "title"  = short_title :: "string option" <= "None"
+doc_class "title"  = 
+  sub_title     :: "string option" <= "None"
+  short_title   :: "string option" <= "None"
+  running_title :: "string option" <= "None"
 
 (*doc_class '\<alpha> affiliation =
   journal_style :: '\<alpha>
@@ -299,32 +302,34 @@ find_theorems name:"convert"
 
 
 subsection\<open>Proving the Preservation of Ontological Mappings : A Domain-Ontology Morphism\<close>
-
-(* rethink examples: should we "morph" providence too ? ? ? Why not ? bu *)
+text\<open>The following example is drawn from a domain-specific scenario: For conventional data-models,
+be it represented by UML-class diagrams or SQL-like "tables" or Excel-sheet like presentations
+of uniform data, we can conceive an ontology (which is equivalent here to a conventional style-sheet)
+and annotate textual raw data. This example describes how meta-data can be used to 
+calculate and transform this kind of representations in a type-safe and verified way. \<close>
 
 (*<*)
 (* Mapped_PILIB_Ontology example *)
+(* rethink examples: should we "morph" providence too ? ? ? Why not ? bu *)
+
 term\<open>fold (+) S 0\<close>  
 
 definition sum 
   where "sum S = (fold (+) S 0)"
 (*>*)
+
+text\<open>We model some basic enumerations as inductive data-types: \<close>
 datatype Hardware_Type = 
-  Motherboard | 
-  Expansion_Card | 
-  Storage_Device | 
-  Fixed_Media | 
-  Removable_Media |
-  Input_Device |
-  Output_Device
+  Motherboard     |  Expansion_Card |  Storage_Device |   Fixed_Media | 
+  Removable_Media | Input_Device    | Output_Device
 
 datatype Software_Type =
-  Operating_system |
-  Text_editor |
-  Web_Navigator |
-  Development_Environment
+  Operating_system |  Text_editor | Web_Navigator |  Development_Environment
 
-(* Reference Ontology *)
+text\<open>In the sequel, we model a ''Reference Ontology'', \<^ie> a data structure in which we assume
+that standards or some de-facto-standard data-base refer to the data in the domain of electronic
+devices:\<close>
+
 onto_class Resource =
   name :: string
 
@@ -353,7 +358,9 @@ onto_class Software = Informatic +
   type ::  Software_Type
   version :: int
 
-(* Local Ontology *)
+text\<open>Finally, we present a \<^emph>\<open>local ontology\<close>,  \<^ie> a data structure used in a local store
+in its data-base of cash-system:\<close>
+
 onto_class Item =
   name :: string
 
@@ -375,7 +382,12 @@ onto_class Computer_Software = Item +
   type ::  Software_Type
   version :: int
 
-(* Mapping or Morphism *)
+text\<open>These two example ontologies were linked via conversion functions called \<^emph>\<open>morphisms\<close>.
+The hic is that we can prove for the morphisms connecting these ontologies, that the conversions
+are guaranteed to preserve the data-invariants, although the data-structures (and, of course,
+the presentation of them) is very different. Besides, morphisms functions can be ``forgetful''
+(\<^ie> surjective), ``embedding'' (\<^ie> injective) or even ``one-to-one'' ((\<^ie> bikjective).\<close>
+
 definition Item_to_Resource_morphism :: "Item \<Rightarrow> Resource"
           ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
           where "  \<sigma> \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m = 
@@ -441,6 +453,11 @@ lemma ontology_mapping_total :
   using  inv_c2_preserved 
   by auto
 
+text\<open>Note that in contrast to conventional data-translations, the preservation of a class-invariant
+is not just established by a validation of the result, it is proven once and for all for all instances
+of the classes.\<close>
+
+subsection\<open>Proving Monitor-Refinements\<close>
 
 (*<*)
 (* switch on regexp syntax *)
@@ -450,8 +467,6 @@ notation Times (infixr "~~" 60)
 notation Atom  ("\<lfloor>_\<rfloor>" 65)
 (*>*)
 
-
-subsection\<open>Proving Monitor-Refinements\<close>
 
 text\<open>Monitors are regular-expressions that allow for specifying instances of classes to appear in 
 a particular order in a document. They are used to specify some structural aspects of a document.
