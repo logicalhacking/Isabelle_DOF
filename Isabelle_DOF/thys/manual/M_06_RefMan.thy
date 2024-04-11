@@ -1370,6 +1370,23 @@ value*\<open>filter (\<lambda>\<sigma>. the (text_section.level \<sigma>) > 1) @
 
 section*[infrastructure::technical]\<open>Technical Infrastructure\<close>
 
+subsection\<open>The Previewer\<close>
+
+figure*[ 
+  global_DOF_view::figure
+  , relative_width="95" 
+  , file_src="''figures/ThisPaperWithPreviewer.png''" 
+]\<open>A Screenshot while editing this Paper in \<^dof> with Preview.\<close>
+text\<open>A screenshot of the editing environment is shown in \<^figure>\<open>global_DOF_view\<close>. It supports 
+incremental continuous PDF generation which  improves  usability. Currently, the granularity 
+is restricted to entire theories (which have to be selected in a specific document pane). 
+The response times can not (yet) compete
+with a Word- or Overleaf editor, though, which is mostly due to the checking and 
+evaluation overhead (the turnaround of this section is about 30 s). However, we believe
+that better parallelization and evaluation techniques will decrease this gap substantially for the 
+most common cases in future versions. \<close>
+
+
 subsection\<open>Developing Ontologies and their Representation Mappings\<close>
 text\<open>
   The document core \<^emph>\<open>may\<close>, but \<^emph>\<open>must\<close> not use Isabelle definitions or proofs for checking the 
