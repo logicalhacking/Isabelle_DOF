@@ -22,7 +22,7 @@ begin
 
 (*>*)
 
-chapter*[onto_proofs::technical]\<open>Proofs on Ontologies\<close>
+chapter*[onto_proofs::technical]\<open>Proofs over Ontologies\<close>
 
 text\<open>It is a distinguishing feature of \<^dof> that it does not directly generate meta-data rather
 than generating a \<^emph>\<open>theory of meta-data\<close> that can be used in HOL-terms on various levels
@@ -40,179 +40,9 @@ needs to be explored, we present in the following sections two applications:
 
 section*["morphisms"::scholarly_paper.text_section] \<open>Proving Properties over Ontologies\<close>
 
-subsection\<open>Proving the Preservation of Ontological Mappings : A Document-Ontology Morphism\<close>
+subsection\<open>Ontology-Morphisms: a Prototypical Example\<close>
 
-text\<open>\<^dof> as a system is currently particularly geared towards \<^emph>\<open>document\<close>-ontologies, in 
-particular for documentations generated from Isabelle theories. We used it meanwhile for the
-generation of various conference and journal papers, notably using the
- \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close> and  \<^theory>\<open>Isabelle_DOF.technical_report\<close>-ontologies, 
-targeting a (small) variety of \<^LaTeX> style-files. A particular aspect of these ontologies,
-especially when targeting journals from publishers such as ACM, Springer or Elsevier, is the
-description of publication meta-data. Publishers tend to have their own styles on what kind 
-meta-data should be associated with a journal publication; thus, the depth and 
-precise format of affiliations, institution, their relation to authors, and author descriptions
-(with photos or without, hair left-combed or right-combed, etcpp...)  varies.
-
-In the following, we present an attempt to generalized ontology with several ontology mappings 
-to more specialized ones such as concrete journals and/or the  \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close>-
-ontology which we mostly used for our own publications. 
-\<close>
-
-doc_class "title"  = 
-  sub_title     :: "string option" <= "None"
-  short_title   :: "string option" <= "None"
-  running_title :: "string option" <= "None"
-
-(*doc_class '\<alpha> affiliation =
-  journal_style :: '\<alpha>
-*)
-
-doc_class elsevier =
-  organization :: string
-  address_line :: string
-  postcode :: int
-  city :: string
-  
-(*doc_class elsevier_affiliation = affiliation +*) 
-
-doc_class acm =
-  position :: string
-  institution :: string
-  department :: int
-  street_address :: string
-  city :: string
-  state :: int
-  country :: string
-  postcode :: int
-
-(*doc_class acm_affiliation = affiliation +*)
-
-doc_class lncs =
-  institution :: string
-
-(*doc_class lncs_affiliation = affiliation +*)
-
-
-doc_class author =
-    firstname   :: string
-    surname     :: string
-    email       :: "string"   <= "''''"
-    invariant ne_fsnames :: "firstname \<sigma> \<noteq> '''' \<and> surname \<sigma> \<noteq> ''''"
-
-doc_class elsevier_author = "author" +
-  affiliations :: "elsevier list"
-  short_author :: string
-  url :: string
-  footnote :: string
-
-text*[el1:: "elsevier"]\<open>\<close>
-(*text*[el_aff1:: "affiliation", journal_style = "@{elsevier \<open>el1\<close>}"]\<open>\<close>*)
-term*\<open>@{elsevier \<open>el1\<close>}\<close>
-text*[el_auth1:: "elsevier_author", affiliations = "[@{elsevier \<open>el1\<close>}]"]\<open>\<close>
-
-doc_class acm_author = "author" +
-  affiliations :: "acm list"
-  orcid :: int
-  footnote :: string
-
-text*[acm1:: "acm"]\<open>\<close>
-(*text*[acm_aff1:: "acm affiliation", journal_style = "@{acm \<open>acm1\<close>}"]\<open>\<close>*)
-text*[acm_auth1:: "acm_author", affiliations = "[@{acm \<open>acm1\<close>}]"]\<open>\<close>
-
-doc_class lncs_author = "author" +
-  affiliations :: "lncs list"
-  orcid :: int
-  short_author :: string
-  footnote :: string
-
-text*[lncs1:: "lncs"]\<open>\<close>
-(*text*[lncs_aff1:: "lncs affiliation", journal_style = "@{lncs \<open>lncs1\<close>}"]\<open>\<close>*)
-text*[lncs_auth1:: "lncs_author", affiliations = "[@{lncs \<open>lncs1\<close>}]"]\<open>\<close>
-
-
-doc_class  "text_element" =
-    authored_by :: "author set"  <= "{}"
-    level       :: "int  option"  <= "None"
-    invariant authors_req :: "authored_by \<sigma> \<noteq> {}" 
-    and       level_req   :: "the (level \<sigma>) > 1"
-
-doc_class "introduction" = "text_element" +
-    authored_by :: "(author) set"  <= "UNIV"
-
-doc_class  "technical" = "text_element" +
-    formal_results  :: "thm list"
-
-doc_class "definition" = "technical" +
-    is_formal   :: "bool"
-
-doc_class "theorem" = "technical" +
-    is_formal   :: "bool"
-    assumptions :: "term list"        <= "[]"
-    statement   :: "term option"      <= "None"
-
-doc_class "conclusion" = "text_element" +
-    resumee     :: "(definition set \<times> theorem set)"
-    invariant is_form :: "(\<exists>x\<in>(fst (resumee \<sigma>)). definition.is_formal x) \<longrightarrow> 
-                  (\<exists>y\<in>(snd (resumee \<sigma>)). is_formal y)"
-
-text*[def::"definition", is_formal = "True"]\<open>\<close>
-text*[theo::"theorem", is_formal = "False"]\<open>\<close>
-text*[conc::"conclusion", resumee="({@{definition \<open>def\<close>}}, {@{theorem \<open>theo\<close>}})"]\<open>\<close>
-
-value*\<open>resumee @{conclusion \<open>conc\<close>} |> fst\<close>
-value*\<open>resumee @{conclusion \<open>conc\<close>} |> snd\<close>
-
-doc_class "article" =
-    style_id    :: string   <= "''LNCS''"
-    accepts "(title ~~ \<lbrace>author\<rbrace>\<^sup>+ ~~ \<lbrace>introduction\<rbrace>\<^sup>+  
-             ~~ \<lbrace>\<lbrace>definition ~~ example\<rbrace>\<^sup>+ || theorem\<rbrace>\<^sup>+ ~~ \<lbrace>conclusion\<rbrace>\<^sup>+)"
-
-
-definition elsevier_to_acm_morphism :: "elsevier \<Rightarrow> M_04_Document_Ontology.acm"
-          ("_ \<langle>acm\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r" [1000]999)
-          where "\<sigma> \<langle>acm\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r = 
-                                   \<lparr> M_04_Document_Ontology.acm.tag_attribute = 1::int,
-                                     M_04_Document_Ontology.acm.position = ''no position'',
-                                     M_04_Document_Ontology.acm.institution = organization \<sigma>,
-                                     M_04_Document_Ontology.acm.department = 0,
-                                     M_04_Document_Ontology.acm.street_address = address_line \<sigma>,
-                                     M_04_Document_Ontology.acm.city = elsevier.city \<sigma>,
-                                     M_04_Document_Ontology.acm.state = 0,
-                                     M_04_Document_Ontology.acm.country = ''no country'',
-                                     M_04_Document_Ontology.acm.postcode = elsevier.postcode \<sigma>  \<rparr>"
-
-(*definition elsevier_aff_to_acm_aff_morphism :: "elsevier affiliation \<Rightarrow> Introduction.acm Introduction.affiliation"
-          ("_ \<langle>acm'_aff\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r'_\<^sub>a\<^sub>f\<^sub>f" [1000]999)
-          where "\<sigma> \<langle>acm_aff\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r_\<^sub>a\<^sub>f\<^sub>f = 
-                                   \<lparr> Introduction.affiliation.tag_attribute = 1::int,
-                                     Introduction.affiliation.journal_style = (affiliation.journal_style \<sigma>)
-                                                                              |> (\<lambda>x. x \<langle>acm\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r) \<rparr>"*)
-
-definition acm_name where "acm_name f s = f @ '' '' @ s"
-
-definition elsevier_author_to_acm_author_morphism :: "elsevier_author \<Rightarrow> M_04_Document_Ontology.acm_author"
-          ("_ \<langle>acm'_auth\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r'_\<^sub>a\<^sub>u\<^sub>t\<^sub>h" [1000]999)
-          where "\<sigma> \<langle>acm_auth\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r_\<^sub>a\<^sub>u\<^sub>t\<^sub>h = 
-                                   \<lparr> M_04_Document_Ontology.author.tag_attribute = 1::int,
-                                     M_04_Document_Ontology.author.name = acm_name (firstname \<sigma>) (surname \<sigma>),
-                                     M_04_Document_Ontology.author.email = author.email \<sigma>,
-                                     M_04_Document_Ontology.acm_author.affiliations = (elsevier_author.affiliations \<sigma>)
-                                                                        |> map (\<lambda>x. x \<langle>acm\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r) ,
-                                     
-                                     M_04_Document_Ontology.acm_author.orcid = 0,
-                                     M_04_Document_Ontology.acm_author.footnote = elsevier_author.footnote \<sigma>  \<rparr>"
-
-
-lemma elsevier_inv_preserved :
-  "ne_fsnames_inv \<sigma> \<Longrightarrow> M_04_Document_Ontology.ne_name_inv (\<sigma> \<langle>acm_auth\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r_\<^sub>a\<^sub>u\<^sub>t\<^sub>h)"
-  unfolding ne_fsnames_inv_def M_04_Document_Ontology.ne_name_inv_def
-            elsevier_author_to_acm_author_morphism_def
-  by (simp add: combinator1_def acm_name_def)
-
-lemma elsevier_author_to_acm_author_morphism_total :
-  "elsevier_author_to_acm_author_morphism ` ({X::elsevier_author. ne_fsnames_inv X}) \<subseteq> ({X::M_04_Document_Ontology.acm_author. M_04_Document_Ontology.ne_name_inv X})"
-  using elsevier_inv_preserved
-  by auto
+(*<*) (* THIS CODE SHOULD GO INTO THE DOF KERNEL \<And>! *)
 
 ML\<open>
 fun add_onto_morphism classes_mappings eqs thy =
@@ -273,32 +103,201 @@ val _ =
                        (parse_onto_morphism >> (Toplevel.theory o add_onto_morphism'));
 
 \<close>
+(*>*)
 
-find_consts name:"convert"
+text\<open>We define a small ontology with the following classes:\<close>
 
-doc_class AA =
-aa :: int
-doc_class BB =
-bb :: int
-doc_class CC =
-cc :: int
-doc_class DD =
-dd :: int
-doc_class EE =
-ee :: int
-doc_class FF =
-ff :: int
+doc_class AA = aa :: nat
+doc_class BB = bb :: int
+doc_class CC = cc :: int
 
-onto_morphism (AA, BB) to CC 
-          and (DD, EE) to FF
-  where "convert\<^sub>A\<^sub>A\<^sub>\<times>\<^sub>B\<^sub>B\<^sub>\<Rightarrow>\<^sub>C\<^sub>C \<sigma> = \<lparr> CC.tag_attribute = 1::int, CC.cc = aa (fst \<sigma>) + bb (snd \<sigma>)\<rparr>"
-  and   "convert\<^sub>D\<^sub>D\<^sub>\<times>\<^sub>E\<^sub>E\<^sub>\<Rightarrow>\<^sub>F\<^sub>F \<sigma> = \<lparr> FF.tag_attribute = 1::int, FF.ff = dd (fst \<sigma>) + ee (snd \<sigma>) \<rparr>"
+doc_class DD = dd :: int
+doc_class EE = ee :: int
+doc_class FF = ff :: int
+
+onto_morphism (AA, BB) to CC  and (DD, EE) to FF
+  where "convert\<^sub>A\<^sub>A\<^sub>\<times>\<^sub>B\<^sub>B\<^sub>\<Rightarrow>\<^sub>C\<^sub>C \<sigma> = \<lparr> CC.tag_attribute = 1::int, 
+                                           CC.cc = int(aa (fst \<sigma>)) + bb (snd \<sigma>)\<rparr>"
+  and   "convert\<^sub>D\<^sub>D\<^sub>\<times>\<^sub>E\<^sub>E\<^sub>\<Rightarrow>\<^sub>F\<^sub>F \<sigma> = \<lparr> FF.tag_attribute = 1::int, 
+                                           FF.ff = dd (fst \<sigma>) + ee (snd \<sigma>) \<rparr>"
+
+text\<open>Note that the \<^term>\<open>convert\<^sub>A\<^sub>A\<^sub>\<times>\<^sub>B\<^sub>B\<^sub>\<Rightarrow>\<^sub>C\<^sub>C\<close>-morphism involves a data-format conversion, and that the
+resulting transformation of @{doc_class AA}-instances and @{doc_class BB}-instances is surjective 
+but not injective. The \<^term>\<open>CC.tag_attribute\<close> is used to potentially differentiate instances with
+equal attribute-content and is irrelevant here.\<close>
+
+text\<open>This specification construct  introduces the following constants and definitions:
+   \<^item> @{term [source] \<open>convert\<^sub>A\<^sub>A\<^sub>_\<^sub>B\<^sub>B\<^sub>_\<^sub>C\<^sub>C :: AA \<times> BB \<Rightarrow> CC\<close>}
+   \<^item> @{term [source] \<open>convert\<^sub>D\<^sub>D\<^sub>_\<^sub>E\<^sub>E\<^sub>_\<^sub>F\<^sub>F :: DD \<times> EE \<Rightarrow> FF\<close>}
+   \<^item> @{term [source] \<open>convert\<^sub>A\<^sub>A\<^sub>_\<^sub>B\<^sub>B\<^sub>_\<^sub>C\<^sub>C\<^sub>_\<^sub>D\<^sub>D\<^sub>_\<^sub>E\<^sub>E\<^sub>_\<^sub>F\<^sub>F :: AA \<times> BB \<times> CC \<times> DD \<times> EE \<Rightarrow> FF\<close>}
+
+and corresponding definitions. \<close>
+
+(*<*) (* Just a test, irrelevant for the document.*)
 
 onto_morphism (AA, BB, CC, DD, EE) to FF
-  where "convert\<^sub>A\<^sub>A\<^sub>\<times>\<^sub>B\<^sub>B\<^sub>\<times>\<^sub>C\<^sub>C\<^sub>\<times>\<^sub>D\<^sub>D\<^sub>\<times>\<^sub>E\<^sub>E\<^sub>\<Rightarrow>\<^sub>F\<^sub>F \<sigma> = \<lparr> FF.tag_attribute = 1::int, FF.ff = aa (fst \<sigma>) + bb (fst (snd \<sigma>))\<rparr>"
+  where "convert\<^sub>A\<^sub>A\<^sub>\<times>\<^sub>B\<^sub>B\<^sub>\<times>\<^sub>C\<^sub>C\<^sub>\<times>\<^sub>D\<^sub>D\<^sub>\<times>\<^sub>E\<^sub>E\<^sub>\<Rightarrow>\<^sub>F\<^sub>F \<sigma> = \<lparr> FF.tag_attribute = 1::int, 
+                                      FF.ff = int(aa (fst \<sigma>)) + bb (fst (snd \<sigma>))\<rparr>"
 
-find_consts name:"convert"
-find_theorems name:"convert"
+(*>*)
+
+subsection\<open>Proving the Preservation of Ontological Mappings : A Document-Ontology Morphism\<close>
+
+text\<open>\<^dof> as a system is currently particularly geared towards \<^emph>\<open>document\<close>-ontologies, in 
+particular for documentations generated from Isabelle theories. We used it meanwhile for the
+generation of various conference and journal papers, notably using the
+ \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close> and  \<^theory>\<open>Isabelle_DOF.technical_report\<close>-ontologies, 
+targeting a (small) variety of \<^LaTeX> style-files. A particular aspect of these ontologies,
+especially when targeting journals from publishers such as ACM, Springer or Elsevier, is the
+description of publication meta-data. Publishers tend to have their own styles on what kind 
+meta-data should be associated with a journal publication; thus, the depth and 
+precise format of affiliations, institution, their relation to authors, and author descriptions
+(with photos or without, hair left-combed or right-combed, etcpp...)  varies.
+
+In the following, we present an attempt to generalized ontology with several ontology mappings 
+to more specialized ones such as concrete journals and/or the  \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close>-
+ontology which we mostly used for our own publications. 
+\<close>
+
+
+doc_class elsevier_org =
+  organization :: string
+  address_line :: string
+  postcode :: int
+  city :: string
+  
+(*doc_class elsevier_affiliation = affiliation +*) 
+
+doc_class acm_org =
+  position :: string
+  institution :: string
+  department :: int
+  street_address :: string
+  city :: string
+  state :: int
+  country :: string
+  postcode :: int
+
+(*doc_class acm_affiliation = affiliation +*)
+
+doc_class lncs_inst =
+  institution :: string
+
+(*doc_class lncs_affiliation = affiliation +*)
+
+
+doc_class author =
+    name   :: string
+    email  :: "string"   <= "''''"
+    invariant ne_fsnames :: "name \<sigma> \<noteq> ''''"
+
+
+doc_class elsevierAuthor = "author" +
+  affiliations :: "elsevier_org list"
+  firstname   :: string
+  surname     :: string
+  short_author :: string
+  url :: string
+  footnote :: string
+  invariant ne_fsnames :: "firstname \<sigma> \<noteq> '''' \<and> surname \<sigma> \<noteq> ''''"
+
+text*[el1:: "elsevier_org"]\<open>An example elsevier-journal affiliation.\<close>
+term*\<open>@{elsevier_org \<open>el1\<close>}\<close>
+text*[el_auth1:: "elsevierAuthor", affiliations = "[@{elsevier_org \<open>el1\<close>}]"]\<open>\<close>
+
+doc_class acmAuthor = "author" +
+  affiliations :: "acm_org list"
+  firstname   :: string
+  familyname     :: string
+  orcid :: int
+  footnote :: string
+  invariant ne_fsnames :: "firstname \<sigma> \<noteq> '''' \<and> familyname \<sigma> \<noteq> ''''"
+
+text*[acm1:: "acm"]\<open>An example acm-style affiliation\<close>
+
+doc_class lncs_author = "author" +
+  affiliations :: "lncs list"
+  orcid :: int
+  short_author :: string
+  footnote :: string
+
+(*<*)
+text*[lncs1:: "lncs"]\<open>An example lncs-style affiliation\<close>
+text*[lncs_auth1:: "lncs_author", affiliations = "[@{lncs \<open>lncs1\<close>}]"]\<open>Another example lncs-style affiliation\<close>
+find_theorems elsevier.tag_attribute
+(*>*)
+
+definition acm_name where "acm_name f s = f @ '' '' @ s"
+
+fun concatWith :: "string \<Rightarrow> string list \<Rightarrow> string"
+  where "concatWith str [] = ''''"
+       |"concatWith str [a] = a"
+       |"concatWith str (a#R) = a@str@(concatWith str R)"
+
+lemma concatWith_non_mt : "(S\<noteq>[] \<and> (\<exists> s\<in>set S. s\<noteq>'''')) \<longrightarrow>  (concatWith sep S) \<noteq> ''''"
+proof(induct S)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons a S)
+  then show ?case apply(auto)
+    using concatWith.elims apply blast
+    using concatWith.elims apply blast
+    using list.set_cases by force
+qed
+  
+
+onto_morphism (acm) to elsevier
+  where "convert\<^sub>a\<^sub>c\<^sub>m\<^sub>\<Rightarrow>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r \<sigma> =  
+               \<lparr>elsevier.tag_attribute = acm.tag_attribute \<sigma>, 
+                organization = acm.institution \<sigma>,
+                address_line = concatWith '','' [acm.street_address \<sigma>, acm.city \<sigma>], 
+                postcode     =  acm.postcode \<sigma> , 
+                city         =  acm.city \<sigma> \<rparr>"
+
+text\<open>Here is a more basic, but equivalent definition for the other way round:\<close>
+
+definition elsevier_to_acm_morphism :: "elsevier_org \<Rightarrow> acm_org"
+          ("_ \<langle>acm\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r" [1000]999)
+          where "\<sigma> \<langle>acm\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r = \<lparr> acm_org.tag_attribute = 1::int,
+                                   acm_org.position = ''no position'',
+                                   acm_org.institution = organization \<sigma>,
+                                   acm_org.department = 0,
+                                   acm_org.street_address = address_line \<sigma>,
+                                   acm_org.city = elsevier_org.city \<sigma>,
+                                   acm_org.state = 0,
+                                   acm_org.country = ''no country'',
+                                   acm_org.postcode = elsevier_org.postcode \<sigma>  \<rparr>"
+
+text\<open>THe following onto-morphism links \<^typ>\<open>elsevierAuthor\<close>'s and \<^typ>\<open>acmAuthor\<close>. Note that
+the conversion implies trivial data-conversions (renaming of attributes in the classes), 
+string-representation conversions, and conversions of second-staged, referenced instances.\<close>
+
+onto_morphism (elsevierAuthor) to acmAuthor
+  where "convert\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r\<^sub>\<Rightarrow>\<^sub>a\<^sub>c\<^sub>m\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r \<sigma> =  
+               \<lparr>author.tag_attribute = undefined, 
+                name = concatWith '','' [elsevierAuthor.firstname \<sigma>,elsevierAuthor.surname \<sigma>], 
+                email = author.email \<sigma>,
+                acmAuthor.affiliations = (elsevierAuthor.affiliations \<sigma>)
+                                         |> map (\<lambda>x. x \<langle>acm\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r),
+                firstname = elsevierAuthor.firstname \<sigma>, 
+                familyname = elsevierAuthor.surname \<sigma>,
+                orcid = 0,  \<comment> \<open>la triche ! ! !\<close>
+                footnote = elsevierAuthor.footnote \<sigma>\<rparr>"
+
+
+lemma elsevier_inv_preserved :
+  "elsevierAuthor.ne_fsnames_inv \<sigma> 
+   \<Longrightarrow> acmAuthor.ne_fsnames_inv (convert\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r\<^sub>\<Rightarrow>\<^sub>a\<^sub>c\<^sub>m\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r \<sigma>) 
+       \<and> author.ne_fsnames_inv (convert\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r\<^sub>\<Rightarrow>\<^sub>a\<^sub>c\<^sub>m\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r \<sigma>)"
+  unfolding elsevierAuthor.ne_fsnames_inv_def acmAuthor.ne_fsnames_inv_def
+            M_05_Proofs_Ontologies.convert\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r\<^sub>_\<^sub>a\<^sub>c\<^sub>m\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r_def author.ne_fsnames_inv_def
+  by auto  
+
+text\<open>The proof is, in order to quote Tony Hoare, ``as simple as it should be''. Note that it involves
+the lemmas like @{thm concatWith_non_mt} which in itself require inductions, \<^ie>, which are out of
+reach of pure ATP proof-techniques. \<close>
+
 
 
 subsection\<open>Proving the Preservation of Ontological Mappings : A Domain-Ontology Morphism\<close>
@@ -494,14 +493,14 @@ The proof of : \<^vs>\<open>0.5cm\<close>
   @{thm [indent=20,margin=70,names_short] articles_sub_reports}
 
  \<^vs>\<open>0.5cm\<close> can be found in theory  \<^theory>\<open>Isabelle_DOF.technical_report\<close>; 
-it is, "as simple as it should be" (to cite Tony Hoare). 
+it is, again, "as simple as it should be" (to cite Tony Hoare). 
 
 The proof of: \<^vs>\<open>0.5cm\<close>
 
   @{thm [indent=20,margin=70,names_short] articles_Lsub_reports}
 
- \<^vs>\<open>0.5cm\<close> is slightly more evolved; this is due to the fact that \<^dof> does not generate a proof of the
-acyclicity of the graph of the class-hierarchy @{term doc_class_rel} automatically. For a given 
+ \<^vs>\<open>0.5cm\<close> is slightly more evolved; this is due to the fact that \<^dof> does not generate a proof of 
+the acyclicity of the graph of the class-hierarchy @{term doc_class_rel} automatically. For a given 
 hierarchy, this proof will always succeed (since  \<^dof> checks this on the meta-level, of course), 
 which permits to deduce the anti-symmetry of the transitive closure of @{term doc_class_rel} 
 and therefore to establish that the doc-classes can be organized in an order (\<^ie> the
