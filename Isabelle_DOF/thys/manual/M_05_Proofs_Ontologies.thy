@@ -166,8 +166,6 @@ doc_class elsevier_org =
   postcode :: int
   city :: string
   
-(*doc_class elsevier_affiliation = affiliation +*) 
-
 doc_class acm_org =
   position :: string
   institution :: string
@@ -178,19 +176,13 @@ doc_class acm_org =
   country :: string
   postcode :: int
 
-(*doc_class acm_affiliation = affiliation +*)
-
 doc_class lncs_inst =
   institution :: string
-
-(*doc_class lncs_affiliation = affiliation +*)
-
 
 doc_class author =
     name   :: string
     email  :: "string"   <= "''''"
     invariant ne_fsnames :: "name \<sigma> \<noteq> ''''"
-
 
 doc_class elsevierAuthor = "author" +
   affiliations :: "elsevier_org list"
@@ -201,9 +193,12 @@ doc_class elsevierAuthor = "author" +
   footnote :: string
   invariant ne_fsnames :: "firstname \<sigma> \<noteq> '''' \<and> surname \<sigma> \<noteq> ''''"
 
+(*<*)
 text*[el1:: "elsevier_org"]\<open>An example elsevier-journal affiliation.\<close>
 term*\<open>@{elsevier_org \<open>el1\<close>}\<close>
 text*[el_auth1:: "elsevierAuthor", affiliations = "[@{elsevier_org \<open>el1\<close>}]"]\<open>\<close>
+(*>*)
+text\<open>\<close>
 
 doc_class acmAuthor = "author" +
   affiliations :: "acm_org list"
@@ -213,7 +208,10 @@ doc_class acmAuthor = "author" +
   footnote :: string
   invariant ne_fsnames :: "firstname \<sigma> \<noteq> '''' \<and> familyname \<sigma> \<noteq> ''''"
 
+(*<*)
 text*[acm1:: "acm"]\<open>An example acm-style affiliation\<close>
+(*>*)
+text\<open>\<close>
 
 doc_class lncs_author = "author" +
   affiliations :: "lncs list"
@@ -226,6 +224,7 @@ text*[lncs1:: "lncs"]\<open>An example lncs-style affiliation\<close>
 text*[lncs_auth1:: "lncs_author", affiliations = "[@{lncs \<open>lncs1\<close>}]"]\<open>Another example lncs-style affiliation\<close>
 find_theorems elsevier.tag_attribute
 (*>*)
+text\<open>\<close>
 
 definition acm_name where "acm_name f s = f @ '' '' @ s"
 
@@ -269,7 +268,7 @@ definition elsevier_to_acm_morphism :: "elsevier_org \<Rightarrow> acm_org"
                                    acm_org.country = ''no country'',
                                    acm_org.postcode = elsevier_org.postcode \<sigma>  \<rparr>"
 
-text\<open>THe following onto-morphism links \<^typ>\<open>elsevierAuthor\<close>'s and \<^typ>\<open>acmAuthor\<close>. Note that
+text\<open>The following onto-morphism links \<^typ>\<open>elsevierAuthor\<close>'s and \<^typ>\<open>acmAuthor\<close>. Note that
 the conversion implies trivial data-conversions (renaming of attributes in the classes), 
 string-representation conversions, and conversions of second-staged, referenced instances.\<close>
 
@@ -291,7 +290,7 @@ lemma elsevier_inv_preserved :
    \<Longrightarrow> acmAuthor.ne_fsnames_inv (convert\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r\<^sub>\<Rightarrow>\<^sub>a\<^sub>c\<^sub>m\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r \<sigma>) 
        \<and> author.ne_fsnames_inv (convert\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r\<^sub>\<Rightarrow>\<^sub>a\<^sub>c\<^sub>m\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r \<sigma>)"
   unfolding elsevierAuthor.ne_fsnames_inv_def acmAuthor.ne_fsnames_inv_def
-            M_05_Proofs_Ontologies.convert\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r\<^sub>_\<^sub>a\<^sub>c\<^sub>m\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r_def author.ne_fsnames_inv_def
+            convert\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r\<^sub>_\<^sub>a\<^sub>c\<^sub>m\<^sub>A\<^sub>u\<^sub>t\<^sub>h\<^sub>o\<^sub>r_def author.ne_fsnames_inv_def
   by auto  
 
 text\<open>The proof is, in order to quote Tony Hoare, ``as simple as it should be''. Note that it involves
