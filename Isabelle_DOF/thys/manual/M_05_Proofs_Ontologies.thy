@@ -16,8 +16,6 @@ theory
   "M_05_Proofs_Ontologies"
   imports 
     "M_04_Document_Ontology" 
-  keywords "onto_morphism"  :: thy_decl
-  and      "to"
 begin
 
 (*>*)
@@ -41,69 +39,6 @@ needs to be explored, we present in the following sections two applications:
 section*["morphisms"::scholarly_paper.text_section] \<open>Proving Properties over Ontologies\<close>
 
 subsection\<open>Ontology-Morphisms: a Prototypical Example\<close>
-
-(*<*) (* THIS CODE SHOULD GO INTO THE DOF KERNEL \<And>! *)
-
-ML\<open>
-fun add_onto_morphism classes_mappings eqs thy =
-  if (length classes_mappings = length eqs) then
-    let 
-      val specs = map (fn x => (Binding.empty_atts, x)) eqs
-      val converts =
-        map (fn (oclasses, dclass) =>
-               let
-                 val oclasses_string = map YXML.content_of oclasses
-                 val dclass_string = YXML.content_of dclass
-                 val const_sub_name = dclass_string
-                                      |> (oclasses_string |> fold_rev (fn x => fn y => x ^ "_" ^ y))
-                                      |> String.explode |> map (fn x => "\<^sub>" ^ (String.str x)) |> String.concat
-                 val convert_typ = oclasses_string |> rev |> hd
-                                    |> (oclasses_string |> rev |> tl |> fold (fn x => fn y => x ^ " \<times> " ^ y))
-                 val convert_typ' = convert_typ ^ " \<Rightarrow> " ^ dclass_string
-                 val oclasses_sub_string = oclasses_string
-                                          |> map (fn x => x |> String.explode |> map (fn y => "\<^sub>" ^ (String.str y)) |> String.concat)
-                 val mixfix = oclasses_sub_string |> rev |> hd
-                               |> (oclasses_sub_string |> rev |> tl |> fold (fn x => fn y => x ^ "\<^sub>\<times>" ^ y))
-                 val mixfix' = "convert" ^ mixfix ^ "\<^sub>\<Rightarrow>"
-                                ^ (dclass_string |> String.explode
-                                   |> map (fn x => "\<^sub>" ^ (String.str x)) |> String.concat)
-               in SOME (Binding.name ("convert" ^ const_sub_name), SOME convert_typ', Mixfix.mixfix mixfix') end)
-            classes_mappings
-      val args = map (fn (x, y) => (x, y, [], [])) (converts ~~ specs)
-      val lthy = Named_Target.theory_init thy
-      val updated_lthy = fold (fn (decl, spec, prems, params) => fn lthy => 
-                        let
-                          val (_, lthy') = Specification.definition_cmd decl params prems spec true lthy
-                        in lthy' end) args lthy
-    in Local_Theory.exit_global updated_lthy end
-    (* alternative way to update the theory using the Theory.join_theory function *)
-      (*val lthys = map (fn (decl, spec, prems, params) => 
-                        let
-                          val (_, lthy') = Specification.definition_cmd decl params prems spec true lthy
-                        in lthy' end) args
-      val thys = map (Local_Theory.exit_global) lthys
-
-    in Theory.join_theory thys end*)
-  else error("The number of morphisms declarations does not match the number of definitions")
-
-fun add_onto_morphism' (classes_mappings, eqs) = add_onto_morphism classes_mappings eqs
-
-val parse_onto_morphism = Parse.and_list
-                            ((Parse.$$$ "(" |-- Parse.enum1 "," Parse.typ --| Parse.$$$ ")" --| \<^keyword>\<open>to\<close>)
-                              -- Parse.typ)
-                          --  (\<^keyword>\<open>where\<close> |-- Parse.and_list Parse.prop)
-
-(* The name of the definitions must follow this rule:
-   for the declaration "onto_morphism (AA, BB) to CC",
-   the name of the constant must be "convert\<^sub>A\<^sub>A\<^sub>\<times>\<^sub>B\<^sub>B\<^sub>\<Rightarrow>\<^sub>C\<^sub>C".
-   See the examples below.
-   *)
-val _ =
-  Outer_Syntax.command \<^command_keyword>\<open>onto_morphism\<close> "define ontology morpism"
-                       (parse_onto_morphism >> (Toplevel.theory o add_onto_morphism'));
-
-\<close>
-(*>*)
 
 text\<open>We define a small ontology with the following classes:\<close>
 
@@ -135,8 +70,10 @@ and corresponding definitions. \<close>
 
 (*<*) (* Just a test, irrelevant for the document.*)
 
-onto_morphism (AA, BB, CC, DD, EE) to FF
-  where "convert\<^sub>A\<^sub>A\<^sub>\<times>\<^sub>B\<^sub>B\<^sub>\<times>\<^sub>C\<^sub>C\<^sub>\<times>\<^sub>D\<^sub>D\<^sub>\<times>\<^sub>E\<^sub>E\<^sub>\<Rightarrow>\<^sub>F\<^sub>F \<sigma> = \<lparr> FF.tag_attribute = 1::int, 
+doc_class A_A = aa :: nat
+doc_class BB' = bb :: int
+onto_morphism (A_A, BB', CC, DD, EE) to FF
+  where "convert\<^sub>A\<^sub>_\<^sub>A\<^sub>\<times>\<^sub>B\<^sub>B\<^sub>'\<^sub>\<times>\<^sub>C\<^sub>C\<^sub>\<times>\<^sub>D\<^sub>D\<^sub>\<times>\<^sub>E\<^sub>E\<^sub>\<Rightarrow>\<^sub>F\<^sub>F \<sigma> = \<lparr> FF.tag_attribute = 1::int, 
                                       FF.ff = int(aa (fst \<sigma>)) + bb (fst (snd \<sigma>))\<rparr>"
 
 (*>*)
@@ -510,7 +447,7 @@ of the above language refinement is quasi automatic. This proof is also part of
 
 (*<*)
 
-(* switch on regexp syntax *)
+(* switch off regexp syntax *)
 no_notation Star  ("\<lbrace>(_)\<rbrace>\<^sup>*" [0]100)
 no_notation Plus  (infixr "||" 55)
 no_notation Times (infixr "~~" 60)
