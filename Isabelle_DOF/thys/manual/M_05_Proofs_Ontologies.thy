@@ -61,13 +61,6 @@ resulting transformation of @{doc_class AA}-instances and @{doc_class BB}-instan
 but not injective. The \<^term>\<open>CC.tag_attribute\<close> is used to potentially differentiate instances with
 equal attribute-content and is irrelevant here.\<close>
 
-text\<open>This specification construct  introduces the following constants and definitions:
-   \<^item> @{term [source] \<open>convert\<^sub>A\<^sub>A\<^sub>_\<^sub>B\<^sub>B\<^sub>_\<^sub>C\<^sub>C :: AA \<times> BB \<Rightarrow> CC\<close>}
-   \<^item> @{term [source] \<open>convert\<^sub>D\<^sub>D\<^sub>_\<^sub>E\<^sub>E\<^sub>_\<^sub>F\<^sub>F :: DD \<times> EE \<Rightarrow> FF\<close>}
-   \<^item> @{term [source] \<open>convert\<^sub>A\<^sub>A\<^sub>_\<^sub>B\<^sub>B\<^sub>_\<^sub>C\<^sub>C\<^sub>_\<^sub>D\<^sub>D\<^sub>_\<^sub>E\<^sub>E\<^sub>_\<^sub>F\<^sub>F :: AA \<times> BB \<times> CC \<times> DD \<times> EE \<Rightarrow> FF\<close>}
-
-and corresponding definitions. \<close>
-
 (*<*) (* Just a test, irrelevant for the document.*)
 
 doc_class A_A = aa :: nat
@@ -77,6 +70,13 @@ onto_morphism (A_A, BB', CC, DD, EE) to FF
                                       FF.ff = int(aa (fst \<sigma>)) + bb (fst (snd \<sigma>))\<rparr>"
 
 (*>*)
+
+text\<open>This specification construct  introduces the following constants and definitions:
+   \<^item> @{term [source] \<open>convert\<^sub>A\<^sub>A\<^sub>_\<^sub>B\<^sub>B\<^sub>_\<^sub>C\<^sub>C :: AA \<times> BB \<Rightarrow> CC\<close>}
+   \<^item> @{term [source] \<open>convert\<^sub>D\<^sub>D\<^sub>_\<^sub>E\<^sub>E\<^sub>_\<^sub>F\<^sub>F :: DD \<times> EE \<Rightarrow> FF\<close>}
+   % @{term [source] \<open>convert\<^sub>A\<^sub>_\<^sub>A\<^sub>\<times>\<^sub>B\<^sub>B\<^sub>'\<^sub>\<times>\<^sub>C\<^sub>C\<^sub>\<times>\<^sub>D\<^sub>D\<^sub>\<times>\<^sub>E\<^sub>E\<^sub>\<Rightarrow>\<^sub>F\<^sub>F :: A_A \<times> BB' \<times> CC \<times> DD \<times> EE \<Rightarrow> FF\<close>}
+
+and corresponding definitions. \<close>
 
 subsection\<open>Proving the Preservation of Ontological Mappings : A Document-Ontology Morphism\<close>
 
@@ -181,7 +181,6 @@ next
     using concatWith.elims apply blast
     using list.set_cases by force
 qed
-  
 
 onto_morphism (acm) to elsevier
   where "convert\<^sub>a\<^sub>c\<^sub>m\<^sub>\<Rightarrow>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r \<sigma> =  
@@ -321,7 +320,7 @@ text\<open>These two example ontologies were linked via conversion functions cal
 The hic is that we can prove for the morphisms connecting these ontologies, that the conversions
 are guaranteed to preserve the data-invariants, although the data-structures (and, of course,
 the presentation of them) is very different. Besides, morphisms functions can be ``forgetful''
-(\<^ie> surjective), ``embedding'' (\<^ie> injective) or even ``one-to-one'' ((\<^ie> bikjective).\<close>
+(\<^ie> surjective), ``embedding'' (\<^ie> injective) or even ``one-to-one'' ((\<^ie> bijective).\<close>
 
 definition Item_to_Resource_morphism :: "Item \<Rightarrow> Resource"
           ("_ \<langle>Resource\<rangle>\<^sub>I\<^sub>t\<^sub>e\<^sub>m" [1000]999)
@@ -420,7 +419,7 @@ Recall that the monitor of \<^term>\<open>scholarly_paper.article\<close> is def
  \<^vs>\<open>0.5cm\<close> However, it is possible to reason over the language of monitors and prove classical 
 refinement notions such as trace-refinement on the monitor-level, so once-and-for-all for all 
 instances of validated documents conforming to a particular ontology. The primitive recursive 
-operators\<^term>\<open>RegExpInterface.Lang\<close> and \<^term>\<open>RegExpInterface.L\<^sub>s\<^sub>u\<^sub>b\<close> generate the languages of the
+operators \<^term>\<open>RegExpInterface.Lang\<close> and \<^term>\<open>RegExpInterface.L\<^sub>s\<^sub>u\<^sub>b\<close> generate the languages of the
 regular expression language, where \<^term>\<open>L\<^sub>s\<^sub>u\<^sub>b\<close> takes the sub-ordering relation of classes into 
 account. 
 
