@@ -36,9 +36,12 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            
   and      "open_monitor*"      "close_monitor*" 
            "declare_reference*" "update_instance*"
-           "doc_class"          "onto_class" (* a syntactic alternative *)   
-           "ML*"
+           "doc_class"          "onto_class" (* a syntactic alternative *)
+           "onto_morphism"                                 :: thy_decl
+  and      "to"
+  and      "ML*"
            "define_shortcut*"   "define_macro*"            :: thy_decl
+  
   and      "definition*"                                   :: thy_defn
   and      "theorem*" "lemma*" "corollary*" "proposition*" :: thy_goal_stmt
   and      "schematic_goal*" :: thy_goal_stmt
@@ -3208,6 +3211,76 @@ val _ =
   Outer_Syntax.command \<^command_keyword>\<open>onto_class\<close> 
                        "define ontological class"
                         (parse_doc_class >> (Toplevel.theory o add_doc_class_cmd'));
+
+
+
+val clean_mixfix_sub = translate_string
+  (fn "\<^sub>_" => "_"
+    | "\<^sub>'" => "'"
+    | c =>  c);
+
+val prefix_sub = prefix "\<^sub>"
+
+val convertN = "convert"
+
+fun add_onto_morphism classes_mappings eqs thy =
+  if (length classes_mappings = length eqs) then
+    let
+      val specs = map (fn x => (Binding.empty_atts, x)) eqs
+      val converts =
+        map (fn (oclasses, dclass) =>
+               let
+                 val oclasses_string = map YXML.content_of oclasses
+                 val dclass_string = YXML.content_of dclass
+                 val const_sub_name = dclass_string
+                                      |> (oclasses_string |> fold_rev (fn x => fn y => x ^ "_" ^ y))
+                                      |> String.explode |> map (fn x => "\<^sub>" ^ (String.str x)) |> String.concat
+                 val convert_typ = oclasses_string |> rev |> hd
+                                   |> (oclasses_string |> rev |> tl |> fold (fn x => fn y => x ^ " \<times> " ^ y))
+                 val convert_typ' = convert_typ ^ " \<Rightarrow> " ^ dclass_string
+                 val oclasses_sub_string = oclasses_string
+                                           |> map (clean_mixfix_sub
+                                                   #> String.explode
+                                                   #> map (prefix_sub o String.str)
+                                                   #> String.concat)
+                 val mixfix = oclasses_sub_string |> rev |> hd
+                              |> (oclasses_sub_string |> rev |> tl |> fold (fn x => fn y => x ^ "\<^sub>\<times>" ^ y))
+                              |> ISA_core.clean_mixfix
+                 val mixfix' = convertN ^ mixfix ^ "\<^sub>\<Rightarrow>"
+                                ^ (dclass_string |> clean_mixfix_sub |> String.explode
+                                   |> map (prefix_sub o String.str) |> String.concat)
+               in SOME (Binding.name (convertN ^ const_sub_name), SOME convert_typ', Mixfix.mixfix mixfix') end)
+            classes_mappings
+      val args = map (fn (x, y) => (x, y, [], [])) (converts ~~ specs)
+      val lthy = Named_Target.theory_init thy
+      val updated_lthy = fold (fn (decl, spec, prems, params) => fn lthy => 
+                        let
+                          val (_, lthy') = Specification.definition_cmd decl params prems spec true lthy
+                        in lthy' end) args lthy
+    in Local_Theory.exit_global updated_lthy end
+    (* alternative way to update the theory using the Theory.join_theory function *)
+      (*val lthys = map (fn (decl, spec, prems, params) => 
+                        let
+                          val (_, lthy') = Specification.definition_cmd decl params prems spec true lthy
+                        in lthy' end) args
+      val thys = map (Local_Theory.exit_global) lthys
+
+    in Theory.join_theory thys end*)
+  else error("The number of morphisms declarations does not match the number of definitions")
+
+fun add_onto_morphism' (classes_mappings, eqs) = add_onto_morphism classes_mappings eqs
+
+val parse_onto_morphism = Parse.and_list
+                            ((Parse.$$$ "(" |-- Parse.enum1 "," Parse.typ --| Parse.$$$ ")" --| \<^keyword>\<open>to\<close>)
+                              -- Parse.typ)
+                          --  (\<^keyword>\<open>where\<close> |-- Parse.and_list Parse.prop)
+
+(* The name of the definitions must follow this rule:
+   for the declaration "onto_morphism (AA, BB) to CC",
+   the name of the constant must be "convert\<^sub>A\<^sub>A\<^sub>\<times>\<^sub>B\<^sub>B\<^sub>\<Rightarrow>\<^sub>C\<^sub>C". *)
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>onto_morphism\<close> "define ontology morpism"
+                       (parse_onto_morphism >> (Toplevel.theory o add_onto_morphism'));
 
 
 
