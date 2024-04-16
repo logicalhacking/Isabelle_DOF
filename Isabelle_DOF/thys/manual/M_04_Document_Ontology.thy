@@ -45,9 +45,6 @@ in end
 
 doc_class "title"  = short_title :: "string option" <= "None"
 
-(*doc_class '\<alpha> affiliation =
-  journal_style :: '\<alpha>
-*)
 
 doc_class elsevier =
   organization :: string
