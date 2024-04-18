@@ -13,7 +13,7 @@
 
 (*<*)
 theory "Isabelle_DOF_Manual"
-  imports "M_05_Implementation"
+  imports "M_07_Implementation"
 begin
 close_monitor*[this]
 check_doc_global

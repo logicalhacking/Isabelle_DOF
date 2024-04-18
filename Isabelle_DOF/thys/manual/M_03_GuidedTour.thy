@@ -477,7 +477,7 @@ on the level of generated \<^verbatim>\<open>.aux\<close>-files, which are not n
 error-message and compiling it with a consistent bibtex usually makes disappear this behavior. 
 \<close>
 
-subsection*["using-term-aq"::technical, main_author = "Some @{author ''bu''}"]
+subsection*["using_term_aq"::technical, main_author = "Some @{author ''bu''}"]
    \<open>Using Term-Antiquotations\<close>
 
 text\<open>The present version of \<^isadof> is the first version that supports the novel feature of
@@ -577,11 +577,11 @@ term antiquotations:
 \<close>
 
 (*<*)
-declare_reference*["subsec:onto-term-ctxt"::technical]
+declare_reference*["subsec_onto_term_ctxt"::technical]
 (*>*)
 
 text\<open>They are text-contexts equivalents to the \<^theory_text>\<open>term*\<close> and \<^theory_text>\<open>value*\<close> commands
-     for term-contexts introduced in @{technical (unchecked) \<open>subsec:onto-term-ctxt\<close>}\<close>
+     for term-contexts introduced in @{technical (unchecked) \<open>subsec_onto_term_ctxt\<close>}\<close>
 
 subsection\<open>A Technical Report with Tight Checking\<close>
 text\<open>An example of tight checking is a small programming manual to document programming trick 

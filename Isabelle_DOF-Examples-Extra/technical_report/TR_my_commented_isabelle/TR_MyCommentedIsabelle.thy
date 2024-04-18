@@ -347,7 +347,7 @@ text\<open>
 \<^item> \<^ML>\<open>Context.proper_subthy : theory * theory -> bool\<close> subcontext test
 \<^item> \<^ML>\<open>Context.Proof: Proof.context -> Context.generic \<close> A constructor embedding local contexts
 \<^item> \<^ML>\<open>Context.proof_of : Context.generic -> Proof.context\<close> the inverse
-\<^item> \<^ML>\<open>Context.theory_name : theory -> string\<close>
+\<^item> \<^ML>\<open>Context.theory_name : {long:bool} -> theory -> string\<close>
 \<^item> \<^ML>\<open>Context.map_theory: (theory -> theory) -> Context.generic -> Context.generic\<close>
 \<close>
 
@@ -358,7 +358,7 @@ text\<open>The structure \<^ML_structure>\<open>Proof_Context\<close> provides a
 \<^item> \<^ML>\<open>  Context.Proof: Proof.context -> Context.generic \<close>
   the path to a generic Context, i.e. a sum-type of global and local contexts
   in order to simplify system interfaces
-\<^item> \<^ML>\<open> Proof_Context.get_global: theory -> string -> Proof.context\<close>
+\<^item> \<^ML>\<open> Proof_Context.get_global: {long:bool} -> theory -> string -> Proof.context\<close>
 \<close>
 
 
@@ -807,7 +807,7 @@ text\<open>  They reflect the Pure logic depicted in a number of presentations s
   Notated as logical inference rules, these operations were presented as follows:
 \<close>
 
-text*["text-elements"::float, 
+text*["text_elements"::float, 
       main_caption="\<open>Kernel Inference Rules.\<close>"]
 \<open>
 @{fig_content (width=48, caption="Pure Kernel Inference Rules I.") "figures/pure-inferences-I.pdf"
@@ -886,7 +886,6 @@ datatype thy = Thy of
 \<^item>  \<^ML>\<open>Theory.axiom_space: theory -> Name_Space.T\<close>
 \<^item>  \<^ML>\<open>Theory.all_axioms_of: theory -> (string * term) list\<close>
 \<^item>  \<^ML>\<open>Theory.defs_of: theory -> Defs.T\<close>
-\<^item>  \<^ML>\<open>Theory.join_theory: theory list -> theory\<close>
 \<^item>  \<^ML>\<open>Theory.at_begin: (theory -> theory option) -> theory -> theory\<close>
 \<^item>  \<^ML>\<open>Theory.at_end: (theory -> theory option) -> theory -> theory\<close>
 \<^item>  \<^ML>\<open>Theory.begin_theory: string * Position.T -> theory list -> theory\<close>
@@ -1139,8 +1138,7 @@ text\<open>
    necessary infrastructure ---  i.e. the operations to pack and unpack theories and
    queries  on it:
 
-\<^item> \<^ML>\<open> Toplevel.theory_toplevel: theory -> Toplevel.state\<close>
-\<^item> \<^ML>\<open> Toplevel.init_toplevel: unit -> Toplevel.state\<close>
+\<^item> \<^ML>\<open> Toplevel.make_state: theory option -> Toplevel.state\<close>
 \<^item> \<^ML>\<open> Toplevel.is_toplevel: Toplevel.state -> bool\<close>
 \<^item> \<^ML>\<open> Toplevel.is_theory: Toplevel.state -> bool\<close>
 \<^item> \<^ML>\<open> Toplevel.is_proof: Toplevel.state -> bool\<close>
@@ -1178,7 +1176,7 @@ text\<open> The extensibility of Isabelle as a system framework depends on a num
  \<^item> \<^ML>\<open>Toplevel.theory: (theory -> theory) -> Toplevel.transition -> Toplevel.transition\<close>
    adjoins a theory transformer.
  \<^item> \<^ML>\<open>Toplevel.generic_theory: (generic_theory -> generic_theory) -> Toplevel.transition -> Toplevel.transition\<close>
- \<^item> \<^ML>\<open>Toplevel.theory': (bool -> theory -> theory) -> Toplevel.presentation -> Toplevel.transition -> Toplevel.transition\<close>
+ \<^item> \<^ML>\<open>Toplevel.theory': (bool -> theory -> theory) -> Toplevel.presentation option -> Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.exit: Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.ignored: Position.T -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.present_local_theory:  (xstring * Position.T) option ->
@@ -1196,7 +1194,6 @@ text\<open>
  \<^item>  \<^ML>\<open>Document.state : unit -> Document.state\<close>, giving the state as a "collection" of named
      nodes, each consisting of an editable list of commands, associated with asynchronous 
      execution process,
- \<^item>  \<^ML>\<open>Session.get_keywords : unit -> Keyword.keywords\<close>, this looks to be session global,
  \<^item>  \<^ML>\<open>Thy_Header.get_keywords : theory -> Keyword.keywords\<close> this looks to be just theory global.
 
 
@@ -1270,7 +1267,6 @@ subsection\<open>Miscellaneous\<close>
 
 text\<open>Here are a few queries relevant for the global config of the isar engine:\<close>
 ML\<open> Document.state();\<close>
-ML\<open> Session.get_keywords(); (* this looks to be  session global. *) \<close>
 ML\<open> Thy_Header.get_keywords @{theory};(* this looks to be really theory global. *) \<close>
 
   
@@ -1877,18 +1873,17 @@ Common Stuff related to Inner Syntax Parsing
 \<^item>\<^ML>\<open>Args.internal_typ : typ parser\<close>
 \<^item>\<^ML>\<open>Args.internal_term: term parser\<close>
 \<^item>\<^ML>\<open>Args.internal_fact: thm list parser\<close>
-\<^item>\<^ML>\<open>Args.internal_attribute: (morphism -> attribute) parser\<close>
-\<^item>\<^ML>\<open>Args.internal_declaration: declaration parser\<close>
+\<^item>\<^ML>\<open>Args.internal_attribute: attribute Morphism.entity parser\<close>
 \<^item>\<^ML>\<open>Args.alt_name    : string parser\<close>
 \<^item>\<^ML>\<open>Args.liberal_name: string parser\<close>
-
 
 
 Common Isar Syntax
 \<^item>\<^ML>\<open>Args.named_source: (Token.T -> Token.src) -> Token.src parser\<close>
 \<^item>\<^ML>\<open>Args.named_typ   : (string -> typ) -> typ parser\<close>
 \<^item>\<^ML>\<open>Args.named_term : (string -> term) -> term parser\<close>
-\<^item>\<^ML>\<open>Args.embedded_declaration: (Input.source -> declaration) -> declaration parser\<close>
+\<^item>\<^ML>\<open>Args.embedded_declaration: (Input.source -> Morphism.declaration_entity) ->
+    Morphism.declaration_entity parser\<close>
 \<^item>\<^ML>\<open>Args.typ_abbrev  : typ context_parser\<close>
 \<^item>\<^ML>\<open>Args.typ: typ context_parser\<close>
 \<^item>\<^ML>\<open>Args.term: term context_parser\<close>
@@ -2148,7 +2143,7 @@ text\<open>
 \<^item>\<^ML>\<open>Document_Output.output_document: Proof.context -> {markdown: bool} -> Input.source -> Latex.text \<close>
 \<^item>\<^ML>\<open>Document_Output.output_token: Proof.context -> Token.T -> Latex.text \<close>
 \<^item>\<^ML>\<open>Document_Output.output_source: Proof.context -> string -> Latex.text \<close>
-\<^item>\<^ML>\<open>Document_Output.present_thy: Options.T -> theory -> Document_Output.segment list -> Latex.text \<close>
+\<^item>\<^ML>\<open>Document_Output.present_thy: Options.T -> Keyword.keywords -> string -> Document_Output.segment list -> Latex.text \<close>
 
 \<^item>\<^ML>\<open>Document_Output.isabelle: Proof.context -> Latex.text  -> Latex.text\<close>
 \<^item>\<^ML>\<open>Document_Output.isabelle_typewriter: Proof.context -> Latex.text  -> Latex.text\<close>

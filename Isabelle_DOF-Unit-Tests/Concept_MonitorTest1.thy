@@ -104,8 +104,8 @@ ML\<open>
 val (oid, DOF_core.Instance {value, ...}) =
     Name_Space.check (Context.Proof \<^context>) (DOF_core.get_instances \<^context>) ("aaa", Position.none)
 \<close>
-term*\<open>map fst @{trace-attribute \<open>test_monitor_M\<close>}\<close>
-value*\<open>map fst @{trace-attribute \<open>test_monitor_M\<close>}\<close>
+term*\<open>map fst @{trace_attribute \<open>test_monitor_M\<close>}\<close>
+value*\<open>map fst @{trace_attribute \<open>test_monitor_M\<close>}\<close>
 
 ML\<open>@{assert} ([("Conceptual.A", "test"), ("Conceptual.F", "sdfg")] =  @{trace_attribute aaa})       \<close>
 

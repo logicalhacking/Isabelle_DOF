@@ -21,10 +21,12 @@
 
 \documentclass[iicol]{sn-jnl}
 \PassOptionsToPackage{force}{DOF-scholarly_paper}
+\title{No Title Given}
 \usepackage{DOF-core}
 \bibliographystyle{sn-basic}
 \let\proof\relax
 \let\endproof\relax
+\newcommand{\inst}[1]{}%
 \newcommand{\institute}[1]{}
 \usepackage{manyfoot}
 \usepackage{DOF-core}
@@ -38,6 +40,10 @@
 } % more detailed digital TOC (aka bookmarks)
 \sloppy
 \allowdisplaybreaks[4]
+
+\usepackage{subcaption}
+\usepackage[size=footnotesize]{caption}
+
 \let\DOFauthor\relax
 \begin{document}
 \selectlanguage{USenglish}%

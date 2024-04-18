@@ -23,8 +23,11 @@
 %% All customization and/or additional packages should be added to the file
 %% preamble.tex.
 
+
+\PassOptionsToPackage{english,USenglish}{babel}
 \documentclass[a4paper,UKenglish,cleveref, autoref,thm-restate]{lipics-v2021}
 \bibliographystyle{plainurl}% the mandatory bibstyle
+\title{No Title Given}
 \usepackage[numbers, sort&compress, sectionbib]{natbib}
 
 \usepackage{DOF-core}
@@ -55,7 +58,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \renewcommand{\DOFauthor}{}
 \renewcommand{\DOFinstitute}{}
-\expandafter\newcommand\csname 2authand\endcsname{}
+%\expandafter\newcommand\csname 2authand\endcsname{}
 \expandafter\newcommand\csname 3authand\endcsname{}
 \expandafter\newcommand\csname 4authand\endcsname{}
 

@@ -93,11 +93,11 @@ build_and_install_manuals()
         else
             echo "  * Quick and Dirty Mode (running on CI)"
             mkdir -p $ISADOF_WORK_DIR/Isabelle_DOF-Example-I/output/
-            cp $ARTIFACT_DIR/browser_info/Unsorted/Isabelle_DOF-Example-I/document.pdf \
+            cp $ARTIFACT_DIR/browser_info/AFP/Isabelle_DOF-Example-I/document.pdf \
                $ISADOF_WORK_DIR/Isabelle_DOF-Example-I/output/
  
             mkdir -p $ISADOF_WORK_DIR/Isabelle_DOF/output/
-            cp $ARTIFACT_DIR/browser_info/Unsorted/Isabelle_DOF/document.pdf \
+            cp $ARTIFACT_DIR/browser_info/AFP/Isabelle_DOF/document.pdf \
                $ISADOF_WORK_DIR/Isabelle_DOF/output/;
         fi
     else

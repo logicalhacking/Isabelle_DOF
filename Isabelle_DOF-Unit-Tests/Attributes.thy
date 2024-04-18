@@ -96,8 +96,10 @@ term "C"
 
 text\<open>Voila what happens on the ML level:\<close>
 ML\<open>val Type("Conceptual.B.B_ext",[Type("Conceptual.C.C_ext",t)]) = @{typ "C"};
-   val @{typ "D"} = Value_Command.Docitem_Parser.cid_2_cidType "Conceptual.D" @{theory};
-   val @{typ "E"} = Value_Command.Docitem_Parser.cid_2_cidType "Conceptual.E" @{theory};
+   val \<^typ>\<open>D\<close> = DOF_core.get_onto_class_cid \<^theory> "Conceptual.D"
+                    |> snd ;
+   val \<^typ>\<open>E\<close> = DOF_core.get_onto_class_cid \<^theory> "Conceptual.E"
+                    |> snd;
   \<close>
 
 text*[dfgdfg2::C, z = "None"]\<open> Lorem ipsum ... @{thm refl} \<close> 
@@ -160,7 +162,7 @@ ML\<open> @{docitem_attribute a2::omega};
 
 type_synonym ALFACENTAURI = E
 
-update_instance*[omega::ALFACENTAURI, x+="''inition''"]
+update_instance*[omega::E, x+="''inition''"]
 
 ML\<open> val s = HOLogic.dest_string ( @{docitem_attribute x::omega}) \<close>
                             
@@ -202,13 +204,24 @@ section\<open>A Complex Evaluation involving Automatas\<close>
 
 text\<open>Test trace\_attribute term antiquotation:\<close>
 
+notation Star  ("\<lbrace>(_)\<rbrace>\<^sup>*" [0]100)
+notation Plus  (infixr "||" 55)
+notation Times (infixr "~~" 60)
+notation Atom  ("\<lfloor>_\<rfloor>" 65)
+
 definition example_expression where "example_expression \<equiv> \<lbrace>\<lfloor>''Conceptual.A''\<rfloor> || \<lfloor>''Conceptual.F''\<rfloor>\<rbrace>\<^sup>*"
-value* \<open> DA.accepts (na2da (rexp2na example_expression)) (map fst @{trace-attribute \<open>aaa\<close>}) \<close>
+
+no_notation Star  ("\<lbrace>(_)\<rbrace>\<^sup>*" [0]100)
+no_notation Plus  (infixr "||" 55)
+no_notation Times (infixr "~~" 60)
+no_notation Atom  ("\<lfloor>_\<rfloor>" 65)
+
+value* \<open> DA.accepts (na2da (rexp2na example_expression)) (map fst @{trace_attribute \<open>aaa\<close>}) \<close>
 
 definition word_test  :: "'a list \<Rightarrow> 'a rexp \<Rightarrow> bool" (infix "is-in" 60)
   where " w is-in rexp \<equiv>  DA.accepts (na2da (rexp2na rexp)) (w)"
 
-value* \<open> (map fst @{trace-attribute \<open>aaa\<close>}) is-in example_expression \<close>
+value* \<open> (map fst @{trace_attribute \<open>aaa\<close>}) is-in example_expression \<close>
 
 
 (*<*)

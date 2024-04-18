@@ -12,9 +12,9 @@
  *************************************************************************)
 
 (*<*)
-theory "M_05_Implementation"
-  imports "M_04_RefMan"
-begin
+theory "M_07_Implementation"
+  imports "M_06_RefMan"
+begin           
 (*>*)
 
 
@@ -188,7 +188,7 @@ text\<open>
 
 section\<open>Programming Class Invariants\<close>
 text\<open>
-  See \<^technical>\<open>sec:low_level_inv\<close>.
+  See \<^technical>\<open>sec_low_level_inv\<close>.
 \<close>
 
 section\<open>Implementing Monitors\<close>
@@ -203,7 +203,7 @@ text\<open>
    val  next    : automaton -> env -> cid -> automaton\<close>}
   where \<^boxed_sml>\<open>env\<close> is basically a map between internal automaton states and class-id's 
   (\<^boxed_sml>\<open>cid\<close>'s). An automaton is said to be \<^emph>\<open>enabled\<close> for a class-id, 
-  iff it either occurs in its accept-set or its reject-set (see @{docitem "sec:monitors"}). During 
+  iff it either occurs in its accept-set or its reject-set (see @{docitem "sec_monitors"}). During 
   top-down document validation, whenever a text-element is encountered, it is checked if a monitor 
   is \emph{enabled} for this class; in this case, the \<^boxed_sml>\<open>next\<close>-operation is executed. The 
   transformed automaton recognizing the suffix is stored in \<^boxed_sml>\<open>docobj_tab\<close> if
@@ -228,7 +228,7 @@ text\<open>
   \expandafter\providekeycommand\csname isaDof.#1\endcsname}%\<close>}
 
   The \<^LaTeX>-generator of \<^isadof> maps each \<^boxed_theory_text>\<open>doc_item\<close> to an \<^LaTeX>-environment (recall
-  @{docitem "text-elements"}). As generic \<^boxed_theory_text>\<open>doc_item\<close>s are derived from the text element, 
+  @{docitem "text_elements"}). As generic \<^boxed_theory_text>\<open>doc_item\<close>s are derived from the text element, 
   the environment \inlineltx|isamarkuptext*| builds the core of \<^isadof>'s \<^LaTeX> implementation. 
 
 \<close>

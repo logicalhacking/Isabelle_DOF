@@ -116,20 +116,22 @@ section\<open>Putting everything together\<close>
 
 text\<open>Major sample: test-item of doc-class \<open>F\<close> with a relational link between class instances, 
      and links to formal Isabelle items like \<open>typ\<close>, \<open>term\<close> and \<open>thm\<close>. \<close>
+declare[[ML_print_depth = 10000]]
 text*[xcv4::F, r="[@{thm ''HOL.refl''}, 
                    @{thm \<open>Concept_TermAntiquotations.local_sample_lemma\<close>}]", (* long names required *)
-               b="{(@{docitem ''xcv1''},@{docitem \<open>xcv2\<close>})}",  (* notations \<open>...\<close> vs. ''...'' *)
+               b="{(@{A ''xcv1''},@{C \<open>xcv2\<close>})}",  (* notations \<open>...\<close> vs. ''...'' *)
                s="[@{typ \<open>int list\<close>}]",                        
                properties = "[@{term \<open>H \<longrightarrow> H\<close>}]"              (* notation \<open>...\<close> required for UTF8*)
 ]\<open>Lorem ipsum ...\<close>
-
+declare[[ML_print_depth = 20]]
 text*[xcv5::G, g="@{thm \<open>HOL.sym\<close>}"]\<open>Lorem ipsum ...\<close>
 
 text\<open>... and here we add a relation between @{docitem \<open>xcv3\<close>} and @{docitem \<open>xcv2\<close>} 
 into the relation \verb+b+ of @{docitem \<open>xcv5\<close>}. Note that in the link-relation,
-a @{typ "C"}-type is required, but a  @{typ "G"}-type is offered which is legal in
-\verb+Isa_DOF+ because of the sub-class relation between those classes: \<close>
-update_instance*[xcv4::F, b+="{(@{docitem ''xcv3''},@{docitem ''xcv5''})}"]
+a @{typ "C"}-type is required, so if a  @{typ "G"}-type is offered, it is considered illegal
+in \verb+Isa_DOF+ despite the sub-class relation between those classes: \<close>
+update_instance-assert-error[xcv4::F, b+="{(@{docitem ''xcv3''},@{docitem ''xcv5''})}"]
+\<open>Type unification failed\<close>
 
 text\<open>And here is the results of some ML-term antiquotations:\<close>
 ML\<open> @{docitem_attribute b::xcv4} \<close>
@@ -150,10 +152,7 @@ term*\<open>r @{F \<open>xcv4\<close>}\<close>
 text\<open>We declare a new text element. Note that the class name contains an underscore "\_".\<close>
 text*[te::text_element]\<open>Lorem ipsum...\<close>
 
-text\<open>Unfortunately due to different lexical conventions for constant symbols and mixfix symbols
-     this term antiquotation has to be denoted like this: @{term_ \<open>@{text-element \<open>te\<close>}\<close>}.
-     We need to substitute an hyphen "-" for the underscore "\_".\<close>
-term*\<open>@{text-element \<open>te\<close>}\<close>
+term*\<open>@{text_element \<open>te\<close>}\<close>
 
 text\<open>Terms containing term antiquotations can be checked and evaluated
 using \<^theory_text>\<open>term_\<close> and \<^theory_text>\<open>value_\<close> text antiquotations respectively:

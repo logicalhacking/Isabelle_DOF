@@ -382,11 +382,11 @@ text-latex\<open>
 ML\<open>
 
 fun gen_enriched_document_command3 name {body} cid_transform attr_transform markdown
-                                  (((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t,
+                                  ((((binding,cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t,
                                      xstring_opt:(xstring * Position.T) option),
                                     toks:Input.source list)
 = gen_enriched_document_command2 name {body=body} cid_transform attr_transform markdown
-                                  (((((oid,pos),cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t,
+                                  ((((binding,cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t,
                                      xstring_opt:(xstring * Position.T) option),
                                      toks) \<comment> \<open>Hack : drop second and thrd args.\<close>
 

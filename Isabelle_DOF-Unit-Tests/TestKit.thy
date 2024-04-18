@@ -23,6 +23,8 @@ keywords "text-" "text-latex"             :: document_body
     and  "update_instance-assert-error"   :: document_body
     and  "declare_reference-assert-error" :: document_body
     and  "value-assert-error"             :: document_body
+    and  "definition-assert-error"        :: document_body
+    and  "doc_class-assert-error"        :: document_body
 
 begin
 
@@ -35,13 +37,14 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
                                      xstring_opt:(xstring * Position.T) option),
                                     toks_list:Input.source list) 
                                   : theory -> theory =
-  let  val toplvl = Toplevel.theory_toplevel
-       val (((oid,pos),cid_pos), doc_attrs) = meta_args
+  let  val toplvl = Toplevel.make_state o SOME
+       val ((binding,cid_pos), doc_attrs) = meta_args
+       val oid = Binding.name_of binding
        val oid' = if meta_args = ODL_Meta_Args_Parser.empty_meta_args
                   then "output"
                   else oid
        (* as side-effect, generates markup *)
-       fun check_n_tex_text thy toks = let val ctxt = Toplevel.presentation_context (toplvl thy);
+       fun check_n_tex_text thy toks = let val ctxt = Toplevel.presentation_context (toplvl thy)
                                       val pos = Input.pos_of toks;
                                       val _ =   Context_Position.reports ctxt
                                                 [(pos, Markup.language_document (Input.is_delimited toks)),
@@ -72,7 +75,7 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
               else
           Value_Command.Docitem_Parser.create_and_check_docitem 
                               {is_monitor = false} {is_inline = false} {define = true}
-                              oid pos (cid_transform cid_pos) (attr_transform doc_attrs))
+                              binding (cid_transform cid_pos) (attr_transform doc_attrs))
        (* ... generating the level-attribute syntax *)
   in   handle_margs_opt  #> (fn thy => (app (check_n_tex_text thy) toks_list; thy))
   end;
@@ -137,10 +140,10 @@ val _ =
                          >> (Toplevel.theory o update_instance_command)); 
 
 val _ = 
-  let fun create_and_check_docitem ((((oid, pos),cid_pos),doc_attrs),src) thy =
+  let fun create_and_check_docitem (((binding,cid_pos),doc_attrs),src) thy =
                   (Value_Command.Docitem_Parser.create_and_check_docitem
                           {is_monitor = false} {is_inline=true}
-                          {define = false} oid pos (cid_pos) (doc_attrs) thy)
+                          {define = false} binding (cid_pos) (doc_attrs) thy)
                    handle ERROR msg => (if error_match src msg 
                           then (writeln ("Correct error: "^msg^": reported.");thy)
                           else error"Wrong error reported")
@@ -152,20 +155,55 @@ val _ =
 
 
 val _ =
-  let fun pass_trans_to_value_cmd (args, (((name, modes), t),src)) trans  = 
-               (Value_Command.value_cmd {assert=false} args name modes t @{here} trans
-                handle ERROR msg => (if error_match src msg 
-                                     then (writeln ("Correct error: "^msg^": reported.");trans)
-                                     else error"Wrong error reported"))
+  let fun pass_trans_to_value_cmd (args, (((name, modes), t),src)) trans  =
+      let val pos = Toplevel.pos_of trans
+      in trans |> Toplevel.theory
+                  (fn thy => Value_Command.value_cmd {assert=false} args name modes t pos thy
+                   handle ERROR msg => (if error_match src msg 
+                                        then (writeln ("Correct error: "^msg^": reported."); thy)
+                                        else error"Wrong error reported"))
+      end
   in  Outer_Syntax.command \<^command_keyword>\<open>value-assert-error\<close> "evaluate and print term"
        (ODL_Meta_Args_Parser.opt_attributes -- 
           (Value_Command.opt_evaluator 
            -- Value_Command.opt_modes 
            -- Parse.term 
            -- Parse.document_source) 
-        >> (Toplevel.theory o pass_trans_to_value_cmd))
+        >> (pass_trans_to_value_cmd))
   end;
 
+val _ =
+  let fun definition_cmd' meta_args_opt decl params prems spec src bool ctxt =
+        Local_Theory.background_theory (Value_Command.meta_args_exec meta_args_opt) ctxt
+        |> (fn ctxt => Definition_Star_Command.definition_cmd decl params prems spec bool ctxt
+        handle ERROR msg => if error_match src msg 
+                             then (writeln ("Correct error: "^msg^": reported.")
+                                  ; pair "Bound 0" @{thm refl}
+                                    |> pair (Bound 0)
+                                    |> rpair ctxt)
+                             else error"Wrong error reported")
+  in
+  Outer_Syntax.local_theory' \<^command_keyword>\<open>definition-assert-error\<close> "constant definition"
+    (ODL_Meta_Args_Parser.opt_attributes --
+      (Scan.option Parse_Spec.constdecl -- (Parse_Spec.opt_thm_name ":" -- Parse.prop) --
+        Parse_Spec.if_assumes -- Parse.for_fixes -- Parse.document_source)
+     >> (fn (meta_args_opt, ((((decl, spec), prems), params), src)) => 
+                                    #2 oo definition_cmd' meta_args_opt decl params prems spec src))
+  end;
+
+
+val _ =
+  let fun add_doc_class_cmd' ((((overloaded, hdr), (parent, attrs)),((rejects,accept_rex),invars)), src) =
+        (fn thy => OntoParser.add_doc_class_cmd {overloaded = overloaded} hdr parent attrs rejects accept_rex invars thy
+         handle ERROR msg => (if error_match src msg 
+                                        then (writeln ("Correct error: "^msg^": reported."); thy)
+                                        else error"Wrong error reported"))
+  in
+  Outer_Syntax.command \<^command_keyword>\<open>doc_class-assert-error\<close> 
+                       "define document class"
+                        ((OntoParser.parse_doc_class -- Parse.document_source)
+                         >> (Toplevel.theory o add_doc_class_cmd'))
+  end
 
 val _ =
   Outer_Syntax.command ("text-latex", \<^here>) "formal comment (primary style)"

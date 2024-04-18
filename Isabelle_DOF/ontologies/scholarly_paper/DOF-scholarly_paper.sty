@@ -31,9 +31,9 @@
 \@ifclassloaded{llncs}%
   {}%
   {%
-    \RequirePackage{amsthm}
     \@ifclassloaded{scrartcl}%
     {%
+      \RequirePackage{amsthm}
       \newcommand{\institute}[1]{}%
       \newcommand{\inst}[1]{}%
       \newcommand{\orcidID}[1]{}%
@@ -42,6 +42,7 @@
     {%
       \@ifclassloaded{lipics-v2021}%
       {%
+        \RequirePackage{amsthm}
         \newcommand{\institute}[1]{}%
         \newcommand{\inst}[1]{}%
         \newcommand{\orcidID}[1]{}%
@@ -49,21 +50,14 @@
       }%
       {%
         {%
-          \@ifclassloaded{eptcs}%
+          \@ifclassloaded{svjour3}%
           {%
-            \newcommand{\inst}[1]{}%
-            \newcommand{\orcidID}[1]{}%
+              \newcommand{\inst}[1]{}%
           }%
           {%
-            \@ifclassloaded{svjour3}%
-            {%
-                \newcommand{\inst}[1]{}%
-            }%
-            {%
-              \PackageError{DOF-scholarly_paper}
-                          {Scholarly Paper only supports LNCS or scrartcl as document class.}
-                          {}\stop%
-            }%
+            \PackageError{DOF-scholarly_paper}
+                        {Scholarly Paper only supports LNCS or scrartcl as document class.}
+                        {}\stop%
           }%
         }%
       }%
@@ -171,58 +165,58 @@
 %\newtheorem{definition}{Definition}
 %\newtheorem{theorem}{Theorem} 
 \newtheorem{defn}{Definition} 
-\newcommand{\defnautorefname}{Definition} 
+\providecommand{\defnautorefname}{Definition} 
 \NewEnviron{isamarkupDefinition*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{axm}{Axiom}
-\newcommand{\axmautorefname}{Axiom}
+\providecommand{\axmautorefname}{Axiom}
 \NewEnviron{isamarkupAxiom*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{theom}{Theorem}
-\newcommand{\theomautorefname}{Theorem}
+\providecommand{\theomautorefname}{Theorem}
 \NewEnviron{isamarkupTheorem*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{lemm}{Lemma}
-\newcommand{\lemmautorefname}{Lemma}
+\providecommand{\lemmautorefname}{Lemma}
 \NewEnviron{isamarkupLemma*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{corr}{Corollary}
-\newcommand{\corrautorefname}{Corollary}
+\providecommand{\corrautorefname}{Corollary}
 \NewEnviron{isamarkupCorollary*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{prpo}{Proposition}
-\newcommand{\prpoautorefname}{Proposition}
+\providecommand{\prpoautorefname}{Proposition}
 \NewEnviron{isamarkupProposition*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{rulE}{Rule}
-\newcommand{\rulEautorefname}{Rule}
+\providecommand{\rulEautorefname}{Rule}
 \NewEnviron{isamarkupRule*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{assn}{Assertion}    
-\newcommand{\assnautorefname}{Assertion}    
+\providecommand{\assnautorefname}{Assertion}    
 \NewEnviron{isamarkupAssertion*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{hypt}{Hypothesis}
-\newcommand{\hyptautorefname}{Hypothesis}
+\providecommand{\hyptautorefname}{Hypothesis}
 \NewEnviron{isamarkupHypothesis*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{assm}{Assumption}
-\newcommand{\assmautorefname}{Assumption}
+\providecommand{\assmautorefname}{Assumption}
 \NewEnviron{isamarkupAssumption*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{prms}{Premise}
-\newcommand{\prmsautorefname}{Premise}
+\providecommand{\prmsautorefname}{Premise}
 \NewEnviron{isamarkupPremise*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{cons}{Consequence}
-\newcommand{\consautorefname}{Consequence}
+\providecommand{\consautorefname}{Consequence}
 \NewEnviron{isamarkupConsequence*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{concUNDERSCOREstmt}{Conclusion}
-\newcommand{\concUNDERSCOREstmtautorefname}{Conclusion}
+\providecommand{\concUNDERSCOREstmtautorefname}{Conclusion}
 \NewEnviron{isamarkupConclusion*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{prfUNDERSCOREstmt}{Proof}
-\newcommand{\prfUNDERSCOREstmtautorefname}{Proof}
+\providecommand{\prfUNDERSCOREstmtautorefname}{Proof}
 \NewEnviron{isamarkupProof*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{explUNDERSCOREstmt}{Example}
-\newcommand{\explUNDERSCOREstmtautorefname}{Example}
+\providecommand{\explUNDERSCOREstmtautorefname}{Example}
 \NewEnviron{isamarkupExample*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{rmrk}{Remark}
-\newcommand{\rmrkautorefname}{Remark}
+\providecommand{\rmrkautorefname}{Remark}
 \NewEnviron{isamarkupRemark*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{notn}{Notation}
-\newcommand{\notnautorefname}{Notation}
+\providecommand{\notnautorefname}{Notation}
 \NewEnviron{isamarkupNotation*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 \newtheorem{tmgy}{Terminology}
-\newcommand{\tmgyautorefname}{Terminology}
+\providecommand{\tmgyautorefname}{Terminology}
 \NewEnviron{isamarkupTerminology*}[1][]{\isaDof[env={text},#1,type={scholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}]{\BODY}}
 
 \newisadof{textDOTscholarlyUNDERSCOREpaperDOTmathUNDERSCOREcontent}%

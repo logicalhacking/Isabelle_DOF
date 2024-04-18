@@ -99,7 +99,7 @@ text*[cc_assumption_test_ref::cc_assumption_test]\<open>\<close>
 
 definition tag_l :: "'a \<Rightarrow> 'b \<Rightarrow> 'b" where "tag_l \<equiv> \<lambda>x y. y"
 
-lemma* tagged : "tag_l @{cc-assumption-test \<open>cc_assumption_test_ref\<close>} AA \<Longrightarrow> AA"
+lemma* tagged : "tag_l @{cc_assumption_test \<open>cc_assumption_test_ref\<close>} AA \<Longrightarrow> AA"
   by (simp add: tag_l_def)
 
 find_theorems name:tagged "(_::cc_assumption_test \<Rightarrow> _ \<Rightarrow> _) _ _ \<Longrightarrow>_"
@@ -144,8 +144,8 @@ update_instance*[f::F,r:="[@{thm ''Concept_OntoReferencing.some_proof''}]"]
 text\<open> ..., mauris amet, id elit aliquam aptent id,  ... @{docitem \<open>a\<close>} \<close>
 (*>*)
 text\<open>Here we add and maintain a link that is actually modeled as m-to-n relation ...\<close>
-update_instance*[f::F,b:="{(@{docitem  \<open>a\<close>}::A,@{docitem  \<open>c1\<close>}::C), 
-                           (@{docitem  \<open>a\<close>},   @{docitem  \<open>c2\<close>})}"] 
+update_instance*[f::F,b:="{(@{A  \<open>a\<close>}::A,@{C  \<open>c1\<close>}::C), 
+                           (@{A  \<open>a\<close>},   @{C  \<open>c2\<close>})}"] 
 
 section\<open>Closing the Monitor and testing the Results.\<close>
 
