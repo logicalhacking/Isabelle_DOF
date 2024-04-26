@@ -119,7 +119,7 @@ text\<open>
     \<^item> attributes may have default values in order to facilitate notation.
 
 \<^boxed_theory_text>\<open>doc_class\<close>'es and \<^boxed_theory_text>\<open>onto_class\<close>'es respectively, have a semantics,
-\<^ie>, a logical representation as extensible records in HOL (@{cite "wenzel:isabelle-isar:2020"}, 
+\<^ie>, a logical representation as extensible records in HOL (\<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>, 
 pp. 11.6); there are therefore amenable to logical reasoning.
 \<close>
 
@@ -169,25 +169,25 @@ text\<open>
   As ODL is an extension of Isabelle/HOL, document class definitions can therefore be arbitrarily 
   mixed with standard HOL specification constructs. To make this manual self-contained, we present 
   syntax and semantics of the specification constructs that are most likely relevant for the 
-  developer of ontologies (for more details, see~@{cite "wenzel:isabelle-isar:2020"}).  Our 
+  developer of ontologies (for more details, see~\<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>).  Our 
   presentation is a simplification of the original sources following the needs of ontology developers 
   in \<^isadof>:
   \<^item> \<open>name\<close>:\<^index>\<open>name@\<open>name\<close>\<close>
      with the syntactic category of \<open>name\<close>'s we refer to alpha-numerical identifiers 
-     (called \<open>short_ident\<close>'s in @{cite "wenzel:isabelle-isar:2020"}) and identifiers
+     (called \<open>short_ident\<close>'s in \<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>) and identifiers
      in \<^boxed_theory_text>\<open>...\<close> which might contain certain ``quasi-letters'' such 
-     as \<^boxed_theory_text>\<open>_\<close>, \<^boxed_theory_text>\<open>-\<close>, \<^boxed_theory_text>\<open>.\<close> (see~@{cite "wenzel:isabelle-isar:2020"} for 
+     as \<^boxed_theory_text>\<open>_\<close>, \<^boxed_theory_text>\<open>-\<close>, \<^boxed_theory_text>\<open>.\<close> (see~\<^cite>\<open>"wenzel:isabelle-isar:2020"\<close> for 
      details).
        % TODO
        % This phrase should be reviewed to clarify identifiers.
        % Peculiarly, "and identifiers in \<^boxed_theory_text>\<open> ... \<close>". 
   \<^item> \<open>tyargs\<close>:\<^index>\<open>tyargs@\<open>tyargs\<close>\<close> 
      \<^rail>\<open>  typefree | ('(' (typefree * ',') ')')\<close>
-     \<open>typefree\<close> denotes fixed type variable (\<open>'a\<close>, \<open>'b\<close>, ...) (see~@{cite "wenzel:isabelle-isar:2020"})
+     \<open>typefree\<close> denotes fixed type variable (\<open>'a\<close>, \<open>'b\<close>, ...) (see~\<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>)
   \<^item> \<open>dt_name\<close>:\<^index>\<open>dt\_npurdahame@\<open>dt_name\<close>\<close>
      \<^rail>\<open>  (tyargs?) name (mixfix?)\<close>   
      The syntactic entity \<open>name\<close> denotes an identifier, \<open>mixfix\<close> denotes the usual 
-     parenthesized mixfix notation (see @{cite "wenzel:isabelle-isar:2020"}).
+     parenthesized mixfix notation (see \<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>).
      The \<^emph>\<open>name\<close>'s referred here are type names such as \<^typ>\<open>int\<close>, \<^typ>\<open>string\<close>,
      \<^type>\<open>list\<close>, \<^type>\<open>set\<close>, etc. 
   \<^item> \<open>type_spec\<close>:\index{type_spec@\<open>type_spec\<close>}
@@ -212,13 +212,13 @@ text\<open>
      % Show string in the document output for  \<^boxed_theory_text>\<open>ab c\<close> (strings) 
      \<^boxed_theory_text>\<open>{1,2,3}\<close> (sets), \<^boxed_theory_text>\<open>(1,2,3)\<close> (tuples), 
      \<^boxed_theory_text>\<open>\<forall> x. P(x) \<and> Q x = C\<close> (formulas). For comprehensive overview, 
-     see~@{cite "nipkow:whats:2020"}.
+     see~\<^cite>\<open>"nipkow:whats:2020"\<close>.
 \<close>
 
 text\<open>
   Advanced ontologies can, \<^eg>,  use recursive function definitions with 
-  pattern-matching~@{cite "kraus:defining:2020"}, extensible record 
-  specifications~@{cite "wenzel:isabelle-isar:2020"}, and abstract type declarations.
+  pattern-matching~\<^cite>\<open>"kraus:defining:2020"\<close>, extensible record 
+  specifications~\<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>, and abstract type declarations.
 \<close>
 
 text\<open>\<^isadof> works internally with fully qualified names in order to avoid confusions 
@@ -290,7 +290,7 @@ text\<open>
   class representation, the identifier \<^boxed_latex>\<open>#1\<close> refers to the content of the main text of the 
   document class (written in \<^boxed_theory_text>\<open>\<open> ... \<close>\<close>) and the attributes can be referenced
   by their name using the  \<^ltxinline>\<open>\commandkey{...}\<close>-command (see the documentation of the 
-  \<^LaTeX>-package ``keycommand''~@{cite "chervet:keycommand:2010"} for details). Usually, the 
+  \<^LaTeX>-package ``keycommand''~\<^cite>\<open>"chervet:keycommand:2010"\<close> for details). Usually, the 
   representations definition needs to be wrapped in a 
   \<^ltxinline>\<open>\begin{isarmarkup}...\end{isamarkup}\<close>-environment, to ensure the correct context 
   within Isabelle's \<^LaTeX>-setup. 
@@ -353,7 +353,7 @@ text\<open>
   as specified in @{technical \<open>odl_manual0\<close>}.
 \<^item> \<open>meta_args\<close> : 
    \<^rail>\<open>obj_id ('::' class_id) ((',' attribute '=' HOL_term) *) \<close>
-\<^item> \<^emph>\<open>evaluator\<close>: from @{cite "wenzel:isabelle-isar:2020"}, evaluation is tried first using ML,
+\<^item> \<^emph>\<open>evaluator\<close>: from \<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>, evaluation is tried first using ML,
   falling back to normalization by evaluation if this fails. Alternatively a specific
   evaluator can be selected using square brackets; typical evaluators use the
   current set of code equations to normalize and include \<open>simp\<close> for fully
@@ -433,7 +433,7 @@ term antiquotations:
   will get the value of the \<^const>\<open>definition_list\<close> attribute of the instance \<open>odl-manual1\<close>.
   \<^theory_text>\<open>value_\<close> may have an optional argument between square brackets to specify the evaluator:
   \<^theory_text>\<open>@{value_ [nbe] \<open>definition_list @{technical \<open>odl-manual1\<close>}\<close>}\<close> forces \<open>value_\<close> to evaluate
-  the term using normalization by evaluation (see @{cite "wenzel:isabelle-isar:2020"}).
+  the term using normalization by evaluation (see \<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>).
 \<close>
 
 (*<*)
@@ -514,7 +514,7 @@ with the \<^boxed_theory_text>\<open>disable_assert_evaluation\<close> theory at
 Then @{command "assert*"} will act like @{command "term*"}.
 
 The @{command "definition*"}-command allows \<open>prop\<close>, \<open>spec_prems\<close>, and \<open>for_fixes\<close>
-(see the @{command "definition"} command in @{cite "wenzel:isabelle-isar:2020"}) to contain
+(see the @{command "definition"} command in \<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>) to contain
 term-antiquotations. For example:
 @{boxed_theory_text [display]
 \<open>doc_class A =
@@ -525,7 +525,7 @@ definition*[a1::A, x=5, level="Some 1"] xx' where "xx' \<equiv> A.x @{A \<open>a
 The @{term_ [source] \<open>@{A \<open>a1\<close>}\<close>} term-antiquotation is used both in \<open>prop\<close> and in \<open>spec_prems\<close>.
 
 @{command "lemma*"}, @{command "theorem*"}, etc., are extended versions of the goal commands
-defined in @{cite "wenzel:isabelle-isar:2020"}. Term-antiquotations can be used either in
+defined in \<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>. Term-antiquotations can be used either in
 a \<open>long_statement\<close> or in a \<open>short_statement\<close>.
 For instance:
 @{boxed_theory_text [display]
@@ -960,7 +960,7 @@ subsubsection\<open>For Isabelle Hackers: Defining New Top-Level Commands\<close
 text\<open>
   Defining such new top-level commands requires some Isabelle knowledge as well as 
   extending the dispatcher of the \<^LaTeX>-backend. For the details of defining top-level 
-  commands, we refer the reader to the Isar manual~@{cite "wenzel:isabelle-isar:2020"}. 
+  commands, we refer the reader to the Isar manual~\<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>. 
   Here, we only give a brief example how the \<^boxed_theory_text>\<open>section*\<close>-command is defined; we 
   refer the reader to the source code of \<^isadof> for details.
 
@@ -1157,7 +1157,7 @@ text\<open>
 
   The \<^boxed_theory_text>\<open>\<sigma>\<close> symbol is reserved and references the future instance class.
   By relying on the implementation of the Records
-  in Isabelle/HOL~@{cite "wenzel:isabelle-isar:2020"},
+  in Isabelle/HOL~\<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>,
   one can reference an attribute of an instance using its selector function.
   For example, \<^boxed_theory_text>\<open>int1 \<sigma>\<close> denotes the value
   of the \<^boxed_theory_text>\<open>int1\<close> attribute
@@ -1542,8 +1542,8 @@ text\<open>
   Examples of this can be found, \<^eg>, in the ontology-style 
   \<^file>\<open>../../ontologies/scholarly_paper/DOF-scholarly_paper.sty\<close>.
   For details about the expansion mechanism
-  in general, we refer the reader to the \<^LaTeX> literature (\<^eg>,~@{cite "knuth:texbook:1986"
-  and "mittelbach.ea:latex:1999" and "eijkhout:latex-cs:2012"}).  
+  in general, we refer the reader to the \<^LaTeX> literature (\<^eg>,~\<^cite>\<open>"knuth:texbook:1986"
+  and "mittelbach.ea:latex:1999" and "eijkhout:latex-cs:2012"\<close>).  
 \<close>
 
 

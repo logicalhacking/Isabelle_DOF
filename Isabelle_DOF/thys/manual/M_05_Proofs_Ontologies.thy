@@ -176,7 +176,7 @@ proof(induct S)
   then show ?case by simp
 next
   case (Cons a S)
-  then show ?case apply(auto)
+  then show ?case apply(auto)[1]
     using concatWith.elims apply blast
     using concatWith.elims apply blast
     using list.set_cases by force
