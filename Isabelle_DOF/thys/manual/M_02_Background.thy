@@ -27,17 +27,17 @@ figure*[architecture::figure,relative_width="95",file_src="''figures/isabelle-ar
 
 text*[bg::introduction]\<open>
 While Isabelle is widely perceived as an interactive theorem 
-prover for HOL (Higher-order Logic)~@{cite "nipkow.ea:isabelle:2002"}, we would like to emphasize
+prover for HOL (Higher-order Logic)~\<^cite>\<open>"nipkow.ea:isabelle:2002"\<close>, we would like to emphasize
 the view that Isabelle is far more than that: it is the \<^emph>\<open>Eclipse of Formal Methods Tools\<close>.  This 
 refers to the ``\<^emph>\<open>generic system framework of Isabelle/Isar underlying recent versions of Isabelle.  
 Among other things, Isabelle provides an infrastructure for Isabelle plug-ins, comprising extensible 
 state components and extensible syntax that can be bound to SML programs. Thus, the Isabelle 
 architecture may be understood as an extension and refinement of the traditional `LCF approach', 
-with explicit infrastructure for building derivative systems.\<close>''~@{cite "wenzel.ea:building:2007"} 
+with explicit infrastructure for building derivative systems.\<close>''~\<^cite>\<open>"wenzel.ea:building:2007"\<close> 
 
 The current system framework offers moreover the following features:
 \<^item> a build management grouping components into to pre-compiled sessions,
-\<^item> a prover IDE (PIDE) framework~@{cite "wenzel:asynchronous:2014"} with various front-ends, 
+\<^item> a prover IDE (PIDE) framework~\<^cite>\<open>"wenzel:asynchronous:2014"\<close> with various front-ends, 
 \<^item> documentation-generation,
 \<^item> code generators for various target languages,
 \<^item> an extensible front-end language Isabelle/Isar, and,
@@ -151,7 +151,7 @@ to switch from a text-context to a term-context, for example. Therefore, antiquo
 literature, this concept has been referred to \<open>Cascade-Syntax\<close> and was used in the 
 Centaur-system and is existing in some limited form in some Emacs-implementations these days. \<close> 
 Isabelle comes with a number of built-in antiquotations for text- and code-contexts;
-a detailed overview can be found in @{cite "wenzel:isabelle-isar:2020"}. \<^dof> reuses this general
+a detailed overview can be found in \<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>. \<^dof> reuses this general
 infrastructure but \<^emph>\<open>generates\<close> its own families of antiquotations from ontologies.\<close>
 
 text\<open> An example for a text-element \<^index>\<open>text-element\<close> using built-in antoquotations 
@@ -203,19 +203,19 @@ text\<open>
   (protected by a kernel).  This includes, \<^eg>, ProofPower, HOL4, HOL-light, Isabelle, or Coq
   and its derivatives. \<^dof> is, however, designed for fast interaction in an IDE. If a user wants
   to benefit from this experience, only Isabelle and Coq have the necessary infrastructure of 
-  asynchronous proof-processing and support by a PIDE~@{cite "wenzel:asynchronous:2014" and 
-  "wenzel:system:2014" and "barras.ea:pervasive:2013" and "faithfull.ea:coqoon:2018"} which 
+  asynchronous proof-processing and support by a PIDE~\<^cite>\<open>"wenzel:asynchronous:2014" and 
+  "wenzel:system:2014" and "barras.ea:pervasive:2013" and "faithfull.ea:coqoon:2018"\<close> which 
   in many features over-accomplishes the required  features of \<^dof>. 
 \<close>
 
 figure*["fig_dof_ide",relative_width="95",file_src="''figures/cicm2018-combined.png''"]\<open> 
      The \<^isadof> IDE (left) and the corresponding PDF (right), showing the first page
-      of~@{cite "brucker.ea:isabelle-ontologies:2018"}.\<close>
+      of~\<^cite>\<open>"brucker.ea:isabelle-ontologies:2018"\<close>.\<close>
 
 text\<open> 
   We call the present implementation of \<^dof> on the Isabelle platform  \<^isadof> . 
   @{figure  "fig_dof_ide"} shows a screenshot of an introductory paper on 
-  \<^isadof>~@{cite "brucker.ea:isabelle-ontologies:2018"}: the \<^isadof> PIDE can be seen on the left, 
+  \<^isadof>~\<^cite>\<open>"brucker.ea:isabelle-ontologies:2018"\<close>: the \<^isadof> PIDE can be seen on the left, 
   while the generated presentation in PDF is shown on the right.
 
   Isabelle provides, beyond the features required for \<^dof>, a lot of additional benefits. 
@@ -223,8 +223,8 @@ text\<open>
   mechanism for user-programmable antiquotations \<^index>\<open>antiquotations\<close> which we use to implement
   semantic macros \<^index>\<open>semantic macros\<close> in \<^isadof> (We will actually use these two terms
   as synonym in the context of \<^isadof>). Moreover, \<^isadof> allows for the asynchronous 
-  evaluation and checking of the document content~@{cite "wenzel:asynchronous:2014" and 
-  "wenzel:system:2014" and "barras.ea:pervasive:2013"} and is dynamically extensible. Its PIDE 
+  evaluation and checking of the document content~\<^cite>\<open>"wenzel:asynchronous:2014" and 
+  "wenzel:system:2014" and "barras.ea:pervasive:2013"\<close> and is dynamically extensible. Its PIDE 
   provides a  \<^emph>\<open>continuous build, continuous check\<close>  functionality, syntax highlighting, and 
   auto-completion. It also provides infrastructure for displaying meta-information (\<^eg>, binding 
   and type annotation) as pop-ups, while hovering over sub-expressions.  A fine-grained dependency 

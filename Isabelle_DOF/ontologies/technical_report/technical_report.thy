@@ -169,7 +169,7 @@ lemma drc_acyclic : "acyclic doc_class_rel"
                                     cid_of listing := 1, cid_of figure := 1, cid_of proposition := 1)"
   show ?thesis
         unfolding doc_class_rel_def
-        apply(rule_tac f = "?measure" in acyclicI_order)
+        apply(rule acyclicI_order [where f = "?measure"])
         by(simp only: class_ids)(auto)
   qed
 
