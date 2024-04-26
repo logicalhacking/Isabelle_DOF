@@ -1,4 +1,0 @@
-# -*- shell-script -*- :mode=shellscript:
-
-ISABELLE_DOF_HOME="$COMPONENT"
-ISABELLE_DOCS="$ISABELLE_DOF_HOME/doc:$ISABELLE_DOCS"
