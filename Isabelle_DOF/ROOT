@@ -31,6 +31,7 @@ session "Isabelle_DOF" (AFP) = "Functional-Automata" +
     "root.bib"
     "dof_session.tex"
     "root.mst"
+    "root.tex"
     "preamble.tex"
     "lstisadof-manual.sty" 
     "figures/cicm2018-combined.png"
