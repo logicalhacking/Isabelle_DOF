@@ -233,8 +233,6 @@ text\<open>The proof is, in order to quote Tony Hoare, ``as simple as it should 
 the lemmas like @{thm concatWith_non_mt} which in itself require inductions, \<^ie>, which are out of
 reach of pure ATP proof-techniques. \<close>
 
-
-
 subsection\<open>Proving the Preservation of Ontological Mappings : A Domain-Ontology Morphism\<close>
 text\<open>The following example is drawn from a domain-specific scenario: For conventional data-models,
 be it represented by UML-class diagrams or SQL-like "tables" or Excel-sheet like presentations
@@ -454,4 +452,3 @@ no_notation Atom  ("\<lfloor>_\<rfloor>" 65)
 
 end
 (*>*) 
-  

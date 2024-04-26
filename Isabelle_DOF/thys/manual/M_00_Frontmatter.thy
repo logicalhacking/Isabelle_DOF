@@ -124,7 +124,7 @@ abstract*[abs, keywordlist="[\<open>Ontology\<close>, \<open>Ontological Modelin
     A major application of \<^dof> is the integrated development of
     formal certification documents (\<^eg>, for Common Criteria or CENELEC
     50128) that require consistency across both formal and informal
-    arguments. 
+    arguments.
 
     \<^isadof> is integrated into Isabelle's IDE, which
     allows for smooth ontology development as well as immediate

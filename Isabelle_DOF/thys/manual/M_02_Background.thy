@@ -118,9 +118,9 @@ text\<open> A simple text-element \<^index>\<open>text-element\<close> may look 
 
   @{boxed_theory_text [display]\<open>
 text\<open> This is a simple text.\<close>\<close>}
-... so it is a command \<^theory_text>\<open>text\<close> followed by an argument (here in  \<open>\<open> ... \<close>\<close> parenthesis) which 
-contains characters. While \<^theory_text>\<open>text\<close>- elements play a major role in this manual --- document 
-generation is the main use-case of \<^dof> in its current stage --- it is important to note that there 
+\ldots so it is a command \<^theory_text>\<open>text\<close> followed by an argument (here in  \<open>\<open> ... \<close>\<close> parenthesis) which 
+contains characters. While \<^theory_text>\<open>text\<close>-elements play a major role in this manual---document 
+generation is the main use-case of \<^dof> in its current stage---it is important to note that there 
 are actually three families of ``ontology aware'' document elements with analogous 
 syntax to standard ones. The difference is a bracket with meta-data of the form:
 @{theory_text [display,indent=5, margin=70] 
@@ -130,7 +130,7 @@ ML*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> s
 value*[label::classid, attr\<^sub>1=E\<^sub>1, ... attr\<^sub>n=E\<^sub>n]\<open> some annotated \<lambda>-term \<close>
 \<close>}
 
-Other instances of document elements belonging to these families are, for example, the freeform
+Other instances of document elements belonging to these families are, for example, the free-form
 \<^theory_text>\<open>Definition*\<close> and \<^theory_text>\<open>Lemma*\<close> as well as their formal counterparts \<^theory_text>\<open>definition*\<close> and \<^theory_text>\<open>lemma*\<close>,
 which allow in addition to their standard Isabelle functionality the creation and management of
 ontology-generated meta-data associated to them (cf. -@{text_section (unchecked) "writing_doc"}).
@@ -214,14 +214,14 @@ figure*["fig_dof_ide",relative_width="95",file_src="''figures/cicm2018-combined.
 
 text\<open> 
   We call the present implementation of \<^dof> on the Isabelle platform  \<^isadof> . 
-  @{figure  "fig_dof_ide"} shows  a screen-shot of an introductory paper on 
+  @{figure  "fig_dof_ide"} shows a screenshot of an introductory paper on 
   \<^isadof>~@{cite "brucker.ea:isabelle-ontologies:2018"}: the \<^isadof> PIDE can be seen on the left, 
   while the generated presentation in PDF is shown on the right.
 
   Isabelle provides, beyond the features required for \<^dof>, a lot of additional benefits. 
   Besides UTF8-support for characters used in text-elements, Isabelle offers built-in already a 
   mechanism for user-programmable antiquotations \<^index>\<open>antiquotations\<close> which we use to implement
-  semantic macros  \<^index>\<open>semantic macros\<close> in \<^isadof> (We will actually use these two terms
+  semantic macros \<^index>\<open>semantic macros\<close> in \<^isadof> (We will actually use these two terms
   as synonym in the context of \<^isadof>). Moreover, \<^isadof> allows for the asynchronous 
   evaluation and checking of the document content~@{cite "wenzel:asynchronous:2014" and 
   "wenzel:system:2014" and "barras.ea:pervasive:2013"} and is dynamically extensible. Its PIDE 

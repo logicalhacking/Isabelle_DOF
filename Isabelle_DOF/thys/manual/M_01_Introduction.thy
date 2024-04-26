@@ -31,7 +31,7 @@ Such ontologies can be used for the scientific discourse within scholarly articl
 libraries, and in the engineering discourse of standardized software certification 
 documents~@{cite "boulanger:cenelec-50128:2015" and "cc:cc-part3:2006"}. All these
 documents contain formal content and have to follow a given structure.  In practice, large groups of developers have to produce a substantial
-set of documents where  consistency is notoriously difficult to maintain. In particular, 
+set of documents where consistency is notoriously difficult to maintain. In particular, 
 certifications are centred around the \<^emph>\<open>traceability\<close> of requirements throughout the entire 
 set of documents. While technical solutions for the traceability problem exist (most notably:
 DOORS~@{cite "ibm:doors:2019"}), they are weak in the treatment of formal entities (such as formulas 
@@ -65,7 +65,7 @@ track and trace links in texts. It is an \<^emph>\<open>environment to write str
 scientific papers---as the present one, which is written in \<^isadof> itself. \<^isadof> is a plugin 
 into the Isabelle/Isar framework in the style of~@{cite "wenzel.ea:building:2007"}. However,
  \<^isadof> will generate from ontologies a theory infrastructure consisting of types, terms, theorems
-and code that allows both interactive checking as well as formal reasoning over meta-data
+and code that allows both interactive checking and formal reasoning over meta-data
 related to annotated documents.\<close>
 
 subsubsection\<open>How to Read This Manual\<close>

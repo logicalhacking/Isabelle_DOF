@@ -807,7 +807,7 @@ doc_class text_section = text_element +
 
 Besides attributes of more practical considerations like a \<^const>\<open>fixme_list\<close>, that can be modified
 during the editing process but is only visible in the integrated source but usually ignored in the
-\<^LaTeX>, this class also introduces the possibility to assign an ``ownership" or ``responsibility" of 
+\<^LaTeX>, this class also introduces the possibility to assign an ``ownership'' or ``responsibility'' of 
 a \<^typ>\<open>text_element\<close> to a specific \<^typ>\<open>author\<close>. Note that this is possible since \<^isadof> assigns to each
 document class also a class-type which is declared in the HOL environment.\<close>
 
