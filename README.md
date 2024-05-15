@@ -99,9 +99,9 @@ experience, as a lot of internal theories are loaded into Isabelle's editor.
 
 ## Repository Structure
 
-The ``main`` branch of this Repository is developed using the latest official
+The ``main`` branch of this repository is developed using the latest official
 release of Isabelle. This is also the main development branch. In addition, he
-``Isabelle_dev`` branch is used for testing Isabelle/DOF with the latest
+``[isabelle_nightly](https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF/src/branch/isabelle_nightly)`` branch is used for testing Isabelle/DOF with the latest
 development version of Isabelle.
 
 This repository is structured into several Isabelle sessions, each of which is stored

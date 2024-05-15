@@ -74,15 +74,15 @@ is currently consisting out of three AFP entries:
   contains the \<^isadof> system itself, including the \<^isadof> manual.
 \<^item> \<^verbatim>\<open>Isabelle_DOF-Example-I\<close>: This entry contains an example of 
   an academic paper written using the \<^isadof> system oriented towards an 
-  introductory paper. The text is based on~@{cite "brucker.ea:isabelle-ontologies:2018"};
+  introductory paper. The text is based on~\<^cite>\<open>"brucker.ea:isabelle-ontologies:2018"\<close>;
   in the document, we deliberately  refrain from integrating references to formal content in order 
   to demonstrate that \<^isadof> can be used for writing documents with very little direct use of
  \<^LaTeX>.
 \<^item> \<^verbatim>\<open>Isabelle_DOF-Example-II\<close>: This entry contains another example of 
-  a mathematics-oriented academic paper. It is based on~@{cite "taha.ea:philosophers:2020"}.
-  It represents a typical mathematical text, heavy in definitions with complex  mathematical notation 
-  and a lot of non-trivial cross-referencing  between statements, definitions and proofs which 
-  are ontologically tracked. However, wrt. the possible linking between the underlying formal theory 
+  a mathematics-oriented academic paper. It is based on~\<^cite>\<open>"taha.ea:philosophers:2020"\<close>.
+  It represents a typical mathematical text, heavy in definitions with complex mathematical notation 
+  and a lot of non-trivial cross-referencing between statements, definitions, and proofs which 
+  are ontologically tracked. However, with respect to the possible linking between the underlying formal theory 
   and this mathematical presentation, it follows a pragmatic path without any ``deep'' linking to 
   types, terms and theorems, and therefore does deliberately not exploit \<^isadof> 's full potential.\<close>
 
@@ -177,7 +177,7 @@ There are actually different name categories that form a proper name space, \<^e
 constant symbols and type symbols are distinguished.
 Additionally, \<^isadof> objects also come with a proper name space: classes (and monitors), instances,
 low-level class invariants (SML-defined invariants) all follow the lexical conventions of
-Isabelle. For instance, a class can be referenced outside of its theory using
+Isabelle. For instance, a class can be referenced outside its theory using
 its short-name or its long-name if another class with the same name is defined
 in the current theory.
 Isabelle identifies names already with the shortest suffix that is unique in the global 
@@ -188,7 +188,7 @@ be printed with different prefixes according to their uniqueness.
 
 subsection*[cartouches::example]\<open>Caveat: Lexical Conventions of Cartouches, Strings, Names, ... \<close>
 text\<open>WARNING: The embedding of strings, terms, names \<^etc>, as parts of commands, anti-quotations,
-terms,  \<^etc>, is unfortunately not always so consistent as one might expect, when it comes
+terms, \<^etc>, is unfortunately not always so consistent as one might expect, when it comes
 to variants that should be lexically equivalent in principle. This can be a nuisance for
 users, but is again a consequence that we build on existing technology that has been developed
 over decades. 
@@ -289,7 +289,7 @@ contained in the theory \<^theory>\<open>Isabelle_DOF.scholarly_paper\<close>. \
 subsection\<open>Writing Academic Publications: A Freeform Mathematics Text \<close>
 text*[csp_paper_synthesis::technical, main_author = "Some bu"]\<open>We present a typical mathematical
 paper focusing on its form, not referring in any sense to its content which is out of scope here.
-As mentioned before, we chose the paper~@{cite "taha.ea:philosophers:2020"} for this purpose,
+As mentioned before, we chose the paper~\<^cite>\<open>"taha.ea:philosophers:2020"\<close> for this purpose,
 which is written in the so-called free-form style: Formulas are superficially parsed and 
 type-set, but no deeper type-checking and checking with the underlying logical context
 is undertaken. \<close>
@@ -629,7 +629,7 @@ text\<open> This is *\<open>emphasized\<close> and this is a
         citation @{cite "brucker.ea:isabelle-ontologies:2018"}.\<close>
 \<close>}
 The list of standard Isabelle document antiquotations, as well as their options and styles,
-can be found in the Isabelle reference manual @{cite "wenzel:isabelle-isar:2020"}, 
+can be found in the Isabelle reference manual \<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>, 
 section 4.2.
 
 In practice,  \<^isadof> documents with ambitious layout will contain a certain number of
@@ -638,7 +638,7 @@ not possible. As far as possible, raw \<^LaTeX> should be restricted to the defi
 of ontologies and  macros (see @{docitem (unchecked) \<open>isadof_ontologies\<close>}). If raw 
  \<^LaTeX> commands can not be avoided, it is recommended to use the Isabelle document comment
 \<^latex>\<open>\verb+\+\verb+<^latex>+\<close>\<open>\<open>argument\<close>\<close> to isolate these parts
-(cf.  @{cite "wenzel:isabelle-isar:2020"}).
+(cf.  \<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>).
 
 Restricting the use of \<^LaTeX> has two advantages: first, \<^LaTeX> commands can circumvent the 
 consistency checks of \<^isadof> and, hence, only if no \<^LaTeX> commands are used, \<^isadof> can 

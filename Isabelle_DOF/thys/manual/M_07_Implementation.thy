@@ -12,9 +12,9 @@
  *************************************************************************)
 
 (*<*)
-theory "M_05_Implementation"
-  imports "M_04_RefMan"
-begin
+theory "M_07_Implementation"
+  imports "M_06_RefMan"
+begin           
 (*>*)
 
 
@@ -33,7 +33,7 @@ text\<open>
 \<close>
 text\<open>
   Semantic macros, as required by our document model, are called \<^emph>\<open>document antiquotations\<close>
-  in the Isabelle literature~@{cite "wenzel:isabelle-isar:2020"}. While Isabelle's code-antiquotations 
+  in the Isabelle literature~\<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>. While Isabelle's code-antiquotations 
   are an old concept going back to Lisp and having found via SML and OCaml their ways into modern 
   proof systems, special annotation syntax inside documentation comments have their roots in 
   documentation generators such as Javadoc. Their use, however, as a mechanism to embed 
@@ -210,13 +210,13 @@ text\<open>
   possible;
   otherwise, if \<^boxed_sml>\<open>next\<close> fails, an error is reported. The automata implementation
   is, in large parts, generated from a formalization of functional automata
-  @{cite "nipkow.ea:functional-Automata-afp:2004"}.
+  \<^cite>\<open>"nipkow.ea:functional-Automata-afp:2004"\<close>.
 \<close>
 
 section\<open>The \<^LaTeX>-Core of \<^isadof>\<close>
 text\<open>
   The \<^LaTeX>-implementation of \<^isadof> heavily relies on the 
-  ``keycommand''~@{cite "chervet:keycommand:2010"} package. In fact, the core \<^isadof> \<^LaTeX>-commands
+  ``keycommand''~\<^cite>\<open>"chervet:keycommand:2010"\<close> package. In fact, the core \<^isadof> \<^LaTeX>-commands
   are just wrappers for the corresponding commands from the keycommand package:
 
 @{boxed_latex [display]

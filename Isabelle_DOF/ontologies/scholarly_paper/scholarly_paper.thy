@@ -590,15 +590,15 @@ text \<open>underlying idea: a monitor class automatically receives a
 doc_class article = 
    style_id :: string                <= "''LNCS''"
    version  :: "(int \<times> int \<times> int)"  <= "(0,0,0)"
-   accepts "(title           ~~ 
-            \<lbrakk>subtitle\<rbrakk>        ~~
-            \<lbrace>author\<rbrace>\<^sup>+         ~~ 
-            abstract          ~~
-            \<lbrace>introduction\<rbrace>\<^sup>+   ~~ 
-            \<lbrace>background\<rbrace>\<^sup>*     ~~ 
-            \<lbrace>technical || example \<rbrace>\<^sup>+      ~~
-            \<lbrace>conclusion\<rbrace>\<^sup>+     ~~  
-            bibliography      ~~
+   accepts "(title                   ~~ 
+            \<lbrakk>subtitle\<rbrakk>                ~~
+            \<lbrace>author\<rbrace>\<^sup>+                 ~~ 
+            abstract                  ~~
+            \<lbrace>introduction\<rbrace>\<^sup>+           ~~ 
+            \<lbrace>background\<rbrace>\<^sup>*             ~~ 
+            \<lbrace>technical || example || float \<rbrace>\<^sup>+      ~~
+            \<lbrace>conclusion\<rbrace>\<^sup>+             ~~  
+            bibliography              ~~
             \<lbrace>annex\<rbrace>\<^sup>* )"
 
 
@@ -662,6 +662,7 @@ let val cidS = ["scholarly_paper.introduction","scholarly_paper.technical",
 in  DOF_core.add_ml_invariant binding (DOF_core.make_ml_invariant (body, cid_long)) thy end)
 \<close>
 
+term\<open>float\<close>
 section\<open>Miscelleous\<close>
 
 subsection\<open>Common Abbreviations\<close>

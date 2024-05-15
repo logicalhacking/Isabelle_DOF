@@ -24,17 +24,17 @@ The linking of the \<^emph>\<open>formal\<close> to the \<^emph>\<open>informal\
 digitization of knowledge and its propagation. This challenge incites numerous research efforts
 summarized under the labels ``semantic web,'' ``data mining,'' or any form of advanced ``semantic''
 text processing.  A key role in structuring this linking plays is \<^emph>\<open>document ontologies\<close> (also called
-\<^emph>\<open>vocabulary\<close> in the semantic web community~@{cite "w3c:ontologies:2015"}), \<^ie>, a machine-readable
+\<^emph>\<open>vocabulary\<close> in the semantic web community~\<^cite>\<open>"w3c:ontologies:2015"\<close>), \<^ie>, a machine-readable
 form of the structure of documents as well as the document discourse.
 
 Such ontologies can be used for the scientific discourse within scholarly articles, mathematical 
 libraries, and in the engineering discourse of standardized software certification 
-documents~@{cite "boulanger:cenelec-50128:2015" and "cc:cc-part3:2006"}. All these
+documents~\<^cite>\<open>"boulanger:cenelec-50128:2015" and "cc:cc-part3:2006"\<close>. All these
 documents contain formal content and have to follow a given structure.  In practice, large groups of developers have to produce a substantial
-set of documents where  consistency is notoriously difficult to maintain. In particular, 
+set of documents where consistency is notoriously difficult to maintain. In particular, 
 certifications are centred around the \<^emph>\<open>traceability\<close> of requirements throughout the entire 
 set of documents. While technical solutions for the traceability problem exist (most notably:
-DOORS~@{cite "ibm:doors:2019"}), they are weak in the treatment of formal entities (such as formulas 
+DOORS~\<^cite>\<open>"ibm:doors:2019"\<close>), they are weak in the treatment of formal entities (such as formulas 
 and their logical contexts).
 
 Further applications are the domain-specific discourse in juridical texts or medical reports.  
@@ -53,7 +53,7 @@ the Document Ontology Framework (\<^dof>) and an implementation of \<^dof> calle
 provers. \<^isadof> is an instance of this novel framework,  implemented as an extension of Isabelle/HOL, 
 to \<^emph>\<open>model\<close> typed ontologies and to \<^emph>\<open>enforce\<close> them  during document evolution. Based on Isabelle's 
 infrastructures, ontologies may refer to types, terms, proven theorems, code, or established 
-assertions. Based on a novel adaption of the Isabelle IDE (called PIDE, @{cite "wenzel:asynchronous:2014"}), 
+assertions. Based on a novel adaption of the Isabelle IDE (called PIDE, \<^cite>\<open>"wenzel:asynchronous:2014"\<close>), 
 a document is checked to be \<^emph>\<open>conform\<close> to a particular ontology---\<^isadof> is designed to give fast 
 user-feedback \<^emph>\<open>during the capture of content\<close>. This is particularly valuable in the case of document 
 evolution, where the \<^emph>\<open>coherence\<close> between the formal and the informal parts of the content can 
@@ -63,9 +63,9 @@ To avoid any misunderstanding: \<^isadof>  is \<^emph>\<open>not a theory in HOL
 track and trace links in texts. It is an \<^emph>\<open>environment to write structured text\<close> which 
 \<^emph>\<open>may contain\<close> Isabelle/HOL definitions and proofs like mathematical articles, tech-reports and
 scientific papers---as the present one, which is written in \<^isadof> itself. \<^isadof> is a plugin 
-into the Isabelle/Isar framework in the style of~@{cite "wenzel.ea:building:2007"}. However,
+into the Isabelle/Isar framework in the style of~\<^cite>\<open>"wenzel.ea:building:2007"\<close>. However,
  \<^isadof> will generate from ontologies a theory infrastructure consisting of types, terms, theorems
-and code that allows both interactive checking as well as formal reasoning over meta-data
+and code that allows both interactive checking and formal reasoning over meta-data
 related to annotated documents.\<close>
 
 subsubsection\<open>How to Read This Manual\<close>
@@ -113,7 +113,7 @@ CHANGELOG.md  CITATION  examples  install  LICENSE  README.md  ROOTS  src\<close
 subsubsection\<open>How to Cite \<^isadof>\<close>
 text\<open>
   If you use or extend \<^isadof> in your publications, please use 
-  \<^item> for the \<^isadof> system~@{cite "brucker.ea:isabelle-ontologies:2018"}:
+  \<^item> for the \<^isadof> system~\<^cite>\<open>"brucker.ea:isabelle-ontologies:2018"\<close>:
     \begin{quote}\small
       A.~D. Brucker, I.~Ait-Sadoune, N. Méric, and B.~Wolff. Using Deep Ontologies in Formal 
       Software Engineering. In \<^emph>\<open>International Conference on Rigorous State-Based Methods (ABZ 2023)\<close>, 
@@ -122,7 +122,7 @@ text\<open>
     \end{quote}
     A \<^BibTeX>-entry is available at: 
     \<^url>\<open>https://www.lri.fr/~wolff/bibtex/wolff.html\<close>. 
-  \<^item> an older description of the system~@{cite "brucker.ea:isabelle-ontologies:2018"}:
+  \<^item> an older description of the system~\<^cite>\<open>"brucker.ea:isabelle-ontologies:2018"\<close>:
     \begin{quote}\small
       A.~D. Brucker, I.~Ait-Sadoune, P.~Crisafulli, and B.~Wolff. Using the {Isabelle} ontology 
       framework: Linking the formal with the informal. In \<^emph>\<open>Conference on Intelligent Computer 
@@ -132,7 +132,7 @@ text\<open>
     \end{quote}
     A \<^BibTeX>-entry is available at: 
     \<^url>\<open>https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelle-ontologies-2018\<close>. 
-  \<^item> for the implementation of \<^isadof>~@{cite "brucker.ea:isabelledof:2019"}:
+  \<^item> for the implementation of \<^isadof>~\<^cite>\<open>"brucker.ea:isabelledof:2019"\<close>:
     \begin{quote}\small
       A.~D. Brucker and B.~Wolff. \<^isadof>: Design and implementation. In P.C.~{\"O}lveczky and 
       G.~Sala{\"u}n, editors, \<^emph>\<open>Software Engineering and Formal Methods (SEFM)\<close>, number 11724 in

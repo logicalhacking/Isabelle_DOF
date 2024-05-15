@@ -36,9 +36,12 @@ theory Isa_DOF                (* Isabelle Document Ontology Framework *)
            
   and      "open_monitor*"      "close_monitor*" 
            "declare_reference*" "update_instance*"
-           "doc_class"          "onto_class" (* a syntactic alternative *)   
-           "ML*"
+           "doc_class"          "onto_class" (* a syntactic alternative *)
+           "onto_morphism"                                 :: thy_decl
+  and      "to"
+  and      "ML*"
            "define_shortcut*"   "define_macro*"            :: thy_decl
+  
   and      "definition*"                                   :: thy_defn
   and      "theorem*" "lemma*" "corollary*" "proposition*" :: thy_goal_stmt
   and      "schematic_goal*" :: thy_goal_stmt
@@ -74,6 +77,7 @@ val def_suffixN = "_" ^ defN
 val defsN = defN ^ "s"
 val instances_of_suffixN = "_instances"
 val invariant_suffixN = "_inv"
+val monitor_suffixN = "_monitor"
 val instance_placeholderN = "\<sigma>"
 val makeN = "make"
 val schemeN = "_scheme"
@@ -856,8 +860,13 @@ val check_closing_ml_invs =
   check_invs get_closing_ml_invariants closing_ml_invariant_class_of closing_ml_invariant_check_of
 
 (* Output name for LaTeX macros.
-   Also rewrite "." to allow macros with objects long names *)
-val output_name = Latex.output_name o translate_string (fn "." => "DOT" | s => s)
+   Also rewrite "." to allow macros with objects long names
+   and "\<^sub>" allowed in name bindings and then in instance names *)
+val output_name = Symbol.explode
+                  #> map (fn s => if equal s Symbol.sub then "SUB" else s)
+                  #> implode
+                  #> translate_string (fn "." => "DOT" | s => s)
+                  #> Latex.output_name
 
 val ISA_prefix = "Isabelle_DOF_"
 
@@ -1816,7 +1825,12 @@ fun check_invariants thy binding =
       let val ctxt = Proof_Context.init_global thy
           val trivial_true = \<^term>\<open>True\<close> |> HOLogic.mk_Trueprop |> Thm.cterm_of ctxt |> Thm.trivial
           val evaluated_term = value ctxt term
-                handle ERROR e =>
+                handle  Match => error ("exception Match raised when checking "
+                                       ^ inv_name ^ " invariant." ^ Position.here pos ^ "\n"
+                                       ^ "You might want to check the definition of the invariant\n"
+                                       ^ "against the value specified in the instance\n"
+                                       ^ "or the default value declared in the instance class.")
+                      | ERROR e =>
                   if (String.isSubstring "Wellsortedness error" e)
                       andalso (Config.get_global thy DOF_core.invariants_checking_with_tactics)
                   then (warning("Invariants checking uses proof tactics");
@@ -2349,6 +2363,7 @@ fun onto_macro_cmd_command (name, pos) descr cmd output_cmd =
               ))))
 
 
+
 (* Core Command Definitions *)
 
 val _ =
@@ -2681,7 +2696,9 @@ fun gen_theorem schematic bundle_includes prep_att prep_stmt
       |> prep_statement (prep_att lthy) prep_stmt elems raw_concl;
     val atts = more_atts @ map (prep_att lthy) raw_atts;
 
-    val print_cfg = {interactive = int, pos = Position.thread_data (), proof_state= false} 
+    val pos = Position.thread_data ();
+    val print_results =
+      Proof_Display.print_results {interactive = int, pos = pos, proof_state = false};
 
     fun after_qed' results goal_ctxt' =
       let
@@ -2693,13 +2710,13 @@ fun gen_theorem schematic bundle_includes prep_att prep_stmt
             Local_Theory.notes_kind kind
               (map2 (fn (b, _) => fn ths => (b, [(ths, [])])) stmt results') lthy;
         val lthy'' =
-          if Binding.is_empty_atts (name, atts) then
-            (Proof_Display.print_results print_cfg lthy' ((kind, ""), res); lthy')
+          if Binding.is_empty_atts (name, atts)
+          then (print_results lthy' ((kind, ""), res); lthy')
           else
             let
               val ([(res_name, _)], lthy'') =
                 Local_Theory.notes_kind kind [((name, atts), [(maps #2 res, [])])] lthy';
-              val _ = Proof_Display.print_results print_cfg lthy' ((kind, res_name), res);
+              val _ = print_results lthy' ((kind, res_name), res);
             in lthy'' end;
       in after_qed results' lthy'' end;
 
@@ -2900,6 +2917,7 @@ fun compute_trace_ML ctxt oid pos_opt pos' =
 val parse_oid  = Scan.lift(Parse.position Args.name) 
 val parse_cid  = Scan.lift(Parse.position Args.name) 
 val parse_oid' = Term_Style.parse -- parse_oid
+val parse_oid'' = Scan.lift(Parse.embedded_position)
 val parse_cid' = Term_Style.parse -- parse_cid
 
 
@@ -2944,13 +2962,6 @@ fun compute_cid_repr ctxt cid _ =
   let val _ = DOF_core.get_onto_class_name_global cid (Proof_Context.theory_of ctxt)
   in Const(cid,dummyT) end
 
-fun compute_name_repr ctxt oid pos =
-  let val instances = DOF_core.get_instances ctxt
-      val markup = DOF_core.get_instance_name_global oid (Proof_Context.theory_of ctxt)
-                   |> Name_Space.markup (Name_Space.space_of_table instances)
-      val _ = Context_Position.report ctxt pos markup;
-  in HOLogic.mk_string oid end
-
 local
 
 fun pretty_attr_access_style ctxt (style, ((attr,pos),(oid,pos'))) = 
@@ -2960,8 +2971,15 @@ fun pretty_trace_style ctxt (style, (oid,pos)) =
           Document_Output.pretty_term ctxt (style (ISA_core.compute_attr_access  (Context.Proof ctxt) 
                                                                    traceN oid NONE pos));
 
-fun pretty_name_style ctxt (style, (oid,pos)) =
-          Document_Output.pretty_term ctxt (style (compute_name_repr  ctxt oid pos))
+fun pretty_name_style ctxt (oid,pos) =
+let
+  val instances = DOF_core.get_instances ctxt
+  val ns = Name_Space.space_of_table instances
+  val name  = DOF_core.get_instance_name_global oid (Proof_Context.theory_of ctxt)
+  val ctxt' = Config.put Name_Space.names_unique true ctxt
+  val _ = name |> Name_Space.markup ns
+               |> Context_Position.report ctxt pos
+in Name_Space.pretty ctxt' ns name end
 
 fun pretty_cid_style ctxt (style, (cid,pos)) = 
           Document_Output.pretty_term ctxt (style (compute_cid_repr ctxt cid pos));
@@ -2974,6 +2992,7 @@ fun context_position_parser parse_con (ctxt, toks) =
          val (res, (ctxt', toks')) = parse_con (ctxt, toks)
      in  ((res,pos),(ctxt', toks')) end
 
+val parse_cid0 = parse_cid
 val parse_cid = (context_position_parser Args.typ_abbrev)
           >> (fn (Type(ss,_),pos) =>  (pos,ss)
                 |( _,pos) => ISA_core.err "Undefined Class Id" pos);
@@ -2985,6 +3004,11 @@ fun pretty_cid_style ctxt (_,(pos,cid)) =
     (*reconversion to term in order to have access to term print options like: names_short etc...) *)
           Document_Output.pretty_term ctxt ((compute_cid_repr ctxt cid pos));
 
+fun get_class_2_ML ctxt (str,_) =
+        let val thy = Context.theory_of ctxt
+            val DOF_core.Onto_Class S = (DOF_core.get_onto_class_global' str thy) 
+         in @{make_string} S end
+
 in
 val _ = Theory.setup 
            (ML_Antiquotation.inline  \<^binding>\<open>docitem\<close> 
@@ -2995,11 +3019,13 @@ val _ = Theory.setup
                (fn (ctxt,toks) => (parse_oid >> trace_attr_2_ML ctxt) (ctxt, toks)) #>
             ML_Antiquotation.inline  \<^binding>\<open>docitem_name\<close>  
                (fn (ctxt,toks) => (parse_oid >> get_instance_name_2_ML ctxt) (ctxt, toks)) #>
+            ML_Antiquotation.inline  \<^binding>\<open>doc_class\<close>  
+               (fn (ctxt,toks) => (parse_cid0 >> get_class_2_ML ctxt) (ctxt, toks)) #>
             basic_entity  \<^binding>\<open>trace_attribute\<close>  parse_oid'  pretty_trace_style #>
             basic_entity  \<^binding>\<open>doc_class\<close>  parse_cid'  pretty_cid_style #>
             basic_entity  \<^binding>\<open>onto_class\<close> parse_cid'  pretty_cid_style #>
             basic_entity  \<^binding>\<open>docitem_attribute\<close>  parse_attribute_access' pretty_attr_access_style #>
-            basic_entity  \<^binding>\<open>docitem_name\<close>  parse_oid' pretty_name_style
+            basic_entity  \<^binding>\<open>docitem_name\<close>  parse_oid'' pretty_name_style
            )
 end
 end
@@ -3063,6 +3089,18 @@ fun define_inv (bind, inv) thy =
                  |> Syntax.check_term (Proof_Context.init_global thy)
     in  thy |> Named_Target.theory_map (define_cond bind eq) end
 
+fun define_monitor_const doc_class_name bind thy = 
+  let val bname = Long_Name.base_name doc_class_name
+      val rex = DOF_core.rex_of doc_class_name thy
+      val monitor_binding = bind |> (Binding.qualify false bname
+                                     #> Binding.suffix_name monitor_suffixN)
+  in
+    if can hd rex
+    then
+      let val eq = Logic.mk_equals (Free(Binding.name_of monitor_binding, doc_class_rexp_T), hd rex) 
+      in thy |> Named_Target.theory_map (define_cond monitor_binding eq) end
+    else thy
+  end
 
 fun add_doc_class_cmd overloaded (raw_params, binding)
                       raw_parent raw_fieldsNdefaults reject_Atoms regexps invariants thy =
@@ -3133,9 +3171,10 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
                  | SOME _  => if (not o null) record_fields
                                 then add record_fields invariants' {virtual=false}
                                 else add [DOF_core.tag_attr] invariants' {virtual=true})
-           |> (fn thy => OntoLinkParser.docitem_antiquotation binding (cid thy) thy)
               (* defines the ontology-checked text antiquotation to this document class *)
+           |> (fn thy => OntoLinkParser.docitem_antiquotation binding (cid thy) thy)
            |> (fn thy => fold define_inv (invariants') thy)
+           |> (fn thy => define_monitor_const (cid thy) binding thy)
            (* The function declare_ISA_class_accessor_and_check_instance uses a prefix
               because the class name is already bound to "doc_class Regular_Exp.rexp" constant
               by add_doc_class_cmd function *)
@@ -3172,6 +3211,76 @@ val _ =
   Outer_Syntax.command \<^command_keyword>\<open>onto_class\<close> 
                        "define ontological class"
                         (parse_doc_class >> (Toplevel.theory o add_doc_class_cmd'));
+
+
+
+val clean_mixfix_sub = translate_string
+  (fn "\<^sub>_" => "_"
+    | "\<^sub>'" => "'"
+    | c =>  c);
+
+val prefix_sub = prefix "\<^sub>"
+
+val convertN = "convert"
+
+fun add_onto_morphism classes_mappings eqs thy =
+  if (length classes_mappings = length eqs) then
+    let
+      val specs = map (fn x => (Binding.empty_atts, x)) eqs
+      val converts =
+        map (fn (oclasses, dclass) =>
+               let
+                 val oclasses_string = map YXML.content_of oclasses
+                 val dclass_string = YXML.content_of dclass
+                 val const_sub_name = dclass_string
+                                      |> (oclasses_string |> fold_rev (fn x => fn y => x ^ "_" ^ y))
+                                      |> String.explode |> map (fn x => "\<^sub>" ^ (String.str x)) |> String.concat
+                 val convert_typ = oclasses_string |> rev |> hd
+                                   |> (oclasses_string |> rev |> tl |> fold (fn x => fn y => x ^ " \<times> " ^ y))
+                 val convert_typ' = convert_typ ^ " \<Rightarrow> " ^ dclass_string
+                 val oclasses_sub_string = oclasses_string
+                                           |> map (clean_mixfix_sub
+                                                   #> String.explode
+                                                   #> map (prefix_sub o String.str)
+                                                   #> String.concat)
+                 val mixfix = oclasses_sub_string |> rev |> hd
+                              |> (oclasses_sub_string |> rev |> tl |> fold (fn x => fn y => x ^ "\<^sub>\<times>" ^ y))
+                              |> ISA_core.clean_mixfix
+                 val mixfix' = convertN ^ mixfix ^ "\<^sub>\<Rightarrow>"
+                                ^ (dclass_string |> clean_mixfix_sub |> String.explode
+                                   |> map (prefix_sub o String.str) |> String.concat)
+               in SOME (Binding.name (convertN ^ const_sub_name), SOME convert_typ', Mixfix.mixfix mixfix') end)
+            classes_mappings
+      val args = map (fn (x, y) => (x, y, [], [])) (converts ~~ specs)
+      val lthy = Named_Target.theory_init thy
+      val updated_lthy = fold (fn (decl, spec, prems, params) => fn lthy => 
+                        let
+                          val (_, lthy') = Specification.definition_cmd decl params prems spec true lthy
+                        in lthy' end) args lthy
+    in Local_Theory.exit_global updated_lthy end
+    (* alternative way to update the theory using the Theory.join_theory function *)
+      (*val lthys = map (fn (decl, spec, prems, params) => 
+                        let
+                          val (_, lthy') = Specification.definition_cmd decl params prems spec true lthy
+                        in lthy' end) args
+      val thys = map (Local_Theory.exit_global) lthys
+
+    in Theory.join_theory thys end*)
+  else error("The number of morphisms declarations does not match the number of definitions")
+
+fun add_onto_morphism' (classes_mappings, eqs) = add_onto_morphism classes_mappings eqs
+
+val parse_onto_morphism = Parse.and_list
+                            ((Parse.$$$ "(" |-- Parse.enum1 "," Parse.typ --| Parse.$$$ ")" --| \<^keyword>\<open>to\<close>)
+                              -- Parse.typ)
+                          --  (\<^keyword>\<open>where\<close> |-- Parse.and_list Parse.prop)
+
+(* The name of the definitions must follow this rule:
+   for the declaration "onto_morphism (AA, BB) to CC",
+   the name of the constant must be "convert\<^sub>A\<^sub>A\<^sub>\<times>\<^sub>B\<^sub>B\<^sub>\<Rightarrow>\<^sub>C\<^sub>C". *)
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>onto_morphism\<close> "define ontology morpism"
+                       (parse_onto_morphism >> (Toplevel.theory o add_onto_morphism'));
 
 
 
