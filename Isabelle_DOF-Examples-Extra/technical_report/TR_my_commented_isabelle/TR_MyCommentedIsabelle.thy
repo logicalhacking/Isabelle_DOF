@@ -721,7 +721,7 @@ proof - fix a :: nat
 subsection*[t233::technical]\<open> Theories and the Signature API\<close>  
 text\<open>
 \<^enum> \<^ML>\<open>Sign.tsig_of : theory -> Type.tsig\<close> extracts the type-signature of a theory
-\<^enum> \<^ML>\<open>Sign.syn_of  : theory -> Syntax.syntax\<close> extracts the constant-symbol signature 
+\<^enum> \<^ML>\<open>Sign.syntax_of  : theory -> Syntax.syntax\<close> extracts the constant-symbol signature 
 \<^enum> \<^ML>\<open>Sign.of_sort : theory -> typ * sort -> bool\<close> decides that a type belongs to a sort.
 \<close>
 
@@ -1969,7 +1969,7 @@ text\<open> Note that the naming underlies the following convention.
    
    This is encapsulated in the data structure @{ML_structure Syntax} --- 
    the table with const symbols,  print and ast translations, ... The latter is accessible, e.g. 
-   from a Proof context via @{ML Proof_Context.syn_of}.
+   from a Proof context via @{ML Proof_Context.syntax_of}.
 \<close>
 
 text\<open> Inner Syntax Parsing combinators for elementary Isabelle Lexems\<close>  
