@@ -4,12 +4,10 @@
 
 Isabelle/DOF has three major prerequisites:
 
-* **Isabelle:** Isabelle/DOF requires [Isabelle
-  2023](https://isabelle.in.tum.de/website-Isabelle2023/). Please download the
-  Isabelle 2023 distribution for your operating system from the [Isabelle
-  website](https://isabelle.in.tum.de/website-Isabelle2023/).
-* **AFP:** Isabelle/DOF requires several entries from the [Archive of Formal Proofs
-  (AFP)](https://www.isa-afp.org/).  
+* **Isabelle:** Isabelle/DOF requires [the latest development version of Isabelle]
+  (https://isabelle.in.tum.de).
+* **AFP:** Isabelle/DOF requires several entries from the [development version of the Archive of Formal Proofs
+  (AFP)](https://devel.isa-afp.org/).
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least
   [TeX Live 2022](https://www.tug.org/texlive/) with all available updates
   applied.
