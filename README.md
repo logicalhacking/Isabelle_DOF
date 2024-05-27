@@ -7,7 +7,7 @@ Isabelle/DOF allows for both conventional typesetting and formal development.
 
 Isabelle/DOF has two major prerequisites:
 
-* **Isabelle (Development Version):** Isabelle/DOF requires [Isabelle](https://isabelle.in.tum.de/)
+* **Isabelle 2024:** Isabelle/DOF requires [Isabelle](https://isabelle.in.tum.de/)
   and several entries from the [Archive of Formal Proofs
   (AFP)](https://www.isa-afp.org/).
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least
@@ -16,7 +16,6 @@ Isabelle/DOF has two major prerequisites:
   
 ## Installation
 
-<!--
 Isabelle/DOF is available as part of the [Archive of Formal Proofs
 (AFP)](https://www.isa-afp.org/). This is the most convenient way to install
 Isabelle/DOF for the latest official release of Isabelle.
@@ -29,28 +28,21 @@ distribution for your operating system from the [Isabelle
 website](https://isabelle.in.tum.de/). Furthermore, please install the AFP
 following the instructions given at <https://www.isa-afp.org/help.html>.
 
-Isabelle/DOF is currently consisting out of three AFP entries:
+Isabelle/DOF is provided as one AFP entry:
 
 * [Isabelle_DOF:](https://www.isa-afp.org/entries/Isabelle_DOF.html) This entry
   contains the Isabelle/DOF system itself, including the Isabelle/DOF manual.
-* [Isabelle_DOF-Example-I:](https://www.isa-afp.org/entries/Isabelle_DOF-Example-I.html)
-  This entry contains an example of an academic paper written using the
-  Isabelle/DOF system.
-* [Isabelle_DOF-Example-II:](https://www.isa-afp.org/entries/Isabelle_DOF-Example-II.html)
-  This entry contains an example of an academic paper written using the
-  Isabelle/DOF system.
-
--->
 
 ### Installation of the Development Version (Git Repository)
 
 The development version of Isabelle/DOF that is available in this Git repository
 provides, over the AFP version, additional ontologies, document templates, and
-examples that might not yet "ready for general use". Furthermore, as it is
+examples that might not yet “ready for general use”. Furthermore, as it is
 provided as an Isabelle component, it can also provide additional tools that
-cannot be distributed via the AFP. For more details on installing the
-development version, please consult the
-[README_DEVELOPMENT.md](./README_DEVELOPMENT.md) file.
+cannot be distributed via the AFP. As this repository provides a (potentially)
+updated version of Isabelle/DOF, it conflicts with a complete installation of
+the AFP. For more details on installing the development version, please consult
+the [README_DEVELOPMENT.md](./README_DEVELOPMENT.md) file.
 
 After installing the prerequisites, change into the directory containing
 Isabelle/DOF (this should be the directory containing this ``README.md`` file)

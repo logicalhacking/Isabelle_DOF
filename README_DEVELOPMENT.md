@@ -5,9 +5,9 @@
 Isabelle/DOF has three major prerequisites:
 
 * **Isabelle:** Isabelle/DOF requires [Isabelle
-  2022](https://isabelle.in.tum.de/website-Isabelle2022/). Please download the
-  Isabelle 2022 distribution for your operating system from the [Isabelle
-  website](https://isabelle.in.tum.de/website-Isabelle2022/).
+  2023](https://isabelle.in.tum.de/website-Isabelle2023/). Please download the
+  Isabelle 2023 distribution for your operating system from the [Isabelle
+  website](https://isabelle.in.tum.de/website-Isabelle2023/).
 * **AFP:** Isabelle/DOF requires several entries from the [Archive of Formal Proofs
   (AFP)](https://www.isa-afp.org/).  
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least
@@ -25,14 +25,12 @@ Both have their own advantages and disadvantages.
 If you use the AFP with other Isabelle projects, you might want to install the
 complete AFP. For this, please follow the instructions given at
 <https://www.isa-afp.org/using.html>.
-<!--
-As Isabelle session names need to be
-unique, you will need to disable the entries ``Isabelle_DOF`` and
-``Isabelle_DOF-Example-I`` provided as part of the AFP. For this,
-you will need to edit the file ``$AFP/thys/ROOTS`` (where ``$AFP`` refers to the
-directory in which you installed the AFP) and delete the two entries
-``Isabelle_DOF`` and ``Isabelle_DOF-Example-I``.
--->
+
+As Isabelle session names need to be unique, you will need to disable the entry
+``Isabelle_DOF`` that is provided as part of the AFP. For doing so, you will
+need to edit the file ``$AFP/thys/ROOTS`` (where ``$AFP`` refers to the
+directory in which you installed the AFP) and delete the entry
+``Isabelle_DOF``.
 
 For the development version of Isabelle, installing the complete AFP
 by cloning the [afp-devel](https://foss.heptapod.net/isa-afp/afp-devel/)
@@ -95,7 +93,7 @@ Using the ``-o`` option, different ontology setups can be selected and using the
 foo@bar:~$ isabelle dof_mkroot -o scholarly_paper -t scrartcl
 ```
 
-creates a setup using the scholarly_paper ontology and the article class from
+creates a setup using the ``scholarly_paper`` ontology and the article class from
 the KOMA-Script bundle.
 
 The help (option ``-h``) show a list of all supported ontologies and document
