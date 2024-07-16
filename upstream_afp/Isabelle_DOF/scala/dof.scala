@@ -42,7 +42,7 @@ object DOF {
   val isabelle_version = "2024"
   val isabelle_url = "https://isabelle.in.tum.de/website-Isabelle2024" 
 
-  val afp_version = "afp-2024"
+  val afp_version = "afp-2024-06-05"
 
   // Isabelle/DOF version: "Unreleased" for development, semantic version for releases
   val version = "Unreleased"
