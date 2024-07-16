@@ -43,10 +43,12 @@ required by Isabelle/DOF. Note that this script will only work, if the AFP is
 not registered as an Isabelle component. It can be executed as follows:
 
 ```console
-foo@bar:~$ isabelle env install-afp
+foo@bar:~$ isabelle components -u .
+foo@bar:~$ isabelle env ./install-afp
 ```
 
 Note that this option is not supported for the development version of Isabelle.
+If the last step crashes, it may help to add 'AFP' into the toplevel ROOTS file.
 
 ## Installation
 
