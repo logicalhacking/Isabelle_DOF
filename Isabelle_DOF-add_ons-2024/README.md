@@ -4,7 +4,7 @@ Isabelle/DOF is a novel Document Ontology Framework on top of Isabelle.
 Isabelle/DOF allows for both conventional typesetting and formal development.
 
 This repository contains add-ons to the [Isabelle/DOF core
-package](https://www.isa-afp.org/Isabelle_DOF/) available in the [Archive of
+package](https://www.isa-afp.org/entries/Isabelle_DOF.html) available in the [Archive of
 Formal Proofs (AFP)](https://www.isa-afp.org/). In particular, the following
 add-ons are provided:
 
