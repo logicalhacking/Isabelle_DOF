@@ -190,7 +190,7 @@ onto_morphism (acm) to elsevier
 text\<open>Here is a more basic, but equivalent definition for the other way round:\<close>
 
 definition elsevier_to_acm_morphism :: "elsevier_org \<Rightarrow> acm_org"
-          ("_ \<langle>acm\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r" [1000]999)
+          (\<open>_ \<langle>acm\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r\<close> [1000]999)
           where "\<sigma> \<langle>acm\<rangle>\<^sub>e\<^sub>l\<^sub>s\<^sub>e\<^sub>v\<^sub>i\<^sub>e\<^sub>r = \<lparr> acm_org.tag_attribute = 1::int,
                                    acm_org.position = ''no position'',
                                    acm_org.institution = organization \<sigma>,
