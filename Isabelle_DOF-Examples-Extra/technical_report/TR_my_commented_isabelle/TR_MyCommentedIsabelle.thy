@@ -513,9 +513,9 @@ text*[T2::technical]\<open>
 \<^enum>  \<^ML>\<open>HOLogic.mk_mem        : term * term -> term\<close>  \<^vs>\<open>-0.2cm\<close>
 \<^enum>  \<^ML>\<open>HOLogic.dest_mem      : term -> term * term\<close>  \<^vs>\<open>-0.2cm\<close>
 \<^enum>  \<^ML>\<open>HOLogic.mk_set        : typ -> term list -> term\<close> \<^vs>\<open>-0.2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.conj_intr     : Proof.context -> thm -> thm -> thm\<close>, some HOL-level derived-inferences  \<^vs>\<open>-0.2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.conj_elim     : Proof.context -> thm -> thm * thm\<close>  \<^vs>\<open>-0.2cm\<close>
-\<^enum>  \<^ML>\<open>HOLogic.conj_elims    : Proof.context -> thm -> thm list\<close>  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conj_intr     : thm -> thm -> thm\<close>, some HOL-level derived-inferences  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conj_elim     : thm -> thm * thm\<close>  \<^vs>\<open>-0.2cm\<close>
+\<^enum>  \<^ML>\<open>HOLogic.conj_elims    : thm -> thm list\<close>  \<^vs>\<open>-0.2cm\<close>
 \<^enum>  \<^ML>\<open>HOLogic.conj          : term\<close> , some ML level logical constructors  \<^vs>\<open>-0.2cm\<close>
 \<^enum>  \<^ML>\<open>HOLogic.disj          : term\<close>   \<^vs>\<open>-0.2cm\<close>
 \<^enum>  \<^ML>\<open>HOLogic.imp           : term\<close>   \<^vs>\<open>-0.2cm\<close>
@@ -1549,7 +1549,6 @@ Position.reports: Position.report list -> unit;
 Markup.entity : string -> string -> Markup.T;
 Markup.properties : Properties.T -> Markup.T -> Markup.T ;
 Properties.get : Properties.T -> string -> string option;
-Markup.enclose : Markup.T -> string -> string; 
      
 (* example for setting a link, the def flag controls if it is a defining or a binding 
 occurence of an item *)
@@ -2011,7 +2010,6 @@ and, from there, the generation of (non-layouted) strings :
 \<^item> \<^ML>\<open>Syntax.pretty_arity: Proof.context -> arity -> Pretty.T\<close>
 \<^item> \<^ML>\<open>Syntax.string_of_term: Proof.context -> term -> string \<close>
 \<^item> \<^ML>\<open>Syntax.string_of_typ: Proof.context -> typ -> string \<close>
-\<^item> \<^ML>\<open>Syntax.lookup_const : Syntax.syntax -> string -> string option\<close>
 \<close>
 
 
@@ -2089,11 +2087,8 @@ text\<open>where we have the registration of the action
 
  
 section \<open> Output: Very Low Level \<close>
-text\<open> For re-directing the output channels, the structure \<^ML_structure>\<open>Output\<close> may be relevant:
-      \<^ML>\<open>Output.output:string -> string\<close> is the  structure for the "hooks" with the target devices.
-    \<close>
+text\<open> For re-directing the output channels, the structure \<^ML_structure>\<open>Output\<close> may be relevant.\<close>
 
-ML\<open> Output.output "bla_1:" \<close>
 
 text\<open>It provides a number of hooks that can be used for redirection hacks ...\<close>
 
@@ -2240,8 +2235,8 @@ ML\<open>\<comment> \<open>Dynamic setup of inner syntax cartouche\<close>
       let fun err () = raise TERM ("string_tr", args) in
         (case args of
           [(c as Const (@{syntax_const "_constrain"}, _)) $ Free (s, _) $ p] =>
-            (case Term_Position.decode_position p of
-              SOME (pos, _) => c $ f (mk_string f_mk accu (content (s, pos))) $ p
+            (case Term_Position.decode_position1 p of
+              SOME {pos, ...} => c $ f (mk_string f_mk accu (content (s, pos))) $ p
             | NONE => err ())
         | _ => err ())
       end;
