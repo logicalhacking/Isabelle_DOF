@@ -50,8 +50,8 @@ object DOF {
   val session = "Isabelle_DOF"
   val session_ontologies = "Isabelle_DOF-Ontologies"
 
-  val latest_version = "1.3.0"
-  val latest_isabelle = "Isabelle2021-1"
+  val latest_version = "2025"
+  val latest_isabelle = "Isabelle2025"
   val latest_doi = "10.5281/zenodo.6810799"
   val generic_doi = "10.5281/zenodo.3370482"
 

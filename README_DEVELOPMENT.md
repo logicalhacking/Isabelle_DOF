@@ -41,10 +41,12 @@ required by Isabelle/DOF. Note that this script will only work, if the AFP is
 not registered as an Isabelle component. It can be executed as follows:
 
 ```console
-foo@bar:~$ isabelle env install-afp
+foo@bar:~$ isabelle components -u .
+foo@bar:~$ isabelle ./env ./install-afp
 ```
 
 Note that this option is not supported for the development version of Isabelle.
+If the last step crashes, it may help to add 'AFP' into the toplevel ROOTS file.
 
 ## Installation
 
@@ -65,6 +67,14 @@ foo@bar:~$ isabelle build -D . -x Isabelle_DOF-Proofs -x HOL-Proofs
 ```
 
 This will compile Isabelle/DOF and run the example suite.
+
+For building the session ``Isabelle_DOF-Proofs``, the timeout might need to
+increased to avoid timeouts during building the dependencies:
+
+```console
+foo@bar:~$ isabelle build -d . -o 'timeout_scale=2' Isabelle_DOF-Proofs
+```
+
 
 ## Usage
 
