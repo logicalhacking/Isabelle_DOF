@@ -153,6 +153,19 @@ SPDX-License-Identifier: BSD-2-Clause
 
 ## Publications
 
+* Achim D. Brucker, Idir Aït-Sadoune, Nicolas Méric, Burkhart Wolff: Parametric
+  ontologies in formal software engineering. Sci. Comput. Program. 241: 103231
+  (2025). [do:10.1016/j.scico.2024.103231](https://doi.org/10.1016/j.scico.2024.103231)
+
+* Nicolas Méric: An Ontology Framework for Formal Libraries: Doctoral Thesis at
+  the University Pris-Saclay. (Conception et Implémentation d'un Environnement
+  d'Ontologie pour des Bibliothèques Formelles). University of Paris-Saclay,
+  France, 2024. <https://tel.archives-ouvertes.fr/tel-04870527>
+
+* Achim D. Brucker, Idir Aït-Sadoune, Nicolas Méric, Burkhart Wolff: Using Deep
+  Ontologies in Formal Software Engineering. ABZ 2023: 15-32.
+  [doi:10.1007/978-3-031-33163-3_2](https://doi.org/10.1007/978-3-031-33163-3_2)
+
 * Achim D. Brucker, Idir Ait-Sadoune, Paolo Crisafulli, and Burkhart Wolff.
   [Using The Isabelle Ontology Framework: Linking the Formal with the
   Informal](https://www.brucker.ch/bibliography/download/2018/brucker.ea-isabelle-ontologies-2018.pdf).
