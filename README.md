@@ -7,7 +7,7 @@ Isabelle/DOF allows for both conventional typesetting and formal development.
 
 Isabelle/DOF has two major prerequisites:
 
-* **Isabelle (Development Version):** Isabelle/DOF requires [Isabelle](https://isabelle.in.tum.de/)
+* **Isabelle 2025:** Isabelle/DOF requires [Isabelle](https://isabelle.in.tum.de/)
   and several entries from the [Archive of Formal Proofs
   (AFP)](https://www.isa-afp.org/).
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least
@@ -33,7 +33,12 @@ Isabelle/DOF is provided as one AFP entry:
 * [Isabelle_DOF:](https://www.isa-afp.org/entries/Isabelle_DOF.html) This entry
   contains the Isabelle/DOF system itself, including the Isabelle/DOF manual.
 
-### Installation of the Development Version (Git Repository)
+### Installation of Add-On Packages and Examples
+
+Add-ons to Isabelle/DOF, in particular, additional ontologies, document templates, 
+and examples, are provided on [Zenodo](https://doi.org/10.5281/zenodo.3370482). 
+
+## Installation of the Development Version (Git Repository)
 
 The development version of Isabelle/DOF that is available in this Git repository
 provides, over the AFP version, additional ontologies, document templates, and
@@ -65,9 +70,8 @@ foo@bar:~$ isabelle build -d . -o 'timeout_scale=2' Isabelle_DOF-Proofs
 ## Usage
 
 In the following, we assume that you installed Isabelle/DOF either from the AFP
-(adding the AFP as a component to your Isabelle system) or from the Git
-repository of Isabelle/DOF (installing Isabelle/DOF as a component to your
-Isabelle system).
+(adding the AFP as a component to your Isabelle system) with the add-ons 
+available on Zenodo (or from the Git repository of Isabelle/DOF). 
 
 Assuming that your current directory contains the example academic paper in the
 subdirectory ``Isabelle_DOF-Example-I/``, you can open it similar
@@ -121,12 +125,9 @@ in a subdirectory:
 
 ## Releases
 
-For releases, signed archives including a PDF version of the Isabelle/DOF manual
-are available. The latest release is **Isabelle/DOF 1.3.0/Isabelle2021-1**:
-
-* [Isabelle_DOF-1.3.0_Isabelle2021-1.pdf](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.pdf)
-* [Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz)
-* [Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz.asc](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/Isabelle_DOF-1.3.0_Isabelle2021-1.tar.xz.asc)
+Since Isabelle 2024, Isabelle/DOF synchronises its releases with the releases
+of Isabelle. The core of Isabelle/DOF is part of the Archive of Formal Proofs
+and several add-on packages are released on Zenodo. 
 
 Older releases are available [here.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/)
 
