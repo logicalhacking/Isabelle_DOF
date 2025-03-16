@@ -12,20 +12,20 @@ add-ons are provided:
 * Additional examples using various Ontologies and LaTeX template.
 * A tool for creating new Isabelle/DOF projects (`isabelle dof_mkroot`).
 
-These add-ons are provided in the archive `Isabelle_DOF-add_ons-2024.tar.xz`.
+These add-ons are provided in the archive `Isabelle_DOF-add_ons-2025.tar.xz`.
 Additional, this entry contains a scaffold that allows for easily starting a new
 project with the version of Isabelle/DOF provided in the AFP (i.e., without the
 add ons installed). This scaffold is provided in the archive
-`Isabelle_DOF-Scaffold-2024`.
+`Isabelle_DOF-Scaffold-2025`.
 
 ## Pre-requisites
 
 Isabelle/DOF has two major prerequisites:
 
-* **Isabelle 2024:** Isabelle/DOF requires [Isabelle
+* **Isabelle 2025:** Isabelle/DOF requires [Isabelle
   20024](https://isabelle.in.tum.de/), which can be obtained from the Isabelle
   homepage: <https://isabelle.in.tum.de/>.  
-* **AFP (for Isabelle 2024)**: Isabelle/DOF requires several entries from the
+* **AFP (for Isabelle 2025)**: Isabelle/DOF requires several entries from the
   [Archive of Formal Proofs (AFP)](https://www.isa-afp.org/).
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least
   [TeX Live 2022](https://www.tug.org/texlive/) with all available updates
@@ -35,8 +35,8 @@ Isabelle/DOF has two major prerequisites:
 
 ### Installation of Isabelle
 
-Please download Isabelle 2024 from the [Isabelle
-Website](http://isabelle.in.tum.de/website-Isabelle2024/index.html) and follow
+Please download Isabelle 2025 from the [Isabelle
+Website](http://isabelle.in.tum.de/website-Isabelle2025/index.html) and follow
 the system specific instructions for its installation.
 
 ### Installation from the Archive of Formal Proofs (AFP)
@@ -53,12 +53,12 @@ Isabelle/DOF is provided as one AFP entry:
 
 ### Isabelle/DOF Add-Ons
 
-Unpack the archive `Isabelle_DOF-add_ons-2024.tar.xz` and change into the 
+Unpack the archive `Isabelle_DOF-add_ons-2025.tar.xz` and change into the 
 directory containing the content of the archive. In this directory, execute
 the following command to register these add-ons as Isabelle components:
 
 ```console
-foo@bar:Isabelle_DOF-add_ons-2024$isabelle components -u . 
+foo@bar:Isabelle_DOF-add_ons-2025$ isabelle components -u . 
 ```
 
 for building the standard session of Isabelle/DOF, execute the following command:
