@@ -42,7 +42,7 @@ object DOF {
   val isabelle_version = ""
   val isabelle_url = "https://isabelle.sketis.net/devel/release_snapshot/"
 
-  val afp_version = "afp-2025-03-31"
+  val afp_version = "afp-2025-03-16"
 
   // Isabelle/DOF version: "Unreleased" for development, semantic version for releases
   val version = "Unreleased"
