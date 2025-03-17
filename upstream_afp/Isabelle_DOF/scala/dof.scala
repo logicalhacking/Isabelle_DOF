@@ -39,7 +39,7 @@ import isabelle._
 object DOF {
   /** parameters **/
 
-  val isabelle_version = ""
+  val isabelle_version = "2025"
   val isabelle_url = "https://isabelle.sketis.net/devel/release_snapshot/"
 
   val afp_version = "afp-devel"
