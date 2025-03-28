@@ -23,7 +23,7 @@ add ons installed). This scaffold is provided in the archive
 Isabelle/DOF has two major prerequisites:
 
 * **Isabelle 2025:** Isabelle/DOF requires [Isabelle
-  20024](https://isabelle.in.tum.de/), which can be obtained from the Isabelle
+  2025](https://isabelle.in.tum.de/), which can be obtained from the Isabelle
   homepage: <https://isabelle.in.tum.de/>.  
 * **AFP (for Isabelle 2025)**: Isabelle/DOF requires several entries from the
   [Archive of Formal Proofs (AFP)](https://www.isa-afp.org/).
