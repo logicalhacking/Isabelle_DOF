@@ -23,10 +23,12 @@ add ons installed). This scaffold is provided in the archive
 Isabelle/DOF has two major prerequisites:
 
 * **Isabelle 2024:** Isabelle/DOF requires [Isabelle
-  20024](https://isabelle.in.tum.de/), which can be obtained from the Isabelle
+  2024](https://isabelle.in.tum.de/), which can be obtained from the Isabelle
   homepage: <https://isabelle.in.tum.de/>.  
 * **AFP (for Isabelle 2024)**: Isabelle/DOF requires several entries from the
-  [Archive of Formal Proofs (AFP)](https://www.isa-afp.org/).
+  [Archive of Formal Proofs (AFP)](https://www.isa-afp.org/). A direct link for 
+  downloading the latest version of the AFP for Isabelle 2024 is: 
+  <https://www.isa-afp.org/release/afp-2025-03-04.tar.gz>
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least
   [TeX Live 2022](https://www.tug.org/texlive/) with all available updates
   applied.
@@ -42,9 +44,10 @@ the system specific instructions for its installation.
 ### Installation from the Archive of Formal Proofs (AFP)
 
 The core of Isabelle/DOF is available in the AFP. Hence, for using the
-Isabelle/DOF Add-Ons package, please install the AFP following the instructions
-given at <https://www.isa-afp.org/help.html>. In the following, we assume that
-the AFP has been registered as Isabelle component.
+Isabelle/DOF Add-Ons package, please install the 
+[AFP for Isabelle 2024](https://www.isa-afp.org/release/afp-2025-03-04.tar.gz)
+following the instructions given at <https://www.isa-afp.org/help.html>. 
+In the following, we assume that the AFP has been registered as Isabelle component.
 
 Isabelle/DOF is provided as one AFP entry:
 
