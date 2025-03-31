@@ -162,12 +162,12 @@ fun ML_isa_elaborate_thms_of (thy:theory) _ _ term_option pos =
           val thm_name = HOLogic.dest_string term
           val thm = Proof_Context.get_thm (Proof_Context.init_global thy) thm_name
           val body = Proofterm.strip_thm_body (Thm.proof_body_of thm)
-          val all_thms_name = Proofterm.fold_body_thms (fn {name, ...} => insert (op =) name) [body] []
+          val all_thms_name = Proofterm.fold_body_thms (fn {thm_name, ...} => insert (op =) thm_name) [body] []
           (*val all_thms = map (Proof_Context.get_thm (Proof_Context.init_global thy)) all_thms_name*)
           (*val all_proofs = map (Proof_Syntax.standard_proof_of
                                    {full = true, expand_name = Thm.expand_name thm}) all_thms*)
         (*in HOLogic.mk_list \<^Type>\<open>thm\<close> (map (fn proof => \<^Const>\<open>Thm_content\<close> $ reify_proofterm proof) all_proofs) end*)
-        in HOLogic.mk_list \<^typ>\<open>string\<close> (map HOLogic.mk_string all_thms_name) end
+        in HOLogic.mk_list \<^typ>\<open>string\<close> (map HOLogic.mk_string (map (Proof_Context.print_thm_name (Proof_Context.init_global thy)) all_thms_name)) end
 
 fun ML_isa_elaborate_trace_attribute (thy:theory) _ _ term_option pos =
 case term_option of

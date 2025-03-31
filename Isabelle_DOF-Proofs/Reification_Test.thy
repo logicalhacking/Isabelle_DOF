@@ -403,7 +403,7 @@ ML\<open>
   (*all theorems used in the graph of nested proofs*)
   val all_thms =
     Proofterm.fold_body_thms
-      (fn {name, ...} => insert (op =) name) [body] [];
+      (fn {thm_name, ...} => insert (op =) thm_name) [body] [];
 \<close>
 
 term*\<open>@{thm \<open>Reification_Test.identity_conc\<close>}\<close>
@@ -434,7 +434,7 @@ ML\<open>
   (*all theorems used in the graph of nested proofs*)
   val all_thms =
     Proofterm.fold_body_thms
-      (fn {name, ...} => insert (op =) name) [body] [];
+      (fn {thm_name, ...} => insert (op =) thm_name) [body] [];
 \<close>
 
 declare[[show_sorts = false]]
@@ -458,7 +458,7 @@ ML\<open>
   (*all theorems used in the graph of nested proofs*)
   val all_thms =
     Proofterm.fold_body_thms
-      (fn {name, ...} => insert (op =) name) [body] [];
+      (fn {thm_name, ...} => insert (op =) thm_name) [body] [];
 \<close>
 
 prf test
@@ -485,7 +485,7 @@ ML\<open>
   (*all theorems used in the graph of nested proofs*)
   val all_thms =
     Proofterm.fold_body_thms
-      (fn {name, ...} => insert (op =) name) [body] [];
+      (fn {thm_name, ...} => insert (op =) thm_name) [body] [];
 \<close>
 
 prf test2
@@ -510,7 +510,7 @@ ML\<open>
   (*all theorems used in the graph of nested proofs*)
   val all_thms =
     Proofterm.fold_body_thms
-      (fn {name, ...} => insert (op =) name) [body] [];
+      (fn {thm_name, ...} => insert (op =) thm_name) [body] [];
 \<close>
 
 prf test3
@@ -535,7 +535,7 @@ ML\<open>
   (*all theorems used in the graph of nested proofs*)
   val all_thms =
     Proofterm.fold_body_thms
-      (fn {name, ...} => insert (op =) name) [body] [];
+      (fn {thm_name, ...} => insert (op =) thm_name) [body] [];
 \<close>
 
 prf test4
@@ -560,7 +560,7 @@ ML\<open>
   (*all theorems used in the graph of nested proofs*)
   val all_thms =
     Proofterm.fold_body_thms
-      (fn {name, ...} => insert (op =) name) [body] [];
+      (fn {thm_name, ...} => insert (op =) thm_name) [body] [];
 \<close>
 
 prf symmetric
@@ -635,7 +635,7 @@ ML\<open>
   (*all theorems used in the graph of nested proofs*)
   val all_thms =
     Proofterm.fold_body_thms
-      (fn {name, ...} => insert (op =) name) [body] [];
+      (fn {thm_name, ...} => insert (op =) thm_name) [body] [];
 \<close>
 ML\<open>
 val thy = \<^theory>;
@@ -700,7 +700,7 @@ ML\<open>
   (*all theorems used in the graph of nested proofs*)
   val all_thms =
     Proofterm.fold_body_thms
-      (fn {name, ...} => insert (op =) name) [body] [];
+      (fn {thm_name, ...} => insert (op =) thm_name) [body] [];
 \<close>
 
 ML\<open>
