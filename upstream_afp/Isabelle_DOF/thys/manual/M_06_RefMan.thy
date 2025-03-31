@@ -1369,27 +1369,29 @@ value*\<open>filter (\<lambda>\<sigma>. the (text_section.level \<sigma>) > 1) @
 \<close>
 
 section*[infrastructure::technical]\<open>Technical Infrastructure\<close>
-
 figure*[ 
   dock_document_panel::figure
-  , relative_width="95" 
+  , relative_width="65" 
   , file_src="''figures/DockingDocumentPanel.png''" 
-]\<open>Re-configuring the docking options of the Documentation Panel.\<close>
+]\<open>Re-configuring the docking options of the Document Panel.\<close>
 
-subsection\<open>Activating the Previewer\<close>
+(*<*)
 declare_reference*[global_DOF_view::figure] 
+(*>*)
+subsection\<open>Activating the Previewer\<close>
 text\<open>The \<^isadof> distribution comes also with a \<^emph>\<open>previewer facility\<close> integrated into \<open>Isabelle/jEdit\<close>
-(it is part of the \<open>Isabelle_DOF-add_ons\<close> - packages available on the Isabelle-zenodo page
-\<^url>\<open>https://zenodo.org/records/6810799\<close>. (For technical reasons, it can not be part of the
- \<^isadof>-core available in the AFP.) It supports incremental continuous PDF generation which  
+\<^footnote>\<open>This is part of the \<open>Isabelle_DOF-add_ons\<close> - packages available on the Isabelle-zenodo page
+\<^url>\<open>https://zenodo.org/records/6810799\<close>. For technical reasons, it can not be part of the
+ \<^isadof>-core available in the AFP.\<close> It supports incremental continuous PDF generation which  
 improves  usability. Currently, the granularity is restricted to entire theories which have to 
-be selected in a specific document pane which has to be activated as follows:
+be selected in a specific \<^emph>\<open>document panel\<close>. This has to be activated as follows:
 
-\<^item> Select under the jEdit menu \<open>Isabelle \<longlongrightarrow> Plugins \<longlongrightarrow> Isabelle  \<longlongrightarrow> Documentation Panel \<close>
-\<^item> Attach the appearing popup-menu as you like with the docking-menu 
-  (see @{figure \<open>dock_document_panel\<close>}).
-
-The subsequent figure @{figure (unchecked) \<open>global_DOF_view\<close>} will show the documentation panel
+    \<^item> Select it under the jEdit menu \\ 
+      \<open>Isabelle \<longlongrightarrow> Plugins \<longlongrightarrow> Isabelle  \<longlongrightarrow> Document Panel\<close>
+    \<^item> Attach the appearing popup-menu as you like with the docking-menu 
+      (see @{figure \<open>dock_document_panel\<close>}).
+    
+The subsequent figure @{figure (unchecked) \<open>global_DOF_view\<close>} will show the document panel
 on top of the editing panel.
 \<close>
 
