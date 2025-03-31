@@ -1370,17 +1370,41 @@ value*\<open>filter (\<lambda>\<sigma>. the (text_section.level \<sigma>) > 1) @
 
 section*[infrastructure::technical]\<open>Technical Infrastructure\<close>
 
-subsection\<open>The Previewer\<close>
+figure*[ 
+  dock_document_panel::figure
+  , relative_width="95" 
+  , file_src="''figures/DockingDocumentPanel.png''" 
+]\<open>Re-configuring the docking options of the Documentation Panel.\<close>
+
+subsection\<open>Activating the Previewer\<close>
+declare_reference*[global_DOF_view::figure] 
+text\<open>The \<^isadof> distribution comes also with a \<^emph>\<open>previewer facility\<close> integrated into \<open>Isabelle/jEdit\<close>
+(it is part of the \<open>Isabelle_DOF-add_ons\<close> - packages available on the Isabelle-zenodo page
+\<^url>\<open>https://zenodo.org/records/6810799\<close>. (For technical reasons, it can not be part of the
+ \<^isadof>-core available in the AFP.) It supports incremental continuous PDF generation which  
+improves  usability. Currently, the granularity is restricted to entire theories which have to 
+be selected in a specific document pane which has to be activated as follows:
+
+\<^item> Select under the jEdit menu \<open>Isabelle \<longlongrightarrow> Plugins \<longlongrightarrow> Isabelle  \<longlongrightarrow> Documentation Panel \<close>
+\<^item> Attach the appearing popup-menu as you like with the docking-menu 
+  (see @{figure \<open>dock_document_panel\<close>}).
+
+The subsequent figure @{figure (unchecked) \<open>global_DOF_view\<close>} will show the documentation panel
+on top of the editing panel.
+\<close>
+
+subsection\<open>Using the Previewer\<close>
 
 figure*[ 
   global_DOF_view::figure
   , relative_width="95" 
   , file_src="''figures/ThisPaperWithPreviewer.png''" 
 ]\<open>A Screenshot while editing this Paper in \<^dof> with Preview.\<close>
-text\<open>A screenshot of the editing environment is shown in \<^figure>\<open>global_DOF_view\<close>. It supports 
-incremental continuous PDF generation which  improves  usability. Currently, the granularity 
-is restricted to entire theories (which have to be selected in a specific document pane). 
-The response times can not (yet) compete
+text\<open>A screenshot of the editing environment is shown in \<^figure>\<open>global_DOF_view\<close>. When
+set to the right session, the documentation panel allows for restricting the \<^LaTeX>-generation
+to specific theories of the document, thus supporting incremental continuous PDF generation to 
+parts of the overall document thus improving  usability.  
+The response times of the previewer can not (yet) compete
 with a Word- or Overleaf editor, though, which is mostly due to the checking and 
 evaluation overhead (the turnaround of this section is about 30 s). However, we believe
 that better parallelization and evaluation techniques will decrease this gap substantially for the 
