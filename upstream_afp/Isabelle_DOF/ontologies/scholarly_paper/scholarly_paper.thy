@@ -193,7 +193,8 @@ datatype math_content_class =
   | "prpo"       \<comment>\<open>proposition\<close>
   | "rulE"       \<comment>\<open>rule\<close>
   | "assn"       \<comment>\<open>assertion\<close>    
-  | "hypt"      \<comment>\<open>hypothesis\<close>    
+  | "hypt"       \<comment>\<open>hypothesis\<close>    
+  | "parm"       \<comment>\<open>parameter\<close>
   | "assm"       \<comment>\<open>assumption\<close>
   | "prms"       \<comment>\<open>premise\<close>  
   | "cons"       \<comment>\<open>consequence\<close>
@@ -322,6 +323,16 @@ doc_class "assumption"  = math_content +
    level         :: "int option"         <= "Some 2"
    mcc           :: "math_content_class" <= "assm" 
    invariant d  :: "mcc \<sigma> = assm"
+
+text\<open>An model parameter (like the speed of light \<open>c\<close> or  
+just the number \<open>N\<close> of processes in a process architecture)
+ is an explicit or a tacit constant about the world or a background belief
+relating to an proposition.\<close>
+doc_class "parameter"  = math_content +
+   referentiable :: bool <= "True"
+   level         :: "int option"         <= "Some 2"
+   mcc           :: "math_content_class" <= "parm" 
+   invariant d   :: "mcc \<sigma> = parm"
 
 text\<open> A working hypothesis is a provisionally accepted hypothesis proposed for further research
  in a process beginning with an educated guess or thought.
