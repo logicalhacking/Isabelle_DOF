@@ -61,7 +61,7 @@ directory containing the content of the archive. In this directory, execute
 the following command to register these add-ons as Isabelle components:
 
 ```console
-foo@bar:Isabelle_DOF-add_ons-2024$isabelle components -u . 
+foo@bar:Isabelle_DOF-add_ons-2024$ isabelle components -u . 
 ```
 
 for building the standard session of Isabelle/DOF, execute the following command:
@@ -222,7 +222,7 @@ SPDX-License-Identifier: BSD-2-Clause
   Certification](https://www.brucker.ch/bibliography/download/2019/brucker.ea-ontologies-certification-2019.pdf).
   In Integrated Formal Methods (IFM). Lecture Notes in Computer Science (11918).
   Springer-Verlag 2019.
-  [doi:10.1007/978-3-030-34968-4_4](http://dx.doi.org/10.1007/978-3-030-34968-4_4)  
+  [doi:10.1007/978-3-030-34968-4_4](http://dx.doi.org/10.1007/978-3-030-34968-4_4)
 
 * Sergio Bezzecchi, Paolo Crisafulli, Charlotte Pichot, and Burkhart Wolff.
   [Making Agile Development Processes fit for V-style Certification
