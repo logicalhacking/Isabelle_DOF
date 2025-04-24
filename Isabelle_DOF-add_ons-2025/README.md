@@ -26,7 +26,9 @@ Isabelle/DOF has two major prerequisites:
   2025](https://isabelle.in.tum.de/), which can be obtained from the Isabelle
   homepage: <https://isabelle.in.tum.de/>.  
 * **AFP (for Isabelle 2025)**: Isabelle/DOF requires several entries from the
-  [Archive of Formal Proofs (AFP)](https://www.isa-afp.org/).
+  [Archive of Formal Proofs (AFP)](https://www.isa-afp.org/).  A direct link for 
+  downloading the latest version of the AFP for Isabelle 2024 is: 
+  <https://www.isa-afp.org/release/afp-2025-04-13.tar.gz>
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least
   [TeX Live 2022](https://www.tug.org/texlive/) with all available updates
   applied.
@@ -42,9 +44,10 @@ the system specific instructions for its installation.
 ### Installation from the Archive of Formal Proofs (AFP)
 
 The core of Isabelle/DOF is available in the AFP. Hence, for using the
-Isabelle/DOF Add-Ons package, please install the AFP following the instructions
-given at <https://www.isa-afp.org/help.html>. In the following, we assume that
-the AFP has been registered as Isabelle component.
+Isabelle/DOF Add-Ons package, please install the 
+[AFP for Isabelle 2025](https://www.isa-afp.org/release/afp-2025-04-13.tar.gz)
+following the instructions given at <https://www.isa-afp.org/help.html>. 
+In the following, we assume that the AFP has been registered as Isabelle component.
 
 Isabelle/DOF is provided as one AFP entry:
 
@@ -219,7 +222,7 @@ SPDX-License-Identifier: BSD-2-Clause
   Certification](https://www.brucker.ch/bibliography/download/2019/brucker.ea-ontologies-certification-2019.pdf).
   In Integrated Formal Methods (IFM). Lecture Notes in Computer Science (11918).
   Springer-Verlag 2019.
-  [doi:10.1007/978-3-030-34968-4_4](http://dx.doi.org/10.1007/978-3-030-34968-4_4)  
+  [doi:10.1007/978-3-030-34968-4_4](http://dx.doi.org/10.1007/978-3-030-34968-4_4)
 
 * Sergio Bezzecchi, Paolo Crisafulli, Charlotte Pichot, and Burkhart Wolff.
   [Making Agile Development Processes fit for V-style Certification
