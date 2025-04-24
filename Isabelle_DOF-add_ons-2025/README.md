@@ -1,4 +1,4 @@
-# [Isabelle/DOF 2004 Add-Ons](https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF)
+# [Isabelle/DOF 2025 Add-Ons](https://git.logicalhacking.com/Isabelle_DOF/Isabelle_DOF)
 
 Isabelle/DOF is a novel Document Ontology Framework on top of Isabelle.
 Isabelle/DOF allows for both conventional typesetting and formal development.
