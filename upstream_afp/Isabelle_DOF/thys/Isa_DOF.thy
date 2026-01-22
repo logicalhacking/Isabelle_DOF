@@ -2633,17 +2633,14 @@ fun gen_def prep_spec prep_att raw_var raw_params raw_prems ((a, raw_atts), raw_
     val lthy3 = lthy2 |> Spec_Rules.add name Spec_Rules.equational [lhs] [th];
 
     val ([(def_name, [th'])], lthy4) = lthy3
-      |> Local_Theory.notes [((name, atts), [([th], [])])];
+      |> Local_Theory.notes [((name, Code.singleton_default_equation_attrib :: atts), [([th], [])])];
 
-    val lthy5 = lthy4
-      |> Code.declare_default_eqns [(th', true)];
-
-    val lhs' = Morphism.term (Local_Theory.target_morphism lthy5) lhs;
+    val lhs' = Morphism.term (Local_Theory.target_morphism lthy) lhs;
 
     val _ =
-      Proof_Display.print_consts int (Position.thread_data ()) lthy5
+      Proof_Display.print_consts int (Position.thread_data ()) lthy4
         (Frees.defined (Frees.build (Frees.add_frees lhs'))) [(x, T)];
-  in ((lhs, (def_name, th')), lthy5) end;
+  in ((lhs, (def_name, th')), lthy4) end;
 
 val definition_cmd = gen_def read_spec_open Attrib.check_src;
 
@@ -2709,9 +2706,8 @@ fun gen_theorem schematic bundle_includes prep_att prep_stmt
       |> prep_statement (prep_att lthy) prep_stmt elems raw_concl;
     val atts = more_atts @ map (prep_att lthy) raw_atts;
 
-    val pos = Position.thread_data ();
     val print_results =
-      Proof_Display.print_results {interactive = int, pos = pos, proof_state = false};
+      Proof_Display.print_results {interactive = int, pos = Position.thread_data ()};
 
     fun after_qed' results goal_ctxt' =
       let

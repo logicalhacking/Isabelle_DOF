@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+exec "isabelle_java${ISABELLE_VERSIO}" "$@"
