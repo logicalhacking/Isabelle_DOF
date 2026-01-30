@@ -1,0 +1,20 @@
+session USERMANUAL = "Isabelle_DOF" +
+  options [document = pdf, document_output = "output", document_build = dof]
+(*theories [document = false]
+    A
+    B*)
+  theories
+    "C0_Introduction"
+    "C1_Installation"
+    "C2_Basics"
+    "C3_DocumentStructure"
+    "IsabelleDOFUserManual"
+  document_files
+    "root.bib"
+    "preamble.tex"
+    "lstisadof-manual.sty" 
+    "dof_session.tex"
+    "root.mst"
+    "subcaption.sty"
+    "figures/LatexLogo.png"
+    "figures/LatexLogoBlack.png"
