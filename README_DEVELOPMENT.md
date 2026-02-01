@@ -4,7 +4,7 @@
 
 Isabelle/DOF has three major prerequisites:
 
-* **Isabelle:** Isabelle/DOF requires [Isabelle 2025-1]
+* **Isabelle:** Isabelle/DOF requires [Isabelle 2025-2]
   (https://isabelle.in.tum.de).
 * **AFP:** Isabelle/DOF requires several entries from the [development version of the Archive of Formal Proofs
   (AFP)](https://devel.isa-afp.org/).

@@ -39,7 +39,7 @@ import isabelle._
 object DOF {
   /** parameters **/
 
-  val isabelle_version = "2025-1"
+  val isabelle_version = "2025-2"
   val isabelle_url = "https://isabelle.sketis.net/devel/release_snapshot/"
 
   val afp_version = "afp-2025-12-20"
@@ -50,8 +50,8 @@ object DOF {
   val session = "Isabelle_DOF"
   val session_ontologies = "Isabelle_DOF-Ontologies"
 
-  val latest_version = "2025-1"
-  val latest_isabelle = "Isabelle2025-1"
+  val latest_version = "2025-2"
+  val latest_isabelle = "Isabelle2025-2"
   val latest_doi = "10.5281/zenodo.6810799"
   val generic_doi = "10.5281/zenodo.3370482"
 
