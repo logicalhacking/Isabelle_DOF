@@ -18,7 +18,7 @@ define_shortcut* csp      \<rightleftharpoons> \<open>CSP\<close>
                  holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>
                  isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
                  hfill    \<rightleftharpoons> \<open>\hfill\<close>
-                 br    \<rightleftharpoons> \<open>\break\<close>
+                 br       \<rightleftharpoons> \<open>\break\<close>
 
 (*>*)
 
