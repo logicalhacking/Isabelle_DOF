@@ -1,0 +1,81 @@
+% Package exercise, v. 0.4e (20/03/2007).
+% Claude Marché (marche@lri.fr), Ralf Treinen (treinen@lri.fr),
+% Cas Cremers (cas.cremers@gmail.com).
+% Defines environments "exercise" (for exercises) and "solution"
+% (for solutions). "exercise" is a theorem-like environment. The effect
+% of a "solution" environment depends on the options passed to the
+% package:
+% - without any option, the text inside this environment is printed
+%   in an appropriate layout, the command "\showsolutions" has no effect;
+% - with the "none" option, the environement with its contents is completely
+%   ignored, the command "\showsolutions" has no effect;
+% - with the "end" option, the corrections are saved.  The command
+%   "\showsolutions" prints all corrections gathered so far.
+%   The heading of this section can be redefined by renewcommanding
+%   the command "\makesolutionsheading".
+% Package is actually in English now.
+%
+% With the option "bychpater", exercises get numbered by chapter.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{exercise}[2007/03/20]
+
+\RequirePackage{theorem}
+
+% we use internally three cases:
+% 0 (no option), 1 (option none), 2 (option end)
+\def\corcase{0}
+\newif\if@bychapter\@bychapterfalse
+\DeclareOption{none}{\def\corcase{1}}
+\DeclareOption{end}{\def\corcase{2}}
+\DeclareOption{bychapter}{\@bychaptertrue}
+
+\ProcessOptions
+
+\newcommand{\makesolutionsheading}{\section*{Solutions to the exercises}}
+
+{
+  \theoremstyle{break}
+  \theorembodyfont{\rmfamily}
+  \if@bychapter
+	\newtheorem{exercise}{Exercice}[chapter]
+  \else
+	\newtheorem{exercise}{Exercice}
+  \fi
+}
+
+\expandafter\ifcase\corcase	 % no option
+	\newenvironment{solution}%
+		{\par\noindent\begin{small}\slshape\textbf{Solution :}}%
+		{\end{small}\par\smallskip}
+	\let\showsolutions\relax
+\or				% none option
+        \RequirePackage{verbatim}
+        \let\solution\comment
+        \let\endsolution\endcomment
+	\let\showsolutions\relax
+\or				% end option
+	\RequirePackage{verbatim}
+	\newwrite\solution@out%
+	\immediate\openout\solution@out\jobname.cor
+	\newenvironment{solution}
+		{\let\do\@makeother\dospecials\catcode`\^^M\active
+		  \immediate\write\solution@out{%
+        	  \noexpand\begin{showsolution}{\theexercise}}
+   		  \def\verbatim@processline{%
+        	  \immediate\write\solution@out{\the\verbatim@line}}%
+   		  \verbatim@start}
+  	{\immediate\write\solution@out{\noexpand\end{showsolution}}}
+
+	\newenvironment{showsolution}[1]
+		{\par\noindent\textbf{Exercice #1:}\par}
+		{\par}
+
+	\newcommand{\showsolutions}{%
+		\immediate\closeout\solution@out
+		\makesolutionsheading
+		\@input{\jobname.cor}
+		\immediate\openout\solution@out\jobname.cor
+	}
+\fi
