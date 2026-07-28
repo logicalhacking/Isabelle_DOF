@@ -308,7 +308,7 @@ struct
                                  cid = "",
                                  vcid = NONE}
 
-  fun make_instance (defined, input_term, value, inline, cid, vcid) =
+  fun make_instance (defined, (input_term, value), inline, cid, vcid) =
             Instance {defined = defined, input_term = input_term, 
                       value = value, inline = inline, cid = cid, vcid = vcid}
 
@@ -345,31 +345,31 @@ struct
 
   fun map_defined name f =
     map_instance_entry name (fn (defined, input_term, value, inline, cid, vcid) =>
-      (f defined, input_term, value, inline, cid, vcid))
+      (f defined, (input_term, value), inline, cid, vcid))
 
   fun map_input_term name f =
     map_instance_entry name (fn (defined, input_term, value, inline, cid, vcid) =>
-      (defined, f input_term, value, inline, cid, vcid))
+      (defined, (f input_term, value), inline, cid, vcid))
 
   fun map_value name f =
     map_instance_entry name (fn (defined, input_term, value, inline, cid, vcid) =>
-      (defined, input_term, f value, inline, cid, vcid))
+      (defined, (input_term, f value), inline, cid, vcid))
 
   fun map_input_term_value name f g =
     map_instance_entry name (fn (defined, input_term, value, inline, cid, vcid) =>
-      (defined, f input_term, g value, inline, cid, vcid))
+      (defined, (f input_term, g value), inline, cid, vcid))
 
   fun map_inline name f =
     map_instance_entry name (fn (defined, input_term, value, inline, cid, vcid) =>
-      (defined, input_term, value, f inline, cid, vcid))
+      (defined, (input_term, value), f inline, cid, vcid))
 
   fun map_cid name f =
     map_instance_entry name (fn (defined, input_term, value, inline, cid, vcid) =>
-      (defined, input_term, value, inline, f cid, vcid))
+      (defined, (input_term, value), inline, f cid, vcid))
 
   fun map_vcid name f =
     map_instance_entry name (fn (defined, input_term, value, inline, cid, vcid) =>
-      (defined, input_term, value, inline, cid, f vcid))
+      (defined, (input_term, value), inline, cid, f vcid))
 
   fun print_instances verbose ctxt =
     Pretty.big_list "Isabelle.DOF Instances:"
@@ -759,7 +759,7 @@ fun define_object_global {define = define} (binding, instance) thy  =
                                 (get_instances (Proof_Context.init_global thy)) (oid, Position.none)
                                 handle ERROR _ => (undefined_instance, empty_instance)
     val Instance {input_term, value, inline, cid, vcid, ...} = instance
-    val instance_args = (define, input_term, value, inline, cid, vcid)
+    val instance_args = (define, (input_term, value), inline, cid, vcid)
     val instance'' = make_instance instance_args 
   in if oid' = undefined_instance andalso instance' = empty_instance
      then (* declare instance using declare_reference* or else define instance *)
@@ -1886,6 +1886,7 @@ fun check_invariants thy binding =
 fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} 
                              binding cid_pos doc_attrs thy =
   let
+    val ctxt = Proof_Context.init_global thy
     val oid = Binding.name_of binding
     val (((name, args_cid), typ:typ), pos') = check_classref is_monitor cid_pos thy
     val cid_pos' = (name, pos')
@@ -1923,8 +1924,8 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define}
                              then let val (input_term, _) = calc_update_term 
                                                                  {mk_elaboration=false}
                                                                  thy (name, typ)  assns' defaults
-                                  in (input_term, value_term') end
-                             else (\<^term>\<open>()\<close>, value_term') end
+                                  in (input_term, value ctxt value_term') end
+                             else (\<^term>\<open>()\<close>, value ctxt value_term') end
      fun check_instance thy = 
             if (* declare_reference* without arguments is not checked against invariants *)
                thy |> DOF_core.defined_of oid |> not
@@ -1946,11 +1947,10 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define}
 
   in thy |> DOF_core.define_object_global
               {define = define} (binding, DOF_core.make_instance
-                                               (false, 
-                                                val1, 
-                                                val2 |> value (Proof_Context.init_global thy),
-                                                               is_inline, args_cid, vcid))
-         |> register_oid_cid_in_open_monitors binding (name,  pos')
+                                               (false, (val1, val2), is_inline, args_cid, vcid))
+
+(* make_instance (defined, input_term, value, inline, cid, vcid)*)
+         |> register_oid_cid_in_open_monitors binding (name,  pos') 
          |> check_instance
   end
 
