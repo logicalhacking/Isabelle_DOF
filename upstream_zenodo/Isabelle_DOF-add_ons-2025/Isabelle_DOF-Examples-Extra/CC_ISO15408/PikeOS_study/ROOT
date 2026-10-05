@@ -1,0 +1,4 @@
+session "PikeOS_study" = "Isabelle_DOF-Ontologies" +
+  options [document = false]
+  theories
+    "PikeOS_ST"
