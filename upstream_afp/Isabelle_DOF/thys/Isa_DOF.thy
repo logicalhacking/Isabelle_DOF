@@ -251,7 +251,7 @@ struct
 
   fun print_onto_classes verbose ctxt =
     Pretty.big_list "Isabelle.DOF Onto_Classes:"
-      (map (Pretty.mark_str o #1) (Name_Space.markup_table verbose ctxt (get_onto_classes ctxt)))
+      (map (Pretty.marks_str o #1) (Name_Space.markups_table verbose ctxt (get_onto_classes ctxt)))
     |> Pretty.writeln;
 
   fun the_onto_class T i =
@@ -290,27 +290,28 @@ struct
     end
 
 
-  datatype instance = Instance of {defined: bool,
-                                   input_term: term,
-                                   value: term,
-                                   inline: bool, 
-                                   cid: string,
-                                   vcid: string option}
+  datatype instance = Instance of 
+    {defined: bool,
+     input_term: term,
+     value: term,
+     inline: bool, 
+     cid: string,
+     vcid: string option}
 
   val undefined_instance = "undefined_instance"
 
   val undefined_value = Free ("Undefined_Value", default_cid_typ)
 
   val empty_instance = Instance {defined = false,
-                                 input_term = \<^term>\<open>()\<close>,
-                                 value = \<^term>\<open>()\<close>,
-                                 inline = false, 
-                                 cid = "",
-                                 vcid = NONE}
+     input_term = \<^term>\<open>()\<close>,
+     value = \<^term>\<open>()\<close>,
+     inline = false, 
+     cid = "",
+     vcid = NONE}
 
-  fun make_instance (defined, (input_term, value), inline, cid, vcid) =
-            Instance {defined = defined, input_term = input_term, 
-                      value = value, inline = inline, cid = cid, vcid = vcid}
+  fun make_instance (defined, input_term, value, inline, cid, vcid) =
+    Instance {defined = defined, input_term = input_term, value = value, inline = inline
+              , cid = cid, vcid = vcid}
 
   structure Instances = Theory_Data
   (
@@ -345,35 +346,35 @@ struct
 
   fun map_defined name f =
     map_instance_entry name (fn (defined, input_term, value, inline, cid, vcid) =>
-      (f defined, (input_term, value), inline, cid, vcid))
+      (f defined, input_term, value, inline, cid, vcid))
 
   fun map_input_term name f =
     map_instance_entry name (fn (defined, input_term, value, inline, cid, vcid) =>
-      (defined, (f input_term, value), inline, cid, vcid))
+      (defined, f input_term, value, inline, cid, vcid))
 
   fun map_value name f =
     map_instance_entry name (fn (defined, input_term, value, inline, cid, vcid) =>
-      (defined, (input_term, f value), inline, cid, vcid))
+      (defined, input_term, f value, inline, cid, vcid))
 
   fun map_input_term_value name f g =
     map_instance_entry name (fn (defined, input_term, value, inline, cid, vcid) =>
-      (defined, (f input_term, g value), inline, cid, vcid))
+      (defined, f input_term, g value, inline, cid, vcid))
 
   fun map_inline name f =
     map_instance_entry name (fn (defined, input_term, value, inline, cid, vcid) =>
-      (defined, (input_term, value), f inline, cid, vcid))
+      (defined, input_term, value, f inline, cid, vcid))
 
   fun map_cid name f =
     map_instance_entry name (fn (defined, input_term, value, inline, cid, vcid) =>
-      (defined, (input_term, value), inline, f cid, vcid))
+      (defined, input_term, value, inline, f cid, vcid))
 
   fun map_vcid name f =
     map_instance_entry name (fn (defined, input_term, value, inline, cid, vcid) =>
-      (defined, (input_term, value), inline, cid, f vcid))
+      (defined, input_term, value, inline, cid, f vcid))
 
   fun print_instances verbose ctxt =
     Pretty.big_list "Isabelle.DOF Instances:"
-      (map (Pretty.mark_str o #1) (Name_Space.markup_table verbose ctxt (get_instances ctxt)))
+      (map (Pretty.marks_str o #1) (Name_Space.markups_table verbose ctxt (get_instances ctxt)))
     |> Pretty.writeln;
 
   fun the_instance T i =
@@ -444,7 +445,7 @@ struct
 
   fun print_isa_transformers verbose ctxt =
     Pretty.big_list "Isabelle.DOF ISA_Transformers:"
-      (map (Pretty.mark_str o #1) (Name_Space.markup_table verbose ctxt (get_isa_transformers ctxt)))
+      (map (Pretty.marks_str o #1) (Name_Space.markups_table verbose ctxt (get_isa_transformers ctxt)))
     |> Pretty.writeln;
 
   fun the_isa_transformer T i =
@@ -593,7 +594,7 @@ struct
 
   fun print_invariants which verbose ctxt =
     Pretty.big_list "Isabelle.DOF ML_Invariants:"
-      (map (Pretty.mark_str o #1) (Name_Space.markup_table verbose ctxt (get_invariants which ctxt)))
+      (map (Pretty.marks_str o #1) (Name_Space.markups_table verbose ctxt (get_invariants which ctxt)))
     |> Pretty.writeln;
 
   val print_ml_invariants = print_invariants (fst o fst)
@@ -687,7 +688,7 @@ struct
 
   fun print_monitors_infos verbose ctxt =
     Pretty.big_list "Isabelle.DOF Monitor_Infos:"
-      (map (Pretty.mark_str o #1) (Name_Space.markup_table verbose ctxt (get_monitor_infos ctxt)))
+      (map (Pretty.marks_str o #1) (Name_Space.markups_table verbose ctxt (get_monitor_infos ctxt)))
     |> Pretty.writeln;
 
   fun the_monitor_info T i =
@@ -759,7 +760,7 @@ fun define_object_global {define = define} (binding, instance) thy  =
                                 (get_instances (Proof_Context.init_global thy)) (oid, Position.none)
                                 handle ERROR _ => (undefined_instance, empty_instance)
     val Instance {input_term, value, inline, cid, vcid, ...} = instance
-    val instance_args = (define, (input_term, value), inline, cid, vcid)
+    val instance_args= (define, input_term, value, inline, cid, vcid)
     val instance'' = make_instance instance_args 
   in if oid' = undefined_instance andalso instance' = empty_instance
      then (* declare instance using declare_reference* or else define instance *)
@@ -828,7 +829,7 @@ fun binding_from_pos get_objects get_object_name name thy  =
   let
     val ns = get_objects (Proof_Context.init_global thy)
                          |> Name_Space.space_of_table 
-    val {pos, ...} = Name_Space.the_entry ns (get_object_name name thy)
+    val pos = Name_Space.the_entry_pos ns (get_object_name name thy)
   in if Long_Name.is_qualified name
      then Binding.make (Long_Name.base_name name, pos)
      else Binding.make (name, pos)end
@@ -979,9 +980,10 @@ fun prep_decls prep_var raw_vars ctxt =
       |> Proof_Context.add_fixes vars
       ||> Context_Position.restore_visible ctxt';
     val _ =
-      Context_Position.reports ctxt''
-        (map (Binding.pos_of o #1) vars ~~        
-          map (Variable.markup_entity_def ctxt'' ##> Properties.remove Markup.kindN) xs);
+      (map (Binding.pos_of o #1) vars ~~
+        map (Variable.markups_entity_def ctxt'' #> map (apsnd (Properties.remove Markup.kindN))) xs)
+      |> maps (fn (p, ms) => map (pair p) ms)
+      |> Context_Position.reports ctxt''
   in ((vars, xs), ctxt'') end;
 
 fun print_doc_class_tree ctxt P T = 
@@ -1308,45 +1310,47 @@ fun declare_ISA_class_accessor_and_check_instance (params, doc_class_name, bind_
         |> add_const (bind', const_typ, Mixfix.mixfix mixfix')
   end
 
-fun elaborate_instances_of thy _ _ NONE _ = error ("Malformed term annotation")
-  | elaborate_instances_of thy _ _ (SOME term) _ =
+fun elaborate_instances_of thy _ _ term_option _ =
+  let
+    val class_name = case term_option of
+                        NONE => error ("Malformed term annotation")
+                      | SOME term => HOLogic.dest_string term
+    fun mk_list class_typ f =
       let
-        val class_name =  HOLogic.dest_string term
-        fun mk_list class_typ f =
-          let
-              val values = thy |> Proof_Context.init_global |> DOF_core.get_instances
-                           |> Name_Space.dest_table
-                           |> map fst
-                           |> f
-                           |> map (fn oid => DOF_core.value_of oid thy)
-            in HOLogic.mk_list class_typ values end
-      in if equal class_name DOF_core.default_cid
-         then
-           (* When the class name is default_cid = "text",
-              return the instances attached to this default class.
-              We want the class default_cid to stay abstract
-              and not have the capability to be defined with attribute, invariants, etc.
-              Hence this can handle docitem without a class associated,
-              for example when you just want a document element to be referentiable
-              without using the burden of ontology classes.
-              ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
-           (filter (fn name => DOF_core.cid_of name thy |> equal DOF_core.default_cid))
-           |> mk_list DOF_core.default_cid_typ
-         else
-           let
-             val class_typ = class_name |> Syntax.read_typ_global thy
-           in
-             (filter_out (fn name => DOF_core.cid_of name thy |> equal DOF_core.default_cid)
-              #> filter (fn name => DOF_core.cid_of name thy
-                                    |> Syntax.read_typ_global thy
-                                    |> equal class_typ))
-             |> mk_list class_typ
-           end
-      end
+          val values = thy |> Proof_Context.init_global |> DOF_core.get_instances
+                       |> Name_Space.dest_table
+                       |> map fst
+                       |> f
+                       |> map (fn oid => DOF_core.value_of oid thy)
+        in HOLogic.mk_list class_typ values end
+  in if equal class_name DOF_core.default_cid
+     then
+       (* When the class name is default_cid = "text",
+          return the instances attached to this default class.
+          We want the class default_cid to stay abstract
+          and not have the capability to be defined with attribute, invariants, etc.
+          Hence this can handle docitem without a class associated,
+          for example when you just want a document element to be referentiable
+          without using the burden of ontology classes.
+          ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
+       (filter (fn name => DOF_core.cid_of name thy |> equal DOF_core.default_cid))
+       |> mk_list DOF_core.default_cid_typ
+     else
+       let
+         val class_typ = class_name |> Syntax.read_typ_global thy
+       in
+         (filter_out (fn name => DOF_core.cid_of name thy |> equal DOF_core.default_cid)
+          #> filter (fn name => DOF_core.cid_of name thy
+                                |> Syntax.read_typ_global thy
+                                |> equal class_typ))
+         |> mk_list class_typ
+       end
+  end
 
 fun symbex_attr_access0 ctxt proj_term term =
-    let  val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
-    in   Value_Command.value ctxt (subterm') end
+let
+      val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
+in Value_Command.value ctxt (subterm') end
 
 fun compute_attr_access ctxt attr oid pos_option pos' = (* template *)
   let
@@ -1356,9 +1360,9 @@ fun compute_attr_access ctxt attr oid pos_option pos' = (* template *)
     val DOF_core.Instance {cid,...} =
                                     DOF_core.get_instance_global oid thy
     val instances = DOF_core.get_instances ctxt'
-    val markup = DOF_core.get_instance_name_global oid thy
-                 |> Name_Space.markup (Name_Space.space_of_table instances)
-    val _ = Context_Position.report ctxt' pos' markup;
+    val markups = DOF_core.get_instance_name_global oid thy
+                 |> Name_Space.markups (Name_Space.space_of_table instances)
+    val _ = Context_Position.reports ctxt' (map (pair pos') markups);
     val {long_name, typ=ty, ...} = 
       case DOF_core.get_attribute_info_local cid attr ctxt' of
           SOME f => f
@@ -1377,13 +1381,15 @@ fun compute_attr_access ctxt attr oid pos_option pos' = (* template *)
                   let 
                     val class_name = Long_Name.qualifier long_name
                     val onto_classes = DOF_core.get_onto_classes ctxt'
-                    val markup = DOF_core.get_onto_class_name_global class_name thy
-                                 |> Name_Space.markup (Name_Space.space_of_table onto_classes)
-                  in Context_Position.report ctxt' pos markup end
+                    val markups = DOF_core.get_onto_class_name_global class_name thy
+                                 |> Name_Space.markups (Name_Space.space_of_table onto_classes)
+                  in Context_Position.reports ctxt' (map (pair pos) markups) end
   in  symbex_attr_access0 ctxt' proj_term value end
 
-fun ML_isa_elaborate_trace_attribute thy _ _ NONE pos = err ("Malformed term annotation") pos
-  | ML_isa_elaborate_trace_attribute (thy:theory) _ _ (SOME term) pos =
+fun ML_isa_elaborate_trace_attribute (thy:theory) _ _ term_option pos =
+case term_option of
+    NONE => err ("Malformed term annotation") pos
+  | SOME term => 
       let
         val oid = HOLogic.dest_string term
         val traces = compute_attr_access (Context.Theory thy) traceN oid NONE pos
@@ -1411,7 +1417,7 @@ setup\<open>
 |> fold (fn (n, check, elaborate) => fn thy =>
 let val ns = Sign.tsig_of thy |> Type.type_space
     val name = n
-    val {pos, ...} = Name_Space.the_entry ns name
+    val pos = Name_Space.the_entry_pos ns name
     val bname = Long_Name.base_name name
     val binding = Binding.make (bname, pos)
                    |> Binding.prefix_name DOF_core.ISA_prefix
@@ -1428,7 +1434,7 @@ end)
 |> fold (fn (n, check, elaborate) => fn thy =>
 let val ns = Sign.consts_of thy |> Consts.space_of
     val name = n
-    val {pos, ...} = Name_Space.the_entry ns name
+    val pos = Name_Space.the_entry_pos ns name
     val bname =  Long_Name.base_name name
     val binding = Binding.make (bname, pos)
 in  DOF_core.add_isa_transformer binding ((check, elaborate) |> DOF_core.make_isa_transformer) thy
@@ -1610,20 +1616,20 @@ fun create_default_object thy binding class_name typ =
 
 
 fun check_classref {is_monitor=is_monitor} (SOME (cid, pos)) thy =                        
-       let
-         val ctxt = Proof_Context.init_global thy
-         val name_cid_typ = DOF_core.get_onto_class_cid thy cid
-         val cid_long = name_cid_typ |> (fst o fst)
-         val rex = DOF_core.rex_of cid_long thy
-         val _ = if is_monitor andalso (null rex orelse cid_long= DOF_core.default_cid ) 
-                 then error("should be monitor class!")
-                 else ()
-         val onto_classes = DOF_core.get_onto_classes ctxt
-         val markup = DOF_core.get_onto_class_name_global cid_long thy
-                      |> Name_Space.markup (Name_Space.space_of_table onto_classes)
-         val _ = Context_Position.report ctxt pos markup;
-       in  (name_cid_typ, pos)
-       end
+  let
+    val ctxt = Proof_Context.init_global thy
+    val name_cid_typ = DOF_core.get_onto_class_cid thy cid
+    val cid_long = name_cid_typ |> (fst o fst)
+    val rex = DOF_core.rex_of cid_long thy
+    val _ = if is_monitor andalso (null rex orelse cid_long= DOF_core.default_cid ) 
+            then error("should be monitor class!")
+            else ()
+    val onto_classes = DOF_core.get_onto_classes ctxt
+    val markups = DOF_core.get_onto_class_name_global cid_long thy
+                 |> Name_Space.markups (Name_Space.space_of_table onto_classes)
+    val _ = Context_Position.reports ctxt (map (pair pos) markups);
+  in  (name_cid_typ, pos)
+  end
   | check_classref _ NONE _ = pair DOF_core.default_cid DOF_core.default_cid
                               |> rpair DOF_core.default_cid_typ
                               |> rpair Position.none
@@ -1654,9 +1660,9 @@ fun calc_update_term {mk_elaboration=mk_elaboration} thy (name, typ)
                         then
                           let val attr_defined_cid = get_class_name cid_long lhs pos
                               val onto_classes = DOF_core.get_onto_classes ctxt
-                              val markup = DOF_core.get_onto_class_name_global attr_defined_cid thy
-                                           |> Name_Space.markup (Name_Space.space_of_table onto_classes)
-                          in Context_Position.report ctxt pos markup end
+                              val markups = DOF_core.get_onto_class_name_global attr_defined_cid thy
+                                           |> Name_Space.markups (Name_Space.space_of_table onto_classes)
+                          in Context_Position.reports ctxt (map (pair pos) markups) end
                         else ()
                 val info_opt = DOF_core.get_attribute_info cid_long (Long_Name.base_name lhs) thy
                 val (ln,lnt,lnu,_) = case info_opt of 
@@ -1754,18 +1760,18 @@ fun register_oid_cid_in_open_monitors binding (name, pos') thy =
                                             else (msg thy (msg_intro snd n moid cid_long) pos';A))
               end
          in (moid,map check_for_cid indexed_autoS, monitor_info)  end  
-      val ctxt = (Proof_Context.init_global thy)
       val enabled_monitors = List.mapPartial is_enabled
-                             (Name_Space.dest_table (DOF_core.get_monitor_infos ctxt))
+                      (Name_Space.dest_table (DOF_core.get_monitor_infos (Proof_Context.init_global thy)))
       val defined = DOF_core.defined_of oid thy
       val trace_attr = if defined
                        then trace_attr_t cid_long oid 
                        else []
       fun mon_cid oid = DOF_core.cid_of oid thy |> DOF_core.get_onto_class_cid thy
                                                 |> (fn ((name, _), typ) => (name, typ))
+      val ctxt = Proof_Context.init_global thy
       fun def_trans_value oid =
-            (#1 o (calc_update_term {mk_elaboration=true} thy (mon_cid oid) trace_attr))
-             #> value ctxt
+        (#1 o (calc_update_term {mk_elaboration=true} thy (mon_cid oid) trace_attr))
+        #> value ctxt
       val _ = if null enabled_monitors
               then ()
               else if defined
@@ -1773,11 +1779,13 @@ fun register_oid_cid_in_open_monitors binding (name, pos') thy =
                          app (fn (n, _) => tracing (oid^" : "^cid_long^" ==> "^n)) enabled_monitors)
                    else ()
       (* check that any transition is possible: *)
-      fun get_cid_long x = let val DOF_core.Instance cid = DOF_core.get_instance_global x thy
-                           in cid |> #cid end
       fun class_inv_checks thy =
         enabled_monitors
-        |> map (fn (x, _) => DOF_core.check_ml_invs (get_cid_long x) x {is_monitor=true} thy)
+        |> map (fn (x, _) =>
+                  let val cid_long =
+                            let val DOF_core.Instance cid = DOF_core.get_instance_global x thy
+                            in cid |> #cid end
+                  in DOF_core.check_ml_invs cid_long x {is_monitor=true} thy end)
       val delta_autoS = map is_enabled_for_cid  enabled_monitors;
       fun update_info (n, aS, monitor_info) =  
         let val DOF_core.Monitor_Info {accepted_cids,rejected_cids,...} = monitor_info
@@ -1883,10 +1891,8 @@ fun check_invariants thy binding =
   in thy end
 
 
-fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} 
-                             binding cid_pos doc_attrs thy =
+fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} binding cid_pos doc_attrs thy =
   let
-    val ctxt = Proof_Context.init_global thy
     val oid = Binding.name_of binding
     val (((name, args_cid), typ:typ), pos') = check_classref is_monitor cid_pos thy
     val cid_pos' = (name, pos')
@@ -1897,7 +1903,7 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define}
                else if DOF_core.virtual_of cid_long thy |> #virtual
                     then SOME args_cid
                     else NONE
-    val (val1,val2) = if default_cid
+    val value_terms = if default_cid
                       then let
                              val undefined_value = dest_Free DOF_core.undefined_value
                                                    |> apfst (fn x => oid ^ "_" ^ x)
@@ -1908,25 +1914,29 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define}
                                without using the burden of ontology classes.
                                ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
                      else let
-                            fun conv_attrs ((lhs, pos), rhs) = 
-                                         (Protocol_Message.clean_output lhs,pos,"=", 
-                                          Syntax.parse_term (Proof_Context.init_global thy) rhs)
+                            fun conv_attrs ((lhs, pos), rhs) = (Protocol_Message.clean_output lhs,pos,"=", Syntax.parse_term (Proof_Context.init_global thy) rhs)
                             val assns' = map conv_attrs doc_attrs
                             val defaults_init = create_default_object thy binding cid_long typ
-                            fun conv (na, _(*ty*), parsed_term) =
-                                         (Binding.name_of na, Binding.pos_of na, "=", parsed_term);
+                            fun conv (na, _(*ty*), parsed_term) =(Binding.name_of na, Binding.pos_of na, "=", parsed_term);
                             val S = map conv (DOF_core.get_attribute_defaults cid_long thy);
                             val (defaults, _) = calc_update_term {mk_elaboration=false}
                                                                       thy (name, typ) S defaults_init;
                             val (value_term', _) = calc_update_term {mk_elaboration=true}
                                                                       thy (name, typ) assns' defaults
                           in if Config.get_global thy DOF_core.object_value_debug
-                             then let val (input_term, _) = calc_update_term 
-                                                                 {mk_elaboration=false}
-                                                                 thy (name, typ)  assns' defaults
-                                  in (input_term, value ctxt value_term') end
-                             else (\<^term>\<open>()\<close>, value ctxt value_term') end
-     fun check_instance thy = 
+                             then let
+                                    val (input_term, _) = calc_update_term {mk_elaboration=false}
+                                                                        thy (name, typ)  assns' defaults
+                                  in (input_term, value_term') end
+                             else (\<^term>\<open>()\<close>, value_term') end
+  in thy |> DOF_core.define_object_global
+              {define = define} (binding, DOF_core.make_instance
+                                               (false, fst value_terms,
+                                                (snd value_terms)
+                                                |> value (Proof_Context.init_global thy),
+                                                 is_inline, args_cid, vcid))
+         |> register_oid_cid_in_open_monitors binding (name,  pos')
+         |> (fn thy =>
             if (* declare_reference* without arguments is not checked against invariants *)
                thy |> DOF_core.defined_of oid |> not
                andalso null doc_attrs
@@ -1943,15 +1953,7 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define}
                         ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
                      |> (fn thy => if default_cid then thy
                                    else if Config.get_global thy DOF_core.invariants_checking
-                                        then check_invariants thy binding else thy)
-
-  in thy |> DOF_core.define_object_global
-              {define = define} (binding, DOF_core.make_instance
-                                               (false, (val1, val2), is_inline, args_cid, vcid))
-
-(* make_instance (defined, input_term, value, inline, cid, vcid)*)
-         |> register_oid_cid_in_open_monitors binding (name,  pos') 
-         |> check_instance
+                                        then check_invariants thy binding else thy))
   end
 
 end (* structure Docitem_Parser *)
@@ -2031,7 +2033,7 @@ fun print_term meta_args_opt (string_list, string) trans =
 let
   val pos = Toplevel.pos_of trans
 in meta_args_exec meta_args_opt
-   #> tap (fn thy => print_item (prin string pos) (string_list, string) (Toplevel.make_state (SOME thy)))
+   #> tap (fn thy => print_item (prin string pos) (string_list, string) (Toplevel.make_state (SOME (Context.Theory thy))))
    |> (fn thy => Toplevel.theory thy trans)
 end
 
@@ -2047,7 +2049,7 @@ in trans
         (fn thy =>
            if Config.get_global thy disable_assert_evaluation
            then (meta_args_exec meta_args_opt
-                #> tap (fn thy => print_item (prin t pos) (modes, t) (Toplevel.make_state (SOME thy))))
+                 #> tap (fn thy => print_item (prin t pos) (modes, t) (Toplevel.make_state (SOME (Context.Theory thy)))))
                 thy
            else value_cmd {assert=true} meta_args_opt name modes t pos thy) 
 end
@@ -2116,9 +2118,9 @@ fun update_instance_command  ((binding, cid_pos),
                                       DOF_core.get_instance_global oid thy
                     val ctxt =  Proof_Context.init_global thy
                     val instances = DOF_core.get_instances ctxt
-                    val markup = DOF_core.get_instance_name_global oid thy
-                                 |> Name_Space.markup (Name_Space.space_of_table instances)
-                    val _ = Context_Position.report ctxt (Binding.pos_of binding) markup;
+                    val markups = DOF_core.get_instance_name_global oid thy
+                                 |> Name_Space.markups (Name_Space.space_of_table instances)
+                    val _ = Context_Position.reports ctxt (map (pair (Binding.pos_of binding)) markups);
                 in  cid end
       val default_cid = cid = DOF_core.default_cid
       val (((name, cid'), typ), pos') = Value_Command.Docitem_Parser.check_classref {is_monitor = false}
@@ -2133,7 +2135,7 @@ fun update_instance_command  ((binding, cid_pos),
       val assns' = map conv_attrs doc_attrs
       val def_trans_value  =
         #1 o (Value_Command.Docitem_Parser.calc_update_term {mk_elaboration=true}
-                                                            thy (name, typ) assns')
+                                                                      thy (name, typ) assns')
         #> Value_Command.value (Proof_Context.init_global thy)
   in     
       thy |> (if Config.get_global thy DOF_core.object_value_debug 
@@ -2163,8 +2165,7 @@ fun update_instance_command  ((binding, cid_pos),
    them out into the COL -- bu *)
 
 
-fun open_monitor_command  (((binding, raw_parent_pos), doc_attrs) : 
-                           ODL_Meta_Args_Parser.meta_args_t) thy =
+fun open_monitor_command  (((binding, raw_parent_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) thy =
     let fun o_m_c binding params_cid_pos doc_attrs thy =
           Value_Command.Docitem_Parser.create_and_check_docitem 
             {is_monitor=true}  (* this is a monitor *)
@@ -2179,8 +2180,7 @@ fun open_monitor_command  (((binding, raw_parent_pos), doc_attrs) :
           in  (aalph, ralph, map (RegExpInterface.rexp_term2da thy aalph)(#rex X)) end 
         fun create_monitor_entry thy =  
           let val cid = case raw_parent_pos of
-                            NONE => ISA_core.err ("You must specified a monitor class.") 
-                                                 (Binding.pos_of binding)
+                            NONE => ISA_core.err ("You must specified a monitor class.") (Binding.pos_of binding)
                           | SOME (raw_parent, _) =>
                               DOF_core.markup2string raw_parent 
                               |> DOF_core.get_onto_class_cid thy |> (fst o fst)
@@ -2200,23 +2200,25 @@ fun close_monitor_command (args as ((binding, cid_pos),
     let val oid = Binding.name_of binding
         val pos = Binding.pos_of binding
         fun check_if_final aS = let val i = (find_index (not o RegExpInterface.final) aS) + 1
-                                    val txt = "accepts clause " ^ Int.toString i 
-                                              ^ " of monitor " ^ oid
-                                              ^ " not in final state."
                                 in  if i >= 1 
-                                    then Value_Command.Docitem_Parser.msg thy txt pos
+                                    then
+                                      Value_Command.Docitem_Parser.msg thy
+                                                    ("accepts clause " ^ Int.toString i 
+                                                     ^ " of monitor " ^ oid
+                                                     ^ " not in final state.") pos
                                     else ()
                                 end
-        val DOF_core.Monitor_Info {automatas,...} = DOF_core.get_monitor_info_global oid thy
-        val _ = check_if_final automatas 
+        val _ = let val DOF_core.Monitor_Info {automatas,...} =
+                                                  DOF_core.get_monitor_info_global oid thy
+                in check_if_final automatas end
         val oid' = DOF_core.get_monitor_info_name_global oid thy
         val delete_monitor_entry = DOF_core.Monitor_Info.map (Name_Space.del_table oid')
         val DOF_core.Instance {cid=cid_long,...} = DOF_core.get_instance_global oid thy
         val ctxt = Proof_Context.init_global thy
         val instances = DOF_core.get_instances ctxt
-        val markup = DOF_core.get_instance_name_global oid thy
-                      |> Name_Space.markup (Name_Space.space_of_table instances)
-        val _ = Context_Position.report ctxt pos markup;
+        val markups = DOF_core.get_instance_name_global oid thy
+                      |> Name_Space.markups (Name_Space.space_of_table instances)
+        val _ = Context_Position.reports ctxt (map (pair pos) markups);
     in  thy |> tap (DOF_core.check_closing_ml_invs cid_long oid {is_monitor=true})
             |> update_instance_command args
             |> tap (DOF_core.check_ml_invs cid_long oid {is_monitor=true})
@@ -2236,11 +2238,12 @@ fun meta_args_2_latex thy sem_attrs transform_attr
                                                             |> enclose "{" "}"
                                                             |> prefix "label = "
         val ((cid_long, _), _) = case cid_opt of
-                                   NONE => let val DOF_core.Instance {cid,...} =
-                                                      DOF_core.get_instance_global lab thy
-                                           in  (cid,cid) |> rpair DOF_core.default_cid_typ end
-                                   
-                                 | SOME(cid,_) => DOF_core.get_onto_class_cid thy cid        
+                               NONE => let val DOF_core.Instance cid =
+                                             DOF_core.get_instance_global lab thy
+                                        in pair (cid |> #cid) (cid |> #cid)
+                                           |> rpair DOF_core.default_cid_typ end
+                                  
+                              | SOME(cid,_) => DOF_core.get_onto_class_cid thy cid        
 
         val cid_txt  = cid_long |> DOF_core.output_name
                                 |> enclose "{" "}"
@@ -2312,8 +2315,7 @@ fun meta_args_2_latex thy sem_attrs transform_attr
         val label_and_type = String.concat [ l, ",", cid_txt]
         val str_args = label_and_type::str_args
     in
-        Latex.string (enclose "[" "]" 
-                              (String.concat[label_and_type, ", args={", (commas str_args), "}"]))
+      Latex.string (enclose "[" "]" (String.concat [ label_and_type, ", args={", (commas str_args), "}"]))
     end
 
 
@@ -2357,54 +2359,59 @@ fun document_output_reports name {markdown, body} sem_attrs transform_attr meta_
 fun document_command (name, pos) descr mark cmd sem_attrs transform_attr =
   Outer_Syntax.command (name, pos) descr
   (ODL_Meta_Args_Parser.attributes -- Parse.document_source >> (fn (meta_args, text) =>
-      Toplevel.theory' (fn _ => cmd meta_args)
-          (SOME (Toplevel.presentation_context 
-                 #> document_output_reports name mark sem_attrs transform_attr meta_args text)))); 
+      Toplevel.theory_presentation (cmd meta_args)
+          (Toplevel.presentation_context #> document_output_reports name mark sem_attrs transform_attr meta_args text))); 
 
 fun onto_macro_cmd_output_reports output_cmd (meta_args, text) ctxt =
- let val _ = Context_Position.reports ctxt (Document_Output.document_reports text);
- in  output_cmd (meta_args, text) ctxt end
+ let
+   val _ = Context_Position.reports ctxt (Document_Output.document_reports text);
+ in output_cmd (meta_args, text) ctxt end
 
 fun onto_macro_cmd_command (name, pos) descr cmd output_cmd = 
   Outer_Syntax.command (name, pos) descr 
   (ODL_Meta_Args_Parser.attributes -- Parse.document_source >>  
      (fn (meta_args, text) =>
-          Toplevel.theory' (fn _ => cmd meta_args)
-             (SOME (Toplevel.presentation_context
+          Toplevel.theory_presentation (cmd meta_args)
+             (Toplevel.presentation_context
               #> onto_macro_cmd_output_reports output_cmd  (meta_args, text)
-              ))))
+              )))
 
 
 
 (* Core Command Definitions *)
 
-val _ = Outer_Syntax.command \<^command_keyword>\<open>open_monitor*\<close>
-                             "open a document reference monitor"
-                             (ODL_Meta_Args_Parser.attributes
-                              >> (Toplevel.theory o open_monitor_command));
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>open_monitor*\<close>
+                       "open a document reference monitor"
+                       (ODL_Meta_Args_Parser.attributes
+                        >> (Toplevel.theory o open_monitor_command));
 
-val _ = Outer_Syntax.command \<^command_keyword>\<open>close_monitor*\<close>
-                             "close a document reference monitor"
-                            (ODL_Meta_Args_Parser.attributes_upd
-                             >> (Toplevel.theory o close_monitor_command)); 
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>close_monitor*\<close>
+                       "close a document reference monitor"
+                       (ODL_Meta_Args_Parser.attributes_upd
+                        >> (Toplevel.theory o close_monitor_command)); 
 
-val _ = Outer_Syntax.command \<^command_keyword>\<open>update_instance*\<close>
-                             "update meta-attributes of an instance of a document class"
-                             (ODL_Meta_Args_Parser.attributes_upd
-                              >> (Toplevel.theory o update_instance_command));
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>update_instance*\<close>
+                       "update meta-attributes of an instance of a document class"
+                        (ODL_Meta_Args_Parser.attributes_upd
+                         >> (Toplevel.theory o update_instance_command));
 
-val _ =  document_command \<^command_keyword>\<open>text*\<close> "formal comment (primary style)"
-          {markdown = true, body = true} (gen_enriched_document_cmd {inline=true} I I) [] I;
+val _ =
+  document_command \<^command_keyword>\<open>text*\<close> "formal comment (primary style)"
+    {markdown = true, body = true} (gen_enriched_document_cmd {inline=true} I I) [] I;
                                                  
 
 (* This is just a stub at present *)
-val _ = document_command \<^command_keyword>\<open>text-macro*\<close> "formal comment macro"
-          {markdown = true, body = true}
-          (gen_enriched_document_cmd {inline=false} (* declare as macro *) I I) [] I;
+val _ =
+  document_command \<^command_keyword>\<open>text-macro*\<close> "formal comment macro"
+    {markdown = true, body = true}
+    (gen_enriched_document_cmd {inline=false} (* declare as macro *) I I) [] I;
 
  
-val     (declare_reference_default_class, declare_reference_default_class_setup) 
-      = Attrib.config_string \<^binding>\<open>declare_reference_default_class\<close> (K "");
+val (declare_reference_default_class, declare_reference_default_class_setup) 
+     = Attrib.config_string \<^binding>\<open>declare_reference_default_class\<close> (K "");
 
 val _ = Theory.setup declare_reference_default_class_setup
 
@@ -2416,7 +2423,7 @@ val _ =
                 let val name = DOF_core.get_onto_class_name_global' ncid thy
                     val ns = DOF_core.get_onto_classes (Proof_Context.init_global thy)
                              |> Name_Space.space_of_table
-                    val {pos, ...} = Name_Space.the_entry ns name
+                    val pos = Name_Space.the_entry_pos ns name
                 in SOME (name,pos) end
             | default_cid' _ (SOME _) cid_pos = cid_pos
           val ncid =  Config.get_global thy declare_reference_default_class
@@ -2602,7 +2609,7 @@ val read_spec_open = prep_spec_open Proof_Context.read_var Syntax.parse_prop;
 
 (* definition *)
 
-fun gen_def prep_spec prep_att raw_var raw_params raw_prems ((a, raw_atts), raw_spec) int lthy =
+fun gen_def prep_spec prep_att raw_var raw_params raw_prems ((a, raw_atts), raw_spec) lthy =
   let
     val atts = map (prep_att lthy) raw_atts;
 
@@ -2632,23 +2639,23 @@ fun gen_def prep_spec prep_att raw_var raw_params raw_prems ((a, raw_atts), raw_
     val lhs' = Morphism.term (Local_Theory.target_morphism lthy) lhs;
 
     val _ =
-      Proof_Display.print_consts int (Position.thread_data ()) lthy4
+      Proof_Display.print_consts {verbose = true, pos = Position.thread_data ()} lthy4
         (Frees.defined (Frees.build (Frees.add_frees lhs'))) [(x, T)];
   in ((lhs, (def_name, th')), lthy4) end;
 
 val definition_cmd = gen_def read_spec_open Attrib.check_src;
 
-fun definition_cmd' meta_args_opt decl params prems spec bool ctxt =
+fun definition_cmd' meta_args_opt decl params prems spec ctxt =
   Local_Theory.background_theory (Value_Command.meta_args_exec meta_args_opt) ctxt
-  |> definition_cmd decl params prems spec bool
+  |> definition_cmd decl params prems spec
 
 val _ =
-  Outer_Syntax.local_theory' \<^command_keyword>\<open>definition*\<close> "constant definition"
+  Outer_Syntax.local_theory \<^command_keyword>\<open>definition*\<close> "constant definition"
     (ODL_Meta_Args_Parser.opt_attributes --
       (Scan.option Parse_Spec.constdecl -- (Parse_Spec.opt_thm_name ":" -- Parse.prop) --
         Parse_Spec.if_assumes -- Parse.for_fixes)
      >> (fn (meta_args_opt, (((decl, spec), prems), params)) => 
-                                    #2 oo definition_cmd' meta_args_opt decl params prems spec));
+                                    #2 o definition_cmd' meta_args_opt decl params prems spec));
 end
 \<close>
 
@@ -2690,7 +2697,7 @@ fun prep_statement prep_att prep_stmt raw_elems raw_stmt ctxt =
   end;
 
 fun gen_theorem schematic bundle_includes prep_att prep_stmt
-    long kind before_qed after_qed (name, raw_atts) raw_includes raw_elems raw_concl int lthy =
+    long kind before_qed after_qed (name, raw_atts) raw_includes raw_elems raw_concl lthy =
   let
     val _ = Local_Theory.assert lthy;
 
@@ -2701,7 +2708,7 @@ fun gen_theorem schematic bundle_includes prep_att prep_stmt
     val atts = more_atts @ map (prep_att lthy) raw_atts;
 
     val print_results =
-      Proof_Display.print_results {interactive = int, pos = Position.thread_data ()};
+      Proof_Display.print_results {verbose = true, pos = Position.thread_data ()};
 
     fun after_qed' results goal_ctxt' =
       let
@@ -2736,24 +2743,19 @@ fun gen_theorem schematic bundle_includes prep_att prep_stmt
 
 in
 
-val theorem_cmd = gen_theorem false Bundle.includes_cmd Attrib.check_src Expression.read_statement;
+val theorem_cmd =
+  gen_theorem false Bundle.includes_cmd Attrib.check_src Expression.read_statement;
 
-fun theorem_cmd' meta_args_opt long kind before_qed after_qed (name, raw_atts) 
-                 raw_includes raw_elems raw_concl int lthy =
-     Local_Theory.background_theory (Value_Command.meta_args_exec meta_args_opt) lthy
-     |> 
-     theorem_cmd long kind before_qed after_qed (name, raw_atts) raw_includes 
-                 raw_elems raw_concl int;
+fun theorem_cmd' meta_args_opt long kind before_qed after_qed (name, raw_atts) raw_includes raw_elems raw_concl lthy =
+  Local_Theory.background_theory (Value_Command.meta_args_exec meta_args_opt) lthy
+  |> theorem_cmd long kind before_qed after_qed (name, raw_atts) raw_includes raw_elems raw_concl;
 
 val schematic_theorem_cmd =
   gen_theorem true Bundle.includes_cmd Attrib.check_src Expression.read_statement;
 
-fun schematic_theorem_cmd' meta_args_opt long kind before_qed after_qed (name, raw_atts) 
-                           raw_includes raw_elems raw_concl int lthy =
-     Local_Theory.background_theory (Value_Command.meta_args_exec meta_args_opt) lthy
-     |> 
-     schematic_theorem_cmd long kind before_qed after_qed (name, raw_atts) raw_includes 
-                           raw_elems raw_concl int;
+fun schematic_theorem_cmd' meta_args_opt long kind before_qed after_qed (name, raw_atts) raw_includes raw_elems raw_concl lthy =
+  Local_Theory.background_theory (Value_Command.meta_args_exec meta_args_opt) lthy
+  |> schematic_theorem_cmd long kind before_qed after_qed (name, raw_atts) raw_includes raw_elems raw_concl;
 
 end;
 
@@ -2766,8 +2768,7 @@ val long_statement =
   ODL_Meta_Args_Parser.opt_attributes --
   Scan.optional (Parse_Spec.opt_thm_name ":" --| Scan.ahead long_keyword) Binding.empty_atts --
   Scan.optional Parse_Spec.includes [] -- Parse_Spec.long_statement
-    >> (fn (((meta_args_opt, binding), includes), (elems, concl)) 
-           => (meta_args_opt, true, binding, includes, elems, concl));
+    >> (fn (((meta_args_opt, binding), includes), (elems, concl)) => (meta_args_opt, true, binding, includes, elems, concl));
 
 val short_statement =
   ODL_Meta_Args_Parser.opt_attributes --
@@ -2777,11 +2778,10 @@ val short_statement =
         Element.Shows shows));
 
 fun theorem spec schematic descr =
-  Outer_Syntax.local_theory_to_proof' spec ("state " ^ descr)
-    ((long_statement || short_statement) 
-     >> (fn (meta_args_opt, long, binding, includes, elems, concl)  =>
-            ((if schematic then schematic_theorem_cmd' else theorem_cmd')
-             meta_args_opt long Thm.theoremK NONE (K I) binding includes elems concl)));
+  Outer_Syntax.local_theory_to_proof spec ("state " ^ descr)
+    ((long_statement || short_statement) >> (fn (meta_args_opt, long, binding, includes, elems, concl) =>
+      ((if schematic then schematic_theorem_cmd' else theorem_cmd')
+        meta_args_opt long Thm.theoremK NONE (K I) binding includes elems concl)));
 
 val _ = theorem \<^command_keyword>\<open>theorem*\<close> false "theorem";
 val _ = theorem \<^command_keyword>\<open>lemma*\<close> false "lemma";
@@ -2817,9 +2817,9 @@ fun check_and_mark ctxt cid_decl ({strict_checking = strict}) {inline=inline_req
             else if not inline then () else error("referred text-element is no macro!")
     val instances = DOF_core.get_instances ctxt
     val name' = DOF_core.get_instance_name_global name thy
-    val markup = name' |> Name_Space.markup (Name_Space.space_of_table instances)
+    val markups = name' |> Name_Space.markups (Name_Space.space_of_table instances)
     (* this sends a report for a ref application to the PIDE interface ... *)
-    val _ = Context_Position.report ctxt pos markup;
+    val _ = Context_Position.reports ctxt (map (pair pos) markups);
     val cid' = if cid = DOF_core.default_cid
                then cid
                else DOF_core.get_onto_class_cid thy cid |> (fst o fst)
@@ -2882,9 +2882,9 @@ fun check_and_mark_term ctxt oid  =
     val DOF_core.Instance {cid,value,...} = DOF_core.get_instance_global oid' thy
     val instances = DOF_core.get_instances ctxt'
     val ns = instances |> Name_Space.space_of_table 
-    val {pos, ...} = Name_Space.the_entry ns oid'
-    val markup = oid' |> Name_Space.markup (Name_Space.space_of_table instances)
-    val _ = Context_Position.report ctxt' pos markup;
+    val pos = Name_Space.the_entry_pos ns oid'
+    val markups = oid' |> Name_Space.markups (Name_Space.space_of_table instances)
+    val _ = Context_Position.reports ctxt' (map (pair pos) markups);
     (* this sends a report for a ref application to the PIDE interface ... *) 
     val _ = if cid = DOF_core.default_cid
             then error("anonymous "^ DOF_core.default_cid ^ " class has no value" )
@@ -2950,17 +2950,17 @@ fun get_instance_value_2_ML ctxt (oid:string,pos) =
         val thy = Proof_Context.theory_of ctxt'
         val value = DOF_core.value_of oid thy
         val instances = DOF_core.get_instances ctxt'
-        val markup = DOF_core.get_instance_name_global oid thy
-                     |> Name_Space.markup (Name_Space.space_of_table instances)
-        val _ = Context_Position.report ctxt' pos markup;
+        val markups = DOF_core.get_instance_name_global oid thy
+                     |> Name_Space.markups (Name_Space.space_of_table instances)
+        val _ = Context_Position.reports ctxt' (map (pair pos) markups);
     in  ML_Syntax.print_term value end
 
 fun get_instance_name_2_ML ctxt (oid:string,pos) =
     let val ctxt' = Context.the_proof ctxt
         val instances = DOF_core.get_instances ctxt'
-        val markup = DOF_core.get_instance_name_global oid (Proof_Context.theory_of ctxt')
-                     |> Name_Space.markup (Name_Space.space_of_table instances)
-        val _ = Context_Position.report ctxt' pos markup;
+        val markups = DOF_core.get_instance_name_global oid (Proof_Context.theory_of ctxt')
+                     |> Name_Space.markups (Name_Space.space_of_table instances)
+        val _ = Context_Position.reports ctxt' (map (pair pos) markups);
     in "\"" ^ oid ^ "\"" end
 
 fun trace_attr_2_ML ctxt (oid:string,pos) =
@@ -2987,8 +2987,8 @@ let
   val ns = Name_Space.space_of_table instances
   val name  = DOF_core.get_instance_name_global oid (Proof_Context.theory_of ctxt)
   val ctxt' = Config.put Name_Space.names_unique true ctxt
-  val _ = name |> Name_Space.markup ns
-               |> Context_Position.report ctxt pos
+  val markups = Name_Space.markups ns name
+  val _ = Context_Position.reports ctxt (map (pair pos) markups)
 in Name_Space.pretty ctxt' ns name end
 
 fun pretty_cid_style ctxt (style, (cid,pos)) = 
@@ -3077,10 +3077,10 @@ fun read_fields raw_fields ctxt =
 
 fun def_cmd (decl, spec, prems, params) lthy =
   let
-    val ((lhs as Free (x, T), _), lthy') = Specification.definition decl params prems spec lthy;
+    val ((lhs as Free (x, T), _), lthy') = Specification.definition {verbose = false} decl params prems spec lthy;
     val lhs' = Morphism.term (Local_Theory.target_morphism lthy') lhs;
     val _ =
-      Proof_Display.print_consts true (Position.thread_data ()) lthy'
+      Proof_Display.print_consts {verbose = true, pos = Position.thread_data ()} lthy'
         (Frees.defined (Frees.build (Frees.add_frees lhs'))) [(x, T)]
   in lthy' end
 
@@ -3205,7 +3205,7 @@ val parse_doc_class = (Parse_Spec.overloaded
           -- Scan.repeat1 (Parse.const_binding -- Scan.option (\<^keyword>\<open><=\<close> |-- Parse.term))
           )
       -- (   Scan.optional (\<^keyword>\<open>rejects\<close>    |-- Parse.enum1 "," Parse.term) []
-          -- Scan.repeats  (\<^keyword>\<open>accepts\<close>    |-- (Parse.and_list Parse.term))
+          -- Scan.repeats   (\<^keyword>\<open>accepts\<close>    |-- (Parse.and_list Parse.term))
           -- Scan.repeats ((\<^keyword>\<open>invariant\<close>) |-- parse_invariants))
      )
 
@@ -3265,7 +3265,7 @@ fun add_onto_morphism classes_mappings eqs thy =
       val lthy = Named_Target.theory_init thy
       val updated_lthy = fold (fn (decl, spec, prems, params) => fn lthy => 
                         let
-                          val (_, lthy') = Specification.definition_cmd decl params prems spec true lthy
+                          val (_, lthy') = Specification.definition_cmd {verbose = false} decl params prems spec lthy
                         in lthy' end) args lthy
     in Local_Theory.exit_global updated_lthy end
     (* alternative way to update the theory using the Theory.join_theory function *)
@@ -3502,8 +3502,8 @@ fun naming_context thy =
 fun get_space which = Name_Space.space_of_table o which o Data.get o Context.theory_of;
 
 fun print which context =
-  Name_Space.markup_extern (Context.proof_of context) (get_space which context)
-  #> uncurry Markup.markup;
+  Name_Space.markups_extern (Context.proof_of context) (get_space which context)
+  #> uncurry Markup.markups;
 
 fun check which context arg =
   Name_Space.check context (which (Data.get (Context.theory_of context))) arg;
@@ -3586,24 +3586,24 @@ val _ =
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>define_template\<close>
     "define DOF document template (via LaTeX root file)"
-    (Parse.position (Resources.provide_parse_file -- Parse.name) >>
+    (Parse.position (Resources.parse_file -- Parse.name) >>
       (fn ((get_file, desc), pos) => Toplevel.theory (fn thy =>
         let
-          val (file, thy') = get_file thy;
+          val file = get_file thy;
           val binding = Binding.make (strip_template (#src_path file, pos), pos);
           val text = cat_lines (#lines file);
-        in #2 (define_template (binding, (text, desc)) thy') end)));
+        in #2 (define_template (binding, (text, desc)) thy) end)));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>define_ontology\<close>
     "define DOF document ontology (via LaTeX style file)"
-    (Parse.position (Resources.provide_parse_file -- Parse.name) >>
+    (Parse.position (Resources.parse_file -- Parse.name) >>
       (fn ((get_file, desc), pos) => Toplevel.theory (fn thy =>
         let
-          val (file, thy') = get_file thy;
-          val binding = Binding.qualify false (Long_Name.qualifier (Context.theory_long_name thy')) (Binding.make (strip_ontology (#src_path file, pos), pos));
+          val file = get_file thy;
+          val binding = Binding.qualify false (Long_Name.qualifier (Context.theory_long_name thy)) (Binding.make (strip_ontology (#src_path file, pos), pos));
           val text = cat_lines (#lines file);
-        in #2 (define_ontology (binding, (text, desc)) thy') end)));
+        in #2 (define_ontology (binding, (text, desc)) thy) end)));
 
 val _ =
   Outer_Syntax.command \<^command_keyword>\<open>list_templates\<close>
@@ -3640,7 +3640,5 @@ scala_build_generated_files
   and
     "scala/dof.scala"
     "scala/dof_document_build.scala" (in "../")
-
-ML\<open>Future.join; Future.fork\<close>
 
 end
