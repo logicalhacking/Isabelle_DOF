@@ -18,6 +18,7 @@ session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" +
     "COL_Test"
     "Test_Polymorphic_Classes"
     "Structural_Object_Value"
+    "Static_Evaluation"
   document_files
     "root.bib"
     "figures/A.png"

@@ -1092,6 +1092,8 @@ val (invariants_checking_with_tactics, invariants_checking_with_tactics_setup)
 
 val (monitor_trace_fast, monitor_trace_fast_setup)
      = Attrib.config_bool \<^binding>\<open>monitor_trace_fast\<close> (K true);
+val (invariants_static_eval, invariants_static_eval_setup)
+     = Attrib.config_bool \<^binding>\<open>invariants_static_eval\<close> (K true);
 val (object_value_fast, object_value_fast_setup)
      = Attrib.config_bool \<^binding>\<open>object_value_fast\<close> (K true);
 val (invariants_timeout, invariants_timeout_setup)
@@ -1112,6 +1114,7 @@ setup\<open>DOF_core.monitor_trace_fast_setup
       #> DOF_core.invariants_parallel_setup
       #> DOF_core.invariants_timeout_setup
       #> DOF_core.object_value_fast_setup
+      #> DOF_core.invariants_static_eval_setup
       #> DOF_core.monitor_trace_check_setup
       #> DOF_core.object_value_debug_setup
       #> DOF_core.strict_monitor_checking_setup
@@ -2029,6 +2032,41 @@ fun normalize_object_fast thy cid_long (eval_leaf: term -> term) t =
          handle TERM _ => NONE | ERROR _ => NONE
     end
 
+(* Evaluation in a "stable" theory.
+
+   The caches of the code generator (and of Nbe) are valid for one theory only: they are
+   discarded as soon as an evaluation is requested in a different theory, i.e. after each command
+   that extends the theory, as each text* does. The code generation and the compilation for the
+   invariants of a class are then repeated for each instance (about 0.2 s, compared to 15 ms with
+   warm caches). Evaluations are therefore done in a fixed earlier theory of the same theory
+   file ("static" evaluation, as with Code_Simp.static_conv), as long as this theory is an
+   ancestor of the current one and declares all the constants of the term; otherwise the
+   evaluation theory is replaced by the current theory. The code equations of constants of the
+   term that are changed in the meantime are not seen (option invariants_static_eval). *)
+val eval_theory = Synchronized.var "DOF_eval_theory" (NONE : theory option);
+
+fun stable_eval thy (f: Proof.context -> term -> term) t =
+  if not (Config.get_global thy DOF_core.invariants_static_eval)
+  then f (Proof_Context.init_global thy) t
+  else
+    let
+      val consts = Term.add_const_names t []
+      fun usable th0 =
+        Context.theory_long_name th0 = Context.theory_long_name thy
+        andalso Context.subthy (th0, thy)
+        andalso forall (Sign.declared_const th0) consts
+      val th_eval = Synchronized.change_result eval_theory (fn cached =>
+        (case cached of
+           SOME th0 => if usable th0 then (th0, cached) else (thy, SOME thy)
+         | NONE => (thy, SOME thy)))
+    in
+      f (Proof_Context.init_global th_eval) t
+      handle ERROR _ => f (Proof_Context.init_global thy) t
+           | TERM _ => f (Proof_Context.init_global thy) t
+           | TYPE _ => f (Proof_Context.init_global thy) t
+           | CTERM _ => f (Proof_Context.init_global thy) t
+    end
+
 (* Optional time limit (CPU seconds, scaled by the system option timeout_scale) for the
    evaluation of values and invariants; 0 means no limit. *)
 fun apply_timeout thy f x =
@@ -2052,7 +2090,7 @@ fun check_invariants_value pre thy binding docitem_value =
     fun check_invariants' (((inv_name, pos), term), pre_t) =
       let val ctxt = Proof_Context.init_global thy
           val trivial_true = \<^term>\<open>True\<close> |> HOLogic.mk_Trueprop |> Thm.cterm_of ctxt |> Thm.trivial
-          val evaluated_term = (case pre_t of SOME t => t | NONE => apply_timeout thy (value ctxt) term)
+          val evaluated_term = (case pre_t of SOME t => t | NONE => apply_timeout thy (stable_eval thy value) term)
                 handle Timeout.TIMEOUT _ => Free ("invariant_timeout", propT)
                       |  Match => error ("exception Match raised when checking "
                                        ^ inv_name ^ " invariant." ^ Position.here pos ^ "\n"
@@ -2167,14 +2205,14 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
     val (input_term, value_term) = mk_value_terms thy2
     val ctxt2 = Proof_Context.init_global thy2
     fun eval_whole () =
-      (apply_timeout thy2 (value ctxt2) value_term
+      (apply_timeout thy2 (stable_eval thy2 value) value_term
          handle Timeout.TIMEOUT _ => error (timeout_msg thy2 ("the value of " ^ oid)))
     (* structural construction of the value, if possible (see normalize_object_fast) *)
     fun fast_value () =
       if default_cid orelse not (Config.get_global thy2 DOF_core.object_value_fast)
       then NONE
       else
-        ((case normalize_object_fast thy2 name (apply_timeout thy2 (Nbe.dynamic_value ctxt2)) value_term of
+        ((case normalize_object_fast thy2 name (apply_timeout thy2 (stable_eval thy2 Nbe.dynamic_value)) value_term of
             SOME v =>
               (if Config.get_global thy2 DOF_core.monitor_trace_check
                   andalso not (v aconv eval_whole ())
@@ -2201,14 +2239,14 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
            else if is_some fast_v
            then (* the value is known: only the invariants have to be evaluated, in one batch *)
              let val v = the fast_v
-             in (let val bs = apply_timeout thy2 (value ctxt2) (HOLogic.mk_list \<^typ>\<open>bool\<close> invs)
+             in (let val bs = apply_timeout thy2 (stable_eval thy2 value) (HOLogic.mk_list \<^typ>\<open>bool\<close> invs)
                              |> HOLogic.dest_list
                  in if length bs <> length invs then (v, NONE) else (v, SOME bs) end
                  handle ERROR _ => (v, NONE) | TERM _ => (v, NONE) | Match => (v, NONE)
                       | Timeout.TIMEOUT _ => (v, NONE) (* the invariants are then timed one by one *))
              end
            else
-             (let val res = apply_timeout thy2 (value ctxt2)
+             (let val res = apply_timeout thy2 (stable_eval thy2 value)
                               (HOLogic.mk_prod (value_term, HOLogic.mk_list \<^typ>\<open>bool\<close> invs))
                   val (v', l) = HOLogic.dest_prod res
                   val bs = HOLogic.dest_list l
