@@ -1092,6 +1092,8 @@ val (invariants_checking_with_tactics, invariants_checking_with_tactics_setup)
 
 val (monitor_trace_fast, monitor_trace_fast_setup)
      = Attrib.config_bool \<^binding>\<open>monitor_trace_fast\<close> (K true);
+val (object_value_fast, object_value_fast_setup)
+     = Attrib.config_bool \<^binding>\<open>object_value_fast\<close> (K true);
 val (invariants_timeout, invariants_timeout_setup)
      = Attrib.config_real \<^binding>\<open>invariants_timeout\<close> (K 0.0);
 val (invariants_parallel, invariants_parallel_setup)
@@ -1109,6 +1111,7 @@ setup\<open>DOF_core.monitor_trace_fast_setup
       #> DOF_core.invariants_batch_setup
       #> DOF_core.invariants_parallel_setup
       #> DOF_core.invariants_timeout_setup
+      #> DOF_core.object_value_fast_setup
       #> DOF_core.monitor_trace_check_setup
       #> DOF_core.object_value_debug_setup
       #> DOF_core.strict_monitor_checking_setup
@@ -1967,6 +1970,65 @@ fun invariant_terms thy oid docitem_value =
 
 (* pre: optional results of the evaluation of the invariants (in the order of invariant_terms),
    computed in a batch together with the value of the instance. *)
+(* Structural construction of the value of an instance.
+
+   The term built by calc_update_term is "C.make a1 ... an" followed by a sequence of record
+   updates. Rewriting it with the record definitions and simplification rules of the class and of
+   its super-classes (no evaluation involved) yields the record in the normal form of nested
+   extensions "C_ext x1 ... xk (D_ext y1 ... yl Unity)". Only the attribute values (the leaves)
+   might still need evaluation: leaves that are literals or constructor terms are normal forms
+   already (unset attributes are free variables), all others are evaluated one by one.
+   The result is the same as the evaluation of the whole term, but avoids the large fixed cost
+   of the evaluation of a record term (compare option monitor_trace_check).
+   Returns NONE if the term is not of the expected shape: the caller then evaluates the whole
+   term. Only used if the term contains free variables (unset attributes), where the evaluation
+   of the whole term is a normalization by evaluation (Nbe). *)
+fun normalize_object_fast thy cid_long (eval_leaf: term -> term) t =
+  if null (Term.add_frees t []) then NONE
+  else
+    let
+      val ctxt = Proof_Context.init_global thy
+      fun ancestry cid =
+        case DOF_core.get_onto_class_global cid thy of
+            DOF_core.Onto_Class {inherits_from=NONE, ...} => [cid]
+          | DOF_core.Onto_Class {inherits_from=SOME (_, p), ...} => cid :: ancestry p
+      fun thms_of cid sfx =
+        Proof_Context.get_thms ctxt (Long_Name.append cid sfx) handle ERROR _ => []
+      val rules = ancestry cid_long
+                  |> maps (fn c => thms_of c defsN @ thms_of c "simps")
+                  |> map Simpdata.mk_eq
+      fun is_literal_head c =
+        member (op =) [\<^const_name>\<open>numeral\<close>, \<^const_name>\<open>zero_class.zero\<close>,
+                       \<^const_name>\<open>one_class.one\<close>, \<^const_name>\<open>uminus\<close>,
+                       \<^const_name>\<open>insert\<close>, \<^const_name>\<open>bot_class.bot\<close>] c
+      fun is_nf (Free (x, _)) = String.isSuffix "_Attribute_Not_Initialized" x
+        | is_nf (t as _ $ _) =
+            (case strip_comb t of
+               (Const (c, _), args) =>
+                 (Code.is_constr thy c orelse is_literal_head c) andalso forall is_nf args
+             | _ => false)
+        | is_nf (Const (c, _)) = Code.is_constr thy c orelse is_literal_head c
+        | is_nf _ = false
+      fun norm_leaf a = if is_nf a then a else eval_leaf a
+      fun norm_ext t =
+        (case strip_comb t of
+           (h as Const (c, _), args as _ :: _) =>
+             if String.isSuffix Record.extN c
+             then
+               let val (leaves, more) = split_last args
+                   val more' = norm_ext more
+               in list_comb (h, map norm_leaf leaves @ [more']) end
+             else raise TERM ("normalize_object_fast", [t])
+         | (Const (c, _), []) =>
+             if c = \<^const_name>\<open>Unity\<close> then t else raise TERM ("normalize_object_fast", [t])
+         | _ => raise TERM ("normalize_object_fast", [t]))
+    in if null rules then NONE
+       else
+         let val rewritten = Raw_Simplifier.rewrite_term thy rules [] t
+         in SOME (norm_ext rewritten) end
+         handle TERM _ => NONE | ERROR _ => NONE
+    end
+
 (* Optional time limit (CPU seconds, scaled by the system option timeout_scale) for the
    evaluation of values and invariants; 0 means no limit. *)
 fun apply_timeout thy f x =
@@ -2104,17 +2166,47 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
        batch: each call of "value" has a large fixed cost (code generation and compilation). *)
     val (input_term, value_term) = mk_value_terms thy2
     val ctxt2 = Proof_Context.init_global thy2
+    fun eval_whole () =
+      (apply_timeout thy2 (value ctxt2) value_term
+         handle Timeout.TIMEOUT _ => error (timeout_msg thy2 ("the value of " ^ oid)))
+    (* structural construction of the value, if possible (see normalize_object_fast) *)
+    fun fast_value () =
+      if default_cid orelse not (Config.get_global thy2 DOF_core.object_value_fast)
+      then NONE
+      else
+        ((case normalize_object_fast thy2 name (apply_timeout thy2 (Nbe.dynamic_value ctxt2)) value_term of
+            SOME v =>
+              (if Config.get_global thy2 DOF_core.monitor_trace_check
+                  andalso not (v aconv eval_whole ())
+               then raise Fail ("object_value_fast: structural and evaluated value of "
+                                ^ oid ^ " differ")
+               else ();
+               SOME v)
+          | NONE => NONE)
+         handle ERROR _ => NONE | Timeout.TIMEOUT _ => NONE)
     fun eval_separately () =
-      ((apply_timeout thy2 (value ctxt2) value_term
-         handle Timeout.TIMEOUT _ => error (timeout_msg thy2 ("the value of " ^ oid))), NONE)
+      ((case fast_value () of SOME v => v | NONE => eval_whole ()), NONE)
     fun compute () =
+      let val fast_v = fast_value ()
+          fun eval_separately () =
+            ((case fast_v of SOME v => v | NONE => eval_whole ()), NONE)
+      in
       if default_cid orelse not (Config.get_global thy2 DOF_core.invariants_batch)
          orelse not (Config.get_global thy2 DOF_core.invariants_checking)
          orelse (thy2 |> DOF_core.defined_of oid |> not andalso null doc_attrs)
       then eval_separately ()
       else
-        let val invs = invariant_terms thy2 oid value_term |> map snd
+        let val invs = invariant_terms thy2 oid (the_default value_term fast_v) |> map snd
         in if null invs then eval_separately ()
+           else if is_some fast_v
+           then (* the value is known: only the invariants have to be evaluated, in one batch *)
+             let val v = the fast_v
+             in (let val bs = apply_timeout thy2 (value ctxt2) (HOLogic.mk_list \<^typ>\<open>bool\<close> invs)
+                             |> HOLogic.dest_list
+                 in if length bs <> length invs then (v, NONE) else (v, SOME bs) end
+                 handle ERROR _ => (v, NONE) | TERM _ => (v, NONE) | Match => (v, NONE)
+                      | Timeout.TIMEOUT _ => (v, NONE) (* the invariants are then timed one by one *))
+             end
            else
              (let val res = apply_timeout thy2 (value ctxt2)
                               (HOLogic.mk_prod (value_term, HOLogic.mk_list \<^typ>\<open>bool\<close> invs))
@@ -2131,6 +2223,7 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
                    | Timeout.TIMEOUT _ => eval_separately () (* the invariants are then timed one by one *)
                    | Match => eval_separately ())
         end
+      end
     (* high-level invariants of the class are checked if requested *)
     val check_wanted =
       not default_cid andalso Config.get_global thy2 DOF_core.invariants_checking
