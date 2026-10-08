@@ -1,0 +1,48 @@
+\usepackage{etex}
+\ifdef{\reserveinserts}{\reserveinserts{28}}{} 
+\usepackage{dirtree}
+\renewcommand*\DTstylecomment{\ttfamily\itshape}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{lstisadof-manual}
+\usepackage{xspace}
+\newcommand{\TeXLive}{\TeX Live}\newcommand{\BibTeX}{Bib\TeX}
+\usepackage{railsetup}
+\setcounter{secnumdepth}{2}
+\usepackage{index}
+\newcommand{\bindex}[1]{\index{#1|textbf}}
+%\makeindex
+%\AtEndDocument{\printindex}
+
+\usepackage[many]{tcolorbox}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%% <out2>
+\providecolor{outmat}{named}{green}
+\NewTColorBox[]{outmat}{}{
+	,boxrule=0pt
+	,boxsep=0pt
+	,colback=white!90!outmat
+	,enhanced jigsaw
+	,borderline west={2pt}{0pt}{outmat!60!black}
+	,sharp corners
+	%,before skip balanced=0.5\baselineskip plus 2pt % works only with Tex Live 2020 and later
+	,enlarge top by=0mm
+	,enhanced
+	,overlay={\node[draw,fill=outmat!60!black,xshift=0pt,anchor=north
+		east,font=\bfseries\footnotesize\color{white}]
+		at (frame.north east) {Document};}
+}%
+%% </out2>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+
+\newcommand{\dof}{DOF\xspace}
+\newcommand{\isactrlemph}{*}
+
+
+
+\newcommand{\path}[1]{\texttt{\nolinkurl{#1}}}
+\title{<TITLE>}
+\author{<AUTHOR>}
+
+\pagestyle{headings}
