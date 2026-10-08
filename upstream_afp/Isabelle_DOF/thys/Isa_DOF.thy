@@ -1255,6 +1255,56 @@ term "\<open>Université\<close> :: char list"
 subsection\<open> Semantics \<close>
 
 ML\<open>
+(* Normal forms of instance values, and structural access to their attributes.
+
+   The value of an instance is a nested record extension "C_ext x1 ... xk (D_ext ... Unity)".
+   Rewriting with the record definitions and simplification rules of its class and super-classes
+   (no evaluation involved) reduces constructions, updates and projections of such values. *)
+structure Record_Normal_Form =
+struct
+
+fun ancestry thy cid =
+  case DOF_core.get_onto_class_global cid thy of
+      DOF_core.Onto_Class {inherits_from=NONE, ...} => [cid]
+    | DOF_core.Onto_Class {inherits_from=SOME (_, p), ...} => cid :: ancestry thy p
+
+fun rules thy cid_long =
+  let val ctxt = Proof_Context.init_global thy
+      fun thms_of cid sfx =
+        Proof_Context.get_thms ctxt (Long_Name.append cid sfx) handle ERROR _ => []
+  in ancestry thy cid_long
+     |> maps (fn c => thms_of c defsN @ thms_of c "simps")
+     |> map Simpdata.mk_eq
+  end
+
+fun is_literal_head c =
+  member (op =) [\<^const_name>\<open>numeral\<close>, \<^const_name>\<open>zero_class.zero\<close>,
+                 \<^const_name>\<open>one_class.one\<close>, \<^const_name>\<open>uminus\<close>,
+                 \<^const_name>\<open>insert\<close>, \<^const_name>\<open>bot_class.bot\<close>] c
+
+(* terms built from constructors, literals and unset attributes: normal forms for Nbe *)
+fun is_nf thy (Free (x, _)) = String.isSuffix "_Attribute_Not_Initialized" x
+  | is_nf thy (t as _ $ _) =
+      (case strip_comb t of
+         (Const (c, _), args) =>
+           (Code.is_constr thy c orelse is_literal_head c) andalso forall (is_nf thy) args
+       | _ => false)
+  | is_nf thy (Const (c, _)) = Code.is_constr thy c orelse is_literal_head c
+  | is_nf _ _ = false
+
+(* "f value" with a record field f and a value in normal form: the value of the attribute,
+   or NONE if it is not a normal form (the caller then evaluates). *)
+fun project thy cid_long t =
+  let val rs = rules thy cid_long
+  in if null rs then NONE
+     else
+       let val r = Raw_Simplifier.rewrite_term thy rs [] t
+       in if is_nf thy r then SOME r else NONE end
+       handle ERROR _ => NONE | TERM _ => NONE
+  end
+
+end
+
 structure ISA_core = 
 struct
 
@@ -1437,10 +1487,21 @@ fun elaborate_instances_of thy _ _ term_option _ =
        end
   end
 
-fun symbex_attr_access0 ctxt proj_term term =
+fun symbex_attr_access0 ctxt cid proj_term term =
 let
       val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
-in Value_Command.value ctxt (subterm') end
+      val thy = Proof_Context.theory_of ctxt
+      fun eval () = Value_Command.value ctxt subterm'
+in
+  case Record_Normal_Form.project thy cid subterm' of
+      SOME v =>
+        (if Config.get_global thy DOF_core.monitor_trace_check andalso not (v aconv eval ())
+         then raise Fail ("attribute access: structural and evaluated projection differ for "
+                          ^ Syntax.string_of_term ctxt subterm')
+         else ();
+         v)
+    | NONE => eval ()
+end
 
 fun compute_attr_access ctxt attr oid pos_option pos' = (* template *)
   let
@@ -1474,7 +1535,7 @@ fun compute_attr_access ctxt attr oid pos_option pos' = (* template *)
                     val markups = DOF_core.get_onto_class_name_global class_name thy
                                  |> Name_Space.markups (Name_Space.space_of_table onto_classes)
                   in Context_Position.reports ctxt' (map (pair pos) markups) end
-  in  symbex_attr_access0 ctxt' proj_term value end
+  in  symbex_attr_access0 ctxt' cid proj_term value end
 
 fun ML_isa_elaborate_trace_attribute (thy:theory) _ _ term_option pos =
 case term_option of
@@ -1990,28 +2051,8 @@ fun normalize_object_fast thy cid_long (eval_leaf: term -> term) t =
   if null (Term.add_frees t []) then NONE
   else
     let
-      val ctxt = Proof_Context.init_global thy
-      fun ancestry cid =
-        case DOF_core.get_onto_class_global cid thy of
-            DOF_core.Onto_Class {inherits_from=NONE, ...} => [cid]
-          | DOF_core.Onto_Class {inherits_from=SOME (_, p), ...} => cid :: ancestry p
-      fun thms_of cid sfx =
-        Proof_Context.get_thms ctxt (Long_Name.append cid sfx) handle ERROR _ => []
-      val rules = ancestry cid_long
-                  |> maps (fn c => thms_of c defsN @ thms_of c "simps")
-                  |> map Simpdata.mk_eq
-      fun is_literal_head c =
-        member (op =) [\<^const_name>\<open>numeral\<close>, \<^const_name>\<open>zero_class.zero\<close>,
-                       \<^const_name>\<open>one_class.one\<close>, \<^const_name>\<open>uminus\<close>,
-                       \<^const_name>\<open>insert\<close>, \<^const_name>\<open>bot_class.bot\<close>] c
-      fun is_nf (Free (x, _)) = String.isSuffix "_Attribute_Not_Initialized" x
-        | is_nf (t as _ $ _) =
-            (case strip_comb t of
-               (Const (c, _), args) =>
-                 (Code.is_constr thy c orelse is_literal_head c) andalso forall is_nf args
-             | _ => false)
-        | is_nf (Const (c, _)) = Code.is_constr thy c orelse is_literal_head c
-        | is_nf _ = false
+      val rules = Record_Normal_Form.rules thy cid_long
+      val is_nf = Record_Normal_Form.is_nf thy
       fun norm_leaf a = if is_nf a then a else eval_leaf a
       fun norm_ext t =
         (case strip_comb t of

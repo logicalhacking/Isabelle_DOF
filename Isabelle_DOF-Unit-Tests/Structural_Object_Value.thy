@@ -74,6 +74,27 @@ value*\<open>L @{c1 \<open>b2\<close>}\<close>
 value*\<open>expr @{c1 \<open>b3\<close>}\<close>
 value*\<open>w @{c2 \<open>d1\<close>}\<close>
 
+section\<open>Access to Attributes, in Particular the Trace of a Monitor\<close>
+
+text\<open>The access to the attribute of an instance (the value command with a star, antiquotations,
+invariants written in ML) projects the field of the stored value structurally; with
+@{attribute monitor_trace_check} the result is compared with the evaluation.\<close>
+
+doc_class mon =
+  tag_m :: int <= "0"
+  accepts "\<lbrace>c0\<rbrace>\<^sup>*"
+
+open_monitor*[m1::mon]
+text*[mc1::c0]\<open>first item of the monitor\<close>
+text*[mc2::c0, v0="2"]\<open>second item of the monitor\<close>
+value*\<open>map snd @{trace_attribute \<open>m1\<close>}\<close>
+close_monitor*[m1]
+
+ML\<open>
+val trace = AttributeAccess.compute_trace_ML (Context.Proof @{context}) "m1" NONE \<^here>;
+val _ = if map snd trace = ["mc1", "mc2"] then () else error "wrong trace of the monitor m1"
+\<close>
+
 section\<open>An Ontology Class\<close>
 
 text*[intro1::introduction, level="Some 1"]\<open>a class of the scholarly paper ontology\<close>
