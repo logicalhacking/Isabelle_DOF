@@ -37,7 +37,7 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
                                      xstring_opt:(xstring * Position.T) option),
                                     toks_list:Input.source list) 
                                   : theory -> theory =
-  let  val toplvl = Toplevel.make_state o SOME
+  let  val toplvl = Toplevel.make_state o SOME o Context.Theory
        val ((binding,cid_pos), doc_attrs) = meta_args
        val oid = Binding.name_of binding
        val oid' = if meta_args = ODL_Meta_Args_Parser.empty_meta_args
@@ -73,9 +73,13 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
        val handle_margs_opt = (if meta_args = ODL_Meta_Args_Parser.empty_meta_args
               then I
               else
-          Value_Command.Docitem_Parser.create_and_check_docitem 
+          (fn thy => (* the assert-error commands need the errors synchronously *)
+             thy |> Config.put_global DOF_core.invariants_parallel false
+                 |> Value_Command.Docitem_Parser.create_and_check_docitem 
                               {is_monitor = false} {is_inline = false} {define = true}
-                              binding (cid_transform cid_pos) (attr_transform doc_attrs))
+                              binding (cid_transform cid_pos) (attr_transform doc_attrs)
+                 |> Config.put_global DOF_core.invariants_parallel
+                              (Config.get_global thy DOF_core.invariants_parallel)))
        (* ... generating the level-attribute syntax *)
   in   handle_margs_opt  #> (fn thy => (app (check_n_tex_text thy) toks_list; thy))
   end;
@@ -173,9 +177,9 @@ val _ =
   end;
 
 val _ =
-  let fun definition_cmd' meta_args_opt decl params prems spec src bool ctxt =
+  let fun definition_cmd' meta_args_opt decl params prems spec src ctxt =
         Local_Theory.background_theory (Value_Command.meta_args_exec meta_args_opt) ctxt
-        |> (fn ctxt => Definition_Star_Command.definition_cmd decl params prems spec bool ctxt
+        |> (fn ctxt => Definition_Star_Command.definition_cmd decl params prems spec ctxt
         handle ERROR msg => if error_match src msg 
                              then (writeln ("Correct error: "^msg^": reported.")
                                   ; pair "Bound 0" @{thm refl}
@@ -183,12 +187,12 @@ val _ =
                                     |> rpair ctxt)
                              else error"Wrong error reported")
   in
-  Outer_Syntax.local_theory' \<^command_keyword>\<open>definition-assert-error\<close> "constant definition"
+  Outer_Syntax.local_theory \<^command_keyword>\<open>definition-assert-error\<close> "constant definition"
     (ODL_Meta_Args_Parser.opt_attributes --
       (Scan.option Parse_Spec.constdecl -- (Parse_Spec.opt_thm_name ":" -- Parse.prop) --
         Parse_Spec.if_assumes -- Parse.for_fixes -- Parse.document_source)
      >> (fn (meta_args_opt, ((((decl, spec), prems), params), src)) => 
-                                    #2 oo definition_cmd' meta_args_opt decl params prems spec src))
+                                    #2 o definition_cmd' meta_args_opt decl params prems spec src))
   end;
 
 

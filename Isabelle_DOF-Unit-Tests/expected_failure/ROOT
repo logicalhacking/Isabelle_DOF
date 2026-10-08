@@ -1,0 +1,8 @@
+(* Expected-failure tests: building this session MUST report errors
+   (one per theory: invariant violations and a timeout in strict mode).
+   It is not part of the regular Isabelle_DOF-Unit-Tests session. *)
+session "Isabelle_DOF-Unit-Tests-Expected_Failure" = "Isabelle_DOF" +
+  theories
+    Invariant_Violation
+    Invariant_Violation_Sync
+    Invariant_Timeout

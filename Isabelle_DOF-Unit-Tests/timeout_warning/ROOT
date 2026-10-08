@@ -1,0 +1,5 @@
+(* Must build successfully: the timeout of the invariant evaluation is only a warning.
+   Not part of the regular Isabelle_DOF-Unit-Tests session. *)
+session "Isabelle_DOF-Unit-Tests-Timeout_Warning" = "Isabelle_DOF" +
+  theories
+    Invariant_Timeout_Warning
