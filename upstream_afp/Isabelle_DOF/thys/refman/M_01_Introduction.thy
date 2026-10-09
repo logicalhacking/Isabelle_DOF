@@ -113,15 +113,31 @@ CHANGELOG.md  CITATION  examples  install  LICENSE  README.md  ROOTS  src\<close
 subsubsection\<open>How to Cite \<^isadof>\<close>
 text\<open>
   If you use or extend \<^isadof> in your publications, please use 
+  \<^item> for the \<^isadof> project as a whole ~\<^cite>\<open>"ASMW25"\<close>
+    \begin{quote}\small
+     A.~D. Brucker, I.~Ait-Sadoune, N. Méric, and B.~Wolff. Parametric ontologies in 
+     formal software engineering. In : \<^emph>\<open>Science of Computer Programming\<close>, vol 241, 
+     pp. 103-231, 2025. \href{10.1016/J.SCICO.2024.103231} {10.1016/j.scico.2024.103231}.
+    \end{quote}
+    A \<^BibTeX>-entry is also available at: 
+    \<^url>\<open>https://usr.lmf.cnrs.fr/~wolff/bibtex/wolff.html\<close>. 
+  \<^item> for the \<^isadof> thesis of Nicolas Méric ~\<^cite>\<open>"meric:tel-04870527"\<close>
+    \begin{quote}\small
+     N. Méric. An Ontology Framework for Formal Libraries. Phd thesis
+     at the \<^emph>\<open>Université Paris-Saclay\<close>, number 2024UPASG038,
+     pp. 1-139, Jul 2024. \href{https://hal.science/tel-04870527v2/file/126692_MERIC_2024_archivage.pdf}.
+    \end{quote}
+    A \<^BibTeX>-entry is also available at: 
+    \<^url>\<open>https://usr.lmf.cnrs.fr/~wolff/bibtex/wolff.html\<close>. 
   \<^item> for the \<^isadof> system~\<^cite>\<open>"brucker.ea:isabelle-ontologies:2018"\<close>:
     \begin{quote}\small
       A.~D. Brucker, I.~Ait-Sadoune, N. Méric, and B.~Wolff. Using Deep Ontologies in Formal 
       Software Engineering. In \<^emph>\<open>International Conference on Rigorous State-Based Methods (ABZ 2023)\<close>, 
-      To appear in Lecture Notes in Computer Science. Springer-Verlag,
+      number 14010 in Lecture Notes in Computer Science. Springer-Verlag,
       Heidelberg, 2023. \href{10.1007/978-3-031-33163-3_2} {10.1007/978-3-031-33163-3\_2}.
     \end{quote}
-    A \<^BibTeX>-entry is available at: 
-    \<^url>\<open>https://www.lri.fr/~wolff/bibtex/wolff.html\<close>. 
+    A \<^BibTeX>-entry is also available at: 
+    \<^url>\<open>https://usr.lmf.cnrs.fr/~wolff/bibtex/wolff.html\<close>. 
   \<^item> an older description of the system~\<^cite>\<open>"brucker.ea:isabelle-ontologies:2018"\<close>:
     \begin{quote}\small
       A.~D. Brucker, I.~Ait-Sadoune, P.~Crisafulli, and B.~Wolff. Using the {Isabelle} ontology 
@@ -130,8 +146,8 @@ text\<open>
       Heidelberg, 2018. \href{https://doi.org/10.1007/978-3-319-96812-4_3}
       {10.1007/978-3-319-96812-4\_3}.
     \end{quote}
-    A \<^BibTeX>-entry is available at: 
-    \<^url>\<open>https://www.brucker.ch/bibliography/abstract/brucker.ea-isabelle-ontologies-2018\<close>. 
+    A \<^BibTeX>-entry is also available at: 
+    \<^url>\<open>https://usr.lmf.cnrs.fr/~wolff/bibtex/wolff.html\<close>. 
   \<^item> for the implementation of \<^isadof>~\<^cite>\<open>"brucker.ea:isabelledof:2019"\<close>:
     \begin{quote}\small
       A.~D. Brucker and B.~Wolff. \<^isadof>: Design and implementation. In P.C.~{\"O}lveczky and 
