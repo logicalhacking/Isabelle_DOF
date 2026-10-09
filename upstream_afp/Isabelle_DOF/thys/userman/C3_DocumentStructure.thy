@@ -187,7 +187,7 @@ text\<open>
                                                                               \end{itemize}
                                                                             & content of the abstract \\
 \hline
-\<^verbatim>\<open>figure*\<close> & Allows you to add images in your document (more in @{technical fig}) & \begin{itemize} 
+\<^verbatim>\<open>figure*\<close> & Allows you to add images in your document (more in @{technical simpfig}) & \begin{itemize} 
                                                                                     \item kind (\<^it>\<open>float\_kind\<close>), default graphics
                                                                                     \item file\_src (\<^it>\<open>string\<close>)
                                                                                     \item relative\_width (\<^it>\<open>int\<close>)
