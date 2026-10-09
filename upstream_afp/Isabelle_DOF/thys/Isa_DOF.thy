@@ -1904,12 +1904,12 @@ fun register_oid_cid_in_open_monitors binding (name, pos') thy =
   let 
       val oid = Binding.name_of binding
       val cid_long= name
+      val fcm_strict = Config.get_global thy DOF_core.free_class_in_monitor_strict_checking
+      val fcm =  Config.get_global thy DOF_core.free_class_in_monitor_checking
       fun is_enabled (n, monitor_info) = 
-                     if exists (DOF_core.is_subclass_global thy cid_long) 
-                                (DOF_core.alphabet_of n thy)
+                     if exists(DOF_core.is_subclass_global thy cid_long)(DOF_core.alphabet_of n thy)
                      then SOME (n, monitor_info)
-                     else if Config.get_global thy DOF_core.free_class_in_monitor_strict_checking
-                             orelse  Config.get_global thy DOF_core.free_class_in_monitor_checking
+                     else if fcm_strict orelse  fcm
                           then SOME (n, monitor_info)
                           else NONE
       (* filtering those monitors with automata, whose alphabet contains the
@@ -1939,9 +1939,9 @@ fun register_oid_cid_in_open_monitors binding (name, pos') thy =
                 case first_accepted of
                     NONE => (case first_rejected of
                                  NONE =>
-                                   if Config.get_global thy DOF_core.free_class_in_monitor_strict_checking
+                                   if fcm_strict
                                    then ISA_core.err (msg_intro fst n moid cid_long) pos'
-                                   else if Config.get_global thy DOF_core.free_class_in_monitor_checking
+                                   else if fcm
                                         then (ISA_core.warn (msg_intro fst n moid cid_long) pos';A)
                                         else A
                                | SOME _ => (msg thy (msg_intro snd n moid cid_long) pos';A))
@@ -1979,8 +1979,7 @@ fun register_oid_cid_in_open_monitors binding (name, pos') thy =
                            ^ oid ^ " differ:\nfast: " ^ Syntax.string_of_term ctxt v'
                            ^ "\nslow: " ^ Syntax.string_of_term ctxt (def_trans_value_slow oid v))
                else (); v')
-      val _ = if null enabled_monitors
-              then ()
+      val _ = if null enabled_monitors then ()
               else if defined
                    then (tracing "registrating in monitors ..." ;
                          app (fn (n, _) => tracing (oid^" : "^cid_long^" ==> "^n)) enabled_monitors)
@@ -2025,22 +2024,18 @@ fun invariant_terms thy oid docitem_value =
       case DOF_core.get_onto_class_global cid thy of
           DOF_core.Onto_Class {inherits_from=NONE, invs, ...} => single (cid, invs)
         | DOF_core.Onto_Class {inherits_from=SOME(_, father), invs, ...} =>
-            (cid, invs) :: get_all_invariants father thy
+                                       (cid, invs) :: get_all_invariants father thy
     val cids_invariants = get_all_invariants name thy
     fun mk_inv_and_apply cid_invs value thy =
       let val ctxt = Proof_Context.init_global thy 
           val (cid_long, invs) = cid_invs
-      in invs |> map
-              (fn (bind, _) =>
-                let
-                  val inv_name = Binding.name_of bind
-                                 |> Long_Name.qualify cid_long
-                  val pos = Binding.pos_of bind
-                  val inv_def = inv_name |> Syntax.parse_term ctxt
-                  in ((inv_name, pos), Syntax.check_term ctxt (inv_def $ value)) end)
-      end    
-  in cids_invariants |> map (fn cid_invs => mk_inv_and_apply cid_invs docitem_value thy) 
-                     |> flat
+          fun conv bind = let  val inv_name = Binding.name_of bind
+                                              |> Long_Name.qualify cid_long
+                               val pos = Binding.pos_of bind
+                               val inv_def = inv_name |> Syntax.parse_term ctxt
+                          in ((inv_name, pos), Syntax.check_term ctxt (inv_def $ value)) end
+      in invs |> map (conv o fst) end    
+  in cids_invariants |> map (fn cid_invs => mk_inv_and_apply cid_invs docitem_value thy) |> flat
   end
 
 (* pre: optional results of the evaluation of the invariants (in the order of invariant_terms),
