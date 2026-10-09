@@ -1738,7 +1738,7 @@ val value = value_select ""
 val value_without_elaboration = value_select ""
 
 structure Docitem_Parser = 
-struct
+struct local open DOF_core in
 
 fun create_default_object thy binding class_name typ = 
   let
@@ -1746,7 +1746,7 @@ fun create_default_object thy binding class_name typ =
     fun attr_to_s (binding, _, _) = purified_class_name ^ "_"
                                       ^ (Binding.name_of binding)
                                       ^ "_Attribute_Not_Initialized"
-    val class_list = DOF_core.get_attributes class_name thy
+    val class_list = get_attributes class_name thy
     fun attrs_filter [] = [] 
       | attrs_filter (x::xs) =
           let val (cid, ys) = x
@@ -1761,7 +1761,7 @@ fun create_default_object thy binding class_name typ =
     val class_list' = rev (attrs_filter (rev class_list))
     val tag_attr_s = serial () |> string_of_int
     fun trans_attr thy trans tag_attr  (cid, filtered_attr_list) =
-      if DOF_core.virtual_of cid thy |> #virtual
+      if virtual_of cid thy |> #virtual
       then (tag_attr)::(map (trans) filtered_attr_list)
       else (map (trans) filtered_attr_list)
     val test_class = class_list' |> map (trans_attr thy (attr_to_s) tag_attr_s)
@@ -1769,10 +1769,10 @@ fun create_default_object thy binding class_name typ =
                                  |> cons tag_attr_s
     val term = test_class |> cons (Long_Name.qualify class_name makeN) |> space_implode Symbol.space
     val ctxt = Proof_Context.init_global thy
-    val term' = term |> Syntax.parse_term ctxt |> DOF_core.elaborate_term' ctxt
+    val term' = term |> Syntax.parse_term ctxt |> elaborate_term' ctxt
     val parsed_prop = Const (\<^const_name>\<open>Pure.eq\<close>, dummyT) $ Free (Binding.name_of binding, dummyT) $ term'
     val raw_vars = [(binding, SOME typ, NoSyn)]
-    val (_, vars_ctxt) = DOF_core.prep_decls Proof_Context.cert_var raw_vars ctxt
+    val (_, vars_ctxt) = prep_decls Proof_Context.cert_var raw_vars ctxt
     val concl = Syntax.check_prop vars_ctxt parsed_prop
   in Logic.dest_equals concl |> snd end
 
@@ -1780,20 +1780,20 @@ fun create_default_object thy binding class_name typ =
 fun check_classref {is_monitor=is_monitor} (SOME (cid, pos)) thy =                        
   let
     val ctxt = Proof_Context.init_global thy
-    val name_cid_typ = DOF_core.get_onto_class_cid thy cid
+    val name_cid_typ = get_onto_class_cid thy cid
     val cid_long = name_cid_typ |> (fst o fst)
-    val rex = DOF_core.rex_of cid_long thy
-    val _ = if is_monitor andalso (null rex orelse cid_long= DOF_core.default_cid ) 
+    val rex = rex_of cid_long thy
+    val _ = if is_monitor andalso (null rex orelse cid_long= default_cid ) 
             then error("should be monitor class!")
             else ()
-    val onto_classes = DOF_core.get_onto_classes ctxt
-    val markups = DOF_core.get_onto_class_name_global cid_long thy
+    val onto_classes = get_onto_classes ctxt
+    val markups = get_onto_class_name_global cid_long thy
                  |> Name_Space.markups (Name_Space.space_of_table onto_classes)
     val _ = Context_Position.reports ctxt (map (pair pos) markups);
   in  (name_cid_typ, pos)
   end
-  | check_classref _ NONE _ = pair DOF_core.default_cid DOF_core.default_cid
-                              |> rpair DOF_core.default_cid_typ
+  | check_classref _ NONE _ = pair default_cid default_cid
+                              |> rpair default_cid_typ
                               |> rpair Position.none
 
 fun calc_update_term {mk_elaboration=mk_elaboration} thy (name, typ)
@@ -1805,8 +1805,8 @@ fun calc_update_term {mk_elaboration=mk_elaboration} thy (name, typ)
             let 
                 fun get_class_name parent_cid attribute_name pos =
                   let
-                    val DOF_core.Onto_Class {attribute_decl, inherits_from, ...} = 
-                                                      DOF_core.get_onto_class_global parent_cid thy
+                    val Onto_Class {attribute_decl, inherits_from, ...} = 
+                                                      get_onto_class_global parent_cid thy
                   in
                     if exists (fn (binding, _, _) => Binding.name_of binding = attribute_name)
                               attribute_decl
@@ -1821,12 +1821,12 @@ fun calc_update_term {mk_elaboration=mk_elaboration} thy (name, typ)
                 val _ = if mk_elaboration
                         then
                           let val attr_defined_cid = get_class_name cid_long lhs pos
-                              val onto_classes = DOF_core.get_onto_classes ctxt
-                              val markups = DOF_core.get_onto_class_name_global attr_defined_cid thy
+                              val onto_classes = get_onto_classes ctxt
+                              val markups = get_onto_class_name_global attr_defined_cid thy
                                            |> Name_Space.markups (Name_Space.space_of_table onto_classes)
                           in Context_Position.reports ctxt (map (pair pos) markups) end
                         else ()
-                val info_opt = DOF_core.get_attribute_info cid_long (Long_Name.base_name lhs) thy
+                val info_opt = get_attribute_info cid_long (Long_Name.base_name lhs) thy
                 val (ln,lnt,lnu,_) = case info_opt of 
                                            NONE => error ("unknown attribute >" 
                                                           ^((Long_Name.base_name lhs))
@@ -1850,8 +1850,8 @@ fun calc_update_term {mk_elaboration=mk_elaboration} thy (name, typ)
              end
              val t = fold read_assn S term
              val t' = if mk_elaboration
-                      then DOF_core.elaborate_term' ctxt t
-                      else DOF_core.check_term' ctxt t
+                      then elaborate_term' ctxt t
+                      else check_term' ctxt t
     in if t = term
        then Sign.certify_term thy t'
        else
@@ -1860,7 +1860,7 @@ fun calc_update_term {mk_elaboration=mk_elaboration} thy (name, typ)
           in Sign.certify_term thy concl end
     end
 
-fun msg thy txt pos = if Config.get_global thy DOF_core.strict_monitor_checking
+fun msg thy txt pos = if Config.get_global thy strict_monitor_checking
                   then ISA_core.err txt pos
                   else ISA_core.warn txt pos
 
@@ -1904,10 +1904,10 @@ fun register_oid_cid_in_open_monitors binding (name, pos') thy =
   let 
       val oid = Binding.name_of binding
       val cid_long= name
-      val fcm_strict = Config.get_global thy DOF_core.free_class_in_monitor_strict_checking
-      val fcm =  Config.get_global thy DOF_core.free_class_in_monitor_checking
+      val fcm_strict = Config.get_global thy free_class_in_monitor_strict_checking
+      val fcm =  Config.get_global thy free_class_in_monitor_checking
       fun is_enabled (n, monitor_info) = 
-                     if exists(DOF_core.is_subclass_global thy cid_long)(DOF_core.alphabet_of n thy)
+                     if exists(is_subclass_global thy cid_long)(alphabet_of n thy)
                      then SOME (n, monitor_info)
                      else if fcm_strict orelse  fcm
                           then SOME (n, monitor_info)
@@ -1917,23 +1917,23 @@ fun register_oid_cid_in_open_monitors binding (name, pos') thy =
          along the super-class id. The evaluation is in parallel, simulating a product
          semantics without expanding the subclass relationship. *)
       fun is_enabled_for_cid (moid , monitor_info) =
-        let val DOF_core.Monitor_Info {accepted_cids, automatas, rejected_cids, ...} = monitor_info
+        let val Monitor_Info {accepted_cids, automatas, rejected_cids, ...} = monitor_info
             val indexS= 1 upto (length automatas)
             val indexed_autoS = automatas ~~ indexS
             fun check_for_cid (A,n) = 
               let fun direct_super_class _ cid [] = cid
                     | direct_super_class thy cid (x::xs) =
-                        if DOF_core.is_subclass_global thy cid x
+                        if is_subclass_global thy cid x
                         then direct_super_class thy cid xs
                         else direct_super_class thy x xs
                   val accS = (RegExpInterface.enabled A accepted_cids)
-                  val accS' = filter (DOF_core.is_subclass_global thy cid_long) accS
+                  val accS' = filter (is_subclass_global thy cid_long) accS
                   fun first_super_class cids =
                       case List.getItem cids
                         of  SOME (hd,tl) => SOME (direct_super_class thy hd tl)
                           | NONE => NONE
                   val first_accepted = first_super_class accS'
-                  val rejectS = filter (DOF_core.is_subclass_global thy cid_long) rejected_cids
+                  val rejectS = filter (is_subclass_global thy cid_long) rejected_cids
                   val first_rejected = first_super_class rejectS
               in
                 case first_accepted of
@@ -1948,32 +1948,32 @@ fun register_oid_cid_in_open_monitors binding (name, pos') thy =
                   | SOME accepted => (case first_rejected of
                                           NONE => RegExpInterface.next A accepted_cids (accepted)
                                         | SOME rejected =>
-                                            if DOF_core.is_subclass_global thy accepted rejected
+                                            if is_subclass_global thy accepted rejected
                                             then RegExpInterface.next A accepted_cids (accepted)
                                             else (msg thy (msg_intro snd n moid cid_long) pos';A))
               end
          in (moid,map check_for_cid indexed_autoS, monitor_info)  end  
       val enabled_monitors = List.mapPartial is_enabled
-                      (Name_Space.dest_table (DOF_core.get_monitor_infos (Proof_Context.init_global thy)))
-      val defined = DOF_core.defined_of oid thy
+                      (Name_Space.dest_table (get_monitor_infos (Proof_Context.init_global thy)))
+      val defined = defined_of oid thy
       val trace_attr = if defined
                        then trace_attr_t cid_long oid 
                        else []
-      fun mon_cid oid = DOF_core.cid_of oid thy |> DOF_core.get_onto_class_cid thy
+      fun mon_cid oid = cid_of oid thy |> get_onto_class_cid thy
                                                 |> (fn ((name, _), typ) => (name, typ))
       val ctxt = Proof_Context.init_global thy
       fun def_trans_value_slow oid =
-        (#1 o (calc_update_term {mk_elaboration=true} thy (mon_cid oid) trace_attr))
-        #> value ctxt
+                (#1 o (calc_update_term {mk_elaboration=true} thy (mon_cid oid) trace_attr))
+             #> value ctxt
       val item_oid = oid  (* the new instance; "oid" is shadowed by the monitor's name below *)
       fun def_trans_value oid =
-        if null trace_attr orelse not (Config.get_global thy DOF_core.monitor_trace_fast)
+        if null trace_attr orelse not (Config.get_global thy monitor_trace_fast)
         then def_trans_value_slow oid
         else fn v =>
           case append_trace_fast cid_long item_oid v of
             NONE => def_trans_value_slow oid v
           | SOME v' =>
-              (if Config.get_global thy DOF_core.monitor_trace_check
+              (if Config.get_global thy monitor_trace_check
                   andalso not (def_trans_value_slow oid v aconv v')
                then error ("monitor_trace_check: fast and slow update of the trace of monitor "
                            ^ oid ^ " differ:\nfast: " ^ Syntax.string_of_term ctxt v'
@@ -1986,29 +1986,29 @@ fun register_oid_cid_in_open_monitors binding (name, pos') thy =
                    else ()
       (* check that any transition is possible: *)
       fun class_inv_checks thy =
-        enabled_monitors
-        |> map (fn (x, _) =>
-                  let val cid_long =
-                            let val DOF_core.Instance cid = DOF_core.get_instance_raw x thy
-                            in cid |> #cid end
-                  in DOF_core.check_ml_invs cid_long x {is_monitor=true} thy end)
+              enabled_monitors
+              |> map (fn (x, _) =>
+                        let val cid_long =
+                                  let val Instance cid = get_instance_raw x thy
+                                  in cid |> #cid end
+                        in check_ml_invs cid_long x {is_monitor=true} thy end)
       val delta_autoS = map is_enabled_for_cid  enabled_monitors;
       fun update_info (n, aS, monitor_info) =  
-        let val DOF_core.Monitor_Info {accepted_cids,rejected_cids,...} = monitor_info
+        let val Monitor_Info {accepted_cids,rejected_cids,...} = monitor_info
         in Name_Space.map_table_entry n (K ((accepted_cids, rejected_cids, aS)
-                                            |> DOF_core.make_monitor_info))
+                                            |> make_monitor_info))
         end
       fun update_trace mon_oid =
-        if Config.get_global thy DOF_core.object_value_debug
+        if Config.get_global thy object_value_debug
         then let fun def_trans_input_term  oid =
                    #1 o (calc_update_term {mk_elaboration=false} thy (mon_cid oid) trace_attr)
-              in DOF_core.map_input_term mon_oid (def_trans_input_term mon_oid)
-                 #> DOF_core.map_value_lazy mon_oid (def_trans_value mon_oid) end
-        else DOF_core.map_value_lazy mon_oid (def_trans_value mon_oid)
+              in map_input_term mon_oid (def_trans_input_term mon_oid)
+                 #> map_value_lazy mon_oid (def_trans_value mon_oid) end
+        else map_value_lazy mon_oid (def_trans_value mon_oid)
   in  (thy |> (* update traces of all enabled monitors *)
                fold update_trace (map #1 enabled_monitors)
            |> (* update the automata of enabled monitors *)
-               DOF_core.Monitor_Info.map (fold update_info delta_autoS),
+               Monitor_Info.map (fold update_info delta_autoS),
        (* The class invariants of the enabled monitors are returned as a deferred check:
           they may inspect the value of the new instance, which is only computed later. *)
        class_inv_checks)
@@ -2018,12 +2018,12 @@ fun register_oid_cid_in_open_monitors binding (name, pos') thy =
    docitem_value, as pairs ((invariant name, position), term to be evaluated). *)
 fun invariant_terms thy oid docitem_value =
   let
-    val name = DOF_core.cid_of oid thy
-               |> DOF_core.get_onto_class_cid thy |> (fst o fst)
+    val name = cid_of oid thy
+               |> get_onto_class_cid thy |> (fst o fst)
     fun get_all_invariants cid thy =
-      case DOF_core.get_onto_class_global cid thy of
-          DOF_core.Onto_Class {inherits_from=NONE, invs, ...} => single (cid, invs)
-        | DOF_core.Onto_Class {inherits_from=SOME(_, father), invs, ...} =>
+      case get_onto_class_global cid thy of
+          Onto_Class {inherits_from=NONE, invs, ...} => single (cid, invs)
+        | Onto_Class {inherits_from=SOME(_, father), invs, ...} =>
                                        (cid, invs) :: get_all_invariants father thy
     val cids_invariants = get_all_invariants name thy
     fun mk_inv_and_apply cid_invs value thy =
@@ -2093,7 +2093,7 @@ fun normalize_object_fast thy cid_long (eval_leaf: term -> term) t =
 val eval_theory = Synchronized.var "DOF_eval_theory" (NONE : theory option);
 
 fun stable_eval thy (f: Proof.context -> term -> term) t =
-  if not (Config.get_global thy DOF_core.invariants_static_eval)
+  if not (Config.get_global thy invariants_static_eval)
   then f (Proof_Context.init_global thy) t
   else
     let
@@ -2117,19 +2117,19 @@ fun stable_eval thy (f: Proof.context -> term -> term) t =
 (* Optional time limit (CPU seconds, scaled by the system option timeout_scale) for the
    evaluation of values and invariants; 0 means no limit. *)
 fun apply_timeout thy f x =
-  let val secs = Config.get_global thy DOF_core.invariants_timeout
+  let val secs = Config.get_global thy invariants_timeout
   in if secs <= 0.0 then f x else Timeout.apply (Time.fromReal secs) f x end
 
 fun timeout_msg thy what =
   "Evaluation of " ^ what ^ " exceeded the timeout of "
-  ^ Real.toString (Config.get_global thy DOF_core.invariants_timeout)
+  ^ Real.toString (Config.get_global thy invariants_timeout)
   ^ " s (configuration option invariants_timeout)"
 
 fun check_invariants_value pre thy binding docitem_value =
   let
     val oid = Binding.name_of binding
-    val name = DOF_core.cid_of oid thy
-               |> DOF_core.get_onto_class_cid thy |> (fst o fst)
+    val name = cid_of oid thy
+               |> get_onto_class_cid thy |> (fst o fst)
     val inv_and_apply_list = invariant_terms thy oid docitem_value
     val pre_list = case pre of
                        SOME l => map SOME l
@@ -2146,7 +2146,7 @@ fun check_invariants_value pre thy binding docitem_value =
                                        ^ "or the default value declared in the instance class.")
                       | ERROR e =>
                   if (String.isSubstring "Wellsortedness error" e)
-                      andalso (Config.get_global thy DOF_core.invariants_checking_with_tactics)
+                      andalso (Config.get_global thy invariants_checking_with_tactics)
                   then (warning("Invariants checking uses proof tactics");
                          let val prop_term = HOLogic.mk_Trueprop term
                              val thms = Proof_Context.get_thms ctxt (inv_name ^ def_suffixN)
@@ -2163,7 +2163,7 @@ fun check_invariants_value pre thy binding docitem_value =
                                                       ^ " failed to be checked using proof tactics"
                                                       ^ " with error:\n"
                                        in 
-                                         if Config.get_global thy DOF_core.invariants_strict_checking
+                                         if Config.get_global thy invariants_strict_checking
                                          then ISA_core.err (msg_intro ^ e) pos
                                          else (ISA_core.warn (msg_intro ^ e) pos; trivial_true) end
                          (* If Goal.prove does not fail, then the evaluation is considered True,
@@ -2179,16 +2179,16 @@ fun check_invariants_value pre thy binding docitem_value =
                                     ^ "to activate invariants_checking_with_tactics\n"
                                     ^ "if your invariant is checked against doc_class algebraic "
                                     ^ "types like 'doc_class list' or 'doc_class set'"
-                in if Config.get_global thy DOF_core.invariants_strict_checking
+                in if Config.get_global thy invariants_strict_checking
                    then ISA_core.err (msg_intro) pos
                    else (ISA_core.warn (msg_intro) pos; ((inv_name, pos), term)) end
            | Free ("invariant_timeout", _) =>
                 let val msg = timeout_msg thy ("invariant " ^ inv_name)
-                in if Config.get_global thy DOF_core.invariants_strict_checking
+                in if Config.get_global thy invariants_strict_checking
                    then ISA_core.err msg pos
                    else (ISA_core.warn msg pos; ((inv_name, pos), term)) end
            | _ => let val msg_intro = "Invariant " ^ inv_name ^ " violated"
-                  in if Config.get_global thy DOF_core.invariants_strict_checking
+                  in if Config.get_global thy invariants_strict_checking
                      then ISA_core.err msg_intro pos
                      else  (ISA_core.warn msg_intro pos; ((inv_name, pos), term)) end
       end
@@ -2196,7 +2196,7 @@ fun check_invariants_value pre thy binding docitem_value =
   in thy end
 
 fun check_invariants_with pre thy binding =
-  check_invariants_value pre thy binding (DOF_core.value_of (Binding.name_of binding) thy)
+  check_invariants_value pre thy binding (value_of (Binding.name_of binding) thy)
 
 fun check_invariants thy binding = check_invariants_with NONE thy binding
 
@@ -2207,15 +2207,15 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
     val (((name, args_cid), typ:typ), pos') = check_classref is_monitor cid_pos thy
     val cid_pos' = (name, pos')
     val cid_long = fst cid_pos'
-    val default_cid = args_cid = DOF_core.default_cid
+    val default_cid = args_cid = default_cid
     val vcid = if default_cid
                then NONE
-               else if DOF_core.virtual_of cid_long thy |> #virtual
+               else if virtual_of cid_long thy |> #virtual
                     then SOME args_cid
                     else NONE
     fun mk_value_terms thy = 
                if default_cid
-               then let val undefined_value = dest_Free DOF_core.undefined_value
+               then let val undefined_value = dest_Free undefined_value
                                                |> apfst (fn x => oid ^ "_" ^ x)
                                                |> Free
                     in (undefined_value, undefined_value) end
@@ -2231,39 +2231,39 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
                       val defaults_init = create_default_object thy binding cid_long typ
                       fun conv (na, _(*ty*), parsed_term) =(Binding.name_of na, Binding.pos_of na, 
                                                             "=", parsed_term);
-                      val S = map conv (DOF_core.get_attribute_defaults cid_long thy);
+                      val S = map conv (get_attribute_defaults cid_long thy);
                       val (defaults, _) = calc_update_term {mk_elaboration=false}
                                                                 thy (name, typ) S defaults_init;
                       val (value_term', _) = calc_update_term {mk_elaboration=true}
                                                                 thy (name, typ) assns' defaults
-                    in if Config.get_global thy DOF_core.object_value_debug
+                    in if Config.get_global thy object_value_debug
                        then let
                               val (input_term, _) = calc_update_term {mk_elaboration=false}
                                                                   thy (name, typ)  assns' defaults
                             in (input_term, value_term') end
                        else (\<^term>\<open>()\<close>, value_term') end
     (* 1. create the object id (with a placeholder value), ... *)
-    val thy1 = thy |> DOF_core.define_object_global
-              {define = define} (binding, DOF_core.make_instance
-                                               (false, \<^term>\<open>()\<close>, DOF_core.undefined_value,
-                                                 is_inline, args_cid, vcid))
-    (* 2. ... check it against the open monitors (cheap, and fails early), ... *)
-    val (thy2, monitor_class_inv_checks) = register_oid_cid_in_open_monitors binding (name,  pos') thy1
-    (* 3. ... and only then parse the attributes and compute the value of the object.
-       The evaluation of the value and of the high-level invariants of the class are done in one
-       batch: each call of "value" has a large fixed cost (code generation and compilation). *)
+    val place_holder = make_instance(false, \<^term>\<open>()\<close>, undefined_value, is_inline, args_cid, vcid)
+    val (thy2, monitor_class_inv_checks) = 
+               thy |> define_object_global  {define = define} (binding, place_holder)
+                   (* 2. ... check it against the open monitors (cheap, and fails early), ... *)
+                   |> register_oid_cid_in_open_monitors binding (name,  pos') 
+                   (* 3. ... and only then parse the attributes and compute the value of the object.
+                         The evaluation of the value and of the high-level invariants of the class 
+                         are done in one batch: each call of "value" has a large fixed cost 
+                         (code generation and compilation). *)
     val (input_term, value_term) = mk_value_terms thy2
     val ctxt2 = Proof_Context.init_global thy2
     fun eval_whole () = (apply_timeout thy2 (stable_eval thy2 value) value_term
                          handle Timeout.TIMEOUT _ => error (timeout_msg thy2 ("the value of " ^ oid)))
     (* structural construction of the value, if possible (see normalize_object_fast) *)
     fun fast_value () =
-      if default_cid orelse not (Config.get_global thy2 DOF_core.object_value_fast)
+      if default_cid orelse not (Config.get_global thy2 object_value_fast)
       then NONE
       else
         ((case normalize_object_fast thy2 name (apply_timeout thy2 (stable_eval thy2 Nbe.dynamic_value)) value_term of
             SOME v =>
-              (if Config.get_global thy2 DOF_core.monitor_trace_check
+              (if Config.get_global thy2 monitor_trace_check
                   andalso not (v aconv eval_whole ())
                then raise Fail ("object_value_fast: structural and evaluated value of "
                                 ^ oid ^ " differ")
@@ -2276,9 +2276,9 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
           fun eval_separately () =
             ((case fast_v of SOME v => v | NONE => eval_whole ()), NONE)
       in
-      if default_cid orelse not (Config.get_global thy2 DOF_core.invariants_batch)
-         orelse not (Config.get_global thy2 DOF_core.invariants_checking)
-         orelse (thy2 |> DOF_core.defined_of oid |> not andalso null doc_attrs)
+      if default_cid orelse not (Config.get_global thy2 invariants_batch)
+         orelse not (Config.get_global thy2 invariants_checking)
+         orelse (thy2 |> defined_of oid |> not andalso null doc_attrs)
       then eval_separately ()
       else
         let val invs = invariant_terms thy2 oid (the_default value_term fast_v) |> map snd
@@ -2298,7 +2298,7 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
                   val (v', l) = HOLogic.dest_prod res
                   val bs = HOLogic.dest_list l
               in if length bs <> length invs then eval_separately ()
-                 else (if Config.get_global thy2 DOF_core.monitor_trace_check
+                 else (if Config.get_global thy2 monitor_trace_check
                           andalso not (v' aconv value ctxt2 value_term)
                        then raise Fail ("invariants_batch: batch and separate evaluation of the value of "
                                    ^ oid ^ " differ")
@@ -2311,22 +2311,22 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
       end
     (* high-level invariants of the class are checked if requested *)
     val check_wanted =
-      not default_cid andalso Config.get_global thy2 DOF_core.invariants_checking
-      andalso not (thy2 |> DOF_core.defined_of oid |> not andalso null doc_attrs)
+      not default_cid andalso Config.get_global thy2 invariants_checking
+      andalso not (thy2 |> defined_of oid |> not andalso null doc_attrs)
     (* The evaluation of the value and the check of the invariants are done in parallel to the
        following commands: the value of the instance becomes a pending future (readers of the
        instance synchronize with it), and the errors and warnings of the invariants are reported
        by a second task at the position of this command. *)
     val parallel = Future.enabled () andalso not default_cid
-                   andalso Config.get_global thy2 DOF_core.invariants_parallel
+                   andalso Config.get_global thy2 invariants_parallel
     val (thy3, inv_results) =
       if parallel
       then
         let fun fork e = Execution.fork {name = DOF_docitemN, pos = Position.thread_data (), pri = ~1} e
             val fut = fork compute
-            val key = DOF_core.get_instance_name_global oid thy2
-            val thy3 = thy2 |> DOF_core.map_input_term oid (K input_term)
-                            |> DOF_core.set_pending_value key (Future.map #1 fut)
+            val key = get_instance_name_global oid thy2
+            val thy3 = thy2 |> map_input_term oid (K input_term)
+                            |> set_pending_value key (Future.map #1 fut)
             (* exceptions of a forked task are reported by Execution.fork at the position of
                this command; a failure of the evaluation itself is already reported by its task. *)
             val _ = fork (fn () =>
@@ -2338,17 +2338,17 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
         in (thy3, NONE) end
       else
         let val (value_term', inv_results) = compute ()
-        in (thy2 |> DOF_core.map_input_term_value oid (K input_term) (K value_term'), inv_results) end
+        in (thy2 |> map_input_term_value oid (K input_term) (K value_term'), inv_results) end
   in thy3
          |> (* 4. class invariants of the enabled monitors, which may inspect the new instance *)
             tap monitor_class_inv_checks
          |> (fn thy =>
             if (* declare_reference* without arguments is not checked against invariants *)
-               thy |> DOF_core.defined_of oid |> not
+               thy |> defined_of oid |> not
                andalso null doc_attrs
             then thy
-            else thy |> tap (DOF_core.check_opening_ml_invs cid_long oid is_monitor)
-                     |> tap (DOF_core.check_ml_invs cid_long oid is_monitor)
+            else thy |> tap (check_opening_ml_invs cid_long oid is_monitor)
+                     |> tap (check_ml_invs cid_long oid is_monitor)
                      (* Bypass checking of high-level invariants when the class default_cid = "text",
                         the top (default) document class.
                         We want the class default_cid to stay abstract
@@ -2358,10 +2358,11 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
                         without using the burden of ontology classes.
                         ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
                      |> (fn thy => if default_cid orelse parallel then thy
-                                   else if Config.get_global thy DOF_core.invariants_checking
+                                   else if Config.get_global thy invariants_checking
                                         then check_invariants_with inv_results thy binding else thy))
   end
 
+end (* local *)
 end (* structure Docitem_Parser *)
 
 
