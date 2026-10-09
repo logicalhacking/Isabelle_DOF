@@ -1494,6 +1494,125 @@ text\<open>
 \<close>
 
 
+subsection*[control_flags::technical]\<open>\<^isadof> Control Flags: Attributes for Evaluation and Parallelization\<close>
+text\<open>
+  The behaviour of the \<^isadof> engine is steered by a number of \<^emph>\<open>control flags\<close>\<^bindex>\<open>control flag\<close>.
+  They are ordinary Isabelle configuration attributes\<^index>\<open>configuration attribute\<close> and are set 
+  in a theory with the \<^theory_text>\<open>declare\<close> command; a Boolean flag that is mentioned without a value
+  is set to \<^theory_text>\<open>true\<close>:
+  @{boxed_theory_text [display]\<open>
+  declare[[invariants_strict_checking = true, invariants_timeout = 30]]
+  declare[[object_value_debug]]\<close>}
+  The value of a flag holds from the point of declaration until the end of the theory, and in all 
+  theories importing it. Each time an instance is declared (for example with \<^theory_text>\<open>text*\<close>), 
+  \<^isadof> does three things: it \<^emph>\<open>registers\<close> the instance (name, class, and the open monitors 
+  that must accept it), it \<^emph>\<open>computes its value\<close>, \<^ie>, the record of its attribute values, 
+  and it \<^emph>\<open>checks the class invariants\<close> against that value. The flags below control 
+  which checks are done, how strict they are, how the values and the invariants are evaluated, 
+  and whether the evaluation runs in parallel to the following commands. 
+  The lists are complete for the flags of the core system; the ontologies \<^verbatim>\<open>scholarly_paper\<close> 
+  and \<^verbatim>\<open>COL\<close> have further flags that only concern the presentation of their document elements.
+\<close>
+
+subsubsection\<open>Flags for Evaluation\<close>
+text\<open>There are vaious ways to influence the evaluation and checking of integrated documents in
+\<^isadof>. A particular means are special flags --- called attributes in Isabelle terminology --- 
+which can be set or unset for specific purposes, in particular to speed up the checking in 
+'draft modes' during development. We roughly divide them in three groups:\<close>
+
+text\<open>
+  The first group of attributes selects \<^emph>\<open>what\<close> is checked and \<^emph>\<open>how strict\<close> this is done 
+  (default in brackets):
+  \<^item> \<^boxed_theory_text>\<open>invariants_checking\<close>\<^bindex>\<open>invariants\_checking@\texttt{invariants\_checking}\<close> [\<^theory_text>\<open>true\<close>]:
+    the high-level class invariants (\<^theory_text>\<open>invariant\<close> clauses of ODL) are evaluated when an instance is 
+    declared or updated, and when a monitor is closed. If switched off, no invariant is evaluated 
+    (the ML-level invariants are not concerned).
+  \<^item> \<^boxed_theory_text>\<open>invariants_strict_checking\<close>\<^bindex>\<open>invariants\_strict\_checking@\texttt{invariants\_strict\_checking}\<close> [\<^theory_text>\<open>false\<close>]:
+    a violated invariant, and an invariant whose evaluation exceeds the time limit
+    (\<^boxed_theory_text>\<open>invariants_timeout\<close>), is an \<^emph>\<open>error\<close> instead of a warning.
+  \<^item> \<^boxed_theory_text>\<open>invariants_checking_with_tactics\<close>\<^bindex>\<open>invariants\_checking\_with\_tactics@\texttt{invariants\_checking\_with\_tactics}\<close> [\<^theory_text>\<open>false\<close>]:
+    if an invariant cannot be evaluated because its type is not executable (for example for 
+    attributes whose type is a class type like \<^theory_text>\<open>doc_class list\<close>), the invariant is proven with
+    the simplifier and auto instead.
+  \<^item> \<^boxed_theory_text>\<open>strict_monitor_checking\<close>\<^bindex>\<open>strict\_monitor\_checking@\texttt{strict\_monitor\_checking}\<close> [\<^theory_text>\<open>false\<close>]:
+    an instance that is rejected by an open monitor, or not enabled by any of its accepts-clauses,
+    is an \<^emph>\<open>error\<close> instead of a warning.
+  \<^item> \<^boxed_theory_text>\<open>free_class_in_monitor_checking\<close>\<^bindex>\<open>free\_class\_in\_monitor\_checking@\texttt{free\_class\_in\_monitor\_checking}\<close> [\<^theory_text>\<open>false\<close>]:
+    a warning is issued for an instance of a class that does not occur in the alphabet of an
+    open monitor (a ``free'' class) .
+  \<^item> \<^boxed_theory_text>\<open>free_class_in_monitor_strict_checking\<close>\<^bindex>\<open>free\_class\_in\_monitor\_strict\_checking@\texttt{free\_class\_in\_monitor\_strict\_checking}\<close> [\<^theory_text>\<open>false\<close>]:
+    as before, but an error instead of a warning.
+  \<^item> \<^boxed_theory_text>\<open>disable_assert_evaluation\<close>\<^bindex>\<open>disable\_assert\_evaluation@\texttt{disable\_assert\_evaluation}\<close> [\<^theory_text>\<open>false\<close>]:
+    the \<^theory_text>\<open>assert*\<close> command does not evaluate its term and acts like \<^theory_text>\<open>term*\<close>.
+
+  The second group selects \<^emph>\<open>how\<close> values and invariants are evaluated. All of its flags 
+  only influence the time needed, never the result (up to the caveat of 
+  \<^boxed_theory_text>\<open>invariants_static_eval\<close>):
+  \<^item> \<^boxed_theory_text>\<open>object_value_fast\<close>\<^bindex>\<open>object\_value\_fast@\texttt{object\_value\_fast}\<close> [\<^theory_text>\<open>true\<close>]:
+    the value of an instance is built \<^emph>\<open>structurally\<close>: the record of its class and super-classes 
+    is rewritten with the record definitions, without evaluation. Only attribute values that are not
+    already literals or constructor terms (for example \<^theory_text>\<open>2+3\<close>) are evaluated, one by one.
+    If switched off, the term of the whole value is evaluated by normalization by evaluation, which
+    takes some hundred milliseconds per instance.
+  \<^item> \<^boxed_theory_text>\<open>monitor_trace_fast\<close>\<^bindex>\<open>monitor\_trace\_fast@\texttt{monitor\_trace\_fast}\<close> [\<^theory_text>\<open>true\<close>]:
+    the \<^verbatim>\<open>trace\<close> attribute of a monitor is extended by the new instance by a direct 
+    construction of the new list, and the stored value of an attribute is read by 
+    rewriting instead of evaluation. If switched off, every access and every extension evaluates 
+    the whole record again, about a second per instance in monitors of large ontologies.
+  \<^item> \<^boxed_theory_text>\<open>invariants_batch\<close>\<^bindex>\<open>invariants\_batch@\texttt{invariants\_batch}\<close> [\<^theory_text>\<open>true\<close>]:
+    the invariants of the class and its super-classes are evaluated in a single call (together 
+    with the value, if this is not built structurally) instead of one call per invariant. 
+    If a batch fails or exceeds the time limit, the invariants are evaluated one by one, so that
+    messages always name the invariant concerned.
+  \<^item> \<^boxed_theory_text>\<open>invariants_static_eval\<close>\<^bindex>\<open>invariants\_static\_eval@\texttt{invariants\_static\_eval}\<close> [\<^theory_text>\<open>true\<close>]:
+    values and invariants are evaluated in a fixed earlier theory of the same theory file, 
+    since the caches of the code generator are lost whenever the theory is extended. 
+    The fixed theory is replaced by the current one as soon as a term uses a constant that is declared 
+    later. The caveat: code equations of constants that are changed later \<^emph>\<open>in the same theory file\<close> 
+    are not seen. Switch it off if you do so.
+  \<^item> \<^boxed_theory_text>\<open>invariants_timeout\<close>\<^bindex>\<open>invariants\_timeout@\texttt{invariants\_timeout}\<close> [\<^theory_text>\<open>0\<close>, \<^ie>, no limit]:
+    a limit in seconds of CPU time (scaled by the Isabelle option \<^verbatim>\<open>timeout_scale\<close>) for each evaluation 
+    of a value or of an invariant. The evaluation of an invariant that exceeds the limit is
+    reported as a warning, or as an error with \<^boxed_theory_text>\<open>invariants_strict_checking\<close>; 
+    the evaluation of a value that exceeds it is always an error.
+
+  The third group is meant for the development and the diagnosis of the system itself:
+  \<^item> \<^boxed_theory_text>\<open>object_value_debug\<close>\<^bindex>\<open>object\_value\_debug@\texttt{object\_value\_debug}\<close> [\<^theory_text>\<open>false\<close>]:
+    keeps the value term of an instance \<^emph>\<open>before\<close> its normalization in the \<^verbatim>\<open>input_term\<close> field 
+    that is shown by \<^theory_text>\<open>print_doc_items\<close>.
+  \<^item> \<^boxed_theory_text>\<open>monitor_trace_check\<close>\<^bindex>\<open>monitor\_trace\_check@\texttt{monitor\_trace\_check}\<close> [\<^theory_text>\<open>false\<close>]:
+    every result that is obtained structurally (values, traces, attributes, batched invariants) is
+    compared with the result of the evaluation, and a difference is an error. It makes everything 
+    slower and is used by the regression tests of the system.
+\<close>
+
+subsubsection\<open>Attributes for Parallelization\<close>
+text\<open>
+  After the registration of an instance and the check of the monitors, the computation of its value 
+  and the check of its invariants can run in a task in parallel to the evaluation of the following 
+  commands. The \<^emph>\<open>value\<close> of the instance is then a \<^emph>\<open>pending value\<close>\<^index>\<open>pending value\<close>:
+  commands that need it (attribute access, \<^theory_text>\<open>value*\<close>, antiquotations, ML-invariants such as 
+  the check of the safety integrity level in the CENELEC ontology) wait until it is available, while 
+  commands that only need its meta-data (class, defined, and so on) do not wait. Errors and warnings 
+  of the task are reported at the command that declared the instance; since the instance exists 
+  already, the theory state is not undone, as it is for an error in sequential mode. All pending 
+  values are joined at the end of the theory. The following flag and options concern this mechanism:
+  \<^item> \<^boxed_theory_text>\<open>invariants_parallel\<close>\<^bindex>\<open>invariants\_parallel@\texttt{invariants\_parallel}\<close> 
+    [\<^theory_text>\<open>true\<close>]:
+    switches the parallel evaluation on. If switched off, the value and the invariants are evaluated 
+    before the command returns and an error aborts the command at once. The assert-error commands of
+    the test kit use this sequential mode in any case, since they test for errors at the command.
+  \<^item> \<^boxed_theory_text>\<open>invariants_timeout\<close> (see above): the limit applies to each task, so that one 
+    divergent invariant cannot block all commands that wait for the value of the instance.
+  \<^item> \<^boxed_theory_text>\<open>invariants_static_eval\<close> and \<^boxed_theory_text>\<open>invariants_batch\<close> (see above): 
+    they reduce the work of each task; the tasks share the caches of the fixed evaluation theory.
+  \<^item> The Isabelle system option \<^verbatim>\<open>threads\<close>\<^bindex>\<open>threads@\texttt{threads}\<close>: with one thread there 
+    are no tasks and everything is evaluated sequentially, whatever the value of 
+    \<^boxed_theory_text>\<open>invariants_parallel\<close>.
+  The ML-level invariants and the class invariants of monitors are always checked at the command 
+  itself.
+\<close>
+
 section*["document_templates"::technical]\<open>Defining Document Templates\<close>
 subsection\<open>The Core Template\<close>
 
@@ -1502,7 +1621,7 @@ text\<open>
   etc.) of the generated documents.
   If a new layout is already supported by a \<^LaTeX>-class, then developing basic support for it 
   is straightforward: In most cases, it is 
-  sufficient to replace the document class in \autoref{lst:dc} of the template and add the 
+  sufficient to replace the document class in \<^latex>\<open>\autoref{lst:dc}\<close> of the template and add the 
   \<^LaTeX>-packages that are (strictly) required by the used \<^LaTeX>-setup. In general, we recommend
   to only add \<^LaTeX>-packages that are always necessary for this particular template, as loading
   packages in the templates minimizes the freedom users have by adapting the \<^path>\<open>preample.tex\<close>.
@@ -1542,9 +1661,9 @@ text\<open>
   @{boxed_bash [display] \<open>ë\prompt{MyProject/output/document}ë lualatex root.tex\<close>}
 
   This allows you to develop and check your \<^LaTeX>-setup without the overhead of running 
-   \<^boxed_bash>\<open>isabelle build\<close> after each change of your template (or ontology-style). Note that 
+  \<^boxed_bash>\<open>isabelle build\<close> after each change of your template (or ontology-style). Note that 
   the content of the \<^path>\<open>output\<close> directory is overwritten by executing 
-   \<^boxed_bash>\<open>isabelle build\<close>.
+  \<^boxed_bash>\<open>isabelle build\<close>.
 \<close>
 
 subsubsection\<open>Truncated Warning and Error Messages\<close>
