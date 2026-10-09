@@ -32,16 +32,20 @@ begin
 
 define_ontology "DOF-CENELEC_50128.sty" "CENELEC 50128"
 
-(* this is a hack and should go into an own ontology, providing thingsd like:
-  - Assumption*
-  - Hypothesis*
-  - Definition*.  (Une redefinition de ce qui se passe dans tech-report, cible a semi-formal 
-                         “Definitions of terminology” \<dots> )
-  - Objective"
-  - Claim* 
-  - Requirement*
-  
-*) 
+text\<open>Ontologies suffer from the phenomenon that common terms ("words") have in a 
+particular ontological context very different meanings, which are not easily to be reconciled
+by a common 'super-concept'. 
+
+This is also a problem here; certain concepts like
+   \<^item>  \<^verbatim>\<open>Assumption*\<close>
+   \<^item>  \<^verbatim>\<open>Hypothesis*\<close>
+   \<^item>  \<^verbatim>\<open>Definition*\<close>
+   \<^item>  \<^verbatim>\<open>Objective"\<close>
+   \<^item>  \<^verbatim>\<open>Claim*\<close>
+   \<^item>  \<^verbatim>\<open>Requirement*\<close>
+were reused from \<^verbatim>\<open>technical_report\<close> but are used in this ontology in a different meaning. 
+Such \<open>homonymes\<close> are a common problem and are treated here by a kond of ad-hoc overloading.
+\<close> 
    
 
 text\<open>We re-use the class \<^typ>\<open>math_content\<close>, which provides also a framework for
