@@ -2248,10 +2248,10 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
                thy |> define_object_global  {define = define} (binding, place_holder)
                    (* 2. ... check it against the open monitors (cheap, and fails early), ... *)
                    |> register_oid_cid_in_open_monitors binding (name,  pos') 
-                   (* 3. ... and only then parse the attributes and compute the value of the object.
-                         The evaluation of the value and of the high-level invariants of the class 
-                         are done in one batch: each call of "value" has a large fixed cost 
-                         (code generation and compilation). *)
+    (* 3. ... and only then parse the attributes and compute the value of the object.
+          The evaluation of the value and of the high-level invariants of the class 
+          are done in one batch: each call of "value" has a large fixed cost 
+          (code generation and compilation). *)
     val (input_term, value_term) = mk_value_terms thy2
     val ctxt2 = Proof_Context.init_global thy2
     fun eval_whole () = (apply_timeout thy2 (stable_eval thy2 value) value_term
