@@ -309,7 +309,7 @@ test3 :: "int"
 test3' :: "'a list"
 
 text*[testtest30::"'a::one test3'", test3'="[1]"]\<open>\<close>
-text-assert-error[testtest30b::"'a test3'", test3'="[1]"]\<open>\<close>
+text-assert-error[testtest30::"'a test3'", test3'="[1]"]\<open>\<close>
 \<open>Type unification failed: Variable\<close>
 
 find_consts name:"test3'.test3"
@@ -369,7 +369,7 @@ value*\<open>test3' @{test3' \<open>testtest3''\<close>}\<close>
 definition testeq where "testeq \<equiv> \<lambda>x. x"
 find_consts name:"test3'.ma"
 
-text-assert-error[testtest3''b::"int test3'", test3 = "1", test3' = "[3::'a::numeral]"]\<open>\<close>
+text-assert-error[testtest3''::"int test3'", test3 = "1", test3' = "[3::'a::numeral]"]\<open>\<close>
   \<open>Type unification failed\<close>
 
 text-assert-error[testtest3''::"int test3'", test3 = "1", test3' = "[3]"]\<open>\<close>

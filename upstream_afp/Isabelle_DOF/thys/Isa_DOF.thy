@@ -2005,21 +2005,19 @@ fun register_oid_cid_in_open_monitors binding (name, pos') thy =
               in map_input_term mon_oid (def_trans_input_term mon_oid)
                  #> map_value_lazy mon_oid (def_trans_value mon_oid) end
         else map_value_lazy mon_oid (def_trans_value mon_oid)
-  in  (thy |> (* update traces of all enabled monitors *)
-               fold update_trace (map #1 enabled_monitors)
-           |> (* update the automata of enabled monitors *)
-               Monitor_Info.map (fold update_info delta_autoS),
-       (* The class invariants of the enabled monitors are returned as a deferred check:
-          they may inspect the value of the new instance, which is only computed later. *)
-       class_inv_checks)
+  in  thy |> (* update traces of all enabled monitors *)
+             fold update_trace (map #1 enabled_monitors)
+          |> (* check class invariants of enabled monitors: they may inspect the value
+                of the new instance, which is available (or pending) at this point *)
+             tap class_inv_checks
+          |> (* update the automata of enabled monitors *)
+              Monitor_Info.map (fold update_info delta_autoS)
   end
 
 (* The invariants of the class of the instance oid (and of its super-classes), applied to
    docitem_value, as pairs ((invariant name, position), term to be evaluated). *)
-fun invariant_terms thy oid docitem_value =
+fun invariant_terms thy name docitem_value =
   let
-    val name = cid_of oid thy
-               |> get_onto_class_cid thy |> (fst o fst)
     fun get_all_invariants cid thy =
       case get_onto_class_global cid thy of
           Onto_Class {inherits_from=NONE, invs, ...} => single (cid, invs)
@@ -2125,12 +2123,9 @@ fun timeout_msg thy what =
   ^ Real.toString (Config.get_global thy invariants_timeout)
   ^ " s (configuration option invariants_timeout)"
 
-fun check_invariants_value pre thy binding docitem_value =
+fun check_invariants_value name pre thy binding docitem_value =
   let
-    val oid = Binding.name_of binding
-    val name = cid_of oid thy
-               |> get_onto_class_cid thy |> (fst o fst)
-    val inv_and_apply_list = invariant_terms thy oid docitem_value
+    val inv_and_apply_list = invariant_terms thy name docitem_value
     val pre_list = case pre of
                        SOME l => map SOME l
                      | NONE => map (K NONE) inv_and_apply_list
@@ -2196,170 +2191,175 @@ fun check_invariants_value pre thy binding docitem_value =
   in thy end
 
 fun check_invariants_with pre thy binding =
-  check_invariants_value pre thy binding (value_of (Binding.name_of binding) thy)
+  let val oid = Binding.name_of binding
+      val name = cid_of oid thy
+                 |> get_onto_class_cid thy |> (fst o fst)
+  in check_invariants_value name pre thy binding (value_of oid thy) end
 
 fun check_invariants thy binding = check_invariants_with NONE thy binding
 
 
+(* Creation of an instance. 
+
+   Pure computations (the value term, the evaluation of the value and of the invariants) refer
+   to the theory thy of the call; only their effects are booked in the resulting theory, in this
+   order:
+   1. the instance with its value (a pending value if the evaluation runs in parallel),
+   2. its registration with the open monitors (transitions of the automata, extension of the
+      traces, class invariants of the monitors, which may read the value of the new instance),
+   3. the ML invariants of the class,
+   4. the high-level invariants of the class, in parallel or sequentially.
+
+   The configuration flags are constant during the command and are inspected once. The routes:
+   * an instance without class (default_cid): nothing is computed or checked,
+   * an instance of a class: the value is built by one of four evaluators, selected by the flags 
+       object_value_fast and (invariants_checking and invariants_batch),
+     and the evaluator is run in a task (invariants_parallel) or immediately. *)
 fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} binding cid_pos doc_attrs thy =
   let
     val oid = Binding.name_of binding
     val (((name, args_cid), typ:typ), pos') = check_classref is_monitor cid_pos thy
-    val cid_pos' = (name, pos')
-    val cid_long = fst cid_pos'
     val default_cid = args_cid = default_cid
     val vcid = if default_cid
                then NONE
-               else if virtual_of cid_long thy |> #virtual
+               else if virtual_of name thy |> #virtual
                     then SOME args_cid
                     else NONE
-    fun mk_value_terms thy = 
-               if default_cid
-               then let val undefined_value = dest_Free undefined_value
-                                               |> apfst (fn x => oid ^ "_" ^ x)
-                                               |> Free
-                    in (undefined_value, undefined_value) end
-                    (* Handle initialization of docitem without a class associated,
-                       for example when you just want a document element to be referentiable
-                       without using the burden of ontology classes.
-                       ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
-               else let
-                      val ctxt = Proof_Context.init_global thy
-                      fun conv_attrs ((lhs, pos), rhs) = (Protocol_Message.clean_output lhs,pos,"=", 
-                                                          Syntax.parse_term ctxt rhs)
-                      val assns' = map conv_attrs doc_attrs
-                      val defaults_init = create_default_object thy binding cid_long typ
-                      fun conv (na, _(*ty*), parsed_term) =(Binding.name_of na, Binding.pos_of na, 
-                                                            "=", parsed_term);
-                      val S = map conv (get_attribute_defaults cid_long thy);
-                      val (defaults, _) = calc_update_term {mk_elaboration=false}
-                                                                thy (name, typ) S defaults_init;
-                      val (value_term', _) = calc_update_term {mk_elaboration=true}
-                                                                thy (name, typ) assns' defaults
-                    in if Config.get_global thy object_value_debug
-                       then let
-                              val (input_term, _) = calc_update_term {mk_elaboration=false}
-                                                                  thy (name, typ)  assns' defaults
-                            in (input_term, value_term') end
-                       else (\<^term>\<open>()\<close>, value_term') end
-    (* 1. create the object id (with a placeholder value), ... *)
-    val place_holder = make_instance(false, \<^term>\<open>()\<close>, undefined_value, is_inline, args_cid, vcid)
-    val (thy2, monitor_class_inv_checks) = 
-               thy |> define_object_global  {define = define} (binding, place_holder)
-                   (* 2. ... check it against the open monitors (cheap, and fails early), ... *)
-                   |> register_oid_cid_in_open_monitors binding (name,  pos') 
-    (* 3. ... and only then parse the attributes and compute the value of the object.
-          The evaluation of the value and of the high-level invariants of the class 
-          are done in one batch: each call of "value" has a large fixed cost 
-          (code generation and compilation). *)
-    val (input_term, value_term) = mk_value_terms thy2
-    val ctxt2 = Proof_Context.init_global thy2
-    fun eval_whole () = (apply_timeout thy2 (stable_eval thy2 value) value_term
-                         handle Timeout.TIMEOUT _ => error (timeout_msg thy2 ("the value of " ^ oid)))
-    (* structural construction of the value, if possible (see normalize_object_fast) *)
-    fun fast_value () =
-      if default_cid orelse not (Config.get_global thy2 object_value_fast)
-      then NONE
-      else
-        ((case normalize_object_fast thy2 name (apply_timeout thy2 (stable_eval thy2 Nbe.dynamic_value)) value_term of
-            SOME v =>
-              (if Config.get_global thy2 monitor_trace_check
-                  andalso not (v aconv eval_whole ())
-               then raise Fail ("object_value_fast: structural and evaluated value of "
-                                ^ oid ^ " differ")
-               else ();
-               SOME v)
-          | NONE => NONE)
-         handle ERROR _ => NONE | Timeout.TIMEOUT _ => NONE)
-    fun compute () =
-      let val fast_v = fast_value ()
-          fun eval_separately () =
-            ((case fast_v of SOME v => v | NONE => eval_whole ()), NONE)
-      in
-      if default_cid orelse not (Config.get_global thy2 invariants_batch)
-         orelse not (Config.get_global thy2 invariants_checking)
-         orelse (thy2 |> defined_of oid |> not andalso null doc_attrs)
-      then eval_separately ()
-      else
-        let val invs = invariant_terms thy2 oid (the_default value_term fast_v) |> map snd
-        in if null invs then eval_separately ()
-           else if is_some fast_v
-           then (* the value is known: only the invariants have to be evaluated, in one batch *)
-             let val v = the fast_v
-             in (let val bs = apply_timeout thy2 (stable_eval thy2 value) (HOLogic.mk_list \<^typ>\<open>bool\<close> invs)
-                             |> HOLogic.dest_list
-                 in if length bs <> length invs then (v, NONE) else (v, SOME bs) end
-                 handle ERROR _ => (v, NONE) | TERM _ => (v, NONE) | Match => (v, NONE)
-                      | Timeout.TIMEOUT _ => (v, NONE) (* the invariants are then timed one by one *))
-             end
-           else
-             (let val res = apply_timeout thy2 (stable_eval thy2 value)
-                              (HOLogic.mk_prod (value_term, HOLogic.mk_list \<^typ>\<open>bool\<close> invs))
-                  val (v', l) = HOLogic.dest_prod res
-                  val bs = HOLogic.dest_list l
-              in if length bs <> length invs then eval_separately ()
-                 else (if Config.get_global thy2 monitor_trace_check
-                          andalso not (v' aconv value ctxt2 value_term)
-                       then raise Fail ("invariants_batch: batch and separate evaluation of the value of "
-                                   ^ oid ^ " differ")
-                       else ();
-                       (v', SOME bs)) end
-              handle ERROR _ => eval_separately () | TERM _ => eval_separately ()
-                   | Timeout.TIMEOUT _ => eval_separately () (* the invariants are then timed one by one *)
-                   | Match => eval_separately ())
-        end
+    (* declare_reference* without arguments is not checked against invariants *)
+    val reference_only = not define andalso null doc_attrs
+
+    (* effects on the theory *)
+    fun define_instance (input_term, value) =
+      define_object_global {define = define}
+        (binding, make_instance (false, input_term, value, is_inline, args_cid, vcid))
+    fun register_and_check_ml thy' =
+      thy' |> register_oid_cid_in_open_monitors binding (name, pos')
+           |> (fn thy'' =>
+                if reference_only then thy''
+                else thy'' |> tap (check_opening_ml_invs name oid is_monitor)
+                           |> tap (check_ml_invs name oid is_monitor))
+  in
+    if default_cid
+    then (* Instance without a class associated, for example when you just want a document element
+            to be referentiable without using the burden of ontology classes: neither an attribute 
+            nor an invariant, and the value is a dummy that needs no evaluation.
+            ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
+      let val dummy = dest_Free undefined_value
+                      |> apfst (fn x => oid ^ "_" ^ x)
+                      |> Free
+      in thy |> define_instance (dummy, dummy)
+             |> register_and_check_ml
       end
-    (* high-level invariants of the class are checked if requested *)
-    val check_wanted =
-      not default_cid andalso Config.get_global thy2 invariants_checking
-      andalso not (thy2 |> defined_of oid |> not andalso null doc_attrs)
-    (* The evaluation of the value and the check of the invariants are done in parallel to the
-       following commands: the value of the instance becomes a pending future (readers of the
-       instance synchronize with it), and the errors and warnings of the invariants are reported
-       by a second task at the position of this command. *)
-    val parallel = Future.enabled () andalso not default_cid
-                   andalso Config.get_global thy2 invariants_parallel
-    val (thy3, inv_results) =
-      if parallel
-      then
-        let fun fork e = Execution.fork {name = DOF_docitemN, pos = Position.thread_data (), pri = ~1} e
-            val fut = fork compute
-            val key = get_instance_name_global oid thy2
-            val thy3 = thy2 |> map_input_term oid (K input_term)
-                            |> set_pending_value key (Future.map #1 fut)
-            (* exceptions of a forked task are reported by Execution.fork at the position of
-               this command; a failure of the evaluation itself is already reported by its task. *)
-            val _ = fork (fn () =>
-                      (case Future.join_result fut of
-                         Exn.Exn _ => ()
-                       | Exn.Res (v', res) =>
-                           if check_wanted then ignore (check_invariants_value res thy3 binding v')
-                           else ()))
-        in (thy3, NONE) end
-      else
-        let val (value_term', inv_results) = compute ()
-        in (thy2 |> map_input_term_value oid (K input_term) (K value_term'), inv_results) end
-  in thy3
-         |> (* 4. class invariants of the enabled monitors, which may inspect the new instance *)
-            tap monitor_class_inv_checks
-         |> (fn thy =>
-            if (* declare_reference* without arguments is not checked against invariants *)
-               thy |> defined_of oid |> not
-               andalso null doc_attrs
-            then thy
-            else thy |> tap (check_opening_ml_invs cid_long oid is_monitor)
-                     |> tap (check_ml_invs cid_long oid is_monitor)
-                     (* Bypass checking of high-level invariants when the class default_cid = "text",
-                        the top (default) document class.
-                        We want the class default_cid to stay abstract
-                        and not have the capability to be defined with attribute, invariants, etc.
-                        Hence this bypass handles docitem without a class associated,
-                        for example when you just want a document element to be referentiable
-                        without using the burden of ontology classes.
-                        ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
-                     |> (fn thy => if default_cid orelse parallel then thy
-                                   else if Config.get_global thy invariants_checking
-                                        then check_invariants_with inv_results thy binding else thy))
+    else
+      let
+        (* configuration flags *)
+        val fast = Config.get_global thy object_value_fast
+        val check_wanted = Config.get_global thy invariants_checking andalso not reference_only
+        val batched = check_wanted andalso Config.get_global thy invariants_batch
+        val parallel = Future.enabled () andalso Config.get_global thy invariants_parallel
+
+        (* The terms of the instance: the attributes are parsed and type-checked. *)
+        val (input_term, value_term) =
+          let
+            val ctxt = Proof_Context.init_global thy
+            fun conv_attrs ((lhs, pos), rhs) = (Protocol_Message.clean_output lhs, pos, "=", 
+                                                Syntax.parse_term ctxt rhs)
+            val assns' = map conv_attrs doc_attrs
+            val defaults_init = create_default_object thy binding name typ
+            fun conv (na, _(*ty*), parsed_term) = (Binding.name_of na, Binding.pos_of na, 
+                                                   "=", parsed_term);
+            val S = map conv (get_attribute_defaults name thy);
+            val (defaults, _) = calc_update_term {mk_elaboration=false} thy (name, typ) S defaults_init;
+            val (value_term', _) = calc_update_term {mk_elaboration=true} thy (name, typ) assns' defaults
+          in if Config.get_global thy object_value_debug
+             then let val (input_term, _) = calc_update_term {mk_elaboration=false}
+                                                             thy (name, typ) assns' defaults
+                  in (input_term, value_term') end
+             else (\<^term>\<open>()\<close>, value_term') end
+
+        (* Evaluation. Each call of "value" has a large fixed cost (code generation and compilation):
+           the invariants of the class are evaluated in one batch, together with the value if this
+           is not built structurally. If a batch fails or exceeds the time limit, the invariants are
+           evaluated, and timed, one by one when they are checked. *)
+        fun eval_whole () = (apply_timeout thy (stable_eval thy value) value_term
+                             handle Timeout.TIMEOUT _ => error (timeout_msg thy ("the value of " ^ oid)))
+        fun fast_value () = (* structural construction of the value (see normalize_object_fast) *)
+          ((case normalize_object_fast thy name (apply_timeout thy (stable_eval thy Nbe.dynamic_value)) value_term of
+              SOME v =>
+                (if Config.get_global thy monitor_trace_check
+                    andalso not (v aconv eval_whole ())
+                 then raise Fail ("object_value_fast: structural and evaluated value of "
+                                  ^ oid ^ " differ")
+                 else ();
+                 SOME v)
+            | NONE => NONE)
+           handle ERROR _ => NONE | Timeout.TIMEOUT _ => NONE)
+        fun invariants_of v = invariant_terms thy name v |> map snd
+        fun eval_invariants invs = (* NONE if the batch fails *)
+          (SOME (apply_timeout thy (stable_eval thy value) (HOLogic.mk_list \<^typ>\<open>bool\<close> invs)
+                 |> HOLogic.dest_list)
+           handle ERROR _ => NONE | TERM _ => NONE | Match => NONE | Timeout.TIMEOUT _ => NONE)
+          |> (fn SOME bs => if length bs = length invs then SOME bs else NONE | NONE => NONE)
+        fun batch_known v = (* the value is known: only the invariants are evaluated *)
+          (case invariants_of v of [] => (v, NONE) | invs => (v, eval_invariants invs))
+        fun batch_unknown () = (* value and invariants in one call *)
+          (case invariants_of value_term of
+             [] => (eval_whole (), NONE)
+           | invs =>
+               (let val (v', l) = apply_timeout thy (stable_eval thy value)
+                                    (HOLogic.mk_prod (value_term, HOLogic.mk_list \<^typ>\<open>bool\<close> invs))
+                                  |> HOLogic.dest_prod
+                    val bs = HOLogic.dest_list l
+                in if length bs <> length invs then (eval_whole (), NONE)
+                   else (if Config.get_global thy monitor_trace_check
+                            andalso not (v' aconv eval_whole ())
+                         then raise Fail ("invariants_batch: batch and separate evaluation of the value of "
+                                          ^ oid ^ " differ")
+                         else ();
+                         (v', SOME bs)) end
+                handle ERROR _ => (eval_whole (), NONE) | TERM _ => (eval_whole (), NONE)
+                     | Timeout.TIMEOUT _ => (eval_whole (), NONE) | Match => (eval_whole (), NONE)))
+
+        (* the four evaluators: value, and results of the batch of the invariants if any *)
+        val evaluate : unit -> term * term list option =
+          (case (fast, batched) of
+             (true, true)   => (fn () => case fast_value () of SOME v => batch_known v
+                                                             | NONE => batch_unknown ())
+           | (true, false)  => (fn () => case fast_value () of SOME v => (v, NONE)
+                                                             | NONE => (eval_whole (), NONE))
+           | (false, true)  => batch_unknown
+           | (false, false) => (fn () => (eval_whole (), NONE)))
+      in
+        if parallel
+        then
+          (* The evaluation of the value and the check of the invariants are done in parallel to the
+             following commands: the value of the instance becomes a pending future (readers of the
+             instance synchronize with it), and the errors and warnings of the invariants are 
+             reported by a second task at the position of this command. Exceptions of a forked task
+             are reported by Execution.fork; a failure of the evaluation itself is already reported
+             by its task. *)
+          let fun fork e = Execution.fork {name = DOF_docitemN, pos = Position.thread_data (), pri = ~1} e
+              val fut = fork evaluate
+              val _ = fork (fn () =>
+                        (case Future.join_result fut of
+                           Exn.Exn _ => ()
+                         | Exn.Res (v, res) =>
+                             if check_wanted then ignore (check_invariants_value name res thy binding v)
+                             else ()))
+          in thy |> define_instance (input_term, undefined_value)
+                 |> (fn thy' => set_pending_value (get_instance_name_global oid thy')
+                                                           (Future.map #1 fut) thy')
+                 |> register_and_check_ml
+          end
+        else
+          let val (v, res) = evaluate ()
+          in thy |> define_instance (input_term, v)
+                 |> register_and_check_ml
+                 |> (fn thy' => if check_wanted
+                                then (check_invariants_value name res thy binding v; thy')
+                                else thy')
+          end
+      end
   end
 
 end (* local *)
