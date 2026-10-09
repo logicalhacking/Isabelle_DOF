@@ -198,6 +198,21 @@ define_shortcut* clearpage \<rightleftharpoons> \<open>\clearpage{}\<close>
                  hf \<rightleftharpoons> \<open>\hfill\<close> 
                  br \<rightleftharpoons> \<open>\break\<close> 
 
+text\<open>Shortcuts and macros for the names of the system and for standard LaTeX-macros. Their
+LaTeX-macros are defined by the core style of the system (\<^verbatim>\<open>isadof\<close>), by the document build 
+(\<^verbatim>\<open>dofurl\<close>, generated into the configuration style), by the LaTeX-kernel (\<^verbatim>\<open>LaTeX\<close>, \<^verbatim>\<open>TeX\<close>) 
+or by the package \<^verbatim>\<open>hyperref\<close>, which is loaded by all document templates (\<^verbatim>\<open>nolinkurl\<close>). 
+They can therefore be used in all documents. Macros that need an own definition in the prelude of a 
+document (such as \<^verbatim>\<open>index\<close>, \<^verbatim>\<open>bindex\<close>) belong to the theory of this document.\<close>
+
+define_shortcut* isadof  \<rightleftharpoons> \<open>\isadof{}\<close>
+                 dofurl  \<rightleftharpoons> \<open>\dofurl\<close>
+                 LaTeX   \<rightleftharpoons> \<open>\LaTeX{}\<close>
+                 TeX     \<rightleftharpoons> \<open>\TeX{}\<close>
+                 pdf     \<rightleftharpoons> \<open>PDF\<close>
+
+define_macro* nolinkurl \<rightleftharpoons> \<open>\nolinkurl{\<close> _ \<open>}\<close>
+
 
 section\<open> Library of Standard Figure Ontology \<close>
 

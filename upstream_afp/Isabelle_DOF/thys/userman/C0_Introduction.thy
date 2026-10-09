@@ -19,21 +19,15 @@ section\<open>Local Document Setup.\<close>
 text\<open>Introducing document specific abbreviations and macros:\<close>
 
 define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
-                 isadof  \<rightleftharpoons> \<open>\isadof{}\<close>
 
 define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
                  BibTeX  \<rightleftharpoons> \<open>\BibTeX{}\<close> 
-                 LaTeX   \<rightleftharpoons> \<open>\LaTeX{}\<close>
-                 TeX     \<rightleftharpoons> \<open>\TeX{}\<close>
-                 dofurl  \<rightleftharpoons> \<open>\dofurl\<close>
-                 pdf     \<rightleftharpoons> \<open>PDF\<close>
 
 text\<open>Note that these setups assume that the associated \<^LaTeX> macros 
      are defined, \<^eg>, in the document prelude. \<close>
 
 define_macro* index     \<rightleftharpoons> \<open>\index{\<close> _ \<open>}\<close>
 define_macro* bindex    \<rightleftharpoons> \<open>\bindex{\<close> _ \<open>}\<close>
-define_macro* nolinkurl \<rightleftharpoons> \<open>\nolinkurl{\<close> _ \<open>}\<close>
 define_macro* center    \<rightleftharpoons> \<open>\center{\<close> _ \<open>}\<close>
 define_macro* ltxinline \<rightleftharpoons> \<open>\inlineltx|\<close> _ \<open>|\<close>
 

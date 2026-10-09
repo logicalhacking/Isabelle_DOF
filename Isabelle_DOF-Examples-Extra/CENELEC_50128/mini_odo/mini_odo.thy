@@ -23,7 +23,6 @@ use_template "scrreprt-modern"
 use_ontology technical_report and "Isabelle_DOF-Ontologies.CENELEC_50128"
 declare[[strict_monitor_checking=true]]
 define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
-                 isadof  \<rightleftharpoons> \<open>\isadof{}\<close>
 (*>*)
 
 title*[title::title]\<open>The CENELEC 50128 Ontology\<close> 

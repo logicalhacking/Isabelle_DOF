@@ -20,12 +20,8 @@ theory
 begin
 
 define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
-                 isadof  \<rightleftharpoons> \<open>\isadof{}\<close>
 define_shortcut* TeXLive \<rightleftharpoons> \<open>\TeXLive\<close>
                  BibTeX  \<rightleftharpoons> \<open>\BibTeX{}\<close> 
-                 LaTeX   \<rightleftharpoons> \<open>\LaTeX{}\<close>
-                 TeX     \<rightleftharpoons> \<open>\TeX{}\<close>
-                 pdf     \<rightleftharpoons> \<open>PDF\<close>
 
 ML\<open>
 

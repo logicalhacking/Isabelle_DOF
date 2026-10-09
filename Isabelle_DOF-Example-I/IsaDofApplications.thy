@@ -22,9 +22,7 @@ use_ontology "Isabelle_DOF.scholarly_paper"
 open_monitor*[this::article] 
 declare[[strict_monitor_checking=false]]
 
-define_shortcut* isadof   \<rightleftharpoons> \<open>\isadof\<close>
-                 LaTeX    \<rightleftharpoons> \<open>\LaTeX{}\<close>
-                 dots     \<rightleftharpoons> \<open>\ldots\<close>
+define_shortcut* dots     \<rightleftharpoons> \<open>\ldots\<close>
                  isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
                  Protege  \<rightleftharpoons> \<open>Prot{\'e}g{\'e}\<close>
 
