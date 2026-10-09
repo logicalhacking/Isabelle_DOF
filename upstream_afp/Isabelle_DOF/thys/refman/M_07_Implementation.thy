@@ -98,15 +98,24 @@ op repeat : ('a -> 'b * 'a) -> 'a -> 'b list * 'a \<close>}
   \<^boxed_sml>\<open>Parse\<close> providing specific combinators for the command-language Isar:
 
 @{boxed_sml [display]
-\<open>val attribute = Parse.position Parse.name 
-              -- Scan.optional(Parse.$$$ "=" |-- Parse.!!! Parse.name)"";
-val reference = Parse.position Parse.name 
-              -- Scan.option (Parse.$$$ "::" |-- Parse.!!!
-                              (Parse.position Parse.name));
-val attributes =(Parse.$$$ "[" |-- (reference 
-               -- (Scan.optional(Parse.$$$ ","
-                   |--(Parse.enum ","attribute)))[]))--| Parse.$$$ "]"              
-\<close>}                                          
+\<open>val is_improper = not o (Token.is_proper orf Token.is_begin_ignore orf Token.is_end_ignore);
+val improper = Scan.many is_improper;  (* white-space and comments *)
+
+val attribute =
+    Parse.position Parse.const --| improper 
+    -- Scan.optional (Parse.$$$ "=" --| improper |-- Parse.!!! Parse.term --| improper) "True";
+val reference =
+    Parse.binding --| improper
+    -- Scan.option (Parse.$$$ "::" -- improper |-- Parse.!!! (Parse.position Parse.name))
+    --| improper;
+val attributes =
+    ((Parse.$$$ "[" -- improper
+      |-- (reference -- (Scan.optional (Parse.$$$ "," -- improper
+                                         |-- Parse.enum "," (improper |-- attribute)) [])))
+      --| Parse.$$$ "]" --| improper) : meta_args_t parser\<close>}
+  The values of attributes are parsed as HOL terms (\<^boxed_sml>\<open>Parse.term\<close>) and checked later,
+  in the logical context of the instance; the combinator \<^boxed_sml>\<open>improper\<close> skips the white-space
+  and the comments that may occur between the syntactic elements.
 
   The ``model'' \<^boxed_sml>\<open>create_and_check_docitem\<close> and ``new''
   \<^boxed_sml>\<open>ODL_Meta_Args_Parser.attributes\<close> parts were 
@@ -114,15 +123,41 @@ val attributes =(Parse.$$$ "[" |-- (reference
 
 @{boxed_sml [display]
 \<open>val _ = 
-  let fun create_and_check_docitem (((oid, pos),cid_pos),doc_attrs) 
-                 = (Value_Command.Docitem_Parser.create_and_check_docitem
-                          {is_monitor = false} {is_inline=true}
-                          {define = false} oid pos (cid_pos) (doc_attrs))
-  in  Outer_Syntax.command @{command_keyword "declare_reference*"}
+  let fun create_and_check_docitem ((binding, cid_pos), doc_attrs) 
+                 = Value_Command.Docitem_Parser.create_and_check_docitem
+                          {is_monitor = false} {is_inline = true} {define = false}
+                          binding cid_pos doc_attrs
+  in  Outer_Syntax.command ("declare_reference*", @{here})
                        "declare document reference"
                        (ODL_Meta_Args_Parser.attributes 
                         >> (Toplevel.theory o create_and_check_docitem))
   end;\<close>}
+  (the registration in the system additionally supplies a default class for references without class).
+  The function \<^boxed_sml>\<open>create_and_check_docitem\<close> is the central operation of \<^isadof>; it is
+  called by all commands that create an instance (\<^theory_text>\<open>text*\<close>, \<^theory_text>\<open>section*\<close>, \<^theory_text>\<open>ML*\<close>, and so on) and
+  proceeds in four steps:
+  \<^enum> the instance is created in the table of instances, with a placeholder as value,
+  \<^enum> it is registered with the open monitors: their automata make a transition, the \<^verbatim>\<open>trace\<close> of the
+    monitors is extended, and violations of the monitor clauses are reported at once,
+  \<^enum> the attribute values are parsed and type-checked, the value of the instance is constructed, and 
+    the high-level class invariants are evaluated, 
+  \<^enum> finally the ML-level invariants of the class and of the monitors are checked.
+
+  Step 3 is the expensive one. It is, by default, executed in a task in parallel to the following 
+  commands (see \<^technical>\<open>control_flags\<close>): the value of the instance is then stored as a
+  \<^emph>\<open>pending value\<close> in a second table of the plugin state, indexed by the long name of the instance:
+
+@{boxed_sml [display]
+\<open>structure Pending_Values = Theory_Data
+(
+  type T = term future Symtab.table;
+  val empty : T = Symtab.empty;
+  fun merge (a, b) : T = Symtab.merge (K true) (a, b);
+);\<close>}
+  The access operations of \<^boxed_sml>\<open>DOF_core\<close> hide this mechanism: reading an instance with 
+  \<^boxed_sml>\<open>get_instance_global\<close> or its value with \<^boxed_sml>\<open>value_of\<close> waits for the task, whereas 
+  \<^boxed_sml>\<open>get_instance_raw\<close> returns the meta-data (class, status, and so on) immediately and must be preferred 
+  in code that does not need the value.
 
   Altogether, this gives the extension of Isabelle/HOL with Isar syntax and semantics for the 
   new \emph{command}:
@@ -144,9 +179,8 @@ text\<open>
 
 @{boxed_sml [display]
 \<open>val _ = Theory.setup
-         (docitem_antiquotation  @{binding "docitem"}  DOF_core.default_cid #>
-            
-        ML_Antiquotation.inline @{binding "docitem_value"} 
+         (docitem_antiquotation   \<^binding>\<open>docitem\<close>  DOF_core.default_cid #>
+          ML_Antiquotation.inline \<^binding>\<open>docitem_value\<close> 
               ML_antiquotation_docitem_value)\<close>}
   the text antiquotation \<^boxed_sml>\<open>docitem\<close> is declared and bounded to a parser for the argument 
   syntax and the overall semantics. This code defines a generic antiquotation to be used in text 
@@ -172,13 +206,15 @@ section\<open>Implementing Second-level Type-Checking\<close>
 text\<open>
   On expressions for attribute values, for which we chose to use HOL syntax to avoid that users 
   need to learn another syntax, we implemented an own pass over type-checked terms. Stored in the 
-  late-binding table \<^boxed_sml>\<open>ISA_transformer_tab\<close>, we register for each term-annotation 
-  (ISA's), a function of type
+  name-space table \<^boxed_sml>\<open>ISA_Transformers\<close>, we register for each term-annotation 
+  (ISA's), a record of two functions:
 
 @{boxed_sml [display]
-\<open>   theory -> term * typ * Position.T -> term option\<close>}
+\<open>datatype isa_transformer = ISA_Transformer of 
+    {check     : theory -> term * typ * Position.T -> string -> term option,
+     elaborate : theory -> string -> typ -> term option -> Position.T -> term}\<close>}
 
-  Executed in a second pass of term parsing, ISA's may just return \<^boxed_theory_text>\<open>None\<close>. This is 
+  Executed in a second pass of term parsing, the \<^boxed_sml>\<open>check\<close>-function of an ISA may just return \<^boxed_theory_text>\<open>None\<close>. This is 
   adequate for ISA's just performing some checking in the logical context \<^boxed_theory_text>\<open>theory\<close>; 
   ISA's of this kind report errors  by exceptions. In contrast, \<^emph>\<open>transforming\<close> ISA's will 
   yield a term; this is adequate, for example, by replacing a string-reference to some term denoted 
@@ -195,18 +231,27 @@ section\<open>Implementing Monitors\<close>
 
 text\<open>
   Since monitor-clauses have a regular expression syntax, it is natural to implement them as 
-  deterministic automata. These are stored in the  \<^boxed_sml>\<open>docobj_tab\<close> for monitor-objects 
-  in the \<^isadof> component. We implemented the functions:
+  deterministic automata. These are stored, one for each accepts-clause, in the table 
+  \<^boxed_sml>\<open>DOF_core.Monitor_Info\<close> of the \<^isadof> component, indexed by the name of the monitor instance:
+
+@{boxed_sml [display]
+\<open>datatype monitor_info = Monitor_Info of 
+    {accepted_cids : RegExpInterface.env,
+     rejected_cids : RegExpInterface.env,
+     automatas     : RegExpInterface.automaton list}\<close>}
+  The structure \<^boxed_sml>\<open>RegExpInterface\<close> offers, among others, the functions:
 
 @{boxed_sml [display]
 \<open>  val  enabled : automaton -> env -> cid list
-   val  next    : automaton -> env -> cid -> automaton\<close>}
+  val  next    : automaton -> env -> cid -> automaton
+  val  final   : automaton -> bool
+  val  accepts : automaton -> env -> cid list -> bool\<close>}
   where \<^boxed_sml>\<open>env\<close> is basically a map between internal automaton states and class-id's 
   (\<^boxed_sml>\<open>cid\<close>'s). An automaton is said to be \<^emph>\<open>enabled\<close> for a class-id, 
   iff it either occurs in its accept-set or its reject-set (see @{docitem "sec_monitors"}). During 
   top-down document validation, whenever a text-element is encountered, it is checked if a monitor 
   is \emph{enabled} for this class; in this case, the \<^boxed_sml>\<open>next\<close>-operation is executed. The 
-  transformed automaton recognizing the suffix is stored in \<^boxed_sml>\<open>docobj_tab\<close> if
+  transformed automaton recognizing the suffix is stored in \<^boxed_sml>\<open>Monitor_Info\<close> if
   possible;
   otherwise, if \<^boxed_sml>\<open>next\<close> fails, an error is reported. The automata implementation
   is, in large parts, generated from a formalization of functional automata

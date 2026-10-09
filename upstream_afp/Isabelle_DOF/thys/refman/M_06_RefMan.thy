@@ -984,10 +984,10 @@ the new keyword needs to be registered, together with its parser, as outer synta
 \<^latex>\<open>
 \begin{sml}
 val _ =
-  Outer_Syntax.command ("section*", <@>{here}) "section heading"
-    (attributes -- Parse.opt_target -- Parse.document_source --| semi
-      >> (Toplevel.theory o (enriched_document_command (SOME(SOME 1)) 
-           {markdown = false} )));
+  document_command ("text*", <@>{here}) "formal comment (primary style)"
+    {markdown = true, body = true} (gen_enriched_document_cmd {inline=true} I I) [] I;
+
+val _ = heading_command ("section*", <@>{here}) "section heading" (SOME (SOME 1));
 \end{sml}\<close>
 \<close>
 
