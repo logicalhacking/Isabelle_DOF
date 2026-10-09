@@ -86,6 +86,7 @@ val monitor_infoN = "monitor_info"
 val isa_transformerN = "isa_transformer"
 val ml_invariantN = "ml_invariant"
 val traceN = "trace"
+val DOF_docitemN = "DOF.docitem"
 \<close>
 
 section\<open> A HomeGrown Document Type Management (the ''Model'') \<close>
@@ -1160,7 +1161,7 @@ datatype "term" = Isabelle_DOF_term string (\<open>@{term _}\<close>)
 datatype "thm" = Isabelle_DOF_thm string (\<open>@{thm _}\<close>)
 datatype "file" = Isabelle_DOF_file string (\<open>@{file _}\<close>)
 datatype "thy" = Isabelle_DOF_thy string (\<open>@{thy _}\<close>)
-consts Isabelle_DOF_docitem      :: "string \<Rightarrow> 'a" (\<open>@{docitem _}\<close>)
+consts   Isabelle_DOF_docitem       :: "string \<Rightarrow> 'a" (\<open>@{docitem _}\<close>)
 datatype "docitem_attr" = Isabelle_DOF_docitem_attr string  string (\<open>@{docitemattr (_) :: (_)}\<close>)
 consts Isabelle_DOF_trace_attribute :: "string \<Rightarrow> (string * string) list" (\<open>@{trace'_attribute _}\<close>)
 consts Isabelle_DOF_instances_of :: "string \<Rightarrow> 'a list" (\<open>@{instances'_of _}\<close>)
@@ -1204,11 +1205,11 @@ structure Cartouche_Grammar = struct
   fun cons1 c l = list_comb_mk @{const_syntax String.Literal} 7 c $ l
 
   val default =
-    [ ( "char list"
+    [ ( "char list"  (* what is the status of "char list" ? ? ? bu *)
       , ( Const (@{const_syntax Nil}, @{typ "char list"})
         , fn c => fn l => Syntax.const @{const_syntax Cons} $ list_comb_mk @{const_syntax Char} 8 c $ l
         , snd))
-    , ( "String.literal", (nil1, cons1, snd))]
+    , ( \<^type_name>\<open>String.literal\<close> , (nil1, cons1, snd))]
 end
 \<close>
 
@@ -1283,7 +1284,7 @@ fun is_literal_head c =
                  \<^const_name>\<open>insert\<close>, \<^const_name>\<open>bot_class.bot\<close>] c
 
 (* terms built from constructors, literals and unset attributes: normal forms for Nbe *)
-fun is_nf thy (Free (x, _)) = String.isSuffix "_Attribute_Not_Initialized" x
+fun is_nf _ (Free (x, _)) = String.isSuffix "_Attribute_Not_Initialized" x
   | is_nf thy (t as _ $ _) =
       (case strip_comb t of
          (Const (c, _), args) =>
@@ -1546,8 +1547,9 @@ case term_option of
         val traces = compute_attr_access (Context.Theory thy) traceN oid NONE pos
         fun conv (\<^Const>\<open>Pair \<^typ>\<open>doc_class rexp\<close> \<^typ>\<open>string\<close>\<close>
                     $ (\<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close> $ (\<^Const>\<open>mk\<close> $ s)) $ S) =
-          let val s' =  DOF_core.get_onto_class_name_global (HOLogic.dest_string s) thy 
-          in \<^Const>\<open>Pair \<^typ>\<open>string\<close> \<^typ>\<open>string\<close>\<close> $ HOLogic.mk_string s' $ S end
+               let val s' =  DOF_core.get_onto_class_name_global (HOLogic.dest_string s) thy 
+               in \<^Const>\<open>Pair \<^typ>\<open>string\<close> \<^typ>\<open>string\<close>\<close> $ HOLogic.mk_string s' $ S end
+           |conv _ = err ("Malformed term annotation") pos
         val traces' = map conv (HOLogic.dest_list traces)
       in HOLogic.mk_list \<^Type>\<open>prod \<^typ>\<open>string\<close> \<^typ>\<open>string\<close>\<close> traces' end
 
@@ -1556,41 +1558,50 @@ end; (* struct *)
 \<close>
 
 
-subsection\<open> Isar - Setup\<close>
-(* Isa_transformers declaration for Isabelle_DOF term anti-quotations (typ, term, thm, etc.).
+subsection\<open> Isar - Setup for Isa Transformers\<close>
+(* Declaration of Isa_transformers for term anti-quotations (typ, term, thm, etc.).
    They must be declared in the same theory file as the one of the declaration
    of Isabelle_DOF term anti-quotations !!! *)
-setup\<open>
-[(\<^type_name>\<open>typ\<close>, ISA_core.ML_isa_check_typ, ISA_core.ML_isa_elaborate_generic)
-  , (\<^type_name>\<open>term\<close>, ISA_core.ML_isa_check_term, ISA_core.ML_isa_elaborate_generic)
-  , (\<^type_name>\<open>thm\<close>, ISA_core.ML_isa_check_thm, ISA_core.ML_isa_elaborate_generic)
-  , (\<^type_name>\<open>file\<close>, ISA_core.ML_isa_check_file, ISA_core.ML_isa_elaborate_generic)]
-|> fold (fn (n, check, elaborate) => fn thy =>
-let val ns = Sign.tsig_of thy |> Type.type_space
-    val name = n
-    val pos = Name_Space.the_entry_pos ns name
-    val bname = Long_Name.base_name name
-    val binding = Binding.make (bname, pos)
-                   |> Binding.prefix_name DOF_core.ISA_prefix
-                   |> Binding.prefix false bname
-in  DOF_core.add_isa_transformer binding ((check, elaborate) |> DOF_core.make_isa_transformer) thy
-end)
-#>
-([(\<^const_name>\<open>Isabelle_DOF_docitem\<close>,
-    ISA_core.ML_isa_check_docitem, ISA_core.ML_isa_elaborate_generic)
-  , (\<^const_name>\<open>Isabelle_DOF_trace_attribute\<close>,
-      ISA_core.ML_isa_check_trace_attribute, ISA_core.ML_isa_elaborate_trace_attribute)
-  , (\<^const_name>\<open>Isabelle_DOF_instances_of\<close>,
-      ISA_core.check_instance_of, ISA_core.elaborate_instances_of)]
-|> fold (fn (n, check, elaborate) => fn thy =>
-let val ns = Sign.consts_of thy |> Consts.space_of
-    val name = n
-    val pos = Name_Space.the_entry_pos ns name
-    val bname =  Long_Name.base_name name
-    val binding = Binding.make (bname, pos)
-in  DOF_core.add_isa_transformer binding ((check, elaborate) |> DOF_core.make_isa_transformer) thy
-end))
+
+ML\<open>
+local open DOF_core ISA_core in
+val _ = Theory.setup(
+           let          fun doit (n, check, elaborate) thy = (
+                                  let val ns = Sign.tsig_of thy |> Type.type_space
+                                      val name = n
+                                      val pos = Name_Space.the_entry_pos ns name
+                                      val bname = Long_Name.base_name name
+                                      val binding = Binding.make (bname, pos)
+                                                         |> Binding.prefix_name ISA_prefix
+                                                         |> Binding.prefix false bname
+                                  in  add_isa_transformer binding ((check, elaborate) 
+                                                            |> make_isa_transformer) thy
+                                  end) 
+                        fun doit2 (n, check, elaborate) thy = (
+                            let val ns = Sign.consts_of thy |> Consts.space_of
+                                val name = n
+                                val pos = Name_Space.the_entry_pos ns name
+                                val bname =  Long_Name.base_name name
+                                val binding = Binding.make (bname, pos)
+                            in  add_isa_transformer binding ((check, elaborate) 
+                                                             |> make_isa_transformer) thy
+                            end)
+           in
+              [   (\<^type_name>\<open>typ\<close>, ML_isa_check_typ, ML_isa_elaborate_generic)
+                , (\<^type_name>\<open>term\<close>, ML_isa_check_term, ML_isa_elaborate_generic)
+                , (\<^type_name>\<open>thm\<close>, ML_isa_check_thm, ML_isa_elaborate_generic)
+                , (\<^type_name>\<open>file\<close>, ML_isa_check_file, ML_isa_elaborate_generic)]
+              |> fold doit
+           #>
+             ([  (\<^const_name>\<open>Isabelle_DOF_docitem\<close>, ML_isa_check_docitem, ML_isa_elaborate_generic)
+               , (\<^const_name>\<open>Isabelle_DOF_trace_attribute\<close>, ML_isa_check_trace_attribute, 
+                                                             ML_isa_elaborate_trace_attribute)
+               , (\<^const_name>\<open>Isabelle_DOF_instances_of\<close>, check_instance_of, elaborate_instances_of)]
+             |> fold doit2)
+           end)
+end (*local*)
 \<close>
+
 
 section\<open> Syntax for Annotated Documentation Commands (the '' View'' Part I) \<close>
 
@@ -1827,8 +1838,8 @@ fun calc_update_term {mk_elaboration=mk_elaboration} thy (name, typ)
                 val _ = if Long_Name.base_name lhs = lhs orelse ln = lhs then ()
                         else error("illegal notation for attribute of "^cid_long)
                 fun join (ttt as \<^Type>\<open>int\<close>) = \<^Const>\<open>Groups.plus ttt\<close>
-                   |join (ttt as \<^Type>\<open>set _\<close>) = \<^Const>\<open>Lattices.sup dummyT\<close>
-                   |join \<^Type>\<open>list A\<close> = \<^Const>\<open>List.append dummyT\<close>
+                   |join \<^Type>\<open>set _\<close> = \<^Const>\<open>Lattices.sup dummyT\<close>
+                   |join \<^Type>\<open>list _\<close> = \<^Const>\<open>List.append dummyT\<close>
                    |join _ = error("implicit fusion operation not defined for attribute: "^ lhs)
                  (* could be extended to bool, map, multisets, ... *)
              in case opr of 
@@ -2207,32 +2218,35 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
                else if DOF_core.virtual_of cid_long thy |> #virtual
                     then SOME args_cid
                     else NONE
-    fun mk_value_terms thy = if default_cid
-                      then let
-                             val undefined_value = dest_Free DOF_core.undefined_value
-                                                   |> apfst (fn x => oid ^ "_" ^ x)
-                                                   |> Free
-                           in (undefined_value, undefined_value) end
-                            (* Handle initialization of docitem without a class associated,
-                               for example when you just want a document element to be referentiable
-                               without using the burden of ontology classes.
-                               ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
-                     else let
-                            fun conv_attrs ((lhs, pos), rhs) = (Protocol_Message.clean_output lhs,pos,"=", Syntax.parse_term (Proof_Context.init_global thy) rhs)
-                            val assns' = map conv_attrs doc_attrs
-                            val defaults_init = create_default_object thy binding cid_long typ
-                            fun conv (na, _(*ty*), parsed_term) =(Binding.name_of na, Binding.pos_of na, "=", parsed_term);
-                            val S = map conv (DOF_core.get_attribute_defaults cid_long thy);
-                            val (defaults, _) = calc_update_term {mk_elaboration=false}
-                                                                      thy (name, typ) S defaults_init;
-                            val (value_term', _) = calc_update_term {mk_elaboration=true}
-                                                                      thy (name, typ) assns' defaults
-                          in if Config.get_global thy DOF_core.object_value_debug
-                             then let
-                                    val (input_term, _) = calc_update_term {mk_elaboration=false}
-                                                                        thy (name, typ)  assns' defaults
-                                  in (input_term, value_term') end
-                             else (\<^term>\<open>()\<close>, value_term') end
+    fun mk_value_terms thy = 
+               if default_cid
+               then let val undefined_value = dest_Free DOF_core.undefined_value
+                                               |> apfst (fn x => oid ^ "_" ^ x)
+                                               |> Free
+                    in (undefined_value, undefined_value) end
+                    (* Handle initialization of docitem without a class associated,
+                       for example when you just want a document element to be referentiable
+                       without using the burden of ontology classes.
+                       ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
+               else let
+                      val ctxt = Proof_Context.init_global thy
+                      fun conv_attrs ((lhs, pos), rhs) = (Protocol_Message.clean_output lhs,pos,"=", 
+                                                          Syntax.parse_term ctxt rhs)
+                      val assns' = map conv_attrs doc_attrs
+                      val defaults_init = create_default_object thy binding cid_long typ
+                      fun conv (na, _(*ty*), parsed_term) =(Binding.name_of na, Binding.pos_of na, 
+                                                            "=", parsed_term);
+                      val S = map conv (DOF_core.get_attribute_defaults cid_long thy);
+                      val (defaults, _) = calc_update_term {mk_elaboration=false}
+                                                                thy (name, typ) S defaults_init;
+                      val (value_term', _) = calc_update_term {mk_elaboration=true}
+                                                                thy (name, typ) assns' defaults
+                    in if Config.get_global thy DOF_core.object_value_debug
+                       then let
+                              val (input_term, _) = calc_update_term {mk_elaboration=false}
+                                                                  thy (name, typ)  assns' defaults
+                            in (input_term, value_term') end
+                       else (\<^term>\<open>()\<close>, value_term') end
     (* 1. create the object id (with a placeholder value), ... *)
     val thy1 = thy |> DOF_core.define_object_global
               {define = define} (binding, DOF_core.make_instance
@@ -2245,9 +2259,8 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
        batch: each call of "value" has a large fixed cost (code generation and compilation). *)
     val (input_term, value_term) = mk_value_terms thy2
     val ctxt2 = Proof_Context.init_global thy2
-    fun eval_whole () =
-      (apply_timeout thy2 (stable_eval thy2 value) value_term
-         handle Timeout.TIMEOUT _ => error (timeout_msg thy2 ("the value of " ^ oid)))
+    fun eval_whole () = (apply_timeout thy2 (stable_eval thy2 value) value_term
+                         handle Timeout.TIMEOUT _ => error (timeout_msg thy2 ("the value of " ^ oid)))
     (* structural construction of the value, if possible (see normalize_object_fast) *)
     fun fast_value () =
       if default_cid orelse not (Config.get_global thy2 DOF_core.object_value_fast)
@@ -2263,8 +2276,6 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
                SOME v)
           | NONE => NONE)
          handle ERROR _ => NONE | Timeout.TIMEOUT _ => NONE)
-    fun eval_separately () =
-      ((case fast_value () of SOME v => v | NONE => eval_whole ()), NONE)
     fun compute () =
       let val fast_v = fast_value ()
           fun eval_separately () =
@@ -2316,7 +2327,7 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
     val (thy3, inv_results) =
       if parallel
       then
-        let fun fork e = Execution.fork {name = "DOF.docitem", pos = Position.thread_data (), pri = ~1} e
+        let fun fork e = Execution.fork {name = DOF_docitemN, pos = Position.thread_data (), pri = ~1} e
             val fut = fork compute
             val key = DOF_core.get_instance_name_global oid thy2
             val thy3 = thy2 |> DOF_core.map_input_term oid (K input_term)
@@ -2375,20 +2386,17 @@ fun value_cmd {assert=assert} meta_args_opt raw_name modes raw_t pos thy  =
     val term'' = Syntax.check_term (Proof_Context.init_global thy') term'
     val t' = value_select name (Proof_Context.init_global thy') term'';
     val ty' = Term.type_of t';
-    val ty' = if assert
-              then case ty' of
-                       \<^typ>\<open>bool\<close> => ty'
-                     | _ =>  error "Assertion expressions must be boolean."
-              else ty'
-    val t'  = if assert
-              then case t'  of
-                       \<^term>\<open>True\<close> => t'
+    val (ty',t') = if assert
+              then case (Term.type_of t',t')  of
+                       (\<^typ>\<open>bool\<close>, \<^term>\<open>True\<close>)  => (ty', t')
+                     | (_,\<^term>\<open>True\<close>) =>  error "Assertion expressions must be boolean."
                      | _ =>  error "Assertion failed."
-              else t'
+              else (ty', t')
     val ctxt' = Proof_Context.augment t' (Proof_Context.init_global thy');
-    val p = Print_Mode.with_modes modes (fn () =>
-      Pretty.block [Pretty.quote (Syntax.pretty_term ctxt' t'), Pretty.fbrk,
-        Pretty.str "::", Pretty.brk 1, Pretty.quote (Syntax.pretty_typ ctxt' ty')]) ();
+    val p = Print_Mode.with_modes modes 
+               (fn () => Pretty.block [Pretty.quote (Syntax.pretty_term ctxt' t'),
+                                       Pretty.fbrk, Pretty.str "::", Pretty.brk 1, 
+                                       Pretty.quote (Syntax.pretty_typ ctxt' ty')]) ();
     val _ = Pretty.writeln p 
   in  thy' end;
 
@@ -2595,7 +2603,7 @@ fun open_monitor_command  (((binding, raw_parent_pos), doc_attrs) : ODL_Meta_Arg
     end;
 
 
-fun close_monitor_command (args as ((binding, cid_pos),
+fun close_monitor_command (args as ((binding, _ (* cid_pos *)),
                                     _: (((string*Position.T)*string)*string)list)) thy = 
     let val oid = Binding.name_of binding
         val pos = Binding.pos_of binding
@@ -2659,16 +2667,6 @@ fun meta_args_2_latex thy sem_attrs transform_attr
           | ltx_of_term _ _ \<^Const_>\<open>None _\<close> = ""
           | ltx_of_term ctxt _ \<^Const_>\<open>Some _ for t\<close> = ltx_of_term ctxt true t
           | ltx_of_term ctxt _ t = ""^(Sledgehammer_Util.hackish_string_of_term ctxt t)
-
-
-        fun ltx_of_term_dbg ctx encl term  = let 
-              val t_str = ML_Syntax.print_term term  
-                          handle (TERM _) => "Exception TERM in ltx_of_term_dbg (print_term)"
-              val ltx = ltx_of_term ctx encl term
-              val _ = writeln("<STRING>"^(Sledgehammer_Util.hackish_string_of_term ctx term)^"</STRING>")
-              val _ = writeln("<LTX>"^ltx^"</LTX>")
-              val _ = writeln("<TERM>"^t_str^"</TERM>")
-            in ltx end 
 
 
         fun markup2string s = String.concat (List.filter (fn c => c <> Symbol.DEL) 
@@ -2760,7 +2758,8 @@ fun document_command (name, pos) descr mark cmd sem_attrs transform_attr =
   Outer_Syntax.command (name, pos) descr
   (ODL_Meta_Args_Parser.attributes -- Parse.document_source >> (fn (meta_args, text) =>
       Toplevel.theory_presentation (cmd meta_args)
-          (Toplevel.presentation_context #> document_output_reports name mark sem_attrs transform_attr meta_args text))); 
+          (Toplevel.presentation_context 
+           #> document_output_reports name mark sem_attrs transform_attr meta_args text))); 
 
 fun onto_macro_cmd_output_reports output_cmd (meta_args, text) ctxt =
  let
@@ -2915,7 +2914,7 @@ val _ =
   Outer_Syntax.command \<^command_keyword>\<open>print_doc_items\<close>  "print document items"
     (Parse.opt_bang >> (fn b => Toplevel.keep (print_doc_items b o Toplevel.context_of)));
 
-fun check_doc_global (strict_checking : bool) ctxt = 
+fun check_doc_global (_ (* strict_checking *) : bool) ctxt = 
   let val S = ctxt |> DOF_core.get_instances |> Name_Space.dest_table
               |> filter (fn (_, DOF_core.Instance {defined,...}) => (not defined))
               |> map #1
@@ -2994,9 +2993,8 @@ fun prep_spec_open prep_var parse_prop raw_vars raw_params raw_prems raw_concl c
   let
     val ((vars, xs), vars_ctxt) = DOF_core.prep_decls prep_var raw_vars ctxt;
     val (ys, params_ctxt) = vars_ctxt |> fold_map prep_var raw_params |-> Proof_Context.add_fixes;
-    val props =
-      map (parse_prop params_ctxt) (raw_concl :: raw_prems)
-      |> singleton (dummy_frees params_ctxt (xs @ ys));
+    val props =  map (parse_prop params_ctxt) (raw_concl :: raw_prems)
+                 |> singleton (dummy_frees params_ctxt (xs @ ys));
     val props' = props |> map (DOF_core.elaborate_term' ctxt)
     val concl :: prems = Syntax.check_props params_ctxt props';
     val spec = Logic.list_implies (prems, concl);
@@ -3014,7 +3012,7 @@ fun gen_def prep_spec prep_att raw_var raw_params raw_prems ((a, raw_atts), raw_
     val atts = map (prep_att lthy) raw_atts;
 
     val ((vars, xs, get_pos, spec), _) = lthy
-      |> prep_spec (the_list raw_var) raw_params raw_prems raw_spec;
+        |> prep_spec (the_list raw_var) raw_params raw_prems raw_spec;
     val (((x, T), rhs), prove) = Local_Defs.derived_def lthy get_pos {conditional = true} spec;
     val _ = Name.reject_internal (x, []);
     val (b, mx) =
@@ -3024,7 +3022,8 @@ fun gen_def prep_spec prep_att raw_var raw_params raw_prems ((a, raw_atts), raw_
           if x = y then (b, mx)
           else
             error ("Head of definition " ^ quote x ^ " differs from declaration " ^ quote y ^
-              Position.here (Binding.pos_of b)));
+              Position.here (Binding.pos_of b))
+      | _ => error "internal naming error: gen_def");
 
     val name = Thm.def_binding_optional b a;
     val ((lhs, (_, raw_th)), lthy2) = lthy
@@ -3038,9 +3037,8 @@ fun gen_def prep_spec prep_att raw_var raw_params raw_prems ((a, raw_atts), raw_
 
     val lhs' = Morphism.term (Local_Theory.target_morphism lthy) lhs;
 
-    val _ =
-      Proof_Display.print_consts {verbose = true, pos = Position.thread_data ()} lthy4
-        (Frees.defined (Frees.build (Frees.add_frees lhs'))) [(x, T)];
+    val _ = Proof_Display.print_consts {verbose = true, pos = Position.thread_data ()} lthy4
+              (Frees.defined (Frees.build (Frees.add_frees lhs'))) [(x, T)];
   in ((lhs, (def_name, th')), lthy4) end;
 
 val definition_cmd = gen_def read_spec_open Attrib.check_src;
@@ -3087,9 +3085,10 @@ fun prep_statement prep_att prep_stmt raw_elems raw_stmt ctxt =
                   [((name, [Context_Rules.intro_query NONE]), asm)]) stmt;
           val that = Assumption.local_prems_of asms_ctxt stmt_ctxt;
           val ([(_, that')], that_ctxt) = asms_ctxt
-            |> Proof_Context.set_stmt true
-            |> Proof_Context.note_thmss "" [((Binding.name Auto_Bind.thatN, []), [(that, [])])]
-            ||> Proof_Context.restore_stmt asms_ctxt;
+                        |> Proof_Context.set_stmt true
+                        |> Proof_Context.note_thmss "" [((Binding.name Auto_Bind.thatN, []), 
+                                                        [(that, [])])]
+                        ||> Proof_Context.restore_stmt asms_ctxt;
 
           val stmt' = [(Binding.empty_atts, [(#2 (#1 (Obtain.obtain_thesis ctxt)), [])])];
           val stmt'' = elaborate stmt' ctxt
@@ -3125,7 +3124,7 @@ fun gen_theorem schematic bundle_includes prep_att prep_stmt
           else
             let
               val ([(res_name, _)], lthy'') =
-                Local_Theory.notes_kind kind [((name, atts), [(maps #2 res, [])])] lthy';
+                 Local_Theory.notes_kind kind [((name, atts), [(maps #2 res, [])])] lthy';
               val _ = print_results lthy' ((kind, res_name), res);
             in lthy'' end;
       in after_qed results' lthy'' end;
