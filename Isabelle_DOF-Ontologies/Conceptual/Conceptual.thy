@@ -77,7 +77,7 @@ Name_Space.dest_table docclass_tab;
 \<close>
 text\<open>... or as ML assertion: \<close>
 ML\<open> 
-@{assert} (Name_Space.dest_table docitem_tab = []);
+@{assert} (null (Name_Space.dest_table docitem_tab));
 fun match ("Conceptual.A", (* the long-name *)
             DOF_core.Onto_Class {params, name, virtual,inherits_from=NONE, 
                                  attribute_decl, rejectS=[],rex=[], invs=[]}) 

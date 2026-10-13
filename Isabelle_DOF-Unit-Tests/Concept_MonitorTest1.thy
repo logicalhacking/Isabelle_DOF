@@ -101,8 +101,9 @@ print_doc_classes
 print_doc_items
 
 ML\<open>
-val (oid, DOF_core.Instance {value, ...}) =
+val (oid, DOF_core.Instance {termNvalue, ...}) =
     Name_Space.check (Context.Proof \<^context>) (DOF_core.get_instances \<^context>) ("aaa", Position.none)
+val value = snd (Future.join termNvalue)
 \<close>
 term*\<open>map fst @{trace_attribute \<open>test_monitor_M\<close>}\<close>
 value*\<open>map fst @{trace_attribute \<open>test_monitor_M\<close>}\<close>

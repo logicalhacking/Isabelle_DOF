@@ -136,28 +136,30 @@ val attributes =
   The function \<^boxed_sml>\<open>create_and_check_docitem\<close> is the central operation of \<^isadof>; it is
   called by all commands that create an instance (\<^theory_text>\<open>text*\<close>, \<^theory_text>\<open>section*\<close>, \<^theory_text>\<open>ML*\<close>, and so on) and
   proceeds in four steps:
-  \<^enum> the instance is created in the table of instances, with a placeholder as value,
-  \<^enum> it is registered with the open monitors: their automata make a transition, the \<^verbatim>\<open>trace\<close> of the
-    monitors is extended, and violations of the monitor clauses are reported at once,
-  \<^enum> the attribute values are parsed and type-checked, the value of the instance is constructed, and 
-    the high-level class invariants are evaluated, 
+  \<^enum> the terms of the instance are prepared by a closure: the attribute values are parsed and 
+    type-checked, the value of the instance is constructed, and the high-level class invariants 
+    are evaluated;
+  \<^enum> the instance is created in the table of instances. Its input term and its value, a pair of
+    terms, are the result of a \<^emph>\<open>future\<close> that runs the closure;
+  \<^enum> the instance is registered with the open monitors: their automata make a transition, the 
+    \<^verbatim>\<open>trace\<close> of the monitors is extended, and violations of the monitor clauses are reported
+    at once;
   \<^enum> finally the ML-level invariants of the class and of the monitors are checked.
 
-  Step 3 is the expensive one. It is, by default, executed in a task in parallel to the following 
-  commands (see \<^technical>\<open>control_flags\<close>): the value of the instance is then stored as a
-  \<^emph>\<open>pending value\<close> in a second table of the plugin state, indexed by the long name of the instance:
+  The closure is, by default, executed in a task in parallel to the following commands (see 
+  \<^technical>\<open>control_flags\<close>). This is why the record of an instance contains a future:
 
 @{boxed_sml [display]
-\<open>structure Pending_Values = Theory_Data
-(
-  type T = term future Symtab.table;
-  val empty : T = Symtab.empty;
-  fun merge (a, b) : T = Symtab.merge (K true) (a, b);
-);\<close>}
-  The access operations of \<^boxed_sml>\<open>DOF_core\<close> hide this mechanism: reading an instance with 
-  \<^boxed_sml>\<open>get_instance_global\<close> or its value with \<^boxed_sml>\<open>value_of\<close> waits for the task, whereas 
-  \<^boxed_sml>\<open>get_instance_raw\<close> returns the meta-data (class, status, and so on) immediately and must be preferred 
-  in code that does not need the value.
+\<open>datatype instance = Instance of 
+    {defined: bool,
+     inline: bool, 
+     cid: string,
+     vcid: string option,
+     termNvalue: (term * term) future}\<close>}
+  The meta-data of an instance (class, status, and so on) is always available. Reading the terms with
+  \<^boxed_sml>\<open>value_of\<close> or \<^boxed_sml>\<open>input_term_of\<close> waits for the task. An instance is created with
+  \<^boxed_sml>\<open>make_instance (defined, inline, cid, vcid, closure)\<close>, which starts the task, or with 
+  \<^boxed_sml>\<open>make_instance_value\<close> if its terms are known. The futures of a theory are joined at its end.
 
   Altogether, this gives the extension of Isabelle/HOL with Isar syntax and semantics for the 
   new \emph{command}:
