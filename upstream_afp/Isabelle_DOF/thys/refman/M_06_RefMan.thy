@@ -36,10 +36,15 @@ text\<open>
   Isabelle's document model.
 
   \<^isadof> consists consists basically of five components:
-  \<^item> the \<^emph>\<open>core\<close> in \<^theory>\<open>Isabelle_DOF.Isa_DOF\<close> providing the \<^emph>\<open>ontology definition language\<close>
+  \<^item> the \<^emph>\<open>core\<close> \<^theory>\<open>Isabelle_DOF.Isa_DOF_core\<close> with the data of the plugin and the control flags,
+    followed by the theories \<^theory>\<open>Isabelle_DOF.Isa_DOF_TA\<close> (annotations of terms),
+    \<^theory>\<open>Isabelle_DOF.Isa_DOF_Instances\<close> (creation and checking of instances),
+    \<^theory>\<open>Isabelle_DOF.Isa_DOF_Anno_Text_Cmds\<close> (annotated text commands),
+    \<^theory>\<open>Isabelle_DOF.Isa_DOF_Onto_Text_Antiquotations\<close> (ontological antiquotations),
+    and \<^theory>\<open>Isabelle_DOF.Isa_DOF_ODL\<close> providing the \<^emph>\<open>ontology definition language\<close>
     (ODL) which allow for the definitions of document-classes
-    and necessary datatypes,
-  \<^item> the \<^emph>\<open>core\<close> also provides an own \<^emph>\<open>family of commands\<close> such as 
+    and necessary datatypes; the theory \<^theory>\<open>Isabelle_DOF.Isa_DOF\<close> collects them,
+  \<^item> the \<^isadof> theories also provide an own \<^emph>\<open>family of commands\<close> such as 
     \<^boxed_theory_text>\<open>text*\<close>, \<^boxed_theory_text>\<open>ML*\<close>, \<^boxed_theory_text>\<open>value*\<close> , \<^etc>.;
     They allow for the annotation of document-elements with meta-information defined in ODL,
   \<^item> the \<^isadof> library \<^theory>\<open>Isabelle_DOF.Isa_COL\<close> providing

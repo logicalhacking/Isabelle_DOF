@@ -15,6 +15,11 @@ session "Isabelle_DOF" (AFP) = "Functional-Automata" +
     "ontologies/scholarly_paper/scholarly_paper"
     "thys/RegExpInterface"
     "thys/Isa_DOF_core"
+    "thys/Isa_DOF_TA"
+    "thys/Isa_DOF_Instances"
+    "thys/Isa_DOF_Anno_Text_Cmds"
+    "thys/Isa_DOF_Onto_Text_Antiquotations"
+    "thys/Isa_DOF_ODL"
     "thys/Isa_DOF"
     "thys/Isa_COL"
   export_classpath
