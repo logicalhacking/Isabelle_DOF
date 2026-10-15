@@ -75,6 +75,10 @@ subsection\<open> Syntax \<close>
 datatype "doc_class" = mk string
 
 ML\<open>
+(* Terms of the trace attribute of monitors. *)
+structure Trace_Attribute =
+struct
+
 val doc_class_rexp_T = \<^typ>\<open>doc_class rexp\<close>
 val doc_class_rexp_Ts = "doc_class rexp"
 fun doc_class_rexp_t cid = \<^Const>\<open>Atom \<^typ>\<open>doc_class\<close>\<close> $ (\<^Const>\<open>mk\<close> $ HOLogic.mk_string cid)
@@ -87,6 +91,8 @@ fun trace_attr_t cid oid =
                $ HOLogic.mk_string oid]
               |> HOLogic.mk_list \<^Type>\<open>prod doc_class_rexp_T \<^typ>\<open>string\<close>\<close>
   in [(traceN, \<^here>, "+=", t)] end
+
+end (* structure Trace_Attribute *)
 \<close>
 
 \<comment> \<open>and others in the future : file, http, thy, ...\<close> 
@@ -672,7 +678,8 @@ val value = value_select ""
 
 val value_without_elaboration = value_select ""
 
-structure Docitem_Parser = 
+(* The terms of an instance: its default object and the update by the attributes. *)
+structure Instance_Terms =
 struct local open DOF_core in
 
 fun create_default_object thy binding class_name typ = 
@@ -795,184 +802,14 @@ fun calc_update_term {mk_elaboration=mk_elaboration} thy (name, typ)
           in Sign.certify_term thy concl end
     end
 
-fun msg thy txt pos = if Config.get_global thy strict_monitor_checking
-                  then ISA_core.err txt pos
-                  else ISA_core.warn txt pos
+end (* local *)
+end (* structure Instance_Terms *)
 
-fun msg_intro get n oid cid = ("accepts clause " ^ Int.toString n 
-                               ^ " of monitor " ^ oid
-                               ^ get (" not enabled for", " rejected")
-                               ^ " doc_class: " ^ cid)
+(* Evaluation of values and invariants: structural construction of values, evaluation in a
+   stable theory, time limit. *)
+structure Evaluation =
+struct local open DOF_core in
 
-(* Fast path for the update of the trace attribute of a monitor: the stored value of a monitor
-   is in normal form, i.e. a (nested) record extension "C_ext a1 ... an more" where the trace is
-   an explicit list. Appending the pair (cid, oid) is a purely structural operation and avoids
-   the code generation and ML compilation of a call to \<^verbatim>\<open>value\<close>.
-   Returns NONE if the value is not of the expected shape; the caller falls back to evaluation. *)
-fun append_trace_fast cid_long oid value_term =
-  let val pair_T = HOLogic.mk_prodT (doc_class_rexp_T, \<^typ>\<open>string\<close>)
-      val trace_T = HOLogic.listT pair_T
-      val item = \<^Const>\<open>Pair doc_class_rexp_T \<^typ>\<open>string\<close>\<close>
-                   $ doc_class_rexp_t cid_long $ HOLogic.mk_string oid
-      fun has_trace_type a = (fastype_of a = trace_T) handle TERM _ => false
-      fun upd t =
-        let val (h, args) = strip_comb t
-            val is_ext = case h of Const (c, _) => String.isSuffix Record.extN c | _ => false
-        in if not is_ext orelse null args then NONE
-           else
-             let val (init, more) = split_last args
-                 val idx = map_index (fn (i, a) => if has_trace_type a then [i] else []) init |> flat
-             in case idx of
-                  [i] => (let val old = HOLogic.dest_list (nth init i)
-                              val new = HOLogic.mk_list pair_T (old @ [item])
-                          in SOME (list_comb (h, nth_map i (K new) init @ [more])) end
-                          handle TERM _ => NONE)
-                | [] => (case upd more of
-                           SOME more' => SOME (list_comb (h, init @ [more']))
-                         | NONE => NONE)
-                | _ => NONE
-             end
-        end
-  in upd value_term end
-
-fun register_oid_cid_in_open_monitors binding (name, pos') thy = 
-  let 
-      val oid = Binding.name_of binding
-      val cid_long= name
-      val fcm_strict = Config.get_global thy free_class_in_monitor_strict_checking
-      val fcm =  Config.get_global thy free_class_in_monitor_checking
-      fun is_enabled (n, monitor_info) = 
-                     if exists(is_subclass_global thy cid_long)(alphabet_of n thy)
-                     then SOME (n, monitor_info)
-                     else if fcm_strict orelse  fcm
-                          then SOME (n, monitor_info)
-                          else NONE
-      (* filtering those monitors with automata, whose alphabet contains the
-         cid of this oid. The enabled ones were selected and moved to their successor state
-         along the super-class id. The evaluation is in parallel, simulating a product
-         semantics without expanding the subclass relationship. *)
-      fun is_enabled_for_cid (moid , monitor_info) =
-        let val Monitor_Info {accepted_cids, automatas, rejected_cids, ...} = monitor_info
-            val indexS= 1 upto (length automatas)
-            val indexed_autoS = automatas ~~ indexS
-            fun check_for_cid (A,n) = 
-              let fun direct_super_class _ cid [] = cid
-                    | direct_super_class thy cid (x::xs) =
-                        if is_subclass_global thy cid x
-                        then direct_super_class thy cid xs
-                        else direct_super_class thy x xs
-                  val accS = (RegExpInterface.enabled A accepted_cids)
-                  val accS' = filter (is_subclass_global thy cid_long) accS
-                  fun first_super_class cids =
-                      case List.getItem cids
-                        of  SOME (hd,tl) => SOME (direct_super_class thy hd tl)
-                          | NONE => NONE
-                  val first_accepted = first_super_class accS'
-                  val rejectS = filter (is_subclass_global thy cid_long) rejected_cids
-                  val first_rejected = first_super_class rejectS
-              in
-                case first_accepted of
-                    NONE => (case first_rejected of
-                                 NONE =>
-                                   if fcm_strict
-                                   then ISA_core.err (msg_intro fst n moid cid_long) pos'
-                                   else if fcm
-                                        then (ISA_core.warn (msg_intro fst n moid cid_long) pos';A)
-                                        else A
-                               | SOME _ => (msg thy (msg_intro snd n moid cid_long) pos';A))
-                  | SOME accepted => (case first_rejected of
-                                          NONE => RegExpInterface.next A accepted_cids (accepted)
-                                        | SOME rejected =>
-                                            if is_subclass_global thy accepted rejected
-                                            then RegExpInterface.next A accepted_cids (accepted)
-                                            else (msg thy (msg_intro snd n moid cid_long) pos';A))
-              end
-         in (moid,map check_for_cid indexed_autoS, monitor_info)  end  
-      val enabled_monitors = List.mapPartial is_enabled
-                      (Name_Space.dest_table (get_monitor_infos (Proof_Context.init_global thy)))
-      val defined = defined_of oid thy
-      val trace_attr = if defined
-                       then trace_attr_t cid_long oid 
-                       else []
-      fun mon_cid oid = cid_of oid thy |> get_onto_class_cid thy
-                                                |> (fn ((name, _), typ) => (name, typ))
-      val ctxt = Proof_Context.init_global thy
-      fun def_trans_value_slow oid =
-                (#1 o (calc_update_term {mk_elaboration=true} thy (mon_cid oid) trace_attr))
-             #> value ctxt
-      val item_oid = oid  (* the new instance; "oid" is shadowed by the monitor's name below *)
-      fun def_trans_value oid =
-        if null trace_attr orelse not (Config.get_global thy monitor_trace_fast)
-        then def_trans_value_slow oid
-        else fn v =>
-          case append_trace_fast cid_long item_oid v of
-            NONE => def_trans_value_slow oid v
-          | SOME v' =>
-              (if Config.get_global thy monitor_trace_check
-                  andalso not (def_trans_value_slow oid v aconv v')
-               then error ("monitor_trace_check: fast and slow update of the trace of monitor "
-                           ^ oid ^ " differ:\nfast: " ^ Syntax.string_of_term ctxt v'
-                           ^ "\nslow: " ^ Syntax.string_of_term ctxt (def_trans_value_slow oid v))
-               else (); v')
-      val _ = if null enabled_monitors then ()
-              else if defined
-                   then (tracing "registrating in monitors ..." ;
-                         app (fn (n, _) => tracing (oid^" : "^cid_long^" ==> "^n)) enabled_monitors)
-                   else ()
-      (* check that any transition is possible: *)
-      fun class_inv_checks thy =
-              enabled_monitors
-              |> map (fn (x, _) =>
-                        let val cid_long =
-                                  let val Instance cid = get_instance_global x thy
-                                  in cid |> #cid end
-                        in check_ml_invs cid_long x {is_monitor=true} thy end)
-      val delta_autoS = map is_enabled_for_cid  enabled_monitors;
-      fun update_info (n, aS, monitor_info) =  
-        let val Monitor_Info {accepted_cids,rejected_cids,...} = monitor_info
-        in Name_Space.map_table_entry n (K ((accepted_cids, rejected_cids, aS)
-                                            |> make_monitor_info))
-        end
-      fun update_trace mon_oid =
-        if Config.get_global thy object_value_debug
-        then let fun def_trans_input_term  oid =
-                   #1 o (calc_update_term {mk_elaboration=false} thy (mon_cid oid) trace_attr)
-              in map_input_term mon_oid (def_trans_input_term mon_oid)
-                 #> map_value_lazy mon_oid (def_trans_value mon_oid) end
-        else map_value_lazy mon_oid (def_trans_value mon_oid)
-  in  thy |> (* update traces of all enabled monitors *)
-             fold update_trace (map #1 enabled_monitors)
-          |> (* check class invariants of enabled monitors: they may inspect the value
-                of the new instance, which is available (or pending) at this point *)
-             tap class_inv_checks
-          |> (* update the automata of enabled monitors *)
-              Monitor_Info.map (fold update_info delta_autoS)
-  end
-
-(* The invariants of the class of the instance oid (and of its super-classes), applied to
-   docitem_value, as pairs ((invariant name, position), term to be evaluated). *)
-fun invariant_terms thy name docitem_value =
-  let
-    fun get_all_invariants cid thy =
-      case get_onto_class_global cid thy of
-          Onto_Class {inherits_from=NONE, invs, ...} => single (cid, invs)
-        | Onto_Class {inherits_from=SOME(_, father), invs, ...} =>
-                                       (cid, invs) :: get_all_invariants father thy
-    val cids_invariants = get_all_invariants name thy
-    fun mk_inv_and_apply cid_invs value thy =
-      let val ctxt = Proof_Context.init_global thy 
-          val (cid_long, invs) = cid_invs
-          fun conv bind = let  val inv_name = Binding.name_of bind
-                                              |> Long_Name.qualify cid_long
-                               val pos = Binding.pos_of bind
-                               val inv_def = inv_name |> Syntax.parse_term ctxt
-                          in ((inv_name, pos), Syntax.check_term ctxt (inv_def $ value)) end
-      in invs |> map (conv o fst) end    
-  in cids_invariants |> map (fn cid_invs => mk_inv_and_apply cid_invs docitem_value thy) |> flat
-  end
-
-(* pre: optional results of the evaluation of the invariants (in the order of invariant_terms),
-   computed in a batch together with the value of the instance. *)
 (* Structural construction of the value of an instance.
 
    The term built by calc_update_term is "C.make a1 ... an" followed by a sequence of record
@@ -1058,6 +895,200 @@ fun timeout_msg thy what =
   ^ Real.toString (Config.get_global thy invariants_timeout)
   ^ " s (configuration option invariants_timeout)"
 
+end (* local *)
+end (* structure Evaluation *)
+
+(* The registration of an instance with the open monitors: transitions of their automata
+   and extension of their traces. *)
+structure Monitor_Registration =
+struct local open DOF_core Instance_Terms in
+
+fun msg thy txt pos = if Config.get_global thy strict_monitor_checking
+                  then ISA_core.err txt pos
+                  else ISA_core.warn txt pos
+
+fun msg_intro get n oid cid = ("accepts clause " ^ Int.toString n 
+                               ^ " of monitor " ^ oid
+                               ^ get (" not enabled for", " rejected")
+                               ^ " doc_class: " ^ cid)
+
+(* Fast path for the update of the trace attribute of a monitor: the stored value of a monitor
+   is in normal form, i.e. a (nested) record extension "C_ext a1 ... an more" where the trace is
+   an explicit list. Appending the pair (cid, oid) is a purely structural operation and avoids
+   the code generation and ML compilation of a call to \<^verbatim>\<open>value\<close>.
+   Returns NONE if the value is not of the expected shape; the caller falls back to evaluation. *)
+fun append_trace_fast cid_long oid value_term =
+  let val pair_T = HOLogic.mk_prodT (Trace_Attribute.doc_class_rexp_T, \<^typ>\<open>string\<close>)
+      val trace_T = HOLogic.listT pair_T
+      val item = \<^Const>\<open>Pair Trace_Attribute.doc_class_rexp_T \<^typ>\<open>string\<close>\<close>
+                   $ Trace_Attribute.doc_class_rexp_t cid_long $ HOLogic.mk_string oid
+      fun has_trace_type a = (fastype_of a = trace_T) handle TERM _ => false
+      fun upd t =
+        let val (h, args) = strip_comb t
+            val is_ext = case h of Const (c, _) => String.isSuffix Record.extN c | _ => false
+        in if not is_ext orelse null args then NONE
+           else
+             let val (init, more) = split_last args
+                 val idx = map_index (fn (i, a) => if has_trace_type a then [i] else []) init |> flat
+             in case idx of
+                  [i] => (let val old = HOLogic.dest_list (nth init i)
+                              val new = HOLogic.mk_list pair_T (old @ [item])
+                          in SOME (list_comb (h, nth_map i (K new) init @ [more])) end
+                          handle TERM _ => NONE)
+                | [] => (case upd more of
+                           SOME more' => SOME (list_comb (h, init @ [more']))
+                         | NONE => NONE)
+                | _ => NONE
+             end
+        end
+  in upd value_term end
+
+fun register_oid_cid_in_open_monitors binding (name, pos') thy = 
+  let 
+      val oid = Binding.name_of binding
+      val cid_long= name
+      val fcm_strict = Config.get_global thy free_class_in_monitor_strict_checking
+      val fcm =  Config.get_global thy free_class_in_monitor_checking
+      fun is_enabled (n, monitor_info) = 
+                     if exists(is_subclass_global thy cid_long)(alphabet_of n thy)
+                     then SOME (n, monitor_info)
+                     else if fcm_strict orelse  fcm
+                          then SOME (n, monitor_info)
+                          else NONE
+      (* filtering those monitors with automata, whose alphabet contains the
+         cid of this oid. The enabled ones were selected and moved to their successor state
+         along the super-class id. The evaluation is in parallel, simulating a product
+         semantics without expanding the subclass relationship. *)
+      fun is_enabled_for_cid (moid , monitor_info) =
+        let val Monitor_Info {accepted_cids, automatas, rejected_cids, ...} = monitor_info
+            val indexS= 1 upto (length automatas)
+            val indexed_autoS = automatas ~~ indexS
+            fun check_for_cid (A,n) = 
+              let fun direct_super_class _ cid [] = cid
+                    | direct_super_class thy cid (x::xs) =
+                        if is_subclass_global thy cid x
+                        then direct_super_class thy cid xs
+                        else direct_super_class thy x xs
+                  val accS = (RegExpInterface.enabled A accepted_cids)
+                  val accS' = filter (is_subclass_global thy cid_long) accS
+                  fun first_super_class cids =
+                      case List.getItem cids
+                        of  SOME (hd,tl) => SOME (direct_super_class thy hd tl)
+                          | NONE => NONE
+                  val first_accepted = first_super_class accS'
+                  val rejectS = filter (is_subclass_global thy cid_long) rejected_cids
+                  val first_rejected = first_super_class rejectS
+              in
+                case first_accepted of
+                    NONE => (case first_rejected of
+                                 NONE =>
+                                   if fcm_strict
+                                   then ISA_core.err (msg_intro fst n moid cid_long) pos'
+                                   else if fcm
+                                        then (ISA_core.warn (msg_intro fst n moid cid_long) pos';A)
+                                        else A
+                               | SOME _ => (msg thy (msg_intro snd n moid cid_long) pos';A))
+                  | SOME accepted => (case first_rejected of
+                                          NONE => RegExpInterface.next A accepted_cids (accepted)
+                                        | SOME rejected =>
+                                            if is_subclass_global thy accepted rejected
+                                            then RegExpInterface.next A accepted_cids (accepted)
+                                            else (msg thy (msg_intro snd n moid cid_long) pos';A))
+              end
+         in (moid,map check_for_cid indexed_autoS, monitor_info)  end  
+      val enabled_monitors = List.mapPartial is_enabled
+                      (Name_Space.dest_table (get_monitor_infos (Proof_Context.init_global thy)))
+      val defined = defined_of oid thy
+      val trace_attr = if defined
+                       then Trace_Attribute.trace_attr_t cid_long oid 
+                       else []
+      fun mon_cid oid = cid_of oid thy |> get_onto_class_cid thy
+                                                |> (fn ((name, _), typ) => (name, typ))
+      val ctxt = Proof_Context.init_global thy
+      fun def_trans_value_slow oid =
+                (#1 o (calc_update_term {mk_elaboration=true} thy (mon_cid oid) trace_attr))
+             #> value ctxt
+      val item_oid = oid  (* the new instance; "oid" is shadowed by the monitor's name below *)
+      fun def_trans_value oid =
+        if null trace_attr orelse not (Config.get_global thy monitor_trace_fast)
+        then def_trans_value_slow oid
+        else fn v =>
+          case append_trace_fast cid_long item_oid v of
+            NONE => def_trans_value_slow oid v
+          | SOME v' =>
+              (if Config.get_global thy monitor_trace_check
+                  andalso not (def_trans_value_slow oid v aconv v')
+               then error ("monitor_trace_check: fast and slow update of the trace of monitor "
+                           ^ oid ^ " differ:\nfast: " ^ Syntax.string_of_term ctxt v'
+                           ^ "\nslow: " ^ Syntax.string_of_term ctxt (def_trans_value_slow oid v))
+               else (); v')
+      val _ = if null enabled_monitors then ()
+              else if defined
+                   then (tracing "registrating in monitors ..." ;
+                         app (fn (n, _) => tracing (oid^" : "^cid_long^" ==> "^n)) enabled_monitors)
+                   else ()
+      (* check that any transition is possible: *)
+      fun class_inv_checks thy =
+              enabled_monitors
+              |> map (fn (x, _) =>
+                        let val cid_long =
+                                  let val Instance cid = get_instance_global x thy
+                                  in cid |> #cid end
+                        in check_ml_invs cid_long x {is_monitor=true} thy end)
+      val delta_autoS = map is_enabled_for_cid  enabled_monitors;
+      fun update_info (n, aS, monitor_info) =  
+        let val Monitor_Info {accepted_cids,rejected_cids,...} = monitor_info
+        in Name_Space.map_table_entry n (K ((accepted_cids, rejected_cids, aS)
+                                            |> make_monitor_info))
+        end
+      fun update_trace mon_oid =
+        if Config.get_global thy object_value_debug
+        then let fun def_trans_input_term  oid =
+                   #1 o (calc_update_term {mk_elaboration=false} thy (mon_cid oid) trace_attr)
+              in map_input_term mon_oid (def_trans_input_term mon_oid)
+                 #> map_value_lazy mon_oid (def_trans_value mon_oid) end
+        else map_value_lazy mon_oid (def_trans_value mon_oid)
+  in  thy |> (* update traces of all enabled monitors *)
+             fold update_trace (map #1 enabled_monitors)
+          |> (* check class invariants of enabled monitors: they may inspect the value
+                of the new instance, which is available (or pending) at this point *)
+             tap class_inv_checks
+          |> (* update the automata of enabled monitors *)
+              Monitor_Info.map (fold update_info delta_autoS)
+  end
+
+end (* local *)
+end (* structure Monitor_Registration *)
+
+(* The high-level class invariants of an instance. *)
+structure Invariants =
+struct local open DOF_core Evaluation in
+
+(* The invariants of the class of the instance oid (and of its super-classes), applied to
+   docitem_value, as pairs ((invariant name, position), term to be evaluated). *)
+fun invariant_terms thy name docitem_value =
+  let
+    fun get_all_invariants cid thy =
+      case get_onto_class_global cid thy of
+          Onto_Class {inherits_from=NONE, invs, ...} => single (cid, invs)
+        | Onto_Class {inherits_from=SOME(_, father), invs, ...} =>
+                                       (cid, invs) :: get_all_invariants father thy
+    val cids_invariants = get_all_invariants name thy
+    fun mk_inv_and_apply cid_invs value thy =
+      let val ctxt = Proof_Context.init_global thy 
+          val (cid_long, invs) = cid_invs
+          fun conv bind = let  val inv_name = Binding.name_of bind
+                                              |> Long_Name.qualify cid_long
+                               val pos = Binding.pos_of bind
+                               val inv_def = inv_name |> Syntax.parse_term ctxt
+                          in ((inv_name, pos), Syntax.check_term ctxt (inv_def $ value)) end
+      in invs |> map (conv o fst) end    
+  in cids_invariants |> map (fn cid_invs => mk_inv_and_apply cid_invs docitem_value thy) |> flat
+  end
+
+(* pre: optional results of the evaluation of the invariants (in the order of invariant_terms),
+   computed in a batch together with the value of the instance. *)
+
 fun check_invariants_value name pre thy binding docitem_value =
   let
     val inv_and_apply_list = invariant_terms thy name docitem_value
@@ -1133,6 +1164,12 @@ fun check_invariants_with pre thy binding =
 
 fun check_invariants thy binding = check_invariants_with NONE thy binding
 
+end (* local *)
+end (* structure Invariants *)
+
+(* The creation of an instance. *)
+structure Docitem_Parser =
+struct local open DOF_core Instance_Terms Evaluation Monitor_Registration Invariants in
 
 (* Creation of an instance. 
 
@@ -1477,7 +1514,7 @@ fun update_instance_command  ((binding, cid_pos),
                     val _ = Context_Position.reports ctxt (map (pair (Binding.pos_of binding)) markups);
                 in  cid end
       val default_cid = cid = DOF_core.default_cid
-      val (((name, cid'), typ), pos') = Value_Command.Docitem_Parser.check_classref {is_monitor = false}
+      val (((name, cid'), typ), pos') = Value_Command.Instance_Terms.check_classref {is_monitor = false}
                                                                               cid_pos thy
       val cid_pos' = (name, pos')
       val cid_long = fst cid_pos'
@@ -1488,13 +1525,13 @@ fun update_instance_command  ((binding, cid_pos),
                                                   Syntax.parse_term (Proof_Context.init_global thy) rhs)
       val assns' = map conv_attrs doc_attrs
       val def_trans_value  =
-        #1 o (Value_Command.Docitem_Parser.calc_update_term {mk_elaboration=true}
+        #1 o (Value_Command.Instance_Terms.calc_update_term {mk_elaboration=true}
                                                                       thy (name, typ) assns')
         #> Value_Command.value (Proof_Context.init_global thy)
   in     
       thy |> (if Config.get_global thy DOF_core.object_value_debug 
               then let val def_trans_input_term  =
-                         #1 o (Value_Command.Docitem_Parser.calc_update_term
+                         #1 o (Value_Command.Instance_Terms.calc_update_term
                                    {mk_elaboration=false} thy (name, typ)  assns')
               in DOF_core.map_input_term_value oid
                          def_trans_input_term def_trans_value end
@@ -1510,7 +1547,7 @@ fun update_instance_command  ((binding, cid_pos),
              ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
           |> (fn thy => if default_cid then thy
                         else if Config.get_global thy DOF_core.invariants_checking
-                             then Value_Command.Docitem_Parser.check_invariants thy binding
+                             then Value_Command.Invariants.check_invariants thy binding
                              else thy)
   end
 
@@ -1556,7 +1593,7 @@ fun close_monitor_command (args as ((binding, _ (* cid_pos *)),
         fun check_if_final aS = let val i = (find_index (not o RegExpInterface.final) aS) + 1
                                 in  if i >= 1 
                                     then
-                                      Value_Command.Docitem_Parser.msg thy
+                                      Value_Command.Monitor_Registration.msg thy
                                                     ("accepts clause " ^ Int.toString i 
                                                      ^ " of monitor " ^ oid
                                                      ^ " not in final state.") pos
@@ -1577,11 +1614,38 @@ fun close_monitor_command (args as ((binding, _ (* cid_pos *)),
             |> update_instance_command args
             |> tap (DOF_core.check_ml_invs cid_long oid {is_monitor=true})
             |> (fn thy => if Config.get_global thy DOF_core.invariants_checking
-                          then Value_Command.Docitem_Parser.check_invariants thy binding
+                          then Value_Command.Invariants.check_invariants thy binding
                           else thy)
             |> delete_monitor_entry
-    end 
+    end
 
+(* Core Command Definitions *)
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>open_monitor*\<close>
+                       "open a document reference monitor"
+                       (ODL_Meta_Args_Parser.attributes
+                        >> (Toplevel.theory o open_monitor_command));
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>close_monitor*\<close>
+                       "close a document reference monitor"
+                       (ODL_Meta_Args_Parser.attributes_upd
+                        >> (Toplevel.theory o close_monitor_command)); 
+
+val _ =
+  Outer_Syntax.command \<^command_keyword>\<open>update_instance*\<close>
+                       "update meta-attributes of an instance of a document class"
+                        (ODL_Meta_Args_Parser.attributes_upd
+                         >> (Toplevel.theory o update_instance_command));
+
+end (* structure Monitor_Command_Parser *)
+\<close>
+
+ML\<open>
+(* The commands that create instances with a document output: text*, text-macro*, declare_reference*. *)
+structure Document_Output_Commands = 
+struct
 
 fun meta_args_2_latex thy sem_attrs transform_attr
       (((binding, cid_opt), attr_list) : ODL_Meta_Args_Parser.meta_args_t) =
@@ -1721,27 +1785,7 @@ fun onto_macro_cmd_command (name, pos) descr cmd output_cmd =
               #> onto_macro_cmd_output_reports output_cmd  (meta_args, text)
               )))
 
-
-
 (* Core Command Definitions *)
-
-val _ =
-  Outer_Syntax.command \<^command_keyword>\<open>open_monitor*\<close>
-                       "open a document reference monitor"
-                       (ODL_Meta_Args_Parser.attributes
-                        >> (Toplevel.theory o open_monitor_command));
-
-val _ =
-  Outer_Syntax.command \<^command_keyword>\<open>close_monitor*\<close>
-                       "close a document reference monitor"
-                       (ODL_Meta_Args_Parser.attributes_upd
-                        >> (Toplevel.theory o close_monitor_command)); 
-
-val _ =
-  Outer_Syntax.command \<^command_keyword>\<open>update_instance*\<close>
-                       "update meta-attributes of an instance of a document class"
-                        (ODL_Meta_Args_Parser.attributes_upd
-                         >> (Toplevel.theory o update_instance_command));
 
 val _ =
   document_command \<^command_keyword>\<open>text*\<close> "formal comment (primary style)"
@@ -1783,12 +1827,15 @@ val _ =
                         >> (Toplevel.theory o default_cid))
   end;
 
-end (* structure Monitor_Command_Parser *)
+end (* structure Document_Output_Commands *)
 \<close>
 
 
 
 ML\<open>
+structure Inspection_Commands =
+struct
+
 fun print_doc_classes _ ctxt = 
     let val classes = Name_Space.dest_table (DOF_core.get_onto_classes ctxt)
         val _ = writeln "=====================================";    
@@ -1878,6 +1925,7 @@ val _ =
   Outer_Syntax.command \<^command_keyword>\<open>check_doc_global\<close> "check global document consistency"
     (Parse.opt_bang >> (fn b => Toplevel.keep (check_doc_global b o Toplevel.context_of)));
 
+end (* structure Inspection_Commands *)
 \<close>
 
 \<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/outer_syntax.ML\<close>\<close>
@@ -2006,6 +2054,8 @@ end
 
 \<comment> \<open>c.f. \<^file>\<open>~~/src/Pure/Isar/specification.ML\<close> and \<^file>\<open>~~/src/Pure/Pure.thy\<close>\<close>
 ML\<open>
+structure Theorem_Star_Command =
+struct
 (* theorem*, lemma*, etc. commands *)
 
 local
@@ -2135,6 +2185,8 @@ val _ = theorem \<^command_keyword>\<open>corollary*\<close> false "corollary";
 val _ = theorem \<^command_keyword>\<open>proposition*\<close> false "proposition";
 val _ = theorem \<^command_keyword>\<open>schematic_goal*\<close> true "schematic goal";
 in end
+
+end (* structure Theorem_Star_Command *)
 \<close>
 
 
@@ -2453,7 +2505,7 @@ fun define_monitor_const doc_class_name bind thy =
   in
     if can hd rex
     then
-      let val eq = Logic.mk_equals (Free(Binding.name_of monitor_binding, doc_class_rexp_T), hd rex) 
+      let val eq = Logic.mk_equals (Free(Binding.name_of monitor_binding, Trace_Attribute.doc_class_rexp_T), hd rex) 
       in thy |> Named_Target.theory_map (define_cond monitor_binding eq) end
     else thy
   end
@@ -2490,7 +2542,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
               else ()
       val raw_fieldsNdefaults'' = if  null regexps  
                                   then raw_fieldsNdefaults' 
-                                  else trace_attr_ts::raw_fieldsNdefaults'
+                                  else Trace_Attribute.trace_attr_ts::raw_fieldsNdefaults'
       val (fields, parsed_terms, ctxt3) = read_fields raw_fieldsNdefaults'' ctxt2;
       val fieldsNterms = (map (fn (a,b,_) => (a,b)) fields) ~~ parsed_terms
       val fieldsNterms' = map (fn ((x,y),z) => (x,y,z)) fieldsNterms
@@ -2506,7 +2558,7 @@ fun add_doc_class_cmd overloaded (raw_params, binding)
                             ^ def_occurrence); NONE)
               else error("no overloading allowed.")
       val record_fields = map_filter (check_n_filter thy) fields
-      fun mk_eq_pair name = (Free (name, doc_class_rexp_T), doc_class_rexp_t name)
+      fun mk_eq_pair name = (Free (name, Trace_Attribute.doc_class_rexp_T), Trace_Attribute.doc_class_rexp_t name)
                             |> mk_meta_eq
       val args = (SOME(binding,NONE,NoSyn)
                   , (Binding.empty_atts, Binding.name_of binding |> mk_eq_pair), [], [])

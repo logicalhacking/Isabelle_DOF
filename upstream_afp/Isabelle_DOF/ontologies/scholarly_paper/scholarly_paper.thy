@@ -50,12 +50,12 @@ doc_class abstract =
 
 ML\<open>
 val _ =
-  Monitor_Command_Parser.document_command \<^command_keyword>\<open>abstract*\<close> "Textual Definition"
+  Document_Output_Commands.document_command \<^command_keyword>\<open>abstract*\<close> "Textual Definition"
     {markdown = true, body = true}
     (Onto_Macros.enriched_document_cmd_exp (SOME "abstract") []) [] I;
 
 val _ =
-  Monitor_Command_Parser.document_command \<^command_keyword>\<open>author*\<close> "Textual Definition"
+  Document_Output_Commands.document_command \<^command_keyword>\<open>author*\<close> "Textual Definition"
     {markdown = true, body = true}
     (Onto_Macros.enriched_document_cmd_exp (SOME "author") []) [] I;
 \<close>
@@ -447,7 +447,7 @@ local open ODL_Meta_Args_Parser in
 
 local 
 fun doc_cmd kwd txt flag key = 
-    Monitor_Command_Parser.document_command kwd txt {markdown = true, body = true}
+    Document_Output_Commands.document_command kwd txt {markdown = true, body = true}
     (fn meta_args => fn thy =>
       let
         val ddc = Config.get_global thy flag 

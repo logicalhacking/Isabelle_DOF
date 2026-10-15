@@ -80,7 +80,7 @@ fun enriched_text_element_cmd level =
                   NONE => doc_attrs 
                 | SOME(NONE)   => (("level",@{here}),"None")::doc_attrs
                 | SOME(SOME x) => (("level",@{here}),"Some("^ Int.toString x ^"::int)")::doc_attrs
-   in Monitor_Command_Parser.gen_enriched_document_cmd {inline=true} I transform end; 
+   in Document_Output_Commands.gen_enriched_document_cmd {inline=true} I transform end; 
 
 local 
 fun transform_cid _ NONE X = X
@@ -115,7 +115,7 @@ fun enriched_formal_statement_command ncid (S: (string * string) list) =
   let fun transform_attr doc_attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ 
                                       (("formal_results",@{here}),"([]::thm list)")::doc_attrs
   in  fn margs => fn thy =>
-          Monitor_Command_Parser.gen_enriched_document_cmd {inline=true} 
+          Document_Output_Commands.gen_enriched_document_cmd {inline=true} 
                                     (transform_cid thy ncid) transform_attr margs thy
   end;
 
@@ -123,14 +123,14 @@ fun enriched_document_cmd_exp ncid (S: (string * string) list) =
    (* expands ncid into supertype-check. *)
    let fun transform_attr attrs = (map (fn(cat,tag) => ((cat,@{here}),tag)) S) @ attrs
    in  fn margs => fn thy =>
-         Monitor_Command_Parser.gen_enriched_document_cmd {inline=true} (transform_cid thy ncid)
+         Document_Output_Commands.gen_enriched_document_cmd {inline=true} (transform_cid thy ncid)
                                                                             transform_attr margs thy
    end;
 end (* local *)
 
 
 fun heading_command (name, pos) descr level =
-  Monitor_Command_Parser.document_command (name, pos) descr
+  Document_Output_Commands.document_command (name, pos) descr
     {markdown = false, body = true} (enriched_text_element_cmd level) [] I;
 
 val _ = heading_command \<^command_keyword>\<open>title*\<close> "section heading" NONE;
@@ -459,7 +459,7 @@ fun float_command (name, pos) descr cid  =
           |> generate_fig_ltx_ctxt ctxt cap_src oid
           |> (Latex.environment ("figure") )
         end
-  in  Monitor_Command_Parser.onto_macro_cmd_command (name, pos) descr create_instance parse_and_tex
+  in  Document_Output_Commands.onto_macro_cmd_command (name, pos) descr create_instance parse_and_tex
   end
 
 fun listing_command (name, pos) descr cid  =
@@ -475,7 +475,7 @@ fun listing_command (name, pos) descr cid  =
         in
           ISA_core.err ("Not yet implemented.\n Please use text*[oid::listing]\<open>\<close> instead.") pos
         end
-  in  Monitor_Command_Parser.onto_macro_cmd_command (name, pos) descr create_instance parse_and_tex
+  in  Document_Output_Commands.onto_macro_cmd_command (name, pos) descr create_instance parse_and_tex
   end
   
 
@@ -903,7 +903,7 @@ fun frame_command (name, pos) descr cid  =
         |> generate_src_ltx_ctxt ctxt src
         |> Latex.environment ("frame")
         |> Latex.environment ("isamarkuptext")
-  in Monitor_Command_Parser.onto_macro_cmd_command (name, pos) descr create_instance parse_and_tex
+  in Document_Output_Commands.onto_macro_cmd_command (name, pos) descr create_instance parse_and_tex
   end
 
 val _ = frame_command \<^command_keyword>\<open>frame*\<close> "frame environment" "Isa_COL.frame" ;
