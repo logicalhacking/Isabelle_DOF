@@ -1061,7 +1061,7 @@ fun check_sil_slow oid _ ctxt =
     val DOF_core.Instance {cid = monitor_cid, ...} =
                           DOF_core.get_instance_global oid (Context.theory_of ctxt)
     val monitor_sil_typ = (Syntax.read_typ ctxt' monitor_cid) --> @{typ "sil"}
-    val monitor_sil = Value_Command.value ctxt'
+    val monitor_sil = DOF_Value_Cmd.value ctxt'
                     (Const("CENELEC_50128.monitor_SIL.sil", monitor_sil_typ) $ monitor_record_value)
     val traces = AttributeAccess.compute_trace_ML ctxt oid NONE \<^here>
     fun check_sil'  [] = true
@@ -1071,7 +1071,7 @@ fun check_sil_slow oid _ ctxt =
             val doc_record_value =
                     DOF_core.value_of doc_oid (Context.theory_of ctxt)
             val doc_sil_typ = (Syntax.read_typ ctxt' doc_cid) --> @{typ "sil"} 
-            val doc_sil = Value_Command.value ctxt'
+            val doc_sil = DOF_Value_Cmd.value ctxt'
                     (Const ("CENELEC_50128.cenelec_document.sil", doc_sil_typ) $ doc_record_value)
           in 
             if doc_sil <> monitor_sil

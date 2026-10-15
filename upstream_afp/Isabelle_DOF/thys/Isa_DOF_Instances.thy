@@ -106,7 +106,7 @@ sig
 end;*)
 
 
-structure Value_Command (*: VALUE_COMMAND*) =
+structure DOF_Value_Cmd (*: VALUE_COMMAND*) =
 struct
 
 structure Evaluators = Theory_Data
@@ -972,7 +972,7 @@ val _ = Theory.setup(
   #> add_evaluator (\<^binding>\<open>code\<close>, Code_Evaluation.dynamic_value_strict) #> snd);
 
 
-end;  (* structure Value_Command *)
+end;  (* structure DOF_Value_Cmd *)
 
 \<close>
 

@@ -75,7 +75,7 @@ fun gen_enriched_document_command2 name {body} cid_transform attr_transform mark
               else
           (fn thy => (* the assert-error commands need the errors synchronously *)
              thy |> Config.put_global DOF_core.invariants_parallel false
-                 |> Value_Command.Docitem_Parser.create_and_check_docitem 
+                 |> DOF_Value_Cmd.Docitem_Parser.create_and_check_docitem 
                               {is_monitor = false} {is_inline = false} {define = true}
                               binding (cid_transform cid_pos) (attr_transform doc_attrs)
                  |> Config.put_global DOF_core.invariants_parallel
@@ -145,7 +145,7 @@ val _ =
 
 val _ = 
   let fun create_and_check_docitem (((binding,cid_pos),doc_attrs),src) thy =
-                  (Value_Command.Docitem_Parser.create_and_check_docitem
+                  (DOF_Value_Cmd.Docitem_Parser.create_and_check_docitem
                           {is_monitor = false} {is_inline=true}
                           {define = false} binding (cid_pos) (doc_attrs) thy)
                    handle ERROR msg => (if error_match src msg 
@@ -162,15 +162,15 @@ val _ =
   let fun pass_trans_to_value_cmd (args, (((name, modes), t),src)) trans  =
       let val pos = Toplevel.pos_of trans
       in trans |> Toplevel.theory
-                  (fn thy => Value_Command.value_cmd {assert=false} args name modes t pos thy
+                  (fn thy => DOF_Value_Cmd.value_cmd {assert=false} args name modes t pos thy
                    handle ERROR msg => (if error_match src msg 
                                         then (writeln ("Correct error: "^msg^": reported."); thy)
                                         else error"Wrong error reported"))
       end
   in  Outer_Syntax.command \<^command_keyword>\<open>value-assert-error\<close> "evaluate and print term"
        (ODL_Meta_Args_Parser.opt_attributes -- 
-          (Value_Command.opt_evaluator 
-           -- Value_Command.opt_modes 
+          (DOF_Value_Cmd.opt_evaluator 
+           -- DOF_Value_Cmd.opt_modes 
            -- Parse.term 
            -- Parse.document_source) 
         >> (pass_trans_to_value_cmd))
@@ -178,7 +178,7 @@ val _ =
 
 val _ =
   let fun definition_cmd' meta_args_opt decl params prems spec src ctxt =
-        Local_Theory.background_theory (Value_Command.meta_args_exec meta_args_opt) ctxt
+        Local_Theory.background_theory (DOF_Value_Cmd.meta_args_exec meta_args_opt) ctxt
         |> (fn ctxt => Definition_Star_Command.definition_cmd decl params prems spec ctxt
         handle ERROR msg => if error_match src msg 
                              then (writeln ("Correct error: "^msg^": reported.")

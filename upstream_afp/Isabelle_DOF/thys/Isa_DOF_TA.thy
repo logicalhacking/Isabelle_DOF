@@ -392,7 +392,8 @@ fun symbex_attr_access0 ctxt cid proj_term term =
 let
       val [subterm'] = Type_Infer_Context.infer_types ctxt [proj_term $ term]
       val thy = Proof_Context.theory_of ctxt
-      fun eval () = Value_Command.value ctxt subterm'
+      fun eval () = Value_Command.value ctxt subterm' (* the evaluator of HOL; the one of Isabelle/DOF
+                                                         is DOF_Value_Cmd, defined later *)
 in
   case Record_Normal_Form.project thy cid subterm' of
       SOME v =>

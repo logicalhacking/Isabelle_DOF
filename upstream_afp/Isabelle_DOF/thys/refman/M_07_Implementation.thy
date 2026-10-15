@@ -124,7 +124,7 @@ val attributes =
 @{boxed_sml [display]
 \<open>val _ = 
   let fun create_and_check_docitem ((binding, cid_pos), doc_attrs) 
-                 = Value_Command.Docitem_Parser.create_and_check_docitem
+                 = DOF_Value_Cmd.Docitem_Parser.create_and_check_docitem
                           {is_monitor = false} {is_inline = true} {define = false}
                           binding cid_pos doc_attrs
   in  Outer_Syntax.command ("declare_reference*", @{here})

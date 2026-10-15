@@ -439,7 +439,7 @@ fun float_command (name, pos) descr cid  =
   let fun set_default_class NONE = SOME(cid,pos)
          |set_default_class (SOME X) = SOME X 
       fun create_instance  (((binding,cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t)  =
-                Value_Command.Docitem_Parser.create_and_check_docitem 
+                DOF_Value_Cmd.Docitem_Parser.create_and_check_docitem 
                {is_monitor = false} 
                {is_inline = true}
                {define = true} binding (set_default_class cid_pos) doc_attrs
@@ -466,7 +466,7 @@ fun listing_command (name, pos) descr cid  =
   let fun set_default_class NONE = SOME(cid,pos)
          |set_default_class (SOME X) = SOME X 
       fun create_instance  (((binding,cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t)  =
-                Value_Command.Docitem_Parser.create_and_check_docitem 
+                DOF_Value_Cmd.Docitem_Parser.create_and_check_docitem 
                {is_monitor = false} 
                {is_inline = true}
                {define = true} binding (set_default_class cid_pos) doc_attrs
@@ -874,7 +874,7 @@ fun frame_command (name, pos) descr cid  =
   let fun set_default_class NONE = SOME(cid,pos)
          |set_default_class (SOME X) = SOME X
       fun create_instance  (((binding,cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t)  =
-                Value_Command.Docitem_Parser.create_and_check_docitem
+                DOF_Value_Cmd.Docitem_Parser.create_and_check_docitem
                {is_monitor = false}
                {is_inline = true}
                {define = true} binding (set_default_class cid_pos) doc_attrs

@@ -16,7 +16,7 @@ chapter \<open>The Document Ontology Framework: The Ontology Definition Language
 text\<open> The commands of the Ontology Definition Language (ODL): document classes, their attributes, invariants and monitors, and ontology morphisms. \<close>
 
 theory Isa_DOF_ODL   (* ODL *)
-  imports Isa_DOF_Onto_Text_Antiquotations
+  imports Isa_DOF_Anno_Text_Cmds Isa_DOF_Onto_Text_Antiquotations
   keywords "accepts"  "rejects" "invariant"
   and      "doc_class"          "onto_class" (* a syntactic alternative *)
            "onto_morphism"                                 :: thy_decl

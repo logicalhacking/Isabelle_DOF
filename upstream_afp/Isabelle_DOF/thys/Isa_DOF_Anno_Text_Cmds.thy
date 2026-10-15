@@ -45,7 +45,7 @@ fun update_instance_command  ((binding, cid_pos),
                     val _ = Context_Position.reports ctxt (map (pair (Binding.pos_of binding)) markups);
                 in  cid end
       val default_cid = cid = DOF_core.default_cid
-      val (((name, cid'), typ), pos') = Value_Command.Instance_Terms.check_classref {is_monitor = false}
+      val (((name, cid'), typ), pos') = DOF_Value_Cmd.Instance_Terms.check_classref {is_monitor = false}
                                                                               cid_pos thy
       val cid_pos' = (name, pos')
       val cid_long = fst cid_pos'
@@ -56,13 +56,13 @@ fun update_instance_command  ((binding, cid_pos),
                                                   Syntax.parse_term (Proof_Context.init_global thy) rhs)
       val assns' = map conv_attrs doc_attrs
       val def_trans_value  =
-        #1 o (Value_Command.Instance_Terms.calc_update_term {mk_elaboration=true}
+        #1 o (DOF_Value_Cmd.Instance_Terms.calc_update_term {mk_elaboration=true}
                                                                       thy (name, typ) assns')
-        #> Value_Command.value (Proof_Context.init_global thy)
+        #> DOF_Value_Cmd.value (Proof_Context.init_global thy)
   in     
       thy |> (if Config.get_global thy DOF_core.object_value_debug 
               then let val def_trans_input_term  =
-                         #1 o (Value_Command.Instance_Terms.calc_update_term
+                         #1 o (DOF_Value_Cmd.Instance_Terms.calc_update_term
                                    {mk_elaboration=false} thy (name, typ)  assns')
               in DOF_core.map_input_term_value oid
                          def_trans_input_term def_trans_value end
@@ -78,7 +78,7 @@ fun update_instance_command  ((binding, cid_pos),
              ex: text*[sdf]\<open> Lorem ipsum @{thm refl}\<close> *)
           |> (fn thy => if default_cid then thy
                         else if Config.get_global thy DOF_core.invariants_checking
-                             then Value_Command.Invariants.check_invariants thy binding
+                             then DOF_Value_Cmd.Invariants.check_invariants thy binding
                              else thy)
   end
 
@@ -89,7 +89,7 @@ fun update_instance_command  ((binding, cid_pos),
 
 fun open_monitor_command  (((binding, raw_parent_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) thy =
     let fun o_m_c binding params_cid_pos doc_attrs thy =
-          Value_Command.Docitem_Parser.create_and_check_docitem 
+          DOF_Value_Cmd.Docitem_Parser.create_and_check_docitem 
             {is_monitor=true}  (* this is a monitor *)
             {is_inline=false} (* monitors are always inline *)
             {define=true}
@@ -124,7 +124,7 @@ fun close_monitor_command (args as ((binding, _ (* cid_pos *)),
         fun check_if_final aS = let val i = (find_index (not o RegExpInterface.final) aS) + 1
                                 in  if i >= 1 
                                     then
-                                      Value_Command.Monitor_Registration.msg thy
+                                      DOF_Value_Cmd.Monitor_Registration.msg thy
                                                     ("accepts clause " ^ Int.toString i 
                                                      ^ " of monitor " ^ oid
                                                      ^ " not in final state.") pos
@@ -145,7 +145,7 @@ fun close_monitor_command (args as ((binding, _ (* cid_pos *)),
             |> update_instance_command args
             |> tap (DOF_core.check_ml_invs cid_long oid {is_monitor=true})
             |> (fn thy => if Config.get_global thy DOF_core.invariants_checking
-                          then Value_Command.Invariants.check_invariants thy binding
+                          then DOF_Value_Cmd.Invariants.check_invariants thy binding
                           else thy)
             |> delete_monitor_entry
     end
@@ -261,12 +261,12 @@ fun meta_args_2_latex thy sem_attrs transform_attr
 (* level-attribute information management *)
 fun gen_enriched_document_cmd {inline} cid_transform attr_transform
     (((binding,cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) : theory -> theory =
-  Value_Command.Docitem_Parser.create_and_check_docitem {is_monitor = false} {is_inline = inline}
+  DOF_Value_Cmd.Docitem_Parser.create_and_check_docitem {is_monitor = false} {is_inline = inline}
    {define = true} binding (cid_transform cid_pos) (attr_transform doc_attrs);
 
 fun gen_enriched_document_cmd' {inline} cid_transform attr_transform
     (((binding,cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) : theory -> theory =
-  Value_Command.Docitem_Parser.create_and_check_docitem {is_monitor = false} {is_inline = inline}
+  DOF_Value_Cmd.Docitem_Parser.create_and_check_docitem {is_monitor = false} {is_inline = inline}
    {define = false} binding (cid_transform cid_pos) (attr_transform doc_attrs);
 
 
@@ -470,7 +470,7 @@ struct
 fun meta_args_exec (meta_args as ((binding,cid_pos), doc_attrs) : ODL_Meta_Args_Parser.meta_args_t) ctxt = 
          ctxt |> (if meta_args = ODL_Meta_Args_Parser.empty_meta_args
                  then (K ctxt)                               
-                 else Context.map_theory (Value_Command.Docitem_Parser.create_and_check_docitem 
+                 else Context.map_theory (DOF_Value_Cmd.Docitem_Parser.create_and_check_docitem 
                                     {is_monitor = false} {is_inline = true} 
                                     {define = true} binding (I cid_pos) (I doc_attrs)))
 
@@ -570,7 +570,7 @@ fun gen_def prep_spec prep_att raw_var raw_params raw_prems ((a, raw_atts), raw_
 val definition_cmd = gen_def read_spec_open Attrib.check_src;
 
 fun definition_cmd' meta_args_opt decl params prems spec ctxt =
-  Local_Theory.background_theory (Value_Command.meta_args_exec meta_args_opt) ctxt
+  Local_Theory.background_theory (DOF_Value_Cmd.meta_args_exec meta_args_opt) ctxt
   |> definition_cmd decl params prems spec
 
 val _ =
@@ -674,14 +674,14 @@ val theorem_cmd =
   gen_theorem false Bundle.includes_cmd Attrib.check_src Expression.read_statement;
 
 fun theorem_cmd' meta_args_opt long kind before_qed after_qed (name, raw_atts) raw_includes raw_elems raw_concl lthy =
-  Local_Theory.background_theory (Value_Command.meta_args_exec meta_args_opt) lthy
+  Local_Theory.background_theory (DOF_Value_Cmd.meta_args_exec meta_args_opt) lthy
   |> theorem_cmd long kind before_qed after_qed (name, raw_atts) raw_includes raw_elems raw_concl;
 
 val schematic_theorem_cmd =
   gen_theorem true Bundle.includes_cmd Attrib.check_src Expression.read_statement;
 
 fun schematic_theorem_cmd' meta_args_opt long kind before_qed after_qed (name, raw_atts) raw_includes raw_elems raw_concl lthy =
-  Local_Theory.background_theory (Value_Command.meta_args_exec meta_args_opt) lthy
+  Local_Theory.background_theory (DOF_Value_Cmd.meta_args_exec meta_args_opt) lthy
   |> schematic_theorem_cmd long kind before_qed after_qed (name, raw_atts) raw_includes raw_elems raw_concl;
 
 end;

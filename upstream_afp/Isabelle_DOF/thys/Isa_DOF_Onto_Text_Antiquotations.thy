@@ -16,7 +16,7 @@ chapter \<open>The Document Ontology Framework: Ontological Antiquotations\<clos
 text\<open> The antiquotations that refer to instances of document classes and access their attributes. \<close>
 
 theory Isa_DOF_Onto_Text_Antiquotations   (* Ontological antiquotations *)
-  imports Isa_DOF_Anno_Text_Cmds
+  imports Isa_DOF_Instances
 begin
 
 section\<open> Syntax for Ontological Antiquotations (the '' View'' Part II) \<close>
