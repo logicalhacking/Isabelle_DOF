@@ -36,13 +36,13 @@ architecture may be understood as an extension and refinement of the traditional
 with explicit infrastructure for building derivative systems.\<close>''~\<^cite>\<open>"wenzel.ea:building:2007"\<close> 
 
 The current system framework offers moreover the following features:
-\<^item> a build management grouping components into to pre-compiled sessions,
-\<^item> a prover IDE (PIDE) framework~\<^cite>\<open>"wenzel:asynchronous:2014"\<close> with various front-ends, 
-\<^item> documentation-generation,
-\<^item> code generators for various target languages,
-\<^item> an extensible front-end language Isabelle/Isar, and,
-\<^item> last but not least, an LCF style, generic theorem prover kernel as 
-  the most prominent and deeply integrated system component.
+   \<^item> a build management grouping components into to pre-compiled sessions,
+   \<^item> a prover IDE (PIDE) framework~\<^cite>\<open>"wenzel:asynchronous:2014"\<close> with various front-ends, 
+   \<^item> documentation-generation,
+   \<^item> code generators for various target languages,
+   \<^item> an extensible front-end language Isabelle/Isar, and,
+   \<^item> last but not least, an LCF style, generic theorem prover kernel as 
+     the most prominent and deeply integrated system component.
 \<close>
 text\<open>
 The Isabelle system architecture shown in @{figure \<open>architecture\<close>} comes with many layers, 

@@ -663,24 +663,41 @@ end
 
 setup\<open>
 (fn thy => 
-let val cidS = ["scholarly_paper.introduction","scholarly_paper.technical", 
-                       "scholarly_paper.example", "scholarly_paper.conclusion"];
+let val cidS = [\<^const_name>\<open>scholarly_paper.introduction\<close>,\<^const_name>\<open>scholarly_paper.technical\<close>, 
+                \<^const_name>\<open>scholarly_paper.example\<close>, \<^const_name>\<open>scholarly_paper.conclusion\<close>];
     fun body moni_oid _ ctxt = (Scholarly_paper_trace_invariant.check ctxt cidS moni_oid NONE; true)
     val ctxt = Proof_Context.init_global thy
-    val cid = "article"
+    val cid = \<^const_name>\<open>article\<close>
     val binding = DOF_core.binding_from_onto_class_pos cid thy
     val cid_long = DOF_core.get_onto_class_name_global cid thy
 in  DOF_core.add_ml_invariant binding (DOF_core.make_ml_invariant (body, cid_long)) thy end)
 \<close>
 
-term\<open>float\<close>
+
 section\<open>Miscelleous\<close>
 
-subsection\<open>Common Abbreviations\<close>
+subsection\<open>Common Abbreviations in Scholarly Texts\<close>
 
-define_shortcut* eg  \<rightleftharpoons> \<open>\eg\<close>  (* Latin: "exempli gratia"  meaning  "for example". *)
-                 ie  \<rightleftharpoons> \<open>\ie\<close>  (* Latin: "id est"  meaning "that is to say". *)
-                 etc \<rightleftharpoons> \<open>\etc\<close> (* Latin : "et cetera" meaning "et cetera" *)
+define_shortcut* eg   \<rightleftharpoons> \<open>\eg\<close>  (* Latin: "exempli gratia"  meaning  "for example". *)
+                 ie   \<rightleftharpoons> \<open>\ie\<close>  (* Latin: "id est"  meaning "that is to say". *)
+                 etc  \<rightleftharpoons> \<open>\etc\<close> (* Latin : "et cetera" meaning "et cetera" *)
+                 vrs  \<rightleftharpoons> \<open>vs.\<close>  (* Versus (against) *)
+                 am   \<rightleftharpoons> \<open>AM\<close>   (* Ante meridiem (before noon)*)
+                 pm   \<rightleftharpoons> \<open>PM\<close>   (* Post meridiem (after noon)*)
+                 asap \<rightleftharpoons> \<open>ASAP\<close> (* As soon as possible*)
+                 ba   \<rightleftharpoons> \<open>B.A.\<close> (* Bachelor of Arts*)
+                 ma   \<rightleftharpoons> \<open>M.A.\<close> (* Master of Arts*)
+                 phd  \<rightleftharpoons> \<open>Ph.D.\<close>(* Doctor of Philosophy*)
+                 mr   \<rightleftharpoons> \<open>Mr.\<close>  (* Mister*)
+                 mrs  \<rightleftharpoons> \<open>Mrs.\<close> (* Misses *)
+                 ms   \<rightleftharpoons> \<open>Miss\<close> (* Miss*) 
+                 dr   \<rightleftharpoons> \<open>Dr.\<close>  (* Doctor*)
+                 prof \<rightleftharpoons> \<open>Prof.\<close>(* Professor *)
+                 aka  \<rightleftharpoons> \<open>AKA\<close>  (* also known as*)
+                 pst  \<rightleftharpoons> \<open>PST\<close>  (* Pacific Time *)
+                 gmt  \<rightleftharpoons> \<open>GMT\<close>  (* Grenwich Mean Time *)
+                 cet  \<rightleftharpoons> \<open>CET\<close>  (* Central European Time (dt.: MEZ)*)
+
 
 print_doc_classes
 

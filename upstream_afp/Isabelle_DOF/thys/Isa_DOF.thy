@@ -1215,27 +1215,35 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
            is not built structurally. If a batch fails or exceeds the time limit, the invariants are
            evaluated, and timed, one by one when they are checked. *)
         fun eval_whole value_term =
-          (apply_timeout thy (stable_eval thy value) value_term
-           handle Timeout.TIMEOUT _ => error (timeout_msg thy ("the value of " ^ oid)))
+                   (apply_timeout thy (stable_eval thy value) value_term
+                   handle Timeout.TIMEOUT _ => error (timeout_msg thy ("the value of " ^ oid)))
         fun fast_value value_term = (* structural construction of the value (see normalize_object_fast) *)
-          ((case normalize_object_fast thy name (apply_timeout thy (stable_eval thy Nbe.dynamic_value)) value_term of
-              SOME v =>
+          ((case normalize_object_fast thy name 
+                                       (apply_timeout thy (stable_eval thy Nbe.dynamic_value)) 
+                                       value_term 
+            of SOME v =>
                 (if Config.get_global thy monitor_trace_check
                     andalso not (v aconv eval_whole value_term)
                  then raise Fail ("object_value_fast: structural and evaluated value of "
                                   ^ oid ^ " differ")
                  else ();
                  SOME v)
-            | NONE => NONE)
+             | NONE => NONE)
            handle ERROR _ => NONE | Timeout.TIMEOUT _ => NONE)
         fun invariants_of v = invariant_terms thy name v |> map snd
         fun eval_invariants invs = (* NONE if the batch fails *)
-          (SOME (apply_timeout thy (stable_eval thy value) (HOLogic.mk_list \<^typ>\<open>bool\<close> invs)
-                 |> HOLogic.dest_list)
-           handle ERROR _ => NONE | TERM _ => NONE | Match => NONE | Timeout.TIMEOUT _ => NONE)
-          |> (fn SOME bs => if length bs = length invs then SOME bs else NONE | NONE => NONE)
+                                   (SOME (apply_timeout thy 
+                                                        (stable_eval thy value) 
+                                                        (HOLogic.mk_list \<^typ>\<open>bool\<close> invs)
+                                         |> HOLogic.dest_list)
+                                         handle ERROR _ => NONE | TERM _ => NONE | Match => NONE 
+                                              | Timeout.TIMEOUT _ => NONE)
+                                   |> (fn SOME bs => if length bs = length invs 
+                                                     then SOME bs 
+                                                     else NONE 
+                                        | NONE => NONE)
         fun batch_known v = (* the value is known: only the invariants are evaluated *)
-          (case invariants_of v of [] => (v, NONE) | invs => (v, eval_invariants invs))
+                      (case invariants_of v of [] => (v, NONE) | invs => (v, eval_invariants invs))
         fun batch_unknown value_term = (* value and invariants in one call *)
           (case invariants_of value_term of
              [] => (eval_whole value_term, NONE)
@@ -1247,7 +1255,7 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
                 in if length bs <> length invs then (eval_whole value_term, NONE)
                    else (if Config.get_global thy monitor_trace_check
                             andalso not (v' aconv eval_whole value_term)
-                         then raise Fail ("invariants_batch: batch and separate evaluation of the value of "
+                         then raise Fail ("invariants_batch: batch and separate evaluation results of "
                                           ^ oid ^ " differ")
                          else ();
                          (v', SOME bs)) end
@@ -1291,7 +1299,8 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
             |> register_and_check_ml
             |> (fn thy' => 
                   (if parallel
-                   then ignore (Execution.fork {name = DOF_docitemN, pos = Position.thread_data (), pri = ~1}
+                   then ignore (Execution.fork {name = DOF_docitemN, 
+                                                pos = Position.thread_data (), pri = ~1}
                                   (fn () => case Future.join_result termNvalue of
                                               Exn.Exn _ => () 
                                             | Exn.Res _ => check_invariants_of termNvalue))
@@ -1375,7 +1384,9 @@ fun print_term meta_args_opt (string_list, string) trans =
 let
   val pos = Toplevel.pos_of trans
 in meta_args_exec meta_args_opt
-   #> tap (fn thy => print_item (prin string pos) (string_list, string) (Toplevel.make_state (SOME (Context.Theory thy))))
+   #> tap (fn thy => print_item (prin string pos) 
+                                (string_list, string) 
+                                (Toplevel.make_state (SOME (Context.Theory thy))))
    |> (fn thy => Toplevel.theory thy trans)
 end
 
@@ -1391,7 +1402,8 @@ in trans
         (fn thy =>
            if Config.get_global thy disable_assert_evaluation
            then (meta_args_exec meta_args_opt
-                 #> tap (fn thy => print_item (prin t pos) (modes, t) (Toplevel.make_state (SOME (Context.Theory thy)))))
+                 #> tap (fn thy => print_item (prin t pos) (modes, t) 
+                        (Toplevel.make_state (SOME (Context.Theory thy)))))
                 thy
            else value_cmd {assert=true} meta_args_opt name modes t pos thy) 
 end
