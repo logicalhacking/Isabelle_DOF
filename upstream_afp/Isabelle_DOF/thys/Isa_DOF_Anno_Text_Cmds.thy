@@ -295,10 +295,21 @@ fun document_output_reports name {markdown, body} sem_attrs transform_attr meta_
 
 (* document output commands *)
 
+(* The transition of an annotated document command, cf. Document_Output.document_output.
+   The meta-arguments are executed by cmd on the theory before the command, synchronously; their
+   effects are visible after the command. The text is checked and presented by present, which
+   Toplevel forks like the presentation of text (Toplevel.present_state). With a target (in X),
+   the text is checked and presented in the context of X, as for text (in X), while the instance
+   stays global (Local_Theory.background_theory). *)
+fun annotated_transition NONE cmd present = Toplevel.theory_presentation cmd present
+  | annotated_transition target cmd present =
+      Toplevel.local_theory_presentation NONE target (Local_Theory.background_theory cmd) present;
+
 fun document_command (name, pos) descr mark cmd sem_attrs transform_attr =
   Outer_Syntax.command (name, pos) descr
-  (ODL_Meta_Args_Parser.attributes -- Parse.document_source >> (fn (meta_args, text) =>
-      Toplevel.theory_presentation (cmd meta_args)
+  (Parse.opt_target -- ODL_Meta_Args_Parser.attributes -- Parse.document_source
+    >> (fn ((target, meta_args), text) =>
+      annotated_transition target (cmd meta_args)
           (Toplevel.presentation_context 
            #> document_output_reports name mark sem_attrs transform_attr meta_args text))); 
 
@@ -309,9 +320,9 @@ fun onto_macro_cmd_output_reports output_cmd (meta_args, text) ctxt =
 
 fun onto_macro_cmd_command (name, pos) descr cmd output_cmd = 
   Outer_Syntax.command (name, pos) descr 
-  (ODL_Meta_Args_Parser.attributes -- Parse.document_source >>  
-     (fn (meta_args, text) =>
-          Toplevel.theory_presentation (cmd meta_args)
+  (Parse.opt_target -- ODL_Meta_Args_Parser.attributes -- Parse.document_source >>  
+     (fn ((target, meta_args), text) =>
+          annotated_transition target (cmd meta_args)
              (Toplevel.presentation_context
               #> onto_macro_cmd_output_reports output_cmd  (meta_args, text)
               )))

@@ -1,8 +1,12 @@
-Isabelle_DOF-Proofs
+upstream_afp #Isabelle_DOF
+# Dev Section 
+/Applications/AFP/afp-2026-03-17/thys/Functional-Automata/
+/Applications/AFP/afp-2026-03-17/thys/Regular-Sets/
+#Isabelle_DOF-Proofs
 Isabelle_DOF-Ontologies
-Isabelle_DOF-Unit-Tests
-Isabelle_DOF-Example-I
-Isabelle_DOF-Example-II
-Isabelle_DOF-Examples-Extra
-Isabelle_DOF-Examples-Templates
-Isabelle_DOF-Scaffold
+#Isabelle_DOF-Unit-Tests
+#Isabelle_DOF-Example-I
+#Isabelle_DOF-Example-II
+#Isabelle_DOF-Examples-Extra
+#Isabelle_DOF-Examples-Templates
+#Isabelle_DOF-Scaffold

@@ -329,7 +329,7 @@ which refer by name to equivalent standard Isabelle commands by their name suffi
 are presented as follows in a railroad diagram:
 
    \<^item> \<open>annotated_text_element\<close> :
-   \<^rail>\<open>( @@{command "text*"} '[' meta_args ']' '\<open>' text context '\<close>' )
+   \<^rail>\<open>( @@{command "text*"} target? '[' meta_args ']' '\<open>' text context '\<close>' )
      \<close>
    \<^item> \<open>annotated_code_element\<close> :
    \<^rail>\<open>( @@{command "ML*"} '[' meta_args ']' '\<open>' code context '\<close>' )
@@ -364,6 +364,9 @@ text\<open>
   current set of code equations to normalize and include \<open>simp\<close> for fully
   symbolic evaluation using the simplifier, \<open>nbe\<close> for \<^emph>\<open>normalization by
   evaluation\<close> and \<^emph>\<open>code\<close> for code generation in SML.
+\<^item> \<open>target\<close>\<^index>\<open>target@\<open>target\<close>\<close> : as for the corresponding Isabelle commands
+   \<^cite>\<open>"wenzel:isabelle-isar:2020"\<close>, a locale or class in which the text is checked:
+   \<^rail>\<open>'(' 'in' name ')'\<close>
 \<^item> \<open>upd_meta_args\<close> :
    \<^rail>\<open> (obj_id ('::' class_id) ((',' attribute (':=' | '+=') HOL_term ) * ))\<close>
 
@@ -414,6 +417,24 @@ can be influenced by setting globally an attribute:
 Then in this example:
 @{boxed_theory_text [display]\<open>declare_reference*[def1]\<close>}
 \<open>def1\<close> will be a declared instance of the class \<open>definition\<close>. 
+
+Like \<^theory_text>\<open>text\<close>, the command \<^theory_text>\<open>text*\<close> and the derived text elements 
+(\<^theory_text>\<open>section*\<close>, \<^theory_text>\<open>figure*\<close>, \<^etc>) accept an optional
+\<open>target\<close>\<^index>\<open>target@\<open>target\<close>\<close>:
+@{boxed_theory_text [display]
+\<open>locale L = fixes c :: nat assumes c_pos: "c > 0"
+text* (in L) [t1::A, x = "3"] \<open>Fact @{thm c_pos} about @{term c}.\<close>\<close>}
+The two parts of the command are treated differently: 
+  \<^item> the meta-arguments are an \<^emph>\<open>annotation\<close> of the text. They are parsed, type-checked and 
+    evaluated in the theory \<^emph>\<open>before\<close> the command, not in the target; the instance is 
+    global, and it is visible \<^emph>\<open>after\<close> the command. Consequently, the attribute terms 
+    cannot refer to the parameters or facts of the target, here \<open>c\<close> or \<open>c_pos\<close>;
+  \<^item> the text is checked and presented in the context of the target, exactly as for 
+    \<^theory_text>\<open>text (in L) \<open>...\<close>\<close>; its antiquotations may thus refer to the parameters 
+    and facts of \<open>L\<close>.
+As for the standard commands, a target is only permitted at the level of a theory, not inside a 
+\<^theory_text>\<open>context ... begin ... end\<close> block, and annotated text elements are not permitted
+inside a proof.
 \<close>
 
 subsection\<open>Ontological Code-Contexts and their Management\<close>
@@ -735,7 +756,7 @@ abbreviations:
        | @@{command "figure*"}    | @@{command "listing*"} 
        ) 
        \<newline>
-       '[' meta_args ']' '\<open>' text '\<close>'
+       target? '[' meta_args ']' '\<open>' text '\<close>'
      ) 
   \<close>
 \<close>
@@ -844,7 +865,7 @@ of the \<^isadof> language:
        | @@{command "Conclusion*"} 
        ) 
        \<newline>
-       '[' meta_args ']' '\<open>' text '\<close>'
+       target? '[' meta_args ']' '\<open>' text '\<close>'
      ) 
      
   \<close>
@@ -1593,15 +1614,20 @@ text\<open>
 
 subsubsection\<open>Attributes for Parallelization\<close>
 text\<open>
-  After the registration of an instance and the check of the monitors, the computation of its value 
-  and the check of its invariants can run in a task in parallel to the evaluation of the following 
+  An annotated text element is executed in two parts. The first part is done at the command 
+  itself, before the following commands are evaluated: the attributes are parsed and type-checked, 
+  the instance is registered, and the monitors are checked; an error in this part aborts the 
+  command at once. The second part, the computation of the value of the instance and the check of 
+  its invariants, can run in a task in parallel to the evaluation of the following 
   commands. The \<^emph>\<open>value\<close> of the instance is then a \<^emph>\<open>pending value\<close>\<^index>\<open>pending value\<close>:
   commands that need it (attribute access, \<^theory_text>\<open>value*\<close>, antiquotations, ML-invariants such as 
   the check of the safety integrity level in the CENELEC ontology) wait until it is available, while 
   commands that only need its meta-data (class, defined, and so on) do not wait. Errors and warnings 
   of the task are reported at the command that declared the instance; since the instance exists 
   already, the theory state is not undone, as it is for an error in sequential mode. All pending 
-  values are joined at the end of the theory. The following flag and options concern this mechanism:
+  values are joined at the end of the theory.
+  Independently of this, Isabelle checks and presents the text of \<^theory_text>\<open>text*\<close>, 
+  like the one of \<^theory_text>\<open>text\<close>, in a task of its own. The following flag and options concern this mechanism:
   \<^item> \<^boxed_theory_text>\<open>invariants_parallel\<close>\<^bindex>\<open>invariants\_parallel@\texttt{invariants\_parallel}\<close> 
     [\<^theory_text>\<open>true\<close>]:
     switches the parallel evaluation on. If switched off, the value and the invariants are evaluated 
@@ -1611,9 +1637,12 @@ text\<open>
     divergent invariant cannot block all commands that wait for the value of the instance.
   \<^item> \<^boxed_theory_text>\<open>invariants_static_eval\<close> and \<^boxed_theory_text>\<open>invariants_batch\<close> (see above): 
     they reduce the work of each task; the tasks share the caches of the fixed evaluation theory.
-  \<^item> The Isabelle system option \<^verbatim>\<open>threads\<close>\<^bindex>\<open>threads@\texttt{threads}\<close>: with one thread there 
-    are no tasks and everything is evaluated sequentially, whatever the value of 
-    \<^boxed_theory_text>\<open>invariants_parallel\<close>.
+  \<^item> The Isabelle system options \<^verbatim>\<open>threads\<close>\<^bindex>\<open>threads@\texttt{threads}\<close> and
+    \<^verbatim>\<open>parallel_proofs\<close>\<^bindex>\<open>parallel\_proofs@\texttt{parallel\_proofs}\<close>: with one 
+    thread, or with \<^verbatim>\<open>parallel_proofs = 0\<close>, there are no tasks and everything is evaluated 
+    sequentially, whatever the value of \<^boxed_theory_text>\<open>invariants_parallel\<close>. This is the 
+    same condition under which Isabelle runs the presentation of text elements and proofs in 
+    tasks.
   The ML-level invariants and the class invariants of monitors are always checked at the command 
   itself.
 \<close>

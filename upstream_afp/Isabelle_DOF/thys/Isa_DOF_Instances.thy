@@ -661,9 +661,10 @@ struct local open DOF_core Instance_Terms Evaluation Monitor_Registration Invari
 
    The configuration flags are constant during the command and are inspected once. The routes:
    * an instance without class (default_cid): nothing is computed or checked,
-   * an instance of a class: the terms are computed by a closure (attributes, then the value by one
-     of four evaluators selected by the flags object_value_fast and (invariants_checking and
-     invariants_batch)), which is run in a task (invariants_parallel) or immediately. *)
+   * an instance of a class: the attributes are parsed and type-checked immediately; the value is
+     computed by a closure (one of four evaluators selected by the flags object_value_fast and
+     (invariants_checking and invariants_batch)), which is run in a task (invariants_parallel and
+     parallel_proofs > 0) or immediately. Errors of the task are reported at this command. *)
 fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} binding cid_pos doc_attrs thy =
   let
     val oid = Binding.name_of binding
@@ -703,7 +704,9 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
         val fast = Config.get_global thy object_value_fast
         val check_wanted = Config.get_global thy invariants_checking andalso not reference_only
         val batched = check_wanted andalso Config.get_global thy invariants_batch
-        val parallel = Future.enabled () andalso Config.get_global thy invariants_parallel
+        (* same gate as the forked presentation of Toplevel (Toplevel.present_state);
+           declare [[invariants_parallel = false]] makes everything synchronous (debugging) *)
+        val parallel = Future.proofs_enabled 1 andalso Config.get_global thy invariants_parallel
 
         (* The terms of the instance: the attributes are parsed and type-checked. *)
         fun terms () =
@@ -790,9 +793,11 @@ fun create_and_check_docitem is_monitor {is_inline=is_inline} {define=define} bi
         (* The closure of the instance. The results of the batch of the invariants are passed to the
            check of the invariants (below) by a variable. *)
         val results = Synchronized.var "docitem_results" (NONE : term list option)
+        (* The attributes are parsed and type-checked synchronously: their errors abort the command
+           at once. Only the evaluation of the value and of the invariants runs in the task. *)
+        val (input_term, value_term) = terms ()
         fun closure () =
-          let val (input_term, value_term) = terms ()
-              val (value, res) = evaluate value_term
+          let val (value, res) = evaluate value_term
               val _ = Synchronized.change results (K res)
           in (input_term, value) end
         fun check_invariants_of termNvalue =

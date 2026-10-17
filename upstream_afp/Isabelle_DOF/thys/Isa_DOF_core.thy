@@ -281,7 +281,7 @@ struct
      Without parallelism, the closure is executed immediately and its errors abort the command. *)
   fun make_instance (defined, inline, cid, vcid, closure : unit -> term * term) =
     make_instance_future (defined, inline, cid, vcid,
-      if Future.enabled ()
+      if Future.proofs_enabled 1
       then Execution.fork {name = DOF_docitemN, pos = Position.thread_data (), pri = ~1} closure
       else Future.value (closure ()))
 

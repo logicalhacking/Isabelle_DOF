@@ -313,6 +313,31 @@ text\<open>Hyperlinks let you add links to websites. The url antiquotation in \<
 \<close>
 \<close>
 
+section*[loc_target::technical]\<open>Annotated Text in a Locale\<close>
+
+text\<open>
+As with the standard \<^theory_text>\<open>text\<close> command, an annotated text element can be checked in the 
+context of a locale or a class, by adding a target \<^theory_text>\<open>(in name)\<close> after the command: 
+@{boxed_theory_text [display]
+\<open>locale L = fixes c :: nat assumes c_pos: "c > 0"
+
+text* (in L) [t1::technical] \<open>Fact @{thm c_pos} about @{term c}.\<close>
+section* (in L) [s1] \<open>Properties of @{term c}\<close>\<close>}
+The text, with its antiquotations, is checked in \<^theory_text>\<open>L\<close>: it may refer to the parameter
+\<open>c\<close> and to the fact \<open>c_pos\<close>. The part in square brackets is not concerned by the target:
+it is an annotation of the text, evaluated in the theory before the command, and the instance 
+\<open>t1\<close> it creates is an ordinary global instance that can be referenced after the command, for 
+example by \<^theory_text>\<open>@{technical \<open>t1\<close>}\<close>. Hence attribute values must not 
+mention \<open>c\<close> or \<open>c_pos\<close>.
+
+When you edit a document, \<^isadof> evaluates the attributes and checks the invariants of a new 
+instance in parallel to the following commands. Type errors in the attributes are reported at once; 
+errors of the evaluation and of the invariants also appear at the command that creates the instance,
+but possibly with some delay. If you prefer to see them before the following commands are 
+evaluated, switch the parallel evaluation off with
+@{boxed_theory_text [display]\<open>declare[[invariants_parallel = false]]\<close>}
+\<close>
+
 section*[ref::technical]\<open>References\<close>
 text\<open> References allow you to create pointers to certain figures and sections in your document
  allowing a quick access and good navigation in your PDF file.\<close>
