@@ -1,0 +1,6 @@
+session "HOL-CSP_OpSem_DOF" = "HOL-CSP_OpSem" +
+  (* options [document = pdf, document_output = "output"] *)
+  sessions "Isabelle_DOF" "Isabelle_DOF-Ontologies"
+  theories "HOL-CSP_OpSem_all"
+  document_files
+    "root.tex"

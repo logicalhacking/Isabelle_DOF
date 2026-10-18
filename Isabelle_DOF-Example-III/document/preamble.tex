@@ -1,0 +1,65 @@
+%% This is a placeholder for user-specific configuration and packages.
+
+\usepackage{mathpartir}
+
+\usepackage{tikz}
+\usetikzlibrary{automata}
+\usetikzlibrary{positioning}  %                 ...positioning nodes
+\usetikzlibrary{arrows}       %                 ...customizing arrows
+\tikzset{node distance=2.5cm, % Minimum distance between two nodes. Change if necessary.
+         every state/.style={ % Sets the properties for each state
+           semithick,
+           fill=gray!10},
+         initial text={},     % No label on start arrow
+         double distance=2pt, % Adjust appearance of accept states
+         every edge/.style={  % Sets the properties for each transition
+                    draw,
+           ->,>=stealth,     % Makes edges directed with bold arrowheads
+           auto,
+           semithick}}
+
+\usepackage{pifont}
+
+%\usepackage{xcolor}
+%\usepackage{listings}
+%\usepackage{lstisadof}
+%\usepackage{stmaryrd}
+
+%\newcommand{\doi}[1]{}
+
+
+\newcommand{\isasymcheckmark}{\ensuremath{\text{\ding{51}}}}
+\newcommand{\isasymcrossmark}{\ensuremath{\text{\ding{55}}}}
+
+
+\author{Benoît Ballenghien}{University Paris-Saclay, \and Laboratoire Méthodes Formelles, France}{benoit.ballenghien@universite-paris-saclay.fr}{https://orcid.org/0009-0000-4941-187X}{Labex DigiCosme}
+
+\author{Burkhart Wolff\footnote{corresponding author}}{University Paris-Saclay, \and Laboratoire Méthodes Formelles, France}{wolff@lmf.cnrs.fr}{https://orcid.org/0000-0002-9648-7663}{}
+
+\authorrunning{B. Ballenghien and B. Wolff} %TODO mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et al.'
+
+\Copyright{Benoît Ballenghien and Burkhart Wolff} %TODO mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+
+\ccsdesc{Theory of computation~Higher order logic}\ccsdesc{Theory of computation~Semantics and reasoning}\ccsdesc{General and reference~Verification}
+
+\keywords{Process-Algebra, Semantics, Concurrency, Computational Models, Theorem Proving, Isabelle/HOL}
+
+\acknowledgements{We would like to thank Catherine Dubois for her remarks on earliest versions of this paper.
+The present version has been generated and deeply checked with Isabelle/DOF \cite{brucker_2022_6810799, DBLP:conf/zum/BruckerAMW23}.}
+
+%\supplement
+
+
+\nolinenumbers %uncomment to disable line numbering
+
+\EventEditors{Yves Bertot, Temur Kutsia, and Michael Norrish}
+\EventNoEds{3}
+\EventLongTitle{15th International Conference on Interactive Theorem Proving (ITP 2024)}
+\EventShortTitle{ITP 2024}
+\EventAcronym{ITP}
+\EventYear{2024}
+\EventDate{September 9-14, 2024}
+\EventLocation{Tbilisi, Georgia}
+\EventLogo{}
+\SeriesVolume{309}
+\ArticleNo{18}

@@ -1,0 +1,25 @@
+session "2024-itp-csp" = "HOL-CSP_OpSem_DOF" +
+  options [document = pdf, document_output = "output",document_comment_latex, document_build=dof,
+           show_question_marks=false]
+  (* sessions "Isabelle_DOF-Ontologies" *)
+  theories
+    intro
+    front
+    background
+    small_steps
+    big_steps
+    variants
+    conclusion
+    annex
+    paper
+  document_files
+    "lipics-v2021.cls"
+    "lipics-logo-bw.pdf"
+    "spmpscinat.bst"
+    "isadof.cfg"
+    "cc-by.pdf"
+    "orcid.pdf"
+    "lstisadof.sty"
+    "root.bib"
+    "isabellesym.sty"
+    "preamble.tex"
