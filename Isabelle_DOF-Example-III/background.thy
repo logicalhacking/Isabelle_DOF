@@ -26,7 +26,7 @@ Two choice operators are distinguished:
 element of a set \<open>\<Sigma>\<close> of \<^emph>\<open>events\<close>), generalized choices of the form @{term [source] \<open>\<box>a\<in>A \<rightarrow> P(a)\<close>} 
 resp. @{term [source]\<open>\<sqinter>a\<in>A \<rightarrow> P(a)\<close>} are constructed (\<^term>\<open>A\<close> is originally a finite set). When events 
 are tagged with \<^emph>\<open>channels\<close>, \<^ie> \<^term>\<open>\<Sigma> = CHANNELS \<times> DATA\<close>, syntactic sugar like
- @{term [source]\<open>c\<^bold>?x\<in>A\<rightarrow>P(x)\<close>} or @{term [source]\<open>c\<^bold>!x\<in>A\<rightarrow>P(x)\<close>} is added; the former reads 
+ @{term [source]\<open>c\<^bold>?x\<in>A\<rightarrow>P(x)\<close>} or @{term [source]\<open>c\<^bold>!\<^bold>!x\<in>A\<rightarrow>P(x)\<close>} is added; the former reads 
 intuitively as ``\<open>x\<close> is read from channel \<open>c\<close>'' while the latter means 
 ``\<open>x\<close> is arbitrarily chosen from \<open>A\<close> and sent into \<open>c\<close>''
 (where \<^term>\<open>c\<in>CHANNELS\<close> and \<^term>\<open>x\<in>DATA\<close>).
@@ -62,7 +62,7 @@ the traces of both operators are just the union of their argument traces. To be 
 \<^cite>\<open>"BrookesHR84"\<close> proposed the failure semantics model, where traces were annotated 
 with a set of \<^emph>\<open>refusals\<close>, \<^ie> sets of events a process can \<^emph>\<open>not\<close> engage in. This leads to the
 notion of a  \<^emph>\<open>failure\<close> \<^term>\<open>(t, X) \<in> \<F> P\<close> which is a pair of a trace \<open>t\<close> and a set of refusals \<open>X\<close>.
-Consider for example the process \<^term>\<open>P = (a \<rightarrow> SKIP) \<box> (a \<rightarrow> STOP)\<close>. The traces \<^term>\<open>\<T>(P)\<close> will 
+Consider for example the process \<^term>\<open>P = (a \<rightarrow> Skip) \<box> (a \<rightarrow> STOP)\<close>. The traces \<^term>\<open>\<T>(P)\<close> will 
 non-deterministically lead to a situation where the process accepts termination (but refuses 
 everything else) or just refuses everything. So, if we assume \<^term>\<open>\<Sigma> = {a,\<checkmark>}\<close>, then the traces 
 \<^term>\<open>\<T>(P)\<close> will be \<^term>\<open>{[],[a]}\<close>. The failures \<^term>\<open>\<F>(P)\<close> are then \<^term>\<open>{([],{{\<checkmark>}}), ([a],{\<Sigma>,{a}})}\<close> 
@@ -110,11 +110,12 @@ structures very similar to dependent types available in other systems. \<close>
 subsection*[holcspsemantics::technical, main_author="Some(@{author ''bu''})"]\<open>Isabelle/HOL-CSP\<close>
 
 (*<*)
-(* good idea, but too lenghty : *)
+(* good idea, but too lenghty : 
 lemmas is_process_inv_fancy =
        is_process_def[of \<open>Rep_process P\<close>,
                       folded Failures_def Divergences_def, unfolded T_F_spec] for P 
 text\<open> @{thm [break] (rhs) is_process_inv_fancy} \<close>  
+*)
 (*>*)
  
 text\<open>\<^noindent> \<^verbatim>\<open>Isabelle/HOL-CSP\<close> is a shallow embedding of CSP in HOL based on the traditional semantic domain 

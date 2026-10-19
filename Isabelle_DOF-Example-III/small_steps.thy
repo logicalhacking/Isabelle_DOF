@@ -4,7 +4,7 @@ theory "small_steps"
             "Isabelle_DOF.scholarly_paper"
             "Isabelle_DOF-Ontologies.document_templates"
             "HOL-CSP_OpSem.Conclusion"
-            "background" "HOL-CSP_OpSem.NewLaws"
+            "background" (* "HOL-CSP_OpSem.NewLaws" *)
 begin
 
 declare [[show_question_marks = false]]
@@ -58,7 +58,7 @@ text \<open>
    \<^item> the \<open>\<tau>\<close> transition, denoted \<^term>\<open>P \<leadsto>\<^sub>\<tau> Q\<close>, (\<^emph>\<open>internal transition\<close>)
    \<^item> and the transition with an observable event (\<^emph>\<open>external transition\<close>) where we distinguish 
      the two cases resulting from the type sum of ``real'' events \<^term>\<open>ev e\<close> and the special event \<^term>\<open>\<checkmark>\<close>.
-     The former transition will be denoted by \<^term>\<open>P \<leadsto>\<^bsub>e\<^esub> Q\<close>, the latter by \<^term>\<open>P \<leadsto>\<^sub>\<checkmark> Q\<close>.
+     The former transition will be denoted by \<^term>\<open>P \<leadsto>\<^bsub>e\<^esub> Q\<close>, the latter by \<^term>\<open>P \<leadsto>\<^sub>\<checkmark>\<^bsub>r\<^esub> Q\<close>.
 
 Initially, Hoare and Jifeng in \<^cite>\<open>jifeng1993algebra\<close> proposed the following link
 between the operational and denotational semantics: 
@@ -154,7 +154,7 @@ We derive:
 \begin{center}
 @{thm initials_BOT} \qquad @{thm initials_empty_iff_STOP} \qquad @{thm initials_SKIP}
 
-@{thm initials_Ndet} \qquad @{thm initials_Det} \qquad @{thm initials_prefix[of e P]}
+@{thm initials_Ndet} \qquad @{thm initials_Det} \qquad @{thm initials_Mprefix[of e P]}
 
 @{thm initials_Sliding} \qquad @{thm initials_Interrupt} \qquad @{thm [eta_contract = false] initials_Throw}
 \end{center}
@@ -163,7 +163,8 @@ We derive:
 (*<*)
 lemma non_BOT_initials_Sync:
   \<open>P \<noteq> \<bottom> \<Longrightarrow> Q \<noteq> \<bottom> \<Longrightarrow> (P \<lbrakk>S\<rbrakk> Q)\<^sup>0 = P\<^sup>0 \<union> Q\<^sup>0 - ({\<checkmark>} \<union> ev ` S) \<union> P\<^sup>0 \<inter> Q\<^sup>0 \<inter> ({\<checkmark>} \<union> ev ` S)\<close>
-  by (simp add: initials_Sync)
+  apply (simp add: initials_Sync)
+  by auto
 
 lemma BOT_initials_Sync: \<open>(\<bottom> \<lbrakk>S\<rbrakk> Q)\<^sup>0 = UNIV\<close> \<open>(P \<lbrakk>S\<rbrakk> \<bottom>)\<^sup>0 = UNIV\<close>
  by (simp_all add: initials_Sync)
@@ -246,7 +247,7 @@ begin
 
 
 text \<open>Here, \<^theory_text>\<open>lift_definition\<close> is a variant of Isabelle constant \<^theory_text>\<open>definition\<close> which gives
-automatic support for ``lifting'' an operation of the \<^typ>\<open>'\<alpha> process\<^sub>0\<close>-level to \<^typ>\<open>'\<alpha> process\<close>.
+automatic support for ``lifting'' an operation of the \<^typ>\<open>('\<alpha>,'\<delta>) process\<^sub>0\<close>-level to \<^typ>\<open>'\<alpha> process\<close>.
 Note that \<^term>\<open>\<Psi>\<close> is a parameter of the locale requiring no assumption which can be 
 instantiated freely.
 
@@ -329,7 +330,7 @@ text \<open>
 Jifeng and Hoare in \<^cite>\<open>jifeng1993algebra\<close>, \<^ie> we define it by \<^term>\<open>P \<leadsto>\<^sub>\<tau> Q \<equiv> P \<sqsubseteq>\<^sub>F\<^sub>D Q\<close> .
 
 With respect to the external transitions, we expect that:
-  \<^item> \<^term>\<open>P \<leadsto>\<^bsub>e\<^esub> Q\<close> (resp. \<^term>\<open>P \<leadsto>\<^sub>\<checkmark> Q\<close>) is impossible if \<^term>\<open>ev e \<notin> P\<^sup>0\<close> (resp. \<^term>\<open>\<checkmark> \<notin> P\<^sup>0\<close>)
+  \<^item> \<^term>\<open>P \<leadsto>\<^bsub>e\<^esub> Q\<close> (resp. \<^term>\<open>P \<leadsto>\<^sub>\<checkmark>\<^bsub>r\<^esub> Q\<close>) is impossible if \<^term>\<open>ev e \<notin> P\<^sup>0\<close> (resp. \<^term>\<open>\<checkmark> \<notin> P\<^sup>0\<close>)
   \<^item> event transitions should absorb \<open>\<tau>\<close> transitions (on both sides) because \<^term>\<open>(\<sqsubseteq>\<^sub>F\<^sub>D)\<close> is transitive
   \<^item> since \<^term>\<open>P \<sqsubseteq>\<^sub>F\<^sub>D Q\<close> can be interpreted as ``\<^term>\<open>Q\<close> is more deterministic than \<^term>\<open>P\<close>'',
     \<open>Q\<close> should be at least as deterministic as \<^term>\<open>P after e\<close>  when \<^term>\<open>P\<close> 
