@@ -774,7 +774,7 @@ delegated to \<^LaTeX>, which is always available as an opt-out.
 
 subsubsection\<open>Grid Tables\<close>
 text\<open>
-The antiquotation \<^verbatim>\<open>\<^gridtbl>\<open>\<dots>\<close>\<close>\<^bindex>\<open>gridtbl\<close> (also written 
+The antiquotation \<^boxed_theory_text>\<open>\<^gridtbl>\<open>\<dots>\<close>\<close>\<^bindex>\<open>gridtbl\<close> (also written 
 \<open>@{gridtbl \<open>\<dots>\<close>}\<close>) of \<^theory>\<open>Isabelle_DOF.Isa_COL\<close> can be used in the text of \<^theory_text>\<open>text\<close>- and  
 \<^theory_text>\<open>text*\<close>-commands. Its argument is an ASCII-art table: borders are drawn with \<^verbatim>\<open>+\<close>, 
 \<^verbatim>\<open>-\<close> and \<^verbatim>\<open>|\<close>; cells may span several rows and columns (a cell is a rectangle that is closed by 
@@ -792,8 +792,8 @@ at the offending position of the source. The extensions of the \<^isadof>-versio
   one paragraph, so the text of a multi-row cell may flow over several lines;
 \<^item> the alignment of rows is based on the \<^emph>\<open>logical\<close> length of the cells: every symbol 
   (\<^verbatim>\<open>|\<close>, \<^verbatim>\<open>+\<close>, \<^verbatim>\<open>=\<close>, but also \<open>\<alpha>\<close> or a cartouche delimiter) has length one. 
-  Instead of the visible cell boundary \<^verbatim>\<open>|\<close>, one may also write \<^verbatim>\<open>\<^bold>\<open>|\<close>\<close>, 
-  which counts one as well; similarly, \<^verbatim>\<open>\<^bold>\<open>---\<close>\<close> or \<^verbatim>\<open>\<^bold>\<open>===\<close>\<close> count three;
+  Instead of the visible cell boundary \<^verbatim>\<open>|\<close>, one may also write \<^boxed_theory_text>\<open>\<^bold>\<open>|\<close>\<close>, 
+  which counts one as well; similarly, \<^boxed_theory_text>\<open>\<^bold>\<open>---\<close>\<close> or \<^boxed_theory_text>\<open>\<^bold>\<open>===\<close>\<close> count three;
 \<^item> as in markdown, \<^verbatim>\<open>:-----:\<close> in the border of a cell centers its content, \<^verbatim>\<open>:-----\<close> 
   aligns it to the left, and \<^verbatim>\<open>-----:\<close> to the right.
 \<close>
@@ -922,6 +922,136 @@ text\<open>Since the cell contents can contain antiquotations, grid tables also 
 \<^theory_text>\<open>text*\<close>-commands whose text is checked against the ontology. Table captions, labels and
 placement are not part of the grid-table syntax; they are provided by the \<^typ>\<open>float\<close>-classes
 (see above) wrapping the table.\<close>
+
+subsubsection\<open>Syntax and Well-formedness of Grid Tables\<close>
+text\<open>
+The antiquotation takes one argument, a cartouche, whose content is the table. 
+Its structure is sketched by the following grammar; the grammar is only a sketch, since the 
+essential constraint (the columns of all lines are aligned) is not context-free:
+\<^rail>\<open>
+  gridtbl: '@{gridtbl' cartouche '}'
+  ;
+  table: border ( line + border ) +
+  ;
+  border: '+' ( rule '+' ) +
+  ;
+  rule: ':' ? ( '-' + | '=' + ) ':' ?
+  ;
+  line: '|' ( cell '|' ) +
+  ;
+  cell: ( blank | char | cartouche ) *
+\<close>
+Every table is also admitted in the form \<^boxed_theory_text>\<open>\<^gridtbl>\<open>\<dots>\<close>\<close>, which is equivalent. A structural 
+symbol (\<^verbatim>\<open>|\<close>, \<^verbatim>\<open>+\<close>, \<^verbatim>\<open>-\<close>, \<^verbatim>\<open>=\<close>, \<^verbatim>\<open>:\<close>) may also be written as a bold group \<^boxed_theory_text>\<open>\<^bold>\<open>\<dots>\<close>\<close>:
+\<^rail>\<open>
+  structural: ( '|' | '+' | ( '-' + ) | ( '=' + ) | ':' ) | '\<^verbatim>\<open>\<^bold>\<open>\<close>' ( '|' | '+' | '-' | '=' | ':' ) + '\<^verbatim>\<open>\<close>\<close>'
+\<close>
+The following conditions have to hold; they are checked in this order:
+\<^enum> \<^emph>\<open>Lines.\<close> The table consists of the non-blank lines of the argument; blank lines before and after
+  are ignored, blank lines inside are an error. All lines start in the same column and have the 
+  same \<^emph>\<open>logical length\<close>. The logical length counts each symbol (not each character) as one;
+  a group \<^boxed_theory_text>\<open>\<^bold>\<open>\<dots>\<close>\<close> that consists only of the structural symbols \<^verbatim>\<open>|\<close>, \<^verbatim>\<open>+\<close>, \<^verbatim>\<open>-\<close>, \<^verbatim>\<open>=\<close> 
+  and \<^verbatim>\<open>:\<close> counts as many as it contains such symbols.
+\<^enum> \<^emph>\<open>Cells.\<close> A cell is a smallest rectangle with a \<^verbatim>\<open>+\<close> in each corner, whose top and bottom 
+  edges consist of \<^verbatim>\<open>-\<close>, \<^verbatim>\<open>=\<close>, \<^verbatim>\<open>:\<close> and \<^verbatim>\<open>+\<close>, and whose left and right edges consist of \<^verbatim>\<open>|\<close>
+  and \<^verbatim>\<open>+\<close>; it has at least one line and one column of interior. Cells are found starting from the
+  top-left corner. Every position of the table has to be border or interior of exactly one cell.
+\<^enum> \<^emph>\<open>Spans.\<close> The distinct horizontal and vertical borders of all cells define the \<^emph>\<open>grid\<close>; the 
+  cells have to tile it without holes or overlaps. The row span and the column span of a cell is
+  the number of grid rows and grid columns it covers.
+\<^enum> \<^emph>\<open>Rulers.\<close> The edge of a cell is a single ruler if its line symbols are all \<^verbatim>\<open>-\<close> and a double 
+  ruler if they are all \<^verbatim>\<open>=\<close>; mixing both in one edge is an error. The border between two grid 
+  rows may have different rulers for different columns, and parts of a border that are interior 
+  to a spanning cell have no ruler.
+\<^enum> \<^emph>\<open>Alignment.\<close> A \<^verbatim>\<open>:\<close> next to the corner at the left end of the top edge of a cell and none at the 
+  right end aligns the content to the left, at the right end only to the right, and at both ends 
+  centers it; if the top edge has no marker, the bottom edge is used.
+\<^enum> \<^emph>\<open>Content.\<close> The content of a cell are its interior lines without the leading and trailing 
+  blanks. The lines are processed as ordinary text, one after the other. In each line, a 
+  cartouche (with balanced nested cartouches) is analysed as text, and its delimiters are removed; 
+  its content may contain the structural symbols.
+
+All violations are reported as errors at the position of the offending symbol:
+\<^gridtbl>\<open>
++----------------------------------+--------------------------------------------------------+
+| Message                          | Cause                                                  |
++==================================+========================================================+
+| empty table                      | the argument contains only blanks                      |
++----------------------------------+--------------------------------------------------------+
+| table must start with +          | the first character is not a corner                    |
++----------------------------------+--------------------------------------------------------+
+| blank line inside table          | an empty line between the borders                      |
++----------------------------------+--------------------------------------------------------+
+| line is indented less than       | a line starts left of the first line                   |
+| the table                        |                                                        |
++----------------------------------+--------------------------------------------------------+
+| line has logical length n,       | the right border of a line is misaligned               |
+| expected m                       |                                                        |
++----------------------------------+--------------------------------------------------------+
+| character is not part of a       | a border does not close a rectangle, or                |
+| well-formed (closed) cell        | a character lies outside any cell                      |
++----------------------------------+--------------------------------------------------------+
+| overlapping cells                | borders cross inside the interior of a cell            |
++----------------------------------+--------------------------------------------------------+
+| border without - or =            | a border segment such as +:+ has no line               |
++----------------------------------+--------------------------------------------------------+
+| border mixes - and =             | a segment between two corners uses both                |
++----------------------------------+--------------------------------------------------------+
+| inconsistent border              | two cells give different rulers for the                |
+|                                  | same border                                            |
++----------------------------------+--------------------------------------------------------+
+| cells do not tile the table      | the rectangles leave a hole or overlap                 |
++----------------------------------+--------------------------------------------------------+
+\<close>
+The table is compiled into a \<^LaTeX> \<^verbatim>\<open>tabular\<close> as follows (the ML-structures \<^verbatim>\<open>Gridtbl\<close> and 
+\<^verbatim>\<open>Gridtbl_Latex\<close> in \<^theory>\<open>Isabelle_DOF.Isa_COL_Gridtbl\<close> provide the parser, which returns the 
+abstract table with cells, spans, alignments and rulers, and the \<^LaTeX> generation):
+\<^gridtbl>\<open>
++--------------------------+------------------------------------------------------------+
+| Grid table               | Generated LaTeX                                            |
++==========================+============================================================+
+| cell                     | \<open>\<^verbatim>\<open>\multicolumn{n}{|l}{\DOFgridcell{...}}\<close>\<close>                |
++--------------------------+------------------------------------------------------------+
+| row span r               | a \<open>\<^verbatim>\<open>\multirow\<close>\<close> of r rows; the rows below                 |
+|                          | hold empty cells                                           |
++--------------------------+------------------------------------------------------------+
+| border -, =, none        | \<open>\<^verbatim>\<open>\hhline{|-|=|~|}\<close>\<close>, one symbol                          |
+|                          | per column                                                 |
++--------------------------+------------------------------------------------------------+
+| alignment :--, :-:, --:  | \<open>\<^verbatim>\<open>\raggedright\<close>\<close>, \<open>\<^verbatim>\<open>\centering\<close>\<close>,                        |
+|                          | \<open>\<^verbatim>\<open>\raggedleft\<close>\<close>                                           |
++--------------------------+------------------------------------------------------------+
+| logical width            | relative width of the column in a \<open>\<^verbatim>\<open>\parbox\<close>\<close>             |
++--------------------------+------------------------------------------------------------+
+| cell text                | ordinary text output: antiquotations are                   |
+|                          | evaluated                                                  |
++--------------------------+------------------------------------------------------------+
+\<close>
+\<close>
+
+subsubsection\<open>Limitations\<close>
+text\<open>
+The following restrictions are inherent in the design:
+\<^item> The syntax is two-dimensional and thus sensitive to layout: tabs count as one blank, so use 
+  blanks only; a proportional font in the editor does not matter, since counting is by symbols.
+\<^item> A cartouche cannot span several lines; each line of a cell is analysed on its own, and the same 
+  holds for antiquotations. Since a cell has only text, grid tables cannot be nested.
+\<^item> The text of a cell is aligned (left, centered, right) as a whole by the markers of the border; 
+  neither the indentation inside the cell nor an alignment per line is kept. Vertically, the 
+  content of a spanning cell is centered; of a cell of one row, aligned to the top. 
+\<^item> The cell content of a multi-row cell has to fit the height of the rows it spans, since the rows
+  have the height of their lines; very long text should be put into a cell of one row.
+\<^item> Column widths are the proportions of the logical widths, and the table always fills the 
+  line width. Absolute widths, colours, rotated text or footnotes in cells cannot be expressed;
+  neither are numbers aligned by their decimal point.
+\<^item> The generated \<^LaTeX> \<^verbatim>\<open>tabular\<close> does not break across pages, has no repeating head, and has no 
+  caption or label. The ruler \<^verbatim>\<open>=\<close> is only a double line; it does not mark a head. Captions, labels 
+  and the placement of a table are provided by a \<^typ>\<open>float\<close> that wraps it.
+\<^item> A bold group counts as the number of its symbols only if all of them are structural symbols;
+  otherwise it is ordinary text with the symbol and the cartouche counted separately. Within 
+  the interior of a cell, the structural symbols have no meaning.
+All of these cases can be handled by the \<^LaTeX> opt-out in the next subsection.
+\<close>
 
 subsubsection\<open>\<^LaTeX> Typesetting as an Opt-out\<close>
 text\<open>
