@@ -109,15 +109,6 @@ structures very similar to dependent types available in other systems. \<close>
 
 subsection*[holcspsemantics::technical, main_author="Some(@{author ''bu''})"]\<open>Isabelle/HOL-CSP\<close>
 
-(*<*)
-(* good idea, but too lenghty : 
-lemmas is_process_inv_fancy =
-       is_process_def[of \<open>Rep_process P\<close>,
-                      folded Failures_def Divergences_def, unfolded T_F_spec] for P 
-text\<open> @{thm [break] (rhs) is_process_inv_fancy} \<close>  
-*)
-(*>*)
- 
 text\<open>\<^noindent> \<^verbatim>\<open>Isabelle/HOL-CSP\<close> is a shallow embedding of CSP in HOL based on the traditional semantic domain 
 described by 9 ``axioms'' over the three semantic functions \<^term>\<open>\<T>\<close> :: \<^typ>\<open>'\<alpha> process \<Rightarrow> '\<alpha> trace set\<close>,
 \<^term>\<open>\<F>\<close> :: \<^typ>\<open>'\<alpha> process \<Rightarrow> '\<alpha> failure set\<close> and \<^term>\<open>\<D>\<close> :: \<^typ>\<open>'\<alpha> process \<Rightarrow> '\<alpha> trace set\<close>:

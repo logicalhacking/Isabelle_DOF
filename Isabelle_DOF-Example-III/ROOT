@@ -11,6 +11,7 @@ session "2024-itp-csp" = "HOL-CSP_OpSem_DOF" +
     variants
     conclusion
     annex
+    ComparisonWithJifengHoare
     paper
   document_files
     "lipics-v2021.cls"

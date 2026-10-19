@@ -3,8 +3,8 @@ theory "big_steps"
   imports   "Isabelle_DOF.scholarly_paper"
             "Isabelle_DOF-Ontologies.document_templates"
             "HOL-CSP_OpSem.Conclusion"
-            "HOL-CSP_OpSem.Determinism"
-            "HOL-CSP_OpSem.AfterDeadlockResults"
+          (*  "HOL-CSP_OpSem.Determinism"
+            "HOL-CSP_OpSem.AfterDeadlockResults" *)
             "annex"
 begin
 
