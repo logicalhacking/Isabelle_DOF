@@ -449,7 +449,7 @@ As in markdown, \<^verbatim>\<open>:---:\<close>, \<^verbatim>\<open>:---\<close
 right-align its content.\<close>
 text\<open>The first example has a head ruler and a column each of left, centered and right-aligned content:
 
-@{boxed_bash [display]\<open>+:-------------+:----------:+-----------:+
+@{boxed_grid [display]\<open>+:-------------+:----------:+-----------:+
 | Class        | Checks     | Time (s)   |
 +:=============+:==========:+===========:+
 | figure       | 12         | 0.31       |
@@ -472,7 +472,7 @@ text\<open>The first example has a head ruler and a column each of left, centere
 \<close>\<close>\<close>
 text\<open>Cells can span rows and columns, and rulers can be placed everywhere:
 
-@{boxed_bash [display]\<open>+-------+---------------+
+@{boxed_grid [display]\<open>+-------+---------------+
 |       | L2 and L3     |
 | L1    +-------+-------+
 |       | L2    | L3    |
@@ -503,7 +503,7 @@ text\<open>Cells can span rows and columns, and rulers can be placed everywhere:
 \<close>\<close>\<close>
 text\<open>Cells can contain antiquotations. This is the table of the definitions of some logical constants, that is, the data of a typical \<^LaTeX> table:
 
-@{boxed_bash [display]\<open>+----------------------------+---------------------+
+@{boxed_grid [display]\<open>+----------------------------+---------------------+
 | Name                       | Theorem             |
 +============================+=====================+
 | @{thm[source]HOL.True_def} | @{thm HOL.True_def} |
@@ -530,7 +530,7 @@ text\<open>Cells can contain antiquotations. This is the table of the definition
 \<close>\<close>\<close>
 text\<open>The text of a cell may flow over several lines, and a multi-row cell is centered vertically:
 
-@{boxed_bash [display]\<open>+---------------+-----------------------+
+@{boxed_grid [display]\<open>+---------------+-----------------------+
 | Phase         | Activity              |
 +===============+=======================+
 |               | \<open>@{term \<open>x\<close>}\<close>         |

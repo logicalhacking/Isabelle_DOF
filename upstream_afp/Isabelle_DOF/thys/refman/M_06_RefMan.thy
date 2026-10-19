@@ -799,7 +799,7 @@ at the offending position of the source. The extensions of the \<^isadof>-versio
 \<close>
 text\<open>A first example with a head ruler and aligned columns: the markers \<^verbatim>\<open>:\<close> in the top border of a cell select its alignment (left, centered, right).
 
-@{boxed_bash [display]\<open>+:-------------+:----------:+-----------:+
+@{boxed_grid [display]\<open>+:-------------+:----------:+-----------:+
 | Class        | Checks     | Time (s)   |
 +:=============+:==========:+===========:+
 | figure       | 12         | 0.31       |
@@ -823,7 +823,7 @@ yields
 \<close>\<close>
 text\<open>Cells can span rows and columns. The following table has the cells \<^verbatim>\<open>L1\<close> and \<^verbatim>\<open>AAA\<close> spanning two rows, \<^verbatim>\<open>L2 and L3\<close> and \<^verbatim>\<open>DDDDD\<close> two columns, and \<^verbatim>\<open>EEEEE\<close> both; the ruler in the middle separates two blocks:
 
-@{boxed_bash [display]\<open>+-------+---------------+
+@{boxed_grid [display]\<open>+-------+---------------+
 |       | L2 and L3     |
 | L1    +-------+-------+
 |       | L2    | L3    |
@@ -855,7 +855,7 @@ yields
 \<close>\<close>
 text\<open>Cell contents are text, which may be broken over several lines and may contain cartouches, with markup and antiquotations that are evaluated as usual (the cartouche in the last row contains a \<^verbatim>\<open>|\<close>):
 
-@{boxed_bash [display]\<open>+----------+----------------------------------+
+@{boxed_grid [display]\<open>+----------+----------------------------------+
 | Command  | Effect                           |
 +==========+==================================+
 | \<open>text*\<close>  | Checks the text against the      |
@@ -879,7 +879,7 @@ yields
 \<close>\<close>
 text\<open>Rulers may be placed at any border, in particular also on the first and the last one:
 
-@{boxed_bash [display]\<open>+=======+=======+
+@{boxed_grid [display]\<open>+=======+=======+
 | Input | Cost  |
 +=======+=======+
 | a     |   1   |
@@ -899,7 +899,7 @@ yields
 \<close>\<close>
 text\<open>A cell spanning several rows: its content is placed in the middle of the spanned rows.
 
-@{boxed_bash [display]\<open>+---------------+-----------------------+
+@{boxed_grid [display]\<open>+---------------+-----------------------+
 | Phase         | Activity              |
 +===============+=======================+
 |               | \<open>@{term \<open>x\<close>}\<close>         |
@@ -1066,7 +1066,7 @@ figure & 12 & 0.31 \\
 \hline
 \end{tabular}\<close>}
 is just the grid table
-@{boxed_bash [display]\<open>+:-------------+:----------:+-----------:+
+@{boxed_grid [display]\<open>+:-------------+:----------:+-----------:+
 | Class        | Checks     | Time (s)   |
 +:=============+:==========:+===========:+
 | figure       | 12         | 0.31       |

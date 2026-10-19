@@ -79,6 +79,23 @@ fun boxed_bash_antiquotation name =
                                         #> Latex.text 
                                         #> DOF_lib.enclose_env true ctxt "bash") 
                            (* the simplest conversion possible *)
+
+(* source of grid tables: the cartouche symbols are shown as such, each control symbol as one 
+   caret, so that the one-symbol-per-column alignment of the table is kept *)
+fun grid_source_text (s, pos) =
+  let fun conv sym =
+        if sym = Symbol.open_ then "ë\\isacartoucheopen ë"
+        else if sym = Symbol.close then "ë\\isacartoucheclose ë"
+        else if String.isPrefix (chr 92 ^ "<^") sym then "ë\\textasciicircum ë"
+        else sym
+  in (String.concat (map conv (Symbol.explode s)), pos) end
+
+fun boxed_grid_antiquotation name =
+    DOF_lib.gen_text_antiquotation name (K(K())) 
+                           (fn ctxt => Input.source_content 
+                                        #> grid_source_text
+                                        #> Latex.text 
+                                        #> DOF_lib.enclose_env true ctxt "bash")
 \<close>
 
 setup\<open>boxed_text_antiquotation         \<^binding>\<open>boxed_text\<close> #>
@@ -88,7 +105,8 @@ setup\<open>boxed_text_antiquotation         \<^binding>\<open>boxed_text\<close
       boxed_sml_text_antiquotation     \<^binding>\<open>boxed_sml\<close> #>
       boxed_pdf_antiquotation          \<^binding>\<open>boxed_pdf\<close> #>
       boxed_latex_antiquotation        \<^binding>\<open>boxed_latex\<close>#>
-      boxed_bash_antiquotation         \<^binding>\<open>boxed_bash\<close> 
+      boxed_bash_antiquotation         \<^binding>\<open>boxed_bash\<close> #>
+      boxed_grid_antiquotation         \<^binding>\<open>boxed_grid\<close>
      \<close>
 
 open_monitor*[this::report] 
