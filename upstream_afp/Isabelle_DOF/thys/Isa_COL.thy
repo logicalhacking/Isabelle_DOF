@@ -394,7 +394,7 @@ fun frame_command (name, pos) descr cid  =
   in Document_Output_Commands.onto_macro_cmd_command (name, pos) descr create_instance parse_and_tex
   end
 
-val _ = frame_command \<^command_keyword>\<open>frame*\<close> "frame environment" "Isa_COL.frame" ;
+val _ = frame_command \<^command_keyword>\<open>frame*\<close> "frame environment" \<^const_name>\<open>Isa_COL.frame\<close> ;
 \<close>
 
 end
