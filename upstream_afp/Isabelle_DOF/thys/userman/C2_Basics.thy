@@ -430,46 +430,158 @@ Footnotes could be considered references \footnote{You may notice that they appe
 \<close>\<close>
 
 section*[tables::technical]\<open>Tables\<close>
-text\<open>Currently there is no antiquotation for tables in \<^isadof>, it is however an good way to synthesis 
-information. In this section, there will be an example on how to use \<^LaTeX> with \<^isadof> to create 
-tables. I suggest checking the \<^LaTeX> documentation online for tables (\<^eg>:\<^cite>\<open>"int:latextable:2020"\<close>) 
-many of which go into much more details about the different possibilities.\<close>
+text\<open>Tables are written either as \<^emph>\<open>grid tables\<close> directly in the text, or, for layouts beyond 
+their scope, in \<^LaTeX>. Grid tables are the preferred way: their cells are ordinary text, so
+they may contain markup and antiquotations of \<^isadof> and Isabelle, they are checked while editing,
+and they are highlighted and reported as the rest of the text.\<close>
 
-text\<open>In this example we will create a table of all defined connective and quantifiers and their definitions
-such as they are given in Isabelle HOL. The code that appears below is \<^LaTeX>, but it can be simple put
-into any Isar-text environment in your '.thy' file.
-@{boxed_latex[display]\<open>
-\resizebox{\textwidth}{!}{
-\begin{tabular}{|p{0.25\textwidth}|p{0.37\textwidth}|p{0.38\textwidth}|} \hline
-\textbf{Name}               & \textbf{Theorem}     & \textbf{Show\_types option}     \\ \hline\hline
-@{thm[source]HOL.True_def}  & @{thm HOL.True_def}  & @{thm[show_types]HOL.True_def}  \\ \hline
-@{thm[source]HOL.All_def}   & @{thm HOL.All_def}   & @{thm[show_types]HOL.All_def}   \\ \hline
-@{thm[source]HOL.Ex_def}    & @{thm HOL.Ex_def}    & @{thm[show_types]HOL.Ex_def}    \\ \hline
-@{thm[source]HOL.False_def} & @{thm HOL.False_def} &
- @{thm[show_types]HOL.False_def} \\ \hline
-@{thm[source]HOL.not_def}   & @{thm HOL.not_def}   & @{thm[show_types]HOL.not_def}   \\ \hline
-@{thm[source]HOL.and_def}   & @{thm HOL.and_def}   & @{thm[show_types]HOL.and_def}   \\ \hline
-@{thm[source]HOL.or_def}    & @{thm HOL.or_def}    & @{thm[show_types]HOL.or_def}    \\ \hline
-@{thm[source]HOL.Uniq_def}  & @{thm HOL.Uniq_def}  & @{thm[show_types]HOL.Uniq_def}  \\ \hline
-@{thm[source]HOL.Ex1_def}   & @{thm HOL.Ex1_def}   & @{thm[show_types]HOL.Ex1_def}   \\ \hline
-\end{tabular}}\<close>}
+subsection*[gridtbl::technical]\<open>Grid Tables\<close>
+text\<open>A grid table is written with the antiquotation \<^verbatim>\<open>\<^gridtbl>\<open>\<dots>\<close>\<close> (or 
+\<^verbatim>\<open>@{gridtbl \<open>\<dots>\<close>}\<close>) inside any \<^theory_text>\<open>text\<close> or \<^theory_text>\<open>text*\<close>. Its argument is drawn in ASCII-art, 
+following the grid tables of reStructuredText: the borders are made of \<^verbatim>\<open>+\<close>, \<^verbatim>\<open>-\<close> and \<^verbatim>\<open>|\<close>, 
+a border of \<^verbatim>\<open>=\<close> is typeset as a double ruler, and a cell is a rectangle closed by borders, 
+so it can span several rows and columns. The columns of all lines must be aligned; otherwise an 
+error is reported at the position of the problem. As extensions, a ruler may occur on any border 
+(also the first and the last), a cell may contain cartouches \<^verbatim>\<open>\<open>\<dots>\<close>\<close> (analysed like any text; they 
+may even contain a \<^verbatim>\<open>|\<close>), and the lines of a cell form one paragraph. Alignment is based on logical 
+length, in which each symbol counts one; \<^verbatim>\<open>\<^bold>\<open>|\<close>\<close> may replace a \<^verbatim>\<open>|\<close>, \<^verbatim>\<open>\<^bold>\<open>---\<close>\<close> counts three. 
+As in markdown, \<^verbatim>\<open>:---:\<close>, \<^verbatim>\<open>:---\<close> and \<^verbatim>\<open>---:\<close> in the border of a cell center, left-align and 
+right-align its content.\<close>
+text\<open>The first example has a head ruler and a column each of left, centered and right-aligned content:
+
+@{boxed_bash [display]\<open>+:-------------+:----------:+-----------:+
+| Class        | Checks     | Time (s)   |
++:=============+:==========:+===========:+
+| figure       | 12         | 0.31       |
++:-------------+:----------:+-----------:+
+| listing      | 3          | 0.05       |
++:-------------+:----------:+-----------:+
+| technical    | 128        | 7.24       |
++:-------------+:----------:+-----------:+\<close>}
 \<^outmat>\<open>
-\<^vs>\<open>0.5cm\<close>
-\resizebox{\textwidth}{!}{
-\begin{tabular}{|p{0.25\textwidth}|p{0.37\textwidth}|p{0.38\textwidth}|} \hline
-\textbf{Name}               & \textbf{Theorem}     & \textbf{Show\_types option}     \\ \hline\hline
-@{thm[source]HOL.True_def}  & @{thm HOL.True_def}  & @{thm[show_types]HOL.True_def}  \\ \hline
-@{thm[source]HOL.All_def}   & @{thm HOL.All_def}   & @{thm[show_types]HOL.All_def}   \\ \hline
-@{thm[source]HOL.Ex_def}    & @{thm HOL.Ex_def}    & @{thm[show_types]HOL.Ex_def}    \\ \hline
-@{thm[source]HOL.False_def} & @{thm HOL.False_def} & @{thm[show_types]HOL.False_def} \\ \hline
-@{thm[source]HOL.not_def}   & @{thm HOL.not_def}   & @{thm[show_types]HOL.not_def}   \\ \hline
-@{thm[source]HOL.and_def}   & @{thm HOL.and_def}   & @{thm[show_types]HOL.and_def}   \\ \hline
-@{thm[source]HOL.or_def}    & @{thm HOL.or_def}    & @{thm[show_types]HOL.or_def}    \\ \hline
-@{thm[source]HOL.Uniq_def}  & @{thm HOL.Uniq_def}  & @{thm[show_types]HOL.Uniq_def}  \\ \hline
-@{thm[source]HOL.Ex1_def}   & @{thm HOL.Ex1_def}   & @{thm[show_types]HOL.Ex1_def}   \\ \hline
-\end{tabular}}
+\<^gridtbl>\<open>
++:-------------+:----------:+-----------:+
+| Class        | Checks     | Time (s)   |
++:=============+:==========:+===========:+
+| figure       | 12         | 0.31       |
++:-------------+:----------:+-----------:+
+| listing      | 3          | 0.05       |
++:-------------+:----------:+-----------:+
+| technical    | 128        | 7.24       |
++:-------------+:----------:+-----------:+
+\<close>\<close>\<close>
+text\<open>Cells can span rows and columns, and rulers can be placed everywhere:
+
+@{boxed_bash [display]\<open>+-------+---------------+
+|       | L2 and L3     |
+| L1    +-------+-------+
+|       | L2    | L3    |
++=======+=======+=======+
+|       | B     | CCC   |
+| AAA   +-------+-------+
+|       |   DDDDD       |
++-------+-------+-------+
+|               | FFF   |
+|     EEEEE     +-------+
+|               | GGG   |
++---------------+-------+\<close>}
+\<^outmat>\<open>
+\<^gridtbl>\<open>
++-------+---------------+
+|       | L2 and L3     |
+| L1    +-------+-------+
+|       | L2    | L3    |
++=======+=======+=======+
+|       | B     | CCC   |
+| AAA   +-------+-------+
+|       |   DDDDD       |
++-------+-------+-------+
+|               | FFF   |
+|     EEEEE     +-------+
+|               | GGG   |
++---------------+-------+
+\<close>\<close>\<close>
+text\<open>Cells can contain antiquotations. This is the table of the definitions of some logical constants, that is, the data of a typical \<^LaTeX> table:
+
+@{boxed_bash [display]\<open>+----------------------------+---------------------+
+| Name                       | Theorem             |
++============================+=====================+
+| @{thm[source]HOL.True_def} | @{thm HOL.True_def} |
++----------------------------+---------------------+
+| @{thm[source]HOL.All_def}  | @{thm HOL.All_def}  |
++----------------------------+---------------------+
+| @{thm[source]HOL.Ex_def}   | @{thm HOL.Ex_def}   |
++----------------------------+---------------------+
+| @{thm[source]HOL.not_def}  | @{thm HOL.not_def}  |
++----------------------------+---------------------+\<close>}
+\<^outmat>\<open>
+\<^gridtbl>\<open>
++----------------------------+---------------------+
+| Name                       | Theorem             |
++============================+=====================+
+| @{thm[source]HOL.True_def} | @{thm HOL.True_def} |
++----------------------------+---------------------+
+| @{thm[source]HOL.All_def}  | @{thm HOL.All_def}  |
++----------------------------+---------------------+
+| @{thm[source]HOL.Ex_def}   | @{thm HOL.Ex_def}   |
++----------------------------+---------------------+
+| @{thm[source]HOL.not_def}  | @{thm HOL.not_def}  |
++----------------------------+---------------------+
+\<close>\<close>\<close>
+text\<open>The text of a cell may flow over several lines, and a multi-row cell is centered vertically:
+
+@{boxed_bash [display]\<open>+---------------+-----------------------+
+| Phase         | Activity              |
++===============+=======================+
+|               | \<open>@{term \<open>x\<close>}\<close>         |
+| Verification  +-----------------------+
+|               | \<open>\<^emph>\<open>proof\<close>\<close> and tests  |
++---------------+-----------------------+\<close>}
+\<^outmat>\<open>
+\<^gridtbl>\<open>
++---------------+-----------------------+
+| Phase         | Activity              |
++===============+=======================+
+|               | \<open>@{term \<open>x\<close>}\<close>         |
+| Verification  +-----------------------+
+|               | \<open>\<^emph>\<open>proof\<close>\<close> and tests  |
++---------------+-----------------------+
+\<close>\<close>\<close>
+
+subsection*[texopt::technical]\<open>\<^LaTeX> Typesetting as an Opt-out\<close>
+text\<open>Tables with typographic requirements that go beyond grid tables have to be written in \<^LaTeX>, 
+which is passed through unchanged (see \<^cite>\<open>"int:latextable:2020"\<close> for the many possibilities).
+Typical examples are decimal alignment of numbers (package \<^verbatim>\<open>siunitx\<close>), partial rulers
+(\<^verbatim>\<open>\cmidrule\<close> of \<^verbatim>\<open>booktabs\<close>), coloured rows (\<^verbatim>\<open>colortbl\<close>) or tables that break across pages. 
+The following table needs all of these; it cannot be expressed as a grid table:
+@{boxed_latex[display]\<open>\begin{tabular}{@{}l S[table-format=2.2] S[table-format=3.1] @{}}
+\toprule
+ & \multicolumn{2}{c}{Measured} \\
+\cmidrule(l){2-3}
+Ontology & {Time (s)} & {Speed-up} \\
+\midrule
+CENELEC\_50128 & 12.40 & 105.0 \\
+\rowcolor{gray!15} technical\_report & 3.17 & 98.5 \\
+\bottomrule
+\end{tabular}\<close>}
+\<^outmat>\<open>
+\<^vs>\<open>0.3cm\<close>
+\<^latex>\<open>
+\begin{tabular}{@{}l S[table-format=2.2] S[table-format=3.1] @{}}
+\toprule
+ & \multicolumn{2}{c}{Measured} \\
+\cmidrule(l){2-3}
+Ontology & {Time (s)} & {Speed-up} \\
+\midrule
+CENELEC\_50128 & 12.40 & 105.0 \\
+\rowcolor{gray!15} technical\_report & 3.17 & 98.5 \\
+\bottomrule
+\end{tabular}\<close>
 \<close>
-\<close>
+The cells of such a table are opaque to \<^isadof> (no checking of their content, and no
+antiquotations unless \<^LaTeX> expands them itself), and the packages used have to be loaded in
+the preamble of the document (here: \<^verbatim>\<open>booktabs\<close>, \<^verbatim>\<open>siunitx\<close> and \<^verbatim>\<open>colortbl\<close>). Whenever possible,
+prefer a grid table.\<close>
 (*<*)
 end
 (*>*)
