@@ -764,6 +764,216 @@ text\<open>The command syntax follows the implicit convention to add a ``*''
 to distinguish them from the (similar) standard Isabelle text-commands
 which are not ontology-aware.\<close>
 
+subsection*[tables::technical]\<open>Tables\<close>
+text\<open>
+Tables are typeset in two ways: simple and medium-complex tables are written as \<^emph>\<open>grid tables\<close>
+\<^bindex>\<open>grid table\<close> directly in the text, with a syntax that is the one of the ``grid tables'' of 
+reStructuredText, extended as described below; tables whose layout goes beyond that are 
+delegated to \<^LaTeX>, which is always available as an opt-out.
+\<close>
+
+subsubsection\<open>Grid Tables\<close>
+text\<open>
+The antiquotation \<^verbatim>\<open>\<^gridtbl>\<open>\<dots>\<close>\<close>\<^bindex>\<open>gridtbl\<close> (also written 
+\<open>@{gridtbl \<open>\<dots>\<close>}\<close>) of \<^theory>\<open>Isabelle_DOF.Isa_COL\<close> can be used in the text of \<^theory_text>\<open>text\<close>- and  
+\<^theory_text>\<open>text*\<close>-commands. Its argument is an ASCII-art table: borders are drawn with \<^verbatim>\<open>+\<close>, 
+\<^verbatim>\<open>-\<close> and \<^verbatim>\<open>|\<close>; cells may span several rows and columns (a cell is a rectangle that is closed by 
+borders); a border built from \<^verbatim>\<open>=\<close> instead of \<^verbatim>\<open>-\<close> is typeset as a double ruler (typically 
+separating the head from the body). The table is compiled into a \<^LaTeX> \<^verbatim>\<open>tabular\<close> (using the 
+packages \<^verbatim>\<open>array\<close>, \<^verbatim>\<open>multirow\<close> and \<^verbatim>\<open>hhline\<close>, loaded by \<^verbatim>\<open>DOF-gridtbl.sty\<close>).
+All syntactic side-conditions of the reStructuredText reference apply: in particular, borders
+must be straight and closed and the rows must be aligned; violations are reported as errors 
+at the offending position of the source. The extensions of the \<^isadof>-version are:
+\<^item> rulers (\<^verbatim>\<open>=====\<close>) may occur at \<^emph>\<open>any\<close> horizontal border, in particular the first and the 
+  last, and any number of times;
+\<^item> the cell content may be a cartouche \<open>\<open>\<dots>\<close>\<close>; as long as the cartouches are balanced, its content 
+  is analysed, reported and highlighted as any other text (so it may contain antiquotations and 
+  even a \<^verbatim>\<open>|\<close>). Text without cartouches is treated in the same way; the lines of a cell form
+  one paragraph, so the text of a multi-row cell may flow over several lines;
+\<^item> the alignment of rows is based on the \<^emph>\<open>logical\<close> length of the cells: every symbol 
+  (\<^verbatim>\<open>|\<close>, \<^verbatim>\<open>+\<close>, \<^verbatim>\<open>=\<close>, but also \<open>\<alpha>\<close> or a cartouche delimiter) has length one. 
+  Instead of the visible cell boundary \<^verbatim>\<open>|\<close>, one may also write \<^verbatim>\<open>\<^bold>\<open>|\<close>\<close>, 
+  which counts one as well; similarly, \<^verbatim>\<open>\<^bold>\<open>---\<close>\<close> or \<^verbatim>\<open>\<^bold>\<open>===\<close>\<close> count three;
+\<^item> as in markdown, \<^verbatim>\<open>:-----:\<close> in the border of a cell centers its content, \<^verbatim>\<open>:-----\<close> 
+  aligns it to the left, and \<^verbatim>\<open>-----:\<close> to the right.
+\<close>
+text\<open>A first example with a head ruler and aligned columns: the markers \<^verbatim>\<open>:\<close> in the top border of a cell select its alignment (left, centered, right).
+
+@{boxed_bash [display]\<open>+:-------------+:----------:+-----------:+
+| Class        | Checks     | Time (s)   |
++:=============+:==========:+===========:+
+| figure       | 12         | 0.31       |
++:-------------+:----------:+-----------:+
+| listing      | 3          | 0.05       |
++:-------------+:----------:+-----------:+
+| technical    | 128        | 7.24       |
++:-------------+:----------:+-----------:+\<close>}
+
+yields
+\<^gridtbl>\<open>
++:-------------+:----------:+-----------:+
+| Class        | Checks     | Time (s)   |
++:=============+:==========:+===========:+
+| figure       | 12         | 0.31       |
++:-------------+:----------:+-----------:+
+| listing      | 3          | 0.05       |
++:-------------+:----------:+-----------:+
+| technical    | 128        | 7.24       |
++:-------------+:----------:+-----------:+
+\<close>\<close>
+text\<open>Cells can span rows and columns. The following table has the cells \<^verbatim>\<open>L1\<close> and \<^verbatim>\<open>AAA\<close> spanning two rows, \<^verbatim>\<open>L2 and L3\<close> and \<^verbatim>\<open>DDDDD\<close> two columns, and \<^verbatim>\<open>EEEEE\<close> both; the ruler in the middle separates two blocks:
+
+@{boxed_bash [display]\<open>+-------+---------------+
+|       | L2 and L3     |
+| L1    +-------+-------+
+|       | L2    | L3    |
++=======+=======+=======+
+|       | B     | CCC   |
+| AAA   +-------+-------+
+|       |   DDDDD       |
++-------+-------+-------+
+|               | FFF   |
+|     EEEEE     +-------+
+|               | GGG   |
++---------------+-------+\<close>}
+
+yields
+\<^gridtbl>\<open>
++-------+---------------+
+|       | L2 and L3     |
+| L1    +-------+-------+
+|       | L2    | L3    |
++=======+=======+=======+
+|       | B     | CCC   |
+| AAA   +-------+-------+
+|       |   DDDDD       |
++-------+-------+-------+
+|               | FFF   |
+|     EEEEE     +-------+
+|               | GGG   |
++---------------+-------+
+\<close>\<close>
+text\<open>Cell contents are text, which may be broken over several lines and may contain cartouches, with markup and antiquotations that are evaluated as usual (the cartouche in the last row contains a \<^verbatim>\<open>|\<close>):
+
+@{boxed_bash [display]\<open>+----------+----------------------------------+
+| Command  | Effect                           |
++==========+==================================+
+| \<open>text*\<close>  | Checks the text against the      |
+|          | ontology, with \<open>\<^emph>\<open>markup\<close>\<close>.      |
++----------+----------------------------------+
+| \<open>value*\<close> | Evaluates \<open>@{term \<open>1+1\<close>}\<close>        |
+|          | and may contain a \<open>|\<close>.           |
++----------+----------------------------------+\<close>}
+
+yields
+\<^gridtbl>\<open>
++----------+----------------------------------+
+| Command  | Effect                           |
++==========+==================================+
+| \<open>text*\<close>  | Checks the text against the      |
+|          | ontology, with \<open>\<^emph>\<open>markup\<close>\<close>.      |
++----------+----------------------------------+
+| \<open>value*\<close> | Evaluates \<open>@{term \<open>1+1\<close>}\<close>        |
+|          | and may contain a \<open>|\<close>.           |
++----------+----------------------------------+
+\<close>\<close>
+text\<open>Rulers may be placed at any border, in particular also on the first and the last one:
+
+@{boxed_bash [display]\<open>+=======+=======+
+| Input | Cost  |
++=======+=======+
+| a     |   1   |
++-------+-------+
+| b     |   2   |
++=======+=======+\<close>}
+
+yields
+\<^gridtbl>\<open>
++=======+=======+
+| Input | Cost  |
++=======+=======+
+| a     |   1   |
++-------+-------+
+| b     |   2   |
++=======+=======+
+\<close>\<close>
+text\<open>A cell spanning several rows: its content is placed in the middle of the spanned rows.
+
+@{boxed_bash [display]\<open>+---------------+-----------------------+
+| Phase         | Activity              |
++===============+=======================+
+|               | \<open>@{term \<open>x\<close>}\<close>         |
+| Verification  +-----------------------+
+|               | \<open>\<^emph>\<open>proof\<close>\<close> and tests  |
++---------------+-----------------------+\<close>}
+
+yields
+\<^gridtbl>\<open>
++---------------+-----------------------+
+| Phase         | Activity              |
++===============+=======================+
+|               | \<open>@{term \<open>x\<close>}\<close>         |
+| Verification  +-----------------------+
+|               | \<open>\<^emph>\<open>proof\<close>\<close> and tests  |
++---------------+-----------------------+
+\<close>\<close>
+
+text\<open>Since the cell contents can contain antiquotations, grid tables also work inside 
+\<^theory_text>\<open>text*\<close>-commands whose text is checked against the ontology. Table captions, labels and
+placement are not part of the grid-table syntax; they are provided by the \<^typ>\<open>float\<close>-classes
+(see above) wrapping the table.\<close>
+
+subsubsection\<open>\<^LaTeX> Typesetting as an Opt-out\<close>
+text\<open>
+Any table that is expressible as a grid table should be written as one: it is checked, 
+its cell contents take part in the ontology-aware document analysis, and it is typeset uniformly. 
+For example, the \<^LaTeX> table
+@{boxed_latex [display]\<open>\begin{tabular}{|l|c|r|}
+\hline
+Class & Checks & Time (s) \\
+\hline\hline
+figure & 12 & 0.31 \\
+\hline
+\end{tabular}\<close>}
+is just the grid table
+@{boxed_bash [display]\<open>+:-------------+:----------:+-----------:+
+| Class        | Checks     | Time (s)   |
++:=============+:==========:+===========:+
+| figure       | 12         | 0.31       |
++:-------------+:----------:+-----------:+\<close>}
+Tables that need genuinely \<^LaTeX>-specific features cannot be expressed in this way: typical 
+examples are decimal alignment of numbers (package \<^verbatim>\<open>siunitx\<close>), partial rulers with trimmed 
+ends (\<^verbatim>\<open>\cmidrule\<close> of package \<^verbatim>\<open>booktabs\<close>), row-wise colours (package \<^verbatim>\<open>colortbl\<close>), 
+footnotes in tables or tables breaking across pages. For these, the \<^LaTeX> source is embedded 
+using the antiquotation \<^verbatim>\<open>\<^latex>\<close>, which passes its argument unchanged to the output:
+@{boxed_latex [display]\<open>\begin{tabular}{@{}l S[table-format=2.2] S[table-format=3.1] @{}}
+\toprule
+ & \multicolumn{2}{c}{Measured} \\
+\cmidrule(l){2-3}
+Ontology & {Time (s)} & {Speed-up} \\
+\midrule
+CENELEC\_50128 & 12.40 & 105.0 \\
+\rowcolor{gray!15} technical\_report & 3.17 & 98.5 \\
+\bottomrule
+\end{tabular}\<close>}
+\<^latex>\<open>
+\begin{center}
+\begin{tabular}{@{}l S[table-format=2.2] S[table-format=3.1] @{}}
+\toprule
+ & \multicolumn{2}{c}{Measured} \\
+\cmidrule(l){2-3}
+Ontology & {Time (s)} & {Speed-up} \\
+\midrule
+CENELEC\_50128 & 12.40 & 105.0 \\
+\rowcolor{gray!15} technical\_report & 3.17 & 98.5 \\
+\bottomrule
+\end{tabular}
+\end{center}\<close>
+The price is that the contents of the cells are opaque to \<^isadof>: they are neither checked 
+nor can they contain Isabelle antiquotations, and the required packages must be loaded in the 
+preamble of the document (here: \<^verbatim>\<open>booktabs\<close>, \<^verbatim>\<open>siunitx\<close> and \<^verbatim>\<open>colortbl\<close>). 
+\<close>
+
 subsection*["text_elements"::technical]\<open>The Ontology \<^verbatim>\<open>scholarly_paper\<close>\<close>
 (*<*)
 ML\<open>val toLaTeX = String.translate (fn c => if c = #"_" then "\\_" else String.implode[c])\<close>     

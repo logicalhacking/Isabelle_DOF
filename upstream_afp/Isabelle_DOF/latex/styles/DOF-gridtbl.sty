@@ -1,0 +1,27 @@
+%% Copyright (C) 2026 The University of Paris-Saclay
+%%
+%% This file may be modified and distributed under the terms of the LaTeX Project Public
+%% License (LPPL), version 1.3c or later, or the 2-clause BSD license.
+%%
+%%   SPDX-License-Identifier: LPPL-1.3c+ OR BSD-2-Clause
+
+\NeedsTeXFormat{LaTeX2e}\relax
+\ProvidesPackage{DOF-gridtbl}
+  [2026/01/01 Support for grid tables (gridtbl) of the Isabelle/DOF COL.]
+
+\RequirePackage{array}
+\RequirePackage{multirow}
+\RequirePackage{hhline}
+
+% width of a cell spanning columns of logical width #1 (out of #2 in total) in a table with #3
+% columns (#4 = #3+1 vertical rules) where #5 = (number of spanned columns) - 1
+\newcommand{\DOFgridcellw}[5]{%
+  \dimexpr(\linewidth-(2\tabcolsep)*#3-\arrayrulewidth*#4)*#1/#2+(2\tabcolsep+\arrayrulewidth)*#5\relax}
+
+% #1: width, #2: alignment command, #3: number of rows, #4: text
+\newcommand{\DOFgridcell}[4]{%
+  \ifnum#3>1
+    \multirow{#3}{*}{\parbox[c]{#1}{#2 #4\strut}}%
+  \else
+    \parbox[t]{#1}{#2 #4\strut}%
+  \fi}

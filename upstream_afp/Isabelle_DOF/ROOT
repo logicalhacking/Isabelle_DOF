@@ -21,6 +21,8 @@ session "Isabelle_DOF" (AFP) = "Functional-Automata" +
     "thys/Isa_DOF_Onto_Text_Antiquotations"
     "thys/Isa_DOF_ODL"
     "thys/Isa_DOF"
+    "thys/Isa_COL_Gridtbl"
+    "thys/Isa_COL_Figs"
     "thys/Isa_COL"
   export_classpath
 
