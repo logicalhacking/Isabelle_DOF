@@ -71,10 +71,15 @@ object DOF_Document_Build
 
       val ltx_ontologies = split_lines((the_document_entry(context, "dof/use_ontology")).text)
 
-      // LaTeX styles from Isabelle/DOF directory
+      // LaTeX styles from Isabelle/DOF directory; generated copies of earlier document builds
+      // (in "output" or "generated" directories) are not sources and must not override them
+      def is_source_sty(path: Path): Boolean = {
+        val elems = path.implode.split('/').toList
+        path.file_name.endsWith(".sty") && !elems.exists(e => e == "output" || e == "generated")
+      }
       (List(Path.explode("latex/styles"), Path.explode("ontologies")) :::(ltx_ontologies.map(name => 
               context.session_context.sessions_structure((Long_Name.base_name(Long_Name.qualifier(name))).mkString).dir))) 
-        .flatMap(dir => File.find_files(isabelle_dof_dir + dir, pred = path => path.file_name.endsWith(".sty")))
+        .flatMap(dir => File.find_files(isabelle_dof_dir + dir, pred = is_source_sty))
         .foreach(sty => Isabelle_System.copy_file(sty, directory.doc_dir))
 
       // ontologies.tex from session exports
