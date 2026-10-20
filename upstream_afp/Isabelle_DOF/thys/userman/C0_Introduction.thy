@@ -123,22 +123,38 @@ define_macro* isarbox \<rightleftharpoons> \<open>\begin{isarbox}\<close> _ \<op
 define_macro* isatext \<rightleftharpoons>  \<open>\begin{isabelle}\isakeywordONE{text}{\isacartoucheopen}\end{isabelle}\<close> _ \<open>\begin{isabelle}{\isacartoucheclose}\end{isabelle}\<close>
 (*>*)
 
-title*[title::title]         \<open>Writing Documents with Isabelle and DOF - a User Manual\<close> 
+title*[title::title]  \<open>Writing Documents with Isabelle and DOF - a User Manual\<close> 
 author*[  mathi,
           email       ="\<open>mathilde.needham@universite-paris-saclay.fr\<close>",
           affiliation = "\<open>Université Paris-Saclay, Paris, France\<close>"]
-\<open>Mathilde Needham and Burkhart Wolff\<close>
+\<open>Mathilde Needham\<close>
+author*[  bu,
+          email       ="\<open>wolff@lmf.cnrs.fr\<close>",
+          affiliation = "\<open>LMF, Université Paris-Saclay, Paris, France\<close>"]
+\<open>Burkhart Wolff\<close>
+
 
 chapter*[intro::text_section]\<open>Introduction\<close>
-text\<open>
-\<^isadof> is a framework designed for writing structured documents that can seamlessly incorporate 
-elements of Isabelle/HOL. It is suitable for authoring mathematical proofs, technical reports, and
- scientific papers.
+text\<open>The Isabelle system \<^cite>\<open>"mwenzel:isaref:2025"\<close> comes with its own document preparation 
+system extended by the \<^isadof> component. \<^isadof> is a framework designed to provide ontological 
+support of structured documents that can seamlessly incorporate elements of Isabelle/HOL. 
+It is suitable for authoring mathematical proofs, technical reports, and scientific papers.
 
 This manual is intended for users of \<^isadof> who wish to use the framework for creating and editing
- such documents. If you are an ontology developer or working on \<^isadof> itself, we recommend consulting
- the Reference Manual(\<^cite>\<open>"brucker.ea:isabelledof:2025"\<close>), which provides a more detailed and technical
- overview of the system’s internal architecture and capabilities.
+formal content, \<^ie> texts with machine-checked code, definitions, formulas and proofs.
+It gives an example-driven overview of the various text elements provided jointly by Isabelle and
+\<^isadof> and discusses some best practices.  
+
+If you are an ontology developer or working on \<^isadof> itself, we recommend consulting
+the Reference Manual(\<^cite>\<open>"brucker.ea:isabelledof:2025"\<close>), which provides a more detailed and technical
+overview of the system’s internal architecture and capabilities.
+
+One final remark: This document --- albeit written in  \<^isadof> --- is \<^bold>\<open>not\<close> a typical  \<^isadof> 
+document. A typical document will avoid \<^LaTeX> code as much as possible, perhaps with the exception of 
+initial macro definitions. A document that describes  \<^isadof> snippets in \<^isadof> runs in limitations
+of the underlying \<^LaTeX> engine and its poor capabilities to combine and nest environments.
+Thus, in many places in this document it was necessary to use hand-crafted  \<^LaTeX> code to give
+adequate impressions of the presentation in the documents and inside the Isabelle PIDE.
 \<close>
 paragraph\<open>Typographical Conventions\<close>
 text\<open>In order to maintain a consistent and coherent style throughout the manuals for \<^isadof>, we
