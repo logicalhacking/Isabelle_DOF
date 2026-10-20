@@ -1,6 +1,6 @@
 (*<*)
 theory
-  "C2_Basics"
+  "C2_TextElements"
 imports
   "C1_Installation"
 begin
@@ -10,7 +10,7 @@ declare_reference*[example2::figure]
 declare_reference*[example1::figure]
 
 (*>*)
-chapter*[anti::text_section]\<open>Basics\<close>
+chapter*[anti::text_section]\<open>Text Elements\<close>
 
 text\<open>
 In this section, you will come to see the mention to \<^ijedit> , this is a reference to
@@ -461,13 +461,13 @@ text\<open>The first example has a head ruler and a column each of left, centere
 \<^outmat>\<open>
 \<^gridtbl>\<open>
 +:-------------+:----------:+-----------:+
-| Class        | Checks     | Time (s)   |
+\<^bold> Class        \<^bold> Checks     \<^bold> Time (s)   \<^bold>
 +:=============+:==========:+===========:+
-| figure       | 12         | 0.31       |
+\<^bold> figure       \<^bold> 12         \<^bold> 0.31       \<^bold>
 +:-------------+:----------:+-----------:+
-| listing      | 3          | 0.05       |
+\<^bold> listing      \<^bold> 3          \<^bold> 0.05       \<^bold>
 +:-------------+:----------:+-----------:+
-| technical    | 128        | 7.24       |
+\<^bold> technical    \<^bold> 128        \<^bold> 7.24       \<^bold> 
 +:-------------+:----------:+-----------:+
 \<close>\<close>\<close>
 text\<open>Cells can span rows and columns, and rulers can be placed everywhere:
@@ -501,19 +501,11 @@ text\<open>Cells can span rows and columns, and rulers can be placed everywhere:
 |               | GGG   |
 +---------------+-------+
 \<close>\<close>\<close>
-text\<open>Cells can contain antiquotations. This is the table of the definitions of some logical constants, that is, the data of a typical \<^LaTeX> table:
 
-@{boxed_grid [display]\<open>+----------------------------+---------------------+
-| Name                       | Theorem             |
-+============================+=====================+
-| @{thm[source]HOL.True_def} | @{thm HOL.True_def} |
-+----------------------------+---------------------+
-| @{thm[source]HOL.All_def}  | @{thm HOL.All_def}  |
-+----------------------------+---------------------+
-| @{thm[source]HOL.Ex_def}   | @{thm HOL.Ex_def}   |
-+----------------------------+---------------------+
-| @{thm[source]HOL.not_def}  | @{thm HOL.not_def}  |
-+----------------------------+---------------------+\<close>}
+text\<open>@{fig_content (width=95, caption="") "figures/GridTable-I.png"}\<close>
+text\<open>Cells can contain antiquotations. This is the table of the definitions of some 
+logical constants, that is, the data of a typical \<^LaTeX> table:
+
 \<^outmat>\<open>
 \<^gridtbl>\<open>
 +----------------------------+---------------------+
@@ -528,9 +520,12 @@ text\<open>Cells can contain antiquotations. This is the table of the definition
 | @{thm[source]HOL.not_def}  | @{thm HOL.not_def}  |
 +----------------------------+---------------------+
 \<close>\<close>\<close>
+
+
 text\<open>The text of a cell may flow over several lines, and a multi-row cell is centered vertically:
 
-@{boxed_grid [display]\<open>+---------------+-----------------------+
+@{boxed_grid [display]
+\<open>+---------------+-----------------------+
 | Phase         | Activity              |
 +===============+=======================+
 |               | \<open>@{term \<open>x\<close>}\<close>         |
@@ -547,6 +542,7 @@ text\<open>The text of a cell may flow over several lines, and a multi-row cell 
 |               | \<open>\<^emph>\<open>proof\<close>\<close> and tests  |
 +---------------+-----------------------+
 \<close>\<close>\<close>
+
 
 subsection*[texopt::technical]\<open>\<^LaTeX> Typesetting as an Opt-out\<close>
 text\<open>Tables with typographic requirements that go beyond grid tables have to be written in \<^LaTeX>, 
@@ -582,6 +578,66 @@ The cells of such a table are opaque to \<^isadof> (no checking of their content
 antiquotations unless \<^LaTeX> expands them itself), and the packages used have to be loaded in
 the preamble of the document (here: \<^verbatim>\<open>booktabs\<close>, \<^verbatim>\<open>siunitx\<close> and \<^verbatim>\<open>colortbl\<close>). Whenever possible,
 prefer a grid table.\<close>
+section*[railroads::technical]\<open>Railroad Diagrams\<close>
+text\<open>
+Syntax diagrams, also called railroad diagrams, are the standard way to explain the syntax of a 
+language to a reader: a path through the diagram, from left to right, is a legal phrase. They 
+are used for the commands of Isabelle and of \<^isadof>, and you can use them in your own documents,
+for example to describe a small input language, a file format or the commands of a tool. 
+The diagrams are not drawn by hand: you write their grammar as text, with the antiquotation 
+\<^verbatim>\<open>\<^rail>\<close>, and \<^isadof> (more precisely, Isabelle) typesets it with \<^LaTeX>.
+\<close>
+
+paragraph\<open>The key elements\<close>
+text\<open>
+A diagram is described by one or several \<^emph>\<open>rules\<close> of the form \<^verbatim>\<open>name: body\<close>, which are 
+separated by semicolons (a single anonymous body is also possible). The body is written with a 
+small number of elements:
+\<^item> a \<^emph>\<open>terminal\<close> is written in single quotes, \<^eg>, \<^verbatim>\<open>'text*'\<close>; with a leading \<^verbatim>\<open>@\<close>, it is shown as 
+  a keyword;
+\<^item> a \<^emph>\<open>nonterminal\<close> is a plain identifier, \<^eg>, \<^verbatim>\<open>class_id\<close>; if a rule of this name exists, it is the 
+  start of another diagram;
+\<^item> elements written one after the other form a sequence, alternatives are separated by \<^verbatim>\<open>|\<close>, and 
+  parentheses group;
+\<^item> a postfix \<^verbatim>\<open>?\<close> makes an element optional, \<^verbatim>\<open>*\<close> repeats it zero or more times, and \<^verbatim>\<open>+\<close> one or more 
+  times; an element after the repetition operator, as in \<^verbatim>\<open>attribute * ','\<close>, is the separator
+  between the repetitions;
+\<^item> \<^verbatim>\<open>\<newline>\<close> starts a new line in the middle of a long sequence.
+\<close>
+
+paragraph\<open>An example\<close>
+text\<open>
+The following rules describe how a document element with attributes is written: the commands 
+\<^verbatim>\<open>text*\<close> and \<^verbatim>\<open>section*\<close> are followed by an object name, a class and an optional, comma-separated 
+list of attributes in square brackets, and the text.
+@{boxed_theory_text [display]\<open>
+\<^rail>\<open>
+  element: ( @'text*' | @'section*' ) '[' oid '::' class_id attributes ? ']' \<newline> text
+  ;
+  attributes: ',' attribute + ','
+  ;
+  attribute: name '=' value
+\<close>\<close>}
+\<^outmat>\<open>
+\<^rail>\<open>
+  element: ( @'text*' | @'section*' ) '[' oid '::' class_id attributes ? ']' \<newline> text
+  ;
+  attributes: ',' attribute + ','
+  ;
+  attribute: name '=' value
+\<close>\<close>
+Each rule yields one diagram: the first shows the choice between the two commands, the optional 
+attribute list, and the continuation on a second line; the other two show the list with its 
+separator and an attribute. 
+\<close>
+
+paragraph\<open>Further reading\<close>
+text\<open>
+The \<^verbatim>\<open>\<^rail>\<close> antiquotation has more features, for example to refer to the syntax categories of
+Isabelle or to commands by name. They are described in the section ``Railroad diagrams'' of the 
+chapter on document preparation in the Isabelle/Isar Reference Manual \<^cite>\<open>"mwenzel:isaref:2025"\<close>, 
+which is the reference for further reading.
+\<close>
 (*<*)
 end
 (*>*)

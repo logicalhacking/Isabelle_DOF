@@ -1,8 +1,8 @@
 (*<*)
 theory
-  "C3_DocumentStructure"
+  "C3_DocStructuring"
 imports  
-  "C2_Basics"
+  "C2_TextElements"
 begin
 
 declare_reference*[lex::technical]

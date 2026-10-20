@@ -6,8 +6,8 @@ session USERMANUAL = "Isabelle_DOF" +
   theories
     "C0_Introduction"
     "C1_Installation"
-    "C2_Basics"
-    "C3_DocumentStructure"
+    "C2_TextElements"
+    "C3_DocStructuring"
     "IsabelleDOFUserManual"
   document_files
     "root.bib"
@@ -18,3 +18,4 @@ session USERMANUAL = "Isabelle_DOF" +
     "subcaption.sty"
     "figures/LatexLogo.png"
     "figures/LatexLogoBlack.png"
+    "figures/GridTable-I.png"

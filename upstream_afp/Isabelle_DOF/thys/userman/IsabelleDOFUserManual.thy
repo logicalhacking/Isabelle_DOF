@@ -1,6 +1,6 @@
 (*<*)
 theory "IsabelleDOFUserManual"
-  imports "C3_DocumentStructure"
+  imports "C3_DocStructuring"
 begin
 close_monitor*[this]
 check_doc_global
