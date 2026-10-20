@@ -28,3 +28,19 @@
 
 % display of the control symbol \<^gridtbl> in the text (\<^gridtbl>\<open>...\<close>)
 \providecommand{\isactrlgridtbl}{{\ttfamily\char`\\<\char`\^gridtbl>}}
+
+% bold (thick) borders of grid tables: the thickness, and the normal rule width to be restored
+\newlength{\DOFgridthick}\setlength{\DOFgridthick}{1.2pt}
+\newlength{\DOFgridthin}\AtBeginDocument{\setlength{\DOFgridthin}{\arrayrulewidth}}
+
+% Presentation of the source of a grid table (as in the editor): in a box of the manual, fixed-pitch,
+% where every symbol occupies one column of the same width
+\newcommand{\DOFgo}{\guilsinglleft}
+\newcommand{\DOFgc}{\guilsinglright}
+\newcommand{\DOFgcaret}{\char94 }
+\newcommand{\DOFgsym}{\char63 }
+\newcommand{\DOFgbar}{\hbox to \fontcharwd\font`a{\hss\vrule width 0.14em height 1.05ex depth 0.35ex\hss}}
+\newcommand{\DOFgridline}[1]{\noindent\hbox{#1}\par}
+\newenvironment{DOFgridsrc}%
+  {\begin{isarbox}\ttfamily\footnotesize\color[HTML]{B35A00}\parindent0pt\parskip0pt\raggedright}%
+  {\end{isarbox}}

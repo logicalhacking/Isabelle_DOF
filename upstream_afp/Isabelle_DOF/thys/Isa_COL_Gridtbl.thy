@@ -36,13 +36,14 @@ structure Gridtbl =
 struct
 
 datatype halign = Default | Left | Center | Right
-datatype rule   = No_Rule | Single | Double  (* horizontal border: none, '---', '===' *)
+datatype rule   = No_Rule | Single | Thick | Double  (* horizontal border: none, '---', bold '---', '===' *)
 
 (* one logical column of the source: a symbol, its position, and the original source symbols
    (only the first logical column of a \<^bold>-run carries the whole run) *)
-type gcell = {sym: string, pos: Position.T, orig: Symbol_Pos.T list}
+type gcell = {sym: string, pos: Position.T, bold: bool, orig: Symbol_Pos.T list}
 
 type cell = {row: int, col: int, rowspan: int, colspan: int, align: halign,
+             leftb: bool, rightb: bool,         (* bold left / right vertical border *)
              content: Symbol_Pos.T list list}   (* trimmed source lines of the cell *)
 
 type table = {nrows: int, ncols: int,
@@ -71,25 +72,32 @@ val trim_end = rev o drop_while is_blank_sp o rev
 
 fun lex_line (syms: Symbol_Pos.T list) : gcell list =
   let
-    fun plain (s, p) = {sym = s, pos = p, orig = [(s, p)]}
+    fun plain (s, p) = {sym = s, pos = p, bold = false, orig = [(s, p)]}
+    (* the bold symbol (without argument) is a bold vertical bar of logical length one *)
+    fun bar (bs as (_, p)) = {sym = "|", pos = p, bold = true, orig = [bs]}
     fun go [] = []
-      | go ((bs as (b, _)) :: (os as (o', _)) :: rest) =
-          if b = bold_sym andalso o' = Symbol.open_ then
-            let val (inner, after) = chop_prefix (fn (s, _) => s <> Symbol.close) rest
-            in case after of
-                 (cl as _) :: after' =>
-                   if not (null inner) andalso forall (member (op =) structural o fst) inner
-                   then
-                     let val whole = bs :: os :: inner @ [cl]
-                     in map_index (fn (i, (s, p)) =>
-                                     {sym = s, pos = p, orig = if i = 0 then whole else []}) inner
-                        @ go after'
-                     end
-                   else plain bs :: go (os :: rest)
-               | [] => plain bs :: go (os :: rest)
-            end
-          else plain bs :: go (os :: rest)
-      | go (s :: ss) = plain s :: go ss
+      | go ((bs as (b, _)) :: rest) =
+          if b <> bold_sym then plain bs :: go rest
+          else
+            (case rest of
+               (os as (o', _)) :: rest' =>
+                 if o' <> Symbol.open_ then bar bs :: go rest
+                 else
+                   let val (inner, after) = chop_prefix (fn (s, _) => s <> Symbol.close) rest'
+                   in case after of
+                        cl :: after' =>
+                          if not (null inner) andalso forall (member (op =) structural o fst) inner
+                          then
+                            let val whole = bs :: os :: inner @ [cl]
+                            in map_index (fn (i, (s, p)) =>
+                                 {sym = s, pos = p, bold = true,
+                                  orig = if i = 0 then whole else []}) inner
+                               @ go after'
+                            end
+                          else plain bs :: go rest
+                      | [] => plain bs :: go rest
+                   end
+             | [] => [bar bs])
   in go syms end
 
 
@@ -193,9 +201,10 @@ fun parse_syms (src: Symbol_Pos.T list) : table =
       let
         val inner = map (sym r) (c1 + 1 upto c2 - 1)
         val bars = filter (fn s => s = "-" orelse s = "=") inner
+        val bold = exists (fn c => #bold (at (r, c))) (c1 + 1 upto c2 - 1)
         val kind =
           if null bars then err (pos r c1) "border without '-' or '='"
-          else if forall (fn s => s = "-") bars then Single
+          else if forall (fn s => s = "-") bars then (if bold then Thick else Single)
           else if forall (fn s => s = "=") bars then Double
           else err (pos r c1) "border mixes '-' and '='"
         val a = (case (hd inner = ":", List.last inner = ":") of
@@ -225,8 +234,9 @@ fun parse_syms (src: Symbol_Pos.T list) : table =
           |> map (fn rr => maps (fn c => #orig (at (rr, c))) (l + 1 upto r - 1)
                            |> trim_end |> drop_while is_blank_sp)
           |> drop_while null |> rev |> drop_while null |> rev
+        fun edge_bold c = exists (fn rr => #bold (at (rr, c))) (t + 1 upto b - 1)
       in {row = row, col = col, rowspan = rowend - row, colspan = colend - col,
-          align = align, content = content} : cell end
+          align = align, leftb = edge_bold l, rightb = edge_bold r, content = content} : cell end
     val cells = map mk_cell rects
     val _ = Array.appi (fn (i, n) =>
               if n = 1 then ()
@@ -246,14 +256,14 @@ fun parse_string (s: string) = parse_syms (Symbol_Pos.explode0 s)
 
 (* debugging / testing *)
 fun string_of_align a = case a of Default => "" | Left => "<" | Center => "^" | Right => ">"
-fun string_of_rule r = case r of No_Rule => " " | Single => "-" | Double => "="
+fun string_of_rule r = case r of No_Rule => " " | Single => "-" | Thick => "#" | Double => "="
 fun string_of_table ({nrows, ncols, col_widths, cells, hrules} : table) =
   "rows=" ^ string_of_int nrows ^ " cols=" ^ string_of_int ncols ^ " widths="
   ^ commas (map string_of_int col_widths) ^ "\n"
   ^ cat_lines (map (fn (k, rs) => "rule" ^ string_of_int k ^ " " ^
                                   implode (map string_of_rule rs)) (tag_list 0 hrules))
   ^ "\n"
-  ^ cat_lines (map (fn {row, col, rowspan, colspan, align, content} =>
+  ^ cat_lines (map (fn {row, col, rowspan, colspan, align, content, ...} =>
         "(" ^ string_of_int row ^ "," ^ string_of_int col ^ ")+" ^ string_of_int rowspan ^ "x"
         ^ string_of_int colspan ^ string_of_align align ^ " "
         ^ quote (space_implode "/" (map Symbol_Pos.content content))) cells)
@@ -327,19 +337,33 @@ fun output_table ctxt ({nrows, ncols, col_widths, cells, hrules}: Gridtbl.table)
                      #row c <= i andalso i < #row c + #rowspan c
                      andalso (#col c = m orelse #col c + #colspan c = m)) cells
 
+    (* is the vertical border at column boundary m in row slot i bold? *)
+    fun vbold i m =
+      exists (fn (c: Gridtbl.cell) =>
+                #row c <= i andalso i < #row c + #rowspan c
+                andalso ((#col c = m andalso #leftb c)
+                         orelse (#col c + #colspan c = m andalso #rightb c))) cells
+    fun bar b = if b then "!{\\vrule width \\DOFgridthick}" else "|"
+
     fun hrule k =
       let
         val rs = nth hrules k
-        fun ch r = (case r of Gridtbl.No_Rule => "~" | Gridtbl.Single => "-" | Gridtbl.Double => "=")
-        fun junction m = if m = 0 orelse m = ncols orelse vline (k - 1) m orelse vline k m
-                         then "|" else ""
+        fun ch r = (case r of Gridtbl.No_Rule => "~" | Gridtbl.Single => "-" | Gridtbl.Thick => "-"
+                            | Gridtbl.Double => "=")
+        fun junction m =
+          if m = 0 orelse m = ncols orelse vline (k - 1) m orelse vline k m
+          then bar (vbold (k - 1) m orelse vbold k m) else ""
+        val thick = exists (fn r => r = Gridtbl.Thick) rs
       in if forall (fn r => r = Gridtbl.No_Rule) rs then []
-         else Latex.string ("\\hhline{" ^ junction 0 ^
+         else (if thick then Latex.string "\\noalign{\\global\\arrayrulewidth=\\DOFgridthick}" else [])
+              @ Latex.string ("\\hhline{" ^ junction 0 ^
                 implode (map_index (fn (j, r) => ch r ^ junction (j + 1)) rs) ^ "}\n")
+              @ (if thick then Latex.string "\\noalign{\\global\\arrayrulewidth=\\DOFgridthin}\n" else [])
       end
 
-    fun item last text span =
-      Latex.string ("\\multicolumn{" ^ string_of_int span ^ "}{|l" ^ (if last then "|" else "") ^ "}{")
+    fun item i col last text span =
+      Latex.string ("\\multicolumn{" ^ string_of_int span ^ "}{" ^ bar (vbold i col) ^ "l"
+                    ^ (if last then bar (vbold i ncols) else "") ^ "}{")
       @ text @ Latex.string "}"
 
     fun row i =
@@ -352,10 +376,10 @@ fun output_table ctxt ({nrows, ncols, col_widths, cells, hrules}: Gridtbl.table)
                  let val txt = Latex.string ("\\DOFgridcell{" ^ cellw c ^ "}{" ^ align_cmd (#align c)
                                              ^ "}{" ^ string_of_int (#rowspan c) ^ "}{")
                                @ output_content ctxt (#content c) @ Latex.string "}"
-                 in (fn last => item last txt (#colspan c)) :: go (j + #colspan c) end
+                 in (fn last => item i j last txt (#colspan c)) :: go (j + #colspan c) end
              | NONE =>
                  (case covers i j of
-                    SOME c => (fn last => item last [] (#colspan c)) :: go (j + #colspan c)
+                    SOME c => (fn last => item i j last [] (#colspan c)) :: go (j + #colspan c)
                   | NONE => error "Grid table: internal error (uncovered slot)"))
         val items = go 0
         val n = length items

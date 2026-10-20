@@ -88,6 +88,18 @@ val t4 = T
   "+----------+-------+"]
 val _ = @{assert} (text_of (cell_of t4 (0, 0)) = "\<open>a|b\<open>c\<close>\<close>/more")
 
+(* 4b. the bold symbol (alone) is a bold vertical bar of logical length one *)
+val t5 = T
+ ["+-----+-----+",
+  "\<^bold> a   | b   \<^bold>",
+  "+-----+-----+"]
+val _ = @{assert} (#col_widths t5 = [6, 6])
+val _ = @{assert} (#leftb (cell_of t5 (0, 0)) andalso not (#rightb (cell_of t5 (0, 0)))
+                   andalso #rightb (cell_of t5 (0, 1)))
+val _ = @{assert} (String.isSubstring "!{\\vrule width \\DOFgridthick}"
+                     (latex ["+-----+-----+", "\<^bold> a   | b   |", "+-----+-----+"]))
+val _ = @{assert} (nth (#hrules (T ["+\<^bold>\<open>---\<close>+", "|   |", "+---+"])) 0 = [Gridtbl.Thick])
+
 (* 5. generated LaTeX *)
 val l1 = latex ["+-----+-----+", "| a   | b   |", "+=====+=====+"]
 val _ = @{assert} (String.isSubstring "\\hhline{|=|=|}" l1

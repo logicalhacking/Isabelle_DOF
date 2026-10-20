@@ -80,22 +80,34 @@ fun boxed_bash_antiquotation name =
                                         #> DOF_lib.enclose_env true ctxt "bash") 
                            (* the simplest conversion possible *)
 
-(* source of grid tables: the cartouche symbols are shown as such, each control symbol as one 
-   caret, so that the one-symbol-per-column alignment of the table is kept *)
+(* source of grid tables, as in the editor: fixed-pitch, every symbol on its own column, so that 
+   the logical columns of the table stay visible; blank lines at the begin and at the end are 
+   ignored *)
+fun grid_tex_symbol sym =
+  if sym = Symbol.open_ then "\\DOFgo{}"
+  else if sym = Symbol.close then "\\DOFgc{}"
+  else if sym = chr 92 ^ "<^bold>" then "\\DOFgbar{}"
+  else if String.isPrefix (chr 92 ^ "<^") sym then "\\DOFgcaret{}"
+  else if String.isPrefix (chr 92 ^ "<") sym then "\\DOFgsym{}"
+  else if sym = " " then "\\ "
+  else if member (op =) (raw_explode "\\{}#$%&^_~") sym then "\\char" ^ string_of_int (ord sym) ^ " "
+  else sym
+
 fun grid_source_text (s, pos) =
-  let fun conv sym =
-        if sym = Symbol.open_ then "ë\\isacartoucheopen ë"
-        else if sym = Symbol.close then "ë\\isacartoucheclose ë"
-        else if String.isPrefix (chr 92 ^ "<^") sym then "ë\\textasciicircum ë"
-        else sym
-  in (String.concat (map conv (Symbol.explode s)), pos) end
+  let
+    fun trim_blanks l = implode (rev (snd (chop_prefix (fn c => c = " ") (rev (raw_explode l)))))
+    val lines = map trim_blanks (split_lines s)
+    fun drop_empty ls = snd (chop_prefix (fn l => l = "") ls)
+    val trim = drop_empty #> rev #> drop_empty #> rev
+    fun line l = "\\DOFgridline{" ^ String.concat (map grid_tex_symbol (Symbol.explode l)) ^ "}\n"
+  in (String.concat (map line (trim lines)), pos) end
 
 fun boxed_grid_antiquotation name =
     DOF_lib.gen_text_antiquotation name (K(K())) 
                            (fn ctxt => Input.source_content 
                                         #> grid_source_text
                                         #> Latex.text 
-                                        #> DOF_lib.enclose_env true ctxt "bash")
+                                        #> Latex.environment "DOFgridsrc")
 \<close>
 
 setup\<open>boxed_text_antiquotation         \<^binding>\<open>boxed_text\<close> #>
