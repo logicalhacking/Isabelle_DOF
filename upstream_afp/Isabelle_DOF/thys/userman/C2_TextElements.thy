@@ -217,10 +217,13 @@ Similar to the precedent example except we combine ordered and unordered lists.
 
 
 text\<open>
-The end of a list ins Isabelle/Isar is defined as an empty line in Isabelle, switching type list with no
-change in indentation is therefore implicitly also ends a list.
+The end of a list in Isabelle/Isar is defined as an empty line in Isabelle, switching type list 
+with no change in indentation is therefore implicitly also ends a list.
 \<close>
-subsection*[simpfig::technical]\<open>Simple\<close>
+
+section\<open>Figures\<close>
+
+subsection*[simpfig::technical]\<open>Simple Figures\<close>
 
 text\<open>The figure macro is provided by the \<^isadof> ontology, and allows you to display a file as
  a figure in your document. The path towards the document (pdf, png) is given in the \<^verbatim>\<open>file_source\<close>
@@ -246,7 +249,7 @@ produces the result @{figure(unchecked)\<open>example1\<close>}.
 figure*[example1::figure,relative_width="95",file_src="''figures/LatexLogo.png''"]\<open> 
      Latex Logo on white background \<close>
 
-subsection*[compfid::technical]\<open>Complex\<close>
+subsection*[compfid::technical]\<open>Complex Figures\<close>
 
 text\<open>It you wanted a more liberal use of your images/figures you may use the \<^verbatim>\<open>text\<close> macro from the
  \<^isadof> ontology. This has many uses when formatting your document, such as allowing to have figures
@@ -507,8 +510,12 @@ text\<open>Cells can span rows and columns, and rulers can be placed everywhere:
 +---------------+-------+
 \<close>\<close>\<close>
 
-text\<open>@{fig_content (width=95, caption="") "figures/GridTable-I.png"}\<close>
-text\<open>Cells can contain antiquotations. This is the table of the definitions of some 
+text*[example5::float,  main_caption="\<open>A Grid-Table Animated in Isabelle/PIDE\<close>"]
+\<open>@{fig_content (width=95, caption="") "figures/GridTable-I.png"}\<close>
+
+text\<open>Result:\<close>
+
+text\<open>Cells can contain antiquotations. This is the table of the definitions of some
 logical constants, that is, the data of a typical \<^LaTeX> table:
 
 \<^outmat>\<open>

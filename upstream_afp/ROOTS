@@ -1,5 +1,6 @@
 Isabelle_DOF
 Isabelle_DOF/thys/refman
+Isabelle_DOF/thys/userman
 # Dev Section 
 ../Isabelle_DOF-Ontologies/
 ../Isabelle_DOF-Unit-Tests/
