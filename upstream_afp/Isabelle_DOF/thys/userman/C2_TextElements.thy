@@ -304,7 +304,7 @@ text\<open>Hyperlinks let you add links to websites. The url antiquotation in \<
  Below is an example of creating a hyperlink towards the installation page of \<^isadof>.
 
 
-\<^isarbox>\<open>\<^isatext>\<open>url
+\<^isarbox>\<open>\<^isatext>\<open>
  This is the link where you may install Isabelle/DOF :
 \textbf{\textit{url}}<https://www.isa-afp.org/entries/Isabelle\_DOF.html>
 \<close>\<close>
@@ -343,10 +343,10 @@ text\<open> References allow you to create pointers to certain figures and secti
  allowing a quick access and good navigation in your PDF file.\<close>
 
 paragraph\<open>Referencing backwards\<close>
-text\<open>This is an easy way to add a reference to chapter,section or figure that has already occured in
+text\<open>This is an easy way to add a reference to chapter, section or figure that has already occurred in
 your document. 
 @{boxed_theory_text[display]\<open>
-subsection*[refexample1::technical]\<open>Reference example 1\<close>
+subsection*[refexample1::technical]\<open>Reference Example 1\<close>
 text\<open>We have just created a reference to the subsection  @{technical\<open>refexample1\<close>}, defined right above.\<close>
 \<close>}
 \<^outmat>\<open>
@@ -355,7 +355,7 @@ text\<open>We have just created a reference to the subsection  @{technical\<open
  args={label = {CTWOUNDERSCOREBasicsDOTrefexample1},type = {scholarlyUNDERSCOREpaperDOTtechnical},
  IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel = {}, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable = {False},
  IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants = {{STR ''outline'', STR ''document''}},
- scholarlyUNDERSCOREpaperDOTtextUNDERSCOREsectionDOTmainUNDERSCOREauthor = {}, scholarlyUNDERSCOREpaperDOTtextUNDERSCOREsectionDOTfixmeUNDERSCORElist = {}, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel = {}, scholarlyUNDERSCOREpaperDOTtechnicalDOTdefinitionUNDERSCORElist = {}, scholarlyUNDERSCOREpaperDOTtechnicalDOTstatus = {description}}]Reference example 1
+ scholarlyUNDERSCOREpaperDOTtextUNDERSCOREsectionDOTmainUNDERSCOREauthor = {}, scholarlyUNDERSCOREpaperDOTtextUNDERSCOREsectionDOTfixmeUNDERSCORElist = {}, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel = {}, scholarlyUNDERSCOREpaperDOTtechnicalDOTdefinitionUNDERSCORElist = {}, scholarlyUNDERSCOREpaperDOTtechnicalDOTstatus = {description}}]Reference Example 1
 \end{isamarkupsubsection*}\isamarkuptrue%
 \begin{isamarkuptext}
 We have just created a reference to the subsection  {\isaDofDOTref[type={scholarlyUNDERSCOREpaperDOTtechnical}]     {CTWOUNDERSCOREBasicsDOTrefexample1}}, defined right above.
@@ -371,7 +371,7 @@ at the very end of the building.
 @{boxed_theory_text[display]\<open>
 declare_reference*[refexample2::technical]
 text\<open>We have just created a reference to the subsection  @{technical(unchecked)\<open>refexample2\<close>}, defined right beneath.\<close>
-subsection*[refexample2::technical]\<open>Reference example 2\<close>
+subsection*[refexample2::technical]\<open>Reference Example 2\<close>
 \<close>}
 \<^outmat>\<open>          
 \isakeywordONE{declare{\isacharunderscore}{\kern0pt}reference{\isacharasterisk}{\kern0pt}}\isamarkupfalse%
@@ -381,7 +381,7 @@ We have just created a reference to the subsection  {\isaDofDOTref[type={scholar
 \end{isamarkuptext}\isamarkuptrue%
 
 \begin{isamarkupsubsection*}
-[label = {CTWOUNDERSCOREBasicsDOTrefexampleTWO},type = {scholarlyUNDERSCOREpaperDOTtechnical}, args={label = {CTWOUNDERSCOREBasicsDOTrefexampleTWO},type = {scholarlyUNDERSCOREpaperDOTtechnical}, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel = {}, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable = {False}, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants = {{STR ''outline'', STR ''document''}}, scholarlyUNDERSCOREpaperDOTtextUNDERSCOREsectionDOTmainUNDERSCOREauthor = {}, scholarlyUNDERSCOREpaperDOTtextUNDERSCOREsectionDOTfixmeUNDERSCORElist = {}, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel = {}, scholarlyUNDERSCOREpaperDOTtechnicalDOTdefinitionUNDERSCORElist = {}, scholarlyUNDERSCOREpaperDOTtechnicalDOTstatus = {description}}]Reference example 2
+[label = {CTWOUNDERSCOREBasicsDOTrefexampleTWO},type = {scholarlyUNDERSCOREpaperDOTtechnical}, args={label = {CTWOUNDERSCOREBasicsDOTrefexampleTWO},type = {scholarlyUNDERSCOREpaperDOTtechnical}, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel = {}, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable = {False}, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants = {{STR ''outline'', STR ''document''}}, scholarlyUNDERSCOREpaperDOTtextUNDERSCOREsectionDOTmainUNDERSCOREauthor = {}, scholarlyUNDERSCOREpaperDOTtextUNDERSCOREsectionDOTfixmeUNDERSCORElist = {}, IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel = {}, scholarlyUNDERSCOREpaperDOTtechnicalDOTdefinitionUNDERSCORElist = {}, scholarlyUNDERSCOREpaperDOTtechnicalDOTstatus = {description}}]Reference Example 2
 \end{isamarkupsubsection*}\isamarkuptrue
 \<close>
 \<close>
@@ -396,21 +396,21 @@ For this you need a 'root.bib' file that will be in the document directory of yo
 example, with the extract of the 'root.bib' file, of the code and the generated end result. 
 
 \begin{config}{root.bib}
-@Manual{	  brucker.ea:isabelledof:2025,
+@Manual{	  brucker.ea:isabelledof:2026,
   title		= {The Isabelle/DOF User and Implementation Manual},
   author	= {Achim D. Brucker, Nicolas Méric and Burkhart Wolff},
-  year		= 2025,
+  year		= 2026,
   url     = "www.isa-afp.org/browser_info/current/AFP/Isabelle_DOF/document.pdf"
 }
 \end{config}
 
 \<^isarbox>\<open>\<^isatext>\<open>
  While writing this user manual,I often used the Implementation and Reference Manual
-\textit{\textbf{cite}}<"brucker.ea:isabelledof:2025"> to check on how antiquotations are most often used.
+\textit{\textbf{cite}}<"brucker.ea:isabelledof:2026"> to check on how antiquotations are most often used.
 \<close>\<close>
 \<^outmat>\<open>
 While writing this user manual, I often used the Implementation and \\
- Reference Manual \cite{brucker.ea:isabelledof:2025} to check how antiquotations are most often used.
+ Reference Manual \cite{brucker.ea:isabelledof:2026} to check how antiquotations are most often used.
 \<close>
 \<close>
 
@@ -448,7 +448,7 @@ length, in which each symbol counts one; \<^verbatim>\<open>\<^bold>\<open>|\<cl
 As in markdown, \<^verbatim>\<open>:---:\<close>, \<^verbatim>\<open>:---\<close> and \<^verbatim>\<open>---:\<close> in the border of a cell center, left-align and 
 right-align its content.\<close>
 text\<open>The first example has a head ruler and a column each of left, centered and right-aligned content:
-
+\<^vs>\<open>0.5cm\<close>
 @{boxed_grid [display]\<open>+:-------------+:----------:+-----------:+
 | Class        | Checks     | Time (s)   |
 +:=============+:==========:+===========:+
@@ -458,6 +458,11 @@ text\<open>The first example has a head ruler and a column each of left, centere
 +:-------------+:----------:+-----------:+
 | technical    | 128        | 7.24       |
 +:-------------+:----------:+-----------:+\<close>}
+
+\<^vs>\<open>0.5cm\<close>
+\<^noindent>  gives the output:
+\<^vs>\<open>0.5cm\<close>
+
 \<^outmat>\<open>
 \<^gridtbl>\<open>
 +:-------------+:----------:+-----------:+
