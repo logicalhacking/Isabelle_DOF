@@ -150,7 +150,7 @@ It gives an example-driven overview of the various text elements provided jointl
 \<^isadof> and discusses some best practices.  
 
 If you are an ontology developer or working on \<^isadof> itself, we recommend consulting
-the Reference Manual(\<^cite>\<open>"brucker.ea:isabelledof:2025"\<close>), which provides a more detailed and technical
+the Reference Manual(\<^cite>\<open>"brucker.ea:isabelledof:2026"\<close>), which provides a more detailed and technical
 overview of the system’s internal architecture and capabilities.
 
 One final remark: This document --- albeit written in  \<^isadof> --- is \<^bold>\<open>not\<close> a typical  \<^isadof> 
