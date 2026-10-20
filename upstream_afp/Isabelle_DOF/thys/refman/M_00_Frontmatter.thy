@@ -102,8 +102,8 @@ fun grid_source_text (s, pos) =
     fun tex_line s = "\\DOFgridline{" ^ s ^ "}\n"
     fun line l = tex_line (String.concat (map grid_tex_symbol (Symbol.explode l)))
     (* the commands around the table, as they are written in the text *)
-    val prelude = ["\\DOFgridcmd{gridtbl}\\DOFgo{}"]
-    val postlude = "\\DOFgc{}"
+    val prelude = ["\\DOFgridcmd{outmat}\\DOFgo{}", "\\DOFgridcmd{gridtbl}\\DOFgo{}"]
+    val postlude = "\\DOFgc{}\\DOFgc{}"
   in (String.concat (map tex_line prelude @ map line (trim lines) @ [tex_line postlude]), pos) end
 
 fun boxed_grid_antiquotation name =
