@@ -252,23 +252,24 @@ figure*[example1::figure,relative_width="95",file_src="''figures/LatexLogo.png''
 subsection*[compfid::technical]\<open>Complex Figures\<close>
 
 text\<open>It you wanted a more liberal use of your images/figures you may use the \<^verbatim>\<open>text\<close> macro from the
- \<^isadof> ontology. This has many uses when formatting your document, such as allowing to have figures
- side by side. 
-This is easier to understand with examples.
+\<^isadof> ontology. This has many uses when formatting your document, such as allowing to have figures
+side by side. This is easier to understand with examples.
 Firstly, an example were we display a single figure, similarly to the use of the \<^verbatim>\<open>figure\<close> macro.
-
+In contrast to the previous (inline) case, this time, we wrap it into an own referentiable 
+\<^theory_text>\<open>text*\<close>-command:
 @{boxed_theory_text[display]\<open>
 text*[example2::float,  main_caption="''\<open>Latex Logo on white background\<close>''"]
 \<open>@{fig_content (width=35, caption="''''") "''figures/LatexLogo.png''"}\<close>
 \<close>
 }
-This has the following results @{figure(unchecked)\<open>example2\<close>}.
+The result is shown in @{figure(unchecked)\<open>example2\<close>}.
 \<close>
 text*[example2::float,  main_caption="\<open>Latex Logo on white background\<close>"]
 \<open>@{fig_content (width=95, caption="") "figures/LatexLogo.png"}\<close>
 text\<open>
-As you can see this has the exact same result as the example we gave with the \<^verbatim>\<open>figure\<close> macro.
-In this second example we see how we can use \<^verbatim>\<open>text\<close> macro to have two figures side by side.
+As you can see the result is identical to the previous \<^theory_text>\<open>figure*\<close>-command. Now, combining
+these two things --- the reference to \<^theory_text>\<open>fig_content\<close> and the \<^theory_text>\<open>text*-float\<close>-box around, we can
+two or more figures side by side.
 
 @{boxed_theory_text[display]\<open>
 text*[example3::float, 
@@ -289,7 +290,7 @@ text*[example3::float,  main_caption="\<open>Latex logos\<close>"]
 \<close>
 
 text\<open>As you can clearly tell the placement seems a bit off. This is because each figure is placed at
- the first available place to the right of the current content. We can resolve this by adding a \<^verbatim>\<open>hs\<open>2.5cm\<close>\<close>
+the first available place to the right of the current content. We can resolve this by adding a \<^verbatim>\<open>hs\<open>2.5cm\<close>\<close>
 macro command between our two \<^verbatim>\<open>fig_content\<close>, and a \<^verbatim>\<open>hs\<open>0.5cm\<close>\<close> before the first one and after the
  second one.\<close>
 
@@ -298,13 +299,13 @@ text*[example4::float,  main_caption="\<open>Latex logos\<close>"]
 \<^hs>\<open>0.5cm\<close>@{fig_content (width=35, caption="In white") "figures/LatexLogo.png"
 }\<^hs>\<open>2.5cm\<close>@{fig_content (width=35, caption="In black") "figures/LatexLogoBlack.png"}\<^hs>\<open>0.5cm\<close>
 \<close>
-text\<open> Placing figures within a \<^isadof> document can be predictable but you can play with the
- different tools to get the wanted result. @{float\<open>example4\<close>}\<close>
+text\<open> Placing figures within a \<^isadof> document can be somewhat impredictable and needs some
+experimenting to get the wanted result. @{float\<open>example4\<close>}\<close>
 
 section*[hlinks::technical]\<open>Hyperlinks\<close>
 
 text\<open>Hyperlinks let you add links to websites. The url antiquotation in \<^isadof> is written \<^verbatim>\<open>\<^url>\<close>.
- Below is an example of creating a hyperlink towards the installation page of \<^isadof>.
+Below is an example of creating a hyperlink towards the installation page of \<^isadof>.
 
 
 \<^isarbox>\<open>\<^isatext>\<open>
