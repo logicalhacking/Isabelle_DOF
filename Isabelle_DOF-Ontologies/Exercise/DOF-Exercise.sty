@@ -17,10 +17,8 @@
 
 \RequirePackage{etoolbox}
 \RequirePackage{xcolor}
-% The names (\ExerciseName, \AnswerName, \ExePartName) and their translations are those of
-% exercise.sty. Its layout is not used: it relies on nested list environments that are opened
-% by one command and closed by a later one, which does not work if every element of the
-% document is typeset in an environment of its own.
+% Counters, headers, names and their translations (\ExerciseName, \AnswerName, \ExePartName), the
+% difficulty marker and the list of exercises are those of exercise.sty (see below).
 \RequirePackage{exercise}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,21 +68,22 @@
   \global\DOFexe@bannershowntrue\fi}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Numbering and layout. The numbers are counted by global counters, since every
-% element is a group of its own.
-\newcounter{DOFexercise}
-\newcounter{DOFpart}[DOFexercise]
-\newcounter{DOFtask}[DOFexercise]
-\newcounter{DOFsubtask}[DOFtask]
-\renewcommand\theDOFpart{\Roman{DOFpart}}
-\renewcommand\theDOFsubtask{\alph{DOFsubtask}}
-\newcommand\DOFexe@stars[1]{\@tempcnta=#1\relax\@whilenum\@tempcnta>0\do{$\star$\advance\@tempcnta\m@ne}}
-\newcommand\DOFexe@difficulty[1]{\ifnum#1>0 \ \textsf{\DOFexe@stars{#1}}\fi}
-\newcommand\DOFexe@points[1]{\ifnum#1>0 \hfill\textit{(#1 pts)}\fi}
+% Numbering, headers and layout are those of exercise.sty: its counters (Exercise, ExePart, Question,
+% subQuestion, which reset each other as sections and subsections do), its keys and flags, its header
+% commands (\ExerciseHeader, \ExePartListHeader, \QuestionNB, ...), its difficulty marker, its lengths
+% and its list of exercises. What is replaced is only the machinery of nested list environments: a
+% command of exercise.sty opens a list that is closed by a later command, which does not survive the
+% groups of the elements (every text* is an environment of its own). Here, the levels of the questions
+% are flat paragraphs with a hanging indentation, numbered by the counters of exercise.sty.
+\def\DifficultyMarker{\ensuremath{\star}}
+% the name of the solutions (the \AnswerName of exercise.sty is "Answer of exercise")
+\providecommand\DOFexeSolutionName{Solution}
 % the value of an attribute is expanded before it is tested
 \newcommand\DOFexe@ifempty[3]{\edef\DOFexe@tmp{#1}\ifdefempty{\DOFexe@tmp}{#2}{#3}}
-\newcommand\DOFexe@title[1]{\DOFexe@ifempty{#1}{}{\ \emph{#1}}}
-\newlength\DOFexe@indent\setlength\DOFexe@indent{2.2em}
+% the points are shown if they are not the default (0)
+\newcommand\DOFexe@points[1]{\ifnum#1>0 \hfill\textit{(#1 pts)}\fi}
+% an indentation of the blocks of solutions and remarks
+\newlength\DOFexe@indent\setlength\DOFexe@indent{\QuestionIndent}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,12 +99,22 @@
  ,ExerciseDOTexerciseDOTorigin=%
 ][1]{%
   \DOFexe@ifvisible{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto}}{%
-    \DOFexeShowBanner\refstepcounter{DOFexercise}\label{\commandkey{label}}%
-    \par\bigskip\noindent\textbf{\ExerciseName\ \theDOFexercise}%
-    \DOFexe@title{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTtitle}}%
-    \DOFexe@ifempty{\commandkey{ExerciseDOTexerciseDOTorigin}}{}{\ (\DOFexe@tmp)}%
-    \DOFexe@difficulty{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}}%
-    \par\nopagebreak\smallskip\noindent #1\par}%
+    \DOFexeShowBanner
+    \@InitExe
+    \DOFexe@ifempty{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTtitle}}{}{%
+      \xdef\ExerciseTitle{\DOFexe@tmp}\global\@ExeTitletrue}%
+    \DOFexe@ifempty{\commandkey{ExerciseDOTexerciseDOTorigin}}{}{%
+      \xdef\ExerciseOrigin{\DOFexe@tmp}\global\@ExeOrigintrue}%
+    \ifnum\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}>0
+      \global\ExerciseDifficulty=\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}%
+      \global\@ExeDifficultytrue\fi
+    \par\pagebreak[1]\vskip\ExerciseSkipBefore
+    \refstepcounter{Exercise}\label{\commandkey{label}}%
+    \begingroup\@getExerciseInfo\ExerciseHeader
+      \addcontentsline{\ext@exercise}{\toc@exercise}{\ExerciseName\ \theExercise\
+        \expandafter{\itshape \ExerciseTitle}\hspace{.66em}}\endgroup
+    \AtBeginExercise
+    \noindent #1\par}%
 }
 
 % exercise_part: ExePart (exercise.sty)
@@ -120,12 +129,17 @@
  ,ExerciseDOTexerciseUNDERSCOREpartDOTname=%
 ][1]{%
   \DOFexe@ifvisible{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto}}{%
-    \refstepcounter{DOFpart}\label{\commandkey{label}}%
-    \par\medskip\noindent\textbf{\DOFexe@ifempty{\commandkey{ExerciseDOTexerciseUNDERSCOREpartDOTname}}%
-      {\ExePartName\ \theDOFpart}{\DOFexe@tmp}}%
-    \DOFexe@title{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTtitle}}%
-    \DOFexe@difficulty{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}}%
-    \par\nopagebreak\smallskip\noindent #1\par}%
+    \@InitExePart
+    \DOFexe@ifempty{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTtitle}}{}{%
+      \xdef\ExePartTitle{\DOFexe@tmp}\global\@ExePartTitletrue}%
+    \DOFexe@ifempty{\commandkey{ExerciseDOTexerciseUNDERSCOREpartDOTname}}{}{%
+      \xdef\@ExePartName{\DOFexe@tmp}\global\@ExePartReNametrue}%
+    \ifnum\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}>0
+      \global\ExePartDifficulty=\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}%
+      \global\@ExePartDifficultytrue\fi
+    \par\refstepcounter{ExePart}\label{\commandkey{label}}%
+    \begingroup\@getExePartInfo\ExePartListHeader\endgroup
+    \noindent #1\par}%
 }
 
 % task: Question (exercise.sty)
@@ -140,11 +154,18 @@
  ,ExerciseDOTtaskDOTpoints=%
 ][1]{%
   \DOFexe@ifvisible{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto}}{%
-    \refstepcounter{DOFtask}\label{\commandkey{label}}%
-    \par\medskip\noindent\hangindent\DOFexe@indent\hangafter=1
-    \makebox[\DOFexe@indent][l]{\textbf{\theDOFtask.}}%
-    \DOFexe@difficulty{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}}%
-    \DOFexe@title{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTtitle}}\ #1%
+    \@InitQuestion
+    \DOFexe@ifempty{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTtitle}}{}{%
+      \xdef\QuestionTitle{\DOFexe@tmp}\global\@QuestionTitletrue}%
+    \ifnum\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}>0
+      \global\QuestionDifficulty=\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}%
+      \global\@QuestionDifficultytrue\fi
+    \par\vskip\QuestionBefore\refstepcounter{Question}\label{\commandkey{label}}%
+    \noindent\hangindent\QuestionIndent\hangafter=1
+    \begingroup\@getQuestionInfo
+      \makebox[\QuestionIndent][l]{\QuestionHeaderDifficulty\QuestionNB}%
+      \QuestionHeaderTitle\endgroup
+    #1%
     \DOFexe@points{\commandkey{ExerciseDOTtaskDOTpoints}}\par}%
 }
 
@@ -160,10 +181,19 @@
  ,ExerciseDOTsubtaskDOTpoints=%
 ][1]{%
   \DOFexe@ifvisible{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto}}{%
-    \refstepcounter{DOFsubtask}\label{\commandkey{label}}%
-    \par\smallskip\noindent\hangindent=2\DOFexe@indent\hangafter=1
-    \hspace*{\DOFexe@indent}\makebox[\DOFexe@indent][l]{\textbf{\theDOFsubtask)}}%
-    \DOFexe@title{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTtitle}}\ #1%
+    \@InitsubQuestion
+    \DOFexe@ifempty{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTtitle}}{}{%
+      \xdef\subQuestionTitle{\DOFexe@tmp}\global\@subQuestionTitletrue}%
+    \ifnum\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}>0
+      \global\subQuestionDifficulty=\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}%
+      \global\@subQuestionDifficultytrue\fi
+    \par\vskip\subQuestionBefore\refstepcounter{subQuestion}\label{\commandkey{label}}%
+    \noindent\hangindent=\dimexpr\QuestionIndent+\subQuestionIndent\relax\hangafter=1
+    \hspace*{\QuestionIndent}%
+    \begingroup\@getsubQuestionInfo
+      \makebox[\subQuestionIndent][l]{\subQuestionHeaderDifficulty\subQuestionNB}%
+      \subQuestionHeaderTitle\endgroup
+    #1%
     \DOFexe@points{\commandkey{ExerciseDOTsubtaskDOTpoints}}\par}%
 }
 
@@ -181,8 +211,8 @@
  ,ExerciseDOTsolutionDOTalsoUNDERSCORErefersUNDERSCOREto=%
 ][1]{%
   \DOFexe@ifvisible{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto}}{%
-    \par\smallskip\noindent\hangindent=2\DOFexe@indent\hangafter=0
-    \hspace*{\DOFexe@indent}{\color{blue!50!black}\textbf{Solution:}\ #1}\par}%
+    \par\vskip\AnswerSkipBefore\noindent\hangindent=\DOFexe@indent\hangafter=0
+    \hspace*{\DOFexe@indent}{\color{blue!50!black}\textbf{\DOFexeSolutionName:}\ #1}\par\vskip\AnswerSkipAfter}%
 }
 
 % remark: no equivalent in exercise.sty; for the external evaluators
@@ -196,7 +226,7 @@
  ,ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto=%
 ][1]{%
   \DOFexe@ifvisible{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto}}{%
-    \par\smallskip\noindent\hangindent=2\DOFexe@indent\hangafter=0
+    \par\smallskip\noindent\hangindent=\DOFexe@indent\hangafter=0
     \hspace*{\DOFexe@indent}{\small\color{red!60!black}\textsf{Remark:}\ #1}\par}%
 }
 
