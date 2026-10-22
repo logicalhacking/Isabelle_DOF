@@ -477,6 +477,8 @@ text(in OpSemTransitions)\<open>\
   @{thm OpSemTransitionsSync.\<tau>_trans_SyncL}, 
   we finally conclude that @{thm (concl) OpSemTransitionsSync.ev_trans_SyncL[of e S P P' Q]}.
 \<close>
+(* BU : Last para commented out since OpSem_axioms_ok not visible in this context *)
+
 
 text (in OpSemTransitionsSliding) \<open>
 % The case of \<^term>\<open>Renaming P f\<close> is a bit more tricky
