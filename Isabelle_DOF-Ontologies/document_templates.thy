@@ -17,6 +17,8 @@ imports
   "Isabelle_DOF.Isa_DOF"
 begin
 
+define_template "./document-templates/root-exercise.tex" 
+                "Exercise sheets (ontology Exercise) using the package exercise.sty."
 define_template "./document-templates/root-lipics-v2021-UNSUPPORTED.tex" 
                 "Unsupported template for LIPICS (v2021). Not for general use."
 define_template "./document-templates/root-svjour3-UNSUPPORTED.tex" 

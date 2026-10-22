@@ -13,6 +13,7 @@
 (*<*)
 theory  Exercise
   imports  "Isabelle_DOF.Isa_COL" 
+  "Isabelle_DOF-Ontologies.document_templates"
   keywords "exercise_role" :: document_raw
 begin
 
