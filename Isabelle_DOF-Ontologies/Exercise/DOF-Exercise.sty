@@ -81,13 +81,14 @@
 \providecommand\DOFexeSolutionName{Solution}
 % the value of an attribute is expanded before it is tested
 \newcommand\DOFexe@ifempty[3]{\edef\DOFexe@tmp{#1}\ifdefempty{\DOFexe@tmp}{#2}{#3}}
-% The marks are shown right behind the number, if the difficulty or the points are not the default
-% (0): [<difficulty marks>|<points>], \eg, [\ensuremath{\star\star}|3], or [\ensuremath{\star\star}] if there are no points.
+% The marks are shown right behind the number, if the points or the difficulty are not the default (0):
+% [<points>|<difficulty marks>], e.g., [3|\ensuremath{\star\star}], [3] if there is no difficulty, and
+% [|\ensuremath{\star\star}] if there are no points. They are not typeset in italics.
 \newcommand\DOFexe@marks[2]{%
   \ifnum#1>0 \def\DOFexe@mk{1}\else\ifnum#2>0 \def\DOFexe@mk{1}\else\def\DOFexe@mk{0}\fi\fi
-  \ifnum\DOFexe@mk>0 \ [\ifnum#1>0 \marker{\DifficultyMarker}{#1}\fi\ifnum#2>0 |#2\fi]\fi}
+  \ifnum\DOFexe@mk>0 \ \textup{[\ifnum#2>0 #2\fi\ifnum#1>0 |\marker{\DifficultyMarker}{#1}\fi]}\fi}
 % the headers of the exercises are left-aligned
-\renewcommand{\ExerciseHeader}{\noindent\textbf{\large\ExerciseName\ \ExerciseHeaderNB%
+\renewcommand{\ExerciseHeader}{\noindent\textbf{\large\upshape\ExerciseName\ \ExerciseHeaderNB%
   \ExerciseHeaderTitle\ExerciseHeaderOrigin}}
 % an indentation of the blocks of solutions and remarks
 \newlength\DOFexe@indent\setlength\DOFexe@indent{\QuestionIndent}
@@ -163,7 +164,7 @@
     \par\vskip\QuestionBefore\refstepcounter{Question}\label{\commandkey{label}}%
     \noindent\hangindent\QuestionIndent\hangafter=1
     \begingroup\@getQuestionInfo
-      \makebox[\QuestionIndent][l]{\QuestionNB}%
+      \makebox[\QuestionIndent][l]{\textup{\QuestionNB}}%
       \DOFexe@marks{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}}%
                     {\commandkey{ExerciseDOTtaskDOTpoints}}\ %
       \QuestionHeaderTitle\endgroup
@@ -189,7 +190,7 @@
     \noindent\hangindent=\dimexpr\QuestionIndent+\subQuestionIndent\relax\hangafter=1
     \hspace*{\QuestionIndent}%
     \begingroup\@getsubQuestionInfo
-      \makebox[\subQuestionIndent][l]{\subQuestionNB}%
+      \makebox[\subQuestionIndent][l]{\textup{\subQuestionNB}}%
       \DOFexe@marks{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}}%
                     {\commandkey{ExerciseDOTsubtaskDOTpoints}}\ %
       \subQuestionHeaderTitle\endgroup

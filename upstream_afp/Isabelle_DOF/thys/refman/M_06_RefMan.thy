@@ -673,8 +673,8 @@ text\<open>
 \begin{center}
 \begin{minipage}{.9\textwidth}\footnotesize
 \dirtree{%
-.0 .
-.1 Isa\_COL.text\_element.
+.0 Isa\_COL.
+.1 Isa\_COL.text\_element\DTcomment{the classes of the COL}.
 .2 Isa\_COL.chapter.
 .2 Isa\_COL.section.
 .2 Isa\_COL.subsection.
@@ -683,9 +683,14 @@ text\<open>
 .2 Isa\_COL.figure{...}.
 .2 Isa\_COL.listing{...}.
 .1 \ldots.
+.1 Isa\_COL\_Figs\DTcomment{figures: fig\_content, figure\_content, figure*, listing*}.
+.1 Isa\_COL\_Gridtbl\DTcomment{grid tables: the antiquotation gridtbl}.
 }
 \end{minipage}
-\end{center}\<close>\<close>
+\end{center}\<close>
+The COL consists of three theories: the classes above (with shortcuts and macros such as 
+\<^verbatim>\<open>outmat\<close>), the figures and the commands for them, and the \<^emph>\<open>grid tables\<close> (the 
+\<^verbatim>\<open>gridtbl\<close>-antiquotation, \<^eg>, for the tables of this manual); the latter two are described below.\<close>
 
 text\<open>
 In particular it defines the super-class \<^typ>\<open>text_element\<close>: the root of all 
@@ -1384,6 +1389,102 @@ schemata:
 
 
 
+subsection*[exercise_onto::technical]\<open>The Ontology \<^verbatim>\<open>Exercise\<close>\<close>
+text\<open>
+The ontology \<^verbatim>\<open>Exercise\<close> is part of the add-on \<^verbatim>\<open>Isabelle_DOF-Ontologies\<close>. It is an abstraction of the 
+\<^LaTeX> package \<^verbatim>\<open>exercise.sty\<close> and describes \<^emph>\<open>exercise sheets\<close> as they are used in teaching: 
+tutorials (TD), practical work (TP), lectures (CM) and examinations. It is based on the COL only; 
+its theory is imported and activated by
+@{boxed_theory_text [display]\<open>
+imports "Isabelle_DOF-Ontologies.Exercise"
+...
+use_template "exercise"
+use_ontology "Isabelle_DOF-Ontologies.Exercise"\<close>}
+The template \<^verbatim>\<open>exercise\<close> (a \<^verbatim>\<open>scrartcl\<close> page) loads \<^verbatim>\<open>exercise.sty\<close>; the ontology can also be used in the 
+templates of other ontologies, for example \<^verbatim>\<open>lncs\<close> together with \<^verbatim>\<open>scholarly_paper\<close>. 
+\<close>
+
+subsubsection\<open>Classes\<close>
+text\<open>
+The elements of a sheet are the following classes; \<^verbatim>\<open>exercise\<close>, \<^verbatim>\<open>exercise_part\<close>, \<^verbatim>\<open>task\<close>, 
+\<^verbatim>\<open>subtask\<close>, \<^verbatim>\<open>solution\<close> and \<^verbatim>\<open>remark\<close> are subclasses of \<^verbatim>\<open>exercise_element\<close>, which provides the 
+attributes \<^verbatim>\<open>title\<close>, \<^verbatim>\<open>difficulty\<close> (a number, default \<open>0\<close>) and \<^verbatim>\<open>visible_to\<close> (see below). 
+The body of an element is its text.
+\<^gridtbl>\<open>
++-------------------------+---------------+----------------------------------------------------------------------+
+| Class                   | exercise.sty  | Attributes                                                           |
++=========================+===============+======================================================================+
+| \<open>\<^verbatim>\<open>exercise_sheet\<close>\<close>     | (the sheet)   | category, subtitle, institution,                                     |
+|                         |               | course, year; body: the title                                        |
++-------------------------+---------------+----------------------------------------------------------------------+
+| \<open>\<^verbatim>\<open>exercise\<close>\<close>           | Exercise      | title, difficulty, origin                                            |
++-------------------------+---------------+----------------------------------------------------------------------+
+| \<open>\<^verbatim>\<open>exercise_part\<close>\<close>      | ExePart       | title, difficulty, name                                              |
++-------------------------+---------------+----------------------------------------------------------------------+
+| \<open>\<^verbatim>\<open>task\<close>\<close>               | Question      | title, difficulty, points                                            |
++-------------------------+---------------+----------------------------------------------------------------------+
+| \<open>\<^verbatim>\<open>subtask\<close>\<close>            | subQuestion   | title, difficulty, points                                            |
++-------------------------+---------------+----------------------------------------------------------------------+
+| \<open>\<^verbatim>\<open>solution\<close>\<close>           | Answer        | \<open>\<^verbatim>\<open>refers_to\<close>\<close>, \<open>\<^verbatim>\<open>also_refers_to\<close>\<close>                                  |
++-------------------------+---------------+----------------------------------------------------------------------+
+| \<open>\<^verbatim>\<open>remark\<close>\<close>             | (none)        | for the external evaluators                                          |
++-------------------------+---------------+----------------------------------------------------------------------+
+\<close>
+A \<^verbatim>\<open>solution\<close> refers to the task or subtask it solves by the attribute \<^verbatim>\<open>refers_to\<close>, whose type 
+\<open>task + subtask\<close> is checked by the type system:
+@{boxed_theory_text [display]\<open>
+text*[t1::task, difficulty=1, points=2]\<open>What is 1 + 1?\<close>
+text*[s1::solution, refers_to="Inl @{task \<open>t1\<close>}"]\<open>It is 2.\<close>\<close>}
+The remarks are comments for the external evaluators, \<^eg>, the marking scheme.
+\<close>
+
+subsubsection\<open>Sheets, Monitors and Categories\<close>
+text\<open>
+The class \<^verbatim>\<open>exercise_sheet\<close> can be used in two ways. As a text element, 
+\<open>text*[td1::exercise_sheet, category=TD, subtitle=\<dots>]\<open>Title\<close>\<close> replaces the \<open>title*\<close> of the other 
+ontologies: its body is the title, and its attributes appear in the banner below the title. As a 
+\<^emph>\<open>monitor\<close> (\<open>open_monitor*\<close> \<open>\<dots>\<close> \<open>close_monitor*\<close>), it fixes the skeleton of the questions: 
+exercises, each with optional parts, which consist of tasks with their subtasks. Solutions and remarks 
+are not part of the skeleton and may occur anywhere. 
+
+The attribute \<^verbatim>\<open>category\<close> is one of \<open>TD\<close> (``travaux dirigés''), \<open>TP\<close> (``travaux pratiques''), \<open>CM\<close> 
+(``cours magistral'') and \<open>Exam\<close> (``examen''). It has a consequence: in an exam, every task must 
+carry points; this is checked when the monitor of the sheet is closed.
+\<close>
+
+subsubsection\<open>Audiences, Roles and Document Variants\<close>
+text\<open>
+Every element has an \<^emph>\<open>audience\<close> (attribute \<^verbatim>\<open>visible_to\<close>), the lowest of the roles \<open>student\<close> < 
+\<open>professor\<close> < \<open>examiner\<close> that sees it. The tasks, subtasks, parts and exercises are visible to the 
+student, solutions to the professor, and remarks to the examiner. The role of a document is the name of its 
+\<^emph>\<open>document variant\<close> (see the section ``Document Variants''), so a sheet is typeset for the three roles by 
+the following entry in the \<^verbatim>\<open>ROOT\<close> file of its session:
+@{boxed_bash [display]\<open>session "MySheet" = "Isabelle_DOF-Ontologies" +
+  options [document = pdf, document_output = "output", document_build = dof,
+           document_variants = "student:professor:examiner"]
+  theories "my_sheet"\<close>}
+It produces the three files \<^verbatim>\<open>student.pdf\<close>, \<^verbatim>\<open>professor.pdf\<close> and \<^verbatim>\<open>examiner.pdf\<close> in the output 
+directory; with \<^verbatim>\<open>document_variants = "student"\<close>, only the student version is built. 
+Elements that a role does not see are not typeset at all, so they cannot be found in the document. 
+Without the option, there is a single variant called \<^verbatim>\<open>document\<close>, which is treated as the examiner and 
+shows everything. Alternatively, the command \<open>exercise_role student\<close> (or \<open>professor\<close>, \<open>examiner\<close>) 
+in the theory fixes the role for all variants. The command also shows a banner with the role and the 
+data of the open sheet; without argument it keeps the role of the variant.
+\<close>
+
+subsubsection\<open>Presentation\<close>
+text\<open>
+The counters, headers, names (with their translations), the difficulty marker and the list of 
+exercises (\<^verbatim>\<open>\listofexercises\<close>) are those of \<^verbatim>\<open>exercise.sty\<close>. The nested list environments 
+of \<^verbatim>\<open>exercise.sty\<close>, which are opened by one command and closed by a later one, do not survive the 
+fact that every \<^verbatim>\<open>text*\<close> is an environment of its own; the questions are therefore typeset as 
+flat paragraphs with a hanging indentation, which are numbered by the counters of the package 
+(\<open>1.\<close> for tasks, \<open>a)\<close> for subtasks). Behind the number, tasks and subtasks show their points 
+and their difficulty, if they are not the default (\<open>0\<close>), in the form \<^verbatim>\<open>[points|difficulty]\<close>, 
+\<^eg>, \<^verbatim>\<open>[3|**]\<close> or \<^verbatim>\<open>[3]\<close>; the headers of exercises and parts show the difficulty only. 
+The name of the solutions can be redefined by the \<^LaTeX>-macro \<^verbatim>\<open>\DOFexeSolutionName\<close> in the preamble.
+\<close>
+
 section*["sec_advanced"::technical]\<open>Advanced ODL Concepts\<close>
 (*<*)
 doc_class title =
@@ -1859,6 +1960,25 @@ text\<open>
   should) make use of any \<^LaTeX>-classes provided by publishers or standardization bodies.
 \<close>
 
+
+subsection*[document_variants::technical]\<open>Document Variants\<close>
+text\<open>
+A session can produce several PDF-files from the same sources, called \<^emph>\<open>document variants\<close>. 
+They are declared by the option \<^verbatim>\<open>document_variants\<close> in the \<^verbatim>\<open>ROOT\<close> file:
+@{boxed_bash [display]\<open>session "S" = "Isabelle_DOF-Ontologies" +
+  options [document = pdf, document_output = "output", document_build = dof,
+           document_variants = "student:professor:examiner"]\<close>}
+The value is a colon-separated list of variants, each of the form \<^verbatim>\<open>name\<close> or \<^verbatim>\<open>name=tags\<close>, where 
+\<^verbatim>\<open>tags\<close> is a list of the document tags that are kept (\<^verbatim>\<open>+tag\<close>) or dropped (\<^verbatim>\<open>-tag\<close>), \<^eg>, 
+\<^verbatim>\<open>overview=-proof,-ML\<close>. Each variant is built separately, \<^eg>, into \<^verbatim>\<open>output/student.pdf\<close>; without the 
+option, there is the single variant \<^verbatim>\<open>document\<close>. Two points are specific for \<^isadof>: 
+\<^item> the document build engine (\<^verbatim>\<open>document_build = dof\<close>) is exported by the session \<^verbatim>\<open>Isabelle_DOF\<close>, so the 
+  session must have it as an ancestor, \<^eg>, \<^verbatim>\<open>Isabelle_DOF-Ontologies\<close>; a session with the parent 
+  \<^verbatim>\<open>Main\<close> is checked but its document is rejected with the error \<^verbatim>\<open>Bad document_build engine "dof"\<close>;
+\<^item> the name of the variant is available in the \<^LaTeX>-sources as the macro \<^verbatim>\<open>\dof@docvariant\<close> (it is 
+  defined in the file \<^verbatim>\<open>dof-config.sty\<close>, which is written for each variant). Ontologies can use it 
+  to adapt their presentation; the ontology \<^verbatim>\<open>Exercise\<close> uses it to select the role.
+\<close>
 
 subsection*[control_flags::technical]\<open>\<^isadof> Control Flags: Attributes for Evaluation and Parallelization\<close>
 text\<open>
