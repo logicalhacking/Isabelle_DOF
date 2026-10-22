@@ -5,6 +5,7 @@ session "Isabelle_DOF-Ontologies" = "Isabelle_DOF" +
     "Conceptual"
     "small_math"
     "CENELEC_50128"
+    "Exercise"
   theories
     "document_setup"
     "document_templates"
@@ -14,6 +15,7 @@ session "Isabelle_DOF-Ontologies" = "Isabelle_DOF" +
     "small_math/small_math"
     "CENELEC_50128/CENELEC_50128"
     "CENELEC_50128/CENELEC_50128_Documentation"
+    "Exercise/Exercise"
   document_files
     "root.bib"
     "lstisadof-manual.sty"

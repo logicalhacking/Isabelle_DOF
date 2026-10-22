@@ -1,0 +1,223 @@
+%% Copyright (C) 2026 The University of Exeter
+%%               2026 The University of Paris-Saclay
+%%
+%% License:
+%%   This program can be redistributed and/or modified under the terms
+%%   of the LaTeX Project Public License Distributed from CTAN
+%%   archives in directory macros/latex/base/lppl.txt; either
+%%   version 1.3c of the License, or (at your option) any later version.
+%%   OR
+%%   The 2-clause BSD-style license.
+%%
+%%   SPDX-License-Identifier: LPPL-1.3c+ OR BSD-2-Clause
+
+\NeedsTeXFormat{LaTeX2e}\relax
+\ProvidesPackage{DOF-Exercise}
+  [2026/01/01 Representation of the DOF ontology Exercise (an abstraction of exercise.sty).]
+
+\RequirePackage{etoolbox}
+\RequirePackage{xcolor}
+% The names (\ExerciseName, \AnswerName, \ExePartName) and their translations are those of
+% exercise.sty. Its layout is not used: it relies on nested list environments that are opened
+% by one command and closed by a later one, which does not work if every element of the
+% document is typeset in an environment of its own.
+\RequirePackage{exercise}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The selection concept: the role of the document is the name of the document variant
+% (see the Isabelle option document_variants): student, professor or examiner. Every element
+% has an audience, the lowest role that sees it. Other variant names (such as the default
+% "document") are treated as the examiner, who sees everything.
+\newif\ifDOFexe@bannershown
+\def\DOFexe@lvl@student{0}
+\def\DOFexe@lvl@professor{1}
+\def\DOFexe@lvl@examiner{2}
+% \DOFexeSetRole{<role>} sets the role of the document. It is called by the command exercise_role
+% of the theory; without it, the name of the document variant is used.
+\newcommand\DOFexeSetRole[1]{\global\DOFexe@bannershownfalse\edef\DOFexe@r{#1}%
+  \ifdefstring{\DOFexe@r}{student}{%
+    \def\DOFexe@role{0}\def\DOFexeRole{Student version}}{%
+  \ifdefstring{\DOFexe@r}{professor}{%
+    \def\DOFexe@role{1}\def\DOFexeRole{Professor version (with solutions)}}{%
+    \def\DOFexe@role{2}\def\DOFexeRole{Examiner version (with solutions and remarks)}}}}
+\DOFexeSetRole{\dof@docvariant}
+
+% \DOFexeSetSheet{category}{course}{institution}{year}, called by the command exercise_role
+% with the data of the open exercise sheet
+\def\DOFexe@sheet{}
+\newcommand\DOFexe@categoryname[1]{%
+  \ifstrequal{#1}{TD}{Tutorial (TD)}{%
+  \ifstrequal{#1}{TP}{Practical work (TP)}{%
+  \ifstrequal{#1}{CM}{Lecture (CM)}{%
+  \ifstrequal{#1}{Exam}{Exam}{#1}}}}}
+\newcommand\DOFexeSetSheet[4]{%
+  \xdef\DOFexe@sa{#1}\xdef\DOFexe@sb{#2}\xdef\DOFexe@sc{#3}\xdef\DOFexe@sd{#4}%
+  \gdef\DOFexe@sheet{\DOFexe@categoryname{\DOFexe@sa}%
+    \ifdefempty{\DOFexe@sb}{}{ --- \DOFexe@sb}%
+    \ifdefempty{\DOFexe@sc}{}{, \DOFexe@sc}%
+    \ifnum\DOFexe@sd>0 , \DOFexe@sd\fi}}
+
+% \DOFexe@ifvisible{<audience>}{<code>} executes <code> if the role sees the audience. The text of
+% elements that are not visible is never typeset, so it cannot appear in the document.
+\newcommand\DOFexe@ifvisible[2]{%
+  \ifnum\DOFexe@role<\csname DOFexe@lvl@#1\endcsname\relax\else#2\fi}
+
+% The banner shows the data of the sheet and the role. It is shown once: by the command exercise_role,
+% or else by the first exercise.
+\newcommand\DOFexeShowBanner{\ifDOFexe@bannershown\else
+  \par\medskip{\centering\large\color{gray}%
+    \ifdefempty{\DOFexe@sheet}{}{\DOFexe@sheet\par}\DOFexeRole\par}\medskip
+  \global\DOFexe@bannershowntrue\fi}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Numbering and layout. The numbers are counted by global counters, since every
+% element is a group of its own.
+\newcounter{DOFexercise}
+\newcounter{DOFpart}[DOFexercise]
+\newcounter{DOFtask}[DOFexercise]
+\newcounter{DOFsubtask}[DOFtask]
+\renewcommand\theDOFpart{\Roman{DOFpart}}
+\renewcommand\theDOFsubtask{\alph{DOFsubtask}}
+\newcommand\DOFexe@stars[1]{\@tempcnta=#1\relax\@whilenum\@tempcnta>0\do{$\star$\advance\@tempcnta\m@ne}}
+\newcommand\DOFexe@difficulty[1]{\ifnum#1>0 \ \textsf{\DOFexe@stars{#1}}\fi}
+\newcommand\DOFexe@points[1]{\ifnum#1>0 \hfill\textit{(#1 pts)}\fi}
+% the value of an attribute is expanded before it is tested
+\newcommand\DOFexe@ifempty[3]{\edef\DOFexe@tmp{#1}\ifdefempty{\DOFexe@tmp}{#2}{#3}}
+\newcommand\DOFexe@title[1]{\DOFexe@ifempty{#1}{}{\ \emph{#1}}}
+\newlength\DOFexe@indent\setlength\DOFexe@indent{2.2em}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% exercise: Exercise (exercise.sty)
+\newisadof{ExerciseDOTexercise}%
+[label=,type=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTtitle=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto=%
+ ,ExerciseDOTexerciseDOTorigin=%
+][1]{%
+  \DOFexe@ifvisible{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto}}{%
+    \DOFexeShowBanner\refstepcounter{DOFexercise}\label{\commandkey{label}}%
+    \par\bigskip\noindent\textbf{\ExerciseName\ \theDOFexercise}%
+    \DOFexe@title{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTtitle}}%
+    \DOFexe@ifempty{\commandkey{ExerciseDOTexerciseDOTorigin}}{}{\ (\DOFexe@tmp)}%
+    \DOFexe@difficulty{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}}%
+    \par\nopagebreak\smallskip\noindent #1\par}%
+}
+
+% exercise_part: ExePart (exercise.sty)
+\newisadof{ExerciseDOTexerciseUNDERSCOREpart}%
+[label=,type=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTtitle=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto=%
+ ,ExerciseDOTexerciseUNDERSCOREpartDOTname=%
+][1]{%
+  \DOFexe@ifvisible{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto}}{%
+    \refstepcounter{DOFpart}\label{\commandkey{label}}%
+    \par\medskip\noindent\textbf{\DOFexe@ifempty{\commandkey{ExerciseDOTexerciseUNDERSCOREpartDOTname}}%
+      {\ExePartName\ \theDOFpart}{\DOFexe@tmp}}%
+    \DOFexe@title{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTtitle}}%
+    \DOFexe@difficulty{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}}%
+    \par\nopagebreak\smallskip\noindent #1\par}%
+}
+
+% task: Question (exercise.sty)
+\newisadof{ExerciseDOTtask}%
+[label=,type=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTtitle=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto=%
+ ,ExerciseDOTtaskDOTpoints=%
+][1]{%
+  \DOFexe@ifvisible{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto}}{%
+    \refstepcounter{DOFtask}\label{\commandkey{label}}%
+    \par\medskip\noindent\hangindent\DOFexe@indent\hangafter=1
+    \makebox[\DOFexe@indent][l]{\textbf{\theDOFtask.}}%
+    \DOFexe@difficulty{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty}}%
+    \DOFexe@title{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTtitle}}\ #1%
+    \DOFexe@points{\commandkey{ExerciseDOTtaskDOTpoints}}\par}%
+}
+
+% subtask: subQuestion (exercise.sty)
+\newisadof{ExerciseDOTsubtask}%
+[label=,type=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTtitle=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto=%
+ ,ExerciseDOTsubtaskDOTpoints=%
+][1]{%
+  \DOFexe@ifvisible{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto}}{%
+    \refstepcounter{DOFsubtask}\label{\commandkey{label}}%
+    \par\smallskip\noindent\hangindent=2\DOFexe@indent\hangafter=1
+    \hspace*{\DOFexe@indent}\makebox[\DOFexe@indent][l]{\textbf{\theDOFsubtask)}}%
+    \DOFexe@title{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTtitle}}\ #1%
+    \DOFexe@points{\commandkey{ExerciseDOTsubtaskDOTpoints}}\par}%
+}
+
+% solution: Answer (exercise.sty). The audience is the last value of the attribute visible_to: the default
+% of the class (professor) overrides the one of the superclass.
+\newisadof{ExerciseDOTsolution}%
+[label=,type=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTtitle=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto=%
+ ,ExerciseDOTsolutionDOTrefersUNDERSCOREto=%
+ ,ExerciseDOTsolutionDOTalsoUNDERSCORErefersUNDERSCOREto=%
+][1]{%
+  \DOFexe@ifvisible{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto}}{%
+    \par\smallskip\noindent\hangindent=2\DOFexe@indent\hangafter=0
+    \hspace*{\DOFexe@indent}{\color{blue!50!black}\textbf{Solution:}\ #1}\par}%
+}
+
+% remark: no equivalent in exercise.sty; for the external evaluators
+\newisadof{ExerciseDOTremark}%
+[label=,type=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTlevel=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTreferentiable=%
+ ,IsaUNDERSCORECOLDOTtextUNDERSCOREelementDOTvariants=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTtitle=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTdifficulty=%
+ ,ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto=%
+][1]{%
+  \DOFexe@ifvisible{\commandkey{ExerciseDOTexerciseUNDERSCOREelementDOTvisibleUNDERSCOREto}}{%
+    \par\smallskip\noindent\hangindent=2\DOFexe@indent\hangafter=0
+    \hspace*{\DOFexe@indent}{\small\color{red!60!black}\textsf{Remark:}\ #1}\par}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% exercise_sheet, declared as text element: the body is the title of the document (it replaces
+% title*), the attributes give the optional subtitle and the data shown in the banner.
+% Like for title*, the title is passed to the next run of LaTeX by the auxiliary file.
+\newisadof{ExerciseDOTexerciseUNDERSCOREsheet}%
+[label=,type=%
+ ,ExerciseDOTexerciseUNDERSCOREsheetDOTcategory=%
+ ,ExerciseDOTexerciseUNDERSCOREsheetDOTsubtitle=%
+ ,ExerciseDOTexerciseUNDERSCOREsheetDOTcourse=%
+ ,ExerciseDOTexerciseUNDERSCOREsheetDOTyear=%
+ ,ExerciseDOTexerciseUNDERSCOREsheetDOTtrace=%
+ ,ExerciseDOTexerciseUNDERSCOREsheetDOTinstitution=%
+][1]{%
+  \immediate\write\@auxout{\noexpand\title{#1}}%
+  \DOFexe@ifempty{\commandkey{ExerciseDOTexerciseUNDERSCOREsheetDOTsubtitle}}{}{%
+    \immediate\write\@auxout{\noexpand\subtitle{\DOFexe@tmp}}}%
+  \DOFexeSetSheet{\commandkey{ExerciseDOTexerciseUNDERSCOREsheetDOTcategory}}%
+                 {\commandkey{ExerciseDOTexerciseUNDERSCOREsheetDOTcourse}}%
+                 {\commandkey{ExerciseDOTexerciseUNDERSCOREsheetDOTinstitution}}%
+                 {\commandkey{ExerciseDOTexerciseUNDERSCOREsheetDOTyear}}%
+}
