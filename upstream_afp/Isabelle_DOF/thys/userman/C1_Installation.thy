@@ -14,19 +14,19 @@ text\<open>
   \<^isadof> is installed in three steps on top of a standard Isabelle installation. This manual
   refers to the following versions:
 \<^gridtbl>\<open>
-+-------------+----------------------------------+------------------------------------------+
-| Component   | Version                          | Where                                    |
-+=============+==================================+==========================================+
-| Isabelle    | Isabelle2026                     | isabelle.in.tum.de                       |
-+-------------+----------------------------------+------------------------------------------+
-| AFP         | AFP for Isabelle2026             | isa-afp.org (contains the core of        |
-|             |                                  | Isabelle/DOF 2026)                       |
-+-------------+----------------------------------+------------------------------------------+
++-----------------+----------------------------------+------------------------------------------+
+| Component       | Version                          | Where                                    |
++=================+==================================+==========================================+
+| Isabelle        | Isabelle2026                     | isabelle.in.tum.de                       |
++-----------------+----------------------------------+------------------------------------------+
+| AFP             | AFP for Isabelle2026             | isa-afp.org (contains the core of        |
+|                 |                                  | Isabelle/DOF 2026)                       |
++-----------------+----------------------------------+------------------------------------------+
 | \<^LaTeX>           | TeX Live 2022 or newer           | tug.org/texlive, or your OS              |
-|             | (2026 recommended)               |                                          |
-+-------------+----------------------------------+------------------------------------------+
-| Add-ons     | release matching your Isabelle   | zenodo.org, DOI 10.5281/zenodo.15274072  |
-+-------------+----------------------------------+------------------------------------------+
+|                 | (2026 recommended)               |                                          |
++-----------------+----------------------------------+------------------------------------------+
+| Add-ons         | release matching your Isabelle   | zenodo.org, DOI 10.5281/zenodo.15274072  |
++-----------------+----------------------------------+------------------------------------------+
 \<close>
   Older combinations of Isabelle and \<^isadof> are not supported, since both evolve together:
   always use the AFP and the add-ons that belong to your Isabelle release.

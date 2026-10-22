@@ -81,7 +81,9 @@ fun grid_tex_symbol sym =
   if sym = Symbol.open_ then "\\DOFgo{}"
   else if sym = Symbol.close then "\\DOFgc{}"
   else if sym = chr 92 ^ "<^bold>" then "\\DOFgbar{}"
-  else if String.isPrefix (chr 92 ^ "<^") sym then "\\DOFgcaret{}"
+  else if String.isPrefix (chr 92 ^ "<^") sym andalso String.isSuffix ">" sym
+  then "\\DOFgridcmd{" ^ String.concat (map (fn c => if c = "_" then "\\char95 " else c)
+                                           (raw_explode (String.substring (sym, 3, size sym - 4)))) ^ "}"
   else if String.isPrefix (chr 92 ^ "<") sym then "\\DOFgsym{}"
   else if sym = " " then "\\ "
   else if member (op =) (raw_explode "\\{}#$%&^_~") sym then "\\char" ^ string_of_int (ord sym) ^ " "

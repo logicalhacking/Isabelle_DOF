@@ -796,7 +796,8 @@ at the offending position of the source. The extensions of the \<^isadof>-versio
   even a \<^verbatim>\<open>|\<close>). Text without cartouches is treated in the same way; the lines of a cell form
   one paragraph, so the text of a multi-row cell may flow over several lines;
 \<^item> the alignment of rows is based on the \<^emph>\<open>logical\<close> length of the cells: every symbol 
-  (\<^verbatim>\<open>|\<close>, \<^verbatim>\<open>+\<close>, \<^verbatim>\<open>=\<close>, but also \<open>\<alpha>\<close> or a cartouche delimiter) has length one. 
+  (\<^verbatim>\<open>|\<close>, \<^verbatim>\<open>+\<close>, \<^verbatim>\<open>=\<close>, but also \<open>\<alpha>\<close> or a cartouche delimiter) has length one, but a control symbol such as \<^verbatim>\<open>\<^term>\<close>, which the 
+  editor shows by its name, counts the length of its name (here 4, so \<^verbatim>\<open>\<^term>\<close>\<open>x\<close> has length 7). 
   Instead of the visible cell boundary \<^verbatim>\<open>|\<close>, one may also write \<^boxed_theory_text>\<open>\<^bold>\<open>|\<close>\<close>, 
   which counts one as well; similarly, \<^boxed_theory_text>\<open>\<^bold>\<open>---\<close>\<close> or \<^boxed_theory_text>\<open>\<^bold>\<open>===\<close>\<close> count three;
 \<^item> as in markdown, \<^verbatim>\<open>:-----:\<close> in the border of a cell centers its content, \<^verbatim>\<open>:-----\<close> 
@@ -872,15 +873,15 @@ text\<open>Cell contents are text, which may be broken over several lines and ma
 
 yields
 \<^gridtbl>\<open>
-+----------+----------------------------------+
-| Command  | Effect                           |
-+==========+==================================+
-| \<open>text*\<close>  | Checks the text against the      |
++----------+-------------------------------------+
+| Command  | Effect                              |
++==========+=====================================+
+| \<open>text*\<close>  | Checks the text against the         |
 |          | ontology, with \<open>\<^emph>\<open>markup\<close>\<close>.      |
-+----------+----------------------------------+
-| \<open>value*\<close> | Evaluates \<open>@{term \<open>1+1\<close>}\<close>        |
-|          | and may contain a \<open>|\<close>.           |
-+----------+----------------------------------+
++----------+-------------------------------------+
+| \<open>value*\<close> | Evaluates \<open>@{term \<open>1+1\<close>}\<close>           |
+|          | and may contain a \<open>|\<close>.              |
++----------+-------------------------------------+
 \<close>\<close>
 text\<open>Rulers may be placed at any border, in particular also on the first and the last one:
 
@@ -914,13 +915,13 @@ text\<open>A cell spanning several rows: its content is placed in the middle of 
 
 yields
 \<^gridtbl>\<open>
-+---------------+-----------------------+
-| Phase         | Activity              |
-+===============+=======================+
-|               | \<open>@{term \<open>x\<close>}\<close>         |
-| Verification  +-----------------------+
++---------------+--------------------------+
+| Phase         | Activity                 |
++===============+==========================+
+|               | \<open>@{term \<open>x\<close>}\<close>            |
+| Verification  |-----------------------   |
 |               | \<open>\<^emph>\<open>proof\<close>\<close> and tests  |
-+---------------+-----------------------+
++---------------+--------------------------+
 \<close>\<close>
 
 text\<open>Since the cell contents can contain antiquotations, grid tables also work inside 
@@ -954,7 +955,9 @@ symbol (\<^verbatim>\<open>|\<close>, \<^verbatim>\<open>+\<close>, \<^verbatim>
 The following conditions have to hold; they are checked in this order:
 \<^enum> \<^emph>\<open>Lines.\<close> The table consists of the non-blank lines of the argument; blank lines before and after
   are ignored, blank lines inside are an error. All lines start in the same column and have the 
-  same \<^emph>\<open>logical length\<close>. The logical length counts each symbol (not each character) as one;
+  same \<^emph>\<open>logical length\<close>. The logical length counts each symbol (not each character) as one, except for a 
+  control symbol such as \<^verbatim>\<open>\<^term>\<close> or \<^verbatim>\<open>\<^emph>\<close>, which counts as many as its name has characters, as the 
+  editor shows it (the symbol \<^verbatim>\<open>\<^bold>\<close> counts one);
   a group \<^boxed_theory_text>\<open>\<^bold>\<open>\<dots>\<close>\<close> that consists only of the structural symbols \<^verbatim>\<open>|\<close>, \<^verbatim>\<open>+\<close>, \<^verbatim>\<open>-\<close>, \<^verbatim>\<open>=\<close> 
   and \<^verbatim>\<open>:\<close> counts as many as it contains such symbols.
 \<^enum> \<^emph>\<open>Cells.\<close> A cell is a smallest rectangle with a \<^verbatim>\<open>+\<close> in each corner, whose top and bottom 
@@ -1012,25 +1015,25 @@ The table is compiled into a \<^LaTeX> \<^verbatim>\<open>tabular\<close> as fol
 \<^verbatim>\<open>Gridtbl_Latex\<close> in \<^theory>\<open>Isabelle_DOF.Isa_COL_Gridtbl\<close> provide the parser, which returns the 
 abstract table with cells, spans, alignments and rulers, and the \<^LaTeX> generation):
 \<^gridtbl>\<open>
-+--------------------------+------------------------------------------------------------+
-| Grid table               | Generated LaTeX                                            |
-+==========================+============================================================+
-| cell                     | \<open>\<^verbatim>\<open>\multicolumn{n}{|l}{\DOFgridcell{...}}\<close>\<close>                |
-+--------------------------+------------------------------------------------------------+
-| row span r               | a \<open>\<^verbatim>\<open>\multirow\<close>\<close> of r rows; the rows below                 |
-|                          | hold empty cells                                           |
-+--------------------------+------------------------------------------------------------+
-| border -, =, none        | \<open>\<^verbatim>\<open>\hhline{|-|=|~|}\<close>\<close>, one symbol                          |
-|                          | per column                                                 |
-+--------------------------+------------------------------------------------------------+
++--------------------------+--------------------------------------------------------------------------+
+| Grid table               | Generated LaTeX                                                          |
++==========================+==========================================================================+
+| cell                     | \<open>\<^verbatim>\<open>\multicolumn{n}{|l}{\DOFgridcell{...}}\<close>\<close>                       |
++--------------------------+--------------------------------------------------------------------------+
+| row span r               | a \<open>\<^verbatim>\<open>\multirow\<close>\<close> of r rows; the rows below                        |
+|                          | hold empty cells                                                         |
++--------------------------+--------------------------------------------------------------------------+
+| border -, =, none        | \<open>\<^verbatim>\<open>\hhline{|-|=|~|}\<close>\<close>, one symbol                                 |
+|                          | per column                                                               |
++--------------------------+--------------------------------------------------------------------------+
 | alignment :--, :-:, --:  | \<open>\<^verbatim>\<open>\raggedright\<close>\<close>, \<open>\<^verbatim>\<open>\centering\<close>\<close>,                        |
-|                          | \<open>\<^verbatim>\<open>\raggedleft\<close>\<close>                                           |
-+--------------------------+------------------------------------------------------------+
-| logical width            | relative width of the column in a \<open>\<^verbatim>\<open>\parbox\<close>\<close>             |
-+--------------------------+------------------------------------------------------------+
-| cell text                | ordinary text output: antiquotations are                   |
-|                          | evaluated                                                  |
-+--------------------------+------------------------------------------------------------+
+|                          | \<open>\<^verbatim>\<open>\raggedleft\<close>\<close>                                                  |
++--------------------------+--------------------------------------------------------------------------+
+| logical width            | relative width of the column in a \<open>\<^verbatim>\<open>\parbox\<close>\<close>                    |
++--------------------------+--------------------------------------------------------------------------+
+| cell text                | ordinary text output: antiquotations are                                 |
+|                          | evaluated                                                                |
++--------------------------+--------------------------------------------------------------------------+
 \<close>
 \<close>
 
@@ -1411,24 +1414,24 @@ The elements of a sheet are the following classes; \<^verbatim>\<open>exercise\<
 attributes \<^verbatim>\<open>title\<close>, \<^verbatim>\<open>difficulty\<close> (a number, default \<open>0\<close>) and \<^verbatim>\<open>visible_to\<close> (see below). 
 The body of an element is its text.
 \<^gridtbl>\<open>
-+-------------------------+---------------+----------------------------------------------------------------------+
-| Class                   | exercise.sty  | Attributes                                                           |
-+=========================+===============+======================================================================+
-| \<open>\<^verbatim>\<open>exercise_sheet\<close>\<close>     | (the sheet)   | category, subtitle, institution,                                     |
-|                         |               | course, year; body: the title                                        |
-+-------------------------+---------------+----------------------------------------------------------------------+
-| \<open>\<^verbatim>\<open>exercise\<close>\<close>           | Exercise      | title, difficulty, origin                                            |
-+-------------------------+---------------+----------------------------------------------------------------------+
-| \<open>\<^verbatim>\<open>exercise_part\<close>\<close>      | ExePart       | title, difficulty, name                                              |
-+-------------------------+---------------+----------------------------------------------------------------------+
-| \<open>\<^verbatim>\<open>task\<close>\<close>               | Question      | title, difficulty, points                                            |
-+-------------------------+---------------+----------------------------------------------------------------------+
-| \<open>\<^verbatim>\<open>subtask\<close>\<close>            | subQuestion   | title, difficulty, points                                            |
-+-------------------------+---------------+----------------------------------------------------------------------+
++--------------------------------+---------------+------------------------------------------------------------------------------------+
+| Class                          | exercise.sty  | Attributes                                                                         |
++================================+===============+====================================================================================+
+| \<open>\<^verbatim>\<open>exercise_sheet\<close>\<close>     | (the sheet)   | category, subtitle, institution,                                                   |
+|                                |               | course, year; body: the title                                                      |
++--------------------------------+---------------+------------------------------------------------------------------------------------+
+| \<open>\<^verbatim>\<open>exercise\<close>\<close>           | Exercise      | title, difficulty, origin                                                          |
++--------------------------------+---------------+------------------------------------------------------------------------------------+
+| \<open>\<^verbatim>\<open>exercise_part\<close>\<close>      | ExePart       | title, difficulty, name                                                            |
++--------------------------------+---------------+------------------------------------------------------------------------------------+
+| \<open>\<^verbatim>\<open>task\<close>\<close>               | Question      | title, difficulty, points                                                          |
++--------------------------------+---------------+------------------------------------------------------------------------------------+
+| \<open>\<^verbatim>\<open>subtask\<close>\<close>            | subQuestion   | title, difficulty, points                                                          |
++--------------------------------+---------------+------------------------------------------------------------------------------------+
 | \<open>\<^verbatim>\<open>solution\<close>\<close>           | Answer        | \<open>\<^verbatim>\<open>refers_to\<close>\<close>, \<open>\<^verbatim>\<open>also_refers_to\<close>\<close>                                  |
-+-------------------------+---------------+----------------------------------------------------------------------+
-| \<open>\<^verbatim>\<open>remark\<close>\<close>             | (none)        | for the external evaluators                                          |
-+-------------------------+---------------+----------------------------------------------------------------------+
++--------------------------------+---------------+------------------------------------------------------------------------------------+
+| \<open>\<^verbatim>\<open>remark\<close>\<close>             | (none)        | for the external evaluators                                                        |
++--------------------------------+---------------+------------------------------------------------------------------------------------+
 \<close>
 A \<^verbatim>\<open>solution\<close> refers to the task or subtask it solves by the attribute \<^verbatim>\<open>refers_to\<close>, whose type 
 \<open>task + subtask\<close> is checked by the type system:

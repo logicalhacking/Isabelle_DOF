@@ -100,6 +100,15 @@ val _ = @{assert} (String.isSubstring "!{\\vrule width \\DOFgridthick}"
                      (latex ["+-----+-----+", "\<^bold> a   | b   |", "+-----+-----+"]))
 val _ = @{assert} (nth (#hrules (T ["+\<^bold>\<open>---\<close>+", "|   |", "+---+"])) 0 = [Gridtbl.Thick])
 
+(* 4c. a control symbol is shown by its name: \<^term> has the logical length 4, as in the editor *)
+val t6 = T
+ ["+---------+-------+",
+  "| \<^term>\<open>x\<close> | b     |",
+  "+---------+-------+"]
+val _ = @{assert} (#col_widths t6 = [10, 8])
+val _ = @{assert} (text_of (cell_of t6 (0, 0)) = "\<^term>\<open>x\<close>")
+val _ = @{assert} (fails "logical length" ["+---+---+", "| \<^term>\<open>x\<close> | b |", "+---+---+"])
+
 (* 5. generated LaTeX *)
 val l1 = latex ["+-----+-----+", "| a   | b   |", "+=====+=====+"]
 val _ = @{assert} (String.isSubstring "\\hhline{|=|=|}" l1
@@ -127,13 +136,13 @@ end
 section\<open>Document Integration\<close>
 
 text\<open>An ordinary text with a grid table: \<^gridtbl>\<open>
-+--------------+--------+------------------------+
-| Class        | Chk    | Time                   |
-+==============+========+========================+
++-----------------+--------+------------------------+
+| Class           | Chk    | Time                   |
++=================+========+========================+
 | \<open>\<^emph>\<open>figure\<close>\<close>  | 12     | \<open>@{term \<open>1+1::nat\<close>}\<close>   |
-+--------------+--------+------------------------+
-| a \<open>|\<close> b      | 3      | 0.5                    |
-+--------------+--------+------------------------+
++-----------------+--------+------------------------+
+| a \<open>|\<close> b         | 3      | 0.5                    |
++-----------------+--------+------------------------+
 \<close>\<close>
 
 text*[gt1::A, x = "3"]\<open>A table inside an ontology-aware text-element:

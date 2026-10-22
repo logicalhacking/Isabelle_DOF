@@ -73,11 +73,21 @@ val trim_end = rev o drop_while is_blank_sp o rev
 fun lex_line (syms: Symbol_Pos.T list) : gcell list =
   let
     fun plain (s, p) = {sym = s, pos = p, bold = false, orig = [(s, p)]}
+    (* A control symbol such as \<^term> is shown by the editor as its name (here: "term"), so its logical
+       length is the length of the name; the bold symbol is the exception (see below). *)
+    fun is_ctrl s = String.isPrefix (chr 92 ^ "<^") s andalso String.isSuffix ">" s andalso size s > 4
+    fun ctrl_or_plain (sym as (s, p)) =
+      if is_ctrl s andalso s <> bold_sym
+      then let val name = String.substring (s, 3, size s - 4)
+           in map_index (fn (i, c) => {sym = c, pos = p, bold = false,
+                                       orig = if i = 0 then [sym] else []})
+                        (raw_explode name) end
+      else [plain sym]
     (* the bold symbol (without argument) is a bold vertical bar of logical length one *)
     fun bar (bs as (_, p)) = {sym = "|", pos = p, bold = true, orig = [bs]}
     fun go [] = []
       | go ((bs as (b, _)) :: rest) =
-          if b <> bold_sym then plain bs :: go rest
+          if b <> bold_sym then ctrl_or_plain bs @ go rest
           else
             (case rest of
                (os as (o', _)) :: rest' =>
