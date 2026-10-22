@@ -2,7 +2,7 @@
 theory "small_steps"
   imports   "HOL-Library.LaTeXsugar"
             "Isabelle_DOF.scholarly_paper"
-            "Isabelle_DOF-Ontologies.document_templates"
+            (* "Isabelle_DOF-Ontologies.document_templates" *)
             "HOL-CSP_OpSem.Conclusion"
             "background" (* "HOL-CSP_OpSem.NewLaws" *)
 begin
@@ -365,63 +365,38 @@ by a placeholder closer to Roscoe's book notation \<^cite>\<open>"Roscoe:UCS:201
 \<close>
 *)
 
-(*<*)
-context OpSemTransitions
-begin
-(*>*)
-
-text\<open>
+text (in OpSemTransitions) \<open>
 \<^noindent> To make our construction as general as possible, we formalize the requirements of
 @{technical motivations} by parameterizing the \<open>\<tau>\<close> transition in a \<^theory_text>\<open>locale\<close> with four hypotheses:
 
 @{theory_text [display, indent=9,margin=78] \<open>locale OpSemTransitions = AfterExt \<Psi> \<Omega>
-    for \<Psi> :: \<open>['\<alpha> process, '\<alpha>] \<Rightarrow> '\<alpha> process\<close> and \<Omega> :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> process\<close> +
-  fixes \<tau>_trans :: \<open>['\<alpha> process, '\<alpha> process] \<Rightarrow> bool\<close> (infixl \<open>\<leadsto>\<^sub>\<tau>\<close> 50)
-assumes \<tau>_trans_NdetL: \<open>P \<sqinter> Q \<leadsto>\<^sub>\<tau> P\<close>
+  for \<Psi> :: \<open>[('a, 'r) process\<^sub>p\<^sub>t\<^sub>i\<^sub>c\<^sub>k, 'a] \<Rightarrow> ('a, 'r) process\<^sub>p\<^sub>t\<^sub>i\<^sub>c\<^sub>k\<close> 
+    and \<Omega> :: \<open>[('a, 'r) process\<^sub>p\<^sub>t\<^sub>i\<^sub>c\<^sub>k, 'r] \<Rightarrow> ('a, 'r) process\<^sub>p\<^sub>t\<^sub>i\<^sub>c\<^sub>k\<close>
+    \<comment> \<open>Just declaring the types \<^typ>\<open>'a\<close> and \<^typ>\<open>'r\<close>.\<close> +
+  fixes \<tau>_trans :: \<open>[('a, 'r) process\<^sub>p\<^sub>t\<^sub>i\<^sub>c\<^sub>k, ('a, 'r) process\<^sub>p\<^sub>t\<^sub>i\<^sub>c\<^sub>k] \<Rightarrow> bool\<close> (infixl \<open>\<leadsto>\<^sub>\<tau>\<close> 50)
+  assumes \<tau>_trans_NdetL: \<open>P \<sqinter> Q \<leadsto>\<^sub>\<tau> P\<close>
     and \<tau>_trans_transitivity: \<open>P \<leadsto>\<^sub>\<tau> Q \<Longrightarrow> Q \<leadsto>\<^sub>\<tau> R \<Longrightarrow> P \<leadsto>\<^sub>\<tau> R\<close>
-    and \<tau>_trans_anti_mono_initials: \<open>P \<leadsto>\<^sub>\<tau> Q \<Longrightarrow> Q\<^sup>0 \<subseteq> P\<^sup>0\<close>
-    and \<tau>_trans_mono_AfterExt: \<open>Q\<^sup>0 \<Longrightarrow> P \<leadsto>\<^sub>\<tau> Q \<Longrightarrow> P after\<^sub>\<checkmark> e \<leadsto>\<^sub>\<tau> Q after\<^sub>\<checkmark> e\<close>
+    and \<tau>_trans_anti_mono_initials: \<open>P \<leadsto>\<^sub>\<tau> Q \<Longrightarrow> initials Q \<subseteq> initials P\<close>
+    and \<tau>_trans_mono_After\<^sub>t\<^sub>i\<^sub>c\<^sub>k: \<open>e \<in> initials Q \<Longrightarrow> P \<leadsto>\<^sub>\<tau> Q \<Longrightarrow> P after\<^sub>\<checkmark> e \<leadsto>\<^sub>\<tau> Q after\<^sub>\<checkmark> e\<close>
 begin
 
-abbreviation ev_trans :: \<open>['\<alpha> process, '\<alpha>, '\<alpha> process] \<Rightarrow> bool\<close> (\<open>_ \<leadsto>\<^bsub>_\<^esub> _\<close> [50, 3, 51] 50)
+definition ev_trans :: \<open>[('a, 'r) process\<^sub>p\<^sub>t\<^sub>i\<^sub>c\<^sub>k, 'a, ('a, 'r) process\<^sub>p\<^sub>t\<^sub>i\<^sub>c\<^sub>k] \<Rightarrow> bool\<close>
+  (\<open>_ \<leadsto>\<^bsub>_\<^esub> _\<close> [50, 3, 51] 50)
   where \<open>P \<leadsto>\<^bsub>e\<^esub> Q \<equiv> ev e \<in> P\<^sup>0 \<and> P after\<^sub>\<checkmark> ev e \<leadsto>\<^sub>\<tau> Q\<close>
 
-abbreviation tick_trans :: \<open>['\<alpha> process, '\<alpha> process] \<Rightarrow> bool\<close> (\<open>_ \<leadsto>\<^sub>\<checkmark> _\<close> [50, 51] 50)
-  where \<open>P \<leadsto>\<^sub>\<checkmark> Q \<equiv> \<checkmark> \<in> P\<^sup>0 \<and> P after\<^sub>\<checkmark> \<checkmark> \<leadsto>\<^sub>\<tau> Q\<close>\<close>}
+definition tick_trans :: \<open>[('a, 'r) process\<^sub>p\<^sub>t\<^sub>i\<^sub>c\<^sub>k, 'r, ('a, 'r) process\<^sub>p\<^sub>t\<^sub>i\<^sub>c\<^sub>k] \<Rightarrow> bool\<close>
+  (\<open>_ \<leadsto>\<^sub>\<checkmark>\<^bsub>_\<^esub> _\<close> [50, 3, 51] 50)
+  where \<open>P \<leadsto>\<^sub>\<checkmark>\<^bsub>r\<^esub> Q \<equiv> \<checkmark>(r) \<in> P\<^sup>0 \<and> P after\<^sub>\<checkmark> \<checkmark>(r) \<leadsto>\<^sub>\<tau> Q\<close>\<close>}
 
 \<^noindent> To sum up, this \<^theory_text>\<open>locale\<close> needs to be instantiated with:
  \<^item> \<^vs>\<open>-0.2cm\<close> a function \<^term>\<open>\<Psi>\<close> that is a placeholder for the value
    of \<^term>\<open>P after e\<close> when \<^term>\<open>ev e \<notin> initials P\<close>
- \<^item> a function \<^term>\<open>\<Omega>\<close> that is a placeholder for the value of \<^term>\<open>P after\<^sub>\<checkmark> \<checkmark>\<close>
+ \<^item> a function \<^term>\<open>\<Omega>\<close> that is a placeholder for the value of \<^term>\<open>P after\<^sub>\<checkmark> \<checkmark>(r)\<close>
  \<^item> a binary relation @{term [show_types] \<open>(\<leadsto>\<^sub>\<tau>)\<close>} which is compatible with \<^term>\<open>(\<sqinter>)\<close>,
    is transitive, makes \<^const>\<open>initials\<close> anti-monotonic and makes @{const [source] After\<^sub>t\<^sub>i\<^sub>c\<^sub>k} monotonic.\<close>
-(*<*)
-end
-
-definition \<Omega> :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> process\<close>
-  where \<open>\<Omega> P \<equiv> undefined\<close>
-
-axiomatization \<tau>_trans :: \<open>['\<alpha> process, '\<alpha> process] \<Rightarrow> bool\<close> (infixl \<open>\<leadsto>\<^sub>\<tau>\<close> 50)
-  where OpSem_axioms_ok : \<open>OpSemTransitionsSync \<Psi> \<Omega> \<tau>_trans\<close>
-
-abbreviation local_ev_trans :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> \<Rightarrow> '\<alpha> process \<Rightarrow> bool\<close> (\<open>_ \<leadsto>\<^bsub>_\<^esub> _\<close> [50, 3, 51] 50)
-  where \<open>P \<leadsto>\<^bsub>e\<^esub> P' \<equiv> ev e \<in> P\<^sup>0 \<and> AfterExt.After\<^sub>t\<^sub>i\<^sub>c\<^sub>k \<Psi> \<Omega> P (ev e) \<leadsto>\<^sub>\<tau> P'\<close>
-
-abbreviation local_after :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> \<Rightarrow> '\<alpha> process\<close> (infixl \<open>after\<close> 77)
-  where \<open>P after e \<equiv> After.After \<Psi> P e\<close>
-
-(* definition S :: \<open>'\<alpha> set\<close> where \<open>S \<equiv> undefined\<close> 
-
-definition e :: \<open>'\<alpha>\<close> where \<open>e \<equiv> undefined\<close>     
-
-axiomatization precond_ok :: \<open>bool\<close> 
-  where precond_ok : \<open>e \<notin> S\<close> *)
 
 
-thm OpSemTransitionsSync.ev_trans_SyncL[OF OpSem_axioms_ok, of e S P P' Q]
-(*>*)
-
-text\<open>\<^vs>\<open>-0.2cm\<close> With these only four local axioms, we can derive most of the basic operational rules for 
+text (in OpSemTransitionsSync) \<open>With these only four local axioms, we can derive most of the basic operational rules for 
  \<^const>\<open>SKIP\<close>, \<^term>\<open>e \<rightarrow> P\<close>, etc., and some of the rules for \<^term>\<open>P \ S\<close> or \<^term>\<open>P \<^bold>; Q\<close>, \<open>\<dots>\<close>
 In order to recover the remaining rules, we divide the work. For each operator with a missing rule, 
 we introduce a \<^theory_text>\<open>locale\<close> inheriting from \<^locale>\<open>OpSemTransitions\<close> in which we add a local axiom 
@@ -429,19 +404,23 @@ we introduce a \<^theory_text>\<open>locale\<close> inheriting from \<^locale>\<
 operator, we can derive the missing rules. Here, we illustrate the case of one of the rules for 
 the \<^const>\<open>Sync\<close> operator:
 \begin{center}
-@{thm[mode=Rule, indent=15, margin=70] OpSemTransitionsSync.ev_trans_SyncL[OF OpSem_axioms_ok, of e S P P' Q]}
+@{thm[mode=Rule, indent=15, margin=70] ev_trans_SyncL}
 \end{center}
 \<^vs>\<open>-0.3cm\<close>
 \<close>
 
-Proof*[proof_ev_trans_SyncL::"math_proof", short_name = \<open>\<open>Derivation of one of the $Sync$ Operational Rules\<close>\<close>]\<open>\
+
+(* Why does this break ? ...
+context OpSemTransitions begin
+Proof*[proof_ev_trans_SyncL::"scholarly_paper.math_content" 
+                            , short_name = \<open>\<open>Derivation of one of the $Sync$ Operational Rules\<close>\<close> ]\<open>\
 
 \<^noindent> Case \<^term>\<open>P = \<bottom>\<close> or \<^term>\<open>Q = \<bottom>\<close>, this is obvious because of the properties of \<^term>\<open>\<bottom>\<close>.
 
-\<^noindent> Otherwise since @{thm (prem 2) OpSemTransitionsSync.ev_trans_SyncL[OF OpSem_axioms_ok, of e S P P' Q]} we have \<^term>\<open>ev e \<in> P\<^sup>0\<close>.
+\<^noindent> Otherwise since @{thm (prem 2) OpSemTransitionsSync.ev_trans_SyncL} we have \<^term>\<open>ev e \<in> P\<^sup>0\<close>.
 
 \<^noindent> With @{theorem initials_hard_laws} and
-  @{thm (prem 1) OpSemTransitionsSync.ev_trans_SyncL[OF OpSem_axioms_ok, of e S P P' Q]},
+  @{thm (prem 1) OpSemTransitionsSync.ev_trans_SyncL},
   we additionally have \<^term>\<open>ev e \<in> (P \<lbrakk>S\<rbrakk> Q)\<^sup>0\<close>.
 
 \<^noindent> Thus, from @{theorem After_Sync}, \<^term>\<open>(P \<lbrakk>S\<rbrakk> Q) after e\<close> is equal to \<^term>\<open>(P after e \<lbrakk>S\<rbrakk> Q) \<sqinter> (P \<lbrakk>S\<rbrakk> Q after e)\<close>
@@ -453,17 +432,53 @@ Proof*[proof_ev_trans_SyncL::"math_proof", short_name = \<open>\<open>Derivation
   @{thm OpSemTransitionsSync.\<tau>_trans_SyncL[OF OpSem_axioms_ok]}, 
   we finally conclude that @{thm (concl) OpSemTransitionsSync.ev_trans_SyncL[OF OpSem_axioms_ok, of e S P P' Q]}.
 \<close>
+end
+*)
+(* Why does this break ?
+Proof*(in X)[proof_ev_trans_SyncL::"scholarly_paper.math_content" 
+                            , short_name = \<open>\<open>Derivation of one of the $Sync$ Operational Rules\<close>\<close> ]\<open>\
 
-(*<*)
-no_notation \<tau>_trans (infixl \<open>\<leadsto>\<^sub>\<tau>\<close> 50)
-no_notation local_ev_trans  (\<open>_ \<leadsto>\<^bsub>_\<^esub> _\<close> [50, 3, 51] 50)
-no_notation local_after (infixl \<open>after\<close> 77)
+\<^noindent> Case \<^term>\<open>P = \<bottom>\<close> or \<^term>\<open>Q = \<bottom>\<close>, this is obvious because of the properties of \<^term>\<open>\<bottom>\<close>.
 
-context OpSemTransitionsSliding
-begin
-(*>*)
+\<^noindent> Otherwise since @{thm (prem 2) OpSemTransitionsSync.ev_trans_SyncL} we have \<^term>\<open>ev e \<in> P\<^sup>0\<close>.
 
-text \<open>
+\<^noindent> With @{theorem initials_hard_laws} and
+  @{thm (prem 1) OpSemTransitionsSync.ev_trans_SyncL},
+  we additionally have \<^term>\<open>ev e \<in> (P \<lbrakk>S\<rbrakk> Q)\<^sup>0\<close>.
+
+\<^noindent> Thus, from @{theorem After_Sync}, \<^term>\<open>(P \<lbrakk>S\<rbrakk> Q) after e\<close> is equal to \<^term>\<open>(P after e \<lbrakk>S\<rbrakk> Q) \<sqinter> (P \<lbrakk>S\<rbrakk> Q after e)\<close>
+  if \<^term>\<open>ev e \<in> Q\<^sup>0\<close>, and \<^term>\<open>(P after e \<lbrakk>S\<rbrakk> Q)\<close> otherwise.
+
+\<^noindent> In both cases, with \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close> properties, we obtain \<^term>\<open>(P \<lbrakk>S\<rbrakk> Q) after e \<leadsto>\<^sub>\<tau> P after e \<lbrakk>S\<rbrakk> Q\<close>.
+
+\<^noindent> Using the additional assumption that, in general,
+  @{thm OpSemTransitionsSync.\<tau>_trans_SyncL[OF OpSem_axioms_ok]}, 
+  we finally conclude that @{thm (concl) OpSemTransitionsSync.ev_trans_SyncL[OF OpSem_axioms_ok, of e S P P' Q]}.
+\<close>
+*)
+
+(* SUPERFICIAL REPAIR BY BU : OpSem_axioms_ok seems not to be visible here.*)
+text(in OpSemTransitions)\<open>\
+
+\<^noindent> Case \<^term>\<open>P = \<bottom>\<close> or \<^term>\<open>Q = \<bottom>\<close>, this is obvious because of the properties of \<^term>\<open>\<bottom>\<close>.
+
+\<^noindent> Otherwise since @{thm (prem 2) OpSemTransitionsSync.ev_trans_SyncL} we have \<^term>\<open>ev e \<in> P\<^sup>0\<close>.
+
+\<^noindent> With @{theorem initials_hard_laws} and
+  @{thm (prem 1) OpSemTransitionsSync.ev_trans_SyncL},
+  we additionally have \<^term>\<open>ev e \<in> (P \<lbrakk>S\<rbrakk> Q)\<^sup>0\<close>.
+
+\<^noindent> Thus, from @{theorem After_Sync}, \<^term>\<open>(P \<lbrakk>S\<rbrakk> Q) after e\<close> is equal to \<^term>\<open>(P after e \<lbrakk>S\<rbrakk> Q) \<sqinter> (P \<lbrakk>S\<rbrakk> Q after e)\<close>
+  if \<^term>\<open>ev e \<in> Q\<^sup>0\<close>, and \<^term>\<open>(P after e \<lbrakk>S\<rbrakk> Q)\<close> otherwise.
+
+\<^noindent> In both cases, with \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close> properties, we obtain \<^term>\<open>(P \<lbrakk>S\<rbrakk> Q) after e \<leadsto>\<^sub>\<tau> P after e \<lbrakk>S\<rbrakk> Q\<close>.
+
+\<^noindent> Using the additional assumption that, in general,
+  @{thm OpSemTransitionsSync.\<tau>_trans_SyncL}, 
+  we finally conclude that @{thm (concl) OpSemTransitionsSync.ev_trans_SyncL[of e S P P' Q]}.
+\<close>
+
+text (in OpSemTransitionsSliding) \<open>
 % The case of \<^term>\<open>Renaming P f\<close> is a bit more tricky
 % (involving polymorphic variables in @{term [show_types] \<open>f :: '\<alpha> \<Rightarrow> '\<beta>\<close>}).
 % We solved the issue by a construction involving a duplication of the \<^theory_text>\<open>locale\<close>. 
@@ -477,7 +492,5 @@ assumptions of monotony for the first argument wrt. \<^term>\<open>(\<leadsto>\<
 Special cases of rules not in the core ruleset will be discussed in the subsequent sections.\<close>
 
 (*<*)
-end
-
 end
 (*>*) 

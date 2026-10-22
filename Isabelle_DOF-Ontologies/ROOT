@@ -23,3 +23,14 @@ session "Isabelle_DOF-Ontologies" = "Isabelle_DOF" +
     "figures/antiquotations-PIDE.png"
     "figures/srac-as-es-application.png"
     "figures/srac-definition.png"
+
+(* An example of the ontology Exercise: one exercise sheet, typeset in three variants (see the
+   option document_variants) for students, professors and examiners.
+   Build: isabelle build -D Isabelle_DOF-Ontologies   (the PDFs are in Exercise_Example/output) *)
+session "Isabelle_DOF-Exercise-Example" in "Exercise_Example" = "Isabelle_DOF-Ontologies" + 
+  options  [document = pdf, document_output = "output", document_build = dof,
+            document_variants = "student:professor:examiner"]
+  theories
+    "Exercise_Sheet"
+  document_files
+    "preamble.tex"

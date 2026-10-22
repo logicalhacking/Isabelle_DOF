@@ -1,7 +1,7 @@
 (*<*)
 theory "big_steps"
   imports   "Isabelle_DOF.scholarly_paper"
-            "Isabelle_DOF-Ontologies.document_templates"
+            (* "Isabelle_DOF-Ontologies.document_templates" *)
             "HOL-CSP_OpSem.Conclusion"
           (*  "HOL-CSP_OpSem.Determinism"
             "HOL-CSP_OpSem.AfterDeadlockResults" *)
@@ -52,17 +52,19 @@ inductive trace_trans :: \<open>['\<alpha> process, '\<alpha> trace, '\<alpha> p
   |          trace_Cons_ev_trans : \<open>P \<leadsto>\<^bsub>e\<^esub> P' \<Longrightarrow> P' \<leadsto>\<^sup>* s P'' \<Longrightarrow> P \<leadsto>\<^sup>* (ev e) # s P''\<close>\<close>}\<close>
 
 
-(*<*) context OpSemTransitions begin (*>*)
-
-text \<open>
+text (in OpSemTransitions) \<open>
 \<^noindent> The @{const [source] After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e} operator and the trace transition \<^term>\<open>P \<leadsto>\<^sup>*s Q\<close> are deeply 
 related, which is expressed in the following theorem:
 \<close>
 
 (*<*)
-end
+(* BU : WAS : >>>>>> *)
+abbreviation  local_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> trace \<Rightarrow> '\<alpha> process\<close> (infixl \<open>after\<^sub>\<T>\<close> 77)
+  where \<open>P after\<^sub>\<T> e \<equiv> AfterExt.After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e \<Psi> \<Omega> P e\<close>
+(* <<<<<< *)
 
-abbreviation local_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> trace \<Rightarrow> '\<alpha> process\<close> (infixl \<open>after\<^sub>\<T>\<close> 77)
+(* BU's patch (a more closer error to the problem) : >>>>>> *)
+abbreviation (in OpSemTransitions)  local_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> trace \<Rightarrow> '\<alpha> process\<close> (infixl \<open>after\<^sub>\<T>\<close> 77)
   where \<open>P after\<^sub>\<T> e \<equiv> AfterExt.After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e \<Psi> \<Omega> P e\<close>
 
 (* notation local_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e (infixl \<open>after\<^sub>\<T>\<close> 77) *)
@@ -70,7 +72,7 @@ abbreviation local_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e :: \<open>'\<al
 axiomatization \<tau>_trans :: \<open>['\<alpha> process, '\<alpha> process] \<Rightarrow> bool\<close> (infixl \<open>\<leadsto>\<^sub>\<tau>\<close> 50)
   where OpSem_axioms_ok : \<open>OpSemTransitions \<Psi> \<Omega> \<tau>_trans\<close>
 
-abbreviation local_trace_trans :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> trace \<Rightarrow> '\<alpha> process \<Rightarrow> bool\<close> 
+abbreviation  local_trace_trans :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> trace \<Rightarrow> '\<alpha> process \<Rightarrow> bool\<close> 
                                  (\<open>_/ \<leadsto>\<^sup>*_/ _\<close> [50, 3, 51] 50)
                                  where \<open>P \<leadsto>\<^sup>*s Q \<equiv> OpSemTransitions.trace_trans \<Psi> \<Omega> \<tau>_trans P s Q\<close>
 
@@ -78,7 +80,7 @@ abbreviation local_trace_trans :: \<open>'\<alpha> process \<Rightarrow> '\<alph
 notation local_trace_trans (\<open>_/ \<leadsto>\<^sup>*_/ _\<close> [50, 3, 51] 50) *)
 (*>*)
 
-Theorem*[trace_trans_After_trace_correspondence :: "theorem",
+Theorem* (in OpSemTransitions) [trace_trans_After_trace_correspondence :: "theorem",
          short_name = \<open>\<open>Bridge between trace transition and $After_{trace}$ operator\<close>\<close>]\<open>\
 
 \<^bigskip> @{thm (lhs) OpSemTransitions.trace_trans_iff_T_and_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e_\<tau>_trans[of \<Psi> \<Omega> \<open>(\<leadsto>\<^sub>\<tau>)\<close>]}

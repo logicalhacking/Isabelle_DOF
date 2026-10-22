@@ -1,7 +1,7 @@
 (*<*)
 theory "intro"
   imports   "Isabelle_DOF.scholarly_paper"
-            "Isabelle_DOF-Ontologies.document_templates"
+            (* "Isabelle_DOF-Ontologies.document_templates" *)
             "HOL-CSP_OpSem.Conclusion"
             "front"
 begin
