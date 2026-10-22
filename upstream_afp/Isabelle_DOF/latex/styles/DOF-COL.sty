@@ -20,6 +20,28 @@
 \RequirePackage{DOF-gridtbl}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% outmat: the presentation of output material, \ie the macro \<^outmat> of the COL, as it is used in
+% documentations to show what the document contains after the processing of a piece of text: a box
+% with a green bar on the left and the label "Document". The source of the piece (\<^isarbox>) is
+% defined in the documentation itself.
+\RequirePackage[many]{tcolorbox}
+\providecolor{outmat}{named}{green}
+\NewTColorBox[]{outmat}{}{
+  ,boxrule=0pt
+  ,boxsep=0pt
+  ,colback=white!90!outmat
+  ,enhanced jigsaw
+  ,borderline west={2pt}{0pt}{outmat!60!black}
+  ,sharp corners
+  ,enlarge top by=0mm
+  ,enhanced
+  ,overlay={\node[draw,fill=outmat!60!black,xshift=0pt,anchor=north
+    east,font=\bfseries\footnotesize\color{white}]
+    at (frame.north east) {Document};}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin: float*
 \NewEnviron{isamarkupfloat*}[1][]{\isaDof[env={float},#1]{\BODY}}
 \newisadof{IsaUNDERSCORECOLDOTfloat}%
