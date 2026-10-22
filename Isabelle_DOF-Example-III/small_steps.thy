@@ -396,16 +396,16 @@ definition tick_trans :: \<open>[('a, 'r) process\<^sub>p\<^sub>t\<^sub>i\<^sub>
    is transitive, makes \<^const>\<open>initials\<close> anti-monotonic and makes @{const [source] After\<^sub>t\<^sub>i\<^sub>c\<^sub>k} monotonic.\<close>
 
 
-text (in OpSemTransitionsSync) \<open>With these only four local axioms, we can derive most of the basic operational rules for 
- \<^const>\<open>SKIP\<close>, \<^term>\<open>e \<rightarrow> P\<close>, etc., and some of the rules for \<^term>\<open>P \ S\<close> or \<^term>\<open>P \<^bold>; Q\<close>, \<open>\<dots>\<close>
-In order to recover the remaining rules, we divide the work. For each operator with a missing rule, 
-we introduce a \<^theory_text>\<open>locale\<close> inheriting from \<^locale>\<open>OpSemTransitions\<close> in which we add a local axiom 
-(about \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close>). With the rules already proven and the denotational properties of the 
-operator, we can derive the missing rules. Here, we illustrate the case of one of the rules for 
-the \<^const>\<open>Sync\<close> operator:
-\begin{center}
-@{thm[mode=Rule, indent=15, margin=70] ev_trans_SyncL}
-\end{center}
+text (in OpSemTransitionsSync) \<open>With these only four local axioms, we can derive most of the 
+basic operational rules for  \<^const>\<open>SKIP\<close>, \<^term>\<open>e \<rightarrow> P\<close>, etc., and some of the rules for
+\<^term>\<open>P \ S\<close> or \<^term>\<open>P \<^bold>; Q\<close>, \<open>\<dots>\<close>. In order to recover the remaining rules, we divide the work. 
+For each operator with a missing rule, we introduce a \<^theory_text>\<open>locale\<close> inheriting from
+\<^locale>\<open>OpSemTransitions\<close> in which we add a local axiom (about \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close>). With the rules already 
+proven and the denotational properties of the operator, we can derive the missing rules. Here, we 
+illustrate the case of one of the rules for the \<^const>\<open>Sync\<close> operator:
+
+     \<^center>\<open>@{thm[mode=Rule, indent=15, margin=70] ev_trans_SyncL}\<close>
+
 \<^vs>\<open>-0.3cm\<close>
 \<close>
 
@@ -434,8 +434,8 @@ Proof*[proof_ev_trans_SyncL::"scholarly_paper.math_content"
 \<close>
 end
 *)
-(* Why does this break ?
-Proof*(in X)[proof_ev_trans_SyncL::"scholarly_paper.math_content" 
+(* BU Why does this break ? This should be the real solution.
+Proof*(in OpSemTransitions)[proof_ev_trans_SyncL::"scholarly_paper.math_content" 
                             , short_name = \<open>\<open>Derivation of one of the $Sync$ Operational Rules\<close>\<close> ]\<open>\
 
 \<^noindent> Case \<^term>\<open>P = \<bottom>\<close> or \<^term>\<open>Q = \<bottom>\<close>, this is obvious because of the properties of \<^term>\<open>\<bottom>\<close>.
