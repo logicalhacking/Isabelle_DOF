@@ -302,7 +302,7 @@ text*[example4::float,  main_caption="\<open>Latex logos\<close>"]
 text\<open> Placing figures within a \<^isadof> document can be somewhat impredictable and needs some
 experimenting to get the wanted result. @{float\<open>example4\<close>}\<close>
 
-section*[hlinks::technical]\<open>Hyperlinks\<close>
+section*[hlinks::technical]\<open>Hyperlinks\<close> 
 
 text\<open>Hyperlinks let you add links to websites. The url antiquotation in \<^isadof> is written \<^verbatim>\<open>\<^url>\<close>.
 Below is an example of creating a hyperlink towards the installation page of \<^isadof>.

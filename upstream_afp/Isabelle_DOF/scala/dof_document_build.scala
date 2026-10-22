@@ -72,14 +72,27 @@ object DOF_Document_Build
       val ltx_ontologies = split_lines((the_document_entry(context, "dof/use_ontology")).text)
 
       // LaTeX styles from Isabelle/DOF directory; generated copies of earlier document builds
-      // (in "output" or "generated" directories) are not sources and must not override them
-      def is_source_sty(path: Path): Boolean = {
-        val elems = path.implode.split('/').toList
-        path.file_name.endsWith(".sty") && !elems.exists(e => e == "output" || e == "generated")
+      // (in "output" or "generated" directories) are not sources and must not override them.
+      // Only the style files of Isabelle/DOF (prefix "DOF-") are taken. The directory tree is walked
+      // on plain files, so that other files of the tree (for example with names that are illegal as
+      // Isabelle paths, or style files of examples) are of no concern.
+      def find_sty_files(dir: Path): List[Path] = {
+        def walk(f: java.io.File): List[Path] =
+          if (f.isDirectory) {
+            if (f.getName.nn == "output" || f.getName.nn == "generated") Nil
+            else {
+              val children = f.listFiles
+              if (children == null) Nil
+              else children.nn.toList.filter(_ != null).map(_.nn).sortBy(_.getName.nn).flatMap(walk)
+            }
+          }
+          else if (f.getName.nn.startsWith("DOF-") && f.getName.nn.endsWith(".sty")) List(File.path(f))
+          else Nil
+        walk(dir.file)
       }
       (List(Path.explode("latex/styles"), Path.explode("ontologies")) :::(ltx_ontologies.map(name => 
               context.session_context.sessions_structure((Long_Name.base_name(Long_Name.qualifier(name))).mkString).dir))) 
-        .flatMap(dir => File.find_files(isabelle_dof_dir + dir, pred = is_source_sty))
+        .flatMap(dir => find_sty_files(isabelle_dof_dir + dir))
         .foreach(sty => Isabelle_System.copy_file(sty, directory.doc_dir))
 
       // ontologies.tex from session exports
@@ -97,6 +110,7 @@ object DOF_Document_Build
 \newcommand{\dof@isabelleversion}{""" + DOF.isabelle_version + """}
 \newcommand{\isabellefullversion}{""" + DOF.isabelle_version + """\xspace}
 \newcommand{\dof@version}{""" + DOF.version + """}
+\newcommand{\dof@docvariant}{""" + doc.name + """}
 \newcommand{\dof@artifacturl}{""" + DOF.artifact_url + """}
 \newcommand{\doflatestversion}{""" + DOF.latest_version + """}
 \newcommand{\isadoflatestdoi}{""" + DOF.latest_doi + """}

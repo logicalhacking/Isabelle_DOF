@@ -122,7 +122,6 @@ setup\<open>boxed_text_antiquotation         \<^binding>\<open>boxed_text\<close
 open_monitor*[this::report] 
 
 (*A few of my own macros*)
-define_macro* outmat \<rightleftharpoons> \<open>\begin{outmat}\<close> _ \<open>\end{outmat}\<close>
 define_macro* isarbox \<rightleftharpoons> \<open>\begin{isarbox}\<close> _ \<open>\end{isarbox}\<close>
 define_macro* isatext \<rightleftharpoons>  \<open>\begin{isabelle}\isakeywordONE{text}{\isacartoucheopen}\end{isabelle}\<close> _ \<open>\begin{isabelle}{\isacartoucheclose}\end{isabelle}\<close>
 (*>*)
@@ -155,7 +154,7 @@ overview of the system’s internal architecture and capabilities.
 
 One final remark: This document --- albeit written in  \<^isadof> --- is \<^bold>\<open>not\<close> a typical  \<^isadof> 
 document. A typical document will avoid \<^LaTeX> code as much as possible, perhaps with the exception of 
-initial macro definitions. A document that describes  \<^isadof> snippets in \<^isadof> runs in limitations
+initial macro definitions. A document that describes  \<^isadof> snippets in \<^isadof> runs into limitations
 of the underlying \<^LaTeX> engine and its poor capabilities to combine and nest environments.
 Thus, in many places in this document it was necessary to use hand-crafted  \<^LaTeX> code to give
 adequate impressions of the presentation in the documents and inside the Isabelle PIDE.
@@ -163,7 +162,7 @@ adequate impressions of the presentation in the documents and inside the Isabell
 paragraph\<open>Typographical Conventions\<close>
 text\<open>In order to maintain a consistent and coherent style throughout the manuals for \<^isadof>, we
  will adopt the same typographical conventions used in the Reference Manual. Therefore we will use:
-  \<^item> a light-blue background for input written in Isabelle’s Isar language, \<^eg>:
+  \<^item> a light-blue background for input written in Isabelle’s Isar proof language, \<^eg>:
     @{boxed_theory_text[display]\<open>lemma refl: x=x by simp\<close>}
   \<^item> a green background for examples of generated document fragments (\<^ie>, PDF output):
     @{boxed_pdf[display]\<open>The axiom refl\<close>}
