@@ -903,12 +903,12 @@ exist) for definitions and axiomatizations is here:
 \<close>
 
 text\<open>
-\<^item>  \<^ML>\<open>Specification.definition: (binding * typ option * mixfix) option ->
+\<^item>  \<^ML>\<open>Specification.definition: {verbose: bool} -> (binding * typ option * mixfix) option ->
         (binding * typ option * mixfix) list -> term list -> Attrib.binding * term ->
         local_theory -> (term * (string * thm)) * local_theory\<close>
-\<^item>  \<^ML>\<open>Specification.definition_cmd: (binding * string option * mixfix) option ->
+\<^item>  \<^ML>\<open>Specification.definition_cmd: {verbose: bool} -> (binding * string option * mixfix) option ->
         (binding * string option * mixfix) list -> string list -> Attrib.binding * string ->
-         bool -> local_theory -> (term * (string * thm)) * local_theory\<close>
+         local_theory -> (term * (string * thm)) * local_theory\<close>
 \<^item>  \<^ML>\<open>Specification.axiomatization: (binding * typ option * mixfix) list ->
         (binding * typ option * mixfix) list -> term list ->
         (Attrib.binding * term) list -> theory -> (term list * thm list) * theory\<close>
@@ -916,10 +916,10 @@ text\<open>
         (binding * string option * mixfix) list -> string list ->
         (Attrib.binding * string) list -> theory -> (term list * thm list) * theory\<close>
 \<^item>  \<^ML>\<open>Specification.axiom: Attrib.binding * term -> theory -> thm * theory\<close>
-\<^item>  \<^ML>\<open>Specification.abbreviation: Syntax.mode -> (binding * typ option * mixfix) option ->
-        (binding * typ option * mixfix) list -> term -> bool -> local_theory -> local_theory\<close>
-\<^item>  \<^ML>\<open>Specification.abbreviation_cmd: Syntax.mode -> (binding * string option * mixfix) option ->
-        (binding * string option * mixfix) list -> string -> bool -> local_theory -> local_theory\<close>
+\<^item>  \<^ML>\<open>Specification.abbreviation: {verbose: bool} -> Syntax.mode -> (binding * typ option * mixfix) option ->
+        (binding * typ option * mixfix) list -> term -> local_theory -> local_theory\<close>
+\<^item>  \<^ML>\<open>Specification.abbreviation_cmd: {verbose: bool} -> Syntax.mode -> (binding * string option * mixfix) option ->
+        (binding * string option * mixfix) list -> string -> local_theory -> local_theory\<close>
 \<close>
 
 
@@ -948,7 +948,7 @@ fun mk_def name p  =
         val ty_global = ty --> ty
         val args = (((SOME(nameb,SOME ty_global,NoSyn),(Binding.empty_atts,term_prop)),[]),[])
         val cmd = (fn (((decl, spec), prems), params) =>
-                        #2 o Specification.definition decl params prems spec)
+                        #2 o Specification.definition {verbose = false} decl params prems spec)
     in cmd args
     end;
 in  Named_Target.theory_map (mk_def "I" @{here} )
@@ -1133,12 +1133,11 @@ text\<open>
    necessary infrastructure ---  i.e. the operations to pack and unpack theories and
    queries  on it:
 
-\<^item> \<^ML>\<open> Toplevel.make_state: theory option -> Toplevel.state\<close>
+\<^item> \<^ML>\<open> Toplevel.make_state: Context.generic option -> Toplevel.state\<close>
 \<^item> \<^ML>\<open> Toplevel.is_toplevel: Toplevel.state -> bool\<close>
 \<^item> \<^ML>\<open> Toplevel.is_theory: Toplevel.state -> bool\<close>
 \<^item> \<^ML>\<open> Toplevel.is_proof: Toplevel.state -> bool\<close>
 \<^item> \<^ML>\<open> Toplevel.is_skipped_proof: Toplevel.state -> bool\<close>
-\<^item> \<^ML>\<open> Toplevel.level: Toplevel.state -> int\<close>
 \<^item> \<^ML>\<open> Toplevel.context_of: Toplevel.state -> Proof.context\<close>
   extracts the local context 
 \<^item> \<^ML>\<open> Toplevel.generic_theory_of: Toplevel.state -> generic_theory\<close>
@@ -1171,8 +1170,7 @@ text\<open> The extensibility of Isabelle as a system framework depends on a num
  \<^item> \<^ML>\<open>Toplevel.theory: (theory -> theory) -> Toplevel.transition -> Toplevel.transition\<close>
    adjoins a theory transformer.
  \<^item> \<^ML>\<open>Toplevel.generic_theory: (generic_theory -> generic_theory) -> Toplevel.transition -> Toplevel.transition\<close>
- \<^item> \<^ML>\<open>Toplevel.theory': (bool -> theory -> theory) -> Toplevel.presentation option -> Toplevel.transition -> Toplevel.transition\<close>
- \<^item> \<^ML>\<open>Toplevel.exit: Toplevel.transition -> Toplevel.transition\<close>
+ \<^item> \<^ML>\<open>Toplevel.theory_presentation: (theory -> theory) -> Toplevel.presentation -> Toplevel.transition -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.ignored: Position.T -> Toplevel.transition\<close>
  \<^item> \<^ML>\<open>Toplevel.present_local_theory:  (xstring * Position.T) option ->
                        (Toplevel.state -> Latex.text) -> Toplevel.transition -> Toplevel.transition\<close>
@@ -1320,7 +1318,7 @@ ML\<open>Specification.definition\<close>
 ML\<open>
 structure HLDefinitionSample = 
 struct
-fun cmd (decl, spec, prems, params) = #2 o Specification.definition decl params prems spec
+fun cmd (decl, spec, prems, params) = #2 o Specification.definition {verbose = false} decl params prems spec
 
 fun MON_SE_T res state = state --> optionT(HOLogic.mk_prodT(res,state));
 
@@ -1374,11 +1372,9 @@ fun lemma1 lemma_name goals_to_prove  a lthy =
     let val lemma_name_bdg =(Binding.make (lemma_name, @{here}), []) 
         val attrs' = ["simp"] (* ?????? *)
     in  lthy |>
-        Specification.theorem_cmd true 
-                                  Thm.theoremK NONE (K I)
+        Specification.theorem_cmd {verbose = true, long = true, kind = Thm.theoremK} NONE (K I)
                                   Binding.empty_atts [] [] 
                                   (Element.Shows [(lemma_name_bdg,[(goals_to_prove, attrs')])])
-                                  true (* disp ??? *)
     end
 
 fun lemma1' lemma_name goals_to_prove a b lthy =
@@ -1386,7 +1382,7 @@ fun lemma1' lemma_name goals_to_prove a b lthy =
         List.map (fn s => Attrib.check_src lthy [Token.make_string (s, Position.none)])
                  (if simp then ["simp", "code_unfold"] else [])
         val lemma_name_bdg =(Binding.make (lemma_name, @{here}), gen_attribute_token true lthy) 
-    in  lthy |> #2 o Specification.theorems Thm.theoremK a b true end
+    in  lthy |> #2 o Specification.theorems {verbose = true, kind = Thm.theoremK} a b end
 \<close>
 
 
@@ -1699,9 +1695,9 @@ local
 
   type dummy = Token.T
   type src = Token.T list
-  type file = {src_path: Path.T, lines: string list, digest: SHA1.digest, pos: Position.T}
+  type file = {src_path: Path.T, lines: string list, pos: Position.T}
 
-  type name_value = {name: string, kind: string, print: Proof.context -> Markup.T * xstring}
+  type name_value = {name: string, kind: string, print: Proof.context -> Markup.T list * xstring}
 
 
   val _ = Token.is_command : Token.T -> bool;

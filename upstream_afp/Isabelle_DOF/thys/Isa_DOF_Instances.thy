@@ -35,14 +35,17 @@ val empty_meta_args = ((Binding.empty, NONE), [])
 val is_improper = not o (Token.is_proper orf Token.is_begin_ignore orf Token.is_end_ignore);
 val improper = Scan.many is_improper; (* parses white-space and comments *)
 
+(* The name of an attribute may also be a keyword of the outer syntax, as options. *)
+val attribute_name = Parse.position (Parse.const || Parse.keyword_with Symbol.is_ascii_identifier)
+
 val attribute =
-    Parse.position Parse.const
+    attribute_name
     --| improper 
     -- Scan.optional (Parse.$$$ "=" --| improper |-- Parse.!!! Parse.term --| improper) "True"
    : ((string * Position.T) * string) parser;
 
 val attribute_upd  : (((string * Position.T) * string) * string) parser =
-    Parse.position Parse.const 
+    attribute_name
     --| improper
     -- ((@{keyword "+="} --| improper) || (@{keyword ":="} --| improper))
     -- Parse.!!! Parse.term

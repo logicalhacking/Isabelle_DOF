@@ -36,4 +36,12 @@ text* (in L) [tt3::A, x = "5"] \<open>Qualified fact with instantiation @{thm (l
 \<comment> \<open>The instances of targeted commands are global, not qualified with the locale name:\<close>
 text*[tt4::A, x = "6"] \<open>@{A tt2} and @{A tt3}\<close>
 
+section\<open>Attribute Names that are Keywords\<close>
+text\<open>The name of an attribute may be a keyword of the outer syntax, as \<open>options\<close>.\<close>
+
+doc_class kw_class =
+  "options" :: string <= "''none''"
+
+text*[tkw1::kw_class, options = "''allowframebreaks''"]\<open>An attribute named as a keyword.\<close>
+
 end
