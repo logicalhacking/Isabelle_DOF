@@ -16,9 +16,6 @@ declare[[ Corollary_default_class  = "corollary"]]
 
 define_shortcut* csp      \<rightleftharpoons> \<open>CSP\<close>
                  holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>
-                 isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
-                 hfill    \<rightleftharpoons> \<open>\hfill\<close>
-                 br       \<rightleftharpoons> \<open>\break\<close>
 
 (*>*)
 
@@ -105,13 +102,13 @@ interplay of different denotational models, refinement-orderings, and side-condi
 continuity, paper-and-pencil proofs easily reach their limits of precision. 
 
 Several attempts have been undertaken to develop a formal theory in an interactive proof system, 
-mostly in Isabelle/HOL @{cite "Camilleri91" and "tej.ea:corrected:1997" and  "IsobeRoggenbach2010"
+mostly in \<^isabelle> @{cite "Camilleri91" and "tej.ea:corrected:1997" and  "IsobeRoggenbach2010"
 and "DBLP:journals/afp/Noce16"}.
 This paper is based on @{cite "tej.ea:corrected:1997"}, which has been the most comprehensive 
 attempt to formalize denotational \<^csp> semantics covering a part of Bill Roscoe's Book 
 @{cite "roscoe:csp:1998"}. Our contributions are as follows:
   \<^item>  we ported @{cite "tej.ea:corrected:1997"} from Isabelle93-7 and ancient 
-    ML-written proof scripts to a modern Isabelle/HOL version and structured Isar proofs,
+    ML-written proof scripts to a modern \<^isabelle> version and structured Isar proofs,
     and extended it substantially,
   \<^item> we introduced new refinement notions allowing a deeper understanding of the \<^csp>
     Failure/Divergence model, providing some meta-theoretic clarifications,
@@ -190,7 +187,7 @@ of @{cite "IsobeRoggenbach2010"} is restricted to a variant of the failures mode
 \<close>
 
 subsection*["isabelleHol"::technical, main_author="Some(@{author ''bu''})"]\<open>Isabelle/HOL\<close>
-text\<open> Nowadays, Isabelle/HOL is one of the major interactive theory development environments
+text\<open> Nowadays, \<^isabelle> is one of the major interactive theory development environments
 @{cite "nipkow.ea:isabelle:2002"}. HOL stands for Higher-Order Logic, a logic based on simply-typed
 \<open>\<lambda>\<close>-calculus extended by parametric polymorphism and Haskell-like type-classes.
 Besides interactive and integrated automated proof procedures,
@@ -203,9 +200,9 @@ For the work presented here, one relevant construction is :
    \<^item> \<^theory_text>\<open>typedef  (\<alpha>\<^sub>1,...,\<alpha>\<^sub>n)t = E\<close>
  
 It creates a fresh type that is isomorphic to a set \<open>E\<close> involving \<open>\<alpha>\<^sub>1,...,\<alpha>\<^sub>n\<close> types.
-Isabelle/HOL performs a number of syntactic checks for these constructions that guarantee the logical
+\<^isabelle> performs a number of syntactic checks for these constructions that guarantee the logical
 consistency of the defined constants or types relative to the axiomatic basis of HOL. The system
-distribution comes with rich libraries comprising Sets, Numbers, Lists, etc. which are built in this
+distribution comes with rich libraries comprising Sets, Numbers, Lists, \<^etc>. which are built in this
 "conservative" way.
 
 For this work, a particular library called \<^theory_text>\<open>HOLCF\<close> is intensively used. It provides classical 
@@ -274,7 +271,7 @@ the above properties for any \<open>P::'\<alpha> process\<close>. \<close>
 
 subsection*["operator"::technical, main_author="Some(@{author ''lina''})"]
 \<open>\<^csp> Operators over the Process Type\<close>
-text\<open> Now, the operators of \<^csp> \<open>Skip\<close>, \<open>Stop\<close>, \<open>_\<sqinter>_\<close>,  \<open>_\<box>_\<close>, \<open>_\<rightarrow>_\<close>,\<open>_\<lbrakk>_\<rbrakk>_\<close> etc. 
+text\<open> Now, the operators of \<^csp> \<open>Skip\<close>, \<open>Stop\<close>, \<open>_\<sqinter>_\<close>,  \<open>_\<box>_\<close>, \<open>_\<rightarrow>_\<close>,\<open>_\<lbrakk>_\<rbrakk>_\<close> \<^etc>. 
 for internal choice, external choice, prefix and parallel composition, can 
 be defined indirectly on the process-type. For example, for the simple case of the internal choice,
 we construct it such that \<open>_\<sqinter>_\<close> has type \<open>'\<alpha> process \<Rightarrow> '\<alpha> process \<Rightarrow> '\<alpha> process\<close> and 

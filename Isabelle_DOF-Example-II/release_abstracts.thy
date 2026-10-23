@@ -19,16 +19,13 @@ define_shortcut* dof     \<rightleftharpoons> \<open>\dof\<close>
 
 define_shortcut* csp      \<rightleftharpoons> \<open>CSP\<close>
                  holcsp   \<rightleftharpoons> \<open>HOL-CSP\<close>
-                 isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
-                 hfill    \<rightleftharpoons> \<open>\hfill\<close>
-                 br    \<rightleftharpoons> \<open>\break\<close>
 
 (*>*)
 
  
 abstract*[abs, keywordlist="[\<open>Ontology\<close>, \<open>Ontological Modeling\<close>, \<open>Document Management\<close>, 
                              \<open>Formal Document Development\<close>,\<open>Isabelle/DOF\<close>]"]
-\<open>   \<^isadof> provides an implementation of an document ontology framework on top of Isabelle/HOL. 
+\<open>   \<^isadof> provides an implementation of an document ontology framework on top of \<^isabelle>. 
     The framework allows both for \<^emph>\<open>defining\<close> ontologies and \<^emph>\<open>enforcing\<close> them during document 
     development and document evolution. \<^isadof> targets use-cases such as mathematical texts 
     referring to a theory development or technical reports requiring a particular structure.

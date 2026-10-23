@@ -176,7 +176,7 @@ Without any surprise, since a trace is just of type \<^typ>\<open>'\<alpha> even
 
 text \<open>
 On this new operator, the authors proved classical properties (monotony, continuity under some
-assumptions on \<^term>\<open>\<Psi>\<close> and \<^term>\<open>\<Omega>\<close>, etc.) but also more elaborated ones like the following:
+assumptions on \<^term>\<open>\<Psi>\<close> and \<^term>\<open>\<Omega>\<close>, \<^etc>.) but also more elaborated ones like the following:
 \<close> 
 
 

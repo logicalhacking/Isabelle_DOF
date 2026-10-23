@@ -119,6 +119,7 @@ val _ = @{assert} (String.isSubstring "{\\raggedright}{2}{L1}" l2 andalso
                    String.isSubstring "\\multicolumn{2}{|l|}{" l2 andalso
                    String.isSubstring "\\hhline{|~|-|-|}" l2)
 val _ = @{assert} (String.isSubstring "\\centering" (latex ["+:---:+", "| x   |", "+-----+"]))
+val _ = @{assert} (String.isSubstring "\\isasymcheckmark" (latex ["+-----+", "| \<open>" ^ chr 92 ^ "<checkmark>\<close> |", "+-----+"]))
 
 (* 6. syntax errors are reported *)
 val _ = @{assert} (fails "logical length" ["+---+---+", "| a | b  |", "+---+---+"])

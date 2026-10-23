@@ -70,19 +70,19 @@ text (in OpSemTransitions) \<open>It turns out that it is also possible to insta
 However, for them, the result is somewhat unimpressive.
 The following table summarizes the rule sets corresponding to operators which can be established.
 
-\begin{center}\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
-\hline
- & basic & \<^term>\<open>(\<box>)\<close> & \<^term>\<open>(\<^bold>;)\<close> & \<^term>\<open>(P \ S)\<close> & \<^term>\<open>P \<lbrakk>S\<rbrakk> Q\<close> & \<^term>\<open>(\<rhd>)\<close> & \<^term>\<open>(\<triangle>)\<close> & \<^term>\<open>Throw\<close> & \<^term>\<open>Renaming\<close>\\
-\hline
-\<^term>\<open>(\<sqsubseteq>\<^sub>F\<^sub>D)\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close>\\
-\hline
-\<^term>\<open>(\<sqsubseteq>\<^sub>D\<^sub>T)\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close>\\
-\hline
-\<^term>\<open>(\<sqsubseteq>\<^sub>F)\<close> & \<open>\<checkmark>\<close> & \<open>\<crossmark>\<close> & \<open>\<crossmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<crossmark>\<close> & \<open>\<crossmark>\<close> & \<open>\<crossmark>\<close> & \<open>\<crossmark>\<close> & \<open>\<crossmark>\<close>\\
-\hline
-\<^term>\<open>(\<sqsubseteq>\<^sub>T)\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<crossmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<crossmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<checkmark>\<close> & \<open>\<crossmark>\<close> & \<open>\<crossmark>\<close>\\
-\hline
-\end{tabular}\end{center}
+\<^gridtbl>\<open>
++---------------------+-------------------+-------------+--------------+-----------------+-----------------+-------------+-------------+---------------------+------------------------------+
+|                     | basic             | \<open>\<^term>\<open>(\<box>)\<close>\<close> | \<open>\<^term>\<open>(\<^bold>;)\<close>\<close> | \<open>\<^term>\<open>(P \ S)\<close>\<close> | \<open>\<^term>\<open>P \<lbrakk>S\<rbrakk> Q\<close>\<close> | \<open>\<^term>\<open>(\<rhd>)\<close>\<close> | \<open>\<^term>\<open>(\<triangle>)\<close>\<close> | \<open>\<^term>\<open>Throw\<close>\<close>       | \<open>\<^term>\<open>Renaming\<close>\<close>             |
++=====================+===================+=============+==============+=================+=================+=============+=============+=====================+==============================+
+| \<open>\<^term>\<open>(\<sqsubseteq>\<^sub>F\<^sub>D)\<close>\<close> | \<checkmark>                 | \<checkmark>           | \<checkmark>            | \<checkmark>               | \<checkmark>               | \<checkmark>           | \<checkmark>           | \<checkmark>                   | \<checkmark>                            |
++---------------------+-------------------+-------------+--------------+-----------------+-----------------+-------------+-------------+---------------------+------------------------------+
+| \<open>\<^term>\<open>(\<sqsubseteq>\<^sub>D\<^sub>T)\<close>\<close> | \<checkmark>                 | \<checkmark>           | \<checkmark>            | \<checkmark>               | \<checkmark>               | \<checkmark>           | \<checkmark>           | \<checkmark>                   | \<checkmark>                            |
++---------------------+-------------------+-------------+--------------+-----------------+-----------------+-------------+-------------+---------------------+------------------------------+
+| \<open>\<^term>\<open>(\<sqsubseteq>\<^sub>F)\<close>\<close>     | \<checkmark>                 | \<crossmark>           | \<crossmark>            | \<checkmark>               | \<crossmark>               | \<crossmark>           | \<crossmark>           | \<crossmark>                   | \<crossmark>                            |
++---------------------+-------------------+-------------+--------------+-----------------+-----------------+-------------+-------------+---------------------+------------------------------+
+| \<open>\<^term>\<open>(\<sqsubseteq>\<^sub>T)\<close>\<close>     | \<checkmark>                 | \<checkmark>           | \<crossmark>            | \<checkmark>               | \<crossmark>               | \<checkmark>           | \<checkmark>           | \<crossmark>                   | \<crossmark>                            |
++---------------------+-------------------+-------------+--------------+-----------------+-----------------+-------------+-------------+---------------------+------------------------------+
+\<close>
 
 \<^noindent> where ``basic'' refers to the rules for absorption, \<^const>\<open>SKIP\<close>, \<^term>\<open>e \<rightarrow> P\<close>, 
 @{term [source] \<open>\<box> a \<in> A \<rightarrow> P a\<close>}, @{term [source] \<open>\<sqinter> a \<in> A \<rightarrow> P a\<close>},
@@ -250,16 +250,16 @@ following observations:
     something like \<open>P \<otimes> Q \<leadsto>\<^sub>\<checkmark> \<Omega> SKIP\<close>. This is a consequence of @{theorem initial_tick_iff_FD_SKIP}
     and @{theorem FD_iff_eq_Ndet}.
   \<^enum> The ``absorption'' rules at the beginning allow additional rules to be derived directly \<^eg>
-    \begin{center}
+    \<^center>\<open>
     @{thm [mode = Rule] ev_trans_SeqR} \qquad @{thm [mode = Rule] tick_trans_SeqR}
-    \end{center}
+    \<close>
   \<^enum> About the termination of @{const [source] Sync} operator, Roscoe postulates
     in \<^cite>\<open>"roscoe:csp:1998"\<close> that:
-    \begin{center}
+    \<^center>\<open>
     @{thm [mode = Rule]  Roscoe_tick_trans_SyncL} \qquad
     @{thm [mode = Rule]  Roscoe_tick_trans_SyncR} \qquad
     @{thm [mode = Axiom] Roscoe_tick_trans_Sync_both}
-    \end{center}
+    \<close>
     where \<^term>\<open>\<Omega>'\<close> is intended to denote any process that has already terminated. In the common
     interpretation that \<^term>\<open>\<Omega>'\<close> can be identified with \<^term>\<open>STOP\<close>, these rules are incompatible
     with the denotational properties since we have \<^term>\<open>STOP \<lbrakk>S\<rbrakk> STOP = STOP\<close> that
@@ -269,18 +269,18 @@ following observations:
     found in the literature. In particular for the @{const [source] Throw} operator,
     where the right argument remains inactive until an exception is triggered, we should not write
     a right \<open>\<tau>\<close> transition rule like:
-    \begin{center}
+    \<^center>\<open>
     @{term [mode = Rule, eta_contract = false] \<open>\<forall>a\<in>A. Q a \<leadsto>\<^sub>\<tau> Q' a \<Longrightarrow> P \<Theta> a \<in> A. Q a \<sqsubseteq>\<^sub>F\<^sub>D P \<Theta> a \<in> A. Q' a\<close>}
-    \end{center}
+    \<close>
     while this is true when instantiating \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close> with \<^term>\<open>(\<sqsubseteq>\<^sub>F\<^sub>D)\<close>, \<^term>\<open>(\<sqsubseteq>\<^sub>D\<^sub>T)\<close>, \<^term>\<open>(\<sqsubseteq>\<^sub>F)\<close> or \<^term>\<open>(\<sqsubseteq>\<^sub>T)\<close>.
 \<close>
 
 (* 
- \begin{center}
+ \<^center>\<open>
     @{thm [mode = Rule]  \<tau>_trans_SKIP_SyncL} \qquad
     @{thm [mode = Rule]  \<tau>_trans_SKIP_SyncR} \qquad
     @{thm [mode = Axiom] tick_trans_SKIP_Sync_SKIP}
-    \end{center}
+    \<close>
 *)
 
 

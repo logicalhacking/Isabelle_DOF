@@ -27,11 +27,11 @@ Most noteworthy to these attempts is an early CSP trace semantics model in HOL S
 by \<^cite>\<open>"Camilleri90"\<close>.  Its successor \<^cite>\<open>"Camilleri91"\<close> presented a first failure-divergence 
 semantics for a restricted set of operators and used the notion of a universal (polymorphic) 
 alphabet\<^footnote>\<open>Our first attempts for HOL-CSP \<^cite>\<open>"tej.ea:corrected:1997"\<close> are based on a extended 
-version of this theory ported to Isabelle/HOL\<close>. Note that \<^cite>\<open>"tej.ea:corrected:1997"\<close> tackled 
+version of this theory ported to \<^isabelle>\<close>. Note that \<^cite>\<open>"tej.ea:corrected:1997"\<close> tackled 
 already with subtle difficulties concerning \<^term>\<open>is_process\<close> and \<^term>\<open>\<checkmark>\<close>.
 
 The tool CSP-Prover \<^cite>\<open>"DBLP:conf/concur/IsobeR06"\<close> --- based on a deep embedding of CSP in an 
-Isabelle/HOL theory on the stable failures model ---  allows for the refinement 
+\<^isabelle> theory on the stable failures model ---  allows for the refinement 
 verification~\<^cite>\<open>"DBLP:conf/concur/IsobeR06"\<close>  by using some automated support for induction. 
 However, only if a process is divergence-free, its failures are the same as its stable failures. 
 In our view, this is a too strong assumption for both a theory as well as a practical tool.
@@ -89,7 +89,7 @@ language for the specification and analysis of concurrent systems studied in a r
 literature. The theory comprises the denotational part (including recursion and permitting
 higher-order processes), the algebraic part paving the way for parametric refinement proofs
 involving fixed point induction, and the operational semantics part. The size of the 
-latter, which constitutes an original contribution, is about 16 kLOC of Isabelle/HOL proofs.
+latter, which constitutes an original contribution, is about 16 kLOC of \<^isabelle> proofs.
 
 The resulting framework offers new ways to reason consistently over denotationally defined
 CSP processes paving the way to symbolic execution of LTS-based representations of processes

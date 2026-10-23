@@ -199,7 +199,7 @@ text\<open> \<^vs>\<open>-0.6cm\<close>\<close>
 text\<open> The theories \<^session>\<open>HOL-CSP\<close> and \<^session>\<open>HOL-CSPM\<close> \<^cite>\<open>"HOL-CSPM-AFP"\<close> also add a number 
 of extensions of the original language. This includes for the binary operators \<^term>\<open>P \<lbrakk>A\<rbrakk> P'\<close>,
  \<^term>\<open>P \<^bold>; P'\<close>,  \<^term>\<open>P \<box> P'\<close>,  \<^term>\<open>P \<sqinter> P'\<close>, the generalizations  @{term [source] \<open>\<^bold>\<lbrakk>S\<^bold>\<rbrakk>i \<in># M. P(i)\<close>},
-@{term [source]\<open>\<^bold>|\<^bold>|\<^bold>| i \<in># M. P(i)\<close>}, etc. Roscoe's operators @{const [source] Interrupt} \<^term>\<open>P \<triangle> P'\<close> and 
+@{term [source]\<open>\<^bold>|\<^bold>|\<^bold>| i \<in># M. P(i)\<close>}, \<^etc>. Roscoe's operators @{const [source] Interrupt} \<^term>\<open>P \<triangle> P'\<close> and 
 \<^const>\<open>Throw\<close>  (exception handler) @{term [source] \<open>P \<Theta> a \<in> A. P'(a)\<close>} have also been included
 since they come in handy in some of the more general constructions. Finally, \<^cite>\<open>TahaWY20\<close> 
 proposed another refinement ordering, the trace-divergence ordering 
