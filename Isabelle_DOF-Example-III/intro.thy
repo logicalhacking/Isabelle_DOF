@@ -38,7 +38,7 @@ by additional information that allow to reason over
 \<^noindent> Several attempts have been undertaken to formalize this fairly complex theory, notably 
  \<^cite>\<open>"Camilleri91" and "tej.ea:corrected:1997" and  "IsobeRoggenbach2010"
 and "DBLP:journals/afp/Noce16" and "CSP-Agda"\<close>. The arguably (see @{technical (unchecked) relatedwork})
-  most comprehensive one is \<^session>\<open>HOL-CSP\<close>  \<^cite>\<open>"tej.ea:corrected:1997" and "HOL-CSP-AFP" and "TahaWY20" 
+most comprehensive one is \<^session>\<open>HOL-CSP\<close>  \<^cite>\<open>"tej.ea:corrected:1997" and "HOL-CSP-AFP" and "TahaWY20" 
    and "HOL-CSPM-AFP" and "HOL-CSP_OpSem-AFP"\<close>, which is
 in several ways not only a formalization in a proof assistant, but a generalization of
 the original setting:
@@ -69,9 +69,10 @@ the \<^emph>\<open>bridge\<close>-definition linking the denotational semantics 
 in the formally proven laws written in @{technical (unchecked) \<open>laws\<close>}. This is
 generalized to big steps semantics in @{technical (unchecked) bigSteps} and possible variants
 are discussed in @{technical (unchecked) variants}.
-Note that \<^session>\<open>HOL-CSP\<close>\<^cite>\<open>"HOL-CSP-AFP"\<close>, \<^session>\<open>HOL-CSPM\<close>\<^cite>\<open>"HOL-CSPM-AFP"\<close> as well as the novel contribution  \<^verbatim>\<open>HOL-CSP_OpSem\<close> \<^cite>\<open>"HOL-CSP_OpSem-AFP"\<close> 
-containing the proofs discussed here are published in the Archive of Formal Proofs AFP\<^footnote>\<open>For the developer 
-version, see \<^url>\<open>https://gitlab.lisn.upsaclay.fr/burkhart.wolff/hol-csp2.0/\<close>.\<close>.  
+Note that \<^session>\<open>HOL-CSP\<close>\<^cite>\<open>"HOL-CSP-AFP"\<close>, \<^session>\<open>HOL-CSPM\<close>\<^cite>\<open>"HOL-CSPM-AFP"\<close> as well as 
+the novel contribution  \<^verbatim>\<open>HOL-CSP_OpSem\<close> \<^cite>\<open>"HOL-CSP_OpSem-AFP"\<close> containing the proofs discussed 
+here are published in the Archive of Formal Proofs AFP\<^footnote>\<open>For the developer version, 
+see \<^url>\<open>https://gitlab.lisn.upsaclay.fr/burkhart.wolff/hol-csp2.0/\<close>.\<close>.  
 \<close>
 
 

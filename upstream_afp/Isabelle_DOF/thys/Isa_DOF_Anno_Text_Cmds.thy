@@ -300,10 +300,16 @@ fun document_output_reports name {markdown, body} sem_attrs transform_attr meta_
    effects are visible after the command. The text is checked and presented by present, which
    Toplevel forks like the presentation of text (Toplevel.present_state). With a target (in X),
    the text is checked and presented in the context of X, as for text (in X), while the instance
-   stays global (Local_Theory.background_theory). *)
+   stays global (Local_Theory.background_theory). Local_Theory.background_theory runs cmd with
+   the naming of the target (the mandatory path "X" of a locale), which would define the instance
+   as "X.oid", unreachable as "oid"; so cmd runs with the naming of the global theory. *)
+fun global_background_theory cmd lthy =
+  let val naming = Sign.naming_of (Proof_Context.theory_of lthy)
+  in Local_Theory.background_theory (Sign.map_naming (K naming) #> cmd) lthy end;
+
 fun annotated_transition NONE cmd present = Toplevel.theory_presentation cmd present
   | annotated_transition target cmd present =
-      Toplevel.local_theory_presentation NONE target (Local_Theory.background_theory cmd) present;
+      Toplevel.local_theory_presentation NONE target (global_background_theory cmd) present;
 
 fun document_command (name, pos) descr mark cmd sem_attrs transform_attr =
   Outer_Syntax.command (name, pos) descr

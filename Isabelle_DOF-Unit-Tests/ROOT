@@ -20,6 +20,7 @@ session "Isabelle_DOF-Unit-Tests" = "Isabelle_DOF-Ontologies" +
     "Structural_Object_Value"
     "Static_Evaluation"
     "Gridtbl_Test"
+    "Target_Test"
   document_files
     "root.bib"
     "figures/A.png"
