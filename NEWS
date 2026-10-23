@@ -1,0 +1,15 @@
+In the transition from Isabelle_DOF 2025 to Isabelle_DOF 2026,
+the most relevant facts are:
+
+Major Changes:
+
+- DOF : substantially improved performance due to deeper use of Isabelle's
+        parallelization mechanisms. This includes a revision of the DOF core,
+        which is now closer to modern Isabelle Versions,
+- DOF : Support of "targets" in text*(in tgt)<< ... >> and related commands,
+- COL : more customized macros, 
+- COL : native support of grid-tables,
+- Manuals : A 30 page User-Manual aside with the Reference-Manual, and
+- Ontologies : A new Exercise Ontology
+
+Minor Changes:
