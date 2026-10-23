@@ -13,3 +13,18 @@ Major Changes:
 - Ontologies : A new Exercise Ontology
 
 Minor Changes:
+- DOF : instances of commands with a target, text* (in L) or Theorem* (in L), stay
+        global (before, they were registered as "L.oid" and could not be found),
+- DOF : the document engine "dof" can be used by sessions outside the Isabelle_DOF
+        hierarchy via an engine-only component (see README_DEVELOPMENT.md),
+- COL : the shortcut \<^isabelle> (Isabelle/HOL) joins the other shortcuts and macros,
+        and the examples use them (\<^eg>, \<^ie>, \<^etc>, \<^center>),
+- COL : grid-table cells may consist of a single symbol such as \<checkmark>,
+- Exercise : one source is typeset for students, professors and examiners
+        via Isabelle's document variants (document_variants in the ROOT file),
+- Examples : revised; new Example-III (operational semantics of CSP, session
+        parent HOL-CSP_OpSem), which uses the target feature,
+- Isabelle_DOF-Proofs : not yet ported; it depends on the AFP entry
+        Metalogic_ProofChecker, which does not build with Isabelle 2026 (RC2),
+- README, README_DEVELOPMENT, CITATION : updated; the SCP paper is the
+        recommended citation.
