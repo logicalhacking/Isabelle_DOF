@@ -47,12 +47,9 @@ end end
 
 section*["smallSteps"::technical,main_author="Some(@{author ''ben''}::author)", level= "Some 3"]
   \<open>Small Steps Semantics\<close>
-  (*<*)
-context OpSemTransitions
-begin
-  (*>*)
 
-text \<open>
+
+text(in OpSemTransitions) \<open>
 \<^noindent> Operational semantics of CSP involve two kinds of transitions that we need to define:
 
    \<^item> the \<open>\<tau>\<close> transition, denoted \<^term>\<open>P \<leadsto>\<^sub>\<tau> Q\<close>, (\<^emph>\<open>internal transition\<close>)
@@ -75,21 +72,13 @@ We will investigate the precise connection between both definitions in
 \<close>
   (* \<^vs>\<open>-0.2cm\<close> *)
 
-(*<*)
-end
-  (*>*)
-
 
 subsection*["initials"::technical,main_author="Some(@{author ''ben''}::author)"]
   \<open>The Notion of initials\<close>
 
-(*<*)
-context After
-begin
-  (*>*)
 
 
-text \<open>\<^noindent> As prerequisite, we need the events \<^term>\<open>P\<close> can start with,
+text(in After) \<open>\<^noindent> As prerequisite, we need the events \<^term>\<open>P\<close> can start with,
 called @{term [source] \<open>initials P\<close>} and denoted \<^term>\<open>P\<^sup>0\<close>.\<close>
 
 (*
@@ -109,9 +98,7 @@ with which \<^term>\<open>P\<close> can start. \<close>
 *)
 (* put a ref to the invariant ? is_process should be in a Definition* then *)
 
-(*<*)
-end
-  (*>*)
+
 
 (*  \<^term>\<open>ev e\<close> (the non-tick-event \<^term>\<open>e::'\<alpha>\<close> of \<^typ>\<open>'\<alpha> event\<close>) in \<^term>\<open>P\<^sup>0\<close>*)
 
@@ -146,13 +133,13 @@ Definition*[initials_def_bis::"definition"]\<open>@{thm [show_question_marks = f
 
 Theorem*["initials_easy_laws"::"theorem", short_name = "\<open>Basic rules for $initials$\<close>"]\<open>
 We derive:
-\begin{center}
+\<^center>\<open>
 @{thm initials_BOT} \qquad @{thm initials_empty_iff_STOP} \qquad @{thm initials_SKIP}
 
 @{thm initials_Ndet} \qquad @{thm initials_Det} \qquad @{thm initials_Mprefix[of e P]}
 
 @{thm initials_Sliding} \qquad @{thm initials_Interrupt} \qquad @{thm [eta_contract = false] initials_Throw}
-\end{center}
+\<close>
 \<close>
 
 (*<*)
@@ -163,7 +150,7 @@ lemma non_BOT_initials_Sync:
 
 lemma BOT_initials_Sync: \<open>(\<bottom> \<lbrakk>S\<rbrakk> Q)\<^sup>0 = UNIV\<close> \<open>(P \<lbrakk>S\<rbrakk> \<bottom>)\<^sup>0 = UNIV\<close>
   by (simp_all add: initials_Sync)
-    (*>*)
+(*>*)
 
 Theorem*["initials_hard_laws"::"theorem", short_name = "\<open>More complex rules for $initials$\<close>"]\<open>
 The following list requires more caution:
@@ -190,9 +177,9 @@ Theorem*["initial_tick_iff_FD_SKIP"::"theorem", short_name = \<open>\<open>Chara
 turned out to be extremely complex, clearly out of reach of paper-and-pencil reasoning. *)
 
 
-subsection*[After::technical,main_author="Some(@{author ''ben''}::author)"]
-  \<open>The After Operator\<close>
-  (*<*)
+subsection*[After::technical,main_author="Some(@{author ''ben''}::author)"] \<open>The After Operator\<close>
+
+(*<*)
 context After
 begin
 
@@ -201,8 +188,8 @@ begin
 (* and a precise clarification of the intended
 relation to the operational semantics *)
 
-(* Theorem*[After_Ndet::"theorem"]\<open>After_Ndet\<close> *)
-text\<open>\<^noindent> There is no comprehensive treatment of the @{const [source] After} operator in the CSP 
+Theorem*(in After) [After_Ndet::"theorem"]\<open>/
+\<^noindent> There is no comprehensive treatment of the @{const [source] After} operator in the CSP 
 literature, at least not with a formal definition and a precise clarification of the behaviour
 wrt. the other operators; we had to do a number of trials and second-guessing here.
 A key element is the notion of \<^const>\<open>initials\<close> (@{definition initials_def}); assuming 
@@ -223,10 +210,8 @@ definition of the @{const [source] After} operator. Given @{term [show_types] \<
 to be \<^term>\<open>{(s, X). (ev e # s, X) \<in> \<F> P}\<close> and its divergences \<^term>\<open>{s. ev e # s \<in> \<D> P}\<close>.
 *)
 
-(*<*)
-end
-  (*>*)
-Definition*[After_def::"definition", short_name = \<open>\<open>$After$ operator\<close>\<close>]\<open>\
+
+Definition*(in After)[After_def::"definition", short_name = \<open>\<open>$After$ operator\<close>\<close>]\<open>\
 @{theory_text [display,indent=10]
 \<open>locale After =  fixes \<Psi> :: \<open>['\<alpha> process, '\<alpha>] \<Rightarrow> '\<alpha> process\<close> begin
 
@@ -234,11 +219,6 @@ lift_definition After :: \<open>['\<alpha> process, '\<alpha>] \<Rightarrow> '\<
   is \<open>\<lambda>P e.   if ev e \<in> initials P
               then ({(s, X). (ev e # s, X) \<in> \<F> P}, {s. ev e # s \<in> \<D> P})
               else (\<F> (\<Psi> P e), \<D> (\<Psi> P e))\<close>\<close>}\<close>
-
-(*<*)
-context After
-begin
-  (*>*)
 
 
 text \<open>Here, \<^theory_text>\<open>lift_definition\<close> is a variant of Isabelle constant \<^theory_text>\<open>definition\<close> which gives
@@ -252,7 +232,8 @@ generalisation to traces denoted by \<open>P / s\<close> was identified at many 
 basing the process-ordering \<^term>\<open>(\<sqsubseteq>)\<close> on its refusals.
 @{const [source] After} and  \<open>P / s\<close> play a pivotal role when linking CSP to automata-theoretic
 concepts; nevertheless it was commonly treated as something ``meta''\<^footnote>\<open>Roscoe states 
-that ``this operator should not be thought of as an ordinary part of the CSP language''\<^cite>\<open>"roscoe:csp:1998"\<close>.\<close>.
+that ``this operator should not be thought of as an ordinary part of the CSP language''
+\<^cite>\<open>"roscoe:csp:1998"\<close>.\<close>.
 
 In our work, we turn @{const [source] After} into an ordinary operator,
 compatible with all other concepts, preserving the invariant of \<^typ>\<open>'\<alpha> process\<close>, 
@@ -294,18 +275,10 @@ Theorem*[After_Hiding::"theorem", short_name = \<open>\<open>$After$ and $Hiding
                 After.After_Hiding_FD_Hiding_After_if_initial_notin[of _ _ _ \<Psi>]}
 \<close>
 
-(*<*)
-no_notation local_After (infixl \<open>after\<close> 77)
+(*<*)no_notation local_After (infixl \<open>after\<close> 77) (*>*)
 
-context After
-begin
-  (*>*)
+text(in After) \<open>\<^noindent> This will not be too restrictive for our construction thanks to the following theorem.\<close>
 
-text \<open>\<^noindent> This will not be too restrictive for our construction thanks to the following theorem.\<close>
-
-(*<*)
-end
-  (*>*)
 
 Theorem*[FD_iff_eq_Ndet::"theorem", short_name = \<open>\<open>Characterization of FD-refinement\<close>\<close>]\<open>\
 
@@ -315,12 +288,8 @@ The FD-refinement @{thm (lhs) FD_iff_eq_Ndet} holds if and only if @{thm (rhs) F
 subsection*["motivations"::technical,main_author="Some(@{author ''ben''}::author)"]
   \<open>The Rationale for an Operational Semantics\<close>
 
-(*<*)
-context OpSemTransitions
-begin
-  (*>*)
 
-text \<open>
+text(in OpSemTransitions) \<open>
 \<^noindent> With respect to the  \<open>\<tau>\<close> transition, \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close>, we follow the choice of
 Jifeng and Hoare in \<^cite>\<open>jifeng1993algebra\<close>, \<^ie> we define it by \<^term>\<open>P \<leadsto>\<^sub>\<tau> Q \<equiv> P \<sqsubseteq>\<^sub>F\<^sub>D Q\<close> .
 
@@ -335,9 +304,6 @@ With respect to the external transitions, we expect that:
 This is achieved by extending the \<^theory_text>\<open>locale\<close> with an additional parameter \<^term>\<open>\<Omega>\<close>.
 \<close>
 
-(*<*)
-end
-  (*>*)
 
 Definition*[After_tick_def::"definition", short_name = \<open>\<open>$After_{tick}$ operator\<close>\<close>]\<open>\
 
@@ -448,7 +414,7 @@ text(in OpSemTransitionsSync)\<open>\
   @{thm \<tau>_trans_SyncL}, 
   we finally conclude that @{thm (concl) ev_trans_SyncL}.
 \<close>
-  (* BU : Last para commented out since OpSem_axioms_ok not visible in this context *)
+(* BU : Last para commented out since OpSem_axioms_ok not visible in this context *)
 
 
 text (in OpSemTransitionsSliding) \<open>
@@ -466,4 +432,4 @@ Special cases of rules not in the core ruleset will be discussed in the subseque
 
 (*<*)
 end
-  (*>*) 
+(*>*) 

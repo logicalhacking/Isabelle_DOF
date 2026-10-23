@@ -1,8 +1,7 @@
-session "2024-itp-csp" = "HOL-CSP_Proc-Omata" +
+session "2024-itp-csp" = "HOL-CSP_OpSem" +
   options [document = pdf, document_output = "output",document_comment_latex, document_build=dof,
            show_question_marks=false]
-  (* sessions "Isabelle_DOF-Ontologies" *)
-  sessions Isabelle_DOF
+  sessions Isabelle_DOF "Isabelle_DOF-Ontologies" "HOL-CSP_Proc-Omata"
   theories
     intro
     front

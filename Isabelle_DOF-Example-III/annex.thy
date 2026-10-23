@@ -9,14 +9,10 @@ begin
 section*["laws"::technical,main_author="Some(@{author ''ben''}::author)", level=\<open>Some 3\<close>]
 \<open>The Derived Rules of the Operational Semantics at a Glance\<close>
 
-(*<*)
-context OpSemTransitionsAll
-begin
-(*>*)
 
 (* \<^noindent> \<^term>\<open>P \<sqinter> Q\<close>, \<^term>\<open>P \<box> Q\<close> and \<^term>\<open>P \<lbrakk>S\<rbrakk> Q\<close> are commutative so we only write the ``left-sided'' rules. *)
 
-text \<open>
+text(in OpSemTransitionsAll) \<open>
 \begin{center}
 \<^vs>\<open>0.3cm\<close>
 @{thm[mode=Rule] ev_trans_\<tau>_trans} \qquad @{thm[mode=Rule] \<tau>_trans_ev_trans}
@@ -137,14 +133,8 @@ text \<open>
 \end{center}
 \<close>
 
-(*<*)
-end
 
-context OpSemTransitionsAllDuplicated
-begin
-(*>*)
-
-text \<open>\<^vs>\<open>-1.26cm\<close>
+text(in OpSemTransitionsAllDuplicated) \<open>\<^vs>\<open>-1.26cm\<close>
 \begin{center}
 @{thm[mode=Rule, eta_contract=false] Renaming_OpSem_rules(1)}
 
@@ -157,10 +147,7 @@ text \<open>\<^vs>\<open>-1.26cm\<close>
 
 \<close>
 
-
 (*<*)
-end
-
 
 (* (* First version here *)
 

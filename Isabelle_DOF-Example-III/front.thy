@@ -1,13 +1,13 @@
 (*<*)
 theory "front"
   imports   "Isabelle_DOF.scholarly_paper"
-            (* "Isabelle_DOF-Ontologies.document_templates" *)
+            "Isabelle_DOF-Ontologies.document_templates"
             "HOL-CSP_OpSem.Conclusion"
 begin
 
 
 use_ontology "Isabelle_DOF.scholarly_paper" 
-(* use_template "lipics-v2021-UNSUPPORTED" *)
+use_template "lipics-v2021-UNSUPPORTED"
 
 open_monitor*[this::article]
 

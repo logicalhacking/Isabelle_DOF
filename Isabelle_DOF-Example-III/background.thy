@@ -97,20 +97,22 @@ of analysis, and --- particularly relevant here --- Scott domain theory (\<^sess
 \<^cite>\<open>"muller.ea:holcf:1999"\<close> providing a particular type class \<open>'\<alpha>::pcpo\<close>, i.e. the class of
 types \<^typ>\<open>'\<alpha>\<close> for which a least element \<^term>\<open>\<bottom>\<close> and a complete partial order \<open>_\<sqsubseteq>_\<close> is defined.
 
-\<^session>\<open>HOLCF\<close> provides the concept of \<^emph>\<open>continuity\<close>, the concept of \<^emph>\<open>admissibility\<close>, the fixed point 
-operator \<^term>\<open>\<mu> X. f X\<close> as well as the fixed point induction for admissible predicates.
-Isabelle's type inference can automatically infer, for example, that if \<open>'\<alpha>::pcpo\<close>, then \<open>('\<beta> \<Rightarrow> '\<alpha>)::pcpo\<close>.
+\<^session>\<open>HOLCF\<close> provides the concept of \<^emph>\<open>continuity\<close>, the concept of \<^emph>\<open>admissibility\<close>, the fixed 
+point operator \<^term>\<open>\<mu> X. f X\<close> as well as the fixed point induction for admissible predicates.
+Isabelle's type inference can automatically infer, for example, that if \<open>'\<alpha>::pcpo\<close>, 
+then \<open>('\<beta> \<Rightarrow> '\<alpha>)::pcpo\<close>.
 
 A distinguishing feature of Isabelle is the \<^theory_text>\<open>locale\<close> mechanism, \<^ie> theories that may be
-parameterized by types, constant-symbols and local hypotheses over them. Since  \<^theory_text>\<open>locale\<close>s may inherit
-from other \<^theory_text>\<open>locale\<close>s, they represent a powerful structuring mechanism for orders and algebraic
-structures very similar to dependent types available in other systems. \<close>
+parameterized by types, constant-symbols and local hypotheses over them. Since  \<^theory_text>\<open>locale\<close>s may 
+inherit from other \<^theory_text>\<open>locale\<close>s, they represent a powerful structuring mechanism for orders and 
+algebraic structures very similar to dependent types available in other systems. \<close>
 
 
 subsection*[holcspsemantics::technical, main_author="Some(@{author ''bu''})"]\<open>Isabelle/HOL-CSP\<close>
 
-text\<open>\<^noindent> \<^verbatim>\<open>Isabelle/HOL-CSP\<close> is a shallow embedding of CSP in HOL based on the traditional semantic domain 
-described by 9 ``axioms'' over the three semantic functions \<^term>\<open>\<T>\<close> :: \<^typ>\<open>'\<alpha> process \<Rightarrow> '\<alpha> trace set\<close>,
+text\<open>\<^noindent> \<^verbatim>\<open>Isabelle/HOL-CSP\<close> is a shallow embedding of CSP in HOL based on the traditional semantic 
+domain described by 9 ``axioms'' over the three semantic functions
+\<^term>\<open>\<T>\<close> :: \<^typ>\<open>'\<alpha> process \<Rightarrow> '\<alpha> trace set\<close>,
 \<^term>\<open>\<F>\<close> :: \<^typ>\<open>'\<alpha> process \<Rightarrow> '\<alpha> failure set\<close> and \<^term>\<open>\<D>\<close> :: \<^typ>\<open>'\<alpha> process \<Rightarrow> '\<alpha> trace set\<close>:
    \<^item> \<^vs>\<open>-0.2cm\<close>the empty trace is always the initial trace and any trace is \<^const>\<open>front_tickFree\<close>; 
    \<^item> traces of a process are  \<^emph>\<open>prefix-closed\<close> and a process can refuse all subsets of refusals; 
@@ -118,7 +120,8 @@ described by 9 ``axioms'' over the three semantic functions \<^term>\<open>\<T>\
    \<^item> the @{const [source] tick} accepted after a trace \<open>s\<close> implies that all other events are refused; 
    \<^item> a divergence trace with any suffix is itself a divergence one
    \<^item> once a process has diverged, it can engage in or refuse any sequence of events.
-   \<^item> a @{const [source] tick}-ending divergence trace has a \<^const>\<open>tickFree\<close> divergence trace prefix of  maximal length. \<^vs>\<open>-0.2cm\<close> 
+   \<^item> a @{const [source] tick}-ending divergence trace has a \<^const>\<open>tickFree\<close> divergence trace prefix 
+     of  maximal length. \<^vs>\<open>-0.2cm\<close> 
 
 \<^noindent> More formally, a process \<open>P\<close> of the type \<open>\<Sigma> process\<close> should have the following properties: \<^vs>\<open>-0.1cm\<close> 
 

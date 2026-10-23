@@ -13,8 +13,7 @@ begin
 
 section*["bigSteps"::technical,main_author="Some(@{author ''ben''}::author)", level= "Some 3"]
 \<open>Big Steps Semantics\<close>
-(*<*) context OpSemTransitions begin (*>*)
-text\<open>\<^noindent> The notation \<open>P / [e]\<close> sometimes appearing in the classical literature will now
+text(in OpSemTransitions)\<open>\<^noindent> The notation \<open>P / [e]\<close> sometimes appearing in the classical literature will now
 be given a formal definition in terms of the  @{const [source] After\<^sub>t\<^sub>i\<^sub>c\<^sub>k} (@{definition After_tick_def})
 operator. From there, the generalization to an operator ``connecting'' two processes \<open>P\<close> and \<open>Q\<close>
 via a trace \<open>s\<close>
@@ -24,7 +23,6 @@ These generalized notions will allow for both establishing new
 formats of refinement proofs as well as (bi)simulation theorems.
 \<close>
 
-(*<*) end  (*>*)
 
 subsection*["extensions_traces"::technical,main_author="Some(@{author ''ben''}::author)"]
 \<open>Extensions to Traces\<close>
@@ -37,12 +35,9 @@ fun After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e :: \<open>['\<alpha> process, 
   where \<open>P after\<^sub>\<T> [] = P\<close>
   |       \<open>P after\<^sub>\<T> (e # s) = (P after\<^sub>\<checkmark> e) after\<^sub>\<T> s\<close>\<close>}\<close>
 
-(*<*) context OpSemTransitions begin (*>*)
-
 
 text\<open>\<^noindent> The definition of the generalized trace-transition is done analogously:\<close>
 
-(*<*)end (*>*)
 
 Definition*[trace_trans_def::"definition", short_name = \<open>\<open>Transition with a trace\<close>\<close>]
 \<open>@{theory_text [display, indent = 5]\<open>
@@ -58,20 +53,12 @@ related, which is expressed in the following theorem:
 \<close>
 
 
-(*  >>>>>>>>>>>>>>>>>>>>>>>> DOF26 Problem:
 
 Theorem* (in OpSemTransitions) [trace_trans_After_trace_correspondence :: "theorem",
          short_name = \<open>\<open>Bridge between trace transition and $After_{trace}$ operator\<close>\<close>]\<open>\
 
 \<^bigskip> @{thm (lhs) OpSemTransitions.trace_trans_iff_T_and_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e_\<tau>_trans[of \<Psi> \<Omega> \<open>(\<leadsto>\<^sub>\<tau>)\<close>]}
 if and only if @{thm (rhs) OpSemTransitions.trace_trans_iff_T_and_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e_\<tau>_trans[of \<Psi> \<Omega> \<open>(\<leadsto>\<^sub>\<tau>)\<close>]}.
-\<close>
- *)
-
-text (in OpSemTransitions)\<open>\
-
-\<^bigskip> @{thm (lhs) trace_trans_iff_T_and_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e_\<tau>_trans}
-if and only if @{thm (rhs) trace_trans_iff_T_and_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e_\<tau>_trans}.
 \<close>
 
 
@@ -85,9 +72,9 @@ event transition (@{technical implem}) where:
   \<^item> \<^term>\<open>P after\<^sub>\<checkmark> (ev e)\<close> (resp. \<^term>\<open>P after\<^sub>\<checkmark> \<checkmark>\<close>) is replaced by \<^term>\<open>P after\<^sub>\<T> s\<close>.
 
 *)
-text (in OpSemTransitions) \<open>Informally spoken, \<^term>\<open>P after\<^sub>\<T> s\<close> is the the least deterministic process that we can
-expect from process \<^term>\<open>P\<close> after the trace \<^term>\<open>s\<close>. This interpretation will become clearer
-when we will instantiate the formal \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close>-relation of the locale with concrete
+text (in OpSemTransitions) \<open>Informally spoken, \<^term>\<open>P after\<^sub>\<T> s\<close> is the the least deterministic 
+process that we can expect from process \<^term>\<open>P\<close> after the trace \<^term>\<open>s\<close>. This interpretation will 
+become clearer when we will instantiate the formal \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close>-relation of the locale with concrete
 refinements in @{technical (unchecked) variants}.
 
 Since the projections for the @{const [source] After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e} operator are relatively easy to handle,
@@ -104,29 +91,12 @@ lemma Refusals_def: \<open>\<R> Q = {X. ([], X) \<in> \<F> Q}\<close>
 
 (*>*)
 
-(*  >>>>>>>>>>>>>>>>>>>>>>>> DOF26 Problem:
 
-Theorem*[reality_checks_equivalences::"theorem", short_name = \<open>\<open>Reality Checks\<close>\<close>]\<open>\
-   \<^item> We have @{thm (lhs) OpSemTransitions.T_trace_trans_reality_check[OF OpSem_axioms_ok]}
-     if and only if @{thm (rhs) OpSemTransitions.T_trace_trans_reality_check[OF OpSem_axioms_ok]}.
-   \<^item> Under the assumption @{thm (prem 1) OpSemTransitions.D_trace_trans_reality_check_weak[OF OpSem_axioms_ok]}
-     of unicity of the least element of \<open>(\<leadsto>\<^sub>\<tau>)\<close>, a trace
-     @{thm (prem 2) OpSemTransitions.D_trace_trans_reality_check_weak[OF OpSem_axioms_ok]} verifies
-     @{thm (lhs) OpSemTransitions.D_trace_trans_reality_check_weak[OF OpSem_axioms_ok]} if and only if
-     @{thm (rhs) OpSemTransitions.D_trace_trans_reality_check_weak[OF OpSem_axioms_ok]}.
-   \<^item> Under the assumption @{thm (prem 1) OpSemTransitions.F_trace_trans_reality_check_weak[OF OpSem_axioms_ok]}
-     that a \<open>\<tau>\<close> transition implies F-refinement, and if
-     @{thm (prem 2) OpSemTransitions.F_trace_trans_reality_check_weak[OF OpSem_axioms_ok]},
-     we have @{thm (lhs) OpSemTransitions.F_trace_trans_reality_check_weak[OF OpSem_axioms_ok]} if and only if
-     @{thm (rhs) OpSemTransitions.F_trace_trans_reality_check_weak[OF OpSem_axioms_ok]}.
-\<close>
- *)
-
-text (in OpSemTransitions)\<open>\
+Theorem* (in OpSemTransitions) [reality_checks_equivalences::"theorem", short_name = \<open>\<open>Reality Checks\<close>\<close>]\<open>\
    \<^item> We have @{thm (lhs) T_trace_trans_reality_check}
      if and only if @{thm (rhs) T_trace_trans_reality_check}.
    \<^item> Under the assumption @{thm (prem 1) D_trace_trans_reality_check_weak}
-     of unicity of the least element of \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close>, a trace
+     of unicity of the least element of \<open>(\<leadsto>\<^sub>\<tau>)\<close>, a trace
      @{thm (prem 2) D_trace_trans_reality_check_weak} verifies
      @{thm (lhs) D_trace_trans_reality_check_weak} if and only if
      @{thm (rhs) D_trace_trans_reality_check_weak}.
@@ -141,18 +111,18 @@ text (in OpSemTransitions)\<open>\
 text\<open>\<^noindent>(where @{thm (lhs) Refusals_def[of Q]} is the set of refusals of \<^term>\<open>Q\<close>, defined as 
 @{thm (rhs) Refusals_def[of Q]}).\<close>
 
-(* >>>>>>>>>>>>>>>>>>>>>>>>>>>>> Isa26 DOF Problem ? ? ?
-
-Proposition*[projections_After_trace :: "proposition", short_name = \<open>\<open>Projections of $After_{trace}$\<close>\<close>]\<open>\
+(* was commented out, but compiles *)
+(*<*)
+Proposition*[projections_After_trace :: "proposition", 
+             short_name = \<open>\<open>Projections of $After_{trace}$\<close>\<close>]\<open>\
 @{thm [display] AfterExt.F_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e_eq[of _ _ \<Psi> \<Omega>]
                 AfterExt.D_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e_eq[of _ _ \<Psi> \<Omega>]
                 AfterExt.T_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e_eq[of _ _ \<Psi> \<Omega>]}\<close>
-
 text \<open>These equivalences are proved with @{theorem trace_trans_After_trace_correspondence}
       (for direct implication, indirect is easier).
       They may have concrete applications by paving the way for trace or divergence certification.\<close> 
+(*>*)
 
-*)
 
 
 subsection*[bisimulation::technical, main_author="Some(@{author ''ben''}::author)", level= "Some 3"]
@@ -190,8 +160,6 @@ more suited for the semantic treatment we are heading for.\<close>
 
 
 (*<*)
-
-end
 
 (*  which can be interpreted as "when \<^term>\<open>s\<close> is a trace of
 \<^term>\<open>P\<close>, we can expect at least \<^term>\<open>P after\<^sub>\<T> s\<close> from \<^term>\<open>P\<close> after \<^term>\<open>s\<close>"
@@ -267,3 +235,4 @@ Corollary*[reality_checks_other_side::"corollary", short_name = \<open>\<open>Re
 *)
 (*>*)
 
+end

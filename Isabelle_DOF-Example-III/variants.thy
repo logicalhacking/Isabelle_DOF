@@ -2,7 +2,7 @@
 theory "variants"
   imports   "Isabelle_DOF.scholarly_paper"
             (* "Isabelle_DOF-Ontologies.document_templates" *)
-            "HOL-CSP_Proc-Omata" "HOL-CSP_OpSem.Comparison_He_Hoare"
+            "HOL-CSP_Proc-Omata.Deterministic_Processes" "HOL-CSP_OpSem.Comparison_He_Hoare"
             "big_steps"
 begin
 (*>*)
@@ -45,18 +45,9 @@ is the same as non intersecting its @{const [source] initials} \<^term>\<open>P\
 
 
 
-(* >>>>>>>>>>>>>>>>>>>>>>>> DOF26 Problem:
 
-   Theorem*[deterministic_F_trace_trans_reality_check::"theorem",
+Theorem* (in OpSemFD) [deterministic_F_trace_trans_reality_check::"theorem",
          short_name=\<open>\<open>Deterministic Version of failures reality Check\<close>\<close>]\<open>\ 
-
-Assuming @{thm (prem 1) local_deterministic_F_trace_trans_reality_check} and
-@{thm (prem 2) local_deterministic_F_trace_trans_reality_check}, we have: 
-
-\<^hs>\<open>1.0cm \<close> @{thm (lhs) local_deterministic_F_trace_trans_reality_check} if and only if
-  @{thm (rhs) local_deterministic_F_trace_trans_reality_check}.\<close> *)
-
-text (in OpSemFD)\<open>
 
 Assuming @{thm (prem 1) deterministic_F_trace_trans_reality_check} and
 @{thm (prem 2) deterministic_F_trace_trans_reality_check}, we have: 
@@ -64,13 +55,8 @@ Assuming @{thm (prem 1) deterministic_F_trace_trans_reality_check} and
 \<^hs>\<open>1.0cm \<close> @{thm (lhs) deterministic_F_trace_trans_reality_check} if and only if
   @{thm (rhs) deterministic_F_trace_trans_reality_check}.\<close>
 
-(*<*)
 
-context OpSemDT 
-begin
-(*>*)
-
-text \<open> 
+text(in OpSemDT) \<open> 
 It came as a pleasant surprise when we observed that the same argument applies for the trace 
 divergence refinement @{term [source] \<open>(\<sqsubseteq>\<^sub>D\<^sub>T)\<close>}. Initially defined and studied in \<^cite>\<open>TahaWY20\<close> for 
 pure curiosity, it behaves remarkably well: the only remaining hypothesis is a monotony for
@@ -78,14 +64,8 @@ pure curiosity, it behaves remarkably well: the only remaining hypothesis is a m
 
 Of course by restricting ourselves to traces and the divergences, we can not reason about failures anymore. \<close>
 
-(*<*)
-end
-context OpSemTransitions
-begin
-(*>*)
 
-
-text \<open>It turns out that it is also possible to instantiate the \<open>\<tau>\<close> transition in the \<^theory_text>\<open>locale\<close>
+text (in OpSemTransitions) \<open>It turns out that it is also possible to instantiate the \<open>\<tau>\<close> transition in the \<^theory_text>\<open>locale\<close>
  \<^locale>\<open>OpSemTransitions\<close> with the failure refinement or the trace refinement.
 However, for them, the result is somewhat unimpressive.
 The following table summarizes the rule sets corresponding to operators which can be established.
@@ -111,7 +91,6 @@ The following table summarizes the rule sets corresponding to operators which ca
 \<close>
 
 (* text \<open>
-
  the \<^theory_text>\<open>locale\<close> \<^locale>\<open>OpSemTransitions\<close>,
 the \<open>\<tau>\<close> transition implies the trace refinement \<^term>\<open>(\<sqsubseteq>\<^sub>T)\<close>. 
 What else can be used as a \<open>\<tau>\<close> transition ? An interesting observation is that under the assumptions
@@ -127,7 +106,6 @@ that we automatically obtain as soon as we can instantiate \<^locale>\<open>OpSe
 recover the operational rules of:
  \<^item> \<^term>\<open>P \ S\<close> for \<^term>\<open>(\<sqsubseteq>\<^sub>F)\<close>
  \<^item> \<^term>\<open>P \<box> Q\<close>, \<^term>\<open>P \ S\<close>, \<^term>\<open>P \<rhd> Q\<close> and \<^term>\<open>P \<triangle> Q\<close> for \<^term>\<open>(\<sqsubseteq>\<^sub>T)\<close>.
-
 \<close> *)
 text \<open> 
 Being able to instantiate the locale represents the main result: we can formally derive 
@@ -139,9 +117,7 @@ And last but not least, we obtained actually two interesting variants with FD-re
 plus all the sub-variants resulting from the free choice of \<^term>\<open>\<Psi>\<close> and \<^term>\<open>\<Omega>\<close>.
 \<close>
 
-(*<*)
-end
-(*>*)
+
 
 subsection*["copy_buffer_illustration"::technical,main_author="Some(@{author ''ben''}::author)", level= "Some 3"]
 \<open>Running Example: the Copy Buffer Again\<close>
@@ -204,21 +180,7 @@ we can prove the reciprocal. The situation is summarized in the following theore
 \<close>
 
 
-(*  >>>>>>>>>>>>>>>>>>>>>>>> DOF26 Problem: 
-Theorem*[equivalence_ev_trans::"theorem", short_name = \<open>\<open>Equivalence of Transitions\<close>\<close>]\<open>\
-
-Assuming a \<open>\<tau>\<close> monotony for \<open>prefix\<close>:
-@{thm (prem 2) OpSemTransitions.hyps_on_\<tau>_trans_imp_ev_trans\<^sub>H\<^sub>O\<^sub>A\<^sub>R\<^sub>E_iff_ev_trans[OF OpSem_axioms_ok]}
-
-\<^noindent> and for @{const [source] Det}:
-@{thm (prem 1) OpSemTransitions.hyps_on_\<tau>_trans_imp_ev_trans\<^sub>H\<^sub>O\<^sub>A\<^sub>R\<^sub>E_iff_ev_trans[OF OpSem_axioms_ok]},
-
-\<^noindent> we have @{thm (lhs) OpSemTransitions.hyps_on_\<tau>_trans_imp_ev_trans\<^sub>H\<^sub>O\<^sub>A\<^sub>R\<^sub>E_iff_ev_trans[OF OpSem_axioms_ok]}
-if and only if \<^term>\<open>P \<leadsto>\<^bsub>e\<^esub> Q\<close>.
-\<close>
-*)
-
-text (in OpSemTransitions)\<open>
+Theorem* (in OpSemTransitions) [equivalence_ev_trans::"theorem", short_name = \<open>\<open>Equivalence of Transitions\<close>\<close>]\<open>\
 
 Assuming a \<open>\<tau>\<close> monotony for \<open>prefix\<close>:
 @{thm (prem 2) hyps_on_\<tau>_trans_imp_ev_trans\<^sub>H\<^sub>O\<^sub>A\<^sub>R\<^sub>E_iff_ev_trans}
@@ -324,7 +286,6 @@ following observations:
 
 (*<*)
 end
-
 end
 (*>*)
 
