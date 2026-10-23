@@ -2,8 +2,7 @@
 theory "variants"
   imports   "Isabelle_DOF.scholarly_paper"
             (* "Isabelle_DOF-Ontologies.document_templates" *)
-            "HOL-CSP_OpSem.Conclusion"
-            "ComparisonWithJifengHoare"
+            "HOL-CSP_Proc-Omata" "HOL-CSP_OpSem.Comparison_He_Hoare"
             "big_steps"
 begin
 (*>*)
@@ -19,13 +18,9 @@ section*["variants"::technical,main_author="Some(@{author ''ben''}::author)", le
 subsection*["refinements"::technical,main_author="Some(@{author ''ben''}::author)", level= "Some 3"]
 \<open>Transitions as Local Refinements\<close>
 
-(*<*)
-context OpSemFD
-begin
-(*>*)
 
-
-text \<open>
+(* theorem reality_checks_equivalences \<Rightarrow> @{theorem reality_checks_equivalences} *)
+text (in OpSemFD) \<open>
 \<^noindent> We use a \<^theory_text>\<open>sublocale\<close> to partially instantiate \<^locale>\<open>OpSemTransitions\<close> 
 with @{term [source] \<open>(\<sqsubseteq>\<^sub>F\<^sub>D)\<close>}, \<^ie> by leaving \<^term>\<open>\<Psi>\<close> and \<^term>\<open>\<Omega>\<close> as parameters.
 In this context we prove that we have only one remaining hypothesis : @{thm mono_\<Omega>_FD},
@@ -36,7 +31,7 @@ we are free to choose for \<^term>\<open>\<Omega>\<close> \<^term>\<open>\<lambd
 @{term [eta_contract=false ]\<open>\<lambda>P. (e \<rightarrow> P)\<close>}, \<open>\<dots>\<close>\<close>. 
 
 Independent of this choice, we recover all the rules of operational semantics, and even better for 
-the ``reality checks'' (@{theorem reality_checks_equivalences}) since we get rid of the hypotheses.
+the ``reality checks'' (theorem reality\_checks\_equivalences) since we get rid of the hypotheses.
 
 However, it remains unfortunate that in the right hand side of the equivalence for failures 
 appears the denotational notion of refusals. 
@@ -48,34 +43,26 @@ long story short we prove that being in the refusals set of a \<^const>\<open>de
 is the same as non intersecting its @{const [source] initials} \<^term>\<open>P\<^sup>0\<close>. Moreover, the notion of
 \<^const>\<open>deterministic\<close> is preserved by \<^const>\<open>tickFree\<close> trace transitions. We finally prove:\<close>
 
-(*<*)
-end
-
-axiomatization \<Omega> :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> process\<close>
-  where OpSemFD_axioms_ok : \<open>OpSemFD \<Omega>\<close>
-
-abbreviation local_FD_trace_trans :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> trace \<Rightarrow> '\<alpha> process \<Rightarrow> bool\<close> (\<open>_ \<^sub>F\<^sub>D\<leadsto>\<^sup>*_ _\<close> [50, 3, 51] 50)
-  where \<open>P \<^sub>F\<^sub>D\<leadsto>\<^sup>*s Q \<equiv> OpSemTransitions.trace_trans \<Psi> variants.\<Omega> (\<sqsubseteq>\<^sub>F\<^sub>D) P s Q\<close>
 
 
-lemma local_deterministic_F_trace_trans_reality_check: 
-  \<open>deterministic P \<Longrightarrow> tickFree s \<Longrightarrow> ((s, X) \<in> \<F> P) = (\<exists>Q. P \<^sub>F\<^sub>D\<leadsto>\<^sup>*s Q \<and> X \<inter> Q\<^sup>0 = {})\<close>
-  by (fact OpSemFD.deterministic_F_trace_trans_reality_check [OF OpSemFD_axioms_ok])
+(* >>>>>>>>>>>>>>>>>>>>>>>> DOF26 Problem:
 
-thm local_deterministic_F_trace_trans_reality_check
-
-thm OpSemFD.deterministic_F_trace_trans_reality_check [OF OpSemFD_axioms_ok]
-
-(*>*)
-
-Theorem*[deterministic_F_trace_trans_reality_check::"theorem", 
+   Theorem*[deterministic_F_trace_trans_reality_check::"theorem",
          short_name=\<open>\<open>Deterministic Version of failures reality Check\<close>\<close>]\<open>\ 
 
 Assuming @{thm (prem 1) local_deterministic_F_trace_trans_reality_check} and
 @{thm (prem 2) local_deterministic_F_trace_trans_reality_check}, we have: 
 
 \<^hs>\<open>1.0cm \<close> @{thm (lhs) local_deterministic_F_trace_trans_reality_check} if and only if
-  @{thm (rhs) local_deterministic_F_trace_trans_reality_check}.\<close>
+  @{thm (rhs) local_deterministic_F_trace_trans_reality_check}.\<close> *)
+
+text (in OpSemFD)\<open>
+
+Assuming @{thm (prem 1) deterministic_F_trace_trans_reality_check} and
+@{thm (prem 2) deterministic_F_trace_trans_reality_check}, we have: 
+
+\<^hs>\<open>1.0cm \<close> @{thm (lhs) deterministic_F_trace_trans_reality_check} if and only if
+  @{thm (rhs) deterministic_F_trace_trans_reality_check}.\<close>
 
 (*<*)
 
@@ -201,9 +188,8 @@ text \<open>
 subsection*["comparison"::technical,main_author="Some(@{author ''ben''}::author)", level= "Some 3"]
 \<open>Comparison with the Work of Jifeng and Hoare\<close>
 
-(*<*) context OpSemTransitions begin (*>*)
 
-text \<open>
+text (in OpSemTransitions) \<open>
 \<^noindent> As mentioned in @{technical smallSteps}, Hoare and Jifeng in \<^cite>\<open>jifeng1993algebra\<close> defined 
 \<^term>\<open>P \<leadsto>\<^sub>\<tau> Q \<equiv> P \<sqsubseteq>\<^sub>F\<^sub>D Q \<close> and
 
@@ -217,23 +203,8 @@ we can define @{thm ev_trans\<^sub>H\<^sub>O\<^sub>A\<^sub>R\<^sub>E_def}. We im
 we can prove the reciprocal. The situation is summarized in the following theorem:
 \<close>
 
-(*<*)
-end
 
-notation \<tau>_trans (infixl \<open>\<leadsto>\<^sub>\<tau>\<close> 50)
-notation local_ev_trans  (\<open>_ \<leadsto>\<^bsub>_\<^esub> _\<close> [50, 3, 51] 50)
-abbreviation local_ev_trans\<^sub>H\<^sub>O\<^sub>A\<^sub>R\<^sub>E :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> \<Rightarrow> '\<alpha> process \<Rightarrow> bool\<close>
-                                  (\<open>_ \<^bsub>HOARE\<^esub>\<leadsto>\<^bsub>_\<^esub> _\<close> [50, 3, 51] 50)
-                                  where \<open>P \<^bsub>HOARE\<^esub>\<leadsto>\<^bsub>e\<^esub> Q \<equiv> OpSemTransitions.ev_trans\<^sub>H\<^sub>O\<^sub>A\<^sub>R\<^sub>E (\<leadsto>\<^sub>\<tau>) P e Q\<close>
-(* abbreviation local_After\<^sub>t\<^sub>i\<^sub>c\<^sub>k :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> event \<Rightarrow> '\<alpha> process\<close> (infixl \<open>after\<^sub>\<checkmark>\<close> 77)
-  where \<open>P after\<^sub>\<checkmark> e \<equiv> AfterExt.After\<^sub>t\<^sub>i\<^sub>c\<^sub>k \<Psi> \<Omega> P e\<close> *)
-
-thm OpSemTransitions.hyps_on_\<tau>_trans_imp_ev_trans\<^sub>H\<^sub>O\<^sub>A\<^sub>R\<^sub>E_iff_ev_trans[OF OpSem_axioms_ok]
-
-find_theorems name: ev_trans_is
-
-(*>*)
-
+(*  >>>>>>>>>>>>>>>>>>>>>>>> DOF26 Problem: 
 Theorem*[equivalence_ev_trans::"theorem", short_name = \<open>\<open>Equivalence of Transitions\<close>\<close>]\<open>\
 
 Assuming a \<open>\<tau>\<close> monotony for \<open>prefix\<close>:
@@ -245,18 +216,22 @@ Assuming a \<open>\<tau>\<close> monotony for \<open>prefix\<close>:
 \<^noindent> we have @{thm (lhs) OpSemTransitions.hyps_on_\<tau>_trans_imp_ev_trans\<^sub>H\<^sub>O\<^sub>A\<^sub>R\<^sub>E_iff_ev_trans[OF OpSem_axioms_ok]}
 if and only if \<^term>\<open>P \<leadsto>\<^bsub>e\<^esub> Q\<close>.
 \<close>
+*)
+
+text (in OpSemTransitions)\<open>
+
+Assuming a \<open>\<tau>\<close> monotony for \<open>prefix\<close>:
+@{thm (prem 2) hyps_on_\<tau>_trans_imp_ev_trans\<^sub>H\<^sub>O\<^sub>A\<^sub>R\<^sub>E_iff_ev_trans}
+
+\<^noindent> and for @{const [source] Det}:
+@{thm (prem 1) hyps_on_\<tau>_trans_imp_ev_trans\<^sub>H\<^sub>O\<^sub>A\<^sub>R\<^sub>E_iff_ev_trans},
+
+\<^noindent> we have @{thm (lhs) hyps_on_\<tau>_trans_imp_ev_trans\<^sub>H\<^sub>O\<^sub>A\<^sub>R\<^sub>E_iff_ev_trans}
+if and only if \<^term>\<open>P \<leadsto>\<^bsub>e\<^esub> Q\<close>.
+\<close>
 
 
-(*<*)
-no_notation \<tau>_trans (infixl \<open>\<leadsto>\<^sub>\<tau>\<close> 50)
-no_notation local_ev_trans (\<open>_ \<leadsto>\<^bsub>_\<^esub> _\<close> [50, 3, 51] 50)
-no_notation local_ev_trans\<^sub>H\<^sub>O\<^sub>A\<^sub>R\<^sub>E (\<open>_ \<^bsub>HOARE\<^esub>\<leadsto>\<^bsub>_\<^esub> _\<close> [50, 3, 51] 50)
-
-context OpSemTransitions
-begin
-(*>*)
-
-text \<open>
+text (in OpSemTransitions) \<open>
 These two hypotheses are verified by all four refinement relations.
 % \<^term>\<open>(\<sqsubseteq>\<^sub>F\<^sub>D)\<close>, \<^term>\<open>(\<sqsubseteq>\<^sub>D\<^sub>T)\<close>,\<^term>\<open>(\<sqsubseteq>\<^sub>F)\<close> and \<^term>\<open>(\<sqsubseteq>\<^sub>T)\<close>. 
 In other words, the definition of Jifeng and Hoare is equivalent to ours 
@@ -274,9 +249,6 @@ of fixed point induction to reason about deadlock freeness\<^cite>\<open>"HOL-CS
 \<close>
 
 
-(*<*)
-end
-(*>*)
 
 subsection*["differences_classical_laws"::technical,main_author="Some(@{author ''ben''}::author)", level= "Some 3"]
 \<open>Discussion\<close>
@@ -285,20 +257,17 @@ subsection*["differences_classical_laws"::technical,main_author="Some(@{author '
 
 locale OpSemTransitionAll_plus_Roscoe_Omega = OpSemTransitionsAll \<Psi> \<Omega> \<tau>_trans 
   for \<Psi> :: \<open>['\<alpha> process, '\<alpha>] \<Rightarrow> '\<alpha> process\<close>
-  and \<Omega> :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> process\<close>
+  and \<Omega> :: \<open>['\<alpha> process, unit] \<Rightarrow> '\<alpha> process\<close>
   and \<tau>_trans :: \<open>['\<alpha> process, '\<alpha> process] \<Rightarrow> bool\<close> (infixl \<open>\<leadsto>\<^sub>\<tau>\<close> 50) +
   fixes  \<Omega>' :: \<open>'\<alpha> process\<close>
-  assumes Roscoe_tick_trans_SyncL : \<open>P \<leadsto>\<^sub>\<checkmark> P' \<Longrightarrow> P \<lbrakk>S\<rbrakk> Q \<leadsto>\<^sub>\<tau> \<Omega>' \<lbrakk>S\<rbrakk> Q\<close>
-      and Roscoe_tick_trans_SyncR : \<open>Q \<leadsto>\<^sub>\<checkmark> Q' \<Longrightarrow> P \<lbrakk>S\<rbrakk> Q \<leadsto>\<^sub>\<tau> P \<lbrakk>S\<rbrakk> \<Omega>'\<close>
-      and Roscoe_tick_trans_Sync_both : \<open>\<Omega>' \<lbrakk>S\<rbrakk> \<Omega>' \<leadsto>\<^sub>\<checkmark> \<Omega>'\<close>
+  assumes Roscoe_tick_trans_SyncL : \<open>P \<leadsto>\<^sub>\<checkmark>\<^bsub>()\<^esub> P' \<Longrightarrow> P \<lbrakk>S\<rbrakk> Q \<leadsto>\<^sub>\<tau> \<Omega>' \<lbrakk>S\<rbrakk> Q\<close>
+      and Roscoe_tick_trans_SyncR : \<open>Q \<leadsto>\<^sub>\<checkmark>\<^bsub>()\<^esub> Q' \<Longrightarrow> P \<lbrakk>S\<rbrakk> Q \<leadsto>\<^sub>\<tau> P \<lbrakk>S\<rbrakk> \<Omega>'\<close>
+      and Roscoe_tick_trans_Sync_both : \<open>\<Omega>' \<lbrakk>S\<rbrakk> \<Omega>' \<leadsto>\<^sub>\<checkmark>\<^bsub>()\<^esub> \<Omega>'\<close>
 begin
 
-
-notation \<tau>_trans (infixl \<open>\<leadsto>\<^sub>\<tau>\<close> 50)
-
-
-
-thm \<tau>_trans_SeqR
+term tick_trans
+abbreviation tick_trans_unit (\<open>_ \<leadsto>\<^sub>\<checkmark> _\<close> [50, 51] 50)
+  where \<open>P \<leadsto>\<^sub>\<checkmark> P' \<equiv> P \<leadsto>\<^sub>\<checkmark>\<^bsub>()\<^esub> P'\<close>
 
 lemma ev_trans_SeqR : \<open>P \<leadsto>\<^sub>\<checkmark> P' \<Longrightarrow> Q \<leadsto>\<^bsub>e\<^esub> Q' \<Longrightarrow> P \<^bold>; Q \<leadsto>\<^bsub>e\<^esub> Q'\<close>
   using \<tau>_trans_SeqR \<tau>_trans_eq \<tau>_trans_ev_trans by blast
@@ -306,8 +275,8 @@ lemma ev_trans_SeqR : \<open>P \<leadsto>\<^sub>\<checkmark> P' \<Longrightarrow
 lemma tick_trans_SeqR : \<open>P \<leadsto>\<^sub>\<checkmark> P' \<Longrightarrow> Q \<leadsto>\<^sub>\<checkmark> Q' \<Longrightarrow> P \<^bold>; Q \<leadsto>\<^sub>\<checkmark> Q'\<close>
   by (meson \<tau>_trans_SeqR \<tau>_trans_eq \<tau>_trans_tick_trans)
 
-lemma \<open>P \<leadsto>\<^sub>\<checkmark> P' \<Longrightarrow> P \<leadsto>\<^sub>\<tau> SKIP\<close>
-  using initial_tick_imp_\<tau>_trans_SKIP by blast
+lemma \<open>P \<leadsto>\<^sub>\<checkmark> P' \<Longrightarrow> P \<leadsto>\<^sub>\<tau> Skip\<close>
+  using initial_tick_imp_\<tau>_trans_SKIP tick_trans_is by blast
 
 
 (*>*)

@@ -57,28 +57,8 @@ text (in OpSemTransitions) \<open>
 related, which is expressed in the following theorem:
 \<close>
 
-(*<*)
-(* BU : WAS : >>>>>> *)
-abbreviation  local_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> trace \<Rightarrow> '\<alpha> process\<close> (infixl \<open>after\<^sub>\<T>\<close> 77)
-  where \<open>P after\<^sub>\<T> e \<equiv> AfterExt.After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e \<Psi> \<Omega> P e\<close>
-(* <<<<<< *)
 
-(* BU's patch (a more closer error to the problem) : >>>>>> *)
-abbreviation (in OpSemTransitions)  local_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> trace \<Rightarrow> '\<alpha> process\<close> (infixl \<open>after\<^sub>\<T>\<close> 77)
-  where \<open>P after\<^sub>\<T> e \<equiv> AfterExt.After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e \<Psi> \<Omega> P e\<close>
-
-(* notation local_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e (infixl \<open>after\<^sub>\<T>\<close> 77) *)
-
-axiomatization \<tau>_trans :: \<open>['\<alpha> process, '\<alpha> process] \<Rightarrow> bool\<close> (infixl \<open>\<leadsto>\<^sub>\<tau>\<close> 50)
-  where OpSem_axioms_ok : \<open>OpSemTransitions \<Psi> \<Omega> \<tau>_trans\<close>
-
-abbreviation  local_trace_trans :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> trace \<Rightarrow> '\<alpha> process \<Rightarrow> bool\<close> 
-                                 (\<open>_/ \<leadsto>\<^sup>*_/ _\<close> [50, 3, 51] 50)
-                                 where \<open>P \<leadsto>\<^sup>*s Q \<equiv> OpSemTransitions.trace_trans \<Psi> \<Omega> \<tau>_trans P s Q\<close>
-
-(* notation \<tau>_trans (infixl \<open>\<leadsto>\<^sub>\<tau>\<close> 50)
-notation local_trace_trans (\<open>_/ \<leadsto>\<^sup>*_/ _\<close> [50, 3, 51] 50) *)
-(*>*)
+(*  >>>>>>>>>>>>>>>>>>>>>>>> DOF26 Problem:
 
 Theorem* (in OpSemTransitions) [trace_trans_After_trace_correspondence :: "theorem",
          short_name = \<open>\<open>Bridge between trace transition and $After_{trace}$ operator\<close>\<close>]\<open>\
@@ -86,15 +66,14 @@ Theorem* (in OpSemTransitions) [trace_trans_After_trace_correspondence :: "theor
 \<^bigskip> @{thm (lhs) OpSemTransitions.trace_trans_iff_T_and_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e_\<tau>_trans[of \<Psi> \<Omega> \<open>(\<leadsto>\<^sub>\<tau>)\<close>]}
 if and only if @{thm (rhs) OpSemTransitions.trace_trans_iff_T_and_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e_\<tau>_trans[of \<Psi> \<Omega> \<open>(\<leadsto>\<^sub>\<tau>)\<close>]}.
 \<close>
+ *)
 
-(*<*)
-no_notation local_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e (infixl \<open>after\<^sub>\<T>\<close> 77) 
-no_notation \<tau>_trans (infixl \<open>\<leadsto>\<^sub>\<tau>\<close> 50)
-no_notation local_trace_trans (\<open>_/ \<leadsto>\<^sup>*_/ _\<close> [50, 3, 51] 50)
+text (in OpSemTransitions)\<open>\
 
-context OpSemTransitions
-begin
-(*>*)
+\<^bigskip> @{thm (lhs) trace_trans_iff_T_and_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e_\<tau>_trans}
+if and only if @{thm (rhs) trace_trans_iff_T_and_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e_\<tau>_trans}.
+\<close>
+
 
 (*
 text \<open>
@@ -106,9 +85,9 @@ event transition (@{technical implem}) where:
   \<^item> \<^term>\<open>P after\<^sub>\<checkmark> (ev e)\<close> (resp. \<^term>\<open>P after\<^sub>\<checkmark> \<checkmark>\<close>) is replaced by \<^term>\<open>P after\<^sub>\<T> s\<close>.
 
 *)
-text \<open>Informally spoken, \<^term>\<open>P after\<^sub>\<T> s\<close> is the the least deterministic process that we can
+text (in OpSemTransitions) \<open>Informally spoken, \<^term>\<open>P after\<^sub>\<T> s\<close> is the the least deterministic process that we can
 expect from process \<^term>\<open>P\<close> after the trace \<^term>\<open>s\<close>. This interpretation will become clearer
-when we will instantiate the formal \<open>(\<leadsto>\<^sub>\<tau>)\<close>-relation of the locale with concrete
+when we will instantiate the formal \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close>-relation of the locale with concrete
 refinements in @{technical (unchecked) variants}.
 
 Since the projections for the @{const [source] After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e} operator are relatively easy to handle,
@@ -118,16 +97,14 @@ when certifying traces or divergences.
 \<close>
 
 (*<*)
-end
 
-notation local_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e (infixl \<open>after\<^sub>\<T>\<close> 77)
-notation \<tau>_trans (infixl \<open>\<leadsto>\<^sub>\<tau>\<close> 50)
-notation local_trace_trans (\<open>_/ \<leadsto>\<^sup>*_/ _\<close> [50, 3, 51] 50)
 
 lemma Refusals_def: \<open>\<R> Q = {X. ([], X) \<in> \<F> Q}\<close>
   by (simp add: Refusals_iff set_eq_iff)
 
 (*>*)
+
+(*  >>>>>>>>>>>>>>>>>>>>>>>> DOF26 Problem:
 
 Theorem*[reality_checks_equivalences::"theorem", short_name = \<open>\<open>Reality Checks\<close>\<close>]\<open>\
    \<^item> We have @{thm (lhs) OpSemTransitions.T_trace_trans_reality_check[OF OpSem_axioms_ok]}
@@ -143,8 +120,28 @@ Theorem*[reality_checks_equivalences::"theorem", short_name = \<open>\<open>Real
      we have @{thm (lhs) OpSemTransitions.F_trace_trans_reality_check_weak[OF OpSem_axioms_ok]} if and only if
      @{thm (rhs) OpSemTransitions.F_trace_trans_reality_check_weak[OF OpSem_axioms_ok]}.
 \<close>
-text\<open>\<^noindent>(where @{thm (lhs) Refusals_def[of Q]} is the set of refusals of \<^term>\<open>Q\<close>, defined as @{thm (rhs) Refusals_def[of Q]}).\<close>
-(*
+ *)
+
+text (in OpSemTransitions)\<open>\
+   \<^item> We have @{thm (lhs) T_trace_trans_reality_check}
+     if and only if @{thm (rhs) T_trace_trans_reality_check}.
+   \<^item> Under the assumption @{thm (prem 1) D_trace_trans_reality_check_weak}
+     of unicity of the least element of \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close>, a trace
+     @{thm (prem 2) D_trace_trans_reality_check_weak} verifies
+     @{thm (lhs) D_trace_trans_reality_check_weak} if and only if
+     @{thm (rhs) D_trace_trans_reality_check_weak}.
+   \<^item> Under the assumption @{thm (prem 1) F_trace_trans_reality_check_weak}
+     that a \<open>\<tau>\<close> transition implies F-refinement, and if
+     @{thm (prem 2) F_trace_trans_reality_check_weak},
+     we have @{thm (lhs) F_trace_trans_reality_check_weak} if and only if
+     @{thm (rhs) F_trace_trans_reality_check_weak}.
+\<close>
+
+
+text\<open>\<^noindent>(where @{thm (lhs) Refusals_def[of Q]} is the set of refusals of \<^term>\<open>Q\<close>, defined as 
+@{thm (rhs) Refusals_def[of Q]}).\<close>
+
+(* >>>>>>>>>>>>>>>>>>>>>>>>>>>>> Isa26 DOF Problem ? ? ?
 
 Proposition*[projections_After_trace :: "proposition", short_name = \<open>\<open>Projections of $After_{trace}$\<close>\<close>]\<open>\
 @{thm [display] AfterExt.F_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e_eq[of _ _ \<Psi> \<Omega>]
@@ -163,35 +160,36 @@ subsection*[bisimulation::technical, main_author="Some(@{author ''ben''}::author
 
 text\<open>\<^noindent> The following theorem (and its generalizations not shown here) represents a new form of
 induction over the set of reachable processes:  \<close>
-Theorem*[strong_induct :: "theorem",
+(* Theorem*[strong_induct :: "theorem",
          short_name = \<open>\<open>Strong Induction for Refinements\<close>\<close>]\<open>Let \<open>f\<close> be a continuous function:
 
 @{prop [break, indent=5]
 \<open>\<exists>s\<in>\<T> P. tickFree s \<and> Q = P after\<^sub>\<T> s 
   \<Longrightarrow> (\<And>s x. s \<in> \<T> P \<Longrightarrow> \<forall>y. (\<exists>s\<in>\<T> P. tickFree s \<and> y = P after\<^sub>\<T> s) \<longrightarrow> x \<sqsubseteq>\<^sub>F\<^sub>D y \<Longrightarrow> f x \<sqsubseteq>\<^sub>F\<^sub>D P after\<^sub>\<T> s) 
+  \<Longrightarrow> (\<mu> x. f x) \<sqsubseteq>\<^sub>F\<^sub>D Q\<close>}\<close> *)
+
+text (in OpSemTransitions)\<open>Let \<open>f\<close> be a continuous function:
+
+@{prop [break, indent=5]
+\<open>\<exists>s\<in>\<T> P. tickFree s \<and> Q = P after\<^sub>\<T> s 
+  \<Longrightarrow> (\<And>s x. s \<in> \<T> P \<Longrightarrow> \<forall>y. (\<exists>s\<in>\<T> P. tF s \<and> y = P after\<^sub>\<T> s) \<longrightarrow> x \<sqsubseteq>\<^sub>F\<^sub>D y \<Longrightarrow> f x \<sqsubseteq>\<^sub>F\<^sub>D P after\<^sub>\<T> s) 
   \<Longrightarrow> (\<mu> x. f x) \<sqsubseteq>\<^sub>F\<^sub>D Q\<close>}\<close>
 
-(*<*)
-no_notation local_After\<^sub>t\<^sub>r\<^sub>a\<^sub>c\<^sub>e (infixl \<open>after\<^sub>\<T>\<close> 77)
-no_notation \<tau>_trans (infixl \<open>\<leadsto>\<^sub>\<tau>\<close> 50)
-no_notation local_trace_trans (\<open>_/ \<leadsto>\<^sup>*_/ _\<close> [50, 3, 51] 50)
-context OpSemTransitions begin (*>*)
-(*>*)
 
-text \<open>Note that as in Hoare and Jifengs approach, there will  always be infinite sequences of
- \<open>\<tau>\<close> transitions. This is a consequence of the fact that the FD-refinement is
+
+text (in OpSemTransitions)\<open>Note that as in Hoare and Jifengs approach, there will  always be 
+infinite sequences of \<open>\<tau>\<close> transitions. This is a consequence of the fact that the FD-refinement is
 reflexive. More generally speaking, since any process equality \<^term>\<open>P = Q\<close> is subsumed by 
 the reflexivity  \<^term>\<open>P \<leadsto>\<^sub>\<tau> Q\<close>, this is unavoidable: unfolding fixed points, for example, also 
 falls into the category of infinite sequences of \<open>\<tau>\<close> transitions. Compared to classical operational 
 semantics in CCS, which is defined purely in terms of syntactic manipulations on process-terms, 
-this means that we can never have  ``strong simulations'' in our denotational 
-framework, which is based on higher-order abstract syntax and a congruence generated from the equality
-on the semantic domain. Rather, we will target \<^emph>\<open>weak\<close> transitions resp. simulations, which are,
-as we argue, more suited for the semantic treatment we are heading for.\<close>
+this means that we can never have  ``strong simulations'' in our denotational framework, which is 
+based on higher-order abstract syntax and a congruence generated from the equality on the semantic 
+domain. Rather, we will target \<^emph>\<open>weak\<close> transitions resp. simulations, which are, as we argue, 
+more suited for the semantic treatment we are heading for.\<close>
 
 
 (*<*)
-end
 
 end
 

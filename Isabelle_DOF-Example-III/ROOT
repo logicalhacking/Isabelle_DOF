@@ -1,17 +1,17 @@
-session "2024-itp-csp" = "HOL-CSP_OpSem_DOF" +
+session "2024-itp-csp" = "HOL-CSP_Proc-Omata" +
   options [document = pdf, document_output = "output",document_comment_latex, document_build=dof,
            show_question_marks=false]
   (* sessions "Isabelle_DOF-Ontologies" *)
+  sessions Isabelle_DOF
   theories
     intro
     front
     background
     small_steps
+    annex
     big_steps
     variants
     conclusion
-    annex
-    ComparisonWithJifengHoare
     paper
   document_files
     "lipics-v2021.cls"

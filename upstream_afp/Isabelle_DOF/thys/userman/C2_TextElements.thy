@@ -545,7 +545,6 @@ text\<open>The text of a cell may flow over several lines, and a multi-row cell 
 | Verification  +-----------------------+
 |               | \<open>\<^emph>\<open>proof\<close>\<close> and tests  |
 +---------------+-----------------------+\<close>}
-\<^outmat>\<open>
 \<^gridtbl>\<open>
 +---------------+--------------------------+
 | Phase         | Activity                 |
@@ -554,7 +553,7 @@ text\<open>The text of a cell may flow over several lines, and a multi-row cell 
 | Verification  |-----------------------   |
 |               | \<open>\<^emph>\<open>proof\<close>\<close> and tests  |
 +---------------+--------------------------+
-\<close>\<close>\<close>
+\<close>\<close>
 
 
 subsection*[texopt::technical]\<open>\<^LaTeX> Typesetting as an Opt-out\<close>

@@ -1,14 +1,14 @@
 (*<*)
 theory "small_steps"
   imports   "HOL-Library.LaTeXsugar"
-            "Isabelle_DOF.scholarly_paper"
-            (* "Isabelle_DOF-Ontologies.document_templates" *)
-            "HOL-CSP_OpSem.Conclusion"
-            "background" (* "HOL-CSP_OpSem.NewLaws" *)
+    "Isabelle_DOF.scholarly_paper"
+    (* "Isabelle_DOF-Ontologies.document_templates" *)
+    "HOL-CSP_OpSem.Conclusion"
+    "background" (* "HOL-CSP_OpSem.NewLaws" *)
 begin
 
 declare [[show_question_marks = false]]
-(* show_brackets show_types show_sorts show_markup 
+  (* show_brackets show_types show_sorts show_markup 
    show_structs show_question_marks show_type_emphasis *)
 
 (*>*)
@@ -46,11 +46,11 @@ end end
  *)
 
 section*["smallSteps"::technical,main_author="Some(@{author ''ben''}::author)", level= "Some 3"]
-\<open>Small Steps Semantics\<close>
-(*<*)
+  \<open>Small Steps Semantics\<close>
+  (*<*)
 context OpSemTransitions
 begin
-(*>*)
+  (*>*)
 
 text \<open>
 \<^noindent> Operational semantics of CSP involve two kinds of transitions that we need to define:
@@ -73,20 +73,20 @@ which represents a kind of inversion of \<^term>\<open>e \<rightarrow> P\<close>
 We will investigate the precise connection between both definitions in 
 @{technical (unchecked)\<open>variants\<close>}.
 \<close>
-(* \<^vs>\<open>-0.2cm\<close> *)
+  (* \<^vs>\<open>-0.2cm\<close> *)
 
 (*<*)
 end
-(*>*)
+  (*>*)
 
 
 subsection*["initials"::technical,main_author="Some(@{author ''ben''}::author)"]
-\<open>The Notion of initials\<close>
+  \<open>The Notion of initials\<close>
 
 (*<*)
 context After
 begin
-(*>*)
+  (*>*)
 
 
 text \<open>\<^noindent> As prerequisite, we need the events \<^term>\<open>P\<close> can start with,
@@ -111,7 +111,7 @@ with which \<^term>\<open>P\<close> can start. \<close>
 
 (*<*)
 end
-(*>*)
+  (*>*)
 
 (*  \<^term>\<open>ev e\<close> (the non-tick-event \<^term>\<open>e::'\<alpha>\<close> of \<^typ>\<open>'\<alpha> event\<close>) in \<^term>\<open>P\<^sup>0\<close>*)
 
@@ -120,12 +120,8 @@ The definition is straightforward: @{thm initials_def}
 
 \<^noindent> or equivalently, thanks to \<^typ>\<open>'\<alpha> process\<close> properties, @{thm initials_def_bis}.\<close>
 
-(*<*)
-context After
-begin
-(*>*)
 
-text\<open>Intuitively, for each \<^term>\<open>ev e\<close> in \<^term>\<open>P\<^sup>0\<close>,
+text (in After)\<open>Intuitively, for each \<^term>\<open>ev e\<close> in \<^term>\<open>P\<^sup>0\<close>,
 the traces of \<^term>\<open>P after e\<close> should be the tails of the traces of \<^term>\<open>P\<close> beginning with \<^term>\<open>ev e\<close>.
 The question arises what happens with processes \<^term>\<open>P\<close> where no trace is beginning with
 \<^term>\<open>ev e\<close>. The semantic domain of \<^term>\<open>P after e\<close> will require that the set of traces is 
@@ -137,7 +133,6 @@ for now let us derive the general computational rules for it.
 \<close>
 
 (*<*)
-end
 
 (* 
 text \<open>
@@ -167,8 +162,8 @@ lemma non_BOT_initials_Sync:
   by auto
 
 lemma BOT_initials_Sync: \<open>(\<bottom> \<lbrakk>S\<rbrakk> Q)\<^sup>0 = UNIV\<close> \<open>(P \<lbrakk>S\<rbrakk> \<bottom>)\<^sup>0 = UNIV\<close>
- by (simp_all add: initials_Sync)
-(*>*)
+  by (simp_all add: initials_Sync)
+    (*>*)
 
 Theorem*["initials_hard_laws"::"theorem", short_name = "\<open>More complex rules for $initials$\<close>"]\<open>
 The following list requires more caution:
@@ -196,8 +191,8 @@ turned out to be extremely complex, clearly out of reach of paper-and-pencil rea
 
 
 subsection*[After::technical,main_author="Some(@{author ''ben''}::author)"]
-\<open>The After Operator\<close>
-(*<*)
+  \<open>The After Operator\<close>
+  (*<*)
 context After
 begin
 
@@ -230,7 +225,7 @@ to be \<^term>\<open>{(s, X). (ev e # s, X) \<in> \<F> P}\<close> and its diverg
 
 (*<*)
 end
-(*>*)
+  (*>*)
 Definition*[After_def::"definition", short_name = \<open>\<open>$After$ operator\<close>\<close>]\<open>\
 @{theory_text [display,indent=10]
 \<open>locale After =  fixes \<Psi> :: \<open>['\<alpha> process, '\<alpha>] \<Rightarrow> '\<alpha> process\<close> begin
@@ -243,7 +238,7 @@ lift_definition After :: \<open>['\<alpha> process, '\<alpha>] \<Rightarrow> '\<
 (*<*)
 context After
 begin
-(*>*)
+  (*>*)
 
 
 text \<open>Here, \<^theory_text>\<open>lift_definition\<close> is a variant of Isabelle constant \<^theory_text>\<open>definition\<close> which gives
@@ -268,7 +263,7 @@ For example, we obtain equalities like the following:\<close>
 
 (*<*)
 end
-  
+
 definition \<Psi> :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> \<Rightarrow> '\<alpha> process\<close>
   where \<open>\<Psi> \<equiv> undefined\<close> 
 
@@ -276,7 +271,7 @@ abbreviation local_After :: \<open>'\<alpha> process \<Rightarrow> '\<alpha> \<R
   where \<open>P after e \<equiv> After.After \<Psi> P e\<close>
 
 thm After.After_Sync[of \<Psi>]
-(*>*)
+  (*>*)
 
 (* Theorem*[After_Sync::"theorem", short_name = \<open>\<open>$After$ distributes over $Sync$\<close>\<close>]\<open>\
 
@@ -304,13 +299,13 @@ no_notation local_After (infixl \<open>after\<close> 77)
 
 context After
 begin
-(*>*)
+  (*>*)
 
 text \<open>\<^noindent> This will not be too restrictive for our construction thanks to the following theorem.\<close>
 
 (*<*)
 end
-(*>*)
+  (*>*)
 
 Theorem*[FD_iff_eq_Ndet::"theorem", short_name = \<open>\<open>Characterization of FD-refinement\<close>\<close>]\<open>\
 
@@ -318,12 +313,12 @@ The FD-refinement @{thm (lhs) FD_iff_eq_Ndet} holds if and only if @{thm (rhs) F
 \<close>
 
 subsection*["motivations"::technical,main_author="Some(@{author ''ben''}::author)"]
-\<open>The Rationale for an Operational Semantics\<close>
+  \<open>The Rationale for an Operational Semantics\<close>
 
 (*<*)
 context OpSemTransitions
 begin
-(*>*)
+  (*>*)
 
 text \<open>
 \<^noindent> With respect to the  \<open>\<tau>\<close> transition, \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close>, we follow the choice of
@@ -342,7 +337,7 @@ This is achieved by extending the \<^theory_text>\<open>locale\<close> with an a
 
 (*<*)
 end
-(*>*)
+  (*>*)
 
 Definition*[After_tick_def::"definition", short_name = \<open>\<open>$After_{tick}$ operator\<close>\<close>]\<open>\
 
@@ -352,7 +347,7 @@ Definition*[After_tick_def::"definition", short_name = \<open>\<open>$After_{tic
 
 
 subsection*["implem"::technical,main_author="Some(@{author ''ben''}::author)"]
-\<open>Finally: Formal Definitions of the Transition Relations\<close>
+  \<open>Finally: Formal Definitions of the Transition Relations\<close>
 
 (* text\<open>
 Coming back to the remaining issue: how do we handle \<^term>\<open>\<checkmark>\<close> ? We provide an extended
@@ -432,18 +427,16 @@ Proof*[proof_ev_trans_SyncL::"scholarly_paper.math_content"
   @{thm OpSemTransitionsSync.\<tau>_trans_SyncL[OF OpSem_axioms_ok]}, 
   we finally conclude that @{thm (concl) OpSemTransitionsSync.ev_trans_SyncL[OF OpSem_axioms_ok, of e S P P' Q]}.
 \<close>
-end
 *)
-(* BU Why does this break ? This should be the real solution.
-Proof*(in OpSemTransitions)[proof_ev_trans_SyncL::"scholarly_paper.math_content" 
-                            , short_name = \<open>\<open>Derivation of one of the $Sync$ Operational Rules\<close>\<close> ]\<open>\
+
+text(in OpSemTransitionsSync)\<open>\
 
 \<^noindent> Case \<^term>\<open>P = \<bottom>\<close> or \<^term>\<open>Q = \<bottom>\<close>, this is obvious because of the properties of \<^term>\<open>\<bottom>\<close>.
 
-\<^noindent> Otherwise since @{thm (prem 2) OpSemTransitionsSync.ev_trans_SyncL} we have \<^term>\<open>ev e \<in> P\<^sup>0\<close>.
+\<^noindent> Otherwise since @{thm (prem 2) ev_trans_SyncL} we have \<^term>\<open>ev e \<in> P\<^sup>0\<close>.
 
 \<^noindent> With @{theorem initials_hard_laws} and
-  @{thm (prem 1) OpSemTransitionsSync.ev_trans_SyncL},
+  @{thm (prem 1) ev_trans_SyncL},
   we additionally have \<^term>\<open>ev e \<in> (P \<lbrakk>S\<rbrakk> Q)\<^sup>0\<close>.
 
 \<^noindent> Thus, from @{theorem After_Sync}, \<^term>\<open>(P \<lbrakk>S\<rbrakk> Q) after e\<close> is equal to \<^term>\<open>(P after e \<lbrakk>S\<rbrakk> Q) \<sqinter> (P \<lbrakk>S\<rbrakk> Q after e)\<close>
@@ -452,32 +445,10 @@ Proof*(in OpSemTransitions)[proof_ev_trans_SyncL::"scholarly_paper.math_content"
 \<^noindent> In both cases, with \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close> properties, we obtain \<^term>\<open>(P \<lbrakk>S\<rbrakk> Q) after e \<leadsto>\<^sub>\<tau> P after e \<lbrakk>S\<rbrakk> Q\<close>.
 
 \<^noindent> Using the additional assumption that, in general,
-  @{thm OpSemTransitionsSync.\<tau>_trans_SyncL[OF OpSem_axioms_ok]}, 
-  we finally conclude that @{thm (concl) OpSemTransitionsSync.ev_trans_SyncL[OF OpSem_axioms_ok, of e S P P' Q]}.
+  @{thm \<tau>_trans_SyncL}, 
+  we finally conclude that @{thm (concl) ev_trans_SyncL}.
 \<close>
-*)
-
-(* SUPERFICIAL REPAIR BY BU : OpSem_axioms_ok seems not to be visible here.*)
-text(in OpSemTransitions)\<open>\
-
-\<^noindent> Case \<^term>\<open>P = \<bottom>\<close> or \<^term>\<open>Q = \<bottom>\<close>, this is obvious because of the properties of \<^term>\<open>\<bottom>\<close>.
-
-\<^noindent> Otherwise since @{thm (prem 2) OpSemTransitionsSync.ev_trans_SyncL} we have \<^term>\<open>ev e \<in> P\<^sup>0\<close>.
-
-\<^noindent> With @{theorem initials_hard_laws} and
-  @{thm (prem 1) OpSemTransitionsSync.ev_trans_SyncL},
-  we additionally have \<^term>\<open>ev e \<in> (P \<lbrakk>S\<rbrakk> Q)\<^sup>0\<close>.
-
-\<^noindent> Thus, from @{theorem After_Sync}, \<^term>\<open>(P \<lbrakk>S\<rbrakk> Q) after e\<close> is equal to \<^term>\<open>(P after e \<lbrakk>S\<rbrakk> Q) \<sqinter> (P \<lbrakk>S\<rbrakk> Q after e)\<close>
-  if \<^term>\<open>ev e \<in> Q\<^sup>0\<close>, and \<^term>\<open>(P after e \<lbrakk>S\<rbrakk> Q)\<close> otherwise.
-
-\<^noindent> In both cases, with \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close> properties, we obtain \<^term>\<open>(P \<lbrakk>S\<rbrakk> Q) after e \<leadsto>\<^sub>\<tau> P after e \<lbrakk>S\<rbrakk> Q\<close>.
-
-\<^noindent> Using the additional assumption that, in general,
-  @{thm OpSemTransitionsSync.\<tau>_trans_SyncL}, 
-  we finally conclude that @{thm (concl) OpSemTransitionsSync.ev_trans_SyncL[of e S P P' Q]}.
-\<close>
-(* BU : Last para commented out since OpSem_axioms_ok not visible in this context *)
+  (* BU : Last para commented out since OpSem_axioms_ok not visible in this context *)
 
 
 text (in OpSemTransitionsSliding) \<open>
@@ -495,4 +466,4 @@ Special cases of rules not in the core ruleset will be discussed in the subseque
 
 (*<*)
 end
-(*>*) 
+  (*>*) 

@@ -215,9 +215,9 @@ define_shortcut* isadof  \<rightleftharpoons> \<open>\isadof{}\<close>
                  HTTPS   \<rightleftharpoons> \<open>HTTPS\<close>
                  number  \<rightleftharpoons> \<open>no.\<close>
 
-define_macro* outmat     \<rightleftharpoons> \<open>\begin{outmat}\<close> _ \<open>\end{outmat}\<close>
 define_macro* center     \<rightleftharpoons> \<open>\begin{center}\<close> _ \<open>\end{center}\<close>
 define_macro* nolinkurl  \<rightleftharpoons> \<open>\nolinkurl{\<close> _ \<open>}\<close>
+define_macro* outmat     \<rightleftharpoons> \<open>\begin{outmat}\<close> _ \<open>\end{outmat}\<close>
 
 
 section\<open> Library of Standard Figure Ontology \<close>

@@ -1,33 +1,19 @@
 (*<*)
 theory "conclusion"
   imports   "Isabelle_DOF.scholarly_paper"
-            (* "Isabelle_DOF-Ontologies.document_templates" *)
             "HOL-CSP_OpSem.Conclusion"
-            "ComparisonWithJifengHoare"
             "variants"
 begin
-
 (*>*)
 
-
-
-(* text\<open>
-We are interested in verification techniques for arbitrary event sets \<open>A\<close> or arbitrarily 
-parameterized processes. Such processes can be used to model dense-timed processes, processes 
-with dynamic thread creation, and processes with unbounded thread-local variables and buffers. 
-However, this adds substantial complexity to the process theory: when it comes to study the 
-interplay of different denotational models, refinement-orderings, and side-conditions for 
-continuity, paper-and-pencil proofs easily reach their limits of precision. 
-
-\<close> *)
 
 (* see if we mention again Hoare and Jifeng *)
 section*["relatedwork"::technical,main_author="Some(@{author ''ben''}::author)",level="Some 3"]
 \<open>Related Work\<close>
 
-(*<*) context OpSemTransitions begin (*>*)
-
-text\<open>
+(* text* (in OpSemTransitions)[ttt::technical] >>> 'error Undefined instance: "ttt"'*)
+text (in OpSemTransitions)
+\<open>
 \<^noindent> In the introduction, we claimed that HOL-CSP is arguably the most \<^emph>\<open>comprehensive\<close>
 formalization of CSP; here, we'd like to substantiate this claim.
 
@@ -89,11 +75,13 @@ node to call infinite fresh values for nonces, thus infinite sequence of operati
 \<^cite>\<open>"DBLP:journals/jcs/RoscoeB99"\<close>. An extension of this work was proposed in  \<^cite>\<open>"AnZhangYou14"\<close> 
 using the script language \<open>CSP\<^sub>M\<close>. However, in their works, even though each agent in the security 
 protocol can perform infinite number of operations,  the number of agent entities remains finite. 
-HOL-CSP satisfies the need to parameterization and high-order processes naturally \<^cite>\<open>"ifm_TahaWY20"\<close> as a consequence of their \<^emph>\<open>pcpo\<close>-type structure. A formalization and theory 
+HOL-CSP satisfies the need to parameterization and high-order processes naturally \<^cite>\<open>"ifm_TahaWY20"\<close>
+as a consequence of their \<^emph>\<open>pcpo\<close>-type structure. A formalization and theory 
 development of \<open>CSP\<^sub>M\<close> has been undertaken \<^cite>\<open>"HOL-CSPM-AFP"\<close> but is out of the scope of this paper.
 \<close>
 
-(*<*) end (*>*)
+
+(* (cf. theorem strong\_induct) \<Rightarrow> (cf. \<^theorem>\<open>strong_induct\<close>)  *)
 section*["conclusion"::"conclusion",main_author="Some(@{author ''bu''}::author)"]
 \<open>Conclusion\<close>
 text\<open>\<^noindent> We presented a formalisation of a comprehensive semantic theory for CSP, a 'classical' 
@@ -107,7 +95,7 @@ The resulting framework offers new ways to reason consistently over denotational
 CSP processes paving the way to symbolic execution of LTS-based representations of processes
 as well as the possibility to \<^emph>\<open>certify\<close> output from model-checkers like  \<^cite>\<open>"fdr4" and "SunLDP09"\<close>,
 which excel in the calculational parts related to interleaving processes. As a by-product, the
-theory allows for new proof principles like strong induction (cf. \<^theorem>\<open>strong_induct\<close>).
+theory allows for new proof principles like strong induction (cf. theorem strong\_induct).
 
 An interesting line of future work is the development of a library of ``process-bricks'' containing,
 \<^eg>, semaphores, monitors or just global variables like:\<^vs>\<open>0.1cm\<close>
@@ -116,7 +104,7 @@ An interesting line of future work is the development of a library of ``process-
 
 \<^noindent> or non-deterministic key-generators like:\<^vs>\<open>-0.2cm\<close>
 
-@{term [indent=5,margin=77,display, eta_contract = false] \<open>KEY chan \<equiv> (\<mu> X. (\<lambda>\<sigma>. (chan\<^bold>!a\<in>\<sigma> \<rightarrow> X (\<sigma> - {a}))))\<nat>\<close>} \<^vs>\<open>-0.15cm\<close>
+@{term [indent=5,margin=77,display, eta_contract = false] \<open>KEY chan \<equiv> (\<mu> X. (\<lambda>\<sigma>. (chan\<^bold>!\<^bold>!a\<in>\<sigma> \<rightarrow> X (\<sigma> - {a}))))\<nat>\<close>} \<^vs>\<open>-0.15cm\<close>
 
 \<^noindent> which will have symbolic traces like:\<^vs>\<open>-0.2cm\<close>
 

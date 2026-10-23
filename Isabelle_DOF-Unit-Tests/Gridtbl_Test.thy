@@ -141,7 +141,7 @@ text\<open>An ordinary text with a grid table: \<^gridtbl>\<open>
 +=================+========+========================+
 | \<open>\<^emph>\<open>figure\<close>\<close>  | 12     | \<open>@{term \<open>1+1::nat\<close>}\<close>   |
 +-----------------+--------+------------------------+
-| a \<open>|\<close> b         | 3      | 0.5                    |
+| a \<open>|\<close> b         | 3      | \<open>\<^term>\<open>(1 mod 1)::int\<close>\<close> |
 +-----------------+--------+------------------------+
 \<close>\<close>
 
