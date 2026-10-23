@@ -304,6 +304,16 @@ fun chunks (syms: Symbol_Pos.T list) : (bool * Symbol_Pos.T list) list =
           else go (s :: acc) ss
   in go [] syms end
 
+(* The document output leaves a symbol that is the whole content of a cell (as \<checkmark>) 
+   as it is; the symbols in the text of the output are translated to their LaTeX macros. *)
+fun fix_symbols (XML.Elem (m, body)) = XML.Elem (m, map fix_symbols body)
+  | fix_symbols (XML.Text s) =
+      XML.Text (if String.isSubstring (chr 92 ^ "<") s
+                then String.concat (map (fn sym => (case Symbol.decode sym of
+                                                      Symbol.Sym _ => Latex.output_symbols [sym]
+                                                    | _ => sym)) (Symbol.explode s))
+                else s)
+
 fun output_syms ctxt syms =
   let
     fun edge_blank ss = (case ss of s :: _ => Gridtbl.is_blank_sp s | [] => false)
@@ -314,8 +324,8 @@ fun output_syms ctxt syms =
     else if null core then space
     else
       (if edge_blank syms then space else [])
-      @ Document_Output.output_document ctxt {markdown = false}
-          (Input.source false (Symbol_Pos.content core) (Symbol_Pos.range core))
+      @ map fix_symbols (Document_Output.output_document ctxt {markdown = false}
+          (Input.source false (Symbol_Pos.content core) (Symbol_Pos.range core)))
       @ (if edge_blank (rev syms) then space else [])
   end
 

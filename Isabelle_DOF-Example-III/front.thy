@@ -43,7 +43,7 @@ text*[abs::abstract,
    a reference model for concurrency. In the fairly rich literature, several versions of operational
    semantics have been discussed, which should be consistent with the denotational one.
    
-   This work is based on Isabelle/HOL-CSP 2.0, a shallow embedding of the 
+   This work is based on \<^isabelle>-CSP 2.0, a shallow embedding of the 
    failure-divergence model of denotational semantics proposed by Hoare, Roscoe and Brookes 
    in the eighties. In several ways, HOL-CSP is actually an extension of the original setting
    in the sense that it admits higher-order processes and infinite alphabets.  

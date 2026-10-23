@@ -23,7 +23,6 @@ open_monitor*[this::article]
 declare[[strict_monitor_checking=false]]
 
 define_shortcut* dots     \<rightleftharpoons> \<open>\ldots\<close>
-                 isabelle \<rightleftharpoons> \<open>Isabelle/HOL\<close>
                  Protege  \<rightleftharpoons> \<open>Prot{\'e}g{\'e}\<close>
 
 (* slanted text in contrast to italics *)
@@ -111,7 +110,7 @@ abstract*[abs::abstract, keywordlist="[''Ontology'',''Ontological Modeling'',''I
    and code generation. 
    
    Up to now, Isabelle's document preparation system lacks a mechanism
-   for ensuring the structure of different document types (as, e.g.,
+   for ensuring the structure of different document types (as, \<^eg>,
    required in certification processes) in general and, in particular,
    mechanism for linking informal and formal parts of a document. 
    
@@ -220,11 +219,11 @@ were built. \<close>
     
 text\<open> We would like to detail the documentation generation of the architecture,
 which is based on literate specification commands such as \<^theory_text>\<open>section\<close> \<^dots>, 
-\<^theory_text>\<open>subsection\<close> \<^dots>, \<^theory_text>\<open>text\<close> \<^dots>, etc.
+\<^theory_text>\<open>subsection\<close> \<^dots>, \<^theory_text>\<open>text\<close> \<^dots>, \<^etc>.
 Thus, a user can add a simple text:
   @{boxed_theory_text [display]\<open>
 text\<open> This is a description.\<close>\<close>}
-These text-commands can be arbitrarily mixed with other commands stating definitions, proofs, code, etc.,
+These text-commands can be arbitrarily mixed with other commands stating definitions, proofs, code, \<^etc>.,
 and will result in the corresponding output in generated \<^LaTeX> or HTML documents. 
 Now, \<^emph>\<open>inside\<close> the textual content, it is possible to embed a \<^emph>\<open>text-antiquotation\<close>:
 @{boxed_theory_text [display]\<open>
@@ -251,7 +250,7 @@ text\<open> An \<^isadof> document consists of three components:
   for document-classes and all auxiliary datatypes.  
 \<^item> the \<^emph>\<open>core\<close> of the document itself which is an Isabelle theory
   importing the ontology definition. \<^isadof> provides an own family of text-element
-  commands such as \<^theory_text>\<open>title*\<close>, \<^theory_text>\<open>section*\<close>, \<^theory_text>\<open>text*\<close>, etc., 
+  commands such as \<^theory_text>\<open>title*\<close>, \<^theory_text>\<open>section*\<close>, \<^theory_text>\<open>text*\<close>, \<^etc>., 
   which can be annotated with meta-information defined in the underlying  ontology definition.
 \<^item> the \<^emph>\<open>layout definition\<close> for the given ontology exploiting this meta-information.
 \<close>
@@ -277,7 +276,7 @@ their source, but this limits the possibility of using different representation 
 The \<^isadof> ontology specification language consists basically on a notation for document classes, 
 where the attributes were typed with HOL-types and can be instantiated by terms HOL-terms, \<^ie>, 
 the actual parsers and type-checkers of the Isabelle system were reused. This has the particular 
-advantage that \<^isadof> commands can be arbitrarily mixed with Isabelle/HOL commands providing the 
+advantage that \<^isadof> commands can be arbitrarily mixed with \<^isabelle> commands providing the 
 machinery for type declarations and term specifications such as enumerations. In particular, 
 document class definitions provide:
 \<^item>  a HOL-type for each document class as well as inheritance, 
@@ -288,7 +287,7 @@ document class definitions provide:
 
 text\<open>
 Attributes referring to other ontological concepts are called \<^emph>\<open>links\<close>. The HOL-types inside the 
-document specification language support built-in types for Isabelle/HOL \<^theory_text>\<open>typ\<close>'s, \<^theory_text>\<open>term\<close>'s, and
+document specification language support built-in types for \<^isabelle> \<^theory_text>\<open>typ\<close>'s, \<^theory_text>\<open>term\<close>'s, and
 \<^theory_text>\<open>thm\<close>'s reflecting internal Isabelle's internal types  for these entities; when denoted in 
 HOL-terms  to instantiate an attribute, for example, there is a  specific syntax 
 (called \<^emph>\<open>inner syntax antiquotations\<close>) that is checked by \<^isadof> for consistency.

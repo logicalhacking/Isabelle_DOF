@@ -13,7 +13,7 @@ section*["laws"::technical,main_author="Some(@{author ''ben''}::author)", level=
 (* \<^noindent> \<^term>\<open>P \<sqinter> Q\<close>, \<^term>\<open>P \<box> Q\<close> and \<^term>\<open>P \<lbrakk>S\<rbrakk> Q\<close> are commutative so we only write the ``left-sided'' rules. *)
 
 text(in OpSemTransitionsAll) \<open>
-\begin{center}
+\<^center>\<open>
 \<^vs>\<open>0.3cm\<close>
 @{thm[mode=Rule] ev_trans_\<tau>_trans} \qquad @{thm[mode=Rule] \<tau>_trans_ev_trans}
 
@@ -130,12 +130,12 @@ text(in OpSemTransitionsAll) \<open>
 {\sc throw}
 \<^vs>\<open>0.3cm\<close> \par\noindent\textcolor{lipicsLineGray}{\rule{0.8\textwidth}{1pt}} \<^vs>\<open>0.3cm\<close> 
 
-\end{center}
+\<close>
 \<close>
 
 
 text(in OpSemTransitionsAllDuplicated) \<open>\<^vs>\<open>-1.26cm\<close>
-\begin{center}
+\<^center>\<open>
 @{thm[mode=Rule, eta_contract=false] Renaming_OpSem_rules(1)}
 
 @{thm[mode=Rule, eta_contract=false] Renaming_OpSem_rules(3)} \qquad
@@ -143,7 +143,7 @@ text(in OpSemTransitionsAllDuplicated) \<open>\<^vs>\<open>-1.26cm\<close>
 
 \<^vs>\<open>0.25cm\<close>
 {\sc renaming}
-\end{center}
+\<close>
 
 \<close>
 
@@ -170,7 +170,7 @@ text \<open>
 Finally, by assembling the locales of each operator (which is inheriting of all these locales),
 this construction led the authors to obtain the following rules (formally proven):
 
-\begin{center}
+\<^center>\<open>
 \<^vs>\<open>0.5cm\<close>
 @{thm[mode=Rule] ev_trans_\<tau>_trans} \qquad @{thm[mode=Rule] \<tau>_trans_ev_trans}
 
@@ -276,7 +276,7 @@ this construction led the authors to obtain the following rules (formally proven
 {\sc Throw rules}
 \<^vs>\<open>0.5cm\<close> \par\noindent\textcolor{lipicsLineGray}{\rule{0.8\textwidth}{1pt}} \<^vs>\<open>0.5cm\<close> 
 
-\end{center}
+\<close>
 \<close>
 
 
@@ -287,12 +287,12 @@ begin
 
 
 text \<open>
-\begin{center}
+\<^center>\<open>
 @{thm[mode=Rule, eta_contract=false] Renaming_OpSem_rules(1)} \qquad {\sc Renaming rules}
 
 @{thm[mode=Rule, eta_contract=false] Renaming_OpSem_rules(2)} \qquad
 @{thm[mode=Rule, eta_contract=false] Renaming_OpSem_rules(3)}
-\end{center}
+\<close>
 
 \<close>
 
@@ -311,7 +311,7 @@ begin
 text \<open>
 In the end, this construction rely on twelve \<^theory_text>\<open>locale\<close> assumptions about the \<open>\<tau>\<close> transition (that
 are straightforward for FD and DT-refinements):
-\begin{center}
+\<^center>\<open>
 @{thm [mode=Axiom] \<tau>_trans_NdetL} \qquad
 @{thm [mode=Rule] \<tau>_trans_transitivity} \qquad
 @{thm [mode=Rule] \<tau>_trans_anti_mono_initials} \qquad
@@ -323,7 +323,7 @@ are straightforward for FD and DT-refinements):
 @{thm [mode=Rule] \<tau>_trans_SlidingL} \qquad
 @{thm [mode=Rule] \<tau>_trans_InterruptR} \qquad
 @{thm [mode=Rule, eta_contract=false] \<tau>_trans_ThrowL}
-\end{center}\<close>
+\<close>\<close>
 
 
 end
@@ -334,9 +334,9 @@ begin
 
 text \<open>
 with one additional axiom in the duplicated construction for the \<^const>\<open>Renaming\<close> operator:
-\begin{center}
+\<^center>\<open>
 @{thm [mode=Rule] \<tau>_trans_Renaming}
-\end{center} \<close>
+\<close> \<close>
 
 
 end

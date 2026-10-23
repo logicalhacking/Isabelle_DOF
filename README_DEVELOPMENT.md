@@ -4,7 +4,7 @@
 
 Isabelle/DOF has three major prerequisites:
 
-* **Isabelle:** Isabelle/DOF requires [Isabelle 2025-2]
+* **Isabelle:** Isabelle/DOF requires [Isabelle 2026]
   (https://isabelle.in.tum.de).
 * **AFP:** Isabelle/DOF requires several entries from the [development version of the Archive of Formal Proofs
   (AFP)](https://devel.isa-afp.org/).
@@ -76,6 +76,24 @@ increased to avoid timeouts during building the dependencies:
 foo@bar:~$ isabelle build -d . -o 'timeout_scale=2' Isabelle_DOF-Proofs
 ```
 
+
+### Building Documents of Sessions Outside the Isabelle/DOF Hierarchy
+
+The document engine ``dof`` (option ``document_build = dof``) is provided by the
+session ``Isabelle_DOF`` to the sessions that descend from it. A session with a
+different parent (as, for example, ``HOL-CSP_OpSem`` in
+``Isabelle_DOF-Example-III``) that only lists ``Isabelle_DOF`` under ``sessions``
+fails with ``Bad document_build engine "dof"``. In this case, register the Scala
+sources of the engine as a component of its own, a directory containing the files
+
+* ``etc/build.props`` (a copy of the file of ``upstream_afp/Isabelle_DOF``),
+* ``etc/settings`` (may be empty), and
+* ``scala`` (a link to ``upstream_afp/Isabelle_DOF/scala``),
+
+by ``isabelle components -u <directory>``. (Do not register ``upstream_afp/Isabelle_DOF``
+itself: a component directory is also a session root, which conflicts with the roots
+of the AFP.) The theories that are typeset also need a ``use_template`` command
+(the exports ``dof/use_template`` and ``dof/use_ontology`` are required by the engine).
 
 ## Usage
 

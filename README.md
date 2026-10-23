@@ -7,7 +7,7 @@ Isabelle/DOF allows for both conventional typesetting and formal development.
 
 Isabelle/DOF has two major prerequisites:
 
-* **Isabelle 2025-2:** Isabelle/DOF requires [Isabelle](https://isabelle.in.tum.de/)
+* **Isabelle 2026:** Isabelle/DOF requires [Isabelle](https://isabelle.in.tum.de/)
   and several entries from the [Archive of Formal Proofs
   (AFP)](https://www.isa-afp.org/).
 * **LaTeX:** Isabelle/DOF requires a modern LaTeX installation, i.e., at least
@@ -128,6 +128,25 @@ in a subdirectory:
 Since Isabelle 2024, Isabelle/DOF synchronises its releases with the releases
 of Isabelle. The core of Isabelle/DOF is part of the Archive of Formal Proofs
 and several add-on packages are released on Zenodo. 
+
+### Isabelle/DOF 2026
+
+The release for Isabelle 2026 comprises, among others, the following changes:
+
+* **Faster checking:** the core is split into several theories that are loaded
+  in parallel, and the invariants of document instances are checked in parallel
+  to the processing of the document.
+* **Local theory targets:** the document commands (``text*``, ``Theorem*``, ...)
+  accept a target as in ``text* (in L) [...]``, such that the text can refer to
+  the facts of a locale.
+* **Grid tables:** the antiquotation ``\<^gridtbl>`` of the standard library
+  ``Isa_COL`` typesets tables written in the style of reStructuredText grid tables.
+* **Exercise ontology:** a new ontology for exercise sheets (tutorials, practicals,
+  lectures and exams) with a document template; one source can be typeset for
+  students, professors and examiners using Isabelle's document variants.
+* **Examples:** the examples are revised, in particular a new example on the
+  operational semantics of CSP (``Isabelle_DOF-Example-III``).
+* **Manuals:** the reference manual and the user manual are revised.
 
 Older releases are available [here.](https://artifacts.logicalhacking.com/releases/Isabelle_DOF/Isabelle_DOF/)
 

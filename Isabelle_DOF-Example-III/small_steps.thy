@@ -358,7 +358,7 @@ definition tick_trans :: \<open>[('a, 'r) process\<^sub>p\<^sub>t\<^sub>i\<^sub>
 
 
 text (in OpSemTransitionsSync) \<open>With these only four local axioms, we can derive most of the 
-basic operational rules for  \<^const>\<open>SKIP\<close>, \<^term>\<open>e \<rightarrow> P\<close>, etc., and some of the rules for
+basic operational rules for  \<^const>\<open>SKIP\<close>, \<^term>\<open>e \<rightarrow> P\<close>, \<^etc>., and some of the rules for
 \<^term>\<open>P \ S\<close> or \<^term>\<open>P \<^bold>; Q\<close>, \<open>\<dots>\<close>. In order to recover the remaining rules, we divide the work. 
 For each operator with a missing rule, we introduce a \<^theory_text>\<open>locale\<close> inheriting from
 \<^locale>\<open>OpSemTransitions\<close> in which we add a local axiom (about \<^term>\<open>(\<leadsto>\<^sub>\<tau>)\<close>). With the rules already 
