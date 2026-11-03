@@ -1,9 +1,0 @@
-session "template-scrreprt-modern" = "Isabelle_DOF-Ontologies" +
-  options [document = pdf, document_output = "output", document_build = dof]
-(*theories [document = false]
-    A
-    B*)
-  theories
-    "template-scrreprt-modern"
-  document_files
-    "preamble.tex"

@@ -1,8 +1,0 @@
-chapter AFP 
-
-session "poster-example" (AFP) = "Isabelle_DOF-Ontologies" +
-  options [document = pdf, document_output = "output", document_build = dof, timeout = 300]
-  theories
-    "poster"
-  document_files
-    "preamble.tex"
