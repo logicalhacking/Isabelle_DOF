@@ -219,6 +219,13 @@ Similar to the precedent example except we combine ordered and unordered lists.
 text\<open>
 The end of a list in Isabelle/Isar is defined as an empty line in Isabelle, switching type list 
 with no change in indentation is therefore implicitly also ends a list.
+
+\<^bold>\<open>Warning:\<close> The indentation rule has a consequence for the paragraphs that follow a list. 
+A paragraph that is written at the same indentation as the items of the list (in particular, if the 
+items start in the first column) is taken as a continuation of the last item: it appears in the 
+output indented as part of the list, and not as a new paragraph of the text. To end a list, the 
+items have to be \<^emph>\<open>indented\<close> (for example by two blanks) with respect to the text around them, and the 
+text that follows has to be written at the smaller indentation.
 \<close>
 
 section\<open>Figures\<close>
@@ -400,10 +407,10 @@ For this you need a 'root.bib' file that will be in the document directory of yo
 example, with the extract of the 'root.bib' file, of the code and the generated end result. 
 
 \begin{config}{root.bib}
-@Manual{	  brucker.ea:isabelledof:2026,
-  title		= {The Isabelle/DOF User and Implementation Manual},
-  author	= {Achim D. Brucker, Nicolas Méric and Burkhart Wolff},
-  year		= 2026,
+@Manual{      brucker.ea:isabelledof:2026,
+  title        = {The Isabelle/DOF User and Implementation Manual},
+  author    = {Achim D. Brucker, Nicolas Méric and Burkhart Wolff},
+  year        = 2026,
   url     = "www.isa-afp.org/browser_info/current/AFP/Isabelle_DOF/document.pdf"
 }
 \end{config}
@@ -649,6 +656,57 @@ The \<^verbatim>\<open>\<^rail>\<close> antiquotation has more features, for exa
 Isabelle or to commands by name. They are described in the section ``Railroad diagrams'' of the 
 chapter on document preparation in the Isabelle/Isar Reference Manual \<^cite>\<open>"mwenzel:isaref:2025"\<close>, 
 which is the reference for further reading.
+\<close>
+
+section*[boxed::technical]\<open>Boxed Language Text Antiquotations\<close>
+text\<open>The listings of this manual are typeset by a family of antiquotations that show a piece of text 
+of a particular language in a coloured box. They are used in the user manual as well as in the 
+reference manual, as \<^verbatim>\<open>@{boxed_bash [display] ...}\<close>, where the text is given as a cartouche; the conventions of colours are described in the section on typographical conventions of the 
+introduction. The antiquotations used here are:
+    \<^item> \<^verbatim>\<open>boxed_theory_text\<close>: Isar text (blue). The source is tokenized with the keywords of the current
+            theory, so that it is typeset as in the editor, and errors in the lexical structure are reported.
+    \<^item> \<^verbatim>\<open>boxed_text\<close> and \<^verbatim>\<open>boxed_cartouche\<close>: ordinary document text, also typeset in the blue box.
+    \<^item> \<^verbatim>\<open>boxed_pdf\<close>: an example of generated output (green), \<^verbatim>\<open>boxed_latex\<close>: \<^LaTeX> code (yellow),
+             \<^verbatim>\<open>boxed_sml\<close>: SML code (red) and \<^verbatim>\<open>boxed_bash\<close>: shell sessions (grey). The text of these four
+             is not interpreted; it is passed unchanged to the corresponding \<^LaTeX> environment.
+    \<^item> \<^verbatim>\<open>boxed_grid\<close>: the source of a grid table (see @{technical gridtbl}) in fixed pitch, 
+            one symbol per column, so that the logical columns of the table remain visible.
+
+These antiquotations are not part of a general ontology such as \<^verbatim>\<open>scholarly_paper\<close>. They are 
+defined \<^emph>\<open>locally\<close> in the front matter of each manual (the theories \<^verbatim>\<open>C0_Introduction\<close> and 
+\<^verbatim>\<open>M_00_Frontmatter\<close>). The reason is that they depend on \<^LaTeX> packages (\<^verbatim>\<open>tcolorbox\<close> and 
+\<^verbatim>\<open>listings\<close>) and on the style file \<^verbatim>\<open>lstisadof-manual.sty\<close> that defines the environments 
+\<^verbatim>\<open>isarbox\<close>, \<^verbatim>\<open>out\<close>, \<^verbatim>\<open>ltx\<close>, \<^verbatim>\<open>sml\<close> and \<^verbatim>\<open>bash\<close>. A document that wants to use them includes 
+this style in its preamble; all other documents are not burdened with these dependencies. 
+
+\<close>
+
+paragraph\<open>How they work\<close>
+text\<open>The antiquotations are built from the following functions of the structure \<^verbatim>\<open>DOF_lib\<close>:
+    \<^item> \<^verbatim>\<open>gen_text_antiquotation name check compile\<close> declares a document antiquotation \<^verbatim>\<open>name\<close> 
+      whose argument is an embedded text (a cartouche). The function \<^verbatim>\<open>check\<close> is run in the editor 
+      and reports markup (\<^verbatim>\<open>report_text\<close> marks the argument as text of a language, \<^verbatim>\<open>report_theory_text\<close> 
+      additionally tokenizes it with the keywords of the theory, which gives the highlighting); 
+      the function \<^verbatim>\<open>compile\<close> transforms the argument into \<^LaTeX>.
+    \<^item> \<^verbatim>\<open>enclose_env verbatim ctxt env body\<close> wraps the result into the \<^LaTeX> environment \<^verbatim>\<open>env\<close> if 
+        the antiquotation is used with the option \<^verbatim>\<open>display\<close>; otherwise, the body is enclosed in the macro
+      \<^verbatim>\<open>\inline\<close>\<^emph>\<open>env\<close>, which typesets the text in the running paragraph (the style defines 
+      \<^verbatim>\<open>\inlinesml\<close>, \<^verbatim>\<open>\inlineltx\<close> and \<^verbatim>\<open>\inlinebash\<close>). The flag \<^verbatim>\<open>verbatim\<close> is true for the languages 
+      whose text is passed on unchanged.
+
+The following paragraph is oriented to an advanced Isabelle user not shying away
+from a little bit of Isabelle-ML hacking: A new boxed language is therefore defined 
+by a function and its registration. As an example, the  following lines would introduce 
+\<^verbatim>\<open>boxed_python\<close>, provided that the style defines an environment 
+\<^verbatim>\<open>python\<close> and a macro \<^verbatim>\<open>\inlinepython\<close>:
+
+@{boxed_sml [display]\<open>fun boxed_python_antiquotation name =
+  DOF_lib.gen_text_antiquotation name (K (K ()))
+    (fn ctxt => Input.source_content #> Latex.text 
+                #> DOF_lib.enclose_env true ctxt "python")
+
+val _ = Theory.setup
+  (boxed_python_antiquotation (Binding.name "boxed_python"))\<close>}
 \<close>
 (*<*)
 end

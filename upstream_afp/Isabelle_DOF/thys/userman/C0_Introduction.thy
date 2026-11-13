@@ -174,6 +174,21 @@ text\<open>In order to maintain a consistent and coherent style throughout the m
     @{boxed_bash [display]\<open>ë\prompt{}ë ls
       CHANGELOG.md  CITATION  examples  install  LICENSE  README.md  ROOTS  src\<close>}
 \<close>
+paragraph\<open>Further Reading\<close>
+text\<open>For the typesetting of ordinary Isabelle documents, the Isabelle documentation contains the manual 
+\<^emph>\<open>\<^LaTeX> Sugar for Isabelle Documents\<close> (to be opened by \<^verbatim>\<open>isabelle doc sugar\<close>), which is accompanied by 
+the theories \<^verbatim>\<open>LaTeXsugar\<close> and \<^verbatim>\<open>OptionalSugar\<close> of \<^verbatim>\<open>HOL-Library\<close>. It collects recipes for the
+presentation of formal entities in \<^LaTeX>: options of the antiquotations for terms and theorems,
+display and pretty-printing modes, the notation of rules, and typographical conventions.
+
+The two approaches are complementary. The Sugar document is concerned with the \<^emph>\<open>appearance\<close> of 
+the individual formal item inside a standard Isabelle document. \<^isadof> is concerned with the 
+\<^emph>\<open>structure\<close> of the document as a whole: typed text elements, ontology classes with attributes, 
+monitors for the order of elements and invariants over their contents. Everything described in the
+Sugar document remains valid inside the text elements of \<^isadof>; conversely, the shortcuts and 
+macros of the standard library \<^verbatim>\<open>Isa_COL\<close> (such as \<^eg>, \<^ie> or \<^LaTeX>), which are defined by 
+\<^verbatim>\<open>define_shortcut*\<close> and \<^verbatim>\<open>define_macro*\<close>, serve a similar purpose as the sugar macros, but are available
+as antiquotations of the document source and can be extended in each document.\<close>
 (*<*)
 end
 (*>*)
