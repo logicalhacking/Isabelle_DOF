@@ -1,5 +1,5 @@
 In the transition from Isabelle_DOF 2025 to Isabelle_DOF 2026,
-the most relevant facts are (the current release candidate is marked by the git tag Isabelle_DOF2026RC2,
+the most relevant facts are (the release is marked by the git tag Isabelle_DOF_2026,
 and was checked with Isabelle 2026 and the 2026 version of the AFP):
 
 Major Changes:
