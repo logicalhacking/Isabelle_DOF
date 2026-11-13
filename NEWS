@@ -1,5 +1,6 @@
 In the transition from Isabelle_DOF 2025 to Isabelle_DOF 2026,
-the most relevant facts are:
+the most relevant facts are (the release is marked by the git tag Isabelle_DOF_2026,
+and was checked with Isabelle 2026 and the 2026 version of the AFP):
 
 Major Changes:
 
@@ -24,7 +25,10 @@ Minor Changes:
         via Isabelle's document variants (document_variants in the ROOT file),
 - Examples : revised; new Example-III (operational semantics of CSP, session
         parent HOL-CSP_OpSem), which uses the target feature,
-- Isabelle_DOF-Proofs : not yet ported; it depends on the AFP entry
-        Metalogic_ProofChecker, which does not build with Isabelle 2026 (RC2),
+- Isabelle_DOF-Proofs : not ported to Isabelle 2026 yet; it depends on the AFP entry
+        Metalogic_ProofChecker, which does not build with Isabelle 2026 yet. This session
+        will never be submitted to the AFP, since it uses features that are not necessarily
+        maintained by the main development of Isabelle; it is maintained in this
+        repository as long as possible,
 - README, README_DEVELOPMENT, CITATION : updated; the SCP paper is the
         recommended citation.

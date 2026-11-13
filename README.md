@@ -121,17 +121,28 @@ in a subdirectory:
   each of which is defined in an own subdirectory.
 * [Isabelle_DOF-Proofs](./Isabelle_DOF-Proofs/): This session provides the
   Isabelle/DOF systems with proof objects. This is required for the deep
-  ontology embedding.
+  ontology embedding. This session will never be submitted to the AFP: it
+  relies on features that are not necessarily maintained by the main
+  development of Isabelle. It is maintained in this repository as long as
+  possible. It is not part of the release checks of Isabelle/DOF 2026 (see
+  the file [NEWS](./NEWS)).
 
 ## Releases
 
 Since Isabelle 2024, Isabelle/DOF synchronises its releases with the releases
 of Isabelle. The core of Isabelle/DOF is part of the Archive of Formal Proofs
-and several add-on packages are released on Zenodo. 
+and several add-on packages are released on Zenodo. More precisely, the
+*kernel* of Isabelle/DOF (the directory ``upstream_afp``) is part of the AFP, whereas the
+other parts (additional ontologies, document templates, examples) are
+maintained as a tarball on Zenodo.
 
 ### Isabelle/DOF 2026
 
-The release for Isabelle 2026 comprises, among others, the following changes:
+The release for Isabelle 2026 is marked by the git tag `Isabelle_DOF_2026` (the
+tag `Isabelle2026` marks the preparation for Isabelle 2026; the tags
+`Isabelle_DOF_RC0` and `Isabelle_DOF_RC1` mark release candidates). It was
+checked with Isabelle 2026 and the 2026 version of the AFP. It comprises, among
+others, the following changes:
 
 * **Faster checking:** the core is split into several theories that are loaded
   in parallel, and the invariants of document instances are checked in parallel
