@@ -48,7 +48,7 @@ abstract*[abs, keywordlist="[\<open>Shallow Embedding\<close>,\<open>Process-Alg
    We demonstrate a number of resulting verification-techniques for classical, generalized examples:
    The CopyBuffer and Dijkstra's Dining Philosopher Problem of an arbitrary size.
 
-   If you consider citing this paper, please refer to @{cite "HOL-CSP-iFM2020"}.
+   If you consider citing this paper, please refer to \<^cite>\<open>"HOL-CSP-iFM2020"\<close>.
 \<close>
 text\<open>\<close>
 section*[introheader::introduction,main_author="Some(@{author ''bu''}::author)"]\<open> Introduction \<close> 
@@ -57,12 +57,12 @@ Communicating Sequential Processes (\<^csp>) is a language to specify and verify
 interaction of concurrent systems. Together with CCS and LOTOS, it belongs to the family of 
 \<^emph>\<open>process algebras\<close>. \<^csp>'s rich theory comprises denotational, operational and algebraic semantic 
 facets and has influenced programming languages such as Limbo, Crystal, Clojure and most notably 
-Golang @{cite "donovan2015go"}. \<^csp> has been applied in industry as a tool for specifying and 
+Golang \<^cite>\<open>"donovan2015go"\<close>. \<^csp> has been applied in industry as a tool for specifying and 
 verifying the concurrent aspects of hardware systems, such as the T9000 transansputer 
-@{cite "Barret95"}. 
+\<^cite>\<open>"Barret95"\<close>. 
 
-The theory of \<^csp> was first described in 1978 in a book by Tony Hoare @{cite "Hoare:1985:CSP:3921"}, 
-but has since evolved substantially @{cite "BrookesHR84" and "brookes-roscoe85" and "roscoe:csp:1998"}.
+The theory of \<^csp> was first described in 1978 in a book by Tony Hoare \<^cite>\<open>"Hoare:1985:CSP:3921"\<close>, 
+but has since evolved substantially \<^cite>\<open>"BrookesHR84" and "brookes-roscoe85" and "roscoe:csp:1998"\<close>.
 \<^csp> describes the most common communication and synchronization mechanisms with one single language 
 primitive: synchronous communication written \<open>_\<lbrakk>_\<rbrakk>_\<close>. \<^csp> semantics is described by a fully abstract 
 model of behaviour designed to be \<^emph>\<open>compositional\<close>: the denotational semantics of a process \<open>P\<close> 
@@ -89,7 +89,7 @@ but are required to synchronize).
 
 Verification of \<^csp> properties has been centered around the notion of \<^emph>\<open>process refinement orderings\<close>,
 most notably \<open>_\<sqsubseteq>\<^sub>F\<^sub>D_\<close> and \<open>_\<sqsubseteq>_\<close>. The latter turns the denotational domain of \<^csp> into a Scott cpo 
-@{cite "scott:cpo:1972"}, which yields semantics for the fixed point operator \<open>\<mu>x. f(x)\<close> provided 
+\<^cite>\<open>"scott:cpo:1972"\<close>, which yields semantics for the fixed point operator \<open>\<mu>x. f(x)\<close> provided 
 that \<open>f\<close> is continuous with respect to \<open>_\<sqsubseteq>_\<close>. Since it is possible to express deadlock-freeness and 
 livelock-freeness as a refinement problem, the verification of properties has been reduced 
 traditionally to a model-checking problem for finite set of events \<open>A\<close>.
@@ -102,12 +102,12 @@ interplay of different denotational models, refinement-orderings, and side-condi
 continuity, paper-and-pencil proofs easily reach their limits of precision. 
 
 Several attempts have been undertaken to develop a formal theory in an interactive proof system, 
-mostly in \<^isabelle> @{cite "Camilleri91" and "tej.ea:corrected:1997" and  "IsobeRoggenbach2010"
-and "DBLP:journals/afp/Noce16"}.
-This paper is based on @{cite "tej.ea:corrected:1997"}, which has been the most comprehensive 
+mostly in \<^isabelle> \<^cite>\<open>"Camilleri91" and "tej.ea:corrected:1997" and  "IsobeRoggenbach2010"
+and "DBLP:journals/afp/Noce16"\<close>.
+This paper is based on \<^cite>\<open>"tej.ea:corrected:1997"\<close>, which has been the most comprehensive 
 attempt to formalize denotational \<^csp> semantics covering a part of Bill Roscoe's Book 
-@{cite "roscoe:csp:1998"}. Our contributions are as follows:
-  \<^item>  we ported @{cite "tej.ea:corrected:1997"} from Isabelle93-7 and ancient 
+\<^cite>\<open>"roscoe:csp:1998"\<close>. Our contributions are as follows:
+  \<^item>  we ported \<^cite>\<open>"tej.ea:corrected:1997"\<close> from Isabelle93-7 and ancient 
     ML-written proof scripts to a modern \<^isabelle> version and structured Isar proofs,
     and extended it substantially,
   \<^item> we introduced new refinement notions allowing a deeper understanding of the \<^csp>
@@ -117,7 +117,7 @@ attempt to formalize denotational \<^csp> semantics covering a part of Bill Rosc
   \<^item> we integrate this machinery into a number of advanced verification techniques, which we 
     apply to two generalized paradigmatic examples in the \<^csp> literature,
     the CopyBuffer and Dining Philosophers@{footnote \<open>All proofs concerning the 
-    HOL-CSP 2 core have been published in the Archive of  Formal Proofs @{cite "HOL-CSP-AFP"}; 
+    HOL-CSP 2 core have been published in the Archive of  Formal Proofs \<^cite>\<open>"HOL-CSP-AFP"\<close>; 
     all other proofs are available at 
     \<^url>\<open>https://gitlri.lri.fr/burkhart.wolff/hol-csp2.0\<close>. In this paper, all Isabelle proofs are 
     omitted.\<close>}. 
@@ -128,7 +128,7 @@ section*["pre"::technical,main_author="Some(@{author \<open>bu\<close>}::author)
 
 subsection*[cspsemantics::technical, main_author="Some(@{author ''bu''})"]\<open>Denotational \<^csp> Semantics\<close>
 
-text\<open> The denotational semantics (following @{cite "roscoe:csp:1998"}) comes in three layers: 
+text\<open> The denotational semantics (following \<^cite>\<open>"roscoe:csp:1998"\<close>) comes in three layers: 
 the \<^emph>\<open>trace model\<close>, the \<^emph>\<open>(stable) failures model\<close> and the \<^emph>\<open>failure/divergence model\<close>.
 
 In the trace semantics model, a process \<open>P\<close> is denoted by a set of communication traces,
@@ -147,7 +147,7 @@ Let two processes be defined as follows:\<^vs>\<open>0.2cm\<close>
 \<close> 
 
 text\<open>These two processes \<open>P\<^sub>d\<^sub>e\<^sub>t\<close> and \<open>P\<^sub>n\<^sub>d\<^sub>e\<^sub>t\<close> cannot be distinguished by using 
-the trace semantics: \<open>\<T>(P\<^sub>d\<^sub>e\<^sub>t) = \<T>(P\<^sub>n\<^sub>d\<^sub>e\<^sub>t) = {[],[a],[b]}\<close>. To resolve this problem, Brookes @{cite "BrookesHR84"} 
+the trace semantics: \<open>\<T>(P\<^sub>d\<^sub>e\<^sub>t) = \<T>(P\<^sub>n\<^sub>d\<^sub>e\<^sub>t) = {[],[a],[b]}\<close>. To resolve this problem, Brookes \<^cite>\<open>"BrookesHR84"\<close> 
 proposed the failures model, where communication traces were augmented with the 
 constraint information for further communication that is represented negatively as a refusal set. 
 A failure \<open>(t, X)\<close> is a pair of a trace \<open>t\<close> and a set of events \<open>X\<close> that a process can refuse if 
@@ -172,7 +172,7 @@ many times. However, using the \<^csp> hiding operator \<open>_\_\<close>, this 
 
 text\<open>where \<open>P\<^sub>i\<^sub>n\<^sub>f\<close> will be equivalent to \<open>\<bottom>\<close> in the process cpo ordering. 
 To distinguish divergences from the deadlock process, Brookes and Roscoe 
-proposed failure/divergence model to incorporate divergence traces  @{cite "brookes-roscoe85"}. 
+proposed failure/divergence model to incorporate divergence traces  \<^cite>\<open>"brookes-roscoe85"\<close>. 
 A divergence trace is the one leading to a possible divergent behavior. 
 A well behaved process should be able to respond to its environment in a finite amount of time. 
 Hence, divergences are considered as a kind of a catastrophe in this model. 
@@ -181,14 +181,14 @@ together with a set of divergence traces \<open>\<D>\<close>;
 in our example, the empty trace \<open>[]\<close> belongs to \<open>\<D> P\<^sub>i\<^sub>n\<^sub>f\<close>.
 
 The failure/divergence model has become the standard semantics for an enormous range of \<^csp> 
-research and the implementations of @{cite "fdr4" and "SunLDP09"}. Note, that the work
-of @{cite "IsobeRoggenbach2010"} is restricted to a variant of the failures model only.
+research and the implementations of \<^cite>\<open>"fdr4" and "SunLDP09"\<close>. Note, that the work
+of \<^cite>\<open>"IsobeRoggenbach2010"\<close> is restricted to a variant of the failures model only.
  
 \<close>
 
 subsection*["isabelleHol"::technical, main_author="Some(@{author ''bu''})"]\<open>Isabelle/HOL\<close>
 text\<open> Nowadays, \<^isabelle> is one of the major interactive theory development environments
-@{cite "nipkow.ea:isabelle:2002"}. HOL stands for Higher-Order Logic, a logic based on simply-typed
+\<^cite>\<open>"nipkow.ea:isabelle:2002"\<close>. HOL stands for Higher-Order Logic, a logic based on simply-typed
 \<open>\<lambda>\<close>-calculus extended by parametric polymorphism and Haskell-like type-classes.
 Besides interactive and integrated automated proof procedures,
 it offers code and documentation generators. Its structured proof language Isar is intensively used
@@ -276,7 +276,7 @@ for internal choice, external choice, prefix and parallel composition, can
 be defined indirectly on the process-type. For example, for the simple case of the internal choice,
 we construct it such that \<open>_\<sqinter>_\<close> has type \<open>'\<alpha> process \<Rightarrow> '\<alpha> process \<Rightarrow> '\<alpha> process\<close> and 
 such that its projection laws satisfy the properties \<open>\<F> (P \<sqinter> Q) = \<F> P \<union> \<F> Q\<close>  and 
-\<open>\<D> (P \<sqinter> Q) = \<D> P \<union> \<D> Q\<close> required from @{cite "roscoe:csp:1998"}. 
+\<open>\<D> (P \<sqinter> Q) = \<D> P \<union> \<D> Q\<close> required from \<^cite>\<open>"roscoe:csp:1998"\<close>. 
 This boils down to a proof that an equivalent definition on the pre-process type \<open>\<Sigma> process\<^sub>0\<close>
 maintains \<open>is_process\<close>, \<^ie> this predicate remains invariant on the elements of the semantic domain. 
 For example, we define \<open>_\<sqinter>_\<close> on the pre-process type as follows:
@@ -290,7 +290,7 @@ The projection into \<^emph>\<open>failures\<close> is defined by \<open>\<F> = 
 \<open>\<F> (P \<sqinter> Q)\<close> and \<open>\<D> (P \<sqinter> Q)\<close> requires a proof that \<open>(\<F> P \<union> \<F> Q , \<D> P \<union> \<D> Q)\<close>
 satisfies the well-formedness conditions of \<open>is_process\<close>, which is fairly simple in this case.
 
-The definitional presentation of the \<^csp> process operators according to @{cite "roscoe:csp:1998"} 
+The definitional presentation of the \<^csp> process operators according to \<^cite>\<open>"roscoe:csp:1998"\<close> 
 follows always this scheme. This part of the theory comprises around 2000 loc. 
 \<close>
 
@@ -319,7 +319,7 @@ out to have in some cases better monotonicity properties and therefore allow for
 principles in \<^csp>. Furthermore, the refinement ordering \<open>\<sqsubseteq>\<^sub>\<F>\<close> analyzed here 
 is different from the classical 
 failure refinement in the literature that is studied for the stable failure model  
-@{cite "roscoe:csp:1998"}, where failures are only defined for stable 
+\<^cite>\<open>"roscoe:csp:1998"\<close>, where failures are only defined for stable 
 states, from which no internal progress is possible. 
 \<close>
 
@@ -331,7 +331,7 @@ of recursive equations is considered as keystone. Its prerequisite is a complete
 \<open>_\<sqsubseteq>_\<close>. The natural candidate \<open>_\<sqsubseteq>\<^sub>\<F>\<^sub>\<D>_\<close> is unfortunately not complete for infinite \<open>\<Sigma>\<close> for the
 generalized deterministic choice, and thus for the building block of the read-operations.
 
-Roscoe and Brooks @{cite "Roscoe1992AnAO"} finally proposed another ordering, called the 
+Roscoe and Brooks \<^cite>\<open>"Roscoe1992AnAO"\<close> finally proposed another ordering, called the 
 \<^emph>\<open>process ordering\<close>, and restricted the generalized deterministic choice in a particular way such 
 that completeness could at least be assured for read-operations. This more complex ordering 
 is based on the concept \<^emph>\<open>refusals after\<close> a trace \<open>s\<close> and defined by \<open>\<R> P s \<equiv> {X | (s, X) \<in> \<F> P}\<close>.\<close>
@@ -352,9 +352,9 @@ should be a subset of the trace set of \<open>Q\<close>.
 It is straight-forward to define the least element \<open>\<bottom>\<close> in this ordering by 
 \<open>\<F>(\<bottom>)= {(s,X). front_tickFree s}\<close> and  \<open>\<D>(\<bottom>) = {s. front_tickFree s}\<close>  \<close>
 
-text\<open>While the original work @{cite "tej.ea:corrected:1997"} was based on an own --- and different ---
-fixed-point theory, we decided to base HOL-\<^csp> 2 on HOLCF (initiated by @{cite "muller.ea:holcf:1999"} 
-and substantially extended in @{cite "huffman.ea:axiomatic:2005"}). 
+text\<open>While the original work \<^cite>\<open>"tej.ea:corrected:1997"\<close> was based on an own --- and different ---
+fixed-point theory, we decided to base HOL-\<^csp> 2 on HOLCF (initiated by \<^cite>\<open>"muller.ea:holcf:1999"\<close> 
+and substantially extended in \<^cite>\<open>"huffman.ea:axiomatic:2005"\<close>). 
 HOLCF is based on parametric polymorphism with type classes. A type class is actually a 
 constraint on a type variable by respecting certain syntactic and semantics 
 requirements. For example, a type class of partial ordering, denoted by \<open>\<alpha>::po\<close>, is restricted to
@@ -398,7 +398,7 @@ subsection*["law"::technical, main_author="Some(@{author ''lina''})"]
 text\<open>The \<^csp> operators enjoy a number of algebraic properties: commutativity, 
 associativities, and idempotence in some cases. Moreover, there is a rich body of distribution
 laws between these operators. Our new version HOL-CSP 2 not only shortens and restructures the 
-proofs of @{cite "tej.ea:corrected:1997"}; the code reduces to 8000 loc from 25000 loc. \<close>
+proofs of \<^cite>\<open>"tej.ea:corrected:1997"\<close>; the code reduces to 8000 loc from 25000 loc. \<close>
 
 Theorem*[th3, short_name="\<open>Examples of Derived Rules.\<close>"]\<open> 
   \<^item> \<open>\<box>x\<in>A\<union>B\<rightarrow>P(x) = (\<box>x\<in>A\<rightarrow>P x) \<box> (\<box>x\<in>B\<rightarrow>P x)\<close>
@@ -421,12 +421,12 @@ The original proof had been drastically shortened by a factor 10 and important i
 generalized: monotonicity, for example, could be generalized to the infinite case. 
 
 As for new laws, consider the case of \<open>(P \ A) \ B = P \ (A \<union> B)\<close> which is 
-stated in @{cite "Roscoe:UCS:2010"} without proof. In the new version, we managed to establish 
+stated in \<^cite>\<open>"Roscoe:UCS:2010"\<close> without proof. In the new version, we managed to establish 
 this law which still need 450 lines of complex Isar code. However, it turned out that the original
 claim is not fully true: it can only be established again by König's 
 lemma to build a divergent trace of  \<open>P \ (A \<union> B)\<close> which requires \<open>A\<close> to be finite 
 (\<open>B\<close> can be arbitrary) in order to use it from a divergent trace of  \<open>(P \ A) \ B\<close> 
-@{footnote \<open>In @{cite "Roscoe:UCS:2010"}, the authors point out that the laws involving the hiding 
+@{footnote \<open>In \<^cite>\<open>"Roscoe:UCS:2010"\<close>, the authors point out that the laws involving the hiding 
 operator may fail when \<open>A\<close> is infinite; however, they fail to give the precise 
 conditions for this case.\<close>}. Again, we want to argue that the intricate number of
 cases to be considered as well as their complexity makes pen and paper proofs 
@@ -478,7 +478,7 @@ subsection*["processes"::technical,main_author="Some(@{author ''safouan''}::auth
 \<open>Reference Processes and their Properties\<close>
 text\<open>
 We now present reference processes that exhibit basic behaviors, introduced in  
-fundamental \<^csp> works @{cite "Roscoe:UCS:2010"}. The process \<open>RUN A\<close> always 
+fundamental \<^csp> works \<^cite>\<open>"Roscoe:UCS:2010"\<close>. The process \<open>RUN A\<close> always 
 accepts events from \<open>A\<close> offered by the environment. The process \<open>CHAOS A\<close> can always choose to 
 accept or reject any event of \<open>A\<close>. The process \<open>DF A\<close> is the most non-deterministic deadlock-free 
 process on \<open>A\<close>, \<^ie>, it can never refuse all events of \<open>A\<close>. 
@@ -604,7 +604,7 @@ We will demonstrate them on two paradigmatic examples well-known in the \<^csp> 
 The CopyBuffer and Dijkstra's Dining Philosophers. In both cases, we will exploit 
 the fact that HOL-CSP 2 allows for reasoning over infinite \<^csp>; in the first case,
 we reason over infinite alphabets approaching an old research objective:
-exploiting data-independence @{cite "Lazic1998ASS" and "AnZhangYou14"} in process
+exploiting data-independence \<^cite>\<open>"Lazic1998ASS" and "AnZhangYou14"\<close> in process
 verification. In the latter case, we present an approach to a verification of a parameterized 
 architecture, in this case a ring-structure of arbitrary size.
 \<close>
@@ -612,7 +612,7 @@ architecture, in this case a ring-structure of arbitrary size.
 subsection*["illustration"::technical,main_author="Some(@{author ''safouan''}::author)", level="Some 3"]
 \<open>The General CopyBuffer Example\<close>
 text\<open>
-We consider the paradigmatic copy buffer example @{cite "Hoare:1985:CSP:3921" and "Roscoe:UCS:2010"} 
+We consider the paradigmatic copy buffer example \<^cite>\<open>"Hoare:1985:CSP:3921" and "Roscoe:UCS:2010"\<close> 
 that is characteristic for a specification of a  prototypical process and its
  implementation. It is used extensively in the \<^csp> literature to illustrate the interplay 
 of communication, component concealment and fixed-point operators.
@@ -885,42 +885,42 @@ a fairly active research area, both
 as a theoretical device as well as a modelling language to analyze complex concurrent systems. 
 It is therefore not surprising that attempts to its formalisation had been undertaken early
 with the advent of interactive theorem proving systems supporting higher-order logic 
- @{cite "Camilleri91" and "tej.ea:corrected:1997" and "10.1007/978-3-642-16690-7_9" 
-   and "10.1007/978-3-642-27705-4_20"  and "DBLP:conf/concur/IsobeR06" }, where
+ \<^cite>\<open>"Camilleri91" and "tej.ea:corrected:1997" and "10.1007/978-3-642-16690-7_9" 
+   and "10.1007/978-3-642-27705-4_20"  and "DBLP:conf/concur/IsobeR06" \<close>, where
  especially the latter allows for some automated support for refinement proofs 
 based on induction. However, HOL-CSP2 is based on a failure/divergence model, while 
-@{cite "DBLP:conf/concur/IsobeR06"} is  based on stable failures, which can infer 
+\<^cite>\<open>"DBLP:conf/concur/IsobeR06"\<close> is  based on stable failures, which can infer 
 deadlock-freeness only under the assumption that no lifelock occurred; In our view, 
 this is a too strong assumption for both the theory as well as the tool.
 
 In the 90ies, research focused on automated verification tools for \<^csp>, most notably on
-FDR~@{cite "fdr4"}. It relies on an operational \<^csp> semantics, allowing for a conversion of processes 
+FDR~\<^cite>\<open>"fdr4"\<close>. It relies on an operational \<^csp> semantics, allowing for a conversion of processes 
 into labelled transition systems, where the states are normalized by the "laws" derived from the 
 denotational semantics.
 For finite event sets, refinement proofs can be reduced to graph inclusion problems. With 
 efficient compression techniques, such as bisimulation, elimination and factorization by 
-semantic equivalence @{cite "Roscoe95"}, FDR was used to analyze some industrial applications. 
+semantic equivalence \<^cite>\<open>"Roscoe95"\<close>, FDR was used to analyze some industrial applications. 
 However, such a model checker can not handle infinite cases and do not scale to large systems. 
-%%Another similar model checking tool @{cite "SunLDP09"} implemented some more optimization techniques, 
+%%Another similar model checking tool \<^cite>\<open>"SunLDP09"\<close> implemented some more optimization techniques, 
 %%such as partial order reduction, symmetric reduction, and parallel model checking, but is also 
 %%restricted to the finite case. 
 
 The fundamental limits of  automated decision procedures for data and processes has been known
 very early on: Undecidability of parameterized model checking was proven by reduction to 
-non-halting of Turing machines @{cite "Suzuki88"}. However, some forms of 
+non-halting of Turing machines \<^cite>\<open>"Suzuki88"\<close>. However, some forms of 
 well-structured transitions systems, could be demonstrated to be decidable 
-@{cite "FinkelS01" and "BloemJKKRVW16"}.
+\<^cite>\<open>"FinkelS01" and "BloemJKKRVW16"\<close>.
 HOL-CSP2 is a fully abstract model for the failure/divergence model; as a HOL theory, it is therefore
 a "relative complete proof theory" both for infinite data as well as number of components.
-(see @{cite "andrews2002introduction"} for relative completeness).
+(see \<^cite>\<open>"andrews2002introduction"\<close> for relative completeness).
 
 
 Encouraged by the progress of SMT solvers which support some infinite types, 
 notably (fixed arrays of) integers or reals, and limited forms of formulas over these types,
 SMT-based model-checkers represent the current main-stream to parametric model-checking.
 This extends both to LTL-style model-checkers for Promela-like languages
-@{cite "Cubicle" and "ByMC"} as well as process-algebra alikes 
-@{cite "AntoninoGR19" and "AntoninoGR16" and "BensalemGLNSY11"}. 
+\<^cite>\<open>"Cubicle" and "ByMC"\<close> as well as process-algebra alikes 
+\<^cite>\<open>"AntoninoGR19" and "AntoninoGR16" and "BensalemGLNSY11"\<close>. 
 However, the usual limitations persist: the translation to SMT is hardly certifiable and
 the solvers are still not able to handle non-linear computations; moreover, they fail
 to elaborate inductive proofs on data if necessary in refinement proofs. 
@@ -928,14 +928,14 @@ to elaborate inductive proofs on data if necessary in refinement proofs.
 Some systems involve approximation techniques in order to make the formal verification of 
 concurrent systems scalable; results are therefore inherently imprecise and require 
 meta-level arguments assuring their truth in a specific application context. 
-For example, in  @{cite "AntoninoGR19"}, the synchronization analysis  techniques try to 
+For example, in  \<^cite>\<open>"AntoninoGR19"\<close>, the synchronization analysis  techniques try to 
 prove the unreachability of a system state by showing that components cannot agree 
 on the order or on the number of times they participate on system rules. 
 Even with such over-approximation, the finiteness restriction on the number of components 
 persists.
 
 Last but not least, SMT-based tools only focusing on bounded model-checking like
-@{cite "Kind2" and "JKind"} use k-induction and quite powerful invariant generation 
+\<^cite>\<open>"Kind2" and "JKind"\<close> use k-induction and quite powerful invariant generation 
 techniques but are still far from scalable techniques. While it is difficult to make
 any precise argument on the scalability for HOL-CSP 2, we argue that we have no data-type 
 restrictions (events may have realvector-, function- or even process type) as well as
@@ -946,9 +946,9 @@ be automatically proven with any of the discussed SMT techniques without restric
 section*["conclusion"::conclusion,main_author="Some(@{author ''bu''}::author)"]\<open>Conclusion\<close>
 text\<open>We presented a formalisation of the most comprehensive semantic model for \<^csp>, a 'classical' 
 language for the specification and analysis of concurrent systems studied in a rich body of 
-literature. For this purpose, we ported @{cite "tej.ea:corrected:1997"} to a modern version
+literature. For this purpose, we ported \<^cite>\<open>"tej.ea:corrected:1997"\<close> to a modern version
 of Isabelle, restructured the proofs, and extended the resulting theory of the language 
-substantially. The result HOL-CSP 2 has been submitted to the Isabelle AFP @{cite "HOL-CSP-AFP"}, 
+substantially. The result HOL-CSP 2 has been submitted to the Isabelle AFP \<^cite>\<open>"HOL-CSP-AFP"\<close>, 
 thus a fairly sustainable format accessible to other researchers and tools.
 
 We developed a novel set of deadlock - and livelock inference proof principles based on 

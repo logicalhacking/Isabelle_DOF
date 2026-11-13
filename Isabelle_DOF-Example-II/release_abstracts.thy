@@ -59,7 +59,7 @@ abstract*[exampleI, keywordlist="[\<open>Ontology\<close>, \<open>Ontological Mo
   with no direct use of \<^LaTeX>.
 
   The example is relevant for its \<^emph>\<open>form\<close>; if you consider
-  to cite it for its \<^emph>\<open>content\<close>, please refer to~@{cite "brucker.ea:isabelle-ontologies:2018"}.
+  to cite it for its \<^emph>\<open>content\<close>, please refer to~\<^cite>\<open>"brucker.ea:isabelle-ontologies:2018"\<close>.
   Please note that, consequenty, the content describes features of \<^isadof> that may be 
   partially outdated. 
 \<close>
@@ -74,7 +74,7 @@ abstract*[exampleIi, keywordlist="[\<open>Ontology\<close>, \<open>Ontological M
   The paper demonstrates the power of \<^isadof>‘s typesetting with no direct use of \<^LaTeX>.
   
   The example is relevant for its \<^emph>\<open>form\<close>; if you consider to cite it for its \<^emph>\<open>content\<close>, 
-  please refer to~@{cite "taha.ea:philosophers:2020"}}. Please note that, consequenty, 
+  please refer to~\<^cite>\<open>"taha.ea:philosophers:2020"\<close>. Please note that, consequenty, 
   the content describes some features of HOL-CSP theories that may be partially outdated. 
 \<close>
 
