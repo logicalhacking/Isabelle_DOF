@@ -138,9 +138,10 @@ maintained as a tarball on Zenodo.
 
 ### Isabelle/DOF 2026
 
-The release for Isabelle 2026 is marked by the git tag `Isabelle_DOF_2026` (the
+The current release candidate for Isabelle 2026 is marked by the git tag
+`Isabelle_DOF2026RC2` (the
 tag `Isabelle2026` marks the preparation for Isabelle 2026; the tags
-`Isabelle_DOF_RC0` and `Isabelle_DOF_RC1` mark release candidates). It was
+`Isabelle_DOF_RC0` and `Isabelle_DOF_RC1` mark earlier release candidates). It was
 checked with Isabelle 2026 and the 2026 version of the AFP. It comprises, among
 others, the following changes:
 
