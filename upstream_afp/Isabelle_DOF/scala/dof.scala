@@ -42,15 +42,18 @@ object DOF {
   val isabelle_version = "2026"
   val isabelle_url = "https://isabelle.sketis.net/devel/release_snapshot/"
 
-  val afp_version = "afp-2026-???"
+  val afp_version = "afp-2026-branch-default"
 
   // Isabelle/DOF version: "Unreleased" for development, semantic version for releases
-  val version = "Unreleased"
+  val version = "Isabelle2026"
+
+  // number of the release of Isabelle/DOF for this version of Isabelle
+  val release = "1"
 
   val session = "Isabelle_DOF"
   val session_ontologies = "Isabelle_DOF-Ontologies"
 
-  val latest_version = "2026 - 1.4"
+  val latest_version = "2026 - 1.6"
   val latest_isabelle = "Isabelle2026"
   val latest_doi = "10.5281/zenodo.15274072"
   val generic_doi = "10.5281/zenodo.3370482"
