@@ -38,6 +38,26 @@ Isabelle/DOF is provided as one AFP entry:
 Add-ons to Isabelle/DOF, in particular, additional ontologies, document templates, 
 and examples, are provided on [Zenodo](https://doi.org/10.5281/zenodo.3370482). 
 
+A first impression of what Isabelle/DOF can do is given by the example 
+``Isabelle_DOF-Example-III``: a paper about an operational semantics of CSP, based on the theories 
+HOL-CSP and HOL-CSPM, which uses a different notation in the document than in the underlying
+theories, while maintaining the full formal consistency. With Isabelle 2026 and the corresponding 
+version of the AFP (registered as an Isabelle component, so that the sessions of the AFP are
+found), it can be opened in Isabelle/jEdit by the following command, executed in the directory 
+that contains the directory ``Isabelle_DOF-Example-III`` (the first start takes some time, since 
+the underlying theories have to be loaded):
+
+```console
+isabelle jedit -d Isabelle_DOF-Example-III -l Isabelle_DOF Isabelle_DOF-Example-III/paper.thy
+```
+
+If you work with the Git repository of Isabelle/DOF (see below) instead of the AFP version of 
+Isabelle/DOF, the kernel in the directory ``upstream_afp`` has to be added:
+
+```console
+isabelle jedit -d upstream_afp -d Isabelle_DOF-Example-III -l Isabelle_DOF Isabelle_DOF-Example-III/paper.thy
+```
+
 ## Installation of the Development Version (Git Repository)
 
 The development version of Isabelle/DOF that is available in this Git repository
