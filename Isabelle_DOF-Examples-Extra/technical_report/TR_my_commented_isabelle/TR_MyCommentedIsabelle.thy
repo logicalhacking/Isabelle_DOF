@@ -25,10 +25,10 @@ open_monitor*[this::report]
 (*>*)
 
 title*[tit::title]\<open>My Personal, Eclectic Isabelle Programming Manual\<close> 
-subtitle*[stit::subtitle]\<open>Version : Isabelle 2022\<close>
+subtitle*[stit::subtitle]\<open>Version : Isabelle 2026\<close>
 text*[bu::author,     
-      email       = "''wolff@lri.fr''",
-      affiliation = "\<open>Université Paris-Saclay, LRI, France\<close>"]\<open>Burkhart Wolff\<close>
+      email       = "''wolff@lmf.cnrs.fr''",
+      affiliation = "\<open>Université Paris-Saclay, LMF, France\<close>"]\<open>Burkhart Wolff\<close>
     
 
 text*[abs::abstract,
@@ -43,7 +43,7 @@ text*[abs::abstract,
   text to the unfortunately somewhat outdated "The Isabelle Cookbook" in
   \<^url>\<open>https://nms.kcl.ac.uk/christian.urban/Cookbook/\<close>. The reader is encouraged
   not only to consider the generated .pdf, but also consult the loadable version in Isabelle/jEdit
-  @{cite "DBLP:journals/corr/Wenzel14"} in order to make experiments on the running code.
+  \<^cite>\<open>"DBLP:journals/corr/Wenzel14"\<close> in order to make experiments on the running code.
   
   This text is written itself in Isabelle/Isar using a specific document ontology
   for technical reports. It is intended to be a "living document", i.e. it is not only
@@ -57,14 +57,14 @@ text*[abs::abstract,
 chapter*[intro::introduction]\<open> Introduction  \<close>    
 
 text\<open> \<^vs>\<open>-0.5cm\<close> 
-  While Isabelle @{cite "DBLP:books/sp/NipkowPW02"} is mostly known as part of Isabelle/HOL 
+  While Isabelle \<^cite>\<open>"DBLP:books/sp/NipkowPW02"\<close> is mostly known as part of Isabelle/HOL 
   (an interactive theorem prover), it actually provides a system framework for developing a wide 
   spectrum of applications. A particular strength of the Isabelle framework is the combination 
   of text editing, formal verification, and code generation. This is a programming-tutorial of 
   Isabelle and Isabelle/HOL, a complementary text to the unfortunately somewhat outdated 
   "The Isabelle Cookbook" in \<^url>\<open>https://nms.kcl.ac.uk/christian.urban/Cookbook/\<close>. 
   The present text is also complementary to the current version of 
-  \<^url>\<open>https://isabelle.in.tum.de/doc/isar-ref.pdf\<close>
+  \<^url>\<open>https://isabelle.in.tum.de/doc/implementation.pdf\<close>
   "The Isabelle/Isar Implementation" by Makarius Wenzel in that it focusses on subjects
   not covered there, or presents alternative explanations for which I believe, based on my 
   experiences with students and Phds, that they are helpful.
@@ -109,7 +109,7 @@ ML\<open>
 text\<open>However, since Isabelle is a platform involving parallel execution, concurrent computing, and,
   as an interactive environment, involves backtracking / re-evaluation as a consequence of user-
   interaction, imperative programming is discouraged and nearly never used in the entire Isabelle
-  code-base @{cite "DBLP:conf/mkm/BarrasGHRTWW13"}.
+  code-base \<^cite>\<open>"DBLP:conf/mkm/BarrasGHRTWW13"\<close>.
   The preferred programming style is purely functional: \<close>
 
 ML\<open> 
@@ -307,9 +307,8 @@ text\<open> What I call the 'Nano-Kernel' in Isabelle can also be seen as an acy
   
   Makarius himself says about this structure:
   
-  "Generic theory contexts with unique identity, arbitrarily typed data,
-  monotonic development graph and history support.  Generic proof
-  contexts with arbitrarily typed data."
+  "Generic theory contexts with unique identity, arbitrarily typed data, and
+  monotonic updates. Generic proof contexts with arbitrarily typed data."
   % NOTE:
   % Add the reference.
 
@@ -588,8 +587,8 @@ val  [(("'a", 0), (["HOL.type"], @{typ "int"}))] = Vartab.dest tyenv;
 \<close>
 
 text\<open> Type generalization --- the conversion between free type variables and schematic 
-  type variables ---  is apparently no longer part of the standard API (there is a slightly 
-  more general replacement in \<^ML>\<open>Term_Subst.generalizeT_same\<close>, however). Here is a way to
+  type variables ---  is not offered by the interface of \<^ML_structure>\<open>Sign\<close> (there is a more general, low-level 
+  replacement in \<^ML>\<open>Term_Subst.generalizeT\<close>, see below). Here is a way to
   overcome this by a self-baked generalization function:\<close>  
 
 ML\<open>
@@ -1210,7 +1209,7 @@ text\<open> The integration of the  \<^theory_text>\<open>text\<close>-command i
  @{ML [display]\<open>
   Outer_Syntax.command ("text", @{here}) "formal comment (primary style)"
     (Parse.opt_target -- Parse.document_source >> Document_Output.document_output 
-                                                  {markdown = true, markup = I})
+        {markdown = true, markup = fn body => [XML.Elem (Markup.latex_body "text", body)]})
  \<close>}
 
  where \<^ML>\<open>Document_Output.document_output\<close> is the defining operation for the 
@@ -1249,7 +1248,8 @@ text\<open>
   Outer_Syntax.command ("ML", \<^here>) "ML text within theory or local theory"
     (Parse.ML_source >> (fn source =>
       Toplevel.generic_theory
-        (ML_Context.exec (fn () =>
+        (Local_Theory.touch_ml_env #>
+          ML_Context.exec (fn () =>
             ML_Context.eval_source (ML_Compiler.verbose true ML_Compiler.flags) source) #>
           Local_Theory.propagate_ml_env)))
   \<close>}
@@ -1389,7 +1389,7 @@ fun lemma1' lemma_name goals_to_prove a b lthy =
 chapter*[frontend::technical]\<open>Front-End \<close>  
 text\<open>In the following chapter, we turn to the right part of the system architecture 
   shown in \<^figure>\<open>architecture\<close>: 
-  The PIDE ("Prover-IDE") layer @{cite "DBLP:conf/itp/Wenzel14"}
+  The PIDE ("Prover-IDE") layer \<^cite>\<open>"DBLP:conf/itp/Wenzel14"\<close>
   consisting of a part written in SML and another in SCALA.
   Roughly speaking, PIDE implements "continuous build - continuous check" - functionality
   over a textual, albeit generic document model. It transforms user modifications
@@ -1404,15 +1404,15 @@ text\<open>In the following chapter, we turn to the right part of the system arc
   coordinates these asynchronous information streams and optimizes it to a certain
   extent (outdated markup referring to modified text is dropped, and 
   corresponding re-calculations are oriented to the user focus, for example). 
-  Four concrete editors --- also called PIDE applications --- have been implemented:
+  Several concrete editors --- also called PIDE applications --- have been implemented:
 
-\<^enum> an Eclipse plugin (developped by an Edinburg-group, based on an very old PIDE version),
-\<^enum> a Visual-Studio Code plugin (developed by Makarius Wenzel), 
-  currently based on a fairly old PIDE version, 
-\<^enum> clide, a web-client supporting javascript and HTML5
-  (developed by a group at University Bremen, based on a very old PIDE version), and 
-\<^enum> the most commonly used: the plugin in JEdit - Editor,
-  (developed by Makarius Wenzel, current PIDE version.)\<close>
+\<^enum> the plugin in the JEdit - Editor (Isabelle/jEdit, developed by Makarius Wenzel), which is
+  the most commonly used and the standard editor of the Isabelle distribution,
+\<^enum> Isabelle/VSCode, a Visual-Studio Code extension based on a language server for PIDE
+  (\<^verbatim>\<open>isabelle vscode\<close> and \<^verbatim>\<open>isabelle vscode_server\<close>), also part of the Isabelle distribution, and
+\<^enum> historically, an Eclipse plugin (developed by an Edinburgh group) and clide, a web-client 
+  supporting javascript and HTML5 (developed by a group at University Bremen), which are not 
+  maintained any more.\<close>
 
 text\<open>The document model forsees a number of text files, which are organized in form of an 
   acyclic graph. Such graphs can be grouped into \<^emph>\<open>sessions\<close> and "frozen" to binaries in order 
@@ -1744,7 +1744,7 @@ ML\<open>
 
 section\<open> Combinator Parsing \<close>  
 text\<open>Parsing Combinators go back to monadic programming as advocated by Wadler et. al, and has been 
-  worked out @{cite "DBLP:journals/jfp/Hutton92"}. Parsing combinators are one of the two
+  worked out \<^cite>\<open>"DBLP:journals/jfp/Hutton92"\<close>. Parsing combinators are one of the two
   major parsing technologies of the Isabelle front-end, in particular for the outer-syntax used
   for the parsing of toplevel-commands. The core of the combinator library is 
   \<^ML_structure>\<open>Scan\<close> providing the \<^ML_type>\<open>'a parser\<close> which is a synonym for
@@ -2025,7 +2025,8 @@ text\<open>
 
   \<^theory_text>\<open>Theory.setup
    (Syntax.install_operations
-     {parse_sort = parse_sort,
+     {parse_trrule = parse_trrule,
+      parse_sort = parse_sort,
       parse_typ = parse_typ,
       parse_term = parse_term false,
       parse_prop = parse_term true,
@@ -2160,7 +2161,7 @@ text\<open> Thus, \<^ML_structure>\<open>Syntax_Phases\<close> does the actual w
 fun check_typs ctxt raw_tys =
   let
     val (sorting_report, tys) = Proof_Context.prepare_sortsT ctxt raw_tys;
-    val _ = if Context_Position.is_visible ctxt then Output.report sorting_report else ();
+    val _ = if Context_Position.reports_enabled ctxt then Output.report sorting_report else ();
   in
     tys
     |> apply_typ_check ctxt
@@ -2181,15 +2182,15 @@ fun check_terms ctxt raw_ts =
       |> apply_term_check ctxt
       |> chop (length ts);
     val typing_report =
-      fold2 (fn (pos, _) => fn ty =>
+      fold2 (fn ({pos, ...}, _) => fn ty =>
         if Position.is_reported pos then
           cons (Position.reported_text pos Markup.typing
             (Syntax.string_of_typ ctxt (Logic.dest_type ty)))
         else I) ps tys' [];
 
     val _ =
-      if Context_Position.is_visible ctxt then Output.report (sorting_report @ typing_report)
-      else ();
+      if Context_Position.reports_enabled ctxt
+      then Output.report (sorting_report @ typing_report) else ();
   in Term_Sharing.terms (Proof_Context.theory_of ctxt) ts' end;
 \<close>
 
