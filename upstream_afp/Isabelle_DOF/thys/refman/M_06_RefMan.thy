@@ -956,13 +956,25 @@ symbol (\<^verbatim>\<open>|\<close>, \<^verbatim>\<open>+\<close>, \<^verbatim>
 \<^rail>\<open>
   structural: ( '|' | '+' | ( '-' + ) | ( '=' + ) | ':' ) | '\<^verbatim>\<open>\<^bold>\<open>\<close>' ( '|' | '+' | '-' | '=' | ':' ) + '\<^verbatim>\<open>\<close>\<close>'
 \<close>
-Like all antiquotations, the table may be given options, as in \<^verbatim>\<open>@{gridtbl [indent=4, margin=60]\<open>\<dots>\<close>}\<close>. 
+Like all antiquotations, the table may be given options, as in \<^verbatim>\<open>@{gridtbl [indent=4, margin=60] ...}\<close>. 
 The options \<^verbatim>\<open>indent\<close> and \<^verbatim>\<open>margin\<close> have the meaning they have for formal text, measured in the 
 characters of a typewriter font: \<^verbatim>\<open>indent\<close> shifts the table to the right, and \<^verbatim>\<open>margin\<close> is the right 
 boundary of the table (counted from the left margin of the text, so the table is \<^verbatim>\<open>margin\<close> \<open>-\<close> 
 \<^verbatim>\<open>indent\<close> characters wide). Both are only effective as far as they leave the table narrower than the text 
 width; the margin is ignored if it has the default value of the system option 
-\<^verbatim>\<open>thy_output_margin\<close>. The option \<^verbatim>\<open>display\<close> is not relevant for the text of the cells (see above).
+\<^verbatim>\<open>thy_output_margin\<close>. The text of the cells is always typeset inline, also if the option \<^verbatim>\<open>display\<close> is given. 
+For instance, the following table is written with \<^verbatim>\<open>[indent=6, margin=36]\<close>:
+
+@{gridtbl [indent=6, margin=36]\<open>
++---------+---------+
+| Option  | Effect  |
++=========+=========+
+| indent  | shifts  |
++---------+---------+
+| margin  | limits  |
++---------+---------+
+\<close>}
+
 The following conditions have to hold; they are checked in this order:
 \<^enum> \<^emph>\<open>Lines.\<close> The table consists of the non-blank lines of the argument; blank lines before and after
   are ignored, blank lines inside are an error. All lines start in the same column and have the 
