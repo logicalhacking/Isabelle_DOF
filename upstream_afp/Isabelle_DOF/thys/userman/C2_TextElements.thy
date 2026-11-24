@@ -529,37 +529,38 @@ logical constants, that is, the data of a typical \<^LaTeX> table:
 
 \<^outmat>\<open>
 \<^gridtbl>\<open>
-+----------------------------+---------------------+
-| Name                       | Theorem             |
-+============================+=====================+
-| @{thm[source]HOL.True_def} | @{thm HOL.True_def} |
-+----------------------------+---------------------+
-| @{thm[source]HOL.All_def}  | @{thm HOL.All_def}  |
-+----------------------------+---------------------+
-| @{thm[source]HOL.Ex_def}   | @{thm HOL.Ex_def}   |
-+----------------------------+---------------------+
-| @{thm[source]HOL.not_def}  | @{thm HOL.not_def}  |
-+----------------------------+---------------------+
++----------------------------+------------------------+
+| Name                       | Theorem                |
++============================+========================+
+| @{thm[source]HOL.True_def} | @{thm HOL.True_def}    |
++----------------------------+------------------------+
+| @{thm[source]HOL.All_def}  | @{thm HOL.All_def}     |
++----------------------------+------------------------+
+| @{thm[source]HOL.Ex_def}   | @{thm HOL.Ex_def}      |
++----------------------------+------------------------+
+| @{thm[source]HOL.not_def}  | @{thm HOL.not_def}     |
++----------------------------+------------------------+
 \<close>\<close>\<close>
 
 
-text\<open>The text of a cell may flow over several lines, and a multi-row cell is centered vertically:
+text\<open>The text of a cell may flow over several lines, and a multi-row cell is centered vertically,
+and can be combined with other text-antiquotations:
 
 @{boxed_grid [display]
 \<open>+---------------+-----------------------+
-| Phase         | Activity              |
-+===============+=======================+
-|               | @{term \<open>x\<close>}           |
-| Verification  +-----------------------+
-|               | \<^emph>\<open>proof\<close> and tests    |
-+---------------+-----------------------+\<close>}
+| Phase         | Term                   |
++===============+========================+
+|               | @{term \<open>x\<close>}, \<^typ>\<open>'a\<close>   |
+| Verification  +------------------------+
+|               | \<^emph>\<open>proof\<close> and \<^verb>\<open>tests\<close>  |
++---------------+------------------------+\<close>}
 \<^gridtbl>\<open>
 +---------------+--------------------------+
-| Phase         | Activity                 |
+| Phase         | Term                     |
 +===============+==========================+
-|               | @{term \<open>x\<close>}              |
+|               | @{term \<open>x\<close>}, \<^typ>\<open>'a\<close>     |
 | Verification  +--------------------------+
-|               | \<^emph>\<open>proof\<close> and tests       |
+|               | \<^emph>\<open>proof\<close> and \<^verbatim>\<open>tests\<close>    |
 +---------------+--------------------------+
 \<close>\<close>
 
