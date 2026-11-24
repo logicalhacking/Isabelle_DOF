@@ -18,6 +18,21 @@
 \newcommand{\DOFgridcellw}[5]{%
   \dimexpr(\linewidth-(2\tabcolsep)*#3-\arrayrulewidth*#4)*#1/#2+(2\tabcolsep+\arrayrulewidth)*#5\relax}
 
+% Options indent (#1) and margin (#2) of the table, in characters of a typewriter font: the table
+% is shifted by #1 characters to the right, and its right border is at #2 characters (0: none).
+\newlength{\DOFgridu}\newlength{\DOFgridw}
+\newcommand{\DOFgridbegin}[2]{\begingroup
+  \settowidth{\DOFgridu}{{\ttfamily 0}}%
+  \setlength{\DOFgridw}{\dimexpr\linewidth-#1\DOFgridu\relax}%
+  \ifnum#2>0
+    \ifdim\dimexpr\numexpr#2-#1\relax\DOFgridu<\DOFgridw
+      \setlength{\DOFgridw}{\dimexpr\numexpr#2-#1\relax\DOFgridu\relax}%
+    \fi
+  \fi
+  \setlength{\linewidth}{\DOFgridw}%
+  \ifnum#1>0 \hspace*{#1\DOFgridu}\fi}
+\newcommand{\DOFgridend}{\endgroup}
+
 % #1: width, #2: alignment command, #3: number of rows, #4: text
 \newcommand{\DOFgridcell}[4]{%
   \ifnum#3>1

@@ -26,6 +26,7 @@ Minor Changes:
         (incompatible change: the former convention that a cell consisting of one cartouche is
         document text is dropped). The logical length of a control symbol that the editor shows as
         one glyph (such as \<^sub>, \<^emph>) is one,
+- COL : grid tables accept the options indent and margin (shift to the right, right boundary),
 - COL : grid-table cells may consist of a single symbol such as \<checkmark>,
 - Exercise : one source is typeset for students, professors and examiners
         via Isabelle's document variants (document_variants in the ROOT file),

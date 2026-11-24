@@ -418,11 +418,18 @@ fun output_table ctxt ({nrows, ncols, col_widths, cells, hrules}: Gridtbl.table)
       in flat (separate (Latex.string " & ") (map_index (fn (k, f) => f (k = n - 1)) items))
          @ Latex.string " \\\\\n" @ hrule (i + 1)
       end
+    (* The options indent and margin of the antiquotations (in characters, as for formal text):
+       the table is shifted to the right by indent, and its right border is at margin; the margin
+       is only effective if it differs from the default of the system option thy_output_margin. *)
+    val indent = Int.max (0, Config.get ctxt Document_Antiquotation.thy_output_indent)
+    val margin = Config.get ctxt Document_Antiquotation.thy_output_margin
+    val margin' = if margin = Options.default_int "thy_output_margin" then 0 else margin
   in Latex.string "\\par\\smallskip\\noindent\n"
+     @ Latex.string ("\\DOFgridbegin{" ^ string_of_int indent ^ "}{" ^ string_of_int margin' ^ "}\n")
      @ Latex.string ("\\begin{tabular}{|" ^ implode (replicate ncols "l|") ^ "}\n")
      @ hrule 0
      @ flat (map row (0 upto nrows - 1))
-     @ Latex.string "\\end{tabular}\\par\\smallskip\n"
+     @ Latex.string "\\end{tabular}\\DOFgridend\\par\\smallskip\n"
   end
 
 val _ = Theory.setup

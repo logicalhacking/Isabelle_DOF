@@ -184,4 +184,17 @@ cartouche, and nested cartouches are typeset as formal text:
 +----------+----------------------------------------+
 \<close>}\<close>
 
+section\<open>Indent and Margin\<close>
+
+text\<open>As for formal text, the options \<^verbatim>\<open>indent\<close> and \<^verbatim>\<open>margin\<close> (in characters) shift the table to
+the right and set its right border:
+
+@{gridtbl [indent=8, margin=40]\<open>
++-------+-------+
+| A     | B     |
++=======+=======+
+| 1     | 2     |
++-------+-------+
+\<close>}\<close>
+
 end
