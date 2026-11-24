@@ -20,6 +20,12 @@ Minor Changes:
         hierarchy via an engine-only component (see README_DEVELOPMENT.md),
 - COL : the shortcut \<^isabelle> (Isabelle/HOL) joins the other shortcuts and macros,
         and the examples use them (\<^eg>, \<^ie>, \<^etc>, \<^center>),
+- COL : the text of a grid-table cell is document text, as in the text command: all document
+        antiquotations of the context (@{term ...}, \<^term>\<open>...\<close>, \<^verbatim>\<open>...\<close>, ...) can be used
+        in cells without a surrounding cartouche, and a nested cartouche is typeset as formal text
+        (incompatible change: the former convention that a cell consisting of one cartouche is
+        document text is dropped). The logical length of a control symbol that the editor shows as
+        one glyph (such as \<^sub>, \<^emph>) is one,
 - COL : grid-table cells may consist of a single symbol such as \<checkmark>,
 - Exercise : one source is typeset for students, professors and examiners
         via Isabelle's document variants (document_variants in the ROOT file),

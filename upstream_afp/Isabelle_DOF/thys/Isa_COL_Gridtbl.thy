@@ -52,6 +52,34 @@ type table = {nrows: int, ncols: int,
               hrules: rule list list}            (* (nrows+1) x ncols; the horizontal borders *)
 
 fun drop_while p = snd o chop_prefix p
+
+(* The control symbols that have a code in the symbol tables (etc/symbols), such as \<^emph>, \<^sub>
+   or \<^bsub>, are shown by the editor as one glyph; the others, such as \<^term>, are shown by their
+   name. This determines the logical length of a control symbol. *)
+val control_codes : Symtab.set Lazy.lazy =
+  Lazy.lazy (fn () =>
+    let
+      fun files () =
+        space_explode ":" (getenv "ISABELLE_SYMBOLS")
+        |> map (fn s => if String.isSuffix "?" s then String.substring (s, 0, size s - 1) else s)
+        |> filter (fn s => s <> "")
+        |> map Path.explode
+        |> filter File.exists
+      fun control_name line =
+        (case space_explode " " (String.map (fn c => if Char.isSpace c then #" " else c) line) of
+           sym :: rest =>
+             if String.isPrefix (chr 92 ^ "<^") sym andalso String.isSuffix ">" sym
+                andalso exists (String.isPrefix "code:") rest
+             then SOME (String.substring (sym, 3, size sym - 4))
+             else NONE
+         | [] => NONE)
+    in
+      fold (fn path => fold (fn l => (case control_name l of SOME n => Symtab.insert_set n | NONE => I))
+                            (split_lines (File.read path))) (files ()) Symtab.empty
+    end)
+
+fun has_code name = Symtab.defined (Lazy.force control_codes) name
+
 fun err pos msg = error ("Grid table: " ^ msg ^ Position.here pos)
 
 val bold_sym = chr 92 ^ "<^bold>"
@@ -74,10 +102,11 @@ fun lex_line (syms: Symbol_Pos.T list) : gcell list =
   let
     fun plain (s, p) = {sym = s, pos = p, bold = false, orig = [(s, p)]}
     (* A control symbol such as \<^term> is shown by the editor as its name (here: "term"), so its logical
-       length is the length of the name; the bold symbol is the exception (see below). *)
+       length is the length of the name, unless it has a code and is shown as one glyph (such as
+       \<^emph> or \<^sub>); the bold symbol is an exception (see below). *)
     fun is_ctrl s = String.isPrefix (chr 92 ^ "<^") s andalso String.isSuffix ">" s andalso size s > 4
     fun ctrl_or_plain (sym as (s, p)) =
-      if is_ctrl s andalso s <> bold_sym
+      if is_ctrl s andalso s <> bold_sym andalso not (has_code (String.substring (s, 3, size s - 4)))
       then let val name = String.substring (s, 3, size s - 4)
            in map_index (fn (i, c) => {sym = c, pos = p, bold = false,
                                        orig = if i = 0 then [sym] else []})
@@ -285,24 +314,10 @@ end
 structure Gridtbl_Latex =
 struct
 
-(* split a line into plain parts and top-level balanced cartouches (whose content is returned) *)
-fun chunks (syms: Symbol_Pos.T list) : (bool * Symbol_Pos.T list) list =
-  let
-    fun flush_plain acc = if null acc then [] else [(false, rev acc)]
-    fun cart _ _ [] = NONE
-      | cart d inner ((s as (c, _)) :: ss) =
-          if c = Symbol.open_ then cart (d + 1) (s :: inner) ss
-          else if c = Symbol.close then
-            (if d = 1 then SOME (rev inner, ss) else cart (d - 1) (s :: inner) ss)
-          else cart d (s :: inner) ss
-    fun go acc [] = flush_plain acc
-      | go acc ((s as (c, _)) :: ss) =
-          if c = Symbol.open_ then
-            (case cart 1 [] ss of
-               SOME (inner, rest) => flush_plain acc @ ((true, inner) :: go [] rest)
-             | NONE => go (s :: acc) ss)
-          else go (s :: acc) ss
-  in go [] syms end
+(* The text of a cell is document text, as in the text command: it is processed as a whole by the
+   parser and the LaTeX generator of Isabelle. Hence all document antiquotations of the current
+   context may be used in it, as \<^term>\<open>x + y\<close>, @{term \<open>x + y\<close>} or \<^verbatim>\<open>c ? e\<close>, and a
+   nested cartouche is shown as formal text. *)
 
 (* The document output leaves a symbol that is the whole content of a cell (as \<checkmark>) 
    as it is; the symbols in the text of the output are translated to their LaTeX macros. *)
@@ -314,26 +329,23 @@ fun fix_symbols (XML.Elem (m, body)) = XML.Elem (m, map fix_symbols body)
                                                     | _ => sym)) (Symbol.explode s))
                 else s)
 
-fun output_syms ctxt syms =
+fun output_content ctxt0 (lines: Symbol_Pos.T list list) : Latex.text =
   let
-    fun edge_blank ss = (case ss of s :: _ => Gridtbl.is_blank_sp s | [] => false)
-    val space = Latex.string " "
+    (* The text of a cell is typeset inline, also in a table that was written with [display].
+       The positions of the symbols of a cell that has several lines are not contiguous in the
+       source, so nothing is reported to the editor for it (the offsets would be wrong). *)
+    val ctxt1 = Config.put Document_Antiquotation.thy_output_display false ctxt0
+    val ctxt = if length lines > 1 then Context_Position.set_visible false ctxt1 else ctxt1
+    val syms = flat (separate [("\n", Position.none)] lines)
     val core = Gridtbl.drop_while Gridtbl.is_blank_sp (Gridtbl.trim_end syms)
   in
     if null syms then []
-    else if null core then space
+    else if null core then Latex.string " "
     else
-      (if edge_blank syms then space else [])
-      @ map fix_symbols (Document_Output.output_document ctxt {markdown = false}
-          (Input.source false (Symbol_Pos.content core) (Symbol_Pos.range core)))
-      @ (if edge_blank (rev syms) then space else [])
+      map fix_symbols
+        (Document_Output.output_document ctxt {markdown = false}
+          (Input.source true (Symbol_Pos.content core) (Symbol_Pos.range core)))
   end
-
-fun output_content ctxt (lines: Symbol_Pos.T list list) : Latex.text =
-  lines
-  |> map (maps (fn (_, syms) => output_syms ctxt syms) o chunks)
-  |> separate (Latex.string "\n")
-  |> flat
 
 fun output_table ctxt ({nrows, ncols, col_widths, cells, hrules}: Gridtbl.table) : Latex.text =
   let

@@ -453,9 +453,10 @@ following the grid tables of reStructuredText: the borders are made of \<^verbat
 a border of \<^verbatim>\<open>=\<close> is typeset as a double ruler, and a cell is a rectangle closed by borders, 
 so it can span several rows and columns. The columns of all lines must be aligned; otherwise an 
 error is reported at the position of the problem. As extensions, a ruler may occur on any border 
-(also the first and the last), a cell may contain cartouches \<^verbatim>\<open>\<open>\<dots>\<close>\<close> (analysed like any text; they 
-may even contain a \<^verbatim>\<open>|\<close>), and the lines of a cell form one paragraph. Alignment is based on logical 
-length, in which each symbol counts one (a control symbol such as \<^verbatim>\<open>\<^term>\<close> counts as many as its name has letters, as the editor shows it); \<^verbatim>\<open>\<^bold>\<open>|\<close>\<close> may replace a \<^verbatim>\<open>|\<close>, \<^verbatim>\<open>\<^bold>\<open>---\<close>\<close> counts three. 
+(also the first and the last), the text of a cell is document text (as in the \<^theory_text>\<open>text\<close> command, so it may contain all document 
+antiquotations, written as \<^verbatim>\<open>@{name ...}\<close> or with a control symbol such as \<^verbatim>\<open>\<^name>\<close>, and cartouches 
+are typeset as formal text), and the lines of a cell form one paragraph. Alignment is based on logical 
+length, in which each symbol counts one (a control symbol such as \<^verbatim>\<open>\<^term>\<close> counts as many as its name has letters, as the editor shows it, unless the editor shows it as one glyph, as for \<^verbatim>\<open>\<^emph>\<close> or \<^verbatim>\<open>\<^sub>\<close>); \<^verbatim>\<open>\<^bold>\<open>|\<close>\<close> may replace a \<^verbatim>\<open>|\<close>, \<^verbatim>\<open>\<^bold>\<open>---\<close>\<close> counts three. 
 As in markdown, \<^verbatim>\<open>:---:\<close>, \<^verbatim>\<open>:---\<close> and \<^verbatim>\<open>---:\<close> in the border of a cell center, left-align and 
 right-align its content.\<close>
 text\<open>The first example has a head ruler and a column each of left, centered and right-aligned content:
@@ -548,17 +549,17 @@ text\<open>The text of a cell may flow over several lines, and a multi-row cell 
 \<open>+---------------+-----------------------+
 | Phase         | Activity              |
 +===============+=======================+
-|               | \<open>@{term \<open>x\<close>}\<close>         |
+|               | @{term \<open>x\<close>}           |
 | Verification  +-----------------------+
-|               | \<open>\<^emph>\<open>proof\<close>\<close> and tests  |
+|               | \<^emph>\<open>proof\<close> and tests    |
 +---------------+-----------------------+\<close>}
 \<^gridtbl>\<open>
 +---------------+--------------------------+
 | Phase         | Activity                 |
 +===============+==========================+
-|               | \<open>@{term \<open>x\<close>}\<close>            |
-| Verification  |-----------------------   |
-|               | \<open>\<^emph>\<open>proof\<close>\<close> and tests  |
+|               | @{term \<open>x\<close>}              |
+| Verification  +--------------------------+
+|               | \<^emph>\<open>proof\<close> and tests       |
 +---------------+--------------------------+
 \<close>\<close>
 

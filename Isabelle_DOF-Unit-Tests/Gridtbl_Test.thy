@@ -109,6 +109,17 @@ val _ = @{assert} (#col_widths t6 = [10, 8])
 val _ = @{assert} (text_of (cell_of t6 (0, 0)) = "\<^term>\<open>x\<close>")
 val _ = @{assert} (fails "logical length" ["+---+---+", "| \<^term>\<open>x\<close> | b |", "+---+---+"])
 
+(* 4d. cells are document text: antiquotations are evaluated, a nested cartouche is formal text *)
+val a1 = latex ["+--------------------+------------------------+",
+                "| \<^term>\<open>(1::nat) + 2\<close> | @{term \<open>(1::nat) + 2\<close>} |",
+                "+--------------------+------------------------+"]
+val _ = @{assert} (String.isSubstring "{\\isacharplus}" a1 andalso not (String.isSubstring (chr 92 ^ "<^term>") a1))
+val a2 = latex ["+----------+", "| \<open>x := e\<close> |", "+----------+"]
+val _ = @{assert} (String.isSubstring "{\\isacharcolon}" a2)
+(* the logical length of a control symbol with a code (shown as one glyph) is one *)
+val t7 = T ["+-------+", "| a\<^sub>b c |", "+-------+"]
+val _ = @{assert} (#col_widths t7 = [8])
+
 (* 5. generated LaTeX *)
 val l1 = latex ["+-----+-----+", "| a   | b   |", "+=====+=====+"]
 val _ = @{assert} (String.isSubstring "\\hhline{|=|=|}" l1
@@ -137,13 +148,13 @@ end
 section\<open>Document Integration\<close>
 
 text\<open>An ordinary text with a grid table: \<^gridtbl>\<open>
-+-----------------+--------+------------------------+
-| Class           | Chk    | Time                   |
-+=================+========+========================+
-| \<open>\<^emph>\<open>figure\<close>\<close>  | 12     | \<open>@{term \<open>1+1::nat\<close>}\<close>   |
-+-----------------+--------+------------------------+
-| a \<open>|\<close> b         | 3      | \<open>\<^term>\<open>(1 mod 1)::int\<close>\<close> |
-+-----------------+--------+------------------------+
++-----------+-----+----------------------+
+| Class     | Chk | Time                 |
++===========+=====+======================+
+| \<^emph>\<open>figure\<close> | 12  | @{term \<open>1+1::nat\<close>}   |
++-----------+-----+----------------------+
+| a \<open>|\<close> b   | 3   | \<^term>\<open>(1 mod 1)::int\<close> |
++-----------+-----+----------------------+
 \<close>\<close>
 
 text*[gt1::A, x = "3"]\<open>A table inside an ontology-aware text-element:
@@ -154,5 +165,23 @@ text*[gt1::A, x = "3"]\<open>A table inside an ontology-aware text-element:
 |     | L2  | L3  |
 +=====+=====+=====+
 \<close>\<close>
+
+section\<open>Antiquotations in Cells\<close>
+
+text\<open>The text of a cell is document text, as in the \<^theory_text>\<open>text\<close> command; it may contain all
+document antiquotations, in the form with braces as well as in the form of a control symbol with a
+cartouche, and nested cartouches are typeset as formal text:
+
+@{gridtbl [display]\<open>
++:---------+:--------------------------------------:+
+| Occam    | HOL-CSP                                |
++==========+========================================+
+| \<open>x := e\<close> | @{term \<open>ASSIGN\<^sub>c (\<lambda>\<sigma>. upd\<^sub>x (e \<sigma>) \<sigma>)\<close>} |
++----------+----------------------------------------+
+| \<open>c ! e\<close>  | \<^term>\<open>SEND c (\<lambda>\<sigma>. e)\<close>                   |
++----------+----------------------------------------+
+| \<^verbatim>\<open>c ? e\<close> | \<^term>\<open>REC c (\<lambda>v \<sigma>. upd\<^sub>x v \<sigma>)\<close>          |
++----------+----------------------------------------+
+\<close>}\<close>
 
 end

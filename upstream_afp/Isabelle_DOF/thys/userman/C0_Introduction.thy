@@ -82,9 +82,10 @@ fun grid_tex_symbol sym =
   else if sym = Symbol.close then "\\DOFgc{}"
   else if sym = chr 92 ^ "<^bold>" then "\\DOFgbar{}"
   else if String.isPrefix (chr 92 ^ "<^") sym andalso String.isSuffix ">" sym
+          andalso not (Gridtbl.has_code (String.substring (sym, 3, size sym - 4)))
   then "\\DOFgridcmd{" ^ String.concat (map (fn c => if c = "_" then "\\char95 " else c)
                                            (raw_explode (String.substring (sym, 3, size sym - 4)))) ^ "}"
-  else if String.isPrefix (chr 92 ^ "<") sym then "\\DOFgsym{}"
+  else if String.isPrefix (chr 92 ^ "<") sym then "\\DOFgsym{}"  (* includes the control symbols with a code *)
   else if sym = " " then "\\ "
   else if member (op =) (raw_explode "\\{}#$%&^_~") sym then "\\char" ^ string_of_int (ord sym) ^ " "
   else sym

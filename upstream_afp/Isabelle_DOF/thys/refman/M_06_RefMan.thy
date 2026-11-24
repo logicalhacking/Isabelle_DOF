@@ -791,13 +791,17 @@ must be straight and closed and the rows must be aligned; violations are reporte
 at the offending position of the source. The extensions of the \<^isadof>-version are:
 \<^item> rulers (\<^verbatim>\<open>=====\<close>) may occur at \<^emph>\<open>any\<close> horizontal border, in particular the first and the 
   last, and any number of times;
-\<^item> the cell content may be a cartouche \<open>\<open>\<dots>\<close>\<close>; as long as the cartouches are balanced, its content 
-  is analysed, reported and highlighted as any other text (so it may contain antiquotations and 
-  even a \<^verbatim>\<open>|\<close>). Text without cartouches is treated in the same way; the lines of a cell form
-  one paragraph, so the text of a multi-row cell may flow over several lines;
+\<^item> the text of a cell is document text, exactly as in the \<^theory_text>\<open>text\<close> command: it is analysed, reported, 
+  highlighted and typeset by the parser and the \<^LaTeX>-generator of Isabelle. Hence it may contain 
+  all document antiquotations that are defined in the current context, in the form 
+  \<^verbatim>\<open>@{name ...}\<close> as well as in the form of a control symbol with a cartouche (\<^verbatim>\<open>\<^name>\<close>\<open>\<dots>\<close>),
+  and a nested cartouche is typeset as formal text. The lines of a cell form one paragraph, so the 
+  text of a multi-row cell may flow over several lines;
 \<^item> the alignment of rows is based on the \<^emph>\<open>logical\<close> length of the cells: every symbol 
-  (\<^verbatim>\<open>|\<close>, \<^verbatim>\<open>+\<close>, \<^verbatim>\<open>=\<close>, but also \<open>\<alpha>\<close> or a cartouche delimiter) has length one, but a control symbol such as \<^verbatim>\<open>\<^term>\<close>, which the 
-  editor shows by its name, counts the length of its name (here 4, so \<^verbatim>\<open>\<^term>\<close>\<open>x\<close> has length 7). 
+  (\<^verbatim>\<open>|\<close>, \<^verbatim>\<open>+\<close>, \<^verbatim>\<open>=\<close>, but also \<open>\<alpha>\<close> or a cartouche delimiter) has length one, and so has a control symbol that the editor shows as one glyph, 
+  such as \<^verbatim>\<open>\<^sub>\<close> or \<^verbatim>\<open>\<^emph>\<close> (they have a code in the symbol tables of Isabelle); but a control symbol such 
+  as \<^verbatim>\<open>\<^term>\<close>, which the editor shows by its name, counts the length of its name (here 4, so 
+  \<^verbatim>\<open>\<^term>\<close>\<open>x\<close> has length 7). 
   Instead of the visible cell boundary \<^verbatim>\<open>|\<close>, one may also write \<^boxed_theory_text>\<open>\<^bold>\<open>|\<close>\<close>, 
   which counts one as well; similarly, \<^boxed_theory_text>\<open>\<^bold>\<open>---\<close>\<close> or \<^boxed_theory_text>\<open>\<^bold>\<open>===\<close>\<close> count three;
 \<^item> as in markdown, \<^verbatim>\<open>:-----:\<close> in the border of a cell centers its content, \<^verbatim>\<open>:-----\<close> 
@@ -859,16 +863,16 @@ yields
 |               | GGG   |
 +---------------+-------+
 \<close>\<close>
-text\<open>Cell contents are text, which may be broken over several lines and may contain cartouches, with markup and antiquotations that are evaluated as usual (the cartouche in the last row contains a \<^verbatim>\<open>|\<close>):
+text\<open>Cell contents are document text, which may be broken over several lines and may contain antiquotations, in either of their two forms, that are evaluated as usual:
 
 @{boxed_grid [display]\<open>+----------+----------------------------------+
 | Command  | Effect                           |
 +==========+==================================+
-| \<open>text*\<close>  | Checks the text against the      |
-|          | ontology, with \<open>\<^emph>\<open>markup\<close>\<close>.      |
+| text*    | Checks the text against the      |
+|          | ontology, with \<^emph>\<open>markup\<close>.           |
 +----------+----------------------------------+
-| \<open>value*\<close> | Evaluates \<open>@{term \<open>1+1\<close>}\<close>        |
-|          | and may contain a \<open>|\<close>.           |
+| value*   | Evaluates @{term \<open>1+1\<close>}          |
+|          | and may contain a |.             |
 +----------+----------------------------------+\<close>}
 
 yields
@@ -876,11 +880,11 @@ yields
 +----------+-------------------------------------+
 | Command  | Effect                              |
 +==========+=====================================+
-| \<open>text*\<close>  | Checks the text against the         |
-|          | ontology, with \<open>\<^emph>\<open>markup\<close>\<close>.      |
+| text*    | Checks the text against the         |
+|          | ontology, with \<^emph>\<open>markup\<close>.           |
 +----------+-------------------------------------+
-| \<open>value*\<close> | Evaluates \<open>@{term \<open>1+1\<close>}\<close>           |
-|          | and may contain a \<open>|\<close>.              |
+| value*   | Evaluates @{term \<open>1+1\<close>}             |
+|          | and may contain a |.                |
 +----------+-------------------------------------+
 \<close>\<close>
 text\<open>Rulers may be placed at any border, in particular also on the first and the last one:
@@ -908,9 +912,9 @@ text\<open>A cell spanning several rows: its content is placed in the middle of 
 @{boxed_grid [display]\<open>+---------------+-----------------------+
 | Phase         | Activity              |
 +===============+=======================+
-|               | \<open>@{term \<open>x\<close>}\<close>         |
+|               | @{term \<open>x\<close>}           |
 | Verification  +-----------------------+
-|               | \<open>\<^emph>\<open>proof\<close>\<close> and tests  |
+|               | \<^emph>\<open>proof\<close> and tests    |
 +---------------+-----------------------+\<close>}
 
 yields
@@ -918,9 +922,9 @@ yields
 +---------------+--------------------------+
 | Phase         | Activity                 |
 +===============+==========================+
-|               | \<open>@{term \<open>x\<close>}\<close>            |
-| Verification  |-----------------------   |
-|               | \<open>\<^emph>\<open>proof\<close>\<close> and tests  |
+|               | @{term \<open>x\<close>}              |
+| Verification  +--------------------------+
+|               | \<^emph>\<open>proof\<close> and tests       |
 +---------------+--------------------------+
 \<close>\<close>
 
@@ -956,8 +960,8 @@ The following conditions have to hold; they are checked in this order:
 \<^enum> \<^emph>\<open>Lines.\<close> The table consists of the non-blank lines of the argument; blank lines before and after
   are ignored, blank lines inside are an error. All lines start in the same column and have the 
   same \<^emph>\<open>logical length\<close>. The logical length counts each symbol (not each character) as one, except for a 
-  control symbol such as \<^verbatim>\<open>\<^term>\<close> or \<^verbatim>\<open>\<^emph>\<close>, which counts as many as its name has characters, as the 
-  editor shows it (the symbol \<^verbatim>\<open>\<^bold>\<close> counts one);
+  control symbol such as \<^verbatim>\<open>\<^term>\<close>, which counts as many as its name has characters, as the 
+  editor shows it, unless it is shown as one glyph (such as \<^verbatim>\<open>\<^emph>\<close>, \<^verbatim>\<open>\<^sub>\<close> or \<^verbatim>\<open>\<^bold>\<close>), which counts one;
   a group \<^boxed_theory_text>\<open>\<^bold>\<open>\<dots>\<close>\<close> that consists only of the structural symbols \<^verbatim>\<open>|\<close>, \<^verbatim>\<open>+\<close>, \<^verbatim>\<open>-\<close>, \<^verbatim>\<open>=\<close> 
   and \<^verbatim>\<open>:\<close> counts as many as it contains such symbols.
 \<^enum> \<^emph>\<open>Cells.\<close> A cell is a smallest rectangle with a \<^verbatim>\<open>+\<close> in each corner, whose top and bottom 
@@ -975,9 +979,9 @@ The following conditions have to hold; they are checked in this order:
   right end aligns the content to the left, at the right end only to the right, and at both ends 
   centers it; if the top edge has no marker, the bottom edge is used.
 \<^enum> \<^emph>\<open>Content.\<close> The content of a cell are its interior lines without the leading and trailing 
-  blanks. The lines are processed as ordinary text, one after the other. In each line, a 
-  cartouche (with balanced nested cartouches) is analysed as text, and its delimiters are removed; 
-  its content may contain the structural symbols.
+  blanks. The lines are joined and processed as document text, as the argument of the 
+  \<^theory_text>\<open>text\<close> command: antiquotations are evaluated, and a cartouche is typeset as formal text. 
+  The interior of a cell may contain the structural symbols.
 
 All violations are reported as errors at the position of the offending symbol:
 \<^gridtbl>\<open>
@@ -1018,18 +1022,18 @@ abstract table with cells, spans, alignments and rulers, and the \<^LaTeX> gener
 +--------------------------+--------------------------------------------------------------------------+
 | Grid table               | Generated LaTeX                                                          |
 +==========================+==========================================================================+
-| cell                     | \<open>\<^verbatim>\<open>\multicolumn{n}{|l}{\DOFgridcell{...}}\<close>\<close>                       |
+| cell                     | \<^verbatim>\<open>\multicolumn{n}{|l}{\DOFgridcell{...}}\<close>                                |
 +--------------------------+--------------------------------------------------------------------------+
-| row span r               | a \<open>\<^verbatim>\<open>\multirow\<close>\<close> of r rows; the rows below                        |
+| row span r               | a \<^verbatim>\<open>\multirow\<close> of r rows; the rows below                                 |
 |                          | hold empty cells                                                         |
 +--------------------------+--------------------------------------------------------------------------+
-| border -, =, none        | \<open>\<^verbatim>\<open>\hhline{|-|=|~|}\<close>\<close>, one symbol                                 |
+| border -, =, none        | \<^verbatim>\<open>\hhline{|-|=|~|}\<close>, one symbol                                          |
 |                          | per column                                                               |
 +--------------------------+--------------------------------------------------------------------------+
-| alignment :--, :-:, --:  | \<open>\<^verbatim>\<open>\raggedright\<close>\<close>, \<open>\<^verbatim>\<open>\centering\<close>\<close>,                        |
-|                          | \<open>\<^verbatim>\<open>\raggedleft\<close>\<close>                                                  |
+| alignment :--, :-:, --:  | \<^verbatim>\<open>\raggedright\<close>, \<^verbatim>\<open>\centering\<close>,                                          |
+|                          | \<^verbatim>\<open>\raggedleft\<close>                                                           |
 +--------------------------+--------------------------------------------------------------------------+
-| logical width            | relative width of the column in a \<open>\<^verbatim>\<open>\parbox\<close>\<close>                    |
+| logical width            | relative width of the column in a \<^verbatim>\<open>\parbox\<close>                             |
 +--------------------------+--------------------------------------------------------------------------+
 | cell text                | ordinary text output: antiquotations are                                 |
 |                          | evaluated                                                                |
@@ -1042,8 +1046,8 @@ text\<open>
 The following restrictions are inherent in the design:
 \<^item> The syntax is two-dimensional and thus sensitive to layout: tabs count as one blank, so use 
   blanks only; a proportional font in the editor does not matter, since counting is by symbols.
-\<^item> A cartouche cannot span several lines; each line of a cell is analysed on its own, and the same 
-  holds for antiquotations. Since a cell has only text, grid tables cannot be nested.
+\<^item> A cartouche in a cell may span several lines, but the lines of the table have to be aligned on 
+  the logical columns also inside of it. Since a cell has only text, grid tables cannot be nested.
 \<^item> The text of a cell is aligned (left, centered, right) as a whole by the markers of the border; 
   neither the indentation inside the cell nor an alignment per line is kept. Vertically, the 
   content of a spanning cell is centered; of a cell of one row, aligned to the top. 
@@ -1417,20 +1421,20 @@ The body of an element is its text.
 +--------------------------------+---------------+------------------------------------------------------------------------------------+
 | Class                          | exercise.sty  | Attributes                                                                         |
 +================================+===============+====================================================================================+
-| \<open>\<^verbatim>\<open>exercise_sheet\<close>\<close>     | (the sheet)   | category, subtitle, institution,                                                   |
+| \<^verbatim>\<open>exercise_sheet\<close>              | (the sheet)   | category, subtitle, institution,                                                   |
 |                                |               | course, year; body: the title                                                      |
 +--------------------------------+---------------+------------------------------------------------------------------------------------+
-| \<open>\<^verbatim>\<open>exercise\<close>\<close>           | Exercise      | title, difficulty, origin                                                          |
+| \<^verbatim>\<open>exercise\<close>                    | Exercise      | title, difficulty, origin                                                          |
 +--------------------------------+---------------+------------------------------------------------------------------------------------+
-| \<open>\<^verbatim>\<open>exercise_part\<close>\<close>      | ExePart       | title, difficulty, name                                                            |
+| \<^verbatim>\<open>exercise_part\<close>               | ExePart       | title, difficulty, name                                                            |
 +--------------------------------+---------------+------------------------------------------------------------------------------------+
-| \<open>\<^verbatim>\<open>task\<close>\<close>               | Question      | title, difficulty, points                                                          |
+| \<^verbatim>\<open>task\<close>                        | Question      | title, difficulty, points                                                          |
 +--------------------------------+---------------+------------------------------------------------------------------------------------+
-| \<open>\<^verbatim>\<open>subtask\<close>\<close>            | subQuestion   | title, difficulty, points                                                          |
+| \<^verbatim>\<open>subtask\<close>                     | subQuestion   | title, difficulty, points                                                          |
 +--------------------------------+---------------+------------------------------------------------------------------------------------+
-| \<open>\<^verbatim>\<open>solution\<close>\<close>           | Answer        | \<open>\<^verbatim>\<open>refers_to\<close>\<close>, \<open>\<^verbatim>\<open>also_refers_to\<close>\<close>                                  |
+| \<^verbatim>\<open>solution\<close>                    | Answer        | \<^verbatim>\<open>refers_to\<close>, \<^verbatim>\<open>also_refers_to\<close>                                                    |
 +--------------------------------+---------------+------------------------------------------------------------------------------------+
-| \<open>\<^verbatim>\<open>remark\<close>\<close>             | (none)        | for the external evaluators                                                        |
+| \<^verbatim>\<open>remark\<close>                      | (none)        | for the external evaluators                                                        |
 +--------------------------------+---------------+------------------------------------------------------------------------------------+
 \<close>
 A \<^verbatim>\<open>solution\<close> refers to the task or subtask it solves by the attribute \<^verbatim>\<open>refers_to\<close>, whose type 
